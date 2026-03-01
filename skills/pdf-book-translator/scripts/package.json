@@ -1,0 +1,11 @@
+{
+    "name": "pdf-book-translator",
+    "version": "1.0.0",
+    "description": "Playwright-based Gemini Gems automation for PDF chapter translation",
+    "scripts": {
+        "setup": "npm install && npx playwright install chromium"
+    },
+    "dependencies": {
+        "playwright": "^1.58.2"
+    }
+}

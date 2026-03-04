@@ -5,7 +5,8 @@ TOKEN = os.getenv("DISCORD_BOT_TOKEN")
 CHANNEL_ID = os.getenv("DISCORD_CHANNEL_ID")
 r = requests.get(
     f"https://discord.com/api/v10/channels/{CHANNEL_ID}/messages?limit=10", 
-    headers={"Authorization": f"Bot {TOKEN}"}
+    headers={"Authorization": f"Bot {TOKEN}"},
+    verify=False
 )
 import json
 with open('messages.json', 'w', encoding='utf-8') as f:

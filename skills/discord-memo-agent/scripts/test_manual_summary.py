@@ -8,7 +8,8 @@ WEBHOOK_URL = os.getenv("DISCORD_WEBHOOK_URL")
 
 r = requests.get(
     f"https://discord.com/api/v10/channels/{CHANNEL_ID}/messages?limit=10", 
-    headers={"Authorization": f"Bot {TOKEN}"}
+    headers={"Authorization": f"Bot {TOKEN}"},
+    verify=False
 )
 
 msgs = r.json()
@@ -28,12 +29,16 @@ summary = """📝 **[수동 요청] 디스코드 메모 요약 리포트** 📝
 for i, t in enumerate(texts, 1):
     summary += f"{i}. {t}\n"
 
-payload = {
-    "content": summary,
-    "username": "안티그래비티 (수동 요약)"
-}
-res = requests.post(WEBHOOK_URL, json=payload)
-if res.status_code in (200, 204):
-    print("수동 요약 전송 완료!")
+chunks = [summary[i:i+1900] for i in range(0, len(summary), 1900)]
+for chunk in chunks:
+    payload = {
+        "content": chunk,
+        "username": "안티그래비티 (수동 요약)"
+    }
+    res = requests.post(WEBHOOK_URL, json=payload, verify=False)
+    if res.status_code in (200, 204):
+        print("수동 요약(청크) 전송 완료!")
+    else:
+        print(f"전송 실패: {res.status_code} - {res.text}")
 else:
     print(f"전송 실패: {res.status_code}")

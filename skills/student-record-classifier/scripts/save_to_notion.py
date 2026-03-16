@@ -29,7 +29,7 @@ from pathlib import Path
 sys.stdout.reconfigure(encoding='utf-8')
 
 # ── 설정 로드 ──────────────────────────────────────────────────────
-env_path = Path(__file__).parent.parent / 'skills' / 'student-record-classifier' / '.env'
+env_path = Path(__file__).parent.parent / '.env'
 config = {}
 if env_path.exists():
     for line in env_path.read_text(encoding='utf-8').splitlines():
@@ -82,19 +82,26 @@ def load_student_map():
 
 def save_records(records: list, date: str):
     """
-    records: list of (names, title, field, content, positivity)
+    records: list of (names, title, field, content, positivity[, subject])
       - names     : 학생명 리스트 (e.g. ['김민준', '이서연'])
       - title     : 기록 제목
       - field     : 분야
       - content   : 내용
       - positivity: 긍정도
+      - subject   : 과목 (선택, 예: '수학', '국어' 등. 없으면 None)
     date: 'YYYY-MM-DD'
     """
     student_map = load_student_map()
     print(f'📚 학생 {len(student_map)}명 로딩 완료\n')
 
     ok = 0
-    for names, title, field, content, positivity in records:
+    for record in records:
+        if len(record) == 6:
+            names, title, field, content, positivity, subject = record
+        else:
+            names, title, field, content, positivity = record
+            subject = None
+
         relation_ids = [{"id": student_map[n]} for n in names if n in student_map]
         missing = [n for n in names if n not in student_map]
         if missing:
@@ -109,10 +116,13 @@ def save_records(records: list, date: str):
             "긍정도":        {"select": {"name": positivity}},
             "출처":          {"select": {"name": "직접메모"}},
         }
+        if subject:
+            props["과목"] = {"select": {"name": subject}}
         try:
             notion_post('pages', {"parent": {"database_id": RECORD_DB_ID}, "properties": props})
             label = ' + '.join(names)
-            print(f'  ✅ [{label}] {title}')
+            subj_label = f' [{subject}]' if subject else ''
+            print(f'  ✅ [{label}]{subj_label} {title}')
             ok += 1
         except Exception as e:
             print(f'  ❌ {title} → {e}')
@@ -126,9 +136,11 @@ if __name__ == '__main__':
     DATE = '2026-03-03'   # ← 날짜 변경
 
     records = [
-        # (['학생이름'], '기록제목', '분야', '내용', '긍정도'),
+        # (['학생이름'], '기록제목', '분야', '내용', '긍정도'),          # 과목 없을 때
+        # (['학생이름'], '기록제목', '분야', '내용', '긍정도', '수학'),   # 과목 있을 때
         # 예시:
         # (['김민준', '이서연'], '쉬는 시간 뛰어다님', '생활습관', '쉬는 시간에 교실에서 뛰어다님.', '관찰필요🔍'),
+        # (['박서우'], '수학 문제풀이 적극 참여', '수업태도', '수학 시간에 손을 들고 적극적으로 참여함.', '긍정✅', '수학'),
     ]
 
     if not records:

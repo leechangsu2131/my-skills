@@ -60,8 +60,9 @@ def run_dynamic_steps(config_data: dict):
         x = step.get("x")
         y = step.get("y")
         text = step.get("text", "")
+        ftype = step.get("type", "click")
         
-        print(f"[{idx+1}] {name} 진행 중...")
+        print(f"[{idx+1}] {name} 진행 중... (유형: {ftype})")
         
         # 1. 일단 해당 좌표를 클릭 (포커스 잡기)
         if x is not None and y is not None:
@@ -74,8 +75,8 @@ def run_dynamic_steps(config_data: dict):
             time.sleep(1.0)
             continue
             
-        # 3. 텍스트가 있다면 지우고 입력
-        if text:
+        # 3. 유형별 동작 처리
+        if ftype == "text" and text:
             # 기존 내용 지우기
             pyautogui.hotkey("ctrl", "a")
             pyautogui.press("backspace")
@@ -83,10 +84,18 @@ def run_dynamic_steps(config_data: dict):
             
             # 새 내용 타이핑
             pyautogui.typewrite(text, interval=0.05)
+            time.sleep(0.2)
             
-            # 드롭다운이나 콤보박스의 경우 엔터가 필요할 때를 대비해 가볍게 딜레이 후 엔터
+        elif ftype == "dropdown" and text:
+            # 드롭다운은 선택지를 펼친 상태에서 타이핑 후 Enter 로 선택하는 패턴
+            pyautogui.typewrite(text, interval=0.05)
             time.sleep(0.2)
             pyautogui.press("enter")
+            time.sleep(0.2)
+            
+        elif text and ftype == "click":
+            # click 이지만 텍스트가 있는 경우 무시하거나 그냥 타이핑
+            pass
             
         time.sleep(0.3)
         

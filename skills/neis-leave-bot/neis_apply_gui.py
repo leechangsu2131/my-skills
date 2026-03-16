@@ -32,6 +32,7 @@ class FieldCoords:
     """신청 폼 내 주요 필드 좌표."""
 
     # 예시: 특별휴가 / 육아시간 신청 폼 기준 (1920x1080, 창 최대화)
+    scroll_focus_area: Tuple[int, int]     # 모달 안쪽 빈 공간 (스크롤 활성화용)
     leave_type_dropdown: Tuple[int, int]   # '근무상황' 또는 휴가 종류 드롭다운
     date_start_field: Tuple[int, int]      # 시작일
     date_end_field: Tuple[int, int]        # 종료일
@@ -50,6 +51,7 @@ class NeisGuiConfig:
     #   2) 표시되는 안내에 따라 마우스를 원하는 칸 위에 올리고 Enter
     #   3) 출력된 좌표를 아래에 복사/붙여넣기
     fields = FieldCoords(
+        scroll_focus_area=(960, 200),
         leave_type_dropdown=(960, 420),
         date_start_field=(960, 460),
         date_end_field=(1120, 460),
@@ -97,6 +99,7 @@ def calibrate():
       3) 마지막에 찍힌 좌표들을 NeisGuiConfig.fields에 그대로 복사/붙여넣습니다.
     """
     items = [
+        "모달창 내부 빈 공간 (스크롤 활성화 용도)",
         "휴가/근무상황 드롭다운",
         "시작일 입력칸",
         "종료일 입력칸",
@@ -106,6 +109,7 @@ def calibrate():
     results = []
     print("=== NEIS GUI 좌표 캘리브레이션 ===")
     print("마우스를 해당 위치에 올려두고 Enter를 누르세요. (취소: Ctrl+C)")
+    print("주의: 스크롤을 맨 아래로 내렸을 때의 위치를 기준으로 좌표를 찍어주세요!")
     for name in items:
         input(f"\n[대상] {name} 위치에 마우스를 올려두고 Enter...")
         x, y = pyautogui.position()
@@ -114,11 +118,12 @@ def calibrate():
 
     print("\n=== 복사해서 설정에 반영하세요 ===")
     print("FieldCoords(")
-    print(f"    leave_type_dropdown=({results[0][1]}, {results[0][2]}),")
-    print(f"    date_start_field=({results[1][1]}, {results[1][2]}),")
-    print(f"    date_end_field=({results[2][1]}, {results[2][2]}),")
-    print(f"    reason_field=({results[3][1]}, {results[3][2]}),")
-    print(f"    save_button=({results[4][1]}, {results[4][2]}),")
+    print(f"    scroll_focus_area=({results[0][1]}, {results[0][2]}),")
+    print(f"    leave_type_dropdown=({results[1][1]}, {results[1][2]}),")
+    print(f"    date_start_field=({results[2][1]}, {results[2][2]}),")
+    print(f"    date_end_field=({results[3][1]}, {results[3][2]}),")
+    print(f"    reason_field=({results[4][1]}, {results[4][2]}),")
+    print(f"    save_button=({results[5][1]}, {results[5][2]}),")
     print(")")
 
 
@@ -132,6 +137,12 @@ def run_special_leave(config: NeisGuiConfig = NeisGuiConfig()):
       - CONFIG의 좌표가 실제 화면과 맞다.
     """
     f = config.fields
+
+    print("[0] 모달 포커스 및 스크롤 내리기")
+    _click(*f.scroll_focus_area)
+    time.sleep(0.5)
+    pyautogui.press("pagedown", presses=3, interval=0.1)
+    time.sleep(1.0)
 
     print("[1] 휴가 종류/근무상황 선택")
     _click(*f.leave_type_dropdown)

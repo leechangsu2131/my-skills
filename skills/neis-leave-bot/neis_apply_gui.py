@@ -16,47 +16,29 @@
 """
 
 import time
+import sys
+import os
+import json
 import pyautogui
 
 # 안전 설정 (computer-use-agents 스타일)
 pyautogui.FAILSAFE = True  # 화면 왼쪽 상단으로 마우스 이동 시 즉시 중단
 pyautogui.PAUSE = 0.1      # 모든 동작 사이 기본 지연
 
-class NeisGuiConfig:
-    """
-    동적 캘리브레이션 툴(`neis_apply_gui_setup.py`)로 얻어낸 
-    (좌표, 이름) 리스트와 입력할 값을 여기에 순서대로 정의합니다.
-    
-    steps 포맷:
-        ("용도", (x, y), "입력할 텍스트(선택)")
-    """
-    
-    # ----------------------------------------------------
-    # TODO: neis_apply_gui_setup.py 로 추출한 좌표와 
-    #       입력할 내용을 여기에 순서대로 정의하세요. 
-    #       텍스트가 None 이면 클릭만 하고 넘어갑니다.
-    # ----------------------------------------------------
-    steps = [
-        ("모달 포커스 및 스크롤 내리기", (960, 200), "SCROLL_DOWN_3"),
-        ("휴가 종류/근무상황 클릭", (960, 420), "특별휴가"),
-        ("시작일 입력", (960, 460), "2026-03-16"),
-        ("종료일 입력", (1120, 460), "2026-03-16"),
-        ("사유 입력", (960, 520), "육아시간 사용"),
-        ("저장/신청 버튼 클릭", (1500, 820), None),
-    ]
 
-
-def _focus_and_type(x: int, y: int, text: str, clear: bool = True):
-    """지정 좌표를 클릭하고 텍스트를 입력한다."""
-    pyautogui.click(x, y)
-    time.sleep(0.2)
-    if clear:
-        # ctrl+a, delete로 기존 내용 삭제
-        pyautogui.hotkey("ctrl", "a")
-        pyautogui.press("backspace")
-        time.sleep(0.1)
-    if text:
-        pyautogui.typewrite(text, interval=0.05)
+def load_config(filename="neis_gui_config.json"):
+    """JSON 파일에서 동적 캘리브레이션 설정을 불러옵니다."""
+    if not os.path.exists(filename):
+        print(f"[{filename}] 설정 파일을 찾을 수 없습니다.")
+        print("먼저 `python neis_apply_gui_setup.py` 를 실행하여 캘리브레이션을 진행해 주세요.")
+        sys.exit(1)
+        
+    try:
+        with open(filename, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception as e:
+        print(f"설정 파일({filename})을 읽는 중 오류가 발생했습니다: {e}")
+        sys.exit(1)
 
 
 def _click(x: int, y: int):
@@ -64,14 +46,26 @@ def _click(x: int, y: int):
     time.sleep(0.2)
 
 
-def run_dynamic_steps(config: NeisGuiConfig = NeisGuiConfig()):
+
+def run_dynamic_steps(config_data: dict):
     """설정된 순서대로 마우스 클릭 및 키보드 입력을 수행합니다."""
     
-    for idx, (name, (x, y), text) in enumerate(config.steps):
+    steps = config_data.get("steps", [])
+    if not steps:
+        print("실행할 step이 없습니다. 설정을 확인해 주세요.")
+        return
+        
+    for idx, step in enumerate(steps):
+        name = step.get("name", f"Step {idx+1}")
+        x = step.get("x")
+        y = step.get("y")
+        text = step.get("text", "")
+        
         print(f"[{idx+1}] {name} 진행 중...")
         
         # 1. 일단 해당 좌표를 클릭 (포커스 잡기)
-        _click(x, y)
+        if x is not None and y is not None:
+            _click(x, y)
         
         # 2. 특별한 매크로 커맨드 처리 (예: 스크롤)
         if text == "SCROLL_DOWN_3":
@@ -91,7 +85,6 @@ def run_dynamic_steps(config: NeisGuiConfig = NeisGuiConfig()):
             pyautogui.typewrite(text, interval=0.05)
             
             # 드롭다운이나 콤보박스의 경우 엔터가 필요할 때를 대비해 가볍게 딜레이 후 엔터
-            # (일반 텍스트칸에 엔터를 쳐도 보통 무방함)
             time.sleep(0.2)
             pyautogui.press("enter")
             
@@ -110,9 +103,11 @@ if __name__ == "__main__":
     else:
         print("==================================================")
         print(" NEIS 신청 폼 매크로 자동 실행")
-        print(" (수정은 NeisGuiConfig.steps 리스트를 변경하세요)")
+        print(" (수정은 `neis_gui_config.json` 파일을 변경하세요)")
         print("==================================================")
+        config_data = load_config()
+        print(f"👉 총 {len(config_data.get('steps', []))}개의 스텝을 불러왔습니다.")
         print("※ NEIS 신청 화면이 원하는 위치(예: 중앙/최대화)에 떠 있는지 확인!")
         input("준비가 되었다면 Enter를 눌러 매크로를 시작합니다... (취소: Ctrl+C)")
-        run_dynamic_steps()
+        run_dynamic_steps(config_data)
 

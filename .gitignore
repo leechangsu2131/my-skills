@@ -67,3 +67,8 @@ check_students.py
 !skills/**/scripts/.env*
 !skills/**/scripts/agent*
 !skills/**/scripts/auth/*
+
+# music-class-helper local state
+skills/music-class-helper/lesson_manager_data.json
+skills/music-class-helper/chrome_profile/
+skills/music-class-helper/tmp*/

@@ -1,0 +1,583 @@
+{
+  "pdf": "[사회]3-1_1_지도서.pdf",
+  "strategy": "plan_text",
+  "split_level": "detail",
+  "requested_page_offset": 0,
+  "auto_page_offset": -15,
+  "effective_page_offset": -15,
+  "sections": [],
+  "detected_groups": [
+    {
+      "index": 1,
+      "title": "단원 도입",
+      "source_title": "단원 도입",
+      "start_page": 1,
+      "end_page": 8,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          16,
+          23
+        ]
+      ],
+      "method": "plan_text",
+      "context": [
+        "우리가 사는 곳의 여러 장소"
+      ],
+      "detected_level": "detail"
+    },
+    {
+      "index": 2,
+      "title": "장소에 대해알아볼까요",
+      "source_title": "장소에 대해알아볼까요",
+      "start_page": 9,
+      "end_page": 15,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          24,
+          30
+        ]
+      ],
+      "method": "plan_text",
+      "context": [
+        "우리가 사는 곳의 여러 장소"
+      ],
+      "detected_level": "detail"
+    },
+    {
+      "index": 3,
+      "title": "우리가 사는 곳의 여러",
+      "source_title": "우리가 사는 곳의 여러",
+      "start_page": 16,
+      "end_page": 22,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          31,
+          37
+        ]
+      ],
+      "method": "plan_text",
+      "context": [
+        "우리가 사는 곳의 여러 장소"
+      ],
+      "detected_level": "detail"
+    },
+    {
+      "index": 4,
+      "title": "우리가 사는 곳에 있는 장소 카드 만들기",
+      "source_title": "우리가 사는 곳에 있는 장소 카드 만들기",
+      "start_page": 23,
+      "end_page": 31,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          38,
+          46
+        ]
+      ],
+      "method": "plan_text",
+      "context": [
+        "우리가 사는 곳의 여러 장소"
+      ],
+      "detected_level": "detail"
+    },
+    {
+      "index": 5,
+      "title": "우리가 사는 곳에 있는 우리가 사는 곳의 여러 장",
+      "source_title": "우리가 사는 곳에 있는 우리가 사는 곳의 여러 장",
+      "start_page": 32,
+      "end_page": 40,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          47,
+          55
+        ]
+      ],
+      "method": "plan_text",
+      "context": [
+        "우리가 사는 곳의 여러 장소"
+      ],
+      "detected_level": "detail"
+    },
+    {
+      "index": 6,
+      "title": "우리가 사는 곳에 있는 여러 장소를 표현한 작품",
+      "source_title": "우리가 사는 곳에 있는 여러 장소를 표현한 작품",
+      "start_page": 41,
+      "end_page": 52,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          56,
+          67
+        ]
+      ],
+      "method": "plan_text",
+      "context": [
+        "우리가 사는 곳의 여러 장소"
+      ],
+      "detected_level": "detail"
+    },
+    {
+      "index": 7,
+      "title": "생각을펼쳐요",
+      "source_title": "생각을펼쳐요",
+      "start_page": 53,
+      "end_page": 54,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          68,
+          69
+        ]
+      ],
+      "method": "plan_text",
+      "context": [
+        "우리가 사는 곳의 여러 장소"
+      ],
+      "detected_level": "detail"
+    },
+    {
+      "index": 8,
+      "title": "우리 생활에 도움을 주제 도입",
+      "source_title": "우리 생활에 도움을 주제 도입",
+      "start_page": 55,
+      "end_page": 62,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          70,
+          77
+        ]
+      ],
+      "method": "plan_text",
+      "context": [
+        "우리 생활에 도움을 주는 장소"
+      ],
+      "detected_level": "detail"
+    },
+    {
+      "index": 9,
+      "title": "우리 생활에 도움을 주는",
+      "source_title": "우리 생활에 도움을 주는",
+      "start_page": 63,
+      "end_page": 69,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          78,
+          84
+        ]
+      ],
+      "method": "plan_text",
+      "context": [
+        "우리 생활에 도움을 주는 장소"
+      ],
+      "detected_level": "detail"
+    },
+    {
+      "index": 10,
+      "title": "우리가 사는 곳에서 생활에 도움을 주는 장소를",
+      "source_title": "우리가 사는 곳에서 생활에 도움을 주는 장소를",
+      "start_page": 70,
+      "end_page": 76,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          85,
+          91
+        ]
+      ],
+      "method": "plan_text",
+      "context": [
+        "우리 생활에 도움을 주는 장소"
+      ],
+      "detected_level": "detail"
+    },
+    {
+      "index": 11,
+      "title": "우리가 생각하는 살기 살기 좋은 곳의 조건",
+      "source_title": "우리가 생각하는 살기 살기 좋은 곳의 조건",
+      "start_page": 77,
+      "end_page": 83,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          92,
+          98
+        ]
+      ],
+      "method": "plan_text",
+      "context": [
+        "우리 생활에 도움을 주는 장소"
+      ],
+      "detected_level": "detail"
+    },
+    {
+      "index": 12,
+      "title": "우리가 사는 곳을 더 우리가 사는 곳이 얼마나",
+      "source_title": "우리가 사는 곳을 더 우리가 사는 곳이 얼마나",
+      "start_page": 84,
+      "end_page": 94,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          99,
+          109
+        ]
+      ],
+      "method": "plan_text",
+      "context": [
+        "우리 생활에 도움을 주는 장소"
+      ],
+      "detected_level": "detail"
+    },
+    {
+      "index": 13,
+      "title": "우리가 생각한 살기 우리가 생각하는 살기 좋은",
+      "source_title": "우리가 생각한 살기 우리가 생각하는 살기 좋은",
+      "start_page": 95,
+      "end_page": 102,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          110,
+          117
+        ]
+      ],
+      "method": "plan_text",
+      "context": [
+        "우리 생활에 도움을 주는 장소"
+      ],
+      "detected_level": "detail"
+    },
+    {
+      "index": 14,
+      "title": "생각을펼쳐요",
+      "source_title": "생각을펼쳐요",
+      "start_page": 103,
+      "end_page": 104,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          118,
+          119
+        ]
+      ],
+      "method": "plan_text",
+      "context": [
+        "우리 생활에 도움을 주는 장소"
+      ],
+      "detected_level": "detail"
+    },
+    {
+      "index": 15,
+      "title": "생각 그물을완성해요",
+      "source_title": "생각 그물을완성해요",
+      "start_page": 105,
+      "end_page": 106,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          120,
+          121
+        ]
+      ],
+      "method": "plan_text",
+      "context": [
+        "우리 생활에 도움을 주는 장소"
+      ],
+      "detected_level": "detail"
+    }
+  ],
+  "groups": [
+    {
+      "index": 1,
+      "title": "단원 도입",
+      "source_title": "단원 도입",
+      "start_page": 1,
+      "end_page": 8,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          16,
+          23
+        ]
+      ],
+      "method": "plan_text",
+      "context": [
+        "우리가 사는 곳의 여러 장소"
+      ],
+      "detected_level": "detail"
+    },
+    {
+      "index": 2,
+      "title": "장소에 대해알아볼까요",
+      "source_title": "장소에 대해알아볼까요",
+      "start_page": 9,
+      "end_page": 15,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          24,
+          30
+        ]
+      ],
+      "method": "plan_text",
+      "context": [
+        "우리가 사는 곳의 여러 장소"
+      ],
+      "detected_level": "detail"
+    },
+    {
+      "index": 3,
+      "title": "우리가 사는 곳의 여러",
+      "source_title": "우리가 사는 곳의 여러",
+      "start_page": 16,
+      "end_page": 22,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          31,
+          37
+        ]
+      ],
+      "method": "plan_text",
+      "context": [
+        "우리가 사는 곳의 여러 장소"
+      ],
+      "detected_level": "detail"
+    },
+    {
+      "index": 4,
+      "title": "우리가 사는 곳에 있는 장소 카드 만들기",
+      "source_title": "우리가 사는 곳에 있는 장소 카드 만들기",
+      "start_page": 23,
+      "end_page": 31,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          38,
+          46
+        ]
+      ],
+      "method": "plan_text",
+      "context": [
+        "우리가 사는 곳의 여러 장소"
+      ],
+      "detected_level": "detail"
+    },
+    {
+      "index": 5,
+      "title": "우리가 사는 곳에 있는 우리가 사는 곳의 여러 장",
+      "source_title": "우리가 사는 곳에 있는 우리가 사는 곳의 여러 장",
+      "start_page": 32,
+      "end_page": 40,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          47,
+          55
+        ]
+      ],
+      "method": "plan_text",
+      "context": [
+        "우리가 사는 곳의 여러 장소"
+      ],
+      "detected_level": "detail"
+    },
+    {
+      "index": 6,
+      "title": "우리가 사는 곳에 있는 여러 장소를 표현한 작품",
+      "source_title": "우리가 사는 곳에 있는 여러 장소를 표현한 작품",
+      "start_page": 41,
+      "end_page": 52,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          56,
+          67
+        ]
+      ],
+      "method": "plan_text",
+      "context": [
+        "우리가 사는 곳의 여러 장소"
+      ],
+      "detected_level": "detail"
+    },
+    {
+      "index": 7,
+      "title": "생각을펼쳐요",
+      "source_title": "생각을펼쳐요",
+      "start_page": 53,
+      "end_page": 54,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          68,
+          69
+        ]
+      ],
+      "method": "plan_text",
+      "context": [
+        "우리가 사는 곳의 여러 장소"
+      ],
+      "detected_level": "detail"
+    },
+    {
+      "index": 8,
+      "title": "우리 생활에 도움을 주제 도입",
+      "source_title": "우리 생활에 도움을 주제 도입",
+      "start_page": 55,
+      "end_page": 62,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          70,
+          77
+        ]
+      ],
+      "method": "plan_text",
+      "context": [
+        "우리 생활에 도움을 주는 장소"
+      ],
+      "detected_level": "detail"
+    },
+    {
+      "index": 9,
+      "title": "우리 생활에 도움을 주는",
+      "source_title": "우리 생활에 도움을 주는",
+      "start_page": 63,
+      "end_page": 69,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          78,
+          84
+        ]
+      ],
+      "method": "plan_text",
+      "context": [
+        "우리 생활에 도움을 주는 장소"
+      ],
+      "detected_level": "detail"
+    },
+    {
+      "index": 10,
+      "title": "우리가 사는 곳에서 생활에 도움을 주는 장소를",
+      "source_title": "우리가 사는 곳에서 생활에 도움을 주는 장소를",
+      "start_page": 70,
+      "end_page": 76,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          85,
+          91
+        ]
+      ],
+      "method": "plan_text",
+      "context": [
+        "우리 생활에 도움을 주는 장소"
+      ],
+      "detected_level": "detail"
+    },
+    {
+      "index": 11,
+      "title": "우리가 생각하는 살기 살기 좋은 곳의 조건",
+      "source_title": "우리가 생각하는 살기 살기 좋은 곳의 조건",
+      "start_page": 77,
+      "end_page": 83,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          92,
+          98
+        ]
+      ],
+      "method": "plan_text",
+      "context": [
+        "우리 생활에 도움을 주는 장소"
+      ],
+      "detected_level": "detail"
+    },
+    {
+      "index": 12,
+      "title": "우리가 사는 곳을 더 우리가 사는 곳이 얼마나",
+      "source_title": "우리가 사는 곳을 더 우리가 사는 곳이 얼마나",
+      "start_page": 84,
+      "end_page": 94,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          99,
+          109
+        ]
+      ],
+      "method": "plan_text",
+      "context": [
+        "우리 생활에 도움을 주는 장소"
+      ],
+      "detected_level": "detail"
+    },
+    {
+      "index": 13,
+      "title": "우리가 생각한 살기 우리가 생각하는 살기 좋은",
+      "source_title": "우리가 생각한 살기 우리가 생각하는 살기 좋은",
+      "start_page": 95,
+      "end_page": 102,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          110,
+          117
+        ]
+      ],
+      "method": "plan_text",
+      "context": [
+        "우리 생활에 도움을 주는 장소"
+      ],
+      "detected_level": "detail"
+    },
+    {
+      "index": 14,
+      "title": "생각을펼쳐요",
+      "source_title": "생각을펼쳐요",
+      "start_page": 103,
+      "end_page": 104,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          118,
+          119
+        ]
+      ],
+      "method": "plan_text",
+      "context": [
+        "우리 생활에 도움을 주는 장소"
+      ],
+      "detected_level": "detail"
+    },
+    {
+      "index": 15,
+      "title": "생각 그물을완성해요",
+      "source_title": "생각 그물을완성해요",
+      "start_page": 105,
+      "end_page": 106,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          120,
+          121
+        ]
+      ],
+      "method": "plan_text",
+      "context": [
+        "우리 생활에 도움을 주는 장소"
+      ],
+      "detected_level": "detail"
+    }
+  ]
+}

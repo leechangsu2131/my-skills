@@ -1,4 +1,6 @@
 import unittest
+from pathlib import Path
+from uuid import uuid4
 
 import social_class_helper
 
@@ -90,6 +92,22 @@ class SocialClassHelperTests(unittest.TestCase):
         )
 
         self.assertGreater(score, 0)
+
+    def test_list_pdf_files_returns_sorted_pdf_only(self):
+        test_dir = Path(__file__).parent / f"guide_dir_{uuid4().hex}"
+        test_dir.mkdir(exist_ok=True)
+        try:
+            (test_dir / "b.pdf").write_text("x", encoding="utf-8")
+            (test_dir / "a.pdf").write_text("x", encoding="utf-8")
+            (test_dir / "note.txt").write_text("x", encoding="utf-8")
+
+            result = social_class_helper.list_pdf_files(test_dir)
+
+            self.assertEqual([path.name for path in result], ["a.pdf", "b.pdf"])
+        finally:
+            for file_path in test_dir.glob("*"):
+                file_path.unlink(missing_ok=True)
+            test_dir.rmdir()
 
     def test_switch_to_live_window_skips_closed_handle(self):
         driver = FakeDriver()

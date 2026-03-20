@@ -14,6 +14,46 @@ except ImportError:
     FITZ_AVAILABLE = False
 
 
+PLAN_PAGE_MARKERS = (
+    "단원의 지도 계획",
+    "주제의 지도 계획",
+    "성취 기준",
+    "성취 기준별 성취 수준",
+    "영역별 성취 수준",
+    "큐알 코드 목록",
+)
+PLAN_LAYOUT_MARKERS = (
+    "차시명",
+    "주요 학습 내용",
+    "학생 활동",
+    "쪽수",
+)
+LESSON_START_MARKERS = (
+    "교수학습 과정",
+    "학습 목표",
+    "차시 안내",
+    "수업 기법 및 전략",
+    "학습 흐름",
+)
+STRONG_LESSON_START_MARKERS = (
+    "교수학습 과정",
+    "학습 목표",
+    "차시 안내",
+)
+LESSON_SUPPORT_MARKERS = (
+    "학습 안내",
+    "학습 문제 확인하기",
+    "도입",
+    "전개",
+    "정리",
+)
+REFERENCE_PAGE_MARKERS = (
+    "활동지",
+    "풀이",
+    "과정 중심 평가",
+)
+
+
 def normalize_space(text: str) -> str:
     return " ".join((text or "").split())
 
@@ -34,6 +74,38 @@ def parse_exact_title(exact_title: str) -> tuple[str, str]:
 def strip_textbook_pages(topic: str) -> str:
     stripped = re.sub(r"\([^)]*p\)", "", topic or "", flags=re.IGNORECASE)
     return normalize_space(stripped)
+
+
+def extract_textbook_pages(exact_title: str) -> str:
+    match = re.search(r"\((?:[^0-9)]*?)?(\d+\s*~\s*\d+)\s*p\)", exact_title or "", flags=re.IGNORECASE)
+    if not match:
+        return ""
+    return normalize_search_text(f"교과서 {match.group(1)}쪽")
+
+
+def compact_lesson_text(text: str) -> str:
+    return re.sub(r"\s+", "", text or "")
+
+
+def parse_lesson_range(lesson_label: str) -> Optional[tuple[int, int]]:
+    compact_label = compact_lesson_text(lesson_label)
+    match = re.search(r"(\d+)(?:~(\d+))?", compact_label)
+    if not match:
+        return None
+
+    start = int(match.group(1))
+    end = int(match.group(2) or match.group(1))
+    return start, end
+
+
+def build_next_lesson_pattern(lesson_label: str) -> Optional[re.Pattern[str]]:
+    lesson_range = parse_lesson_range(lesson_label)
+    if not lesson_range:
+        return None
+
+    _current_start, current_end = lesson_range
+    next_start = current_end + 1
+    return re.compile(rf"(?<!\d){next_start}(?:~\d{{1,2}})?차시")
 
 
 def sanitize_filename_part(value: str) -> str:
@@ -75,6 +147,18 @@ def build_output_filename(pdf_path: str, exact_title: str, unit_text: Optional[s
     return "_".join(safe_parts) + ext
 
 
+def build_unique_output_path(path: Path) -> Path:
+    if not path.exists():
+        return path
+
+    for index in range(1, 1000):
+        candidate = path.with_name(f"{path.stem} ({index}){path.suffix}")
+        if not candidate.exists():
+            return candidate
+
+    raise RuntimeError(f"저장할 수 있는 새 파일 이름을 찾지 못했습니다: {path}")
+
+
 def build_search_targets(exact_title: str) -> List[str]:
     lesson_label, topic = parse_exact_title(exact_title)
     core_topic = strip_textbook_pages(topic)
@@ -95,34 +179,166 @@ def build_search_targets(exact_title: str) -> List[str]:
     return targets
 
 
+def normalize_markers(markers: tuple[str, ...]) -> tuple[str, ...]:
+    return tuple(normalize_search_text(marker) for marker in markers)
+
+
+NORMALIZED_PLAN_PAGE_MARKERS = normalize_markers(PLAN_PAGE_MARKERS)
+NORMALIZED_PLAN_LAYOUT_MARKERS = normalize_markers(PLAN_LAYOUT_MARKERS)
+NORMALIZED_LESSON_START_MARKERS = normalize_markers(LESSON_START_MARKERS)
+NORMALIZED_STRONG_LESSON_START_MARKERS = normalize_markers(STRONG_LESSON_START_MARKERS)
+NORMALIZED_LESSON_SUPPORT_MARKERS = normalize_markers(LESSON_SUPPORT_MARKERS)
+NORMALIZED_REFERENCE_PAGE_MARKERS = normalize_markers(REFERENCE_PAGE_MARKERS)
+
+
 def is_noise_page(page_text: str) -> bool:
     normalized = normalize_search_text(page_text[:250])
     return any(marker in normalized for marker in ("목차", "차례", "부록"))
 
 
+def split_normalized_lines(page_text: str, limit: Optional[int] = None) -> List[str]:
+    lines = [normalize_search_text(line) for line in (page_text or "").splitlines()]
+    filtered = [line for line in lines if line]
+    if limit is not None:
+        return filtered[:limit]
+    return filtered
+
+
+def marker_hits(normalized_text: str, markers: tuple[str, ...]) -> int:
+    return sum(1 for marker in markers if marker and marker in normalized_text)
+
+
+def best_target_score(
+    normalized_page: str,
+    top_lines: List[str],
+    targets: List[str],
+    *,
+    base_score: int,
+) -> int:
+    best_score = -1
+    top_block = "".join(top_lines[:14])
+    top_head = top_lines[:3]
+    top_window = top_lines[:8]
+
+    for target in targets:
+        if not target:
+            continue
+        position = normalized_page.find(target)
+        if position == -1:
+            continue
+
+        score = base_score + len(target) * 2
+        score += max(0, 1200 - min(position, 1200))
+        if any(target in line for line in top_head):
+            score += 1600
+        elif any(target in line for line in top_window):
+            score += 900
+        elif target in top_block:
+            score += 500
+        best_score = max(best_score, score)
+
+    return best_score
+
+
+def score_page_for_title(page_text: str, exact_title: str) -> int:
+    normalized_page = normalize_search_text(page_text)
+    if not normalized_page or is_noise_page(page_text):
+        return -1
+
+    lesson_label, topic = parse_exact_title(exact_title)
+    core_topic = strip_textbook_pages(topic)
+    top_lines = split_normalized_lines(page_text, limit=18)
+    top_block = "".join(top_lines)
+
+    primary_targets = [
+        normalize_search_text(candidate)
+        for candidate in [
+            core_topic,
+            topic,
+            f"{lesson_label} {core_topic}".strip(),
+            exact_title,
+        ]
+        if normalize_search_text(candidate)
+    ]
+    fallback_targets = [normalize_search_text(lesson_label)] if lesson_label else []
+
+    score = best_target_score(normalized_page, top_lines, primary_targets, base_score=3000)
+    if score == -1:
+        score = best_target_score(normalized_page, top_lines, fallback_targets, base_score=1200)
+    if score == -1:
+        return -1
+
+    score += marker_hits(normalized_page, NORMALIZED_LESSON_START_MARKERS) * 650
+    score += marker_hits(normalized_page, NORMALIZED_LESSON_SUPPORT_MARKERS) * 180
+
+    textbook_target = extract_textbook_pages(exact_title)
+    if textbook_target and textbook_target in normalized_page:
+        score += 260
+        if textbook_target in top_block:
+            score += 180
+
+    score -= marker_hits(normalized_page, NORMALIZED_PLAN_PAGE_MARKERS) * 2200
+    if marker_hits(top_block, NORMALIZED_PLAN_LAYOUT_MARKERS) >= 3:
+        score -= 1800
+    score -= marker_hits(top_block, NORMALIZED_REFERENCE_PAGE_MARKERS) * 1200
+
+    return score
+
+
 def find_start_page(doc: "fitz.Document", exact_title: str) -> int:
-    targets = build_search_targets(exact_title)
-    if not targets:
+    if not build_search_targets(exact_title):
         return -1
 
     best_page = -1
-    best_score = 0
+    best_score = -1
 
     for page_num in range(len(doc)):
         page_text = doc.load_page(page_num).get_text()
-        normalized_page = normalize_search_text(page_text)
-        if not normalized_page or is_noise_page(page_text):
-            continue
-
-        for target in targets:
-            if target and target in normalized_page:
-                score = len(target)
-                if score > best_score:
-                    best_score = score
-                    best_page = page_num
-                break
+        score = score_page_for_title(page_text, exact_title)
+        if score > best_score:
+            best_score = score
+            best_page = page_num
 
     return best_page
+
+
+def is_next_lesson_start_page(page_text: str, next_lesson_pattern: re.Pattern[str]) -> bool:
+    top_lines = (page_text or "").splitlines()[:20]
+    compact_top_lines = [compact_lesson_text(line) for line in top_lines if compact_lesson_text(line)]
+    if not any(next_lesson_pattern.search(line) for line in compact_top_lines):
+        return False
+
+    normalized_page = normalize_search_text(page_text)
+    if not normalized_page or is_noise_page(page_text):
+        return False
+    if marker_hits(normalized_page, NORMALIZED_PLAN_PAGE_MARKERS):
+        return False
+    if marker_hits(normalized_page, NORMALIZED_REFERENCE_PAGE_MARKERS):
+        return False
+    if marker_hits(normalized_page, NORMALIZED_STRONG_LESSON_START_MARKERS) < 2:
+        return False
+    return True
+
+
+def find_next_lesson_start_page(doc: "fitz.Document", start_page: int, exact_title: str) -> int:
+    lesson_label, _topic = parse_exact_title(exact_title)
+    next_lesson_pattern = build_next_lesson_pattern(lesson_label)
+    if not next_lesson_pattern:
+        return -1
+
+    for page_num in range(start_page + 1, len(doc)):
+        page_text = doc.load_page(page_num).get_text()
+        if is_next_lesson_start_page(page_text, next_lesson_pattern):
+            return page_num
+
+    return -1
+
+
+def find_end_page(doc: "fitz.Document", start_page: int, exact_title: str, extract_pages: int) -> int:
+    next_lesson_start = find_next_lesson_start_page(doc, start_page, exact_title)
+    if next_lesson_start != -1:
+        return max(start_page, next_lesson_start - 1)
+    return min(start_page + max(1, extract_pages) - 1, len(doc) - 1)
 
 
 def do_extract(
@@ -156,12 +372,12 @@ def do_extract(
             doc.close()
             return None
 
-        end_page = min(start_page + max(1, extract_pages) - 1, len(doc) - 1)
+        end_page = find_end_page(doc, start_page, exact_title, extract_pages)
         new_doc = fitz.open()
         new_doc.insert_pdf(doc, from_page=start_page, to_page=end_page)
 
         out_filename = build_output_filename(str(pdf_file), exact_title, unit_text=unit_text)
-        out_path = pdf_file.with_name(out_filename)
+        out_path = build_unique_output_path(pdf_file.with_name(out_filename))
         new_doc.save(str(out_path))
         new_doc.close()
         doc.close()

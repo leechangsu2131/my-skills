@@ -72,3 +72,8 @@ check_students.py
 skills/music-class-helper/lesson_manager_data.json
 skills/music-class-helper/chrome_profile/
 skills/music-class-helper/tmp*/
+
+# social-class-helper local state
+skills/social-class-helper/social_class_data.json
+skills/social-class-helper/chrome_profile/
+skills/social-class-helper/tmp*/

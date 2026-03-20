@@ -193,6 +193,38 @@ def resolve_guide_pdf_path(
     return None
 
 
+def list_pdf_files(folder_path: Path) -> List[Path]:
+    if not folder_path.exists() or not folder_path.is_dir():
+        return []
+    return sorted(folder_path.glob("*.pdf"), key=lambda path: path.name.lower())
+
+
+def choose_guide_pdf_from_folder(folder_path: Path) -> Optional[str]:
+    pdf_files = list_pdf_files(folder_path)
+    if not pdf_files:
+        print(f"[!] 지정한 지도서 폴더에 PDF가 없습니다: {folder_path}")
+        return None
+
+    print(f"\n[지도서 PDF 선택] {folder_path}")
+    for index, pdf_file in enumerate(pdf_files, start=1):
+        print(f"  {index}. {pdf_file.name}")
+    print("번호를 입력하면 선택하고, 그냥 Enter를 누르면 이번 추출은 건너뜁니다.")
+
+    selection = prompt_input("지도서 PDF 선택: ")
+    if not selection:
+        return None
+    if selection.isdigit():
+        index = int(selection) - 1
+        if 0 <= index < len(pdf_files):
+            return str(pdf_files[index])
+    chosen_path = Path(selection).expanduser()
+    if chosen_path.exists() and chosen_path.is_file():
+        return str(chosen_path)
+
+    print("[!] 올바른 PDF 번호 또는 파일 경로를 입력해 주세요.")
+    return None
+
+
 def extract_guide_if_available(
     config: HelperConfig,
     exact_title: str,
@@ -204,6 +236,13 @@ def extract_guide_if_available(
     if not resolved_path:
         print("\n[STEP 3] 지도서 PDF 경로가 설정되지 않아 추출은 건너뜁니다.")
         return None
+
+    resolved_path_obj = Path(resolved_path)
+    if resolved_path_obj.is_dir():
+        resolved_path = choose_guide_pdf_from_folder(resolved_path_obj)
+        if not resolved_path:
+            print("[STEP 3] 지도서 PDF를 고르지 않아 추출은 건너뜁니다.")
+            return None
 
     return social_guide_extract.do_extract(
         resolved_path,
@@ -696,8 +735,17 @@ def button_descriptor(element: Any) -> str:
 
 
 def find_iscream_resource_button(chapter: Any, keywords: Iterable[str]) -> Optional[Any]:
-    anchors = chapter.find_elements(By.XPATH, "./a")
-    resource_anchors = anchors[1:] if len(anchors) > 1 else []
+    anchors = chapter.find_elements(By.XPATH, ".//a")
+    resource_anchors = []
+    for anchor in anchors:
+        try:
+            href = (anchor.get_attribute("href") or "").strip()
+            onclick = (anchor.get_attribute("onclick") or "").strip()
+            if href == "#none" or "chasiView" in onclick:
+                continue
+            resource_anchors.append(anchor)
+        except Exception:
+            continue
     candidates: List[tuple[int, int, Any]] = []
 
     for element in resource_anchors:
@@ -803,18 +851,17 @@ def open_resource_for_lesson(
         button = find_resource_button(chapter, config.resource_keywords, config.site_kind)
         if button is None:
             print(f"  [!] 자동으로 '{config.resource_label}' 버튼을 찾지 못했습니다.")
-            answer = prompt_enter_after_browser_action(
-                f"  -> 브라우저에서 직접 '{config.resource_label}' 버튼을 클릭한 뒤 Enter를 눌러 주세요."
-            )
             clear_highlight(driver, chapter)
-            if answer.lower() == "b":
-                print("  -> 자료 열기를 취소했습니다.")
-                return None
+            print("  -> 브라우저 자료 클릭은 건너뛰고 다음 단계로 계속합니다.")
             return title_text
 
         button_label = button_descriptor(button) or config.resource_label
         print(f"  -> 버튼을 찾았습니다: {button_label}")
-        click_resource_button(driver, button)
+        try:
+            click_resource_button(driver, button)
+        except Exception as error:
+            print(f"  [!] 자료 버튼 클릭에 실패했습니다: {error}")
+            print("  -> 브라우저 자료 클릭은 건너뛰고 다음 단계로 계속합니다.")
         clear_highlight(driver, chapter)
         return title_text
 

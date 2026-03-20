@@ -1,0 +1,583 @@
+{
+  "pdf": "[사회]3-1_1_지도서.pdf",
+  "strategy": "plan_text",
+  "split_level": "detail",
+  "requested_page_offset": 0,
+  "auto_page_offset": -2,
+  "effective_page_offset": -2,
+  "sections": [],
+  "detected_groups": [
+    {
+      "index": 1,
+      "title": "우우리리가가 사사는는 곳곳의의 여여러러 장장소소",
+      "source_title": "1 우리가 사는 곳",
+      "start_page": 9,
+      "end_page": 31,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          11,
+          33
+        ]
+      ],
+      "method": "plan_text",
+      "context": [
+        "우리 생활에 도움을 주는 장소"
+      ],
+      "detected_level": "detail"
+    },
+    {
+      "index": 2,
+      "title": "미미미미디디디디어어어어활활동동",
+      "source_title": "단원 도입",
+      "start_page": 14,
+      "end_page": 21,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          16,
+          23
+        ]
+      ],
+      "method": "plan_text",
+      "context": [
+        "우리가 사는 곳의 여러 장소"
+      ],
+      "detected_level": "detail"
+    },
+    {
+      "index": 3,
+      "title": "지지 난난",
+      "source_title": "우리가 사는 곳 17",
+      "start_page": 15,
+      "end_page": 15,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          17,
+          17
+        ]
+      ],
+      "method": "plan_text",
+      "context": [
+        "우리가 사는 곳의 여러 장소"
+      ],
+      "detected_level": "detail"
+    },
+    {
+      "index": 4,
+      "title": "활동지",
+      "source_title": "장소에 대해 알아볼까요 주제 도입",
+      "start_page": 22,
+      "end_page": 28,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          24,
+          30
+        ]
+      ],
+      "method": "plan_text",
+      "context": [
+        "우리가 사는 곳의 여러 장소"
+      ],
+      "detected_level": "detail"
+    },
+    {
+      "index": 5,
+      "title": "교육과정과 교과서 역시 사적인 장소를 확인하고 나의 장 모르는 장소, 새롭게 알게 된 장소, 좋아하는 장소, 자주 가",
+      "source_title": "우리가 사는 곳의 여러 우리가 사는 곳의 여러",
+      "start_page": 29,
+      "end_page": 35,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          31,
+          37
+        ]
+      ],
+      "method": "plan_text",
+      "context": [
+        "우리가 사는 곳의 여러 장소"
+      ],
+      "detected_level": "detail"
+    },
+    {
+      "index": 6,
+      "title": "학습 안내 전국을 누비며 장소를 찾아다니는 ‘촬영 장소 섭외자’",
+      "source_title": "우리가 사는 곳에 있는 장소 카드 만들기",
+      "start_page": 36,
+      "end_page": 44,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          38,
+          46
+        ]
+      ],
+      "method": "plan_text",
+      "context": [
+        "우리가 사는 곳의 여러 장소"
+      ],
+      "detected_level": "detail"
+    },
+    {
+      "index": 7,
+      "title": "사진 속 장소 중에서 가 본 곳이 있나요? 88 ~ ~99 차차시시 주요 내용 정리",
+      "source_title": "우리가 사는 곳에 있는 우리가 사는 곳의 여러 장",
+      "start_page": 45,
+      "end_page": 53,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          47,
+          55
+        ]
+      ],
+      "method": "plan_text",
+      "context": [
+        "우리가 사는 곳의 여러 장소"
+      ],
+      "detected_level": "detail"
+    },
+    {
+      "index": 8,
+      "title": "주주제제마마무무리리 주주제제마마무무리리",
+      "source_title": "우리가 사는 곳에 있는 여러 장소를 표현한 작품",
+      "start_page": 54,
+      "end_page": 65,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          56,
+          67
+        ]
+      ],
+      "method": "plan_text",
+      "context": [
+        "우리가 사는 곳의 여러 장소"
+      ],
+      "detected_level": "detail"
+    },
+    {
+      "index": 9,
+      "title": "수업을 도와주는 교교수수 학학습습 자자료료 공공시설 19곳 예식장으로 개방",
+      "source_title": "생각을 펼쳐요 장소에서의 경험 역할극",
+      "start_page": 66,
+      "end_page": 67,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          68,
+          69
+        ]
+      ],
+      "method": "plan_text",
+      "context": [
+        "우리가 사는 곳의 여러 장소"
+      ],
+      "detected_level": "detail"
+    },
+    {
+      "index": 10,
+      "title": "3학년 반 이름:",
+      "source_title": "우리 생활에 도움을 주제 도입",
+      "start_page": 68,
+      "end_page": 75,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          70,
+          77
+        ]
+      ],
+      "method": "plan_text",
+      "context": [
+        "우리 생활에 도움을 주는 장소"
+      ],
+      "detected_level": "detail"
+    },
+    {
+      "index": 11,
+      "title": "활동지",
+      "source_title": "우리 생활에 도움을 우리 생활에 도움을 주는",
+      "start_page": 76,
+      "end_page": 82,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          78,
+          84
+        ]
+      ],
+      "method": "plan_text",
+      "context": [
+        "우리 생활에 도움을 주는 장소"
+      ],
+      "detected_level": "detail"
+    },
+    {
+      "index": 12,
+      "title": "지지 난난",
+      "source_title": "우리가 사는 곳에서 생활에 도움을 주는 장소를",
+      "start_page": 83,
+      "end_page": 89,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          85,
+          91
+        ]
+      ],
+      "method": "plan_text",
+      "context": [
+        "우리 생활에 도움을 주는 장소"
+      ],
+      "detected_level": "detail"
+    },
+    {
+      "index": 13,
+      "title": "활동지",
+      "source_title": "우리가 생각하는 살기 살기 좋은 곳의 조건",
+      "start_page": 90,
+      "end_page": 96,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          92,
+          98
+        ]
+      ],
+      "method": "plan_text",
+      "context": [
+        "우리 생활에 도움을 주는 장소"
+      ],
+      "detected_level": "detail"
+    },
+    {
+      "index": 14,
+      "title": "학습 안내 친구들과 역할을 나누어 그림으로 살기 좋은 곳을 표...",
+      "source_title": "우리가 사는 곳을 더 우리가 사는 곳이 얼마나",
+      "start_page": 97,
+      "end_page": 107,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          99,
+          109
+        ]
+      ],
+      "method": "plan_text",
+      "context": [
+        "우리 생활에 도움을 주는 장소"
+      ],
+      "detected_level": "detail"
+    },
+    {
+      "index": 15,
+      "title": "정답 및 해설 468쪽",
+      "source_title": "우리가 생각한 살기 우리가 생각하는 살기 좋은",
+      "start_page": 108,
+      "end_page": 108,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          110,
+          117
+        ]
+      ],
+      "method": "plan_text",
+      "context": [
+        "우리 생활에 도움을 주는 장소"
+      ],
+      "detected_level": "detail"
+    }
+  ],
+  "groups": [
+    {
+      "index": 1,
+      "title": "우우리리가가 사사는는 곳곳의의 여여러러 장장소소",
+      "source_title": "1 우리가 사는 곳",
+      "start_page": 9,
+      "end_page": 31,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          11,
+          33
+        ]
+      ],
+      "method": "plan_text",
+      "context": [
+        "우리 생활에 도움을 주는 장소"
+      ],
+      "detected_level": "detail"
+    },
+    {
+      "index": 2,
+      "title": "미미미미디디디디어어어어활활동동",
+      "source_title": "단원 도입",
+      "start_page": 14,
+      "end_page": 21,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          16,
+          23
+        ]
+      ],
+      "method": "plan_text",
+      "context": [
+        "우리가 사는 곳의 여러 장소"
+      ],
+      "detected_level": "detail"
+    },
+    {
+      "index": 3,
+      "title": "지지 난난",
+      "source_title": "우리가 사는 곳 17",
+      "start_page": 15,
+      "end_page": 15,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          17,
+          17
+        ]
+      ],
+      "method": "plan_text",
+      "context": [
+        "우리가 사는 곳의 여러 장소"
+      ],
+      "detected_level": "detail"
+    },
+    {
+      "index": 4,
+      "title": "활동지",
+      "source_title": "장소에 대해 알아볼까요 주제 도입",
+      "start_page": 22,
+      "end_page": 28,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          24,
+          30
+        ]
+      ],
+      "method": "plan_text",
+      "context": [
+        "우리가 사는 곳의 여러 장소"
+      ],
+      "detected_level": "detail"
+    },
+    {
+      "index": 5,
+      "title": "교육과정과 교과서 역시 사적인 장소를 확인하고 나의 장 모르는 장소, 새롭게 알게 된 장소, 좋아하는 장소, 자주 가",
+      "source_title": "우리가 사는 곳의 여러 우리가 사는 곳의 여러",
+      "start_page": 29,
+      "end_page": 35,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          31,
+          37
+        ]
+      ],
+      "method": "plan_text",
+      "context": [
+        "우리가 사는 곳의 여러 장소"
+      ],
+      "detected_level": "detail"
+    },
+    {
+      "index": 6,
+      "title": "학습 안내 전국을 누비며 장소를 찾아다니는 ‘촬영 장소 섭외자’",
+      "source_title": "우리가 사는 곳에 있는 장소 카드 만들기",
+      "start_page": 36,
+      "end_page": 44,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          38,
+          46
+        ]
+      ],
+      "method": "plan_text",
+      "context": [
+        "우리가 사는 곳의 여러 장소"
+      ],
+      "detected_level": "detail"
+    },
+    {
+      "index": 7,
+      "title": "사진 속 장소 중에서 가 본 곳이 있나요? 88 ~ ~99 차차시시 주요 내용 정리",
+      "source_title": "우리가 사는 곳에 있는 우리가 사는 곳의 여러 장",
+      "start_page": 45,
+      "end_page": 53,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          47,
+          55
+        ]
+      ],
+      "method": "plan_text",
+      "context": [
+        "우리가 사는 곳의 여러 장소"
+      ],
+      "detected_level": "detail"
+    },
+    {
+      "index": 8,
+      "title": "주주제제마마무무리리 주주제제마마무무리리",
+      "source_title": "우리가 사는 곳에 있는 여러 장소를 표현한 작품",
+      "start_page": 54,
+      "end_page": 65,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          56,
+          67
+        ]
+      ],
+      "method": "plan_text",
+      "context": [
+        "우리가 사는 곳의 여러 장소"
+      ],
+      "detected_level": "detail"
+    },
+    {
+      "index": 9,
+      "title": "수업을 도와주는 교교수수 학학습습 자자료료 공공시설 19곳 예식장으로 개방",
+      "source_title": "생각을 펼쳐요 장소에서의 경험 역할극",
+      "start_page": 66,
+      "end_page": 67,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          68,
+          69
+        ]
+      ],
+      "method": "plan_text",
+      "context": [
+        "우리가 사는 곳의 여러 장소"
+      ],
+      "detected_level": "detail"
+    },
+    {
+      "index": 10,
+      "title": "3학년 반 이름:",
+      "source_title": "우리 생활에 도움을 주제 도입",
+      "start_page": 68,
+      "end_page": 75,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          70,
+          77
+        ]
+      ],
+      "method": "plan_text",
+      "context": [
+        "우리 생활에 도움을 주는 장소"
+      ],
+      "detected_level": "detail"
+    },
+    {
+      "index": 11,
+      "title": "활동지",
+      "source_title": "우리 생활에 도움을 우리 생활에 도움을 주는",
+      "start_page": 76,
+      "end_page": 82,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          78,
+          84
+        ]
+      ],
+      "method": "plan_text",
+      "context": [
+        "우리 생활에 도움을 주는 장소"
+      ],
+      "detected_level": "detail"
+    },
+    {
+      "index": 12,
+      "title": "지지 난난",
+      "source_title": "우리가 사는 곳에서 생활에 도움을 주는 장소를",
+      "start_page": 83,
+      "end_page": 89,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          85,
+          91
+        ]
+      ],
+      "method": "plan_text",
+      "context": [
+        "우리 생활에 도움을 주는 장소"
+      ],
+      "detected_level": "detail"
+    },
+    {
+      "index": 13,
+      "title": "활동지",
+      "source_title": "우리가 생각하는 살기 살기 좋은 곳의 조건",
+      "start_page": 90,
+      "end_page": 96,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          92,
+          98
+        ]
+      ],
+      "method": "plan_text",
+      "context": [
+        "우리 생활에 도움을 주는 장소"
+      ],
+      "detected_level": "detail"
+    },
+    {
+      "index": 14,
+      "title": "학습 안내 친구들과 역할을 나누어 그림으로 살기 좋은 곳을 표...",
+      "source_title": "우리가 사는 곳을 더 우리가 사는 곳이 얼마나",
+      "start_page": 97,
+      "end_page": 107,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          99,
+          109
+        ]
+      ],
+      "method": "plan_text",
+      "context": [
+        "우리 생활에 도움을 주는 장소"
+      ],
+      "detected_level": "detail"
+    },
+    {
+      "index": 15,
+      "title": "정답 및 해설 468쪽",
+      "source_title": "우리가 생각한 살기 우리가 생각하는 살기 좋은",
+      "start_page": 108,
+      "end_page": 108,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          110,
+          117
+        ]
+      ],
+      "method": "plan_text",
+      "context": [
+        "우리 생활에 도움을 주는 장소"
+      ],
+      "detected_level": "detail"
+    }
+  ]
+}

@@ -1,0 +1,305 @@
+{
+  "pdf": "art.pdf",
+  "strategy": "toc",
+  "requested_page_offset": 0,
+  "auto_page_offset": 0,
+  "effective_page_offset": 0,
+  "sections": [
+    {
+      "index": 1,
+      "title": "총론",
+      "start_page": 1,
+      "end_page": 53
+    },
+    {
+      "index": 2,
+      "title": "3학년 지도의 실제",
+      "start_page": 54,
+      "end_page": 202
+    }
+  ],
+  "groups": [
+    {
+      "index": 1,
+      "title": "총론",
+      "source_title": "총론",
+      "start_page": 1,
+      "end_page": 53,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          1,
+          53
+        ]
+      ],
+      "method": "toc_leading_section",
+      "context": []
+    },
+    {
+      "index": 2,
+      "title": "미술 시간 계획표",
+      "source_title": "미술 시간 계획표",
+      "start_page": 54,
+      "end_page": 57,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          54,
+          54
+        ]
+      ],
+      "method": "toc",
+      "context": [
+        "지도의 실제",
+        "3학년"
+      ]
+    },
+    {
+      "index": 3,
+      "title": "1 함께 만드는 캐릭터",
+      "source_title": "1 함께 만드는 캐릭터",
+      "start_page": 58,
+      "end_page": 69,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          58,
+          58
+        ]
+      ],
+      "method": "toc",
+      "context": [
+        "지도의 실제",
+        "3학년"
+      ]
+    },
+    {
+      "index": 4,
+      "title": "2 조형 요소 색, 선, 형",
+      "source_title": "2 조형 요소 색, 선, 형",
+      "start_page": 70,
+      "end_page": 81,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          70,
+          70
+        ]
+      ],
+      "method": "toc",
+      "context": [
+        "지도의 실제",
+        "3학년"
+      ]
+    },
+    {
+      "index": 5,
+      "title": "3 관찰하여 그리기",
+      "source_title": "3 관찰하여 그리기",
+      "start_page": 82,
+      "end_page": 91,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          82,
+          82
+        ]
+      ],
+      "method": "toc",
+      "context": [
+        "지도의 실제",
+        "3학년"
+      ]
+    },
+    {
+      "index": 6,
+      "title": "4 찾았다, 오감",
+      "source_title": "4 찾았다, 오감",
+      "start_page": 92,
+      "end_page": 107,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          92,
+          92
+        ]
+      ],
+      "method": "toc",
+      "context": [
+        "지도의 실제",
+        "3학년"
+      ]
+    },
+    {
+      "index": 7,
+      "title": "5 재미있는 미술관 나들이",
+      "source_title": "5 재미있는 미술관 나들이",
+      "start_page": 108,
+      "end_page": 121,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          108,
+          108
+        ]
+      ],
+      "method": "toc",
+      "context": [
+        "지도의 실제",
+        "3학년"
+      ]
+    },
+    {
+      "index": 8,
+      "title": "6 흙으로 빚은 상상",
+      "source_title": "6 흙으로 빚은 상상",
+      "start_page": 122,
+      "end_page": 131,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          122,
+          122
+        ]
+      ],
+      "method": "toc",
+      "context": [
+        "지도의 실제",
+        "3학년"
+      ]
+    },
+    {
+      "index": 9,
+      "title": "7 수채화로 그린 나의 경험",
+      "source_title": "7 수채화로 그린 나의 경험",
+      "start_page": 132,
+      "end_page": 141,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          132,
+          132
+        ]
+      ],
+      "method": "toc",
+      "context": [
+        "지도의 실제",
+        "3학년"
+      ]
+    },
+    {
+      "index": 10,
+      "title": "8 미술과 함께한 하루",
+      "source_title": "8 미술과 함께한 하루",
+      "start_page": 142,
+      "end_page": 151,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          142,
+          142
+        ]
+      ],
+      "method": "toc",
+      "context": [
+        "지도의 실제",
+        "3학년"
+      ]
+    },
+    {
+      "index": 11,
+      "title": "9 움직임 더하기 미술",
+      "source_title": "9 움직임 더하기 미술",
+      "start_page": 152,
+      "end_page": 163,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          152,
+          152
+        ]
+      ],
+      "method": "toc",
+      "context": [
+        "지도의 실제",
+        "3학년"
+      ]
+    },
+    {
+      "index": 12,
+      "title": "10 먹으로 그린 그림",
+      "source_title": "10 먹으로 그린 그림",
+      "start_page": 164,
+      "end_page": 173,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          164,
+          164
+        ]
+      ],
+      "method": "toc",
+      "context": [
+        "지도의 실제",
+        "3학년"
+      ]
+    },
+    {
+      "index": 13,
+      "title": "11 전통 무늬로 꾸미기",
+      "source_title": "11 전통 무늬로 꾸미기",
+      "start_page": 174,
+      "end_page": 185,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          174,
+          174
+        ]
+      ],
+      "method": "toc",
+      "context": [
+        "지도의 실제",
+        "3학년"
+      ]
+    },
+    {
+      "index": 14,
+      "title": "12 작품에서 찾은 이야기",
+      "source_title": "12 작품에서 찾은 이야기",
+      "start_page": 186,
+      "end_page": 195,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          186,
+          186
+        ]
+      ],
+      "method": "toc",
+      "context": [
+        "지도의 실제",
+        "3학년"
+      ]
+    },
+    {
+      "index": 15,
+      "title": "프로젝트 우리 작품으로 미술 축제 열기",
+      "source_title": "프로젝트 우리 작품으로 미술 축제 열기",
+      "start_page": 196,
+      "end_page": 202,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          196,
+          196
+        ]
+      ],
+      "method": "toc",
+      "context": [
+        "지도의 실제",
+        "3학년"
+      ]
+    }
+  ]
+}

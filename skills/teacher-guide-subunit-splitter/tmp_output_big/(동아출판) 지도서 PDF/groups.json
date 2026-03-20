@@ -1,0 +1,442 @@
+{
+  "pdf": "(동아출판) 지도서 PDF.pdf",
+  "strategy": "overview_page",
+  "requested_page_offset": 0,
+  "auto_page_offset": 0,
+  "effective_page_offset": 0,
+  "sections": [],
+  "groups": [
+    {
+      "index": 1,
+      "title": "앞부분",
+      "source_title": "앞부분",
+      "start_page": 1,
+      "end_page": 1,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          1,
+          1
+        ]
+      ],
+      "method": "overview_leading_section",
+      "context": []
+    },
+    {
+      "index": 2,
+      "title": "만나요, 음악 시간",
+      "source_title": "만나요, 음악 시간",
+      "start_page": 2,
+      "end_page": 4,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          2,
+          2
+        ]
+      ],
+      "method": "overview_page",
+      "context": []
+    },
+    {
+      "index": 3,
+      "title": "새 친구들과 함께",
+      "source_title": "새 친구들과 함께",
+      "start_page": 5,
+      "end_page": 8,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          5,
+          5
+        ]
+      ],
+      "method": "overview_page",
+      "context": []
+    },
+    {
+      "index": 4,
+      "title": "길고 짧은 음, 높고 낮은음",
+      "source_title": "길고 짧은 음, 높고 낮은음",
+      "start_page": 9,
+      "end_page": 18,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          9,
+          9
+        ]
+      ],
+      "method": "overview_page",
+      "context": []
+    },
+    {
+      "index": 5,
+      "title": "(왼손 운지법)",
+      "source_title": "(왼손 운지법)",
+      "start_page": 19,
+      "end_page": 24,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          19,
+          19
+        ]
+      ],
+      "method": "overview_page",
+      "context": []
+    },
+    {
+      "index": 6,
+      "title": "남생아 놀아라",
+      "source_title": "남생아 놀아라",
+      "start_page": 25,
+      "end_page": 34,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          25,
+          25
+        ]
+      ],
+      "method": "overview_page",
+      "context": []
+    },
+    {
+      "index": 7,
+      "title": "동물의 사육제",
+      "source_title": "동물의 사육제",
+      "start_page": 35,
+      "end_page": 52,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          35,
+          35
+        ]
+      ],
+      "method": "overview_page",
+      "context": []
+    },
+    {
+      "index": 8,
+      "title": "장구와 장단",
+      "source_title": "장구와 장단",
+      "start_page": 53,
+      "end_page": 64,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          53,
+          53
+        ]
+      ],
+      "method": "overview_page",
+      "context": []
+    },
+    {
+      "index": 9,
+      "title": "춤과 음악",
+      "source_title": "춤과 음악",
+      "start_page": 65,
+      "end_page": 70,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          65,
+          65
+        ]
+      ],
+      "method": "overview_page",
+      "context": []
+    },
+    {
+      "index": 10,
+      "title": "시계",
+      "source_title": "시계",
+      "start_page": 71,
+      "end_page": 76,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          71,
+          71
+        ]
+      ],
+      "method": "overview_page",
+      "context": []
+    },
+    {
+      "index": 11,
+      "title": "타악 기 친구들",
+      "source_title": "타악 기 친구들",
+      "start_page": 77,
+      "end_page": 82,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          77,
+          77
+        ]
+      ],
+      "method": "overview_page",
+      "context": []
+    },
+    {
+      "index": 12,
+      "title": "모두 다 꽃이야",
+      "source_title": "모두 다 꽃이야",
+      "start_page": 83,
+      "end_page": 88,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          83,
+          83
+        ]
+      ],
+      "method": "overview_page",
+      "context": []
+    },
+    {
+      "index": 13,
+      "title": "음악으로 만드는 세상",
+      "source_title": "음악으로 만드는 세상",
+      "start_page": 89,
+      "end_page": 98,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          89,
+          89
+        ]
+      ],
+      "method": "overview_page",
+      "context": []
+    },
+    {
+      "index": 14,
+      "title": "옥수수 하모니카",
+      "source_title": "옥수수 하모니카",
+      "start_page": 99,
+      "end_page": 104,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          99,
+          99
+        ]
+      ],
+      "method": "overview_page",
+      "context": []
+    },
+    {
+      "index": 15,
+      "title": "월월이청청",
+      "source_title": "월월이청청",
+      "start_page": 105,
+      "end_page": 114,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          105,
+          105
+        ]
+      ],
+      "method": "overview_page",
+      "context": []
+    },
+    {
+      "index": 16,
+      "title": "흥겨운 풍물놀이",
+      "source_title": "흥겨운 풍물놀이",
+      "start_page": 115,
+      "end_page": 120,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          115,
+          115
+        ]
+      ],
+      "method": "overview_page",
+      "context": []
+    },
+    {
+      "index": 17,
+      "title": "아기 콩",
+      "source_title": "아기 콩",
+      "start_page": 121,
+      "end_page": 126,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          121,
+          121
+        ]
+      ],
+      "method": "overview_page",
+      "context": []
+    },
+    {
+      "index": 18,
+      "title": "리듬 악기 노래",
+      "source_title": "리듬 악기 노래",
+      "start_page": 127,
+      "end_page": 132,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          127,
+          127
+        ]
+      ],
+      "method": "overview_page",
+      "context": []
+    },
+    {
+      "index": 19,
+      "title": "노래 하 며 놀이하 며",
+      "source_title": "노래 하 며 놀이하 며",
+      "start_page": 133,
+      "end_page": 138,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          133,
+          133
+        ]
+      ],
+      "method": "overview_page",
+      "context": []
+    },
+    {
+      "index": 20,
+      "title": "내가 만드는 리듬",
+      "source_title": "내가 만드는 리듬",
+      "start_page": 139,
+      "end_page": 148,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          139,
+          139
+        ]
+      ],
+      "method": "overview_page",
+      "context": []
+    },
+    {
+      "index": 21,
+      "title": "아 리랑",
+      "source_title": "아 리랑",
+      "start_page": 149,
+      "end_page": 154,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          149,
+          149
+        ]
+      ],
+      "method": "overview_page",
+      "context": []
+    },
+    {
+      "index": 22,
+      "title": "만화 영화 속 음악",
+      "source_title": "만화 영화 속 음악",
+      "start_page": 155,
+      "end_page": 160,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          155,
+          155
+        ]
+      ],
+      "method": "overview_page",
+      "context": []
+    },
+    {
+      "index": 23,
+      "title": "솜사탕",
+      "source_title": "솜사탕",
+      "start_page": 161,
+      "end_page": 166,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          161,
+          161
+        ]
+      ],
+      "method": "overview_page",
+      "context": []
+    },
+    {
+      "index": 24,
+      "title": "함 께 연주하 는 겨울 노래",
+      "source_title": "함 께 연주하 는 겨울 노래",
+      "start_page": 167,
+      "end_page": 174,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          167,
+          167
+        ]
+      ],
+      "method": "overview_page",
+      "context": []
+    },
+    {
+      "index": 25,
+      "title": "다른 나라 의 노래",
+      "source_title": "다른 나라 의 노래",
+      "start_page": 175,
+      "end_page": 180,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          175,
+          175
+        ]
+      ],
+      "method": "overview_page",
+      "context": []
+    },
+    {
+      "index": 26,
+      "title": "호두까기 인형",
+      "source_title": "호두까기 인형",
+      "start_page": 181,
+      "end_page": 186,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          181,
+          181
+        ]
+      ],
+      "method": "overview_page",
+      "context": []
+    },
+    {
+      "index": 27,
+      "title": "함 께 하 는 음악 회",
+      "source_title": "함 께 하 는 음악 회",
+      "start_page": 187,
+      "end_page": 241,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          187,
+          187
+        ]
+      ],
+      "method": "overview_page",
+      "context": []
+    }
+  ]
+}

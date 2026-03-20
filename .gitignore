@@ -64,7 +64,7 @@ save_today.py
 check_students.py
 
 # Allow tracking of specific env and agent files in skills
-!skills/**/scripts/.env*
+!skills/**/scripts/.env.example
 !skills/**/scripts/agent*
 !skills/**/scripts/auth/*
 

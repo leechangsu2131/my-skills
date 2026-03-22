@@ -5,6 +5,7 @@
 
 import os
 import sys
+import json
 from datetime import date, timedelta
 from dotenv import load_dotenv
 import gspread
@@ -22,26 +23,25 @@ SCOPES = [
     "https://www.googleapis.com/auth/drive",
 ]
 
-# ───────────────────────────────────────────────
-# 연결 및 데이터 로드
-# ───────────────────────────────────────────────
-
 def connect():
-    creds = Credentials.from_service_account_file(CREDS_PATH, scopes=SCOPES)
+    creds_json = os.getenv("GOOGLE_CREDENTIALS_JSON")
+    if creds_json:
+        creds_json = creds_json.replace('\\n', '\n')
+        creds_dict = json.loads(creds_json, strict=False)
+        creds = Credentials.from_service_account_info(creds_dict, scopes=SCOPES)
+    else:
+        creds = Credentials.from_service_account_file(CREDS_PATH, scopes=SCOPES)
+        
     gc = gspread.authorize(creds)
     return gc.open_by_key(SHEET_ID).worksheet(SHEET_NAME)
 
-
 def load_all(ws):
-    """전체 데이터를 한 번에 로드 (행번호 포함)"""
-    records = ws.get_all_records()  # 헤더 기준 dict 리스트
+    records = ws.get_all_records()
     for i, r in enumerate(records):
-        r["_row"] = i + 2  # 실제 시트 행번호 (헤더=1행, 데이터=2행~)
+        r["_row"] = i + 2
     return records
 
-
 def get_subjects(records):
-    """시트에서 과목 목록 동적 추출 (순서 유지, 중복 제거)"""
     seen = set()
     subjects = []
     for r in records:
@@ -51,13 +51,7 @@ def get_subjects(records):
             subjects.append(s)
     return subjects
 
-
-# ───────────────────────────────────────────────
-# 조회 기능
-# ───────────────────────────────────────────────
-
 def get_schedule_by_date(records, target_date: date):
-    """특정 날짜의 미완료 수업 목록"""
     target_str = target_date.strftime("%Y-%m-%d")
     return [
         r for r in records
@@ -65,9 +59,7 @@ def get_schedule_by_date(records, target_date: date):
         and str(r.get("실행여부", "FALSE")).upper() != "TRUE"
     ]
 
-
 def get_next_class(records, subject: str):
-    """과목별 다음 차시 (미완료 중 가장 빠른 계획일)"""
     pending = [
         r for r in records
         if r.get("과목", "").strip() == subject
@@ -79,9 +71,7 @@ def get_next_class(records, subject: str):
     pending.sort(key=lambda x: x.get("계획일", ""))
     return pending[0]
 
-
 def get_progress(records, subject: str):
-    """과목별 진도율"""
     all_lessons = [r for r in records if r.get("과목", "").strip() == subject]
     done = [r for r in all_lessons if str(r.get("실행여부", "FALSE")).upper() == "TRUE"]
     total = len(all_lessons)
@@ -89,17 +79,7 @@ def get_progress(records, subject: str):
     pct = (completed / total * 100) if total > 0 else 0
     return {"과목": subject, "완료": completed, "전체": total, "진도율": f"{pct:.1f}%"}
 
-
-# ───────────────────────────────────────────────
-# 업데이트 기능
-# ───────────────────────────────────────────────
-
 def mark_done(ws, records, subject: str, target_date: date = None):
-    """
-    수업 완료 처리
-    - target_date 지정 시 해당 날짜+과목 항목 완료
-    - 미지정 시 해당 과목의 다음 차시 완료
-    """
     if target_date:
         target_str = target_date.strftime("%Y-%m-%d")
         candidates = [
@@ -116,7 +96,6 @@ def mark_done(ws, records, subject: str, target_date: date = None):
         print(f"  ⚠️  완료할 수업을 찾지 못했습니다. (과목: {subject})")
         return
 
-    # batch_update로 한 번에 처리
     updates = []
     for r in candidates:
         cell = f"F{r['_row']}"
@@ -130,29 +109,25 @@ def mark_done(ws, records, subject: str, target_date: date = None):
     for r in candidates:
         print(f"  ✅ 완료: [{r['과목']}] {r['수업내용']} ({r['계획일']})")
 
-
 def push_schedule(ws, records, subject: str, days: int, from_date: date = None):
-    """
-    특정 과목의 미완료 수업 계획일을 N일 밀기
-    from_date 지정 시 해당 날짜 이후만 밀기 (기본: 오늘 이후)
-    """
-    base = from_date or date.today()
-    base_str = base.strftime("%Y-%m-%d")
+    base_str = from_date.strftime("%Y-%m-%d") if from_date else ""
 
     targets = [
         r for r in records
         if r.get("과목", "").strip() == subject
         and str(r.get("실행여부", "FALSE")).upper() != "TRUE"
-        and r.get("계획일", "").strip() >= base_str
+        and (not base_str or r.get("계획일", "").strip() >= base_str)
     ]
 
     if not targets:
-        print(f"  ⚠️  밀 수 있는 수업이 없습니다. (과목: {subject}, {base_str} 이후)")
+        print(f"  ⚠️  밀 수 있는 수업이 없습니다. (과목: {subject})")
         return
 
     updates = []
     for r in targets:
-        old_date = date.fromisoformat(r["계획일"].strip())
+        old_date_str = r.get("계획일", "").strip()
+        if not old_date_str: continue
+        old_date = date.fromisoformat(old_date_str)
         new_date = old_date + timedelta(days=days)
         cell = f"E{r['_row']}"
         updates.append({
@@ -166,12 +141,22 @@ def push_schedule(ws, records, subject: str, days: int, from_date: date = None):
     })
 
     print(f"  📅 [{subject}] {len(targets)}개 수업을 {days}일 밀었습니다.")
-    print(f"     ({base_str} 이후 → +{days}일)")
 
-
-# ───────────────────────────────────────────────
-# 출력 헬퍼
-# ───────────────────────────────────────────────
+def extend_lesson(ws, records, subject: str):
+    """현재 미완료 중 가장 빠른 차시를 복제하여 밑에 삽입 (1차시 분량 연장)"""
+    next_cls = get_next_class(records, subject)
+    if not next_cls:
+        print(f"  ⚠️ 연장할 미완료 수업이 없습니다. ({subject})")
+        return
+        
+    idx = next_cls['_row']
+    try:
+        raw_values = ws.row_values(idx)
+        ws.insert_row(raw_values, index=idx + 1)
+        print(f"  ⏳ [{subject}] '{next_cls['수업내용']}' 차시가 연장(복제)되었습니다!")
+        print(f"     시트의 {idx+1}행에 추가되었으니, 필요시 구글 시트에서 계획일을 조정해 주세요.")
+    except Exception as e:
+        print(f"  ❌ 연장 처리 실패: {e}")
 
 def print_schedule(lessons, title: str):
     print(f"\n{'='*50}")
@@ -187,7 +172,6 @@ def print_schedule(lessons, title: str):
             print(f"    PDF: {r['pdf파일']} (p.{r['시작페이지']}~{r['끝페이지']})")
         print()
 
-
 def print_next_classes(records, subjects):
     print(f"\n{'='*50}")
     print(f"  과목별 다음 차시")
@@ -201,7 +185,6 @@ def print_next_classes(records, subjects):
             print(f"  [{subject}] 모든 진도 완료 🎉")
     print()
 
-
 def print_progress(records, subjects):
     print(f"\n{'='*50}")
     print(f"  과목별 진도율")
@@ -214,10 +197,23 @@ def print_progress(records, subjects):
         print(f"  [{subject}] {bar} {p['진도율']} ({p['완료']}/{p['전체']})")
     print()
 
-
-# ───────────────────────────────────────────────
-# 메인 메뉴
-# ───────────────────────────────────────────────
+def select_subject(subjects):
+    print("\n  과목 선택:")
+    for i, sub in enumerate(subjects, 1):
+        print(f"    {i}. {sub}")
+    print("    0. 뒤로가기")
+    
+    while True:
+        choice = input("  입력 (번호 또는 이름): ").strip()
+        if choice == "0" or choice.lower() == "back" or choice == "":
+            return None
+        if choice.isdigit():
+            idx = int(choice)
+            if 1 <= idx <= len(subjects):
+                return subjects[idx - 1]
+        elif choice in subjects:
+            return choice
+        print("  ⚠️ 잘못된 입력입니다. 다시 선택해주세요.")
 
 def menu(ws, records, subjects):
     today = date.today()
@@ -229,11 +225,13 @@ def menu(ws, records, subjects):
         print(f"{'='*50}")
         print("  1. 오늘 수업 확인")
         print("  2. 내일 수업 확인")
-        print("  3. 과목별 다음 차시")
-        print("  4. 과목별 진도율")
-        print("  5. 수업 완료 처리")
-        print("  6. 날짜 밀기")
-        print("  7. 데이터 새로고침")
+        print("  3. 다음 주 수업 확인")
+        print("  4. 과목별 다음 차시")
+        print("  5. 과목별 진도율")
+        print("  6. 수업 완료 처리")
+        print("  7. 한 차시 연장 처리")
+        print("  8. 날짜 밀기")
+        print("  9. 데이터 새로고침")
         print("  0. 종료")
         print(f"{'='*50}")
 
@@ -248,40 +246,77 @@ def menu(ws, records, subjects):
             print_schedule(lessons, f"내일 수업 ({tomorrow})")
 
         elif choice == "3":
-            print_next_classes(records, subjects)
+            next_monday = today + timedelta(days=(7 - today.weekday()))
+            found_any = False
+            for i in range(5):
+                d = next_monday + timedelta(days=i)
+                lessons = get_schedule_by_date(records, d)
+                if lessons:
+                    print_schedule(lessons, f"다음 주 수업 ({d.strftime('%Y-%m-%d, %a')})")
+                    found_any = True
+            if not found_any:
+                print("\n  ⚠️ 다음 주에 계획된 미완료 수업이 없습니다.")
 
         elif choice == "4":
-            print_progress(records, subjects)
+            print_next_classes(records, subjects)
 
         elif choice == "5":
-            print(f"\n  과목 선택: {', '.join(subjects)}")
-            subject = input("  과목: ").strip()
-            if subject not in subjects:
-                print(f"  ⚠️  '{subject}'은 없는 과목입니다.")
-                continue
-            date_input = input("  날짜 (Enter=다음 차시, YYYY-MM-DD=특정날짜): ").strip()
-            target = date.fromisoformat(date_input) if date_input else None
-            mark_done(ws, records, subject, target)
-            # 완료 후 데이터 새로고침
-            records = load_all(ws)
+            print_progress(records, subjects)
 
         elif choice == "6":
-            print(f"\n  과목 선택: {', '.join(subjects)}")
-            subject = input("  과목: ").strip()
-            if subject not in subjects:
-                print(f"  ⚠️  '{subject}'은 없는 과목입니다.")
-                continue
-            try:
-                days = int(input("  밀 일수 (예: 7): ").strip())
-            except ValueError:
-                print("  ⚠️  숫자를 입력하세요.")
-                continue
-            from_input = input("  시작 날짜 (Enter=오늘, YYYY-MM-DD): ").strip()
-            from_date = date.fromisoformat(from_input) if from_input else None
-            push_schedule(ws, records, subject, days, from_date)
+            subject = select_subject(subjects)
+            if not subject: continue
+            
+            all_sub = [r for r in records if r.get("과목", "").strip() == subject]
+            done_list = [r for r in all_sub if str(r.get("실행여부", "FALSE")).upper() == "TRUE"]
+            pending_list = [r for r in all_sub if str(r.get("실행여부", "FALSE")).upper() != "TRUE"]
+            
+            print(f"\n  [{subject}] 시트 현황 요약")
+            if done_list:
+                last = done_list[-1]
+                print(f"  ✅ 직전 완료: {last.get('차시')}차시 - {last.get('수업내용')} ({last.get('계획일','')})")
+            if pending_list:
+                curr = pending_list[0]
+                print(f"  🎯 현재 대상: {curr.get('차시')}차시 - {curr.get('수업내용')} ({curr.get('계획일','')})")
+                if len(pending_list) > 1:
+                    nxt = pending_list[1]
+                    print(f"  ⏭️ 다음 예정: {nxt.get('차시')}차시 - {nxt.get('수업내용')} ({nxt.get('계획일','')})")
+            
+            print("\n  위 정보를 확인하셨습니까?")
+            date_input = input("  완료할 날짜 (Enter=위의 '현재 대상' 처리, YYYY-MM-DD=특정날짜): ").strip()
+            target = date.fromisoformat(date_input) if date_input else None
+            mark_done(ws, records, subject, target)
             records = load_all(ws)
 
         elif choice == "7":
+            subject = select_subject(subjects)
+            if not subject: continue
+            extend_lesson(ws, records, subject)
+            records = load_all(ws)
+
+        elif choice == "8":
+            subject = select_subject(subjects)
+            if not subject: continue
+            
+            print("\n  1. 미완료 수업 전체 밀기")
+            print("  2. 특정 날짜 이후 수업만 밀기")
+            opt = input("  선택 (번호, Enter=1): ").strip()
+            
+            try:
+                days = int(input("  밀어낼 일수 (예: 1 또는 7): ").strip())
+            except ValueError:
+                print("  ⚠️ 숫자를 입력하세요.")
+                continue
+                
+            from_date = None
+            if opt == "2":
+                d_str = input("  기준 날짜 (YYYY-MM-DD): ").strip()
+                if d_str: from_date = date.fromisoformat(d_str)
+                
+            push_schedule(ws, records, subject, days, from_date)
+            records = load_all(ws)
+
+        elif choice == "9":
             print("  ⟳ 데이터 새로고침 중...")
             records = load_all(ws)
             subjects = get_subjects(records)
@@ -292,23 +327,12 @@ def menu(ws, records, subjects):
             break
 
         else:
-            print("  잘못된 선택입니다.")
+            print("  ⚠️ 잘못된 선택입니다.")
 
-
-# ───────────────────────────────────────────────
-# CLI 직접 실행 모드
-# ───────────────────────────────────────────────
 
 def cli_mode():
     """
     터미널에서 직접 명령어로 실행하는 모드
-    사용법:
-        python schedule.py today
-        python schedule.py tomorrow
-        python schedule.py next
-        python schedule.py progress
-        python schedule.py done 수학
-        python schedule.py push 수학 7
     """
     ws = connect()
     records = load_all(ws)
@@ -321,32 +345,31 @@ def cli_mode():
     if cmd == "today":
         lessons = get_schedule_by_date(records, today)
         print_schedule(lessons, f"오늘 수업 ({today})")
-
     elif cmd == "tomorrow":
         lessons = get_schedule_by_date(records, tomorrow)
         print_schedule(lessons, f"내일 수업 ({tomorrow})")
-
+    elif cmd == "nextweek":
+        next_monday = today + timedelta(days=(7 - today.weekday()))
+        for i in range(5):
+            d = next_monday + timedelta(days=i)
+            lessons = get_schedule_by_date(records, d)
+            if lessons: print_schedule(lessons, f"다음 주 수업 ({d.strftime('%Y-%m-%d, %a')})")
     elif cmd == "next":
         print_next_classes(records, subjects)
-
     elif cmd == "progress":
         print_progress(records, subjects)
-
     elif cmd == "done" and len(sys.argv) > 2:
         subject = sys.argv[2]
         date_arg = sys.argv[3] if len(sys.argv) > 3 else None
         target = date.fromisoformat(date_arg) if date_arg else None
         mark_done(ws, records, subject, target)
-
     elif cmd == "push" and len(sys.argv) > 3:
         subject = sys.argv[2]
         days = int(sys.argv[3])
         from_arg = sys.argv[4] if len(sys.argv) > 4 else None
         from_date = date.fromisoformat(from_arg) if from_arg else None
         push_schedule(ws, records, subject, days, from_date)
-
     else:
-        # 명령어 없으면 대화형 메뉴
         menu(ws, records, subjects)
 
 

@@ -3,13 +3,18 @@
 구글 시트에서 과목/진도 정보를 읽어 동적으로 운영
 """
 
-import os
-import sys
 import json
-from datetime import date, timedelta
-from dotenv import load_dotenv
-import gspread
-from google.oauth2.service_account import Credentials
+import os
+import re
+import sys
+from datetime import date, datetime, timedelta
+
+try:
+    from dotenv import load_dotenv
+except ImportError:
+    def load_dotenv(*_args, **_kwargs):
+        return False
+
 
 load_dotenv()
 
@@ -23,189 +28,797 @@ SCOPES = [
     "https://www.googleapis.com/auth/drive",
 ]
 
-def connect():
+COLUMN_SUBJECT = "과목"
+COLUMN_DATE = "계획일"
+COLUMN_DONE = "실행여부"
+COLUMN_LESSON = "차시"
+COLUMN_TITLE = "수업내용"
+COLUMN_UNIT = "대단원"
+COLUMN_PDF = "pdf파일"
+COLUMN_START_PAGE = "시작페이지"
+COLUMN_END_PAGE = "끝페이지"
+COLUMN_NOTE = "비고"
+COLUMN_EXTENSION_COUNT = "연장횟수"
+DONE_COLUMN_FALLBACK_INDEX = 6
+
+REQUIRED_COLUMNS = (
+    COLUMN_SUBJECT,
+    COLUMN_DATE,
+)
+
+DATE_FORMATS = ("%Y-%m-%d", "%Y/%m/%d", "%Y.%m.%d")
+EXTENSION_NOTE_PREFIX = "[연장일정:"
+EXTENSION_NOTE_PATTERN = re.compile(r"\[연장일정:([0-9,\-\s]+)\]")
+
+
+class ScheduleError(Exception):
+    """Base exception for schedule operations."""
+
+
+class ConfigurationError(ScheduleError):
+    """Raised when environment or dependency configuration is invalid."""
+
+
+class SheetFormatError(ScheduleError):
+    """Raised when the worksheet shape or headers are invalid."""
+
+
+def _clean_text(value):
+    if value is None:
+        return ""
+    return str(value).strip()
+
+
+def _normalize_done_value(value):
+    text = _clean_text(value)
+    text = text.lstrip("'").strip()
+    return text.upper()
+
+
+def _format_date(value):
+    return value.strftime("%Y-%m-%d")
+
+
+def _row_label(row_number):
+    return f"{row_number}행" if row_number else "알 수 없는 행"
+
+
+def _parse_date(value, *, field_name=COLUMN_DATE, row_number=None, allow_blank=True):
+    if isinstance(value, datetime):
+        return value.date()
+    if isinstance(value, date):
+        return value
+
+    text = _clean_text(value)
+    if not text:
+        if allow_blank:
+            return None
+        raise ValueError(f"{field_name} 값이 비어 있습니다. ({_row_label(row_number)})")
+
+    # '2026. 3. 2' → '2026-3-2' 정규화 (공백/점 혼합 형식 지원)
+    normalized = re.sub(r'\s*\.\s*', '-', text).rstrip('-')
+    for candidate in (normalized, text):
+        for fmt in DATE_FORMATS:
+            try:
+                return datetime.strptime(candidate, fmt).date()
+            except ValueError:
+                continue
+
+    raise ValueError(
+        f"{field_name} 날짜 형식이 올바르지 않습니다: {text} ({_row_label(row_number)})"
+    )
+
+
+def _coerce_date(value, *, field_name):
+    return _parse_date(value, field_name=field_name, allow_blank=True)
+
+
+def _coerce_days(days):
+    try:
+        return int(days)
+    except (TypeError, ValueError) as exc:
+        raise ValueError(f"일수는 정수여야 합니다: {days}") from exc
+
+
+def _safe_int(value, default=sys.maxsize):
+    text = _clean_text(value)
+    if not text:
+        return default
+    try:
+        return int(text)
+    except ValueError:
+        match = re.match(r"^\d+", text)
+        if match:
+            return int(match.group(0))
+        return default
+
+
+def _is_done(record):
+    value = record.get(COLUMN_DONE, record.get("_done_value", ""))
+    if isinstance(value, bool):
+        return value
+
+    normalized = _normalize_done_value(value)
+    if normalized in {"TRUE", "1", "Y", "YES", "DONE"}:
+        return True
+    if normalized in {"FALSE", "0", "N", "NO", ""}:
+        return False
+    return False
+
+
+def _planned_date(record):
+    return _parse_date(
+        record.get(COLUMN_DATE),
+        field_name=COLUMN_DATE,
+        row_number=record.get("_row"),
+        allow_blank=True,
+    )
+
+
+def _subject_of(record):
+    return _clean_text(record.get(COLUMN_SUBJECT))
+
+
+def _record_sort_key(record):
+    planned = _planned_date(record) or date.max
+    lesson = _safe_int(record.get(COLUMN_LESSON))
+    row_number = _safe_int(record.get("_row"))
+    return (planned, lesson, row_number)
+
+
+def _lesson_label(record):
+    lesson = _clean_text(record.get(COLUMN_LESSON))
+    return f"{lesson}차시" if lesson else "차시 미지정"
+
+
+def _planned_date_label(record):
+    planned = _planned_date(record)
+    return _format_date(planned) if planned else "계획일 미정"
+
+
+def _extension_count(record):
+    value = record.get(COLUMN_EXTENSION_COUNT, 0)
+    if value in ("", None):
+        return 0
+    try:
+        return int(str(value).strip())
+    except ValueError:
+        return 0
+
+
+def _strip_extension_note(note_text):
+    return EXTENSION_NOTE_PATTERN.sub("", _clean_text(note_text)).strip(" |")
+
+
+def _extension_dates(record):
+    note_text = _clean_text(record.get(COLUMN_NOTE, ""))
+    match = EXTENSION_NOTE_PATTERN.search(note_text)
+    if not match:
+        return []
+
+    dates = []
+    for raw_date in match.group(1).split(","):
+        parsed = _parse_date(raw_date.strip(), field_name="연장일정", allow_blank=True)
+        if parsed:
+            dates.append(parsed)
+    return sorted(dict.fromkeys(dates))
+
+
+def _build_note_with_extension_dates(note_text, extension_dates):
+    clean_note = _strip_extension_note(note_text)
+    if not extension_dates:
+        return clean_note
+
+    unique_dates = sorted(dict.fromkeys(extension_dates))
+    marker = f"{EXTENSION_NOTE_PREFIX}{','.join(_format_date(d) for d in unique_dates)}]"
+    if clean_note:
+        return f"{clean_note} | {marker}"
+    return marker
+
+
+def _scheduled_occurrence_dates(record):
+    planned = _planned_date(record)
+    if planned is None:
+        return []
+    return [planned] + _extension_dates(record)
+
+
+def _column_letter(index):
+    if index < 1:
+        raise ValueError(f"유효하지 않은 컬럼 번호입니다: {index}")
+
+    letters = []
+    while index:
+        index, remainder = divmod(index - 1, 26)
+        letters.append(chr(65 + remainder))
+    return "".join(reversed(letters))
+
+
+def validate_config():
+    if not _clean_text(SHEET_ID):
+        raise ConfigurationError("환경 변수 SHEET_ID가 설정되어 있지 않습니다.")
+
     creds_json = os.getenv("GOOGLE_CREDENTIALS_JSON")
     if creds_json:
-        creds_json = creds_json.replace('\\n', '\n')
+        return
+
+    if not os.path.exists(CREDS_PATH):
+        raise ConfigurationError(
+            "GOOGLE_CREDENTIALS_JSON이 없고 자격증명 파일도 찾을 수 없습니다: "
+            f"{CREDS_PATH}"
+        )
+
+
+def get_header_map(ws):
+    headers = ws.row_values(1)
+    return _build_header_map(headers)
+
+
+def _build_header_map(headers):
+    header_map = {}
+    for idx, header in enumerate(headers, start=1):
+        normalized = _clean_text(header)
+        if normalized and normalized not in header_map:
+            header_map[normalized] = idx
+
+    if COLUMN_DONE not in header_map:
+        if len(headers) >= DONE_COLUMN_FALLBACK_INDEX:
+            header_map[COLUMN_DONE] = DONE_COLUMN_FALLBACK_INDEX
+        else:
+            raise SheetFormatError(
+                f"필수 컬럼이 없습니다: {COLUMN_DONE} (헤더가 없으면 F열이 필요합니다.)"
+            )
+
+    missing = [col for col in REQUIRED_COLUMNS if col not in header_map]
+    if missing:
+        raise SheetFormatError(f"필수 컬럼이 없습니다: {', '.join(missing)}")
+
+    return header_map
+
+
+def _validate_records(records):
+    for record in records:
+        _planned_date(record)
+        _extension_dates(record)
+
+
+def _batch_update_cells(ws, updates):
+    _batch_update_cells_with_option(ws, updates, value_input_option="RAW")
+
+
+def _batch_update_cells_with_option(ws, updates, *, value_input_option):
+    if not updates:
+        return
+
+    ws.spreadsheet.values_batch_update(
+        {
+            "valueInputOption": value_input_option,
+            "data": updates,
+        }
+    )
+
+
+def _make_cell_update(column_index, row_index, value):
+    cell = f"{_column_letter(column_index)}{row_index}"
+    return {"range": f"{SHEET_NAME}!{cell}", "values": [[value]]}
+
+
+def _pending_lessons(records, subject):
+    pending = [
+        record
+        for record in records
+        if _subject_of(record) == subject and not _is_done(record)
+    ]
+    return sorted(pending, key=_record_sort_key)
+
+
+def _scheduled_lessons(records, subject, *, include_done=False):
+    lessons = [record for record in records if _subject_of(record) == subject]
+    if not include_done:
+        lessons = [record for record in lessons if not _is_done(record)]
+    lessons = [record for record in lessons if _planned_date(record) is not None]
+    return sorted(lessons, key=_record_sort_key)
+
+
+def _estimate_extension_gap(records, subject, target_record, occurrence_dates):
+    for earlier, later in zip(reversed(occurrence_dates[:-1]), reversed(occurrence_dates[1:])):
+        gap = later - earlier
+        if gap > timedelta(0):
+            return gap
+
+    scheduled_all = _scheduled_lessons(records, subject, include_done=True)
+    all_dates = []
+    for record in scheduled_all:
+        all_dates.extend(_scheduled_occurrence_dates(record))
+
+    for earlier, later in zip(reversed(all_dates[:-1]), reversed(all_dates[1:])):
+        gap = later - earlier
+        if gap > timedelta(0):
+            return gap
+
+    return timedelta(days=7)
+
+
+def _refresh_records(ws):
+    records = load_all(ws)
+    subjects = get_subjects(records)
+    return records, subjects
+
+
+def connect():
+    validate_config()
+
+    try:
+        import gspread
+        from google.oauth2.service_account import Credentials
+    except ImportError as exc:
+        raise ConfigurationError(
+            "Google Sheets 연동 라이브러리가 없습니다. "
+            "`pip install -r requirements.txt`를 먼저 실행하세요."
+        ) from exc
+
+    creds_json = os.getenv("GOOGLE_CREDENTIALS_JSON")
+    if creds_json:
+        creds_json = creds_json.replace("\\n", "\n")
         creds_dict = json.loads(creds_json, strict=False)
         creds = Credentials.from_service_account_info(creds_dict, scopes=SCOPES)
     else:
         creds = Credentials.from_service_account_file(CREDS_PATH, scopes=SCOPES)
-        
+
     gc = gspread.authorize(creds)
     return gc.open_by_key(SHEET_ID).worksheet(SHEET_NAME)
 
+
 def load_all(ws):
-    records = ws.get_all_records()
-    for i, r in enumerate(records):
-        r["_row"] = i + 2
+    values = ws.get_all_values()
+    headers = values[0] if values else []
+    header_map = _build_header_map(headers)
+    done_index = header_map[COLUMN_DONE]
+
+    records = []
+    for row_number, row_values in enumerate(values[1:], start=2):
+        expanded = row_values + [""] * max(0, len(headers) - len(row_values))
+        record = {}
+        for col_index, header in enumerate(headers):
+            normalized = _clean_text(header)
+            if normalized:
+                record[normalized] = expanded[col_index]
+
+        done_value = expanded[done_index - 1] if len(expanded) >= done_index else ""
+        record[COLUMN_DONE] = done_value
+        record["_done_value"] = done_value
+        record["_row"] = row_number
+        records.append(record)
+
+    _validate_records(records)
     return records
+
 
 def get_subjects(records):
     seen = set()
     subjects = []
-    for r in records:
-        s = r.get("과목", "").strip()
-        if s and s not in seen:
-            seen.add(s)
-            subjects.append(s)
+    for record in records:
+        subject = _subject_of(record)
+        if subject and subject not in seen:
+            seen.add(subject)
+            subjects.append(subject)
     return subjects
 
-def get_schedule_by_date(records, target_date: date):
-    target_str = target_date.strftime("%Y-%m-%d")
-    return [
-        r for r in records
-        if r.get("계획일", "").strip() == target_str
-        and str(r.get("실행여부", "FALSE")).upper() != "TRUE"
-    ]
 
-def get_next_class(records, subject: str):
-    pending = [
-        r for r in records
-        if r.get("과목", "").strip() == subject
-        and str(r.get("실행여부", "FALSE")).upper() != "TRUE"
-        and r.get("계획일", "").strip()
-    ]
-    if not pending:
-        return None
-    pending.sort(key=lambda x: x.get("계획일", ""))
-    return pending[0]
+def get_schedule_by_date(records, target_date):
+    target_date = _coerce_date(target_date, field_name="조회 날짜")
+    if target_date is None:
+        return []
 
-def get_progress(records, subject: str):
-    all_lessons = [r for r in records if r.get("과목", "").strip() == subject]
-    done = [r for r in all_lessons if str(r.get("실행여부", "FALSE")).upper() == "TRUE"]
+    lessons = [
+        record
+        for record in records
+        if not _is_done(record)
+        and target_date in _scheduled_occurrence_dates(record)
+    ]
+    return sorted(lessons, key=_record_sort_key)
+
+
+def get_next_class(records, subject):
+    scheduled_pending = [
+        record
+        for record in _pending_lessons(records, subject)
+        if _planned_date(record) is not None
+    ]
+    return scheduled_pending[0] if scheduled_pending else None
+
+
+def get_progress(records, subject):
+    all_lessons = [record for record in records if _subject_of(record) == subject]
+    done = [record for record in all_lessons if _is_done(record)]
     total = len(all_lessons)
     completed = len(done)
     pct = (completed / total * 100) if total > 0 else 0
-    return {"과목": subject, "완료": completed, "전체": total, "진도율": f"{pct:.1f}%"}
+    return {
+        "과목": subject,
+        "완료": completed,
+        "전체": total,
+        "진도율": f"{pct:.1f}%",
+    }
 
-def mark_done(ws, records, subject: str, target_date: date = None):
-    if target_date:
-        target_str = target_date.strftime("%Y-%m-%d")
-        candidates = [
-            r for r in records
-            if r.get("과목", "").strip() == subject
-            and r.get("계획일", "").strip() == target_str
-            and str(r.get("실행여부", "FALSE")).upper() != "TRUE"
-        ]
+
+def get_remaining_week_lessons(records, start_date=None):
+    start_date = _coerce_date(start_date, field_name="조회 날짜") or date.today()
+    if start_date.weekday() > 4:
+        return []
+
+    end_date = start_date + timedelta(days=4 - start_date.weekday())
+    lessons = [
+        record
+        for record in records
+        if not _is_done(record)
+        and any(
+            start_date <= scheduled_date <= end_date
+            for scheduled_date in _scheduled_occurrence_dates(record)
+        )
+    ]
+    return sorted(lessons, key=_record_sort_key)
+
+
+def plan_lesson_extension(records, subject, row_number=None, extra_slots=1):
+    subject = _clean_text(subject)
+    extra_slots = _coerce_days(extra_slots)
+    if extra_slots < 1:
+        raise ValueError("연장할 차시 수는 1 이상이어야 합니다.")
+
+    scheduled_pending = _scheduled_lessons(records, subject, include_done=False)
+
+    if row_number is None:
+        target_record = scheduled_pending[0] if scheduled_pending else None
     else:
-        next_cls = get_next_class(records, subject)
-        candidates = [next_cls] if next_cls else []
+        target_record = next(
+            (
+                record
+                for record in scheduled_pending
+                if record.get("_row") == row_number
+            ),
+            None,
+        )
+
+    if not target_record:
+        return None
+
+    target_index = next(
+        index
+        for index, record in enumerate(scheduled_pending)
+        if record.get("_row") == target_record.get("_row")
+    )
+    tail_records = scheduled_pending[target_index:]
+
+    flat_occurrences = []
+    for record in tail_records:
+        occurrence_dates = _scheduled_occurrence_dates(record)
+        flat_occurrences.extend(
+            (record, occurrence_index, occurrence_date)
+            for occurrence_index, occurrence_date in enumerate(occurrence_dates)
+        )
+
+    target_occurrence_dates = _scheduled_occurrence_dates(target_record)
+    insertion_index = len(target_occurrence_dates)
+    flat_dates = [occurrence_date for _, _, occurrence_date in flat_occurrences]
+    extension_gap = _estimate_extension_gap(records, subject, target_record, flat_dates)
+
+    extended_dates = list(flat_dates)
+    while len(extended_dates) < len(flat_dates) + extra_slots:
+        base_date = extended_dates[-1] if extended_dates else _planned_date(target_record)
+        extended_dates.append(base_date + extension_gap)
+
+    added_extension_dates = extended_dates[insertion_index:insertion_index + extra_slots]
+
+    updates_by_row = {}
+    for flat_index, (record, occurrence_index, _old_date) in enumerate(
+        flat_occurrences[insertion_index:],
+        start=insertion_index,
+    ):
+        updates_by_row.setdefault(record["_row"], {})[occurrence_index] = extended_dates[flat_index + extra_slots]
+
+    record_updates = []
+    for record in tail_records:
+        occurrence_updates = updates_by_row.get(record["_row"])
+        if not occurrence_updates:
+            continue
+
+        original_dates = _scheduled_occurrence_dates(record)
+        new_dates = [
+            occurrence_updates.get(index, original_dates[index])
+            for index in range(len(original_dates))
+        ]
+        record_updates.append(
+            {
+                "record": record,
+                "new_planned_date": new_dates[0],
+                "new_extension_dates": new_dates[1:],
+            }
+        )
+
+    return {
+        "subject": subject,
+        "target_record": target_record,
+        "extra_slots": extra_slots,
+        "added_extension_dates": added_extension_dates,
+        "record_updates": record_updates,
+    }
+
+
+def mark_done(ws, records, subject, target_date=None):
+    subject = _clean_text(subject)
+    target_date = _coerce_date(target_date, field_name="완료 날짜")
+    done_column = get_header_map(ws)[COLUMN_DONE]
+
+    if target_date:
+        candidates = [
+            record
+            for record in records
+            if _subject_of(record) == subject
+            and target_date in _scheduled_occurrence_dates(record)
+            and not _is_done(record)
+        ]
+        candidates = sorted(candidates, key=_record_sort_key)
+    else:
+        next_class = get_next_class(records, subject)
+        candidates = [next_class] if next_class else []
 
     if not candidates:
-        print(f"  ⚠️  완료할 수업을 찾지 못했습니다. (과목: {subject})")
-        return
+        message = f"완료할 수업을 찾지 못했습니다. (과목: {subject})"
+        print(f"  [경고] {message}")
+        return {"updated": 0, "rows": [], "message": message}
 
-    updates = []
-    for r in candidates:
-        cell = f"F{r['_row']}"
-        updates.append({"range": f"{SHEET_NAME}!{cell}", "values": [["TRUE"]]})
-
-    ws.spreadsheet.values_batch_update({
-        "valueInputOption": "RAW",
-        "data": updates,
-    })
-
-    for r in candidates:
-        print(f"  ✅ 완료: [{r['과목']}] {r['수업내용']} ({r['계획일']})")
-
-def push_schedule(ws, records, subject: str, days: int, from_date: date = None):
-    base_str = from_date.strftime("%Y-%m-%d") if from_date else ""
-
-    targets = [
-        r for r in records
-        if r.get("과목", "").strip() == subject
-        and str(r.get("실행여부", "FALSE")).upper() != "TRUE"
-        and (not base_str or r.get("계획일", "").strip() >= base_str)
+    updates = [
+        _make_cell_update(done_column, record["_row"], True)
+        for record in candidates
     ]
+    _batch_update_cells_with_option(ws, updates, value_input_option="USER_ENTERED")
+
+    for record in candidates:
+        print(
+            f"  [완료] [{record.get(COLUMN_SUBJECT, '')}] "
+            f"{record.get(COLUMN_TITLE, '')} ({record.get(COLUMN_DATE, '')})"
+        )
+
+    return {
+        "updated": len(candidates),
+        "rows": [record["_row"] for record in candidates],
+        "message": f"{len(candidates)}개 수업을 완료 처리했습니다.",
+    }
+
+
+def push_schedule(ws, records, subject, days, from_date=None):
+    subject = _clean_text(subject)
+    days = _coerce_days(days)
+    from_date = _coerce_date(from_date, field_name="기준 날짜")
+    header_map = get_header_map(ws)
+    date_column = header_map[COLUMN_DATE]
+    note_column = header_map.get(COLUMN_NOTE)
+
+    targets = []
+    for record in _pending_lessons(records, subject):
+        planned = _planned_date(record)
+        if planned is None:
+            continue
+        if from_date and planned < from_date:
+            continue
+        targets.append(record)
 
     if not targets:
-        print(f"  ⚠️  밀 수 있는 수업이 없습니다. (과목: {subject})")
-        return
+        message = f"밀 수 있는 수업이 없습니다. (과목: {subject})"
+        print(f"  [경고] {message}")
+        return {"updated": 0, "rows": [], "message": message}
 
     updates = []
-    for r in targets:
-        old_date_str = r.get("계획일", "").strip()
-        if not old_date_str: continue
-        old_date = date.fromisoformat(old_date_str)
-        new_date = old_date + timedelta(days=days)
-        cell = f"E{r['_row']}"
-        updates.append({
-            "range": f"{SHEET_NAME}!{cell}",
-            "values": [[new_date.strftime("%Y-%m-%d")]]
-        })
+    for record in targets:
+        delta = timedelta(days=days)
+        new_date = _planned_date(record) + delta
+        updates.append(
+            _make_cell_update(date_column, record["_row"], _format_date(new_date))
+        )
+        extension_dates = _extension_dates(record)
+        if note_column and extension_dates:
+            shifted_extension_dates = [extension_date + delta for extension_date in extension_dates]
+            updates.append(
+                _make_cell_update(
+                    note_column,
+                    record["_row"],
+                    _build_note_with_extension_dates(record.get(COLUMN_NOTE, ""), shifted_extension_dates),
+                )
+            )
 
-    ws.spreadsheet.values_batch_update({
-        "valueInputOption": "RAW",
-        "data": updates,
-    })
+    _batch_update_cells(ws, updates)
 
-    print(f"  📅 [{subject}] {len(targets)}개 수업을 {days}일 밀었습니다.")
+    message = f"[{subject}] {len(targets)}개 수업을 {days}일 밀었습니다."
+    print(f"  {message}")
+    return {
+        "updated": len(targets),
+        "rows": [record["_row"] for record in targets],
+        "message": message,
+    }
 
-def extend_lesson(ws, records, subject: str):
-    """현재 미완료 중 가장 빠른 차시를 복제하여 밑에 삽입 (1차시 분량 연장)"""
-    next_cls = get_next_class(records, subject)
-    if not next_cls:
-        print(f"  ⚠️ 연장할 미완료 수업이 없습니다. ({subject})")
-        return
-        
-    idx = next_cls['_row']
-    try:
-        raw_values = ws.row_values(idx)
-        ws.insert_row(raw_values, index=idx + 1)
-        print(f"  ⏳ [{subject}] '{next_cls['수업내용']}' 차시가 연장(복제)되었습니다!")
-        print(f"     시트의 {idx+1}행에 추가되었으니, 필요시 구글 시트에서 계획일을 조정해 주세요.")
-    except Exception as e:
-        print(f"  ❌ 연장 처리 실패: {e}")
 
-def print_schedule(lessons, title: str):
-    print(f"\n{'='*50}")
+def extend_lesson(ws, records, subject, row_number=None, extra_slots=1):
+    """선택한 차시를 연장하고 같은 과목의 뒤 차시 일정을 뒤로 민다."""
+    subject = _clean_text(subject)
+    header_map = get_header_map(ws)
+    note_column = header_map.get(COLUMN_NOTE)
+    if not note_column:
+        message = "차시 연장을 기록하려면 시트에 '비고' 컬럼이 필요합니다."
+        print(f"  [경고] {message}")
+        return {"updated": 0, "rows": [], "message": message}
+
+    extension_count_column = header_map.get(COLUMN_EXTENSION_COUNT)
+    date_column = header_map[COLUMN_DATE]
+
+    plan = plan_lesson_extension(
+        records,
+        subject,
+        row_number=row_number,
+        extra_slots=extra_slots,
+    )
+    if not plan:
+        message = f"연장할 미완료 수업을 찾지 못했습니다. ({subject})"
+        print(f"  [경고] {message}")
+        return {"updated": 0, "rows": [], "message": message}
+
+    target_record = plan["target_record"]
+    added_extension_dates = plan["added_extension_dates"]
+    record_updates = plan["record_updates"]
+
+    updates = [
+        _make_cell_update(
+            note_column,
+            target_record["_row"],
+            _build_note_with_extension_dates(
+                target_record.get(COLUMN_NOTE, ""),
+                _extension_dates(target_record) + added_extension_dates,
+            ),
+        )
+    ]
+    if extension_count_column:
+        updates.append(
+            _make_cell_update(
+                extension_count_column,
+                target_record["_row"],
+                str(_extension_count(target_record) + len(added_extension_dates)),
+            )
+        )
+
+    for record_update in record_updates:
+        record = record_update["record"]
+        updates.append(
+            _make_cell_update(
+                date_column,
+                record["_row"],
+                _format_date(record_update["new_planned_date"]),
+            )
+        )
+        updates.append(
+            _make_cell_update(
+                note_column,
+                record["_row"],
+                _build_note_with_extension_dates(
+                    record.get(COLUMN_NOTE, ""),
+                    record_update["new_extension_dates"],
+                ),
+            )
+        )
+
+    _batch_update_cells(ws, updates)
+
+    message = (
+        f"[{subject}] '{target_record.get(COLUMN_TITLE, '')}' 차시를 연장했습니다. "
+        f"연장 {len(added_extension_dates)}차시를 기록했고, "
+        f"뒤 {len(record_updates)}개 차시 일정을 뒤로 밀었습니다."
+    )
+    print(f"  {message}")
+    return {
+        "updated": 1 + len(record_updates),
+        "rows": [target_record["_row"]] + [item["record"]["_row"] for item in record_updates],
+        "message": message,
+        "shifted": len(record_updates),
+    }
+
+
+def print_schedule(lessons, title):
+    print(f"\n{'=' * 50}")
     print(f"  {title}")
-    print(f"{'='*50}")
+    print(f"{'=' * 50}")
     if not lessons:
         print("  수업 없음 (또는 모두 완료)")
         return
-    for r in lessons:
-        print(f"  [{r['과목']}] {r['수업내용']}")
-        print(f"    대단원: {r['대단원']} | 차시: {r['차시']}")
-        if r.get("pdf파일"):
-            print(f"    PDF: {r['pdf파일']} (p.{r['시작페이지']}~{r['끝페이지']})")
+
+    for record in lessons:
+        print(f"  [{record.get(COLUMN_SUBJECT, '')}] {record.get(COLUMN_TITLE, '')}")
+        print(
+            f"    대단원: {record.get(COLUMN_UNIT, '')} | "
+            f"차시: {record.get(COLUMN_LESSON, '')}"
+        )
+        extension_dates = _extension_dates(record)
+        if extension_dates:
+            print(
+                "    연장일정: "
+                + ", ".join(_format_date(extension_date) for extension_date in extension_dates)
+            )
+        if record.get(COLUMN_PDF):
+            print(
+                f"    PDF: {record.get(COLUMN_PDF)} "
+                f"(p.{record.get(COLUMN_START_PAGE, '')}~{record.get(COLUMN_END_PAGE, '')})"
+            )
         print()
 
+
 def print_next_classes(records, subjects):
-    print(f"\n{'='*50}")
-    print(f"  과목별 다음 차시")
-    print(f"{'='*50}")
+    print(f"\n{'=' * 50}")
+    print("  과목별 다음 차시")
+    print(f"{'=' * 50}")
     for subject in subjects:
-        next_cls = get_next_class(records, subject)
-        if next_cls:
-            print(f"  [{subject}] {next_cls['수업내용']}")
-            print(f"    계획일: {next_cls['계획일']} | 차시: {next_cls['차시']}")
+        next_class = get_next_class(records, subject)
+        if next_class:
+            print(f"  [{subject}] {next_class.get(COLUMN_TITLE, '')}")
+            print(
+                f"    계획일: {next_class.get(COLUMN_DATE, '')} | "
+                f"차시: {next_class.get(COLUMN_LESSON, '')}"
+            )
         else:
-            print(f"  [{subject}] 모든 진도 완료 🎉")
+            print(f"  [{subject}] 모든 진도 완료")
     print()
 
+
 def print_progress(records, subjects):
-    print(f"\n{'='*50}")
-    print(f"  과목별 진도율")
-    print(f"{'='*50}")
+    print(f"\n{'=' * 50}")
+    print("  과목별 진도율")
+    print(f"{'=' * 50}")
     for subject in subjects:
-        p = get_progress(records, subject)
+        progress = get_progress(records, subject)
         bar_len = 20
-        filled = int(bar_len * p["완료"] / p["전체"]) if p["전체"] > 0 else 0
+        filled = (
+            int(bar_len * progress["완료"] / progress["전체"])
+            if progress["전체"] > 0
+            else 0
+        )
         bar = "█" * filled + "░" * (bar_len - filled)
-        print(f"  [{subject}] {bar} {p['진도율']} ({p['완료']}/{p['전체']})")
+        print(
+            f"  [{subject}] {bar} {progress['진도율']} "
+            f"({progress['완료']}/{progress['전체']})"
+        )
     print()
+
+
+def print_remaining_week_schedule(records, start_date=None):
+    start_date = _coerce_date(start_date, field_name="조회 날짜") or date.today()
+
+    print(f"\n{'=' * 50}")
+    print("  이번 주 남은 수업")
+    print(f"{'=' * 50}")
+
+    if start_date.weekday() > 4:
+        print("  이번 주 수업은 모두 끝났습니다. (현재 주말)")
+        return
+
+    end_date = start_date + timedelta(days=4 - start_date.weekday())
+    found_any = False
+    for offset in range((end_date - start_date).days + 1):
+        day = start_date + timedelta(days=offset)
+        lessons = get_schedule_by_date(records, day)
+        if lessons:
+            print_schedule(lessons, f"이번 주 남은 수업 ({day.strftime('%Y-%m-%d, %a')})")
+            found_any = True
+
+    if not found_any:
+        print("  이번 주에 남은 미완료 수업이 없습니다.")
+
 
 def select_subject(subjects):
     print("\n  과목 선택:")
-    for i, sub in enumerate(subjects, 1):
-        print(f"    {i}. {sub}")
+    for i, subject in enumerate(subjects, start=1):
+        print(f"    {i}. {subject}")
     print("    0. 뒤로가기")
-    
+
     while True:
         choice = input("  입력 (번호 또는 이름): ").strip()
-        if choice == "0" or choice.lower() == "back" or choice == "":
+        if choice in {"0", ""} or choice.lower() == "back":
             return None
         if choice.isdigit():
             idx = int(choice)
@@ -213,27 +826,54 @@ def select_subject(subjects):
                 return subjects[idx - 1]
         elif choice in subjects:
             return choice
-        print("  ⚠️ 잘못된 입력입니다. 다시 선택해주세요.")
+        print("  [경고] 잘못된 입력입니다. 다시 선택해주세요.")
 
-def menu(ws, records, subjects):
-    today = date.today()
-    tomorrow = today + timedelta(days=1)
+
+def select_lesson(records, subject, *, action_label):
+    pending = _scheduled_lessons(records, subject, include_done=False)
+    if not pending:
+        print(f"  [경고] {subject} 과목에 계획일이 있는 미완료 수업이 없습니다.")
+        return None
+
+    print(f"\n  [{subject}] {action_label}할 차시 선택:")
+    for i, record in enumerate(pending, start=1):
+        print(
+            f"    {i}. {_lesson_label(record)} | {_planned_date_label(record)} | "
+            f"{record.get(COLUMN_TITLE, '')}"
+        )
+    print("    0. 뒤로가기")
 
     while True:
-        print(f"\n{'='*50}")
-        print(f"  📚 수업 진도 관리  |  {today.strftime('%Y-%m-%d (%a)')}")
-        print(f"{'='*50}")
+        choice = input("  선택: ").strip()
+        if choice in {"0", ""} or choice.lower() == "back":
+            return None
+        if choice.isdigit():
+            idx = int(choice)
+            if 1 <= idx <= len(pending):
+                return pending[idx - 1]
+        print("  [경고] 잘못된 입력입니다. 다시 선택해주세요.")
+
+
+def menu(ws, records, subjects):
+    while True:
+        today = date.today()
+        tomorrow = today + timedelta(days=1)
+
+        print(f"\n{'=' * 50}")
+        print(f"  수업 진도 관리  |  {today.strftime('%Y-%m-%d (%a)')}")
+        print(f"{'=' * 50}")
         print("  1. 오늘 수업 확인")
         print("  2. 내일 수업 확인")
-        print("  3. 다음 주 수업 확인")
-        print("  4. 과목별 다음 차시")
-        print("  5. 과목별 진도율")
-        print("  6. 수업 완료 처리")
-        print("  7. 한 차시 연장 처리")
-        print("  8. 날짜 밀기")
-        print("  9. 데이터 새로고침")
+        print("  3. 이번 주 남은 수업 확인")
+        print("  4. 다음 주 수업 확인")
+        print("  5. 과목별 다음 차시")
+        print("  6. 과목별 진도율")
+        print("  7. 수업 완료 처리")
+        print("  8. 차시 연장")
+        print("  9. 날짜 밀기")
+        print(" 10. 데이터 새로고침")
         print("  0. 종료")
-        print(f"{'='*50}")
+        print(f"{'=' * 50}")
 
         choice = input("  선택: ").strip()
 
@@ -246,94 +886,176 @@ def menu(ws, records, subjects):
             print_schedule(lessons, f"내일 수업 ({tomorrow})")
 
         elif choice == "3":
-            next_monday = today + timedelta(days=(7 - today.weekday()))
-            found_any = False
-            for i in range(5):
-                d = next_monday + timedelta(days=i)
-                lessons = get_schedule_by_date(records, d)
-                if lessons:
-                    print_schedule(lessons, f"다음 주 수업 ({d.strftime('%Y-%m-%d, %a')})")
-                    found_any = True
-            if not found_any:
-                print("\n  ⚠️ 다음 주에 계획된 미완료 수업이 없습니다.")
+            print_remaining_week_schedule(records, today)
 
         elif choice == "4":
-            print_next_classes(records, subjects)
+            next_monday = today + timedelta(days=(7 - today.weekday()))
+            found_any = False
+            for offset in range(5):
+                day = next_monday + timedelta(days=offset)
+                lessons = get_schedule_by_date(records, day)
+                if lessons:
+                    print_schedule(lessons, f"다음 주 수업 ({day.strftime('%Y-%m-%d, %a')})")
+                    found_any = True
+            if not found_any:
+                print("\n  [경고] 다음 주에 계획된 미완료 수업이 없습니다.")
 
         elif choice == "5":
-            print_progress(records, subjects)
+            print_next_classes(records, subjects)
 
         elif choice == "6":
-            subject = select_subject(subjects)
-            if not subject: continue
-            
-            all_sub = [r for r in records if r.get("과목", "").strip() == subject]
-            done_list = [r for r in all_sub if str(r.get("실행여부", "FALSE")).upper() == "TRUE"]
-            pending_list = [r for r in all_sub if str(r.get("실행여부", "FALSE")).upper() != "TRUE"]
-            
-            print(f"\n  [{subject}] 시트 현황 요약")
-            if done_list:
-                last = done_list[-1]
-                print(f"  ✅ 직전 완료: {last.get('차시')}차시 - {last.get('수업내용')} ({last.get('계획일','')})")
-            if pending_list:
-                curr = pending_list[0]
-                print(f"  🎯 현재 대상: {curr.get('차시')}차시 - {curr.get('수업내용')} ({curr.get('계획일','')})")
-                if len(pending_list) > 1:
-                    nxt = pending_list[1]
-                    print(f"  ⏭️ 다음 예정: {nxt.get('차시')}차시 - {nxt.get('수업내용')} ({nxt.get('계획일','')})")
-            
-            print("\n  위 정보를 확인하셨습니까?")
-            date_input = input("  완료할 날짜 (Enter=위의 '현재 대상' 처리, YYYY-MM-DD=특정날짜): ").strip()
-            target = date.fromisoformat(date_input) if date_input else None
-            mark_done(ws, records, subject, target)
-            records = load_all(ws)
+            print_progress(records, subjects)
 
         elif choice == "7":
             subject = select_subject(subjects)
-            if not subject: continue
-            extend_lesson(ws, records, subject)
-            records = load_all(ws)
+            if not subject:
+                continue
+
+            done_list = [
+                record
+                for record in records
+                if _subject_of(record) == subject and _is_done(record)
+            ]
+            pending_list = _pending_lessons(records, subject)
+
+            print(f"\n  [{subject}] 시트 현황 요약")
+            if done_list:
+                last = sorted(done_list, key=_record_sort_key)[-1]
+                print(
+                    f"  직전 완료: {last.get(COLUMN_LESSON, '')}차시 - "
+                    f"{last.get(COLUMN_TITLE, '')} ({last.get(COLUMN_DATE, '')})"
+                )
+            if pending_list:
+                current = pending_list[0]
+                print(
+                    f"  현재 대상: {current.get(COLUMN_LESSON, '')}차시 - "
+                    f"{current.get(COLUMN_TITLE, '')} ({current.get(COLUMN_DATE, '')})"
+                )
+                if len(pending_list) > 1:
+                    next_item = pending_list[1]
+                    print(
+                        f"  다음 예정: {next_item.get(COLUMN_LESSON, '')}차시 - "
+                        f"{next_item.get(COLUMN_TITLE, '')} ({next_item.get(COLUMN_DATE, '')})"
+                    )
+
+            date_input = input(
+                "\n  완료할 날짜 (Enter=현재 대상 처리, YYYY-MM-DD=특정날짜): "
+            ).strip()
+            try:
+                target = _coerce_date(date_input, field_name="완료 날짜") if date_input else None
+            except ValueError as exc:
+                print(f"  [경고] {exc}")
+                continue
+
+            mark_done(ws, records, subject, target)
+            records, subjects = _refresh_records(ws)
 
         elif choice == "8":
             subject = select_subject(subjects)
-            if not subject: continue
-            
-            print("\n  1. 미완료 수업 전체 밀기")
-            print("  2. 특정 날짜 이후 수업만 밀기")
-            opt = input("  선택 (번호, Enter=1): ").strip()
-            
-            try:
-                days = int(input("  밀어낼 일수 (예: 1 또는 7): ").strip())
-            except ValueError:
-                print("  ⚠️ 숫자를 입력하세요.")
+            if not subject:
                 continue
-                
-            from_date = None
-            if opt == "2":
-                d_str = input("  기준 날짜 (YYYY-MM-DD): ").strip()
-                if d_str: from_date = date.fromisoformat(d_str)
-                
-            push_schedule(ws, records, subject, days, from_date)
-            records = load_all(ws)
+
+            target_record = select_lesson(records, subject, action_label="연장")
+            if not target_record:
+                continue
+
+            extra_slots_input = input("  몇 차시 연장할까요? (Enter=1): ").strip()
+            try:
+                extra_slots = _coerce_days(extra_slots_input or "1")
+                if extra_slots < 1:
+                    raise ValueError("연장할 차시 수는 1 이상이어야 합니다.")
+            except ValueError as exc:
+                print(f"  [경고] {exc}")
+                continue
+
+            extension_plan = plan_lesson_extension(
+                records,
+                subject,
+                row_number=target_record["_row"],
+                extra_slots=extra_slots,
+            )
+            if not extension_plan:
+                print("  [경고] 연장 계획을 만들지 못했습니다.")
+                continue
+
+            print(f"\n  선택한 차시: {_lesson_label(target_record)}")
+            print(f"  계획일: {_planned_date_label(target_record)}")
+            print(f"  수업내용: {target_record.get(COLUMN_TITLE, '')}")
+            print(
+                "  추가 연장일: "
+                + ", ".join(_format_date(extension_date) for extension_date in extension_plan["added_extension_dates"])
+            )
+            if extension_plan["record_updates"]:
+                print("  뒤로 밀리는 차시:")
+                for item in extension_plan["record_updates"][:5]:
+                    record = item["record"]
+                    print(
+                        f"    - {_lesson_label(record)} | "
+                        f"{record.get(COLUMN_TITLE, '')} -> {_format_date(item['new_planned_date'])}"
+                    )
+                remaining = len(extension_plan["record_updates"]) - 5
+                if remaining > 0:
+                    print(f"    - 그 외 {remaining}개 차시")
+            else:
+                print("  뒤로 밀리는 차시는 없습니다.")
+
+            confirm = input("  이 계획대로 차시를 연장할까요? (y/N): ").strip().lower()
+            if confirm not in {"y", "yes"}:
+                print("  연장을 취소했습니다.")
+                continue
+
+            extend_lesson(
+                ws,
+                records,
+                subject,
+                row_number=target_record["_row"],
+                extra_slots=extra_slots,
+            )
+            records, subjects = _refresh_records(ws)
 
         elif choice == "9":
-            print("  ⟳ 데이터 새로고침 중...")
-            records = load_all(ws)
-            subjects = get_subjects(records)
-            print(f"  ✅ 완료. 과목: {', '.join(subjects)}")
+            subject = select_subject(subjects)
+            if not subject:
+                continue
+
+            print("\n  1. 미완료 수업 전체 밀기")
+            print("  2. 특정 날짜 이후 수업만 밀기")
+            option = input("  선택 (번호, Enter=1): ").strip()
+
+            days_input = input("  밀어낼 일수 (예: 1 또는 7): ").strip()
+            try:
+                days = _coerce_days(days_input)
+            except ValueError as exc:
+                print(f"  [경고] {exc}")
+                continue
+
+            from_date = None
+            if option == "2":
+                date_text = input("  기준 날짜 (YYYY-MM-DD): ").strip()
+                try:
+                    from_date = _coerce_date(date_text, field_name="기준 날짜") if date_text else None
+                except ValueError as exc:
+                    print(f"  [경고] {exc}")
+                    continue
+
+            push_schedule(ws, records, subject, days, from_date)
+            records, subjects = _refresh_records(ws)
+
+        elif choice == "10":
+            print("  데이터 새로고침 중...")
+            records, subjects = _refresh_records(ws)
+            print(f"  완료. 과목: {', '.join(subjects)}")
 
         elif choice == "0":
             print("\n  종료합니다.\n")
             break
 
         else:
-            print("  ⚠️ 잘못된 선택입니다.")
+            print("  [경고] 잘못된 선택입니다.")
 
 
 def cli_mode():
-    """
-    터미널에서 직접 명령어로 실행하는 모드
-    """
+    """터미널에서 직접 명령어로 실행하는 모드"""
     ws = connect()
     records = load_all(ws)
     subjects = get_subjects(records)
@@ -348,12 +1070,15 @@ def cli_mode():
     elif cmd == "tomorrow":
         lessons = get_schedule_by_date(records, tomorrow)
         print_schedule(lessons, f"내일 수업 ({tomorrow})")
+    elif cmd == "thisweek":
+        print_remaining_week_schedule(records, today)
     elif cmd == "nextweek":
         next_monday = today + timedelta(days=(7 - today.weekday()))
-        for i in range(5):
-            d = next_monday + timedelta(days=i)
-            lessons = get_schedule_by_date(records, d)
-            if lessons: print_schedule(lessons, f"다음 주 수업 ({d.strftime('%Y-%m-%d, %a')})")
+        for offset in range(5):
+            day = next_monday + timedelta(days=offset)
+            lessons = get_schedule_by_date(records, day)
+            if lessons:
+                print_schedule(lessons, f"다음 주 수업 ({day.strftime('%Y-%m-%d, %a')})")
     elif cmd == "next":
         print_next_classes(records, subjects)
     elif cmd == "progress":
@@ -361,17 +1086,26 @@ def cli_mode():
     elif cmd == "done" and len(sys.argv) > 2:
         subject = sys.argv[2]
         date_arg = sys.argv[3] if len(sys.argv) > 3 else None
-        target = date.fromisoformat(date_arg) if date_arg else None
-        mark_done(ws, records, subject, target)
+        mark_done(ws, records, subject, date_arg)
     elif cmd == "push" and len(sys.argv) > 3:
         subject = sys.argv[2]
-        days = int(sys.argv[3])
+        days = sys.argv[3]
         from_arg = sys.argv[4] if len(sys.argv) > 4 else None
-        from_date = date.fromisoformat(from_arg) if from_arg else None
-        push_schedule(ws, records, subject, days, from_date)
+        push_schedule(ws, records, subject, days, from_arg)
     else:
         menu(ws, records, subjects)
 
 
+def main():
+    try:
+        cli_mode()
+    except (ScheduleError, ValueError, json.JSONDecodeError) as exc:
+        print(f"\n[오류] {exc}\n")
+        raise SystemExit(1) from exc
+    except KeyboardInterrupt:
+        print("\n\n종료합니다.\n")
+        raise SystemExit(130)
+
+
 if __name__ == "__main__":
-    cli_mode()
+    main()

@@ -2,6 +2,120 @@
 
 StorageMap 시스템의 향후 개선 및 확장 계획입니다.
 
+## 🎯 기술 업그레이드 가이드
+
+### 벤치마킹 기반 개선 방향
+
+#### 1. 프론트엔드 현대화
+
+**현재 → 개선 방향**
+```javascript
+// 현재: Vanilla JS
+class StorageMapApp {
+  constructor() { ... }
+}
+
+// 개선: React + TypeScript
+interface StorageMapProps {
+  spaces: Space[];
+  selectedSpaceId: string;
+}
+
+const StorageMap: React.FC<StorageMapProps> = ({ spaces, selectedSpaceId }) => {
+  // React hooks 사용
+};
+```
+
+#### 2. UI 컴포넌트 라이브러리 도입
+```bash
+# Radix UI + Tailwind CSS
+npm install @radix-ui/react-dialog @radix-ui/react-select
+npm install tailwindcss
+```
+
+#### 3. 타입 세이프한 API 통신
+```typescript
+// 현재: fetch + manual typing
+const response = await fetch('/api/data');
+const data = await response.json();
+
+// 개선: tRPC
+const spacesQuery = trpc.space.list.useQuery();
+// 자동 타입 추론 + 에러 핸들링
+```
+
+---
+
+## 📋 기능별 개선 계획
+
+### 2D 캔버스 기능 고도화
+
+#### 드래그 & 리사이즈 구현
+```typescript
+// 벤치마킹: Canvas2D.tsx 참조
+interface DragState {
+  furnitureId: string;
+  type: "move" | "resize";
+  startX: number;
+  startY: number;
+  startPosX: number;
+  startPosY: number;
+}
+
+const handleMouseDown = useCallback(
+  (e: React.MouseEvent, furnitureId: string, type: "move" | "resize") => {
+    // 드래그 로직 구현
+  },
+  [furnitureList, onFurnitureSelect]
+);
+```
+
+#### 그리드 배경 및 스냅
+```css
+/* 벤치마킹: 그리드 배경 */
+.grid-background {
+  background-image: 
+    linear-gradient(0deg, transparent 24%, rgba(0,0,0,.05) 25%, ...),
+    linear-gradient(90deg, transparent 24%, rgba(0,0,0,.05) 25%, ...);
+  background-size: 50px 50px;
+}
+```
+
+### 데이터 품질 대시보드
+
+#### 지표 계산 로직
+```typescript
+// 벤치마킹: QualityDashboard.tsx
+interface QualityMetrics {
+  fieldCompletionRate: number;    // 필수 필드 완성도
+  furnitureAssignmentRate: number; // 가구 배정률
+  nameDuplicationRate: number;   // 이름 중복률
+  dataFreshnessRate: number;     // 데이터 최신성
+}
+
+const calculateMetrics = (items: Item[], furniture: Furniture[]): QualityMetrics => {
+  // 각 지표 계산 로직
+};
+```
+
+### 실시간 데이터 동기화
+
+#### React Query + WebSocket
+```typescript
+// 실시간 데이터 업데이트
+const itemsQuery = trpc.item.list.useQuery(undefined, {
+  refetchInterval: 5000, // 5초마다 자동 리프레시
+});
+
+// 실시간 위치 업데이트
+const updateFurnitureMutation = trpc.furniture.updatePosition.useMutation({
+  onSuccess: () => {
+    // 다른 클라이언트에 실시간 반영
+    queryClient.invalidateQueries(['furniture.list']);
+  }
+});
+```
+
 ---
 
 ## 📋 단기 개선 (Short-term)

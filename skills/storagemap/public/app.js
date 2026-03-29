@@ -646,6 +646,12 @@ class StorageMapApp {
                 this.showToast('📍 위치 저장됨 (Google Sheets 동기화)');
                 this.saveLocalData();
                 console.log('✅ 저장 완료');
+            } else if (response.status === 404) {
+                // 가구가 서버에 없음 - 먼저 가구를 생성
+                console.log('🔄 가구가 서버에 없음, 가구 생성 시도...');
+                await this.createFurnitureOnServer(furniture);
+                // 생성 후 다시 위치 저장 시도
+                await this.retrySavePosition(furnitureId, x, y, w, h);
             } else {
                 console.error('❌ 서버 저장 실패:', result.error);
                 this.saveLocalData();
@@ -655,6 +661,61 @@ class StorageMapApp {
             console.error('❌ 저장 오류:', error);
             this.saveLocalData();
             this.showToast('⚠️ 로컬에만 저장됨 (연결 오류)');
+        }
+    }
+
+    // 서버에 가구 생성
+    async createFurnitureOnServer(furniture) {
+        try {
+            const response = await fetch('/api/furniture', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name: furniture.name,
+                    space_id: furniture.space_id,
+                    type: furniture.type,
+                    pos_x: furniture.pos_x,
+                    pos_y: furniture.pos_y,
+                    width: furniture.width,
+                    height: furniture.height,
+                    notes: furniture.notes
+                })
+            });
+            
+            if (response.ok) {
+                console.log('✅ 서버에 가구 생성 완료:', furniture.name);
+                return true;
+            } else {
+                const error = await response.json();
+                throw new Error(error.error || '가구 생성 실패');
+            }
+        } catch (error) {
+            console.error('❌ 서버에 가구 생성 실패:', error);
+            throw error;
+        }
+    }
+
+    // 위치 저장 재시도
+    async retrySavePosition(furnitureId, x, y, w, h) {
+        try {
+            const response = await fetch('/api/furniture/' + furnitureId + '/position', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ x, y, width: w, height: h })
+            });
+            
+            if (response.ok) {
+                this.showToast('📍 위치 저장됨 (Google Sheets 동기화)');
+                this.saveLocalData();
+                console.log('✅ 재시도 저장 완료');
+            } else {
+                const result = await response.json();
+                throw new Error(result.error || '저장 실패');
+            }
+        } catch (error) {
+            console.error('❌ 재시도 저장 실패:', error);
+            this.saveLocalData();
+            this.showToast('⚠️ 로컬에만 저장됨');
         }
     }
 
@@ -1125,6 +1186,12 @@ class StorageMapApp {
             e.preventDefault();
             const formData = new FormData(e.target);
             
+            // 현재 공간이 없으면 첫 번째 공간으로 설정
+            if (!this.currentSpace && this.data.spaces.length > 0) {
+                this.currentSpace = this.data.spaces[0].space_id;
+                console.log('⚠️ currentSpace 없음, 첫 번째 공간으로 설정:', this.currentSpace);
+            }
+            
             const newFurniture = {
                 name: formData.get('name'),
                 space_id: this.currentSpace,
@@ -1136,6 +1203,8 @@ class StorageMapApp {
                 notes: formData.get('notes') || null
             };
             
+            console.log('📝 가구 추가 요청:', newFurniture.name, '공간:', this.currentSpace);
+            
             try {
                 const response = await fetch('/api/furniture', {
                     method: 'POST',
@@ -1145,6 +1214,9 @@ class StorageMapApp {
                 
                 if (response.ok) {
                     const data = await response.json();
+                    // 로컬 데이터에 추가
+                    this.data.furniture.push(data.furniture);
+                    this.saveLocalData();
                     this.closeModal();
                     this.render();
                     this.showToast(`✅ ${newFurniture.name} 가구 추가됨`);

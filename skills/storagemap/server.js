@@ -33,13 +33,25 @@ app.use(session({
   cookie: { secure: false } // 개발 환경에서는 false
 }));
 
-// 인증 미들웨어
+// 서버 자동 인증 상태
+let serverAutoAuth = null;
+
+// 인증 미들웨어 - 서버 자동 인증 또는 세션 인증 지원
 function checkAuth(req, res, next) {
-  if (!req.session || !req.session.tokens) {
-    return res.status(401).json({ error: '인증이 필요합니다. /auth/google로 이동하세요' });
+  // 1. 세션 인증 확인 (브라우저 OAuth 로그인)
+  if (req.session && req.session.tokens) {
+    oauth2Client.setCredentials(req.session.tokens);
+    return next();
   }
-  oauth2Client.setCredentials(req.session.tokens);
-  next();
+  
+  // 2. 서버 자동 인증 확인 (.env의 GOOGLE_REFRESH_TOKEN)
+  if (serverAutoAuth && serverAutoAuth.credentials) {
+    oauth2Client.setCredentials(serverAutoAuth.credentials);
+    return next();
+  }
+  
+  // 인증 실패
+  return res.status(401).json({ error: '인증이 필요합니다. /auth/google로 이동하세요' });
 }
 
 // Google OAuth 라우트
@@ -74,10 +86,12 @@ app.get('/auth/callback', async (req, res) => {
   }
 });
 
-// 인증 상태 확인
+// 인증 상태 확인 (서버 자동 인증 포함)
 app.get('/api/auth/status', (req, res) => {
+  const isAuthenticated = !!(req.session.tokens || (serverAutoAuth && serverAutoAuth.credentials));
   res.json({
-    authenticated: !!req.session.tokens,
+    authenticated: isAuthenticated,
+    serverAutoAuth: !!(serverAutoAuth && serverAutoAuth.credentials),
     timestamp: new Date().toISOString()
   });
 });
@@ -254,7 +268,15 @@ class StorageMapService {
       const obj = {};
       headers.forEach((header, index) => {
         const key = header.toLowerCase().replace(/\s+/g, '_');
-        obj[key] = row[index] || '';
+        let value = row[index] || '';
+        
+        // 숫자 필드 자동 변환
+        const numericFields = ['pos_x', 'pos_y', 'width', 'height', 'quantity'];
+        if (numericFields.includes(key)) {
+          value = parseInt(value) || 0;
+        }
+        
+        obj[key] = value;
       });
       
       if (rowIndex === 0) {
@@ -448,26 +470,37 @@ app.get('/api/floorplan/:spaceId', (req, res) => {
   res.json(floorplanData);
 });
 
-// 가구 위치 업데이트 API (벤치마킹 기능)
+// 가구 위치 업데이트 API
 app.put('/api/furniture/:furnitureId/position', checkAuth, async (req, res) => {
   const { furnitureId } = req.params;
   const { x, y, width, height } = req.body;
+  
+  console.log(`📝 가구 위치 업데이트 요청: ${furnitureId}`, { x, y, width, height });
   
   try {
     // 캐시 업데이트
     const furniture = storageService.cache.furniture.find(f => f.furniture_id === furnitureId);
     if (!furniture) {
+      console.error(`❌ 가구를 찾을 수 없음: ${furnitureId}`);
       return res.status(404).json({ error: '가구를 찾을 수 없습니다' });
     }
     
-    if (x !== undefined) furniture.pos_x = x;
-    if (y !== undefined) furniture.pos_y = y;
-    if (width !== undefined) furniture.width = width;
-    if (height !== undefined) furniture.height = height;
+    console.log(`✅ 가구 찾음: ${furniture.name}, 현재 위치: (${furniture.pos_x}, ${furniture.pos_y})`);
     
-    // Google Sheets에 저장 (선택적)
-    if (process.env.ENABLE_SHEETS_WRITE === 'true') {
-      await updateFurnitureInSheets(furnitureId, { pos_x: x, pos_y: y, width, height });
+    if (x !== undefined) furniture.pos_x = parseInt(x) || 0;
+    if (y !== undefined) furniture.pos_y = parseInt(y) || 0;
+    if (width !== undefined) furniture.width = parseInt(width) || 100;
+    if (height !== undefined) furniture.height = parseInt(height) || 60;
+    
+    console.log(`🔄 업데이트된 위치: (${furniture.pos_x}, ${furniture.pos_y})`);
+    
+    // 항상 Google Sheets에 저장
+    try {
+      await updateFurnitureInSheets(furnitureId, { pos_x: furniture.pos_x, pos_y: furniture.pos_y, width: furniture.width, height: furniture.height });
+      console.log('✅ Google Sheets 저장 완료');
+    } catch (sheetsError) {
+      console.error('⚠️ Google Sheets 저장 실패:', sheetsError.message);
+      // Sheets 저장 실패해도 API는 성공 응답 (캐시는 이미 업데이트됨)
     }
     
     res.json({ 
@@ -482,13 +515,15 @@ app.put('/api/furniture/:furnitureId/position', checkAuth, async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('위치 업데이트 실패:', error);
+    console.error('❌ 위치 업데이트 실패:', error);
     res.status(500).json({ error: '위치 업데이트 실패: ' + error.message });
   }
 });
 
 // Google Sheets에 가구 위치 업데이트
 async function updateFurnitureInSheets(furnitureId, updates) {
+  console.log(`🔄 Google Sheets 업데이트 시작: ${furnitureId}`, updates);
+  
   try {
     // Furniture 시트에서 해당 가구 찾기
     const response = await sheets.spreadsheets.values.get({
@@ -497,46 +532,80 @@ async function updateFurnitureInSheets(furnitureId, updates) {
     });
     
     const rows = response.data.values;
+    if (!rows || rows.length === 0) {
+      throw new Error('Furniture 시트가 비어있습니다');
+    }
+    
     const headers = rows[0];
     const furnitureIdIndex = headers.indexOf('furniture_id');
     
+    if (furnitureIdIndex === -1) {
+      throw new Error('furniture_id 컬럼을 찾을 수 없습니다');
+    }
+    
     const rowIndex = rows.findIndex(row => row[furnitureIdIndex] === furnitureId);
     
-    if (rowIndex > 0) {
-      // 업데이트할 값들
-      const posXIndex = headers.indexOf('pos_x');
-      const posYIndex = headers.indexOf('pos_y');
-      const widthIndex = headers.indexOf('width');
-      const heightIndex = headers.indexOf('height');
+    if (rowIndex === -1) {
+      throw new Error(`가구 ${furnitureId}를 찾을 수 없습니다`);
+    }
+    
+    console.log(`✅ 가구 찾음: ${furnitureId}, 행: ${rowIndex + 1}`);
+    
+    // 업데이트할 값들
+    const posXIndex = headers.indexOf('pos_x');
+    const posYIndex = headers.indexOf('pos_y');
+    const widthIndex = headers.indexOf('width');
+    const heightIndex = headers.indexOf('height');
+    
+    // 업데이트 요청 생성
+    const updates2 = [];
+    
+    if (updates.pos_x !== undefined && posXIndex !== -1) {
+      const colLetter = String.fromCharCode(65 + posXIndex);
+      updates2.push({
+        range: `${process.env.SHEET_FURNITURE || 'Furniture'}!${colLetter}${rowIndex + 1}`,
+        values: [[updates.pos_x]]
+      });
+    }
+    
+    if (updates.pos_y !== undefined && posYIndex !== -1) {
+      const colLetter = String.fromCharCode(65 + posYIndex);
+      updates2.push({
+        range: `${process.env.SHEET_FURNITURE || 'Furniture'}!${colLetter}${rowIndex + 1}`,
+        values: [[updates.pos_y]]
+      });
+    }
+    
+    if (updates.width !== undefined && widthIndex !== -1) {
+      const colLetter = String.fromCharCode(65 + widthIndex);
+      updates2.push({
+        range: `${process.env.SHEET_FURNITURE || 'Furniture'}!${colLetter}${rowIndex + 1}`,
+        values: [[updates.width]]
+      });
+    }
+    
+    if (updates.height !== undefined && heightIndex !== -1) {
+      const colLetter = String.fromCharCode(65 + heightIndex);
+      updates2.push({
+        range: `${process.env.SHEET_FURNITURE || 'Furniture'}!${colLetter}${rowIndex + 1}`,
+        values: [[updates.height]]
+      });
+    }
+    
+    if (updates2.length > 0) {
+      console.log(`📝 ${updates2.length}개 셀 업데이트:`, updates2.map(u => u.range).join(', '));
       
-      // 업데이트 요청 생성
-      const updates2 = [];
+      await sheets.spreadsheets.values.batchUpdate({
+        spreadsheetId,
+        resource: {
+          valueInputOption: 'USER_ENTERED',
+          data: updates2
+        }
+      });
       
-      if (updates.pos_x !== undefined && posXIndex !== -1) {
-        updates2.push({
-          range: `${process.env.SHEET_FURNITURE || 'Furniture'}!${String.fromCharCode(65 + posXIndex)}${rowIndex + 1}`,
-          values: [[updates.pos_x]]
-        });
-      }
-      
-      if (updates.pos_y !== undefined && posYIndex !== -1) {
-        updates2.push({
-          range: `${process.env.SHEET_FURNITURE || 'Furniture'}!${String.fromCharCode(65 + posYIndex)}${rowIndex + 1}`,
-          values: [[updates.pos_y]]
-        });
-      }
-      
-      if (updates.length > 0) {
-        await sheets.spreadsheets.values.batchUpdate({
-          spreadsheetId,
-          resource: {
-            valueInputOption: 'USER_ENTERED',
-            data: updates2
-          }
-        });
-        
-        console.log(`✅ Google Sheets 업데이트: ${furnitureId}`);
-      }
+      console.log(`✅ Google Sheets 업데이트 완료: ${furnitureId}`);
+    } else {
+      console.log('⚠️ 업데이트할 내용이 없습니다');
     }
   } catch (error) {
     console.error('❌ Google Sheets 업데이트 실패:', error.message);
@@ -619,9 +688,10 @@ app.get('/api/data/reload', checkAuth, async (req, res) => {
   try {
     console.log('🔄 /api/data/reload 요청 받음');
     console.log('  세션 토큰:', req.session.tokens ? '있음' : '없음');
+    console.log('  서버 자동 인증:', serverAutoAuth ? '사용 중' : '미사용');
     
-    // oauth2Client에 토큰 설정
-    oauth2Client.setCredentials(req.session.tokens);
+    // 이미 checkAuth 미들웨어에서 oauth2Client에 credentials 설정됨
+    // 추가 설정 필요 없음
     
     // Google Sheets에서 데이터 로드
     await storageService.loadFromSheetsWithAuth(oauth2Client);
@@ -985,7 +1055,10 @@ app.listen(PORT, async () => {
       const { credentials } = await oauth2Client.refreshAccessToken();
       oauth2Client.setCredentials(credentials);
       
-      console.log('✅ Google 자동 인증 성공');
+      // 서버 자동 인증 상태 저장 (API에서 사용)
+      serverAutoAuth = { credentials };
+      
+      console.log('✅ Google 자동 인증 성공 (서버 및 API 사용 가능)');
       
       // Google Sheets에서 데이터 로드
       await storageService.loadFromSheetsWithAuth(oauth2Client);

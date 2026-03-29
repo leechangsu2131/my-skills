@@ -1,10 +1,23 @@
-# StorageMap Google Sheets 기반 장기 업그레이드 로드맵
+# StorageMap 벤치마킹 및 장기 로드맵
+
+## 📊 세 프로젝트 비교
+
+| 항목 | 현재 프로젝트 | storagemap-v2-2d | Storage-Map-1 |
+|------|-------------|------------------|---------------|
+| **아키텍처** | 단일 프로젝트 | 단일 프로젝트 | Monorepo (pnpm) |
+| **프론트엔드** | Vanilla JS | React + TS | React + TS |
+| **백엔드** | Express | tRPC + Express | Express + API |
+| **데이터베이스** | Google Sheets | MySQL + Drizzle | PostgreSQL + Drizzle |
+| **API 방식** | REST API | tRPC | REST + OpenAPI |
+| **빌드** | 없음 | Vite | esbuild + Vite |
+
+---
 
 ## 🎯 비전: Google Sheets + 현대적 프론트엔드
 
 Google Sheets를 데이터베이스로 유지하면서 React + TypeScript로 프론트엔드를 현대화합니다.
 
-## 📊 기술 스택 목표
+### 기술 스택 목표
 
 ```json
 {
@@ -24,6 +37,8 @@ Google Sheets를 데이터베이스로 유지하면서 React + TypeScript로 프
   }
 }
 ```
+
+---
 
 ## 🚀 Phase별 업그레이드 계획
 
@@ -60,7 +75,6 @@ export class GoogleSheetsService {
     this.spreadsheetId = process.env.GOOGLE_SHEETS_SPREADSHEET_ID!;
   }
 
-  // CRUD operations
   async getItems(): Promise<Item[]> {
     const response = await this.sheets.spreadsheets.values.get({
       spreadsheetId: this.spreadsheetId,
@@ -69,23 +83,14 @@ export class GoogleSheetsService {
     return this.parseSheetData(response.data.values);
   }
 
-  async addItem(item: Omit<Item, 'item_id' | 'created_at' | 'updated_at'>): Promise<Item> {
-    const newItem = {
-      item_id: generateId(),
-      ...item,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
-    };
-
+  async addItem(item: Omit<Item, 'item_id'>): Promise<Item> {
+    const newItem = { item_id: generateId(), ...item };
     await this.sheets.spreadsheets.values.append({
       spreadsheetId: this.spreadsheetId,
       range: 'Items!A:L',
       valueInputOption: 'USER_ENTERED',
-      resource: {
-        values: [Object.values(newItem)]
-      }
+      resource: { values: [Object.values(newItem)] }
     });
-
     return newItem;
   }
 }
@@ -100,7 +105,7 @@ export const useGoogleSheets = () => {
   const itemsQuery = useQuery({
     queryKey: ['items'],
     queryFn: () => googleSheetsService.getItems(),
-    staleTime: 5 * 60 * 1000, // 5분
+    staleTime: 5 * 60 * 1000,
   });
 
   const addItemMutation = useMutation({
@@ -115,6 +120,8 @@ export const useGoogleSheets = () => {
 };
 ```
 
+---
+
 ### Phase 2: 고급 2D 캔버스 (2-3주)
 
 #### 2.1 벤치마킹 Canvas2D 컴포넌트 이식
@@ -128,12 +135,8 @@ interface Canvas2DProps {
 }
 
 export const Canvas2D: React.FC<Canvas2DProps> = ({
-  furnitureList,
-  selectedFurnitureId,
-  onFurnitureSelect,
-  onFurnitureMove
+  furnitureList, selectedFurnitureId, onFurnitureSelect, onFurnitureMove
 }) => {
-  // 벤치마킹된 드래그 로직 적용
   const [dragState, setDragState] = useState<DragState | null>(null);
 
   const handleMouseDown = useCallback((e: React.MouseEvent, furnitureId: string) => {
@@ -147,23 +150,11 @@ export const Canvas2D: React.FC<Canvas2DProps> = ({
       startPosX: furniture.posX,
       startPosY: furniture.posY
     });
-
     onFurnitureSelect(furnitureId);
   }, [furnitureList, onFurnitureSelect]);
 
-  // Google Sheets에 위치 실시간 저장
-  const updateFurniturePosition = useMutation({
-    mutationFn: async ({ furnitureId, x, y }: UpdatePositionParams) => {
-      return googleSheetsService.updateFurniturePosition(furnitureId, x, y);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries(['furniture']);
-    }
-  });
-
   return (
     <div className="relative w-full h-600 bg-grid">
-      {/* 가구 마커들 */}
       {furnitureList.map(furniture => (
         <FurnitureMarker
           key={furniture.furnitureId}
@@ -189,17 +180,12 @@ export const useDragAndDrop = (onMove: (id: string, x: number, y: number) => voi
     const handleMouseMove = (e: MouseEvent) => {
       const deltaX = e.clientX - dragState.startX;
       const deltaY = e.clientY - dragState.startY;
-      
       const newX = Math.max(0, dragState.startPosX + deltaX);
       const newY = Math.max(0, dragState.startPosY + deltaY);
-      
       onMove(dragState.furnitureId, newX, newY);
     };
 
-    const handleMouseUp = () => {
-      // Google Sheets에 위치 저장
-      setDragState(null);
-    };
+    const handleMouseUp = () => setDragState(null);
 
     document.addEventListener('mousemove', handleMouseMove);
     document.addEventListener('mouseup', handleMouseUp);
@@ -214,6 +200,8 @@ export const useDragAndDrop = (onMove: (id: string, x: number, y: number) => voi
 };
 ```
 
+---
+
 ### Phase 3: 데이터 품질 대시보드 (1-2주)
 
 #### 3.1 Google Sheets 기반 지표 계산
@@ -226,17 +214,14 @@ export const useQualityMetrics = () => {
   const metrics = useMemo(() => {
     if (!items?.length || !furniture?.length) return null;
 
-    // 필수 필드 완성도
     const fieldCompletionRate = (items.filter(item => 
       item.name && item.furniture_id
     ).length / items.length) * 100;
 
-    // 가구 배정률
     const furnitureAssignmentRate = (items.filter(item => 
       item.furniture_id
     ).length / items.length) * 100;
 
-    // 이름 중복률
     const nameGroups = items.reduce((acc, item) => {
       acc[item.name] = (acc[item.name] || 0) + 1;
       return acc;
@@ -245,14 +230,9 @@ export const useQualityMetrics = () => {
     const duplicateNames = Object.values(nameGroups).filter(count => count > 1);
     const nameDuplicationRate = (duplicateNames.length / Object.keys(nameGroups).length) * 100;
 
-    // 데이터 최신성 (30일 이내)
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-    
-    const recentItems = items.filter(item => 
-      new Date(item.updated_at) > thirtyDaysAgo
-    );
-    
+    const recentItems = items.filter(item => new Date(item.updated_at) > thirtyDaysAgo);
     const dataFreshnessRate = (recentItems.length / items.length) * 100;
 
     return {
@@ -274,7 +254,6 @@ export const useQualityMetrics = () => {
 // components/QualityDashboard.tsx
 export const QualityDashboard: React.FC = () => {
   const { metrics } = useQualityMetrics();
-
   if (!metrics) return <div>로딩 중...</div>;
 
   return (
@@ -289,37 +268,27 @@ export const QualityDashboard: React.FC = () => {
         value={metrics.furnitureAssignmentRate}
         status={metrics.furnitureAssignmentRate > 90 ? 'pass' : metrics.furnitureAssignmentRate > 70 ? 'warning' : 'danger'}
       />
-      <MetricCard
-        title="이름 중복률"
-        value={metrics.nameDuplicationRate}
-        status={metrics.nameDuplicationRate < 5 ? 'pass' : metrics.nameDuplicationRate < 15 ? 'warning' : 'danger'}
-      />
-      <MetricCard
-        title="데이터 최신성"
-        value={metrics.dataFreshnessRate}
-        status={metrics.dataFreshnessRate > 85 ? 'pass' : metrics.dataFreshnessRate > 60 ? 'warning' : 'danger'}
-      />
     </div>
   );
 };
 ```
 
+---
+
 ### Phase 4: 실시간 기능 및 최적화 (2-3주)
 
 #### 4.1 Google Sheets 변경 감지
 ```typescript
-// lib/google-sheets-webhook.ts
-// Google Apps Script 웹훅으로 실시간 변경 감지
-export const setupGoogleSheetsWebhook = () => {
-  // Google Apps Script에서 웹훅 설정
-  // onChange 이벤트로 서버에 알림
-};
+// 실시간 데이터 업데이트
+const itemsQuery = trpc.item.list.useQuery(undefined, {
+  refetchInterval: 5000, // 5초마다 자동 리프레시
+});
 
-// 서버에서 WebSocket으로 클라이언트에 실시간 전파
-io.on('google-sheets-update', (data) => {
-  // React Query 무효화
-  queryClient.invalidateQueries(['items']);
-  queryClient.invalidateQueries(['furniture']);
+// 실시간 위치 업데이트
+const updateFurnitureMutation = trpc.furniture.updatePosition.useMutation({
+  onSuccess: () => {
+    queryClient.invalidateQueries(['furniture.list']);
+  }
 });
 ```
 
@@ -328,49 +297,21 @@ io.on('google-sheets-update', (data) => {
 // lib/cache.ts
 export class GoogleSheetsCache {
   private cache = new Map<string, { data: any; timestamp: number }>();
-  private TTL = 5 * 60 * 1000; // 5분
+  private TTL = 5 * 60 * 1000;
 
   async get<T>(key: string, fetcher: () => Promise<T>): Promise<T> {
     const cached = this.cache.get(key);
-    
     if (cached && Date.now() - cached.timestamp < this.TTL) {
       return cached.data;
     }
-
     const data = await fetcher();
     this.cache.set(key, { data, timestamp: Date.now() });
-    
     return data;
-  }
-
-  invalidate(key: string) {
-    this.cache.delete(key);
   }
 }
 ```
 
-## 🛠️ Google Sheets 서비스 계정 설정
-
-### 1. 서비스 계정 생성
-```bash
-# Google Cloud Console에서 서비스 계정 생성
-gcloud iam service-accounts create storagemap-service \
-    --display-name="StorageMap Service" \
-    --description="Service account for StorageMap"
-```
-
-### 2. 키 파일 생성 및 권한 설정
-```bash
-# JSON 키 파일 다운로드
-# 스프레드시트에 서비스 계정 이메일 공유 (편집자 권한)
-```
-
-### 3. 환경 설정
-```bash
-# .env
-GOOGLE_APPLICATION_CREDENTIALS=./path/to/service-account-key.json
-GOOGLE_SHEETS_SPREADSHEET_ID=your_spreadsheet_id
-```
+---
 
 ## 📋 마이그레이션 체크리스트
 
@@ -400,7 +341,36 @@ GOOGLE_SHEETS_SPREADSHEET_ID=your_spreadsheet_id
 - [ ] 캐싱 최적화
 - [ ] 성능 모니터링
 
-## 🎯 최종 목표
+---
+
+## 🎯 최종 권장 아키텍처
+
+**Storage-Map-1의 아키텍처 + Google Sheets의 데이터 편의성**
+
+```mermaid
+graph TB
+    subgraph "Monorepo Structure"
+        A[artifacts/frontend] --> B[lib/google-sheets]
+        C[artifacts/api-server] --> B
+        D[lib/api-client] --> B
+        E[lib/types] --> D
+        F[scripts/setup] --> B
+    end
+    
+    subgraph "Google Sheets"
+        G[Spaces Sheet]
+        H[Furniture Sheet]
+        I[Items Sheet]
+        J[History Sheet]
+    end
+    
+    B --> G
+    B --> H
+    B --> I
+    B --> J
+```
+
+### 🎯 최종 목표
 
 Google Sheets의 **간편한 데이터 관리** 장점은 유지하면서, **현대적인 사용자 경험**과 **고급 기능**을 제공하는 하이브리드 솔루션:
 
@@ -410,3 +380,26 @@ Google Sheets의 **간편한 데이터 관리** 장점은 유지하면서, **현
 ✅ **데이터 품질 모니터링 대시보드**  
 ✅ **실시간 동기화 및 캐싱 최적화**  
 ✅ **스펙 문서 100% 준수**
+
+---
+
+## 🛠️ Google Sheets 서비스 계정 설정
+
+### 1. 서비스 계정 생성
+```bash
+# Google Cloud Console에서 서비스 계정 생성
+gcloud iam service-accounts create storagemap-service \
+    --display-name="StorageMap Service" \
+    --description="Service account for StorageMap"
+```
+
+### 2. 환경 설정
+```bash
+# .env
+GOOGLE_APPLICATION_CREDENTIALS=./path/to/service-account-key.json
+GOOGLE_SHEETS_SPREADSHEET_ID=your_spreadsheet_id
+```
+
+---
+
+**마지막 업데이트**: 2026-03-29

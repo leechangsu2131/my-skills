@@ -740,21 +740,42 @@ body {
 }
 .resize-handle {
     position: absolute;
-    bottom: -6px;
-    right: -6px;
-    width: 12px;
-    height: 12px;
+    bottom: 4px;
+    right: 4px;
+    width: 20px;
+    height: 20px;
     background: var(--primary-color);
-    border: 2px solid white;
+    border: 3px solid white;
     border-radius: 50%;
     cursor: se-resize;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
-    z-index: 10;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0; /* 기본적으로 숨김 */
+    pointer-events: none; /* 클릭 불가능 */
+    transition: opacity 0.2s ease;
+}
+
+/* 선택된 가구에서만 핸들 표시 */
+.furniture-marker.selected .resize-handle {
+    opacity: 1;
+    pointer-events: auto; /* 클릭 가능 */
+}
+
+.resize-handle::after {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-right: 2px solid white;
+    border-bottom: 2px solid white;
 }
 
 .resize-handle:hover {
     background: var(--primary-hover);
     transform: scale(1.2);
+    box-shadow: 0 3px 8px rgba(0,0,0,0.5);
 }
 
 /* 그리드 배경 (Storage-Map-1 벤치마킹) */

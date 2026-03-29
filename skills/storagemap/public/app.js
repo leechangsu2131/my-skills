@@ -420,7 +420,7 @@ class StorageMapApp {
         this.render();
     }
 
-    // 2D 평면도 렌더링
+    // 2D 평면도 렌더링 - 완전히 새로운 드래그 구현
     renderFloorPlan() {
         const floorPlan = document.getElementById('floorPlan');
         const emptyState = document.getElementById('emptyState');
@@ -442,7 +442,7 @@ class StorageMapApp {
         floorPlan.style.width = `${planWidth * this.zoom}px`;
         floorPlan.style.height = `${planHeight * this.zoom}px`;
         
-        // 가구 마커 렌더링 - 드래그 기능 추가
+        // 가구 마커 렌더링
         floorPlan.innerHTML = spaceFurniture.map(furniture => {
             const items = this.data.items.filter(item => item.furniture_id === furniture.furniture_id);
             const isSelected = this.selectedFurniture === furniture.furniture_id;
@@ -454,52 +454,163 @@ class StorageMapApp {
                             top: ${furniture.pos_y * this.zoom}px; 
                             width: ${furniture.width * this.zoom}px; 
                             height: ${furniture.height * this.zoom}px;"
-                     onmousedown="app.startDrag(event, '${furniture.furniture_id}', 'move')"
-                     onclick="app.selectFurniture('${furniture.furniture_id}')"
                      data-furniture-id="${furniture.furniture_id}">
                     <div class="furniture-name">${furniture.name}</div>
                     ${items.length > 0 ? `<div class="furniture-count">${items.length}개</div>` : ''}
-                    ${isSelected ? `<div class="resize-handle" onmousedown="app.startDrag(event, '${furniture.furniture_id}', 'resize')"></div>` : ''}
+                    <div class="resize-handle"></div>
                 </div>
             `;
         }).join('');
+        
+        // 각 마커에 직접 이벤트 리스너 연결
+        this.attachMarkerListeners();
     }
 
-    // 드래그 시작
-    startDrag(e, furnitureId, type) {
-        e.stopPropagation();
+    // 각 마커에 개별 이벤트 리스너 연결
+    attachMarkerListeners() {
+        const markers = document.querySelectorAll('.furniture-marker');
+        markers.forEach(marker => {
+            const furnitureId = marker.dataset.furnitureId;
+            
+            // mousedown - 드래그 시작
+            marker.addEventListener('mousedown', (e) => {
+                console.log('🖱️ 마커 mousedown:', e.target.className);
+                
+                // 리사이즈 핸들 클릭 체크 (closest 사용 for robust detection)
+                if (e.target.closest('.resize-handle')) {
+                    console.log('✅ 리사이즈 핸들 클릭 감지!');
+                    e.stopPropagation();
+                    e.preventDefault();
+                    this.beginDrag(e, furnitureId, 'resize');
+                    return;
+                }
+                
+                // 가구 본체 클릭
+                if (e.button === 0) { // 좌클릭만
+                    e.stopPropagation();
+                    e.preventDefault();
+                    this.beginDrag(e, furnitureId, 'move');
+                }
+            });
+            
+            // click - 선택 (드래그가 아닌 경우)
+            marker.addEventListener('click', (e) => {
+                if (!this.hasDragged) {
+                    this.selectFurniture(furnitureId);
+                }
+            });
+        });
+    }
+
+    // 드래그 시작 (새로운 구현)
+    beginDrag(e, furnitureId, type) {
+        e.preventDefault();
         
         const furniture = this.data.furniture.find(f => f.furniture_id === furnitureId);
         if (!furniture) return;
         
-        dragHandler.startDrag(e, furniture, type);
+        // 좌표를 숫자로 확실히 변환
+        furniture.pos_x = parseInt(furniture.pos_x) || 0;
+        furniture.pos_y = parseInt(furniture.pos_y) || 0;
+        furniture.width = parseInt(furniture.width) || 100;
+        furniture.height = parseInt(furniture.height) || 60;
         
-        const handleMouseMove = (ev) => {
-            const result = dragHandler.handleMove(ev);
-            if (result) {
-                const furniture = this.data.furniture.find(f => f.furniture_id === furnitureId);
-                if (result.type === 'move') {
-                    furniture.pos_x = result.x;
-                    furniture.pos_y = result.y;
-                } else if (result.type === 'resize') {
-                    furniture.width = result.width;
-                    furniture.height = result.height;
+        console.log('🖱️ 드래그 시작:', furniture.name, '타입:', type, '현재크기:', furniture.width, 'x', furniture.height);
+        
+        // 드래그 상태 초기화
+        this.hasDragged = false;
+        this.isDragging = true;
+        this.dragType = type; // 드래그 타입 저장
+        
+        // 초기 위치 저장 (픽셀 좌표)
+        const startX = e.clientX;
+        const startY = e.clientY;
+        const startPosX = furniture.pos_x;
+        const startPosY = furniture.pos_y;
+        const startWidth = furniture.width;
+        const startHeight = furniture.height;
+        
+        // 마커 DOM 참조
+        const marker = document.querySelector(`[data-furniture-id="${furnitureId}"]`);
+        if (marker) {
+            marker.classList.add('dragging');
+            if (type === 'resize') {
+                marker.style.cursor = 'se-resize';
+                console.log('✅ 리사이즈 커서 적용');
+            }
+        }
+        
+        // 마우스 이동 핸들러
+        const onMouseMove = (ev) => {
+            if (!this.isDragging) return;
+            
+            const deltaX = ev.clientX - startX;
+            const deltaY = ev.clientY - startY;
+            
+            // 이동 거리 체크 (클릭과 드래그 구분)
+            if (Math.abs(deltaX) > 3 || Math.abs(deltaY) > 3) {
+                this.hasDragged = true;
+            }
+            
+            if (type === 'move') {
+                // 줌 고려한 좌표 계산
+                const rawX = startPosX + (deltaX / this.zoom);
+                const rawY = startPosY + (deltaY / this.zoom);
+                
+                // 그리드 스냅
+                const newX = Math.max(0, Math.round(rawX / 10) * 10);
+                const newY = Math.max(0, Math.round(rawY / 10) * 10);
+                
+                // 데이터 업데이트
+                furniture.pos_x = newX;
+                furniture.pos_y = newY;
+                
+                // DOM 직접 업데이트
+                if (marker) {
+                    marker.style.left = `${newX * this.zoom}px`;
+                    marker.style.top = `${newY * this.zoom}px`;
                 }
-                this.renderFloorPlan();
+            } else if (type === 'resize') {
+                const rawWidth = startWidth + (deltaX / this.zoom);
+                const rawHeight = startHeight + (deltaY / this.zoom);
+                
+                const newWidth = Math.max(50, Math.round(rawWidth / 10) * 10);
+                const newHeight = Math.max(30, Math.round(rawHeight / 10) * 10);
+                
+                furniture.width = newWidth;
+                furniture.height = newHeight;
+                
+                if (marker) {
+                    marker.style.width = `${newWidth * this.zoom}px`;
+                    marker.style.height = `${newHeight * this.zoom}px`;
+                }
+                
+                console.log('📐 리사이즈 중:', newWidth, 'x', newHeight);
             }
         };
         
-        const handleMouseUp = () => {
-            const dragState = dragHandler.endDrag();
-            if (dragState) {
-                this.saveFurniturePosition(dragState.furnitureId);
+        // 마우스 업 핸들러
+        const onMouseUp = () => {
+            console.log('🖱️ 드래그 종료, 타입:', type);
+            this.isDragging = false;
+            
+            if (marker) {
+                marker.classList.remove('dragging');
+                marker.style.cursor = ''; // 커서 초기화
             }
-            document.removeEventListener('mousemove', handleMouseMove);
-            document.removeEventListener('mouseup', handleMouseUp);
+            
+            // 위치 저장
+            if (this.hasDragged) {
+                console.log('💾 위치 저장:', furnitureId, '타입:', type);
+                this.saveFurniturePosition(furnitureId);
+            }
+            
+            document.removeEventListener('mousemove', onMouseMove);
+            document.removeEventListener('mouseup', onMouseUp);
         };
         
-        document.addEventListener('mousemove', handleMouseMove);
-        document.addEventListener('mouseup', handleMouseUp);
+        document.addEventListener('mousemove', onMouseMove);
+        document.addEventListener('mouseup', onMouseUp);
     }
 
     // 가구 위치 저장
@@ -507,28 +618,54 @@ class StorageMapApp {
         const furniture = this.data.furniture.find(f => f.furniture_id === furnitureId);
         if (!furniture) return;
         
+        // 숫자로 변환하여 저장
+        const x = parseInt(furniture.pos_x) || 0;
+        const y = parseInt(furniture.pos_y) || 0;
+        const w = parseInt(furniture.width) || 100;
+        const h = parseInt(furniture.height) || 60;
+        
+        console.log('💾 저장 시도:', furniture.name, 'x:', x, 'y:', y, 'w:', w, 'h:', h);
+        
+        // 데이터 정리 (숫자로 확실히 변환)
+        furniture.pos_x = x;
+        furniture.pos_y = y;
+        furniture.width = w;
+        furniture.height = h;
+        
         try {
             const response = await fetch('/api/furniture/' + furnitureId + '/position', {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    x: furniture.pos_x,
-                    y: furniture.pos_y,
-                    width: furniture.width,
-                    height: furniture.height
-                })
+                body: JSON.stringify({ x, y, width: w, height: h })
             });
             
-            if (response.ok) {
-                this.showToast('📍 위치 저장됨');
+            const result = await response.json();
+            console.log('📥 서버 응답:', result);
+            
+            if (response.ok && result.success) {
+                this.showToast('📍 위치 저장됨 (Google Sheets 동기화)');
+                this.saveLocalData();
+                console.log('✅ 저장 완료');
+            } else {
+                console.error('❌ 서버 저장 실패:', result.error);
+                this.saveLocalData();
+                this.showToast('⚠️ 로컬에만 저장됨: ' + (result.error || '알 수 없는 오류'));
             }
         } catch (error) {
-            console.error('위치 저장 실패:', error);
+            console.error('❌ 저장 오류:', error);
+            this.saveLocalData();
+            this.showToast('⚠️ 로컬에만 저장됨 (연결 오류)');
         }
     }
 
     // 가구 선택
     selectFurniture(furnitureId) {
+        // 드래그 중에는 선택하지 않음
+        if (this.isDragging || this.hasDragged) {
+            console.log('드래그 중에는 가구 선택을 건너뜁니다');
+            return;
+        }
+        
         this.selectedFurniture = furnitureId;
         this.renderSidebar();
         
@@ -1237,10 +1374,11 @@ class DragHandler {
     this.startHeight = 0;
   }
 
-  startDrag(e, furniture, type = 'move') {
+  startDrag(e, furniture, type = 'move', zoom = 1) {
     e.preventDefault();
     e.stopPropagation();
     
+    this.zoom = zoom; // 줌 레벨 저장
     this.dragState = {
       furnitureId: furniture.furniture_id,
       type: type,
@@ -1264,11 +1402,12 @@ class DragHandler {
     
     const deltaX = e.clientX - this.dragState.startX;
     const deltaY = e.clientY - this.dragState.startY;
+    const zoom = this.zoom || 1;
     
     if (this.dragState.type === 'move') {
-      // 그리드 스냅 (10px 단위)
-      const rawX = this.dragState.startPosX + deltaX;
-      const rawY = this.dragState.startPosY + deltaY;
+      // 줌 레벨을 고려하여 픽셀 델타를 가구 좌표로 변환
+      const rawX = this.dragState.startPosX + (deltaX / zoom);
+      const rawY = this.dragState.startPosY + (deltaY / zoom);
       
       return {
         x: Math.max(0, Math.round(rawX / 10) * 10),
@@ -1276,8 +1415,8 @@ class DragHandler {
         type: 'move'
       };
     } else if (this.dragState.type === 'resize') {
-      const newWidth = Math.max(50, this.dragState.startWidth + deltaX);
-      const newHeight = Math.max(30, this.dragState.startHeight + deltaY);
+      const newWidth = Math.max(50, this.dragState.startWidth + (deltaX / zoom));
+      const newHeight = Math.max(30, this.dragState.startHeight + (deltaY / zoom));
       
       return {
         width: Math.round(newWidth / 10) * 10,

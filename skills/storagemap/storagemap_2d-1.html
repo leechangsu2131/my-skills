@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>STORAGEMAP</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg:       #F7F5F0;
+  --surface:  #FFFFFF;
+  --border:   #E2DDD6;
+  --text:     #1C1C1E;
+  --muted:    #8E8E93;
+  --accent:   #2D6BE4;
+  --accent-s: #EBF1FD;
+  --green:    #2A9D5C;
+  --amber:    #E08C00;
+  --red:      #D94040;
+  --shadow:   0 2px 12px rgba(0,0,0,.08);
+  --shadow-lg:0 8px 32px rgba(0,0,0,.12);
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body {
+  font-family:'Noto Sans KR',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  height:100vh;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+}
+
+/* ── HEADER ── */
+header {
+  height:56px;
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  padding:0 20px;
+  gap:16px;
+  flex-shrink:0;
+  box-shadow:var(--shadow);
+  z-index:10;
+}
+.logo {
+  font-family:'DM Mono',monospace;
+  font-size:13px;
+  font-weight:500;
+  letter-spacing:2px;
+  color:var(--accent);
+}
+.search-wrap {
+  flex:1;
+  max-width:400px;
+  position:relative;
+}
+.search-wrap input {
+  width:100%;
+  padding:8px 14px 8px 36px;
+  background:var(--bg);
+  border:1.5px solid var(--border);
+  border-radius:8px;
+  font-family:'Noto Sans KR',sans-serif;
+  font-size:13px;
+  color:var(--text);
+  outline:none;
+  transition:border-color .15s, box-shadow .15s;
+}
+.search-wrap input:focus {
+  border-color:var(--accent);
+  box-shadow:0 0 0 3px rgba(45,107,228,.1);
+  background:#fff;
+}
+.search-icon {
+  position:absolute;
+  left:11px;top:50%;
+  transform:translateY(-50%);
+  color:var(--muted);
+  font-size:14px;
+  pointer-events:none;
+}
+.search-dropdown {
+  display:none;
+  position:absolute;
+  top:calc(100% + 6px);
+  left:0;right:0;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:10px;
+  box-shadow:var(--shadow-lg);
+  z-index:200;
+  overflow:hidden;
+  max-height:280px;
+  overflow-y:auto;
+}
+.search-dropdown.open { display:block; }
+.search-row {
+  padding:10px 14px;
+  cursor:pointer;
+  border-bottom:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  gap:10px;
+  transition:background .12s;
+}
+.search-row:last-child { border-bottom:none; }
+.search-row:hover { background:var(--accent-s); }
+.search-row .sr-name { font-size:13px;font-weight:500; }
+.search-row .sr-path { font-size:11px;color:var(--muted);margin-top:2px; }
+.search-row .sr-tag {
+  margin-left:auto;
+  font-size:10px;
+  padding:2px 7px;
+  background:var(--accent-s);
+  color:var(--accent);
+  border-radius:4px;
+  white-space:nowrap;
+}
+.header-right { margin-left:auto; display:flex; gap:8px; }
+.btn {
+  padding:7px 14px;
+  border-radius:7px;
+  border:none;
+  font-family:'Noto Sans KR',sans-serif;
+  font-size:12px;
+  font-weight:500;
+  cursor:pointer;
+  transition:all .15s;
+}
+.btn-primary { background:var(--accent); color:#fff; }
+.btn-primary:hover { background:#1f59cc; }
+.btn-ghost { background:transparent; border:1.5px solid var(--border); color:var(--muted); }
+.btn-ghost:hover { border-color:var(--muted); color:var(--text); }
+
+/* ── BODY ── */
+.body-wrap {
+  display:flex;
+  flex:1;
+  overflow:hidden;
+}
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width:220px;
+  background:var(--surface);
+  border-right:1px solid var(--border);
+  display:flex;
+  flex-direction:column;
+  flex-shrink:0;
+  overflow:hidden;
+}
+.sidebar-section { flex-shrink:0; }
+.sidebar-label {
+  padding:12px 16px 6px;
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:1.5px;
+  color:var(--muted);
+  text-transform:uppercase;
+}
+.space-list, .furniture-list { overflow-y:auto; }
+.space-item, .furn-item {
+  padding:8px 16px;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-size:13px;
+  border-radius:0;
+  transition:background .12s;
+  position:relative;
+}
+.space-item:hover, .furn-item:hover { background:var(--bg); }
+.space-item.active { background:var(--accent-s); font-weight:600; color:var(--accent); }
+.space-item.active::before {
+  content:'';
+  position:absolute;
+  left:0;top:0;bottom:0;
+  width:3px;
+  background:var(--accent);
+  border-radius:0 2px 2px 0;
+}
+.furn-item { font-size:12px; padding:7px 16px 7px 28px; color:var(--muted); }
+.furn-item:hover { color:var(--text); }
+.furn-item.active { color:var(--accent); font-weight:600; }
+.furn-badge {
+  margin-left:auto;
+  font-size:10px;
+  background:var(--border);
+  padding:1px 6px;
+  border-radius:10px;
+  color:var(--muted);
+}
+.furn-item.active .furn-badge { background:var(--accent-s); color:var(--accent); }
+.divider { height:1px; background:var(--border); margin:4px 0; }
+
+/* ── MAP AREA ── */
+.map-area {
+  flex:1;
+  position:relative;
+  overflow:hidden;
+  background:var(--bg);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+/* 평면도 캔버스 컨테이너 */
+.floorplan-wrap {
+  position:relative;
+  display:inline-block;
+  user-select:none;
+}
+#floorCanvas {
+  display:block;
+  border-radius:4px;
+  box-shadow:var(--shadow-lg);
+}
+
+/* 마커 */
+.marker {
+  position:absolute;
+  transform:translate(-50%, -100%);
+  cursor:pointer;
+  z-index:10;
+  transition:transform .15s;
+}
+.marker:hover { transform:translate(-50%,-100%) scale(1.15); }
+.marker.highlight { transform:translate(-50%,-100%) scale(1.25); z-index:20; }
+
+.marker-pin {
+  width:28px;height:34px;
+  display:flex;align-items:center;justify-content:center;
+  border-radius:50% 50% 50% 0;
+  transform:rotate(-45deg);
+  box-shadow:0 3px 8px rgba(0,0,0,.2);
+  font-size:13px;
+  transition:background .2s, box-shadow .2s;
+}
+.marker-pin span { transform:rotate(45deg); display:block; }
+.marker.highlight .marker-pin {
+  box-shadow:0 0 0 4px rgba(45,107,228,.25), 0 3px 8px rgba(0,0,0,.2);
+}
+
+/* 마커 색상 */
+.mk-blue  .marker-pin { background:#2D6BE4; }
+.mk-green .marker-pin { background:#2A9D5C; }
+.mk-amber .marker-pin { background:#E08C00; }
+.mk-red   .marker-pin { background:#D94040; }
+.mk-purple.marker-pin { background:#7B5EA7; }
+
+/* 툴팁 */
+.marker-tooltip {
+  position:absolute;
+  bottom:calc(100% + 6px);
+  left:50%;
+  transform:translateX(-50%);
+  background:var(--text);
+  color:#fff;
+  font-size:11px;
+  padding:4px 8px;
+  border-radius:5px;
+  white-space:nowrap;
+  pointer-events:none;
+  opacity:0;
+  transition:opacity .15s;
+}
+.marker:hover .marker-tooltip { opacity:1; }
+
+/* 배치 모드 커서 */
+.map-area.placing { cursor:crosshair; }
+.placing-hint {
+  position:absolute;
+  bottom:16px; left:50%;
+  transform:translateX(-50%);
+  background:var(--text);
+  color:#fff;
+  font-size:12px;
+  padding:8px 16px;
+  border-radius:20px;
+  pointer-events:none;
+  opacity:0;
+  transition:opacity .3s;
+}
+.placing-hint.show { opacity:1; }
+
+/* 평면도 없을 때 */
+.empty-map {
+  text-align:center;
+  color:var(--muted);
+}
+.empty-map .em-icon { font-size:48px; margin-bottom:12px; }
+.empty-map .em-title { font-size:15px; font-weight:600; margin-bottom:6px; color:var(--text); }
+.empty-map .em-sub { font-size:13px; }
+
+/* ── RIGHT PANEL ── */
+.right-panel {
+  width:260px;
+  background:var(--surface);
+  border-left:1px solid var(--border);
+  display:flex;
+  flex-direction:column;
+  flex-shrink:0;
+  overflow:hidden;
+}
+.panel-header {
+  padding:12px 16px;
+  border-bottom:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+.panel-title { font-size:12px; font-weight:700; letter-spacing:.5px; }
+.item-count { font-size:11px; color:var(--muted); }
+.item-list { overflow-y:auto; flex:1; padding:8px; }
+.item-card {
+  background:var(--bg);
+  border:1.5px solid var(--border);
+  border-radius:8px;
+  padding:10px 12px;
+  margin-bottom:6px;
+  cursor:pointer;
+  transition:border-color .15s, background .15s, transform .1s;
+}
+.item-card:hover { border-color:var(--accent); background:#fff; transform:translateX(-2px); }
+.item-card.highlighted {
+  border-color:var(--accent);
+  background:var(--accent-s);
+  animation:card-pop .4s ease;
+}
+@keyframes card-pop {
+  0%  { transform:translateX(0) scale(1); }
+  40% { transform:translateX(-3px) scale(1.01); }
+  100%{ transform:translateX(-2px) scale(1); }
+}
+.ic-name { font-size:13px; font-weight:600; margin-bottom:4px; }
+.ic-loc {
+  font-size:11px;color:var(--accent);
+  margin-bottom:4px;
+  display:flex;align-items:center;gap:4px;
+}
+.ic-meta { display:flex; gap:5px; flex-wrap:wrap; }
+.ic-tag {
+  font-size:10px;
+  padding:2px 6px;
+  background:var(--border);
+  border-radius:4px;
+  color:var(--muted);
+}
+.empty-items {
+  text-align:center;
+  padding:30px 12px;
+  color:var(--muted);
+  font-size:12px;
+}
+.empty-items .ei-icon { font-size:28px; margin-bottom:8px; }
+
+/* ── MODAL ── */
+.overlay {
+  display:none;
+  position:fixed;inset:0;
+  background:rgba(0,0,0,.4);
+  backdrop-filter:blur(3px);
+  z-index:100;
+  align-items:center;
+  justify-content:center;
+}
+.overlay.open { display:flex; }
+.modal {
+  background:var(--surface);
+  border-radius:14px;
+  padding:24px;
+  width:380px;
+  box-shadow:var(--shadow-lg);
+  animation:modal-in .2s ease;
+}
+@keyframes modal-in {
+  from { opacity:0; transform:translateY(12px) scale(.97); }
+  to   { opacity:1; transform:none; }
+}
+.modal h2 { font-size:15px; font-weight:700; margin-bottom:18px; }
+.form-group { margin-bottom:12px; }
+.form-group label { display:block; font-size:11px; color:var(--muted); margin-bottom:5px; }
+.form-group input, .form-group select, .form-group textarea {
+  width:100%;
+  padding:9px 12px;
+  background:var(--bg);
+  border:1.5px solid var(--border);
+  border-radius:7px;
+  font-family:'Noto Sans KR',sans-serif;
+  font-size:13px;
+  color:var(--text);
+  outline:none;
+  transition:border-color .15s;
+}
+.form-group input:focus, .form-group select:focus { border-color:var(--accent); background:#fff; }
+.form-group select option { background:#fff; }
+.modal-actions { display:flex; gap:8px; justify-content:flex-end; margin-top:16px; }
+
+/* ── LOCATION BANNER ── */
+.loc-banner {
+  position:absolute;
+  top:12px; left:50%;
+  transform:translateX(-50%);
+  background:var(--accent);
+  color:#fff;
+  font-size:12px;
+  font-weight:600;
+  padding:8px 18px;
+  border-radius:20px;
+  box-shadow:0 4px 16px rgba(45,107,228,.35);
+  z-index:50;
+  white-space:nowrap;
+  display:none;
+  gap:6px;
+  align-items:center;
+  animation:banner-in .3s cubic-bezier(.34,1.56,.64,1);
+}
+.loc-banner.show { display:flex; }
+@keyframes banner-in {
+  from { opacity:0; transform:translateX(-50%) translateY(-8px); }
+  to   { opacity:1; transform:translateX(-50%) translateY(0); }
+}
+
+/* ── TOAST ── */
+.toast {
+  position:fixed;
+  bottom:20px; right:20px;
+  background:var(--text);
+  color:#fff;
+  font-size:12px;
+  padding:10px 16px;
+  border-radius:8px;
+  z-index:300;
+  box-shadow:var(--shadow-lg);
+  opacity:0;
+  transform:translateY(10px);
+  transition:all .25s cubic-bezier(.34,1.56,.64,1);
+  pointer-events:none;
+}
+.toast.show { opacity:1; transform:translateY(0); }
+
+/* 업로드 버튼 */
+.upload-label {
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:7px 14px;
+  border-radius:7px;
+  border:1.5px dashed var(--border);
+  font-size:12px;
+  color:var(--muted);
+  cursor:pointer;
+  transition:all .15s;
+}
+.upload-label:hover { border-color:var(--accent); color:var(--accent); }
+#fileInput { display:none; }
+
+/* zoom controls */
+.zoom-controls {
+  position:absolute;
+  bottom:16px; right:16px;
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+.zoom-btn {
+  width:32px;height:32px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:6px;
+  font-size:16px;
+  cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:var(--shadow);
+  transition:background .12s;
+  color:var(--text);
+}
+.zoom-btn:hover { background:var(--bg); }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">STORAGEMAP</div>
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input id="searchInput" type="text" placeholder="물건 이름으로 검색..." autocomplete="off">
+    <div class="search-dropdown" id="searchDropdown"></div>
+  </div>
+  <div class="header-right">
+    <label class="upload-label">
+      🗺️ 평면도 업로드
+      <input type="file" id="fileInput" accept="image/*">
+    </label>
+    <button class="btn btn-ghost" id="addFurnBtn">＋ 가구 추가</button>
+    <button class="btn btn-primary" id="addItemBtn">＋ 물건 추가</button>
+  </div>
+</header>
+
+<!-- BODY -->
+<div class="body-wrap">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">공간</div>
+      <div class="space-list" id="spaceList"></div>
+    </div>
+    <div class="divider"></div>
+    <div class="sidebar-section" style="flex:1;overflow:hidden;display:flex;flex-direction:column;">
+      <div class="sidebar-label">가구</div>
+      <div class="furniture-list" id="furnitureList" style="overflow-y:auto;flex:1;"></div>
+    </div>
+  </div>
+
+  <!-- MAP -->
+  <div class="map-area" id="mapArea">
+    <div class="empty-map" id="emptyMap">
+      <div class="em-icon">🗺️</div>
+      <div class="em-title">평면도를 업로드하세요</div>
+      <div class="em-sub">사진 또는 직접 그린 도면을 올리면<br>그 위에 가구 마커를 배치할 수 있습니다</div>
+    </div>
+    <div class="floorplan-wrap" id="floorplanWrap" style="display:none;">
+      <canvas id="floorCanvas"></canvas>
+      <!-- 마커들이 여기에 동적으로 추가됨 -->
+    </div>
+    <div class="loc-banner" id="locBanner"></div>
+    <div class="placing-hint" id="placingHint">📍 평면도에서 배치할 위치를 클릭하세요 &nbsp;·&nbsp; ESC로 취소</div>
+    <div class="zoom-controls">
+      <button class="zoom-btn" id="zoomIn">＋</button>
+      <button class="zoom-btn" id="zoomOut">－</button>
+      <button class="zoom-btn" id="zoomReset" title="초기화" style="font-size:12px;">↺</button>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div class="right-panel">
+    <div class="panel-header">
+      <span class="panel-title">물건 목록</span>
+      <span class="item-count" id="itemCount"></span>
+    </div>
+    <div class="item-list" id="itemList"></div>
+  </div>
+</div>
+
+<!-- 가구 추가 모달 -->
+<div class="overlay" id="furnModal">
+  <div class="modal">
+    <h2>🗄️ 가구 추가</h2>
+    <div class="form-group">
+      <label>가구 이름 *</label>
+      <input id="f-name" type="text" placeholder="예: TV 장식장, 앞 교구장">
+    </div>
+    <div class="form-group">
+      <label>종류</label>
+      <select id="f-type">
+        <option>서랍장</option><option>옷장</option><option>책장</option>
+        <option>선반</option><option>수납함</option><option>교구장</option>
+        <option>사물함</option><option>교탁</option><option>기타</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>구획 (쉼표로 구분)</label>
+      <input id="f-zones" type="text" placeholder="예: 1번 서랍, 2번 서랍, 상단 선반">
+    </div>
+    <div class="form-group">
+      <label>메모</label>
+      <input id="f-note" type="text" placeholder="예: 잠금 있음, 흰색">
+    </div>
+    <p style="font-size:11px;color:var(--muted);margin-top:4px;">저장 후 평면도에서 위치를 클릭해 마커를 배치합니다.</p>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="furnCancel">취소</button>
+      <button class="btn btn-primary" id="furnSave">저장 후 배치</button>
+    </div>
+  </div>
+</div>
+
+<!-- 물건 추가 모달 -->
+<div class="overlay" id="itemModal">
+  <div class="modal">
+    <h2>📦 물건 추가</h2>
+    <div class="form-group">
+      <label>물건 이름 *</label>
+      <input id="i-name" type="text" placeholder="예: USB-C 충전기, 빨간 가위">
+    </div>
+    <div class="form-group">
+      <label>가구 *</label>
+      <select id="i-furn"></select>
+    </div>
+    <div class="form-group">
+      <label>구획</label>
+      <select id="i-zone"></select>
+    </div>
+    <div class="form-group">
+      <label>카테고리</label>
+      <select id="i-cat">
+        <option>전자기기</option><option>문구</option><option>교구</option>
+        <option>생활용품</option><option>의류</option><option>서류</option>
+        <option>공구</option><option>기타</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>메모</label>
+      <input id="i-memo" type="text" placeholder="색상, 형태, 위치 힌트 등">
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="itemCancel">취소</button>
+      <button class="btn btn-primary" id="itemSave">추가</button>
+    </div>
+  </div>
+</div>
+
+<!-- 마커 상세 모달 -->
+<div class="overlay" id="markerModal">
+  <div class="modal">
+    <h2 id="mm-title"></h2>
+    <div id="mm-zones" style="margin-bottom:12px;"></div>
+    <div id="mm-items"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="markerClose">닫기</button>
+      <button class="btn btn-primary" id="markerAddItem">이 가구에 물건 추가</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ════════════════════════
+// STATE
+// ════════════════════════
+const SPACES = [{ id:'sp1', name:'현재 공간' }];
+
+let furniture = [
+  { id:'f1', name:'TV 장식장', type:'서랍장', zones:['1번 서랍','2번 서랍','상단 칸'], note:'', x:0.18, y:0.22 },
+  { id:'f2', name:'소파 사이드', type:'수납함', zones:['위 칸','아래 칸'], note:'', x:0.72, y:0.45 },
+  { id:'f3', name:'책장', type:'책장', zones:['1단','2단','3단','4단'], note:'', x:0.88, y:0.3 },
+  { id:'f4', name:'주방 상부장', type:'선반', zones:['왼쪽','오른쪽'], note:'', x:0.55, y:0.1 },
+];
+
+let items = [
+  { id:'i1', name:'USB-C 충전기', furnId:'f1', zone:'1번 서랍', cat:'전자기기', memo:'흰색 케이블' },
+  { id:'i2', name:'리모컨',       furnId:'f1', zone:'상단 칸',  cat:'전자기기', memo:'' },
+  { id:'i3', name:'건전지',       furnId:'f2', zone:'위 칸',   cat:'전자기기', memo:'AA, AAA 혼합' },
+  { id:'i4', name:'가위',         furnId:'f3', zone:'1단',     cat:'문구',     memo:'빨간 손잡이' },
+  { id:'i5', name:'여권',         furnId:'f3', zone:'2단',     cat:'서류',     memo:'파란 케이스' },
+  { id:'i6', name:'통조림',       furnId:'f4', zone:'왼쪽',   cat:'기타',     memo:'참치 8개' },
+];
+
+let nextFId = 5, nextIId = 7;
+let currentSpace = 'sp1';
+let activeFurnId = null;
+let highlightFurnId = null;
+let placingFurnId = null;  // 마커 배치 대기 중인 가구 ID
+let floorImg = null;
+let scale = 1;
+let editingItemFurnId = null;
+
+const MARKER_COLORS = ['mk-blue','mk-green','mk-amber','mk-red'];
+const MARKER_ICONS  = { '서랍장':'🗄️','옷장':'👔','책장':'📚','선반':'🔲','수납함':'📦','교구장':'🧰','사물함':'🔒','교탁':'🖥️','기타':'📌' };
+
+// ════════════════════════
+// CANVAS / FLOORPLAN
+// ════════════════════════
+const mapArea       = document.getElementById('mapArea');
+const floorplanWrap = document.getElementById('floorplanWrap');
+const canvas        = document.getElementById('floorCanvas');
+const ctx           = canvas.getContext('2d');
+const emptyMap      = document.getElementById('emptyMap');
+
+let imgEl = null;
+
+document.getElementById('fileInput').addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const img = new Image();
+    img.onload = () => {
+      imgEl = img;
+      drawFloor();
+      emptyMap.style.display = 'none';
+      floorplanWrap.style.display = 'inline-block';
+      showToast('평면도가 업로드됐습니다 ✓');
+      renderMarkers();
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+});
+
+function drawFloor() {
+  if (!imgEl) return;
+  const maxW = mapArea.offsetWidth  - 60;
+  const maxH = mapArea.offsetHeight - 60;
+  const ratio = Math.min(maxW / imgEl.width, maxH / imgEl.height, 1);
+  canvas.width  = imgEl.width  * ratio * scale;
+  canvas.height = imgEl.height * ratio * scale;
+  ctx.drawImage(imgEl, 0, 0, canvas.width, canvas.height);
+}
+
+// 마커 클릭으로 배치
+floorplanWrap.addEventListener('click', e => {
+  if (!placingFurnId) return;
+  const rect = canvas.getBoundingClientRect();
+  const rx = (e.clientX - rect.left) / canvas.width;
+  const ry = (e.clientY - rect.top)  / canvas.height;
+  const furn = furniture.find(f => f.id === placingFurnId);
+  if (furn) { furn.x = rx; furn.y = ry; }
+  placingFurnId = null;
+  mapArea.classList.remove('placing');
+  document.getElementById('placingHint').classList.remove('show');
+  renderMarkers();
+  renderFurnList();
+  showToast(`📍 ${furn?.name} 위치 배치 완료`);
+});
+
+// ESC 취소
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    placingFurnId = null;
+    mapArea.classList.remove('placing');
+    document.getElementById('placingHint').classList.remove('show');
+  }
+});
+
+// zoom
+document.getElementById('zoomIn').onclick    = () => { scale = Math.min(3, scale + .2); drawFloor(); renderMarkers(); };
+document.getElementById('zoomOut').onclick   = () => { scale = Math.max(.3, scale - .2); drawFloor(); renderMarkers(); };
+document.getElementById('zoomReset').onclick = () => { scale = 1; drawFloor(); renderMarkers(); };
+
+// ════════════════════════
+// MARKERS
+// ════════════════════════
+function renderMarkers() {
+  // 기존 마커 제거
+  floorplanWrap.querySelectorAll('.marker').forEach(m => m.remove());
+  if (!imgEl) return;
+
+  furniture.forEach((furn, idx) => {
+    if (furn.x == null) return;
+    const m = document.createElement('div');
+    m.className = `marker ${MARKER_COLORS[idx % MARKER_COLORS.length]} ${highlightFurnId === furn.id ? 'highlight' : ''}`;
+    m.style.left = (furn.x * canvas.width)  + 'px';
+    m.style.top  = (furn.y * canvas.height) + 'px';
+
+    const cnt = items.filter(i => i.furnId === furn.id).length;
+    const icon = MARKER_ICONS[furn.type] || '📌';
+    m.innerHTML = `
+      <div class="marker-pin"><span>${icon}</span></div>
+      <div class="marker-tooltip">${furn.name}${cnt ? ` (${cnt}개)` : ''}</div>
+    `;
+    m.addEventListener('click', e => { e.stopPropagation(); openMarkerModal(furn.id); });
+    floorplanWrap.appendChild(m);
+  });
+}
+
+// ════════════════════════
+// RENDER UI
+// ════════════════════════
+function renderSpaces() {
+  document.getElementById('spaceList').innerHTML = SPACES.map(s =>
+    `<div class="space-item ${s.id===currentSpace?'active':''}" onclick="selectSpace('${s.id}')">
+      🏠 ${s.name}
+    </div>`
+  ).join('');
+}
+
+function renderFurnList() {
+  const el = document.getElementById('furnitureList');
+  if (!furniture.length) {
+    el.innerHTML = `<div style="padding:12px 16px;font-size:12px;color:var(--muted)">가구를 추가하세요</div>`;
+    return;
+  }
+  el.innerHTML = furniture.map(f => {
+    const cnt = items.filter(i => i.furnId === f.id).length;
+    const placed = f.x != null ? '' : ' <span style="color:var(--amber);font-size:10px">미배치</span>';
+    return `<div class="furn-item ${activeFurnId===f.id?'active':''}" onclick="selectFurniture('${f.id}')">
+      ${MARKER_ICONS[f.type]||'📌'} ${f.name}${placed}
+      <span class="furn-badge">${cnt}</span>
+    </div>`;
+  }).join('');
+}
+
+function renderItems() {
+  const el = document.getElementById('itemList');
+  const filtered = activeFurnId
+    ? items.filter(i => i.furnId === activeFurnId)
+    : items;
+
+  document.getElementById('itemCount').textContent = `(${filtered.length})`;
+
+  if (!filtered.length) {
+    el.innerHTML = `<div class="empty-items"><div class="ei-icon">📭</div>물건이 없습니다</div>`;
+    return;
+  }
+  el.innerHTML = filtered.map(item => {
+    const furn = furniture.find(f => f.id === item.furnId);
+    const path = furn ? `${furn.name}${item.zone ? ' › ' + item.zone : ''}` : '위치 미정';
+    const isH = item.furnId === highlightFurnId;
+    return `<div class="item-card ${isH?'highlighted':''}" id="ic-${item.id}" onclick="highlightItem('${item.id}')">
+      <div class="ic-name">${item.name}</div>
+      <div class="ic-loc">📍 ${path}</div>
+      <div class="ic-meta">
+        <span class="ic-tag">${item.cat}</span>
+        ${item.memo ? `<span class="ic-tag">${item.memo}</span>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function selectSpace(id) { currentSpace = id; renderSpaces(); }
+
+function selectFurniture(id) {
+  activeFurnId = activeFurnId === id ? null : id;
+  highlightFurnId = activeFurnId;
+  renderFurnList();
+  renderItems();
+  renderMarkers();
+  if (activeFurnId) {
+    const f = furniture.find(f=>f.id===id);
+    showBanner(`🗄️ ${f?.name}`);
+  } else {
+    hideBanner();
+  }
+}
+
+function highlightItem(id) {
+  const item = items.find(i => i.id === id);
+  if (!item) return;
+  highlightFurnId = item.furnId;
+  activeFurnId = null;
+  const furn = furniture.find(f => f.id === item.furnId);
+  renderMarkers();
+  renderItems();
+  const path = furn ? `${furn.name}${item.zone ? ' › ' + item.zone : ''}` : '위치 미정';
+  showBanner(`📍 ${item.name}  ·  ${path}`);
+  setTimeout(() => {
+    document.getElementById(`ic-${id}`)?.scrollIntoView({ behavior:'smooth', block:'nearest' });
+  }, 80);
+}
+
+// ════════════════════════
+// SEARCH
+// ════════════════════════
+const searchInput    = document.getElementById('searchInput');
+const searchDropdown = document.getElementById('searchDropdown');
+
+searchInput.addEventListener('input', () => {
+  const q = searchInput.value.trim();
+  if (!q) { searchDropdown.classList.remove('open'); return; }
+  const found = items.filter(i =>
+    i.name.includes(q) || i.memo.includes(q) || i.cat.includes(q)
+  );
+  if (!found.length) {
+    searchDropdown.innerHTML = `<div style="padding:14px;text-align:center;color:var(--muted);font-size:13px">검색 결과 없음</div>`;
+  } else {
+    searchDropdown.innerHTML = found.map(item => {
+      const furn = furniture.find(f => f.id === item.furnId);
+      const path = furn ? `${furn.name}${item.zone ? ' › ' + item.zone : ''}` : '위치 미정';
+      return `<div class="search-row" onclick="pickSearch('${item.id}')">
+        <div>
+          <div class="sr-name">${item.name}</div>
+          <div class="sr-path">📍 ${path}${item.memo ? ' · '+item.memo : ''}</div>
+        </div>
+        <span class="sr-tag">${item.cat}</span>
+      </div>`;
+    }).join('');
+  }
+  searchDropdown.classList.add('open');
+});
+
+document.addEventListener('click', e => {
+  if (!e.target.closest('.search-wrap')) searchDropdown.classList.remove('open');
+});
+
+function pickSearch(id) {
+  searchDropdown.classList.remove('open');
+  searchInput.value = '';
+  highlightItem(id);
+}
+
+// ════════════════════════
+// 가구 추가 모달
+// ════════════════════════
+document.getElementById('addFurnBtn').onclick = () => openFurnModal();
+document.getElementById('furnCancel').onclick = () => document.getElementById('furnModal').classList.remove('open');
+document.getElementById('furnSave').onclick   = saveFurniture;
+
+function openFurnModal() {
+  document.getElementById('f-name').value  = '';
+  document.getElementById('f-zones').value = '';
+  document.getElementById('f-note').value  = '';
+  document.getElementById('furnModal').classList.add('open');
+  setTimeout(() => document.getElementById('f-name').focus(), 50);
+}
+
+function saveFurniture() {
+  const name = document.getElementById('f-name').value.trim();
+  if (!name) { showToast('가구 이름을 입력하세요'); return; }
+  const zonesRaw = document.getElementById('f-zones').value;
+  const zones = zonesRaw ? zonesRaw.split(',').map(z => z.trim()).filter(Boolean) : [];
+  const furn = {
+    id: 'f' + (nextFId++),
+    name,
+    type: document.getElementById('f-type').value,
+    zones,
+    note: document.getElementById('f-note').value,
+    x: null, y: null,
+  };
+  furniture.push(furn);
+  document.getElementById('furnModal').classList.remove('open');
+
+  if (imgEl) {
+    // 배치 모드 진입
+    placingFurnId = furn.id;
+    mapArea.classList.add('placing');
+    document.getElementById('placingHint').classList.add('show');
+    showToast(`${furn.name} 추가됨 — 평면도에서 위치 클릭`);
+  } else {
+    showToast(`${furn.name} 추가됨 (평면도 업로드 후 배치 가능)`);
+  }
+  renderFurnList();
+}
+
+// ════════════════════════
+// 물건 추가 모달
+// ════════════════════════
+document.getElementById('addItemBtn').onclick  = () => openItemModal();
+document.getElementById('itemCancel').onclick  = () => document.getElementById('itemModal').classList.remove('open');
+document.getElementById('itemSave').onclick    = saveItem;
+document.getElementById('i-furn').addEventListener('change', updateZoneSelect);
+
+function openItemModal(prefurnId = null) {
+  editingItemFurnId = prefurnId;
+  document.getElementById('i-name').value = '';
+  document.getElementById('i-memo').value = '';
+  const sel = document.getElementById('i-furn');
+  sel.innerHTML = furniture.map(f => `<option value="${f.id}">${f.name}</option>`).join('');
+  if (prefurnId) sel.value = prefurnId;
+  updateZoneSelect();
+  document.getElementById('itemModal').classList.add('open');
+  setTimeout(() => document.getElementById('i-name').focus(), 50);
+}
+
+function updateZoneSelect() {
+  const fid  = document.getElementById('i-furn').value;
+  const furn = furniture.find(f => f.id === fid);
+  const sel  = document.getElementById('i-zone');
+  const zones = furn?.zones?.length ? furn.zones : ['(구획 없음)'];
+  sel.innerHTML = zones.map(z => `<option>${z}</option>`).join('');
+}
+
+function saveItem() {
+  const name = document.getElementById('i-name').value.trim();
+  if (!name) { showToast('물건 이름을 입력하세요'); return; }
+  const zone = document.getElementById('i-zone').value;
+  const item = {
+    id: 'i' + (nextIId++),
+    name,
+    furnId: document.getElementById('i-furn').value,
+    zone:   zone === '(구획 없음)' ? '' : zone,
+    cat:    document.getElementById('i-cat').value,
+    memo:   document.getElementById('i-memo').value,
+  };
+  items.push(item);
+  document.getElementById('itemModal').classList.remove('open');
+  highlightItem(item.id);
+  renderFurnList();
+  showToast(`✅ ${name} 추가됨`);
+}
+
+// ════════════════════════
+// 마커 상세 모달
+// ════════════════════════
+document.getElementById('markerClose').onclick    = () => document.getElementById('markerModal').classList.remove('open');
+document.getElementById('markerAddItem').onclick  = () => {
+  document.getElementById('markerModal').classList.remove('open');
+  const fid = document.getElementById('markerModal').dataset.furnId;
+  openItemModal(fid);
+};
+
+function openMarkerModal(furnId) {
+  const furn  = furniture.find(f => f.id === furnId);
+  const modal = document.getElementById('markerModal');
+  modal.dataset.furnId = furnId;
+  document.getElementById('mm-title').textContent = `${MARKER_ICONS[furn.type]||'📌'} ${furn.name}`;
+
+  // 구획 표시
+  const zonesEl = document.getElementById('mm-zones');
+  if (furn.zones?.length) {
+    zonesEl.innerHTML = `<div style="font-size:11px;color:var(--muted);margin-bottom:6px">구획</div>
+      <div style="display:flex;flex-wrap:wrap;gap:5px;">
+        ${furn.zones.map(z => `<span style="font-size:11px;padding:3px 8px;background:var(--bg);border:1px solid var(--border);border-radius:4px;">${z}</span>`).join('')}
+      </div>`;
+  } else {
+    zonesEl.innerHTML = '';
+  }
+
+  // 물건 목록
+  const myItems = items.filter(i => i.furnId === furnId);
+  const itemsEl = document.getElementById('mm-items');
+  if (!myItems.length) {
+    itemsEl.innerHTML = `<div style="font-size:12px;color:var(--muted);text-align:center;padding:12px 0">물건이 없습니다</div>`;
+  } else {
+    itemsEl.innerHTML = `
+      <div style="font-size:11px;color:var(--muted);margin-bottom:6px">물건 ${myItems.length}개</div>
+      ${myItems.map(item => `
+        <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);">
+          <div style="flex:1;">
+            <div style="font-size:13px;font-weight:600;">${item.name}</div>
+            <div style="font-size:11px;color:var(--accent);">${item.zone || '구획 미지정'}</div>
+          </div>
+          <span style="font-size:10px;padding:2px 6px;background:var(--bg);border:1px solid var(--border);border-radius:4px;color:var(--muted)">${item.cat}</span>
+        </div>
+      `).join('')}
+    `;
+  }
+  modal.classList.add('open');
+}
+
+// ════════════════════════
+// BANNER / TOAST
+// ════════════════════════
+const locBanner = document.getElementById('locBanner');
+function showBanner(msg) { locBanner.textContent = msg; locBanner.classList.add('show'); }
+function hideBanner()    { locBanner.classList.remove('show'); }
+
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// ════════════════════════
+// EXPORT CSV
+// ════════════════════════
+// CSV 버튼 (헤더 우측에 숨겨 넣지 않고 마커 모달 닫기 옆에 배치)
+// 단축키 Ctrl+E 로 export
+document.addEventListener('keydown', e => {
+  if ((e.ctrlKey||e.metaKey) && e.key==='e') {
+    e.preventDefault(); exportCSV();
+  }
+});
+function exportCSV() {
+  const rows = [['이름','가구','구획','카테고리','메모']];
+  items.forEach(item => {
+    const furn = furniture.find(f=>f.id===item.furnId);
+    rows.push([item.name, furn?.name||'', item.zone||'', item.cat, item.memo]);
+  });
+  const csv = '\uFEFF' + rows.map(r=>r.join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+  a.download = 'storagemap.csv';
+  a.click();
+  showToast('📊 CSV 내보내기 완료');
+}
+
+// ════════════════════════
+// INIT
+// ════════════════════════
+renderSpaces();
+renderFurnList();
+renderItems();
+</script>
+</body>
+</html>

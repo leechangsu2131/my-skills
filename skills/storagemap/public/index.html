@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STORAGEMAP 2D - 물건 위치 관리 시스템</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- 헤더 -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <h1>STORAGEMAP <span class="version">2D</span></h1>
+            </div>
+            
+            <div class="search-container">
+                <div class="search-box">
+                    <span class="search-icon">🔍</span>
+                    <input 
+                        type="text" 
+                        id="searchInput" 
+                        placeholder="물건 이름으로 검색..." 
+                        autocomplete="off"
+                    >
+                    <div class="search-results" id="searchResults"></div>
+                </div>
+            </div>
+            
+            <div class="header-actions">
+                <button class="btn btn-primary" id="addItemBtn">
+                    <span class="btn-icon">+</span>
+                    물건 추가
+                </button>
+                <button class="btn btn-secondary" id="manageSpaceBtn">
+                    <span class="btn-icon">⚙️</span>
+                    공간 관리
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- 공간 탭 -->
+    <div class="space-tabs" id="spaceTabs">
+        <div class="space-tab active" data-space="default">
+            <span class="tab-icon">🏠</span>
+            <span class="tab-name">기본 공간</span>
+        </div>
+        <button class="space-tab add-tab" id="addSpaceBtn">
+            <span class="btn-icon">+</span>
+            공간 추가
+        </button>
+    </div>
+
+    <!-- 메인 콘텐츠 -->
+    <main class="main-content">
+        <!-- 2D 평면도 영역 -->
+        <section class="map-section">
+            <div class="map-container" id="mapContainer">
+                <div class="floor-plan" id="floorPlan">
+                    <!-- 가구 마커들이 여기에 동적으로 추가됨 -->
+                </div>
+                <div class="empty-state" id="emptyState">
+                    <div class="empty-icon">🗺️</div>
+                    <h3>평면도를 준비 중입니다</h3>
+                    <p>잠시만 기다려주세요...</p>
+                </div>
+            </div>
+            
+            <!-- 확대/축소 컨트롤 -->
+            <div class="zoom-controls">
+                <button class="zoom-btn" id="zoomIn" title="확대">+</button>
+                <button class="zoom-btn" id="zoomOut" title="축소">-</button>
+                <button class="zoom-btn" id="zoomReset" title="초기화">⟲</button>
+            </div>
+        </section>
+
+        <!-- 사이드바 -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-empty" id="sidebarEmpty">
+                <div class="empty-icon">📦</div>
+                <h3>가구를 선택하세요</h3>
+                <p>평면도에서 가구를 클릭하면<br>보관 중인 물건 목록이 표시됩니다.</p>
+            </div>
+            
+            <div class="sidebar-content" id="sidebarContent" style="display: none;">
+                <div class="sidebar-header">
+                    <h2 id="furnitureName">가구 이름</h2>
+                    <div class="location-path" id="locationPath">
+                        공간 > 가구
+                    </div>
+                    <div class="item-count" id="itemCount">물건 0개</div>
+                </div>
+                
+                <div class="items-list" id="itemsList">
+                    <!-- 물건 목록이 동적으로 추가됨 -->
+                </div>
+                
+                <div class="sidebar-footer">
+                    <button class="btn btn-primary full-width" id="addItemToFurnitureBtn">
+                        이 가구에 물건 추가
+                    </button>
+                </div>
+            </div>
+        </aside>
+    </main>
+
+    <!-- 모달 컨테이너 -->
+    <div class="modal-container" id="modalContainer"></div>
+
+    <!-- 토스트 알림 -->
+    <div class="toast" id="toast"></div>
+
+    <!-- 로딩 오버레이 -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+        <p>데이터를 불러오는 중...</p>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

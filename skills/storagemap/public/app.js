@@ -250,10 +250,14 @@ class StorageMapApp {
             this.setZoom(1);
         });
 
-        // 이 가구에 물건 추가 버튼 - 딱 한 번만 등록
-        document.getElementById('addItemToFurnitureBtn').addEventListener('click', () => {
-            if (this.selectedFurniture) {
-                this.openItemModal(this.selectedFurniture);
+        // 이 가구에 물건 추가 버튼 - 이벤트 위임 사용 (버튼이 초기에 DOM에 없음)
+        document.addEventListener('click', (e) => {
+            const btn = e.target.closest('#addItemToFurnitureBtn');
+            if (btn) {
+                console.log('🖱️ 버튼 클릭! selectedFurniture:', this.selectedFurniture);
+                if (this.selectedFurniture) {
+                    this.openItemModal(this.selectedFurniture);
+                }
             }
         });
 
@@ -861,11 +865,19 @@ class StorageMapApp {
                         <div class="form-group">
                             <label>위치 (가구) *</label>
                             <select name="furniture_id" required>
-                                ${this.data.furniture.map(f => `
+                                ${this.data.furniture.map(f => {
+                                    const space = this.data.spaces.find(s => s.space_id === f.space_id);
+                                    const spaceName = space ? space.name : '위치 미정';
+                                    const isCurrentSpace = f.space_id === this.currentSpace;
+                                    const label = isCurrentSpace 
+                                        ? `${f.name} (${spaceName}) [현재공간]`
+                                        : `${f.name} (${spaceName})`;
+                                    return `
                                     <option value="${f.furniture_id}" ${f.furniture_id === furnitureId ? 'selected' : ''}>
-                                        ${f.name}
+                                        ${label}
                                     </option>
-                                `).join('')}
+                                    `;
+                                }).join('')}
                             </select>
                         </div>
                         <div class="form-group">

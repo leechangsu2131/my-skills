@@ -588,7 +588,13 @@ body {
     position: relative;
     z-index: 100;
     pointer-events: auto !important;
-    cursor: pointer;
+    cursor: pointer !important;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+#addItemToFurnitureBtn svg {
+    pointer-events: none;
 }
 
 /* 모달 */
@@ -675,6 +681,7 @@ body {
     transform: translateY(20px);
     transition: all 0.3s ease;
     max-width: 300px;
+    pointer-events: none; /* 클릭 무시 */
 }
 
 .toast.show {

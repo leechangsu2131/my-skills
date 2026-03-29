@@ -8,17 +8,23 @@
     "dev": "nodemon server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": ["storage", "inventory", "2d-map", "location-tracking"],
+  "keywords": [
+    "storage",
+    "inventory",
+    "2d-map",
+    "location-tracking"
+  ],
   "author": "StorageMap Team",
   "license": "MIT",
   "dependencies": {
-    "express": "^4.18.2",
+    "body-parser": "^1.20.2",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
     "googleapis": "^128.0.0",
-    "uuid": "^9.0.1",
-    "body-parser": "^1.20.2",
-    "express-session": "^1.17.3"
+    "serverless-http": "^4.0.0",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"

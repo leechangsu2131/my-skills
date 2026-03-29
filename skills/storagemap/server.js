@@ -790,12 +790,31 @@ app.post('/api/items', checkAuth, async (req, res) => {
       memo: memo || ''
     };
     
-    // 캐시에 추가
+    // 캐시에 추가 (항상 성공)
     storageService.cache.items.push(newItem);
     
-    // Google Sheets에 추가
-    oauth2Client.setCredentials(req.session.tokens);
-    await addItemToSheets(oauth2Client, newItem);
+    // Google Sheets에 추가 시도 (실패해도 캐시에는 있음)
+    // checkAuth 미들웨어에서 이미 oauth2Client.setCredentials() 호출됨
+    try {
+      // 토큰 유효성 확인 및 필요시 refresh
+      if (!oauth2Client.credentials.access_token) {
+        console.log('🔄 Items: Access token 없음, refresh 시도...');
+        const { credentials } = await oauth2Client.refreshAccessToken();
+        oauth2Client.setCredentials(credentials);
+        // serverAutoAuth 업데이트 (refresh_token 유지)
+        if (serverAutoAuth) {
+          serverAutoAuth.credentials = {
+            ...serverAutoAuth.credentials,
+            ...credentials
+          };
+        }
+      }
+      await addItemToSheets(oauth2Client, newItem);
+      console.log('✅ Google Sheets에 물건 추가 완료:', newItem.name);
+    } catch (sheetsError) {
+      console.error('⚠️ Google Sheets 물건 추가 실패 (캐시에는 저장됨):', sheetsError.message);
+      // Sheets 실패해도 API는 성공 응답 - 클라이언트에서 나중에 동기화
+    }
     
     res.json({ success: true, item: newItem });
   } catch (error) {
@@ -875,12 +894,31 @@ app.post('/api/spaces', checkAuth, async (req, res) => {
       description: description || ''
     };
     
-    // 캐시에 추가
+    // 캐시에 추가 (항상 성공)
     storageService.cache.spaces.push(newSpace);
     
-    // Google Sheets에 추가
-    oauth2Client.setCredentials(req.session.tokens);
-    await addSpaceToSheets(oauth2Client, newSpace);
+    // Google Sheets에 추가 시도 (실패해도 캐시에는 있음)
+    // checkAuth 미들웨어에서 이미 oauth2Client.setCredentials() 호출됨
+    try {
+      // 토큰 유효성 확인 및 필요시 refresh
+      if (!oauth2Client.credentials.access_token) {
+        console.log('🔄 Spaces: Access token 없음, refresh 시도...');
+        const { credentials } = await oauth2Client.refreshAccessToken();
+        oauth2Client.setCredentials(credentials);
+        // serverAutoAuth 업데이트 (refresh_token 유지)
+        if (serverAutoAuth) {
+          serverAutoAuth.credentials = {
+            ...serverAutoAuth.credentials,
+            ...credentials
+          };
+        }
+      }
+      await addSpaceToSheets(oauth2Client, newSpace);
+      console.log('✅ Google Sheets에 공간 추가 완료:', newSpace.name);
+    } catch (sheetsError) {
+      console.error('⚠️ Google Sheets 공간 추가 실패 (캐시에는 저장됨):', sheetsError.message);
+      // Sheets 실패해도 API는 성공 응답 - 클라이언트에서 나중에 동기화
+    }
     
     res.json({ success: true, space: newSpace });
   } catch (error) {

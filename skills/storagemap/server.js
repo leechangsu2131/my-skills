@@ -825,12 +825,33 @@ app.post('/api/furniture', checkAuth, async (req, res) => {
       notes: notes || ''
     };
     
-    // 캐시에 추가
+    // 캐시에 먼저 추가 (항상 성공)
     storageService.cache.furniture.push(newFurniture);
     
-    // Google Sheets에 추가
-    oauth2Client.setCredentials(req.session.tokens);
-    await addFurnitureToSheets(oauth2Client, newFurniture);
+    // Google Sheets에 추가 시도 (실패해도 캐시에는 있음)
+    // checkAuth 미들웨어에서 이미 oauth2Client.setCredentials() 호출됨
+    try {
+      // 토큰 유효성 확인 및 필요시 refresh
+      console.log('🔑 토큰 확인:', oauth2Client.credentials.access_token ? '있음' : '없음');
+      if (!oauth2Client.credentials.access_token) {
+        console.log('🔄 Access token 없음, refresh 시도...');
+        const { credentials } = await oauth2Client.refreshAccessToken();
+        console.log('✅ 토큰 refresh 성공, 새 access_token:', credentials.access_token ? '발급됨' : '실패');
+        oauth2Client.setCredentials(credentials);
+        // serverAutoAuth 업데이트 (refresh_token 유지)
+        if (serverAutoAuth) {
+          serverAutoAuth.credentials = {
+            ...serverAutoAuth.credentials,
+            ...credentials
+          };
+        }
+      }
+      await addFurnitureToSheets(oauth2Client, newFurniture);
+      console.log('✅ Google Sheets에 가구 추가 완료:', newFurniture.name);
+    } catch (sheetsError) {
+      console.error('⚠️ Google Sheets 가구 추가 실패 (캐시에는 저장됨):', sheetsError.message);
+      // Sheets 실패해도 API는 성공 응답 - 클라이언트에서 나중에 동기화
+    }
     
     res.json({ success: true, furniture: newFurniture });
   } catch (error) {
@@ -1053,10 +1074,15 @@ app.listen(PORT, async () => {
       
       // 새로운 access token 요청
       const { credentials } = await oauth2Client.refreshAccessToken();
-      oauth2Client.setCredentials(credentials);
+      // refresh_token이 없으면 기존 것 유지
+      const newCredentials = {
+        refresh_token: process.env.GOOGLE_REFRESH_TOKEN,  // 원본 refresh token 유지
+        ...credentials  // 새 access_token 등
+      };
+      oauth2Client.setCredentials(newCredentials);
       
       // 서버 자동 인증 상태 저장 (API에서 사용)
-      serverAutoAuth = { credentials };
+      serverAutoAuth = { credentials: newCredentials };
       
       console.log('✅ Google 자동 인증 성공 (서버 및 API 사용 가능)');
       

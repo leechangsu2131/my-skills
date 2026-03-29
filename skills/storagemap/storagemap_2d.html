@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>STORAGEMAP 2D</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Noto Sans KR', sans-serif; background: #f5f4f0; color: #1a1a18; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+
+  .topbar { display: flex; align-items: center; gap: 12px; padding: 10px 16px; background: #fff; border-bottom: 0.5px solid #ddd; flex-shrink: 0; }
+  .topbar h1 { font-size: 15px; font-weight: 500; }
+  .topbar h1 span { font-size: 11px; color: #888; margin-left: 6px; }
+  .search-wrap { flex: 1; max-width: 320px; position: relative; }
+  .search-wrap input { width: 100%; border: 0.5px solid #ccc; border-radius: 8px; padding: 7px 12px 7px 32px; font-size: 13px; background: #f9f9f7; outline: none; }
+  .search-wrap input:focus { border-color: #7f77dd; background: #fff; }
+  .search-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); font-size: 13px; color: #aaa; }
+  .search-results { position: absolute; top: calc(100% + 4px); left: 0; right: 0; background: #fff; border: 0.5px solid #ddd; border-radius: 8px; z-index: 100; max-height: 260px; overflow-y: auto; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+  .search-results .sr-item { padding: 9px 14px; font-size: 13px; cursor: pointer; border-bottom: 0.5px solid #f0f0ed; }
+  .search-results .sr-item:hover { background: #f5f4f0; }
+  .search-results .sr-item .sr-name { font-weight: 500; }
+  .search-results .sr-item .sr-path { font-size: 11px; color: #888; margin-top: 2px; }
+  .search-results .empty { padding: 14px; text-align: center; font-size: 13px; color: #aaa; }
+  .btn { border: 0.5px solid #ccc; background: #fff; border-radius: 8px; padding: 7px 14px; font-size: 13px; cursor: pointer; transition: background .15s; }
+  .btn:hover { background: #f0efea; }
+  .btn-primary { background: #7f77dd; color: #fff; border-color: #7f77dd; }
+  .btn-primary:hover { background: #6a63c5; border-color: #6a63c5; }
+
+  .layout { display: flex; flex: 1; overflow: hidden; }
+
+  .map-area { flex: 1; overflow: auto; padding: 24px; display: flex; align-items: flex-start; justify-content: center; }
+  .room { position: relative; background: #fff; border: 2px solid #b4b2a9; border-radius: 4px; }
+  .room-label { position: absolute; top: -22px; left: 0; font-size: 12px; color: #888; font-weight: 500; }
+
+  .furniture { position: absolute; border-radius: 6px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; transition: box-shadow .15s, border-color .15s; border: 1.5px solid transparent; user-select: none; }
+  .furniture:hover { box-shadow: 0 2px 8px rgba(127,119,221,0.18); border-color: #7f77dd; }
+  .furniture.selected { border-color: #7f77dd; box-shadow: 0 0 0 3px rgba(127,119,221,0.18); }
+  .furniture .f-name { font-size: 11px; font-weight: 500; text-align: center; line-height: 1.3; padding: 0 4px; }
+  .furniture .f-count { font-size: 10px; border-radius: 10px; padding: 1px 7px; font-weight: 500; }
+  .count-badge { display: inline-block; border-radius: 10px; padding: 1px 7px; font-size: 10px; font-weight: 500; }
+
+  .sidebar { width: 300px; flex-shrink: 0; background: #fff; border-left: 0.5px solid #ddd; display: flex; flex-direction: column; overflow: hidden; }
+  .sidebar-header { padding: 14px 16px 10px; border-bottom: 0.5px solid #eee; }
+  .sidebar-header h2 { font-size: 14px; font-weight: 500; }
+  .sidebar-header .path { font-size: 11px; color: #888; margin-top: 3px; }
+  .items-list { flex: 1; overflow-y: auto; padding: 8px 0; }
+  .item-row { display: flex; align-items: center; gap: 10px; padding: 8px 16px; border-bottom: 0.5px solid #f2f2ef; }
+  .item-row:hover { background: #fafaf8; }
+  .item-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .item-info { flex: 1; min-width: 0; }
+  .item-name { font-size: 13px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .item-meta { font-size: 11px; color: #aaa; margin-top: 1px; }
+  .item-del { border: none; background: none; cursor: pointer; font-size: 14px; color: #ccc; padding: 2px 4px; border-radius: 4px; }
+  .item-del:hover { color: #e24b4a; background: #fcebeb; }
+  .sidebar-footer { padding: 12px 16px; border-top: 0.5px solid #eee; }
+  .sidebar-empty { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; text-align: center; }
+  .sidebar-empty .empty-icon { font-size: 28px; margin-bottom: 10px; }
+  .sidebar-empty p { font-size: 13px; color: #aaa; line-height: 1.6; }
+
+  .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.35); z-index: 200; display: flex; align-items: center; justify-content: center; padding: 20px; }
+  .modal { background: #fff; border-radius: 12px; padding: 20px; width: 100%; max-width: 360px; }
+  .modal h3 { font-size: 15px; font-weight: 500; margin-bottom: 14px; }
+  .form-group { margin-bottom: 12px; }
+  .form-group label { display: block; font-size: 12px; color: #888; margin-bottom: 5px; }
+  .form-group input, .form-group select { width: 100%; border: 0.5px solid #ccc; border-radius: 8px; padding: 8px 11px; font-size: 13px; outline: none; }
+  .form-group input:focus, .form-group select:focus { border-color: #7f77dd; }
+  .modal-btns { display: flex; gap: 8px; justify-content: flex-end; margin-top: 16px; }
+
+  .space-tabs { display: flex; gap: 6px; padding: 10px 16px; border-bottom: 0.5px solid #eee; background: #fff; flex-shrink: 0; }
+  .space-tab { padding: 5px 12px; border-radius: 20px; font-size: 12px; cursor: pointer; border: 0.5px solid #ccc; background: #fff; }
+  .space-tab.active { background: #7f77dd; color: #fff; border-color: #7f77dd; }
+
+  .highlight-ring { position: absolute; border: 2.5px solid #7f77dd; border-radius: 8px; pointer-events: none; animation: pulse 1.2s ease-out forwards; z-index: 10; }
+  @keyframes pulse { 0% { opacity:1; box-shadow: 0 0 0 0 rgba(127,119,221,0.4); } 100% { opacity:0; box-shadow: 0 0 0 14px rgba(127,119,221,0); } }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <h1>STORAGEMAP <span>2D</span></h1>
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="searchInput" placeholder="물건 이름으로 검색..." autocomplete="off">
+    <div class="search-results" id="searchResults" style="display:none;"></div>
+  </div>
+  <button class="btn btn-primary" onclick="openAddModal(null)">+ 물건 추가</button>
+  <button class="btn" onclick="openSpaceManager()">공간 관리</button>
+</div>
+
+<div class="space-tabs" id="spaceTabs"></div>
+
+<div class="layout">
+  <div class="map-area" id="mapArea"></div>
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-empty">
+      <div class="empty-icon">🗺️</div>
+      <p>가구를 클릭하면<br>보관 중인 물건 목록이<br>여기 표시됩니다.</p>
+    </div>
+  </div>
+</div>
+
+<div id="modalContainer"></div>
+
+<script>
+const COLORS = ['#7f77dd','#1d9e75','#d85a30','#378add','#ba7517','#d4537e'];
+const CAT_COLORS = { '교구':'#7f77dd','문구':'#1d9e75','전자기기':'#378add','서류':'#ba7517','생활용품':'#d85a30','기타':'#888' };
+
+let state = {
+  spaces: [
+    {
+      id:'s1', name:'3학년 2반',
+      rooms: [{ id:'r1', name:'교실', w:680, h:500 }],
+      furniture: [
+        {id:'f1',rid:'r1',name:'앞 교구장',x:20,y:40,w:100,h:60,color:'#e1f5ee'},
+        {id:'f2',rid:'r1',name:'교탁',x:260,y:20,w:140,h:50,color:'#eeedfe'},
+        {id:'f3',rid:'r1',name:'뒤 교구장',x:20,y:380,w:100,h:100,color:'#e1f5ee'},
+        {id:'f4',rid:'r1',name:'사물함 1-10',x:560,y:20,w:100,h:160,color:'#faeeda'},
+        {id:'f5',rid:'r1',name:'사물함 11-25',x:560,y:200,w:100,h:280,color:'#faeeda'},
+        {id:'f6',rid:'r1',name:'창가 선반',x:140,y:440,w:400,h:40,color:'#e6f1fb'},
+        {id:'f7',rid:'r1',name:'컴퓨터 책상',x:20,y:150,w:80,h:70,color:'#eaf3de'},
+      ],
+      items: [
+        {id:'i1',fid:'f1',name:'리코더 (학생용)',cat:'교구',qty:25,memo:''},
+        {id:'i2',fid:'f1',name:'수학 교구 세트',cat:'교구',qty:5,memo:''},
+        {id:'i3',fid:'f1',name:'색종이',cat:'문구',qty:10,memo:''},
+        {id:'i4',fid:'f2',name:'출석부',cat:'서류',qty:1,memo:''},
+        {id:'i5',fid:'f2',name:'빨간펜',cat:'문구',qty:3,memo:''},
+        {id:'i6',fid:'f2',name:'도장',cat:'기타',qty:2,memo:'선생님 도장'},
+        {id:'i7',fid:'f3',name:'청소 도구',cat:'생활용품',qty:1,memo:''},
+        {id:'i8',fid:'f3',name:'쓰레기봉투',cat:'생활용품',qty:30,memo:''},
+        {id:'i9',fid:'f4',name:'알림장 (예비)',cat:'서류',qty:20,memo:''},
+        {id:'i10',fid:'f6',name:'화분',cat:'생활용품',qty:6,memo:''},
+        {id:'i11',fid:'f6',name:'개인 급식 도구',cat:'생활용품',qty:25,memo:''},
+        {id:'i12',fid:'f7',name:'노트북',cat:'전자기기',qty:1,memo:'담임 업무용'},
+      ]
+    },
+    {
+      id:'s2', name:'우리 집',
+      rooms: [{ id:'r2', name:'거실/서재', w:600, h:460 }],
+      furniture: [
+        {id:'g1',rid:'r2',name:'TV 장식장',x:20,y:30,w:180,h:60,color:'#faece7'},
+        {id:'g2',rid:'r2',name:'책장',x:20,y:120,w:70,h:180,color:'#eeedfe'},
+        {id:'g3',rid:'r2',name:'서랍장',x:500,y:60,w:80,h:120,color:'#faeeda'},
+        {id:'g4',rid:'r2',name:'옷장',x:500,y:210,w:80,h:140,color:'#e1f5ee'},
+        {id:'g5',rid:'r2',name:'컴퓨터 책상',x:20,y:340,w:140,h:80,color:'#eaf3de'},
+        {id:'g6',rid:'r2',name:'수납 박스',x:200,y:360,w:100,h:60,color:'#e6f1fb'},
+      ],
+      items: [
+        {id:'h1',fid:'g1',name:'리모컨',cat:'전자기기',qty:2,memo:''},
+        {id:'h2',fid:'g1',name:'건전지',cat:'생활용품',qty:8,memo:''},
+        {id:'h3',fid:'g2',name:'교육 서적',cat:'서류',qty:12,memo:''},
+        {id:'h4',fid:'g3',name:'여권',cat:'서류',qty:2,memo:'2번째 서랍'},
+        {id:'h5',fid:'g3',name:'약품 상자',cat:'생활용품',qty:1,memo:''},
+        {id:'h6',fid:'g4',name:'계절 옷',cat:'생활용품',qty:1,memo:'겨울 코트'},
+        {id:'h7',fid:'g5',name:'충전기 모음',cat:'전자기기',qty:5,memo:''},
+        {id:'h8',fid:'g6',name:'공구 세트',cat:'생활용품',qty:1,memo:''},
+      ]
+    }
+  ],
+  selectedSpace: 's1',
+  selectedFurniture: null,
+  highlightFid: null,
+};
+
+let dragState = null;
+
+function getSpace() { return state.spaces.find(s=>s.id===state.selectedSpace); }
+function getItems(fid) { return getSpace().items.filter(i=>i.fid===fid); }
+function uid() { return Math.random().toString(36).substr(2,8); }
+
+function renderSpaceTabs() {
+  const el = document.getElementById('spaceTabs');
+  el.innerHTML = state.spaces.map(s=>`
+    <button class="space-tab ${s.id===state.selectedSpace?'active':''}" onclick="switchSpace('${s.id}')">${s.name}</button>
+  `).join('') + `<button class="space-tab" onclick="addSpace()">+ 추가</button>`;
+}
+
+function switchSpace(id) {
+  state.selectedSpace = id;
+  state.selectedFurniture = null;
+  renderAll();
+}
+
+function renderMap() {
+  const sp = getSpace();
+  const mapArea = document.getElementById('mapArea');
+  let html = '';
+  for (const room of sp.rooms) {
+    html += `<div class="room" style="width:${room.w}px;height:${room.h}px;position:relative;" id="room_${room.id}">
+      <span class="room-label">${sp.name} · ${room.name}</span>`;
+    for (const f of sp.furniture.filter(f=>f.rid===room.id)) {
+      const count = getItems(f.id).length;
+      const isSelected = state.selectedFurniture === f.id;
+      const isHighlight = state.highlightFid === f.id;
+      html += `<div class="furniture ${isSelected?'selected':''}"
+        id="furn_${f.id}"
+        style="left:${f.x}px;top:${f.y}px;width:${f.w}px;height:${f.h}px;background:${f.color};"
+        onclick="selectFurniture('${f.id}')"
+        onmousedown="startDrag(event,'${f.id}')">
+        <span class="f-name" style="color:#2c2c2a;">${f.name}</span>
+        ${count>0?`<span class="count-badge" style="background:rgba(127,119,221,0.15);color:#534ab7;">${count}개</span>`:''}
+      </div>`;
+      if (isHighlight) {
+        html += `<div class="highlight-ring" id="ring_${f.id}" style="left:${f.x-2}px;top:${f.y-2}px;width:${f.w+4}px;height:${f.h+4}px;"></div>`;
+      }
+    }
+    html += '</div>';
+  }
+  mapArea.innerHTML = html;
+
+  document.querySelectorAll('.furniture').forEach(el => {
+    el.addEventListener('mousedown', e => {
+      const fid = el.id.replace('furn_','');
+      if (e.button !== 0) return;
+      dragState = { fid, startX: e.clientX, startY: e.clientY, moved: false, origX:0, origY:0 };
+      const f = getSpace().furniture.find(f=>f.id===fid);
+      if (f) { dragState.origX = f.x; dragState.origY = f.y; }
+    });
+  });
+}
+
+document.addEventListener('mousemove', e => {
+  if (!dragState) return;
+  const dx = e.clientX - dragState.startX;
+  const dy = e.clientY - dragState.startY;
+  if (Math.abs(dx)>4||Math.abs(dy)>4) dragState.moved = true;
+  if (!dragState.moved) return;
+  const f = getSpace().furniture.find(f=>f.id===dragState.fid);
+  if (!f) return;
+  f.x = Math.max(0, dragState.origX + dx);
+  f.y = Math.max(0, dragState.origY + dy);
+  const el = document.getElementById('furn_'+f.id);
+  if (el) { el.style.left=f.x+'px'; el.style.top=f.y+'px'; }
+});
+
+document.addEventListener('mouseup', e => {
+  if (!dragState) return;
+  if (!dragState.moved) {
+    selectFurniture(dragState.fid);
+  }
+  dragState = null;
+});
+
+function startDrag(e, fid) { e.stopPropagation(); }
+
+function selectFurniture(fid) {
+  state.selectedFurniture = fid;
+  renderSidebar();
+  document.querySelectorAll('.furniture').forEach(el => el.classList.remove('selected'));
+  const el = document.getElementById('furn_'+fid);
+  if (el) el.classList.add('selected');
+}
+
+function renderSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  if (!state.selectedFurniture) {
+    sidebar.innerHTML = `<div class="sidebar-empty"><div class="empty-icon">🗺️</div><p>가구를 클릭하면<br>보관 중인 물건 목록이<br>여기 표시됩니다.</p></div>`;
+    return;
+  }
+  const sp = getSpace();
+  const f = sp.furniture.find(f=>f.id===state.selectedFurniture);
+  if (!f) return;
+  const items = getItems(f.id);
+  sidebar.innerHTML = `
+    <div class="sidebar-header">
+      <h2>${f.name}</h2>
+      <div class="path">${sp.name} · ${sp.rooms.find(r=>r.id===f.rid)?.name||''} · ${f.name}</div>
+    </div>
+    <div class="items-list">
+      ${items.length===0?`<div class="sidebar-empty" style="flex:none;padding:32px 24px;"><p>아직 등록된 물건이 없습니다.</p></div>`
+        :items.map(item=>`
+        <div class="item-row">
+          <div class="item-dot" style="background:${CAT_COLORS[item.cat]||'#888'};"></div>
+          <div class="item-info">
+            <div class="item-name">${item.name}${item.qty>1?` <span style="font-size:11px;color:#aaa;">×${item.qty}</span>`:''}</div>
+            <div class="item-meta">${item.cat}${item.memo?` · ${item.memo}`:''}</div>
+          </div>
+          <button class="item-del" onclick="deleteItem('${item.id}')" title="삭제">✕</button>
+        </div>`).join('')}
+    </div>
+    <div class="sidebar-footer">
+      <button class="btn btn-primary" style="width:100%;" onclick="openAddModal('${f.id}')">+ 물건 추가</button>
+    </div>`;
+}
+
+function deleteItem(iid) {
+  const sp = getSpace();
+  sp.items = sp.items.filter(i=>i.id!==iid);
+  renderMap();
+  renderSidebar();
+}
+
+function openAddModal(prefillFid) {
+  const sp = getSpace();
+  const fOptions = sp.furniture.map(f=>`<option value="${f.id}" ${f.id===prefillFid?'selected':''}>${f.name}</option>`).join('');
+  const cats = ['교구','문구','전자기기','서류','생활용품','기타'];
+  document.getElementById('modalContainer').innerHTML = `
+    <div class="modal-backdrop" onclick="closeModal(event)">
+      <div class="modal" onclick="event.stopPropagation()">
+        <h3>물건 추가</h3>
+        <div class="form-group"><label>물건 이름 *</label><input id="mName" placeholder="예: 가위, 리코더, 출석부" autofocus></div>
+        <div class="form-group"><label>위치 (가구) *</label><select id="mFid">${fOptions}</select></div>
+        <div class="form-group"><label>분류</label><select id="mCat">${cats.map(c=>`<option>${c}</option>`).join('')}</select></div>
+        <div class="form-group"><label>수량</label><input id="mQty" type="number" min="1" value="1" style="width:80px;"></div>
+        <div class="form-group"><label>메모 (선택)</label><input id="mMemo" placeholder="예: 빨간색, 2번 서랍"></div>
+        <div class="modal-btns">
+          <button class="btn" onclick="closeModal()">취소</button>
+          <button class="btn btn-primary" onclick="saveItem()">저장</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function saveItem() {
+  const name = document.getElementById('mName').value.trim();
+  if (!name) { document.getElementById('mName').focus(); return; }
+  const fid = document.getElementById('mFid').value;
+  const cat = document.getElementById('mCat').value;
+  const qty = parseInt(document.getElementById('mQty').value)||1;
+  const memo = document.getElementById('mMemo').value.trim();
+  getSpace().items.push({id:'i'+uid(),fid,name,cat,qty,memo});
+  closeModal();
+  state.selectedFurniture = fid;
+  renderAll();
+}
+
+function closeModal(e) {
+  if (e && e.target !== document.querySelector('.modal-backdrop')) return;
+  document.getElementById('modalContainer').innerHTML = '';
+}
+
+function openSpaceManager() {
+  const sp = getSpace();
+  document.getElementById('modalContainer').innerHTML = `
+    <div class="modal-backdrop" onclick="closeModal(event)">
+      <div class="modal" onclick="event.stopPropagation()" style="max-width:420px;">
+        <h3>가구 추가 — ${sp.name}</h3>
+        <div class="form-group"><label>가구 이름 *</label><input id="smName" placeholder="예: 교구장, 서랍장, 선반"></div>
+        <div class="form-group" style="display:flex;gap:8px;">
+          <div style="flex:1;"><label>가로(px)</label><input id="smW" type="number" value="100" min="40"></div>
+          <div style="flex:1;"><label>세로(px)</label><input id="smH" type="number" value="60" min="30"></div>
+        </div>
+        <p style="font-size:12px;color:#aaa;margin-top:8px;">추가 후 평면도에서 드래그해서 위치를 조정할 수 있습니다.</p>
+        <div class="modal-btns">
+          <button class="btn" onclick="closeModal()">취소</button>
+          <button class="btn btn-primary" onclick="saveFurniture()">추가</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function saveFurniture() {
+  const name = document.getElementById('smName').value.trim();
+  if (!name) return;
+  const w = parseInt(document.getElementById('smW').value)||100;
+  const h = parseInt(document.getElementById('smH').value)||60;
+  const sp = getSpace();
+  const rid = sp.rooms[0].id;
+  const colors = ['#eeedfe','#e1f5ee','#faece7','#faeeda','#e6f1fb','#eaf3de'];
+  const color = colors[sp.furniture.length % colors.length];
+  sp.furniture.push({id:'f'+uid(),rid,name,x:20,y:20,w,h,color});
+  closeModal();
+  renderAll();
+}
+
+function addSpace() {
+  document.getElementById('modalContainer').innerHTML = `
+    <div class="modal-backdrop" onclick="closeModal(event)">
+      <div class="modal" onclick="event.stopPropagation()">
+        <h3>공간 추가</h3>
+        <div class="form-group"><label>공간 이름 *</label><input id="nsName" placeholder="예: 우리 집, 2학년 교실" autofocus></div>
+        <div class="modal-btns">
+          <button class="btn" onclick="closeModal()">취소</button>
+          <button class="btn btn-primary" onclick="saveSpace()">추가</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function saveSpace() {
+  const name = document.getElementById('nsName').value.trim();
+  if (!name) return;
+  const sid = 's'+uid(); const rid = 'r'+uid();
+  state.spaces.push({id:sid,name,rooms:[{id:rid,name:'공간',w:600,h:460}],furniture:[],items:[]});
+  state.selectedSpace = sid;
+  closeModal();
+  renderAll();
+}
+
+function renderSearch() {
+  const input = document.getElementById('searchInput');
+  const resultsEl = document.getElementById('searchResults');
+  input.addEventListener('input', () => {
+    const q = input.value.trim().toLowerCase();
+    if (!q) { resultsEl.style.display='none'; return; }
+    const results = [];
+    for (const sp of state.spaces) {
+      for (const item of sp.items) {
+        if (item.name.toLowerCase().includes(q) || (item.memo||'').toLowerCase().includes(q)) {
+          const f = sp.furniture.find(f=>f.id===item.fid);
+          const room = f ? sp.rooms.find(r=>r.id===f.rid) : null;
+          results.push({item, f, sp, room});
+        }
+      }
+    }
+    if (results.length===0) {
+      resultsEl.innerHTML = `<div class="empty">검색 결과 없음</div>`;
+    } else {
+      resultsEl.innerHTML = results.map(({item,f,sp,room})=>`
+        <div class="sr-item" onclick="goToItem('${sp.id}','${f?.id||''}')">
+          <div class="sr-name">${item.name}${item.qty>1?` ×${item.qty}`:''}</div>
+          <div class="sr-path">${sp.name} › ${f?.name||'?'}</div>
+        </div>`).join('');
+    }
+    resultsEl.style.display='block';
+  });
+  document.addEventListener('click', e => {
+    if (!resultsEl.contains(e.target) && e.target!==input) resultsEl.style.display='none';
+  });
+}
+
+function goToItem(spaceId, fid) {
+  document.getElementById('searchResults').style.display='none';
+  document.getElementById('searchInput').value='';
+  state.selectedSpace = spaceId;
+  state.selectedFurniture = fid;
+  state.highlightFid = fid;
+  renderAll();
+  setTimeout(()=>{
+    state.highlightFid = null;
+    const ring = document.getElementById('ring_'+fid);
+    if(ring) ring.remove();
+  }, 1400);
+  const el = document.getElementById('furn_'+fid);
+  if (el) el.scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+function renderAll() {
+  renderSpaceTabs();
+  renderMap();
+  renderSidebar();
+}
+
+renderAll();
+renderSearch();
+</script>
+</body>
+</html>

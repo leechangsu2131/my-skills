@@ -250,6 +250,13 @@ class StorageMapApp {
             this.setZoom(1);
         });
 
+        // 이 가구에 물건 추가 버튼 - 딱 한 번만 등록
+        document.getElementById('addItemToFurnitureBtn').addEventListener('click', () => {
+            if (this.selectedFurniture) {
+                this.openItemModal(this.selectedFurniture);
+            }
+        });
+
         // 키보드 단축키
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
@@ -366,13 +373,13 @@ class StorageMapApp {
         document.getElementById('searchResults').style.display = 'none';
         document.getElementById('searchInput').value = '';
         
-        // 하이라이트 애니메이션
+        this.showToast(`📍 ${item.name} - ${furniture.name}`);
+        
+        // 3초 후 하이라이트 자동 해제
         setTimeout(() => {
             this.highlightedFurniture = null;
             this.render();
-        }, 2000);
-        
-        this.showToast(`📍 ${item.name} - ${furniture.name}`);
+        }, 3000);
     }
 
     // 렌더링
@@ -455,6 +462,7 @@ class StorageMapApp {
                             width: ${furniture.width * this.zoom}px; 
                             height: ${furniture.height * this.zoom}px;"
                      data-furniture-id="${furniture.furniture_id}">
+                    ${isHighlighted ? '<div class="pin-icon">📍</div>' : ''}
                     <div class="furniture-name">${furniture.name}</div>
                     ${items.length > 0 ? `<div class="furniture-count">${items.length}개</div>` : ''}
                     <div class="resize-handle"></div>
@@ -728,7 +736,11 @@ class StorageMapApp {
         }
         
         this.selectedFurniture = furnitureId;
-        this.renderSidebar();
+        
+        // 검색이 아닌 직접 클릭 시 하이라이트 제거
+        this.highlightedFurniture = null;
+        
+        this.render(); // render() 내부에서 renderSidebar() 호출됨
         
         // 시각적 선택 상태 업데이트
         document.querySelectorAll('.furniture-marker').forEach(marker => {
@@ -791,11 +803,6 @@ class StorageMapApp {
             `).join('');
         }
         
-        // 이 가구에 물건 추가 버튼
-        document.getElementById('addItemToFurnitureBtn').onclick = () => {
-            this.openItemModal(furniture.furniture_id);
-        };
-        
         // 사이드바 액션 버튼들
         document.getElementById('closeSidebarBtn').onclick = () => {
             this.selectedFurniture = null;
@@ -822,10 +829,15 @@ class StorageMapApp {
         this.highlightedFurniture = furniture.furniture_id;
         this.selectedFurniture = furniture.furniture_id;
         
-        this.render();
-        this.selectFurniture(furniture.furniture_id);
+        this.render(); // 딱 한 번만 렌더링
         
         this.showToast(`📍 ${item.name} - ${furniture.name}`);
+        
+        // 3초 후 하이라이트 자동 해제
+        setTimeout(() => {
+            this.highlightedFurniture = null;
+            this.renderFloorPlan(); // 평면도만 재렌더 (사이드바는 유지)
+        }, 3000);
     }
 
     // 확대/축소
@@ -912,6 +924,9 @@ class StorageMapApp {
             
             if (response.ok) {
                 const data = await response.json();
+                // 로컬 데이터에 추가
+                this.data.items.push(data.item);
+                this.saveLocalData();
                 this.closeModal();
                 this.selectFurniture(item.furniture_id);
                 this.render();
@@ -1014,6 +1029,9 @@ class StorageMapApp {
                 
                 if (response.ok) {
                     const data = await response.json();
+                    // 로컬 데이터에 추가
+                    this.data.spaces.push(data.space);
+                    this.saveLocalData();
                     this.closeModal();
                     this.currentSpace = data.space.space_id;
                     this.render();

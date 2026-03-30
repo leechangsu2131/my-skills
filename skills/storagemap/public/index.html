@@ -1,151 +1,18 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>STORAGEMAP 2D - 물건 위치 관리 시스템</title>
-    <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>STORAGEMAP - 물건 위치 관리 시스템</title>
+  <meta name="description" content="물건을 찾는 가장 빠른 방법. 2D 평면도에서 5초 안에 물건 위치를 확인하세요." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📦</text></svg>" />
+  <script type="module" crossorigin src="/assets/index-CYjSnEu_.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-B-jg5GdR.css">
 </head>
 <body>
-    <!-- 헤더 -->
-    <header class="header">
-        <div class="header-content">
-            <div class="logo">
-                <h1>STORAGEMAP <span class="version">2D</span></h1>
-            </div>
-            
-            <div class="search-container">
-                <div class="search-box">
-                    <span class="search-icon">🔍</span>
-                    <input 
-                        type="text" 
-                        id="searchInput" 
-                        placeholder="물건 이름으로 검색..." 
-                        autocomplete="off"
-                    >
-                    <div class="search-results" id="searchResults"></div>
-                </div>
-            </div>
-            
-            <div class="header-actions">
-                <div class="auth-status" id="authStatus">
-                    <span class="auth-indicator" id="authIndicator">⚪</span>
-                    <span class="auth-text" id="authText">로그인 필요</span>
-                </div>
-                <button class="btn btn-primary" id="addItemBtn">
-                    <span class="btn-icon">+</span>
-                    물건 추가
-                </button>
-                <button class="btn btn-secondary" id="addFurnitureBtn">
-                    <span class="btn-icon">🗄️</span>
-                    가구 추가
-                </button>
-                <button class="btn btn-secondary" id="manageSpaceBtn">
-                    <span class="btn-icon">⚙️</span>
-                    공간 관리
-                </button>
-                <button class="btn btn-secondary" id="exportDataBtn" title="데이터 백업">
-                    <span class="btn-icon">💾</span>
-                    백업
-                </button>
-            </div>
-        </div>
-    </header>
-
-    <!-- 공간 탭 -->
-    <div class="space-tabs" id="spaceTabs">
-        <div class="space-tab active" data-space="default">
-            <span class="tab-icon">🏠</span>
-            <span class="tab-name">기본 공간</span>
-        </div>
-        <button class="space-tab add-tab" id="addSpaceBtn">
-            <span class="btn-icon">+</span>
-            공간 추가
-        </button>
-    </div>
-
-    <!-- 메인 콘텐츠 -->
-    <main class="main-content">
-        <!-- 2D 평면도 영역 -->
-        <section class="map-section">
-            <div class="map-container" id="mapContainer">
-                <div class="floor-plan" id="floorPlan">
-                    <!-- 가구 마커들이 여기에 동적으로 추가됨 -->
-                </div>
-                <div class="empty-state" id="emptyState">
-                    <div class="empty-icon">🗺️</div>
-                    <h3>평면도를 준비 중입니다</h3>
-                    <p>잠시만 기다려주세요...</p>
-                </div>
-            </div>
-            
-            <!-- 확대/축소 컨트롤 -->
-            <div class="zoom-controls">
-                <button class="zoom-btn" id="zoomIn" title="확대">+</button>
-                <button class="zoom-btn" id="zoomOut" title="축소">-</button>
-                <button class="zoom-btn" id="zoomReset" title="초기화">⟲</button>
-            </div>
-        </section>
-
-        <!-- 사이드바 -->
-        <aside class="sidebar" id="sidebar">
-            <div class="sidebar-empty" id="sidebarEmpty">
-                <div class="empty-icon">📦</div>
-                <h3>가구를 선택하세요</h3>
-                <p>평면도에서 가구를 클릭하면<br>보관 중인 물건 목록이 표시됩니다.</p>
-            </div>
-            
-            <div class="sidebar-content" id="sidebarContent" style="display: none;">
-                <div class="sidebar-header">
-                    <div class="sidebar-actions">
-                        <button class="btn-icon" id="editFurnitureBtn" title="가구 수정">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-                        </button>
-                        <button class="btn-icon btn-danger" id="deleteFurnitureBtn" title="가구 삭제">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-                        </button>
-                        <button class="btn-icon" id="closeSidebarBtn" title="닫기">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                        </button>
-                    </div>
-                    <h2 id="furnitureName">가구 이름</h2>
-                    <div class="location-path" id="locationPath">
-                        공간 > 가구
-                    </div>
-                    <div class="item-stats">
-                        <span class="item-count" id="itemCount">물건 0개</span>
-                        <span class="last-updated" id="lastUpdated">최근 업데이트: 오늘</span>
-                    </div>
-                </div>
-                
-                <div class="items-list" id="itemsList">
-                    <!-- 물건 목록이 동적으로 추가됨 -->
-                </div>
-                
-                <div class="sidebar-footer">
-                    <button class="btn btn-primary full-width" id="addItemToFurnitureBtn" 
-                        onclick="console.log('🔥 INLINE CLICK!'); app.openItemModal(app.selectedFurniture);">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px;"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                        이 가구에 물건 추가
-                    </button>
-                </div>
-            </div>
-        </aside>
-    </main>
-
-    <!-- 모달 컨테이너 -->
-    <div class="modal-container" id="modalContainer"></div>
-
-    <!-- 토스트 알림 -->
-    <div class="toast" id="toast"></div>
-
-    <!-- 로딩 오버레이 -->
-    <div class="loading-overlay" id="loadingOverlay">
-        <div class="loading-spinner"></div>
-        <p>데이터를 불러오는 중...</p>
-    </div>
-
-    <script src="app.js"></script>
+  <div id="root"></div>
 </body>
 </html>

@@ -1095,6 +1095,203 @@ async function addFurnitureToSheets(auth, furniture) {
     throw error;
   }
 }
+// ─── 물건 수정 API ───
+app.put('/api/items/:itemId', checkAuth, async (req, res) => {
+  const { itemId } = req.params;
+  const updates = req.body;
+  
+  try {
+    const item = storageService.cache.items.find(i => i.item_id === itemId);
+    if (!item) {
+      return res.status(404).json({ error: '물건을 찾을 수 없습니다' });
+    }
+    
+    // History 기록 (가구 변경 시)
+    if (updates.furniture_id && updates.furniture_id !== item.furniture_id) {
+      const historyEntry = {
+        history_id: 'h' + Date.now(),
+        item_id: itemId,
+        from_furniture: item.furniture_id,
+        to_furniture: updates.furniture_id,
+        moved_at: new Date().toISOString(),
+        note: ''
+      };
+      storageService.cache.history.push(historyEntry);
+    }
+    
+    // 캐시 업데이트
+    Object.assign(item, updates);
+    
+    res.json({ success: true, item });
+  } catch (error) {
+    res.status(500).json({ error: '물건 수정 실패: ' + error.message });
+  }
+});
+
+// ─── 물건 삭제 API ───
+app.delete('/api/items/:itemId', checkAuth, async (req, res) => {
+  const { itemId } = req.params;
+  
+  try {
+    const index = storageService.cache.items.findIndex(i => i.item_id === itemId);
+    if (index === -1) {
+      return res.status(404).json({ error: '물건을 찾을 수 없습니다' });
+    }
+    
+    const deleted = storageService.cache.items.splice(index, 1)[0];
+    
+    // Google Sheets에서도 삭제 시도
+    try {
+      await deleteRowFromSheet(process.env.SHEET_ITEMS || 'Items', 'item_id', itemId);
+    } catch (e) {
+      console.error('⚠️ Sheets 삭제 실패 (캐시에서는 삭제됨):', e.message);
+    }
+    
+    res.json({ success: true, deleted });
+  } catch (error) {
+    res.status(500).json({ error: '물건 삭제 실패: ' + error.message });
+  }
+});
+
+// ─── 가구 삭제 API ───
+app.delete('/api/furniture/:furnitureId', checkAuth, async (req, res) => {
+  const { furnitureId } = req.params;
+  
+  try {
+    // 물건이 있는지 확인
+    const hasItems = storageService.cache.items.some(i => i.furniture_id === furnitureId);
+    if (hasItems) {
+      return res.status(400).json({ error: '가구 안에 물건이 있습니다. 먼저 물건을 비워주세요.' });
+    }
+    
+    const index = storageService.cache.furniture.findIndex(f => f.furniture_id === furnitureId);
+    if (index === -1) {
+      return res.status(404).json({ error: '가구를 찾을 수 없습니다' });
+    }
+    
+    const deleted = storageService.cache.furniture.splice(index, 1)[0];
+    
+    try {
+      await deleteRowFromSheet(process.env.SHEET_FURNITURE || 'Furniture', 'furniture_id', furnitureId);
+    } catch (e) {
+      console.error('⚠️ Sheets 삭제 실패:', e.message);
+    }
+    
+    res.json({ success: true, deleted });
+  } catch (error) {
+    res.status(500).json({ error: '가구 삭제 실패: ' + error.message });
+  }
+});
+
+// ─── 공간 수정 API ───
+app.put('/api/spaces/:spaceId', checkAuth, async (req, res) => {
+  const { spaceId } = req.params;
+  const { name, description } = req.body;
+  
+  try {
+    const space = storageService.cache.spaces.find(s => s.space_id === spaceId);
+    if (!space) {
+      return res.status(404).json({ error: '공간을 찾을 수 없습니다' });
+    }
+    
+    if (name) space.name = name;
+    if (description !== undefined) space.description = description;
+    
+    res.json({ success: true, space });
+  } catch (error) {
+    res.status(500).json({ error: '공간 수정 실패: ' + error.message });
+  }
+});
+
+// ─── 공간 삭제 API ───
+app.delete('/api/spaces/:spaceId', checkAuth, async (req, res) => {
+  const { spaceId } = req.params;
+  
+  try {
+    const hasFurniture = storageService.cache.furniture.some(f => f.space_id === spaceId);
+    if (hasFurniture) {
+      return res.status(400).json({ error: '공간에 가구가 있습니다. 먼저 가구를 삭제해주세요.' });
+    }
+    
+    const index = storageService.cache.spaces.findIndex(s => s.space_id === spaceId);
+    if (index === -1) {
+      return res.status(404).json({ error: '공간을 찾을 수 없습니다' });
+    }
+    
+    const deleted = storageService.cache.spaces.splice(index, 1)[0];
+    
+    try {
+      await deleteRowFromSheet(process.env.SHEET_SPACES || 'Spaces', 'space_id', spaceId);
+    } catch (e) {
+      console.error('⚠️ Sheets 삭제 실패:', e.message);
+    }
+    
+    res.json({ success: true, deleted });
+  } catch (error) {
+    res.status(500).json({ error: '공간 삭제 실패: ' + error.message });
+  }
+});
+
+// ─── Google Sheets 행 삭제 헬퍼 ───
+async function deleteRowFromSheet(sheetName, idColumn, idValue) {
+  try {
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId,
+      range: sheetName
+    });
+    
+    const rows = response.data.values;
+    if (!rows || rows.length === 0) return;
+    
+    const headers = rows[0];
+    const idIndex = headers.indexOf(idColumn);
+    if (idIndex === -1) return;
+    
+    const rowIndex = rows.findIndex(row => row[idIndex] === idValue);
+    if (rowIndex <= 0) return; // 0 is header
+    
+    // Get sheet ID for batchUpdate
+    const spreadsheet = await sheets.spreadsheets.get({ spreadsheetId });
+    const sheet = spreadsheet.data.sheets.find(s => s.properties.title === sheetName);
+    if (!sheet) return;
+    
+    await sheets.spreadsheets.batchUpdate({
+      spreadsheetId,
+      resource: {
+        requests: [{
+          deleteDimension: {
+            range: {
+              sheetId: sheet.properties.sheetId,
+              dimension: 'ROWS',
+              startIndex: rowIndex,
+              endIndex: rowIndex + 1
+            }
+          }
+        }]
+      }
+    });
+    
+    console.log(`✅ ${sheetName}에서 행 삭제 완료: ${idValue}`);
+  } catch (error) {
+    console.error(`❌ ${sheetName} 행 삭제 실패:`, error.message);
+    throw error;
+  }
+}
+
+// refresh_token 가져오는 API (한 번 로그인 후 토큰 저장용)
+app.get('/api/auth/token', checkAuth, (req, res) => {
+  res.json({
+    refresh_token: req.session.tokens?.refresh_token,
+    message: '이 refresh_token을 .env 파일의 GOOGLE_REFRESH_TOKEN에 저장하세요'
+  });
+});
+
+// React Router SPA fallback
+const path = require('path');
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
 app.listen(PORT, async () => {
   console.log(`StorageMap 서버가 http://localhost:${PORT} 에서 시작되었습니다`);
   
@@ -1140,14 +1337,6 @@ app.listen(PORT, async () => {
     console.log('   수동 로그인이 필요합니다: /auth/google');
     console.log('   (한 번 로그인 후 받은 refresh_token을 .env에 저장하면 자동 로그인됩니다)');
   }
-});
-
-// refresh_token 가져오는 API (한 번 로그인 후 토큰 저장용)
-app.get('/api/auth/token', checkAuth, (req, res) => {
-  res.json({
-    refresh_token: req.session.tokens?.refresh_token,
-    message: '이 refresh_token을 .env 파일의 GOOGLE_REFRESH_TOKEN에 저장하세요'
-  });
 });
 
 module.exports = app;

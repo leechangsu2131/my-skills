@@ -1,0 +1,36 @@
+
+> @workspace/storagemap@0.0.0 dev /home/runner/workspace/artifacts/storagemap
+> vite --config vite.config.ts --host 0.0.0.0
+
+[2m4:51:39 AM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m Re-optimizing dependencies because lockfile has changed
+
+  [32m[1mVITE[22m v7.3.1[39m  [2mready in [0m[1m321[22m[2m[0m ms[22m
+
+  [32m➜[39m  [1mLocal[22m:   [36mhttp://localhost:[1m23864[22m/[39m
+  [32m➜[39m  [1mNetwork[22m: [36mhttp://172.31.78.162:[1m23864[22m/[39m
+[2m[32m  ➜[39m[22m[2m  press [22m[1mh + enter[22m[2m to show help[22m
+[RUNTIME_ERROR]{"type":"runtime-error","timestamp":1774763369752,"name":"Error","message":"X is not defined","stack":"    at CreateItemModal /home/runner/workspace/artifacts/storagemap/src/pages/Items.tsx:179:100\n\n\n\n\n\n\n\n\n","loc":{"line":179,"column":100,"file":"/home/runner/workspace/artifacts/storagemap/src/pages/Items.tsx"},"frame":"177|          <div className=\"px-6 py-5 border-b flex justify-between items-center bg-secondary/30\">\n178|            <h2 className=\"text-xl font-bold text-foreground\">새 물건 등록</h2>\n179|            <button onClick={onClose} className=\"p-2 hover:bg-white rounded-full transition-colors\"><X className=\"w-5 h-5\"/></button>\n   |                                                                                                     ^\n180|          </div>\n181|          "}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[1;1H[0J[2m5:49:52 AM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/pages/Items.tsx, /src/index.css[22m

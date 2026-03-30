@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "StorageMap"
+version = "1.0.0"
+id = "artifacts/storagemap"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 23864
+
+[services.development]
+run = "pnpm --filter @workspace/storagemap run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/storagemap", "run", "build" ]
+publicDir = "artifacts/storagemap/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "23864"
+BASE_PATH = "/"

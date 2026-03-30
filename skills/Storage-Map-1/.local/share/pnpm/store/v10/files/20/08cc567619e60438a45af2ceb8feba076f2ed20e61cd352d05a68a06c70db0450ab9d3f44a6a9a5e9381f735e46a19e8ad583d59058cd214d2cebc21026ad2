@@ -1,0 +1,2 @@
+import{purry as e}from"./purry.js";import{t}from"./words-Dv8LmnKC.js";function n(...t){return e(r,t)}const r=e=>t(e).join(`-`).toLowerCase();export{n as toKebabCase};
+//# sourceMappingURL=toKebabCase.js.map

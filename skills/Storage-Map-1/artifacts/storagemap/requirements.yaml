@@ -1,0 +1,17 @@
+packages:
+  "framer-motion": "For page transitions and smooth UI micro-interactions"
+  "date-fns": "For formatting dates in item history and creation times"
+  "clsx": "Utility for constructing className strings conditionally"
+  "tailwind-merge": "Utility to merge tailwind classes safely"
+
+images:
+  - path: "artifacts/storagemap/public/images/empty-box.png"
+    description: "A clean, minimal, 3d-rendered illustration of an open, empty storage box or drawer in soft pastel colors (light blue and white), on a transparent background, productivity style"
+    aspect_ratio: "1:1"
+  - path: "artifacts/storagemap/public/images/hero-bg.png"
+    description: "A subtle, abstract geometric pattern background with soft overlapping blue and white shapes, conveying organization and structure, very light and minimal"
+    aspect_ratio: "16:9"
+
+notes:
+  - Uses @workspace/api-client-react for TanStack Query hooks.
+  - Custom dragging logic implemented for floor plan canvas to avoid heavy dependencies.

@@ -1,0 +1,39 @@
+{
+  "name": "@orval/hono",
+  "version": "8.5.3",
+  "license": "MIT",
+  "type": "module",
+  "types": "./dist/index.d.mts",
+  "exports": {
+    ".": "./dist/index.mjs",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "!dist/**/*.d.ts.map",
+    "!dist/**/*.d.mts.map"
+  ],
+  "scripts": {
+    "build": "tsdown --config-loader unrun",
+    "dev": "tsdown --config-loader unrun --watch src",
+    "lint": "tsc --noEmit src/zValidator.ts && eslint .",
+    "test": "vitest",
+    "clean": "rimraf .turbo dist",
+    "nuke": "rimraf .turbo dist node_modules"
+  },
+  "dependencies": {
+    "@orval/core": "8.5.3",
+    "@orval/zod": "8.5.3",
+    "fs-extra": "^11.3.2",
+    "remeda": "^2.33.6"
+  },
+  "devDependencies": {
+    "@hono/zod-validator": "0.7.6",
+    "@types/fs-extra": "^11.0.4",
+    "eslint": "10.0.2",
+    "rimraf": "6.1.2",
+    "tsdown": "0.20.3",
+    "typescript": "5.9.3",
+    "vitest": "4.0.18"
+  }
+}

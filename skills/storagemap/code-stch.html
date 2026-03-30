@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>STORAGEMAP V3 - Hybrid Search</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-tertiary-fixed": "#002109",
+                        "surface-container-lowest": "#ffffff",
+                        "inverse-surface": "#2d3133",
+                        "inverse-on-surface": "#eff1f3",
+                        "primary-fixed-dim": "#adc7ff",
+                        "on-background": "#191c1e",
+                        "on-tertiary": "#ffffff",
+                        "surface": "#f7f9fb",
+                        "on-error-container": "#93000a",
+                        "on-secondary": "#ffffff",
+                        "inverse-primary": "#adc7ff",
+                        "error": "#ba1a1a",
+                        "on-surface-variant": "#44474e",
+                        "surface-container-high": "#e6e8ea",
+                        "on-secondary-container": "#57657a",
+                        "secondary": "#515f74",
+                        "on-primary-container": "#689eff",
+                        "on-tertiary-container": "#00b753",
+                        "error-container": "#ffdad6",
+                        "tertiary-container": "#003f18",
+                        "primary": "#001f4a",
+                        "surface-variant": "#e0e3e5",
+                        "tertiary-fixed": "#6bff8f",
+                        "on-primary-fixed": "#001a41",
+                        "surface-bright": "#f7f9fb",
+                        "secondary-fixed-dim": "#b9c7df",
+                        "surface-container-highest": "#e0e3e5",
+                        "on-primary": "#ffffff",
+                        "primary-fixed": "#d8e2ff",
+                        "surface-dim": "#d8dadc",
+                        "on-secondary-fixed-variant": "#3a485b",
+                        "tertiary-fixed-dim": "#4ae176",
+                        "on-primary-fixed-variant": "#004493",
+                        "tertiary": "#00270c",
+                        "primary-container": "#003473",
+                        "outline-variant": "#c4c6cf",
+                        "on-surface": "#191c1e",
+                        "on-secondary-fixed": "#0d1c2e",
+                        "background": "#f7f9fb",
+                        "secondary-fixed": "#d5e3fc",
+                        "outline": "#74777f",
+                        "on-error": "#ffffff",
+                        "surface-container-low": "#f2f4f6",
+                        "surface-tint": "#005bc0",
+                        "surface-container": "#eceef0",
+                        "on-tertiary-fixed-variant": "#005321",
+                        "secondary-container": "#d5e3fc"
+                    },
+                    fontFamily: {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    },
+                    borderRadius: { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body selection:bg-primary-container selection:text-white">
+<div class="flex h-screen overflow-hidden">
+<!-- SideNavBar Shared Component -->
+<aside class="hidden md:flex flex-col h-full py-6 px-4 gap-2 bg-[#f2f4f6] dark:bg-slate-950 text-[#1B365D] dark:text-blue-400 docked h-screen left-0 w-64 tonal-shift bg-[#f2f4f6] dark:bg-slate-900 shadow-none font-['Inter'] text-sm font-medium">
+<div class="mb-8 px-2">
+<h1 class="text-lg font-bold text-[#1B365D] uppercase tracking-widest font-headline">STORAGEMAP V3</h1>
+<p class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold opacity-60">Management Console</p>
+</div>
+<nav class="flex flex-col gap-2">
+<a class="flex items-center gap-3 px-4 py-3 text-[#44474e] dark:text-slate-400 hover:text-[#1B365D] hover:bg-white/50 dark:hover:bg-slate-800/50 transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-[#44474e] dark:text-slate-400 hover:text-[#1B365D] hover:bg-white/50 dark:hover:bg-slate-800/50 transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="map">map</span>
+<span>Floor Plan</span>
+</a>
+<!-- Active Search Tab -->
+<a class="flex items-center gap-3 px-4 py-3 bg-white dark:bg-slate-800 text-[#1B365D] dark:text-blue-300 rounded-lg shadow-sm font-semibold" href="#">
+<span class="material-symbols-outlined" data-icon="search" style="font-variation-settings: 'FILL' 1;">search</span>
+<span>Search</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-[#44474e] dark:text-slate-400 hover:text-[#1B365D] hover:bg-white/50 dark:hover:bg-slate-800/50 transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="history">history</span>
+<span>History</span>
+</a>
+</nav>
+<div class="mt-auto p-4 bg-surface-container rounded-xl">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-white">
+<span class="material-symbols-outlined">person</span>
+</div>
+<div>
+<p class="text-xs font-bold text-primary">System Admin</p>
+<p class="text-[10px] text-on-surface-variant">Zone A-12 Supervisor</p>
+</div>
+</div>
+</div>
+</aside>
+<div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+<!-- TopNavBar Shared Component -->
+<header class="flex justify-between items-center w-full px-6 py-3 border-b border-slate-200/15 bg-[#f7f9fb] dark:bg-slate-900 text-[#1B365D] dark:text-blue-400 font-['Manrope'] font-bold tracking-tight docked full-width top-0">
+<div class="flex items-center gap-4 flex-1">
+<span class="md:hidden material-symbols-outlined">menu</span>
+<!-- Search is Integrated into main layout but TopNav supports trailings -->
+<div class="text-xs font-bold uppercase tracking-tighter text-on-surface-variant opacity-50">Global Search Engine</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 hover:bg-[#f2f4f6] dark:hover:bg-slate-800 transition-colors rounded-full transition-all active:opacity-80">
+<span class="material-symbols-outlined" data-icon="refresh">refresh</span>
+</button>
+<button class="p-2 hover:bg-[#f2f4f6] dark:hover:bg-slate-800 transition-colors rounded-full transition-all active:opacity-80">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<div class="w-8 h-8 rounded-lg bg-surface-container-highest overflow-hidden">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="Close-up professional headshot of a male operations manager in a neutral industrial office setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBOStQgyxBK9JekIQ40kxCWpXovJJEv1yG-4lvDlex2HzGo23vEKIogH85jmluiRT5mPndHQSSH2TzQRudJfSC45Vet3AyVnCdpwnw7mEYGdHY72kzvaGtQQaECtRikzTS-mUSCtusSH4vyzYKOa_GvrordVqCmyEbF8__RzazurQNZV-0XVeSVAXE1AyfgpLPWTyZzYsuhEAOKdDE-hw1sJqvDWwJws9-5_SfiYXCoKrxngYPLISaE5i2ot6c31NikVSPVxwtQGuSA"/>
+</div>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="flex-1 overflow-hidden flex flex-col bg-surface">
+<!-- Search & Filters Header (Level 1) -->
+<section class="bg-surface-container-low px-8 py-6 flex flex-col gap-6">
+<div class="flex flex-col md:flex-row gap-4 items-end">
+<div class="flex-1 w-full">
+<label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2 ml-1">Universal Inventory Locator</label>
+<div class="relative group">
+<span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-outline">search</span>
+<input class="w-full pl-12 pr-4 py-4 bg-surface-container-lowest border-none rounded-xl shadow-sm focus:ring-2 focus:ring-primary-container text-lg font-medium placeholder:text-outline-variant" placeholder="Scan SKU, Item Name, or Asset ID..." type="text"/>
+</div>
+</div>
+<div class="flex gap-3 w-full md:w-auto">
+<div class="flex-1 md:w-40">
+<label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2 ml-1">Category</label>
+<select class="w-full bg-surface-container-lowest border-none rounded-lg text-sm py-3 focus:ring-primary-container">
+<option>All Assets</option>
+<option>Logistics</option>
+<option>Electronics</option>
+<option>Hardware</option>
+</select>
+</div>
+<div class="flex-1 md:w-40">
+<label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2 ml-1">Space</label>
+<select class="w-full bg-surface-container-lowest border-none rounded-lg text-sm py-3 focus:ring-primary-container">
+<option>Warehouse A</option>
+<option>Zone B-2</option>
+<option>Cold Storage</option>
+</select>
+</div>
+<button class="bg-primary text-on-primary px-6 py-3 rounded-lg flex items-center gap-2 font-bold hover:opacity-90 transition-opacity self-end h-[46px]">
+<span class="material-symbols-outlined text-sm">filter_list</span>
+<span>Filter</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Hybrid Results View -->
+<section class="flex-1 flex overflow-hidden">
+<!-- Results List (Left) -->
+<div class="w-full md:w-1/3 lg:w-1/4 border-r border-outline-variant/10 overflow-y-auto bg-surface-container-low/30">
+<div class="p-4 flex items-center justify-between border-b border-outline-variant/10">
+<span class="text-[11px] font-bold text-on-surface-variant uppercase tracking-widest">24 Results Found</span>
+<span class="material-symbols-outlined text-sm text-outline cursor-pointer">sort</span>
+</div>
+<!-- Result Items -->
+<div class="flex flex-col">
+<!-- Active Selection -->
+<div class="p-5 bg-white border-l-4 border-primary cursor-pointer transition-all">
+<div class="flex justify-between items-start mb-1">
+<h3 class="font-bold text-primary font-headline">Industrial Pump X-200</h3>
+<span class="text-[10px] px-2 py-0.5 bg-tertiary-container text-on-tertiary-container rounded-full font-bold">Active</span>
+</div>
+<p class="text-xs text-on-surface-variant mb-3">SKU: IND-99283-XP</p>
+<div class="flex items-center gap-2 text-xs text-outline">
+<span class="material-symbols-outlined text-sm">location_on</span>
+<span>Warehouse A, Bay 4</span>
+</div>
+</div>
+<!-- Inactive Items -->
+<div class="p-5 hover:bg-white/50 cursor-pointer transition-all border-b border-outline-variant/5">
+<div class="flex justify-between items-start mb-1">
+<h3 class="font-bold text-on-surface font-headline">Server Rack Alpha</h3>
+<span class="text-[10px] px-2 py-0.5 bg-surface-container-highest text-on-surface-variant rounded-full font-bold">Staged</span>
+</div>
+<p class="text-xs text-on-surface-variant mb-3">SKU: SRV-0021-AL</p>
+<div class="flex items-center gap-2 text-xs text-outline">
+<span class="material-symbols-outlined text-sm">location_on</span>
+<span>Zone B, Rack 12</span>
+</div>
+</div>
+<div class="p-5 hover:bg-white/50 cursor-pointer transition-all border-b border-outline-variant/5">
+<div class="flex justify-between items-start mb-1">
+<h3 class="font-bold text-on-surface font-headline">Hydraulic Lift Arm</h3>
+<span class="text-[10px] px-2 py-0.5 bg-error-container text-on-error-container rounded-full font-bold">Maintenance</span>
+</div>
+<p class="text-xs text-on-surface-variant mb-3">SKU: HYD-4412-BB</p>
+<div class="flex items-center gap-2 text-xs text-outline">
+<span class="material-symbols-outlined text-sm">location_on</span>
+<span>Workshop Floor</span>
+</div>
+</div>
+<div class="p-5 hover:bg-white/50 cursor-pointer transition-all border-b border-outline-variant/5">
+<div class="flex justify-between items-start mb-1">
+<h3 class="font-bold text-on-surface font-headline">Titanium Alloy Rods</h3>
+<span class="text-[10px] px-2 py-0.5 bg-tertiary-container text-on-tertiary-container rounded-full font-bold">In Stock</span>
+</div>
+<p class="text-xs text-on-surface-variant mb-3">SKU: MAT-9001-TI</p>
+<div class="flex items-center gap-2 text-xs text-outline">
+<span class="material-symbols-outlined text-sm">location_on</span>
+<span>Material Storage 2</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Details Pane (Right/Full) -->
+<div class="flex-1 overflow-y-auto bg-surface p-8 relative">
+<div class="max-w-4xl mx-auto flex flex-col gap-8">
+<!-- Detail Header Card -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<div class="lg:col-span-1 h-64 bg-surface-container-highest rounded-2xl overflow-hidden shadow-sm group relative">
+<img class="w-full h-full object-cover transition-transform group-hover:scale-105 duration-700" data-alt="high-tech industrial machine part with metallic finish and complex engineering details in a brightly lit clean laboratory environment" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAYjRdqqDlDtr6rJGEiggYYloP9qrQcje3I2eqTqJjfkM_c2Z-AbHXzwyIPYF0kkxtr2ovv2oad7RHhxFlQut8Zjz4Zgn4g5NOlvTk6xWNEgHmyosM8GJgJHf-G9kZNzGLckJWjb7w_hNrlnwNEHHOxx8CiRwrab05c8YSHiuVxG_C5vwrqIc5AY4u4CBEqn-W-Zlw3UuzE1rQxGnVRXjMbKDOEvVgBsOXrq2iV-Rtr46RaqDebNeUMAW-0A2dGW2iV7mumxJaCOY1P"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+<button class="absolute bottom-4 right-4 bg-white/90 backdrop-blur text-primary p-2 rounded-full shadow-lg">
+<span class="material-symbols-outlined">zoom_in</span>
+</button>
+</div>
+<div class="lg:col-span-2 flex flex-col justify-center">
+<div class="flex items-center gap-3 mb-2">
+<span class="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/60">Heavy Machinery / Category 4</span>
+</div>
+<h2 class="text-4xl font-black text-primary font-headline tracking-tight mb-4 leading-tight">Industrial Pump X-200</h2>
+<div class="flex flex-wrap gap-6 mb-8">
+<div class="flex flex-col">
+<span class="text-[10px] font-bold text-outline uppercase tracking-wider">Asset Status</span>
+<span class="text-on-tertiary-container font-bold flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-on-tertiary-container"></span>
+                                                Operational
+                                            </span>
+</div>
+<div class="flex flex-col border-l border-outline-variant/30 pl-6">
+<span class="text-[10px] font-bold text-outline uppercase tracking-wider">Last Sync</span>
+<span class="text-on-surface font-semibold">12 mins ago</span>
+</div>
+<div class="flex flex-col border-l border-outline-variant/30 pl-6">
+<span class="text-[10px] font-bold text-outline uppercase tracking-wider">Weight</span>
+<span class="text-on-surface font-semibold">452.4 kg</span>
+</div>
+</div>
+<div class="flex gap-4">
+<button class="bg-primary text-on-primary px-8 py-4 rounded-xl font-bold flex items-center gap-3 shadow-xl shadow-primary/20 hover:translate-y-[-2px] transition-all">
+<span class="material-symbols-outlined">location_searching</span>
+                                            Show on Map
+                                        </button>
+<button class="bg-surface-container-high text-on-surface px-8 py-4 rounded-xl font-bold flex items-center gap-3 hover:bg-surface-container-highest transition-colors">
+<span class="material-symbols-outlined">edit</span>
+                                            Edit Specs
+                                        </button>
+</div>
+</div>
+</div>
+<!-- Contextual Map Overlay (Simulation) -->
+<div class="rounded-3xl bg-surface-container overflow-hidden h-[400px] relative border border-outline-variant/10">
+<img class="w-full h-full object-cover opacity-80" data-alt="overhead schematic floor plan of a warehouse with marked sectors and bright blue navigation pathways" data-location="Chicago Logistics Center" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCF-NtJyfppU-ceXqPejhZ7YY9OlTqKh8dvEchORk8iIxjsAPpojQOkqnpGwCPRw8es86feoJNzIaPNgc2JD--dGC_eR4OCmrvNfZUvo1PRQTqTdqVxcZacio2BGlqa8tCCFyuTbMJy7YOZwQV3fhT-CR_I0pysAYOOe8dIhRLepx9LMGsdMfHDGzef4UsqdRMK5RsV2e7ODRmvKuH9m_8o807jVFlDNVn-oGd1Yu3iXNti9QCyho2iQImj_I0moy1XIlZGITzJnBox"/>
+<!-- Floating Map Controls -->
+<div class="absolute top-6 left-6 glass-panel p-4 rounded-2xl shadow-xl flex flex-col gap-2 border border-white/20">
+<h4 class="text-xs font-black uppercase tracking-widest text-primary">Warehouse A</h4>
+<p class="text-[10px] text-on-surface-variant">Level 02 - Processing Wing</p>
+</div>
+<!-- The "Found" Indicator -->
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center">
+<div class="w-12 h-12 bg-primary rounded-full flex items-center justify-center text-white shadow-2xl ring-4 ring-primary/20 animate-pulse">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">location_on</span>
+</div>
+<div class="mt-3 bg-primary text-on-primary px-3 py-1 rounded-full text-[10px] font-bold shadow-lg">
+                                        ITEM LOCATED
+                                    </div>
+</div>
+<div class="absolute bottom-6 right-6 flex flex-col gap-2">
+<button class="w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center text-primary font-bold hover:bg-surface-variant transition-colors">+</button>
+<button class="w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center text-primary font-bold hover:bg-surface-variant transition-colors">-</button>
+</div>
+</div>
+<!-- Details Bento Grid -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-4 pb-12">
+<div class="bg-surface-container-lowest p-6 rounded-2xl shadow-sm border border-outline-variant/5">
+<span class="material-symbols-outlined text-primary mb-3">inventory_2</span>
+<p class="text-[10px] font-bold text-outline uppercase mb-1">Stock Level</p>
+<p class="text-2xl font-black text-primary">12 <span class="text-sm font-medium text-on-surface-variant">units</span></p>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-2xl shadow-sm border border-outline-variant/5">
+<span class="material-symbols-outlined text-primary mb-3">straighten</span>
+<p class="text-[10px] font-bold text-outline uppercase mb-1">Dimensions</p>
+<p class="text-xl font-bold text-primary">120x80x150 <span class="text-xs font-medium text-on-surface-variant">cm</span></p>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-2xl shadow-sm border border-outline-variant/5">
+<span class="material-symbols-outlined text-primary mb-3">event</span>
+<p class="text-[10px] font-bold text-outline uppercase mb-1">Stored Since</p>
+<p class="text-lg font-bold text-primary">OCT 12, 2023</p>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-2xl shadow-sm border border-outline-variant/5">
+<span class="material-symbols-outlined text-primary mb-3">shield</span>
+<p class="text-[10px] font-bold text-outline uppercase mb-1">Class</p>
+<p class="text-lg font-bold text-primary">Hazard A1</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+</div>
+</div>
+<!-- Floating Action Button - Only for Primary Search Context -->
+<button class="fixed bottom-8 right-8 w-14 h-14 bg-primary text-on-primary rounded-full shadow-2xl flex items-center justify-center hover:scale-110 transition-transform active:scale-95 group">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+<span class="absolute right-16 bg-primary text-on-primary px-3 py-1 rounded text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">New Entry</span>
+</button>
+</body></html>

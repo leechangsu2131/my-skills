@@ -511,6 +511,81 @@ def generate_korean_data():
 
     return rows
 
+# ══════════════════════════════════════════════════════════
+#  범용 데이터 생성 (정규식 기본 추출)
+# ══════════════════════════════════════════════════════════
+def extract_general_titles(pdf_path):
+    if not os.path.exists(pdf_path):
+        return {}
+
+    doc = fitz.open(pdf_path)
+    titles = {}
+    
+    lesson_pattern = re.compile(r'(?:차시|단원|lesson|unit)\s*(\d+)', re.IGNORECASE)
+    
+    for page_num in range(min(5, len(doc))):
+        text = doc[page_num].get_text()
+        lines = [l.strip() for l in text.split('\n') if l.strip()]
+        
+        for i, line in enumerate(lines):
+            m = lesson_pattern.search(line)
+            if m:
+                lesson_num = int(m.group(1))
+                if lesson_num not in titles:
+                    for j in range(i + 1, min(i + 4, len(lines))):
+                        cand = lines[j]
+                        if cand.startswith('•') or cand.startswith('·'):
+                            cand = cand.lstrip('•·\t ')
+                        if len(cand) > 2 and not cand.isdigit():
+                            titles[lesson_num] = cand[:50]
+                            break
+
+    doc.close()
+    return titles
+
+
+def generate_general_data(subject_name, prefix, max_unit=5):
+    rows = []
+    
+    for unit_num in range(1, max_unit + 1):
+        candidates = [
+            f"{prefix}3_{unit_num}_1_지도서.pdf",
+            f"{prefix}3-1지도서_{unit_num}.pdf",
+            f"{prefix}_{unit_num}단원지도서.pdf",
+            f"{prefix}3-1_{unit_num}단원.pdf"
+        ]
+        
+        pdf_path = None
+        for cand in candidates:
+            p = os.path.join(GUIDE_DIR, cand)
+            if os.path.exists(p):
+                pdf_path = p
+                break
+                
+        titles = extract_general_titles(pdf_path) if pdf_path else {}
+        unit_name = f"{unit_num}단원"
+        
+        max_lessons = max(titles.keys()) if titles else 3
+        
+        for lesson_num in range(1, max_lessons + 1):
+            title = titles.get(lesson_num, f"{unit_name} {lesson_num}차시")
+            rows.append({
+                "수업내용": title,
+                "과목": subject_name,
+                "대단원": unit_name,
+                "소단원": "",
+                "차시": str(lesson_num),
+                "계획일": "",
+                "실행여부": False,
+                "pdf파일": "",
+                "시작페이지": "",
+                "끝페이지": "",
+                "비고": "",
+            })
+            
+    return rows
+
+
 
 # ══════════════════════════════════════════════════════════
 #  중복 행 삭제
@@ -583,7 +658,15 @@ def main():
     for r in moral_rows:
         print(f"    {r['과목']} | {r['대단원'][:25]:<25} | {r['차시']:<5} | {r['수업내용'][:40]}")
 
-    all_rows = korean_rows + moral_rows
+    # 3. 범용 과목 데이터 생성 (수학, 사회, 과학)
+    print(f"\n[3/4] 범용 데이터 생성 중 (수학, 사회, 과학)...")
+    math_rows = generate_general_data("수학", "수학")
+    social_rows = generate_general_data("사회", "사회")
+    science_rows = generate_general_data("과학", "과학")
+    general_rows = math_rows + social_rows + science_rows
+    print(f"  기타 {len(general_rows)}행 생성됨")
+
+    all_rows = korean_rows + moral_rows + general_rows
 
     if not args.upload and not args.cleanup:
         print(f"\n[미리보기 모드] 총 {len(all_rows)}행.")

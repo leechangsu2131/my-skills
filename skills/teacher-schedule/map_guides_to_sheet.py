@@ -12,6 +12,7 @@ import json
 import re
 import io
 import argparse
+from pathlib import Path
 
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
@@ -28,9 +29,16 @@ import fitz  # pymupdf
 SHEET_ID = os.getenv("SHEET_ID")
 SHEET_NAME = os.getenv("SHEET_NAME", "시트1")
 GUIDE_DIR = r"D:\지도서"
+SPLIT_GUIDE_OUTPUT_DIR = str((Path(SCHEDULE_DIR).parent / "teacher-guide-subunit-splitter" / "output").resolve())
+DOWNLOADS_DIRS = [
+    str(Path(os.environ.get("USERPROFILE", "")) / "Downloads"),
+    r"D:\Downloads",
+]
 SCOPES = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"]
 DONE_COLUMN_NAME = "실행여부"
 DONE_COLUMN_FALLBACK_INDEX = 6
+GUIDE_SEARCH_DIRS = [GUIDE_DIR, SPLIT_GUIDE_OUTPUT_DIR]
+ANNUAL_PLAN_SEARCH_DIRS = [GUIDE_DIR, *DOWNLOADS_DIRS]
 
 
 # ── 구글 시트 연결 ───────────────────────────────────────────
@@ -43,57 +51,131 @@ def get_sheet():
     sh = gc.open_by_key(SHEET_ID)
     return sh, sh.worksheet(SHEET_NAME)
 
+def normalize_search_text(text):
+    return re.sub(r"[\s_\-\[\]\(\)]+", "", str(text)).lower()
 
-from pathlib import Path
 
-def find_best_pdf(subject_prefix, unit_num, lesson_num=None, grade_str="3-1"):
-    search_path = Path(GUIDE_DIR)
-    if not search_path.exists():
-        return None
-        
-    all_pdfs = list(search_path.rglob(f"*{subject_prefix}*.pdf"))
+def iter_search_pdfs(subject_prefix, search_dirs):
+    seen = set()
+    normalized_subject = normalize_search_text(subject_prefix)
+    for base_dir in search_dirs:
+        if not base_dir:
+            continue
+        search_path = Path(base_dir)
+        if not search_path.exists():
+            continue
+        for pdf in search_path.rglob("*.pdf"):
+            key = str(pdf.resolve())
+            if key in seen:
+                continue
+            normalized_path = normalize_search_text(key)
+            if normalized_subject not in normalized_path:
+                continue
+            seen.add(key)
+            yield pdf
+
+
+def build_lesson_name_patterns(lesson_value):
+    lesson_text = str(lesson_value).replace("∼", "~").strip()
+    if not lesson_text:
+        return []
+    patterns = {lesson_text}
+    if "~" in lesson_text:
+        left, right = [part.strip() for part in lesson_text.split("~", 1)]
+        patterns.update(
+            {
+                lesson_text.replace("~", "-"),
+                lesson_text.replace("~", "_"),
+                f"{left}차시~{right}차시",
+                f"{left}차시-{right}차시",
+                f"{left}차시_{right}차시",
+                f"{left}차시{right}차시",
+            }
+        )
+    else:
+        patterns.update(
+            {
+                f"{lesson_text}차시",
+                f"_{lesson_text}.pdf",
+                f"-{lesson_text}.pdf",
+                f"_{lesson_text}_",
+            }
+        )
+    return [normalize_search_text(pattern) for pattern in patterns if pattern]
+
+
+def extract_title_match_tokens(title):
+    tokens = [normalize_search_text(token) for token in re.findall(r"[0-9A-Za-z가-힣]+", str(title)) if len(token) >= 2]
+    tokens = sorted(set(token for token in tokens if token), key=len, reverse=True)
+    return tokens[:6]
+
+
+def find_best_pdf(subject_prefix, unit_num, lesson_num=None, grade_str="3-1", lesson_title=None):
+    all_pdfs = list(iter_search_pdfs(subject_prefix, GUIDE_SEARCH_DIRS))
     if not all_pdfs:
         return None
-        
+
     best_pdf = None
     best_score = -1
-    
+
+    normalized_subject = normalize_search_text(subject_prefix)
+    normalized_grade = normalize_search_text(grade_str)
+    normalized_unit = normalize_search_text(unit_num)
+    lesson_patterns = build_lesson_name_patterns(lesson_num) if lesson_num is not None else []
+    lesson_title_tokens = extract_title_match_tokens(lesson_title)
+
     for pdf in all_pdfs:
-        name = pdf.name.replace(" ", "")
+        name = normalize_search_text(pdf.name)
+        full_path = normalize_search_text(str(pdf))
         score = 0
-        
-        if subject_prefix in name:
+
+        if normalized_subject in full_path:
             score += 1
-            
+
         lesson_match = False
-        if lesson_num is not None:
-            l_str = str(lesson_num)
-            if f"{l_str}차시" in name or f"_{l_str}.pdf" in name or f"-{l_str}.pdf" in name or f"_{l_str}_" in name:
+        if lesson_patterns:
+            if any(pattern and pattern in full_path for pattern in lesson_patterns):
                 score += 20
                 lesson_match = True
-                
+
         unit_match = False
-        u_str = str(unit_num)
-        if f"{u_str}단원" in name or f"_{u_str}_" in name or f"-{u_str}_" in name or f"_{u_str}." in name:
+        if any(
+            pattern in full_path
+            for pattern in (
+                f"{normalized_unit}단원",
+                f"_{normalized_unit}_",
+                f"-{normalized_unit}_",
+                f"_{normalized_unit}.",
+            )
+        ):
             score += 10
             unit_match = True
-        elif isinstance(unit_num, str) and unit_num in name:
+        elif isinstance(unit_num, str) and normalized_unit in full_path:
             score += 10
             unit_match = True
-            
-        if grade_str and grade_str in name:
+
+        if lesson_title_tokens:
+            token_hits = sum(1 for token in lesson_title_tokens if token in full_path)
+            if token_hits >= 3:
+                score += 24
+            elif token_hits == 2:
+                score += 16
+            elif token_hits == 1:
+                score += 8
+
+        if normalized_grade and normalized_grade in full_path:
             score += 5
-            
-            # 일반 통권 지도서 파일은 조각 파일(Split)보다 우선순위를 대폭 낮춥니다.
-            # 이로써 아무리 이름이 부실한 조각 파일이더라도 원본 파일보다 우선적으로 매칭됩니다.
-            is_original = "지도서" in name and "subunit_" not in name and "pdf_splits" not in str(pdf)
-            if is_original and not unit_match and not lesson_match:
-                score -= 100
-            
+
+        # 일반 통권 지도서 파일은 조각 파일(Split)보다 우선순위를 대폭 낮춥니다.
+        # 이로써 아무리 이름이 부실한 조각 파일이더라도 원본 파일보다 우선적으로 매칭됩니다.
+        is_original = "지도서" in pdf.name and "subunit_" not in pdf.name and "pdf_splits" not in str(pdf)
+        if is_original and not unit_match and not lesson_match:
+            score -= 100
+
         if score > best_score:
             best_score = score
             best_pdf = pdf
-            
+
     if best_pdf:
         return str(best_pdf.resolve())
     return None
@@ -105,6 +187,228 @@ def format_pdf_path(pdf_path):
     if user_prof and abs_p.startswith(user_prof):
         return abs_p.replace(user_prof, "%USERPROFILE%")
     return abs_p
+
+
+ANNUAL_PLAN_HEADER_LINES = {
+    "단원",
+    "주제",
+    "차시",
+    "차시명",
+    "교과서 쪽수",
+    "연간 지도 계획",
+}
+ANNUAL_PLAN_RESOURCE_MARKERS = (
+    "별별 직업 속으로",
+    "디지털 +",
+    "할 수 있어요",
+    "풍덩 사회 속으로",
+)
+ANNUAL_PLAN_UNIT_MARKER_RE = re.compile(r"^(\d+)\.\s*$")
+ANNUAL_PLAN_THEME_START_RE = re.compile(r"^(\d+)\.\s*(.+)$")
+ANNUAL_PLAN_LESSON_RE = re.compile(r"^(\d+(?:[~∼]\d+)?)$")
+ANNUAL_PLAN_PAGE_RANGE_RE = re.compile(r"^(\d+\s*[~∼]\s*\d+)$")
+
+
+def find_annual_plan_pdf(subject_prefix, grade_str="3-1"):
+    normalized_grade = normalize_search_text(grade_str)
+    best_pdf = None
+    best_score = -1
+
+    seen = set()
+    for base_dir in ANNUAL_PLAN_SEARCH_DIRS:
+        if not base_dir:
+            continue
+        root = Path(base_dir)
+        if not root.exists():
+            continue
+        candidate_patterns = [
+            f"*{subject_prefix}*연간*계획*.pdf",
+            f"*{subject_prefix}*지도계획*.pdf",
+            f"*{subject_prefix}*연간지도계획*.pdf",
+        ]
+        for pattern in candidate_patterns:
+            for pdf in root.rglob(pattern):
+                resolved = str(pdf.resolve())
+                if resolved in seen:
+                    continue
+                seen.add(resolved)
+                text = normalize_search_text(resolved)
+
+                score = 10
+                if normalized_grade and normalized_grade in text:
+                    score += 8
+                if root == Path(GUIDE_DIR):
+                    score += 4
+                if pdf.parent == root:
+                    score += 2
+
+                if score > best_score:
+                    best_score = score
+                    best_pdf = pdf
+
+    return str(best_pdf.resolve()) if best_pdf else None
+
+
+def dedupe_consecutive_lines(lines):
+    deduped = []
+    previous = None
+    for raw in lines:
+        normalized = normalize_pdf_line(raw)
+        if not normalized:
+            continue
+        if normalized == previous:
+            continue
+        deduped.append(normalized)
+        previous = normalized
+    return deduped
+
+
+def parse_range_start(range_text):
+    text = str(range_text).replace("∼", "~")
+    try:
+        return int(text.split("~", 1)[0])
+    except Exception:
+        return 10**9
+
+
+def is_annual_plan_header_or_noise(line):
+    return line in ANNUAL_PLAN_HEADER_LINES
+
+
+def is_annual_plan_lesson_token(line):
+    return bool(ANNUAL_PLAN_LESSON_RE.fullmatch(line))
+
+
+def is_annual_plan_page_range(line):
+    return bool(ANNUAL_PLAN_PAGE_RANGE_RE.fullmatch(line))
+
+
+def is_annual_plan_resource_line(line):
+    return any(line.startswith(marker) for marker in ANNUAL_PLAN_RESOURCE_MARKERS)
+
+
+def join_wrapped_lines(parts):
+    return normalize_pdf_line(" ".join(part.strip() for part in parts if part.strip()))
+
+
+def extract_annual_plan_entries(pdf_path):
+    if not pdf_path or not os.path.exists(pdf_path):
+        return []
+
+    doc = fitz.open(pdf_path)
+    try:
+        lines = []
+        for page_num in range(len(doc)):
+            lines.extend(doc[page_num].get_text().splitlines())
+    finally:
+        doc.close()
+
+    lines = dedupe_consecutive_lines(lines)
+    entries = []
+    current_unit_num = None
+    current_unit_title = ""
+    current_subunit = ""
+    i = 0
+
+    while i < len(lines):
+        line = lines[i]
+        if is_annual_plan_header_or_noise(line):
+            i += 1
+            continue
+
+        unit_match = ANNUAL_PLAN_UNIT_MARKER_RE.fullmatch(line)
+        if unit_match:
+            unit_num = int(unit_match.group(1))
+            j = i + 1
+            title_parts = []
+            while j < len(lines):
+                candidate = lines[j]
+                if (
+                    is_annual_plan_header_or_noise(candidate)
+                    or ANNUAL_PLAN_UNIT_MARKER_RE.fullmatch(candidate)
+                    or ANNUAL_PLAN_THEME_START_RE.fullmatch(candidate)
+                    or is_annual_plan_lesson_token(candidate)
+                    or is_annual_plan_page_range(candidate)
+                ):
+                    break
+                title_parts.append(candidate)
+                j += 1
+            if title_parts:
+                current_unit_num = unit_num
+                current_unit_title = f"{unit_num}. {join_wrapped_lines(title_parts)}"
+                current_subunit = ""
+            i = j
+            continue
+
+        theme_match = ANNUAL_PLAN_THEME_START_RE.fullmatch(line)
+        if theme_match:
+            j = i + 1
+            theme_parts = [theme_match.group(2)]
+            while j < len(lines):
+                candidate = lines[j]
+                if (
+                    is_annual_plan_header_or_noise(candidate)
+                    or ANNUAL_PLAN_UNIT_MARKER_RE.fullmatch(candidate)
+                    or ANNUAL_PLAN_THEME_START_RE.fullmatch(candidate)
+                    or is_annual_plan_lesson_token(candidate)
+                    or is_annual_plan_page_range(candidate)
+                ):
+                    break
+                theme_parts.append(candidate)
+                j += 1
+            current_subunit = f"{theme_match.group(1)}. {join_wrapped_lines(theme_parts)}"
+            i = j
+            continue
+
+        if is_annual_plan_lesson_token(line):
+            lesson_range = line.replace("∼", "~")
+            j = i + 1
+            title_parts = []
+            page_range = ""
+            suppress_detail = False
+
+            while j < len(lines):
+                candidate = lines[j]
+                if is_annual_plan_page_range(candidate):
+                    page_range = candidate.replace("∼", "~")
+                    j += 1
+                    break
+                if (
+                    is_annual_plan_lesson_token(candidate)
+                    or ANNUAL_PLAN_UNIT_MARKER_RE.fullmatch(candidate)
+                    or ANNUAL_PLAN_THEME_START_RE.fullmatch(candidate)
+                ):
+                    break
+                if is_annual_plan_header_or_noise(candidate):
+                    j += 1
+                    continue
+                if is_annual_plan_resource_line(candidate):
+                    suppress_detail = True
+                    j += 1
+                    continue
+                if not suppress_detail:
+                    title_parts.append(candidate)
+                j += 1
+
+            title = join_wrapped_lines(title_parts)
+            if title and current_unit_num is not None:
+                entries.append(
+                    {
+                        "unit_num": current_unit_num,
+                        "unit_title": current_unit_title or f"{current_unit_num}단원",
+                        "subunit": current_subunit,
+                        "lesson_range": lesson_range,
+                        "title": title,
+                        "textbook_pages": page_range,
+                    }
+                )
+            i = j
+            continue
+
+        i += 1
+
+    entries.sort(key=lambda item: (item["unit_num"], parse_range_start(item["lesson_range"])))
+    return entries
 
 
 # ══════════════════════════════════════════════════════════
@@ -657,7 +961,41 @@ def extract_heuristic_titles(pdf_path):
     return titles
 
 
+def build_rows_from_annual_plan(subject_name, prefix, grade_str="3-1"):
+    annual_plan_pdf = find_annual_plan_pdf(prefix, grade_str)
+    entries = extract_annual_plan_entries(annual_plan_pdf)
+    if not entries:
+        return []
+
+    rows = []
+    for entry in entries:
+        lesson_pdf_path = (
+            find_best_pdf(prefix, entry["unit_num"], entry["lesson_range"], grade_str, lesson_title=entry["title"])
+            or find_best_pdf(prefix, entry["unit_num"], None, grade_str, lesson_title=entry["title"])
+        )
+        rows.append(
+            {
+                "수업내용": entry["title"],
+                "과목": subject_name,
+                "대단원": entry["unit_title"],
+                "소단원": entry["subunit"],
+                "차시": entry["lesson_range"],
+                "계획일": "",
+                "실행여부": False,
+                "pdf파일": format_pdf_path(lesson_pdf_path),
+                "시작페이지": "",
+                "끝페이지": "",
+                "비고": "",
+            }
+        )
+    return rows
+
+
 def generate_general_data(subject_name, prefix, max_unit=5, disable_heuristic=False, grade_str="3-1"):
+    annual_plan_rows = build_rows_from_annual_plan(subject_name, prefix, grade_str=grade_str)
+    if annual_plan_rows:
+        return annual_plan_rows
+
     rows = []
     
     for unit_num in range(1, max_unit + 1):

@@ -90,7 +90,7 @@ export function useFurnitureBySpace(spaceId: string | null) {
 export function useCreateFurniture() {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (data: { name: string; space_id: string; type?: string; pos_x?: number; pos_y?: number; width?: number; height?: number; color?: string }) =>
+    mutationFn: (data: { name: string; space_id: string; type?: string; pos_x?: number; pos_y?: number; width?: number; height?: number; color?: string; notes?: string }) =>
       postJSON('/api/furniture', data),
     onSuccess: (_, vars) => {
       qc.invalidateQueries({ queryKey: ['furniture', vars.space_id] })
@@ -107,6 +107,20 @@ export function useUpdateFurniturePosition() {
       putJSON(`/api/furniture/${furnitureId}/position`, body),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['furniture'] })
+    },
+    onError: (e: Error) => toast.error(e.message),
+  })
+}
+
+export function useUpdateFurniture() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ furnitureId, ...body }: { furnitureId: string; name?: string; type?: string; color?: string; notes?: string }) =>
+      putJSON(`/api/furniture/${furnitureId}`, body),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['furniture'] })
+      qc.invalidateQueries({ queryKey: ['all-data'] })
+      toast.success('가구 정보가 수정되었습니다')
     },
     onError: (e: Error) => toast.error(e.message),
   })

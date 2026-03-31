@@ -19,6 +19,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterable
 
+CACHE_SCHEMA_VERSION = "2026-03-31-stable-plantext-v1"
+
 PLAN_TITLE_KEYWORDS = (
     "단원 지도 계획",
     "단원의 지도 계획",
@@ -2365,7 +2367,7 @@ def split_subunits_from_plan_table(
         md5.update(f.read(4 * 1024 * 1024))
     file_hash = md5.hexdigest()
     
-    cache_key = f"{file_hash}_{scan_pages}_{page_offset}_{z_col}_{strategy}_{split_level}.json"
+    cache_key = f"{CACHE_SCHEMA_VERSION}_{file_hash}_{scan_pages}_{page_offset}_{z_col}_{strategy}_{split_level}.json"
     cache_file = cache_dir / cache_key
     
     if cache_file.exists():

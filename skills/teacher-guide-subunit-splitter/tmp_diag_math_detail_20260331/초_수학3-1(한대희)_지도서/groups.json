@@ -1,0 +1,2956 @@
+{
+  "pdf": "초_수학3-1(한대희)_지도서.pdf",
+  "strategy": "toc_detail",
+  "split_level": "detail",
+  "requested_page_offset": 0,
+  "auto_page_offset": 0,
+  "effective_page_offset": 0,
+  "sections": [
+    {
+      "index": 1,
+      "title": "총론",
+      "start_page": 1,
+      "end_page": 7
+    }
+  ],
+  "detected_groups": [
+    {
+      "index": 1,
+      "title": "총론",
+      "source_title": "총론",
+      "start_page": 1,
+      "end_page": 7,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          1,
+          7
+        ]
+      ],
+      "method": "toc_leading_section",
+      "context": [],
+      "detected_level": "section"
+    },
+    {
+      "index": 2,
+      "title": "01. 「수학」의 구성 체제 및 활용 방안",
+      "source_title": "01. 「수학」의 구성 체제 및 활용 방안",
+      "start_page": 8,
+      "end_page": 16,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          8,
+          8
+        ]
+      ],
+      "method": "toc",
+      "context": [
+        "PART 1"
+      ],
+      "detected_level": "subunit"
+    },
+    {
+      "index": 3,
+      "title": "02. 「수학익힘」의 구성 체제 및 활용 방안",
+      "source_title": "02. 「수학익힘」의 구성 체제 및 활용 방안",
+      "start_page": 17,
+      "end_page": 19,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          17,
+          17
+        ]
+      ],
+      "method": "toc",
+      "context": [
+        "PART 1"
+      ],
+      "detected_level": "subunit"
+    },
+    {
+      "index": 4,
+      "title": "03. 「지도서」의 구성 체제 및 활용 방안",
+      "source_title": "03. 「지도서」의 구성 체제 및 활용 방안",
+      "start_page": 20,
+      "end_page": 29,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          20,
+          20
+        ]
+      ],
+      "method": "toc",
+      "context": [
+        "PART 1"
+      ],
+      "detected_level": "subunit"
+    },
+    {
+      "index": 5,
+      "title": "04. 전자책등의 구성 체제 및 활용 방안",
+      "source_title": "04. 전자책등의 구성 체제 및 활용 방안",
+      "start_page": 30,
+      "end_page": 31,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          30,
+          30
+        ]
+      ],
+      "method": "toc",
+      "context": [
+        "PART 1"
+      ],
+      "detected_level": "subunit"
+    },
+    {
+      "index": 6,
+      "title": "05. 수학과 교과용 도서의 유기적인 활용 및",
+      "source_title": "05. 수학과 교과용 도서의 유기적인 활용 및",
+      "start_page": 32,
+      "end_page": 35,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          32,
+          32
+        ]
+      ],
+      "method": "toc",
+      "context": [
+        "PART 1"
+      ],
+      "detected_level": "subunit"
+    },
+    {
+      "index": 7,
+      "title": "학기별 지도 계획",
+      "source_title": "학기별 지도 계획",
+      "start_page": 36,
+      "end_page": 41,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          36,
+          36
+        ]
+      ],
+      "method": "toc",
+      "context": [
+        "PART 2"
+      ],
+      "detected_level": "plan"
+    },
+    {
+      "title": "1. 덧셈과 뺄셈 단원 개관 및 자료",
+      "source_title": "1. 덧셈과 뺄셈 단원 개관 및 자료",
+      "start_page": 42,
+      "end_page": 56,
+      "row_evidence": 0,
+      "page_ranges_raw": [
+        [
+          42,
+          56
+        ]
+      ],
+      "method": "unit_gap",
+      "context": [
+        "PART 2"
+      ],
+      "detected_level": "detail",
+      "parent_unit_title": "1. 덧셈과 뺄셈",
+      "index": 8
+    },
+    {
+      "index": 9,
+      "title": "단원 도입",
+      "source_title": "단원 도입",
+      "start_page": 57,
+      "end_page": 59,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          57,
+          59
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "1. 덧셈과 뺄셈"
+    },
+    {
+      "index": 10,
+      "title": "덧셈을 해 볼까요⑴",
+      "source_title": "덧셈을 해 볼까요⑴",
+      "start_page": 60,
+      "end_page": 63,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          60,
+          63
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "1. 덧셈과 뺄셈"
+    },
+    {
+      "index": 11,
+      "title": "덧셈을 해 볼까요⑵",
+      "source_title": "덧셈을 해 볼까요⑵",
+      "start_page": 64,
+      "end_page": 67,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          64,
+          67
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "1. 덧셈과 뺄셈"
+    },
+    {
+      "index": 12,
+      "title": "덧셈을 해 볼까요⑶",
+      "source_title": "덧셈을 해 볼까요⑶",
+      "start_page": 68,
+      "end_page": 73,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          68,
+          73
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "1. 덧셈과 뺄셈"
+    },
+    {
+      "index": 13,
+      "title": "뺄셈을 해 볼까요⑴",
+      "source_title": "뺄셈을 해 볼까요⑴",
+      "start_page": 74,
+      "end_page": 77,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          74,
+          77
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "1. 덧셈과 뺄셈"
+    },
+    {
+      "index": 14,
+      "title": "뺄셈을 해 볼까요⑵",
+      "source_title": "뺄셈을 해 볼까요⑵",
+      "start_page": 78,
+      "end_page": 85,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          78,
+          85
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "1. 덧셈과 뺄셈"
+    },
+    {
+      "index": 15,
+      "title": "하하! 놀이와 만나요",
+      "source_title": "하하! 놀이와 만나요",
+      "start_page": 86,
+      "end_page": 87,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          86,
+          87
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "1. 덧셈과 뺄셈"
+    },
+    {
+      "index": 16,
+      "title": "와우! 세상과 만나요",
+      "source_title": "와우! 세상과 만나요",
+      "start_page": 88,
+      "end_page": 89,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          88,
+          89
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "1. 덧셈과 뺄셈"
+    },
+    {
+      "index": 17,
+      "title": "됐다! 마무리",
+      "source_title": "됐다! 마무리",
+      "start_page": 90,
+      "end_page": 91,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          90,
+          91
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "1. 덧셈과 뺄셈"
+    },
+    {
+      "title": "2. 평면도형 단원 개관 및 자료",
+      "source_title": "2. 평면도형 단원 개관 및 자료",
+      "start_page": 92,
+      "end_page": 106,
+      "row_evidence": 0,
+      "page_ranges_raw": [
+        [
+          92,
+          106
+        ]
+      ],
+      "method": "unit_gap",
+      "context": [
+        "PART 2"
+      ],
+      "detected_level": "detail",
+      "parent_unit_title": "2. 평면도형",
+      "index": 18
+    },
+    {
+      "index": 19,
+      "title": "단원 도입",
+      "source_title": "단원 도입",
+      "start_page": 107,
+      "end_page": 109,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          107,
+          109
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "2. 평면도형"
+    },
+    {
+      "index": 20,
+      "title": "선의 종류에는 어떤 것이 있을까요",
+      "source_title": "선의 종류에는 어떤 것이 있을까요",
+      "start_page": 110,
+      "end_page": 115,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          110,
+          115
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "2. 평면도형"
+    },
+    {
+      "index": 21,
+      "title": "각을 알아볼까요",
+      "source_title": "각을 알아볼까요",
+      "start_page": 116,
+      "end_page": 119,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          116,
+          119
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "2. 평면도형"
+    },
+    {
+      "index": 22,
+      "title": "직각을 알아볼까요",
+      "source_title": "직각을 알아볼까요",
+      "start_page": 120,
+      "end_page": 123,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          120,
+          123
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "2. 평면도형"
+    },
+    {
+      "index": 23,
+      "title": "직각삼각형을 알아볼까요",
+      "source_title": "직각삼각형을 알아볼까요",
+      "start_page": 124,
+      "end_page": 127,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          124,
+          127
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "2. 평면도형"
+    },
+    {
+      "index": 24,
+      "title": "직사각형을 알아볼까요",
+      "source_title": "직사각형을 알아볼까요",
+      "start_page": 128,
+      "end_page": 131,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          128,
+          131
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "2. 평면도형"
+    },
+    {
+      "index": 25,
+      "title": "정사각형을 알아볼까요",
+      "source_title": "정사각형을 알아볼까요",
+      "start_page": 132,
+      "end_page": 135,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          132,
+          135
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "2. 평면도형"
+    },
+    {
+      "index": 26,
+      "title": "하하! 놀이와 만나요",
+      "source_title": "하하! 놀이와 만나요",
+      "start_page": 136,
+      "end_page": 137,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          136,
+          137
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "2. 평면도형"
+    },
+    {
+      "index": 27,
+      "title": "와우! 세상과 만나요",
+      "source_title": "와우! 세상과 만나요",
+      "start_page": 138,
+      "end_page": 141,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          138,
+          141
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "2. 평면도형"
+    },
+    {
+      "index": 28,
+      "title": "됐다! 마무리",
+      "source_title": "됐다! 마무리",
+      "start_page": 142,
+      "end_page": 143,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          142,
+          143
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "2. 평면도형"
+    },
+    {
+      "title": "3. 나눗셈 단원 개관 및 자료",
+      "source_title": "3. 나눗셈 단원 개관 및 자료",
+      "start_page": 144,
+      "end_page": 158,
+      "row_evidence": 0,
+      "page_ranges_raw": [
+        [
+          144,
+          158
+        ]
+      ],
+      "method": "unit_gap",
+      "context": [
+        "PART 2"
+      ],
+      "detected_level": "detail",
+      "parent_unit_title": "3. 나눗셈",
+      "index": 29
+    },
+    {
+      "index": 30,
+      "title": "단원 도입",
+      "source_title": "단원 도입",
+      "start_page": 159,
+      "end_page": 161,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          159,
+          161
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "3. 나눗셈"
+    },
+    {
+      "index": 31,
+      "title": "똑같이 나누어 볼까요⑴",
+      "source_title": "똑같이 나누어 볼까요⑴",
+      "start_page": 162,
+      "end_page": 165,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          162,
+          165
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "3. 나눗셈"
+    },
+    {
+      "index": 32,
+      "title": "똑같이 나누어 볼까요⑵",
+      "source_title": "똑같이 나누어 볼까요⑵",
+      "start_page": 166,
+      "end_page": 169,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          166,
+          169
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "3. 나눗셈"
+    },
+    {
+      "index": 33,
+      "title": "똑같이 나누어 볼까요⑶",
+      "source_title": "똑같이 나누어 볼까요⑶",
+      "start_page": 170,
+      "end_page": 173,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          170,
+          173
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "3. 나눗셈"
+    },
+    {
+      "index": 34,
+      "title": "곱셈과 나눗셈의 관계를 알아볼까요",
+      "source_title": "곱셈과 나눗셈의 관계를 알아볼까요",
+      "start_page": 174,
+      "end_page": 177,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          174,
+          177
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "3. 나눗셈"
+    },
+    {
+      "index": 35,
+      "title": "나눗셈의 몫을 곱셈으로 구해 볼까요",
+      "source_title": "나눗셈의 몫을 곱셈으로 구해 볼까요",
+      "start_page": 178,
+      "end_page": 183,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          178,
+          183
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "3. 나눗셈"
+    },
+    {
+      "index": 36,
+      "title": "하하! 놀이와 만나요",
+      "source_title": "하하! 놀이와 만나요",
+      "start_page": 184,
+      "end_page": 185,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          184,
+          185
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "3. 나눗셈"
+    },
+    {
+      "index": 37,
+      "title": "와우! 세상과 만나요",
+      "source_title": "와우! 세상과 만나요",
+      "start_page": 186,
+      "end_page": 189,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          186,
+          189
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "3. 나눗셈"
+    },
+    {
+      "index": 38,
+      "title": "됐다! 마무리",
+      "source_title": "됐다! 마무리",
+      "start_page": 190,
+      "end_page": 191,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          190,
+          191
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "3. 나눗셈"
+    },
+    {
+      "title": "4. 곱셈 단원 개관 및 자료",
+      "source_title": "4. 곱셈 단원 개관 및 자료",
+      "start_page": 192,
+      "end_page": 206,
+      "row_evidence": 0,
+      "page_ranges_raw": [
+        [
+          192,
+          206
+        ]
+      ],
+      "method": "unit_gap",
+      "context": [
+        "PART 2"
+      ],
+      "detected_level": "detail",
+      "parent_unit_title": "4. 곱셈",
+      "index": 39
+    },
+    {
+      "index": 40,
+      "title": "단원 도입",
+      "source_title": "단원 도입",
+      "start_page": 207,
+      "end_page": 209,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          207,
+          209
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "4. 곱셈"
+    },
+    {
+      "index": 41,
+      "title": "(몇십)_(몇)을 알아볼까요",
+      "source_title": "(몇십)_(몇)을 알아볼까요",
+      "start_page": 210,
+      "end_page": 213,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          210,
+          213
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "4. 곱셈"
+    },
+    {
+      "index": 42,
+      "title": "(몇십몇)_(몇)을 알아볼까요⑴",
+      "source_title": "(몇십몇)_(몇)을 알아볼까요⑴",
+      "start_page": 214,
+      "end_page": 217,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          214,
+          217
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "4. 곱셈"
+    },
+    {
+      "index": 43,
+      "title": "(몇십몇)_(몇)을 알아볼까요⑵",
+      "source_title": "(몇십몇)_(몇)을 알아볼까요⑵",
+      "start_page": 218,
+      "end_page": 225,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          218,
+          225
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "4. 곱셈"
+    },
+    {
+      "index": 44,
+      "title": "(몇십몇)_(몇)을 알아볼까요⑶",
+      "source_title": "(몇십몇)_(몇)을 알아볼까요⑶",
+      "start_page": 226,
+      "end_page": 229,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          226,
+          229
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "4. 곱셈"
+    },
+    {
+      "index": 45,
+      "title": "하하! 놀이와 만나요",
+      "source_title": "하하! 놀이와 만나요",
+      "start_page": 230,
+      "end_page": 231,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          230,
+          231
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "4. 곱셈"
+    },
+    {
+      "index": 46,
+      "title": "와우! 세상과 만나요",
+      "source_title": "와우! 세상과 만나요",
+      "start_page": 232,
+      "end_page": 233,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          232,
+          233
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "4. 곱셈"
+    },
+    {
+      "index": 47,
+      "title": "됐다! 마무리",
+      "source_title": "됐다! 마무리",
+      "start_page": 234,
+      "end_page": 235,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          234,
+          235
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "4. 곱셈"
+    },
+    {
+      "title": "5. 길이와 시간 단원 개관 및 자료",
+      "source_title": "5. 길이와 시간 단원 개관 및 자료",
+      "start_page": 236,
+      "end_page": 250,
+      "row_evidence": 0,
+      "page_ranges_raw": [
+        [
+          236,
+          250
+        ]
+      ],
+      "method": "unit_gap",
+      "context": [
+        "PART 2"
+      ],
+      "detected_level": "detail",
+      "parent_unit_title": "5. 길이와 시간",
+      "index": 48
+    },
+    {
+      "index": 49,
+      "title": "단원 도입",
+      "source_title": "단원 도입",
+      "start_page": 251,
+      "end_page": 253,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          251,
+          253
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "5. 길이와 시간"
+    },
+    {
+      "index": 50,
+      "title": "cm보다 작은 단위를 알아볼까요",
+      "source_title": "cm보다 작은 단위를 알아볼까요",
+      "start_page": 254,
+      "end_page": 257,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          254,
+          257
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "5. 길이와 시간"
+    },
+    {
+      "index": 51,
+      "title": "m보다 큰 단위를 알아볼까요",
+      "source_title": "m보다 큰 단위를 알아볼까요",
+      "start_page": 258,
+      "end_page": 261,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          258,
+          261
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "5. 길이와 시간"
+    },
+    {
+      "index": 52,
+      "title": "길이와 거리를 어림하고 재어 볼까요",
+      "source_title": "길이와 거리를 어림하고 재어 볼까요",
+      "start_page": 262,
+      "end_page": 267,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          262,
+          267
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "5. 길이와 시간"
+    },
+    {
+      "index": 53,
+      "title": "분보다 작은 단위를 알아볼까요",
+      "source_title": "분보다 작은 단위를 알아볼까요",
+      "start_page": 268,
+      "end_page": 271,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          268,
+          271
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "5. 길이와 시간"
+    },
+    {
+      "index": 54,
+      "title": "시간은 어떻게 더할까요",
+      "source_title": "시간은 어떻게 더할까요",
+      "start_page": 272,
+      "end_page": 275,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          272,
+          275
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "5. 길이와 시간"
+    },
+    {
+      "index": 55,
+      "title": "시간은 어떻게 뺄까요",
+      "source_title": "시간은 어떻게 뺄까요",
+      "start_page": 276,
+      "end_page": 279,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          276,
+          279
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "5. 길이와 시간"
+    },
+    {
+      "index": 56,
+      "title": "하하! 놀이와 만나요",
+      "source_title": "하하! 놀이와 만나요",
+      "start_page": 280,
+      "end_page": 281,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          280,
+          281
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "5. 길이와 시간"
+    },
+    {
+      "index": 57,
+      "title": "와우! 세상과 만나요",
+      "source_title": "와우! 세상과 만나요",
+      "start_page": 282,
+      "end_page": 283,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          282,
+          283
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "5. 길이와 시간"
+    },
+    {
+      "index": 58,
+      "title": "됐다! 마무리",
+      "source_title": "됐다! 마무리",
+      "start_page": 284,
+      "end_page": 285,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          284,
+          285
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "5. 길이와 시간"
+    },
+    {
+      "title": "6. 분수와 소수 단원 개관 및 자료",
+      "source_title": "6. 분수와 소수 단원 개관 및 자료",
+      "start_page": 286,
+      "end_page": 300,
+      "row_evidence": 0,
+      "page_ranges_raw": [
+        [
+          286,
+          300
+        ]
+      ],
+      "method": "unit_gap",
+      "context": [
+        "PART 2"
+      ],
+      "detected_level": "detail",
+      "parent_unit_title": "6. 분수와 소수",
+      "index": 59
+    },
+    {
+      "index": 60,
+      "title": "단원 도입",
+      "source_title": "단원 도입",
+      "start_page": 301,
+      "end_page": 303,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          301,
+          303
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "6. 분수와 소수"
+    },
+    {
+      "index": 61,
+      "title": "똑같이 나누어 볼까요",
+      "source_title": "똑같이 나누어 볼까요",
+      "start_page": 304,
+      "end_page": 307,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          304,
+          307
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "6. 분수와 소수"
+    },
+    {
+      "index": 62,
+      "title": "분수를 알아볼까요",
+      "source_title": "분수를 알아볼까요",
+      "start_page": 308,
+      "end_page": 313,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          308,
+          313
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "6. 분수와 소수"
+    },
+    {
+      "index": 63,
+      "title": "단위분수의 크기를 비교해 볼까요",
+      "source_title": "단위분수의 크기를 비교해 볼까요",
+      "start_page": 314,
+      "end_page": 319,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          314,
+          319
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "6. 분수와 소수"
+    },
+    {
+      "index": 64,
+      "title": "분모가 같은 분수의 크기를 비교해 볼까요",
+      "source_title": "분모가 같은 분수의 크기를 비교해 볼까요",
+      "start_page": 320,
+      "end_page": 323,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          320,
+          323
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "6. 분수와 소수"
+    },
+    {
+      "index": 65,
+      "title": "소수를 알아볼까요⑴",
+      "source_title": "소수를 알아볼까요⑴",
+      "start_page": 324,
+      "end_page": 327,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          324,
+          327
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "6. 분수와 소수"
+    },
+    {
+      "index": 66,
+      "title": "소수를 알아볼까요⑵",
+      "source_title": "소수를 알아볼까요⑵",
+      "start_page": 328,
+      "end_page": 331,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          328,
+          331
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "6. 분수와 소수"
+    },
+    {
+      "index": 67,
+      "title": "소수의 크기를 비교해 볼까요",
+      "source_title": "소수의 크기를 비교해 볼까요",
+      "start_page": 332,
+      "end_page": 335,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          332,
+          335
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "6. 분수와 소수"
+    },
+    {
+      "index": 68,
+      "title": "하하! 놀이와 만나요",
+      "source_title": "하하! 놀이와 만나요",
+      "start_page": 336,
+      "end_page": 337,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          336,
+          337
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "6. 분수와 소수"
+    },
+    {
+      "index": 69,
+      "title": "와우! 세상과 만나요",
+      "source_title": "와우! 세상과 만나요",
+      "start_page": 338,
+      "end_page": 339,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          338,
+          339
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "6. 분수와 소수"
+    },
+    {
+      "index": 70,
+      "title": "됐다! 마무리",
+      "source_title": "됐다! 마무리",
+      "start_page": 340,
+      "end_page": 341,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          340,
+          341
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "6. 분수와 소수"
+    },
+    {
+      "title": "6. 분수와 소수 자료 출처",
+      "source_title": "6. 분수와 소수 자료 출처",
+      "start_page": 342,
+      "end_page": 343,
+      "row_evidence": 0,
+      "page_ranges_raw": [
+        [
+          342,
+          343
+        ]
+      ],
+      "method": "unit_gap",
+      "context": [
+        "PART 2"
+      ],
+      "detected_level": "detail",
+      "parent_unit_title": "6. 분수와 소수",
+      "index": 71
+    },
+    {
+      "index": 72,
+      "title": "01. 개정의 방향",
+      "source_title": "01. 개정의 방향",
+      "start_page": 344,
+      "end_page": 345,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          344,
+          344
+        ]
+      ],
+      "method": "toc",
+      "context": [
+        "PART 3"
+      ],
+      "detected_level": "subunit"
+    },
+    {
+      "index": 73,
+      "title": "02. 총론의 핵심역량과 수학 교과 역량",
+      "source_title": "02. 총론의 핵심역량과 수학 교과 역량",
+      "start_page": 346,
+      "end_page": 373,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          346,
+          346
+        ]
+      ],
+      "method": "toc",
+      "context": [
+        "PART 3"
+      ],
+      "detected_level": "subunit"
+    },
+    {
+      "index": 74,
+      "title": "01. 영역별 수학 교과 지식",
+      "source_title": "01. 영역별 수학 교과 지식",
+      "start_page": 374,
+      "end_page": 394,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          374,
+          374
+        ]
+      ],
+      "method": "toc",
+      "context": [
+        "PART 3"
+      ],
+      "detected_level": "subunit"
+    },
+    {
+      "index": 75,
+      "title": "02. 교수 학습 방법",
+      "source_title": "02. 교수 학습 방법",
+      "start_page": 395,
+      "end_page": 409,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          395,
+          395
+        ]
+      ],
+      "method": "toc",
+      "context": [
+        "PART 3"
+      ],
+      "detected_level": "subunit"
+    },
+    {
+      "index": 76,
+      "title": "03. 평가 방법",
+      "source_title": "03. 평가 방법",
+      "start_page": 410,
+      "end_page": 423,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          410,
+          410
+        ]
+      ],
+      "method": "toc",
+      "context": [
+        "PART 3"
+      ],
+      "detected_level": "subunit"
+    },
+    {
+      "index": 77,
+      "title": "1. 수행 평가",
+      "source_title": "1. 수행 평가",
+      "start_page": 424,
+      "end_page": 447,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          424,
+          424
+        ]
+      ],
+      "method": "toc",
+      "context": [
+        "PART 4"
+      ],
+      "detected_level": "subunit"
+    },
+    {
+      "index": 78,
+      "title": "2. 단원 평가(기본/보충/심화)",
+      "source_title": "2. 단원 평가(기본/보충/심화)",
+      "start_page": 448,
+      "end_page": 501,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          448,
+          448
+        ]
+      ],
+      "method": "toc",
+      "context": [
+        "PART 4"
+      ],
+      "detected_level": "subunit"
+    },
+    {
+      "index": 79,
+      "title": "3. 서술형 평가",
+      "source_title": "3. 서술형 평가",
+      "start_page": 502,
+      "end_page": 513,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          502,
+          502
+        ]
+      ],
+      "method": "toc",
+      "context": [
+        "PART 4"
+      ],
+      "detected_level": "subunit"
+    },
+    {
+      "index": 80,
+      "title": "4. 정답과 풀이",
+      "source_title": "4. 정답과 풀이",
+      "start_page": 514,
+      "end_page": 592,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          514,
+          514
+        ]
+      ],
+      "method": "toc",
+      "context": [
+        "PART 4"
+      ],
+      "detected_level": "subunit"
+    }
+  ],
+  "groups": [
+    {
+      "index": 1,
+      "title": "총론",
+      "source_title": "총론",
+      "start_page": 1,
+      "end_page": 7,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          1,
+          7
+        ]
+      ],
+      "method": "toc_leading_section",
+      "context": [],
+      "detected_level": "section"
+    },
+    {
+      "index": 2,
+      "title": "01. 「수학」의 구성 체제 및 활용 방안",
+      "source_title": "01. 「수학」의 구성 체제 및 활용 방안",
+      "start_page": 8,
+      "end_page": 16,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          8,
+          8
+        ]
+      ],
+      "method": "toc",
+      "context": [
+        "PART 1"
+      ],
+      "detected_level": "subunit"
+    },
+    {
+      "index": 3,
+      "title": "02. 「수학익힘」의 구성 체제 및 활용 방안",
+      "source_title": "02. 「수학익힘」의 구성 체제 및 활용 방안",
+      "start_page": 17,
+      "end_page": 19,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          17,
+          17
+        ]
+      ],
+      "method": "toc",
+      "context": [
+        "PART 1"
+      ],
+      "detected_level": "subunit"
+    },
+    {
+      "index": 4,
+      "title": "03. 「지도서」의 구성 체제 및 활용 방안",
+      "source_title": "03. 「지도서」의 구성 체제 및 활용 방안",
+      "start_page": 20,
+      "end_page": 29,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          20,
+          20
+        ]
+      ],
+      "method": "toc",
+      "context": [
+        "PART 1"
+      ],
+      "detected_level": "subunit"
+    },
+    {
+      "index": 5,
+      "title": "04. 전자책등의 구성 체제 및 활용 방안",
+      "source_title": "04. 전자책등의 구성 체제 및 활용 방안",
+      "start_page": 30,
+      "end_page": 31,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          30,
+          30
+        ]
+      ],
+      "method": "toc",
+      "context": [
+        "PART 1"
+      ],
+      "detected_level": "subunit"
+    },
+    {
+      "index": 6,
+      "title": "05. 수학과 교과용 도서의 유기적인 활용 및",
+      "source_title": "05. 수학과 교과용 도서의 유기적인 활용 및",
+      "start_page": 32,
+      "end_page": 35,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          32,
+          32
+        ]
+      ],
+      "method": "toc",
+      "context": [
+        "PART 1"
+      ],
+      "detected_level": "subunit"
+    },
+    {
+      "index": 7,
+      "title": "학기별 지도 계획",
+      "source_title": "학기별 지도 계획",
+      "start_page": 36,
+      "end_page": 41,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          36,
+          36
+        ]
+      ],
+      "method": "toc",
+      "context": [
+        "PART 2"
+      ],
+      "detected_level": "plan"
+    },
+    {
+      "title": "1. 덧셈과 뺄셈 단원 개관 및 자료",
+      "source_title": "1. 덧셈과 뺄셈 단원 개관 및 자료",
+      "start_page": 42,
+      "end_page": 56,
+      "row_evidence": 0,
+      "page_ranges_raw": [
+        [
+          42,
+          56
+        ]
+      ],
+      "method": "unit_gap",
+      "context": [
+        "PART 2"
+      ],
+      "detected_level": "detail",
+      "parent_unit_title": "1. 덧셈과 뺄셈",
+      "index": 8
+    },
+    {
+      "index": 9,
+      "title": "단원 도입",
+      "source_title": "단원 도입",
+      "start_page": 57,
+      "end_page": 59,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          57,
+          59
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "1. 덧셈과 뺄셈"
+    },
+    {
+      "index": 10,
+      "title": "덧셈을 해 볼까요⑴",
+      "source_title": "덧셈을 해 볼까요⑴",
+      "start_page": 60,
+      "end_page": 63,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          60,
+          63
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "1. 덧셈과 뺄셈"
+    },
+    {
+      "index": 11,
+      "title": "덧셈을 해 볼까요⑵",
+      "source_title": "덧셈을 해 볼까요⑵",
+      "start_page": 64,
+      "end_page": 67,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          64,
+          67
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "1. 덧셈과 뺄셈"
+    },
+    {
+      "index": 12,
+      "title": "덧셈을 해 볼까요⑶",
+      "source_title": "덧셈을 해 볼까요⑶",
+      "start_page": 68,
+      "end_page": 73,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          68,
+          73
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "1. 덧셈과 뺄셈"
+    },
+    {
+      "index": 13,
+      "title": "뺄셈을 해 볼까요⑴",
+      "source_title": "뺄셈을 해 볼까요⑴",
+      "start_page": 74,
+      "end_page": 77,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          74,
+          77
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "1. 덧셈과 뺄셈"
+    },
+    {
+      "index": 14,
+      "title": "뺄셈을 해 볼까요⑵",
+      "source_title": "뺄셈을 해 볼까요⑵",
+      "start_page": 78,
+      "end_page": 85,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          78,
+          85
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "1. 덧셈과 뺄셈"
+    },
+    {
+      "index": 15,
+      "title": "하하! 놀이와 만나요",
+      "source_title": "하하! 놀이와 만나요",
+      "start_page": 86,
+      "end_page": 87,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          86,
+          87
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "1. 덧셈과 뺄셈"
+    },
+    {
+      "index": 16,
+      "title": "와우! 세상과 만나요",
+      "source_title": "와우! 세상과 만나요",
+      "start_page": 88,
+      "end_page": 89,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          88,
+          89
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "1. 덧셈과 뺄셈"
+    },
+    {
+      "index": 17,
+      "title": "됐다! 마무리",
+      "source_title": "됐다! 마무리",
+      "start_page": 90,
+      "end_page": 91,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          90,
+          91
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "1. 덧셈과 뺄셈"
+    },
+    {
+      "title": "2. 평면도형 단원 개관 및 자료",
+      "source_title": "2. 평면도형 단원 개관 및 자료",
+      "start_page": 92,
+      "end_page": 106,
+      "row_evidence": 0,
+      "page_ranges_raw": [
+        [
+          92,
+          106
+        ]
+      ],
+      "method": "unit_gap",
+      "context": [
+        "PART 2"
+      ],
+      "detected_level": "detail",
+      "parent_unit_title": "2. 평면도형",
+      "index": 18
+    },
+    {
+      "index": 19,
+      "title": "단원 도입",
+      "source_title": "단원 도입",
+      "start_page": 107,
+      "end_page": 109,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          107,
+          109
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "2. 평면도형"
+    },
+    {
+      "index": 20,
+      "title": "선의 종류에는 어떤 것이 있을까요",
+      "source_title": "선의 종류에는 어떤 것이 있을까요",
+      "start_page": 110,
+      "end_page": 115,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          110,
+          115
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "2. 평면도형"
+    },
+    {
+      "index": 21,
+      "title": "각을 알아볼까요",
+      "source_title": "각을 알아볼까요",
+      "start_page": 116,
+      "end_page": 119,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          116,
+          119
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "2. 평면도형"
+    },
+    {
+      "index": 22,
+      "title": "직각을 알아볼까요",
+      "source_title": "직각을 알아볼까요",
+      "start_page": 120,
+      "end_page": 123,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          120,
+          123
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "2. 평면도형"
+    },
+    {
+      "index": 23,
+      "title": "직각삼각형을 알아볼까요",
+      "source_title": "직각삼각형을 알아볼까요",
+      "start_page": 124,
+      "end_page": 127,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          124,
+          127
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "2. 평면도형"
+    },
+    {
+      "index": 24,
+      "title": "직사각형을 알아볼까요",
+      "source_title": "직사각형을 알아볼까요",
+      "start_page": 128,
+      "end_page": 131,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          128,
+          131
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "2. 평면도형"
+    },
+    {
+      "index": 25,
+      "title": "정사각형을 알아볼까요",
+      "source_title": "정사각형을 알아볼까요",
+      "start_page": 132,
+      "end_page": 135,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          132,
+          135
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "2. 평면도형"
+    },
+    {
+      "index": 26,
+      "title": "하하! 놀이와 만나요",
+      "source_title": "하하! 놀이와 만나요",
+      "start_page": 136,
+      "end_page": 137,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          136,
+          137
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "2. 평면도형"
+    },
+    {
+      "index": 27,
+      "title": "와우! 세상과 만나요",
+      "source_title": "와우! 세상과 만나요",
+      "start_page": 138,
+      "end_page": 141,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          138,
+          141
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "2. 평면도형"
+    },
+    {
+      "index": 28,
+      "title": "됐다! 마무리",
+      "source_title": "됐다! 마무리",
+      "start_page": 142,
+      "end_page": 143,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          142,
+          143
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "2. 평면도형"
+    },
+    {
+      "title": "3. 나눗셈 단원 개관 및 자료",
+      "source_title": "3. 나눗셈 단원 개관 및 자료",
+      "start_page": 144,
+      "end_page": 158,
+      "row_evidence": 0,
+      "page_ranges_raw": [
+        [
+          144,
+          158
+        ]
+      ],
+      "method": "unit_gap",
+      "context": [
+        "PART 2"
+      ],
+      "detected_level": "detail",
+      "parent_unit_title": "3. 나눗셈",
+      "index": 29
+    },
+    {
+      "index": 30,
+      "title": "단원 도입",
+      "source_title": "단원 도입",
+      "start_page": 159,
+      "end_page": 161,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          159,
+          161
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "3. 나눗셈"
+    },
+    {
+      "index": 31,
+      "title": "똑같이 나누어 볼까요⑴",
+      "source_title": "똑같이 나누어 볼까요⑴",
+      "start_page": 162,
+      "end_page": 165,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          162,
+          165
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "3. 나눗셈"
+    },
+    {
+      "index": 32,
+      "title": "똑같이 나누어 볼까요⑵",
+      "source_title": "똑같이 나누어 볼까요⑵",
+      "start_page": 166,
+      "end_page": 169,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          166,
+          169
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "3. 나눗셈"
+    },
+    {
+      "index": 33,
+      "title": "똑같이 나누어 볼까요⑶",
+      "source_title": "똑같이 나누어 볼까요⑶",
+      "start_page": 170,
+      "end_page": 173,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          170,
+          173
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "3. 나눗셈"
+    },
+    {
+      "index": 34,
+      "title": "곱셈과 나눗셈의 관계를 알아볼까요",
+      "source_title": "곱셈과 나눗셈의 관계를 알아볼까요",
+      "start_page": 174,
+      "end_page": 177,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          174,
+          177
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "3. 나눗셈"
+    },
+    {
+      "index": 35,
+      "title": "나눗셈의 몫을 곱셈으로 구해 볼까요",
+      "source_title": "나눗셈의 몫을 곱셈으로 구해 볼까요",
+      "start_page": 178,
+      "end_page": 183,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          178,
+          183
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "3. 나눗셈"
+    },
+    {
+      "index": 36,
+      "title": "하하! 놀이와 만나요",
+      "source_title": "하하! 놀이와 만나요",
+      "start_page": 184,
+      "end_page": 185,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          184,
+          185
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "3. 나눗셈"
+    },
+    {
+      "index": 37,
+      "title": "와우! 세상과 만나요",
+      "source_title": "와우! 세상과 만나요",
+      "start_page": 186,
+      "end_page": 189,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          186,
+          189
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "3. 나눗셈"
+    },
+    {
+      "index": 38,
+      "title": "됐다! 마무리",
+      "source_title": "됐다! 마무리",
+      "start_page": 190,
+      "end_page": 191,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          190,
+          191
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "3. 나눗셈"
+    },
+    {
+      "title": "4. 곱셈 단원 개관 및 자료",
+      "source_title": "4. 곱셈 단원 개관 및 자료",
+      "start_page": 192,
+      "end_page": 206,
+      "row_evidence": 0,
+      "page_ranges_raw": [
+        [
+          192,
+          206
+        ]
+      ],
+      "method": "unit_gap",
+      "context": [
+        "PART 2"
+      ],
+      "detected_level": "detail",
+      "parent_unit_title": "4. 곱셈",
+      "index": 39
+    },
+    {
+      "index": 40,
+      "title": "단원 도입",
+      "source_title": "단원 도입",
+      "start_page": 207,
+      "end_page": 209,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          207,
+          209
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "4. 곱셈"
+    },
+    {
+      "index": 41,
+      "title": "(몇십)_(몇)을 알아볼까요",
+      "source_title": "(몇십)_(몇)을 알아볼까요",
+      "start_page": 210,
+      "end_page": 213,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          210,
+          213
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "4. 곱셈"
+    },
+    {
+      "index": 42,
+      "title": "(몇십몇)_(몇)을 알아볼까요⑴",
+      "source_title": "(몇십몇)_(몇)을 알아볼까요⑴",
+      "start_page": 214,
+      "end_page": 217,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          214,
+          217
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "4. 곱셈"
+    },
+    {
+      "index": 43,
+      "title": "(몇십몇)_(몇)을 알아볼까요⑵",
+      "source_title": "(몇십몇)_(몇)을 알아볼까요⑵",
+      "start_page": 218,
+      "end_page": 225,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          218,
+          225
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "4. 곱셈"
+    },
+    {
+      "index": 44,
+      "title": "(몇십몇)_(몇)을 알아볼까요⑶",
+      "source_title": "(몇십몇)_(몇)을 알아볼까요⑶",
+      "start_page": 226,
+      "end_page": 229,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          226,
+          229
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "4. 곱셈"
+    },
+    {
+      "index": 45,
+      "title": "하하! 놀이와 만나요",
+      "source_title": "하하! 놀이와 만나요",
+      "start_page": 230,
+      "end_page": 231,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          230,
+          231
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "4. 곱셈"
+    },
+    {
+      "index": 46,
+      "title": "와우! 세상과 만나요",
+      "source_title": "와우! 세상과 만나요",
+      "start_page": 232,
+      "end_page": 233,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          232,
+          233
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "4. 곱셈"
+    },
+    {
+      "index": 47,
+      "title": "됐다! 마무리",
+      "source_title": "됐다! 마무리",
+      "start_page": 234,
+      "end_page": 235,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          234,
+          235
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "4. 곱셈"
+    },
+    {
+      "title": "5. 길이와 시간 단원 개관 및 자료",
+      "source_title": "5. 길이와 시간 단원 개관 및 자료",
+      "start_page": 236,
+      "end_page": 250,
+      "row_evidence": 0,
+      "page_ranges_raw": [
+        [
+          236,
+          250
+        ]
+      ],
+      "method": "unit_gap",
+      "context": [
+        "PART 2"
+      ],
+      "detected_level": "detail",
+      "parent_unit_title": "5. 길이와 시간",
+      "index": 48
+    },
+    {
+      "index": 49,
+      "title": "단원 도입",
+      "source_title": "단원 도입",
+      "start_page": 251,
+      "end_page": 253,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          251,
+          253
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "5. 길이와 시간"
+    },
+    {
+      "index": 50,
+      "title": "cm보다 작은 단위를 알아볼까요",
+      "source_title": "cm보다 작은 단위를 알아볼까요",
+      "start_page": 254,
+      "end_page": 257,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          254,
+          257
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "5. 길이와 시간"
+    },
+    {
+      "index": 51,
+      "title": "m보다 큰 단위를 알아볼까요",
+      "source_title": "m보다 큰 단위를 알아볼까요",
+      "start_page": 258,
+      "end_page": 261,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          258,
+          261
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "5. 길이와 시간"
+    },
+    {
+      "index": 52,
+      "title": "길이와 거리를 어림하고 재어 볼까요",
+      "source_title": "길이와 거리를 어림하고 재어 볼까요",
+      "start_page": 262,
+      "end_page": 267,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          262,
+          267
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "5. 길이와 시간"
+    },
+    {
+      "index": 53,
+      "title": "분보다 작은 단위를 알아볼까요",
+      "source_title": "분보다 작은 단위를 알아볼까요",
+      "start_page": 268,
+      "end_page": 271,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          268,
+          271
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "5. 길이와 시간"
+    },
+    {
+      "index": 54,
+      "title": "시간은 어떻게 더할까요",
+      "source_title": "시간은 어떻게 더할까요",
+      "start_page": 272,
+      "end_page": 275,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          272,
+          275
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "5. 길이와 시간"
+    },
+    {
+      "index": 55,
+      "title": "시간은 어떻게 뺄까요",
+      "source_title": "시간은 어떻게 뺄까요",
+      "start_page": 276,
+      "end_page": 279,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          276,
+          279
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "5. 길이와 시간"
+    },
+    {
+      "index": 56,
+      "title": "하하! 놀이와 만나요",
+      "source_title": "하하! 놀이와 만나요",
+      "start_page": 280,
+      "end_page": 281,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          280,
+          281
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "5. 길이와 시간"
+    },
+    {
+      "index": 57,
+      "title": "와우! 세상과 만나요",
+      "source_title": "와우! 세상과 만나요",
+      "start_page": 282,
+      "end_page": 283,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          282,
+          283
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "5. 길이와 시간"
+    },
+    {
+      "index": 58,
+      "title": "됐다! 마무리",
+      "source_title": "됐다! 마무리",
+      "start_page": 284,
+      "end_page": 285,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          284,
+          285
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "5. 길이와 시간"
+    },
+    {
+      "title": "6. 분수와 소수 단원 개관 및 자료",
+      "source_title": "6. 분수와 소수 단원 개관 및 자료",
+      "start_page": 286,
+      "end_page": 300,
+      "row_evidence": 0,
+      "page_ranges_raw": [
+        [
+          286,
+          300
+        ]
+      ],
+      "method": "unit_gap",
+      "context": [
+        "PART 2"
+      ],
+      "detected_level": "detail",
+      "parent_unit_title": "6. 분수와 소수",
+      "index": 59
+    },
+    {
+      "index": 60,
+      "title": "단원 도입",
+      "source_title": "단원 도입",
+      "start_page": 301,
+      "end_page": 303,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          301,
+          303
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "6. 분수와 소수"
+    },
+    {
+      "index": 61,
+      "title": "똑같이 나누어 볼까요",
+      "source_title": "똑같이 나누어 볼까요",
+      "start_page": 304,
+      "end_page": 307,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          304,
+          307
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "6. 분수와 소수"
+    },
+    {
+      "index": 62,
+      "title": "분수를 알아볼까요",
+      "source_title": "분수를 알아볼까요",
+      "start_page": 308,
+      "end_page": 313,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          308,
+          313
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "6. 분수와 소수"
+    },
+    {
+      "index": 63,
+      "title": "단위분수의 크기를 비교해 볼까요",
+      "source_title": "단위분수의 크기를 비교해 볼까요",
+      "start_page": 314,
+      "end_page": 319,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          314,
+          319
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "6. 분수와 소수"
+    },
+    {
+      "index": 64,
+      "title": "분모가 같은 분수의 크기를 비교해 볼까요",
+      "source_title": "분모가 같은 분수의 크기를 비교해 볼까요",
+      "start_page": 320,
+      "end_page": 323,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          320,
+          323
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "6. 분수와 소수"
+    },
+    {
+      "index": 65,
+      "title": "소수를 알아볼까요⑴",
+      "source_title": "소수를 알아볼까요⑴",
+      "start_page": 324,
+      "end_page": 327,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          324,
+          327
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "6. 분수와 소수"
+    },
+    {
+      "index": 66,
+      "title": "소수를 알아볼까요⑵",
+      "source_title": "소수를 알아볼까요⑵",
+      "start_page": 328,
+      "end_page": 331,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          328,
+          331
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "6. 분수와 소수"
+    },
+    {
+      "index": 67,
+      "title": "소수의 크기를 비교해 볼까요",
+      "source_title": "소수의 크기를 비교해 볼까요",
+      "start_page": 332,
+      "end_page": 335,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          332,
+          335
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "6. 분수와 소수"
+    },
+    {
+      "index": 68,
+      "title": "하하! 놀이와 만나요",
+      "source_title": "하하! 놀이와 만나요",
+      "start_page": 336,
+      "end_page": 337,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          336,
+          337
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "6. 분수와 소수"
+    },
+    {
+      "index": 69,
+      "title": "와우! 세상과 만나요",
+      "source_title": "와우! 세상과 만나요",
+      "start_page": 338,
+      "end_page": 339,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          338,
+          339
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "6. 분수와 소수"
+    },
+    {
+      "index": 70,
+      "title": "됐다! 마무리",
+      "source_title": "됐다! 마무리",
+      "start_page": 340,
+      "end_page": 341,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          340,
+          341
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail",
+      "parent_unit_title": "6. 분수와 소수"
+    },
+    {
+      "title": "6. 분수와 소수 자료 출처",
+      "source_title": "6. 분수와 소수 자료 출처",
+      "start_page": 342,
+      "end_page": 343,
+      "row_evidence": 0,
+      "page_ranges_raw": [
+        [
+          342,
+          343
+        ]
+      ],
+      "method": "unit_gap",
+      "context": [
+        "PART 2"
+      ],
+      "detected_level": "detail",
+      "parent_unit_title": "6. 분수와 소수",
+      "index": 71
+    },
+    {
+      "index": 72,
+      "title": "01. 개정의 방향",
+      "source_title": "01. 개정의 방향",
+      "start_page": 344,
+      "end_page": 345,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          344,
+          344
+        ]
+      ],
+      "method": "toc",
+      "context": [
+        "PART 3"
+      ],
+      "detected_level": "subunit"
+    },
+    {
+      "index": 73,
+      "title": "02. 총론의 핵심역량과 수학 교과 역량",
+      "source_title": "02. 총론의 핵심역량과 수학 교과 역량",
+      "start_page": 346,
+      "end_page": 373,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          346,
+          346
+        ]
+      ],
+      "method": "toc",
+      "context": [
+        "PART 3"
+      ],
+      "detected_level": "subunit"
+    },
+    {
+      "index": 74,
+      "title": "01. 영역별 수학 교과 지식",
+      "source_title": "01. 영역별 수학 교과 지식",
+      "start_page": 374,
+      "end_page": 394,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          374,
+          374
+        ]
+      ],
+      "method": "toc",
+      "context": [
+        "PART 3"
+      ],
+      "detected_level": "subunit"
+    },
+    {
+      "index": 75,
+      "title": "02. 교수 학습 방법",
+      "source_title": "02. 교수 학습 방법",
+      "start_page": 395,
+      "end_page": 409,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          395,
+          395
+        ]
+      ],
+      "method": "toc",
+      "context": [
+        "PART 3"
+      ],
+      "detected_level": "subunit"
+    },
+    {
+      "index": 76,
+      "title": "03. 평가 방법",
+      "source_title": "03. 평가 방법",
+      "start_page": 410,
+      "end_page": 423,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          410,
+          410
+        ]
+      ],
+      "method": "toc",
+      "context": [
+        "PART 3"
+      ],
+      "detected_level": "subunit"
+    },
+    {
+      "index": 77,
+      "title": "1. 수행 평가",
+      "source_title": "1. 수행 평가",
+      "start_page": 424,
+      "end_page": 447,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          424,
+          424
+        ]
+      ],
+      "method": "toc",
+      "context": [
+        "PART 4"
+      ],
+      "detected_level": "subunit"
+    },
+    {
+      "index": 78,
+      "title": "2. 단원 평가(기본/보충/심화)",
+      "source_title": "2. 단원 평가(기본/보충/심화)",
+      "start_page": 448,
+      "end_page": 501,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          448,
+          448
+        ]
+      ],
+      "method": "toc",
+      "context": [
+        "PART 4"
+      ],
+      "detected_level": "subunit"
+    },
+    {
+      "index": 79,
+      "title": "3. 서술형 평가",
+      "source_title": "3. 서술형 평가",
+      "start_page": 502,
+      "end_page": 513,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          502,
+          502
+        ]
+      ],
+      "method": "toc",
+      "context": [
+        "PART 4"
+      ],
+      "detected_level": "subunit"
+    },
+    {
+      "index": 80,
+      "title": "4. 정답과 풀이",
+      "source_title": "4. 정답과 풀이",
+      "start_page": 514,
+      "end_page": 592,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          514,
+          514
+        ]
+      ],
+      "method": "toc",
+      "context": [
+        "PART 4"
+      ],
+      "detected_level": "subunit"
+    }
+  ]
+}

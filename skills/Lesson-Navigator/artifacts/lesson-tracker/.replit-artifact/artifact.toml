@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "교사 수업 진도 트래커"
+version = "1.0.0"
+id = "artifacts/lesson-tracker"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 20794
+
+[services.development]
+run = "pnpm --filter @workspace/lesson-tracker run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/lesson-tracker", "run", "build" ]
+publicDir = "artifacts/lesson-tracker/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "20794"
+BASE_PATH = "/"

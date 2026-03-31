@@ -1,0 +1,35 @@
+{
+  "name": "@orval/query",
+  "version": "8.5.3",
+  "license": "MIT",
+  "type": "module",
+  "types": "./dist/index.d.mts",
+  "exports": {
+    ".": "./dist/index.mjs",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "!dist/**/*.d.ts.map",
+    "!dist/**/*.d.mts.map"
+  ],
+  "scripts": {
+    "build": "tsdown --config-loader unrun",
+    "dev": "tsdown --config-loader unrun --watch src",
+    "lint": "eslint .",
+    "test": "vitest",
+    "clean": "rimraf .turbo dist",
+    "nuke": "rimraf .turbo dist node_modules"
+  },
+  "dependencies": {
+    "@orval/core": "8.5.3",
+    "@orval/fetch": "8.5.3",
+    "remeda": "^2.33.6"
+  },
+  "devDependencies": {
+    "eslint": "10.0.2",
+    "rimraf": "6.1.2",
+    "tsdown": "0.20.3",
+    "vitest": "4.0.18"
+  }
+}

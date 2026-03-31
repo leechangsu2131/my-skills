@@ -1,0 +1,16 @@
+
+> @workspace/api-server@0.0.0 dev /home/runner/workspace/artifacts/api-server
+> NODE_ENV=development tsx ./src/index.ts
+
+/home/runner/workspace/artifacts/api-server/src/routes/textbooks/index.ts:5
+import pdfParse from "pdf-parse";
+       ^
+SyntaxError: The requested module 'pdf-parse' does not provide an export named 'default'
+[90m    at #asyncInstantiate (node:internal/modules/esm/module_job:302:21)[39m
+[90m    at async ModuleJob.run (node:internal/modules/esm/module_job:405:5)[39m
+[90m    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:660:26)[39m
+[90m    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)[39m
+
+Node.js v24.13.0
+[41m[30m ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL [39m[49m [31m@workspace/api-server@0.0.0 dev: `NODE_ENV=development tsx ./src/index.ts`[39m
+[31mExit status 1[39m

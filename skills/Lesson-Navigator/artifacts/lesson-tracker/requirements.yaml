@@ -1,0 +1,17 @@
+packages:
+  "framer-motion": "For premium page transitions, list animations, and modal interactions"
+  "date-fns": "For formatting dates in a readable way"
+  "clsx": "For conditional class merging"
+  "tailwind-merge": "For conditional class merging"
+
+images:
+  - path: "artifacts/lesson-tracker/public/images/empty-books.png"
+    description: "A soft, 3D illustrative stylized graphic of neatly stacked educational books with a small potted plant on top, warm neutral background, clean minimalist lighting, perfect for an empty state in an educational app"
+    aspect_ratio: "1:1"
+  - path: "artifacts/lesson-tracker/public/images/hero-bg.png"
+    description: "Abstract soft gradient mesh background in warm cream, soft teal, and gentle peach colors, providing a calming and professional atmosphere for a teacher's dashboard"
+    aspect_ratio: "16:9"
+
+notes:
+  - "Assuming React Query hooks are fully functional from @workspace/api-client-react"
+  - "Assuming API endpoints for Notion sync, lesson completion, and textbook upload are correctly mapped in the generated Orval client"

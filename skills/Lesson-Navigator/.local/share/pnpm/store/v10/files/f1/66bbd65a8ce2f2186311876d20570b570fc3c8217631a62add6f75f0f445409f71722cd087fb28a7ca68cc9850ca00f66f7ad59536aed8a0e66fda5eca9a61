@@ -1,0 +1,2 @@
+import{n as e}from"./purryOrderRules-4JgY6z4X.js";import{t}from"./quickSelect-B4eZ0JeB.js";function n(...t){return e(r,t)}const r=(e,n,r)=>t(e,r>=0?r:e.length+r,n);export{n as nthBy};
+//# sourceMappingURL=nthBy.js.map

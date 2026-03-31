@@ -1,0 +1,2 @@
+import{n as e,t}from"./heap-OOe_F8_z.js";import{n}from"./purryOrderRules-4JgY6z4X.js";function r(...e){return n(i,e)}function i(n,r,i){if(i<=0)return[];if(i>=n.length)return[...n];let a=n.slice(0,i);e(a,r);let o=n.slice(i);for(let e of o)t(a,r,e);return a}export{r as takeFirstBy};
+//# sourceMappingURL=takeFirstBy.js.map

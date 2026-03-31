@@ -1,0 +1,16 @@
+
+> @workspace/api-server@0.0.0 dev /home/runner/workspace/artifacts/api-server
+> NODE_ENV=development tsx ./src/index.ts
+
+[02:25:12.908] [32mINFO[39m (176): [36mServer listening[39m
+    [35mport[39m: 8080
+[02:25:14.931] [32mINFO[39m (176): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 1,
+      "method": "GET",
+      "url": "/api/textbooks"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 36

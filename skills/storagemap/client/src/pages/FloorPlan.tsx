@@ -4,6 +4,7 @@ import { ArrowLeft, Plus, Search } from 'lucide-react'
 import Canvas2D from '@/components/Canvas2D'
 import FurnitureSidebar from '@/components/FurnitureSidebar'
 import ItemModal from '@/components/ItemModal'
+import FurnitureModal from '@/components/FurnitureModal'
 import {
   useFurnitureBySpace,
   useAllItems,
@@ -28,7 +29,10 @@ export default function FloorPlan() {
   const [selectedFurnitureId, setSelectedFurnitureId] = useState<string | null>(null)
   const [highlightedFurnitureId, setHighlightedFurnitureId] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
-  const [showAddFurniture, setShowAddFurniture] = useState(false)
+  const [furnitureModalState, setFurnitureModalState] = useState<{ isOpen: boolean; mode: 'add' | 'edit' }>({
+    isOpen: false,
+    mode: 'add'
+  })
   
   // For ItemModal we need either a furnitureId to add to, or an existing item to edit
   const [itemModalState, setItemModalState] = useState<{ isOpen: boolean; mode: 'add' | 'edit'; furnitureId?: string; item?: Item }>({
@@ -62,17 +66,6 @@ export default function FloorPlan() {
     (f: Furniture) => f.furniture_id === selectedFurnitureId,
   )
   const selectedItems: Item[] = selectedFurniture?.items || []
-
-  const handleAddFurniture = (name: string, type: string) => {
-    createFurniture.mutate({
-      name,
-      space_id: spaceId,
-      type,
-      pos_x: 50 + furnitureList.length * 30,
-      pos_y: 50 + furnitureList.length * 20,
-    })
-    setShowAddFurniture(false)
-  }
 
   const handleAddItemClick = (furnitureId: string) => {
     setItemModalState({ isOpen: true, mode: 'add', furnitureId })
@@ -127,7 +120,7 @@ export default function FloorPlan() {
           </div>
 
           <button
-            onClick={() => setShowAddFurniture(true)}
+            onClick={() => setFurnitureModalState({ isOpen: true, mode: 'add' })}
             disabled={createFurniture.isPending}
             className="flex items-center gap-1.5 px-4 py-2 bg-slate-800 text-white font-semibold rounded-xl hover:bg-slate-700 transition-colors shadow-md text-sm"
           >
@@ -138,7 +131,7 @@ export default function FloorPlan() {
       </div>
 
       {/* Canvas + Sidebar */}
-      <div className="relative flex-1 overflow-hidden rounded-2xl shadow-sm">
+      <div className="relative flex-1 overflow-hidden rounded-2xl shadow-sm border border-slate-200">
         <Canvas2D
           furnitureList={furnitureList}
           selectedFurnitureId={selectedFurnitureId}
@@ -149,24 +142,29 @@ export default function FloorPlan() {
         />
 
         {selectedFurniture && (
-          <FurnitureSidebar
-            furniture={selectedFurniture}
-            spaceName={space?.name || ''}
-            items={selectedItems}
-            onClose={() => setSelectedFurnitureId(null)}
-            onAddItem={handleAddItemClick}
-            onEditItem={handleEditItemClick}
-            onDeleteItem={(itemId) => deleteItem.mutate(itemId)}
-            onDeleteFurniture={(id) => deleteFurniture.mutate(id)}
-          />
+          <div className="absolute top-0 right-0 h-full shrink-0 w-72 md:w-80 shadow-2xl overflow-hidden border-l border-slate-200 bg-white z-30 sidebar-enter hidden md:block">
+            <FurnitureSidebar
+              furniture={selectedFurniture}
+              spaceName={space?.name || ''}
+              items={selectedItems}
+              onClose={() => setSelectedFurnitureId(null)}
+              onAddItem={handleAddItemClick}
+              onEditItem={handleEditItemClick}
+              onDeleteItem={(itemId) => deleteItem.mutate(itemId)}
+              onDeleteFurniture={(id) => deleteFurniture.mutate(id)}
+              onEditFurniture={() => setFurnitureModalState({ isOpen: true, mode: 'edit' })}
+            />
+          </div>
         )}
       </div>
 
-      {/* Add Furniture Modal */}
-      {showAddFurniture && (
-        <AddFurnitureModal
-          onAdd={handleAddFurniture}
-          onClose={() => setShowAddFurniture(false)}
+      {/* Add / Edit Furniture Modal */}
+      {furnitureModalState.isOpen && (
+        <FurnitureModal
+          initialData={furnitureModalState.mode === 'edit' && selectedFurniture ? selectedFurniture : undefined}
+          spaceId={furnitureModalState.mode === 'add' ? spaceId : undefined}
+          furnitureListLength={furnitureList.length}
+          onClose={() => setFurnitureModalState({ isOpen: false, mode: 'add' })}
         />
       )}
 
@@ -174,82 +172,11 @@ export default function FloorPlan() {
       {itemModalState.isOpen && (
         <ItemModal
           furnitureList={allFurniture.length > 0 ? allFurniture : furnitureList}
-          initialFurnitureId={itemModalState.furnitureId}
           initialData={itemModalState.item}
+          initialFurnitureId={itemModalState.furnitureId}
           onClose={() => setItemModalState({ isOpen: false, mode: 'add' })}
         />
       )}
-    </div>
-  )
-}
-
-function AddFurnitureModal({
-  onAdd,
-  onClose,
-}: {
-  onAdd: (name: string, type: string) => void
-  onClose: () => void
-}) {
-  const [name, setName] = useState('')
-  const [type, setType] = useState('기타')
-
-  const types = ['교구장', '교탁', '서랍장', '옷장', '책장', '선반', '수납함', '사물함', '기타']
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={onClose}>
-      <div
-        className="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 mx-4"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <h2 className="text-lg font-bold text-slate-800 mb-4">가구 추가</h2>
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-slate-600 mb-1">가구 이름</label>
-            <input
-              type="text"
-              className="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-violet-500"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="예: 앞 교구장"
-              autoFocus
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-slate-600 mb-1">유형</label>
-            <div className="flex flex-wrap gap-2">
-              {types.map((t) => (
-                <button
-                  key={t}
-                  type="button"
-                  onClick={() => setType(t)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
-                    type === t
-                      ? 'bg-violet-600 text-white'
-                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                  }`}
-                >
-                  {t}
-                </button>
-              ))}
-            </div>
-          </div>
-          <div className="flex gap-3 pt-2">
-            <button
-              onClick={onClose}
-              className="flex-1 py-2.5 border border-slate-200 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50"
-            >
-              취소
-            </button>
-            <button
-              onClick={() => { if (name.trim()) onAdd(name.trim(), type) }}
-              disabled={!name.trim()}
-              className="flex-1 py-2.5 bg-slate-800 text-white rounded-xl text-sm font-semibold hover:bg-slate-700 disabled:opacity-50 shadow-sm"
-            >
-              추가
-            </button>
-          </div>
-        </div>
-      </div>
     </div>
   )
 }

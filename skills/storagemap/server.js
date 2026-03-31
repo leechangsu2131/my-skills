@@ -520,6 +520,78 @@ app.put('/api/furniture/:furnitureId/position', checkAuth, async (req, res) => {
   }
 });
 
+// 가구 일반 정보 업데이트 API (이름, 타입, 색상 등)
+app.put('/api/furniture/:furnitureId', checkAuth, async (req, res) => {
+  const { furnitureId } = req.params;
+  const { name, type, color, notes } = req.body;
+  
+  console.log(`📝 가구 정보 업데이트 요청: ${furnitureId}`, { name, type, color, notes });
+  
+  try {
+    // 캐시 업데이트
+    const furniture = storageService.cache.furniture.find(f => f.furniture_id === furnitureId);
+    if (!furniture) {
+      return res.status(404).json({ error: '가구를 찾을 수 없습니다' });
+    }
+    
+    if (name !== undefined) furniture.name = name;
+    if (type !== undefined) furniture.type = type;
+    if (color !== undefined) furniture.color = color;
+    if (notes !== undefined) furniture.notes = notes;
+    
+    // Google Sheets 업데이트
+    try {
+      await updateFurnitureDetailsInSheets(furnitureId, { name, type, color, notes });
+    } catch (sheetsError) {
+      console.error('⚠️ Google Sheets 일반 정보 저장 실패:', sheetsError.message);
+    }
+    
+    res.json({ success: true, message: '가구 정보 업데이트됨', furniture });
+  } catch (error) {
+    console.error('❌ 가구 정보 업데이트 실패:', error);
+    res.status(500).json({ error: '가구 정보 업데이트 실패: ' + error.message });
+  }
+});
+
+// Google Sheets에 가구 일반 정보 업데이트
+async function updateFurnitureDetailsInSheets(furnitureId, updates) {
+  try {
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId, range: process.env.SHEET_FURNITURE || 'Furniture'
+    });
+    const rows = response.data.values;
+    if (!rows || rows.length === 0) return;
+    
+    const headers = rows[0];
+    const furnitureIdIndex = headers.indexOf('furniture_id');
+    if (furnitureIdIndex === -1) return;
+    const rowIndex = rows.findIndex(row => row[furnitureIdIndex] === furnitureId);
+    if (rowIndex === -1) return;
+    
+    const updates2 = [];
+    const fields = ['name', 'type', 'color', 'notes'];
+    
+    fields.forEach(field => {
+      const colIndex = headers.indexOf(field);
+      if (updates[field] !== undefined && colIndex !== -1) {
+        const colLetter = String.fromCharCode(65 + colIndex);
+        updates2.push({
+          range: `${process.env.SHEET_FURNITURE || 'Furniture'}!${colLetter}${rowIndex + 1}`,
+          values: [[updates[field]]]
+        });
+      }
+    });
+    
+    if (updates2.length > 0) {
+      await sheets.spreadsheets.values.batchUpdate({
+        spreadsheetId, resource: { valueInputOption: 'USER_ENTERED', data: updates2 }
+      });
+    }
+  } catch (e) {
+    console.error(e);
+  }
+}
+
 // Google Sheets에 가구 위치 업데이트
 async function updateFurnitureInSheets(furnitureId, updates) {
   console.log(`🔄 Google Sheets 업데이트 시작: ${furnitureId}`, updates);

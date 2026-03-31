@@ -109,7 +109,7 @@ export default function Layout({ children }: { children: ReactNode }) {
       </header>
 
       {/* Main content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
+      <main className={`${location.includes('/map') ? 'w-full' : 'max-w-7xl mx-auto'} px-4 sm:px-6 py-6`}>
         {children}
       </main>
     </div>

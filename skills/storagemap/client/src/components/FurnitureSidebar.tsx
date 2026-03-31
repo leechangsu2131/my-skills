@@ -1,4 +1,4 @@
-import { X, Package, Trash2, Plus } from 'lucide-react'
+import { X, Package, Trash2, Plus, Edit2 } from 'lucide-react'
 import type { Furniture, Item } from '../types'
 
 interface FurnitureSidebarProps {
@@ -10,6 +10,7 @@ interface FurnitureSidebarProps {
   onDeleteItem: (itemId: string) => void
   onDeleteFurniture: (furnitureId: string) => void
   onEditItem?: (item: Item) => void
+  onEditFurniture?: () => void
 }
 
 export default function FurnitureSidebar({
@@ -21,6 +22,7 @@ export default function FurnitureSidebar({
   onDeleteItem,
   onDeleteFurniture,
   onEditItem,
+  onEditFurniture,
 }: FurnitureSidebarProps) {
   const handleDelete = () => {
     if (items.length > 0) {
@@ -34,7 +36,7 @@ export default function FurnitureSidebar({
   }
 
   return (
-    <div className="absolute top-0 right-0 h-full w-80 bg-white border-l border-slate-200 shadow-2xl flex flex-col z-30 sidebar-enter">
+    <div className="flex-shrink-0 w-72 md:w-80 bg-white h-full flex flex-col sidebar-enter">
       {/* Header */}
       <div className="p-4 border-b border-slate-100 bg-gradient-to-r from-violet-50 to-indigo-50">
         <div className="flex justify-between items-start">
@@ -61,6 +63,13 @@ export default function FurnitureSidebar({
           className="flex-1 bg-violet-600 text-white py-2 rounded-xl text-sm font-semibold flex justify-center items-center gap-1.5 hover:bg-violet-700 transition-colors shadow-sm"
         >
           <Plus className="w-4 h-4" /> 물건 추가
+        </button>
+        <button
+          onClick={onEditFurniture}
+          className="p-2 bg-slate-50 text-slate-600 rounded-xl hover:bg-slate-200 transition-colors"
+          title="가구 정보 수정"
+        >
+          <Edit2 className="w-4 h-4" />
         </button>
         <button
           onClick={handleDelete}

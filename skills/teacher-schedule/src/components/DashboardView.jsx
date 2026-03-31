@@ -37,6 +37,34 @@ export function OverallProgress({ views }) {
     );
 }
 
+function RecentActivityTimeline({ historyView }) {
+    if (!historyView || !historyView.data || historyView.data.length === 0) return null;
+    return (
+        <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 mb-8">
+            <h3 className="text-sm font-bold text-gray-900 mb-4 flex items-center gap-2">
+                <span className="text-indigo-500">⏱</span> 최근 활동 이력
+            </h3>
+            <div className="space-y-4 relative before:absolute before:inset-0 before:ml-2 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-gray-200 before:to-transparent">
+                {historyView.data.slice(0, 5).map((log, idx) => (
+                    <div key={idx} className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
+                        <div className="flex items-center justify-center w-5 h-5 rounded-full border border-white bg-indigo-100 text-indigo-500 shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2">
+                            <span className="w-2 h-2 rounded-full bg-indigo-500"></span>
+                        </div>
+                        <div className="w-[calc(100%-2rem)] md:w-[calc(50%-1.5rem)] p-3 rounded-lg border border-gray-100 bg-gray-50 shadow-sm transition-colors hover:bg-white">
+                            <div className="flex items-center justify-between mb-1">
+                                <span className="font-bold text-gray-900 text-sm">{log.subject}</span>
+                                <span className="text-xs font-medium text-indigo-500">{log.action}</span>
+                            </div>
+                            <div className="text-xs text-gray-500">{log.details}</div>
+                            <div className="text-[10px] text-gray-400 mt-1.5">{new Date(log.timestamp).toLocaleString("ko-KR")}</div>
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+}
+
 function UnitProgress({ unitData, style }) {
     if (!unitData || unitData.length === 0) return null;
     return (
@@ -72,12 +100,14 @@ export function DashboardView({ views, markDone, marking }) {
     const nextView = views.find(v => v.id === "next");
     const progView = views.find(v => v.id === "progress");
     const unitView = views.find(v => v.id === "unit_progress");
+    const historyView = views.find(v => v.id === "history");
 
     if (!nextView || !progView) return <div className="text-center py-12 text-gray-500">데이터가 없습니다.</div>;
 
     return (
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
             <OverallProgress views={views} />
+            <RecentActivityTimeline historyView={historyView} />
 
             <h3 className="text-lg font-bold text-gray-900 mb-4 px-1">오늘 & 다음 수업</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -121,14 +151,26 @@ export function DashboardView({ views, markDone, marking }) {
                                         <span className="text-xs font-medium text-gray-500 bg-white px-2 py-1 rounded shadow-sm border border-gray-200">
                                             {nextCls.차시}차시
                                         </span>
-                                        <button
-                                            className={`text-xs font-bold text-white px-3 py-1.5 rounded-md shadow-sm transition-transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed`}
-                                            style={{ backgroundColor: 'currentColor' }}
-                                            onClick={() => markDone(nextCls)}
-                                            disabled={marking === (nextCls._row || nextCls.행번호)}
-                                        >
-                                            {marking === (nextCls._row || nextCls.행번호) ? "..." : "완료 ✓"}
-                                        </button>
+                                        <div className="flex gap-2">
+                                            {nextCls.pdf파일 && (
+                                                <a
+                                                    href={`http://127.0.0.1:5000/api/pdf/${nextCls._row || nextCls.행번호}`}
+                                                    target="_blank"
+                                                    rel="noreferrer"
+                                                    className="text-xs font-bold text-gray-700 bg-white border border-gray-200 px-3 py-1.5 rounded-md shadow-sm transition-all hover:bg-gray-50"
+                                                >
+                                                    📖 열람
+                                                </a>
+                                            )}
+                                            <button
+                                                className={`text-xs font-bold text-white px-3 py-1.5 rounded-md shadow-sm transition-transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed`}
+                                                style={{ backgroundColor: 'currentColor' }}
+                                                onClick={() => markDone(nextCls)}
+                                                disabled={marking === (nextCls._row || nextCls.행번호)}
+                                            >
+                                                {marking === (nextCls._row || nextCls.행번호) ? "..." : "완료 ✓"}
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             ) : (

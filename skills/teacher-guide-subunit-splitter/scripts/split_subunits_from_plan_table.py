@@ -13,6 +13,7 @@ import json
 import re
 import site
 import sys
+import hashlib
 from collections import defaultdict
 from dataclasses import dataclass
 from pathlib import Path
@@ -192,12 +193,21 @@ def shorten_title(value: str, *, max_chars: int = MAX_TITLE_LENGTH) -> str:
     return f"{shortened}..."
 
 
-def build_output_filename(index: int, title: str, start_page: int, end_page: int) -> str:
+def build_output_filename(index: int, title: str, start_page: int, end_page: int, pdf_name: str = "", parent_title: str | None = None) -> str:
     title_part = sanitize_filename_part(shorten_title(title, max_chars=MAX_FILENAME_TITLE_LENGTH))
+    
+    if parent_title and parent_title != title:
+        parent_part = sanitize_filename_part(shorten_title(parent_title, max_chars=20))
+        title_part = f"{parent_part}_{title_part}"
+        
     page_part = f"p{start_page}-{end_page}"
+    prefix = ""
+    if pdf_name:
+        base = Path(pdf_name).stem
+        prefix = f"[{base}]_"
     if title_part:
-        return f"subunit_{index:02d}_{title_part}_{page_part}.pdf"
-    return f"subunit_{index:02d}_{page_part}.pdf"
+        return f"{prefix}subunit_{index:02d}_{title_part}_{page_part}.pdf"
+    return f"{prefix}subunit_{index:02d}_{page_part}.pdf"
 
 
 def build_run_directory_name(pdf_path: str | Path) -> str:
@@ -2345,17 +2355,50 @@ def split_subunits_from_plan_table(
     run_dir.mkdir(parents=True, exist_ok=True)
     groups_path = run_dir / "groups.json"
 
-    pdfplumber = load_pdfplumber()
-    with pdfplumber.open(str(pdf_file)) as pdf_doc:
-        detected_groups, sections, strategy_used, auto_offset = choose_groups(
-            pdf_doc,
-            scan_pages=scan_pages,
-            page_offset=page_offset,
-            z_col=z_col,
-            strategy=strategy,
-            split_level=split_level,
-        )
-        total_pages = len(pdf_doc.pages)
+    # --- Cache Check ---
+    cache_dir = output_root / ".cache"
+    cache_dir.mkdir(parents=True, exist_ok=True)
+    
+    md5 = hashlib.md5()
+    with pdf_file.open("rb") as f:
+        # Read the first 4MB to hash quickly but uniquely
+        md5.update(f.read(4 * 1024 * 1024))
+    file_hash = md5.hexdigest()
+    
+    cache_key = f"{file_hash}_{scan_pages}_{page_offset}_{z_col}_{strategy}_{split_level}.json"
+    cache_file = cache_dir / cache_key
+    
+    if cache_file.exists():
+        with cache_file.open("r", encoding="utf-8") as f:
+            cdata = json.load(f)
+            detected_groups = cdata["detected_groups"]
+            sections = cdata["sections"]
+            strategy_used = cdata["strategy_used"]
+            auto_offset = cdata["auto_offset"]
+            total_pages = cdata["total_pages"]
+            print("[INFO] Cache Hit: PDF structural data loaded instantly from cache.")
+    else:
+        pdfplumber = load_pdfplumber()
+        with pdfplumber.open(str(pdf_file)) as pdf_doc:
+            detected_groups, sections, strategy_used, auto_offset = choose_groups(
+                pdf_doc,
+                scan_pages=scan_pages,
+                page_offset=page_offset,
+                z_col=z_col,
+                strategy=strategy,
+                split_level=split_level,
+            )
+            total_pages = len(pdf_doc.pages)
+            
+        with cache_file.open("w", encoding="utf-8") as f:
+            json.dump({
+                "detected_groups": detected_groups,
+                "sections": sections,
+                "strategy_used": strategy_used,
+                "auto_offset": auto_offset,
+                "total_pages": total_pages
+            }, f, ensure_ascii=False)
+    # --- End Cache Check ---
 
     groups = apply_split_level(detected_groups, strategy_used=strategy_used, split_level=split_level)
 
@@ -2400,6 +2443,8 @@ def split_subunits_from_plan_table(
             title=group["title"],
             start_page=group["start_page"],
             end_page=group["end_page"],
+            pdf_name=pdf_file.name,
+            parent_title=group.get("parent_unit_title"),
         )
         extract_pdf_range(
             pdf_file,

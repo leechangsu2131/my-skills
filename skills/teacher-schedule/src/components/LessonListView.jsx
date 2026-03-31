@@ -48,15 +48,27 @@ export function LessonListView({ views, markDone, marking }) {
                             <p className="text-sm font-medium text-gray-500">{item.대단원}</p>
                         </div>
 
-                        <button
-                            className={`flex-shrink-0 px-5 py-2.5 rounded-xl font-bold text-sm text-white shadow-sm transition-all focus:ring-4 focus:ring-opacity-50
+                        <div className="flex gap-2 shrink-0">
+                            {item.pdf파일 && (
+                                <a
+                                    href={`http://127.0.0.1:5000/api/pdf/${rowId}`}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-xl font-bold text-sm shadow-sm transition-all hover:bg-indigo-100 flex items-center justify-center"
+                                >
+                                    📖 자료 보기
+                                </a>
+                            )}
+                            <button
+                                className={`px-5 py-2.5 rounded-xl font-bold text-sm text-white shadow-sm transition-all focus:ring-4 focus:ring-opacity-50
                 ${isProcessing ? "bg-gray-300 transform-none cursor-not-allowed" : "hover:-translate-y-0.5"}`}
-                            style={!isProcessing ? { backgroundColor: 'currentColor' } : undefined}
-                            onClick={() => markDone(item)}
-                            disabled={isProcessing}
-                        >
-                            {isProcessing ? "처리중..." : "수업 완료 ✓"}
-                        </button>
+                                style={!isProcessing ? { backgroundColor: 'currentColor' } : undefined}
+                                onClick={() => markDone(item)}
+                                disabled={isProcessing}
+                            >
+                                {isProcessing ? "처리중..." : "수업 완료 ✓"}
+                            </button>
+                        </div>
                     </div>
                 );
             })}

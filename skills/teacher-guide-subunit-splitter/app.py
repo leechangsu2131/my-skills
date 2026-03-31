@@ -28,7 +28,7 @@ class SplitterApp:
         self.root.minsize(820, 560)
 
         self.pdf_path = tk.StringVar()
-        self.output_dir = tk.StringVar(value=str(Path.cwd() / "output"))
+        self.output_dir = tk.StringVar(value=r"D:\지도서")
         self.scan_pages = tk.IntVar(value=60)
         self.page_offset = tk.IntVar(value=0)
         self.guide_column = tk.StringVar(value="")

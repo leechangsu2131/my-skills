@@ -27,7 +27,7 @@ import fitz  # pymupdf
 
 SHEET_ID = os.getenv("SHEET_ID")
 SHEET_NAME = os.getenv("SHEET_NAME", "시트1")
-GUIDE_DIR = r"C:\Users\user\Desktop\cd\지도서"
+GUIDE_DIR = r"D:\지도서"
 SCOPES = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"]
 DONE_COLUMN_NAME = "실행여부"
 DONE_COLUMN_FALLBACK_INDEX = 6
@@ -42,6 +42,69 @@ def get_sheet():
     gc = gspread.authorize(creds)
     sh = gc.open_by_key(SHEET_ID)
     return sh, sh.worksheet(SHEET_NAME)
+
+
+from pathlib import Path
+
+def find_best_pdf(subject_prefix, unit_num, lesson_num=None, grade_str="3-1"):
+    search_path = Path(GUIDE_DIR)
+    if not search_path.exists():
+        return None
+        
+    all_pdfs = list(search_path.rglob(f"*{subject_prefix}*.pdf"))
+    if not all_pdfs:
+        return None
+        
+    best_pdf = None
+    best_score = -1
+    
+    for pdf in all_pdfs:
+        name = pdf.name.replace(" ", "")
+        score = 0
+        
+        if subject_prefix in name:
+            score += 1
+            
+        lesson_match = False
+        if lesson_num is not None:
+            l_str = str(lesson_num)
+            if f"{l_str}차시" in name or f"_{l_str}.pdf" in name or f"-{l_str}.pdf" in name or f"_{l_str}_" in name:
+                score += 20
+                lesson_match = True
+                
+        unit_match = False
+        u_str = str(unit_num)
+        if f"{u_str}단원" in name or f"_{u_str}_" in name or f"-{u_str}_" in name or f"_{u_str}." in name:
+            score += 10
+            unit_match = True
+        elif isinstance(unit_num, str) and unit_num in name:
+            score += 10
+            unit_match = True
+            
+        if grade_str and grade_str in name:
+            score += 5
+            
+            # 일반 통권 지도서 파일은 조각 파일(Split)보다 우선순위를 대폭 낮춥니다.
+            # 이로써 아무리 이름이 부실한 조각 파일이더라도 원본 파일보다 우선적으로 매칭됩니다.
+            is_original = "지도서" in name and "subunit_" not in name and "pdf_splits" not in str(pdf)
+            if is_original and not unit_match and not lesson_match:
+                score -= 100
+            
+        if score > best_score:
+            best_score = score
+            best_pdf = pdf
+            
+    if best_pdf:
+        return str(best_pdf.resolve())
+    return None
+
+def format_pdf_path(pdf_path):
+    if not pdf_path: return ""
+    abs_p = os.path.abspath(pdf_path)
+    user_prof = os.environ.get("USERPROFILE")
+    if user_prof and abs_p.startswith(user_prof):
+        return abs_p.replace(user_prof, "%USERPROFILE%")
+    return abs_p
 
 
 # ══════════════════════════════════════════════════════════
@@ -128,6 +191,7 @@ def generate_moral_data():
         titles = extract_moral_titles(unit_num)
 
         for lesson_num in range(1, 5):
+            lesson_pdf_path = find_best_pdf("도덕", unit_num, lesson_num) or find_best_pdf("도덕", unit_num, None)
             title = titles.get(lesson_num, f"{unit_name} {lesson_num}차시")
             rows.append({
                 "수업내용": title,
@@ -136,7 +200,7 @@ def generate_moral_data():
                 "차시": str(lesson_num),
                 "계획일": "",
                 "실행여부": False,
-                "pdf파일": "",
+                "pdf파일": format_pdf_path(lesson_pdf_path),
                 "시작페이지": "",
                 "끝페이지": "",
                 "비고": "",
@@ -288,9 +352,8 @@ def parse_korean_overview_lines(lines):
 
 def extract_korean_overview(unit_num):
     """국어 지도서 개요 페이지(p3)에서 차시 구조와 대표 제목을 읽어온다."""
-    pdf_name = f"국어3-1지도서_2_{unit_num}.pdf"
-    pdf_path = os.path.join(GUIDE_DIR, pdf_name)
-    if not os.path.exists(pdf_path):
+    pdf_path = find_best_pdf("국어", unit_num, None, "3-1")
+    if not pdf_path or not os.path.exists(pdf_path):
         return [], {}
 
     doc = fitz.open(pdf_path)
@@ -387,9 +450,8 @@ def parse_korean_detail_page_blocks(blocks, overview_titles=None):
 
 def extract_korean_detail_entries(unit_num, overview_titles=None):
     """국어 지도서 상세 차시 페이지에서 실제 차시 범위별 학습목표를 추출한다."""
-    pdf_name = f"국어3-1지도서_2_{unit_num}.pdf"
-    pdf_path = os.path.join(GUIDE_DIR, pdf_name)
-    if not os.path.exists(pdf_path):
+    pdf_path = find_best_pdf("국어", unit_num, None, "3-1")
+    if not pdf_path or not os.path.exists(pdf_path):
         return {}
 
     entries = {}
@@ -443,12 +505,12 @@ def generate_korean_data():
                 if fallback_subunit and fallback_subunit != title:
                     subunit = fallback_subunit
              
-            # 다중 차시 분리 (예: 2~5 -> 2(2~5), 3(2~5)...)
             m = re.match(r'(\d+)[~∼](\d+)', lr)
             if m:
                 start = int(m.group(1))
                 end = int(m.group(2))
                 for i in range(start, end + 1):
+                    lesson_pdf_path = find_best_pdf("국어", unit_num, i, "3-1") or find_best_pdf("국어", unit_num, None, "3-1")
                     rows.append({
                         "수업내용": title,
                         "과목": "국어",
@@ -457,12 +519,14 @@ def generate_korean_data():
                         "차시": f"{i}({lr})",
                         "계획일": "",
                         "실행여부": False,
-                        "pdf파일": "",
+                        "pdf파일": format_pdf_path(lesson_pdf_path),
                         "시작페이지": "",
                         "끝페이지": "",
                         "비고": "",
                     })
             else:
+                first_lesson = int(re.match(r'^(\d+)', lr).group(1)) if re.match(r'^(\d+)', lr) else None
+                lesson_pdf_path = find_best_pdf("국어", unit_num, first_lesson, "3-1") or find_best_pdf("국어", unit_num, None, "3-1")
                 rows.append({
                     "수업내용": title,
                     "과목": "국어",
@@ -471,7 +535,7 @@ def generate_korean_data():
                     "차시": lr,
                     "계획일": "",
                     "실행여부": False,
-                    "pdf파일": "",
+                    "pdf파일": format_pdf_path(lesson_pdf_path),
                     "시작페이지": "",
                     "끝페이지": "",
                     "비고": "",
@@ -479,6 +543,7 @@ def generate_korean_data():
 
     # 독서 단원 (10차시)
     for i in range(1, 11):
+        lesson_pdf_path = find_best_pdf("국어", "독서", i, "3-1") or find_best_pdf("국어", "독서", None, "3-1")
         rows.append({
             "수업내용": f"독서 단원 {i}차시",
             "과목": "국어",
@@ -487,7 +552,7 @@ def generate_korean_data():
             "차시": str(i),
             "계획일": "",
             "실행여부": False,
-            "pdf파일": "",
+            "pdf파일": format_pdf_path(lesson_pdf_path),
             "시작페이지": "",
             "끝페이지": "",
             "비고": "",
@@ -495,6 +560,7 @@ def generate_korean_data():
 
     # 매체 단원 (10차시)
     for i in range(1, 11):
+        lesson_pdf_path = find_best_pdf("국어", "매체", i, "3-1") or find_best_pdf("국어", "매체", None, "3-1")
         rows.append({
             "수업내용": f"매체 단원 {i}차시",
             "과목": "국어",
@@ -503,7 +569,7 @@ def generate_korean_data():
             "차시": str(i),
             "계획일": "",
             "실행여부": False,
-            "pdf파일": "",
+            "pdf파일": format_pdf_path(lesson_pdf_path),
             "시작페이지": "",
             "끝페이지": "",
             "비고": "",
@@ -524,6 +590,7 @@ def extract_heuristic_titles(pdf_path):
 
     doc = fitz.open(pdf_path)
     titles = {}
+    current_subunit = ""
     
     lesson_pattern = re.compile(r'(?:차시|단원|lesson|unit)\s*(\d+)', re.IGNORECASE)
     
@@ -531,7 +598,6 @@ def extract_heuristic_titles(pdf_path):
         page = doc[page_num]
         blocks = page.get_text("dict")["blocks"]
         
-        # 텍스트 블록에서 폰트 크기 및 내용 추출
         text_spans = []
         for b in blocks:
             if "lines" in b:
@@ -548,77 +614,84 @@ def extract_heuristic_titles(pdf_path):
         if not text_spans:
             continue
             
-        # 폰트 사이즈 통계 (가장 많이 나오는 폰트 등)
         sizes = [s["size"] for s in text_spans]
+        if not sizes: continue
         max_size = max(sizes)
         
-        # Heuristics: 
-        # 1. 폰트 크기가 본문(평균)보다 크면서 숫자로 시작하는 경우 '차시명'일 확률 높음
-        # 2. lesson_pattern이 포함된 경우 확실함
         for i, span in enumerate(text_spans):
+            # 먼저 소단원(Subunit)인지 검사 (예: "3-1-1. 우리 마을" 또는 "1. 우리 마을")
+            sub_m = re.match(r'^(\d+(?:-\d+)*)[\.\s]+(.*)', span["text"])
             m = lesson_pattern.search(span["text"])
+            
+            if sub_m and not m and span["size"] >= max_size * 0.7:
+                # 이것은 차시가 아니라 소단원 제목임
+                current_subunit = span["text"][:50]
+                
             lesson_num = None
             if m:
                 lesson_num = int(m.group(1))
-            elif span["size"] >= max_size * 0.7 and re.match(r'^\d+[\.\s]', span["text"]):
-                # 큰 폰트 + 숫자로 시작 = 차시 제목일 가능성
-                ext = re.match(r'^(\d+)[\.\s]', span["text"])
-                if ext:
-                    lesson_num = int(ext.group(1))
+            # 기존의 "단순 숫자로 시작하면 무조건 차시로 본다"는 fallback을 제거하여
+            # 사회의 소단원을 차시로 오해하지 않도록 함.
                     
             if lesson_num and lesson_num not in titles:
-                # 차시 번호를 찾으면, 그 주변(또는 폰트가 유사한 다음 스팬)을 제목으로 유추
                 title_cand = span["text"]
-                # 만약 번호만 있다면(ex: "1차시") 다음 스팬들을 탐색
+                lesson_title = ""
+                
                 if len(title_cand) < 6 or m:
                     for j in range(i+1, min(i+4, len(text_spans))):
                         cand_span = text_spans[j]
-                        if cand_span["size"] >= span["size"] * 0.8: # 비슷한 크기의 폰트
+                        if cand_span["size"] >= span["size"] * 0.8: 
                             cand_text = cand_span["text"].lstrip('•·\t ')
                             if len(cand_text) > 2 and not cand_text.isdigit():
-                                titles[lesson_num] = cand_text[:50]
+                                lesson_title = cand_text[:50]
                                 break
                 else:
-                    titles[lesson_num] = re.sub(r'^\d+[\.\s]*', '', title_cand)[:50]
+                    lesson_title = re.sub(r'^\d+[\.\s]*', '', title_cand)[:50]
+                    
+                titles[lesson_num] = {
+                    "title": lesson_title,
+                    "subunit": current_subunit
+                }
 
     doc.close()
     return titles
 
 
-def generate_general_data(subject_name, prefix, max_unit=5):
+def generate_general_data(subject_name, prefix, max_unit=5, disable_heuristic=False, grade_str="3-1"):
     rows = []
     
     for unit_num in range(1, max_unit + 1):
-        candidates = [
-            f"{prefix}3_{unit_num}_1_지도서.pdf",
-            f"{prefix}3-1지도서_{unit_num}.pdf",
-            f"{prefix}_{unit_num}단원지도서.pdf",
-            f"{prefix}3-1_{unit_num}단원.pdf"
-        ]
-        
-        pdf_path = None
-        for cand in candidates:
-            p = os.path.join(GUIDE_DIR, cand)
-            if os.path.exists(p):
-                pdf_path = p
-                break
+        pdf_path = find_best_pdf(prefix, unit_num, None, grade_str)
                 
-        titles = extract_heuristic_titles(pdf_path) if pdf_path else {}
+        if disable_heuristic:
+            titles = {}
+            max_lessons = 15
+        else:
+            titles = extract_heuristic_titles(pdf_path) if pdf_path else {}
+            max_lessons = max(titles.keys()) if titles else 3
+            
         unit_name = f"{unit_num}단원"
         
-        max_lessons = max(titles.keys()) if titles else 3
-        
         for lesson_num in range(1, max_lessons + 1):
-            title = titles.get(lesson_num, f"{unit_name} {lesson_num}차시")
+            lesson_pdf_path = find_best_pdf(prefix, unit_num, lesson_num, grade_str) or pdf_path
+            
+            lesson_info = titles.get(lesson_num, {})
+            if isinstance(lesson_info, str):
+                title = lesson_info
+                subunit = ""
+            else:
+                title = lesson_info.get("title", f"{unit_name} {lesson_num}차시") if lesson_info.get("title") else f"{unit_name} {lesson_num}차시"
+                subunit = lesson_info.get("subunit", "")
+                
             rows.append({
                 "수업내용": title,
                 "과목": subject_name,
                 "대단원": unit_name,
-                "소단원": "",
+                "소단원": subunit,
                 "차시": str(lesson_num),
                 "계획일": "",
                 "실행여부": False,
-                "pdf파일": "",
+                "pdf파일": format_pdf_path(lesson_pdf_path),
                 "시작페이지": "",
                 "끝페이지": "",
                 "비고": "",
@@ -699,12 +772,20 @@ def main():
     for r in moral_rows:
         print(f"    {r['과목']} | {r['대단원'][:25]:<25} | {r['차시']:<5} | {r['수업내용'][:40]}")
 
-    # 3. 범용 과목 데이터 생성 (수학, 사회, 과학)
-    print(f"\n[3/4] 범용 데이터 생성 중 (수학, 사회, 과학)...")
-    math_rows = generate_general_data("수학", "수학")
-    social_rows = generate_general_data("사회", "사회")
-    science_rows = generate_general_data("과학", "과학")
-    general_rows = math_rows + social_rows + science_rows
+    # 3. 범용 과목 데이터 생성 (전 과목 지원)
+    print(f"\n[3/3] 범용 데이터 생성 중 (수학, 사회, 과학, 음악, 미술, 체육, 영어, 실과)...")
+    # prefix는 오로지 '과목' 기명으로 유지하여 어떠한 파일명 포맷이든 전부 스캔(rglob)되게 합니다.
+    # 대신 grade_str 인자를 넘겨서 구체적인 학년 점수(score)를 채점합니다.
+    math_rows = generate_general_data("수학", "수학", max_unit=6, grade_str="3-1")
+    social_rows = generate_general_data("사회", "사회", max_unit=4, disable_heuristic=True, grade_str="3-1")
+    science_rows = generate_general_data("과학", "과학", max_unit=5, grade_str="3-1")
+    music_rows = generate_general_data("음악", "음악", max_unit=8, grade_str="3")
+    art_rows = generate_general_data("미술", "미술", max_unit=8, grade_str="3")
+    pe_rows = generate_general_data("체육", "체육", max_unit=5, grade_str="3")
+    english_rows = generate_general_data("영어", "영어", max_unit=11, grade_str="3")
+    prac_rows = generate_general_data("실과", "실과", max_unit=6, grade_str="5")
+    
+    general_rows = math_rows + social_rows + science_rows + music_rows + art_rows + pe_rows + english_rows + prac_rows
     print(f"  기타 {len(general_rows)}행 생성됨")
 
     all_rows = korean_rows + moral_rows + general_rows

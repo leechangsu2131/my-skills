@@ -6,8 +6,8 @@
 - `schedule.py`: 오늘/내일/이번 주 수업 조회, 완료 처리, 차시 연장, 일정 밀기
 - `auto_planner.py`: 기초시간표, 휴업일, 수업시작일을 바탕으로 계획일 자동 배정
 - `map_guides_to_sheet.py`: 지도서를 읽어 진도표 기본 행을 생성하고 시트에 업로드
-
-`server.py`, `schedule_app.jsx`는 선택형 웹 UI입니다. 실제 운영 로직은 위 3개 스크립트가 중심입니다.
+- `server.py`: 구글 시트 데이터를 계층형 트리(Tree) 구조로 응답하는 Flask 백엔드 API
+- `src/`: TailwindCSS와 단위 컴포넌트(Dashboard, LessonList, Actions)로 모듈화된 React(Vite) 프론트엔드
 
 ## 현재 동작 요약
 
@@ -177,7 +177,8 @@ python auto_planner.py --mode fill-blanks --start-date 2026-03-02
 
 ## `map_guides_to_sheet.py`
 
-지도서 PDF를 읽어 진도표 기본 행을 만듭니다.
+지도서 PDF를 읽어 진도표 기본 행을 만듭니다. 
+외부 API(통신비용) 없이 **PyMuPDF(fitz)**의 폰트 크기 및 화면 내 좌표를 분석(Heuristics 알고리즘)하여, 가장 큰 글씨를 '대단원', 다음 큰 글씨를 '차시'로 자동 유추하는 강력한 **범용 로컬 파싱 엔진**이 탑재되어 있습니다.
 
 ### 실행 예시
 
@@ -206,14 +207,22 @@ python map_guides_to_sheet.py --upload --cleanup
 - `소단원` 열이 시트에 없으면 업로드 시 무시됩니다.
 - `실행여부` 헤더가 없더라도 F열에는 체크박스용 `False` 값이 들어갑니다.
 
-## 웹 UI
+## 웹 UI (스마트 진도표 대시보드)
 
-선택 사항입니다.
+디자인 및 모듈화 아키텍처가 업그레이드된 최신 React(Vite) + TailwindCSS 대시보드입니다. 모놀리식 단일 파일을 버리고, 상태 관리 로직(`useScheduleData`)과 뷰(`DashboardView`, `LessonListView`, `ActionsView`)를 분리 설계했습니다.
 
 ```bash
+# 터미널 1 (백엔드)
 python server.py
+
+# 터미널 2 (프론트엔드)
 npm run dev
 ```
+
+### 웹 UI 주요 기능
+- **단원별 상세 진도 (Tree View)**: `server.py`가 시트의 평면적인 행 배열을 묶어서 컴파일해주어, 현재 어떤 대단원의 몇 %를 달성 중인지 시각적으로 한눈에 확인할 수 있습니다.
+- **수업 카드 렌더링**: 오늘/내일/다음주 수업 및 직전 완료 차시와 다음 차시를 직관적인 아이콘 카드들로 보여줍니다.
+- **일괄 연기 및 연장**: 버튼 터치만으로 일정 N일 미루기와 미수행 수업 연장을 쉽게 트리거할 수 있습니다.
 
 ## 테스트
 

@@ -46,6 +46,49 @@ def dashboard():
     progress_data = {sub: schedule.get_progress(records, sub) for sub in subjects}
     views.append({"id": "progress", "label": "진도율", "title": "현재까지 과목별 진도 현황", "type": "progress_list", "data": progress_data})
     
+    unit_progress_data = {}
+    for sub in subjects:
+        all_sub = [r for r in records if r.get("과목", "").strip() == sub]
+        units_dict = {}
+        for r in all_sub:
+            unit_name = r.get("대단원", "").strip()
+            if not unit_name:
+                unit_name = "기타 차시"
+                
+            if unit_name not in units_dict:
+                units_dict[unit_name] = {"total": 0, "completed": 0, "lessons": []}
+                
+            units_dict[unit_name]["total"] += 1
+            is_done = str(r.get("실행여부", "FALSE")).upper() in ("TRUE", "1", "Y", "YES", "DONE")
+            if isinstance(r.get("실행여부"), bool):
+                is_done = r.get("실행여부")
+                
+            if is_done:
+                units_dict[unit_name]["completed"] += 1
+                
+            units_dict[unit_name]["lessons"].append({
+                "차시": r.get("차시", ""),
+                "수업내용": r.get("수업내용", ""),
+                "실행여부": is_done,
+                "계획일": r.get("계획일", ""),
+                "_row": r.get("_row")
+            })
+            
+        units_list = []
+        for name, data in units_dict.items():
+            pct = round((data["completed"] / data["total"] * 100)) if data["total"] > 0 else 0
+            units_list.append({
+                "name": name,
+                "total": data["total"],
+                "completed": data["completed"],
+                "percentage": pct,
+                "lessons": data["lessons"]
+            })
+            
+        unit_progress_data[sub] = units_list
+        
+    views.append({"id": "unit_progress", "label": "단원 추적", "title": "단원별 상세 진도 (Tree View)", "type": "unit_progress", "data": unit_progress_data})
+    
     views.append({"id": "push", "label": "일정 연기", "title": "특정 과목 수업 일정 미루기", "type": "push_action", "data": None})
     views.append({"id": "extend", "label": "차시 연장", "title": "진행 중인 차시 분량 늘리기(행 복제)", "type": "extend_action", "data": None})
             

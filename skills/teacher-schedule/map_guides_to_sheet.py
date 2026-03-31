@@ -514,7 +514,11 @@ def generate_korean_data():
 # ══════════════════════════════════════════════════════════
 #  범용 데이터 생성 (정규식 기본 추출)
 # ══════════════════════════════════════════════════════════
-def extract_general_titles(pdf_path):
+def extract_heuristic_titles(pdf_path):
+    """
+    외부 API 없이 PyMuPDF(fitz)의 폰트 크기와 좌표 Heuristics를 분석하여 
+    동적으로 대단원/소단원/차시를 유추하는 로컬 파싱 엔진
+    """
     if not os.path.exists(pdf_path):
         return {}
 
@@ -524,21 +528,58 @@ def extract_general_titles(pdf_path):
     lesson_pattern = re.compile(r'(?:차시|단원|lesson|unit)\s*(\d+)', re.IGNORECASE)
     
     for page_num in range(min(5, len(doc))):
-        text = doc[page_num].get_text()
-        lines = [l.strip() for l in text.split('\n') if l.strip()]
+        page = doc[page_num]
+        blocks = page.get_text("dict")["blocks"]
         
-        for i, line in enumerate(lines):
-            m = lesson_pattern.search(line)
+        # 텍스트 블록에서 폰트 크기 및 내용 추출
+        text_spans = []
+        for b in blocks:
+            if "lines" in b:
+                for line in b["lines"]:
+                    for span in line["spans"]:
+                        text = span["text"].strip()
+                        if text:
+                            text_spans.append({
+                                "text": text,
+                                "size": round(span["size"], 1),
+                                "y": span["bbox"][1]
+                            })
+                            
+        if not text_spans:
+            continue
+            
+        # 폰트 사이즈 통계 (가장 많이 나오는 폰트 등)
+        sizes = [s["size"] for s in text_spans]
+        max_size = max(sizes)
+        
+        # Heuristics: 
+        # 1. 폰트 크기가 본문(평균)보다 크면서 숫자로 시작하는 경우 '차시명'일 확률 높음
+        # 2. lesson_pattern이 포함된 경우 확실함
+        for i, span in enumerate(text_spans):
+            m = lesson_pattern.search(span["text"])
+            lesson_num = None
             if m:
                 lesson_num = int(m.group(1))
-                if lesson_num not in titles:
-                    for j in range(i + 1, min(i + 4, len(lines))):
-                        cand = lines[j]
-                        if cand.startswith('•') or cand.startswith('·'):
-                            cand = cand.lstrip('•·\t ')
-                        if len(cand) > 2 and not cand.isdigit():
-                            titles[lesson_num] = cand[:50]
-                            break
+            elif span["size"] >= max_size * 0.7 and re.match(r'^\d+[\.\s]', span["text"]):
+                # 큰 폰트 + 숫자로 시작 = 차시 제목일 가능성
+                ext = re.match(r'^(\d+)[\.\s]', span["text"])
+                if ext:
+                    lesson_num = int(ext.group(1))
+                    
+            if lesson_num and lesson_num not in titles:
+                # 차시 번호를 찾으면, 그 주변(또는 폰트가 유사한 다음 스팬)을 제목으로 유추
+                title_cand = span["text"]
+                # 만약 번호만 있다면(ex: "1차시") 다음 스팬들을 탐색
+                if len(title_cand) < 6 or m:
+                    for j in range(i+1, min(i+4, len(text_spans))):
+                        cand_span = text_spans[j]
+                        if cand_span["size"] >= span["size"] * 0.8: # 비슷한 크기의 폰트
+                            cand_text = cand_span["text"].lstrip('•·\t ')
+                            if len(cand_text) > 2 and not cand_text.isdigit():
+                                titles[lesson_num] = cand_text[:50]
+                                break
+                else:
+                    titles[lesson_num] = re.sub(r'^\d+[\.\s]*', '', title_cand)[:50]
 
     doc.close()
     return titles
@@ -562,7 +603,7 @@ def generate_general_data(subject_name, prefix, max_unit=5):
                 pdf_path = p
                 break
                 
-        titles = extract_general_titles(pdf_path) if pdf_path else {}
+        titles = extract_heuristic_titles(pdf_path) if pdf_path else {}
         unit_name = f"{unit_num}단원"
         
         max_lessons = max(titles.keys()) if titles else 3

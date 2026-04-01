@@ -5,7 +5,8 @@
 
 - `schedule.py`: 오늘/내일/이번 주 수업 조회, 완료 처리, 차시 연장, 일정 밀기
 - `auto_planner.py`: 기초시간표, 휴업일, 수업시작일을 바탕으로 계획일 자동 배정
-- `map_guides_to_sheet.py`: 지도서를 읽어 진도표 기본 행을 생성하고 시트에 업로드
+- `map_guides_to_sheet.py`: 국어/도덕 지도서를 읽어 진도표 기본 행을 생성하고 시트에 업로드
+- `map_general_guides_to_sheet.py`: 기타 교과용 범용 지도서 매핑
 - `server.py`: 구글 시트 데이터를 계층형 트리(Tree) 구조로 응답하는 Flask 백엔드 API
 - `src/`: TailwindCSS와 단위 컴포넌트(Dashboard, LessonList, Actions)로 모듈화된 React(Vite) 프론트엔드
 
@@ -177,7 +178,7 @@ python auto_planner.py --mode fill-blanks --start-date 2026-03-02
 
 ## `map_guides_to_sheet.py`
 
-지도서 PDF를 읽어 진도표 기본 행을 만듭니다. 
+국어/도덕 지도서 PDF를 읽어 진도표 기본 행을 만듭니다.
 외부 API(통신비용) 없이 **PyMuPDF(fitz)**의 폰트 크기 및 화면 내 좌표를 분석(Heuristics 알고리즘)하여, 가장 큰 글씨를 '대단원', 다음 큰 글씨를 '차시'로 자동 유추하는 강력한 **범용 로컬 파싱 엔진**이 탑재되어 있습니다.
 
 ### 실행 예시
@@ -206,6 +207,37 @@ python map_guides_to_sheet.py --upload --cleanup
 
 - `소단원` 열이 시트에 없으면 업로드 시 무시됩니다.
 - `실행여부` 헤더가 없더라도 F열에는 체크박스용 `False` 값이 들어갑니다.
+
+## `map_general_guides_to_sheet.py`
+
+기타 교과용 범용 지도서 매핑 스크립트입니다.
+
+### 실행 예시
+
+```bash
+python map_general_guides_to_sheet.py --list-presets
+python map_general_guides_to_sheet.py --subject 사회
+python map_general_guides_to_sheet.py --subject 과학 --upload
+python map_general_guides_to_sheet.py --all-presets --upload --cleanup
+```
+
+### 현재 preset
+
+- 수학
+- 사회
+- 과학
+- 음악
+- 미술
+- 체육
+- 영어
+- 실과
+
+### 동작 방식
+
+- 같은 `.env`, 같은 구글시트를 사용합니다.
+- 먼저 연간 지도 계획 PDF를 찾고, 있으면 그 구조를 우선 사용합니다.
+- 연간 계획 PDF가 없으면 PDF 이름과 초기 몇 페이지를 기준으로 휴리스틱 생성으로 떨어집니다.
+- 과목마다 품질 차이가 있으므로 미리보기 후 업로드하는 흐름을 권장합니다.
 
 ## 웹 UI (스마트 진도표 대시보드)
 

@@ -11,7 +11,8 @@ description: "구글시트 기반 수업 진도 관리 도구를 유지보수할
 1. `schedule.py`
 2. `auto_planner.py`
 3. `map_guides_to_sheet.py`
-4. `server.py`, `schedule_app.jsx`
+4. `map_general_guides_to_sheet.py`
+5. `server.py`, `schedule_app.jsx`
 
 ## 핵심 전제
 
@@ -85,6 +86,19 @@ description: "구글시트 기반 수업 진도 관리 도구를 유지보수할
 - `차시`: `2(2~3)`
 - `수업내용`: `감각적 표현을 이해할 수 있다.`
 
+### `map_general_guides_to_sheet.py`
+
+- 기타 교과용 범용 매핑 스크립트다.
+- 같은 구글시트와 같은 `.env`를 사용한다.
+- 기본 preset은 수학, 사회, 과학, 음악, 미술, 체육, 영어, 실과다.
+- 먼저 연간 지도 계획 PDF를 찾고, 없으면 휴리스틱으로 생성한다.
+
+수정 시 주의:
+
+- `map_guides_to_sheet.py`의 국어/도덕 전용 로직과 섞지 않는다.
+- 범용 로직은 과목별 편차가 크므로 미리보기 기준을 유지한다.
+- 새 과목을 추가할 때는 preset과 테스트를 함께 고친다.
+
 ## 문서/코드 수정 시 권장 흐름
 
 1. 먼저 `README.md`와 현재 코드가 맞는지 확인한다.
@@ -120,3 +134,4 @@ python -m py_compile schedule.py auto_planner.py map_guides_to_sheet.py
 - 차시 연장은 새 행 추가가 아니라 날짜 이동이라는 점
 - 자동 배정의 `initial` / `fill-blanks` 차이
 - 국어는 `대단원 / 소단원 / 학습목표 / 실제 차시범위` 구조라는 점
+- 범용 지도서 매핑은 `map_general_guides_to_sheet.py`로 분리되었다는 점

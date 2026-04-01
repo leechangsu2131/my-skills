@@ -1,0 +1,1951 @@
+{
+  "pdf": "공통자료_수학 지도서 3-1_각론.PDF",
+  "strategy": "plan_table",
+  "split_level": "detail",
+  "requested_page_offset": 0,
+  "auto_page_offset": -41,
+  "effective_page_offset": -41,
+  "sections": [],
+  "detected_groups": [
+    {
+      "index": 1,
+      "title": "단원 도입",
+      "source_title": "단원 도입",
+      "start_page": 16,
+      "end_page": 18,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          57,
+          59
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 2,
+      "title": "덧셈을 해 볼까요⑴",
+      "source_title": "덧셈을 해 볼까요⑴",
+      "start_page": 19,
+      "end_page": 22,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          60,
+          63
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 3,
+      "title": "덧셈을 해 볼까요⑵",
+      "source_title": "덧셈을 해 볼까요⑵",
+      "start_page": 23,
+      "end_page": 26,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          64,
+          67
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 4,
+      "title": "덧셈을 해 볼까요⑶",
+      "source_title": "덧셈을 해 볼까요⑶",
+      "start_page": 27,
+      "end_page": 32,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          68,
+          73
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 5,
+      "title": "뺄셈을 해 볼까요⑴",
+      "source_title": "뺄셈을 해 볼까요⑴",
+      "start_page": 33,
+      "end_page": 36,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          74,
+          77
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 6,
+      "title": "뺄셈을 해 볼까요⑵",
+      "source_title": "뺄셈을 해 볼까요⑵",
+      "start_page": 37,
+      "end_page": 44,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          78,
+          85
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 7,
+      "title": "하하! 놀이와 만나요",
+      "source_title": "하하! 놀이와 만나요",
+      "start_page": 45,
+      "end_page": 46,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          86,
+          87
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 8,
+      "title": "와우! 세상과 만나요",
+      "source_title": "와우! 세상과 만나요",
+      "start_page": 47,
+      "end_page": 48,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          88,
+          89
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 9,
+      "title": "됐다! 마무리",
+      "source_title": "됐다! 마무리",
+      "start_page": 49,
+      "end_page": 50,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          90,
+          91
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 10,
+      "title": "단원 도입",
+      "source_title": "단원 도입",
+      "start_page": 66,
+      "end_page": 68,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          107,
+          109
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 11,
+      "title": "선의 종류에는 어떤 것이 있을까요",
+      "source_title": "선의 종류에는 어떤 것이 있을까요",
+      "start_page": 69,
+      "end_page": 74,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          110,
+          115
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 12,
+      "title": "각을 알아볼까요",
+      "source_title": "각을 알아볼까요",
+      "start_page": 75,
+      "end_page": 78,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          116,
+          119
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 13,
+      "title": "직각을 알아볼까요",
+      "source_title": "직각을 알아볼까요",
+      "start_page": 79,
+      "end_page": 82,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          120,
+          123
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 14,
+      "title": "직각삼각형을 알아볼까요",
+      "source_title": "직각삼각형을 알아볼까요",
+      "start_page": 83,
+      "end_page": 86,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          124,
+          127
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 15,
+      "title": "직사각형을 알아볼까요",
+      "source_title": "직사각형을 알아볼까요",
+      "start_page": 87,
+      "end_page": 90,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          128,
+          131
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 16,
+      "title": "정사각형을 알아볼까요",
+      "source_title": "정사각형을 알아볼까요",
+      "start_page": 91,
+      "end_page": 94,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          132,
+          135
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 17,
+      "title": "하하! 놀이와 만나요",
+      "source_title": "하하! 놀이와 만나요",
+      "start_page": 95,
+      "end_page": 96,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          136,
+          137
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 18,
+      "title": "와우! 세상과 만나요",
+      "source_title": "와우! 세상과 만나요",
+      "start_page": 97,
+      "end_page": 100,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          138,
+          141
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 19,
+      "title": "됐다! 마무리",
+      "source_title": "됐다! 마무리",
+      "start_page": 101,
+      "end_page": 102,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          142,
+          143
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 20,
+      "title": "단원 도입",
+      "source_title": "단원 도입",
+      "start_page": 118,
+      "end_page": 120,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          159,
+          161
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 21,
+      "title": "똑같이 나누어 볼까요⑴",
+      "source_title": "똑같이 나누어 볼까요⑴",
+      "start_page": 121,
+      "end_page": 124,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          162,
+          165
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 22,
+      "title": "똑같이 나누어 볼까요⑵",
+      "source_title": "똑같이 나누어 볼까요⑵",
+      "start_page": 125,
+      "end_page": 128,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          166,
+          169
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 23,
+      "title": "똑같이 나누어 볼까요⑶",
+      "source_title": "똑같이 나누어 볼까요⑶",
+      "start_page": 129,
+      "end_page": 132,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          170,
+          173
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 24,
+      "title": "곱셈과 나눗셈의 관계를 알아볼까요",
+      "source_title": "곱셈과 나눗셈의 관계를 알아볼까요",
+      "start_page": 133,
+      "end_page": 136,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          174,
+          177
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 25,
+      "title": "나눗셈의 몫을 곱셈으로 구해 볼까요",
+      "source_title": "나눗셈의 몫을 곱셈으로 구해 볼까요",
+      "start_page": 137,
+      "end_page": 142,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          178,
+          183
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 26,
+      "title": "하하! 놀이와 만나요",
+      "source_title": "하하! 놀이와 만나요",
+      "start_page": 143,
+      "end_page": 144,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          184,
+          185
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 27,
+      "title": "와우! 세상과 만나요",
+      "source_title": "와우! 세상과 만나요",
+      "start_page": 145,
+      "end_page": 148,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          186,
+          189
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 28,
+      "title": "됐다! 마무리",
+      "source_title": "됐다! 마무리",
+      "start_page": 149,
+      "end_page": 150,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          190,
+          191
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 29,
+      "title": "단원 도입",
+      "source_title": "단원 도입",
+      "start_page": 166,
+      "end_page": 168,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          207,
+          209
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 30,
+      "title": "(몇십)_(몇)을 알아볼까요",
+      "source_title": "(몇십)_(몇)을 알아볼까요",
+      "start_page": 169,
+      "end_page": 172,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          210,
+          213
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 31,
+      "title": "(몇십몇)_(몇)을 알아볼까요⑴",
+      "source_title": "(몇십몇)_(몇)을 알아볼까요⑴",
+      "start_page": 173,
+      "end_page": 176,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          214,
+          217
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 32,
+      "title": "(몇십몇)_(몇)을 알아볼까요⑵",
+      "source_title": "(몇십몇)_(몇)을 알아볼까요⑵",
+      "start_page": 177,
+      "end_page": 184,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          218,
+          225
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 33,
+      "title": "(몇십몇)_(몇)을 알아볼까요⑶",
+      "source_title": "(몇십몇)_(몇)을 알아볼까요⑶",
+      "start_page": 185,
+      "end_page": 188,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          226,
+          229
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 34,
+      "title": "하하! 놀이와 만나요",
+      "source_title": "하하! 놀이와 만나요",
+      "start_page": 189,
+      "end_page": 190,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          230,
+          231
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 35,
+      "title": "와우! 세상과 만나요",
+      "source_title": "와우! 세상과 만나요",
+      "start_page": 191,
+      "end_page": 192,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          232,
+          233
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 36,
+      "title": "됐다! 마무리",
+      "source_title": "됐다! 마무리",
+      "start_page": 193,
+      "end_page": 194,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          234,
+          235
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 37,
+      "title": "단원 도입",
+      "source_title": "단원 도입",
+      "start_page": 210,
+      "end_page": 212,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          251,
+          253
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 38,
+      "title": "cm보다 작은 단위를 알아볼까요",
+      "source_title": "cm보다 작은 단위를 알아볼까요",
+      "start_page": 213,
+      "end_page": 216,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          254,
+          257
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 39,
+      "title": "m보다 큰 단위를 알아볼까요",
+      "source_title": "m보다 큰 단위를 알아볼까요",
+      "start_page": 217,
+      "end_page": 220,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          258,
+          261
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 40,
+      "title": "길이와 거리를 어림하고 재어 볼까요",
+      "source_title": "길이와 거리를 어림하고 재어 볼까요",
+      "start_page": 221,
+      "end_page": 226,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          262,
+          267
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 41,
+      "title": "분보다 작은 단위를 알아볼까요",
+      "source_title": "분보다 작은 단위를 알아볼까요",
+      "start_page": 227,
+      "end_page": 230,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          268,
+          271
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 42,
+      "title": "시간은 어떻게 더할까요",
+      "source_title": "시간은 어떻게 더할까요",
+      "start_page": 231,
+      "end_page": 234,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          272,
+          275
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 43,
+      "title": "시간은 어떻게 뺄까요",
+      "source_title": "시간은 어떻게 뺄까요",
+      "start_page": 235,
+      "end_page": 238,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          276,
+          279
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 44,
+      "title": "하하! 놀이와 만나요",
+      "source_title": "하하! 놀이와 만나요",
+      "start_page": 239,
+      "end_page": 240,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          280,
+          281
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 45,
+      "title": "와우! 세상과 만나요",
+      "source_title": "와우! 세상과 만나요",
+      "start_page": 241,
+      "end_page": 242,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          282,
+          283
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 46,
+      "title": "됐다! 마무리",
+      "source_title": "됐다! 마무리",
+      "start_page": 243,
+      "end_page": 244,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          284,
+          285
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 47,
+      "title": "단원 도입",
+      "source_title": "단원 도입",
+      "start_page": 260,
+      "end_page": 262,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          301,
+          303
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 48,
+      "title": "똑같이 나누어 볼까요",
+      "source_title": "똑같이 나누어 볼까요",
+      "start_page": 263,
+      "end_page": 266,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          304,
+          307
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 49,
+      "title": "분수를 알아볼까요",
+      "source_title": "분수를 알아볼까요",
+      "start_page": 267,
+      "end_page": 272,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          308,
+          313
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 50,
+      "title": "단위분수의 크기를 비교해 볼까요",
+      "source_title": "단위분수의 크기를 비교해 볼까요",
+      "start_page": 273,
+      "end_page": 278,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          314,
+          319
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 51,
+      "title": "분모가 같은 분수의 크기를 비교해 볼까요",
+      "source_title": "분모가 같은 분수의 크기를 비교해 볼까요",
+      "start_page": 279,
+      "end_page": 282,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          320,
+          323
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 52,
+      "title": "소수를 알아볼까요⑴",
+      "source_title": "소수를 알아볼까요⑴",
+      "start_page": 283,
+      "end_page": 286,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          324,
+          327
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 53,
+      "title": "소수를 알아볼까요⑵",
+      "source_title": "소수를 알아볼까요⑵",
+      "start_page": 287,
+      "end_page": 290,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          328,
+          331
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 54,
+      "title": "소수의 크기를 비교해 볼까요",
+      "source_title": "소수의 크기를 비교해 볼까요",
+      "start_page": 291,
+      "end_page": 294,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          332,
+          335
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 55,
+      "title": "하하! 놀이와 만나요",
+      "source_title": "하하! 놀이와 만나요",
+      "start_page": 295,
+      "end_page": 296,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          336,
+          337
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 56,
+      "title": "와우! 세상과 만나요",
+      "source_title": "와우! 세상과 만나요",
+      "start_page": 297,
+      "end_page": 298,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          338,
+          339
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 57,
+      "title": "됐다! 마무리",
+      "source_title": "됐다! 마무리",
+      "start_page": 299,
+      "end_page": 300,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          340,
+          341
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    }
+  ],
+  "groups": [
+    {
+      "index": 1,
+      "title": "단원 도입",
+      "source_title": "단원 도입",
+      "start_page": 16,
+      "end_page": 18,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          57,
+          59
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 2,
+      "title": "덧셈을 해 볼까요⑴",
+      "source_title": "덧셈을 해 볼까요⑴",
+      "start_page": 19,
+      "end_page": 22,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          60,
+          63
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 3,
+      "title": "덧셈을 해 볼까요⑵",
+      "source_title": "덧셈을 해 볼까요⑵",
+      "start_page": 23,
+      "end_page": 26,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          64,
+          67
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 4,
+      "title": "덧셈을 해 볼까요⑶",
+      "source_title": "덧셈을 해 볼까요⑶",
+      "start_page": 27,
+      "end_page": 32,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          68,
+          73
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 5,
+      "title": "뺄셈을 해 볼까요⑴",
+      "source_title": "뺄셈을 해 볼까요⑴",
+      "start_page": 33,
+      "end_page": 36,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          74,
+          77
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 6,
+      "title": "뺄셈을 해 볼까요⑵",
+      "source_title": "뺄셈을 해 볼까요⑵",
+      "start_page": 37,
+      "end_page": 44,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          78,
+          85
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 7,
+      "title": "하하! 놀이와 만나요",
+      "source_title": "하하! 놀이와 만나요",
+      "start_page": 45,
+      "end_page": 46,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          86,
+          87
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 8,
+      "title": "와우! 세상과 만나요",
+      "source_title": "와우! 세상과 만나요",
+      "start_page": 47,
+      "end_page": 48,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          88,
+          89
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 9,
+      "title": "됐다! 마무리",
+      "source_title": "됐다! 마무리",
+      "start_page": 49,
+      "end_page": 50,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          90,
+          91
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 10,
+      "title": "단원 도입",
+      "source_title": "단원 도입",
+      "start_page": 66,
+      "end_page": 68,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          107,
+          109
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 11,
+      "title": "선의 종류에는 어떤 것이 있을까요",
+      "source_title": "선의 종류에는 어떤 것이 있을까요",
+      "start_page": 69,
+      "end_page": 74,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          110,
+          115
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 12,
+      "title": "각을 알아볼까요",
+      "source_title": "각을 알아볼까요",
+      "start_page": 75,
+      "end_page": 78,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          116,
+          119
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 13,
+      "title": "직각을 알아볼까요",
+      "source_title": "직각을 알아볼까요",
+      "start_page": 79,
+      "end_page": 82,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          120,
+          123
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 14,
+      "title": "직각삼각형을 알아볼까요",
+      "source_title": "직각삼각형을 알아볼까요",
+      "start_page": 83,
+      "end_page": 86,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          124,
+          127
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 15,
+      "title": "직사각형을 알아볼까요",
+      "source_title": "직사각형을 알아볼까요",
+      "start_page": 87,
+      "end_page": 90,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          128,
+          131
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 16,
+      "title": "정사각형을 알아볼까요",
+      "source_title": "정사각형을 알아볼까요",
+      "start_page": 91,
+      "end_page": 94,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          132,
+          135
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 17,
+      "title": "하하! 놀이와 만나요",
+      "source_title": "하하! 놀이와 만나요",
+      "start_page": 95,
+      "end_page": 96,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          136,
+          137
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 18,
+      "title": "와우! 세상과 만나요",
+      "source_title": "와우! 세상과 만나요",
+      "start_page": 97,
+      "end_page": 100,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          138,
+          141
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 19,
+      "title": "됐다! 마무리",
+      "source_title": "됐다! 마무리",
+      "start_page": 101,
+      "end_page": 102,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          142,
+          143
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 20,
+      "title": "단원 도입",
+      "source_title": "단원 도입",
+      "start_page": 118,
+      "end_page": 120,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          159,
+          161
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 21,
+      "title": "똑같이 나누어 볼까요⑴",
+      "source_title": "똑같이 나누어 볼까요⑴",
+      "start_page": 121,
+      "end_page": 124,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          162,
+          165
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 22,
+      "title": "똑같이 나누어 볼까요⑵",
+      "source_title": "똑같이 나누어 볼까요⑵",
+      "start_page": 125,
+      "end_page": 128,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          166,
+          169
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 23,
+      "title": "똑같이 나누어 볼까요⑶",
+      "source_title": "똑같이 나누어 볼까요⑶",
+      "start_page": 129,
+      "end_page": 132,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          170,
+          173
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 24,
+      "title": "곱셈과 나눗셈의 관계를 알아볼까요",
+      "source_title": "곱셈과 나눗셈의 관계를 알아볼까요",
+      "start_page": 133,
+      "end_page": 136,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          174,
+          177
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 25,
+      "title": "나눗셈의 몫을 곱셈으로 구해 볼까요",
+      "source_title": "나눗셈의 몫을 곱셈으로 구해 볼까요",
+      "start_page": 137,
+      "end_page": 142,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          178,
+          183
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 26,
+      "title": "하하! 놀이와 만나요",
+      "source_title": "하하! 놀이와 만나요",
+      "start_page": 143,
+      "end_page": 144,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          184,
+          185
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 27,
+      "title": "와우! 세상과 만나요",
+      "source_title": "와우! 세상과 만나요",
+      "start_page": 145,
+      "end_page": 148,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          186,
+          189
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 28,
+      "title": "됐다! 마무리",
+      "source_title": "됐다! 마무리",
+      "start_page": 149,
+      "end_page": 150,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          190,
+          191
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 29,
+      "title": "단원 도입",
+      "source_title": "단원 도입",
+      "start_page": 166,
+      "end_page": 168,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          207,
+          209
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 30,
+      "title": "(몇십)_(몇)을 알아볼까요",
+      "source_title": "(몇십)_(몇)을 알아볼까요",
+      "start_page": 169,
+      "end_page": 172,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          210,
+          213
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 31,
+      "title": "(몇십몇)_(몇)을 알아볼까요⑴",
+      "source_title": "(몇십몇)_(몇)을 알아볼까요⑴",
+      "start_page": 173,
+      "end_page": 176,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          214,
+          217
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 32,
+      "title": "(몇십몇)_(몇)을 알아볼까요⑵",
+      "source_title": "(몇십몇)_(몇)을 알아볼까요⑵",
+      "start_page": 177,
+      "end_page": 184,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          218,
+          225
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 33,
+      "title": "(몇십몇)_(몇)을 알아볼까요⑶",
+      "source_title": "(몇십몇)_(몇)을 알아볼까요⑶",
+      "start_page": 185,
+      "end_page": 188,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          226,
+          229
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 34,
+      "title": "하하! 놀이와 만나요",
+      "source_title": "하하! 놀이와 만나요",
+      "start_page": 189,
+      "end_page": 190,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          230,
+          231
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 35,
+      "title": "와우! 세상과 만나요",
+      "source_title": "와우! 세상과 만나요",
+      "start_page": 191,
+      "end_page": 192,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          232,
+          233
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 36,
+      "title": "됐다! 마무리",
+      "source_title": "됐다! 마무리",
+      "start_page": 193,
+      "end_page": 194,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          234,
+          235
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 37,
+      "title": "단원 도입",
+      "source_title": "단원 도입",
+      "start_page": 210,
+      "end_page": 212,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          251,
+          253
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 38,
+      "title": "cm보다 작은 단위를 알아볼까요",
+      "source_title": "cm보다 작은 단위를 알아볼까요",
+      "start_page": 213,
+      "end_page": 216,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          254,
+          257
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 39,
+      "title": "m보다 큰 단위를 알아볼까요",
+      "source_title": "m보다 큰 단위를 알아볼까요",
+      "start_page": 217,
+      "end_page": 220,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          258,
+          261
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 40,
+      "title": "길이와 거리를 어림하고 재어 볼까요",
+      "source_title": "길이와 거리를 어림하고 재어 볼까요",
+      "start_page": 221,
+      "end_page": 226,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          262,
+          267
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 41,
+      "title": "분보다 작은 단위를 알아볼까요",
+      "source_title": "분보다 작은 단위를 알아볼까요",
+      "start_page": 227,
+      "end_page": 230,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          268,
+          271
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 42,
+      "title": "시간은 어떻게 더할까요",
+      "source_title": "시간은 어떻게 더할까요",
+      "start_page": 231,
+      "end_page": 234,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          272,
+          275
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 43,
+      "title": "시간은 어떻게 뺄까요",
+      "source_title": "시간은 어떻게 뺄까요",
+      "start_page": 235,
+      "end_page": 238,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          276,
+          279
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 44,
+      "title": "하하! 놀이와 만나요",
+      "source_title": "하하! 놀이와 만나요",
+      "start_page": 239,
+      "end_page": 240,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          280,
+          281
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 45,
+      "title": "와우! 세상과 만나요",
+      "source_title": "와우! 세상과 만나요",
+      "start_page": 241,
+      "end_page": 242,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          282,
+          283
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 46,
+      "title": "됐다! 마무리",
+      "source_title": "됐다! 마무리",
+      "start_page": 243,
+      "end_page": 244,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          284,
+          285
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 47,
+      "title": "단원 도입",
+      "source_title": "단원 도입",
+      "start_page": 260,
+      "end_page": 262,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          301,
+          303
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 48,
+      "title": "똑같이 나누어 볼까요",
+      "source_title": "똑같이 나누어 볼까요",
+      "start_page": 263,
+      "end_page": 266,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          304,
+          307
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 49,
+      "title": "분수를 알아볼까요",
+      "source_title": "분수를 알아볼까요",
+      "start_page": 267,
+      "end_page": 272,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          308,
+          313
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 50,
+      "title": "단위분수의 크기를 비교해 볼까요",
+      "source_title": "단위분수의 크기를 비교해 볼까요",
+      "start_page": 273,
+      "end_page": 278,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          314,
+          319
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 51,
+      "title": "분모가 같은 분수의 크기를 비교해 볼까요",
+      "source_title": "분모가 같은 분수의 크기를 비교해 볼까요",
+      "start_page": 279,
+      "end_page": 282,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          320,
+          323
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 52,
+      "title": "소수를 알아볼까요⑴",
+      "source_title": "소수를 알아볼까요⑴",
+      "start_page": 283,
+      "end_page": 286,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          324,
+          327
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 53,
+      "title": "소수를 알아볼까요⑵",
+      "source_title": "소수를 알아볼까요⑵",
+      "start_page": 287,
+      "end_page": 290,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          328,
+          331
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 54,
+      "title": "소수의 크기를 비교해 볼까요",
+      "source_title": "소수의 크기를 비교해 볼까요",
+      "start_page": 291,
+      "end_page": 294,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          332,
+          335
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 55,
+      "title": "하하! 놀이와 만나요",
+      "source_title": "하하! 놀이와 만나요",
+      "start_page": 295,
+      "end_page": 296,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          336,
+          337
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 56,
+      "title": "와우! 세상과 만나요",
+      "source_title": "와우! 세상과 만나요",
+      "start_page": 297,
+      "end_page": 298,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          338,
+          339
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    },
+    {
+      "index": 57,
+      "title": "됐다! 마무리",
+      "source_title": "됐다! 마무리",
+      "start_page": 299,
+      "end_page": 300,
+      "row_evidence": 1,
+      "page_ranges_raw": [
+        [
+          340,
+          341
+        ]
+      ],
+      "method": "plan_table",
+      "context": [],
+      "detected_level": "detail"
+    }
+  ]
+}

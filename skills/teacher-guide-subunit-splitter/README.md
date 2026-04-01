@@ -1,11 +1,17 @@
 # Teacher Guide PDF Splitter
 
-This project detects split ranges from front-matter topic lists, lesson-plan tables, or overview pages and splits the PDF into smaller PDFs.
+This project detects split ranges from front-matter topic lists, lesson-plan tables, overview pages, and local unit plan pages, then splits a teacher-guide PDF into smaller PDFs.
 
 ## Install
 
 ```bash
 pip install -r requirements.txt
+```
+
+For tests and skill validation helpers:
+
+```bash
+pip install -r requirements-dev.txt
 ```
 
 ## Run the desktop app
@@ -57,6 +63,8 @@ python scripts/split_subunits_from_plan_table.py --pdf "teacher-guide.pdf" --out
 - `--z-col`: force the guide-page column index when plan-table auto detection is wrong
 
 `overview` is useful for guide PDFs that start directly with unit pages and mark new units with headings such as `단원 개관` or `제재 개관`.
+
+When a title extracted from a TOC or plan page looks truncated or OCR-noisy, the splitter now repairs only that group name from the destination start-page heading instead of relying on subject-specific title exceptions.
 
 ## Output
 

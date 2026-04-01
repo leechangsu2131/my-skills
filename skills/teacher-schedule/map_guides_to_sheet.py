@@ -1,8 +1,10 @@
 """
-지도서 PDF 파일들에서 차시 정보를 추출하여 구글 시트 진도표에 업로드하는 스크립트.
+국어/도덕 지도서 PDF 파일들에서 차시 정보를 추출하여 구글 시트 진도표에 업로드하는 스크립트.
+
+기타 교과용 범용 매핑은 `map_general_guides_to_sheet.py`를 사용한다.
 
 사용법:
-  python map_guides_to_sheet.py              # dry-run (미리보기)
+  python map_guides_to_sheet.py               # dry-run (미리보기)
   python map_guides_to_sheet.py --upload      # 실제 업로드
   python map_guides_to_sheet.py --cleanup     # 중복행 삭제 후 업로드
 """
@@ -53,6 +55,60 @@ def get_sheet():
 
 def normalize_search_text(text):
     return re.sub(r"[\s_\-\[\]\(\)]+", "", str(text)).lower()
+
+
+def build_grade_search_tokens(grade_str):
+    grade_text = str(grade_str or "").strip()
+    if not grade_text:
+        return []
+
+    numbers = re.findall(r"\d+", grade_text)
+    tokens = set()
+
+    if len(numbers) >= 2:
+        grade_num, term_num = numbers[:2]
+        tokens.update(
+            {
+                normalize_search_text(grade_text),
+                normalize_search_text(f"{grade_num}-{term_num}"),
+                normalize_search_text(f"{grade_num}_{term_num}"),
+                normalize_search_text(f"{grade_num}\ud559\ub144 {term_num}\ud559\uae30"),
+                normalize_search_text(f"{grade_num}\ud559\ub144{term_num}\ud559\uae30"),
+                normalize_search_text(f"{grade_num}\ud559\ub144 {term_num}"),
+                normalize_search_text(f"{grade_num}\ud559\ub144{term_num}"),
+            }
+        )
+    elif len(numbers) == 1:
+        grade_num = numbers[0]
+        tokens.update(
+            {
+                normalize_search_text(f"{grade_num}\ud559\ub144"),
+                normalize_search_text(f"{grade_num}\ud559\ub144\uad70"),
+            }
+        )
+    else:
+        tokens.add(normalize_search_text(grade_text))
+
+    return [token for token in tokens if token]
+
+
+def build_split_run_search_text(groups_path, source_name, data):
+    fragments = [str(groups_path), str(source_name), data.get("pdf", "")]
+
+    for section in data.get("sections", []):
+        fragments.append(section.get("title", ""))
+
+    for group in data.get("groups", []):
+        fragments.append(group.get("title", ""))
+        fragments.append(group.get("parent_unit_title", ""))
+        fragments.extend(group.get("context") or [])
+
+    return normalize_search_text(" ".join(str(fragment) for fragment in fragments if fragment))
+
+
+def is_schedule_content_group(group):
+    detected_level = str(group.get("detected_level", "")).strip().lower()
+    return detected_level not in {"section", "plan"}
 
 
 def iter_search_pdfs(subject_prefix, search_dirs):
@@ -269,6 +325,34 @@ def parse_range_start(range_text):
         return int(text.split("~", 1)[0])
     except Exception:
         return 10**9
+
+
+def parse_range_end(range_text):
+    text = str(range_text).replace("бн", "~")
+    try:
+        parts = text.split("~", 1)
+        return int(parts[1] if len(parts) > 1 else parts[0])
+    except Exception:
+        return -1
+
+
+def normalize_unit_lesson_range(lesson_range, unit_start):
+    text = str(lesson_range).replace("бн", "~").strip()
+    if not text or unit_start in (None, 10**9):
+        return text
+
+    start = parse_range_start(text)
+    end = parse_range_end(text)
+    if start == 10**9 or end < start or unit_start <= 0:
+        return text
+
+    local_start = start - unit_start + 1
+    local_end = end - unit_start + 1
+    if local_start <= 0 or local_end < local_start:
+        return text
+    if local_start == local_end:
+        return str(local_start)
+    return f"{local_start}~{local_end}"
 
 
 def is_annual_plan_header_or_noise(line):
@@ -968,7 +1052,15 @@ def build_rows_from_annual_plan(subject_name, prefix, grade_str="3-1"):
         return []
 
     rows = []
+    unit_start_by_number = {}
     for entry in entries:
+        unit_num = entry.get("unit_num")
+        if unit_num not in unit_start_by_number:
+            unit_start_by_number[unit_num] = parse_range_start(entry["lesson_range"])
+        unit_lesson_range = normalize_unit_lesson_range(
+            entry["lesson_range"],
+            unit_start_by_number.get(unit_num),
+        )
         lesson_pdf_path = (
             find_best_pdf(prefix, entry["unit_num"], entry["lesson_range"], grade_str, lesson_title=entry["title"])
             or find_best_pdf(prefix, entry["unit_num"], None, grade_str, lesson_title=entry["title"])
@@ -979,7 +1071,7 @@ def build_rows_from_annual_plan(subject_name, prefix, grade_str="3-1"):
                 "과목": subject_name,
                 "대단원": entry["unit_title"],
                 "소단원": entry["subunit"],
-                "차시": entry["lesson_range"],
+                "차시": unit_lesson_range,
                 "계획일": "",
                 "실행여부": False,
                 "pdf파일": format_pdf_path(lesson_pdf_path),
@@ -991,10 +1083,179 @@ def build_rows_from_annual_plan(subject_name, prefix, grade_str="3-1"):
     return rows
 
 
+def collect_split_group_runs(subject_prefix, grade_str="3-1", search_dirs=None):
+    search_dirs = search_dirs or GUIDE_SEARCH_DIRS
+    normalized_subject = normalize_search_text(subject_prefix)
+    grade_tokens = build_grade_search_tokens(grade_str)
+    best_by_source = {}
+
+    for base_dir in search_dirs:
+        if not base_dir:
+            continue
+        root = Path(base_dir)
+        if not root.exists():
+            continue
+
+        for groups_path in root.rglob("groups.json"):
+            try:
+                data = json.loads(groups_path.read_text(encoding="utf-8"))
+            except Exception:
+                continue
+
+            groups = data.get("groups", [])
+            if data.get("split_level") != "detail" or not groups:
+                continue
+
+            pdf_dir = groups_path.parent / "pdf_splits"
+            if not pdf_dir.exists():
+                continue
+
+            source_name = str(data.get("pdf") or groups_path.parent.name)
+            subject_haystack = normalize_search_text(f"{groups_path} {source_name}")
+            if normalized_subject and normalized_subject not in subject_haystack:
+                continue
+
+            grade_haystack = build_split_run_search_text(groups_path, source_name, data)
+            grade_matched = not grade_tokens or any(token in grade_haystack for token in grade_tokens)
+
+            source_key = normalize_search_text(source_name)
+            candidate = {
+                "groups_path": groups_path,
+                "pdf_dir": pdf_dir,
+                "source_name": source_name,
+                "groups": groups,
+                "grade_matched": grade_matched,
+            }
+            existing = best_by_source.get(source_key)
+            if (
+                existing is None
+                or (grade_matched and not existing["grade_matched"])
+                or (
+                    grade_matched == existing["grade_matched"]
+                    and len(groups) > len(existing["groups"])
+                )
+            ):
+                best_by_source[source_key] = candidate
+
+    candidates = list(best_by_source.values())
+    if any(candidate["grade_matched"] for candidate in candidates):
+        candidates = [candidate for candidate in candidates if candidate["grade_matched"]]
+
+    return sorted(
+        candidates,
+        key=lambda item: normalize_search_text(item["source_name"]),
+    )
+
+
+def find_split_pdf_for_group(pdf_dir, group):
+    group_index = group.get("index")
+    start_page = group.get("start_page")
+    end_page = group.get("end_page")
+
+    patterns = []
+    if isinstance(group_index, int) and start_page and end_page:
+        patterns.append(f"*subunit_{group_index:02d}_*_p{start_page}-{end_page}.pdf")
+    if isinstance(group_index, int):
+        patterns.append(f"*subunit_{group_index:02d}_*.pdf")
+    if start_page and end_page:
+        patterns.append(f"*_p{start_page}-{end_page}.pdf")
+
+    for pattern in patterns:
+        matches = sorted(pdf_dir.glob(pattern))
+        if matches:
+            return str(matches[0].resolve())
+
+    title_tokens = extract_title_match_tokens(group.get("title", ""))
+    for pdf in sorted(pdf_dir.glob("*.pdf")):
+        full_path = normalize_search_text(str(pdf))
+        if start_page and end_page and f"p{start_page}{end_page}" not in normalize_search_text(pdf.name):
+            continue
+        if all(token in full_path for token in title_tokens[:2]):
+            return str(pdf.resolve())
+
+    return ""
+
+
+def build_rows_from_split_groups(subject_name, prefix, grade_str="3-1"):
+    runs = collect_split_group_runs(prefix, grade_str=grade_str)
+    if not runs:
+        return []
+
+    rows = []
+
+    for run in runs:
+        groups = sorted(
+            (
+                group
+                for group in run["groups"]
+                if is_schedule_content_group(group)
+            ),
+            key=lambda item: (
+                int(item.get("index", 10**9)),
+                int(item.get("start_page", 10**9)),
+                normalize_pdf_line(str(item.get("title", ""))),
+            ),
+        )
+        if not groups:
+            continue
+
+        current_unit_title = ""
+        inferred_unit_index = 0
+        unit_lesson_counter = 0
+        last_unit_label = None
+        source_label = normalize_pdf_line(Path(run["source_name"]).stem)
+
+        for group in groups:
+            title = normalize_pdf_line(str(group.get("title", "")))
+            if not title:
+                continue
+
+            parent_unit_title = normalize_pdf_line(str(group.get("parent_unit_title", "")))
+            context_values = group.get("context") or []
+            context_title = normalize_pdf_line(str(context_values[0])) if context_values else ""
+
+            if parent_unit_title:
+                current_unit_title = parent_unit_title
+            elif title == "단원 도입":
+                inferred_unit_index += 1
+                current_unit_title = f"{inferred_unit_index}단원"
+
+            unit_label = current_unit_title or source_label
+            if unit_label != last_unit_label:
+                unit_lesson_counter = 0
+                last_unit_label = unit_label
+
+            unit_lesson_counter += 1
+            lesson_pdf_path = find_split_pdf_for_group(run["pdf_dir"], group)
+
+            rows.append(
+                {
+                    "수업내용": title,
+                    "과목": subject_name,
+                    "대단원": unit_label,
+                    "소단원": context_title,
+                    "차시": str(unit_lesson_counter),
+                    "계획일": "",
+                    "실행여부": False,
+                    "pdf파일": format_pdf_path(lesson_pdf_path),
+                    "시작페이지": group.get("start_page", ""),
+                    "끝페이지": group.get("end_page", ""),
+                    "비고": source_label if len(runs) > 1 else "",
+                }
+            )
+
+    return rows
+
+
 def generate_general_data(subject_name, prefix, max_unit=5, disable_heuristic=False, grade_str="3-1"):
+    split_rows = build_rows_from_split_groups(subject_name, prefix, grade_str=grade_str)
     annual_plan_rows = build_rows_from_annual_plan(subject_name, prefix, grade_str=grade_str)
+    if split_rows and (not annual_plan_rows or len(split_rows) > len(annual_plan_rows)):
+        return split_rows
     if annual_plan_rows:
         return annual_plan_rows
+    if split_rows:
+        return split_rows
 
     rows = []
     
@@ -1087,46 +1348,30 @@ def build_row_for_headers(headers, record):
 #  메인
 # ══════════════════════════════════════════════════════════
 def main():
-    parser = argparse.ArgumentParser(description="지도서 PDF → 진도표 구글시트 매핑")
+    parser = argparse.ArgumentParser(description="국어/도덕 지도서 PDF → 진도표 구글시트 매핑")
     parser.add_argument("--upload", action="store_true", help="실제 구글 시트에 업로드")
     parser.add_argument("--cleanup", action="store_true", help="중복 행 삭제 포함")
     args = parser.parse_args()
 
     print("=" * 60)
-    print("  📚 지도서 → 진도표 매핑 스크립트")
+    print("  📚 국어/도덕 지도서 → 진도표 매핑 스크립트")
     print("=" * 60)
 
     # 1. 국어 데이터 생성
-    print("\n[1/3] 국어 데이터 생성 중...")
+    print("\n[1/2] 국어 데이터 생성 중...")
     korean_rows = generate_korean_data()
     print(f"  국어 {len(korean_rows)}행 생성됨")
     for r in korean_rows:
         print(f"    {r['과목']} | {r['대단원'][:25]:<25} | {r['차시']:<5} | {r['수업내용'][:40]}")
 
     # 2. 도덕 데이터 생성
-    print(f"\n[2/3] 도덕 데이터 생성 중...")
+    print(f"\n[2/2] 도덕 데이터 생성 중...")
     moral_rows = generate_moral_data()
     print(f"  도덕 {len(moral_rows)}행 생성됨")
     for r in moral_rows:
         print(f"    {r['과목']} | {r['대단원'][:25]:<25} | {r['차시']:<5} | {r['수업내용'][:40]}")
 
-    # 3. 범용 과목 데이터 생성 (전 과목 지원)
-    print(f"\n[3/3] 범용 데이터 생성 중 (수학, 사회, 과학, 음악, 미술, 체육, 영어, 실과)...")
-    # prefix는 오로지 '과목' 기명으로 유지하여 어떠한 파일명 포맷이든 전부 스캔(rglob)되게 합니다.
-    # 대신 grade_str 인자를 넘겨서 구체적인 학년 점수(score)를 채점합니다.
-    math_rows = generate_general_data("수학", "수학", max_unit=6, grade_str="3-1")
-    social_rows = generate_general_data("사회", "사회", max_unit=4, disable_heuristic=True, grade_str="3-1")
-    science_rows = generate_general_data("과학", "과학", max_unit=5, grade_str="3-1")
-    music_rows = generate_general_data("음악", "음악", max_unit=8, grade_str="3")
-    art_rows = generate_general_data("미술", "미술", max_unit=8, grade_str="3")
-    pe_rows = generate_general_data("체육", "체육", max_unit=5, grade_str="3")
-    english_rows = generate_general_data("영어", "영어", max_unit=11, grade_str="3")
-    prac_rows = generate_general_data("실과", "실과", max_unit=6, grade_str="5")
-    
-    general_rows = math_rows + social_rows + science_rows + music_rows + art_rows + pe_rows + english_rows + prac_rows
-    print(f"  기타 {len(general_rows)}행 생성됨")
-
-    all_rows = korean_rows + moral_rows + general_rows
+    all_rows = korean_rows + moral_rows
 
     if not args.upload and not args.cleanup:
         print(f"\n[미리보기 모드] 총 {len(all_rows)}행.")
@@ -1134,8 +1379,7 @@ def main():
         print("  중복삭제+업로드:  python map_guides_to_sheet.py --upload --cleanup")
         return
 
-    # 3. 구글 시트 연결 및 업로드
-    print("\n[3/3] 구글 시트 연결 중...")
+    print("\n[업로드] 구글 시트 연결 중...")
     sh, ws = get_sheet()
     headers = ws.row_values(1)
     print(f"  헤더: {headers}")

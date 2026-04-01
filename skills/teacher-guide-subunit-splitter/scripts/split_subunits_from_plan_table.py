@@ -19,7 +19,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterable
 
-CACHE_SCHEMA_VERSION = "2026-03-31-stable-plantext-v1"
+CACHE_SCHEMA_VERSION = "2026-04-01-toc-align-page-header-v4"
 
 PLAN_TITLE_KEYWORDS = (
     "단원 지도 계획",
@@ -63,11 +63,20 @@ TOC_ACTION_HINTS = (
     "찾아봅시다",
     "완성하고",
 )
+DISPLAY_TITLE_STOP_LINES = {"학습 안내", "활동 안내", "차시", "교과서", "쪽"}
+DISPLAY_TITLE_SKIP_HINTS = (
+    "교수 · 학습 과정안",
+    "교수·학습 과정안",
+    "과정 중심 평가 예시",
+    "교과 역량 평가 계획",
+)
 MAX_TITLE_LENGTH = 80
 MAX_FILENAME_TITLE_LENGTH = 40
 MAX_TOC_SCAN_PAGES = 24
 MAX_TOC_BLOCK_PAGES = 4
 MAX_AUTO_OFFSET = 12
+MAX_PLAN_TABLE_AUTO_OFFSET = 80
+MAX_TOC_START_ADJUST_PAGES = 4
 MAX_ABSORBED_LEADING_GAP_PAGES = 4
 MAX_ABSORBED_MIDDLE_GAP_PAGES = 2
 MAX_ABSORBED_TRAILING_GAP_PAGES = 2
@@ -556,6 +565,123 @@ def entry_matches_page(pdf_doc, page_number: int, tokens: list[str]) -> bool:
     return False
 
 
+def page_looks_like_toc_listing(pdf_doc, page_number: int) -> bool:
+    if page_number < 1 or page_number > len(pdf_doc.pages):
+        return False
+    text = extract_page_text(pdf_doc.pages[page_number - 1])
+    if not text:
+        return False
+    entries = extract_toc_entries_from_text(text, source_page=page_number)
+    if not entries:
+        return False
+    return has_toc_heading(text) or score_toc_page(text, entries, source_page=page_number) >= 18
+
+
+def page_has_heading_prefix(lines: list[str], title: str) -> bool:
+    normalized_title = normalize_toc_title(title)
+    stripped_title = normalize_toc_title(re.sub(r"^\d{1,2}(?:\.\s*|\s)+", "", normalized_title))
+    canonical_title = normalize_toc_title(normalized_title.replace(".", " "))
+    canonical_stripped = normalize_toc_title(stripped_title.replace(".", " "))
+    for line in lines[:3]:
+        normalized_line = normalize_toc_title(line)
+        canonical_line = normalize_toc_title(normalized_line.replace(".", " "))
+        if canonical_stripped and canonical_line.startswith(canonical_stripped):
+            return True
+        if canonical_title and canonical_line.startswith(canonical_title):
+            return True
+    return False
+
+
+def page_has_strong_title_signal(pdf_doc, page_number: int, title: str) -> bool:
+    if page_number < 1 or page_number > len(pdf_doc.pages):
+        return False
+
+    text = extract_page_text(pdf_doc.pages[page_number - 1])
+    lines = [normalize_space(line) for line in text.splitlines() if normalize_space(line)]
+    if page_looks_like_toc_listing(pdf_doc, page_number):
+        return page_has_heading_prefix(lines, title) and not any(TRAILING_PAGE_RE.match(line) for line in lines[1:4])
+
+    top_text = normalize_toc_title(" ".join(lines[:40]))
+    if not top_text:
+        return False
+
+    if page_has_heading_prefix(lines, title):
+        return True
+
+    tokens = entry_search_tokens(title)
+    heading_markers = ("단원명", "학습 목표", "핵심 아이디어", "과정안", "성취기준")
+    if len(tokens) >= 2 and all(token in top_text for token in tokens[:2]) and any(marker in top_text for marker in heading_markers):
+        return True
+    return False
+
+
+def page_looks_like_detail_lead_in(pdf_doc, page_number: int) -> bool:
+    if page_number < 1 or page_number > len(pdf_doc.pages):
+        return False
+    if page_looks_like_toc_listing(pdf_doc, page_number):
+        return False
+
+    text = extract_page_text(pdf_doc.pages[page_number - 1])
+    lines = [normalize_space(line) for line in text.splitlines() if normalize_space(line)]
+    top_lines = lines[:12]
+    top_text = " ".join(top_lines)
+    bullet_count = sum(1 for line in top_lines if line.startswith("•"))
+    if any(re.match(r"^\d+(?:[~∼]\d+)?차시(?:\s|$)", line) for line in top_lines[:3]):
+        return "핵심 아이디어" in top_text and "학습 목표" in top_text
+    return "핵심 아이디어" in top_text and "학습 목표" in top_text and bullet_count >= 1
+
+
+def align_toc_entry_start_page(
+    pdf_doc,
+    title: str,
+    start_page: int,
+    *,
+    max_page: int,
+) -> int:
+    if start_page >= max_page:
+        return start_page
+
+    strong_page: int | None = None
+    search_end = min(max_page, start_page + MAX_TOC_START_ADJUST_PAGES)
+    for page_number in range(start_page, search_end + 1):
+        if page_has_strong_title_signal(pdf_doc, page_number, title):
+            strong_page = page_number
+            break
+
+    if strong_page is None:
+        return start_page
+
+    candidate = strong_page
+    previous_page = strong_page - 1
+    if previous_page >= start_page and page_looks_like_detail_lead_in(pdf_doc, previous_page):
+        candidate = previous_page
+    return candidate
+
+
+def align_toc_entry_starts(pdf_doc, entries: list[dict]) -> list[dict]:
+    if not entries:
+        return []
+
+    aligned_entries: list[dict] = []
+    total_pages = len(pdf_doc.pages)
+
+    for index, entry in enumerate(entries):
+        next_start = entries[index + 1]["start_page"] if index + 1 < len(entries) else total_pages + 1
+        min_allowed = aligned_entries[-1]["start_page"] + 1 if aligned_entries else 1
+        max_allowed = max(min_allowed, next_start - 1)
+        aligned_start = align_toc_entry_start_page(
+            pdf_doc,
+            entry["title"],
+            entry["start_page"],
+            max_page=max_allowed,
+        )
+        cloned = dict(entry)
+        cloned["start_page"] = max(min_allowed, min(aligned_start, max_allowed))
+        aligned_entries.append(cloned)
+
+    return aligned_entries
+
+
 def count_valid_entries(entries: list[TocEntry], offset: int, total_pages: int) -> int:
     return sum(1 for entry in entries if 1 <= entry.printed_page + offset <= total_pages)
 
@@ -709,6 +835,7 @@ def build_groups_from_toc_entries(pdf_doc, entries: list[TocEntry], page_offset:
         if entry["level"] in {"plan", "subunit", "project"} or any("학년" in ctx for ctx in entry["context"])
     ]
     leaf_entries = preferred_entries if len(preferred_entries) >= 3 else valid_entries
+    leaf_entries = align_toc_entry_starts(pdf_doc, leaf_entries)
 
     groups: list[dict] = []
     first_start = leaf_entries[0]["start_page"]
@@ -737,10 +864,15 @@ def build_groups_from_toc_entries(pdf_doc, entries: list[TocEntry], page_offset:
             else total_pages + 1
         )
         end_page = max(entry["start_page"], next_start - 1)
+        display_title = resolve_display_title_from_page_heading(
+            pdf_doc,
+            entry["start_page"],
+            entry["title"],
+        )
         groups.append(
             {
                 "index": offset_index,
-                "title": shorten_title(entry["title"]),
+                "title": display_title,
                 "source_title": entry["source_title"],
                 "start_page": entry["start_page"],
                 "end_page": end_page,
@@ -752,7 +884,7 @@ def build_groups_from_toc_entries(pdf_doc, entries: list[TocEntry], page_offset:
             }
         )
 
-    section_source_entries = preferred_entries if preferred_entries else valid_entries
+    section_source_entries = leaf_entries if leaf_entries else valid_entries
     sections = build_sections_from_toc_entries(section_source_entries, total_pages)
     if groups and groups[0]["title"] in {"총론", "앞부분"} and groups[0]["start_page"] == 1:
         sections.insert(
@@ -775,6 +907,8 @@ def is_suspicious_group_title(title: str) -> bool:
     if not normalized:
         return True
     if not contains_meaningful_title_chars(normalized):
+        return True
+    if title_needs_page_heading_rescue(normalized):
         return True
     if looks_like_activity_sentence(normalized):
         return True
@@ -1077,8 +1211,8 @@ def build_groups_from_tables(
     tables: list[list[list[str | None]]],
     guide_column_override: int | None,
 ) -> list[dict]:
-    groups: dict[str, dict] = {}
-    current_group_title: str | None = None
+    groups: list[dict] = []
+    current_group: dict | None = None
 
     for table in tables:
         if not table:
@@ -1100,27 +1234,26 @@ def build_groups_from_tables(
             guide_cell = normalize_space(row[guide_column] if len(row) > guide_column else "")
 
             if row_title:
-                current_group_title = row_title
-            if not current_group_title or not guide_cell:
+                if current_group is None or current_group["title"] != row_title:
+                    current_group = {
+                        "title": row_title,
+                        "page_ranges": [],
+                        "row_evidence": 0,
+                    }
+                    groups.append(current_group)
+
+            if not current_group or not guide_cell:
                 continue
 
             page_ranges = parse_page_ranges(guide_cell)
             if not page_ranges:
                 continue
 
-            group = groups.setdefault(
-                current_group_title,
-                {
-                    "title": current_group_title,
-                    "page_ranges": [],
-                    "row_evidence": 0,
-                },
-            )
-            group["page_ranges"].extend(page_ranges)
-            group["row_evidence"] += 1
+            current_group["page_ranges"].extend(page_ranges)
+            current_group["row_evidence"] += 1
 
     final_groups: list[dict] = []
-    for group in groups.values():
+    for group in groups:
         starts = [start for start, _ in group["page_ranges"]]
         ends = [end for _, end in group["page_ranges"]]
         if not starts or not ends:
@@ -1140,6 +1273,78 @@ def build_groups_from_tables(
     return final_groups
 
 
+def count_valid_plan_table_groups(groups: list[dict], offset: int, total_pages: int) -> int:
+    return sum(
+        1
+        for group in groups
+        if 1 <= group["start_page"] + offset <= group["end_page"] + offset <= total_pages
+    )
+
+
+def score_plan_table_offset(pdf_doc, groups: list[dict], offset: int) -> int:
+    total_pages = len(pdf_doc.pages)
+    valid_groups: list[tuple[dict, int, int]] = []
+    invalid_group_count = 0
+
+    for group in groups:
+        start_page = group["start_page"] + offset
+        end_page = group["end_page"] + offset
+        if 1 <= start_page <= end_page <= total_pages:
+            valid_groups.append((group, start_page, end_page))
+        else:
+            invalid_group_count += 1
+
+    if not valid_groups:
+        return -10_000
+
+    score = len(valid_groups) * 6
+    score -= invalid_group_count * 12
+    score -= abs(offset)
+
+    mapped_starts = [start_page for _, start_page, _ in valid_groups]
+    score += sum(1 for left, right in zip(mapped_starts, mapped_starts[1:]) if right > left)
+
+    for group, start_page, _ in valid_groups[:6]:
+        if entry_matches_page(pdf_doc, start_page, entry_search_tokens(group["title"])):
+            score += 8
+
+    return score
+
+
+def infer_plan_table_page_offset(pdf_doc, groups: list[dict]) -> int:
+    total_pages = len(pdf_doc.pages)
+    if not groups:
+        return 0
+
+    first_start = min(group["start_page"] for group in groups)
+    last_end = max(group["end_page"] for group in groups)
+    search_limit = max(
+        MAX_AUTO_OFFSET,
+        first_start - 1,
+        max(0, last_end - total_pages),
+        max(0, total_pages - last_end),
+    )
+    search_limit = min(MAX_PLAN_TABLE_AUTO_OFFSET, search_limit)
+
+    zero_valid = count_valid_plan_table_groups(groups, 0, total_pages)
+    if zero_valid >= max(3, len(groups) // 2):
+        candidate_offsets = [0] + [
+            offset for offset in range(-search_limit, search_limit + 1) if offset != 0
+        ]
+    else:
+        candidate_offsets = list(range(-search_limit, search_limit + 1))
+
+    best_offset = 0
+    best_score = -10_000
+    for offset in candidate_offsets:
+        offset_score = score_plan_table_offset(pdf_doc, groups, offset)
+        if offset_score > best_score:
+            best_score = offset_score
+            best_offset = offset
+
+    return best_offset
+
+
 def build_groups_from_plan_tables(
     pdf_doc,
     scan_pages: int,
@@ -1148,17 +1353,20 @@ def build_groups_from_plan_tables(
     start_page: int | None = None,
     end_page: int | None = None,
 ) -> tuple[list[dict], int]:
+    total_pages = len(pdf_doc.pages)
+    window_page_count = len(list(page_index_window(len(pdf_doc.pages), start_page=start_page, end_page=end_page)))
+    candidate_scan_pages = window_page_count if start_page is None and end_page is None else scan_pages
     candidate_pages = find_plan_table_pages(
         pdf_doc,
-        scan_pages=scan_pages,
+        scan_pages=candidate_scan_pages,
         title_keywords=PLAN_TITLE_KEYWORDS,
         start_page=start_page,
         end_page=end_page,
     )
-    if not candidate_pages:
+    if not candidate_pages and candidate_scan_pages != window_page_count:
         candidate_pages = find_plan_table_pages(
             pdf_doc,
-            scan_pages=len(list(page_index_window(len(pdf_doc.pages), start_page=start_page, end_page=end_page))),
+            scan_pages=window_page_count,
             title_keywords=PLAN_TITLE_KEYWORDS,
             start_page=start_page,
             end_page=end_page,
@@ -1188,27 +1396,41 @@ def build_groups_from_plan_tables(
     if not extracted_tables:
         return [], 0
 
-    scored_tables = sorted(
-        ((score_table_for_plan(table), table) for table in extracted_tables),
-        key=lambda item: item[0],
-        reverse=True,
+    scored_tables = [
+        (score_table_for_plan(table), index, table)
+        for index, table in enumerate(extracted_tables)
+    ]
+    selected_tables = sorted(
+        (item for item in scored_tables if item[0] > 0),
+        key=lambda item: item[1],
     )
-    top_tables = [table for score, table in scored_tables if score > 0][:5]
+    top_tables = [table for _, _, table in selected_tables]
     parsed_groups = build_groups_from_tables(top_tables, guide_column_override=z_col)
     if not parsed_groups:
         return [], 0
+    auto_offset = infer_plan_table_page_offset(pdf_doc, parsed_groups)
+    effective_offset = auto_offset + page_offset
 
     final_groups: list[dict] = []
     for index, group in enumerate(parsed_groups, start=1):
-        start_page = group["start_page"] + page_offset
-        end_page = group["end_page"] + page_offset
+        start_page = group["start_page"] + effective_offset
+        end_page = group["end_page"] + effective_offset
         if end_page < start_page:
             start_page, end_page = end_page, start_page
+        if end_page < 1 or start_page > total_pages:
+            continue
+        start_page = max(1, start_page)
+        end_page = min(total_pages, end_page)
 
+        display_title = resolve_display_title_from_page_heading(
+            pdf_doc,
+            start_page,
+            group["title"],
+        )
         final_groups.append(
             {
                 "index": index,
-                "title": shorten_title(group["title"]),
+                "title": display_title,
                 "source_title": group["title"],
                 "start_page": start_page,
                 "end_page": end_page,
@@ -1220,7 +1442,7 @@ def build_groups_from_plan_tables(
             }
         )
 
-    return final_groups, 0
+    return final_groups, auto_offset
 
 
 def looks_like_plan_text_header(line: str) -> bool:
@@ -1394,12 +1616,61 @@ def is_probably_footer_or_noise(line: str) -> bool:
     return False
 
 
-def extract_display_title_from_start_page(pdf_doc, start_page: int, fallback: str) -> str:
+def title_has_connector_tail(title: str) -> bool:
+    normalized = normalize_space(title)
+    if not normalized:
+        return False
+    last_word = normalized.split()[-1]
+    return last_word in {"및", "와", "과", "또는"}
+
+
+def title_has_ocr_artifacts(title: str) -> bool:
+    normalized = normalize_space(title)
+    if not normalized:
+        return False
+    if normalized.count("(") != normalized.count(")"):
+        return True
+    if any(marker in normalized for marker in ("�", "□")):
+        return True
+    if re.search(r"[A-Za-z0-9가-힣)\]]\s*_\s*[A-Za-z0-9가-힣(\[]", normalized):
+        return True
+    return bool(re.search(r"[._/\-]{2,}", normalized))
+
+
+def title_has_stable_lesson_signal(title: str) -> bool:
+    normalized = normalize_space(title)
+    if not normalized:
+        return False
+    return any(ending in normalized for ending in PLAN_TITLE_ENDINGS)
+
+
+def title_needs_page_heading_rescue(title: str) -> bool:
+    normalized = normalize_space(title)
+    if not normalized:
+        return True
+    if title_has_connector_tail(normalized):
+        return True
+    if title_has_ocr_artifacts(normalized) and not title_has_stable_lesson_signal(normalized):
+        return True
+    return normalized.endswith(("(", "[", "/", "-", ":", "·"))
+
+
+def extract_display_title_from_start_page(
+    pdf_doc,
+    start_page: int,
+    fallback: str,
+    *,
+    parent_title: str | None = None,
+) -> str:
+    fallback_title = shorten_title(fallback)
     if start_page < 1 or start_page > len(pdf_doc.pages):
-        return shorten_title(fallback)
+        return fallback_title
 
     text = extract_page_text(pdf_doc.pages[start_page - 1])
     lines = [normalize_space(line) for line in text.splitlines() if normalize_space(line)]
+    fallback_normalized = normalize_toc_title(fallback_title)
+    parent_normalized = normalize_toc_title(parent_title or "")
+
     for line in lines[:12]:
         if is_probably_footer_or_noise(line):
             continue
@@ -1407,10 +1678,42 @@ def extract_display_title_from_start_page(pdf_doc, start_page: int, fallback: st
             continue
         if any(keyword in line for keyword in PLAN_TITLE_KEYWORDS):
             continue
-        if line in {"학습 안내", "활동 안내", "차시", "교과서", "쪽"}:
+        if line in DISPLAY_TITLE_STOP_LINES:
             continue
-        return shorten_title(line)
-    return shorten_title(fallback)
+        if is_part_heading_line(line):
+            continue
+        if any(hint in line for hint in LOCAL_DETAIL_EXCLUDE_TITLE_HINTS + DISPLAY_TITLE_SKIP_HINTS):
+            continue
+
+        candidate = normalize_toc_title(line)
+        if not candidate:
+            continue
+        if parent_normalized and candidate == parent_normalized:
+            continue
+        if candidate == fallback_normalized:
+            continue
+        return shorten_title(candidate)
+
+    return fallback_title
+
+
+def resolve_display_title_from_page_heading(
+    pdf_doc,
+    start_page: int,
+    fallback: str,
+    *,
+    parent_title: str | None = None,
+) -> str:
+    fallback_title = shorten_title(fallback)
+    if not title_needs_page_heading_rescue(fallback_title):
+        return fallback_title
+
+    return extract_display_title_from_start_page(
+        pdf_doc,
+        start_page,
+        fallback_title,
+        parent_title=parent_title,
+    )
 
 
 def extract_plan_rows_from_text_pages(
@@ -1555,7 +1858,11 @@ def build_groups_from_plan_text(
         if end_page < start_page:
             start_page, end_page = end_page, start_page
 
-        display_title = shorten_title(row["title"])
+        display_title = resolve_display_title_from_page_heading(
+            pdf_doc,
+            start_page,
+            row["title"],
+        )
         groups.append(
             {
                 "index": index,
@@ -1783,6 +2090,108 @@ def normalize_groups_within_parent(pdf_doc, parent_group: dict, detail_groups: l
     return normalized_groups
 
 
+def process_guide_line_matches_parent(line: str, parent_title: str) -> bool:
+    normalized = normalize_space(line)
+    if "단원명" not in normalized or "차시" not in normalized or "과정안" not in normalized:
+        return False
+    tokens = entry_search_tokens(parent_title)
+    if len(tokens) >= 2:
+        return all(token in normalized for token in tokens[:2])
+    return bool(tokens and tokens[0] in normalized)
+
+
+def extract_lead_in_detail_title(lines: list[str], fallback_title: str) -> str:
+    bullet_titles: list[str] = []
+    seen: set[str] = set()
+    for line in lines[:20]:
+        if not line.startswith("•"):
+            continue
+        candidate = shorten_title(normalize_toc_title(line.replace("•", " ")))
+        if not candidate or len(candidate) > 40 or candidate in seen:
+            continue
+        seen.add(candidate)
+        bullet_titles.append(candidate)
+        if len(bullet_titles) >= 2:
+            break
+
+    if bullet_titles:
+        return shorten_title(" / ".join(bullet_titles))
+    return shorten_title(fallback_title)
+
+
+def extract_process_guide_title(lines: list[str], fallback_title: str) -> str:
+    for line in lines[:15]:
+        if "학습 주제" not in line:
+            continue
+        candidate = normalize_space(line.split("학습 주제", 1)[1])
+        candidate = normalize_toc_title(candidate)
+        if candidate:
+            return shorten_title(candidate)
+    return shorten_title(fallback_title)
+
+
+def build_groups_from_page_header_patterns(pdf_doc, parent_group: dict) -> list[dict]:
+    parent_start = parent_group["start_page"]
+    parent_end = parent_group["end_page"]
+    parent_title = normalize_space(parent_group.get("source_title") or parent_group["title"])
+    process_starts: list[tuple[int, str]] = []
+
+    for page_number in range(parent_start, parent_end + 1):
+        lines = [
+            normalize_space(line)
+            for line in extract_page_text(pdf_doc.pages[page_number - 1]).splitlines()
+            if normalize_space(line)
+        ]
+        for line in lines[:12]:
+            if process_guide_line_matches_parent(line, parent_title):
+                process_starts.append((page_number, extract_process_guide_title(lines, parent_title)))
+                break
+
+    if not process_starts:
+        return []
+
+    groups: list[dict] = []
+    first_process_start = process_starts[0][0]
+    if parent_start < first_process_start:
+        start_lines = [
+            normalize_space(line)
+            for line in extract_page_text(pdf_doc.pages[parent_start - 1]).splitlines()
+            if normalize_space(line)
+        ]
+        intro_title = extract_lead_in_detail_title(start_lines, parent_title)
+        groups.append(
+            {
+                "title": intro_title,
+                "source_title": intro_title,
+                "start_page": parent_start,
+                "end_page": first_process_start - 1,
+                "row_evidence": 1,
+                "page_ranges_raw": [(parent_start, first_process_start - 1)],
+                "method": "page_header",
+                "context": list(parent_group.get("context", [])),
+                "detected_level": "detail",
+            }
+        )
+
+    for index, (start_page, title) in enumerate(process_starts):
+        next_start = process_starts[index + 1][0] if index + 1 < len(process_starts) else parent_end + 1
+        groups.append(
+            {
+                "title": title,
+                "source_title": title,
+                "start_page": start_page,
+                "end_page": next_start - 1,
+                "row_evidence": 1,
+                "page_ranges_raw": [(start_page, next_start - 1)],
+                "method": "page_header",
+                "context": list(parent_group.get("context", [])),
+                "detected_level": "detail",
+            }
+        )
+
+    return groups if len(groups) >= 2 else []
+
+
 def build_local_detail_groups_for_parent(
     pdf_doc,
     parent_group: dict,
@@ -1819,6 +2228,10 @@ def build_local_detail_groups_for_parent(
     )
     if len(plan_text_groups) >= 2:
         return normalize_groups_within_parent(pdf_doc, parent_group, plan_text_groups)
+
+    page_header_groups = build_groups_from_page_header_patterns(pdf_doc, parent_group)
+    if len(page_header_groups) >= 2:
+        return normalize_groups_within_parent(pdf_doc, parent_group, page_header_groups)
 
     return []
 

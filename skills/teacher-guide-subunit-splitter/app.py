@@ -8,7 +8,7 @@ import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
 
 from scripts.split_subunits_from_plan_table import (
-    build_run_directory_name,
+    resolve_run_directory,
     split_subunits_from_plan_table,
 )
 
@@ -19,13 +19,20 @@ SPLIT_LEVEL_LABELS = {
 SPLIT_LEVEL_CHOICES = tuple(SPLIT_LEVEL_LABELS.values())
 SPLIT_LEVEL_BY_LABEL = {label: key for key, label in SPLIT_LEVEL_LABELS.items()}
 
+EXISTING_RUN_DIR_LABELS = {
+    "replace": "기존 폴더 삭제 후 새로 만들기",
+    "suffix": "새 폴더 만들기 (이름 뒤에 (1) 붙이기)",
+}
+EXISTING_RUN_DIR_CHOICES = tuple(EXISTING_RUN_DIR_LABELS.values())
+EXISTING_RUN_DIR_BY_LABEL = {label: key for key, label in EXISTING_RUN_DIR_LABELS.items()}
+
 
 class SplitterApp:
     def __init__(self, root: tk.Tk) -> None:
         self.root = root
         self.root.title("지도서 PDF 분할기")
-        self.root.geometry("900x680")
-        self.root.minsize(820, 560)
+        self.root.geometry("960x720")
+        self.root.minsize(860, 600)
 
         self.pdf_path = tk.StringVar()
         self.output_dir = tk.StringVar(value=r"D:\지도서")
@@ -33,6 +40,8 @@ class SplitterApp:
         self.page_offset = tk.IntVar(value=0)
         self.guide_column = tk.StringVar(value="")
         self.split_level_label = tk.StringVar(value=SPLIT_LEVEL_LABELS["unit"])
+        self.existing_run_dir_label = tk.StringVar(value=EXISTING_RUN_DIR_LABELS["replace"])
+        self.use_cache = tk.BooleanVar(value=False)
         self.status_text = tk.StringVar(value="PDF를 선택해 주세요.")
         self.is_running = False
 
@@ -46,18 +55,32 @@ class SplitterApp:
 
         ttk.Label(frame, text="입력 PDF").grid(row=0, column=0, sticky="w", pady=(0, 8))
         ttk.Entry(frame, textvariable=self.pdf_path).grid(
-            row=0, column=1, sticky="ew", padx=(8, 8), pady=(0, 8)
+            row=0,
+            column=1,
+            sticky="ew",
+            padx=(8, 8),
+            pady=(0, 8),
         )
         ttk.Button(frame, text="찾아보기", command=self.choose_pdf).grid(
-            row=0, column=2, sticky="ew", pady=(0, 8)
+            row=0,
+            column=2,
+            sticky="ew",
+            pady=(0, 8),
         )
 
         ttk.Label(frame, text="출력 폴더").grid(row=1, column=0, sticky="w", pady=(0, 8))
         ttk.Entry(frame, textvariable=self.output_dir).grid(
-            row=1, column=1, sticky="ew", padx=(8, 8), pady=(0, 8)
+            row=1,
+            column=1,
+            sticky="ew",
+            padx=(8, 8),
+            pady=(0, 8),
         )
         ttk.Button(frame, text="선택", command=self.choose_output_dir).grid(
-            row=1, column=2, sticky="ew", pady=(0, 8)
+            row=1,
+            column=2,
+            sticky="ew",
+            pady=(0, 8),
         )
 
         options = ttk.LabelFrame(frame, text="옵션", padding=12)
@@ -67,11 +90,17 @@ class SplitterApp:
 
         ttk.Label(options, text="탐색 페이지 수").grid(row=0, column=0, sticky="w")
         ttk.Spinbox(options, from_=1, to=1000, textvariable=self.scan_pages, width=10).grid(
-            row=0, column=1, sticky="w", padx=(8, 20)
+            row=0,
+            column=1,
+            sticky="w",
+            padx=(8, 20),
         )
         ttk.Label(options, text="페이지 오프셋").grid(row=0, column=2, sticky="w")
         ttk.Spinbox(options, from_=-500, to=500, textvariable=self.page_offset, width=10).grid(
-            row=0, column=3, sticky="w", padx=(8, 0)
+            row=0,
+            column=3,
+            sticky="w",
+            padx=(8, 0),
         )
 
         ttk.Label(options, text="분할 수준").grid(row=1, column=0, sticky="w", pady=(10, 0))
@@ -84,24 +113,49 @@ class SplitterApp:
         ).grid(row=1, column=1, sticky="w", padx=(8, 20), pady=(10, 0))
         ttk.Label(
             options,
-            text="단원만 자르거나 더 세부적인 제재/차시 수준까지 나눌 수 있습니다.",
+            text="단원만 나누거나 더 세부적인 제재/차시 단위까지 나눌 수 있습니다.",
         ).grid(row=1, column=2, columnspan=2, sticky="w", pady=(10, 0))
 
-        ttk.Label(options, text="지도서 쪽수 열 인덱스").grid(row=2, column=0, sticky="w", pady=(10, 0))
+        ttk.Label(options, text="기존 폴더 처리").grid(row=2, column=0, sticky="w", pady=(10, 0))
+        ttk.Combobox(
+            options,
+            textvariable=self.existing_run_dir_label,
+            values=EXISTING_RUN_DIR_CHOICES,
+            state="readonly",
+            width=30,
+        ).grid(row=2, column=1, sticky="w", padx=(8, 20), pady=(10, 0))
+        ttk.Label(
+            options,
+            text="분할 저장할 때 같은 PDF 이름 폴더가 이미 있으면 삭제 후 새로 만들거나, 새 폴더를 따로 만듭니다.",
+        ).grid(row=2, column=2, columnspan=2, sticky="w", pady=(10, 0))
+
+        ttk.Label(options, text="지도서 쪽수 열번호").grid(row=3, column=0, sticky="w", pady=(10, 0))
         ttk.Entry(options, textvariable=self.guide_column, width=12).grid(
-            row=2, column=1, sticky="w", padx=(8, 20), pady=(10, 0)
+            row=3,
+            column=1,
+            sticky="w",
+            padx=(8, 20),
+            pady=(10, 0),
         )
         ttk.Label(
             options,
-            text="비우면 자동 탐지, 숫자를 넣으면 0부터 시작하는 열 번호를 고정합니다.",
-        ).grid(row=2, column=2, columnspan=2, sticky="w", pady=(10, 0))
+            text="비우면 자동 감지, 숫자를 넣으면 0부터 시작하는 열 번호를 고정합니다.",
+        ).grid(row=3, column=2, columnspan=2, sticky="w", pady=(10, 0))
+
+        ttk.Checkbutton(
+            options,
+            text="이전 분석 캐시 사용 (빠르지만 예전 분석을 재사용할 수 있음)",
+            variable=self.use_cache,
+        ).grid(row=4, column=0, columnspan=4, sticky="w", pady=(10, 0))
 
         actions = ttk.Frame(frame)
         actions.grid(row=3, column=0, columnspan=3, sticky="ew", pady=(0, 12))
         actions.columnconfigure(0, weight=1)
         actions.columnconfigure(1, weight=1)
+
         self.preview_button = ttk.Button(actions, text="미리보기", command=self.preview_split)
         self.preview_button.grid(row=0, column=0, sticky="ew", padx=(0, 6))
+
         self.save_button = ttk.Button(actions, text="분할 저장", command=self.save_split)
         self.save_button.grid(row=0, column=1, sticky="ew", padx=(6, 0))
 
@@ -140,6 +194,10 @@ class SplitterApp:
         output_dir = Path(self.output_dir.get().strip())
         guide_column_text = self.guide_column.get().strip()
         split_level = SPLIT_LEVEL_BY_LABEL.get(self.split_level_label.get(), "unit")
+        existing_run_dir = EXISTING_RUN_DIR_BY_LABEL.get(
+            self.existing_run_dir_label.get(),
+            "replace",
+        )
 
         if not pdf_path:
             messagebox.showwarning("확인", "먼저 PDF 파일을 선택해 주세요.")
@@ -156,7 +214,7 @@ class SplitterApp:
             try:
                 z_col = int(guide_column_text)
             except ValueError:
-                messagebox.showerror("오류", "열 인덱스는 숫자로 입력해 주세요.")
+                messagebox.showerror("오류", "열번호는 숫자로 입력해 주세요.")
                 return
 
         self.set_running(True, "PDF를 분석 중입니다...")
@@ -170,6 +228,8 @@ class SplitterApp:
                 "save": save,
                 "z_col": z_col,
                 "split_level": split_level,
+                "existing_run_dir": existing_run_dir,
+                "use_cache": self.use_cache.get(),
             },
             daemon=True,
         )
@@ -183,21 +243,32 @@ class SplitterApp:
         save: bool,
         z_col: int | None,
         split_level: str,
+        existing_run_dir: str,
+        use_cache: bool,
     ) -> None:
         try:
+            run_dir = resolve_run_directory(
+                output_dir,
+                pdf_path,
+                existing_run_dir=existing_run_dir if save else "reuse",
+                create=True,
+            )
             groups = split_subunits_from_plan_table(
                 pdf_path=pdf_path,
                 out_dir=output_dir,
+                run_dir=run_dir,
                 dry_run=not save,
                 save=save,
                 scan_pages=self.scan_pages.get(),
                 page_offset=self.page_offset.get(),
                 z_col=z_col,
                 split_level=split_level,
+                existing_run_dir="reuse",
+                use_cache=use_cache,
             )
             self.root.after(
                 0,
-                lambda: self.on_success(pdf_path, output_dir, groups, save, split_level),
+                lambda: self.on_success(pdf_path, run_dir, groups, save, split_level, use_cache),
             )
         except Exception as exc:
             details = "".join(traceback.format_exception_only(type(exc), exc)).strip()
@@ -206,16 +277,17 @@ class SplitterApp:
     def on_success(
         self,
         pdf_path: Path,
-        output_dir: Path,
+        run_dir: Path,
         groups: list[dict],
         save: bool,
         split_level: str,
+        use_cache: bool,
     ) -> None:
-        run_dir = output_dir / build_run_directory_name(pdf_path)
         lines = [
             f"입력 파일: {pdf_path}",
             f"출력 위치: {run_dir}",
             f"분할 수준: {SPLIT_LEVEL_LABELS.get(split_level, split_level)}",
+            f"분석 캐시: {'사용' if use_cache else '사용 안 함'}",
             f"감지된 그룹 수: {len(groups)}",
             "",
         ]

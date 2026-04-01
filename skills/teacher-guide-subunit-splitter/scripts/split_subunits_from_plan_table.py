@@ -12,6 +12,7 @@ import argparse
 import json
 import re
 import site
+import shutil
 import sys
 import hashlib
 from collections import defaultdict
@@ -19,7 +20,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterable
 
-CACHE_SCHEMA_VERSION = "2026-04-01-toc-align-page-header-v4"
+CACHE_SCHEMA_VERSION = "2026-04-01-music-plan-v2"
 
 PLAN_TITLE_KEYWORDS = (
     "단원 지도 계획",
@@ -148,11 +149,46 @@ PLAN_TITLE_INCOMPLETE_ENDINGS = (
     "방안을",
 )
 PLAN_TITLE_JOINABLE_TAILS = ("알아", "이야", "표현해", "찾아", "비교해")
+ACTIVITY_PLAN_HEADER_MARKERS = (
+    "표현 활동명",
+    "표현 활동별 배당 시수",
+    "활동별 합",
+    "지도서 쪽수",
+    "교과서 쪽수",
+)
+ACTIVITY_PLAN_SKIP_LINE_HINTS = (
+    "시수 총합",
+    "초등 미술 교과서",
+    "3, 4학년 연간 학습 지도 계획",
+    "지도의 실제",
+    "총론",
+)
+ACTIVITY_PLAN_SKIP_TITLE_HINTS = (
+    "미술 시간 계획표",
+    "연간 학습 지도 계획",
+)
+ACTIVITY_PLAN_PROJECT_PARTS = {"프로", "젝트"}
+MUSIC_PLAN_HEADER_MARKERS = (
+    "단원 교수·학습 계획",
+    "제재명",
+    "차시",
+    "지도서",
+    "쪽수",
+)
+MUSIC_PLAN_SKIP_TITLE_HINTS = (
+    "평가 계획",
+    "수업 도움 자료",
+    "단원 교수·학습 계획",
+    "제재 개관",
+    "단원 개관",
+)
 
 GRADE_LINE_RE = re.compile(r"^\s*([1-6])\s*학년\s*$")
 TRAILING_PAGE_RE = re.compile(r"^(?P<title>.+?)\s+(?P<page>\d{1,3})$")
 OVERVIEW_PARENT_RE = re.compile(r"^\s*(\d{1,2})\.\s*(.+?)\s*$")
 PLAN_RANGE_AT_END_RE = re.compile(r"(?P<range>\d{1,3}\s*[~-]\s*\d{1,3})\s*$")
+ACTIVITY_PLAN_HOURS_RE = re.compile(r"^\(?\s*(\d+)\s*\)?$")
+MUSIC_PLAN_PAGE_RE = re.compile(r"\d{1,3}")
 
 
 @dataclass(frozen=True)
@@ -223,6 +259,52 @@ def build_output_filename(index: int, title: str, start_page: int, end_page: int
 
 def build_run_directory_name(pdf_path: str | Path) -> str:
     return sanitize_filename_part(Path(pdf_path).stem)[:50] or "teacher_guide"
+
+
+def ensure_directory_within_root(target_dir: str | Path, root_dir: str | Path) -> Path:
+    resolved_target = Path(target_dir).resolve()
+    resolved_root = Path(root_dir).resolve()
+    try:
+        resolved_target.relative_to(resolved_root)
+    except ValueError as exc:
+        raise RuntimeError(f"Refusing to operate outside output root: {resolved_target}") from exc
+    return resolved_target
+
+
+def resolve_run_directory(
+    output_root: str | Path,
+    pdf_path: str | Path,
+    *,
+    existing_run_dir: str = "reuse",
+    create: bool = True,
+) -> Path:
+    output_root_path = Path(output_root)
+    output_root_path.mkdir(parents=True, exist_ok=True)
+
+    run_name = build_run_directory_name(pdf_path)
+    base_run_dir = output_root_path / run_name
+    mode = existing_run_dir.lower()
+    if mode not in {"reuse", "replace", "suffix"}:
+        raise ValueError(f"Unknown existing-run-dir mode: {existing_run_dir}")
+
+    run_dir = base_run_dir
+    if mode == "replace" and base_run_dir.exists():
+        if not base_run_dir.is_dir():
+            raise RuntimeError(f"Existing output path is not a folder: {base_run_dir}")
+        safe_run_dir = ensure_directory_within_root(base_run_dir, output_root_path)
+        shutil.rmtree(safe_run_dir)
+    elif mode == "suffix" and base_run_dir.exists():
+        suffix_index = 1
+        while True:
+            candidate = output_root_path / f"{run_name} ({suffix_index})"
+            if not candidate.exists():
+                run_dir = candidate
+                break
+            suffix_index += 1
+
+    if create:
+        run_dir.mkdir(parents=True, exist_ok=True)
+    return run_dir
 
 
 def parse_page_ranges(cell_text: str | None) -> list[tuple[int, int]]:
@@ -1881,6 +1963,1053 @@ def build_groups_from_plan_text(
     return groups, auto_offset
 
 
+def normalize_activity_plan_title(text: str) -> str:
+    normalized = normalize_toc_title(text)
+    normalized = normalized.replace("프로 젝트", "프로젝트")
+    normalized = re.sub(r"\s+([,./])", r"\1", normalized)
+    normalized = re.sub(r"\(\s*(\d+)\s*\)", r"(\1)", normalized)
+    return normalize_space(normalized)
+
+
+def extract_word_lines_from_page(page) -> list[dict]:
+    words_by_line: dict[tuple[int, int], list[tuple[float, float, float, float, str]]] = defaultdict(list)
+    raw_words: list[tuple[float, float, float, float, str, int, int]] = []
+
+    try:
+        extracted_words = page.extract_words(use_text_flow=False, keep_blank_chars=False)
+    except Exception:
+        extracted_words = None
+
+    if extracted_words:
+        clustered_words: list[tuple[float, float, float, float, str]] = []
+        for word in extracted_words:
+            text = normalize_space(word.get("text"))
+            if not text:
+                continue
+            x0 = float(word.get("x0", 0.0))
+            y0 = float(word.get("top", word.get("y0", 0.0)))
+            x1 = float(word.get("x1", x0))
+            y1 = float(word.get("bottom", word.get("y1", y0)))
+            clustered_words.append((x0, y0, x1, y1, text))
+
+        clustered_words.sort(key=lambda item: (item[1], item[0]))
+        line_index = -1
+        current_y: float | None = None
+        for x0, y0, x1, y1, text in clustered_words:
+            if current_y is None or abs(y0 - current_y) > 3.2:
+                line_index += 1
+                current_y = y0
+            raw_words.append((x0, y0, x1, y1, text, 0, line_index))
+    else:
+        for word in page.get_text("words"):
+            x0, y0, x1, y1, text, block_no, line_no, _ = word
+            normalized = normalize_space(text)
+            if not normalized:
+                continue
+            raw_words.append((x0, y0, x1, y1, normalized, int(block_no), int(line_no)))
+
+    for x0, y0, x1, y1, text, block_no, line_no in raw_words:
+        words_by_line[(block_no, line_no)].append((x0, y0, x1, y1, text))
+
+    lines: list[dict] = []
+    for key, words in words_by_line.items():
+        ordered = sorted(words, key=lambda item: item[0])
+        text = normalize_space(" ".join(item[4] for item in ordered))
+        if not text:
+            continue
+        lines.append(
+            {
+                "key": key,
+                "y": min(item[1] for item in ordered),
+                "text": text,
+                "words": ordered,
+            }
+        )
+
+    lines.sort(key=lambda item: (item["y"], item["words"][0][0]))
+    return lines
+
+
+def is_activity_plan_candidate_page(lines: list[dict]) -> bool:
+    preview = " ".join(line["text"] for line in lines[:12])
+    return all(marker in preview for marker in ACTIVITY_PLAN_HEADER_MARKERS[:3]) and "지도서" in preview and "교과서" in preview
+
+
+def detect_activity_plan_columns(lines: list[dict]) -> dict[str, float] | None:
+    header_lines = [line for line in lines if line["y"] <= 205]
+    if not header_lines:
+        return None
+
+    header_words = [word for line in header_lines for word in line["words"]]
+
+    def first_x(*keywords: str, min_x: float = -1.0) -> float | None:
+        xs = [
+            word[0]
+            for word in header_words
+            if word[0] >= min_x and any(keyword in word[4] for keyword in keywords)
+        ]
+        return min(xs) if xs else None
+
+    unit_title_x = first_x("단원명")
+    guide_x = first_x("지도서")
+    activity_x = first_x("활동명", min_x=(guide_x or 0) + 20)
+    textbook_x = first_x("교과서", min_x=(activity_x or 0) + 20)
+    hours_x = first_x("배당", "활동별", min_x=(textbook_x or 0) + 10)
+    total_x = first_x("합", min_x=(hours_x or 0) + 10)
+    if None in {unit_title_x, guide_x, activity_x, textbook_x, hours_x, total_x}:
+        return None
+
+    content_words = [
+        word
+        for line in lines
+        if line["y"] > max(header_line["y"] for header_line in header_lines) + 4
+        for word in line["words"]
+    ]
+    guide_page_words = [
+        word
+        for word in content_words
+        if parse_page_ranges(word[4]) and word[0] < textbook_x
+    ]
+    textbook_page_words = [
+        word
+        for word in content_words
+        if parse_page_ranges(word[4]) and word[0] >= activity_x and word[0] < hours_x
+    ]
+    unit_number_xs = [
+        word[0]
+        for word in content_words
+        if 60 <= word[0] < unit_title_x and (re.fullmatch(r"\d+", word[4]) or word[4] in ACTIVITY_PLAN_PROJECT_PARTS)
+    ]
+    if unit_number_xs:
+        sorted_unit_xs = sorted(unit_number_xs)
+        unit_number_x = sorted_unit_xs[len(sorted_unit_xs) // 2]
+    else:
+        unit_number_x = unit_title_x - 36
+
+    guide_start_x = min((word[0] for word in guide_page_words), default=guide_x)
+    guide_end_x = max((word[2] for word in guide_page_words), default=guide_start_x + 28) + 8
+    textbook_start_x = min((word[0] for word in textbook_page_words), default=textbook_x)
+    textbook_end_x = max((word[2] for word in textbook_page_words), default=textbook_start_x + 24) + 8
+
+    return {
+        "header_end_y": max(word[3] for word in header_words),
+        "unit_number_end": (unit_number_x + unit_title_x) / 2,
+        "unit_title_end": max(unit_title_x + 28, guide_start_x - 10),
+        "guide_end": max(guide_end_x, guide_x + 26),
+        "activity_end": max(activity_x + 36, textbook_start_x - 10),
+        "textbook_end": max(textbook_end_x, textbook_x + 24),
+        "hours_end": max(hours_x + 16, total_x - 10),
+    }
+
+
+def parse_activity_plan_hours(text: str) -> int | None:
+    normalized = normalize_space(text)
+    if not normalized:
+        return None
+    match = ACTIVITY_PLAN_HOURS_RE.fullmatch(normalized)
+    if not match:
+        return None
+    try:
+        return int(match.group(1))
+    except ValueError:
+        return None
+
+
+def split_activity_plan_textbook_and_hours(textbook_text: str, hours_text: str) -> tuple[str, str]:
+    textbook = normalize_space(textbook_text)
+    hours = normalize_space(hours_text)
+    if hours:
+        return textbook, hours
+
+    parts = textbook.split()
+    if len(parts) >= 2 and parse_page_ranges(" ".join(parts[:-1])) and parse_activity_plan_hours(parts[-1]) is not None:
+        return normalize_space(" ".join(parts[:-1])), parts[-1]
+    return textbook, hours
+
+
+def is_activity_plan_domain_fragment(text: str) -> bool:
+    normalized = normalize_space(text).replace(" ", "")
+    return normalized in {"표현", "감상", "미적체험", "교과통합"}
+
+
+def finalize_activity_plan_entry(entry: dict) -> dict | None:
+    unit_title = normalize_activity_plan_title(" ".join(entry.get("title_parts", [])))
+    if not unit_title or any(hint in unit_title for hint in ACTIVITY_PLAN_SKIP_TITLE_HINTS):
+        return None
+
+    activities: list[dict] = []
+    for activity in entry.get("activities", []):
+        title = normalize_activity_plan_title(" ".join(activity.get("title_parts", [])))
+        if not title:
+            continue
+        if activities and activities[-1]["title"] == title:
+            continue
+        activities.append(
+            {
+                "title": title,
+                "hours": activity.get("hours") or 1,
+            }
+        )
+
+    if len(activities) < 2:
+        return None
+
+    return {
+        "unit_title": unit_title,
+        "unit_number": entry.get("unit_number"),
+        "guide_ranges": entry.get("guide_ranges", []),
+        "activities": activities,
+    }
+
+
+def parse_activity_plan_units_from_page(page) -> list[dict]:
+    lines = extract_word_lines_from_page(page)
+    if not lines or not is_activity_plan_candidate_page(lines):
+        return []
+
+    columns = detect_activity_plan_columns(lines)
+    if not columns:
+        return []
+
+    parsed_rows: list[dict] = []
+
+    for line in lines:
+        if line["y"] <= columns["header_end_y"] + 3:
+            continue
+
+        full_text = line["text"]
+        if not full_text or any(hint in full_text for hint in ACTIVITY_PLAN_SKIP_LINE_HINTS):
+            continue
+
+        column_words: dict[int, list[str]] = defaultdict(list)
+        for x0, _, x1, _, word_text in line["words"]:
+            center = (x0 + x1) / 2
+            if center < columns["unit_number_end"]:
+                column_words[0].append(word_text)
+            elif center < columns["unit_title_end"]:
+                column_words[1].append(word_text)
+            elif center < columns["guide_end"]:
+                column_words[2].append(word_text)
+            elif center < columns["activity_end"]:
+                column_words[3].append(word_text)
+            elif center < columns["textbook_end"]:
+                column_words[4].append(word_text)
+            elif center < columns["hours_end"]:
+                column_words[5].append(word_text)
+            else:
+                column_words[6].append(word_text)
+
+        unit_prefix = normalize_space(" ".join(column_words[0]))
+        unit_title = normalize_space(" ".join(column_words[1]))
+        guide_text = normalize_space(" ".join(column_words[2]))
+        activity_title = normalize_space(" ".join(column_words[3]))
+        textbook_text = normalize_space(" ".join(column_words[4]))
+        hours_text = normalize_space(" ".join(column_words[5]))
+        textbook_text, hours_text = split_activity_plan_textbook_and_hours(textbook_text, hours_text)
+
+        if not any((unit_prefix, unit_title, guide_text, activity_title, textbook_text, hours_text)):
+            continue
+
+        guide_ranges = parse_page_ranges(guide_text)
+        unit_number = int(unit_prefix) if re.fullmatch(r"\d+", unit_prefix) else None
+        project_prefix = unit_prefix if unit_prefix in ACTIVITY_PLAN_PROJECT_PARTS else ""
+        title_fragments: list[str] = []
+        if project_prefix:
+            title_fragments.append(project_prefix)
+        guide_text_without_ranges = normalize_space(re.sub(r"\d{1,3}\s*[~-]\s*\d{1,3}", " ", guide_text))
+        combined_fragment = normalize_space(
+            " ".join(
+                part
+                for part in (
+                    unit_title,
+                    guide_text if not guide_ranges else guide_text_without_ranges,
+                )
+                if part
+            )
+        )
+        if not is_activity_plan_domain_fragment(combined_fragment):
+            if unit_title:
+                title_fragments.append(unit_title)
+            if guide_text and not guide_ranges and not is_activity_plan_domain_fragment(guide_text):
+                title_fragments.append(guide_text)
+            elif guide_text_without_ranges and not is_activity_plan_domain_fragment(guide_text_without_ranges):
+                title_fragments.append(guide_text_without_ranges)
+        candidate_title = normalize_activity_plan_title(" ".join(title_fragments))
+        if guide_ranges and candidate_title and any(hint in candidate_title for hint in ACTIVITY_PLAN_SKIP_TITLE_HINTS):
+            continue
+
+        hours = parse_activity_plan_hours(hours_text)
+        activity_payload = None
+        if activity_title:
+            activity_payload = {
+                "title_parts": [activity_title],
+                "hours": hours,
+            }
+        parsed_rows.append(
+            {
+                "y": line["y"],
+                "unit_number": unit_number,
+                "title_fragments": title_fragments,
+                "guide_ranges": guide_ranges,
+                "activity": activity_payload,
+            }
+        )
+
+    entries: list[dict] = []
+    index = 0
+    while index < len(parsed_rows):
+        row = parsed_rows[index]
+        starts_unit = bool(row["guide_ranges"])
+        if not starts_unit:
+            index += 1
+            continue
+
+        title_parts: list[str] = []
+        activities: list[dict] = []
+        lead_rows: list[dict] = []
+        previous_index = index - 1
+        while previous_index >= 0:
+            previous_row = parsed_rows[previous_index]
+            if previous_row["guide_ranges"]:
+                break
+            if row["y"] - previous_row["y"] > 20:
+                break
+            lead_rows.append(previous_row)
+            previous_index -= 1
+        lead_rows.reverse()
+
+        for lead_row in lead_rows:
+            title_parts.extend(lead_row["title_fragments"])
+            if lead_row["activity"]:
+                activities.append(
+                    {
+                        "title_parts": list(lead_row["activity"]["title_parts"]),
+                        "hours": lead_row["activity"].get("hours"),
+                    }
+                )
+
+        title_parts.extend(row["title_fragments"])
+        if row["activity"]:
+            activities.append(
+                {
+                    "title_parts": list(row["activity"]["title_parts"]),
+                    "hours": row["activity"].get("hours"),
+                }
+            )
+
+        next_index = index + 1
+        while next_index < len(parsed_rows):
+            next_row = parsed_rows[next_index]
+            next_starts_unit = bool(next_row["guide_ranges"])
+            upcoming_start = any(
+                parsed_rows[probe_index]["guide_ranges"]
+                for probe_index in range(next_index + 1, min(len(parsed_rows), next_index + 3))
+            )
+            if next_starts_unit:
+                break
+            if upcoming_start and (next_row["title_fragments"] or next_row["activity"]) and next_row["y"] - row["y"] > 20:
+                break
+
+            if next_row["title_fragments"]:
+                if (
+                    next_row["title_fragments"][0] in ACTIVITY_PLAN_PROJECT_PARTS
+                    and title_parts
+                    and title_parts[0] in ACTIVITY_PLAN_PROJECT_PARTS
+                ):
+                    title_parts[0] = normalize_activity_plan_title(title_parts[0] + next_row["title_fragments"][0])
+                    title_parts.extend(next_row["title_fragments"][1:])
+                else:
+                    title_parts.extend(next_row["title_fragments"])
+            if next_row["activity"]:
+                activities.append(
+                    {
+                        "title_parts": list(next_row["activity"]["title_parts"]),
+                        "hours": next_row["activity"].get("hours"),
+                    }
+                )
+            next_index += 1
+
+        entry = finalize_activity_plan_entry(
+            {
+                "unit_number": row["unit_number"],
+                "title_parts": title_parts,
+                "guide_ranges": row["guide_ranges"],
+                "activities": activities,
+            }
+        )
+        if entry:
+            entries.append(entry)
+
+        index = next_index
+
+    return entries
+
+
+def extract_activity_plan_units(pdf_doc, scan_pages: int = 80) -> list[dict]:
+    total_pages = len(pdf_doc.pages)
+    limit = min(scan_pages, total_pages)
+    entries: list[dict] = []
+    seen: set[tuple[str, tuple[str, ...]]] = set()
+
+    for page_number in range(1, limit + 1):
+        lines = extract_page_text(pdf_doc.pages[page_number - 1]).splitlines()
+        preview = " ".join(normalize_space(line) for line in lines[:15] if normalize_space(line))
+        if not all(marker in preview for marker in ACTIVITY_PLAN_HEADER_MARKERS[:3]):
+            continue
+        for entry in parse_activity_plan_units_from_page(pdf_doc.pages[page_number - 1]):
+            key = (
+                entry["unit_title"],
+                tuple(activity["title"] for activity in entry["activities"]),
+            )
+            if key in seen:
+                continue
+            seen.add(key)
+            entries.append(entry)
+
+    return entries
+
+
+def score_activity_plan_unit_match(parent_title: str, plan_unit_title: str) -> int:
+    parent_tokens = entry_search_tokens(parent_title)
+    plan_title = normalize_activity_plan_title(plan_unit_title)
+    if not parent_tokens or not plan_title:
+        return 0
+
+    score = 0
+    for index, token in enumerate(parent_tokens):
+        if token in plan_title:
+            score += 6 if index == 0 else 4
+
+    stripped_parent = normalize_activity_plan_title(re.sub(r"^\d+\.\s*", "", parent_title))
+    if stripped_parent and stripped_parent == plan_title:
+        score += 10
+    return score
+
+
+def match_activity_plan_units_to_parents(parent_groups: list[dict], plan_units: list[dict]) -> dict[tuple[int, int, str], dict]:
+    assignments: dict[tuple[int, int, str], dict] = {}
+    if not parent_groups or not plan_units:
+        return assignments
+
+    used_indexes: set[int] = set()
+    cursor = 0
+
+    for parent_group in parent_groups:
+        parent_title = normalize_space(parent_group.get("source_title") or parent_group["title"])
+        best_index: int | None = None
+        best_score = 0
+
+        for index in range(cursor, len(plan_units)):
+            if index in used_indexes:
+                continue
+            score = score_activity_plan_unit_match(parent_title, plan_units[index]["unit_title"])
+            score -= min(4, max(0, index - cursor))
+            if score > best_score:
+                best_score = score
+                best_index = index
+            if best_score >= 16 and index - cursor >= 2:
+                break
+
+        if best_index is None:
+            for index, plan_unit in enumerate(plan_units):
+                if index in used_indexes:
+                    continue
+                score = score_activity_plan_unit_match(parent_title, plan_unit["unit_title"])
+                if score > best_score:
+                    best_score = score
+                    best_index = index
+
+        if best_index is None or best_score < 10:
+            continue
+
+        used_indexes.add(best_index)
+        cursor = best_index + 1
+        key = (
+            parent_group["start_page"],
+            parent_group["end_page"],
+            parent_title,
+        )
+        assignments[key] = plan_units[best_index]
+
+    return assignments
+
+
+def split_parent_range_by_weights(start_page: int, end_page: int, weights: list[int]) -> list[tuple[int, int]]:
+    total_pages = end_page - start_page + 1
+    if total_pages <= 0 or not weights:
+        return []
+
+    safe_weights = [max(1, int(weight or 1)) for weight in weights]
+    if total_pages < len(safe_weights):
+        return []
+
+    ranges: list[tuple[int, int]] = []
+    cumulative_weight = 0
+    previous_end = start_page - 1
+    total_weight = sum(safe_weights)
+
+    for index, weight in enumerate(safe_weights):
+        if index == len(safe_weights) - 1:
+            current_end = end_page
+        else:
+            cumulative_weight += weight
+            target_size = round(total_pages * cumulative_weight / total_weight)
+            remaining_groups = len(safe_weights) - index - 1
+            min_current_end = previous_end + 1
+            max_current_end = end_page - remaining_groups
+            current_end = max(min_current_end, min(max_current_end, start_page + target_size - 1))
+
+        current_start = previous_end + 1
+        ranges.append((current_start, current_end))
+        previous_end = current_end
+
+    return ranges
+
+
+def detect_top_art_activity_marker(page) -> tuple[int | None, bool]:
+    try:
+        lines = extract_word_lines_from_page(page)
+    except Exception:
+        return None, False
+
+    top_lines = [line["text"] for line in lines if line["y"] <= 70][:6]
+    if not top_lines:
+        return None, False
+
+    top_text = normalize_space(" ".join(top_lines))
+    if "활동 1 + 마무리" in top_text or "활동1 + 마무리" in top_text:
+        return 1, True
+    if "활동 2 + 마무리" in top_text or "활동2 + 마무리" in top_text:
+        return 2, True
+    if "활동 1" in top_text or "활동1" in top_text:
+        return 1, "마무리" in top_text
+    if "활동 2" in top_text or "활동2" in top_text:
+        return 2, "마무리" in top_text
+    return None, False
+
+
+def find_activity_plan_boundary_page(pdf_doc, parent_group: dict, activity_title: str) -> int | None:
+    tokens = entry_search_tokens(activity_title)
+    if not tokens:
+        return None
+
+    parent_start = parent_group["start_page"]
+    parent_end = parent_group["end_page"]
+    best_page: int | None = None
+    best_score = 0
+    exact_pair_pages: list[int] = []
+
+    for page_number in range(parent_start + 1, parent_end + 1):
+        page = pdf_doc.pages[page_number - 1]
+        lines = [
+            normalize_space(line)
+            for line in extract_page_text(page).splitlines()
+            if normalize_space(line)
+        ]
+        if not lines:
+            continue
+
+        preview_lines = lines[:24]
+        preview_text = " ".join(preview_lines)
+        score = 0
+        current_marker, current_has_summary = detect_top_art_activity_marker(page)
+
+        if current_marker == 2 and current_has_summary:
+            score += 12
+        elif current_marker == 2:
+            score += 7
+
+        if page_number > parent_start:
+            previous_marker, previous_has_summary = detect_top_art_activity_marker(pdf_doc.pages[page_number - 2])
+            if previous_marker == 1 and previous_has_summary and current_marker == 2:
+                if current_has_summary:
+                    exact_pair_pages.append(page_number)
+                score += 10
+            elif previous_marker == 1 and current_marker == 2:
+                score += 6
+
+        token_hits = sum(1 for token in tokens[:3] if token in preview_text)
+        if current_marker == 2:
+            if token_hits >= 2:
+                score += 8
+            elif token_hits == 1:
+                score += 4
+
+            if token_hits and any(marker in preview_text for marker in ("교수 학습", "교수·학습", "차시", "학습 주제", "교과서")):
+                score += 3
+
+        if score > best_score:
+            best_score = score
+            best_page = page_number
+
+    if exact_pair_pages:
+        return exact_pair_pages[0]
+    if best_score >= 10:
+        return best_page
+    return None
+
+
+def build_groups_from_activity_plan_entry(pdf_doc, parent_group: dict, plan_unit: dict) -> list[dict]:
+    activities = plan_unit.get("activities", [])
+    if len(activities) < 2:
+        return []
+
+    page_ranges: list[tuple[int, int]] = []
+    if len(activities) == 2:
+        boundary_page = find_activity_plan_boundary_page(pdf_doc, parent_group, activities[1]["title"])
+        if boundary_page is not None and parent_group["start_page"] < boundary_page <= parent_group["end_page"]:
+            page_ranges = [
+                (parent_group["start_page"], boundary_page - 1),
+                (boundary_page, parent_group["end_page"]),
+            ]
+
+    if not page_ranges:
+        page_ranges = split_parent_range_by_weights(
+            parent_group["start_page"],
+            parent_group["end_page"],
+            [activity.get("hours") or 1 for activity in activities],
+        )
+    if len(page_ranges) != len(activities):
+        return []
+
+    parent_title = normalize_space(parent_group.get("source_title") or parent_group["title"])
+    groups: list[dict] = []
+    for (start_page, end_page), activity in zip(page_ranges, activities):
+        title = normalize_activity_plan_title(activity["title"]) or parent_title
+        groups.append(
+            {
+                "title": shorten_title(title),
+                "source_title": title,
+                "start_page": start_page,
+                "end_page": end_page,
+                "row_evidence": 1,
+                "page_ranges_raw": [(start_page, end_page)],
+                "method": "activity_plan",
+                "context": list(parent_group.get("context", [])),
+                "detected_level": "detail",
+                "parent_unit_title": parent_title,
+            }
+        )
+
+    return groups
+
+
+def is_music_plan_candidate_page(lines: list[dict]) -> bool:
+    preview = " ".join(line["text"] for line in lines[:10])
+    return all(marker in preview for marker in MUSIC_PLAN_HEADER_MARKERS)
+
+
+def detect_music_plan_columns(lines: list[dict]) -> dict[str, float] | None:
+    header_lines = [line for line in lines if line["y"] <= 90]
+    if not header_lines:
+        return None
+
+    header_words = [word for line in header_lines for word in line["words"]]
+
+    def first_x(*keywords: str, min_x: float = -1.0) -> float | None:
+        xs = [
+            word[0]
+            for word in header_words
+            if word[0] >= min_x and any(keyword in word[4] for keyword in keywords)
+        ]
+        return min(xs) if xs else None
+
+    title_x = first_x("제재명")
+    hours_x = first_x("차시", min_x=title_x or -1.0)
+    content_x = first_x("교수", "학습", min_x=hours_x or -1.0)
+    page_xs = sorted(word[0] for word in header_words if "쪽수" in word[4])
+    if title_x is None or hours_x is None or content_x is None or len(page_xs) < 2:
+        return None
+
+    return {
+        "title_x": title_x,
+        "hours_x": hours_x,
+        "content_x": content_x,
+        "guide_x": page_xs[-1],
+        "header_end_y": max(word[3] for word in header_words),
+    }
+
+
+def parse_music_plan_page(text: str) -> int | None:
+    matches = MUSIC_PLAN_PAGE_RE.findall(normalize_space(text))
+    if not matches:
+        return None
+    return int(matches[-1])
+
+
+def finalize_music_plan_row(row: dict) -> dict | None:
+    title = normalize_toc_title(" ".join(row.get("title_parts", [])))
+    title = re.sub(r"^\d+\s*", "", title)
+    if not title or any(hint in title for hint in MUSIC_PLAN_SKIP_TITLE_HINTS):
+        return None
+
+    printed_page = row.get("printed_page")
+    if printed_page is None:
+        return None
+
+    return {
+        "title": title,
+        "printed_page": printed_page,
+        "hours": row.get("hours") or 1,
+        "source_page": row.get("source_page", 0),
+    }
+
+
+def parse_music_plan_rows_from_page(page) -> list[dict]:
+    lines = extract_word_lines_from_page(page)
+    if not lines or not is_music_plan_candidate_page(lines):
+        return []
+
+    columns = detect_music_plan_columns(lines)
+    if not columns:
+        return []
+
+    rows: list[dict] = []
+    current_row: dict | None = None
+
+    for line in lines:
+        if line["y"] <= columns["header_end_y"] + 3:
+            continue
+
+        title_words = [
+            word[4]
+            for word in line["words"]
+            if 40 <= word[0] < columns["hours_x"] - 8
+        ]
+        hours_words = [
+            word[4]
+            for word in line["words"]
+            if columns["hours_x"] - 8 <= word[0] < columns["content_x"] - 8
+        ]
+        guide_words = [word[4] for word in line["words"] if word[0] >= columns["guide_x"] - 6]
+
+        title_text = normalize_toc_title(" ".join(title_words))
+        hours = parse_activity_plan_hours(" ".join(hours_words))
+        printed_page = parse_music_plan_page(" ".join(guide_words))
+
+        if printed_page is not None and title_text:
+            if current_row is not None:
+                finalized = finalize_music_plan_row(current_row)
+                if finalized is not None:
+                    rows.append(finalized)
+            current_row = {
+                "title_parts": [title_text],
+                "printed_page": printed_page,
+                "hours": hours,
+                "source_page": page.page_number,
+            }
+            continue
+
+        if current_row is None or not title_text or printed_page is not None:
+            continue
+
+        if any(hint in title_text for hint in MUSIC_PLAN_SKIP_TITLE_HINTS):
+            continue
+        if title_text not in current_row["title_parts"] and len(title_text) <= 40:
+            current_row["title_parts"].append(title_text)
+
+    if current_row is not None:
+        finalized = finalize_music_plan_row(current_row)
+        if finalized is not None:
+            rows.append(finalized)
+
+    deduped: list[dict] = []
+    seen: set[tuple[str, int]] = set()
+    for row in rows:
+        key = (row["title"], row["printed_page"])
+        if key in seen:
+            continue
+        seen.add(key)
+        deduped.append(row)
+    return deduped
+
+
+def infer_music_plan_page_offset(pdf_doc, parent_group: dict, rows: list[dict]) -> int:
+    if not rows:
+        return 0
+
+    entries = [
+        TocEntry(
+            title=row["title"],
+            printed_page=row["printed_page"],
+            source_page=row["source_page"],
+            context=tuple(parent_group.get("context", [])),
+            level="subunit",
+        )
+        for row in rows
+    ]
+
+    candidate_offsets = {infer_toc_page_offset(pdf_doc, entries)}
+    first_printed = rows[0]["printed_page"]
+    for lead_pages in range(1, 6):
+        candidate_offsets.add(parent_group["start_page"] + lead_pages - first_printed)
+
+    best_offset = 0
+    best_score = -10_000
+    for offset in candidate_offsets:
+        score = -abs(offset)
+        mapped_pages = [row["printed_page"] + offset for row in rows]
+        for row, mapped_page in zip(rows, mapped_pages):
+            if parent_group["start_page"] <= mapped_page <= parent_group["end_page"]:
+                score += 6
+                if entry_matches_page(pdf_doc, mapped_page, entry_search_tokens(row["title"])):
+                    score += 8
+            else:
+                score -= 20
+
+        score += sum(1 for left, right in zip(mapped_pages, mapped_pages[1:]) if right > left) * 2
+        if mapped_pages:
+            lead_gap = mapped_pages[0] - parent_group["start_page"]
+            if 2 <= lead_gap <= 5:
+                score += 6
+            elif 1 <= lead_gap <= 7:
+                score += 3
+
+        if score > best_score:
+            best_score = score
+            best_offset = offset
+
+    return best_offset
+
+
+def extract_music_unit_title(page, fallback_title: str) -> str:
+    lines = [normalize_space(line) for line in extract_page_text(page).splitlines() if normalize_space(line)]
+    for line in lines[:12]:
+        if re.fullmatch(r"\d+", line):
+            continue
+        if any(marker in line for marker in MUSIC_PLAN_SKIP_TITLE_HINTS):
+            continue
+        if any(marker in line for marker in ("역량", "내용 체계", "성취기준", "교수·학습")):
+            continue
+        candidate = normalize_toc_title(line)
+        if candidate:
+            return candidate
+    return normalize_space(fallback_title)
+
+
+def build_groups_from_music_plan_entry(pdf_doc, parent_group: dict) -> list[dict]:
+    parent_start = parent_group["start_page"]
+    parent_end = parent_group["end_page"]
+    parent_title = normalize_space(parent_group.get("source_title") or parent_group["title"])
+
+    search_end = min(parent_end, parent_start + 4)
+    for page_number in range(parent_start, search_end + 1):
+        rows = parse_music_plan_rows_from_page(pdf_doc.pages[page_number - 1])
+        if len(rows) < 2:
+            continue
+
+        offset = infer_music_plan_page_offset(pdf_doc, parent_group, rows)
+        groups: list[dict] = []
+        first_start_page = rows[0]["printed_page"] + offset
+        if parent_start < first_start_page <= parent_end:
+            intro_title = extract_music_unit_title(pdf_doc.pages[parent_start - 1], parent_title)
+            groups.append(
+                {
+                    "title": shorten_title(intro_title),
+                    "source_title": intro_title,
+                    "start_page": parent_start,
+                    "end_page": first_start_page - 1,
+                    "row_evidence": 1,
+                    "page_ranges_raw": [(parent_start, first_start_page - 1)],
+                    "method": "music_plan_intro",
+                    "context": list(parent_group.get("context", [])),
+                    "detected_level": "detail",
+                    "parent_unit_title": parent_title,
+                }
+            )
+
+        for index, row in enumerate(rows):
+            start_page = row["printed_page"] + offset
+            if not (parent_start <= start_page <= parent_end):
+                groups = []
+                break
+
+            next_start_page = (
+                rows[index + 1]["printed_page"] + offset
+                if index + 1 < len(rows)
+                else parent_end + 1
+            )
+            end_page = min(parent_end, next_start_page - 1)
+            if end_page < start_page:
+                groups = []
+                break
+
+            title = normalize_toc_title(row["title"]) or parent_title
+            groups.append(
+                {
+                    "title": shorten_title(title),
+                    "source_title": title,
+                    "start_page": start_page,
+                    "end_page": end_page,
+                    "row_evidence": 1,
+                    "page_ranges_raw": [(row["printed_page"], row["printed_page"])],
+                    "method": "music_plan",
+                    "context": list(parent_group.get("context", [])),
+                    "detected_level": "detail",
+                    "parent_unit_title": parent_title,
+                }
+            )
+
+        if len(groups) >= 2:
+            return groups
+
+    return []
+
+
+def extract_music_plan_units(pdf_doc) -> list[dict]:
+    total_pages = len(pdf_doc.pages)
+    units: list[dict] = []
+    seen_starts: set[int] = set()
+
+    for page_number in range(2, total_pages + 1):
+        rows = parse_music_plan_rows_from_page(pdf_doc.pages[page_number - 1])
+        if len(rows) < 2:
+            continue
+
+        start_page = page_number - 1
+        if start_page in seen_starts:
+            continue
+
+        unit_title = extract_music_unit_title(
+            pdf_doc.pages[start_page - 1],
+            rows[0]["title"],
+        )
+        seen_starts.add(start_page)
+        units.append(
+            {
+                "title": unit_title,
+                "start_page": start_page,
+                "plan_page": page_number,
+                "rows": rows,
+            }
+        )
+
+    units.sort(key=lambda item: item["start_page"])
+    for index, unit in enumerate(units):
+        next_start = units[index + 1]["start_page"] if index + 1 < len(units) else total_pages + 1
+        unit["end_page"] = max(unit["start_page"], next_start - 1)
+    return units
+
+
+def build_groups_from_music_plan_pages(pdf_doc, split_level: str) -> list[dict]:
+    music_units = extract_music_plan_units(pdf_doc)
+    if len(music_units) < 2:
+        return []
+
+    groups: list[dict] = []
+    first_start = music_units[0]["start_page"]
+    if first_start > 1:
+        groups.append(
+            {
+                "index": 1,
+                "title": "앞부분",
+                "source_title": "앞부분",
+                "start_page": 1,
+                "end_page": first_start - 1,
+                "row_evidence": 1,
+                "page_ranges_raw": [(1, first_start - 1)],
+                "method": "music_plan_leading_section",
+                "context": [],
+                "detected_level": "section",
+            }
+        )
+
+    if split_level == "unit":
+        for offset_index, unit in enumerate(music_units, start=len(groups) + 1):
+            unit_title = normalize_space(unit["title"])
+            groups.append(
+                {
+                    "index": offset_index,
+                    "title": shorten_title(unit_title),
+                    "source_title": unit_title,
+                    "start_page": unit["start_page"],
+                    "end_page": unit["end_page"],
+                    "row_evidence": 1,
+                    "page_ranges_raw": [(unit["start_page"], unit["start_page"])],
+                    "method": "music_plan_page",
+                    "context": [],
+                    "detected_level": "unit",
+                    "parent_unit_title": unit_title,
+                }
+            )
+        return groups
+
+    for unit in music_units:
+        unit_title = normalize_space(unit["title"])
+        parent_group = {
+            "title": unit_title,
+            "source_title": unit_title,
+            "start_page": unit["start_page"],
+            "end_page": unit["end_page"],
+            "context": [],
+        }
+        rows = unit["rows"]
+        offset = infer_music_plan_page_offset(pdf_doc, parent_group, rows)
+        unit_groups: list[dict] = []
+
+        first_detail_start = rows[0]["printed_page"] + offset
+        if unit["start_page"] < first_detail_start <= unit["end_page"]:
+            unit_groups.append(
+                {
+                    "title": shorten_title(unit_title),
+                    "source_title": unit_title,
+                    "start_page": unit["start_page"],
+                    "end_page": first_detail_start - 1,
+                    "row_evidence": 1,
+                    "page_ranges_raw": [(unit["start_page"], first_detail_start - 1)],
+                    "method": "music_plan_intro",
+                    "context": [],
+                    "detected_level": "detail",
+                    "parent_unit_title": unit_title,
+                }
+            )
+
+        valid = True
+        for index, row in enumerate(rows):
+            start_page = row["printed_page"] + offset
+            next_start = rows[index + 1]["printed_page"] + offset if index + 1 < len(rows) else unit["end_page"] + 1
+            end_page = min(unit["end_page"], next_start - 1)
+            if start_page < unit["start_page"] or start_page > unit["end_page"] or end_page < start_page:
+                valid = False
+                break
+
+            title = normalize_toc_title(row["title"]) or unit_title
+            unit_groups.append(
+                {
+                    "title": shorten_title(title),
+                    "source_title": title,
+                    "start_page": start_page,
+                    "end_page": end_page,
+                    "row_evidence": 1,
+                    "page_ranges_raw": [(row["printed_page"], row["printed_page"])],
+                    "method": "music_plan",
+                    "context": [],
+                    "detected_level": "detail",
+                    "parent_unit_title": unit_title,
+                }
+            )
+
+        if not valid or len(unit_groups) < 2:
+            unit_groups = [
+                {
+                    "title": shorten_title(unit_title),
+                    "source_title": unit_title,
+                    "start_page": unit["start_page"],
+                    "end_page": unit["end_page"],
+                    "row_evidence": 1,
+                    "page_ranges_raw": [(unit["start_page"], unit["start_page"])],
+                    "method": "music_plan_page",
+                    "context": [],
+                    "detected_level": "detail",
+                    "parent_unit_title": unit_title,
+                }
+            ]
+
+        groups.extend(unit_groups)
+
+    return renumber_groups(groups)
+
+
 def is_parent_unit_group(group: dict) -> bool:
     return group.get("detected_level") in {"subunit", "project", "unit"}
 
@@ -2207,6 +3336,10 @@ def build_local_detail_groups_for_parent(
     if local_scan_pages < 2:
         return []
 
+    music_plan_groups = build_groups_from_music_plan_entry(pdf_doc, parent_group)
+    if len(music_plan_groups) >= 2:
+        return music_plan_groups
+
     plan_groups, _ = build_groups_from_plan_tables(
         pdf_doc,
         scan_pages=local_scan_pages,
@@ -2244,18 +3377,41 @@ def refine_detail_groups_from_parent_units(
 ) -> list[dict]:
     refined_groups: list[dict] = []
     replaced_any = False
+    parent_candidates = [
+        group
+        for group in groups
+        if is_parent_unit_group(group)
+        and group["end_page"] - group["start_page"] + 1 >= 6
+        and (group.get("detected_level") == "project" or group_looks_like_curriculum_unit(pdf_doc, group))
+    ]
+    activity_plan_assignments = match_activity_plan_units_to_parents(
+        parent_candidates,
+        extract_activity_plan_units(pdf_doc),
+    )
 
     for group in groups:
-        if not is_parent_unit_group(group) or group["end_page"] - group["start_page"] < 6:
+        if not is_parent_unit_group(group) or group["end_page"] - group["start_page"] + 1 < 6:
             refined_groups.append(clone_group(group))
             continue
 
-        local_groups = build_local_detail_groups_for_parent(
-            pdf_doc,
-            parent_group=group,
-            page_offset=page_offset,
-            z_col=z_col,
-        )
+        local_groups: list[dict] = []
+        if group.get("detected_level") == "project" or group_looks_like_curriculum_unit(pdf_doc, group):
+            group_key = (
+                group["start_page"],
+                group["end_page"],
+                normalize_space(group.get("source_title") or group["title"]),
+            )
+            plan_unit = activity_plan_assignments.get(group_key)
+            if plan_unit:
+                local_groups = build_groups_from_activity_plan_entry(pdf_doc, group, plan_unit)
+
+        if not local_groups:
+            local_groups = build_local_detail_groups_for_parent(
+                pdf_doc,
+                parent_group=group,
+                page_offset=page_offset,
+                z_col=z_col,
+            )
         if local_groups:
             refined_groups.extend(local_groups)
             replaced_any = True
@@ -2546,7 +3702,9 @@ def score_candidate_groups(
     coverage_pages = merged_group_coverage_pages(content_groups)
     unit_gap_count = sum(1 for group in content_groups if group.get("method") == "unit_gap")
     detail_source_count = sum(
-        1 for group in content_groups if group.get("method") in {"plan_table", "plan_text"}
+        1
+        for group in content_groups
+        if group.get("method") in {"plan_table", "plan_text", "activity_plan", "music_plan"}
     )
 
     score = len(content_groups) * 4
@@ -2560,6 +3718,8 @@ def score_candidate_groups(
         score += 24
     elif strategy_used == "toc":
         score += 16
+    elif strategy_used == "overview_detail":
+        score += 18
     elif strategy_used == "overview_page":
         score += 14 if split_level == "unit" else 8
     elif strategy_used == "plan_table":
@@ -2628,10 +3788,15 @@ def choose_groups(
     split_level: str,
 ) -> tuple[list[dict], list[dict], str, int]:
     total_pages = len(pdf_doc.pages)
+    music_groups = build_groups_from_music_plan_pages(pdf_doc, split_level)
+    if music_groups and strategy in {"auto", "overview"}:
+        return music_groups, [], "music_plan_page", 0
+
     toc_groups: list[dict] = []
     toc_sections: list[dict] = []
     auto_offset = 0
     toc_detail_candidate: tuple[list[dict], list[dict], str, int] | None = None
+    overview_detail_candidate: tuple[list[dict], list[dict], str, int] | None = None
 
     if strategy in {"auto", "toc"}:
         toc_entries = find_toc_entries(pdf_doc, scan_pages=scan_pages)
@@ -2678,6 +3843,19 @@ def choose_groups(
 
     if strategy == "overview":
         overview_groups = build_groups_from_overview_pages(pdf_doc)
+        if split_level == "detail" and overview_groups:
+            overview_unit_groups = build_unit_groups_from_overview(overview_groups)
+            refined_overview_groups = refine_detail_groups_from_parent_units(
+                pdf_doc,
+                groups=overview_unit_groups,
+                page_offset=page_offset,
+                z_col=z_col,
+            )
+            if refined_overview_groups and any(
+                group.get("method") in {"music_plan", "music_plan_intro"}
+                for group in refined_overview_groups
+            ):
+                return refined_overview_groups, [], "overview_detail", 0
         if overview_groups:
             return overview_groups, [], "overview_page", 0
         return [], [], "overview", 0
@@ -2689,6 +3867,19 @@ def choose_groups(
     ]
     if len(content_overview_groups) == 1:
         preferred_first_start = content_overview_groups[0]["start_page"]
+    if split_level == "detail" and overview_groups:
+        overview_unit_groups = build_unit_groups_from_overview(overview_groups)
+        refined_overview_groups = refine_detail_groups_from_parent_units(
+            pdf_doc,
+            groups=overview_unit_groups,
+            page_offset=page_offset,
+            z_col=z_col,
+        )
+        if refined_overview_groups and any(
+            group.get("method") in {"music_plan", "music_plan_intro"}
+            for group in refined_overview_groups
+        ):
+            overview_detail_candidate = (refined_overview_groups, [], "overview_detail", 0)
 
     plan_groups, plan_auto_offset = build_groups_from_plan_tables(
         pdf_doc,
@@ -2705,6 +3896,8 @@ def choose_groups(
 
     if strategy != "auto":
         if split_level == "detail":
+            if overview_detail_candidate is not None:
+                return overview_detail_candidate
             if plan_groups:
                 return plan_groups, [], "plan_table", plan_auto_offset
             if plan_text_groups:
@@ -2725,6 +3918,8 @@ def choose_groups(
         candidates.append((toc_groups, toc_sections, "toc", auto_offset))
     if toc_detail_candidate is not None:
         candidates.append(toc_detail_candidate)
+    if overview_detail_candidate is not None:
+        candidates.append(overview_detail_candidate)
     if overview_groups:
         candidates.append((overview_groups, [], "overview_page", 0))
     if plan_groups:
@@ -2754,6 +3949,9 @@ def split_subunits_from_plan_table(
     z_col: int | None = None,
     strategy: str = "auto",
     split_level: str = "unit",
+    existing_run_dir: str = "reuse",
+    run_dir: str | Path | None = None,
+    use_cache: bool = False,
 ) -> list[dict]:
     pdf_file = Path(pdf_path)
     if not pdf_file.exists():
@@ -2765,9 +3963,17 @@ def split_subunits_from_plan_table(
     output_root = Path(out_dir)
     output_root.mkdir(parents=True, exist_ok=True)
 
-    run_name = build_run_directory_name(pdf_file)
-    run_dir = output_root / run_name
-    run_dir.mkdir(parents=True, exist_ok=True)
+    if run_dir is None:
+        run_dir_path = resolve_run_directory(
+            output_root,
+            pdf_file,
+            existing_run_dir=existing_run_dir,
+            create=True,
+        )
+    else:
+        run_dir_path = Path(run_dir)
+        run_dir_path.mkdir(parents=True, exist_ok=True)
+    run_dir = run_dir_path
     groups_path = run_dir / "groups.json"
 
     # --- Cache Check ---
@@ -2783,7 +3989,8 @@ def split_subunits_from_plan_table(
     cache_key = f"{CACHE_SCHEMA_VERSION}_{file_hash}_{scan_pages}_{page_offset}_{z_col}_{strategy}_{split_level}.json"
     cache_file = cache_dir / cache_key
     
-    if cache_file.exists():
+    cache_used = False
+    if use_cache and cache_file.exists():
         with cache_file.open("r", encoding="utf-8") as f:
             cdata = json.load(f)
             detected_groups = cdata["detected_groups"]
@@ -2791,6 +3998,7 @@ def split_subunits_from_plan_table(
             strategy_used = cdata["strategy_used"]
             auto_offset = cdata["auto_offset"]
             total_pages = cdata["total_pages"]
+            cache_used = True
             print("[INFO] Cache Hit: PDF structural data loaded instantly from cache.")
     else:
         pdfplumber = load_pdfplumber()
@@ -2805,14 +4013,15 @@ def split_subunits_from_plan_table(
             )
             total_pages = len(pdf_doc.pages)
             
-        with cache_file.open("w", encoding="utf-8") as f:
-            json.dump({
-                "detected_groups": detected_groups,
-                "sections": sections,
-                "strategy_used": strategy_used,
-                "auto_offset": auto_offset,
-                "total_pages": total_pages
-            }, f, ensure_ascii=False)
+        if use_cache:
+            with cache_file.open("w", encoding="utf-8") as f:
+                json.dump({
+                    "detected_groups": detected_groups,
+                    "sections": sections,
+                    "strategy_used": strategy_used,
+                    "auto_offset": auto_offset,
+                    "total_pages": total_pages
+                }, f, ensure_ascii=False)
     # --- End Cache Check ---
 
     groups = apply_split_level(detected_groups, strategy_used=strategy_used, split_level=split_level)
@@ -2837,6 +4046,8 @@ def split_subunits_from_plan_table(
                 "requested_page_offset": page_offset,
                 "auto_page_offset": auto_offset,
                 "effective_page_offset": page_offset + auto_offset,
+                "cache_enabled": use_cache,
+                "cache_used": cache_used,
                 "sections": sections,
                 "detected_groups": detected_groups,
                 "groups": groups,
@@ -2877,6 +4088,17 @@ def build_argument_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--pdf", required=True, help="Input PDF path")
     parser.add_argument("--out-dir", default="output", help="Output folder")
+    parser.add_argument(
+        "--existing-run-dir",
+        default="reuse",
+        choices=("reuse", "replace", "suffix"),
+        help="When the PDF-named output folder already exists: reuse it, replace it, or create a suffixed folder",
+    )
+    parser.add_argument(
+        "--use-cache",
+        action="store_true",
+        help="Reuse previously saved structural analysis from output/.cache when available",
+    )
     parser.add_argument(
         "--dry-run",
         action="store_true",
@@ -2935,6 +4157,8 @@ def main() -> None:
         z_col=args.z_col,
         strategy=strategy,
         split_level=args.split_level,
+        existing_run_dir=args.existing_run_dir,
+        use_cache=args.use_cache,
     )
 
     print(f"[OK] detected {len(groups)} groups")

@@ -25,8 +25,13 @@ Use the app like this:
 1. Select a teacher-guide PDF.
 2. Choose an output folder.
 3. Choose `단원 단위만 분할` or `차시/세부 제재까지 분할`.
-4. Click `미리보기` to inspect detected ranges.
-5. Click `분할 저장` to create split PDFs.
+4. For `분할 저장`, choose how to handle an existing same-name output folder:
+   - delete the old folder and recreate it
+   - create a new suffixed folder such as `(1)`
+5. Choose whether to reuse the previous structural analysis cache.
+   - By default the desktop app re-analyzes the PDF fresh each time.
+6. Click `미리보기` to inspect detected ranges.
+7. Click `분할 저장` to create split PDFs.
 
 ## Run from the command line
 
@@ -40,6 +45,24 @@ Create split PDFs:
 
 ```bash
 python scripts/split_subunits_from_plan_table.py --pdf "teacher-guide.pdf" --out-dir "output" --save
+```
+
+Create split PDFs and replace an existing same-name run folder:
+
+```bash
+python scripts/split_subunits_from_plan_table.py --pdf "teacher-guide.pdf" --out-dir "output" --save --existing-run-dir replace
+```
+
+Create split PDFs in a suffixed folder when the base folder already exists:
+
+```bash
+python scripts/split_subunits_from_plan_table.py --pdf "teacher-guide.pdf" --out-dir "output" --save --existing-run-dir suffix
+```
+
+Opt in to reusing structural analysis cache:
+
+```bash
+python scripts/split_subunits_from_plan_table.py --pdf "teacher-guide.pdf" --out-dir "output" --use-cache --dry-run
 ```
 
 Request more detailed splits:
@@ -61,6 +84,8 @@ python scripts/split_subunits_from_plan_table.py --pdf "teacher-guide.pdf" --out
 - `--scan-pages`: how many front pages to inspect for TOC or lesson-plan structure
 - `--page-offset`: manual adjustment after automatic page calibration
 - `--z-col`: force the guide-page column index when plan-table auto detection is wrong
+- `--existing-run-dir`: `reuse`, `replace`, or `suffix` for handling an existing same-name output folder
+- `--use-cache`: reuse `output/.cache` analysis data instead of reanalyzing the PDF from scratch
 
 `overview` is useful for guide PDFs that start directly with unit pages and mark new units with headings such as `단원 개관` or `제재 개관`.
 

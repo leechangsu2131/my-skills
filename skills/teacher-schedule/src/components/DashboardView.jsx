@@ -1,138 +1,63 @@
-import { getSubjectStyle } from "../lib/constants";
+import { getSubjectStyle, subjectMatches } from "../lib/constants";
+import {
+    formatPlacement,
+    getActionKey,
+    getBridgeRow,
+    getLesson,
+    getPdfPath,
+    getRecordKey,
+    getSubject,
+    getTitle,
+    getUnit,
+    isDoneItem,
+} from "../lib/lessonFields";
+import { formatKoreanDate } from "../lib/dateUtils";
 
 const PDF_BASE = "http://127.0.0.1:5000/api/pdf";
 
-function getRecordKey(item) {
-    return item?.lesson_id || item?._record_key || item?._row || "";
+function viewById(views, id) {
+    return views.find((view) => view.id === id);
 }
 
-function getActionKey(item) {
-    return item?._bridge_row || getRecordKey(item);
-}
+function ActivityPanel({ historyView, subjectFilter }) {
+    const logs = (historyView?.data || []).filter((log) => subjectMatches(log.subject, subjectFilter));
 
-function getTitle(item) {
-    return item?.["수업내용"] || item?.title || "제목 없음";
-}
-
-function getUnit(item) {
-    return item?.["대단원"] || item?.unit || "";
-}
-
-function getLesson(item) {
-    return item?.["차시"] || item?.lesson || "";
-}
-
-function getPlannedDate(item) {
-    return item?.["계획일"] || item?.slot_date || "";
-}
-
-function getPlannedPeriod(item) {
-    return item?.["계획교시"] || item?.slot_period || "";
-}
-
-function getPdfPath(item) {
-    return item?.["pdf파일"] || item?.pdf_file || "";
-}
-
-function formatSchedule(item) {
-    const plannedDate = getPlannedDate(item);
-    const plannedPeriod = getPlannedPeriod(item);
-    if (plannedDate && plannedPeriod) {
-        return `${plannedDate} · ${plannedPeriod}교시`;
-    }
-    if (plannedDate) {
-        return plannedDate;
-    }
-    if (plannedPeriod) {
-        return `${plannedPeriod}교시`;
-    }
-    return "계획 미정";
-}
-
-function ProgressHero({ progressView }) {
-    const entries = Object.values(progressView?.data || {});
-    const totalLessons = entries.reduce((sum, item) => sum + Number(item?.["전체"] || 0), 0);
-    const doneLessons = entries.reduce((sum, item) => sum + Number(item?.["완료"] || 0), 0);
-    const percentage = totalLessons === 0 ? 0 : Math.round((doneLessons / totalLessons) * 100);
-
-    return (
-        <section className="rounded-[32px] border border-stone-200 bg-[linear-gradient(135deg,#1c1917_0%,#44403c_55%,#78716c_100%)] p-6 text-white shadow-xl shadow-stone-900/10">
-            <div className="grid gap-6 lg:grid-cols-[1.3fr_0.9fr] lg:items-end">
-                <div>
-                    <div className="text-[11px] font-bold uppercase tracking-[0.28em] text-stone-300">
-                        Progress Board
-                    </div>
-                    <h2 className="mt-3 text-3xl font-black tracking-tight">
-                        진도 흐름을 과목별로 확인합니다.
-                    </h2>
-                    <p className="mt-3 max-w-2xl text-sm leading-6 text-stone-200">
-                        여기서는 무엇을 얼마나 진행했는지와 다음 차시가 어디에 놓여 있는지를 봅니다.
-                        실제 날짜와 교시는 수업배치 탭에서 다룹니다.
-                    </p>
-                </div>
-
-                <div className="rounded-[28px] border border-white/10 bg-white/10 p-5 backdrop-blur">
-                    <div className="flex items-end justify-between gap-4">
-                        <div>
-                            <div className="text-xs font-bold uppercase tracking-[0.22em] text-stone-300">
-                                Completion
-                            </div>
-                            <div className="mt-2 text-5xl font-black tracking-tight">
-                                {percentage}
-                                <span className="ml-1 text-2xl text-stone-300">%</span>
-                            </div>
-                        </div>
-                        <div className="text-right text-sm text-stone-200">
-                            <div>{doneLessons}차시 완료</div>
-                            <div>{Math.max(totalLessons - doneLessons, 0)}차시 남음</div>
-                        </div>
-                    </div>
-                    <div className="mt-5 h-3 overflow-hidden rounded-full bg-white/15">
-                        <div
-                            className="h-full rounded-full bg-[linear-gradient(90deg,#fde68a_0%,#f97316_100%)]"
-                            style={{ width: `${percentage}%` }}
-                        />
-                    </div>
-                </div>
-            </div>
-        </section>
-    );
-}
-
-function ActivityPanel({ historyView }) {
-    const logs = historyView?.data || [];
     if (logs.length === 0) {
         return (
-            <section className="rounded-[28px] border border-stone-200 bg-white/85 p-5 shadow-sm">
-                <div className="text-sm font-bold text-stone-900">최근 활동</div>
-                <p className="mt-3 text-sm text-stone-500">기록된 활동이 아직 없습니다.</p>
+            <section className="rounded-[28px] border border-slate-200 bg-white/85 p-5 shadow-sm">
+                <div className="text-sm font-bold text-slate-900">최근 활동</div>
+                <p className="mt-3 text-sm text-slate-500">
+                    {subjectFilter
+                        ? `${subjectFilter} 관련 최근 활동이 아직 없습니다.`
+                        : "표시할 최근 활동이 아직 없습니다."}
+                </p>
             </section>
         );
     }
 
     return (
-        <section className="rounded-[28px] border border-stone-200 bg-white/85 p-5 shadow-sm">
+        <section className="rounded-[28px] border border-slate-200 bg-white/85 p-5 shadow-sm">
             <div className="flex items-center justify-between">
-                <h3 className="text-sm font-black tracking-[0.2em] text-stone-400">RECENT ACTIVITY</h3>
-                <span className="rounded-full bg-stone-100 px-3 py-1 text-xs font-bold text-stone-500">
+                <h3 className="text-sm font-black tracking-[0.2em] text-slate-400">RECENT ACTIVITY</h3>
+                <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-500">
                     {logs.length}건
                 </span>
             </div>
             <div className="mt-5 space-y-4">
-                {logs.slice(0, 6).map((log, index) => (
+                {logs.slice(0, 8).map((log, index) => (
                     <div key={`${log.timestamp}-${index}`} className="flex gap-3">
-                        <div className="mt-1 h-2.5 w-2.5 rounded-full bg-amber-500" />
+                        <div className="mt-1 h-2.5 w-2.5 rounded-full bg-sky-500" />
                         <div className="min-w-0 flex-1">
                             <div className="flex items-center justify-between gap-3">
-                                <div className="truncate text-sm font-bold text-stone-900">
-                                    {log.subject || "과목 미지정"}
+                                <div className="truncate text-sm font-bold text-slate-900">
+                                    {log.subject || "과목 미정"}
                                 </div>
-                                <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-stone-400">
+                                <div className="text-[11px] font-black uppercase tracking-[0.18em] text-slate-400">
                                     {log.action}
                                 </div>
                             </div>
-                            <div className="mt-1 text-sm text-stone-500">{log.details}</div>
-                            <div className="mt-1 text-xs text-stone-400">
+                            <div className="mt-1 text-sm text-slate-500">{log.details}</div>
+                            <div className="mt-1 text-xs text-slate-400">
                                 {new Date(log.timestamp).toLocaleString("ko-KR")}
                             </div>
                         </div>
@@ -143,55 +68,45 @@ function ActivityPanel({ historyView }) {
     );
 }
 
-function UnitMeters({ unitData, style }) {
-    if (!Array.isArray(unitData) || unitData.length === 0) {
-        return null;
-    }
+function TimelineRow({ item }) {
+    const subject = getSubject(item);
+    const style = getSubjectStyle(subject);
+    const done = isDoneItem(item);
 
     return (
-        <div className="mt-5 border-t border-stone-100 pt-4">
-            <div className="mb-3 text-[11px] font-bold uppercase tracking-[0.24em] text-stone-400">
-                Unit Progress
-            </div>
-            <div className="space-y-3">
-                {unitData.map((unit) => (
-                    <div key={unit.name} className="rounded-2xl border border-stone-100 bg-stone-50/70 p-3">
-                        <div className="flex items-center justify-between gap-3">
-                            <div className="truncate text-sm font-semibold text-stone-700">{unit.name}</div>
-                            <div className={`rounded-full px-2 py-1 text-[11px] font-bold ${style.bg} ${style.accent}`}>
-                                {unit.completed}/{unit.total}
-                            </div>
-                        </div>
-                        <div className="mt-3 flex gap-1">
-                            {unit.lessons.map((lesson, index) => (
-                                <div
-                                    key={`${unit.name}-${index}`}
-                                    className="h-2 flex-1 rounded-full bg-stone-200"
-                                    style={lesson?.["실행여부"] ? { backgroundColor: style.fill } : undefined}
-                                    title={`${lesson?.["차시"] || ""}차시 ${lesson?.["수업내용"] || ""}`}
-                                />
-                            ))}
-                        </div>
+        <div className="rounded-2xl border border-slate-100 bg-slate-50/80 px-4 py-3">
+            <div className="flex items-center justify-between gap-3">
+                <div className="min-w-0">
+                    <div className="truncate text-sm font-bold text-slate-900">{getTitle(item)}</div>
+                    <div className="mt-1 text-xs text-slate-500">
+                        {formatPlacement(item)}
+                        {getUnit(item) ? ` · ${getUnit(item)}` : ""}
                     </div>
-                ))}
+                </div>
+                <div className={`rounded-full px-3 py-1 text-[11px] font-bold ${style.bg} ${done ? "text-slate-500" : style.accent}`}>
+                    {done ? "완료" : `${getLesson(item) || "-"}차시`}
+                </div>
             </div>
         </div>
     );
 }
 
-function SubjectCard({ subject, payload, progress, unitData, markDone, marking }) {
+function SubjectCard({ subject, payload, markDone, pullLessonForward, extendSchedule, marking }) {
     const style = getSubjectStyle(subject);
     const nextItem = payload?.next || null;
-    const recentItem = payload?.recent || null;
-    const actionKey = getActionKey(nextItem);
+    const upcoming = payload?.upcoming || [];
+    const recent = payload?.recent || [];
+    const completedCount = payload?.completed_count || 0;
+    const totalCount = payload?.total_count || 0;
+    const bridgeRow = getBridgeRow(nextItem);
     const recordKey = getRecordKey(nextItem);
-    const isProcessing = Boolean(nextItem) && marking === actionKey;
-    const progressText = progress?.["진도율"] || "0.0%";
-    const completed = Number(progress?.["완료"] || 0);
-    const total = Number(progress?.["전체"] || 0);
+    const rowNumber = nextItem?.row_number ?? nextItem?._row ?? null;
+    const doneKey = `done-${bridgeRow || recordKey}`;
+    const pullKey = `pull-${bridgeRow}`;
+    const extendKey = `extend-${subject}-${rowNumber || "next"}`;
 
     return (
-        <article className="rounded-[30px] border border-stone-200 bg-white/90 p-5 shadow-sm shadow-stone-200/40">
+        <article className="rounded-[30px] border border-slate-200 bg-white/90 p-5 shadow-sm shadow-slate-200/40">
             <div className="flex items-start justify-between gap-4">
                 <div className="flex items-center gap-3">
                     <div className={`flex h-14 w-14 items-center justify-center rounded-2xl text-2xl ${style.bg} ${style.accent}`}>
@@ -199,109 +114,190 @@ function SubjectCard({ subject, payload, progress, unitData, markDone, marking }
                     </div>
                     <div>
                         <h3 className={`text-lg font-black ${style.accent}`}>{subject}</h3>
-                        <p className="text-sm text-stone-500">
-                            {completed}/{total}차시 완료
+                        <p className="text-sm text-slate-500">
+                            {completedCount}/{totalCount}개 완료
                         </p>
                     </div>
                 </div>
                 <div className={`rounded-full px-3 py-1 text-xs font-bold ${style.bg} ${style.accent}`}>
-                    {progressText}
+                    {upcoming.length}개 남음
                 </div>
             </div>
 
-            <div className="mt-4 h-2 overflow-hidden rounded-full bg-stone-100">
-                <div
-                    className="h-full rounded-full"
-                    style={{ width: progressText, backgroundColor: style.fill }}
-                />
-            </div>
-
-            <div className="mt-5 rounded-[24px] border border-stone-100 bg-stone-50/80 p-4">
+            <div className="mt-5 rounded-[24px] border border-slate-100 bg-slate-50/80 p-4">
                 <div className="flex items-center justify-between gap-3">
-                    <div className="text-xs font-bold uppercase tracking-[0.22em] text-stone-400">
-                        다음 수업
-                    </div>
+                    <div className="text-xs font-black uppercase tracking-[0.22em] text-slate-400">다음 수업</div>
                     {nextItem && (
-                        <div className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-stone-500 shadow-sm">
-                            {formatSchedule(nextItem)}
+                        <div className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-slate-500 shadow-sm">
+                            {formatPlacement(nextItem)}
                         </div>
                     )}
                 </div>
 
                 {nextItem ? (
                     <>
-                        <div className="mt-3 text-lg font-bold leading-snug text-stone-900">
-                            {getTitle(nextItem)}
-                        </div>
-                        <div className="mt-2 flex flex-wrap items-center gap-2 text-sm text-stone-500">
+                        <div className="mt-3 text-lg font-bold leading-snug text-slate-900">{getTitle(nextItem)}</div>
+                        <div className="mt-2 flex flex-wrap items-center gap-2 text-sm text-slate-500">
+                            <span className="rounded-full bg-white px-3 py-1 shadow-sm">{getLesson(nextItem) || "-"}차시</span>
+                            {getUnit(nextItem) && <span className="rounded-full bg-white px-3 py-1 shadow-sm">{getUnit(nextItem)}</span>}
                             <span className="rounded-full bg-white px-3 py-1 shadow-sm">
-                                {getLesson(nextItem)}차시
+                                {nextItem.planned_date ? formatKoreanDate(nextItem.planned_date) : "날짜 미정"}
                             </span>
-                            {getUnit(nextItem) && (
-                                <span className="rounded-full bg-white px-3 py-1 shadow-sm">
-                                    {getUnit(nextItem)}
-                                </span>
-                            )}
                         </div>
                         <div className="mt-4 flex flex-wrap gap-2">
-                            {getPdfPath(nextItem) && (
+                            {getPdfPath(nextItem) && recordKey && (
                                 <a
                                     href={`${PDF_BASE}/${encodeURIComponent(recordKey)}`}
                                     target="_blank"
                                     rel="noreferrer"
-                                    className="inline-flex items-center justify-center rounded-2xl border border-stone-200 bg-white px-4 py-2 text-sm font-bold text-stone-700 transition hover:bg-stone-50"
+                                    className="inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-700 transition hover:bg-slate-50"
                                 >
                                     PDF 보기
                                 </a>
                             )}
                             <button
                                 className={`inline-flex items-center justify-center rounded-2xl px-4 py-2 text-sm font-bold text-white transition ${
-                                    isProcessing ? "cursor-not-allowed bg-stone-300" : "bg-stone-900 hover:-translate-y-0.5"
+                                    marking === doneKey
+                                        ? "cursor-not-allowed bg-slate-300"
+                                        : "bg-slate-950 hover:-translate-y-0.5"
                                 }`}
                                 onClick={() => markDone(nextItem)}
-                                disabled={isProcessing}
+                                disabled={marking === doneKey}
+                                type="button"
                             >
-                                {isProcessing ? "처리 중..." : "이 수업 완료"}
+                                {marking === doneKey ? "처리 중..." : "완료 처리"}
+                            </button>
+                            {bridgeRow && (
+                                <button
+                                    className={`inline-flex items-center justify-center rounded-2xl border px-4 py-2 text-sm font-bold transition ${
+                                        marking === pullKey
+                                            ? "cursor-not-allowed border-slate-200 bg-slate-100 text-slate-400"
+                                            : "border-slate-200 bg-slate-50 text-slate-700 hover:bg-white"
+                                    }`}
+                                    onClick={() => pullLessonForward(nextItem)}
+                                    disabled={marking === pullKey}
+                                    type="button"
+                                >
+                                    {marking === pullKey ? "조정 중..." : "다음 차시 당겨오기"}
+                                </button>
+                            )}
+                            <button
+                                className={`inline-flex items-center justify-center rounded-2xl border px-4 py-2 text-sm font-bold transition ${
+                                    marking === extendKey
+                                        ? "cursor-not-allowed border-slate-200 bg-slate-100 text-slate-400"
+                                        : "border-slate-200 bg-slate-50 text-slate-700 hover:bg-white"
+                                }`}
+                                onClick={() => extendSchedule(subject, rowNumber)}
+                                disabled={marking === extendKey}
+                                type="button"
+                            >
+                                {marking === extendKey ? "연장 중..." : "이 수업 한 차시 더"}
                             </button>
                         </div>
                     </>
                 ) : (
-                    <div className="mt-3 rounded-2xl border border-dashed border-stone-200 bg-white px-4 py-6 text-center text-sm font-semibold text-stone-400">
-                        배치된 다음 수업이 없습니다.
+                    <div className="mt-3 rounded-2xl border border-dashed border-slate-200 bg-white px-4 py-6 text-center text-sm font-semibold text-slate-400">
+                        현재 배치된 다음 수업이 없습니다.
                     </div>
                 )}
             </div>
 
-            {recentItem && (
-                <div className="mt-4 rounded-2xl bg-amber-50 px-4 py-3 text-sm text-amber-900">
-                    <span className="font-bold">최근 완료:</span> {getTitle(recentItem)}
-                </div>
-            )}
-
-            <UnitMeters unitData={unitData} style={style} />
+            <div className="mt-5 grid gap-4 xl:grid-cols-2">
+                <section>
+                    <div className="mb-3 text-[11px] font-black uppercase tracking-[0.24em] text-slate-400">UPCOMING</div>
+                    <div className="space-y-3">
+                        {upcoming.length === 0 ? (
+                            <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-6 text-center text-sm font-semibold text-slate-400">
+                                남은 수업이 없습니다.
+                            </div>
+                        ) : (
+                            upcoming.slice(0, 5).map((item) => (
+                                <TimelineRow key={`${getActionKey(item)}-${item.planned_date}`} item={item} />
+                            ))
+                        )}
+                    </div>
+                </section>
+                <section>
+                    <div className="mb-3 text-[11px] font-black uppercase tracking-[0.24em] text-slate-400">RECENTLY DONE</div>
+                    <div className="space-y-3">
+                        {recent.length === 0 ? (
+                            <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-6 text-center text-sm font-semibold text-slate-400">
+                                아직 완료한 수업 기록이 없습니다.
+                            </div>
+                        ) : (
+                            recent.map((item) => (
+                                <TimelineRow key={`${getActionKey(item)}-${item.planned_date}`} item={item} />
+                            ))
+                        )}
+                    </div>
+                </section>
+            </div>
         </article>
     );
 }
 
-export function DashboardView({ views, markDone, marking }) {
-    const progressView = views.find((view) => view.id === "progress");
-    const nextView = views.find((view) => view.id === "next");
-    const unitView = views.find((view) => view.id === "unit_progress");
-    const historyView = views.find((view) => view.id === "history");
+export function DashboardView({
+    views,
+    markDone,
+    pullLessonForward,
+    extendSchedule,
+    marking,
+    subjectFilter,
+}) {
+    const historyView = viewById(views, "history");
+    const timelineView = viewById(views, "subject_timeline");
+    const timelineData = timelineView?.data || {};
+    const subjects = Object.keys(timelineData).filter((subject) => subjectMatches(subject, subjectFilter));
 
-    if (!progressView || !nextView) {
+    const totals = subjects.reduce(
+        (accumulator, subject) => {
+            const payload = timelineData[subject] || {};
+            accumulator.total += payload.total_count || 0;
+            accumulator.completed += payload.completed_count || 0;
+            accumulator.upcoming += (payload.upcoming || []).length;
+            return accumulator;
+        },
+        { total: 0, completed: 0, upcoming: 0 },
+    );
+
+    if (subjects.length === 0) {
         return (
-            <div className="rounded-[28px] border border-stone-200 bg-white p-8 text-center text-stone-500 shadow-sm">
-                진도 데이터를 찾지 못했습니다.
+            <div className="rounded-[28px] border border-slate-200 bg-white p-8 text-center text-slate-500 shadow-sm">
+                진도 현황 데이터를 찾지 못했습니다.
             </div>
         );
     }
 
-    const subjects = Object.keys(nextView.data || {});
-
     return (
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <ProgressHero progressView={progressView} />
+            <section className="rounded-[32px] border border-slate-200 bg-[linear-gradient(135deg,#0f172a_0%,#1e293b_55%,#334155_100%)] p-6 text-white shadow-xl shadow-slate-900/10">
+                <div className="grid gap-6 lg:grid-cols-[1.3fr_0.9fr] lg:items-end">
+                    <div>
+                        <div className="text-[11px] font-black uppercase tracking-[0.28em] text-slate-300">Timeline Board</div>
+                        <h2 className="mt-3 text-3xl font-black tracking-tight">
+                            퍼센트보다 실제 수업 흐름이 먼저 보이도록 정리했습니다.
+                        </h2>
+                        <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-200">
+                            과목별로 다음 수업이 언제인지, 앞으로 어떤 수업이 잡혀 있는지, 최근에 무엇을 마쳤는지
+                            바로 볼 수 있습니다.
+                        </p>
+                    </div>
+                    <div className="grid gap-3 sm:grid-cols-3">
+                        <div className="rounded-[24px] border border-white/10 bg-white/10 p-4 backdrop-blur">
+                            <div className="text-xs font-black uppercase tracking-[0.22em] text-slate-300">남은 수업</div>
+                            <div className="mt-2 text-4xl font-black">{totals.upcoming}</div>
+                        </div>
+                        <div className="rounded-[24px] border border-white/10 bg-white/10 p-4 backdrop-blur">
+                            <div className="text-xs font-black uppercase tracking-[0.22em] text-slate-300">완료 수업</div>
+                            <div className="mt-2 text-4xl font-black">{totals.completed}</div>
+                        </div>
+                        <div className="rounded-[24px] border border-white/10 bg-white/10 p-4 backdrop-blur">
+                            <div className="text-xs font-black uppercase tracking-[0.22em] text-slate-300">총 슬롯</div>
+                            <div className="mt-2 text-4xl font-black">{totals.total}</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
             <div className="grid gap-6 xl:grid-cols-[1.45fr_0.75fr]">
                 <section className="space-y-5">
@@ -309,16 +305,16 @@ export function DashboardView({ views, markDone, marking }) {
                         <SubjectCard
                             key={subject}
                             subject={subject}
-                            payload={nextView.data[subject]}
-                            progress={progressView.data?.[subject]}
-                            unitData={unitView?.data?.[subject]}
+                            payload={timelineData[subject]}
                             markDone={markDone}
+                            pullLessonForward={pullLessonForward}
+                            extendSchedule={extendSchedule}
                             marking={marking}
                         />
                     ))}
                 </section>
 
-                <ActivityPanel historyView={historyView} />
+                <ActivityPanel historyView={historyView} subjectFilter={subjectFilter} />
             </div>
         </div>
     );

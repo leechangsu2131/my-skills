@@ -21,7 +21,9 @@ load_dotenv()
 SHEET_ID = os.getenv("SHEET_ID")
 CREDS_PATH = os.getenv("GOOGLE_CREDENTIALS_PATH", "credentials.json")
 PDF_BASE_PATH = os.getenv("PDF_BASE_PATH", "./")
-SHEET_NAME = os.getenv("SHEET_NAME", "시트1")
+PREFERRED_PROGRESS_SHEET_NAME = os.getenv("SHEET_PROGRESS")
+LEGACY_PROGRESS_SHEET_NAME = os.getenv("SHEET_NAME", "시트1")
+SHEET_NAME = PREFERRED_PROGRESS_SHEET_NAME or LEGACY_PROGRESS_SHEET_NAME
 
 SCOPES = [
     "https://www.googleapis.com/auth/spreadsheets",
@@ -29,6 +31,7 @@ SCOPES = [
 ]
 
 COLUMN_SUBJECT = "과목"
+COLUMN_LESSON_ID = "lesson_id"
 COLUMN_DATE = "계획일"
 COLUMN_DONE = "실행여부"
 COLUMN_LESSON = "차시"
@@ -49,6 +52,31 @@ REQUIRED_COLUMNS = (
 DATE_FORMATS = ("%Y-%m-%d", "%Y/%m/%d", "%Y.%m.%d")
 EXTENSION_NOTE_PREFIX = "[연장일정:"
 EXTENSION_NOTE_PATTERN = re.compile(r"\[연장일정:([0-9,\-\s]+)\]")
+LESSON_ID_PREFIX = "lesson-"
+LESSON_ID_PATTERN = re.compile(rf"^{LESSON_ID_PREFIX}(\d+)$")
+CORRUPTED_PROGRESS_HEADER_PREFIX = (
+    "slot_date",
+    "slot_period",
+    "slot_order",
+    COLUMN_SUBJECT,
+    COLUMN_LESSON_ID,
+    "status",
+    "source",
+    "memo",
+)
+CORRUPTED_PROGRESS_COLUMN_MAP = (
+    (COLUMN_TITLE, 1),
+    (COLUMN_SUBJECT, 2),
+    (COLUMN_UNIT, 3),
+    (COLUMN_LESSON, 4),
+    (COLUMN_DATE, 5),
+    (COLUMN_DONE, 6),
+    (COLUMN_PDF, 7),
+    (COLUMN_START_PAGE, 8),
+    (COLUMN_END_PAGE, 9),
+    (COLUMN_NOTE, 10),
+    (COLUMN_LESSON_ID, 11),
+)
 
 
 class ScheduleError(Exception):
@@ -73,6 +101,29 @@ def _normalize_done_value(value):
     text = _clean_text(value)
     text = text.lstrip("'").strip()
     return text.upper()
+
+
+def _sheet_name_candidates(*names):
+    candidates = []
+    seen = set()
+    for name in names:
+        normalized = _clean_text(name)
+        if normalized and normalized not in seen:
+            seen.add(normalized)
+            candidates.append(normalized)
+    return candidates
+
+
+def _lesson_id_of(record):
+    return _clean_text(record.get(COLUMN_LESSON_ID))
+
+
+def _record_identifier(record):
+    lesson_id = _lesson_id_of(record)
+    if lesson_id:
+        return lesson_id
+    row_number = record.get("_row")
+    return str(row_number) if row_number else ""
 
 
 def _format_date(value):
@@ -131,6 +182,58 @@ def _safe_int(value, default=sys.maxsize):
         if match:
             return int(match.group(0))
         return default
+
+
+def _looks_like_corrupted_progress_headers(headers, sample_row=None):
+    normalized_headers = [_clean_text(header) for header in headers]
+    if len(normalized_headers) < 11:
+        return False
+    if tuple(normalized_headers[:4]) != CORRUPTED_PROGRESS_HEADER_PREFIX[:4]:
+        return False
+    if tuple(normalized_headers[5:8]) != ("status", "source", "memo"):
+        return False
+    if _clean_text(normalized_headers[10]) != COLUMN_LESSON_ID:
+        return False
+
+    if sample_row is None:
+        return True
+
+    expanded = list(sample_row) + [""] * max(0, len(headers) - len(sample_row))
+    if not any(_clean_text(value) for value in expanded):
+        return True
+
+    title = _clean_text(expanded[0]) if len(expanded) >= 1 else ""
+    subject = _clean_text(expanded[1]) if len(expanded) >= 2 else ""
+    lesson = _clean_text(expanded[3]) if len(expanded) >= 4 else ""
+    planned_date = _clean_text(expanded[4]) if len(expanded) >= 5 else ""
+    lesson_id = _clean_text(expanded[10]) if len(expanded) >= 11 else ""
+
+    try:
+        parsed_title = _parse_date(title, allow_blank=True)
+    except ValueError:
+        parsed_title = None
+    try:
+        parsed_planned_date = _parse_date(planned_date, allow_blank=True)
+    except ValueError:
+        parsed_planned_date = None
+
+    return (
+        bool(subject)
+        and parsed_title is None
+        and _safe_int(lesson, default=None) is not None
+        and parsed_planned_date is not None
+        and (not lesson_id or LESSON_ID_PATTERN.fullmatch(lesson_id) is not None)
+    )
+
+
+def _apply_progress_header_aliases(header_map, headers, sample_row=None):
+    if not _looks_like_corrupted_progress_headers(headers, sample_row=sample_row):
+        return header_map
+
+    for column_name, column_index in CORRUPTED_PROGRESS_COLUMN_MAP:
+        if column_index <= len(headers):
+            header_map[column_name] = column_index
+    return header_map
 
 
 def _is_done(record):
@@ -249,17 +352,69 @@ def validate_config():
         )
 
 
+def get_progress_sheet_candidates():
+    return _sheet_name_candidates(PREFERRED_PROGRESS_SHEET_NAME, LEGACY_PROGRESS_SHEET_NAME) or ["시트1"]
+
+
+def resolve_worksheet(spreadsheet, candidates, *, label):
+    last_error = None
+    for candidate in candidates:
+        try:
+            return spreadsheet.worksheet(candidate)
+        except Exception as exc:
+            if exc.__class__.__name__ != "WorksheetNotFound":
+                raise
+            last_error = exc
+
+    raise SheetFormatError(
+        f"{label} 시트를 찾을 수 없습니다. 확인한 이름: {', '.join(candidates)}"
+    ) from last_error
+
+
+def resolve_progress_worksheet(spreadsheet):
+    candidates = get_progress_sheet_candidates()
+    format_errors = []
+    last_error = None
+
+    for candidate in candidates:
+        try:
+            worksheet = spreadsheet.worksheet(candidate)
+        except Exception as exc:
+            if exc.__class__.__name__ != "WorksheetNotFound":
+                raise
+            last_error = exc
+            continue
+
+        try:
+            _build_header_map(worksheet.row_values(1), sample_row=worksheet.row_values(2))
+            return worksheet
+        except SheetFormatError as exc:
+            format_errors.append(f"{candidate}: {exc}")
+
+    if format_errors:
+        raise SheetFormatError(
+            "진도표 후보 시트를 찾았지만 형식이 맞지 않습니다. "
+            + " | ".join(format_errors)
+        )
+
+    raise SheetFormatError(
+        f"진도표 시트를 찾을 수 없습니다. 확인한 이름: {', '.join(candidates)}"
+    ) from last_error
+
+
 def get_header_map(ws):
     headers = ws.row_values(1)
-    return _build_header_map(headers)
+    return _build_header_map(headers, sample_row=ws.row_values(2))
 
 
-def _build_header_map(headers):
+def _build_header_map(headers, sample_row=None):
     header_map = {}
     for idx, header in enumerate(headers, start=1):
         normalized = _clean_text(header)
         if normalized and normalized not in header_map:
             header_map[normalized] = idx
+
+    header_map = _apply_progress_header_aliases(header_map, headers, sample_row=sample_row)
 
     if COLUMN_DONE not in header_map:
         if len(headers) >= DONE_COLUMN_FALLBACK_INDEX:
@@ -277,9 +432,19 @@ def _build_header_map(headers):
 
 
 def _validate_records(records):
+    seen_lesson_ids = {}
     for record in records:
         _planned_date(record)
         _extension_dates(record)
+        lesson_id = _lesson_id_of(record)
+        if not lesson_id:
+            continue
+        if lesson_id in seen_lesson_ids:
+            first_row = seen_lesson_ids[lesson_id]
+            raise SheetFormatError(
+                f"lesson_id가 중복되었습니다: {lesson_id} ({_row_label(first_row)}, {_row_label(record.get('_row'))})"
+            )
+        seen_lesson_ids[lesson_id] = record.get("_row")
 
 
 def _batch_update_cells(ws, updates):
@@ -298,9 +463,43 @@ def _batch_update_cells_with_option(ws, updates, *, value_input_option):
     )
 
 
-def _make_cell_update(column_index, row_index, value):
+def _worksheet_title(ws):
+    return getattr(ws, "title", SHEET_NAME)
+
+
+def _make_cell_update(column_index, row_index, value, *, worksheet_name=None):
     cell = f"{_column_letter(column_index)}{row_index}"
-    return {"range": f"{SHEET_NAME}!{cell}", "values": [[value]]}
+    target_sheet_name = worksheet_name or SHEET_NAME
+    return {"range": f"{target_sheet_name}!{cell}", "values": [[value]]}
+
+
+def _append_header_column(ws, headers, header_name):
+    if not hasattr(ws, "add_cols"):
+        raise SheetFormatError(
+            f"시트에 '{header_name}' 컬럼을 자동으로 추가할 수 없습니다. 시트에 직접 컬럼을 만든 뒤 다시 실행해 주세요."
+        )
+
+    ws.add_cols(1)
+    column_index = len(headers) + 1
+    _batch_update_cells_with_option(
+        ws,
+        [_make_cell_update(column_index, 1, header_name, worksheet_name=_worksheet_title(ws))],
+        value_input_option="RAW",
+    )
+    return column_index
+
+
+def _format_lesson_id(number):
+    width = max(4, len(str(number)))
+    return f"{LESSON_ID_PREFIX}{number:0{width}d}"
+
+
+def _next_lesson_id_number(start_number, used_ids):
+    candidate = start_number
+    while True:
+        candidate += 1
+        if _format_lesson_id(candidate) not in used_ids:
+            return candidate
 
 
 def _pending_lessons(records, subject):
@@ -342,7 +541,8 @@ def _estimate_extension_gap(records, subject, target_record, occurrence_dates):
 def _refresh_records(ws):
     records = load_all(ws)
     subjects = get_subjects(records)
-    return records, subjects
+    bridge_rows = load_bridge_rows_for_progress_ws(ws)
+    return records, subjects, bridge_rows
 
 
 def connect():
@@ -366,13 +566,14 @@ def connect():
         creds = Credentials.from_service_account_file(CREDS_PATH, scopes=SCOPES)
 
     gc = gspread.authorize(creds)
-    return gc.open_by_key(SHEET_ID).worksheet(SHEET_NAME)
+    return resolve_progress_worksheet(gc.open_by_key(SHEET_ID))
 
 
 def load_all(ws):
     values = ws.get_all_values()
     headers = values[0] if values else []
-    header_map = _build_header_map(headers)
+    sample_row = values[1] if len(values) > 1 else None
+    header_map = _build_header_map(headers, sample_row=sample_row)
     done_index = header_map[COLUMN_DONE]
 
     records = []
@@ -384,14 +585,211 @@ def load_all(ws):
             if normalized:
                 record[normalized] = expanded[col_index]
 
+        for column_name, column_index in header_map.items():
+            if column_index <= len(expanded):
+                record[column_name] = expanded[column_index - 1]
+
         done_value = expanded[done_index - 1] if len(expanded) >= done_index else ""
         record[COLUMN_DONE] = done_value
         record["_done_value"] = done_value
+        record[COLUMN_LESSON_ID] = _clean_text(record.get(COLUMN_LESSON_ID, ""))
         record["_row"] = row_number
+        record["_record_key"] = _record_identifier(record)
         records.append(record)
 
     _validate_records(records)
     return records
+
+
+def _bridge_row_sort_key(row):
+    parsed_date = _parse_date(row.get("slot_date"), allow_blank=True) or date.max
+    return (
+        parsed_date,
+        _safe_int(row.get("slot_period")),
+        _safe_int(row.get("slot_order")),
+        _clean_text(row.get(COLUMN_SUBJECT)),
+        _clean_text(row.get(COLUMN_LESSON_ID)),
+    )
+
+
+def _bridge_status(row):
+    return _clean_text(row.get("status")).casefold()
+
+
+def _is_bridge_done(row):
+    return _bridge_status(row) == "done"
+
+
+def _is_bridge_planned(row):
+    return _bridge_status(row) in {"", "planned"}
+
+
+def _record_with_bridge_row(record, bridge_row):
+    enriched = dict(record)
+    enriched[COLUMN_DATE] = _clean_text(bridge_row.get("slot_date"))
+    enriched["계획교시"] = _clean_text(bridge_row.get("slot_period"))
+    enriched["slot_date"] = _clean_text(bridge_row.get("slot_date"))
+    enriched["slot_period"] = _clean_text(bridge_row.get("slot_period"))
+    enriched["slot_order"] = _clean_text(bridge_row.get("slot_order"))
+    enriched["status"] = _clean_text(bridge_row.get("status"))
+    enriched["source"] = _clean_text(bridge_row.get("source"))
+    enriched["memo"] = _clean_text(bridge_row.get("memo"))
+    enriched["_bridge_row"] = bridge_row.get("_row")
+    return enriched
+
+
+def _bridge_rows_for_records(records, bridge_rows, *, subject=None, include_done=False, start_date=None, end_date=None):
+    records_by_lesson_id = {
+        _lesson_id_of(record): record
+        for record in records
+        if _lesson_id_of(record)
+    }
+    matched = []
+    for bridge_row in sorted(bridge_rows, key=_bridge_row_sort_key):
+        if not include_done and not _is_bridge_planned(bridge_row):
+            continue
+
+        parsed_date = _parse_date(bridge_row.get("slot_date"), allow_blank=True)
+        if parsed_date is None:
+            continue
+        if start_date and parsed_date < start_date:
+            continue
+        if end_date and parsed_date > end_date:
+            continue
+
+        bridge_subject = _clean_text(bridge_row.get(COLUMN_SUBJECT))
+        if subject and bridge_subject != subject:
+            continue
+
+        lesson_id = _clean_text(bridge_row.get(COLUMN_LESSON_ID))
+        record = records_by_lesson_id.get(lesson_id)
+        if not record:
+            continue
+        matched.append(_record_with_bridge_row(record, bridge_row))
+    return matched
+
+
+def _load_bridge_support(progress_ws):
+    if progress_ws is None:
+        return None
+
+    spreadsheet = getattr(progress_ws, "spreadsheet", None)
+    if spreadsheet is None or not hasattr(spreadsheet, "worksheet"):
+        return None
+
+    try:
+        import bridge_sheet
+    except Exception:
+        return None
+
+    if _clean_text(getattr(progress_ws, "title", "")) == _clean_text(bridge_sheet.BRIDGE_SHEET_NAME):
+        return None
+
+    try:
+        bridge_ws = spreadsheet.worksheet(bridge_sheet.BRIDGE_SHEET_NAME)
+    except Exception as exc:
+        if exc.__class__.__name__ == "WorksheetNotFound":
+            return None
+        raise
+
+    return {
+        "module": bridge_sheet,
+        "worksheet": bridge_ws,
+        "rows": bridge_sheet.load_bridge_rows(bridge_ws),
+    }
+
+
+def load_bridge_rows_for_progress_ws(progress_ws):
+    support = _load_bridge_support(progress_ws)
+    return list(support["rows"]) if support is not None else None
+
+
+def ensure_lesson_ids(ws):
+    values = ws.get_all_values()
+    headers = values[0] if values else []
+    header_map = _build_header_map(headers)
+
+    created_column = False
+    lesson_id_column = header_map.get(COLUMN_LESSON_ID)
+    if lesson_id_column is None:
+        lesson_id_column = _append_header_column(ws, headers, COLUMN_LESSON_ID)
+        created_column = True
+
+    records = load_all(ws)
+    used_ids = {
+        lesson_id
+        for record in records
+        if (lesson_id := _lesson_id_of(record))
+    }
+    used_numbers = [
+        int(match.group(1))
+        for lesson_id in used_ids
+        if (match := LESSON_ID_PATTERN.fullmatch(lesson_id))
+    ]
+    next_number = max(used_numbers, default=0)
+
+    updates = []
+    assigned = []
+    for record in records:
+        if _lesson_id_of(record):
+            continue
+
+        next_number = _next_lesson_id_number(next_number, used_ids)
+        lesson_id = _format_lesson_id(next_number)
+        used_ids.add(lesson_id)
+        updates.append(
+            _make_cell_update(
+                lesson_id_column,
+                record["_row"],
+                lesson_id,
+                worksheet_name=_worksheet_title(ws),
+            )
+        )
+        assigned.append(
+            {
+                "row": record["_row"],
+                "lesson_id": lesson_id,
+                "title": record.get(COLUMN_TITLE, ""),
+            }
+        )
+
+    if updates:
+        _batch_update_cells(ws, updates)
+
+    if created_column and assigned:
+        message = f"lesson_id 컬럼을 만들고 {len(assigned)}개 행에 ID를 채웠습니다."
+    elif created_column:
+        message = "lesson_id 컬럼을 만들었고, 기존 행에는 이미 모두 ID가 있었습니다."
+    elif assigned:
+        message = f"누락된 lesson_id {len(assigned)}개를 채웠습니다."
+    else:
+        message = "모든 행에 lesson_id가 이미 있어 변경할 내용이 없습니다."
+
+    return {
+        "created_column": created_column,
+        "updated": len(assigned),
+        "assigned": assigned,
+        "message": message,
+    }
+
+
+def find_record_by_key(records, record_key):
+    normalized_key = _clean_text(record_key)
+    if not normalized_key:
+        return None
+
+    matched_by_id = next(
+        (record for record in records if _lesson_id_of(record) == normalized_key),
+        None,
+    )
+    if matched_by_id:
+        return matched_by_id
+
+    try:
+        row_number = int(normalized_key)
+    except ValueError:
+        return None
+    return next((record for record in records if record.get("_row") == row_number), None)
 
 
 def get_subjects(records):
@@ -405,10 +803,17 @@ def get_subjects(records):
     return subjects
 
 
-def get_schedule_by_date(records, target_date):
+def get_schedule_by_date(records, target_date, bridge_rows=None):
     target_date = _coerce_date(target_date, field_name="조회 날짜")
     if target_date is None:
         return []
+    if bridge_rows is not None:
+        return _bridge_rows_for_records(
+            records,
+            bridge_rows,
+            start_date=target_date,
+            end_date=target_date,
+        )
 
     lessons = [
         record
@@ -419,7 +824,11 @@ def get_schedule_by_date(records, target_date):
     return sorted(lessons, key=_record_sort_key)
 
 
-def get_next_class(records, subject):
+def get_next_class(records, subject, bridge_rows=None):
+    subject = _clean_text(subject)
+    if bridge_rows is not None:
+        matched = _bridge_rows_for_records(records, bridge_rows, subject=subject)
+        return matched[0] if matched else None
     scheduled_pending = [
         record
         for record in _pending_lessons(records, subject)
@@ -442,12 +851,19 @@ def get_progress(records, subject):
     }
 
 
-def get_remaining_week_lessons(records, start_date=None):
+def get_remaining_week_lessons(records, start_date=None, bridge_rows=None):
     start_date = _coerce_date(start_date, field_name="조회 날짜") or date.today()
     if start_date.weekday() > 4:
         return []
 
     end_date = start_date + timedelta(days=4 - start_date.weekday())
+    if bridge_rows is not None:
+        return _bridge_rows_for_records(
+            records,
+            bridge_rows,
+            start_date=start_date,
+            end_date=end_date,
+        )
     lessons = [
         record
         for record in records
@@ -545,10 +961,257 @@ def plan_lesson_extension(records, subject, row_number=None, extra_slots=1):
     }
 
 
-def mark_done(ws, records, subject, target_date=None):
+def _legacy_mark_done_via_bridge(ws, records, subject, target_date=None, record_key=None, bridge_support=None):
+    subject = _clean_text(subject)
+    target_date = _coerce_date(target_date, field_name="?꾨즺 ?좎쭨")
+    bridge_support = _load_bridge_support(ws)
+    if bridge_support and bridge_support["rows"]:
+        bridge_result = _mark_done_via_bridge(
+            ws,
+            records,
+            subject,
+            target_date=target_date,
+            record_key=record_key,
+            bridge_support=bridge_support,
+        )
+        if bridge_result is not None:
+            return bridge_result
+    bridge_support = _load_bridge_support(ws)
+    if bridge_support and bridge_support["rows"]:
+        bridge_result = _mark_done_via_bridge(
+            ws,
+            records,
+            subject,
+            target_date=target_date,
+            record_key=record_key,
+            bridge_support=bridge_support,
+        )
+        if bridge_result is not None:
+            return bridge_result
+    record_key = _clean_text(record_key)
+
+    if record_key:
+        target_record = find_record_by_key(records, record_key)
+        candidates = [target_record] if target_record else []
+    elif target_date:
+        candidates = [
+            record
+            for record in get_schedule_by_date(records, target_date, bridge_rows=bridge_support["rows"])
+            if _subject_of(record) == subject
+        ]
+    else:
+        next_class = get_next_class(records, subject, bridge_rows=bridge_support["rows"])
+        candidates = [next_class] if next_class else []
+
+    lesson_ids = {
+        _lesson_id_of(record)
+        for record in candidates
+        if record and _lesson_id_of(record)
+    }
+    if not lesson_ids:
+        return None
+
+    updated_bridge_rows = 0
+    for bridge_row in bridge_support["rows"]:
+        if _clean_text(bridge_row.get(COLUMN_LESSON_ID)) in lesson_ids and not _is_bridge_done(bridge_row):
+            bridge_row["status"] = "done"
+            updated_bridge_rows += 1
+
+    if updated_bridge_rows == 0:
+        return None
+
+    done_column = get_header_map(ws)[COLUMN_DONE]
+    worksheet_name = _worksheet_title(ws)
+    progress_updates = [
+        _make_cell_update(done_column, record["_row"], True, worksheet_name=worksheet_name)
+        for record in records
+        if _lesson_id_of(record) in lesson_ids and not _is_done(record)
+    ]
+
+    _rewrite_bridge_sheet(ws, records, bridge_support)
+    _batch_update_cells_with_option(ws, progress_updates, value_input_option="USER_ENTERED")
+
+    return {
+        "updated": len(lesson_ids),
+        "rows": [record["_row"] for record in records if _lesson_id_of(record) in lesson_ids],
+        "message": f"{len(lesson_ids)}媛??섏뾽???꾨즺 泥섎━?덉뒿?덈떎.",
+    }
+
+
+def _legacy_push_schedule_via_bridge(ws, records, subject, days, from_date=None, bridge_support=None):
+    subject = _clean_text(subject)
+    days = _coerce_days(days)
+    from_date = _coerce_date(from_date, field_name="湲곗? ?좎쭨")
+    bridge_support = _load_bridge_support(ws)
+    if bridge_support and bridge_support["rows"]:
+        bridge_result = _push_schedule_via_bridge(
+            ws,
+            records,
+            subject,
+            days,
+            from_date=from_date,
+            bridge_support=bridge_support,
+        )
+        if bridge_result is not None:
+            return bridge_result
+    bridge_support = _load_bridge_support(ws)
+    if bridge_support and bridge_support["rows"]:
+        bridge_result = _push_schedule_via_bridge(
+            ws,
+            records,
+            subject,
+            days,
+            from_date=from_date,
+            bridge_support=bridge_support,
+        )
+        if bridge_result is not None:
+            return bridge_result
+    delta = timedelta(days=days)
+
+    updated_rows = []
+    for bridge_row in bridge_support["rows"]:
+        if not _is_bridge_planned(bridge_row):
+            continue
+        if _clean_text(bridge_row.get(COLUMN_SUBJECT)) != subject:
+            continue
+        planned = _parse_date(bridge_row.get("slot_date"), allow_blank=True)
+        if planned is None:
+            continue
+        if from_date and planned < from_date:
+            continue
+        bridge_row["slot_date"] = _format_date(planned + delta)
+        updated_rows.append(bridge_row)
+
+    if not updated_rows:
+        return None
+
+    _rewrite_bridge_sheet(ws, records, bridge_support)
+    return {
+        "updated": len(updated_rows),
+        "rows": [row.get("_row") for row in updated_rows if row.get("_row")],
+        "message": f"[{subject}] {len(updated_rows)}媛??섏뾽??{days}??諛?덉뒿?덈떎.",
+    }
+
+
+def _generate_future_bridge_slots(subject_rows, extra_slots):
+    if extra_slots < 1:
+        return []
+
+    sorted_rows = sorted(subject_rows, key=_bridge_row_sort_key)
+    parsed_dates = [
+        _parse_date(row.get("slot_date"), allow_blank=True)
+        for row in sorted_rows
+    ]
+    parsed_dates = [parsed for parsed in parsed_dates if parsed is not None]
+    gap = timedelta(days=7)
+    for earlier, later in zip(parsed_dates, parsed_dates[1:]):
+        if later > earlier:
+            gap = later - earlier
+
+    last_row = sorted_rows[-1]
+    last_date = _parse_date(last_row.get("slot_date"), allow_blank=True) or date.today()
+    future_slots = []
+    next_date = last_date
+    for _ in range(extra_slots):
+        next_date = next_date + gap
+        future_slots.append(
+            {
+                "slot_date": _format_date(next_date),
+                "slot_period": _clean_text(last_row.get("slot_period")),
+                "slot_order": _clean_text(last_row.get("slot_order")),
+            }
+        )
+    return future_slots
+
+
+def _extend_lesson_via_bridge(ws, records, subject, row_number=None, extra_slots=1, bridge_support=None):
+    subject = _clean_text(subject)
+    extra_slots = _coerce_days(extra_slots)
+    if extra_slots < 1:
+        raise ValueError("?곗옣??李⑥떆 ?섎뒗 1 ?댁긽?댁뼱???⑸땲??")
+
+    subject_rows = [
+        row
+        for row in bridge_support["rows"]
+        if _is_bridge_planned(row)
+        and _clean_text(row.get(COLUMN_SUBJECT)) == subject
+        and _parse_date(row.get("slot_date"), allow_blank=True) is not None
+    ]
+    subject_rows = sorted(subject_rows, key=_bridge_row_sort_key)
+    if not subject_rows:
+        return None
+
+    target_lesson_id = ""
+    if row_number is not None:
+        target_record = next((record for record in records if record.get("_row") == row_number), None)
+        target_lesson_id = _lesson_id_of(target_record) if target_record else ""
+
+    target_index = None
+    if target_lesson_id:
+        for index, row in enumerate(subject_rows):
+            if _clean_text(row.get(COLUMN_LESSON_ID)) == target_lesson_id:
+                target_index = index
+                break
+    if target_index is None:
+        target_index = 0
+        target_lesson_id = _clean_text(subject_rows[0].get(COLUMN_LESSON_ID))
+
+    if not target_lesson_id:
+        return None
+
+    insertion_index = target_index + 1
+    while (
+        insertion_index < len(subject_rows)
+        and _clean_text(subject_rows[insertion_index].get(COLUMN_LESSON_ID)) == target_lesson_id
+    ):
+        insertion_index += 1
+
+    clones = [
+        {
+            COLUMN_SUBJECT: subject,
+            COLUMN_LESSON_ID: target_lesson_id,
+            "status": "planned",
+            "source": "manual_extend",
+            "memo": "",
+        }
+        for _ in range(extra_slots)
+    ]
+    rewritten_subject_rows = subject_rows[:insertion_index] + clones + subject_rows[insertion_index:]
+    slot_templates = [
+        {
+            "slot_date": _clean_text(row.get("slot_date")),
+            "slot_period": _clean_text(row.get("slot_period")),
+            "slot_order": _clean_text(row.get("slot_order")),
+        }
+        for row in subject_rows
+    ] + _generate_future_bridge_slots(subject_rows, extra_slots)
+
+    for row, slot_template in zip(rewritten_subject_rows, slot_templates):
+        row["slot_date"] = slot_template["slot_date"]
+        row["slot_period"] = slot_template["slot_period"]
+        row["slot_order"] = slot_template["slot_order"]
+
+    subject_row_ids = {id(row) for row in subject_rows}
+    remaining_rows = [row for row in bridge_support["rows"] if id(row) not in subject_row_ids]
+    bridge_support["rows"] = remaining_rows + rewritten_subject_rows
+    _rewrite_bridge_sheet(ws, records, bridge_support)
+
+    return {
+        "updated": len(rewritten_subject_rows),
+        "rows": [row.get("_row") for row in rewritten_subject_rows if row.get("_row")],
+        "message": (
+            f"[{subject}] lesson {target_lesson_id}??{extra_slots}媛?slot???붽??섍퀬 "
+            f"?ㅼ쓬 ?섏뾽???ㅻ줈 諛곗튂?덉뒿?덈떎."
+        ),
+        "shifted": max(0, len(rewritten_subject_rows) - insertion_index - extra_slots),
+    }
+
+
+def _legacy_mark_done(ws, records, subject, target_date=None, record_key=None):
     subject = _clean_text(subject)
     target_date = _coerce_date(target_date, field_name="완료 날짜")
     done_column = get_header_map(ws)[COLUMN_DONE]
+    worksheet_name = _worksheet_title(ws)
 
     if target_date:
         candidates = [
@@ -569,7 +1232,7 @@ def mark_done(ws, records, subject, target_date=None):
         return {"updated": 0, "rows": [], "message": message}
 
     updates = [
-        _make_cell_update(done_column, record["_row"], True)
+        _make_cell_update(done_column, record["_row"], True, worksheet_name=worksheet_name)
         for record in candidates
     ]
     _batch_update_cells_with_option(ws, updates, value_input_option="USER_ENTERED")
@@ -587,13 +1250,14 @@ def mark_done(ws, records, subject, target_date=None):
     }
 
 
-def push_schedule(ws, records, subject, days, from_date=None):
+def _legacy_push_schedule(ws, records, subject, days, from_date=None):
     subject = _clean_text(subject)
     days = _coerce_days(days)
     from_date = _coerce_date(from_date, field_name="기준 날짜")
     header_map = get_header_map(ws)
     date_column = header_map[COLUMN_DATE]
     note_column = header_map.get(COLUMN_NOTE)
+    worksheet_name = _worksheet_title(ws)
 
     targets = []
     for record in _pending_lessons(records, subject):
@@ -614,7 +1278,12 @@ def push_schedule(ws, records, subject, days, from_date=None):
         delta = timedelta(days=days)
         new_date = _planned_date(record) + delta
         updates.append(
-            _make_cell_update(date_column, record["_row"], _format_date(new_date))
+            _make_cell_update(
+                date_column,
+                record["_row"],
+                _format_date(new_date),
+                worksheet_name=worksheet_name,
+            )
         )
         extension_dates = _extension_dates(record)
         if note_column and extension_dates:
@@ -624,6 +1293,7 @@ def push_schedule(ws, records, subject, days, from_date=None):
                     note_column,
                     record["_row"],
                     _build_note_with_extension_dates(record.get(COLUMN_NOTE, ""), shifted_extension_dates),
+                    worksheet_name=worksheet_name,
                 )
             )
 
@@ -638,9 +1308,21 @@ def push_schedule(ws, records, subject, days, from_date=None):
     }
 
 
-def extend_lesson(ws, records, subject, row_number=None, extra_slots=1):
+def _legacy_extend_lesson(ws, records, subject, row_number=None, extra_slots=1):
     """선택한 차시를 연장하고 같은 과목의 뒤 차시 일정을 뒤로 민다."""
     subject = _clean_text(subject)
+    bridge_support = _load_bridge_support(ws)
+    if bridge_support and bridge_support["rows"]:
+        bridge_result = _extend_lesson_via_bridge(
+            ws,
+            records,
+            subject,
+            row_number=row_number,
+            extra_slots=extra_slots,
+            bridge_support=bridge_support,
+        )
+        if bridge_result is not None:
+            return bridge_result
     header_map = get_header_map(ws)
     note_column = header_map.get(COLUMN_NOTE)
     if not note_column:
@@ -650,6 +1332,7 @@ def extend_lesson(ws, records, subject, row_number=None, extra_slots=1):
 
     extension_count_column = header_map.get(COLUMN_EXTENSION_COUNT)
     date_column = header_map[COLUMN_DATE]
+    worksheet_name = _worksheet_title(ws)
 
     plan = plan_lesson_extension(
         records,
@@ -674,6 +1357,7 @@ def extend_lesson(ws, records, subject, row_number=None, extra_slots=1):
                 target_record.get(COLUMN_NOTE, ""),
                 _extension_dates(target_record) + added_extension_dates,
             ),
+            worksheet_name=worksheet_name,
         )
     ]
     if extension_count_column:
@@ -682,6 +1366,7 @@ def extend_lesson(ws, records, subject, row_number=None, extra_slots=1):
                 extension_count_column,
                 target_record["_row"],
                 str(_extension_count(target_record) + len(added_extension_dates)),
+                worksheet_name=worksheet_name,
             )
         )
 
@@ -692,6 +1377,7 @@ def extend_lesson(ws, records, subject, row_number=None, extra_slots=1):
                 date_column,
                 record["_row"],
                 _format_date(record_update["new_planned_date"]),
+                worksheet_name=worksheet_name,
             )
         )
         updates.append(
@@ -702,6 +1388,7 @@ def extend_lesson(ws, records, subject, row_number=None, extra_slots=1):
                     record.get(COLUMN_NOTE, ""),
                     record_update["new_extension_dates"],
                 ),
+                worksheet_name=worksheet_name,
             )
         )
 
@@ -717,6 +1404,382 @@ def extend_lesson(ws, records, subject, row_number=None, extra_slots=1):
         "updated": 1 + len(record_updates),
         "rows": [target_record["_row"]] + [item["record"]["_row"] for item in record_updates],
         "message": message,
+        "shifted": len(record_updates),
+    }
+
+
+def _rewrite_bridge_sheet(progress_ws, records, bridge_support):
+    bridge_support["rows"] = sorted(bridge_support["rows"], key=_bridge_row_sort_key)
+    bridge_support["module"].write_bridge_sheet(bridge_support["worksheet"], bridge_support["rows"])
+    bridge_support["rows"] = bridge_support["module"].load_bridge_rows(bridge_support["worksheet"])
+    bridge_support["module"].sync_progress_sheet(progress_ws, records, bridge_support["rows"])
+
+
+def _mark_done_via_bridge(
+    ws,
+    records,
+    subject,
+    target_date=None,
+    record_key=None,
+    bridge_row_number=None,
+    bridge_support=None,
+):
+    subject = _clean_text(subject)
+    target_date = _coerce_date(target_date, field_name="완료 날짜")
+    if bridge_support is None:
+        bridge_support = _load_bridge_support(ws)
+    if bridge_support is None:
+        return None
+
+    record_key = _clean_text(record_key)
+    bridge_row_number = _clean_text(bridge_row_number)
+    if bridge_row_number:
+        try:
+            bridge_row_number = int(bridge_row_number)
+        except ValueError as exc:
+            raise ValueError(f"Invalid bridge row: {bridge_row_number}") from exc
+    else:
+        bridge_row_number = None
+
+    sorted_bridge_rows = sorted(bridge_support["rows"], key=_bridge_row_sort_key)
+
+    if bridge_row_number is not None:
+        target_rows = [
+            row
+            for row in sorted_bridge_rows
+            if row.get("_row") == bridge_row_number and _is_bridge_planned(row)
+        ]
+    elif record_key:
+        target_record = find_record_by_key(records, record_key)
+        lesson_id = _lesson_id_of(target_record) if target_record else ""
+        target_rows = [
+            row
+            for row in sorted_bridge_rows
+            if _is_bridge_planned(row)
+            and _clean_text(row.get(COLUMN_LESSON_ID)) == lesson_id
+            and (not target_date or _parse_date(row.get("slot_date"), allow_blank=True) == target_date)
+        ]
+        target_rows = target_rows[:1]
+    elif target_date:
+        target_rows = [
+            row
+            for row in sorted_bridge_rows
+            if _is_bridge_planned(row)
+            and _clean_text(row.get(COLUMN_SUBJECT)) == subject
+            and _parse_date(row.get("slot_date"), allow_blank=True) == target_date
+        ]
+    else:
+        next_class = get_next_class(records, subject, bridge_rows=bridge_support["rows"])
+        bridge_row_id = next_class.get("_bridge_row") if next_class else None
+        target_rows = [
+            row
+            for row in sorted_bridge_rows
+            if row.get("_row") == bridge_row_id and _is_bridge_planned(row)
+        ]
+        target_rows = target_rows[:1]
+
+    lesson_ids = {
+        _clean_text(row.get(COLUMN_LESSON_ID))
+        for row in target_rows
+        if _clean_text(row.get(COLUMN_LESSON_ID))
+    }
+    if not lesson_ids:
+        return None
+
+    updated_target_rows = []
+    for bridge_row in target_rows:
+        if _is_bridge_done(bridge_row):
+            continue
+        bridge_row["status"] = "done"
+        updated_target_rows.append(bridge_row)
+
+    if not updated_target_rows:
+        return None
+
+    done_by_lesson_id = {}
+    for lesson_id in lesson_ids:
+        has_remaining_planned = any(
+            _clean_text(row.get(COLUMN_LESSON_ID)) == lesson_id and _is_bridge_planned(row)
+            for row in bridge_support["rows"]
+        )
+        done_by_lesson_id[lesson_id] = not has_remaining_planned
+
+    done_column = get_header_map(ws)[COLUMN_DONE]
+    worksheet_name = _worksheet_title(ws)
+    progress_updates = [
+        _make_cell_update(
+            done_column,
+            record["_row"],
+            done_by_lesson_id[_lesson_id_of(record)],
+            worksheet_name=worksheet_name,
+        )
+        for record in records
+        if _lesson_id_of(record) in done_by_lesson_id
+        and _is_done(record) != done_by_lesson_id[_lesson_id_of(record)]
+    ]
+
+    _rewrite_bridge_sheet(ws, records, bridge_support)
+    _batch_update_cells_with_option(ws, progress_updates, value_input_option="USER_ENTERED")
+
+    return {
+        "updated": len(updated_target_rows),
+        "rows": [record["_row"] for record in records if _lesson_id_of(record) in lesson_ids],
+        "bridge_rows": [row.get("_row") for row in updated_target_rows if row.get("_row")],
+        "message": f"Marked {len(updated_target_rows)} bridge slot(s) done.",
+    }
+
+
+def _push_schedule_via_bridge(ws, records, subject, days, from_date=None, bridge_support=None):
+    subject = _clean_text(subject)
+    days = _coerce_days(days)
+    from_date = _coerce_date(from_date, field_name="기준 날짜")
+    if bridge_support is None:
+        bridge_support = _load_bridge_support(ws)
+    if bridge_support is None:
+        return None
+
+    delta = timedelta(days=days)
+    updated_rows = []
+    for bridge_row in bridge_support["rows"]:
+        if not _is_bridge_planned(bridge_row):
+            continue
+        if _clean_text(bridge_row.get(COLUMN_SUBJECT)) != subject:
+            continue
+        planned = _parse_date(bridge_row.get("slot_date"), allow_blank=True)
+        if planned is None:
+            continue
+        if from_date and planned < from_date:
+            continue
+        bridge_row["slot_date"] = _format_date(planned + delta)
+        updated_rows.append(bridge_row)
+
+    if not updated_rows:
+        return None
+
+    _rewrite_bridge_sheet(ws, records, bridge_support)
+    return {
+        "updated": len(updated_rows),
+        "rows": [row.get("_row") for row in updated_rows if row.get("_row")],
+        "message": f"[{subject}] shifted {len(updated_rows)} bridge slot(s) by {days} day(s).",
+    }
+
+
+def mark_done(ws, records, subject, target_date=None, record_key=None, bridge_row_number=None):
+    subject = _clean_text(subject)
+    target_date = _coerce_date(target_date, field_name="완료 날짜")
+    bridge_support = _load_bridge_support(ws)
+    if bridge_support is not None:
+        bridge_result = _mark_done_via_bridge(
+            ws,
+            records,
+            subject,
+            target_date=target_date,
+            record_key=record_key,
+            bridge_row_number=bridge_row_number,
+            bridge_support=bridge_support,
+        )
+        if bridge_result is not None:
+            return bridge_result
+        message = f"No planned bridge slot found for [{subject}]."
+        print(f"  [warn] {message}")
+        return {"updated": 0, "rows": [], "message": message}
+
+    done_column = get_header_map(ws)[COLUMN_DONE]
+    worksheet_name = _worksheet_title(ws)
+    if target_date:
+        candidates = [
+            record
+            for record in records
+            if _subject_of(record) == subject
+            and target_date in _scheduled_occurrence_dates(record)
+            and not _is_done(record)
+        ]
+        candidates = sorted(candidates, key=_record_sort_key)
+    else:
+        next_class = get_next_class(records, subject)
+        candidates = [next_class] if next_class else []
+
+    if not candidates:
+        message = f"No pending lesson found for [{subject}]."
+        print(f"  [warn] {message}")
+        return {"updated": 0, "rows": [], "message": message}
+
+    updates = [
+        _make_cell_update(done_column, record["_row"], True, worksheet_name=worksheet_name)
+        for record in candidates
+    ]
+    _batch_update_cells_with_option(ws, updates, value_input_option="USER_ENTERED")
+
+    return {
+        "updated": len(candidates),
+        "rows": [record["_row"] for record in candidates],
+        "message": f"Marked {len(candidates)} lesson(s) done.",
+    }
+
+
+def push_schedule(ws, records, subject, days, from_date=None):
+    subject = _clean_text(subject)
+    days = _coerce_days(days)
+    from_date = _coerce_date(from_date, field_name="기준 날짜")
+    bridge_support = _load_bridge_support(ws)
+    if bridge_support is not None:
+        bridge_result = _push_schedule_via_bridge(
+            ws,
+            records,
+            subject,
+            days,
+            from_date=from_date,
+            bridge_support=bridge_support,
+        )
+        if bridge_result is not None:
+            return bridge_result
+        message = f"No planned bridge slot found for [{subject}]."
+        print(f"  [warn] {message}")
+        return {"updated": 0, "rows": [], "message": message}
+
+    header_map = get_header_map(ws)
+    date_column = header_map[COLUMN_DATE]
+    note_column = header_map.get(COLUMN_NOTE)
+    worksheet_name = _worksheet_title(ws)
+
+    targets = []
+    for record in _pending_lessons(records, subject):
+        planned = _planned_date(record)
+        if planned is None:
+            continue
+        if from_date and planned < from_date:
+            continue
+        targets.append(record)
+
+    if not targets:
+        message = f"No pending lesson found for [{subject}]."
+        print(f"  [warn] {message}")
+        return {"updated": 0, "rows": [], "message": message}
+
+    updates = []
+    for record in targets:
+        delta = timedelta(days=days)
+        new_date = _planned_date(record) + delta
+        updates.append(
+            _make_cell_update(
+                date_column,
+                record["_row"],
+                _format_date(new_date),
+                worksheet_name=worksheet_name,
+            )
+        )
+        extension_dates = _extension_dates(record)
+        if note_column and extension_dates:
+            shifted_extension_dates = [extension_date + delta for extension_date in extension_dates]
+            updates.append(
+                _make_cell_update(
+                    note_column,
+                    record["_row"],
+                    _build_note_with_extension_dates(record.get(COLUMN_NOTE, ""), shifted_extension_dates),
+                    worksheet_name=worksheet_name,
+                )
+            )
+
+    _batch_update_cells(ws, updates)
+    return {
+        "updated": len(targets),
+        "rows": [record["_row"] for record in targets],
+        "message": f"[{subject}] shifted {len(targets)} lesson(s) by {days} day(s).",
+    }
+
+
+def extend_lesson(ws, records, subject, row_number=None, extra_slots=1):
+    subject = _clean_text(subject)
+    bridge_support = _load_bridge_support(ws)
+    if bridge_support is not None:
+        bridge_result = _extend_lesson_via_bridge(
+            ws,
+            records,
+            subject,
+            row_number=row_number,
+            extra_slots=extra_slots,
+            bridge_support=bridge_support,
+        )
+        if bridge_result is not None:
+            return bridge_result
+        message = f"No planned bridge slot found to extend for [{subject}]."
+        print(f"  [warn] {message}")
+        return {"updated": 0, "rows": [], "message": message}
+
+    header_map = get_header_map(ws)
+    note_column = header_map.get(COLUMN_NOTE)
+    if not note_column:
+        message = "The note column is required to store extension dates."
+        print(f"  [warn] {message}")
+        return {"updated": 0, "rows": [], "message": message}
+
+    extension_count_column = header_map.get(COLUMN_EXTENSION_COUNT)
+    date_column = header_map[COLUMN_DATE]
+    worksheet_name = _worksheet_title(ws)
+
+    plan = plan_lesson_extension(
+        records,
+        subject,
+        row_number=row_number,
+        extra_slots=extra_slots,
+    )
+    if not plan:
+        message = f"No pending lesson found to extend for [{subject}]."
+        print(f"  [warn] {message}")
+        return {"updated": 0, "rows": [], "message": message}
+
+    target_record = plan["target_record"]
+    added_extension_dates = plan["added_extension_dates"]
+    record_updates = plan["record_updates"]
+
+    updates = [
+        _make_cell_update(
+            note_column,
+            target_record["_row"],
+            _build_note_with_extension_dates(
+                target_record.get(COLUMN_NOTE, ""),
+                _extension_dates(target_record) + added_extension_dates,
+            ),
+            worksheet_name=worksheet_name,
+        )
+    ]
+    if extension_count_column:
+        updates.append(
+            _make_cell_update(
+                extension_count_column,
+                target_record["_row"],
+                str(_extension_count(target_record) + len(added_extension_dates)),
+                worksheet_name=worksheet_name,
+            )
+        )
+
+    for record_update in record_updates:
+        record = record_update["record"]
+        updates.append(
+            _make_cell_update(
+                date_column,
+                record["_row"],
+                _format_date(record_update["new_planned_date"]),
+                worksheet_name=worksheet_name,
+            )
+        )
+        updates.append(
+            _make_cell_update(
+                note_column,
+                record["_row"],
+                _build_note_with_extension_dates(
+                    record.get(COLUMN_NOTE, ""),
+                    record_update["new_extension_dates"],
+                ),
+                worksheet_name=worksheet_name,
+            )
+        )
+
+    _batch_update_cells(ws, updates)
+    return {
+        "updated": 1 + len(record_updates),
+        "rows": [target_record["_row"]] + [item["record"]["_row"] for item in record_updates],
+        "message": f"[{subject}] extended one lesson and shifted {len(record_updates)} lesson(s).",
         "shifted": len(record_updates),
     }
 
@@ -1064,7 +2127,18 @@ def cli_mode():
 
     cmd = sys.argv[1] if len(sys.argv) > 1 else None
 
-    if cmd == "today":
+    if cmd in {"lesson-ids", "ensure-lesson-ids"}:
+        result = ensure_lesson_ids(ws)
+        print(f"  {result['message']}")
+        for item in result["assigned"][:10]:
+            print(
+                f"    - {_row_label(item['row'])}: {item['lesson_id']} | "
+                f"{item['title']}"
+            )
+        remaining = len(result["assigned"]) - 10
+        if remaining > 0:
+            print(f"    - 그 외 {remaining}개 행")
+    elif cmd == "today":
         lessons = get_schedule_by_date(records, today)
         print_schedule(lessons, f"오늘 수업 ({today})")
     elif cmd == "tomorrow":
@@ -1094,6 +2168,324 @@ def cli_mode():
         push_schedule(ws, records, subject, days, from_arg)
     else:
         menu(ws, records, subjects)
+
+
+def print_schedule(lessons, title):
+    print(f"\n{'=' * 50}")
+    print(f"  {title}")
+    print(f"{'=' * 50}")
+    if not lessons:
+        print("  수업 없음 (또는 모두 완료)")
+        return
+
+    for record in lessons:
+        subject = _clean_text(record.get(COLUMN_SUBJECT))
+        title_text = _clean_text(record.get(COLUMN_TITLE))
+        unit = _clean_text(record.get(COLUMN_UNIT))
+        lesson = _clean_text(record.get(COLUMN_LESSON))
+        planned_date = _clean_text(record.get(COLUMN_DATE) or record.get("slot_date"))
+        planned_period = _clean_text(record.get("slot_period"))
+
+        print(f"  [{subject}] {title_text}")
+        print(f"    대단원: {unit} | 차시: {lesson}")
+        if planned_date or planned_period:
+            if planned_period:
+                print(f"    배치: {planned_date} | {planned_period}교시")
+            else:
+                print(f"    배치: {planned_date}")
+
+        extension_dates = _extension_dates(record)
+        if extension_dates:
+            print("    연장일정: " + ", ".join(_format_date(d) for d in extension_dates))
+        if record.get(COLUMN_PDF):
+            print(
+                f"    PDF: {record.get(COLUMN_PDF)} "
+                f"(p.{record.get(COLUMN_START_PAGE, '')}~{record.get(COLUMN_END_PAGE, '')})"
+            )
+        print()
+
+
+def print_next_classes(records, subjects, bridge_rows=None):
+    print(f"\n{'=' * 50}")
+    print("  과목별 다음 차시")
+    print(f"{'=' * 50}")
+    for subject in subjects:
+        next_class = get_next_class(records, subject, bridge_rows=bridge_rows)
+        if next_class:
+            print(f"  [{subject}] {next_class.get(COLUMN_TITLE, '')}")
+            print(
+                f"    계획일: {next_class.get(COLUMN_DATE, '')} | "
+                f"차시: {next_class.get(COLUMN_LESSON, '')}"
+            )
+            planned_period = _clean_text(next_class.get("slot_period"))
+            if planned_period:
+                print(f"    계획교시: {planned_period}")
+        else:
+            print(f"  [{subject}] 모든 진도 완료")
+    print()
+
+
+def print_progress(records, subjects):
+    print(f"\n{'=' * 50}")
+    print("  과목별 진도율")
+    print(f"{'=' * 50}")
+    for subject in subjects:
+        progress = get_progress(records, subject)
+        total = int(progress.get("?꾩껜", 0))
+        done = int(progress.get("?꾨즺", 0))
+        percentage_text = progress.get("吏꾨룄??", "0.0%")
+        filled = int(20 * done / total) if total > 0 else 0
+        bar = "#" * filled + "." * (20 - filled)
+        print(f"  [{subject}] {bar} {percentage_text} ({done}/{total})")
+    print()
+
+
+def print_remaining_week_schedule(records, start_date=None, bridge_rows=None):
+    start_date = _coerce_date(start_date, field_name="조회 날짜") or date.today()
+
+    print(f"\n{'=' * 50}")
+    print("  이번 주 남은 수업")
+    print(f"{'=' * 50}")
+
+    if start_date.weekday() > 4:
+        print("  이번 주 수업은 모두 지난 상태입니다. (현재 주말)")
+        return
+
+    end_date = start_date + timedelta(days=4 - start_date.weekday())
+    found_any = False
+    for offset in range((end_date - start_date).days + 1):
+        day = start_date + timedelta(days=offset)
+        lessons = get_schedule_by_date(records, day, bridge_rows=bridge_rows)
+        if lessons:
+            print_schedule(lessons, f"이번 주 남은 수업 ({day.strftime('%Y-%m-%d, %a')})")
+            found_any = True
+
+    if not found_any:
+        print("  이번 주에 남은 미완료 수업이 없습니다.")
+
+
+def menu(ws, records, subjects, bridge_rows=None):
+    while True:
+        today = date.today()
+        tomorrow = today + timedelta(days=1)
+
+        print(f"\n{'=' * 50}")
+        print(f"  수업 진도 관리  |  {today.strftime('%Y-%m-%d (%a)')}")
+        print(f"{'=' * 50}")
+        print("  1. 오늘 수업 확인")
+        print("  2. 내일 수업 확인")
+        print("  3. 이번 주 남은 수업 확인")
+        print("  4. 다음 주 수업 확인")
+        print("  5. 과목별 다음 차시")
+        print("  6. 과목별 진도율")
+        print("  7. 수업 완료 처리")
+        print("  8. 차시 연장")
+        print("  9. 날짜 밀기")
+        print(" 10. 데이터 새로고침")
+        print("  0. 종료")
+        print(f"{'=' * 50}")
+
+        choice = input("  선택: ").strip()
+
+        if choice == "1":
+            lessons = get_schedule_by_date(records, today, bridge_rows=bridge_rows)
+            print_schedule(lessons, f"오늘 수업 ({today})")
+
+        elif choice == "2":
+            lessons = get_schedule_by_date(records, tomorrow, bridge_rows=bridge_rows)
+            print_schedule(lessons, f"내일 수업 ({tomorrow})")
+
+        elif choice == "3":
+            print_remaining_week_schedule(records, today, bridge_rows=bridge_rows)
+
+        elif choice == "4":
+            next_monday = today + timedelta(days=(7 - today.weekday()))
+            found_any = False
+            for offset in range(5):
+                day = next_monday + timedelta(days=offset)
+                lessons = get_schedule_by_date(records, day, bridge_rows=bridge_rows)
+                if lessons:
+                    print_schedule(lessons, f"다음 주 수업 ({day.strftime('%Y-%m-%d, %a')})")
+                    found_any = True
+            if not found_any:
+                print("\n  [경고] 다음 주에 계획된 미완료 수업이 없습니다.")
+
+        elif choice == "5":
+            print_next_classes(records, subjects, bridge_rows=bridge_rows)
+
+        elif choice == "6":
+            print_progress(records, subjects)
+
+        elif choice == "7":
+            subject = select_subject(subjects)
+            if not subject:
+                continue
+
+            done_list = [record for record in records if _subject_of(record) == subject and _is_done(record)]
+            next_item = get_next_class(records, subject, bridge_rows=bridge_rows)
+
+            print(f"\n  [{subject}] 현재 상태 요약")
+            if done_list:
+                last = sorted(done_list, key=_record_sort_key)[-1]
+                print(
+                    f"  직전 완료: {last.get(COLUMN_LESSON, '')}차시 - "
+                    f"{last.get(COLUMN_TITLE, '')} ({last.get(COLUMN_DATE, '')})"
+                )
+            if next_item:
+                print(
+                    f"  현재 대상: {next_item.get(COLUMN_LESSON, '')}차시 - "
+                    f"{next_item.get(COLUMN_TITLE, '')} ({next_item.get(COLUMN_DATE, '')})"
+                )
+                planned_period = _clean_text(next_item.get('slot_period'))
+                if planned_period:
+                    print(f"  계획교시: {planned_period}")
+
+            date_input = input(
+                "\n  완료할 날짜 (Enter=현재 대상 처리, YYYY-MM-DD=특정 날짜): "
+            ).strip()
+            try:
+                target = _coerce_date(date_input, field_name="완료 날짜") if date_input else None
+            except ValueError as exc:
+                print(f"  [경고] {exc}")
+                continue
+
+            mark_done(ws, records, subject, target)
+            records, subjects, bridge_rows = _refresh_records(ws)
+
+        elif choice == "8":
+            subject = select_subject(subjects)
+            if not subject:
+                continue
+
+            target_record = select_lesson(records, subject, action_label="연장")
+            if not target_record:
+                continue
+
+            extra_slots_input = input("  몇 차시 연장할까요? (Enter=1): ").strip()
+            try:
+                extra_slots = _coerce_days(extra_slots_input or "1")
+                if extra_slots < 1:
+                    raise ValueError("연장할 차시는 1 이상이어야 합니다.")
+            except ValueError as exc:
+                print(f"  [경고] {exc}")
+                continue
+
+            extension_plan = plan_lesson_extension(
+                records,
+                subject,
+                row_number=target_record["_row"],
+                extra_slots=extra_slots,
+            )
+            if not extension_plan:
+                print("  [경고] 연장 계획을 만들지 못했습니다.")
+                continue
+
+            print(f"\n  선택한 차시: {_lesson_label(target_record)}")
+            print(f"  계획일: {_planned_date_label(target_record)}")
+            print(f"  수업내용: {target_record.get(COLUMN_TITLE, '')}")
+            print(
+                "  추가 연장일: "
+                + ", ".join(_format_date(extension_date) for extension_date in extension_plan["added_extension_dates"])
+            )
+
+            confirm = input("  이 계획대로 차시를 연장할까요? (y/N): ").strip().lower()
+            if confirm not in {"y", "yes"}:
+                print("  연장을 취소했습니다.")
+                continue
+
+            extend_lesson(
+                ws,
+                records,
+                subject,
+                row_number=target_record["_row"],
+                extra_slots=extra_slots,
+            )
+            records, subjects, bridge_rows = _refresh_records(ws)
+
+        elif choice == "9":
+            subject = select_subject(subjects)
+            if not subject:
+                continue
+
+            print("\n  1. 미완료 수업 전체 밀기")
+            print("  2. 특정 날짜 이후 수업만 밀기")
+            option = input("  선택 (번호, Enter=1): ").strip()
+
+            days_input = input("  밀어낼 일수 (예: 1 또는 7): ").strip()
+            try:
+                days = _coerce_days(days_input)
+            except ValueError as exc:
+                print(f"  [경고] {exc}")
+                continue
+
+            from_date = None
+            if option == "2":
+                date_text = input("  기준 날짜 (YYYY-MM-DD): ").strip()
+                try:
+                    from_date = _coerce_date(date_text, field_name="기준 날짜") if date_text else None
+                except ValueError as exc:
+                    print(f"  [경고] {exc}")
+                    continue
+
+            push_schedule(ws, records, subject, days, from_date)
+            records, subjects, bridge_rows = _refresh_records(ws)
+
+        elif choice == "10":
+            print("  데이터를 새로고침하는 중입니다...")
+            records, subjects, bridge_rows = _refresh_records(ws)
+            print(f"  완료. 과목: {', '.join(subjects)}")
+
+        elif choice == "0":
+            print("\n  종료합니다.\n")
+            break
+
+        else:
+            print("  [경고] 잘못된 선택입니다.")
+
+
+def cli_mode():
+    ws = connect()
+    records, subjects, bridge_rows = _refresh_records(ws)
+    today = date.today()
+    tomorrow = today + timedelta(days=1)
+
+    cmd = sys.argv[1] if len(sys.argv) > 1 else None
+
+    if cmd in {"lesson-ids", "ensure-lesson-ids"}:
+        result = ensure_lesson_ids(ws)
+        print(f"  {result['message']}")
+        for item in result["assigned"][:10]:
+            print(f"    - {_row_label(item['row'])}: {item['lesson_id']} | {item['title']}")
+    elif cmd == "today":
+        lessons = get_schedule_by_date(records, today, bridge_rows=bridge_rows)
+        print_schedule(lessons, f"오늘 수업 ({today})")
+    elif cmd == "tomorrow":
+        lessons = get_schedule_by_date(records, tomorrow, bridge_rows=bridge_rows)
+        print_schedule(lessons, f"내일 수업 ({tomorrow})")
+    elif cmd == "thisweek":
+        print_remaining_week_schedule(records, today, bridge_rows=bridge_rows)
+    elif cmd == "nextweek":
+        next_monday = today + timedelta(days=(7 - today.weekday()))
+        for offset in range(5):
+            day = next_monday + timedelta(days=offset)
+            lessons = get_schedule_by_date(records, day, bridge_rows=bridge_rows)
+            if lessons:
+                print_schedule(lessons, f"다음 주 수업 ({day.strftime('%Y-%m-%d, %a')})")
+    elif cmd == "next":
+        print_next_classes(records, subjects, bridge_rows=bridge_rows)
+    elif cmd == "progress":
+        print_progress(records, subjects)
+    elif cmd == "done" and len(sys.argv) > 2:
+        subject = sys.argv[2]
+        date_arg = sys.argv[3] if len(sys.argv) > 3 else None
+        mark_done(ws, records, subject, date_arg)
+    elif cmd == "push" and len(sys.argv) > 3:
+        subject = sys.argv[2]
+        days = sys.argv[3]
+        from_arg = sys.argv[4] if len(sys.argv) > 4 else None
+        push_schedule(ws, records, subject, days, from_arg)
+    else:
+        menu(ws, records, subjects, bridge_rows)
 
 
 def main():

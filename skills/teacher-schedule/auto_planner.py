@@ -1,9 +1,11 @@
-import argparse
+﻿import argparse
 import json
 import os
 import re
 import sys
 from datetime import date, datetime, timedelta
+
+import schedule
 
 try:
     from dotenv import load_dotenv
@@ -16,10 +18,12 @@ load_dotenv()
 
 SHEET_ID = os.getenv("SHEET_ID")
 CREDS_PATH = os.getenv("GOOGLE_CREDENTIALS_PATH", "credentials.json")
-PROGRESS_SHEET_NAME = os.getenv("SHEET_NAME", "시트1")
-TIMETABLE_SHEET_NAME = os.getenv("TIMETABLE_SHEET", "기초시간표")
-HOLIDAY_SHEET_NAME = os.getenv("HOLIDAY_SHEET", "휴업일")
-SUBJECT_START_SHEET_NAME = os.getenv("SUBJECT_START_SHEET", "수업시작일")
+PREFERRED_PROGRESS_SHEET_NAME = os.getenv("SHEET_PROGRESS")
+LEGACY_PROGRESS_SHEET_NAME = os.getenv("SHEET_NAME", "?쒗듃1")
+PROGRESS_SHEET_NAME = PREFERRED_PROGRESS_SHEET_NAME or LEGACY_PROGRESS_SHEET_NAME
+TIMETABLE_SHEET_NAME = os.getenv("SHEET_TIMETABLE") or os.getenv("TIMETABLE_SHEET", "기초시간표")
+HOLIDAY_SHEET_NAME = os.getenv("SHEET_HOLIDAY") or os.getenv("HOLIDAY_SHEET", "휴업일")
+SUBJECT_START_SHEET_NAME = os.getenv("SHEET_SUBJECT_START") or os.getenv("SUBJECT_START_SHEET", "수업시작일")
 
 SCOPES = [
     "https://www.googleapis.com/auth/spreadsheets",
@@ -29,8 +33,8 @@ SCOPES = [
 TRUE_VALUES = {"TRUE", "1", "Y", "YES", "DONE"}
 DONE_COLUMN_FALLBACK_INDEX = 6
 PLANNER_MODES = {
-    "initial": "초기 전체 배정",
-    "fill-blanks": "빈칸 보강 배정",
+    "initial": "珥덇린 ?꾩껜 諛곗젙",
+    "fill-blanks": "鍮덉뭏 蹂닿컯 諛곗젙",
 }
 
 
@@ -42,6 +46,17 @@ def _clean_text(value):
 
 def _normalize_done_value(value):
     return _clean_text(value).lstrip("'").strip().upper()
+
+
+def _sheet_name_candidates(*names):
+    candidates = []
+    seen = set()
+    for name in names:
+        normalized = _clean_text(name)
+        if normalized and normalized not in seen:
+            seen.add(normalized)
+            candidates.append(normalized)
+    return candidates
 
 
 def _extract_number(value, default=0):
@@ -57,23 +72,23 @@ def _is_done(value):
 
 
 def _has_planned_date(record):
-    return parse_date(record.get("계획일")) is not None
+    return parse_date(record.get(schedule.COLUMN_DATE)) is not None
 
 
 def _has_ordered_unit(record):
-    return re.match(r"^\s*\d+", _clean_text(record.get("대단원", ""))) is not None
+    return re.match(r"^\s*\d+", _clean_text(record.get(schedule.COLUMN_UNIT, ""))) is not None
 
 
 def get_client():
     if not SHEET_ID:
-        raise ValueError("환경 변수 SHEET_ID가 설정되어 있지 않습니다. (.env 파일을 확인하세요)")
+        raise ValueError("?섍꼍 蹂??SHEET_ID媛 ?ㅼ젙?섏뼱 ?덉? ?딆뒿?덈떎. (.env ?뚯씪???뺤씤?섏꽭??")
 
     try:
         import gspread
         from google.oauth2.service_account import Credentials
     except ImportError as exc:
         raise ValueError(
-            "Google Sheets 연동 라이브러리가 없습니다. `pip install -r requirements.txt`를 먼저 실행하세요."
+            "Google Sheets ?곕룞 ?쇱씠釉뚮윭由ш? ?놁뒿?덈떎. `pip install -r requirements.txt`瑜?癒쇱? ?ㅽ뻾?섏꽭??"
         ) from exc
 
     creds_json = os.getenv("GOOGLE_CREDENTIALS_JSON")
@@ -118,20 +133,49 @@ def parse_date(date_str):
     return None
 
 
+def resolve_progress_worksheet(sh):
+    candidates = _sheet_name_candidates(PREFERRED_PROGRESS_SHEET_NAME, LEGACY_PROGRESS_SHEET_NAME) or ["?쒗듃1"]
+    format_errors = []
+    last_error = None
+    for candidate in candidates:
+        try:
+            worksheet = sh.worksheet(candidate)
+        except Exception as exc:
+            if exc.__class__.__name__ != "WorksheetNotFound":
+                raise
+            last_error = exc
+            continue
+
+        headers = {_clean_text(header) for header in worksheet.row_values(1)}
+        required = {schedule.COLUMN_SUBJECT, schedule.COLUMN_DATE}
+        if required.issubset(headers):
+            return worksheet
+        format_errors.append(f"{candidate}: ?꾨씫 ?ㅻ뜑 {', '.join(sorted(required - headers))}")
+
+    if format_errors:
+        raise ValueError(
+            "吏꾨룄???꾨낫 ?쒗듃瑜?李얠븯吏留??뺤떇??留욎? ?딆뒿?덈떎. "
+            + " | ".join(format_errors)
+        )
+
+    attempted = ", ".join(candidates)
+    raise ValueError(f"吏꾨룄???쒗듃瑜?李얠쓣 ???놁뒿?덈떎. ?뺤씤???대쫫: {attempted}") from last_error
+
+
 def fetch_holidays(sh):
     try:
         ws = sh.worksheet(HOLIDAY_SHEET_NAME)
         records = ws.get_all_records(default_blank="")
     except Exception as exc:
         if exc.__class__.__name__ == "WorksheetNotFound":
-            print(f"  [안내] '{HOLIDAY_SHEET_NAME}' 시트를 찾을 수 없어 평일(월~금)을 모두 수업일로 간주합니다.")
+            print(f"  [?덈궡] '{HOLIDAY_SHEET_NAME}' ?쒗듃瑜?李얠쓣 ???놁뼱 ?됱씪(??湲???紐⑤몢 ?섏뾽?쇰줈 媛꾩＜?⑸땲??")
             return set()
         raise
 
     holidays = set()
     for record in records:
         values = list(record.values())
-        date_value = record.get("날짜") if "날짜" in record else (values[0] if values else "")
+        date_value = record.get("?좎쭨") if "?좎쭨" in record else (values[0] if values else "")
         parsed = parse_date(date_value)
         if parsed:
             holidays.add(parsed)
@@ -142,9 +186,9 @@ def fetch_timetable(sh):
     ws = sh.worksheet(TIMETABLE_SHEET_NAME)
     rows = ws.get_all_values()
     if not rows or len(rows) < 2:
-        raise ValueError("기초시간표 시트에 데이터가 존재하지 않습니다.")
+        raise ValueError("湲곗큹?쒓컙???쒗듃???곗씠?곌? 議댁옱?섏? ?딆뒿?덈떎.")
 
-    headers = [_clean_text(value).replace("요일", "") for value in rows[0]]
+    headers = [_clean_text(value).replace("?붿씪", "") for value in rows[0]]
     valid_days = {"월": 0, "화": 1, "수": 2, "목": 3, "금": 4}
     day_indices = {}
 
@@ -155,7 +199,7 @@ def fetch_timetable(sh):
                 break
 
     if not day_indices:
-        raise ValueError(f"기초시간표 첫 번째 행({headers})에서 요일(월~금) 텍스트를 찾을 수 없습니다.")
+        raise ValueError(f"湲곗큹?쒓컙??泥?踰덉㎏ ??{headers})?먯꽌 ?붿씪(??湲? ?띿뒪?몃? 李얠쓣 ???놁뒿?덈떎.")
 
     timetable = {day: [] for day in range(5)}
     for row in rows[1:]:
@@ -165,7 +209,7 @@ def fetch_timetable(sh):
                 if subject:
                     timetable[weekday].append(subject)
 
-    print("  [기초시간표 파싱 완료]")
+    print("  [湲곗큹?쒓컙???뚯떛 ?꾨즺]")
     for weekday, subjects in sorted(timetable.items()):
         label = ["월", "화", "수", "목", "금"][weekday]
         print(f"    {label}: {', '.join(subjects)}")
@@ -185,8 +229,8 @@ def get_school_days(start_date, end_date, holidays):
 
 def _lesson_sort_key(item):
     return (
-        item.get("_unit_order", _extract_number(item.get("대단원"))),
-        item.get("_lesson_order", _extract_number(item.get("차시"))),
+        item.get("_unit_order", _extract_number(item.get(schedule.COLUMN_UNIT))),
+        item.get("_lesson_order", _extract_number(item.get(schedule.COLUMN_LESSON))),
         item["_row"],
     )
 
@@ -197,14 +241,14 @@ def should_include_record(record, planner_mode):
     if planner_mode == "initial":
         return True
     if planner_mode == "fill-blanks":
-        return not _is_done(record.get("실행여부", "")) and not _has_planned_date(record)
-    raise ValueError(f"지원하지 않는 배정 모드입니다: {planner_mode}")
+        return not _is_done(record.get(schedule.COLUMN_DONE, "")) and not _has_planned_date(record)
+    raise ValueError(f"吏?먰븯吏 ?딅뒗 諛곗젙 紐⑤뱶?낅땲?? {planner_mode}")
 
 
 def build_subject_queues(records, planner_mode="fill-blanks"):
     subject_queues = {}
     for row_number, record in enumerate(records, start=2):
-        subject = _clean_text(record.get("과목"))
+        subject = _clean_text(record.get(schedule.COLUMN_SUBJECT))
         if not subject:
             continue
 
@@ -217,14 +261,14 @@ def build_subject_queues(records, planner_mode="fill-blanks"):
     for subject, queue in subject_queues.items():
         last_unit_order = 0
         for item in sorted(queue, key=lambda row: row["_row"]):
-            unit_order = _extract_number(item.get("대단원"), default=None)
+            unit_order = _extract_number(item.get(schedule.COLUMN_UNIT), default=None)
             if unit_order is None:
                 unit_order = last_unit_order
             else:
                 last_unit_order = unit_order
 
             item["_unit_order"] = unit_order
-            item["_lesson_order"] = _extract_number(item.get("차시"), default=item["_row"])
+            item["_lesson_order"] = _extract_number(item.get(schedule.COLUMN_LESSON), default=item["_row"])
 
         subject_queues[subject] = sorted(queue, key=_lesson_sort_key)
 
@@ -244,19 +288,19 @@ def _find_matching_key(records, candidates):
 
 
 def apply_done_column_fallback(headers, rows, records):
-    if any(_clean_text(header) == "실행여부" for header in headers):
+    if any(_clean_text(header) == schedule.COLUMN_DONE for header in headers):
         return records
     if len(headers) < DONE_COLUMN_FALLBACK_INDEX:
         return records
 
     for index, record in enumerate(records):
         row = rows[index + 1] if index + 1 < len(rows) else []
-        record["실행여부"] = row[DONE_COLUMN_FALLBACK_INDEX - 1] if len(row) >= DONE_COLUMN_FALLBACK_INDEX else ""
+        record[schedule.COLUMN_DONE] = row[DONE_COLUMN_FALLBACK_INDEX - 1] if len(row) >= DONE_COLUMN_FALLBACK_INDEX else ""
     return records
 
 
 def parse_subject_start_sheet(records):
-    subject_key = _find_matching_key(records, ["과목", "subject"])
+    subject_key = _find_matching_key(records, [schedule.COLUMN_SUBJECT, "subject"])
     start_key = _find_matching_key(records, ["수업시작일", "시작일", "start_date"])
     if not subject_key or not start_key:
         return {}
@@ -278,11 +322,11 @@ def resolve_subject_start_dates(target_subjects, sheet_mapping, semester_start_d
             continue
 
         answer = input_fn(
-            f"  [{subject}] 수업시작일을 입력하세요 (Enter={semester_start_date}): "
+            f"  [{subject}] ?섏뾽?쒖옉?쇱쓣 ?낅젰?섏꽭??(Enter={semester_start_date}): "
         ).strip()
         parsed = parse_date(answer)
         if answer and not parsed:
-            print(f"  [경고] '{subject}' 수업시작일 형식이 잘못되어 학기 시작일({semester_start_date})로 처리합니다.")
+            print(f"  [寃쎄퀬] '{subject}' ?섏뾽?쒖옉???뺤떇???섎せ?섏뼱 ?숆린 ?쒖옉??{semester_start_date})濡?泥섎━?⑸땲??")
         resolved[subject] = parsed or semester_start_date
 
     return resolved
@@ -295,12 +339,12 @@ def fetch_subject_start_dates(sh, target_subjects, semester_start_date, input_fn
         records = ws.get_all_records(default_blank="")
         sheet_mapping = parse_subject_start_sheet(records)
         if sheet_mapping:
-            print(f"  [수업시작일 시트 파싱 완료] {', '.join(sorted(sheet_mapping))}")
+            print(f"  [?섏뾽?쒖옉???쒗듃 ?뚯떛 ?꾨즺] {', '.join(sorted(sheet_mapping))}")
         else:
-            print(f"  [안내] '{SUBJECT_START_SHEET_NAME}' 시트에서 과목/수업시작일 형식을 찾지 못했습니다.")
+            print(f"  [?덈궡] '{SUBJECT_START_SHEET_NAME}' ?쒗듃?먯꽌 怨쇰ぉ/?섏뾽?쒖옉???뺤떇??李얠? 紐삵뻽?듬땲??")
     except Exception as exc:
         if exc.__class__.__name__ == "WorksheetNotFound":
-            print(f"  [안내] '{SUBJECT_START_SHEET_NAME}' 시트가 없어 과목별 시작일을 직접 확인합니다.")
+            print(f"  [?덈궡] '{SUBJECT_START_SHEET_NAME}' ?쒗듃媛 ?놁뼱 怨쇰ぉ蹂??쒖옉?쇱쓣 吏곸젒 ?뺤씤?⑸땲??")
         else:
             raise
 
@@ -313,41 +357,41 @@ def fetch_subject_start_dates(sh, target_subjects, semester_start_date, input_fn
 
 
 def select_target_subjects(subject_queues, input_fn=input):
-    print(f"\n  [안내] 미수업 차시가 남아있는 과목: {', '.join(subject_queues.keys())}")
-    print("  어느 과목에 이번 일정 배정을 적용하시겠습니까?")
-    print("    1. 모든 과목 한 번에 배정 (그냥 엔터 입력)")
-    print("    2. 특정 과목만 선택")
+    print(f"\n  [?덈궡] 誘몄닔??李⑥떆媛 ?⑥븘?덈뒗 怨쇰ぉ: {', '.join(subject_queues.keys())}")
+    print("  ?대뒓 怨쇰ぉ???대쾲 ?쇱젙 諛곗젙???곸슜?섏떆寃좎뒿?덇퉴?")
+    print("    1. 紐⑤뱺 怨쇰ぉ ??踰덉뿉 諛곗젙 (洹몃깷 ?뷀꽣 ?낅젰)")
+    print("    2. ?뱀젙 怨쇰ぉ留??좏깮")
 
-    choice = input_fn("  입력 (번호 또는 과목명 쉼표 구분): ").strip()
+    choice = input_fn("  ?낅젰 (踰덊샇 ?먮뒗 怨쇰ぉ紐??쇳몴 援щ텇): ").strip()
     target_subjects = list(subject_queues.keys())
 
     if choice and choice != "1":
         if choice == "2":
-            choice = input_fn("  배정할 과목명을 입력하세요 (예: 국어, 도덕): ").strip()
+            choice = input_fn("  諛곗젙??怨쇰ぉ紐낆쓣 ?낅젰?섏꽭??(?? 援?뼱, ?꾨뜒): ").strip()
 
         if choice:
             entered = [_clean_text(value) for value in choice.split(",") if _clean_text(value)]
             valid = [subject for subject in entered if subject in subject_queues]
             if not valid:
-                print("  [경고] 입력하신 과목이 미수업 목록에 없거나 잘못 입력되었습니다. 작업을 취소합니다.")
+                print("  [寃쎄퀬] ?낅젰?섏떊 怨쇰ぉ??誘몄닔??紐⑸줉???녾굅???섎せ ?낅젰?섏뿀?듬땲?? ?묒뾽??痍⑥냼?⑸땲??")
                 return []
             target_subjects = valid
 
-    print(f"\n  [진행] 다음 과목에 대해서만 일정을 배정합니다: {', '.join(target_subjects)}")
+    print(f"\n  [吏꾪뻾] ?ㅼ쓬 怨쇰ぉ????댁꽌留??쇱젙??諛곗젙?⑸땲?? {', '.join(target_subjects)}")
     return target_subjects
 
 
 def choose_planner_mode(input_fn=input):
-    print("\n  배정 모드를 선택하세요.")
-    print("    1. 초기 전체 배정: 계획일을 처음부터 다시 넣습니다. F열(실행여부)과 기존 계획일을 무시합니다.")
-    print("    2. 빈칸 보강 배정: F열이 FALSE 계열이고 계획일이 빈칸인 행만 채웁니다. (Enter=2)")
+    print("\n  諛곗젙 紐⑤뱶瑜??좏깮?섏꽭??")
+    print("    1. 珥덇린 ?꾩껜 諛곗젙: 怨꾪쉷?쇱쓣 泥섏쓬遺???ㅼ떆 ?ｌ뒿?덈떎. F???ㅽ뻾?щ?)怨?湲곗〈 怨꾪쉷?쇱쓣 臾댁떆?⑸땲??")
+    print("    2. 鍮덉뭏 蹂닿컯 諛곗젙: F?댁씠 FALSE 怨꾩뿴?닿퀬 怨꾪쉷?쇱씠 鍮덉뭏???됰쭔 梨꾩썎?덈떎. (Enter=2)")
 
-    choice = _clean_text(input_fn("  선택: "))
+    choice = _clean_text(input_fn("  ?좏깮: "))
     if choice in {"", "2", "fill", "fill-blanks", "blank"}:
         return "fill-blanks"
     if choice in {"1", "initial", "all"}:
         return "initial"
-    print("  [경고] 알 수 없는 입력이라 안전하게 '빈칸 보강 배정'으로 진행합니다.")
+    print("  [寃쎄퀬] ?????녿뒗 ?낅젰?대씪 ?덉쟾?섍쾶 '鍮덉뭏 蹂닿컯 諛곗젙'?쇰줈 吏꾪뻾?⑸땲??")
     return "fill-blanks"
 
 
@@ -393,26 +437,26 @@ def _find_header_index(headers, target_name):
 
 
 def fetch_progress_and_plan(sh, school_days, timetable, semester_start_date, planner_mode, input_fn=input):
-    ws = sh.worksheet(PROGRESS_SHEET_NAME)
+    ws = resolve_progress_worksheet(sh)
     rows = ws.get_all_values()
     headers = rows[0] if rows else []
-    date_col_idx = _find_header_index(headers, "계획일")
+    date_col_idx = _find_header_index(headers, schedule.COLUMN_DATE)
     if not date_col_idx:
-        raise ValueError("진도표 시트에서 '계획일' 컬럼 헤더를 찾을 수 없습니다.")
+        raise ValueError("吏꾨룄???쒗듃?먯꽌 '怨꾪쉷?? 而щ읆 ?ㅻ뜑瑜?李얠쓣 ???놁뒿?덈떎.")
 
     records = ws.get_all_records(default_blank="")
     apply_done_column_fallback(headers, rows, records)
     excluded_unordered = [
         dict(record, _row=row_number)
         for row_number, record in enumerate(records, start=2)
-        if _clean_text(record.get("과목")) and not _has_ordered_unit(record)
+        if _clean_text(record.get("怨쇰ぉ")) and not _has_ordered_unit(record)
     ]
     if excluded_unordered:
-        print(f"  [안내] 숫자로 시작하지 않는 단원 {len(excluded_unordered)}개는 계획일 배정에서 제외합니다.")
+        print(f"  [?덈궡] ?レ옄濡??쒖옉?섏? ?딅뒗 ?⑥썝 {len(excluded_unordered)}媛쒕뒗 怨꾪쉷??諛곗젙?먯꽌 ?쒖쇅?⑸땲??")
 
     subject_queues = build_subject_queues(records, planner_mode=planner_mode)
     if not subject_queues:
-        print(f"  [알림] '{PLANNER_MODES[planner_mode]}' 대상으로 배정할 차시가 없습니다.")
+        print(f"  [?뚮┝] '{PLANNER_MODES[planner_mode]}' ??곸쑝濡?諛곗젙??李⑥떆媛 ?놁뒿?덈떎.")
         return
 
     target_subjects = select_target_subjects(subject_queues, input_fn=input_fn)
@@ -425,7 +469,7 @@ def fetch_progress_and_plan(sh, school_days, timetable, semester_start_date, pla
         semester_start_date,
         input_fn=input_fn,
     )
-    print("  [과목별 수업시작일]")
+    print("  [怨쇰ぉ蹂??섏뾽?쒖옉??")
     for subject in target_subjects:
         print(f"    {subject}: {subject_start_dates[subject]}")
 
@@ -441,7 +485,7 @@ def fetch_progress_and_plan(sh, school_days, timetable, semester_start_date, pla
     updates_by_row = {}
     if planner_mode == "initial":
         for row_number, record in enumerate(records, start=2):
-            if _clean_text(record.get("과목")) in target_subjects:
+            if _clean_text(record.get("怨쇰ぉ")) in target_subjects:
                 updates_by_row[row_number] = ""
 
     for assignment in assignments:
@@ -450,28 +494,28 @@ def fetch_progress_and_plan(sh, school_days, timetable, semester_start_date, pla
 
     updates = [
         {
-            "range": f"{PROGRESS_SHEET_NAME}!{date_col_letter}{row_number}",
+            "range": f"{ws.title}!{date_col_letter}{row_number}",
             "values": [[value]],
         }
         for row_number, value in sorted(updates_by_row.items())
     ]
 
     if updates:
-        print(f"  [업데이트 준비] 총 {len(updates)}개의 수업 일정이 배정되었습니다.")
+        print(f"  [?낅뜲?댄듃 以鍮? 珥?{len(updates)}媛쒖쓽 ?섏뾽 ?쇱젙??諛곗젙?섏뿀?듬땲??")
         preview = assignments[:10]
         for assignment in preview:
             record = assignment["record"]
             print(
-                f"    - {assignment['subject']} | {record.get('대단원', '')} | "
-                f"{record.get('차시', '')}차시 | {assignment['date']}"
+                f"    - {assignment['subject']} | {record.get('??⑥썝', '')} | "
+                f"{record.get('李⑥떆', '')}李⑥떆 | {assignment['date']}"
             )
         if len(assignments) > len(preview):
-            print(f"    - 그 외 {len(assignments) - len(preview)}개")
+            print(f"    - and {len(assignments) - len(preview)} more")
 
         sh.values_batch_update({"valueInputOption": "USER_ENTERED", "data": updates})
-        print("  [성공] 구글 시트 '계획일' 항목에 모든 날짜가 계산되어 입력되었습니다!")
+        print("  [?깃났] 援ш? ?쒗듃 '怨꾪쉷?? ??ぉ??紐⑤뱺 ?좎쭨媛 怨꾩궛?섏뼱 ?낅젰?섏뿀?듬땲??")
     else:
-        print("  [알림] 배정할 수 있는 날짜(시간표 기준)가 없거나 이미 배정되었습니다.")
+        print("  [?뚮┝] 諛곗젙?????덈뒗 ?좎쭨(?쒓컙??湲곗?)媛 ?녾굅???대? 諛곗젙?섏뿀?듬땲??")
 
     unscheduled = {
         subject: len(queue)
@@ -479,30 +523,147 @@ def fetch_progress_and_plan(sh, school_days, timetable, semester_start_date, pla
         if subject in target_subjects and queue
     }
     if unscheduled:
-        print("  [안내] 탐색 기간 안에 배정하지 못한 차시가 남아 있습니다.")
+        print("  [?덈궡] ?먯깋 湲곌컙 ?덉뿉 諛곗젙?섏? 紐삵븳 李⑥떆媛 ?⑥븘 ?덉뒿?덈떎.")
         for subject, count in unscheduled.items():
-            print(f"    {subject}: {count}개 남음")
+            print(f"    {subject}: {count}媛??⑥쓬")
+
+
+def resolve_progress_worksheet(sh):
+    candidates = _sheet_name_candidates(PREFERRED_PROGRESS_SHEET_NAME, LEGACY_PROGRESS_SHEET_NAME) or ["시트1"]
+    format_errors = []
+    last_error = None
+    for candidate in candidates:
+        try:
+            worksheet = sh.worksheet(candidate)
+        except Exception as exc:
+            if exc.__class__.__name__ != "WorksheetNotFound":
+                raise
+            last_error = exc
+            continue
+
+        headers = {_clean_text(header) for header in worksheet.row_values(1)}
+        required = {schedule.COLUMN_SUBJECT, schedule.COLUMN_DATE}
+        if required.issubset(headers):
+            return worksheet
+        format_errors.append(f"{candidate}: missing headers {', '.join(sorted(required - headers))}")
+
+    if format_errors:
+        raise ValueError(
+            "Could not find a valid progress sheet. " + " | ".join(format_errors)
+        )
+
+    attempted = ", ".join(candidates)
+    raise ValueError(f"Could not find a progress sheet. Checked: {attempted}") from last_error
+
+
+def fetch_progress_and_plan(sh, school_days, timetable, semester_start_date, planner_mode, input_fn=input):
+    ws = resolve_progress_worksheet(sh)
+    date_col_idx = schedule.get_header_map(ws).get(schedule.COLUMN_DATE)
+    if not date_col_idx:
+        raise ValueError("Progress sheet is missing the planned-date column.")
+
+    records = schedule.load_all(ws)
+    excluded_unordered = [
+        record
+        for record in records
+        if _clean_text(record.get(schedule.COLUMN_SUBJECT)) and not _has_ordered_unit(record)
+    ]
+    if excluded_unordered:
+        print(f"  [info] Skipping {len(excluded_unordered)} rows without an ordered unit.")
+
+    subject_queues = build_subject_queues(records, planner_mode=planner_mode)
+    if not subject_queues:
+        print(f"  [skip] No lessons matched planner mode '{planner_mode}'.")
+        return
+
+    target_subjects = select_target_subjects(subject_queues, input_fn=input_fn)
+    if not target_subjects:
+        return
+
+    subject_start_dates = fetch_subject_start_dates(
+        sh,
+        target_subjects,
+        semester_start_date,
+        input_fn=input_fn,
+    )
+    print("  [subject start dates]")
+    for subject in target_subjects:
+        print(f"    {subject}: {subject_start_dates[subject]}")
+
+    assignments, remaining = plan_lesson_assignments(
+        subject_queues,
+        school_days,
+        timetable,
+        target_subjects,
+        subject_start_dates,
+    )
+
+    date_col_letter = _get_column_letter(date_col_idx)
+    updates_by_row = {}
+    if planner_mode == "initial":
+        for record in records:
+            if _clean_text(record.get(schedule.COLUMN_SUBJECT)) in target_subjects:
+                updates_by_row[record["_row"]] = ""
+
+    for assignment in assignments:
+        row_number = assignment["record"]["_row"]
+        updates_by_row[row_number] = assignment["date"].strftime("%Y-%m-%d")
+
+    updates = [
+        {
+            "range": f"{ws.title}!{date_col_letter}{row_number}",
+            "values": [[value]],
+        }
+        for row_number, value in sorted(updates_by_row.items())
+    ]
+
+    if updates:
+        print(f"  [preview] Prepared {len(updates)} date updates.")
+        preview = assignments[:10]
+        for assignment in preview:
+            record = assignment["record"]
+            print(
+                f"    - {assignment['subject']} | {record.get(schedule.COLUMN_UNIT, '')} | "
+                f"{record.get(schedule.COLUMN_LESSON, '')} | {assignment['date']}"
+            )
+        if len(assignments) > len(preview):
+            print(f"    - and {len(assignments) - len(preview)} more")
+
+        sh.values_batch_update({"valueInputOption": "USER_ENTERED", "data": updates})
+        print("  [done] Updated planned dates in the progress sheet.")
+    else:
+        print("  [skip] No schedulable dates were available in the selected window.")
+
+    unscheduled = {
+        subject: len(queue)
+        for subject, queue in remaining.items()
+        if subject in target_subjects and queue
+    }
+    if unscheduled:
+        print("  [info] Some lessons remain unscheduled within the search window.")
+        for subject, count in unscheduled.items():
+            print(f"    {subject}: {count} remaining")
 
 
 def main():
     parser = argparse.ArgumentParser(
-        description="기초시간표, 진도표, 휴업일, 수업시작일을 조합해 수업 계획일을 자동 세팅합니다."
+        description="湲곗큹?쒓컙?? 吏꾨룄?? ?댁뾽?? ?섏뾽?쒖옉?쇱쓣 議고빀???섏뾽 怨꾪쉷?쇱쓣 ?먮룞 ?명똿?⑸땲??"
     )
     parser.add_argument(
         "--start-date",
         required=False,
-        help="학기 시작일 또는 기본 수업 시작일 (예: 2026-03-02)",
+        help="?숆린 ?쒖옉???먮뒗 湲곕낯 ?섏뾽 ?쒖옉??(?? 2026-03-02)",
     )
     parser.add_argument(
         "--end-date",
         required=False,
-        help="학기 종료 일정 (생략 시 시작일로부터 150일간 탐색)",
+        help="?숆린 醫낅즺 ?쇱젙 (?앸왂 ???쒖옉?쇰줈遺??150?쇨컙 ?먯깋)",
     )
     parser.add_argument(
         "--mode",
         choices=sorted(PLANNER_MODES.keys()),
         required=False,
-        help="initial=초기 전체 배정, fill-blanks=빈칸 보강 배정",
+        help="initial=珥덇린 ?꾩껜 諛곗젙, fill-blanks=鍮덉뭏 蹂닿컯 諛곗젙",
     )
     args = parser.parse_args()
 
@@ -510,23 +671,23 @@ def main():
     raw_start_date = args.start_date
     if raw_start_date is None:
         print("=" * 60)
-        print(" 📅 자동 진도표 배분 생성기 (Auto Schedule Planner)")
+        print(" ?뱟 ?먮룞 吏꾨룄??諛곕텇 ?앹꽦湲?(Auto Schedule Planner)")
         print("=" * 60)
-        raw_start_date = input("학기 시작일을 입력하세요 (Enter=3.2): ").strip()
+        raw_start_date = input("?숆린 ?쒖옉?쇱쓣 ?낅젰?섏꽭??(Enter=3.2): ").strip()
 
     semester_start_date = parse_date(raw_start_date) if raw_start_date else default_semester_start
     if not semester_start_date:
-        print("시작 날짜의 형식이 잘못 입력되었습니다.")
-        input("\n엔터를 누르면 창이 닫힙니다...")
+        print("?쒖옉 ?좎쭨???뺤떇???섎せ ?낅젰?섏뿀?듬땲??")
+        input("\n?뷀꽣瑜??꾨Ⅴ硫?李쎌씠 ?ロ옓?덈떎...")
         sys.exit(1)
 
     end_date = parse_date(args.end_date) if args.end_date else semester_start_date + timedelta(days=150)
     if not end_date:
-        print("종료 날짜의 형식이 잘못 입력되었습니다.")
-        input("\n엔터를 누르면 창이 닫힙니다...")
+        print("醫낅즺 ?좎쭨???뺤떇???섎せ ?낅젰?섏뿀?듬땲??")
+        input("\n?뷀꽣瑜??꾨Ⅴ硫?李쎌씠 ?ロ옓?덈떎...")
         sys.exit(1)
 
-    print(f"\n ▸ 배정 탐색 기간: {semester_start_date} ~ {end_date}")
+    print(f"\n ??諛곗젙 ?먯깋 湲곌컙: {semester_start_date} ~ {end_date}")
 
     try:
         client = get_client()
@@ -534,11 +695,11 @@ def main():
 
         holidays = fetch_holidays(sh)
         school_days = get_school_days(semester_start_date, end_date, holidays)
-        print(f" ▸ 총 수업 일수 (주말/휴일 제외): {len(school_days)}일 확보됨")
+        print(f" Total school days (weekdays minus holidays): {len(school_days)}")
 
         timetable = fetch_timetable(sh)
         planner_mode = args.mode or choose_planner_mode(input_fn=input)
-        print(f" ▸ 배정 모드: {PLANNER_MODES[planner_mode]}")
+        print(f" ??諛곗젙 紐⑤뱶: {PLANNER_MODES[planner_mode]}")
         fetch_progress_and_plan(
             sh,
             school_days,
@@ -548,13 +709,15 @@ def main():
             input_fn=input,
         )
 
-        input("\n[작업 완료] 엔터를 누르면 창이 닫힙니다...")
+        input("\n[?묒뾽 ?꾨즺] ?뷀꽣瑜??꾨Ⅴ硫?李쎌씠 ?ロ옓?덈떎...")
 
     except Exception as exc:
-        print(f"\n[오류 발생] 작업을 중단합니다: {exc}")
-        input("\n[오류] 엔터를 누르면 창이 닫힙니다...")
+        print(f"\n[?ㅻ쪟 諛쒖깮] ?묒뾽??以묐떒?⑸땲?? {exc}")
+        input("\n[?ㅻ쪟] ?뷀꽣瑜??꾨Ⅴ硫?李쎌씠 ?ロ옓?덈떎...")
         sys.exit(1)
 
 
 if __name__ == "__main__":
     main()
+
+

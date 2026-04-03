@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 const API_BASE = "http://127.0.0.1:5000/api";
 
@@ -19,12 +19,14 @@ export function useScheduleData() {
         setError(null);
         try {
             const res = await fetch(`${API_BASE}/dashboard`);
-            if (!res.ok) throw new Error("서버 응답 오류");
+            if (!res.ok) {
+                throw new Error("Server error");
+            }
             const json = await res.json();
             setData({ views: json.views || [], subjects: json.subjects || [] });
         } catch (e) {
             setError(e.message);
-            showToast("데이터 로드 실패: " + e.message, "error");
+            showToast(`Load failed: ${e.message}`, "error");
         } finally {
             setLoading(false);
         }
@@ -35,54 +37,74 @@ export function useScheduleData() {
     }, [loadData]);
 
     const markDone = async (item) => {
-        setIsProcessing(item._row || item.행번호);
+        const recordKey = item.lesson_id || item._record_key || item._row || null;
+        const bridgeRow = item._bridge_row ?? null;
+        const subject = item["과목"] || item.subject || "";
+        const plannedDate = item["계획일"] || item.slot_date || null;
+        const title = item["수업내용"] || item.title || item.lesson_id || "lesson";
+
+        setIsProcessing(bridgeRow || recordKey || "done");
         try {
             const res = await fetch(`${API_BASE}/done`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ subject: item.과목, target_date: item.계획일 })
+                body: JSON.stringify({
+                    subject,
+                    target_date: plannedDate,
+                    record_key: recordKey,
+                    bridge_row: bridgeRow,
+                }),
             });
-            if (!res.ok) throw new Error("서버 에러");
-            showToast(`✅ "${item.수업내용}" 완료 처리됨`);
+            if (!res.ok) {
+                throw new Error("Server error");
+            }
+            const json = await res.json();
+            showToast(json.message || `"${title}" updated`);
             await loadData();
         } catch (e) {
-            showToast("업데이트 실패: " + e.message, "error");
+            showToast(`Update failed: ${e.message}`, "error");
         } finally {
             setIsProcessing(null);
         }
     };
 
-    const pushSchedule = async (subj, days, fromDate = null) => {
-        setIsProcessing(`push-${subj}`);
+    const pushSchedule = async (subject, days, fromDate = null) => {
+        setIsProcessing(`push-${subject}`);
         try {
             const res = await fetch(`${API_BASE}/push`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ subject: subj, days, from_date: fromDate || null })
+                body: JSON.stringify({ subject, days, from_date: fromDate || null }),
             });
-            if (!res.ok) throw new Error("서버 에러");
-            showToast(`📅 ${subj} 연기 완료`);
+            if (!res.ok) {
+                throw new Error("Server error");
+            }
+            const json = await res.json();
+            showToast(json.message || `${subject} shifted`);
             await loadData();
         } catch (e) {
-            showToast("실패: " + e.message, "error");
+            showToast(`Update failed: ${e.message}`, "error");
         } finally {
             setIsProcessing(null);
         }
     };
 
-    const extendSchedule = async (subj) => {
-        setIsProcessing(`ext-${subj}`);
+    const extendSchedule = async (subject) => {
+        setIsProcessing(`ext-${subject}`);
         try {
             const res = await fetch(`${API_BASE}/extend`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ subject: subj })
+                body: JSON.stringify({ subject }),
             });
-            if (!res.ok) throw new Error("서버 에러");
-            showToast(`⏳ ${subj} 연장 완료`);
+            if (!res.ok) {
+                throw new Error("Server error");
+            }
+            const json = await res.json();
+            showToast(json.message || `${subject} extended`);
             await loadData();
         } catch (e) {
-            showToast("실패: " + e.message, "error");
+            showToast(`Update failed: ${e.message}`, "error");
         } finally {
             setIsProcessing(null);
         }

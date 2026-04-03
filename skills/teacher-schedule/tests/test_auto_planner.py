@@ -4,6 +4,32 @@ from datetime import date
 import auto_planner
 
 
+class WorksheetNotFound(Exception):
+    pass
+
+
+class FakeWorksheet:
+    def __init__(self, title, headers):
+        self.title = title
+        self._headers = list(headers)
+
+    def row_values(self, index):
+        if index == 1:
+            return self._headers[:]
+        return []
+
+
+class FakeWorkbook:
+    def __init__(self, worksheets):
+        self.worksheets = {worksheet.title: worksheet for worksheet in worksheets}
+
+    def worksheet(self, title):
+        worksheet = self.worksheets.get(title)
+        if worksheet is None:
+            raise WorksheetNotFound(title)
+        return worksheet
+
+
 class AutoPlannerTests(unittest.TestCase):
     def test_is_done_accepts_apostrophe_prefixed_checkbox_values(self):
         self.assertTrue(auto_planner._is_done("'TRUE"))
@@ -149,6 +175,18 @@ class AutoPlannerTests(unittest.TestCase):
         )
         self.assertEqual(len(remaining["수학"]), 1)
         self.assertEqual(remaining["수학"][0]["차시"], "2")
+
+    def test_resolve_progress_worksheet_skips_invalid_first_candidate(self):
+        workbook = FakeWorkbook(
+            [
+                FakeWorksheet("진도표", ["과목", "실행여부"]),
+                FakeWorksheet("시트1", ["과목", "계획일", "차시"]),
+            ]
+        )
+
+        worksheet = auto_planner.resolve_progress_worksheet(workbook)
+
+        self.assertEqual(worksheet.title, "시트1")
 
 
 if __name__ == "__main__":

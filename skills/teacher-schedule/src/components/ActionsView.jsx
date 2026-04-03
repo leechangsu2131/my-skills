@@ -5,83 +5,115 @@ export function ActionsView({ subjects, pushSchedule, extendSchedule, isProcessi
     const [pushDays, setPushDays] = useState(7);
     const [pushFrom, setPushFrom] = useState("");
 
-    const daysOptions = [1, 2, 3, 5, 7, 14];
+    const dayOptions = [1, 2, 3, 5, 7, 14];
 
     return (
-        <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <h3 className="text-lg font-bold text-gray-900 mb-4 px-1">⚙️ 일괄 연기 설정</h3>
-            <div className="card mb-8">
-                <label className="block text-sm font-bold text-gray-700 mb-3">며칠을 미룰까요?</label>
-                <div className="flex flex-wrap gap-2 mb-6">
-                    {daysOptions.map(d => (
-                        <button
-                            key={d}
-                            className={`px-4 py-2 text-sm font-bold border rounded-lg transition-all ${pushDays === d
-                                    ? 'bg-gray-900 text-white border-gray-900 shadow-md transform scale-105'
-                                    : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50 hover:border-gray-300'
-                                }`}
-                            onClick={() => setPushDays(d)}
-                        >
-                            {d}일
-                        </button>
-                    ))}
+        <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <section className="rounded-[32px] border border-stone-200 bg-[linear-gradient(135deg,#eff6ff_0%,#f8fafc_45%,#ffffff_100%)] p-6 shadow-sm">
+                <div className="grid gap-5 lg:grid-cols-[1.15fr_0.85fr]">
+                    <div>
+                        <div className="text-[11px] font-bold uppercase tracking-[0.28em] text-sky-600">
+                            Schedule Control
+                        </div>
+                        <h2 className="mt-3 text-3xl font-black tracking-tight text-stone-900">
+                            수업배치 운영 도구
+                        </h2>
+                        <p className="mt-3 max-w-2xl text-sm leading-6 text-stone-600">
+                            여기서 미루기와 차시 확장을 수행하면 진도표 표시 열도 함께 맞춰집니다.
+                            즉, 수업배치를 실제 일정의 기준으로 다루는 화면입니다.
+                        </p>
+                    </div>
+
+                    <div className="rounded-[28px] border border-sky-100 bg-white/80 p-5 shadow-sm">
+                        <div className="text-sm font-bold text-stone-800">미루기 기본 설정</div>
+                        <div className="mt-4 flex flex-wrap gap-2">
+                            {dayOptions.map((days) => {
+                                const active = pushDays === days;
+                                return (
+                                    <button
+                                        key={days}
+                                        className={`rounded-2xl px-4 py-2 text-sm font-bold transition ${
+                                            active
+                                                ? "bg-stone-900 text-white shadow-sm"
+                                                : "border border-stone-200 bg-white text-stone-600 hover:bg-stone-50"
+                                        }`}
+                                        onClick={() => setPushDays(days)}
+                                    >
+                                        {days}일
+                                    </button>
+                                );
+                            })}
+                        </div>
+
+                        <label className="mt-5 block text-sm font-bold text-stone-700">
+                            기준 날짜
+                        </label>
+                        <p className="mt-1 text-xs text-stone-500">
+                            비워 두면 해당 과목의 남은 모든 슬롯을 함께 미룹니다.
+                        </p>
+                        <input
+                            type="date"
+                            className="mt-3 w-full rounded-2xl border border-stone-200 bg-stone-50 px-4 py-3 text-sm font-medium text-stone-900 outline-none transition focus:border-stone-900 focus:bg-white"
+                            value={pushFrom}
+                            onChange={(event) => setPushFrom(event.target.value)}
+                        />
+                    </div>
                 </div>
+            </section>
 
-                <label className="block text-sm font-bold text-gray-700 mb-2">언제부터 연기할까요? <span className="text-gray-400 font-normal ml-1">(비워두면 전체 일정 연기)</span></label>
-                <input
-                    type="date"
-                    className="w-full max-w-sm px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 font-medium focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-shadow outline-none"
-                    value={pushFrom}
-                    onChange={e => setPushFrom(e.target.value)}
-                />
-            </div>
-
-            <h3 className="text-lg font-bold text-gray-900 mb-4 px-1">📅 과목별 일괄 연기</h3>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 mb-10">
-                {subjects.map(subject => {
+            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+                {subjects.map((subject) => {
                     const style = getSubjectStyle(subject);
-                    const processingTarget = `push-${subject}`;
-                    const loading = isProcessing === processingTarget;
+                    const pushing = isProcessing === `push-${subject}`;
+                    const extending = isProcessing === `ext-${subject}`;
 
                     return (
-                        <div key={`push-${subject}`} className={`bg-white rounded-xl p-4 border border-gray-100 shadow-sm flex flex-col items-center justify-center text-center transition-all hover:border-${style.accent} hover:shadow-md`}>
-                            <div className="text-3xl mb-2">{style.icon}</div>
-                            <div className={`font-bold text-base mb-1 ${style.accent}`}>{subject}</div>
-                            <div className="text-xs text-gray-400 font-medium mb-4">일정 미루기</div>
-                            <button
-                                className={`w-full py-2 px-3 text-xs font-bold rounded-lg transition-colors border field-sizing-content
-                  ${loading ? 'bg-gray-100 text-gray-400 border-gray-100' : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50 hover:border-gray-300 shadow-sm'}`}
-                                onClick={() => pushSchedule(subject, pushDays, pushFrom)}
-                                disabled={loading}
-                            >
-                                {loading ? "..." : `+${pushDays}일 연기`}
-                            </button>
-                        </div>
-                    );
-                })}
-            </div>
+                        <article
+                            key={subject}
+                            className="rounded-[28px] border border-stone-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+                        >
+                            <div className="flex items-center gap-3">
+                                <div className={`flex h-12 w-12 items-center justify-center rounded-2xl text-xl ${style.bg} ${style.accent}`}>
+                                    {style.icon}
+                                </div>
+                                <div>
+                                    <div className={`text-lg font-black ${style.accent}`}>{subject}</div>
+                                    <div className="text-sm text-stone-500">수업배치 조정</div>
+                                </div>
+                            </div>
 
-            <h3 className="text-lg font-bold text-gray-900 mb-4 px-1">➕ 수업 연장 (최근 1시간 차시 복제)</h3>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 pb-12">
-                {subjects.map(subject => {
-                    const style = getSubjectStyle(subject);
-                    const processingTarget = `ext-${subject}`;
-                    const loading = isProcessing === processingTarget;
+                            <div className="mt-5 grid gap-3">
+                                <button
+                                    className={`inline-flex items-center justify-between rounded-2xl px-4 py-3 text-sm font-bold transition ${
+                                        pushing
+                                            ? "cursor-not-allowed bg-stone-200 text-stone-400"
+                                            : "bg-stone-900 text-white hover:-translate-y-0.5"
+                                    }`}
+                                    onClick={() => pushSchedule(subject, pushDays, pushFrom || null)}
+                                    disabled={pushing}
+                                >
+                                    <span>{pushDays}일 미루기</span>
+                                    <span>{pushing ? "..." : "push"}</span>
+                                </button>
 
-                    return (
-                        <div key={`ext-${subject}`} className="bg-gray-50 rounded-xl p-4 border border-dashed border-gray-200 flex flex-col items-center justify-center text-center transition-colors hover:bg-white hover:border-solid hover:border-gray-300">
-                            <div className="font-bold text-gray-800 text-base mb-1">{subject} 연장</div>
-                            <div className="text-xs text-gray-500 font-medium mb-4">미완료 차시 유지<br />날짜만 밀기</div>
-                            <button
-                                className={`w-full py-2 px-3 text-xs font-bold rounded-lg text-white shadow-sm transition-transform 
-                  ${loading ? 'bg-gray-300 transform-none' : 'hover:-translate-y-0.5'}`}
-                                style={!loading ? { backgroundColor: 'currentColor' } : undefined}
-                                onClick={() => extendSchedule(subject)}
-                                disabled={loading}
-                            >
-                                {loading ? "처리중..." : "연장하기"}
-                            </button>
-                        </div>
+                                <button
+                                    className={`inline-flex items-center justify-between rounded-2xl border px-4 py-3 text-sm font-bold transition ${
+                                        extending
+                                            ? "cursor-not-allowed border-stone-200 bg-stone-100 text-stone-400"
+                                            : "border-stone-200 bg-stone-50 text-stone-700 hover:-translate-y-0.5 hover:bg-white"
+                                    }`}
+                                    onClick={() => extendSchedule(subject)}
+                                    disabled={extending}
+                                >
+                                    <span>1차시 확장</span>
+                                    <span>{extending ? "..." : "extend"}</span>
+                                </button>
+                            </div>
+
+                            <div className="mt-4 rounded-2xl bg-stone-50 px-4 py-3 text-xs leading-5 text-stone-500">
+                                미루기는 날짜를 뒤로 보내고, 확장은 현재 진행 중인 차시 뒤에 같은 수업 슬롯을 하나 더 만듭니다.
+                            </div>
+                        </article>
                     );
                 })}
             </div>

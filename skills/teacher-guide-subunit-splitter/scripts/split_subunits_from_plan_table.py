@@ -2588,6 +2588,7 @@ def build_groups_from_activity_plan_entry(pdf_doc, parent_group: dict, plan_unit
                 "context": list(parent_group.get("context", [])),
                 "detected_level": "detail",
                 "parent_unit_title": parent_title,
+                "hours": activity.get("hours") or 1,
             }
         )
 
@@ -2786,6 +2787,19 @@ def extract_music_unit_title(page, fallback_title: str) -> str:
             return candidate
     return normalize_space(fallback_title)
 
+def normalize_music_unit_title(unit_title: str, unit_index: int) -> str:
+    title = normalize_space(unit_title)
+    if not title:
+        return title
+    if re.match(r"^\d+\s*[. ]?", title):
+        return title
+    if "프로젝트" in title:
+        return title
+    return f"{unit_index} {title}"
+
+
+
+
 
 def build_groups_from_music_plan_entry(pdf_doc, parent_group: dict) -> list[dict]:
     parent_start = parent_group["start_page"]
@@ -2815,6 +2829,7 @@ def build_groups_from_music_plan_entry(pdf_doc, parent_group: dict) -> list[dict
                     "context": list(parent_group.get("context", [])),
                     "detected_level": "detail",
                     "parent_unit_title": parent_title,
+                    "hours": 1,
                 }
             )
 
@@ -2847,6 +2862,7 @@ def build_groups_from_music_plan_entry(pdf_doc, parent_group: dict) -> list[dict
                     "context": list(parent_group.get("context", [])),
                     "detected_level": "detail",
                     "parent_unit_title": parent_title,
+                    "hours": row.get("hours") or 1,
                 }
             )
 
@@ -2885,8 +2901,9 @@ def extract_music_plan_units(pdf_doc) -> list[dict]:
         )
 
     units.sort(key=lambda item: item["start_page"])
-    for index, unit in enumerate(units):
-        next_start = units[index + 1]["start_page"] if index + 1 < len(units) else total_pages + 1
+    for index, unit in enumerate(units, start=1):
+        unit["title"] = normalize_music_unit_title(unit.get("title", ""), index)
+        next_start = units[index]["start_page"] if index < len(units) else total_pages + 1
         unit["end_page"] = max(unit["start_page"], next_start - 1)
     return units
 
@@ -2961,6 +2978,7 @@ def build_groups_from_music_plan_pages(pdf_doc, split_level: str) -> list[dict]:
                     "context": [],
                     "detected_level": "detail",
                     "parent_unit_title": unit_title,
+                    "hours": 1,
                 }
             )
 
@@ -2986,6 +3004,7 @@ def build_groups_from_music_plan_pages(pdf_doc, split_level: str) -> list[dict]:
                     "context": [],
                     "detected_level": "detail",
                     "parent_unit_title": unit_title,
+                    "hours": row.get("hours") or 1,
                 }
             )
 

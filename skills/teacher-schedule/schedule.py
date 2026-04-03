@@ -638,6 +638,26 @@ def _record_with_bridge_row(record, bridge_row):
     return enriched
 
 
+def _record_with_occurrence_date(record, occurrence_date):
+    enriched = dict(record)
+    formatted = _format_date(occurrence_date)
+    enriched[COLUMN_DATE] = formatted
+    enriched["slot_date"] = formatted
+    if "slot_period" not in enriched:
+        enriched["slot_period"] = ""
+    return enriched
+
+
+def _occurrence_sort_key(record):
+    planned = _parse_date(record.get("slot_date") or record.get(COLUMN_DATE), allow_blank=True) or date.max
+    return (
+        planned,
+        _safe_int(record.get("slot_period")),
+        _safe_int(record.get(COLUMN_LESSON)),
+        _safe_int(record.get("_row")),
+    )
+
+
 def _bridge_rows_for_records(records, bridge_rows, *, subject=None, include_done=False, start_date=None, end_date=None):
     records_by_lesson_id = {
         _lesson_id_of(record): record
@@ -874,6 +894,79 @@ def get_remaining_week_lessons(records, start_date=None, bridge_rows=None):
         )
     ]
     return sorted(lessons, key=_record_sort_key)
+
+
+def get_schedule_range(records, start_date=None, end_date=None, bridge_rows=None, include_done=False):
+    start_date = _coerce_date(start_date, field_name="start date") if start_date is not None else None
+    end_date = _coerce_date(end_date, field_name="end date") if end_date is not None else None
+    if start_date and end_date and end_date < start_date:
+        return []
+
+    if bridge_rows is not None:
+        return _bridge_rows_for_records(
+            records,
+            bridge_rows,
+            include_done=include_done,
+            start_date=start_date,
+            end_date=end_date,
+        )
+
+    lessons = []
+    for record in records:
+        if not include_done and _is_done(record):
+            continue
+
+        for occurrence_date in _scheduled_occurrence_dates(record):
+            if start_date and occurrence_date < start_date:
+                continue
+            if end_date and occurrence_date > end_date:
+                continue
+            lessons.append(_record_with_occurrence_date(record, occurrence_date))
+
+    return sorted(lessons, key=_occurrence_sort_key)
+
+
+def get_schedule_by_date(records, target_date, bridge_rows=None, include_done=False):
+    target_date = _coerce_date(target_date, field_name="target date")
+    if target_date is None:
+        return []
+    return get_schedule_range(
+        records,
+        start_date=target_date,
+        end_date=target_date,
+        bridge_rows=bridge_rows,
+        include_done=include_done,
+    )
+
+
+def get_next_school_day(records, start_date=None, bridge_rows=None, include_done=False):
+    start_date = _coerce_date(start_date, field_name="start date") or date.today()
+    schedule_rows = get_schedule_range(
+        records,
+        start_date=start_date + timedelta(days=1),
+        bridge_rows=bridge_rows,
+        include_done=include_done,
+    )
+    for row in schedule_rows:
+        parsed_date = _parse_date(row.get("slot_date") or row.get(COLUMN_DATE), allow_blank=True)
+        if parsed_date is not None and parsed_date > start_date:
+            return parsed_date
+    return None
+
+
+def get_remaining_week_lessons(records, start_date=None, bridge_rows=None, include_done=False):
+    start_date = _coerce_date(start_date, field_name="target date") or date.today()
+    if start_date.weekday() > 4:
+        return []
+
+    end_date = start_date + timedelta(days=4 - start_date.weekday())
+    return get_schedule_range(
+        records,
+        start_date=start_date,
+        end_date=end_date,
+        bridge_rows=bridge_rows,
+        include_done=include_done,
+    )
 
 
 def plan_lesson_extension(records, subject, row_number=None, extra_slots=1):
@@ -1561,6 +1654,179 @@ def _push_schedule_via_bridge(ws, records, subject, days, from_date=None, bridge
         "updated": len(updated_rows),
         "rows": [row.get("_row") for row in updated_rows if row.get("_row")],
         "message": f"[{subject}] shifted {len(updated_rows)} bridge slot(s) by {days} day(s).",
+    }
+
+
+def _coerce_bridge_row_number(value, *, field_name="bridge row"):
+    text = _clean_text(value)
+    if not text:
+        raise ValueError(f"{field_name} is required.")
+    try:
+        return int(text)
+    except ValueError as exc:
+        raise ValueError(f"Invalid {field_name}: {value}") from exc
+
+
+def _bridge_slot_payload(row):
+    return (
+        _clean_text(row.get("slot_date")),
+        _clean_text(row.get("slot_period")),
+        _clean_text(row.get("slot_order")),
+    )
+
+
+def _apply_bridge_slot_payload(row, payload):
+    row["slot_date"], row["slot_period"], row["slot_order"] = payload
+
+
+def move_bridge_slot(ws, records, bridge_row_number, direction, bridge_support=None):
+    if bridge_support is None:
+        bridge_support = _load_bridge_support(ws)
+    if bridge_support is None:
+        message = "Bridge sheet is required for slot moves."
+        return {"updated": 0, "rows": [], "message": message}
+
+    bridge_row_number = _coerce_bridge_row_number(bridge_row_number)
+    direction = _clean_text(direction).casefold()
+    step = {
+        "earlier": -1,
+        "up": -1,
+        "previous": -1,
+        "later": 1,
+        "down": 1,
+        "next": 1,
+    }.get(direction)
+    if step is None:
+        raise ValueError(f"Invalid move direction: {direction}")
+
+    planned_rows = [row for row in sorted(bridge_support["rows"], key=_bridge_row_sort_key) if _is_bridge_planned(row)]
+    current_index = next(
+        (index for index, row in enumerate(planned_rows) if row.get("_row") == bridge_row_number),
+        None,
+    )
+    if current_index is None:
+        message = f"No planned bridge slot found for row {bridge_row_number}."
+        return {"updated": 0, "rows": [], "message": message}
+
+    target_index = current_index + step
+    if target_index < 0 or target_index >= len(planned_rows):
+        message = "The lesson is already at the edge of the schedule."
+        return {"updated": 0, "rows": [bridge_row_number], "message": message}
+
+    current_row = planned_rows[current_index]
+    target_row = planned_rows[target_index]
+    current_payload = _bridge_slot_payload(current_row)
+    target_payload = _bridge_slot_payload(target_row)
+    _apply_bridge_slot_payload(current_row, target_payload)
+    _apply_bridge_slot_payload(target_row, current_payload)
+    _rewrite_bridge_sheet(ws, records, bridge_support)
+
+    return {
+        "updated": 2,
+        "rows": [bridge_row_number, target_row.get("_row")],
+        "message": "Moved the lesson slot.",
+    }
+
+
+def pull_bridge_slot(ws, records, bridge_row_number, bridge_support=None):
+    if bridge_support is None:
+        bridge_support = _load_bridge_support(ws)
+    if bridge_support is None:
+        message = "Bridge sheet is required for subject flow adjustments."
+        return {"updated": 0, "rows": [], "message": message}
+
+    bridge_row_number = _coerce_bridge_row_number(bridge_row_number)
+    sorted_rows = sorted(bridge_support["rows"], key=_bridge_row_sort_key)
+    target_row = next(
+        (row for row in sorted_rows if row.get("_row") == bridge_row_number and _is_bridge_planned(row)),
+        None,
+    )
+    if target_row is None:
+        message = f"No planned bridge slot found for row {bridge_row_number}."
+        return {"updated": 0, "rows": [], "message": message}
+
+    subject = _clean_text(target_row.get(COLUMN_SUBJECT))
+    lesson_id = _clean_text(target_row.get(COLUMN_LESSON_ID))
+    subject_rows = [
+        row
+        for row in sorted_rows
+        if _is_bridge_planned(row) and _clean_text(row.get(COLUMN_SUBJECT)) == subject
+    ]
+    target_index = next(
+        (index for index, row in enumerate(subject_rows) if row.get("_row") == bridge_row_number),
+        None,
+    )
+    if target_index is None or target_index >= len(subject_rows) - 1:
+        message = f"There is no later [{subject}] lesson to pull forward."
+        return {"updated": 0, "rows": [bridge_row_number], "message": message}
+
+    slot_templates = [_bridge_slot_payload(row) for row in subject_rows]
+    rewritten_subject_rows = subject_rows[:target_index] + subject_rows[target_index + 1 :]
+    for row, slot_template in zip(rewritten_subject_rows, slot_templates[: len(rewritten_subject_rows)]):
+        _apply_bridge_slot_payload(row, slot_template)
+
+    subject_row_ids = {id(row) for row in subject_rows}
+    remaining_rows = [row for row in bridge_support["rows"] if id(row) not in subject_row_ids]
+    bridge_support["rows"] = remaining_rows + rewritten_subject_rows
+    _rewrite_bridge_sheet(ws, records, bridge_support)
+
+    has_remaining_planned = any(
+        _clean_text(row.get(COLUMN_LESSON_ID)) == lesson_id and _is_bridge_planned(row)
+        for row in bridge_support["rows"]
+    )
+    done_value = not has_remaining_planned
+    done_column = get_header_map(ws)[COLUMN_DONE]
+    worksheet_name = _worksheet_title(ws)
+    progress_updates = [
+        _make_cell_update(
+            done_column,
+            record["_row"],
+            done_value,
+            worksheet_name=worksheet_name,
+        )
+        for record in records
+        if _lesson_id_of(record) == lesson_id and _is_done(record) != done_value
+    ]
+    _batch_update_cells_with_option(ws, progress_updates, value_input_option="USER_ENTERED")
+
+    return {
+        "updated": 1,
+        "rows": [bridge_row_number],
+        "message": f"Pulled the next [{subject}] lesson forward.",
+        "done_lesson": done_value,
+    }
+
+
+def swap_bridge_slots(ws, records, first_bridge_row, second_bridge_row, bridge_support=None):
+    if bridge_support is None:
+        bridge_support = _load_bridge_support(ws)
+    if bridge_support is None:
+        message = "Bridge sheet is required for slot swaps."
+        return {"updated": 0, "rows": [], "message": message}
+
+    first_bridge_row = _coerce_bridge_row_number(first_bridge_row, field_name="first bridge row")
+    second_bridge_row = _coerce_bridge_row_number(second_bridge_row, field_name="second bridge row")
+    if first_bridge_row == second_bridge_row:
+        message = "Choose two different lesson slots to swap."
+        return {"updated": 0, "rows": [first_bridge_row], "message": message}
+
+    bridge_rows = {row.get("_row"): row for row in bridge_support["rows"]}
+    first_row = bridge_rows.get(first_bridge_row)
+    second_row = bridge_rows.get(second_bridge_row)
+    if first_row is None or second_row is None or not _is_bridge_planned(first_row) or not _is_bridge_planned(second_row):
+        message = "Only planned bridge slots can be swapped."
+        return {"updated": 0, "rows": [], "message": message}
+
+    first_payload = _bridge_slot_payload(first_row)
+    second_payload = _bridge_slot_payload(second_row)
+    _apply_bridge_slot_payload(first_row, second_payload)
+    _apply_bridge_slot_payload(second_row, first_payload)
+    _rewrite_bridge_sheet(ws, records, bridge_support)
+
+    return {
+        "updated": 2,
+        "rows": [first_bridge_row, second_bridge_row],
+        "message": "Swapped the two lesson slots.",
     }
 
 

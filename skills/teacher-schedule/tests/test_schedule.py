@@ -393,6 +393,69 @@ class ScheduleTests(unittest.TestCase):
         self.assertEqual(lessons[0][schedule.COLUMN_DATE], "2026-03-12")
         self.assertEqual(lessons[0]["_bridge_row"], 2)
 
+    def test_get_schedule_by_date_can_include_done_bridge_rows(self):
+        progress_ws, _bridge_ws = self.make_progress_and_bridge(
+            [
+                ["lesson-0001", "Math", "2026-03-12", "TRUE", "1", "Fractions", "Unit 1"],
+            ],
+            [
+                ["2026-03-12", 2, 1, "Math", "lesson-0001", "done", "progress_sync", ""],
+            ],
+            progress_headers=[
+                schedule.COLUMN_LESSON_ID,
+                schedule.COLUMN_SUBJECT,
+                schedule.COLUMN_DATE,
+                schedule.COLUMN_DONE,
+                schedule.COLUMN_LESSON,
+                schedule.COLUMN_TITLE,
+                schedule.COLUMN_UNIT,
+            ],
+        )
+        records = schedule.load_all(progress_ws)
+        bridge_rows = schedule.load_bridge_rows_for_progress_ws(progress_ws)
+
+        lessons = schedule.get_schedule_by_date(
+            records,
+            date(2026, 3, 12),
+            bridge_rows=bridge_rows,
+            include_done=True,
+        )
+
+        self.assertEqual(len(lessons), 1)
+        self.assertEqual(lessons[0]["status"], "done")
+
+    def test_get_next_school_day_returns_next_date_with_lessons(self):
+        progress_ws, _bridge_ws = self.make_progress_and_bridge(
+            [
+                ["lesson-0001", "Math", "2026-03-12", "FALSE", "1", "Fractions", "Unit 1"],
+                ["lesson-0002", "Math", "2026-03-18", "FALSE", "2", "Division", "Unit 1"],
+            ],
+            [
+                ["2026-03-12", 2, 1, "Math", "lesson-0001", "planned", "progress_sync", ""],
+                ["2026-03-18", 3, 1, "Math", "lesson-0002", "planned", "progress_sync", ""],
+            ],
+            progress_headers=[
+                schedule.COLUMN_LESSON_ID,
+                schedule.COLUMN_SUBJECT,
+                schedule.COLUMN_DATE,
+                schedule.COLUMN_DONE,
+                schedule.COLUMN_LESSON,
+                schedule.COLUMN_TITLE,
+                schedule.COLUMN_UNIT,
+            ],
+        )
+        records = schedule.load_all(progress_ws)
+        bridge_rows = schedule.load_bridge_rows_for_progress_ws(progress_ws)
+
+        next_day = schedule.get_next_school_day(
+            records,
+            date(2026, 3, 12),
+            bridge_rows=bridge_rows,
+            include_done=True,
+        )
+
+        self.assertEqual(next_day, date(2026, 3, 18))
+
     def test_mark_done_via_bridge_marks_one_slot_at_a_time(self):
         progress_ws, bridge_ws = self.make_progress_and_bridge(
             [
@@ -456,6 +519,104 @@ class ScheduleTests(unittest.TestCase):
         self.assertEqual(result["updated"], 1)
         self.assertEqual(bridge_ws.rows[0][0], "2026-03-31")
         self.assertEqual(progress_ws.rows[0][2], "2026-03-31")
+
+    def test_move_bridge_slot_swaps_with_adjacent_slot(self):
+        progress_ws, bridge_ws = self.make_progress_and_bridge(
+            [
+                ["lesson-0001", "Math", "2026-03-24", "FALSE", "1", "Fractions", "Unit 1"],
+                ["lesson-0002", "Science", "2026-03-25", "FALSE", "2", "Plants", "Unit 2"],
+            ],
+            [
+                ["2026-03-24", 2, 1, "Math", "lesson-0001", "planned", "progress_sync", ""],
+                ["2026-03-25", 3, 1, "Science", "lesson-0002", "planned", "progress_sync", ""],
+            ],
+            progress_headers=[
+                schedule.COLUMN_LESSON_ID,
+                schedule.COLUMN_SUBJECT,
+                schedule.COLUMN_DATE,
+                schedule.COLUMN_DONE,
+                schedule.COLUMN_LESSON,
+                schedule.COLUMN_TITLE,
+                schedule.COLUMN_UNIT,
+            ],
+        )
+        records = schedule.load_all(progress_ws)
+
+        result = schedule.move_bridge_slot(progress_ws, records, 3, "earlier")
+
+        self.assertEqual(result["updated"], 2)
+        self.assertEqual(progress_ws.rows[0][2], "2026-03-25")
+        self.assertEqual(progress_ws.rows[1][2], "2026-03-24")
+        self.assertEqual(bridge_ws.rows[0][4], "lesson-0002")
+        self.assertEqual(bridge_ws.rows[1][4], "lesson-0001")
+
+    def test_swap_bridge_slots_updates_progress_dates(self):
+        progress_ws, bridge_ws = self.make_progress_and_bridge(
+            [
+                ["lesson-0001", "Math", "2026-03-24", "FALSE", "1", "Fractions", "Unit 1"],
+                ["lesson-0002", "Science", "2026-03-25", "FALSE", "2", "Plants", "Unit 2"],
+                ["lesson-0003", "English", "2026-03-26", "FALSE", "3", "Greetings", "Unit 3"],
+            ],
+            [
+                ["2026-03-24", 2, 1, "Math", "lesson-0001", "planned", "progress_sync", ""],
+                ["2026-03-25", 3, 1, "Science", "lesson-0002", "planned", "progress_sync", ""],
+                ["2026-03-26", 1, 1, "English", "lesson-0003", "planned", "progress_sync", ""],
+            ],
+            progress_headers=[
+                schedule.COLUMN_LESSON_ID,
+                schedule.COLUMN_SUBJECT,
+                schedule.COLUMN_DATE,
+                schedule.COLUMN_DONE,
+                schedule.COLUMN_LESSON,
+                schedule.COLUMN_TITLE,
+                schedule.COLUMN_UNIT,
+            ],
+        )
+        records = schedule.load_all(progress_ws)
+
+        result = schedule.swap_bridge_slots(progress_ws, records, 2, 4)
+
+        self.assertEqual(result["updated"], 2)
+        self.assertEqual(progress_ws.rows[0][2], "2026-03-26")
+        self.assertEqual(progress_ws.rows[2][2], "2026-03-24")
+        self.assertEqual(sorted(row[4] for row in bridge_ws.rows), ["lesson-0001", "lesson-0002", "lesson-0003"])
+
+    def test_pull_bridge_slot_shifts_same_subject_lessons_forward(self):
+        progress_ws, bridge_ws = self.make_progress_and_bridge(
+            [
+                ["lesson-0001", "Math", "2026-03-24", "FALSE", "1", "Fractions", "Unit 1"],
+                ["lesson-0002", "Math", "2026-03-31", "FALSE", "2", "Division", "Unit 1"],
+                ["lesson-0003", "Math", "2026-04-07", "FALSE", "3", "Decimals", "Unit 1"],
+            ],
+            [
+                ["2026-03-24", 2, 1, "Math", "lesson-0001", "planned", "progress_sync", ""],
+                ["2026-03-31", 2, 1, "Math", "lesson-0002", "planned", "progress_sync", ""],
+                ["2026-04-07", 2, 1, "Math", "lesson-0003", "planned", "progress_sync", ""],
+            ],
+            progress_headers=[
+                schedule.COLUMN_LESSON_ID,
+                schedule.COLUMN_SUBJECT,
+                schedule.COLUMN_DATE,
+                schedule.COLUMN_DONE,
+                schedule.COLUMN_LESSON,
+                schedule.COLUMN_TITLE,
+                schedule.COLUMN_UNIT,
+            ],
+        )
+        records = schedule.load_all(progress_ws)
+
+        result = schedule.pull_bridge_slot(progress_ws, records, 2)
+        refreshed_records = schedule.load_all(progress_ws)
+
+        self.assertEqual(result["updated"], 1)
+        self.assertEqual(len(bridge_ws.rows), 2)
+        self.assertEqual(bridge_ws.rows[0][4], "lesson-0002")
+        self.assertEqual(bridge_ws.rows[0][0], "2026-03-24")
+        self.assertEqual(bridge_ws.rows[1][4], "lesson-0003")
+        self.assertEqual(bridge_ws.rows[1][0], "2026-03-31")
+        self.assertTrue(schedule._is_done(refreshed_records[0]))
+        self.assertEqual(refreshed_records[1][schedule.COLUMN_DATE], "2026-03-24")
+        self.assertEqual(refreshed_records[2][schedule.COLUMN_DATE], "2026-03-31")
 
     def test_resolve_progress_worksheet_skips_invalid_first_candidate(self):
         invalid = FakeWorksheet([schedule.COLUMN_SUBJECT, schedule.COLUMN_DONE], [], title="invalid")

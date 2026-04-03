@@ -1,0 +1,32 @@
+[
+  {
+    "timestamp": "2026-04-03T21:19:41.268022",
+    "action": "move_slot",
+    "subject": "수학",
+    "details": "bridge_row=65, direction=earlier"
+  },
+  {
+    "timestamp": "2026-04-03T21:10:46.231563",
+    "action": "move_slot",
+    "subject": "수학",
+    "details": "bridge_row=64, direction=later"
+  },
+  {
+    "timestamp": "2026-04-03T21:04:32.330565",
+    "action": "move_slot",
+    "subject": "음악",
+    "details": "bridge_row=67, direction=later"
+  },
+  {
+    "timestamp": "2026-04-03T21:04:05.567745",
+    "action": "move_slot",
+    "subject": "수학",
+    "details": "bridge_row=67, direction=later"
+  },
+  {
+    "timestamp": "2026-04-03T20:28:04.388139",
+    "action": "lesson_done",
+    "subject": "사회",
+    "details": "target_date=2026-04-03"
+  }
+]

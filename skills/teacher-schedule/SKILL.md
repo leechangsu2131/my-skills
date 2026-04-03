@@ -1,11 +1,11 @@
 ---
 name: teacher-schedule
-description: "구글 시트 기반 교사 수업 관리 스킬. schedule.py, bridge_sheet.py, auto_planner.py, server.py, src/를 중심으로 작업하며, 현재 구조는 진도표와 수업배치를 분리해 운영한다."
+description: "Google Sheets 기반 교사 수업 관리 스킬. schedule.py, bridge_sheet.py, auto_planner.py, server.py, src/를 함께 다루며 진도표와 수업배치 시트를 분리해 유지한다."
 ---
 
 # Teacher Schedule Skill
 
-이 스킬은 교사의 수업 진도와 수업배치를 함께 관리하는 저장소를 다룹니다.
+이 스킬은 교사 수업 진도와 실제 수업 배치를 함께 관리하는 저장소를 다룰 때 사용합니다.
 
 ## 범위
 
@@ -16,61 +16,81 @@ description: "구글 시트 기반 교사 수업 관리 스킬. schedule.py, bri
 - `auto_planner.py`
 - `server.py`
 - `src/`
+- `README.md`
 - `tests/test_schedule.py`
+- `tests/test_server.py`
 - `tests/test_auto_planner.py`
 - `tests/test_bridge_sheet.py`
 
 제외:
 
 - 지도서 PDF 분할
-- 지도서 내용을 시트 행으로 매핑/업로드
+- 지도서 내용을 다른 시트 행으로 매핑하는 별도 도구
 
 관련 별도 저장소:
 
 - `C:\Users\user\.gemini\antigravity\scratch\repos\my-skills\skills\teacher-guide-sheet-mapper`
 
-## 현재 구조
+## 현재 아키텍처
 
 핵심 개념:
 
 - `진도표`: 무엇을 가르칠지 관리
-- `수업배치`: 언제 / 몇 교시에 가르칠지 관리
-- `lesson_id`: 진도표와 수업배치를 연결하는 키
+- `수업배치`: 언제, 몇 교시에 가르칠지 관리
+- `lesson_id`: 두 시트를 연결하는 고정 키
 
-현재는 날짜/교시의 진실 원천을 `수업배치`로 둡니다.
+우선 원칙:
 
-- `schedule.py` 조회/완료/밀기/연장은 브릿지 시트가 있으면 `수업배치` 기준으로 동작
-- `server.py`와 `src/`도 같은 기준으로 조회
-- `진도표.계획일`, `진도표.계획교시`는 브릿지에서 역동기화되는 표시 컬럼
+- 브릿지 시트가 있으면 날짜/교시는 `수업배치`를 기준으로 본다.
+- 진도표의 `계획일`, `계획교시`는 브릿지 결과가 동기화된 표시 컬럼이다.
+- `lesson_id`는 `_row`보다 우선하는 식별자다.
 
-## 우선순위
+## 사용자 관점에서 반드시 유지할 의미
+
+### 완료 처리
+
+- 완료한 수업은 UI에서 사라지지 않고 `완료됨`으로 남아야 한다.
+- 같은 `lesson_id`가 여러 슬롯에 걸쳐 있으면 마지막 planned 슬롯까지 끝나야 진도표 완료로 본다.
+
+### 빠른 조정 의미
+
+빠른 조정은 하루 안 교시 순서를 바꾸는 기능이 아니다.
+
+- `다음 차시 당겨오기`
+  - 현재 슬롯 자리에 같은 과목의 다음 수업을 당겨온다.
+  - 뒤쪽 같은 과목 수업들이 한 칸씩 앞으로 당겨진다.
+- `이 수업 한 차시 더`
+  - 현재 수업이 다음 같은 과목 시간까지 이어지도록 1차시를 더 확보한다.
+  - 뒤쪽 같은 과목 수업들이 한 칸씩 뒤로 밀린다.
+- `과목 전체 뒤로 밀기`
+  - 특정 날짜 이후의 해당 과목 예정 수업을 일괄 이동한다.
+- `교환`
+  - 필요할 때만 두 슬롯의 날짜/교시를 바꾼다.
+
+### 주간 보드
+
+- 주간 보드는 `이번주` 고정이 아니라 선택 가능한 주를 기준으로 그려진다.
+- 이전주 / 이번주 / 다음주 / 특정 날짜 선택이 가능해야 한다.
+- 월간 보드는 선택한 주가 속한 달을 기준으로 같이 갱신된다.
+
+## 수정 우선순위
 
 1. `schedule.py`
-2. `bridge_sheet.py`
-3. `auto_planner.py`
-4. `server.py`
-5. `src/`
-6. 테스트
+2. `server.py`
+3. `src/hooks/useScheduleData.js`
+4. `src/components/`
+5. 테스트
+6. `README.md`
 
 ## 작업 원칙
 
-- 실제 운영 데이터는 Google Sheets다.
-- `lesson_id`를 `_row`보다 우선한다.
-- 브릿지 시트가 있으면 날짜/교시는 `수업배치`를 기준으로 본다.
-- 완료 처리는 가능한 한 슬롯 단위로 처리한다.
-- 같은 `lesson_id`가 여러 슬롯에 걸쳐 있으면 마지막 planned 슬롯이 사라질 때만 `진도표.실행여부`를 완료로 본다.
-- 진도표의 본문 컬럼과 수업배치의 슬롯 컬럼을 섞어 쓰지 않는다.
-- `계획일`을 직접 수정하는 것보다 브릿지 갱신 경로를 우선한다.
+- 브릿지 시트가 있을 때는 브릿지 기준으로 동작을 설계한다.
+- 진도표 본문 컬럼과 브릿지 슬롯 컬럼을 혼동하지 않는다.
+- 날짜/교시를 직접 진도표에만 수정하는 것보다 브릿지 갱신 경로를 우선한다.
+- UI 문구를 바꿀 때는 실제 동작 의미도 함께 맞는지 확인한다.
+- README와 SKILL 문서는 현재 구현 의미와 같아야 한다.
 
-## 주의할 점
-
-- 실제 `진도표` 헤더가 브릿지 헤더로 덮여도 복구해서 읽도록 되어 있다.
-- `실행여부` 헤더가 없으면 F열 fallback이 여전히 적용된다.
-- 숫자로 시작하지 않는 `대단원`은 자동 배치 대상에서 빠질 수 있다.
-- CLI와 UI 둘 다 브릿지 기준으로 맞춰야 한다. 한쪽만 바꾸면 표시와 실제 동작이 어긋난다.
-- 문서 수정 시에는 `진도표 / 수업배치` 역할 분리를 기준으로 설명을 맞춘다.
-
-## 바꿀 때 같이 볼 파일
+## 함께 바꿔야 하는 파일
 
 ### `schedule.py`를 바꿀 때
 
@@ -78,26 +98,41 @@ description: "구글 시트 기반 교사 수업 관리 스킬. schedule.py, bri
 - 필요하면 `server.py`
 - 필요하면 `src/hooks/useScheduleData.js`
 
+### `server.py`를 바꿀 때
+
+- `src/hooks/useScheduleData.js`
+- 필요하면 `src/components/`
+- 필요하면 `tests/test_server.py`
+
 ### `bridge_sheet.py`를 바꿀 때
 
 - `tests/test_bridge_sheet.py`
 - `schedule.py`
-- `docs/bridge-sheet-design.md`
+- 필요하면 `docs/bridge-sheet-design.md`
 
 ### `auto_planner.py`를 바꿀 때
 
 - `tests/test_auto_planner.py`
-- `bridge_sheet.py`
+- 필요하면 `bridge_sheet.py`
 
 ### UI를 바꿀 때
 
 - `server.py`
 - `src/hooks/useScheduleData.js`
 - `src/components/`
+- 필요하면 `README.md`
+
+## 자주 쓰는 검증
+
+```powershell
+python -m unittest tests.test_schedule tests.test_server tests.test_auto_planner tests.test_bridge_sheet
+python -m py_compile schedule.py auto_planner.py bridge_sheet.py server.py
+npm.cmd run build
+```
 
 ## 자주 쓰는 명령
 
-```bash
+```powershell
 python schedule.py
 python schedule.py today
 python schedule.py nextweek
@@ -106,16 +141,12 @@ python schedule.py progress
 
 python bridge_sheet.py
 
-python auto_planner.py --mode initial --start-date 3.2
+python auto_planner.py --mode initial --start-date 2026-03-02
 python auto_planner.py --mode fill-blanks --start-date 2026-03-02
 
-python -m unittest tests.test_schedule tests.test_auto_planner tests.test_bridge_sheet
-python -m py_compile schedule.py auto_planner.py bridge_sheet.py server.py
-npm run build
+실행_교사일정_UI.bat
 ```
 
-## 문서 기준
-
-아키텍처 설명은 아래 문서를 기준으로 맞춘다.
+## 참고 문서
 
 - [bridge-sheet-design.md](C:/Users/user/.gemini/antigravity/scratch/repos/my-skills/skills/teacher-schedule/docs/bridge-sheet-design.md)

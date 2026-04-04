@@ -91,7 +91,7 @@ function TimelineRow({ item }) {
     );
 }
 
-function SubjectCard({ subject, payload, markDone, pullLessonForward, extendSchedule, marking }) {
+function SubjectCard({ subject, payload, markDone, pullLessonForward, extendSchedule, copyPdfPath, marking }) {
     const style = getSubjectStyle(subject);
     const nextItem = payload?.next || null;
     const upcoming = payload?.upcoming || [];
@@ -101,9 +101,10 @@ function SubjectCard({ subject, payload, markDone, pullLessonForward, extendSche
     const bridgeRow = getBridgeRow(nextItem);
     const recordKey = getRecordKey(nextItem);
     const rowNumber = nextItem?.row_number ?? nextItem?._row ?? null;
+    const pdfPath = getPdfPath(nextItem);
     const doneKey = `done-${bridgeRow || recordKey}`;
     const pullKey = `pull-${bridgeRow}`;
-    const extendKey = `extend-${subject}-${rowNumber || "next"}`;
+    const extendKey = `extend-${subject}-${bridgeRow || rowNumber || "next"}`;
 
     return (
         <article className="rounded-[30px] border border-slate-200 bg-white/90 p-5 shadow-sm shadow-slate-200/40">
@@ -145,7 +146,7 @@ function SubjectCard({ subject, payload, markDone, pullLessonForward, extendSche
                             </span>
                         </div>
                         <div className="mt-4 flex flex-wrap gap-2">
-                            {getPdfPath(nextItem) && recordKey && (
+                            {pdfPath && recordKey && (
                                 <a
                                     href={`${PDF_BASE}/${encodeURIComponent(recordKey)}`}
                                     target="_blank"
@@ -154,6 +155,15 @@ function SubjectCard({ subject, payload, markDone, pullLessonForward, extendSche
                                 >
                                     PDF 보기
                                 </a>
+                            )}
+                            {pdfPath && (
+                                <button
+                                    className="inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-700 transition hover:bg-slate-50"
+                                    onClick={() => copyPdfPath(nextItem)}
+                                    type="button"
+                                >
+                                    {"PDF \uacbd\ub85c \ubcf5\uc0ac"}
+                                </button>
                             )}
                             <button
                                 className={`inline-flex items-center justify-center rounded-2xl px-4 py-2 text-sm font-bold text-white transition ${
@@ -187,7 +197,7 @@ function SubjectCard({ subject, payload, markDone, pullLessonForward, extendSche
                                         ? "cursor-not-allowed border-slate-200 bg-slate-100 text-slate-400"
                                         : "border-slate-200 bg-slate-50 text-slate-700 hover:bg-white"
                                 }`}
-                                onClick={() => extendSchedule(subject, rowNumber)}
+                                onClick={() => extendSchedule(subject, rowNumber, bridgeRow)}
                                 disabled={marking === extendKey}
                                 type="button"
                             >
@@ -241,6 +251,7 @@ export function DashboardView({
     markDone,
     pullLessonForward,
     extendSchedule,
+    copyPdfPath,
     marking,
     subjectFilter,
 }) {
@@ -309,6 +320,7 @@ export function DashboardView({
                             markDone={markDone}
                             pullLessonForward={pullLessonForward}
                             extendSchedule={extendSchedule}
+                            copyPdfPath={copyPdfPath}
                             marking={marking}
                         />
                     ))}

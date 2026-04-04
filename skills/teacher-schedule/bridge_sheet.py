@@ -131,11 +131,18 @@ def build_bridge_rows_from_progress(records, timetable, *, planned_period_column
     return sorted(bridge_rows, key=_bridge_row_sort_key)
 
 
-def build_progress_sync_rows(records, bridge_rows):
+def build_progress_sync_rows(records, bridge_rows, *, lesson_ids=None):
+    target_lesson_ids = {
+        _clean_text(lesson_id)
+        for lesson_id in (lesson_ids or [])
+        if _clean_text(lesson_id)
+    }
     earliest_slot_by_lesson_id = {}
     for row in bridge_rows:
         lesson_id = _clean_text(row.get(schedule.COLUMN_LESSON_ID))
         if not lesson_id:
+            continue
+        if target_lesson_ids and lesson_id not in target_lesson_ids:
             continue
 
         parsed_date = schedule._parse_date(row.get("slot_date"), allow_blank=True)
@@ -158,6 +165,8 @@ def build_progress_sync_rows(records, bridge_rows):
     sync_rows = []
     for record in records:
         lesson_id = schedule._lesson_id_of(record)
+        if target_lesson_ids and lesson_id not in target_lesson_ids:
+            continue
         slot = earliest_slot_by_lesson_id.get(lesson_id)
         sync_rows.append(
             {
@@ -490,14 +499,14 @@ def write_bridge_sheet(ws, bridge_rows):
     )
 
 
-def sync_progress_sheet(progress_ws, records, bridge_rows):
+def sync_progress_sheet(progress_ws, records, bridge_rows, *, lesson_ids=None):
     header_map = schedule.get_header_map(progress_ws)
     date_column = header_map[schedule.COLUMN_DATE]
     period_column = header_map.get(COLUMN_PLANNED_PERIOD)
     if period_column is None:
         period_column = _ensure_column(progress_ws, COLUMN_PLANNED_PERIOD)
 
-    sync_rows = build_progress_sync_rows(records, bridge_rows)
+    sync_rows = build_progress_sync_rows(records, bridge_rows, lesson_ids=lesson_ids)
     worksheet_name = getattr(progress_ws, "title", auto_planner.PROGRESS_SHEET_NAME)
     updates = []
     for item in sync_rows:

@@ -54,6 +54,11 @@ EXTENSION_NOTE_PREFIX = "[연장일정:"
 EXTENSION_NOTE_PATTERN = re.compile(r"\[연장일정:([0-9,\-\s]+)\]")
 LESSON_ID_PREFIX = "lesson-"
 LESSON_ID_PATTERN = re.compile(rf"^{LESSON_ID_PREFIX}(\d+)$")
+_CONNECT_CACHE = {
+    "signature": None,
+    "client": None,
+    "spreadsheet": None,
+}
 CORRUPTED_PROGRESS_HEADER_PREFIX = (
     "slot_date",
     "slot_period",
@@ -545,8 +550,30 @@ def _refresh_records(ws):
     return records, subjects, bridge_rows
 
 
-def connect():
+def _connect_signature():
+    return (
+        _clean_text(SHEET_ID),
+        _clean_text(CREDS_PATH),
+        os.getenv("GOOGLE_CREDENTIALS_JSON", ""),
+    )
+
+
+def _clear_connect_cache():
+    _CONNECT_CACHE["signature"] = None
+    _CONNECT_CACHE["client"] = None
+    _CONNECT_CACHE["spreadsheet"] = None
+
+
+def _connect_client():
     validate_config()
+
+    signature = _connect_signature()
+    if (
+        _CONNECT_CACHE["signature"] == signature
+        and _CONNECT_CACHE["client"] is not None
+        and _CONNECT_CACHE["spreadsheet"] is not None
+    ):
+        return _CONNECT_CACHE["client"], _CONNECT_CACHE["spreadsheet"]
 
     try:
         import gspread
@@ -565,8 +592,17 @@ def connect():
     else:
         creds = Credentials.from_service_account_file(CREDS_PATH, scopes=SCOPES)
 
-    gc = gspread.authorize(creds)
-    return resolve_progress_worksheet(gc.open_by_key(SHEET_ID))
+    client = gspread.authorize(creds)
+    spreadsheet = client.open_by_key(SHEET_ID)
+    _CONNECT_CACHE["signature"] = signature
+    _CONNECT_CACHE["client"] = client
+    _CONNECT_CACHE["spreadsheet"] = spreadsheet
+    return client, spreadsheet
+
+
+def connect():
+    _client, spreadsheet = _connect_client()
+    return resolve_progress_worksheet(spreadsheet)
 
 
 def load_all(ws):
@@ -658,12 +694,34 @@ def _occurrence_sort_key(record):
     )
 
 
-def _bridge_rows_for_records(records, bridge_rows, *, subject=None, include_done=False, start_date=None, end_date=None):
-    records_by_lesson_id = {
+def _records_by_lesson_id(records):
+    return {
         _lesson_id_of(record): record
         for record in records
         if _lesson_id_of(record)
     }
+
+
+def _bridge_row_subject(row, records_by_lesson_id=None):
+    lesson_id = _clean_text(row.get(COLUMN_LESSON_ID))
+    if records_by_lesson_id is not None and lesson_id:
+        record = records_by_lesson_id.get(lesson_id)
+        if record is not None:
+            subject = _subject_of(record)
+            if subject:
+                return subject
+    return _clean_text(row.get(COLUMN_SUBJECT))
+
+
+def _normalize_bridge_row_subjects(bridge_rows, records):
+    records_by_lesson_id = _records_by_lesson_id(records)
+    for row in bridge_rows:
+        row[COLUMN_SUBJECT] = _bridge_row_subject(row, records_by_lesson_id)
+    return bridge_rows
+
+
+def _bridge_rows_for_records(records, bridge_rows, *, subject=None, include_done=False, start_date=None, end_date=None):
+    records_by_lesson_id = _records_by_lesson_id(records)
     matched = []
     for bridge_row in sorted(bridge_rows, key=_bridge_row_sort_key):
         if not include_done and not _is_bridge_planned(bridge_row):
@@ -677,13 +735,11 @@ def _bridge_rows_for_records(records, bridge_rows, *, subject=None, include_done
         if end_date and parsed_date > end_date:
             continue
 
-        bridge_subject = _clean_text(bridge_row.get(COLUMN_SUBJECT))
-        if subject and bridge_subject != subject:
-            continue
-
         lesson_id = _clean_text(bridge_row.get(COLUMN_LESSON_ID))
         record = records_by_lesson_id.get(lesson_id)
         if not record:
+            continue
+        if subject and _subject_of(record) != subject:
             continue
         matched.append(_record_with_bridge_row(record, bridge_row))
     return matched
@@ -1057,6 +1113,7 @@ def plan_lesson_extension(records, subject, row_number=None, extra_slots=1):
 def _legacy_mark_done_via_bridge(ws, records, subject, target_date=None, record_key=None, bridge_support=None):
     subject = _clean_text(subject)
     target_date = _coerce_date(target_date, field_name="?꾨즺 ?좎쭨")
+    records_by_lesson_id = _records_by_lesson_id(records)
     bridge_support = _load_bridge_support(ws)
     if bridge_support and bridge_support["rows"]:
         bridge_result = _mark_done_via_bridge(
@@ -1121,7 +1178,7 @@ def _legacy_mark_done_via_bridge(ws, records, subject, target_date=None, record_
         if _lesson_id_of(record) in lesson_ids and not _is_done(record)
     ]
 
-    _rewrite_bridge_sheet(ws, records, bridge_support)
+    _rewrite_bridge_sheet(ws, records, bridge_support, affected_lesson_ids=lesson_ids)
     _batch_update_cells_with_option(ws, progress_updates, value_input_option="USER_ENTERED")
 
     return {
@@ -1178,7 +1235,12 @@ def _legacy_push_schedule_via_bridge(ws, records, subject, days, from_date=None,
     if not updated_rows:
         return None
 
-    _rewrite_bridge_sheet(ws, records, bridge_support)
+    _rewrite_bridge_sheet(
+        ws,
+        records,
+        bridge_support,
+        affected_lesson_ids=_bridge_lesson_ids(updated_rows),
+    )
     return {
         "updated": len(updated_rows),
         "rows": [row.get("_row") for row in updated_rows if row.get("_row")],
@@ -1217,17 +1279,26 @@ def _generate_future_bridge_slots(subject_rows, extra_slots):
     return future_slots
 
 
-def _extend_lesson_via_bridge(ws, records, subject, row_number=None, extra_slots=1, bridge_support=None):
+def _extend_lesson_via_bridge(
+    ws,
+    records,
+    subject,
+    row_number=None,
+    bridge_row_number=None,
+    extra_slots=1,
+    bridge_support=None,
+):
     subject = _clean_text(subject)
     extra_slots = _coerce_days(extra_slots)
     if extra_slots < 1:
         raise ValueError("?곗옣??李⑥떆 ?섎뒗 1 ?댁긽?댁뼱???⑸땲??")
 
+    records_by_lesson_id = _records_by_lesson_id(records)
     subject_rows = [
         row
         for row in bridge_support["rows"]
         if _is_bridge_planned(row)
-        and _clean_text(row.get(COLUMN_SUBJECT)) == subject
+        and _bridge_row_subject(row, records_by_lesson_id) == subject
         and _parse_date(row.get("slot_date"), allow_blank=True) is not None
     ]
     subject_rows = sorted(subject_rows, key=_bridge_row_sort_key)
@@ -1235,12 +1306,20 @@ def _extend_lesson_via_bridge(ws, records, subject, row_number=None, extra_slots
         return None
 
     target_lesson_id = ""
-    if row_number is not None:
+    target_index = None
+    if bridge_row_number is not None:
+        bridge_row_number = _coerce_bridge_row_number(bridge_row_number)
+        target_index = next(
+            (index for index, row in enumerate(subject_rows) if row.get("_row") == bridge_row_number),
+            None,
+        )
+        if target_index is not None:
+            target_lesson_id = _clean_text(subject_rows[target_index].get(COLUMN_LESSON_ID))
+    if not target_lesson_id and row_number is not None:
         target_record = next((record for record in records if record.get("_row") == row_number), None)
         target_lesson_id = _lesson_id_of(target_record) if target_record else ""
 
-    target_index = None
-    if target_lesson_id:
+    if target_index is None and target_lesson_id:
         for index, row in enumerate(subject_rows):
             if _clean_text(row.get(COLUMN_LESSON_ID)) == target_lesson_id:
                 target_index = index
@@ -1287,7 +1366,12 @@ def _extend_lesson_via_bridge(ws, records, subject, row_number=None, extra_slots
     subject_row_ids = {id(row) for row in subject_rows}
     remaining_rows = [row for row in bridge_support["rows"] if id(row) not in subject_row_ids]
     bridge_support["rows"] = remaining_rows + rewritten_subject_rows
-    _rewrite_bridge_sheet(ws, records, bridge_support)
+    _rewrite_bridge_sheet(
+        ws,
+        records,
+        bridge_support,
+        affected_lesson_ids=_bridge_lesson_ids(rewritten_subject_rows),
+    )
 
     return {
         "updated": len(rewritten_subject_rows),
@@ -1501,11 +1585,19 @@ def _legacy_extend_lesson(ws, records, subject, row_number=None, extra_slots=1):
     }
 
 
-def _rewrite_bridge_sheet(progress_ws, records, bridge_support):
+def _rewrite_bridge_sheet(progress_ws, records, bridge_support, *, affected_lesson_ids=None):
+    _normalize_bridge_row_subjects(bridge_support["rows"], records)
     bridge_support["rows"] = sorted(bridge_support["rows"], key=_bridge_row_sort_key)
+    for row_index, row in enumerate(bridge_support["rows"], start=2):
+        row["_row"] = row_index
+
     bridge_support["module"].write_bridge_sheet(bridge_support["worksheet"], bridge_support["rows"])
-    bridge_support["rows"] = bridge_support["module"].load_bridge_rows(bridge_support["worksheet"])
-    bridge_support["module"].sync_progress_sheet(progress_ws, records, bridge_support["rows"])
+    bridge_support["module"].sync_progress_sheet(
+        progress_ws,
+        records,
+        bridge_support["rows"],
+        lesson_ids=affected_lesson_ids,
+    )
 
 
 def _mark_done_via_bridge(
@@ -1535,6 +1627,7 @@ def _mark_done_via_bridge(
         bridge_row_number = None
 
     sorted_bridge_rows = sorted(bridge_support["rows"], key=_bridge_row_sort_key)
+    records_by_lesson_id = _records_by_lesson_id(records)
 
     if bridge_row_number is not None:
         target_rows = [
@@ -1558,7 +1651,7 @@ def _mark_done_via_bridge(
             row
             for row in sorted_bridge_rows
             if _is_bridge_planned(row)
-            and _clean_text(row.get(COLUMN_SUBJECT)) == subject
+            and _bridge_row_subject(row, records_by_lesson_id) == subject
             and _parse_date(row.get("slot_date"), allow_blank=True) == target_date
         ]
     else:
@@ -1611,7 +1704,12 @@ def _mark_done_via_bridge(
         and _is_done(record) != done_by_lesson_id[_lesson_id_of(record)]
     ]
 
-    _rewrite_bridge_sheet(ws, records, bridge_support)
+    _rewrite_bridge_sheet(
+        ws,
+        records,
+        bridge_support,
+        affected_lesson_ids=lesson_ids,
+    )
     _batch_update_cells_with_option(ws, progress_updates, value_input_option="USER_ENTERED")
 
     return {
@@ -1631,12 +1729,13 @@ def _push_schedule_via_bridge(ws, records, subject, days, from_date=None, bridge
     if bridge_support is None:
         return None
 
+    records_by_lesson_id = _records_by_lesson_id(records)
     delta = timedelta(days=days)
     updated_rows = []
     for bridge_row in bridge_support["rows"]:
         if not _is_bridge_planned(bridge_row):
             continue
-        if _clean_text(bridge_row.get(COLUMN_SUBJECT)) != subject:
+        if _bridge_row_subject(bridge_row, records_by_lesson_id) != subject:
             continue
         planned = _parse_date(bridge_row.get("slot_date"), allow_blank=True)
         if planned is None:
@@ -1649,7 +1748,12 @@ def _push_schedule_via_bridge(ws, records, subject, days, from_date=None, bridge
     if not updated_rows:
         return None
 
-    _rewrite_bridge_sheet(ws, records, bridge_support)
+    _rewrite_bridge_sheet(
+        ws,
+        records,
+        bridge_support,
+        affected_lesson_ids=_bridge_lesson_ids(updated_rows),
+    )
     return {
         "updated": len(updated_rows),
         "rows": [row.get("_row") for row in updated_rows if row.get("_row")],
@@ -1677,6 +1781,32 @@ def _bridge_slot_payload(row):
 
 def _apply_bridge_slot_payload(row, payload):
     row["slot_date"], row["slot_period"], row["slot_order"] = payload
+
+
+def _bridge_slot_group_key(row):
+    return (
+        _clean_text(row.get("slot_date")),
+        _clean_text(row.get("slot_period")),
+    )
+
+
+def _next_bridge_slot_order(rows):
+    numeric_orders = [
+        _safe_int(row.get("slot_order"), default=None)
+        for row in rows
+        if _safe_int(row.get("slot_order"), default=None) is not None
+    ]
+    if numeric_orders:
+        return max(numeric_orders) + 1
+    return len(rows) + 1
+
+
+def _bridge_lesson_ids(rows):
+    return {
+        _clean_text(row.get(COLUMN_LESSON_ID))
+        for row in rows
+        if _clean_text(row.get(COLUMN_LESSON_ID))
+    }
 
 
 def move_bridge_slot(ws, records, bridge_row_number, direction, bridge_support=None):
@@ -1719,7 +1849,12 @@ def move_bridge_slot(ws, records, bridge_row_number, direction, bridge_support=N
     target_payload = _bridge_slot_payload(target_row)
     _apply_bridge_slot_payload(current_row, target_payload)
     _apply_bridge_slot_payload(target_row, current_payload)
-    _rewrite_bridge_sheet(ws, records, bridge_support)
+    _rewrite_bridge_sheet(
+        ws,
+        records,
+        bridge_support,
+        affected_lesson_ids=_bridge_lesson_ids([current_row, target_row]),
+    )
 
     return {
         "updated": 2,
@@ -1737,63 +1872,80 @@ def pull_bridge_slot(ws, records, bridge_row_number, bridge_support=None):
 
     bridge_row_number = _coerce_bridge_row_number(bridge_row_number)
     sorted_rows = sorted(bridge_support["rows"], key=_bridge_row_sort_key)
+    records_by_lesson_id = _records_by_lesson_id(records)
     target_row = next(
-        (row for row in sorted_rows if row.get("_row") == bridge_row_number and _is_bridge_planned(row)),
+        (row for row in sorted_rows if row.get("_row") == bridge_row_number),
         None,
     )
     if target_row is None:
-        message = f"No planned bridge slot found for row {bridge_row_number}."
+        message = f"No bridge slot found for row {bridge_row_number}."
         return {"updated": 0, "rows": [], "message": message}
 
-    subject = _clean_text(target_row.get(COLUMN_SUBJECT))
-    lesson_id = _clean_text(target_row.get(COLUMN_LESSON_ID))
+    subject = _bridge_row_subject(target_row, records_by_lesson_id)
+    target_slot_key = _bridge_slot_group_key(target_row)
+    if not target_slot_key[0]:
+        message = f"No scheduled bridge slot found for row {bridge_row_number}."
+        return {"updated": 0, "rows": [], "message": message}
+
     subject_rows = [
         row
         for row in sorted_rows
-        if _is_bridge_planned(row) and _clean_text(row.get(COLUMN_SUBJECT)) == subject
+        if _bridge_row_subject(row, records_by_lesson_id) == subject
     ]
-    target_index = next(
-        (index for index, row in enumerate(subject_rows) if row.get("_row") == bridge_row_number),
+    target_group_rows = [
+        row
+        for row in subject_rows
+        if _bridge_slot_group_key(row) == target_slot_key
+    ]
+    if not target_group_rows:
+        message = f"No subject slot group found for row {bridge_row_number}."
+        return {"updated": 0, "rows": [], "message": message}
+
+    target_group_end_index = max(
+        index
+        for index, row in enumerate(subject_rows)
+        if _bridge_slot_group_key(row) == target_slot_key
+    )
+    next_planned_row = next(
+        (row for row in subject_rows[target_group_end_index + 1 :] if _is_bridge_planned(row)),
         None,
     )
-    if target_index is None or target_index >= len(subject_rows) - 1:
+    if next_planned_row is None:
         message = f"There is no later [{subject}] lesson to pull forward."
         return {"updated": 0, "rows": [bridge_row_number], "message": message}
 
-    slot_templates = [_bridge_slot_payload(row) for row in subject_rows]
-    rewritten_subject_rows = subject_rows[:target_index] + subject_rows[target_index + 1 :]
-    for row, slot_template in zip(rewritten_subject_rows, slot_templates[: len(rewritten_subject_rows)]):
+    planned_subject_rows = [row for row in subject_rows if _is_bridge_planned(row)]
+    source_index = next(
+        (index for index, row in enumerate(planned_subject_rows) if row is next_planned_row),
+        None,
+    )
+    if source_index is None:
+        message = f"There is no later [{subject}] lesson to pull forward."
+        return {"updated": 0, "rows": [bridge_row_number], "message": message}
+
+    shift_rows = planned_subject_rows[source_index + 1 :]
+    shift_templates = [_bridge_slot_payload(row) for row in planned_subject_rows[source_index:]]
+
+    next_planned_row["slot_date"] = target_slot_key[0]
+    next_planned_row["slot_period"] = target_slot_key[1]
+    next_planned_row["slot_order"] = _next_bridge_slot_order(target_group_rows)
+    for row, slot_template in zip(shift_rows, shift_templates):
         _apply_bridge_slot_payload(row, slot_template)
 
-    subject_row_ids = {id(row) for row in subject_rows}
-    remaining_rows = [row for row in bridge_support["rows"] if id(row) not in subject_row_ids]
-    bridge_support["rows"] = remaining_rows + rewritten_subject_rows
-    _rewrite_bridge_sheet(ws, records, bridge_support)
-
-    has_remaining_planned = any(
-        _clean_text(row.get(COLUMN_LESSON_ID)) == lesson_id and _is_bridge_planned(row)
-        for row in bridge_support["rows"]
+    affected_rows = target_group_rows + [next_planned_row] + shift_rows
+    _rewrite_bridge_sheet(
+        ws,
+        records,
+        bridge_support,
+        affected_lesson_ids=_bridge_lesson_ids(affected_rows),
     )
-    done_value = not has_remaining_planned
-    done_column = get_header_map(ws)[COLUMN_DONE]
-    worksheet_name = _worksheet_title(ws)
-    progress_updates = [
-        _make_cell_update(
-            done_column,
-            record["_row"],
-            done_value,
-            worksheet_name=worksheet_name,
-        )
-        for record in records
-        if _lesson_id_of(record) == lesson_id and _is_done(record) != done_value
-    ]
-    _batch_update_cells_with_option(ws, progress_updates, value_input_option="USER_ENTERED")
 
     return {
-        "updated": 1,
-        "rows": [bridge_row_number],
+        "updated": len(_bridge_lesson_ids(affected_rows)),
+        "rows": [row.get("_row") for row in affected_rows if row.get("_row")],
         "message": f"Pulled the next [{subject}] lesson forward.",
-        "done_lesson": done_value,
+        "slot_date": target_slot_key[0],
+        "slot_period": target_slot_key[1],
     }
 
 
@@ -1821,7 +1973,12 @@ def swap_bridge_slots(ws, records, first_bridge_row, second_bridge_row, bridge_s
     second_payload = _bridge_slot_payload(second_row)
     _apply_bridge_slot_payload(first_row, second_payload)
     _apply_bridge_slot_payload(second_row, first_payload)
-    _rewrite_bridge_sheet(ws, records, bridge_support)
+    _rewrite_bridge_sheet(
+        ws,
+        records,
+        bridge_support,
+        affected_lesson_ids=_bridge_lesson_ids([first_row, second_row]),
+    )
 
     return {
         "updated": 2,
@@ -1954,7 +2111,7 @@ def push_schedule(ws, records, subject, days, from_date=None):
     }
 
 
-def extend_lesson(ws, records, subject, row_number=None, extra_slots=1):
+def extend_lesson(ws, records, subject, row_number=None, bridge_row_number=None, extra_slots=1):
     subject = _clean_text(subject)
     bridge_support = _load_bridge_support(ws)
     if bridge_support is not None:
@@ -1963,6 +2120,7 @@ def extend_lesson(ws, records, subject, row_number=None, extra_slots=1):
             records,
             subject,
             row_number=row_number,
+            bridge_row_number=bridge_row_number,
             extra_slots=extra_slots,
             bridge_support=bridge_support,
         )

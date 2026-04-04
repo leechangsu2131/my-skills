@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">
+  <title id="title">Teacher Schedule Icon</title>
+  <desc id="desc">Calendar and check badge icon for the teacher schedule app.</desc>
+  <defs>
+    <linearGradient id="bg" x1="18" y1="14" x2="110" y2="116" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0f172a" />
+      <stop offset="1" stop-color="#1d4ed8" />
+    </linearGradient>
+    <linearGradient id="card" x1="24" y1="28" x2="96" y2="100" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#f8fbff" />
+      <stop offset="1" stop-color="#dbeafe" />
+    </linearGradient>
+  </defs>
+  <rect x="10" y="10" width="108" height="108" rx="28" fill="url(#bg)" />
+  <rect x="28" y="28" width="72" height="72" rx="18" fill="url(#card)" />
+  <rect x="28" y="28" width="72" height="16" rx="12" fill="#38bdf8" />
+  <rect x="40" y="22" width="8" height="18" rx="4" fill="#f8fafc" />
+  <rect x="80" y="22" width="8" height="18" rx="4" fill="#f8fafc" />
+  <rect x="40" y="54" width="16" height="10" rx="5" fill="#93c5fd" />
+  <rect x="40" y="70" width="24" height="10" rx="5" fill="#93c5fd" />
+  <circle cx="88" cy="88" r="20" fill="#f59e0b" />
+  <path d="M79 88.5l6 6 12-14" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="7" />
+</svg>

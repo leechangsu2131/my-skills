@@ -20,7 +20,7 @@ function AgendaCard({ item, pullLessonForward, extendSchedule, isProcessing }) {
     const bridgeRow = getBridgeRow(item);
     const rowNumber = item.row_number ?? item._row ?? null;
     const pullKey = `pull-${bridgeRow}`;
-    const extendKey = `extend-${subject}-${rowNumber || "next"}`;
+    const extendKey = `extend-${subject}-${bridgeRow || rowNumber || "next"}`;
 
     return (
         <article className="rounded-[24px] border border-slate-200 bg-white p-4 shadow-sm">
@@ -55,7 +55,7 @@ function AgendaCard({ item, pullLessonForward, extendSchedule, isProcessing }) {
                                 ? "cursor-not-allowed border-slate-200 bg-slate-100 text-slate-400"
                                 : "border-slate-200 bg-slate-50 text-slate-700 hover:bg-white"
                         }`}
-                        onClick={() => extendSchedule(subject, rowNumber)}
+                        onClick={() => extendSchedule(subject, rowNumber, bridgeRow)}
                         disabled={isProcessing === extendKey}
                         type="button"
                     >
@@ -85,17 +85,20 @@ export function ActionsView({
     const dayOptions = [1, 2, 3, 5, 7, 14];
     const filteredSubjects = subjects.filter((subject) => subjectMatches(subject, subjectFilter));
     const filteredAgenda = filterItemsBySubject(agendaItems, subjectFilter).filter(
-        (item) => getBridgeRow(item) && !isDoneItem(item),
+        (item) => getBridgeRow(item),
+    );
+    const swappableAgenda = filteredAgenda.filter(
+        (item) => !isDoneItem(item),
     );
 
     useEffect(() => {
-        if (firstSwap && !filteredAgenda.some((item) => String(getBridgeRow(item)) === String(firstSwap))) {
+        if (firstSwap && !swappableAgenda.some((item) => String(getBridgeRow(item)) === String(firstSwap))) {
             setFirstSwap("");
         }
-        if (secondSwap && !filteredAgenda.some((item) => String(getBridgeRow(item)) === String(secondSwap))) {
+        if (secondSwap && !swappableAgenda.some((item) => String(getBridgeRow(item)) === String(secondSwap))) {
             setSecondSwap("");
         }
-    }, [filteredAgenda, firstSwap, secondSwap]);
+    }, [swappableAgenda, firstSwap, secondSwap]);
 
     const swapDisabled =
         !firstSwap ||
@@ -105,11 +108,11 @@ export function ActionsView({
 
     const swapOptions = useMemo(
         () =>
-            filteredAgenda.map((item) => ({
+            swappableAgenda.map((item) => ({
                 value: String(getBridgeRow(item)),
                 label: agendaLabel(item),
             })),
-        [filteredAgenda],
+        [swappableAgenda],
     );
 
     return (

@@ -1,6 +1,7 @@
 import json
 import os
 import re
+import time
 from datetime import date, datetime, timedelta
 from io import BytesIO
 
@@ -13,6 +14,8 @@ import schedule
 
 LOG_FILE = "activity_log.json"
 SPLIT_PDF_FILENAME_PATTERN = re.compile(r"_p\d+(?:-\d+)?\.pdf$", re.IGNORECASE)
+DASHBOARD_CACHE_TTL_SECONDS = max(0.0, float(os.getenv("DASHBOARD_CACHE_TTL_SECONDS", "3")))
+_DASHBOARD_CACHE = {}
 
 
 def log_action(action, subject, details=""):
@@ -58,6 +61,30 @@ def _is_pre_split_pdf(pdf_path):
     if "pdf_splits" in parts:
         return True
     return SPLIT_PDF_FILENAME_PATTERN.search(os.path.basename(normalized)) is not None
+
+
+def _send_pdf_file(pdf_path, record):
+    return send_file(
+        pdf_path,
+        mimetype="application/pdf",
+        as_attachment=False,
+        download_name=_pdf_download_name(record),
+    )
+
+
+def _parse_pdf_page_range(record):
+    start_text = schedule._clean_text(record.get(schedule.COLUMN_START_PAGE, ""))
+    end_text = schedule._clean_text(record.get(schedule.COLUMN_END_PAGE, ""))
+    if not start_text and not end_text:
+        return None
+    try:
+        start_page = int(start_text) if start_text else None
+        end_page = int(end_text) if end_text else start_page
+    except ValueError:
+        return None
+    if start_page is None or end_page is None or start_page < 1 or end_page < start_page:
+        return None
+    return start_page, end_page
 
 
 def _month_bounds(target_date):
@@ -176,7 +203,46 @@ def _build_subject_timeline(records, subjects, bridge_rows, today):
     return timeline
 
 
-def _dashboard_payload(board_date=None):
+def _cache_now():
+    return time.monotonic()
+
+
+def _dashboard_cache_key(board_date):
+    return board_date.isoformat() if board_date else "__default__"
+
+
+def _clear_dashboard_cache():
+    _DASHBOARD_CACHE.clear()
+
+
+def _get_cached_dashboard_payload(board_date=None):
+    if DASHBOARD_CACHE_TTL_SECONDS <= 0:
+        return None
+
+    key = _dashboard_cache_key(board_date)
+    entry = _DASHBOARD_CACHE.get(key)
+    if entry is None:
+        return None
+
+    if entry["expires_at"] <= _cache_now():
+        _DASHBOARD_CACHE.pop(key, None)
+        return None
+
+    return entry["payload"]
+
+
+def _store_cached_dashboard_payload(board_date, payload):
+    if DASHBOARD_CACHE_TTL_SECONDS <= 0:
+        return payload
+
+    _DASHBOARD_CACHE[_dashboard_cache_key(board_date)] = {
+        "expires_at": _cache_now() + DASHBOARD_CACHE_TTL_SECONDS,
+        "payload": payload,
+    }
+    return payload
+
+
+def _build_dashboard_payload(board_date=None):
     ws = schedule.connect()
     records = schedule.load_all(ws)
     bridge_rows = schedule.load_bridge_rows_for_progress_ws(ws)
@@ -223,7 +289,12 @@ def _dashboard_payload(board_date=None):
         )
     )
     agenda_items = _serialize_lessons(
-        schedule.get_schedule_range(records, bridge_rows=bridge_rows, include_done=False)
+        schedule.get_schedule_range(
+            records,
+            start_date=today,
+            bridge_rows=bridge_rows,
+            include_done=True,
+        )
     )
     subject_timeline = _build_subject_timeline(records, subjects, bridge_rows, today)
 
@@ -294,6 +365,15 @@ def _dashboard_payload(board_date=None):
     return {"views": views, "subjects": subjects, "board_date": board_date.isoformat(), "today": today.isoformat()}
 
 
+def _dashboard_payload(board_date=None):
+    cached_payload = _get_cached_dashboard_payload(board_date)
+    if cached_payload is not None:
+        return cached_payload
+
+    payload = _build_dashboard_payload(board_date=board_date)
+    return _store_cached_dashboard_payload(board_date, payload)
+
+
 def _action_success(result, status_code=200):
     return jsonify(
         {
@@ -347,6 +427,7 @@ def done():
         subject,
         f"target_date={target_date.isoformat()}" if target_date else "next_slot",
     )
+    _clear_dashboard_cache()
     return _action_success(result)
 
 
@@ -370,6 +451,7 @@ def push():
         subject,
         f"days={days}, from_date={from_date.isoformat() if from_date else 'all'}",
     )
+    _clear_dashboard_cache()
     return _action_success(result)
 
 
@@ -378,19 +460,35 @@ def extend():
     data = request.json or {}
     subject = data.get("subject")
     row_number = data.get("row_number")
+    bridge_row = data.get("bridge_row")
 
     try:
         if row_number not in (None, ""):
             row_number = int(row_number)
         else:
             row_number = None
+        if bridge_row not in (None, ""):
+            bridge_row = int(bridge_row)
+        else:
+            bridge_row = None
         ws = schedule.connect()
         records = schedule.load_all(ws)
-        result = schedule.extend_lesson(ws, records, subject, row_number=row_number)
+        result = schedule.extend_lesson(
+            ws,
+            records,
+            subject,
+            row_number=row_number,
+            bridge_row_number=bridge_row,
+        )
     except ValueError as exc:
         return _action_error(str(exc))
 
-    log_action("extend_lesson", subject, f"row_number={row_number or 'next'}")
+    log_action(
+        "extend_lesson",
+        subject,
+        f"row_number={row_number or 'next'}, bridge_row={bridge_row or 'auto'}",
+    )
+    _clear_dashboard_cache()
     return _action_success(result)
 
 
@@ -408,6 +506,7 @@ def pull():
         return _action_error(str(exc))
 
     log_action("pull_subject_flow", subject, f"bridge_row={bridge_row}")
+    _clear_dashboard_cache()
     return _action_success(result)
 
 
@@ -426,6 +525,7 @@ def move():
         return _action_error(str(exc))
 
     log_action("move_slot", subject, f"bridge_row={bridge_row}, direction={direction}")
+    _clear_dashboard_cache()
     return _action_success(result)
 
 
@@ -448,6 +548,7 @@ def swap():
         subject,
         f"first_bridge_row={first_bridge_row}, second_bridge_row={second_bridge_row}",
     )
+    _clear_dashboard_cache()
     return _action_success(result)
 
 
@@ -462,35 +563,32 @@ def serve_pdf_fragment(record_key):
 
     raw_pdf_path = schedule._clean_text(record.get(schedule.COLUMN_PDF, ""))
     pdf_path = os.path.expandvars(os.path.expanduser(raw_pdf_path))
-    start_str = record.get(schedule.COLUMN_START_PAGE, "")
-    end_str = record.get(schedule.COLUMN_END_PAGE, "")
 
     if not pdf_path or not os.path.exists(pdf_path):
         return f"PDF not found: {pdf_path}", 404
 
-    download_name = _pdf_download_name(record)
-
     if _is_pre_split_pdf(pdf_path):
-        return send_file(
-            pdf_path,
-            mimetype="application/pdf",
-            as_attachment=False,
-            download_name=download_name,
-        )
+        return _send_pdf_file(pdf_path, record)
 
-    try:
-        start_page = int(str(start_str).strip())
-        end_page = int(str(end_str).strip()) if str(end_str).strip() else start_page
-    except ValueError:
-        return "Invalid PDF page range", 400
+    page_range = _parse_pdf_page_range(record)
+    if page_range is None:
+        return _send_pdf_file(pdf_path, record)
 
+    start_page, end_page = page_range
     doc = fitz.open(pdf_path)
-    start_index = max(0, start_page - 1)
-    end_index = min(len(doc) - 1, end_page - 1)
-    if end_index < start_index:
-        doc.close()
-        return "Invalid PDF page range", 400
+    page_count = len(doc)
+    requested_page_count = end_page - start_page + 1
 
+    if (
+        start_page > page_count
+        or end_page > page_count
+        or requested_page_count >= page_count
+    ):
+        doc.close()
+        return _send_pdf_file(pdf_path, record)
+
+    start_index = start_page - 1
+    end_index = end_page - 1
     new_doc = fitz.open()
     new_doc.insert_pdf(doc, from_page=start_index, to_page=end_index)
     pdf_bytes = new_doc.write()
@@ -501,7 +599,7 @@ def serve_pdf_fragment(record_key):
         BytesIO(pdf_bytes),
         mimetype="application/pdf",
         as_attachment=False,
-        download_name=download_name,
+        download_name=_pdf_download_name(record),
     )
 
 

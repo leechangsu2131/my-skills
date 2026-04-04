@@ -1,5 +1,65 @@
 [
   {
+    "timestamp": "2026-04-04T11:32:19.021016",
+    "action": "lesson_done",
+    "subject": "국어",
+    "details": "target_date=2026-04-07"
+  },
+  {
+    "timestamp": "2026-04-04T10:39:15.729690",
+    "action": "lesson_done",
+    "subject": "수학",
+    "details": "target_date=2026-04-03"
+  },
+  {
+    "timestamp": "2026-04-04T10:39:01.245423",
+    "action": "lesson_done",
+    "subject": "수학",
+    "details": "target_date=2026-04-02"
+  },
+  {
+    "timestamp": "2026-04-04T10:38:59.947676",
+    "action": "lesson_done",
+    "subject": "수학",
+    "details": "target_date=2026-04-02"
+  },
+  {
+    "timestamp": "2026-04-04T10:38:59.343331",
+    "action": "lesson_done",
+    "subject": "수학",
+    "details": "target_date=2026-04-02"
+  },
+  {
+    "timestamp": "2026-04-04T10:38:11.081437",
+    "action": "extend_lesson",
+    "subject": "수학",
+    "details": "row_number=142, bridge_row=64"
+  },
+  {
+    "timestamp": "2026-04-04T10:26:16.637911",
+    "action": "extend_lesson",
+    "subject": "수학",
+    "details": "row_number=142, bridge_row=64"
+  },
+  {
+    "timestamp": "2026-04-04T10:26:07.814214",
+    "action": "extend_lesson",
+    "subject": "수학",
+    "details": "row_number=142, bridge_row=64"
+  },
+  {
+    "timestamp": "2026-04-04T10:08:47.711393",
+    "action": "extend_lesson",
+    "subject": "수학",
+    "details": "row_number=142"
+  },
+  {
+    "timestamp": "2026-04-04T10:08:33.791689",
+    "action": "lesson_done",
+    "subject": "국어",
+    "details": "target_date=2026-04-03"
+  },
+  {
     "timestamp": "2026-04-03T21:19:41.268022",
     "action": "move_slot",
     "subject": "수학",

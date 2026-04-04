@@ -125,6 +125,7 @@ export default function App() {
         extendSchedule,
         pullLessonForward,
         swapLessons,
+        copyPdfPath,
     } = useScheduleData();
 
     const viewMap = useMemo(
@@ -271,6 +272,7 @@ export default function App() {
                     markDone={markDone}
                     pullLessonForward={pullLessonForward}
                     extendSchedule={extendSchedule}
+                    copyPdfPath={copyPdfPath}
                     marking={isProcessing}
                     subjectFilter={selectedSubject}
                 />
@@ -298,6 +300,7 @@ export default function App() {
                 markDone={markDone}
                 pullLessonForward={pullLessonForward}
                 extendSchedule={extendSchedule}
+                copyPdfPath={copyPdfPath}
                 marking={isProcessing}
                 subjectFilter={selectedSubject}
                 boardDate={boardDate}
@@ -378,6 +381,9 @@ export default function App() {
                                 <div className="text-[11px] font-black uppercase tracking-[0.24em] text-slate-400">
                                     Subject Filter
                                 </div>
+                                <p className="mt-1 text-xs leading-5 text-slate-400">
+                                    Global filter across all tabs, not a current-lesson tab.
+                                </p>
                                 <p className="mt-2 text-sm leading-5 text-slate-500">
                                     과목을 고르면 배치, 진도, 일정 관리 화면이 모두 같은 기준으로 좁혀집니다.
                                 </p>

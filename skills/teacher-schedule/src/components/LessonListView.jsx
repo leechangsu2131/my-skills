@@ -41,19 +41,20 @@ function StatusBadge({ item }) {
     );
 }
 
-function ActionButtons({ item, markDone, pullLessonForward, extendSchedule, marking }) {
+function ActionButtons({ item, markDone, pullLessonForward, extendSchedule, copyPdfPath, marking }) {
     const recordKey = getRecordKey(item);
     const bridgeRow = getBridgeRow(item);
     const subject = getSubject(item);
     const rowNumber = item.row_number ?? item._row ?? null;
+    const pdfPath = getPdfPath(item);
     const done = isDoneItem(item);
     const doneKey = `done-${bridgeRow || recordKey}`;
     const pullKey = `pull-${bridgeRow}`;
-    const extendKey = `extend-${subject}-${rowNumber || "next"}`;
+    const extendKey = `extend-${subject}-${bridgeRow || rowNumber || "next"}`;
 
     return (
         <div className="mt-4 flex flex-wrap gap-2">
-            {getPdfPath(item) && recordKey && (
+            {pdfPath && recordKey && (
                 <a
                     href={`${PDF_BASE}/${encodeURIComponent(recordKey)}`}
                     target="_blank"
@@ -62,6 +63,15 @@ function ActionButtons({ item, markDone, pullLessonForward, extendSchedule, mark
                 >
                     PDF 보기
                 </a>
+            )}
+            {pdfPath && (
+                <button
+                    className="inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-bold text-slate-700 transition hover:bg-slate-100"
+                    onClick={() => copyPdfPath(item)}
+                    type="button"
+                >
+                    {"PDF \uacbd\ub85c \ubcf5\uc0ac"}
+                </button>
             )}
             <button
                 className={`inline-flex items-center justify-center rounded-2xl px-4 py-2 text-sm font-bold text-white transition ${
@@ -75,7 +85,7 @@ function ActionButtons({ item, markDone, pullLessonForward, extendSchedule, mark
             >
                 {done ? "완료됨" : marking === doneKey ? "처리 중..." : "완료 처리"}
             </button>
-            {bridgeRow && !done && (
+            {bridgeRow && (
                 <button
                     className={`inline-flex items-center justify-center rounded-2xl border px-4 py-2 text-sm font-bold transition ${
                         marking === pullKey
@@ -96,7 +106,7 @@ function ActionButtons({ item, markDone, pullLessonForward, extendSchedule, mark
                             ? "cursor-not-allowed border-slate-200 bg-slate-100 text-slate-400"
                             : "border-slate-200 bg-slate-50 text-slate-700 hover:bg-white"
                     }`}
-                    onClick={() => extendSchedule(subject, rowNumber)}
+                    onClick={() => extendSchedule(subject, rowNumber, bridgeRow)}
                     disabled={marking === extendKey}
                     type="button"
                 >
@@ -107,7 +117,7 @@ function ActionButtons({ item, markDone, pullLessonForward, extendSchedule, mark
     );
 }
 
-function PlacementCard({ item, markDone, pullLessonForward, extendSchedule, marking }) {
+function PlacementCard({ item, markDone, pullLessonForward, extendSchedule, copyPdfPath, marking }) {
     const subject = getSubject(item);
     const style = getSubjectStyle(subject);
 
@@ -139,6 +149,7 @@ function PlacementCard({ item, markDone, pullLessonForward, extendSchedule, mark
                 markDone={markDone}
                 pullLessonForward={pullLessonForward}
                 extendSchedule={extendSchedule}
+                copyPdfPath={copyPdfPath}
                 marking={marking}
             />
         </article>
@@ -153,7 +164,7 @@ function EmptyState({ text }) {
     );
 }
 
-function WeeklyColumn({ day, items, markDone, pullLessonForward, extendSchedule, marking }) {
+function WeeklyColumn({ day, items, markDone, pullLessonForward, extendSchedule, copyPdfPath, marking }) {
     return (
         <section className="rounded-[26px] border border-slate-200 bg-white/90 p-4 shadow-sm">
             <div className="flex items-center justify-between gap-3">
@@ -182,6 +193,7 @@ function WeeklyColumn({ day, items, markDone, pullLessonForward, extendSchedule,
                             markDone={markDone}
                             pullLessonForward={pullLessonForward}
                             extendSchedule={extendSchedule}
+                            copyPdfPath={copyPdfPath}
                             marking={marking}
                         />
                     ))
@@ -238,6 +250,7 @@ export function LessonListView({
     markDone,
     pullLessonForward,
     extendSchedule,
+    copyPdfPath,
     marking,
     subjectFilter,
     boardDate,
@@ -338,6 +351,7 @@ export function LessonListView({
                                     markDone={markDone}
                                     pullLessonForward={pullLessonForward}
                                     extendSchedule={extendSchedule}
+                                    copyPdfPath={copyPdfPath}
                                     marking={marking}
                                 />
                             ))
@@ -368,6 +382,7 @@ export function LessonListView({
                                     markDone={markDone}
                                     pullLessonForward={pullLessonForward}
                                     extendSchedule={extendSchedule}
+                                    copyPdfPath={copyPdfPath}
                                     marking={marking}
                                 />
                             ))
@@ -424,6 +439,7 @@ export function LessonListView({
                             markDone={markDone}
                             pullLessonForward={pullLessonForward}
                             extendSchedule={extendSchedule}
+                            copyPdfPath={copyPdfPath}
                             marking={marking}
                         />
                     ))}

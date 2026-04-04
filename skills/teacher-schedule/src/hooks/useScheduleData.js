@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import {
     getBridgeRow,
+    getPdfPath,
     getPlannedDate,
     getRecordKey,
     getSubject,
@@ -18,6 +19,31 @@ async function requestJson(path, options = {}) {
     }
 
     return payload;
+}
+
+async function copyTextToClipboard(value) {
+    if (navigator?.clipboard?.writeText) {
+        await navigator.clipboard.writeText(value);
+        return;
+    }
+
+    const textArea = document.createElement("textarea");
+    textArea.value = value;
+    textArea.setAttribute("readonly", "");
+    textArea.style.position = "fixed";
+    textArea.style.top = "-9999px";
+    textArea.style.opacity = "0";
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    textArea.setSelectionRange(0, textArea.value.length);
+
+    const copied = typeof document.execCommand === "function" && document.execCommand("copy");
+    document.body.removeChild(textArea);
+
+    if (!copied) {
+        throw new Error("클립보드 복사에 실패했습니다.");
+    }
 }
 
 export function useScheduleData() {
@@ -116,11 +142,15 @@ export function useScheduleData() {
     );
 
     const extendSchedule = useCallback(
-        async (subject, rowNumber = null) =>
+        async (subject, rowNumber = null, bridgeRow = null) =>
             runAction(
-                `extend-${subject}-${rowNumber || "next"}`,
+                `extend-${subject}-${bridgeRow || rowNumber || "next"}`,
                 "/extend",
-                { subject, row_number: rowNumber ?? null },
+                {
+                    subject,
+                    row_number: rowNumber ?? null,
+                    bridge_row: bridgeRow ?? null,
+                },
                 `${subject} 수업을 1차시 연장했습니다.`,
             ),
         [runAction],
@@ -183,6 +213,26 @@ export function useScheduleData() {
         [runAction],
     );
 
+    const copyPdfPath = useCallback(
+        async (item) => {
+            const pdfPath = getPdfPath(item);
+            if (!pdfPath) {
+                showToast("복사할 PDF 경로가 없습니다.", "error");
+                return false;
+            }
+
+            try {
+                await copyTextToClipboard(pdfPath);
+                showToast("PDF 경로를 클립보드에 복사했습니다.");
+                return true;
+            } catch (copyError) {
+                showToast(copyError.message || "PDF 경로 복사에 실패했습니다.", "error");
+                return false;
+            }
+        },
+        [showToast],
+    );
+
     return {
         ...data,
         loading,
@@ -199,5 +249,6 @@ export function useScheduleData() {
         moveLesson,
         pullLessonForward,
         swapLessons,
+        copyPdfPath,
     };
 }

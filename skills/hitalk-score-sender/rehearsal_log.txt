@@ -1,0 +1,16 @@
+OK	강시우	testing 강시우
+OK	김가을	testing 김가을
+OK	김동규	testing 김동규
+OK	박민서	testing 박민서
+OK	박서우	testing 박서우
+OK	박현규	testing 박현규
+OK	백다온	testing 백다온
+FAIL	오지윤	student-not-found
+OK	이서우	testing 이서우
+OK	이예나	testing 이예나
+OK	이윤슬	testing 이윤슬
+OK	정두영	testing 정두영
+OK	조주아	testing 조주아
+OK	천선율	testing 천선율
+FAIL	한예기	student-not-found
+OK	황보검	testing 황보검

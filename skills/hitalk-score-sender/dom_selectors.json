@@ -1,0 +1,13 @@
+{
+  "search_input": {
+    "placeholder": "이름, #태그 검색",
+    "class": "",
+    "id": ""
+  },
+  "student_item_example": {
+    "tag": "span",
+    "class": "",
+    "parent_tag": "div",
+    "parent_class": "name"
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "spreadsheet_id": "1DSYGtAoggl6iG96UMY_emqvWutGZe7n16YjuFq7YNSs",
+  "range": "시트1!A1:C30",
+  "subject": "수학 1단원 평가",
+  "name_column": 1,
+  "score_column": 2,
+  "remote_port": 9223,
+  "message_template": "📝 {subject} 결과 안내\n\n{student_name} 학생의 점수: {score}점\n💬 {comment}\n\n궁금하신 점은 편하게 문의해 주세요. 😊",
+  "comments": {
+    "perfect": "완벽해요! 정말 대단합니다! 👏",
+    "excellent": "아주 잘했어요! 훌륭합니다! 😊",
+    "good": "잘했어요! 조금만 더 노력하면 완벽해요! 💪",
+    "okay": "괜찮아요! 복습하면 더 좋아질 거에요! 📚",
+    "effort": "조금 더 노력해봐요! 화이팅! 🔥",
+    "support": "어려웠죠? 같이 복습해봐요! 선생님이 도와줄게요! 🤗"
+  },
+  "comment_thresholds": {
+    "perfect": 100,
+    "excellent": 90,
+    "good": 80,
+    "okay": 70,
+    "effort": 60,
+    "support": 0
+  },
+  "delay_between_students": 3,
+  "hitalk_url": "https://www.hiclass.net/hitalk"
+}

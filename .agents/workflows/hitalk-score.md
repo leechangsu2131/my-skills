@@ -22,11 +22,19 @@ python -m pip install -r requirements.txt
 
 ## 실행 순서
 
+0. **창으로 실행하고 싶을 때**
+```powershell
+cd C:\Users\lee21\.gemini\antigravity\scratch\my-skills\skills\hitalk-score-sender
+python hitalk_sender_gui.py
+```
+   - 더블클릭은 `launch_hitalk_sender_gui.bat`
+
 1. **config.json 설정 확인/수정**
    - 스킬 폴더: `C:\Users\lee21\.gemini\antigravity\scratch\my-skills\skills\hitalk-score-sender\`
    - `spreadsheet_id`: 구글시트 ID
    - `range`: 데이터 범위 (예: `시트1!A1:C30`)
    - `subject`: 과목명 (예: `수학 1단원 평가`)
+   - `custom_message_file`: 원하는 문구 파일 (예: `custom_message_template.txt`)
 
 // turbo
 2. **크롬 실행** (이미 열려있으면 생략)
@@ -59,6 +67,25 @@ python hitalk_sender.py
 
 7. **결과 확인** — 성공/실패 건수 보고
 
+## 원하는 문구 넣는 방법
+
+1. `custom_message_template.txt`를 수정합니다.
+2. 아래 치환값을 쓸 수 있습니다.
+   - `[학생]`
+   - `[과목]`
+   - `[점수]`
+   - `[코멘트]`
+3. 아래 순서로 확인 후 전송합니다.
+
+```powershell
+cd C:\Users\lee21\.gemini\antigravity\scratch\my-skills\skills\hitalk-score-sender
+python hitalk_sender.py --message-file custom_message_template.txt --dry-run
+python hitalk_sender.py --message-file custom_message_template.txt --rehearsal
+python hitalk_sender.py --message-file custom_message_template.txt
+```
+
+- 짧은 문구는 `--custom-message`로 바로 넣어도 됩니다.
+
 ## 자주 나는 오류
 
 - `ModuleNotFoundError: No module named 'selenium'`
@@ -69,3 +96,5 @@ python hitalk_sender.py
   → 같은 계정의 하이톡 탭을 하나만 남기고 다시 실행
 - 실제 발송 없이 화면 동선만 점검하고 싶을 때
   → `python hitalk_sender.py --rehearsal`
+- 긴 문구를 매번 명령줄에 치기 불편할 때
+  → `custom_message_template.txt`를 수정한 뒤 `--message-file`로 사용

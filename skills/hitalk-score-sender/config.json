@@ -5,6 +5,7 @@
   "name_column": 1,
   "score_column": 2,
   "remote_port": 9223,
+  "custom_message_file": "custom_message_template.txt",
   "message_template": "📝 {subject} 결과 안내\n\n{student_name} 학생의 점수: {score}점\n💬 {comment}\n\n궁금하신 점은 편하게 문의해 주세요. 😊",
   "comments": {
     "perfect": "완벽해요! 정말 대단합니다! 👏",

@@ -25,10 +25,20 @@ import os
 import argparse
 import shutil
 
+def _wrap_stream_utf8(stream):
+    """pythonw 등 콘솔이 없는 환경에서도 안전하게 UTF-8 래핑"""
+    if stream is None or not hasattr(stream, "buffer"):
+        return stream
+    try:
+        return io.TextIOWrapper(stream.buffer, encoding="utf-8", errors="replace")
+    except Exception:
+        return stream
+
+
 # Windows 터미널 UTF-8 인코딩 설정
-if sys.platform == 'win32':
-    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
-    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
+if sys.platform == "win32":
+    sys.stdout = _wrap_stream_utf8(getattr(sys, "stdout", None))
+    sys.stderr = _wrap_stream_utf8(getattr(sys, "stderr", None))
 
 SELENIUM_IMPORT_ERROR = None
 try:
@@ -61,6 +71,7 @@ except ModuleNotFoundError as exc:
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 CONFIG_PATH = os.path.join(SCRIPT_DIR, "config.json")
 REQUIREMENTS_PATH = os.path.join(SCRIPT_DIR, "requirements.txt")
+DEFAULT_MESSAGE_FILE_PATH = os.path.join(SCRIPT_DIR, "custom_message_template.txt")
 PLACEHOLDER_SPREADSHEET_MARKERS = (
     "여기에",
     "구글시트_URL",
@@ -135,6 +146,43 @@ def load_config(config_path=CONFIG_PATH):
         sys.exit(1)
 
     return config
+
+
+def resolve_path(base_path, maybe_relative_path):
+    """상대 경로를 기준 파일 위치에 맞춰 절대 경로로 변환"""
+    if not maybe_relative_path:
+        return ""
+    if os.path.isabs(maybe_relative_path):
+        return maybe_relative_path
+    return os.path.join(os.path.dirname(base_path), maybe_relative_path)
+
+
+def load_message_template(config, args):
+    """CLI, 파일, config 중에서 사용자 지정 메시지 템플릿을 선택"""
+    if args.custom_message:
+        return args.custom_message.strip()
+
+    if args.message_file:
+        message_file_path = resolve_path(args.config or CONFIG_PATH, args.message_file)
+        with open(message_file_path, "r", encoding="utf-8") as f:
+            return f.read().strip()
+
+    if config.get("custom_message_template"):
+        return str(config["custom_message_template"]).strip()
+
+    if config.get("custom_message_file"):
+        message_file_path = resolve_path(
+            args.config or CONFIG_PATH,
+            config["custom_message_file"],
+        )
+        with open(message_file_path, "r", encoding="utf-8") as f:
+            return f.read().strip()
+
+    if os.path.exists(DEFAULT_MESSAGE_FILE_PATH):
+        with open(DEFAULT_MESSAGE_FILE_PATH, "r", encoding="utf-8") as f:
+            return f.read().strip()
+
+    return None
 
 
 # ──────────────────────────────────────
@@ -232,15 +280,24 @@ def get_comment(score, config):
     return comments.get("support", "수고했어요! 😊")
 
 
-def build_message(student_name, score, config):
+def build_message(student_name, score, config, custom_message=None):
     """전송할 메시지 생성"""
     subject = config.get("subject", "시험")
     comment = get_comment(score, config)
 
-    template = config.get(
-        "message_template",
-        "📝 {subject} 결과 안내\n\n{student_name} 학생의 점수: {score}점\n💬 {comment}\n\n궁금하신 점은 편하게 문의해 주세요. 😊"
-    )
+    if custom_message:
+        template = (
+            custom_message
+            .replace("[학생]", "{student_name}")
+            .replace("[과목]", "{subject}")
+            .replace("[점수]", "{score}")
+            .replace("[코멘트]", "{comment}")
+        )
+    else:
+        template = config.get(
+            "message_template",
+            "📝 {subject} 결과 안내\n\n{student_name} 학생의 점수: {score}점\n💬 {comment}\n\n궁금하신 점은 편하게 문의해 주세요. 😊"
+        )
 
     msg = template.format(
         subject=subject,
@@ -726,7 +783,7 @@ def clear_search(driver):
 # ──────────────────────────────────────
 # 메인 실행
 # ──────────────────────────────────────
-def dry_run(students, config):
+def dry_run(students, config, custom_message=None):
     """드라이런: 실제 전송 없이 메시지 미리보기 (파일로도 저장)"""
     preview_lines = []
 
@@ -735,7 +792,7 @@ def dry_run(students, config):
     preview_lines.append(header)
 
     for i, st in enumerate(students, 1):
-        msg = build_message(st["name"], st["score"], config)
+        msg = build_message(st["name"], st["score"], config, custom_message=custom_message)
         block = f"\n{'─' * 50}\n  [{i}/{len(students)}] {st['name']} ({st['score']}점)\n{'─' * 50}\n{msg}"
         print(block)
         preview_lines.append(block)
@@ -752,7 +809,7 @@ def dry_run(students, config):
     print("  확인 후 'python hitalk_sender.py' 로 실제 전송하세요.")
 
 
-def send_to_all(driver, students, config):
+def send_to_all(driver, students, config, custom_message=None):
     """모든 학생에게 점수 메시지 전송"""
     delay = config.get("delay_between_students", 3)
     success_count = 0
@@ -765,7 +822,7 @@ def send_to_all(driver, students, config):
     for i, st in enumerate(students, 1):
         name = st["name"]
         score = st["score"]
-        msg = build_message(name, score, config)
+        msg = build_message(name, score, config, custom_message=custom_message)
 
         print(f"\n{'─' * 50}")
         print(f"  [{i}/{len(students)}] {name} ({score}점)")
@@ -841,11 +898,22 @@ def run():
         default="testing {student_name}",
         help="리허설 입력 문구 템플릿 (기본: 'testing {student_name}')"
     )
+    parser.add_argument(
+        "--custom-message",
+        default=None,
+        help="학생별 치환 메시지. [학생] 또는 {student_name} 사용 가능"
+    )
+    parser.add_argument(
+        "--message-file",
+        default=None,
+        help="메시지 템플릿 파일 경로 (.txt). [학생], [과목], [점수], [코멘트] 사용 가능"
+    )
     args = parser.parse_args()
 
     config = load_config(args.config or CONFIG_PATH)
     check_runtime_dependencies()
     port = config.get("remote_port", 9223)
+    custom_message = load_message_template(config, args)
 
     print("\n" + "=" * 60)
     print("  🎯 하이톡 시험점수 개별 전송 시스템")
@@ -869,7 +937,7 @@ def run():
 
     # 2. 드라이런 모드
     if args.dry_run:
-        dry_run(students, config)
+        dry_run(students, config, custom_message=custom_message)
         return
 
     if args.rehearsal:
@@ -910,7 +978,12 @@ def run():
     wait_for_hitalk_ready(driver)
 
     # 5. 전송 실행
-    success_count, fail_list = send_to_all(driver, students, config)
+    success_count, fail_list = send_to_all(
+        driver,
+        students,
+        config,
+        custom_message=custom_message,
+    )
 
     if fail_list:
         retry = input(f"\n  실패한 {len(fail_list)}명 재시도? (y/n): ").strip().lower()

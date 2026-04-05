@@ -11,6 +11,15 @@ description: "구글시트의 시험점수를 읽어 하이클래스 하이톡(H
 
 ## 🚀 빠른 시작
 
+### 0. 창으로 실행
+
+- 더블클릭: `launch_hitalk_sender_gui.bat`
+- 또는 실행:
+
+```powershell
+python hitalk_sender_gui.py
+```
+
 ### 1. 사전 준비
 - 구글시트에 시험 점수 입력 (A=번호, B=이름, C=점수)
 - `config.json`에 구글시트 ID와 과목명 설정
@@ -26,6 +35,21 @@ python -m pip install -r requirements.txt
 ```
 
 - `gws` 설치 후에는 터미널을 새로 열어 주는 편이 안전합니다.
+
+### 1-2. 원하는 문구 넣기
+
+- 기본 파일: `custom_message_template.txt`
+- `config.json`의 `custom_message_file`로 기본 문구 파일을 지정할 수 있습니다.
+- 지원 치환값: `[학생]`, `[과목]`, `[점수]`, `[코멘트]`
+
+예시:
+
+```text
+안녕하세요? [학생]부모님
+지난주 목요일에 [과목]를 실시했습니다.
+점수는 학생들이 알고 있습니다!
+편안한 주말 되십시오 ^^
+```
 
 ### 2. 실행 순서
 
@@ -89,6 +113,22 @@ python -m pip install -r requirements.txt
    ```
 7. **결과 보고** — 성공/실패 건수 안내
 
+### 원하는 문구로 보내기
+
+파일 방식:
+```powershell
+python hitalk_sender.py --message-file custom_message_template.txt --dry-run
+python hitalk_sender.py --message-file custom_message_template.txt --rehearsal
+python hitalk_sender.py --message-file custom_message_template.txt
+```
+
+한 줄 문구 방식:
+```powershell
+python hitalk_sender.py --custom-message "안녕하세요? [학생]부모님 ..."
+```
+
+GUI에서는 템플릿 파일을 창에서 바로 수정한 뒤 `Dry Run` → `Rehearsal` → `실제 전송` 순서로 누르면 됩니다.
+
 ---
 
 ## 📝 메시지 예시
@@ -134,3 +174,5 @@ python -m pip install -r requirements.txt
   → 하이톡 탭을 하나만 남기고 다시 실행
 - 실제 전송 없이 순회/입력/삭제만 점검하고 싶을 때
   → `python hitalk_sender.py --rehearsal`
+- 원하는 문구 파일을 기본값으로 쓰고 싶을 때
+  → `config.json`의 `custom_message_file`에 파일명을 적고 `python hitalk_sender.py --dry-run`

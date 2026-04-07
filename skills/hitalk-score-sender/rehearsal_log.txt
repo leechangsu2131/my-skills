@@ -1,16 +1,5 @@
 OK	학생A	testing 학생A
-OK	학생B	testing 학생B
 OK	학생C	testing 학생C
-OK	학생E	testing 학생E
-OK	학생F	testing 학생F
-OK	학생G	testing 학생G
-OK	학생H	testing 학생H
-FAIL	학생I	student-not-found
 OK	학생J	testing 학생J
-OK	학생K	testing 학생K
-OK	학생L	testing 학생L
 OK	학생M	testing 학생M
-OK	학생N	testing 학생N
 OK	학생O	testing 학생O
-FAIL	학생Q	student-not-found
-OK	학생R	testing 학생R

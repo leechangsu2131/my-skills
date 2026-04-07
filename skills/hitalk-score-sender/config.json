@@ -1,9 +1,11 @@
 {
   "spreadsheet_id": "1DSYGtAoggl6iG96UMY_emqvWutGZe7n16YjuFq7YNSs",
-  "range": "시트1!A1:C30",
+  "range": "시트1!A1:d30",
   "subject": "수학 1단원 평가",
   "name_column": 1,
   "score_column": 2,
+  "recipient_filter_column": "보충지도",
+  "recipient_filter_values": "y",
   "remote_port": 9223,
   "custom_message_file": "custom_message_template.txt",
   "message_template": "📝 {subject} 결과 안내\n\n{student_name} 학생의 점수: {score}점\n💬 {comment}\n\n궁금하신 점은 편하게 문의해 주세요. 😊",

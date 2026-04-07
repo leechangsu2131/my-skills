@@ -1,11 +1,11 @@
 """
-하이클래스 하이톡(HiTalk) 시험점수 개별 전송 스크립트
-====================================================
-구글시트에서 학생별 점수를 읽어, 하이톡으로 학부모에게 개별 메시지를 보냅니다.
+하이클래스 하이톡(HiTalk) 개별 전송 스크립트
+===========================================
+구글시트에서 학생별 데이터를 읽어, 하이톡으로 학부모에게 개별 메시지를 보냅니다.
 
 흐름:
   1. config.json에서 설정 로드
-  2. gws CLI로 구글시트에서 점수 데이터 읽기
+  2. gws CLI로 구글시트에서 학생 데이터 읽기
   3. Selenium으로 하이클래스 하이톡에 연결
   4. 각 학생에 대해: 검색 → 클릭 → 메시지 입력 → 전송
 
@@ -24,6 +24,14 @@ import sys
 import os
 import argparse
 import shutil
+import re
+
+DOTENV_IMPORT_ERROR = None
+try:
+    from dotenv import dotenv_values
+except ModuleNotFoundError as exc:
+    DOTENV_IMPORT_ERROR = exc
+    dotenv_values = None
 
 def _wrap_stream_utf8(stream):
     """pythonw 등 콘솔이 없는 환경에서도 안전하게 UTF-8 래핑"""
@@ -78,6 +86,7 @@ PLACEHOLDER_SPREADSHEET_MARKERS = (
     "구글시트_",
 )
 GWS_EXECUTABLE = None
+SHEETS_READONLY_SCOPE = ["https://www.googleapis.com/auth/spreadsheets.readonly"]
 
 
 def is_placeholder_spreadsheet_id(value):
@@ -97,6 +106,165 @@ def print_dependency_help(missing_dependencies):
     for name, install_command in missing_dependencies:
         print(f"    - {name}: {install_command}")
     print("    설치 후 새 터미널을 열고 다시 실행하면 가장 안전합니다.")
+
+
+def format_gws_runtime_error(error_text):
+    """gws 실행 오류를 사용자 친화적인 안내 문구로 정리"""
+    raw = (error_text or "").strip()
+    normalized = " ".join(raw.split())
+
+    if "No credentials provided" in raw or "Access denied" in raw:
+        return (
+            "gws 인증이 필요합니다.\n"
+            "    1. 먼저 OAuth client를 준비합니다.\n"
+            "       - 가장 쉬운 방법: Google Cloud Console에서 Desktop OAuth client JSON을 받아\n"
+            "         `C:\\Users\\user\\.config\\gws\\client_secret.json` 로 저장\n"
+            "    2. 터미널에서 `gws auth login` 실행\n"
+            "    3. 또는 `GOOGLE_WORKSPACE_CLI_CREDENTIALS_FILE` 환경 변수에 OAuth 자격 증명 JSON 경로 설정\n"
+            "    4. 인증 후 GUI에서 '실제 예시 새로고침' 또는 dry-run 재실행"
+        )
+
+    if "gws CLI를 찾지 못했습니다" in raw or "'gws'" in raw or '"gws"' in raw:
+        return (
+            "gws CLI가 설치되어 있지 않습니다.\n"
+            "    1. 터미널에서 `npm install -g @googleworkspace/cli` 실행\n"
+            "    2. 새 터미널 또는 앱을 다시 연 뒤 재시도"
+        )
+
+    return normalized or "gws 실행 중 알 수 없는 오류가 발생했습니다."
+
+
+def format_sheet_runtime_error(error_text):
+    """서비스 계정 기반 구글시트 읽기 오류를 사용자 친화적으로 정리"""
+    raw = (error_text or "").strip()
+    normalized = " ".join(raw.split())
+
+    if "The caller does not have permission" in raw or "PERMISSION_DENIED" in raw:
+        return (
+            "서비스 계정으로 시트를 읽을 권한이 없습니다.\n"
+            "    1. 해당 시트를 서비스 계정 이메일에 공유했는지 확인\n"
+            "    2. 또는 다른 자격증명 경로로 다시 시도"
+        )
+
+    if "Unable to parse range" in raw:
+        return "시트 범위를 해석하지 못했습니다. config.json의 range 값을 확인해 주세요."
+
+    if "SpreadsheetNotFound" in raw:
+        return "스프레드시트를 찾지 못했습니다. spreadsheet_id 또는 공유 권한을 확인해 주세요."
+
+    return normalized or "구글시트 읽기 중 알 수 없는 오류가 발생했습니다."
+
+
+def get_env_candidate_paths():
+    """현재 스킬과 이웃 스킬에서 공유 가능한 .env 후보 경로"""
+    return [
+        os.path.join(SCRIPT_DIR, ".env"),
+        os.path.join(os.path.dirname(SCRIPT_DIR), "teacher-schedule", ".env"),
+    ]
+
+
+def load_shared_env_values():
+    """현재 스킬 또는 이웃 스킬의 .env에서 필요한 값 읽기"""
+    if dotenv_values is None:
+        return {}
+
+    merged = {}
+    for env_path in get_env_candidate_paths():
+        if not os.path.exists(env_path):
+            continue
+        try:
+            values = dotenv_values(env_path)
+        except Exception:
+            continue
+        for key, value in values.items():
+            if value is not None and key not in merged:
+                merged[key] = value
+    return merged
+
+
+def find_service_account_material():
+    """서비스 계정 JSON 또는 파일 경로를 환경에서 찾기"""
+    creds_json = os.getenv("GOOGLE_CREDENTIALS_JSON")
+    if creds_json:
+        return {
+            "kind": "json",
+            "value": creds_json,
+            "source": "환경 변수 GOOGLE_CREDENTIALS_JSON",
+        }
+
+    creds_path = os.getenv("GOOGLE_CREDENTIALS_PATH")
+    if creds_path:
+        resolved = creds_path if os.path.isabs(creds_path) else os.path.abspath(creds_path)
+        return {
+            "kind": "path",
+            "value": resolved,
+            "source": "환경 변수 GOOGLE_CREDENTIALS_PATH",
+        }
+
+    shared_values = load_shared_env_values()
+
+    creds_json = shared_values.get("GOOGLE_CREDENTIALS_JSON")
+    if creds_json:
+        return {
+            "kind": "json",
+            "value": creds_json,
+            "source": "공유 .env의 GOOGLE_CREDENTIALS_JSON",
+        }
+
+    creds_path = shared_values.get("GOOGLE_CREDENTIALS_PATH")
+    if creds_path:
+        for env_path in get_env_candidate_paths():
+            if not os.path.exists(env_path) or dotenv_values is None:
+                continue
+            try:
+                values = dotenv_values(env_path)
+            except Exception:
+                continue
+            if values.get("GOOGLE_CREDENTIALS_PATH") == creds_path:
+                resolved = (
+                    creds_path
+                    if os.path.isabs(creds_path)
+                    else os.path.normpath(os.path.join(os.path.dirname(env_path), creds_path))
+                )
+                return {
+                    "kind": "path",
+                    "value": resolved,
+                    "source": f"{env_path} 의 GOOGLE_CREDENTIALS_PATH",
+                }
+
+    return None
+
+
+def load_service_account_credentials():
+    """서비스 계정 자격증명을 Credentials 객체로 변환"""
+    material = find_service_account_material()
+    if not material:
+        return None
+
+    try:
+        from google.oauth2.service_account import Credentials
+    except ModuleNotFoundError as exc:
+        raise RuntimeError(
+            "서비스 계정 자격증명은 찾았지만 google-auth 라이브러리가 없습니다. "
+            "teacher-schedule requirements 설치 여부를 확인해 주세요."
+        ) from exc
+
+    if material["kind"] == "json":
+        try:
+            creds_json = str(material["value"]).replace("\\n", "\n")
+            creds_dict = json.loads(creds_json, strict=False)
+        except json.JSONDecodeError as exc:
+            raise RuntimeError(f"{material['source']} 값을 JSON으로 해석하지 못했습니다.") from exc
+        creds = Credentials.from_service_account_info(creds_dict, scopes=SHEETS_READONLY_SCOPE)
+    else:
+        creds_path = material["value"]
+        if not os.path.exists(creds_path):
+            raise RuntimeError(
+                f"{material['source']} 에 지정된 자격증명 파일을 찾을 수 없습니다: {creds_path}"
+            )
+        creds = Credentials.from_service_account_file(creds_path, scopes=SHEETS_READONLY_SCOPE)
+
+    return creds, material["source"]
 
 
 def find_gws_executable():
@@ -120,9 +288,9 @@ def check_runtime_dependencies():
         )
 
     GWS_EXECUTABLE = find_gws_executable()
-    if GWS_EXECUTABLE is None:
+    if GWS_EXECUTABLE is None and find_service_account_material() is None:
         missing_dependencies.append(
-            ("gws CLI", "npm install -g @aspect-build/gws")
+            ("gws CLI", "npm install -g @googleworkspace/cli")
         )
 
     if missing_dependencies:
@@ -185,13 +353,266 @@ def load_message_template(config, args):
     return None
 
 
+class SafeDict(dict):
+    """알 수 없는 format placeholder를 원문 그대로 남긴다."""
+
+    def __missing__(self, key):
+        return "{" + key + "}"
+
+
+def clean_cell(value):
+    """시트 셀 값을 공백 제거된 문자열로 통일"""
+    if value is None:
+        return ""
+    return str(value).strip()
+
+
+def normalize_placeholder_key(key):
+    """헤더명을 format에서 쓰기 쉬운 snake_case 키로 정규화"""
+    normalized = clean_cell(key)
+    if not normalized:
+        return ""
+
+    normalized = re.sub(r"\s+", "_", normalized)
+    normalized = re.sub(r"[^\w]", "_", normalized, flags=re.UNICODE)
+    normalized = re.sub(r"_+", "_", normalized).strip("_")
+    return normalized.lower()
+
+
+def normalize_match_value(value):
+    """필터 비교용 문자열 정규화"""
+    return clean_cell(value).casefold()
+
+
+PARTICLE_PAIRS = {
+    "이/가": ("이", "가"),
+    "은/는": ("은", "는"),
+    "는/이는": ("이는", "는"),
+    "을/를": ("을", "를"),
+    "과/와": ("과", "와"),
+    "으로/로": ("으로", "로"),
+    "아/야": ("아", "야"),
+}
+
+
+def parse_filter_values(raw_values):
+    """config의 대상 값 설정을 문자열 목록으로 정리"""
+    if raw_values is None:
+        return []
+
+    if isinstance(raw_values, (list, tuple, set)):
+        items = [clean_cell(item) for item in raw_values]
+        return [item for item in items if item]
+
+    text = clean_cell(raw_values)
+    if not text:
+        return []
+
+    parts = re.split(r"[,;\n]+", text)
+    return [part for part in (clean_cell(part) for part in parts) if part]
+
+
+def get_recipient_filter(config):
+    """현재 config에서 사용할 수신 대상 필터 정보 반환"""
+    column = clean_cell(config.get("recipient_filter_column"))
+    if not column:
+        return None
+
+    values = parse_filter_values(config.get("recipient_filter_values"))
+    return {
+        "column": column,
+        "normalized_column": normalize_placeholder_key(column),
+        "values": values,
+        "normalized_values": {normalize_match_value(value) for value in values},
+    }
+
+
+def describe_recipient_filter(config):
+    """사용자에게 보여줄 필터 설명"""
+    recipient_filter = get_recipient_filter(config)
+    if not recipient_filter:
+        return ""
+
+    values = recipient_filter["values"]
+    if values:
+        return f"{recipient_filter['column']} 열이 {', '.join(values)} 인 학생만 전송"
+    return f"{recipient_filter['column']} 열이 비어 있지 않은 학생만 전송"
+
+
+def resolve_field_value(fields, key):
+    """헤더명 또는 정규화 키로 필드 값 조회"""
+    if key in fields:
+        return fields.get(key)
+
+    normalized_key = normalize_placeholder_key(key)
+    if normalized_key and normalized_key in fields:
+        return fields.get(normalized_key)
+
+    return None
+
+
+def student_matches_filter(fields, recipient_filter):
+    """학생 필드가 현재 수신 대상 필터와 일치하는지 판단"""
+    if not recipient_filter:
+        return True
+
+    field_value = resolve_field_value(fields, recipient_filter["column"])
+    if field_value is None:
+        return False
+
+    cell_value = clean_cell(field_value)
+    if not recipient_filter["normalized_values"]:
+        return bool(cell_value)
+
+    return normalize_match_value(cell_value) in recipient_filter["normalized_values"]
+
+
+def has_final_consonant(text):
+    """마지막 글자에 받침이 있는지 판별"""
+    cleaned = clean_cell(text)
+    if not cleaned:
+        return False
+
+    last_char = cleaned[-1]
+    code = ord(last_char)
+
+    if 0xAC00 <= code <= 0xD7A3:
+        return ((code - 0xAC00) % 28) != 0
+
+    digit_final_consonant = {
+        "0": False,  # 영
+        "1": True,   # 일
+        "2": False,  # 이
+        "3": True,   # 삼
+        "4": False,  # 사
+        "5": False,  # 오
+        "6": True,   # 육
+        "7": True,   # 칠
+        "8": True,   # 팔
+        "9": False,  # 구
+    }
+    if last_char in digit_final_consonant:
+        return digit_final_consonant[last_char]
+
+    return False
+
+
+def ends_with_rieul(text):
+    """마지막 한글 글자가 ㄹ 받침인지 판별"""
+    cleaned = clean_cell(text)
+    if not cleaned:
+        return False
+
+    last_char = cleaned[-1]
+    code = ord(last_char)
+    if 0xAC00 <= code <= 0xD7A3:
+        return ((code - 0xAC00) % 28) == 8
+
+    return False
+
+
+def choose_particle(stem, pattern):
+    """단어와 조사 패턴에 맞는 조사를 선택"""
+    first, second = PARTICLE_PAIRS[pattern]
+    has_batchim = has_final_consonant(stem)
+
+    if pattern == "으로/로":
+        return second if not has_batchim or ends_with_rieul(stem) else first
+
+    return first if has_batchim else second
+
+
+def apply_korean_particles(text):
+    """민수이/가 같은 조사 패턴을 한국어 규칙에 맞게 치환"""
+    particle_pattern = "|".join(sorted((re.escape(key) for key in PARTICLE_PAIRS), key=len, reverse=True))
+    regex = re.compile(
+        rf"(?P<stem>[^\s'\"“”‘’()\[\]{{}}<>]+)(?P<quote>['\"]?)(?P<pattern>{particle_pattern})(?P=quote)"
+    )
+
+    def replace(match):
+        stem = match.group("stem")
+        pattern = match.group("pattern")
+        quote = match.group("quote")
+        particle = choose_particle(stem, pattern)
+        return f"{stem}{quote}{particle}{quote}"
+
+    return regex.sub(replace, text)
+
+
+def build_student_label(student):
+    """로그/미리보기에 보여줄 학생 라벨 생성"""
+    name = clean_cell(student.get("name"))
+    score = clean_cell(student.get("score"))
+    return f"{name} ({score}점)" if score else name
+
+
+def build_placeholder_context(student, config):
+    """학생 1명 기준 템플릿 치환용 컨텍스트 생성"""
+    student_name = clean_cell(student.get("name"))
+    subject = clean_cell(config.get("subject", "시험"))
+    score = clean_cell(student.get("score"))
+    comment = get_comment(score, config) if score else clean_cell(config.get("default_comment", ""))
+
+    context = SafeDict(
+        {
+            "student_name": student_name,
+            "name": student_name,
+            "학생": student_name,
+            "이름": student_name,
+            "subject": subject,
+            "과목": subject,
+            "score": score,
+            "점수": score,
+            "comment": comment,
+            "코멘트": comment,
+        }
+    )
+
+    for key, value in (student.get("fields") or {}).items():
+        value = clean_cell(value)
+        context[key] = value
+
+        normalized_key = normalize_placeholder_key(key)
+        if normalized_key:
+            context.setdefault(normalized_key, value)
+
+    return context
+
+
 # ──────────────────────────────────────
 # 구글시트 데이터 읽기
 # ──────────────────────────────────────
-def read_scores(config):
-    """gws CLI로 구글시트에서 점수 데이터 읽기"""
+def fetch_sheet_values(config):
+    """서비스 계정 또는 gws CLI로 구글시트 값 읽기"""
     spreadsheet_id = config["spreadsheet_id"]
     range_name = config["range"]
+
+    service_account_error = None
+    service_account_bundle = None
+
+    try:
+        service_account_bundle = load_service_account_credentials()
+    except RuntimeError as exc:
+        service_account_error = str(exc)
+
+    if service_account_bundle is not None:
+        creds, source = service_account_bundle
+        try:
+            import gspread
+        except ModuleNotFoundError as exc:
+            raise RuntimeError(
+                "서비스 계정 자격증명은 찾았지만 gspread 라이브러리가 없습니다. "
+                "teacher-schedule requirements 설치 여부를 확인해 주세요."
+            ) from exc
+
+        print(f"\n📊 구글시트 읽는 중... (서비스 계정, {source})")
+        try:
+            client = gspread.authorize(creds)
+            spreadsheet = client.open_by_key(spreadsheet_id)
+            data = spreadsheet.values_get(range_name)
+            return data.get("values", [])
+        except Exception as exc:
+            service_account_error = format_sheet_runtime_error(str(exc))
 
     print(f"\n📊 구글시트 읽는 중... (ID: {spreadsheet_id[:8]}...)")
 
@@ -200,10 +621,16 @@ def read_scores(config):
         "range": range_name
     }, ensure_ascii=False)
 
+    gws_executable = GWS_EXECUTABLE or find_gws_executable()
+    if gws_executable is None:
+        if service_account_error:
+            raise RuntimeError(service_account_error)
+        raise RuntimeError(format_gws_runtime_error("gws CLI를 찾지 못했습니다. 먼저 전역 설치가 필요합니다."))
+
     try:
         result = subprocess.run(
             [
-                GWS_EXECUTABLE or "gws.cmd",
+                gws_executable,
                 "sheets",
                 "spreadsheets",
                 "values",
@@ -216,40 +643,92 @@ def read_scores(config):
             encoding="utf-8",
         )
     except FileNotFoundError:
-        print_dependency_help([
-            ("gws CLI", "npm install -g @aspect-build/gws")
-        ])
-        sys.exit(1)
+        if service_account_error:
+            raise RuntimeError(service_account_error)
+        raise RuntimeError(format_gws_runtime_error("gws CLI를 찾지 못했습니다. 먼저 전역 설치가 필요합니다."))
 
     if result.returncode != 0:
-        print(f"[✗] 구글시트 읽기 실패: {result.stderr}")
-        sys.exit(1)
+        gws_error = format_gws_runtime_error(result.stderr)
+        if service_account_error:
+            raise RuntimeError(f"{service_account_error}\n\n추가로 gws 경로로도 실패했습니다.\n{gws_error}")
+        raise RuntimeError(gws_error)
 
     data = json.loads(result.stdout)
     return data.get("values", [])
 
 
+def read_scores(config):
+    """CLI용 구글시트 데이터 읽기"""
+    try:
+        return fetch_sheet_values(config)
+    except RuntimeError as exc:
+        print(f"[✗] 구글시트 읽기 실패: {exc}")
+        sys.exit(1)
+
+
 def parse_students(raw_data, config):
-    """raw 데이터에서 학생 이름-점수 리스트 추출"""
+    """raw 데이터에서 학생별 전송 컨텍스트 추출"""
     name_col = config.get("name_column", 1)   # B열 = index 1
     score_col = config.get("score_column", 2)  # C열 = index 2
+    recipient_filter = get_recipient_filter(config)
 
     if not raw_data or len(raw_data) < 2:
         print("[✗] 시트에 데이터가 없습니다.")
         return []
 
-    header = raw_data[0]
+    header = [clean_cell(cell) for cell in raw_data[0]]
     print(f"  📋 헤더: {header}")
 
-    students = []
-    for row in raw_data[1:]:
-        if len(row) > max(name_col, score_col):
-            name = str(row[name_col]).strip()
-            score = str(row[score_col]).strip()
-            if name and score:
-                students.append({"name": name, "score": score})
+    if recipient_filter:
+        available_keys = {header_name for header_name in header if header_name}
+        available_keys.update(
+            normalize_placeholder_key(header_name) for header_name in header if header_name
+        )
+        if (
+            recipient_filter["column"] not in available_keys
+            and recipient_filter["normalized_column"] not in available_keys
+        ):
+            raise RuntimeError(
+                f"대상 필터 열 '{recipient_filter['column']}' 을(를) 헤더에서 찾지 못했습니다."
+            )
 
-    print(f"  ✅ {len(students)}명의 학생 데이터 로드 완료")
+    students = []
+    total_named_students = 0
+    for row in raw_data[1:]:
+        if len(row) <= name_col:
+            continue
+
+        name = clean_cell(row[name_col])
+        if not name:
+            continue
+        total_named_students += 1
+
+        score = ""
+        if score_col is not None and len(row) > score_col:
+            score = clean_cell(row[score_col])
+
+        fields = {}
+        for idx, header_name in enumerate(header):
+            if not header_name:
+                continue
+
+            value = clean_cell(row[idx]) if idx < len(row) else ""
+            fields[header_name] = value
+
+            normalized_key = normalize_placeholder_key(header_name)
+            if normalized_key:
+                fields.setdefault(normalized_key, value)
+
+        if not student_matches_filter(fields, recipient_filter):
+            continue
+
+        students.append({"name": name, "score": score, "fields": fields})
+
+    if recipient_filter:
+        print(f"  🎯 대상 필터: {describe_recipient_filter(config)}")
+        print(f"  ✅ {total_named_students}명 중 {len(students)}명 선택 완료")
+    else:
+        print(f"  ✅ {len(students)}명의 학생 데이터 로드 완료")
     return students
 
 
@@ -280,32 +759,30 @@ def get_comment(score, config):
     return comments.get("support", "수고했어요! 😊")
 
 
-def build_message(student_name, score, config, custom_message=None):
+def build_message(student, config, custom_message=None):
     """전송할 메시지 생성"""
-    subject = config.get("subject", "시험")
-    comment = get_comment(score, config)
-
-    if custom_message:
-        template = (
-            custom_message
-            .replace("[학생]", "{student_name}")
-            .replace("[과목]", "{subject}")
-            .replace("[점수]", "{score}")
-            .replace("[코멘트]", "{comment}")
-        )
-    else:
-        template = config.get(
-            "message_template",
-            "📝 {subject} 결과 안내\n\n{student_name} 학생의 점수: {score}점\n💬 {comment}\n\n궁금하신 점은 편하게 문의해 주세요. 😊"
-        )
-
-    msg = template.format(
-        subject=subject,
-        student_name=student_name,
-        score=score,
-        comment=comment
+    context = build_placeholder_context(student, config)
+    template = custom_message or config.get(
+        "message_template",
+        "📝 {subject} 결과 안내\n\n{student_name} 학생의 점수: {score}점\n💬 {comment}\n\n궁금하신 점은 편하게 문의해 주세요. 😊",
     )
-    return msg
+
+    square_replacements = {
+        "[학생]": context["student_name"],
+        "[이름]": context["student_name"],
+        "[과목]": context["subject"],
+        "[점수]": context["score"],
+        "[코멘트]": context["comment"],
+    }
+
+    for key, value in (student.get("fields") or {}).items():
+        square_replacements[f"[{key}]"] = clean_cell(value)
+
+    rendered = template
+    for placeholder, value in square_replacements.items():
+        rendered = rendered.replace(placeholder, value)
+
+    return apply_korean_particles(rendered.format_map(context))
 
 
 # ──────────────────────────────────────
@@ -674,7 +1151,7 @@ def rehearse_all(driver, students, config, template):
 
     for i, st in enumerate(students, 1):
         name = st["name"]
-        rehearsal_message = template.format(student_name=name)
+        rehearsal_message = template.format_map(build_placeholder_context(st, config))
 
         print(f"\n{'─' * 50}")
         print(f"  [{i}/{len(students)}] {name}")
@@ -792,8 +1269,8 @@ def dry_run(students, config, custom_message=None):
     preview_lines.append(header)
 
     for i, st in enumerate(students, 1):
-        msg = build_message(st["name"], st["score"], config, custom_message=custom_message)
-        block = f"\n{'─' * 50}\n  [{i}/{len(students)}] {st['name']} ({st['score']}점)\n{'─' * 50}\n{msg}"
+        msg = build_message(st, config, custom_message=custom_message)
+        block = f"\n{'─' * 50}\n  [{i}/{len(students)}] {build_student_label(st)}\n{'─' * 50}\n{msg}"
         print(block)
         preview_lines.append(block)
 
@@ -810,7 +1287,7 @@ def dry_run(students, config, custom_message=None):
 
 
 def send_to_all(driver, students, config, custom_message=None):
-    """모든 학생에게 점수 메시지 전송"""
+    """모든 학생에게 개별 메시지 전송"""
     delay = config.get("delay_between_students", 3)
     success_count = 0
     fail_list = []
@@ -821,11 +1298,10 @@ def send_to_all(driver, students, config, custom_message=None):
 
     for i, st in enumerate(students, 1):
         name = st["name"]
-        score = st["score"]
-        msg = build_message(name, score, config, custom_message=custom_message)
+        msg = build_message(st, config, custom_message=custom_message)
 
         print(f"\n{'─' * 50}")
-        print(f"  [{i}/{len(students)}] {name} ({score}점)")
+        print(f"  [{i}/{len(students)}] {build_student_label(st)}")
         print(f"{'─' * 50}")
 
         # 1. 검색
@@ -879,7 +1355,7 @@ def send_to_all(driver, students, config, custom_message=None):
 def run():
     """전체 실행 흐름"""
     parser = argparse.ArgumentParser(
-        description="하이톡 시험점수 개별 전송"
+        description="하이톡 개별 메시지 전송"
     )
     parser.add_argument(
         "--dry-run", action="store_true",
@@ -901,12 +1377,12 @@ def run():
     parser.add_argument(
         "--custom-message",
         default=None,
-        help="학생별 치환 메시지. [학생] 또는 {student_name} 사용 가능"
+        help="학생별 치환 메시지. [학생], {student_name}, [담임교사] 같은 헤더 placeholder 사용 가능"
     )
     parser.add_argument(
         "--message-file",
         default=None,
-        help="메시지 템플릿 파일 경로 (.txt). [학생], [과목], [점수], [코멘트] 사용 가능"
+        help="메시지 템플릿 파일 경로 (.txt). [학생], [과목], [점수], [코멘트], 시트 헤더 placeholder 사용 가능"
     )
     args = parser.parse_args()
 
@@ -916,7 +1392,7 @@ def run():
     custom_message = load_message_template(config, args)
 
     print("\n" + "=" * 60)
-    print("  🎯 하이톡 시험점수 개별 전송 시스템")
+    print("  🎯 하이톡 개별 전송 시스템")
     print("=" * 60)
     print(f"  과목: {config.get('subject', '시험')}")
     print(f"  시트: {config['spreadsheet_id'][:12]}...")
@@ -924,16 +1400,26 @@ def run():
     # 1. 구글시트에서 점수 읽기
     raw_data = read_scores(config)
     students = parse_students(raw_data, config)
+    filter_text = describe_recipient_filter(config)
 
     if not students:
-        print("[✗] 전송할 학생 데이터가 없습니다.")
+        if filter_text:
+            print(f"[✗] 전송 대상이 없습니다. 현재 필터: {filter_text}")
+        else:
+            print("[✗] 전송할 학생 데이터가 없습니다. 이름 열과 범위를 확인해 주세요.")
         sys.exit(1)
 
     # 점수 요약 출력
     print(f"\n  📋 학생 목록:")
+    if filter_text:
+        print(f"  🎯 현재 대상 조건: {filter_text}")
     for st in students:
-        comment = get_comment(st["score"], config)
-        print(f"     {st['name']:>6s}  {st['score']:>3s}점  {comment}")
+        score = clean_cell(st.get("score"))
+        if score:
+            comment = get_comment(score, config)
+            print(f"     {st['name']:>6s}  {score:>3s}점  {comment}")
+        else:
+            print(f"     {st['name']:>6s}  (점수 없이 전송)")
 
     # 2. 드라이런 모드
     if args.dry_run:

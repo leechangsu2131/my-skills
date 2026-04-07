@@ -1,7 +1,6 @@
 import json
 import os
 import queue
-import shutil
 import subprocess
 import sys
 import threading
@@ -9,7 +8,14 @@ import tkinter as tk
 from pathlib import Path
 from tkinter import messagebox, scrolledtext, ttk
 
-from hitalk_sender import build_message, is_placeholder_spreadsheet_id
+from hitalk_sender import (
+    build_message,
+    build_student_label,
+    describe_recipient_filter,
+    fetch_sheet_values,
+    is_placeholder_spreadsheet_id,
+    parse_students,
+)
 
 
 SCRIPT_DIR = Path(__file__).resolve().parent
@@ -37,11 +43,14 @@ class HiTalkSenderGUI(tk.Tk):
         self.subject_var = tk.StringVar()
         self.spreadsheet_var = tk.StringVar()
         self.range_var = tk.StringVar()
+        self.filter_column_var = tk.StringVar()
+        self.filter_values_var = tk.StringVar()
         self.message_file_var = tk.StringVar(value=str(DEFAULT_MESSAGE_FILE_PATH))
         self.status_var = tk.StringVar(value="준비됨")
         self.current_config = {}
         self.preview_students = []
         self.preview_total_count = 0
+        self.preview_error_message = ""
 
         self._configure_style()
         self._build_ui()
@@ -126,7 +135,7 @@ class HiTalkSenderGUI(tk.Tk):
         )
         ttk.Label(
             frame,
-            text="치환값: [학생], [과목], [점수], [코멘트]",
+            text="치환값: [학생], [과목], [점수], [코멘트], 그리고 시트 헤더명 그대로 사용 가능",
             style="Muted.TLabel",
         ).grid(row=1, column=0, sticky="w", pady=(2, 8))
 
@@ -148,7 +157,7 @@ class HiTalkSenderGUI(tk.Tk):
 
         helper = ttk.Label(
             frame,
-            text="예: 안녕하세요? [학생]부모님",
+            text="예: 안녕하세요. [담임교사] 담임교사입니다. [학생] 학생 안내드립니다.",
             style="Muted.TLabel",
         )
         helper.grid(row=3, column=0, sticky="w")
@@ -287,15 +296,30 @@ class HiTalkSenderGUI(tk.Tk):
             row=3, column=1, sticky="ew", pady=6
         )
 
-        ttk.Label(frame, text="상태").grid(row=4, column=0, sticky="w", pady=(12, 6))
+        ttk.Label(frame, text="대상 열").grid(row=4, column=0, sticky="w", pady=6)
+        ttk.Entry(frame, textvariable=self.filter_column_var).grid(
+            row=4, column=1, sticky="ew", pady=6
+        )
+
+        ttk.Label(frame, text="대상 값").grid(row=5, column=0, sticky="w", pady=6)
+        ttk.Entry(frame, textvariable=self.filter_values_var).grid(
+            row=5, column=1, sticky="ew", pady=6
+        )
+        ttk.Label(
+            frame,
+            text="예: 대상 열=보충지도 / 대상 값=y  또는 y,yes",
+            style="Muted.TLabel",
+        ).grid(row=6, column=0, columnspan=2, sticky="w", pady=(0, 6))
+
+        ttk.Label(frame, text="상태").grid(row=7, column=0, sticky="w", pady=(12, 6))
         ttk.Label(
             frame,
             textvariable=self.status_var,
             style="Muted.TLabel",
-        ).grid(row=4, column=1, sticky="w", pady=(12, 6))
+        ).grid(row=7, column=1, sticky="w", pady=(12, 6))
 
         action_row = ttk.Frame(frame)
-        action_row.grid(row=5, column=0, columnspan=2, sticky="ew", pady=(16, 0))
+        action_row.grid(row=8, column=0, columnspan=2, sticky="ew", pady=(16, 0))
         action_row.columnconfigure(0, weight=1)
         action_row.columnconfigure(1, weight=1)
 
@@ -309,7 +333,7 @@ class HiTalkSenderGUI(tk.Tk):
         ).grid(row=0, column=1, sticky="ew", padx=(6, 0))
 
         file_row = ttk.Frame(frame)
-        file_row.grid(row=6, column=0, columnspan=2, sticky="ew", pady=(12, 0))
+        file_row.grid(row=9, column=0, columnspan=2, sticky="ew", pady=(12, 0))
         file_row.columnconfigure(0, weight=1)
         file_row.columnconfigure(1, weight=1)
 
@@ -361,6 +385,11 @@ class HiTalkSenderGUI(tk.Tk):
         self.subject_var.set(config.get("subject", ""))
         self.spreadsheet_var.set(config.get("spreadsheet_id", ""))
         self.range_var.set(config.get("range", ""))
+        self.filter_column_var.set(config.get("recipient_filter_column", ""))
+        filter_values = config.get("recipient_filter_values", "")
+        if isinstance(filter_values, list):
+            filter_values = ",".join(str(value) for value in filter_values)
+        self.filter_values_var.set(str(filter_values or ""))
 
         message_file = config.get("custom_message_file") or DEFAULT_MESSAGE_FILE_PATH.name
         message_path = (
@@ -383,6 +412,8 @@ class HiTalkSenderGUI(tk.Tk):
         config["subject"] = self.subject_var.get().strip()
         config["spreadsheet_id"] = self.spreadsheet_var.get().strip()
         config["range"] = self.range_var.get().strip()
+        config["recipient_filter_column"] = self.filter_column_var.get().strip()
+        config["recipient_filter_values"] = self.filter_values_var.get().strip()
 
         message_path = Path(self.message_file_var.get().strip() or DEFAULT_MESSAGE_FILE_PATH)
         try:
@@ -432,6 +463,8 @@ class HiTalkSenderGUI(tk.Tk):
         config["subject"] = self.subject_var.get().strip()
         config["spreadsheet_id"] = self.spreadsheet_var.get().strip()
         config["range"] = self.range_var.get().strip()
+        config["recipient_filter_column"] = self.filter_column_var.get().strip()
+        config["recipient_filter_values"] = self.filter_values_var.get().strip()
         return config
 
     def _set_readonly_text(self, widget, text: str):
@@ -449,57 +482,14 @@ class HiTalkSenderGUI(tk.Tk):
         if not range_name:
             raise RuntimeError("시트 범위를 먼저 입력해 주세요.")
 
-        candidates = ["gws.cmd", "gws"] if os.name == "nt" else ["gws"]
-        gws_executable = next((shutil.which(candidate) for candidate in candidates if shutil.which(candidate)), None)
-        if not gws_executable:
-            raise RuntimeError("gws CLI를 찾지 못했습니다. 먼저 전역 설치가 필요합니다.")
-
-        params_json = json.dumps(
-            {"spreadsheetId": spreadsheet_id, "range": range_name},
-            ensure_ascii=False,
-        )
-        result = subprocess.run(
-            [
-                gws_executable,
-                "sheets",
-                "spreadsheets",
-                "values",
-                "get",
-                "--params",
-                params_json,
-            ],
-            capture_output=True,
-            text=True,
-            encoding="utf-8",
-            errors="replace",
-            cwd=str(SCRIPT_DIR),
-        )
-        if result.returncode != 0:
-            error_text = (result.stderr or "").strip() or "구글시트 읽기에 실패했습니다."
-            raise RuntimeError(error_text)
-
-        try:
-            data = json.loads(result.stdout)
-        except json.JSONDecodeError as exc:
-            raise RuntimeError(f"gws 출력 파싱에 실패했습니다: {exc}") from exc
-
-        values = data.get("values", [])
+        values = fetch_sheet_values(config)
         if len(values) < 2:
             raise RuntimeError("시트에 학생 데이터가 없습니다.")
 
-        name_col = config.get("name_column", 1)
-        score_col = config.get("score_column", 2)
-        students = []
-        for row in values[1:]:
-            if len(row) <= max(name_col, score_col):
-                continue
-            name = str(row[name_col]).strip()
-            score = str(row[score_col]).strip()
-            if name and score:
-                students.append({"name": name, "score": score})
+        students = parse_students(values, config)
 
         if not students:
-            raise RuntimeError("이름과 점수가 모두 있는 학생이 없습니다.")
+            raise RuntimeError("이름이 있는 학생이 없습니다.")
         return students
 
     def _refresh_preview_students(self):
@@ -538,10 +528,18 @@ class HiTalkSenderGUI(tk.Tk):
         if not template:
             rendered = "메시지 템플릿을 입력하면 여기에 실제 예시가 표시됩니다."
         elif not self.preview_students:
-            rendered = (
-                "실제 예시가 아직 없습니다.\n"
-                "오른쪽 위의 '실제 예시 새로고침'을 누르면 현재 시트 기준 학생 1~2명의 메시지를 보여줍니다."
-            )
+            if self.preview_error_message:
+                rendered = (
+                    "실제 시트 예시를 아직 불러오지 못했습니다.\n\n"
+                    f"{self.preview_error_message}\n\n"
+                    "인증이나 설치를 마친 뒤 오른쪽 위의 '실제 예시 새로고침'을 다시 눌러 주세요.\n"
+                    "그 전에는 아래 '마지막 dry-run 불러오기' 탭으로 최종 문구를 확인할 수 있습니다."
+                )
+            else:
+                rendered = (
+                    "실제 예시가 아직 없습니다.\n"
+                    "오른쪽 위의 '실제 예시 새로고침'을 누르면 현재 시트 기준 학생 1~2명의 메시지를 보여줍니다."
+                )
         else:
             config = self._build_preview_config()
             lines = []
@@ -549,20 +547,18 @@ class HiTalkSenderGUI(tk.Tk):
             if self.preview_total_count > len(self.preview_students):
                 header += f" (전체 {self.preview_total_count}명 중 앞의 {len(self.preview_students)}명)"
             lines.append(header)
+            filter_text = describe_recipient_filter(config)
+            if filter_text:
+                lines.append(f"대상 조건: {filter_text}")
             lines.append("=" * 56)
 
             for index, student in enumerate(self.preview_students, 1):
                 try:
-                    message = build_message(
-                        student["name"],
-                        student["score"],
-                        config,
-                        custom_message=template,
-                    )
+                    message = build_message(student, config, custom_message=template)
                 except Exception as exc:
                     message = f"[미리보기 오류] {exc}\n\n원본 템플릿:\n{template}"
 
-                lines.append(f"[예시 {index}] {student['name']} ({student['score']}점)")
+                lines.append(f"[예시 {index}] {build_student_label(student)}")
                 lines.append(message)
                 if index < len(self.preview_students):
                     lines.append("─" * 50)
@@ -699,6 +695,7 @@ class HiTalkSenderGUI(tk.Tk):
                 elif kind == "preview_samples":
                     self.preview_students = payload["students"]
                     self.preview_total_count = payload["total_count"]
+                    self.preview_error_message = ""
                     self.preview_refresh_button.configure(state="normal")
                     self.status_var.set("실제 예시 갱신 완료")
                     self._append_log(
@@ -709,8 +706,14 @@ class HiTalkSenderGUI(tk.Tk):
                 elif kind == "preview_error":
                     self.preview_students = []
                     self.preview_total_count = 0
+                    self.preview_error_message = payload
                     self.preview_refresh_button.configure(state="normal")
-                    self.status_var.set("실제 예시 불러오기 실패")
+                    if "gws 인증이 필요합니다." in payload:
+                        self.status_var.set("gws 인증 필요")
+                    elif "gws CLI가 설치되어 있지 않습니다." in payload:
+                        self.status_var.set("gws 설치 필요")
+                    else:
+                        self.status_var.set("실제 예시 불러오기 실패")
                     self._append_log(f"[GUI] 실제 예시 불러오기 실패: {payload}")
                     self._refresh_live_preview()
                 elif kind == "error":

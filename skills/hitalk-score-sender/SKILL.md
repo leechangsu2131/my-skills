@@ -1,178 +1,131 @@
 ---
 name: hitalk-score-sender
-description: "구글시트의 시험점수를 읽어 하이클래스 하이톡(HiTalk)으로 학부모에게 개별 전송합니다."
+description: Send individualized HiTalk messages from HiClass using a Google Sheet roster and a reusable text template. Use when working in HiTalk to send parents or students personalized messages such as score notices, learning-support invitations, counseling follow-ups, participation requests, or other small-batch classroom notices. This skill fits especially well when only a subset of students should receive a message and the wording should be previewed before sending.
 ---
 
-# 하이톡 시험점수 개별 전송 스킬
+# HiTalk Individual Sender
 
-구글시트에 입력된 시험 점수를 읽어, 하이클래스 하이톡으로 각 학부모에게 **자기 자녀의 점수와 코멘트만** 개별 메시지로 전송합니다.
+Use this skill when the user wants to send a custom HiTalk message to selected students or parents through HiClass.
 
----
+The existing toolchain in this folder already supports:
 
-## 🚀 빠른 시작
+- Reading recipients from Google Sheets through `gws`
+- Reusing shared service-account credentials from nearby teacher tools when available
+- Previewing messages with `--dry-run`
+- Safe input rehearsal with `--rehearsal`
+- Real sending through Selenium after the user logs into HiTalk
+- Reusing long message templates from `.txt` files
+- Filling placeholders not only for score fields, but also for arbitrary sheet headers such as `[담임교사]`, `[평가명]`, `[역할명]`
+- Filtering recipients by a marker column such as `보충지도=y`
 
-### 0. 창으로 실행
+## Prefer This Workflow
 
-- 더블클릭: `launch_hitalk_sender_gui.bat`
-- 또는 실행:
+1. Confirm the recipient set first.
+If the user says "몇몇 학생" or "일부 학생", narrow `config.json` `range` to just those rows, or ask the user to prepare a small dedicated sheet/range.
+
+2. Put long text into a template file.
+For long parent messages, prefer a `.txt` template file in this folder over a one-line CLI string.
+
+3. Preview before sending.
+Run `python hitalk_sender.py --dry-run` first and inspect `preview.txt`.
+
+4. Rehearse before real delivery.
+Run `python hitalk_sender.py --rehearsal` to verify search, chat focus, and input clearing without sending.
+
+5. Send only after the preview wording is approved.
+
+## Main Files
+
+- `hitalk_sender.py`: CLI sender
+- `hitalk_sender_gui.py`: GUI wrapper
+- `config.json`: sheet/range/message defaults
+- `custom_message_template.txt`: basic score-message example
+- `learning_guidance_invitation_template.txt`: example for 학습지도 권유/보충프로그램 안내
+
+## Sheet Setup
+
+At minimum, the sheet needs a student name column.
+
+Typical examples:
+
+- Score notice: `번호 | 이름 | 점수`
+- Learning-support invitation: `이름 | 담임교사 | 평가명 | 역할명`
+- Rich custom message: `이름 | 점수 | 담임교사 | 평가명 | 역할명 | 강조점`
+
+Notes:
+
+- `name_column` should point to the student-name column.
+- `score_column` can stay as-is if score exists, but messages can still work even when a row has no score.
+- Any additional header can be used directly in the template as `[헤더명]`.
+- If you only want some students, set `recipient_filter_column` and optionally `recipient_filter_values`.
+- Example: `recipient_filter_column = "보충지도"` and `recipient_filter_values = "y"` sends only rows marked with `y`.
+- If `recipient_filter_values` is left blank, any non-empty value in that column is treated as selected.
+
+## Template Placeholders
+
+Built-in placeholders:
+
+- `[학생]`, `{student_name}`, `{name}`
+- `[과목]`, `{subject}`
+- `[점수]`, `{score}`
+- `[코멘트]`, `{comment}`
+- Korean particles are auto-resolved for patterns like `[학생]이/가`, `[학생]은/는`, `[학생]는/이는`, `[학생]을/를`, `[학생]과/와`, `[학생]으로/로`
+
+Sheet-header placeholders:
+
+- If the sheet header is `담임교사`, use `[담임교사]` or `{담임교사}`
+- If the sheet header is `역할명`, use `[역할명]` or `{역할명}`
+- Headers are also exposed as normalized snake_case keys, so `또래 교사 역할` can also be used as `{또래_교사_역할}`
+
+## Recommended Commands
 
 ```powershell
 python hitalk_sender_gui.py
+python hitalk_sender.py --dry-run
+python hitalk_sender.py --message-file learning_guidance_invitation_template.txt --dry-run
+python hitalk_sender.py --rehearsal
+python hitalk_sender.py
 ```
 
-### 1. 사전 준비
-- 구글시트에 시험 점수 입력 (A=번호, B=이름, C=점수)
-- `config.json`에 구글시트 ID와 과목명 설정
-- Python + Selenium + Chrome 필요
-- 하이톡 탭은 1개만 열어 두기
+## gws Authentication
 
-### 1-1. 설치가 안 된 경우
+This skill reads Google Sheets through `gws`, so even read-only preview requires Google authentication.
 
+Recommended setup:
+
+1. Install `gws`
 ```powershell
-npm install -g @aspect-build/gws
-cd C:\Users\lee21\.gemini\antigravity\scratch\my-skills\skills\hitalk-score-sender
-python -m pip install -r requirements.txt
+npm install -g @googleworkspace/cli
 ```
 
-- `gws` 설치 후에는 터미널을 새로 열어 주는 편이 안전합니다.
+2. Create or download a Desktop OAuth client JSON from Google Cloud Console
 
-### 1-2. 원하는 문구 넣기
+3. Save it as:
+`C:\Users\user\.config\gws\client_secret.json`
 
-- 기본 파일: `custom_message_template.txt`
-- `config.json`의 `custom_message_file`로 기본 문구 파일을 지정할 수 있습니다.
-- 지원 치환값: `[학생]`, `[과목]`, `[점수]`, `[코멘트]`
-
-예시:
-
-```text
-안녕하세요? [학생]부모님
-지난주 목요일에 [과목]를 실시했습니다.
-점수는 학생들이 알고 있습니다!
-편안한 주말 되십시오 ^^
-```
-
-### 2. 실행 순서
-
-```
-📋 Step 1: config.json 설정
-         ↓
-🌐 Step 2: launch_chrome_hiclass.bat 실행
-         ↓  
-🔐 Step 3: 하이클래스 로그인 → 하이톡 페이지
-         ↓
-🔍 Step 4: python hitalk_sender.py --dry-run  (미리보기)
-          ↓
-🧪 Step 5: python hitalk_sender.py --rehearsal  (입력 후 즉시 삭제)
-         ↓
-📤 Step 6: python hitalk_sender.py  (실제 전송)
-```
-
----
-
-## ⚙️ config.json 설정
-
-```json
-{
-  "spreadsheet_id": "구글시트_URL에서_복사한_ID",
-  "range": "시트1!A1:C30",
-  "subject": "수학 1단원 평가",
-  "name_column": 1,
-  "score_column": 2
-}
-```
-
-| 항목 | 설명 |
-|------|------|
-| `spreadsheet_id` | 구글시트 URL → `https://docs.google.com/spreadsheets/d/**여기**` |
-| `range` | 읽을 범위 (예: `시트1!A1:C30`) |
-| `subject` | 과목/시험 이름 (메시지에 표시) |
-| `name_column` | 이름이 있는 열 인덱스 (B열=1) |
-| `score_column` | 점수가 있는 열 인덱스 (C열=2) |
-
----
-
-## 🤖 AI 에이전트 실행 순서
-
-사용자가 "하이톡으로 시험점수 보내줘" 또는 "학부모에게 점수 알려줘"라고 하면:
-
-1. **config.json 확인** — 시트 ID, 과목명, 범위 설정 확인
-2. **크롬 실행** — `launch_chrome_hiclass.bat` 실행 안내
-3. **로그인 대기** — 사용자가 하이클래스 로그인 완료할 때까지 대기
-4. **드라이런 실행**
-   ```powershell
-   cd C:\Users\lee21\.gemini\antigravity\scratch\my-skills\skills\hitalk-score-sender
-   python hitalk_sender.py --dry-run
-   ```
-5. **사용자 확인 후 실제 전송**
-   ```powershell
-   python hitalk_sender.py
-   ```
-6. **원하면 안전 리허설 먼저 실행**
-   ```powershell
-   python hitalk_sender.py --rehearsal
-   ```
-7. **결과 보고** — 성공/실패 건수 안내
-
-### 원하는 문구로 보내기
-
-파일 방식:
+4. Run:
 ```powershell
-python hitalk_sender.py --message-file custom_message_template.txt --dry-run
-python hitalk_sender.py --message-file custom_message_template.txt --rehearsal
-python hitalk_sender.py --message-file custom_message_template.txt
+gws auth login
 ```
 
-한 줄 문구 방식:
-```powershell
-python hitalk_sender.py --custom-message "안녕하세요? [학생]부모님 ..."
-```
+`gws auth setup` is optional convenience automation. It needs `gcloud` installed, so manual `client_secret.json` setup is often simpler on Windows.
 
-GUI에서는 템플릿 파일을 창에서 바로 수정한 뒤 `Dry Run` → `Rehearsal` → `실제 전송` 순서로 누르면 됩니다.
+## Agent Guidance
 
----
+When the user provides message text directly:
 
-## 📝 메시지 예시
+1. Save it into a descriptive template file in this folder.
+2. Keep the user wording unless they ask for a rewrite.
+3. Replace only obviously reusable parts with placeholders such as `[학생]`, `[담임교사]`, `[평가명]`.
+4. Use dry-run output to show the filled preview before any send step.
 
-```
-📝 수학 1단원 평가 결과 안내
+When the user asks for score messages, use the existing score-based setup.
 
-강시우 학생의 점수: 65점
-💬 조금 더 노력해봐요! 화이팅! 🔥
+When the user asks for 학습지도 권유, 보충프로그램 안내, 상담 안내, 또래교사 역할 안내, or similar parent communication, prefer a custom template file and lean on header placeholders rather than rewriting the automation.
 
-궁금하신 점은 편하게 문의해 주세요. 😊
-```
+## Safety Checks
 
-### 점수별 자동 코멘트
-
-| 점수 | 코멘트 |
-|------|--------|
-| 100점 | 완벽해요! 정말 대단합니다! 👏 |
-| 90~99점 | 아주 잘했어요! 훌륭합니다! 😊 |
-| 80~89점 | 잘했어요! 조금만 더 힘내면 완벽해요! 💪 |
-| 70~79점 | 괜찮아요! 복습하면 더 좋아질 거에요! 📚 |
-| 60~69점 | 조금 더 노력해봐요! 화이팅! 🔥 |
-| 0~59점 | 어려웠죠? 같이 복습해봐요! 선생님이 도와줄게요! 🤗 |
-
-코멘트는 `config.json`의 `comments`와 `comment_thresholds`에서 자유롭게 수정 가능합니다.
-
----
-
-## ⚠️ 주의사항
-
-- 반드시 `--dry-run`으로 미리보기 확인 후 전송하세요
-- 전송 사이 3초 간격을 두어 서버 부하를 방지합니다 (설정 가능)
-- 실패한 학생은 전송 완료 후 재시도 가능
-- 개인정보 보호: 각 학부모에게 자기 자녀 점수만 전송됩니다
-
-## 🩹 자주 나는 오류
-
-- `ModuleNotFoundError: No module named 'selenium'`
-  → `python -m pip install -r requirements.txt`
-- `'gws' 용어가 ... 인식되지 않습니다` 또는 `[✗] gws CLI를 찾을 수 없습니다.`
-  → `npm install -g @aspect-build/gws` 실행 후 새 터미널에서 다시 실행
-- 하이톡 탭이 여러 개 열려 있다는 메시지
-  → 하이톡 탭을 하나만 남기고 다시 실행
-- 실제 전송 없이 순회/입력/삭제만 점검하고 싶을 때
-  → `python hitalk_sender.py --rehearsal`
-- 원하는 문구 파일을 기본값으로 쓰고 싶을 때
-  → `config.json`의 `custom_message_file`에 파일명을 적고 `python hitalk_sender.py --dry-run`
+- Make sure only one HiTalk tab is open.
+- Do not skip `--dry-run`.
+- Use `--rehearsal` before real send when selectors or template content changed.
+- Keep recipient scope tight when the request mentions only a few students.

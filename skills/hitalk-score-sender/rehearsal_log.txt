@@ -1,5 +1,0 @@
-OK	학생A	testing 학생A
-OK	학생C	testing 학생C
-OK	학생J	testing 학생J
-OK	학생M	testing 학생M
-OK	학생O	testing 학생O

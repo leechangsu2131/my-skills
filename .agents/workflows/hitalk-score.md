@@ -14,7 +14,7 @@ description: 구글시트 시험점수를 하이클래스 하이톡(HiTalk)으�
 
 ```powershell
 npm install -g @aspect-build/gws
-cd C:\Users\lee21\.gemini\antigravity\scratch\my-skills\skills\hitalk-score-sender
+cd C:\Users\user\.gemini\antigravity\scratch\repos\my-skills\skills\admin-hitalk-sender
 python -m pip install -r requirements.txt
 ```
 
@@ -24,13 +24,13 @@ python -m pip install -r requirements.txt
 
 0. **창으로 실행하고 싶을 때**
 ```powershell
-cd C:\Users\lee21\.gemini\antigravity\scratch\my-skills\skills\hitalk-score-sender
+cd C:\Users\user\.gemini\antigravity\scratch\repos\my-skills\skills\admin-hitalk-sender
 python hitalk_sender_gui.py
 ```
    - 더블클릭은 `launch_hitalk_sender_gui.bat`
 
 1. **config.json 설정 확인/수정**
-   - 스킬 폴더: `C:\Users\lee21\.gemini\antigravity\scratch\my-skills\skills\hitalk-score-sender\`
+   - 스킬 폴더: `C:\Users\user\.gemini\antigravity\scratch\repos\my-skills\skills\admin-hitalk-sender\`
    - `spreadsheet_id`: 구글시트 ID
    - `range`: 데이터 범위 (예: `시트1!A1:C30`)
    - `subject`: 과목명 (예: `수학 1단원 평가`)
@@ -39,7 +39,7 @@ python hitalk_sender_gui.py
 // turbo
 2. **크롬 실행** (이미 열려있으면 생략)
 ```powershell
-start "" "C:\Users\lee21\.gemini\antigravity\scratch\my-skills\skills\hitalk-score-sender\launch_chrome_hiclass.bat"
+start "" "C:\Users\user\.gemini\antigravity\scratch\repos\my-skills\skills\admin-hitalk-sender\launch_chrome_hiclass.bat"
 ```
 
 3. **사용자가 직접 하이클래스 로그인** → 하이톡 페이지 이동
@@ -49,19 +49,19 @@ start "" "C:\Users\lee21\.gemini\antigravity\scratch\my-skills\skills\hitalk-sco
 // turbo
 4. **드라이런 (미리보기)**
 ```powershell
-cd C:\Users\lee21\.gemini\antigravity\scratch\my-skills\skills\hitalk-score-sender
+cd C:\Users\user\.gemini\antigravity\scratch\repos\my-skills\skills\admin-hitalk-sender
 python hitalk_sender.py --dry-run
 ```
 
 5. **안전 리허설 (입력 후 즉시 삭제)**
 ```powershell
-cd C:\Users\lee21\.gemini\antigravity\scratch\my-skills\skills\hitalk-score-sender
+cd C:\Users\user\.gemini\antigravity\scratch\repos\my-skills\skills\admin-hitalk-sender
 python hitalk_sender.py --rehearsal
 ```
 
 6. **확인 후 실제 전송**
 ```powershell
-cd C:\Users\lee21\.gemini\antigravity\scratch\my-skills\skills\hitalk-score-sender
+cd C:\Users\user\.gemini\antigravity\scratch\repos\my-skills\skills\admin-hitalk-sender
 python hitalk_sender.py
 ```
 
@@ -78,7 +78,7 @@ python hitalk_sender.py
 3. 아래 순서로 확인 후 전송합니다.
 
 ```powershell
-cd C:\Users\lee21\.gemini\antigravity\scratch\my-skills\skills\hitalk-score-sender
+cd C:\Users\user\.gemini\antigravity\scratch\repos\my-skills\skills\admin-hitalk-sender
 python hitalk_sender.py --message-file custom_message_template.txt --dry-run
 python hitalk_sender.py --message-file custom_message_template.txt --rehearsal
 python hitalk_sender.py --message-file custom_message_template.txt

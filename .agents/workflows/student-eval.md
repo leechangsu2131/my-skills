@@ -64,7 +64,7 @@ description: 특정 학생의 누적 기록을 불러와 학기말 평가 문장
 
 ## Step 4: 평가 문장 생성
 
-`@student-eval-generator` 스킬의 가이드라인에 따라 문장을 생성합니다:
+`@classmanage-student-eval-generator` 스킬의 가이드라인에 따라 문장을 생성합니다:
 
 1. 3인칭 관찰자 시점
 2. 긍정 우선, 성장 변화 강조

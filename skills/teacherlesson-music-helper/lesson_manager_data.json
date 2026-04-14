@@ -1,0 +1,101 @@
+{
+  "saved_classes": [
+    {
+      "name": "음악",
+      "unit": "1",
+      "lesson": "3",
+      "pdf_path": "C:\\Users\\user\\Downloads\\music.pdf",
+      "updated_at": "2026-03-19T08:09:36"
+    },
+    {
+      "name": "music",
+      "unit": "1",
+      "lesson": "3",
+      "pdf_path": "C:\\Users\\user\\Documents\\지도서\\music.pdf",
+      "exact_title": "",
+      "updated_at": "2026-03-19T08:49:15"
+    }
+  ],
+  "recent_runs": [
+    {
+      "unit": "1",
+      "lesson": "6",
+      "pdf_path": "C:\\Users\\user\\Documents\\지도서\\music.pdf",
+      "exact_title": "[5~6차시] 구슬비",
+      "saved_name": "",
+      "ran_at": "2026-03-19T11:12:47"
+    },
+    {
+      "unit": "1",
+      "lesson": "6",
+      "pdf_path": "C:\\Users\\user\\Documents\\지도서\\music.pdf",
+      "exact_title": "[5~6차시] 구슬비",
+      "saved_name": "",
+      "ran_at": "2026-03-19T11:07:40"
+    },
+    {
+      "unit": "1. 만나요, 음악 시간",
+      "lesson": "[5~6차시] 구슬비",
+      "pdf_path": "C:\\Users\\user\\Documents\\지도서\\music.pdf",
+      "exact_title": "[5~6차시] 구슬비",
+      "saved_name": "",
+      "ran_at": "2026-03-19T10:58:18"
+    },
+    {
+      "unit": "1",
+      "lesson": "4",
+      "pdf_path": "C:\\Users\\user\\Documents\\지도서\\music.pdf",
+      "exact_title": "[3~4차시] 길고 짧은 음, 높고 낮은음",
+      "saved_name": "",
+      "ran_at": "2026-03-19T10:57:10"
+    },
+    {
+      "unit": "1",
+      "lesson": "4",
+      "pdf_path": "C:\\Users\\user\\Documents\\지도서\\music.pdf",
+      "exact_title": "",
+      "saved_name": "",
+      "ran_at": "2026-03-19T10:53:13"
+    },
+    {
+      "unit": "1",
+      "lesson": "4",
+      "pdf_path": "C:\\Users\\user\\Documents\\지도서\\music.pdf",
+      "exact_title": "",
+      "saved_name": "",
+      "ran_at": "2026-03-19T08:55:24"
+    },
+    {
+      "unit": "1",
+      "lesson": "3",
+      "pdf_path": "C:\\Users\\user\\Documents\\지도서\\music.pdf",
+      "exact_title": "",
+      "saved_name": "music",
+      "ran_at": "2026-03-19T08:49:15"
+    },
+    {
+      "unit": "1",
+      "lesson": "[6~7차시] 작은 세상",
+      "pdf_path": "C:\\Users\\user\\Downloads\\music.pdf",
+      "exact_title": "[6~7차시] 작은 세상",
+      "saved_name": "음악",
+      "ran_at": "2026-03-19T08:15:37"
+    },
+    {
+      "unit": "1",
+      "lesson": "3",
+      "pdf_path": "C:\\Users\\user\\Downloads\\music.pdf",
+      "exact_title": "[3~4차시] 길고 짧은 음, 높고 낮은음",
+      "saved_name": "음악",
+      "ran_at": "2026-03-19T08:09:36"
+    },
+    {
+      "unit": "1",
+      "lesson": "3",
+      "pdf_path": "\"C:\\Users\\user\\Downloads\\music.pdf\"",
+      "exact_title": "[3~4차시] 길고 짧은 음, 높고 낮은음",
+      "saved_name": "음악",
+      "ran_at": "2026-03-19T08:05:38"
+    }
+  ]
+}

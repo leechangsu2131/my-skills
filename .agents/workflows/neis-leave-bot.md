@@ -16,7 +16,7 @@ description: 나이스(NEIS) 연가/출장 신청 자동화 (셀레니움 방식
 ## 준비 사항
 
 ```text
-파일 위치: skills/neis-leave-bot/
+파일 위치: skills/admin-neis-bot/
   ├── launch_chrome.bat        # 크롬 실행기 (원격 디버깅 포트 9222)
   ├── neis_apply.py            # [STEP 1] 메뉴 이동 및 신청창 열기 스크립트
   ├── neis_apply_gui_setup.py  # [STEP 2] 동적 캘리브레이션 툴 (원하는 좌표 무제한 찍기)
@@ -40,7 +40,7 @@ pip install selenium webdriver-manager pyautogui
 ### 2단계: 신청 창 띄우기 (Selenium)
 로그인이 완료되면 터미널에서 다음을 실행하여 자동으로 신청 모달을 띄웁니다.
 ```bash
-cd skills/neis-leave-bot
+cd skills/admin-neis-bot
 python neis_apply.py
 ```
 👉 왼쪽 메뉴 `복무` ➡️ `개인근무상황관리` ➡️ 중앙의 `신청` 버튼을 자동으로 클릭합니다.

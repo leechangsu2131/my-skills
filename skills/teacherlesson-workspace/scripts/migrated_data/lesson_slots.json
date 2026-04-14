@@ -1,0 +1,2468 @@
+[
+  {
+    "legacy_lesson_id": "lesson-0127",
+    "slot_date": "2026-03-09",
+    "slot_period": 4,
+    "slot_order": 2,
+    "status": "done",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0095",
+    "slot_date": "2026-03-09",
+    "slot_period": 5,
+    "slot_order": 1,
+    "status": "done",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0001",
+    "slot_date": "2026-03-10",
+    "slot_period": 3,
+    "slot_order": 1,
+    "status": "done",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0128",
+    "slot_date": "2026-03-10",
+    "slot_period": 4,
+    "slot_order": 1,
+    "status": "done",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0290",
+    "slot_date": "2026-03-10",
+    "slot_period": 5,
+    "slot_order": 2,
+    "status": "done",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0291",
+    "slot_date": "2026-03-10",
+    "slot_period": 6,
+    "slot_order": 2,
+    "status": "done",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0002",
+    "slot_date": "2026-03-11",
+    "slot_period": 1,
+    "slot_order": 1,
+    "status": "done",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0184",
+    "slot_date": "2026-03-11",
+    "slot_period": 3,
+    "slot_order": 1,
+    "status": "done",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0232",
+    "slot_date": "2026-03-11",
+    "slot_period": 5,
+    "slot_order": 2,
+    "status": "done",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0003",
+    "slot_date": "2026-03-12",
+    "slot_period": 1,
+    "slot_order": 1,
+    "status": "done",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0004",
+    "slot_date": "2026-03-12",
+    "slot_period": 2,
+    "slot_order": 1,
+    "status": "done",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0129",
+    "slot_date": "2026-03-12",
+    "slot_period": 4,
+    "slot_order": 1,
+    "status": "done",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0005",
+    "slot_date": "2026-03-13",
+    "slot_period": 1,
+    "slot_order": 1,
+    "status": "done",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0185",
+    "slot_date": "2026-03-13",
+    "slot_period": 2,
+    "slot_order": 1,
+    "status": "done",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0130",
+    "slot_date": "2026-03-13",
+    "slot_period": 4,
+    "slot_order": 1,
+    "status": "done",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0233",
+    "slot_date": "2026-03-13",
+    "slot_period": 5,
+    "slot_order": 2,
+    "status": "done",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0131",
+    "slot_date": "2026-03-16",
+    "slot_period": 4,
+    "slot_order": 1,
+    "status": "done",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0096",
+    "slot_date": "2026-03-16",
+    "slot_period": 5,
+    "slot_order": 1,
+    "status": "done",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0006",
+    "slot_date": "2026-03-17",
+    "slot_period": 3,
+    "slot_order": 1,
+    "status": "done",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0132",
+    "slot_date": "2026-03-17",
+    "slot_period": 4,
+    "slot_order": 2,
+    "status": "done",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0292",
+    "slot_date": "2026-03-17",
+    "slot_period": 5,
+    "slot_order": 1,
+    "status": "done",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0293",
+    "slot_date": "2026-03-17",
+    "slot_period": 6,
+    "slot_order": 1,
+    "status": "done",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0007",
+    "slot_date": "2026-03-18",
+    "slot_period": 1,
+    "slot_order": 1,
+    "status": "done",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0186",
+    "slot_date": "2026-03-18",
+    "slot_period": 3,
+    "slot_order": 1,
+    "status": "done",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0187",
+    "slot_date": "2026-03-18",
+    "slot_period": 4,
+    "slot_order": 1,
+    "status": "done",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0234",
+    "slot_date": "2026-03-18",
+    "slot_period": 5,
+    "slot_order": 2,
+    "status": "done",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0008",
+    "slot_date": "2026-03-19",
+    "slot_period": 1,
+    "slot_order": 1,
+    "status": "done",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0009",
+    "slot_date": "2026-03-19",
+    "slot_period": 2,
+    "slot_order": 1,
+    "status": "done",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0133",
+    "slot_date": "2026-03-19",
+    "slot_period": 4,
+    "slot_order": 1,
+    "status": "done",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0010",
+    "slot_date": "2026-03-20",
+    "slot_period": 1,
+    "slot_order": 1,
+    "status": "done",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0188",
+    "slot_date": "2026-03-20",
+    "slot_period": 2,
+    "slot_order": 1,
+    "status": "done",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0134",
+    "slot_date": "2026-03-20",
+    "slot_period": 4,
+    "slot_order": 1,
+    "status": "done",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0235",
+    "slot_date": "2026-03-20",
+    "slot_period": 5,
+    "slot_order": 1,
+    "status": "done",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0135",
+    "slot_date": "2026-03-23",
+    "slot_period": 4,
+    "slot_order": 1,
+    "status": "done",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0097",
+    "slot_date": "2026-03-23",
+    "slot_period": 5,
+    "slot_order": 1,
+    "status": "done",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0011",
+    "slot_date": "2026-03-24",
+    "slot_period": 3,
+    "slot_order": 1,
+    "status": "done",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0136",
+    "slot_date": "2026-03-24",
+    "slot_period": 4,
+    "slot_order": 1,
+    "status": "done",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0294",
+    "slot_date": "2026-03-24",
+    "slot_period": 5,
+    "slot_order": 2,
+    "status": "done",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0295",
+    "slot_date": "2026-03-24",
+    "slot_period": 6,
+    "slot_order": 1,
+    "status": "done",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0012",
+    "slot_date": "2026-03-25",
+    "slot_period": 1,
+    "slot_order": 1,
+    "status": "done",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0189",
+    "slot_date": "2026-03-25",
+    "slot_period": 3,
+    "slot_order": 1,
+    "status": "done",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0190",
+    "slot_date": "2026-03-25",
+    "slot_period": 4,
+    "slot_order": 1,
+    "status": "done",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0236",
+    "slot_date": "2026-03-25",
+    "slot_period": 5,
+    "slot_order": 1,
+    "status": "done",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0014",
+    "slot_date": "2026-03-26",
+    "slot_period": 1,
+    "slot_order": 1,
+    "status": "done",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0013",
+    "slot_date": "2026-03-26",
+    "slot_period": 2,
+    "slot_order": 1,
+    "status": "done",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0137",
+    "slot_date": "2026-03-26",
+    "slot_period": 4,
+    "slot_order": 1,
+    "status": "done",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0015",
+    "slot_date": "2026-03-27",
+    "slot_period": 1,
+    "slot_order": 1,
+    "status": "done",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0191",
+    "slot_date": "2026-03-27",
+    "slot_period": 2,
+    "slot_order": 1,
+    "status": "done",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0138",
+    "slot_date": "2026-03-27",
+    "slot_period": 4,
+    "slot_order": 1,
+    "status": "done",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0237",
+    "slot_date": "2026-03-27",
+    "slot_period": 5,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0139",
+    "slot_date": "2026-03-30",
+    "slot_period": 4,
+    "slot_order": 2,
+    "status": "done",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0098",
+    "slot_date": "2026-03-30",
+    "slot_period": 5,
+    "slot_order": 1,
+    "status": "done",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0016",
+    "slot_date": "2026-03-31",
+    "slot_period": 3,
+    "slot_order": 1,
+    "status": "done",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0140",
+    "slot_date": "2026-03-31",
+    "slot_period": 4,
+    "slot_order": 1,
+    "status": "done",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0296",
+    "slot_date": "2026-03-31",
+    "slot_period": 5,
+    "slot_order": 1,
+    "status": "done",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0297",
+    "slot_date": "2026-03-31",
+    "slot_period": 6,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0017",
+    "slot_date": "2026-04-01",
+    "slot_period": 1,
+    "slot_order": 1,
+    "status": "done",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0192",
+    "slot_date": "2026-04-01",
+    "slot_period": 3,
+    "slot_order": 1,
+    "status": "done",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0193",
+    "slot_date": "2026-04-01",
+    "slot_period": 4,
+    "slot_order": 1,
+    "status": "done",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0238",
+    "slot_date": "2026-04-01",
+    "slot_period": 5,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0018",
+    "slot_date": "2026-04-02",
+    "slot_period": 1,
+    "slot_order": 1,
+    "status": "done",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0019",
+    "slot_date": "2026-04-02",
+    "slot_period": 2,
+    "slot_order": 1,
+    "status": "done",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0141",
+    "slot_date": "2026-04-02",
+    "slot_period": 4,
+    "slot_order": 1,
+    "status": "done",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0020",
+    "slot_date": "2026-04-03",
+    "slot_period": 1,
+    "slot_order": 1,
+    "status": "done",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0194",
+    "slot_date": "2026-04-03",
+    "slot_period": 2,
+    "slot_order": 1,
+    "status": "done",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0141",
+    "slot_date": "2026-04-03",
+    "slot_period": 4,
+    "slot_order": 1,
+    "status": "done",
+    "source": "manual_extend",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0239",
+    "slot_date": "2026-04-03",
+    "slot_period": 5,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0142",
+    "slot_date": "2026-04-06",
+    "slot_period": 4,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0099",
+    "slot_date": "2026-04-06",
+    "slot_period": 5,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0021",
+    "slot_date": "2026-04-07",
+    "slot_period": 3,
+    "slot_order": 1,
+    "status": "done",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0022",
+    "slot_date": "2026-04-07",
+    "slot_period": 3,
+    "slot_order": 2,
+    "status": "done",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0023",
+    "slot_date": "2026-04-07",
+    "slot_period": 3,
+    "slot_order": 3,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0142",
+    "slot_date": "2026-04-07",
+    "slot_period": 4,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "manual_extend",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0298",
+    "slot_date": "2026-04-07",
+    "slot_period": 5,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0299",
+    "slot_date": "2026-04-07",
+    "slot_period": 6,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0024",
+    "slot_date": "2026-04-08",
+    "slot_period": 1,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0025",
+    "slot_date": "2026-04-08",
+    "slot_period": 1,
+    "slot_order": 2,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0195",
+    "slot_date": "2026-04-08",
+    "slot_period": 3,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0196",
+    "slot_date": "2026-04-08",
+    "slot_period": 4,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0240",
+    "slot_date": "2026-04-08",
+    "slot_period": 5,
+    "slot_order": 1,
+    "status": "done",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0026",
+    "slot_date": "2026-04-09",
+    "slot_period": 1,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0027",
+    "slot_date": "2026-04-09",
+    "slot_period": 2,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0143",
+    "slot_date": "2026-04-09",
+    "slot_period": 4,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0028",
+    "slot_date": "2026-04-10",
+    "slot_period": 1,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0197",
+    "slot_date": "2026-04-10",
+    "slot_period": 2,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0144",
+    "slot_date": "2026-04-10",
+    "slot_period": 4,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0241",
+    "slot_date": "2026-04-10",
+    "slot_period": 5,
+    "slot_order": 1,
+    "status": "done",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0145",
+    "slot_date": "2026-04-13",
+    "slot_period": 4,
+    "slot_order": 2,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0099",
+    "slot_date": "2026-04-13",
+    "slot_period": 5,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "manual_extend",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0029",
+    "slot_date": "2026-04-14",
+    "slot_period": 3,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0146",
+    "slot_date": "2026-04-14",
+    "slot_period": 4,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0300",
+    "slot_date": "2026-04-14",
+    "slot_period": 5,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0301",
+    "slot_date": "2026-04-14",
+    "slot_period": 6,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0030",
+    "slot_date": "2026-04-15",
+    "slot_period": 1,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0198",
+    "slot_date": "2026-04-15",
+    "slot_period": 3,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0199",
+    "slot_date": "2026-04-15",
+    "slot_period": 4,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0242",
+    "slot_date": "2026-04-15",
+    "slot_period": 5,
+    "slot_order": 1,
+    "status": "done",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0031",
+    "slot_date": "2026-04-16",
+    "slot_period": 1,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0032",
+    "slot_date": "2026-04-16",
+    "slot_period": 2,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0147",
+    "slot_date": "2026-04-16",
+    "slot_period": 4,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0033",
+    "slot_date": "2026-04-17",
+    "slot_period": 1,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0200",
+    "slot_date": "2026-04-17",
+    "slot_period": 2,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0148",
+    "slot_date": "2026-04-17",
+    "slot_period": 4,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0243",
+    "slot_date": "2026-04-17",
+    "slot_period": 5,
+    "slot_order": 1,
+    "status": "done",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0149",
+    "slot_date": "2026-04-20",
+    "slot_period": 4,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0100",
+    "slot_date": "2026-04-20",
+    "slot_period": 5,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0034",
+    "slot_date": "2026-04-21",
+    "slot_period": 3,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0150",
+    "slot_date": "2026-04-21",
+    "slot_period": 4,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0302",
+    "slot_date": "2026-04-21",
+    "slot_period": 5,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0303",
+    "slot_date": "2026-04-21",
+    "slot_period": 6,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0035",
+    "slot_date": "2026-04-22",
+    "slot_period": 1,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0201",
+    "slot_date": "2026-04-22",
+    "slot_period": 3,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0202",
+    "slot_date": "2026-04-22",
+    "slot_period": 4,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0244",
+    "slot_date": "2026-04-22",
+    "slot_period": 5,
+    "slot_order": 1,
+    "status": "done",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0036",
+    "slot_date": "2026-04-23",
+    "slot_period": 1,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0037",
+    "slot_date": "2026-04-23",
+    "slot_period": 2,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0151",
+    "slot_date": "2026-04-23",
+    "slot_period": 4,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0038",
+    "slot_date": "2026-04-24",
+    "slot_period": 1,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0203",
+    "slot_date": "2026-04-24",
+    "slot_period": 2,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0152",
+    "slot_date": "2026-04-24",
+    "slot_period": 4,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0245",
+    "slot_date": "2026-04-24",
+    "slot_period": 5,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0153",
+    "slot_date": "2026-04-27",
+    "slot_period": 4,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0101",
+    "slot_date": "2026-04-27",
+    "slot_period": 5,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0039",
+    "slot_date": "2026-04-28",
+    "slot_period": 3,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0154",
+    "slot_date": "2026-04-28",
+    "slot_period": 4,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0304",
+    "slot_date": "2026-04-28",
+    "slot_period": 5,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0305",
+    "slot_date": "2026-04-28",
+    "slot_period": 6,
+    "slot_order": 2,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0040",
+    "slot_date": "2026-04-29",
+    "slot_period": 1,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0205",
+    "slot_date": "2026-04-29",
+    "slot_period": 3,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0204",
+    "slot_date": "2026-04-29",
+    "slot_period": 4,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0246",
+    "slot_date": "2026-04-29",
+    "slot_period": 5,
+    "slot_order": 2,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0041",
+    "slot_date": "2026-04-30",
+    "slot_period": 1,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0042",
+    "slot_date": "2026-04-30",
+    "slot_period": 2,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0155",
+    "slot_date": "2026-04-30",
+    "slot_period": 4,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0043",
+    "slot_date": "2026-05-06",
+    "slot_period": 1,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0206",
+    "slot_date": "2026-05-06",
+    "slot_period": 3,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0207",
+    "slot_date": "2026-05-06",
+    "slot_period": 4,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0247",
+    "slot_date": "2026-05-06",
+    "slot_period": 5,
+    "slot_order": 2,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0044",
+    "slot_date": "2026-05-07",
+    "slot_period": 1,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0045",
+    "slot_date": "2026-05-07",
+    "slot_period": 2,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0156",
+    "slot_date": "2026-05-07",
+    "slot_period": 4,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0046",
+    "slot_date": "2026-05-08",
+    "slot_period": 1,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0208",
+    "slot_date": "2026-05-08",
+    "slot_period": 2,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0157",
+    "slot_date": "2026-05-08",
+    "slot_period": 4,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0248",
+    "slot_date": "2026-05-08",
+    "slot_period": 5,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0158",
+    "slot_date": "2026-05-11",
+    "slot_period": 4,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0102",
+    "slot_date": "2026-05-11",
+    "slot_period": 5,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0047",
+    "slot_date": "2026-05-12",
+    "slot_period": 3,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0159",
+    "slot_date": "2026-05-12",
+    "slot_period": 4,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0306",
+    "slot_date": "2026-05-12",
+    "slot_period": 5,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0307",
+    "slot_date": "2026-05-12",
+    "slot_period": 6,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0048",
+    "slot_date": "2026-05-13",
+    "slot_period": 1,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0209",
+    "slot_date": "2026-05-13",
+    "slot_period": 3,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0210",
+    "slot_date": "2026-05-13",
+    "slot_period": 4,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0249",
+    "slot_date": "2026-05-13",
+    "slot_period": 5,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0049",
+    "slot_date": "2026-05-14",
+    "slot_period": 1,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0050",
+    "slot_date": "2026-05-14",
+    "slot_period": 2,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0160",
+    "slot_date": "2026-05-14",
+    "slot_period": 4,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0052",
+    "slot_date": "2026-05-15",
+    "slot_period": 1,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0211",
+    "slot_date": "2026-05-15",
+    "slot_period": 2,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0161",
+    "slot_date": "2026-05-15",
+    "slot_period": 4,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0250",
+    "slot_date": "2026-05-15",
+    "slot_period": 5,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0162",
+    "slot_date": "2026-05-18",
+    "slot_period": 4,
+    "slot_order": 2,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0103",
+    "slot_date": "2026-05-18",
+    "slot_period": 5,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0051",
+    "slot_date": "2026-05-19",
+    "slot_period": 3,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0163",
+    "slot_date": "2026-05-19",
+    "slot_period": 4,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0308",
+    "slot_date": "2026-05-19",
+    "slot_period": 5,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0309",
+    "slot_date": "2026-05-19",
+    "slot_period": 6,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0053",
+    "slot_date": "2026-05-20",
+    "slot_period": 1,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0212",
+    "slot_date": "2026-05-20",
+    "slot_period": 3,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0213",
+    "slot_date": "2026-05-20",
+    "slot_period": 4,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0251",
+    "slot_date": "2026-05-20",
+    "slot_period": 5,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0054",
+    "slot_date": "2026-05-21",
+    "slot_period": 1,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0055",
+    "slot_date": "2026-05-21",
+    "slot_period": 2,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0164",
+    "slot_date": "2026-05-21",
+    "slot_period": 4,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0056",
+    "slot_date": "2026-05-22",
+    "slot_period": 1,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0214",
+    "slot_date": "2026-05-22",
+    "slot_period": 2,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0165",
+    "slot_date": "2026-05-22",
+    "slot_period": 4,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0252",
+    "slot_date": "2026-05-22",
+    "slot_period": 5,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0057",
+    "slot_date": "2026-05-26",
+    "slot_period": 3,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0166",
+    "slot_date": "2026-05-26",
+    "slot_period": 4,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0310",
+    "slot_date": "2026-05-26",
+    "slot_period": 5,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0311",
+    "slot_date": "2026-05-26",
+    "slot_period": 6,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0058",
+    "slot_date": "2026-05-27",
+    "slot_period": 1,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0215",
+    "slot_date": "2026-05-27",
+    "slot_period": 3,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0216",
+    "slot_date": "2026-05-27",
+    "slot_period": 4,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0253",
+    "slot_date": "2026-05-27",
+    "slot_period": 5,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0059",
+    "slot_date": "2026-05-28",
+    "slot_period": 1,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0060",
+    "slot_date": "2026-05-28",
+    "slot_period": 2,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0167",
+    "slot_date": "2026-05-28",
+    "slot_period": 4,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0061",
+    "slot_date": "2026-05-29",
+    "slot_period": 1,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0217",
+    "slot_date": "2026-05-29",
+    "slot_period": 2,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0168",
+    "slot_date": "2026-05-29",
+    "slot_period": 4,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0254",
+    "slot_date": "2026-05-29",
+    "slot_period": 5,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0169",
+    "slot_date": "2026-06-01",
+    "slot_period": 4,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0104",
+    "slot_date": "2026-06-01",
+    "slot_period": 5,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0062",
+    "slot_date": "2026-06-02",
+    "slot_period": 3,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0170",
+    "slot_date": "2026-06-02",
+    "slot_period": 4,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0312",
+    "slot_date": "2026-06-02",
+    "slot_period": 5,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0313",
+    "slot_date": "2026-06-02",
+    "slot_period": 6,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0063",
+    "slot_date": "2026-06-04",
+    "slot_period": 1,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0064",
+    "slot_date": "2026-06-04",
+    "slot_period": 2,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0171",
+    "slot_date": "2026-06-04",
+    "slot_period": 4,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0065",
+    "slot_date": "2026-06-05",
+    "slot_period": 1,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0218",
+    "slot_date": "2026-06-05",
+    "slot_period": 2,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0172",
+    "slot_date": "2026-06-05",
+    "slot_period": 4,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0255",
+    "slot_date": "2026-06-05",
+    "slot_period": 5,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0173",
+    "slot_date": "2026-06-08",
+    "slot_period": 4,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0105",
+    "slot_date": "2026-06-08",
+    "slot_period": 5,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0066",
+    "slot_date": "2026-06-09",
+    "slot_period": 3,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0174",
+    "slot_date": "2026-06-09",
+    "slot_period": 4,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0314",
+    "slot_date": "2026-06-09",
+    "slot_period": 5,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0315",
+    "slot_date": "2026-06-09",
+    "slot_period": 6,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0067",
+    "slot_date": "2026-06-10",
+    "slot_period": 1,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0219",
+    "slot_date": "2026-06-10",
+    "slot_period": 3,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0220",
+    "slot_date": "2026-06-10",
+    "slot_period": 4,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0256",
+    "slot_date": "2026-06-10",
+    "slot_period": 5,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0068",
+    "slot_date": "2026-06-11",
+    "slot_period": 1,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0069",
+    "slot_date": "2026-06-11",
+    "slot_period": 2,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0175",
+    "slot_date": "2026-06-11",
+    "slot_period": 4,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0070",
+    "slot_date": "2026-06-12",
+    "slot_period": 1,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0221",
+    "slot_date": "2026-06-12",
+    "slot_period": 2,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0176",
+    "slot_date": "2026-06-12",
+    "slot_period": 4,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0257",
+    "slot_date": "2026-06-12",
+    "slot_period": 5,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0177",
+    "slot_date": "2026-06-15",
+    "slot_period": 4,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0106",
+    "slot_date": "2026-06-15",
+    "slot_period": 5,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0071",
+    "slot_date": "2026-06-16",
+    "slot_period": 3,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0178",
+    "slot_date": "2026-06-16",
+    "slot_period": 4,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0316",
+    "slot_date": "2026-06-16",
+    "slot_period": 5,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0317",
+    "slot_date": "2026-06-16",
+    "slot_period": 6,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0072",
+    "slot_date": "2026-06-17",
+    "slot_period": 1,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0222",
+    "slot_date": "2026-06-17",
+    "slot_period": 3,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0223",
+    "slot_date": "2026-06-17",
+    "slot_period": 4,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0258",
+    "slot_date": "2026-06-17",
+    "slot_period": 5,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0073",
+    "slot_date": "2026-06-18",
+    "slot_period": 1,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0074",
+    "slot_date": "2026-06-18",
+    "slot_period": 2,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0179",
+    "slot_date": "2026-06-18",
+    "slot_period": 4,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0224",
+    "slot_date": "2026-06-19",
+    "slot_period": 2,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0180",
+    "slot_date": "2026-06-19",
+    "slot_period": 4,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0259",
+    "slot_date": "2026-06-19",
+    "slot_period": 5,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0181",
+    "slot_date": "2026-06-22",
+    "slot_period": 4,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0107",
+    "slot_date": "2026-06-22",
+    "slot_period": 5,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0318",
+    "slot_date": "2026-06-23",
+    "slot_period": 5,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0319",
+    "slot_date": "2026-06-23",
+    "slot_period": 6,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0225",
+    "slot_date": "2026-06-24",
+    "slot_period": 3,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0226",
+    "slot_date": "2026-06-24",
+    "slot_period": 4,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0260",
+    "slot_date": "2026-06-24",
+    "slot_period": 5,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0182",
+    "slot_date": "2026-06-25",
+    "slot_period": 4,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0227",
+    "slot_date": "2026-06-26",
+    "slot_period": 2,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0261",
+    "slot_date": "2026-06-26",
+    "slot_period": 5,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0183",
+    "slot_date": "2026-06-28",
+    "slot_period": 4,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0108",
+    "slot_date": "2026-06-29",
+    "slot_period": 5,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0320",
+    "slot_date": "2026-06-30",
+    "slot_period": 5,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0321",
+    "slot_date": "2026-06-30",
+    "slot_period": 6,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0228",
+    "slot_date": "2026-07-01",
+    "slot_period": 3,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0229",
+    "slot_date": "2026-07-01",
+    "slot_period": 4,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0262",
+    "slot_date": "2026-07-01",
+    "slot_period": 5,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0230",
+    "slot_date": "2026-07-03",
+    "slot_period": 2,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0263",
+    "slot_date": "2026-07-03",
+    "slot_period": 5,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0109",
+    "slot_date": "2026-07-06",
+    "slot_period": 5,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0322",
+    "slot_date": "2026-07-07",
+    "slot_period": 5,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0323",
+    "slot_date": "2026-07-07",
+    "slot_period": 6,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0264",
+    "slot_date": "2026-07-08",
+    "slot_period": 5,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0265",
+    "slot_date": "2026-07-10",
+    "slot_period": 5,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0110",
+    "slot_date": "2026-07-13",
+    "slot_period": 5,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0324",
+    "slot_date": "2026-07-14",
+    "slot_period": 5,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0325",
+    "slot_date": "2026-07-14",
+    "slot_period": 6,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0266",
+    "slot_date": "2026-07-15",
+    "slot_period": 5,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0111",
+    "slot_date": "2026-07-20",
+    "slot_period": 5,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0326",
+    "slot_date": "2026-07-21",
+    "slot_period": 5,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0327",
+    "slot_date": "2026-07-21",
+    "slot_period": 6,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0267",
+    "slot_date": "2026-07-22",
+    "slot_period": 5,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0268",
+    "slot_date": "2026-07-24",
+    "slot_period": 5,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  },
+  {
+    "legacy_lesson_id": "lesson-0112",
+    "slot_date": "2026-07-27",
+    "slot_period": 5,
+    "slot_order": 1,
+    "status": "planned",
+    "source": "progress_sync",
+    "memo": null
+  }
+]

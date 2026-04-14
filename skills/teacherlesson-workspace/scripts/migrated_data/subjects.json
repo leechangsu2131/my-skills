@@ -1,0 +1,32 @@
+[
+  {
+    "name": "국어",
+    "color": "#005bbf",
+    "sort_order": 1
+  },
+  {
+    "name": "도덕",
+    "color": "#f4a261",
+    "sort_order": 2
+  },
+  {
+    "name": "수학",
+    "color": "#e85d04",
+    "sort_order": 3
+  },
+  {
+    "name": "사회",
+    "color": "#6a994e",
+    "sort_order": 4
+  },
+  {
+    "name": "음악",
+    "color": "#e76f51",
+    "sort_order": 5
+  },
+  {
+    "name": "미술",
+    "color": "#2a9d8f",
+    "sort_order": 6
+  }
+]

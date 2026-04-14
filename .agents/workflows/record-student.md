@@ -8,7 +8,7 @@ description: 클로바노트 텍스트나 메모를 학생별로 분류하여 �
 
 ## 사전 조건
 
-- `skills/student-record-classifier/.env` 파일에 노션 설정이 입력되어 있어야 합니다 (`.env.example` 참고)
+- `skills/classmanage-student-classifier/.env` 파일에 노션 설정이 입력되어 있어야 합니다 (`.env.example` 참고)
 - 노션 🧑‍🎓 학생 데이터베이스에 학생 명단이 등록되어 있어야 합니다
 - 노션에 📝 학생 기록 DB가 이미 생성되어 있어야 합니다
 
@@ -20,18 +20,18 @@ description: 클로바노트 텍스트나 메모를 학생별로 분류하여 �
 노션에서 등록된 학생 명단을 먼저 조회하여 이름을 확인합니다:
 
 ```
-python skills/student-record-classifier/scripts/save_to_notion.py --list-students
+python skills/classmanage-student-classifier/scripts/save_to_notion.py --list-students
 ```
 
 또는 아래 코드로 직접 확인:
 
 ```python
-# skills/student-record-classifier 폴더에서 실행
+# skills/classmanage-student-classifier 폴더에서 실행
 import urllib.request, json, ssl, sys
 sys.stdout.reconfigure(encoding='utf-8')
 from pathlib import Path
 
-env_path = Path('skills/student-record-classifier/.env')
+env_path = Path('skills/classmanage-student-classifier/.env')
 config = {}
 for line in env_path.read_text(encoding='utf-8').splitlines():
     if line.strip() and not line.startswith('#') and '=' in line:
@@ -75,7 +75,7 @@ for i, s in enumerate(students, 1): print(f'  {i}. {s}')
 
 ## Step 3: 학생별 분류
 
-`@student-record-classifier` 스킬의 지침에 따라 텍스트를 분류합니다:
+`@classmanage-student-classifier` 스킬의 지침에 따라 텍스트를 분류합니다:
 
 1. **Step 1에서 확인한 정확한 이름**으로 학생을 식별 (이름 오탈자 주의)
 2. 학생별로 내용 분리
@@ -109,7 +109,7 @@ for i, s in enumerate(students, 1): print(f'  {i}. {s}')
 ## Step 5: 노션에 저장
 
 분류된 기록을 `save_today.py` 스크립트로 저장합니다.
-아래 형식으로 `skills/student-record-classifier/scripts/save_today.py` 파일을 **새로 생성**하여 실행합니다:
+아래 형식으로 `skills/classmanage-student-classifier/scripts/save_today.py` 파일을 **새로 생성**하여 실행합니다:
 
 ```python
 # -*- coding: utf-8 -*-
@@ -183,7 +183,7 @@ print(f'\n🎉 {ok}/{len(records)}건 저장 완료!')
 
 실행:
 ```
-python skills/student-record-classifier/scripts/save_today.py
+python skills/classmanage-student-classifier/scripts/save_today.py
 ```
 
 ### 📝 학생 기록 DB 속성

@@ -8,7 +8,7 @@ description: 사회 교과서 차시 자료를 빠르게 열고 반복 수업 �
 
 ## 사전 조건
 
-- `skills/social-class-helper/.env` 파일이 준비되어 있어야 합니다
+- `skills/teacherlesson-social-helper/.env` 파일이 준비되어 있어야 합니다
 - `.env` 안에 `SOCIAL_CLASS_BASE_URL`이 입력되어 있어야 합니다
 - 필요한 경우 `pip install selenium` 이 되어 있어야 합니다
 - Douclass 로그인은 사용자가 직접 한 번 진행해야 합니다
@@ -19,7 +19,7 @@ description: 사회 교과서 차시 자료를 빠르게 열고 반복 수업 �
 
 먼저 아래 항목을 확인합니다:
 
-1. `skills/social-class-helper/.env` 파일이 있는지 확인
+1. `skills/teacherlesson-social-helper/.env` 파일이 있는지 확인
 2. `SOCIAL_CLASS_BASE_URL` 값이 올바른지 확인
 3. 어떤 버튼을 열어야 하는지 `SOCIAL_CLASS_RESOURCE_KEYWORDS` 확인
 
@@ -45,19 +45,19 @@ description: 사회 교과서 차시 자료를 빠르게 열고 반복 수업 �
 대화형 메뉴가 필요하면:
 
 ```bash
-python skills/social-class-helper/social_class_helper.py menu
+python skills/teacherlesson-social-helper/social_class_helper.py menu
 ```
 
 바로 실행하려면:
 
 ```bash
-python skills/social-class-helper/social_class_helper.py run "1단원" "3~4차시" --save "3학년 1단원 2주차"
+python skills/teacherlesson-social-helper/social_class_helper.py run "1단원" "3~4차시" --save "3학년 1단원 2주차"
 ```
 
 자동 클릭이 잘 안 되면 수동 클릭 모드로 다시 실행합니다:
 
 ```bash
-python skills/social-class-helper/social_class_helper.py run "1단원" "3~4차시" --manual
+python skills/teacherlesson-social-helper/social_class_helper.py run "1단원" "3~4차시" --manual
 ```
 
 ---
@@ -79,13 +79,13 @@ python skills/social-class-helper/social_class_helper.py run "1단원" "3~4차�
 자주 쓰는 수업은 저장한 뒤 다음 명령으로 다시 실행합니다:
 
 ```bash
-python skills/social-class-helper/social_class_helper.py saved run "3학년 1단원 2주차"
+python skills/teacherlesson-social-helper/social_class_helper.py saved run "3학년 1단원 2주차"
 ```
 
 목록 확인:
 
 ```bash
-python skills/social-class-helper/social_class_helper.py saved list
+python skills/teacherlesson-social-helper/social_class_helper.py saved list
 ```
 
 ---

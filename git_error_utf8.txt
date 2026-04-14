@@ -1,0 +1,3596 @@
+﻿git : warning: in the working 
+copy of '.agents/workflows/soc
+ial-class-helper.md', LF will 
+be replaced by CRLF the next t
+ime Git touches it
+위치 줄:1 문자:1
++ git add -A 2> git_error.txt
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo            
+  : NotSpecifi    ed: (warning
+: in t    he... Git touches   
+  it:String) [], Rem    oteExc
+eption
+    + FullyQualifiedEr    rorI
+d : NativeComm    andError
+ 
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/.gitignore', LF wi
+ll be replaced by CRLF the nex
+t time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/.npmrc', LF will b
+e replaced by CRLF the next ti
+me Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/.replit', LF will 
+be replaced by CRLF the next t
+ime Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/.replitignore', LF
+ will be replaced by CRLF the 
+next time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/artifacts/api-serv
+er/.replit-artifact/artifact.t
+oml', LF will be replaced by C
+RLF the next time Git touches 
+it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/artifacts/api-serv
+er/build.mjs', LF will be repl
+aced by CRLF the next time Git
+ touches it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/artifacts/api-serv
+er/package.json', LF will be r
+eplaced by CRLF the next time 
+Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/artifacts/api-serv
+er/src/app.ts', LF will be rep
+laced by CRLF the next time Gi
+t touches it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/artifacts/api-serv
+er/src/index.ts', LF will be r
+eplaced by CRLF the next time 
+Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/artifacts/api-serv
+er/src/routes/health.ts', LF w
+ill be replaced by CRLF the ne
+xt time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/artifacts/api-serv
+er/src/routes/index.ts', LF wi
+ll be replaced by CRLF the nex
+t time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/artifacts/api-serv
+er/tsconfig.json', LF will be 
+replaced by CRLF the next time
+ Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/artifacts/mockup-s
+andbox/.replit-artifact/artifa
+ct.toml', LF will be replaced 
+by CRLF the next time Git touc
+hes it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/artifacts/mockup-s
+andbox/components.json', LF wi
+ll be replaced by CRLF the nex
+t time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/artifacts/mockup-s
+andbox/index.html', LF will be
+ replaced by CRLF the next tim
+e Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/artifacts/mockup-s
+andbox/mockupPreviewPlugin.ts'
+, LF will be replaced by CRLF 
+the next time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/artifacts/mockup-s
+andbox/package.json', LF will 
+be replaced by CRLF the next t
+ime Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/artifacts/mockup-s
+andbox/src/.generated/mockup-c
+omponents.ts', LF will be repl
+aced by CRLF the next time Git
+ touches it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/artifacts/mockup-s
+andbox/src/App.tsx', LF will b
+e replaced by CRLF the next ti
+me Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/artifacts/mockup-s
+andbox/src/components/ui/accor
+dion.tsx', LF will be replaced
+ by CRLF the next time Git tou
+ches it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/artifacts/mockup-s
+andbox/src/components/ui/alert
+-dialog.tsx', LF will be repla
+ced by CRLF the next time Git 
+touches it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/artifacts/mockup-s
+andbox/src/components/ui/alert
+.tsx', LF will be replaced by 
+CRLF the next time Git touches
+ it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/artifacts/mockup-s
+andbox/src/components/ui/aspec
+t-ratio.tsx', LF will be repla
+ced by CRLF the next time Git 
+touches it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/artifacts/mockup-s
+andbox/src/components/ui/avata
+r.tsx', LF will be replaced by
+ CRLF the next time Git touche
+s it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/artifacts/mockup-s
+andbox/src/components/ui/badge
+.tsx', LF will be replaced by 
+CRLF the next time Git touches
+ it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/artifacts/mockup-s
+andbox/src/components/ui/bread
+crumb.tsx', LF will be replace
+d by CRLF the next time Git to
+uches it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/artifacts/mockup-s
+andbox/src/components/ui/butto
+n-group.tsx', LF will be repla
+ced by CRLF the next time Git 
+touches it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/artifacts/mockup-s
+andbox/src/components/ui/butto
+n.tsx', LF will be replaced by
+ CRLF the next time Git touche
+s it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/artifacts/mockup-s
+andbox/src/components/ui/calen
+dar.tsx', LF will be replaced 
+by CRLF the next time Git touc
+hes it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/artifacts/mockup-s
+andbox/src/components/ui/card.
+tsx', LF will be replaced by C
+RLF the next time Git touches 
+it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/artifacts/mockup-s
+andbox/src/components/ui/carou
+sel.tsx', LF will be replaced 
+by CRLF the next time Git touc
+hes it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/artifacts/mockup-s
+andbox/src/components/ui/chart
+.tsx', LF will be replaced by 
+CRLF the next time Git touches
+ it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/artifacts/mockup-s
+andbox/src/components/ui/check
+box.tsx', LF will be replaced 
+by CRLF the next time Git touc
+hes it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/artifacts/mockup-s
+andbox/src/components/ui/colla
+psible.tsx', LF will be replac
+ed by CRLF the next time Git t
+ouches it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/artifacts/mockup-s
+andbox/src/components/ui/comma
+nd.tsx', LF will be replaced b
+y CRLF the next time Git touch
+es it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/artifacts/mockup-s
+andbox/src/components/ui/conte
+xt-menu.tsx', LF will be repla
+ced by CRLF the next time Git 
+touches it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/artifacts/mockup-s
+andbox/src/components/ui/dialo
+g.tsx', LF will be replaced by
+ CRLF the next time Git touche
+s it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/artifacts/mockup-s
+andbox/src/components/ui/drawe
+r.tsx', LF will be replaced by
+ CRLF the next time Git touche
+s it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/artifacts/mockup-s
+andbox/src/components/ui/dropd
+own-menu.tsx', LF will be repl
+aced by CRLF the next time Git
+ touches it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/artifacts/mockup-s
+andbox/src/components/ui/empty
+.tsx', LF will be replaced by 
+CRLF the next time Git touches
+ it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/artifacts/mockup-s
+andbox/src/components/ui/field
+.tsx', LF will be replaced by 
+CRLF the next time Git touches
+ it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/artifacts/mockup-s
+andbox/src/components/ui/form.
+tsx', LF will be replaced by C
+RLF the next time Git touches 
+it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/artifacts/mockup-s
+andbox/src/components/ui/hover
+-card.tsx', LF will be replace
+d by CRLF the next time Git to
+uches it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/artifacts/mockup-s
+andbox/src/components/ui/input
+-group.tsx', LF will be replac
+ed by CRLF the next time Git t
+ouches it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/artifacts/mockup-s
+andbox/src/components/ui/input
+-otp.tsx', LF will be replaced
+ by CRLF the next time Git tou
+ches it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/artifacts/mockup-s
+andbox/src/components/ui/input
+.tsx', LF will be replaced by 
+CRLF the next time Git touches
+ it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/artifacts/mockup-s
+andbox/src/components/ui/item.
+tsx', LF will be replaced by C
+RLF the next time Git touches 
+it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/artifacts/mockup-s
+andbox/src/components/ui/kbd.t
+sx', LF will be replaced by CR
+LF the next time Git touches i
+t
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/artifacts/mockup-s
+andbox/src/components/ui/label
+.tsx', LF will be replaced by 
+CRLF the next time Git touches
+ it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/artifacts/mockup-s
+andbox/src/components/ui/menub
+ar.tsx', LF will be replaced b
+y CRLF the next time Git touch
+es it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/artifacts/mockup-s
+andbox/src/components/ui/navig
+ation-menu.tsx', LF will be re
+placed by CRLF the next time G
+it touches it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/artifacts/mockup-s
+andbox/src/components/ui/pagin
+ation.tsx', LF will be replace
+d by CRLF the next time Git to
+uches it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/artifacts/mockup-s
+andbox/src/components/ui/popov
+er.tsx', LF will be replaced b
+y CRLF the next time Git touch
+es it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/artifacts/mockup-s
+andbox/src/components/ui/progr
+ess.tsx', LF will be replaced 
+by CRLF the next time Git touc
+hes it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/artifacts/mockup-s
+andbox/src/components/ui/radio
+-group.tsx', LF will be replac
+ed by CRLF the next time Git t
+ouches it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/artifacts/mockup-s
+andbox/src/components/ui/resiz
+able.tsx', LF will be replaced
+ by CRLF the next time Git tou
+ches it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/artifacts/mockup-s
+andbox/src/components/ui/scrol
+l-area.tsx', LF will be replac
+ed by CRLF the next time Git t
+ouches it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/artifacts/mockup-s
+andbox/src/components/ui/selec
+t.tsx', LF will be replaced by
+ CRLF the next time Git touche
+s it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/artifacts/mockup-s
+andbox/src/components/ui/separ
+ator.tsx', LF will be replaced
+ by CRLF the next time Git tou
+ches it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/artifacts/mockup-s
+andbox/src/components/ui/sheet
+.tsx', LF will be replaced by 
+CRLF the next time Git touches
+ it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/artifacts/mockup-s
+andbox/src/components/ui/sideb
+ar.tsx', LF will be replaced b
+y CRLF the next time Git touch
+es it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/artifacts/mockup-s
+andbox/src/components/ui/skele
+ton.tsx', LF will be replaced 
+by CRLF the next time Git touc
+hes it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/artifacts/mockup-s
+andbox/src/components/ui/slide
+r.tsx', LF will be replaced by
+ CRLF the next time Git touche
+s it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/artifacts/mockup-s
+andbox/src/components/ui/sonne
+r.tsx', LF will be replaced by
+ CRLF the next time Git touche
+s it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/artifacts/mockup-s
+andbox/src/components/ui/spinn
+er.tsx', LF will be replaced b
+y CRLF the next time Git touch
+es it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/artifacts/mockup-s
+andbox/src/components/ui/switc
+h.tsx', LF will be replaced by
+ CRLF the next time Git touche
+s it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/artifacts/mockup-s
+andbox/src/components/ui/table
+.tsx', LF will be replaced by 
+CRLF the next time Git touches
+ it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/artifacts/mockup-s
+andbox/src/components/ui/tabs.
+tsx', LF will be replaced by C
+RLF the next time Git touches 
+it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/artifacts/mockup-s
+andbox/src/components/ui/texta
+rea.tsx', LF will be replaced 
+by CRLF the next time Git touc
+hes it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/artifacts/mockup-s
+andbox/src/components/ui/toast
+.tsx', LF will be replaced by 
+CRLF the next time Git touches
+ it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/artifacts/mockup-s
+andbox/src/components/ui/toast
+er.tsx', LF will be replaced b
+y CRLF the next time Git touch
+es it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/artifacts/mockup-s
+andbox/src/components/ui/toggl
+e-group.tsx', LF will be repla
+ced by CRLF the next time Git 
+touches it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/artifacts/mockup-s
+andbox/src/components/ui/toggl
+e.tsx', LF will be replaced by
+ CRLF the next time Git touche
+s it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/artifacts/mockup-s
+andbox/src/components/ui/toolt
+ip.tsx', LF will be replaced b
+y CRLF the next time Git touch
+es it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/artifacts/mockup-s
+andbox/src/hooks/use-mobile.ts
+x', LF will be replaced by CRL
+F the next time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/artifacts/mockup-s
+andbox/src/hooks/use-toast.ts'
+, LF will be replaced by CRLF 
+the next time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/artifacts/mockup-s
+andbox/src/index.css', LF will
+ be replaced by CRLF the next 
+time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/artifacts/mockup-s
+andbox/src/main.tsx', LF will 
+be replaced by CRLF the next t
+ime Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/artifacts/mockup-s
+andbox/tsconfig.json', LF will
+ be replaced by CRLF the next 
+time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/artifacts/mockup-s
+andbox/vite.config.ts', LF wil
+l be replaced by CRLF the next
+ time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/package.json', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/pnpm-lock.yaml', L
+F will be replaced by CRLF the
+ next time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/pnpm-workspace.yam
+l', LF will be replaced by CRL
+F the next time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/replit.md', LF wil
+l be replaced by CRLF the next
+ time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/scripts/package.js
+on', LF will be replaced by CR
+LF the next time Git touches i
+t
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/scripts/post-merge
+.sh', LF will be replaced by C
+RLF the next time Git touches 
+it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/scripts/src/hello.
+ts', LF will be replaced by CR
+LF the next time Git touches i
+t
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/scripts/tsconfig.j
+son', LF will be replaced by C
+RLF the next time Git touches 
+it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/tsconfig.base.json
+', LF will be replaced by CRLF
+ the next time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Class-
+Planner-Pro/tsconfig.json', LF
+ will be replaced by CRLF the 
+next time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/secondary_sk
+ills/LICENSE.txt', LF will be 
+replaced by CRLF the next time
+ Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/secondary_sk
+ills/ad-creative/SKILL.md', LF
+ will be replaced by CRLF the 
+next time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/secondary_sk
+ills/ai-recruiter/SKILL.md', L
+F will be replaced by CRLF the
+ next time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/secondary_sk
+ills/ai-secretary/SKILL.md', L
+F will be replaced by CRLF the
+ next time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/secondary_sk
+ills/apartment-finder/SKILL.md
+', LF will be replaced by CRLF
+ the next time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/secondary_sk
+ills/branding-generator/SKILL.
+md', LF will be replaced by CR
+LF the next time Git touches i
+t
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/secondary_sk
+ills/competitive-analysis/SKIL
+L.md', LF will be replaced by 
+CRLF the next time Git touches
+ it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/secondary_sk
+ills/content-machine/SKILL.md'
+, LF will be replaced by CRLF 
+the next time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/secondary_sk
+ills/deep-research/SKILL.md', 
+LF will be replaced by CRLF th
+e next time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/secondary_sk
+ills/design-thinker/SKILL.md',
+ LF will be replaced by CRLF t
+he next time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/secondary_sk
+ills/excel-generator/SKILL.md'
+, LF will be replaced by CRLF 
+the next time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/secondary_sk
+ills/file-converter/SKILL.md',
+ LF will be replaced by CRLF t
+he next time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/secondary_sk
+ills/find-customers/SKILL.md',
+ LF will be replaced by CRLF t
+he next time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/secondary_sk
+ills/flashcard-generator/SKILL
+.md', LF will be replaced by C
+RLF the next time Git touches 
+it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/secondary_sk
+ills/github-solution-finder/SK
+ILL.md', LF will be replaced b
+y CRLF the next time Git touch
+es it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/secondary_sk
+ills/insurance-optimizer/SKILL
+.md', LF will be replaced by C
+RLF the next time Git touches 
+it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/secondary_sk
+ills/interview-prep/SKILL.md',
+ LF will be replaced by CRLF t
+he next time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/secondary_sk
+ills/invoice-generator/SKILL.m
+d', LF will be replaced by CRL
+F the next time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/secondary_sk
+ills/legal-contract/SKILL.md',
+ LF will be replaced by CRLF t
+he next time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/secondary_sk
+ills/meal-planner/SKILL.md', L
+F will be replaced by CRLF the
+ next time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/secondary_sk
+ills/personal-shopper/SKILL.md
+', LF will be replaced by CRLF
+ the next time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/secondary_sk
+ills/photo-editor/SKILL.md', L
+F will be replaced by CRLF the
+ next time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/secondary_sk
+ills/podcast-generator/SKILL.m
+d', LF will be replaced by CRL
+F the next time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/secondary_sk
+ills/product-manager/SKILL.md'
+, LF will be replaced by CRLF 
+the next time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/secondary_sk
+ills/programmatic-seo/SKILL.md
+', LF will be replaced by CRLF
+ the next time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/secondary_sk
+ills/real-estate-analyzer/SKIL
+L.md', LF will be replaced by 
+CRLF the next time Git touches
+ it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/secondary_sk
+ills/recipe-creator/SKILL.md',
+ LF will be replaced by CRLF t
+he next time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/secondary_sk
+ills/repl-seo-optimizer/SKILL.
+md', LF will be replaced by CR
+LF the next time Git touches i
+t
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/secondary_sk
+ills/resume-maker/SKILL.md', L
+F will be replaced by CRLF the
+ next time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/secondary_sk
+ills/seo-auditor/SKILL.md', LF
+ will be replaced by CRLF the 
+next time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/secondary_sk
+ills/stock-analyzer/SKILL.md',
+ LF will be replaced by CRLF t
+he next time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/secondary_sk
+ills/storyboard/SKILL.md', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/secondary_sk
+ills/supplier-research/SKILL.m
+d', LF will be replaced by CRL
+F the next time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/secondary_sk
+ills/tax-reviewer/SKILL.md', L
+F will be replaced by CRLF the
+ next time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/secondary_sk
+ills/translation/SKILL.md', LF
+ will be replaced by CRLF the 
+next time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/secondary_sk
+ills/travel-assistant/SKILL.md
+', LF will be replaced by CRLF
+ the next time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/secondary_sk
+ills/used-car-advisor/SKILL.md
+', LF will be replaced by CRLF
+ the next time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/secondary_sk
+ills/website-cloning/SKILL.md'
+, LF will be replaced by CRLF 
+the next time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/00d6c4ccbc75
+e39606cd7004dcbd7a6c87353b9c78
+9aeb85540c06d533340924406c973e
+21078680b9b18634ad8a880949c5fa
+78b5fdf44571b67f35b19dfa', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/02980e8195c0
+f57802239173631b6a34a13c0d537f
+5c0899df31eed517edafd68877347f
+ffe7fae20d2d143f262dcad60f0bdc
+040c3b4992cddde127f9b83c', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/036a817502f9
+64456bd02270b474cffedbd04e391d
+e6f56a8f12218f1307eb8702113508
+4014e289f577e488cbbd1e9df5133e
+f3948ad1a3a2a9753064aab5', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/069606b6421b
+a9dda030f623b2d4363ad130cb3748
+9f2f87bf05cee40f2e5abe9e50ee23
+e871a43c97058278aadd0805ba5161
+da12b5446bfdf06e6219b015', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/0a57539c3ea4
+9736380ab214874f4528b455742d1f
+21c9d8027015cfae1372aa80382fef
+b88fd0abdd89c27c2d1332561e5186
+e4fa9ec8c348fc5768ca5b22', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/0af4fc03d2ec
+f7155b911e07941ea071519cc573fc
+911548cdad0701587a3617d6dc9954
+610260c3d1c421adc4799ccec5835e
+c14b994d5fc5baa8a6f83e0a', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/0e3d48f65525
+180e63138727411f6b07d78e307944
+a0bdd3bcbc887bfbf3facaf2cd631c
+a3116a0f4eca79ad917552169d72d4
+7f9d19330c5bf1445a937bc4', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/0f301143f103
+5233038e3fc748423d6ba6d7a0a0b8
+f61ff3540157b33ff5f980cf7a593f
+1d4fa5c3c8acbab09d901ed4b28631
+95ab20ee18622311bea8a78a', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/11c73e80655c
+72f00b59fcd77eecb6c6f87ad2118d
+f18899e6f209c74091de761174b7d0
+bd73b6f570cb2ceef340ee9febf6b3
+dae35225dad0e5b5b4676d6b', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/1822dfefeda5
+a7200b8404840fcc2d0662a45d41ee
+a98320267f549c065def6b3ad4e987
+1950ad2e0ff8c317aa54cc11dbf75c
+95af6ae0c51fbbda81d380be', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/194c86d4fb03
+dd66f92a96eaee62ff3dfedbb0fb7f
+e3923103d0697c97f0cdc563655010
+05f0981719d4e1a65a3a891415b886
+236130a6406068314f2ccd6b', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/1964986d531b
+57f13008a726001a1e7999d284cf8d
+03725c57160bc19406a20f8c508b10
+f838f325f2584daafdbc996c2dc6b0
+a82a0a8d67ec53898625d83c', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/1c35fef8cf71
+243398fa04fa5d8155dc1a41fd1563
+5e98a05a162019b62b0e3300706a43
+508e2e2303ddd08fe196a074e49b28
+54bbf82ac5386699080f53e4', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/24770d9d673c
+bde4bce9257ec316e53f0b0f6aea01
+9e41bc1608bba43dd971662ce22b83
+11d80da14b5625a12a8d2b9bf98eeb
+9a8eb26ef0d57e683e2d6a88', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/2483fbcd5aa7
+296790faa24ffbcd57f3b093c64b4f
+4faf1e45b32918e08a4ae6d0a011bb
+cc104a8e6bf50b950892239554eadb
+d4a070169ee85bc92a239cff', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/2699f89e9af5
+2e35ea537d4a6c9e2843d7c07f32b1
+6eb3db3523dea7a96d303e674a1b38
+f3444d9f594e36412e261beebe42e4
+9b38c2481294443933a6c17a', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/279381deebca
+9a0d59b864cba4e671fe703245cb0c
+abfa480947d1874aa932a1fe2c522c
+a71f9e85ff5280da4ddb10a7cea29f
+42de4be1af32bc710a770dc6', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/292a4141c400
+50a7ff83df4677679c817b3205c002
+00bde16af52e5e247a597c1e943b62
+2be6c857d1600895609363db75183b
+5ab04fd003fbc8616187f721', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/29ff912fdfd4
+3e8553b3a0701d732dc79b4dcbf930
+5d8eb786bbccd3d264a2b2f9021126
+7ef188ad9894afeb796223a36ea6ee
+f71c005912e8398999c5528f', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/2a442b4d14e3
+fa23b5c9140e7d98c28e05aae7f895
+73e1c62000471617a6b80fe520c04f
+8a05d2b3276052a93eade9787322cd
+743624e7f3f85615e080ead2', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/2a53f4d72629
+d39e56ae08134c001015a51e58f0ea
+2c3911ce984b09db971e8a4a0c27b4
+2757dd343263f5b93ce21ac4d816c5
+9cf9738a2f740c92a98b6607', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/2b9fe24617ab
+909176fc19a9b4c390d4e720d68d5b
+27bc65eff219c28164a82dc81c1818
+5d4e237542dd78ae13bde876a631ee
+8eb44faf173c1bf7e0ff940f', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/320c80a0ee3c
+383dbfaeec0d2ba7308737c6939dc7
+2d9f63ea51662359abca3ab1185785
+90c8e4ed468eb668b8f3a6d122aaf8
+ae4afd502d58b5b8aa5d9263', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/3510b4c5d98e
+b6eccf6a19b30ffaeaac9b9a347208
+444a78f6e626138a3e902cce99c300
+90a29658aa36ac4c5c3802212c5b98
+45ebf39c6459c6e10989abab', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/358a98ebfc5f
+002d81dba724affd650340bfa0796b
+ef02868fbc94e81cd69c4be7a7e87c
+324ac43285c4eac8abd61dfd12099a
+280302bef6ee5b14fd8d0b03', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/364c8c4c43e2
+4a9997f833f5e7a9a9d034ba382cf4
+e3ccade7b130811fd69bde20e0eff4
+81ad531e0cd359a9626ba5c290a454
+48144ccf5b340c8a8bf093fe', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/3972da116e06
+763562ccc7abe93ddc18575d59ec44
+660e60004162c5f8ebc8c6eb51f627
+cd4be4397b8345404f663740aa1eb3
+4e02b21c79ead33df2c4654a', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/44e7c43527a8
+6f6f116069d2b4dd72c13411a7164a
+e8f818f99be28fd31d5b9505376248
+fcf14c6516bb3e611aa41120aaf961
+65dd45098985f0899b50c205', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/48e1dae9ed73
+0753784c788f2c943b21d6cfb12e97
+53205948ec2ef2215ecaabcdb67100
+ec0b1489225c1ee37d73789500eaaf
+a3702158e17b3d5626a44057', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/4a262053b584
+517072357b21bda102eafa86a2debf
+d5092df74ef5d690accb579d63900e
+77d36f530d763d7a3205a79d762fa3
+cd476347ed5ed6f0cdf149bd', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/4b34b0aafd4c
+792fb5425af7feb5f6d3f6645c7434
+d4a801917331bf1a240ab028abb39e
+267cdc3a1d0bf24686a10c7b4a56bc
+15de1f88039928a42bf3444e', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/4b60241f6f52
+7747f2f52cb492319da80abe1da96f
+414ce473efde488a48a621793bc4d0
+32d7457f164f74aad7f3bf5375861a
+27347a542aaf0747d6401d3c', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/506d80a97250
+e459e7fdcc2a32864672bbf6d9753b
+27d0e78a064254e321efa31ec027ef
+53ab41ce18ab6faaf0b86d9e84ff67
+e52af2caab235c5729ba3168', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/5119cccb029d
+d8981683ba9e2360195bb0ef3436c4
+7f3a0d3f23d820be32a2a99c98637c
+436393b34ec034d58467078275de5b
+219cc4dd533da0a60dbc813d', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/565946ee18ee
+0c5bd6471e4ace05a28eecece98750
+cf2677b53ecf918cf13cf6c19533ba
+8f0f368b8ca1e3444068a101a22c90
+98f45ce9835c38a079b34d75', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/57fa628c2b29
+c74a3f024624947d29ce3580b9fa00
+49c646fb697933a41c22b84dca8ae2
+954cecf4f32d8f763c07258752ff12
+0fbd4278c2758c8d9786c4b9', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/5cd627f158ad
+9f64cf2c7d4a48f7f79bdf4c4a9c70
+fe3feda552b57387155c2dcfb3dc5a
+6081849ddf41129cd030abe8893139
+f0fa22c4e9ea4b128d5f3a47', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/5e0ef37b4b9f
+01aae1abb9a71feb0a465490781297
+2591b2c188b371406544843776423a
+485743bc41c6228507e4512900253e
+5b0a4273d58b752113219e7a', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/5e9634265c39
+c27ff1e4b476d7aa3f13de44eb6b6f
+7887dd46d578aafbd4059c84773369
+0db326372c4e19826e5b0d0bd156c7
+8ca4268375abb35e76233f1e', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/60b31286000e
+059db8e7e82ea2880d7ebf2c3c8dc8
+1b832f9c79c12ce66891cf590c9992
+eb91c9b2f35fd889ad5c843f6c7d50
+681a8f53b76e09528cbfc982', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/60dd271fd86c
+1ac6e7916774aad94bfe7f424793c5
+20028c9454d4cfb11b5c3f576fba8c
+d57c20a19171b3f8021aaafabead9c
+19cdb34814059a4aefb8e02e', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/61c3cb00ad15
+f4b48a8e40b43ebfb5fd1f41f20b39
+5e18f8087659111d46919a89fc0a6b
+6446d39cc6e7841d4e53e79cc2f12a
+eda39e6ef225fca88ee8fda1', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/6280f1e09560
+b4a61773c057a5368f17e9edba656a
+17cac5b3ee18bb7a3b001b51fd6311
+4a7d3f1a25dedd57202b6274304bb1
+ea2999746245e0581f4198af', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/654701f9a1ce
+7b15f7290d08a7eec3e7b421f8af45
+08b0d3fb8a588326abe64283172f0c
+a87f0a1a248614a4fe8057ff6bc5d5
+fe544dc6c853250cfa734e6e', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/69bd0c54300f
+bcff214786fbb70cac10d37156cd94
+79b0f5609fc16119a38d3a8b3fcbd0
+fe043fec928ceca16ff7b32e632b8c
+0dc57250280f08723e125d7a', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/6c85efb76af8
+1f63ec5ef02f49d3129b2858b1e6e2
+8a46d7d83b14461aa8952c434ad0b4
+58e5c0ee739fb5b6266b755306cf79
+34bbbe2d86f177c67378cdcf', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/6cc9c60a420f
+c2e49f35437dc1ee1a5d54493c6c45
+543608fffb3674cc3eb340be619ade
+05a800d3a4fed34892f091513924d7
+a5d90752e5a7bee211c37ef2', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/6d192d3bb9ac
+7bebf223f00721aab181e7fcc55761
+dce35f81da527876b984effdcddb45
+bb2ff16dd1cb47ead0254156cefebc
+ab387f0b95c8b30a790250d1', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/6d96460d21e0
+1f9ffe88c20fef5552c96461b21fab
+6d7f156ea26fbcb76f568131c61069
+4c1ce671d31d0a59c6ac3a4a128da0
+0cef994939057449cbb623bc', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/6f0c07e29b40
+792d7d64d067498f22a8b714761933
+427caac3b3893b61877961e6cc64bf
+bb26453410943fb7378ee3cc178fae
+886d066f28bbe1c588f479cc', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/6f854b5038dd
+295e3c6d63ac222bc489e339e58b6e
+9322c4ec83642fce515210688042b5
+173f704798696010b7a0506d946dd4
+8397496227cd4ba5e52434d7', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/7485b47475a3
+18768c5bc5b4f54c2ba9161ce669c9
+703fc95db329c003804ef095ebf513
+3d0719791d57219ba9047004af0acf
+119dd06e06269639b3e31d2c', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/7801c96faad8
+4b98a5235cc5f2c11fb5a12b528324
+451fa50331b1b853fd57bda1c353f1
+0595ec0b199ece8da73152d2e112bb
+c7c14df2dfed4c2fdc15eb48', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/78e0e68ae160
+639cb8461bd639b740057528985fa3
+a04b66779fa76f63bf438eaf9a5e71
+ecb41c13b6a8a7a3f58f1d5d64d7b1
+8b1162cc0bee923e98f116e3', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/7a933894c7a1
+29d4b18848208408721135db097651
+a75b889b97b06b262067c900642e1c
+e8b836002f41556bf6562070b65ea5
+8c615c7ee0cc3e39431896db', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/7ffd05344890
+f29a57893099ea4a910bcfd304a723
+4088adcb629ad85b7885665a888cb8
+ba878e7e42716b6dbcf5935db48406
+ced0fb3b3fcf4adcdea10a09', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/80b470abea46
+a906082ab4aeb1d9fdf2d0dc35a134
+efc796166e17018d577b400db3c3ac
+95263b4530c88a14b57599eade6cca
+09232e26795f2fe2b946412b', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/80e65df66cdb
+57bd27a9730034a63a6eb9bf55aa53
+c5dc36cd534b6ac9f4a8c90907ebb3
+d4990f77050e8456d6e5f384d6a0d2
+4091227570bc5919a362a5d0', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/8124dafccd25
+14cbdfb0711be35364a254f9ea6457
+5211caed6e1c0a31082498bc367f42
+fb5cfc868b949c1361989ac30c63ac
+e57cb4dd2b74cc9ec03fadec', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/8656118b4445
+a347e8db20acfea1ee1d98900f0c69
+e85739fc6c5dee4454c207089524a9
+afe263675ce86e870cdf5c7f361688
+e87185e9f0966c38cd01087f', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/87319be0281c
+72d6258f4ad62f7cb12c615a16ceea
+c08b26b836eedb91efb3ce17d1c16a
+fac0d0d2ee2834a34860a70ef2fa3b
+ec4af6f2498016688d86f648', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/879d412d38a5
+4dc262b16588c853c45b0d1acdaa2a
+f3464740b747b5b6224fcad7698ba9
+9dcff6dd69488c3d54b2824f5ac88e
+4dc13a172decb5b31d5a9d5c', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/88f07345d2e7
+a0d79cc9587927c9ef457ef394d9e4
+405d473f819e3b24773b7a698d3b08
+45844d8786603e90c79e5977a8c694
+63b274b8883ee258732d926a', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/8cd5804e26df
+46a4417e94c6f723469fe6bd5d95d4
+da6e258991650aed48cfcdacdeecb2
+48cf55aea5ae3a003ed6a7bd03c392
+456a6b4c53ed73b9c144f249', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/8dd7c49fbfba
+4de598d22b0a1e4a1f5692a0d5a68f
+a4491792015f3775eb040f83e18e84
+2a4fb8bc36301addddf3207aaddec5
+f889e12ea401c5dfef499d7f', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/8f19213aa247
+6a2e33e74d5789869102106972b666
+b162491eda15322abe34eac540060f
+fd428435aeed9738c0083745174fb0
+959195ccda520c9ca272cb8d', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/8fed940668dc
+88775ca95ddc7aec398d662f0d3710
+91aad1b1c113872355a78e0ecc6dc5
+fc0cfd2190e3c1f4a9ec7628eacb81
+ea5fb29ec17575f88dd46e18', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/92f1e0413e4f
+fdf7e9fcbde9c1865b465aca44ef07
+f49c57f356c72efac1757c17208d2f
+51279bc2af7e947ef365cda1c8795d
+25838273d807f8d9ff486d7f', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/95b7b8f083a5
+f35062e36fdba6d12448b484b4e0fa
+b4de0878ae1054daa6742b60c2cf0c
+58d87023fe7c05b953c09415359036
+6e30b543024d954e123fa6a1', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/9cc526e354fe
+e9054afe134212d78b660fba44a134
+c456d52726cfe03787795744fc916c
+09855e1040c27b44e2b82c26dc5757
+c1be8431551e80476de79334', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/9f80b2b1493b
+e504e39368ff50b0f601fdf7631d80
+453e51f12cd21300e21cc695725a27
+14a01cdc6ab120ae54a3b900d538bb
+d82400ff8c47d73dbdb80019', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/a52da56c3399
+70fa2f218345385f1f27e852643e2d
+0e68ccf0131056f071ed995d9d9165
+1c6e38635fdc6c322f1bdade2e00f0
+a5dbd092ea2e6dff1963f58a', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/a92bc5bd3771
+0c0bf226dcb6cdc6f41db035a299cf
+7f83ad511dcb127049f872e2cf2aa3
+95d27b181d0aec8c136b8462e846f1
+8378f9a8459587a34bc3f62d', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/af8b8f0f4ba5
+28a5c9903d94f200f4d8721b62cec3
+23ddf7d21c96c08ef457e1f2c259ca
+1d44cc5d2978663735ce019c314d23
+967f973cf1f3bcda554a1f8d', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/b45ee9168788
+2fc9159e3224efac22f3fa40eb4f82
+6a032925474b6031b1e0e61c7f127f
+1066b6e4a0c0f8f8ab86ad1d883dda
+d7cf5810bee8c94cf78b6c47', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/b6a1c6cc3281
+4a3211421e06656852e5585df12312
+484339ebb2d89689e192b0cdfd321d
+412b4dc9e4a8c07ae52bac1ac200fd
+296012af522479f8ce7d8c5c', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/b9f836e39452
+f661ec7b4ccb1c937fb033f21e5a8e
+16fc35053d5efbdafe24e6eab572ee
+d3e48673ce5dffadfd22ba2fedc311
+bc6d878b3598ac15fa8aabd0', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/bbf7f30ffa50
+e9f89ec9ce3eae9ebade5d5aef7de0
+542b4baf5211b3ae701140b8ef86ee
+bf93bf58cf54203a21bc94eb24a23b
+cfe59dcf8c9f049b38a01bfe', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/be6c9873613e
+07f52b4c0f559e12a5f622ec0a7424
+5549610cb99458d431cd09ee0fb565
+d9bc7506f7c3b0de69df7ae0d92dae
+dbda73570005722e2cc9fc3c', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/c8d17cdd459e
+905cef9ba8bf80263ef8ecb400817e
+5c9bad40ec1bc993b291443088b514
+a8c00feac6a18e9e0ac3e3f2342c0c
+6d447790cd4347391216c470', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/cc062201d51b
+80ae7b4f8a67e59936c974073e428e
+3e269fd7c0567140cd4955ff3bb7cb
+555ea970d5b4736fb286f65d45adbc
+3d09d4595d8ebad5e33a3c04', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/ccec67cb7af7
+2035fe26a1bc76c0af0c6db5feb8f1
+df7a10035b018c2fd686b560f28e1c
+836d83a197ab5dea2494d2b2a852a2
+d40196e52cb1a2e6d27a7738', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/cdc5931b854c
+9794c62e749ccd5a34982464e314f3
+8f500705b625e58e6be4dff8d75d1c
+8c620febc5bee8fea571416e57baa7
+04294053321158b1557ba4c8', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/cea64b8c7c6f
+b195f4e0b92d4cb627fc0a2ea92553
+9ba7c9d6fe85d3c606b04c2af0421b
+0ee14193486ff12e81415fe6787fb2
+e54c9fc73e2b661ceb917bea', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/d1d013c20b5f
+096fe1f8227cb76e7048650ba297e4
+c259cdd61963aacc9f6a4a92ff632a
+4acf85663dbbc7e4cfd4f25a8423ae
+34e0232e86303de0d0bc122d', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/d1f7a4a6a01c
+b35ef597c755723a7c8f52563689da
+7b9750be49f73babbf15cc916d85b5
+ccac26069a60ddc2b81ecc9ed7649f
+f227f8c6926cb108b7ef2550', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/d26b89fd18da
+b4a70761b5d5dc25f5ed37f9ed5a57
+2ba8f054a8f299a51e62a8b1147234
+b851851ec6172b4f7fb70376948e8e
+933fd16832589e751407209f', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/d558ac101cb6
+9db5108e5a0221b1975bdf1956c8d7
+d335c76c21cd3b0247b64ebf285cb0
+c7a46803a6255cbca97d5d8665c59d
+39186adcb0c130a75e6622c6', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/d792c44d0629
+f9efa727f05b3e9d337bff2dda107b
+39dd7d2b2b84f937fe5aa7d39540c8
+f2c7c1cb4b85edbdc521465311831a
+b382b61d25beb9bbedd8bf6a', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/dae13f9f307b
+35e3770c742dbe9995d45c0164fc4f
+9f25455dfb029822e57cf602f13221
+866d598e1333c7b847cc5383124586
+253fe22221a80f2e05d9c1fc', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/e3e4bde6ae1c
+ddfcaa99ee22b287d01a8c9e729a41
+70887153996e09fcd7b376fb44c093
+f99db1785914b357e2f82ef4a82c86
+949a44ecc2874e33abef6a57', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/e4eba77fb9db
+34b62ca1c831a8c9eb65c08b0334ef
+c1a7cbbad89dccee0f3fa96dc900c7
+3802fc202aa1a4bcb1a54dc2251cdb
+2ff8d4839e37303b33d5e19e', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/e5c16a4f9771
+af77c7730c052727c881b63d1162be
+2bb36f5f7146d453051000d58d79f5
+1d3fcf1241d99aed4eda0395362d5a
+4f6c45cef5f1cbee2abd4261', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/e6b426210a12
+637889fdbd5af573bb42821baf8aca
+98786f09a14b9119722539111b05d2
+93cee78ce1671c7d2625120a27a661
+09bc09a708e2cf1e4ac2fe81', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/edb7468d151f
+32b5a9df77f03f60f74c8517111aa5
+cbf4f1c57a8f333e16961b453d89ba
+0ee825de237dc74d4a96feca8271e8
+c7d051717311ec5ac441db39', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/ee3aa23bd8a5
+8116e7d8d24f5db69afa84d386af22
+223aa65f437b20e2aa6b5b65c8dbd1
+2ab6cdb8e0441fabc1102cd778e159
+0b070cb651922936bd92b51e', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/f46b7e859dda
+ed643a3aba1d24ecee9897156f640f
+d396f758d832d914ce9afd466683fb
+8585b875170069ee3711a04ba771b4
+ba2ed0f20eebdf77e4bfdbe9', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/00/f60e05e81e46
+c41bbe9e4f30a484f2d4db0b4c5a21
+055d1e7e97cece36ea730bea5b35b1
+fc6a85b94a12c7c64a0e6a75bbe5a7
+bcfd31f00a96f039370b7190', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/005e2a164c9b
+ad2f54df45ce664a7bb027df709c88
+f010acbaca2486fedf9ebe93319b0f
+8e165368c0cfa89629fc5b7398484b
+d1bf63718c4b98bbfe494b94', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/0106f064bb55
+6566de2f3704d844ba801fdab5dd5e
+860b8c5cf217728aa5dd2fd276c85e
+15f762b4330c8ce4063a3aa0cdfddf
+61e906cc8f4e424a77d91a96', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/01ae773b7fc7
+1db0df4661a39922c9ca1cb4fde7d6
+84d4fa98309d0fa9410db29702371c
+04c102cb9b1bbc397f5828bc28457c
+4fd0f343c0c960a2a860375b', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/01d4c3451ae7
+439a8dce01daf57cc18bed99ec8fbb
+ae0283179c3296dfba2a5b231e052e
+58b38662a376be453ce4b20942d120
+ceae03b3dd364d801a0c7dbb', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/02904283cbe0
+c18d55effcf73f50ea739226da2d89
+7e79ab12689e2cadaba019e9a5d092
+2d0e3b93304443a3d446192dd04951
+ec59e49abf8b6f28211dae1b', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/05ec71139782
+672cd2822b751fc1f4578190ebda03
+c43a3f49387e09a47003c4d9496491
+834f82bf8c05373ba7ed5743b1e950
+ec4757ca417b601115eb24ab', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/09b23d8ceec5
+dbfcabb6a247e3f620a22dda0e34d6
+fb91e1e04d238492613d4b0d941b32
+4405c6c7e55f46e1b54cd0add01811
+51d3c273cb0ecca7eaf75e03', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/0a9995978a10
+17d522d9fb7142b28110648de292a0
+27952bdb28e8885c86f278ae9fc20d
+c02682f4596194df04271284b926e7
+33e62df2523c4309fe6af794', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/0ad26cf55322
+a0e5caa691eb4b68377bb9f4e9133a
+ba082f449f704372b5b713de82b0b4
+30635cbed57e7be4fd57e41853b4b3
+fda90f762108b76967e57399', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/0b095c8e29b4
+719e042e2265ba4ee8b84594ac6101
+57941c21a842b609ca53e9605823aa
+a277933e3710c7b1ff2c29366ae8fc
+e1653a5389573dc859b0d74c', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/0fcc49876268
+715ea62feb5caee2c35761c20211c2
+9bea6c9376a92ed06687db4eeb5028
+f8cc1987a33b0f905f00c45c8dbaa9
+335214016e97e5bceb25460b', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/15d72982107b
+2786be15c2bbfe4fd754f810be4740
+930616846c7c2dd157ffbe368bc486
+bb651f9cdf27ddd8ec4ab6586595dd
+45d8cf67844d1da038f3a58a', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/1b0d88ef501f
+98146ba5458d3ba6d3eb61c9a472e4
+f4c532c54ffa12585a67376a57fddc
+b2155b9e827defaed06ad3ed937bbf
+25b616621cd144c243d64abf', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/1fa7c18b34df
+27008bd1ecf0e47a44b014daaf9878
+d6c33eb8cf00dd5770fd593bf95599
+1969cfa07e3decf6817d22b4d87d30
+c9a331780c6311d40f6b9f97', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/2269ee384486
+45fa7b23d8f37e3420fcafebceda88
+d0475e4410147b9414be8fdb72aaf1
+e412376fcb736971603b7cac0f53b7
+8ec7ae06c8894b7777f8766f', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/22dbe69ece42
+079b3b2f4c08ef5e7361653b2d77d1
+228e413350e20764b96f1c7e374aa8
+0ddf7aa8ac07f2ebd587188c3ba144
+98f368c1b40b757fe6624ec8', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/27ebd58649f2
+b9ac5af8985d2633e54bff10ac520d
+d3e16f8461002cdd39c77774284da0
+5e963efb4da749249c2d4d84eb4290
+47431d67dc58b8d488f05e4e', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/28b97075cd53
+d4ee30c4868368950f5362e0935274
+98401aeb87a686c11b529166dde075
+57d10097e46b3008b3bfe94244687d
+d41ed8ffc91a04d9beb793e1', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/2ea45e057dec
+8bf23bb43defe525695ce49514791e
+d90969384f78205f3c439250718e46
+28870ada82d61aebe384ea510cbfc4
+e8c7e620b5f6afdbf3d1ac9b', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/343ad9bc7d77
+7bc1bce85d4aa497ef717fe1658983
+ca4d5c47b46b0e87b220494206b062
+c3dc68369837c7d06914e714786427
+665c8ef4d2ed0a9fc421243b', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/35ec2afbb1d5
+022110594ecd4271d45cc216f38e7b
+0071a9a2760ae2b7ec91eca94a345a
+df98c2197522739698fefc090af553
+f922e95a39d131fd2bc5611e', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/38363f6ec1e2
+03a6450c7377444f851b0bc6593cf6
+e761a8b59140bf0fb5ec3abacbc7a8
+9ccadb69d53f11fdba0da9c2f89412
+d39aba395cd4278245446536', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/3989baf753cd
+9e9364f551613d0a5e174306b0d880
+8721e66ca78aeb5bf41340c62d60f5
+d1742f48888b6431ae369b7d11a408
+24a3886c21a604f0a2b53385', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/3afda836fdf7
+e3ebccd3d1b6e101ed4e155bb71585
+929f2386e9cbf74ba930a7ad56bb54
+31da4c1caad60805a03b01839e29d2
+12ed15db4b76bdb4c65f4004', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/3b7f7f44d1e3
+537a8c759d1c995fdd23478efee7f1
+6e1c3ea3729b32bc557b0261975706
+a2509183df0fbcd7e1863b61b8dedd
+7da793b151d1986732b508ae', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/3c45c00ba7a6
+a7d2aecb1b6deeeba6293ded88c665
+96b4869a6022900851f1bf8b7cddf3
+3c3716a268a421411cc048e0531140
+c155a7b55e07642f98f30eaf', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/3f704438970a
+35b716cadf3cfd7b2ce113c5bb2382
+105f2a5a2f928586df2556f52efd1b
+93d432b4997ee3f006335624401127
+12eef5ffde61ab6ad75470e0', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/4140fb02b0ab
+840385d3daa1085b463ef10f448144
+10394ef787bcb31b9859aff69df08b
+1780c0142572449aaad07bf6373cf7
+6dba0053c604fca96c2bcedd', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/4aa3fecc9756
+205c7cef0af474fef565fe2b9629b7
+baf590a429a18bff7821a1947cb216
+22d9de8254ccd020c9eea56c718bc6
+d48f4d987878c41551677786', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/5082003855cc
+2e4b0546e823bf40877a808021978c
+15825a4f6783480e43959edf09afd0
+967d8bac9507ef74b37a428af256d5
+2e1c438cd0acbe53ae774328', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/50d0ff2134d4
+b90191962ce4788e6542a4385757d8
+309fafd9012aa57ec58e8c8250fb90
+89d47c4fe9902df54afb638f693c93
+9e01ff81869a89da5d1ffaeb', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/5124f910cecd
+47373ff44ff21ba785a0665947a505
+3f7a84973b48b97a37c4a013e55e2f
+a2c03cfd2652fea72ce0c4ce31b3b5
+11b12d1674c84c459c492936', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/51cb7936422e
+a1c61557b8ecb32a7a7ca34b77971e
+561e9cbbd3b8b0d32fdd8bb338a889
+46a5356149ca2c504c9d479cee761a
+0d034d73d80f71cc2e96f10f', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/528215229175
+604e45ccb986904036c1b8a1321633
+a269435e44317c91aec62919c74046
+e2a4003026996ec1cfcdd88eeeff16
+bf96a8e1d5acd55b5901c654', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/546b4a346655
+ca05e9f9920c5dbfc2dcdaf2a8015c
+7d3fbe4d1a98dbabff3be6b96d4321
+8ddac020c795c7d45127ef27db92b5
+2bf101956ad054807a36d898', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/57d23725d048
+d0fbd4f10a54840b42203b16451f3a
+911b8e2f367b2aedc61127951225ec
+d963f4caee6bed279af18d037734f0
+d61e36e3792b2b91ee22320a', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/59e4a556a7e0
+e2def11381946ed56f2148d3a8a3da
+9010328055b40b793813b8b9a8af4c
+e75fcb8992a0e910a8fba263e0e1ca
+fcff2d9004af0a0f654a08dd', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/5a9cf6f5ec30
+67bf22662e804ffafda584f12722b6
+7c877e37fe7ffe8298a79d541c4547
+2598d404a341b8879125c3edb8dd80
+a3f53202f8267d221a07941e', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/5b599f67acf7
+cf1cfba4636b000f8525a243e5cc24
+c9a8d2120bbf20cbe606efa240178d
+7835ea64f84fac084ba5c44b86e469
+dffd3a35c67c7a79abc09d9e', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/5c4860b62808
+264317bc7e1515eb2c9d883e62aa71
+d6c0d1b9d0c077abab02e4b49554a5
+53811874233e4274210071bb025695
+9d659679ee647e3831cc8927', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/5c7c06c31c55
+6802dadbf0e0a4c619bfedf3cd955f
+dde1612742f6d1c112551e11c25a49
+c40c9f1c7c13b11fb7752c451d5f52
+3e01cba3ee556a04d4708293', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/5e429cbf9035
+c440b2fe3cd338a80e100b83db89c5
+b5dd66b5f6ab94130297fbd7b9903a
+dd21d7f8c89d162fc1d10e6fd38726
+d86944c12b2249a0a5b49f9e', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/5fd19ed72a9a
+c5abf76c06cc737aab6a5ff578f61c
+ad2d448882b5cb1d1a8baf139f1572
+28e535431e6e91b02879d5c0de9259
+d604826ece624d8ec60b2da4', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/6123bdc5b2e2
+4f64cd1cc9ac04d075195fd7ee12e9
+3beb5333e2f689025acd82412646cf
+a9d558a16f74bd697d4ae477d9b101
+80121a435311395e7e81d09d', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/614e1502dc13
+90284021aef0f5025d5438e82a2a17
+b54703e676157ba15bab2fc3e0e0e8
+35d1ac3f037ef5999d126f2ef5f916
+a40e8e4dd02f0bbb6a1f3e1d', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/61841e844db7
+4c8405cf208cfe94da6b85f7cd4651
+eb18ee00afe43ebe88c6dae2950128
+6f21e539f4c17310d5d3b50dabaafe
+80d280a65f255105eccd01bb', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/6429d9321ffc
+690cf989e226e3a512aa20ef2ba120
+abaa16dd656095354072811fff9251
+393597d9a9a2e0d40826cd584a48f6
+1c4cae26ac1b5bf6d33676ce', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/67ef73352fb2
+4b447ccd7c20586762db2fcf2bd088
+0c7f728d367fcabecb6cc33c67a87e
+a294b1820aada6a1b412b29952eada
+072f094d6f6c821b12e015e9', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/69ac02a31022
+a4cb42d72220054842e97a781d4919
+c7862a39d8f32ad66e67ca9f5a3732
+a7851a79aa988a328945379bbdb330
+a0061d1d02472bd38b328daa', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/6a5cbbf9e294
+337a9eb1df1780d49cf9dcd6f79da0
+bb66026e3b67cab102e51f77fc9e9b
+2baaddb819f534d3ad28cb4ee8213a
+4adbc87f4efe8d6d933dc83b', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/6a67d68779f1
+441b06ad98eb278bb8e0691905e923
+0a040db1741f395850c4bd66666824
+f30fdbe51ac65bce642879fc9ac818
+c025a049dc5fa2c7aac67a33', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/6b2331c1c930
+a5519ad6700054714c202f8b6cdc98
+f57852337d54939a1eaf98d957c344
+e39226c7894c2b1815098d24a8bf38
+0514c4a2dfb646b68d619a21', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/6bd760667b17
+f1982f721652ca0a46dd120a34abf9
+b4add5762af372c1ea56bb66e77435
+b013f09d728da605f49f171578b511
+371473d322710b7bb6a25988', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/6d45f71af67d
+bb79e39d8bba941664b9bbae8e9e54
+50ff0ca5ecbca9d6b711067da88131
+1b333ff79872271256d047f49d9857
+bdb4b01a35d8b42100f72053', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/7146cf31f23a
+e6d2c3227a1d3a37b370e7638bd215
+541112dd4270ed6e2c502da7af727c
+a9ff874725216761ed178fd6c2dba3
+e9af116b38c39d6b7ac262b4', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/7262998ffc40
+d215ef61784debf57d807020acd205
+3079d982d9ac7c571e74fca9e0a596
+92379ea82a93f9fe51a82f71ab5953
+dad77c34d18c75a7a34c4da4', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/74c4d821e1be
+8999523ffb94a5337c2d6a8a1cb35c
+f0f3bf0e782e6860b2eb95ab50bf4a
+015ff4126406586e7bdb41e41de379
+c1f287ab41dbacce46c920cd', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/7893b7b0dda5
+c94f42a2ebccb94c2e30ff05a82122
+cfab2008c3f85beeed07edf22668d0
+16aa350a27bdc248f217d281505d70
+33a6eaf257c0d657f795533d', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/7bbb8f85acfb
+0c781be48bd3d196a8d11c28899550
+d043b1d4d64b2b1449b5228f9b6499
+de206e0b2527576278261d1390b927
+d80b918774ff4b81505fa56c', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/7ca1537317a8
+1749c8070a971ffa32c9c129ea5c2d
+d9bced265caf1a204785e4f4892118
+7ef9b78298f477ff0262e25653688c
+700b243b3fc8726059c2dc9d', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/7e1c45b9a525
+5956aac4d0b926071815e323b4f1cc
+c47af4e44c9eb087afd101064f2ffa
+92280bde310a6d3a37d4fa3005d87b
+62a5788208a9cc5857ed6c40', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/90fd170a97fd
+92276ff9026ca60fd7f6f5adcc3224
+cf2a4aaf964466c0bbb10db729e950
+a5d630464345d1621c047bd9380228
+5a7643d4e95d0ddcc887241f', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/93d5530e9b3c
+99bfdef3ac5cf5b01265ecd8b33642
+79d4176e48db0238691e6dff82c02e
+8c0a9ed17cfbd758443322693855b5
+6b87d05f6966b244ed7aa47b', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/973764d55158
+99e5fd985b4b38c9a9b200e97197fc
+b09566c7e32d5ff438fea795b84df5
+3ceba1c1aba704f38c5bcb2985d49d
+dfa19f26c52ed7c8811146a8', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/9cd3a2835a52
+b119ea2ecaf567973a06465ca32bf4
+c7a283122453f6a5ab259e6dd3e8e2
+71edd52a08ca176ee48492e19c38d7
+11a15854c599ce0457a9cf94', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/a256ab5bb126
+3dc27ffff8dfd24975623fe62c16b8
+4c241083e2c0cc46f1541a13d91db8
+0c6fc67c4ba1432e54df6dab176686
+0915902f78e24ec499199beb', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/a699fa651ea5
+9a06bf6946b820d314df1bc121f8ec
+de32f50b5e983f587af7ac94645fd9
+3c740c5be8cf43439fa048dd56512c
+54c3662ba8c545cbbf04b3c0', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/a9da07d43b3c
+8dbd5022272cac6af8381217adf657
+9fb251bbeda69d61a1825f537c701c
+ab2eb34d7a9731d6b3b9b656f1a034
+8a0a5ce73621339e366a211f', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/ac267c6c9a16
+713171b1816a1d81637f383d7c2463
+35398acee23d82eb3c29d81db3a20c
+dcbf3723c600c22444e05cf28295ab
+b0fe5e3ee5ec176c8373a37b', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/ac5f27a6fd86
+bca46d94471560363ab52b095b3627
+e88faa8dfdf385828e13ed256259a6
+2f3c96d0994ed8a66b2080efb28aa3
+f5909a4306f071b522ec8e04', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/ac9cebce73d3
+9a859ccac8cff3ec7ca6c330cc6a76
+83ebc037f09814ed29e3c580a2621e
+9bb178f7e8e88b0f9bb46a1afa34d3
+c09c702434e46d57f2812fa5', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/adc0730ca71b
+c7d7b144d985edb6588230943deac2
+a11b052f48f48a818e80e2dc720dd1
+dc34ba7f86199a3685f2eca56db4f5
+43ec97a747d18127dbdd9251', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/aef88c662cee
+ae2f9a153121619960861ac2a542e3
+49c185cb20a089afab6f03a1a93717
+ca1f8144ee2b0b9b8e1c20315e4933
+4104795db45b08c0444dd164', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/af60d236a609
+844b63836ec19f072afbc20f0fe06f
+e577bb4cd9309fdc496b30036036dc
+23e759791c81549e66a74dbfea0c95
+0f9eaebe2d1cb1b18e865ee2', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/b18972099153
+93878414a825a98aa1a92fda8c2743
+315bb7569134d5949b21061972a3b7
+2af73d247de9e151bf46e0f9bbfaa9
+0ddd063bbefccf00b4afe9ee', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/b2799abcf1b7
+9912a6f9b36855849993b0d247b558
+1d2d16c9683ce2fe2cac7afebf46bd
+f936154d7673c1b6dadc399819ee0d
+1cded041950372025663ef61', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/b5f0abfa4a77
+381a38088a2c73f0c5a5220f45ada5
+dd1e522a0216634dbbe0f48df32c32
+6fcf3f5620d5cea3b6dcc886f3e7ce
+8391032ea2878056eec49071', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/b6a08d8f6189
+e0c971affeddb46c1c25caf581b346
+d2401661212d22c9c7769eba6afe0c
+f17bbf59d16df79a3def7112e6af2a
+62160b0b131d931c78ab8cf3', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/ba969b52bf7e
+7506fc41a31ecaef264cf13af6f600
+010336993e83282dacccda2b0d0f98
+7c2997efcc23c592c5058946943b71
+9ca4d8857267d52344d99c82', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/c12a9c3a6c6a
+20cb3244485f4e2cfd6d8604720b14
+6cf46772ddf15c4833d933aaec6f51
+0c750186d857f891f41f23146e6ffe
+cc1daf2183d714b62c68688c', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/c158f6333afc
+9df6fc7edd5b3c5c5177e799420485
+0bd9aa8164f61f9971d8a8e2c74865
+c47f0b76d11e61c029e51e8e2a8000
+d9a1a56a3bbf90a26275926d', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/c5b4ec278346
+4d10419aaf5b816d6c86834293b962
+0794404aacc024c4642d3feaa4d26d
+2e1840a00334144f8d630bebf02f2b
+2deee1b5701ea93a33747279', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/c5f09e84ef0e
+039e8cb6c33255aabdeb68110d8f44
+dc24f289afdd6ff54d188ac05ca163
+dfc9e31b44fcdda3df3a92d361ec2e
+4021b22e6793bbc9971eded0', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/c85095fe353d
+89874c4e5c9a8bff32bac4df471e02
+98726ac21e3f5d124e8d511000a6d9
+ce2c986d9c7e1f26bd10544d2c76e7
+8f9873134934f2434461cef6', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/ca46981bbd51
+c0ba2682cd7cd35ea9038a6cf8839a
+6ec6c4af3ba3792511c3371f54cce2
+f5bb0120bc9087ce3037cba569f600
+6329cde6a0c1c711524617e7', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/d2cd552a11f0
+9a325af9b0c8c33351996225d3cfeb
+68c55e3608a42b1c3511ea269bd292
+63dc617a5af1a02feae5de6c88fc0e
+2cf4866286ee5bdb7f7bf8ea', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/d4bca0f0ac0b
+b81d7e8b1046d03d1d30497f719259
+8b250d23efba252a88ab8ee311be01
+77af3c301456b703f8ff3007c76186
+2795391649f37906ac5974fc', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/d5206b9e60f2
+60faa7a7ac6bbdbf4f5dcd72521f98
+59ab0d5dc85641af552c9b476dd772
+87ce1255308065421d8bb6e6a00a61
+751a36d76c6e97392d860aa8', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/d5f44b590349
+f42ec123ab2961dc2ef33ee63f904f
+417a8ecde81a8c5b10ad26806696b4
+9e883a48c0998a96f73d33e722764b
+aab152482b7be1d7f374f291', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/d6fe0a03dff5
+6eb4f8744d15a1242b919011416cd0
+bda83cf570b9914a2c9cf787b7c19d
+1f4d46c5311750d1efec295a5a0c12
+c087e2fdf6a9cfb7cd4f2ef9', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/dc07e10ce38f
+3eb24ef415357dcc333fff32db9d11
+1446718f961d456e6b3ad11091b668
+8693016fa521899fabd2a890892b49
+65cef71a257258033976f0fb', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/eba1c4f2a41a
+d402a6faef14948dd62c18467f3c6d
+a0c2561ad9ea1a01f6896838734602
+bf0eb386f05fe9a497d8602ef98a56
+9c4df1a438aa6de1451f590f', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/ec6731435398
+9306eb143d7b8d1da050f66bbbb5b9
+830da5d6b88465d2c37821ddf31b36
+d18e7c81df6d5099bc0f06bf9e6e09
+6e6ce623c993cc883d900ef1', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/eda8564ea731
+c4c33d71e9b40e7fe0750203890188
+e743b1e1946b1d210ac7c69054fef0
+af077505dc9fdc3eec2fae2ef35fd0
+1bdb42ebfce2ca704de72ff7', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/ee4d0b59cef0
+1eafa54d844b195748b76ead9d7ac4
+885a01521cf3514955f725d31f2357
+207cf16e85972b91149561759674b8
+676b2106b1b409f2271e1398', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/ef1a1afa6998
+fd88d360bcf78bca04a0c7b7faaffd
+89b92118ddfe1a22268eb597e29fd9
+277b59c5a571556e5ef7d0603f4338
+3a09ab29d58c8c3bee435da0', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/f4b14fbd3d84
+efead48939e7e0d5bbb7ee7a6dcdb7
+5f646a813aa1701032303ec22895d1
+89b851bbf81e1ddad6d77f86870187
+2c47b44192ae37296c26330d', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/f87359834ddd
+01335fe0e9a09b86df0f6362ab25ee
+5bc812f23dd4c0d099c991946d19c2
+a38ef787cc312a9fc531ced7b2a6c0
+fcd7f727a481865125aa5ea8', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/fc68fba34305
+0682e78d63876731b187b426ce6b12
+725998bebd9f036a29737e3faaa396
+1a459478ccd5cfb0243ebcab88041b
+c40a95104e6d410374306ea0', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/01/ffdc6424d26c
+f11d46184fc7f547dd3198cf5e506d
+801a0aae734d05e51d7afc014f69ec
+84cdbb95293a0be3cc43ac03a548a5
+99bcf77d7e246aec04874881', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/02/00a6bd3f88ec
+6de7f2a99fceb35b37f38be8fe84ae
+305280405745c99453032372bc6365
+6dc63fd6837dddc4b39a7837ae6390
+d7f2ed3c8cbb0a3448bf47bd', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/02/01c0ac9148eb
+c1fc7bb703913ab5caa053060fc935
+3091fd6ae674d71d3dec3248e98760
+1f086b3ef5b7692e5aff5227855bd9
+c2bd6c4ddd30195b05accca3', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/02/09a5dab96696
+76c23ad216d9dfec5c09a8d46d6410
+66e2c2973bf7211eab3e9c43365601
+dc029f5ea892a74d3b2d52efbbe7a8
+659b5a47c9fa3149229cf30c', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/02/1015191dd0b7
+9607aaca67c5874b55293ea421ee53
+3e18f2593bc2b5cb5c092b55fd4e43
+0f65adf72dc97ddf02426d6e2498bf
+962823471a5e3b9ba54d5031', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/02/105dcdab962e
+841f6f2cbe51140081d2693af92a0a
+f0b60500a2368b58c6bef9df4050c4
+62ed43313a3e92a58549dbf7f790b9
+f2c3b905bb574ea4678f8ccf', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/02/11603186e414
+f8d48b6836959027c497c6bae3688e
+6e92e9cef31e0e6d3ab211d07ac87f
+a7c36a8545d92d19d3b255050f0f18
+101363604396ae7c907666da', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/02/11e8d293f5de
+741049afb898d2d934df1ce43fadef
+507912938f1a638c452d0d16ed967c
+86940f2d750d20b392a7ebf309dc73
+bb868f01c3a0068336302439', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/02/136ce124e518
+d95550fe00b7277c022270da8c586b
+c3dfa411f78b665eab84ba9b35e050
+b591dc054321c79c0e43bf246a92ce
+6af0f89f81520ab92ac64a77', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/02/14a2c0c3097b
+b35c509f3a1c99f2b74089ea81d568
+71d0e7d6013d7c5321e02e97a36db3
+b37ebe8d4168af8218c638f78ba85d
+6c3e9604e689b1e9e077ce09', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/02/182b468e697c
+1a1795a32c5310e92116a9bba72c38
+c6b085c45281e2bc7f8f6f2d23af68
+ff125b845f59ccc86bf57624295e19
+5330c83aa51f03e1139f08bc', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/02/1a57fe1b8c9d
+5d1ac39d12cc7004e8e698538eaa0f
+72f394e232423e9c22b0cdfcd8b087
+213f5e7c0d60c990b4c3ff3f9ce816
+9ff3875be918ce862f6ecc22', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/02/1b6d1b4651eb
+19bd804623cc02d54dc46009f1e8e9
+1af249e87741b3124610f5ab5c44d3
+fe4a4438b0ab59f21cc090749b07a9
+d6670f259c772e616fc08fa3', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/02/1d90efb09f00
+a9fa3219448d44a4288ce1294f0438
+b420e173c626815f2ce28bef06f898
+3ee7be1969cd9ae5a177dc714c493e
+fa7d08643f1b0299154586db', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/02/1e8f311ebec2
+beda495fb0ebf032e4dbe3009bce9f
+937f69bdb91e06d3de1d7bf217ef9c
+3fe7870ab0b67e5257e0bb0087847b
+bd2947d2d1fec7c194ccb25f', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/02/1ed1461cda5f
+afe8db65e39c87434d166152a4d9ce
+4817ccfde05860cea2530b77d5c3e7
+f4de8bca3a8d5a0e446cd6c2a3ba1d
+9ba1a677d0b7c41648166bf5', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/02/2135d90da7ec
+831744a8bf0469ce2dedaf025ddc70
+fb95547e9b796c937a211f837718a7
+115457d3ec1f789519fec3f909b958
+9d501c004007746c493ded01', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/02/2446e81ecc92
+0863775a5b197fa94a2a2f146c41d2
+204dea98a71b206f2e53b6cb299a8b
+023ed437f7126c8a5bb7f1042a4168
+0adac2259cca8cb21c447bea', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/02/262edb5d6b90
+dd7df77fc44e4e0972334ada56f560
+218b24938fa36c0b51a47ed7cbf7a5
+c5fcccb3064f143891023ecd07d78a
+c57e40d97cadbff893dcafc0', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/02/29aea75c6c0c
+82bea77104e1697d659d3db48947f4
+12aa582a01b5d1512f87012e26de05
+5ea0840134284624983c8dfb547503
+3f920c057ae74e0be69019f6', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/02/2ddff0a37799
+a636c57c393e03cda0f516f6037f21
+a156b9ba39be4444a18c172d2c2228
+819caef3c402cac02fdea820d94ef3
+8f7ddc0c406632da1990e6b7', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/02/2de8a3824d58
+8fb2fbc56a73dfc7b9cc15b1a50d2f
+51ff85c4869442ec9efe0692b3edc0
+a52a20d9cfc5cee17c2c4d2465d297
+4c994d1ea2a594cd4a37c3da', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/02/2f1e8183d04c
+09aab62aec9d1a1e3ce42def8fe6a9
+ed09669ebafcfeb4517e94128390e0
+5eaf566938998c71dcf7046a4b9551
+799961c520e0514630ca3aa6', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/02/2f9510d93de0
+1660b71f9b53e55c66b7b45c9d9c70
+8cba67cab824bc1e274e749a87bd12
+8607da56701a7743f16a434c4e3f4f
+94290765700984919fe0ce14', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/02/30859554fe77
+2f7b157695d0d045b95f391a27cdf6
+869fa614728ded2c9a7a2e99affd99
+66f78a4f142af2fc6e518892d5a9f3
+ee978ee1d37ee34b20450bc3', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/02/313057367995
+04af35342fd3aa0326cb46dfa2fd5e
+bde4794a01edc4ddcc0afd190d4dee
+8c52415eb065fc900fb862bcc93e2a
+0e878a785ce6cc8bf61a2d00', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/02/34b963552a26
+1df2a5eab7f8c9d6b135b81f66c52e
+8d8503fc0f14571dc5533d5e1efe97
+1541d674a8b8fbbc44e243db3f60d8
+faa4a55521460d53820f59c1', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/02/376915ca52fb
+eab8bbb2efe15fd5721a460600b16c
+76555971c6a2d16ff6a8b957166fb2
+5b8a7ddab56e307a5001954fab015f
+889cd6f2f0b6b65e4de74d16', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/02/38e098ae612a
+1cb51fd07c783c66c6a86b9ba6bdce
+0b513567e162e36e0589dd03361c42
+50f93282d4156281d3480c26f728e7
+81221ca50c3df851fc9018ee', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/02/392dbfa97719
+6ca524c120421ddc8f65b4ede248f1
+8480d37a125c0aea9ff3b09c000c85
+cb70d4253045170f8d587f47fe4093
+3a4a50710b71833a6e0e3d5d', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/02/3a153bab29da
+cbe48b913fdcef690dba14ed89e2b9
+8e45b9898ac28c5439eff3924b5f55
+1411dc6b896ff17f7eafd9f42d1cda
+cb751df3ccccdd539cc986b8', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/02/3ea8bde7e75e
+9c3d0ed8f62139ce1d54159e8f6837
+9e7b0689bda5fd15ec34bda88e5fbf
+ac36a4a45f60519c09ed5179d4b1de
+9556dc18cfa4d7a2c02a4cf2', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/02/417f1f0e3f2f
+2c927d4a6f0daf1500adb9d3c7bf04
+3ea056ec1163b327b42b7a0715d94d
+5c1e255e7c03da57755f239f8fedef
+d46a1fbd8bb36afe334f1641', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/02/50a599f4a389
+d0a35c0a09f2ab08fa478034408b62
+d54087f0b75b6d419abbdbf091b73a
+647a5a268750603c3e3691835de060
+3e26a1743da7eeba6f8e2920', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/02/511700ea71c5
+c8f977b8a5399e9232c070007210e9
+b89c2bb00cd489c795ac3013073c40
+15428a0f1b5db8f5053ca1b528afcf
+1df32c27c4dd173b4681db95', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/02/532554f1f23f
+ae454cb4417e5d8e376ba0e081efaf
+916867556e165fc732c244219127f4
+e22e5e5ce7bcece5e0618f01ac3ed8
+bfe2f604671155555a9cd0ae', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/02/5fd3b6b7b3b6
+81d55b03b0da530c59f3c29e574957
+224a0e52a00a61df08273568a3eb70
+2291cf3245a1adf5b44f16d7347b83
+9228642bb78d053c9ae501c0', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/02/6319b1a4916f
+989b15a2ffb6252f85443888e98fba
+be40422216e5b2a1732020fb3d1cdb
+35cf39a20f947479419d4b8796ca1a
+5f29682f672ae5135ed73853', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/02/675d700bec71
+166eeb26d876c368608e0bf3320db6
+9753716e2a22c80e688caacb13e9e7
+fc44d69cc299ba389b81bc396a5018
+98ec16d2704cf3efbd7edc73', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/02/696c8abca85b
+d0a41ab64e2c6dd061aff505b3b245
+2968729892940d74aa210b95fb802e
+e622c7e549bd43f721a8e5ff84ed52
+3de2d33b71bdaee49e881218', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/02/69d1b0ccc579
+02399daece40f08900726504a57329
+ed7bd7e1189330687590a762cf49bc
+b4e5bf70c7f49da58c1695a076cff5
+bff8d85a89c409de3b383e81', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/02/6a7e2fc73f24
+ce4590139b46dca9fdf8d71b2299a7
+a91fd04629c650d8f111b065a49fe9
+47f3fe60fce3f589f3fd77262c3c7f
+2f056bd0684ee570a370f45e', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/02/6de8501da5bd
+628e0658457355fc9a220f47a2c845
+fd2038ce542e14f48246d9e440fdee
+282b1c8ef848aa9b7b4a0b74c48a97
+810db92ee6297a9aba73319b', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/02/703b998f8645
+fe56e8ab69ca7c8a5b06ade2ad4451
+8ea4f86396e7fba358f5859c246057
+175711edc741c08baf73cec8d6cbbf
+2450637316facec8e005b205', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/02/761e1ff31f4f
+cfb54b128b8aeb9d52ce8a3da1fae7
+562941efd3a5da3e65de0524cebabb
+0db9ae023b56ee395798a41cf090c7
+d38ca47512ce18b098ab1500', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/02/779cc72a8f6e
+35a31d187c6885b7b831e922dd80df
+9b11c5cb5f2b0989d96682b05d461b
+21af763a0ecaf65eae74c234a44a77
+481e26dd9bb970de1389e631', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/02/78cc20783b1c
+3df9af3e5c8c8140b548b700d7d00c
+abbb8f48027f85e7e7f60c5effe881
+860894aadc3cafcbfb7b4b29d76cc3
+27af81e912896d6d115bd7ec', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/02/79dd6b1f2fce
+e024143de0544e30483d0e15daea0d
+adb62057da97f1bdce2ff0f0b708b8
+6371ba467b3ddc284961954f4f79fd
+dcea2ed4793fcbf446e970ba', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/02/7d3c0f2daa63
+9538fb1edcba04dbbcc50c86bb533e
+0bf99ca09a66ed06cfe6680d64a998
+95689aa83095a9334b5cd2f769cf65
+a4ea55172cadac48beae28ec', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/02/7f2cb464048a
+972fb1382c7ee0f8839073e36af97f
+581af783f0ef11bd5c22d672ccaba4
+ecfad1fd4964a79a23206ce08ec851
+0f38217daf31d0f431030302', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/02/7f9835b04462
+56907ab413aa5ee795704a3561a763
+1f7e05a17fc632b5d40ae7216acac3
+f560ba19ad3458c3812e0b78534ddb
+aaf22a10a51b13c3f732ab99', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/02/838e531a7494
+bf2ae7adf465723ee0c80a918a2fde
+9e5c3ba7190f091dfb3baedcdd87ea
+85cb86df20780a2a837dcc2d096cdc
+866ec2e4cce654dd2cde5a89', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/02/88fdb96187fe
+ad29a6f4bbabd3e83d701f5ea16092
+0ee9008e69fab181dd375de9af4759
+b702058fd362f02a922d5e5622f572
+21d9f762346a695c02bc3777', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/02/8a0f4a817658
+27feb2a5ccb5b205af71f476dcf192
+dd555b968ccc1d74721dbd98e3d2cc
+257164f71cd7d1afb190f475933d5f
+a049a4ba2883c1b1e9100806', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/02/8bdf0053eee9
+8f19c701a7b3b8d7918c5f30ca0cf2
+199c58945f7e0bbbb4a631e2cbdabe
+39ba181b2a6628e232817efd4e4941
+6fd7b702ee283098b6e8b45c', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/02/8c33d60f2474
+2a9fd5a839c1686c68f72772ead160
+7d9a036118730800cd537ddfc67d42
+4a6e50b5fffd468e10260d3c463e1c
+af79d0132764cea8941fe856', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/02/8c9f64aa5bed
+225135068c7689b10aed7245c5a1ae
+f6c4c67f7d8d084562bfb991493354
+cb058839bc26696350eddc84e17d84
+2badeea7df5d2881647967dc', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/02/9713015b472e
+96ac5f4945ed1f0be95521637c1bae
+619786d0fab5339213fc8cf3141e61
+855a4f9d460a0c90132e7c3bd17fa4
+2e16e33a746b1cd4fdd63996', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/02/97a04f56ad47
+47a9307475694ec88cb722671c2b61
+1827d81eee21ffe687d186ea9a8b3e
+3c10b947bb82bfd9d7300d876248ab
+48b3a3ed976925606e96d08a', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/02/98a3843d9f7d
+5eb0e8343a3ee501ecd99e634beb67
+fb740ae39fb90f1d2e0a2a3eee460a
+761d99f00a5ccbade52a4cdef6b382
+36fa9689c7905d04117adb29', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/02/99988bb5f744
+782f3f0cc2d29b6d867a7613ca3c99
+4fa3306306a0b87191b11e3e145c43
+9783ea2d8f7695f0a12f20b1edc955
+3c36f1449193a1a7a3bd36af', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/02/9e08ad987d5a
+2306ee1c5e12d6338e44054ca55fe0
+4d36a2393bafd2f1eadad3cdf40717
+b29b3f679a787f7e0653a71a89032a
+fa986bbbd7b77c6921cad84b', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/02/a02e8e4e4aa7
+1aaff167a6708eac91b12d36cc6804
+7b9d11e671a1969a072424961e40f8
+e69abd5bc6189c6568ee66cc3606ee
+356f4067ec4bb43d1cbe539b', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/02/a73f3f937858
+3e7148611982ec60cc23498bd624c4
+6b30aa96063ad0c2705f0a135553b4
+81380cdc3e38e5813689aa7aba8f6f
+88bb7bf92da47e65be2b40c6', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/02/ab6df7a75c72
+0c93c83dfc260c70c6b5d9e3f90429
+b9f56a17ccb36d9edf0211092ea2f6
+f83feee9a910db00007dc849cfa2f8
+f0398eafe7f0efce29bb2f07', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/02/ad83f11332a2
+81c4dcd0c45747f83155fd08af258e
+3820d95cc4c18f988dc60e1c363e29
+6063be26f03cdce2a2ec951f5b02f1
+8f5f6e62f9df589f7f0b9214', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/02/afd885ca33d6
+2da71b4eaa4f84cf8b449e8aae3a13
+4dca56995d2e37072f93be79a06de5
+024375f5eeeaa2f12b292b01ad200e
+8d72f0c9e5d0826cadf2ccbb', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/02/b450e1fb1669
+7242a5f067e6888498f6a2b2b122be
+06f0bcd05de8b1bde21d272f724029
+ccb5c0508212706c02289e7edb5d14
+170b7f404eda78b4fefd53fa', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/02/b5755e51a20c
+fe3585158de91952e1271051b252be
+489dbd6fb62d370ea5411e41fe0289
+6ce59b101b574c9cbee9d3bdc98cd9
+8a0ea2e402a022761a434d22', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/02/b643283398fe
+331e9a3980ff7bf2f67d45dfd0aaab
+140a400dec656878525043c6f2f987
+ae13e84ae98008e6354a4796128611
+51a4f6a41d48bce1642d8db8', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/02/b9cef2909750
+3e430d3fe6259ae1797f8a01212292
+a89239b5b79cbc4bf635d653c82959
+84bea365c9c56d5ddfa49ca9e29784
+05836fa190e4c680acda8a7f', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/02/bc11a64a8229
+3283bc013cafbf06b78418f91b6665
+e6e40ad8c96eca147fe39d9e0d2cb1
+3f5ae9c20d3846493d5d0cebfcc40c
+8844ae0ef24a06d65c11efc5', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/02/bcee5b464b30
+61f6e38acbc38a60a2b7e15b70e2bf
+adf0304d728bdadad4352616074c05
+2a40b98376abe97ab9f20423bb4866
+11e4ec8b01e4b6aeb1ae7069', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/02/bfe89320c96a
+a5439b852a36991c8499b4b9ae6e6e
+fdce847fbde926d2d3ef59223f0f13
+67da8bb09df38a874124ab4b71af3f
+d63483055f218afabe30f211', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/02/c07075d6025a
+513c2d0a70bc101f56c767207b561d
+3fa911efd5f97a11f883ccb8c2d9c9
+49b6c3f4a33e2d5b7c5c760942a12c
+5940061fc77d995fac92aa64', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/02/c1028f3d7b1b
+f5985e0d211521f7a632f8f59f042c
+b59b4ca180f899ef37db1554f41d21
+d4565a156fdcf803b564246ecfa311
+e3c1f4c10ff679ae39fedc37', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+warning: in the working copy o
+f 'reference/benchmarks/Lesson
+-Navigator/.local/share/pnpm/s
+tore/v10/files/02/c71f46ad9d06
+58b4614e2cf859ed3ac6081b1a8732
+4efabfb9e8a79f25474514075d5e09
+adc9366e2b8866531774a4432e8a5f
+c2592a12ef941162b7374938', LF 
+will be replaced by CRLF the n
+ext time Git touches it
+error: open("reference/benchma
+rks/Lesson-Navigator/.local/sh
+are/pnpm/store/v10/files/02/c7
+c26c9a19965960b6bb1ee8a6b3b9f0
+4a0faf5214a02ebf8a15d315ae1589
+14543b612c8a934a117cfa8f46beef
+08c47112fd5e3f9496546433fac6fd
+4ff6-exec"): Filename too long
+error: unable to index file 'r
+eference/benchmarks/Lesson-Nav
+igator/.local/share/pnpm/store
+/v10/files/02/c7c26c9a19965960
+b6bb1ee8a6b3b9f04a0faf5214a02e
+bf8a15d315ae158914543b612c8a93
+4a117cfa8f46beef08c47112fd5e3f
+9496546433fac6fd4ff6-exec'
+fatal: adding files failed

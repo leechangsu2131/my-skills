@@ -149,4 +149,4 @@ python auto_planner.py --mode fill-blanks --start-date 2026-03-02
 
 ## 참고 문서
 
-- [bridge-sheet-design.md](C:/Users/user/.gemini/antigravity/scratch/repos/my-skills/skills/teacher-schedule/docs/bridge-sheet-design.md)
+- [bridge-sheet-design.md](C:/Users/user/.gemini/antigravity/scratch/repos/my-skills/skills/teacherlesson-schedule/docs/bridge-sheet-design.md)

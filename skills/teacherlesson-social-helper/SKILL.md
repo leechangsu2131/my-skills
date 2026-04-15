@@ -18,7 +18,7 @@ tags: ["education", "social-studies", "douclass", "selenium", "classroom-managem
 
 ## Setup
 
-1. `skills/social-class-helper/.env.example`를 복사해 `skills/social-class-helper/.env`를 만듭니다.
+1. `skills/teacherlesson-social-helper/.env.example`를 복사해 `skills/teacherlesson-social-helper/.env`를 만듭니다.
 2. `SOCIAL_CLASS_BASE_URL`에 사회 교과서 차시 첫 화면 URL을 넣습니다.
 3. 지도서 PDF가 있다면 `SOCIAL_CLASS_GUIDE_PDF`에 경로를 넣습니다.
 4. 필요하면 `SOCIAL_CLASS_RESOURCE_KEYWORDS`를 수정해 열고 싶은 버튼 이름에 맞춥니다.
@@ -29,20 +29,20 @@ tags: ["education", "social-studies", "douclass", "selenium", "classroom-managem
 대화형 메뉴:
 
 ```bash
-cd skills/social-class-helper
+cd skills/teacherlesson-social-helper
 python social_class_helper.py menu
 ```
 
 바로 실행:
 
 ```bash
-python skills/social-class-helper/social_class_helper.py run "1단원" "1~2차시" --save "3학년 1단원 첫 수업"
+python skills/teacherlesson-social-helper/social_class_helper.py run "1단원" "1~2차시" --save "3학년 1단원 첫 수업"
 ```
 
 저장된 수업 실행:
 
 ```bash
-python skills/social-class-helper/social_class_helper.py saved run "3학년 1단원 첫 수업"
+python skills/teacherlesson-social-helper/social_class_helper.py saved run "3학년 1단원 첫 수업"
 ```
 
 ## What It Stores

@@ -1,0 +1,30 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ExternalAnalysis",
+  "description": "외부 LLM이 제공하는 오답 분석 파일 형식",
+  "type": "object",
+  "required": ["analyses"],
+  "properties": {
+    "student_name": { "type": ["string", "null"] },
+    "analyst": { "type": ["string", "null"], "description": "분석한 LLM/도구 이름" },
+    "analyses": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["q_num", "analysis"],
+        "properties": {
+          "q_num": { "type": "integer", "description": "문제 번호" },
+          "analysis": { "type": "string", "description": "틀린 이유 분석 텍스트" },
+          "category": {
+            "type": ["string", "null"],
+            "description": "오류 유형 (예: 계산실수, 개념오류, 문제이해오류)"
+          },
+          "suggestion": {
+            "type": ["string", "null"],
+            "description": "개선 제안"
+          }
+        }
+      }
+    }
+  }
+}

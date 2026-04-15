@@ -1,0 +1,6 @@
+data/input/
+data/extracted/
+data/graded/
+data/output/
+__pycache__/
+*.pyc

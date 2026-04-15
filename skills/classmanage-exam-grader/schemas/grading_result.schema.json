@@ -1,0 +1,34 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "GradingResult",
+  "description": "채점 결과",
+  "type": "object",
+  "required": ["student_name", "total_score", "total_points", "details"],
+  "properties": {
+    "student_name": { "type": "string" },
+    "student_number": { "type": ["integer", "null"] },
+    "exam_title": { "type": ["string", "null"] },
+    "total_score": { "type": "number", "description": "획득 점수" },
+    "total_points": { "type": "number", "description": "총 배점" },
+    "correct_count": { "type": "integer" },
+    "wrong_count": { "type": "integer" },
+    "review_count": { "type": "integer", "description": "수동 채점 필요 수" },
+    "accuracy": { "type": "number", "description": "정답률 (%)" },
+    "details": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["q_num", "correct", "student_answer", "correct_answer", "points_earned"],
+        "properties": {
+          "q_num": { "type": "integer" },
+          "correct": { "type": ["boolean", "null"], "description": "null = needs_review" },
+          "student_answer": { "type": "string" },
+          "correct_answer": { "type": "string" },
+          "points_earned": { "type": "number" },
+          "points_possible": { "type": "number" },
+          "analysis": { "type": ["string", "null"], "description": "오답 분석 (병합 시)" }
+        }
+      }
+    }
+  }
+}

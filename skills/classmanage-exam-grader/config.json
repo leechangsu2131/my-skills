@@ -1,0 +1,31 @@
+{
+  "gemini_model": "gemini-2.5-flash",
+  "gemini_cli_path": "gemini",
+  "output_format": "json",
+  "annotation": {
+    "correct_mark": "⭕",
+    "wrong_mark": "❌",
+    "needs_review_mark": "❓",
+    "font_name": "helv",
+    "font_size": 10,
+    "summary_font_size": 12,
+    "title_font_size": 16,
+    "add_summary_page": true,
+    "correct_color": [0, 0.6, 0],
+    "wrong_color": [0.8, 0, 0],
+    "info_color": [0, 0, 0.6]
+  },
+  "grading": {
+    "case_sensitive": false,
+    "strip_whitespace": true,
+    "normalize_numbers": true,
+    "descriptive_auto_grade": false
+  },
+  "paths": {
+    "input_students": "data/input/students",
+    "input_answer_key": "data/input/answer_key",
+    "extracted": "data/extracted",
+    "graded": "data/graded",
+    "output": "data/output"
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "AnswerKey",
+  "description": "시험 답안지 (정답 및 배점)",
+  "type": "object",
+  "required": ["questions"],
+  "properties": {
+    "exam_title": { "type": ["string", "null"], "description": "시험 제목" },
+    "total_points": { "type": "integer", "description": "총 배점" },
+    "questions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["q_num", "answer", "points"],
+        "properties": {
+          "q_num": { "type": "integer", "description": "문제 번호" },
+          "type": {
+            "type": "string",
+            "enum": ["multiple_choice", "short_answer", "descriptive"],
+            "description": "문제 유형"
+          },
+          "answer": { "type": "string", "description": "정답" },
+          "alt_answers": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "대체 정답 목록 (예: '24', '24cm' 둘 다 허용)"
+          },
+          "points": { "type": "number", "description": "배점" },
+          "rubric": { "type": ["string", "null"], "description": "서술형 채점 기준" }
+        }
+      }
+    }
+  }
+}

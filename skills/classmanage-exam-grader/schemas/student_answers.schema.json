@@ -1,0 +1,33 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "StudentAnswers",
+  "description": "학생 시험 답안 OCR 결과",
+  "type": "object",
+  "required": ["student_name", "answers"],
+  "properties": {
+    "student_name": { "type": "string", "description": "학생 이름" },
+    "student_number": { "type": ["integer", "null"], "description": "번호 (있으면)" },
+    "exam_title": { "type": ["string", "null"], "description": "시험 제목 (있으면)" },
+    "answers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["q_num", "answer"],
+        "properties": {
+          "q_num": { "type": "integer", "description": "문제 번호" },
+          "type": {
+            "type": "string",
+            "enum": ["multiple_choice", "short_answer", "descriptive", "unknown"],
+            "description": "문제 유형"
+          },
+          "answer": { "type": "string", "description": "학생이 작성한 답" },
+          "confidence": {
+            "type": "string",
+            "enum": ["high", "medium", "low"],
+            "description": "OCR 판독 신뢰도"
+          }
+        }
+      }
+    }
+  }
+}

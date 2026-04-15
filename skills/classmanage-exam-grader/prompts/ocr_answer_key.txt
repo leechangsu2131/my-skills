@@ -1,0 +1,54 @@
+다음은 시험 답안지(정답지) PDF입니다.
+각 문제의 정답, 배점, 문제 유형을 정확하게 추출해 주세요.
+
+## 추출 규칙
+
+1. 모든 문제의 번호, 정답, 배점을 추출합니다.
+2. 대체 정답이 있으면 alt_answers에 포함합니다 (예: "24"와 "24cm" 모두 정답).
+3. 서술형 문제는 채점 기준(rubric)을 추출합니다.
+4. 배점이 명시되지 않은 경우, 모든 문제를 동일 배점으로 가정하여 총점 100점이 되도록 계산합니다.
+5. 시험 제목이 보이면 exam_title에 넣습니다.
+
+## 출력 형식
+
+반드시 아래 JSON 형식으로만 출력하세요. JSON 외의 텍스트는 포함하지 마세요.
+
+```json
+{
+  "exam_title": "시험 제목 또는 null",
+  "total_points": 100,
+  "questions": [
+    {
+      "q_num": 1,
+      "type": "multiple_choice",
+      "answer": "3",
+      "alt_answers": [],
+      "points": 5,
+      "rubric": null
+    },
+    {
+      "q_num": 2,
+      "type": "short_answer",
+      "answer": "24",
+      "alt_answers": ["24cm", "24 cm"],
+      "points": 5,
+      "rubric": null
+    },
+    {
+      "q_num": 3,
+      "type": "descriptive",
+      "answer": "",
+      "alt_answers": [],
+      "points": 10,
+      "rubric": "삼각형 넓이 공식(밑변×높이÷2)을 올바르게 적용하여 답을 구함"
+    }
+  ]
+}
+```
+
+type 값은 다음 중 하나:
+- "multiple_choice": 객관식
+- "short_answer": 단답형
+- "descriptive": 서술형
+
+JSON만 출력하세요.

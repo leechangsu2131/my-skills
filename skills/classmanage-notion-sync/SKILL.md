@@ -15,7 +15,7 @@ description: 노션(Notion) 데이터베이스의 자료를 읽어와서 Supabas
 ## 설정 방법
 
 ### 1. 환경 변수 설정
-`my-skills/skills/notion-to-supabase/.env` 파일을 생성하고 다음 정보를 입력하세요.
+`my-skills/skills/util-notion-to-supabase/.env` 파일을 생성하고 다음 정보를 입력하세요.
 
 ```env
 NOTION_API_KEY=secret_...

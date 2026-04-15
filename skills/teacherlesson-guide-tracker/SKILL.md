@@ -11,7 +11,7 @@ description: 지도서 분할기의 groups.json을 읽어 노션 진도표 DB를
 ## 실행 방법
 
 ```bash
-cd skills/teacher-guide-notion-tracker
+cd skills/teacherlesson-guide-tracker
 pip install -r requirements.txt
 python app.py
 ```

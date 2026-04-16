@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'wouter'
-import { Search, BarChart3, MapPin, RefreshCw, LayoutDashboard, History, Settings, MonitorOff, User } from 'lucide-react'
-import { useAuthStatus, useReloadData, useSpaces } from '@/hooks/useStorageMap'
+import { Search, RefreshCw, LayoutDashboard, MonitorOff, User } from 'lucide-react'
+import { useAuthStatus, useReloadData } from '@/hooks/useStorageMap'
 import { useTheme } from '@/contexts/ThemeContext'
 import type { ReactNode } from 'react'
 
@@ -9,6 +9,8 @@ export default function EnterpriseLayout({ children }: { children: ReactNode }) 
   const { data: auth } = useAuthStatus()
   const reloadMutation = useReloadData()
   const { setTheme } = useTheme()
+  const adminLabel = auth?.mode === 'supabase' ? 'Storage Admin' : 'Preview Mode'
+  const roleLabel = auth?.mode === 'supabase' ? 'Supabase Writable' : 'Sample Read Only'
 
   const navItems = [
     { href: '/', label: 'Search', icon: Search },
@@ -51,8 +53,8 @@ export default function EnterpriseLayout({ children }: { children: ReactNode }) 
               <User className="w-5 h-5" />
             </div>
             <div>
-              <p className="text-xs font-bold text-blue-900">{auth?.authenticated ? 'System Admin' : 'Guest'}</p>
-              <p className="text-[10px] text-slate-500">{auth?.authenticated ? 'Zone Supervisor' : 'Read Only'}</p>
+              <p className="text-xs font-bold text-blue-900">{adminLabel}</p>
+              <p className="text-[10px] text-slate-500">{roleLabel}</p>
             </div>
           </div>
         </div>
@@ -71,7 +73,7 @@ export default function EnterpriseLayout({ children }: { children: ReactNode }) 
               onClick={() => reloadMutation.mutate()}
               disabled={reloadMutation.isPending}
               className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-semibold hover:bg-slate-100 transition-colors ${reloadMutation.isPending ? 'opacity-50' : ''}`}
-              title="Sync Data"
+              title="Sync Supabase Data"
             >
               <RefreshCw className={`w-4 h-4 ${reloadMutation.isPending ? 'animate-spin' : ''}`} />
               <span className="hidden sm:inline">Sync</span>
@@ -86,11 +88,9 @@ export default function EnterpriseLayout({ children }: { children: ReactNode }) 
               <span className="hidden sm:inline">기존 테마 복귀</span>
             </button>
             
-            {!auth?.authenticated && (
-                <a href="/auth/google" className="ml-1 text-xs font-semibold text-blue-600 hover:underline bg-blue-50 px-3 py-1.5 rounded-lg border border-blue-100">
-                  Authenticate Google
-                </a>
-            )}
+            <span className="text-xs font-semibold text-blue-700 bg-blue-50 px-3 py-1.5 rounded-lg border border-blue-100">
+              {auth?.mode === 'supabase' ? 'Supabase Connected' : auth?.configured ? 'Sample Fallback' : 'Config Needed'}
+            </span>
           </div>
         </header>
 

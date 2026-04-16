@@ -4,6 +4,15 @@ import type { Space, Furniture, Item, QualityMetrics } from '../types'
 
 const API = ''
 
+export interface StorageStatus {
+  authenticated: boolean
+  configured: boolean
+  provider: 'supabase'
+  mode: 'supabase' | 'sample'
+  readOnly: boolean
+  lastError?: string | null
+}
+
 async function fetchJSON<T>(url: string): Promise<T> {
   const res = await fetch(`${API}${url}`)
   if (!res.ok) {
@@ -52,7 +61,7 @@ async function deleteJSON<T>(url: string): Promise<T> {
 export function useAuthStatus() {
   return useQuery({
     queryKey: ['auth-status'],
-    queryFn: () => fetchJSON<{ authenticated: boolean }>('/api/auth/status'),
+    queryFn: () => fetchJSON<StorageStatus>('/api/auth/status'),
     staleTime: 60_000,
   })
 }
@@ -208,10 +217,14 @@ export function useDeleteItem() {
 export function useReloadData() {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: () => fetchJSON('/api/data/reload'),
-    onSuccess: () => {
+    mutationFn: () => fetchJSON<{ source: 'supabase' | 'sample'; warning?: string }>('/api/data/reload'),
+    onSuccess: (result) => {
       qc.invalidateQueries()
-      toast.success('Google Sheets 데이터를 새로고침했습니다')
+      toast.success(
+        result.source === 'supabase'
+          ? 'Supabase 데이터를 새로고침했습니다'
+          : '샘플 데이터를 다시 불러왔습니다'
+      )
     },
     onError: (e: Error) => toast.error(e.message),
   })

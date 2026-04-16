@@ -10,6 +10,16 @@ export default function Layout({ children }: { children: ReactNode }) {
   const { data: spaces } = useSpaces()
   const reloadMutation = useReloadData()
   const { setTheme } = useTheme()
+  const statusLabel = auth?.mode === 'supabase'
+    ? 'Supabase 연결'
+    : auth?.configured
+      ? '샘플 모드'
+      : '설정 필요'
+  const statusDot = auth?.mode === 'supabase'
+    ? 'bg-emerald-400'
+    : auth?.configured
+      ? 'bg-amber-400'
+      : 'bg-slate-300'
 
   const navItems = [
     { href: '/', label: '검색', icon: Search },
@@ -80,29 +90,15 @@ export default function Layout({ children }: { children: ReactNode }) {
               onClick={() => reloadMutation.mutate()}
               disabled={reloadMutation.isPending}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-100 transition-all disabled:opacity-50"
-              title="Google Sheets 새로고침"
+              title="Supabase 데이터 새로고침"
             >
               <RefreshCw className={`w-4 h-4 ${reloadMutation.isPending ? 'animate-spin' : ''}`} />
               <span className="hidden sm:inline">새로고침</span>
             </button>
 
             <div className="flex items-center gap-2">
-              <span
-                className={`w-2 h-2 rounded-full ${
-                  auth?.authenticated ? 'bg-emerald-400' : 'bg-slate-300'
-                }`}
-              />
-              <span className="text-xs text-slate-500">
-                {auth?.authenticated ? '인증됨' : '미인증'}
-              </span>
-              {!auth?.authenticated && (
-                <a
-                  href="/auth/google"
-                  className="ml-1 text-xs font-semibold text-violet-600 hover:underline"
-                >
-                  로그인
-                </a>
-              )}
+              <span className={`w-2 h-2 rounded-full ${statusDot}`} />
+              <span className="text-xs text-slate-500">{statusLabel}</span>
             </div>
           </div>
         </div>

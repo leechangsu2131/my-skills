@@ -143,7 +143,7 @@ export function ScheduleManager({
 
                 <div className="action-row">
                     <span className="label-md text-variant">
-                        Supabase 연결 후 활성화됩니다.
+                        이 탭의 교환 기능은 아직 데모 상태입니다.
                     </span>
                 </div>
             </div>
@@ -160,13 +160,11 @@ export function ScheduleManager({
                     <span style={{ fontSize: "1.5rem" }}>💡</span>
                     <div>
                         <p className="title-md" style={{ marginBottom: "var(--sp-2)" }}>
-                            Supabase 연결 안내
+                            현재 동작 상태
                         </p>
                         <p className="body-md text-variant">
-                            현재 데모 데이터로 동작합니다. <code>.env.local</code>에
-                            Supabase URL과 Anon Key를 설정하고,{" "}
-                            <code>supabase/migrations/001_initial_schema.sql</code>을
-                            실행하면 실제 데이터가 연동됩니다.
+                            수업 배치/진도 화면의 완료, 연장, 당겨오기는 Supabase에 실제 저장됩니다.
+                            이 일정 관리 탭의 일부 버튼은 아직 데모 메시지로만 동작합니다.
                         </p>
                     </div>
                 </div>

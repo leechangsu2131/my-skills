@@ -1,5 +1,11 @@
 [
   {
+    "timestamp": "2026-04-17T14:32:08.200866",
+    "action": "pull_subject_flow",
+    "subject": "사회",
+    "details": "bridge_row=103"
+  },
+  {
     "timestamp": "2026-04-06T14:46:28.681114",
     "action": "extend_lesson",
     "subject": "도덕",

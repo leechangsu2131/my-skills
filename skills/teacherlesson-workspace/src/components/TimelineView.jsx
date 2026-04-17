@@ -2,7 +2,7 @@
 
 import { LessonCard } from "./LessonCard";
 
-export function TimelineView({ timeline, onMarkDone }) {
+export function TimelineView({ timeline, onMarkDone, onOpenPdf, onCopyPdfPath }) {
     if (!timeline || timeline.length === 0) {
         return (
             <div className="empty-state">
@@ -85,6 +85,8 @@ export function TimelineView({ timeline, onMarkDone }) {
                                 key={slot.id}
                                 slot={slot}
                                 onMarkDone={onMarkDone}
+                                onOpenPdf={onOpenPdf}
+                                onCopyPdfPath={onCopyPdfPath}
                                 compact
                             />
                         ))}

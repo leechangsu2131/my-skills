@@ -3,6 +3,13 @@
 import { useState, useEffect, useCallback } from "react";
 import { getWeekRange, todayStr } from "@/lib/demoData";
 
+function toLocalDateStr(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+}
+
 /**
  * Supabase 데이터 훅
  * — API 라우트를 통해 실제 DB 데이터를 로드
@@ -30,8 +37,8 @@ export function useSupabaseData({ boardDate, selectedSubject }) {
             const fourWeeksLater = new Date(week.end + "T00:00:00");
             fourWeeksLater.setDate(fourWeeksLater.getDate() + 28);
 
-            const start = fourWeeksAgo.toISOString().slice(0, 10);
-            const end = fourWeeksLater.toISOString().slice(0, 10);
+            const start = toLocalDateStr(fourWeeksAgo);
+            const end = toLocalDateStr(fourWeeksLater);
 
             const slotRes = await fetch(`/api/slots?week_start=${start}&week_end=${end}`);
             if (!slotRes.ok) throw new Error("slots fetch failed");
@@ -82,6 +89,46 @@ export function useSupabaseData({ boardDate, selectedSubject }) {
         }
     }, [slots, usingDemo, fetchData]);
 
+    const adjustPacing = useCallback(async (slotId, pacing) => {
+        if (!['extend', 'pull_next'].includes(pacing)) return;
+        if (usingDemo) return;
+        try {
+            const res = await fetch("/api/slots", {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ id: slotId, pacing }),
+            });
+            if (!res.ok) {
+                const payload = await res.json().catch(() => ({}));
+                throw new Error(payload.error || "slot pacing adjust failed");
+            }
+            await res.json().catch(() => ({}));
+            await fetchData();
+            return true;
+        } catch (e) {
+            console.error("adjustPacing failed:", e);
+            await fetchData();
+            return false;
+        }
+    }, [usingDemo, fetchData]);
+
+    const copyPdfPath = useCallback(async (slot) => {
+        const value = slot?.pdf_path;
+        if (!value) return false;
+        try {
+            await navigator.clipboard.writeText(value);
+            return true;
+        } catch {
+            return false;
+        }
+    }, []);
+
+    const openPdf = useCallback((slot) => {
+        if (!slot?.id) return false;
+        window.open(`/api/pdf/${slot.id}`, "_blank", "noopener,noreferrer");
+        return true;
+    }, []);
+
     // 필터된 슬롯 (과목 필터 적용)
     const filteredSlots = selectedSubject
         ? slots.filter((s) => s.subject === selectedSubject)
@@ -105,6 +152,9 @@ export function useSupabaseData({ boardDate, selectedSubject }) {
         loading,
         usingDemo,
         markDone,
+        adjustPacing,
+        copyPdfPath,
+        openPdf,
         refetch: fetchData,
     };
 }

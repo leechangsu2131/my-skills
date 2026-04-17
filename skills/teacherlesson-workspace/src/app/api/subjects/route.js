@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server';
 // GET /api/subjects
 export async function GET() {
     const { data, error } = await supabase
-        .from('subjects')
+        .from('lesson_subjects')
         .select('id, name, color, sort_order')
         .order('sort_order');
 

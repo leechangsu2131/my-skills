@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useCallback } from "react"; // eslint-disable-line
 import { WeeklyBoard } from "@/components/WeeklyBoard";
+import { MonthlyCalendar } from "@/components/MonthlyCalendar";
 import { TimelineView } from "@/components/TimelineView";
 import { ScheduleManager } from "@/components/ScheduleManager";
 import { LessonCard } from "@/components/LessonCard";
@@ -12,6 +13,13 @@ import {
   formatDateKR,
   getWeekRange,
 } from "@/lib/demoData";
+
+function toLocalDateStr(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
 
 const TAB_CONFIG = {
   placements: {
@@ -52,6 +60,9 @@ export default function Home() {
     loading,
     usingDemo,
     markDone: handleMarkDone,
+    adjustPacing: handleAdjustPacing,
+    copyPdfPath,
+    openPdf,
   } = useSupabaseData({ boardDate, selectedSubject });
 
   const filteredSlots = slots;
@@ -79,11 +90,34 @@ export default function Home() {
     setTimeout(() => setToast(null), 2500);
   }, []);
 
+  const handlePacing = useCallback(async (slotId, pacing) => {
+    const ok = await handleAdjustPacing(slotId, pacing);
+    if (!ok) {
+      showToast("진도 조정에 실패했습니다.");
+      return;
+    }
+    showToast(pacing === "extend" ? "현재 수업을 1차시 연장했습니다." : "다음 차시를 이번 교시에 당겨왔습니다.");
+  }, [handleAdjustPacing, showToast]);
+
+  const handleOpenPdf = useCallback((slot) => {
+    const ok = openPdf(slot);
+    showToast(ok ? "PDF를 새 탭에서 열었습니다." : "열 수 있는 PDF 주소가 없습니다.");
+  }, [openPdf, showToast]);
+
+  const handleCopyPdfPath = useCallback(async (slot) => {
+    const ok = await copyPdfPath(slot);
+    showToast(ok ? "PDF 주소를 복사했습니다." : "복사할 PDF 주소가 없습니다.");
+  }, [copyPdfPath, showToast]);
+
   const handleWeekChange = useCallback(
     (dir) => {
+      if (dir === 0) {
+        setBoardDate(todayStr());
+        return;
+      }
       const d = new Date(boardDate + "T00:00:00");
       d.setDate(d.getDate() + dir * 7);
-      setBoardDate(d.toISOString().slice(0, 10));
+      setBoardDate(toLocalDateStr(d));
     },
     [boardDate]
   );
@@ -223,6 +257,9 @@ export default function Home() {
                       key={slot.id}
                       slot={slot}
                       onMarkDone={handleMarkDone}
+                      onAdjustPacing={handlePacing}
+                      onOpenPdf={handleOpenPdf}
+                      onCopyPdfPath={handleCopyPdfPath}
                     />
                   ))}
                 </div>
@@ -237,7 +274,15 @@ export default function Home() {
                 today={today}
                 onWeekChange={handleWeekChange}
                 onMarkDone={handleMarkDone}
+                onAdjustPacing={handlePacing}
+                onOpenPdf={handleOpenPdf}
+                onCopyPdfPath={handleCopyPdfPath}
               />
+            </section>
+
+            {/* Monthly Calendar */}
+            <section className="section">
+              <MonthlyCalendar slots={slots} boardDate={boardDate} />
             </section>
           </>
         )}
@@ -246,6 +291,8 @@ export default function Home() {
           <TimelineView
             timeline={timeline}
             onMarkDone={handleMarkDone}
+            onOpenPdf={handleOpenPdf}
+            onCopyPdfPath={handleCopyPdfPath}
           />
         )}
 

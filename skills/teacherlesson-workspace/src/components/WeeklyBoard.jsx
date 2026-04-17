@@ -8,7 +8,16 @@ function subjectColor(name) {
     return s ? s.color : "#005bbf";
 }
 
-export function WeeklyBoard({ slots, week, today, onWeekChange, onMarkDone }) {
+export function WeeklyBoard({
+    slots,
+    week,
+    today,
+    onWeekChange,
+    onMarkDone,
+    onAdjustPacing,
+    onOpenPdf,
+    onCopyPdfPath,
+}) {
     const byDate = useMemo(() => groupByDate(slots), [slots]);
     const dayNames = ["월", "화", "수", "목", "금"];
 
@@ -76,8 +85,7 @@ export function WeeklyBoard({ slots, week, today, onWeekChange, onMarkDone }) {
                                     <div
                                         key={slot.id}
                                         className={`day-slot${slot.status === "done" ? " done" : ""}`}
-                                        onClick={() => onMarkDone?.(slot.id)}
-                                        title={`${slot.lesson_number}차시 — ${slot.title}\n클릭으로 완료 토글`}
+                                        title={`${slot.lesson_number}차시 — ${slot.title}`}
                                     >
                                         <div className="day-slot-period">
                                             {slot.slot_period}교시
@@ -89,6 +97,43 @@ export function WeeklyBoard({ slots, week, today, onWeekChange, onMarkDone }) {
                                             {slot.subject}
                                         </div>
                                         <div className="day-slot-title">{slot.title}</div>
+                                        <div className="day-slot-actions">
+                                            <button
+                                                className="btn btn-tertiary btn-sm"
+                                                onClick={() => onAdjustPacing?.(slot.id, "extend")}
+                                                title="현재 수업 1차시 연장"
+                                            >
+                                                연장
+                                            </button>
+                                            <button
+                                                className="btn btn-tertiary btn-sm"
+                                                onClick={() => onAdjustPacing?.(slot.id, "pull_next")}
+                                                title="다음 차시 당겨오기"
+                                            >
+                                                당겨오기
+                                            </button>
+                                            <button
+                                                className="btn btn-done btn-sm"
+                                                onClick={() => onMarkDone?.(slot.id)}
+                                                title="완료 토글"
+                                            >
+                                                완료
+                                            </button>
+                                            <button
+                                                className="btn btn-secondary btn-sm"
+                                                onClick={() => onOpenPdf?.(slot)}
+                                                title="PDF 열기"
+                                            >
+                                                PDF
+                                            </button>
+                                            <button
+                                                className="btn btn-tertiary btn-sm"
+                                                onClick={() => onCopyPdfPath?.(slot)}
+                                                title="PDF 주소 복사"
+                                            >
+                                                주소복사
+                                            </button>
+                                        </div>
                                         {slot.status === "done" && (
                                             <span
                                                 className="status-badge done"

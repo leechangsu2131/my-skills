@@ -7,7 +7,7 @@ function subjectColor(name) {
     return s ? s.color : "#005bbf";
 }
 
-export function LessonCard({ slot, onMarkDone, compact = false }) {
+export function LessonCard({ slot, onMarkDone, onAdjustPacing, onOpenPdf, onCopyPdfPath, compact = false }) {
     const isDone = slot.status === "done";
     const color = subjectColor(slot.subject);
 
@@ -42,6 +42,38 @@ export function LessonCard({ slot, onMarkDone, compact = false }) {
 
                 {/* Actions */}
                 <div className="lesson-card-actions">
+                    {!compact && (
+                        <>
+                            <button
+                                className="btn btn-tertiary btn-sm"
+                                onClick={() => onAdjustPacing?.(slot.id, "extend")}
+                                title="현재 수업 1차시 연장"
+                            >
+                                연장
+                            </button>
+                            <button
+                                className="btn btn-tertiary btn-sm"
+                                onClick={() => onAdjustPacing?.(slot.id, "pull_next")}
+                                title="다음 차시 당겨오기"
+                            >
+                                당겨오기
+                            </button>
+                            <button
+                                className="btn btn-secondary btn-sm"
+                                onClick={() => onOpenPdf?.(slot)}
+                                title="PDF 열기"
+                            >
+                                PDF
+                            </button>
+                            <button
+                                className="btn btn-tertiary btn-sm"
+                                onClick={() => onCopyPdfPath?.(slot)}
+                                title="PDF 주소 복사"
+                            >
+                                주소복사
+                            </button>
+                        </>
+                    )}
                     {isDone ? (
                         <span
                             className="status-badge done"

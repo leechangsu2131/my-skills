@@ -3,10 +3,13 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+import fitz
+
 from analysis_merger import merge_analysis
 from answer_key_parser import load_answer_key_json, parse_answer_key_pdf
 from grader import grade_student, load_config
 from ocr_extractor import extract_answers
+from pdf_annotator import annotate_pdf
 from webapp.schemas import ReviewedSubmission, ReviewItem
 
 
@@ -73,3 +76,52 @@ def build_reviewed_submission(student_answers: dict, answer_key: dict) -> Review
         review_count=merged["review_count"],
         items=items,
     )
+
+
+def finalize_submission_pdf(source_path: Path, payload: ReviewedSubmission, output_path: Path) -> Path:
+    real_source = source_path
+    if real_source.suffix.lower() != ".pdf":
+        real_source = _build_placeholder_source_pdf(
+            output_path.parent.parent / "_generated" / f"{source_path.stem}_source.pdf",
+            payload,
+        )
+
+    graded_payload = {
+        "student_name": payload.student_name,
+        "student_number": payload.student_number,
+        "exam_title": payload.exam_title,
+        "total_score": payload.total_score,
+        "total_points": payload.total_points,
+        "correct_count": payload.correct_count,
+        "wrong_count": payload.wrong_count,
+        "review_count": payload.review_count,
+        "accuracy": round((payload.correct_count / max(payload.correct_count + payload.wrong_count, 1)) * 100, 1),
+        "details": [
+            {
+                "q_num": item.q_num,
+                "correct": item.correct,
+                "student_answer": item.student_answer,
+                "correct_answer": item.correct_answer,
+                "points_earned": item.points_earned,
+                "points_possible": item.points_possible,
+                "analysis": item.feedback_text,
+            }
+            for item in payload.items
+        ],
+    }
+    return annotate_pdf(str(real_source), graded_payload, str(output_path), load_config())
+
+
+def _build_placeholder_source_pdf(path: Path, payload: ReviewedSubmission) -> Path:
+    document = fitz.open()
+    page = document.new_page()
+    page.insert_text((72, 72), f"Student: {payload.student_name}", fontsize=16)
+    page.insert_text((72, 96), f"Score: {payload.total_score}/{payload.total_points}", fontsize=12)
+    y_position = 132
+    for item in payload.items:
+        page.insert_text((72, y_position), f"Q{item.q_num} answer: {item.student_answer or '(blank)'}", fontsize=11)
+        y_position += 18
+    path.parent.mkdir(parents=True, exist_ok=True)
+    document.save(path)
+    document.close()
+    return path

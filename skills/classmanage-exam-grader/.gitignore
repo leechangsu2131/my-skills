@@ -2,5 +2,6 @@ data/input/
 data/extracted/
 data/graded/
 data/output/
+.worktrees/
 __pycache__/
 *.pyc

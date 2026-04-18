@@ -44,6 +44,14 @@ def create_app(workspace: str | Path | None = None) -> FastAPI:
         student_files: list[UploadFile] = File(...),
     ):
         valid_student_files = [upload for upload in student_files if _normalize_upload_name(upload)]
+        if not valid_student_files:
+            return TEMPLATES.TemplateResponse(
+                request,
+                "index.html",
+                _build_index_context(request, store, error_message="Student exam files are required."),
+                status_code=400,
+            )
+
         title = Path(_normalize_upload_name(answer_key) or "answer_key").stem
         batch = store.create_batch(title)
         batch_folder = Path(batch.folder)
@@ -54,29 +62,47 @@ def create_app(workspace: str | Path | None = None) -> FastAPI:
 
         answer_key_path = inputs_dir / (_normalize_upload_name(answer_key) or "answer_key.json")
         answer_key_path.write_bytes(await answer_key.read())
-        parsed_answer_key = parse_answer_key_file(answer_key_path)
+        try:
+            parsed_answer_key = parse_answer_key_file(answer_key_path)
 
-        if parsed_answer_key.get("exam_title"):
-            store.update_batch_title(batch.id, parsed_answer_key["exam_title"])
+            if parsed_answer_key.get("exam_title"):
+                store.update_batch_title(batch.id, parsed_answer_key["exam_title"])
 
-        for index, upload in enumerate(valid_student_files, start=1):
-            fallback_name = f"student-{index}{Path(upload.filename or '').suffix or '.json'}"
-            student_path = inputs_dir / (_normalize_upload_name(upload) or fallback_name)
-            student_path.write_bytes(await upload.read())
-            parsed_student = parse_student_file(student_path)
-            reviewed = build_reviewed_submission(parsed_student, parsed_answer_key)
-            payload_path = reviewed_dir / f"{student_path.stem}_reviewed.json"
-            store.save_payload(payload_path, reviewed.model_dump(mode="json"))
-            store.add_submission(
-                batch_id=batch.id,
-                student_name=reviewed.student_name,
-                student_number=reviewed.student_number,
-                status="needs_review" if reviewed.review_count else "approved",
-                total_score=reviewed.total_score,
-                total_points=reviewed.total_points,
-                review_count=reviewed.review_count,
-                payload_path=payload_path,
-                source_pdf_path=student_path,
+            for index, upload in enumerate(valid_student_files, start=1):
+                fallback_name = f"student-{index}{Path(upload.filename or '').suffix or '.json'}"
+                student_path = inputs_dir / (_normalize_upload_name(upload) or fallback_name)
+                student_path.write_bytes(await upload.read())
+                parsed_student = parse_student_file(student_path)
+                reviewed = build_reviewed_submission(parsed_student, parsed_answer_key)
+                payload_path = reviewed_dir / f"{student_path.stem}_reviewed.json"
+                store.save_payload(payload_path, reviewed.model_dump(mode="json"))
+                store.add_submission(
+                    batch_id=batch.id,
+                    student_name=reviewed.student_name,
+                    student_number=reviewed.student_number,
+                    status="needs_review" if reviewed.review_count else "approved",
+                    total_score=reviewed.total_score,
+                    total_points=reviewed.total_points,
+                    review_count=reviewed.review_count,
+                    payload_path=payload_path,
+                    source_pdf_path=student_path,
+                )
+        except Exception as exc:
+            error_message = str(exc).strip() or exc.__class__.__name__
+            store.update_batch_status(batch.id, "failed")
+            _write_batch_error(batch_folder, error_message)
+            failed_batch = store.get_batch(batch.id)
+            submissions = store.list_submissions(batch.id)
+            return TEMPLATES.TemplateResponse(
+                request,
+                "batch_detail.html",
+                {
+                    "request": request,
+                    "batch": _build_batch_view(store, failed_batch),
+                    "submissions": [_build_submission_view(submission) for submission in submissions],
+                    "error_message": error_message,
+                },
+                status_code=200,
             )
 
         return RedirectResponse(url=f"/batches/{batch.id}", status_code=303)
@@ -92,7 +118,7 @@ def create_app(workspace: str | Path | None = None) -> FastAPI:
                 "request": request,
                 "batch": _build_batch_view(store, batch),
                 "submissions": [_build_submission_view(submission) for submission in submissions],
-                "error_message": None,
+                "error_message": _read_batch_error(Path(batch.folder)),
             },
         )
 
@@ -128,6 +154,18 @@ def _build_index_context(request: Request, store: WorkspaceStore, error_message:
 def _normalize_upload_name(upload: UploadFile) -> str | None:
     filename = Path((upload.filename or "").strip()).name
     return filename or None
+
+
+def _write_batch_error(batch_folder: Path, error_message: str) -> None:
+    (batch_folder / "error.txt").write_text(error_message, encoding="utf-8")
+
+
+def _read_batch_error(batch_folder: Path) -> str | None:
+    error_path = batch_folder / "error.txt"
+    if not error_path.exists():
+        return None
+    message = error_path.read_text(encoding="utf-8").strip()
+    return message or None
 
 
 def _build_batch_view(store: WorkspaceStore, batch: BatchRecord) -> dict[str, Any]:

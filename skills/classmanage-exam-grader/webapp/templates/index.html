@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+
+{% block title %}배치 업로드 | 시험 피드백 스튜디오{% endblock %}
+{% block body_class %}page-shell page-shell--home{% endblock %}
+
+{% block content %}
+{% set batch_list = batches if batches is defined else [] %}
+{% set overview = namespace(total=batch_list|length, pending=0, review=0, finalized=0) %}
+{% for item in batch_list %}
+    {% set item_status = item.status|default("pending") %}
+    {% if item_status == "needs_review" %}
+        {% set overview.review = overview.review + 1 %}
+    {% elif item_status == "finalized" %}
+        {% set overview.finalized = overview.finalized + 1 %}
+    {% else %}
+        {% set overview.pending = overview.pending + 1 %}
+    {% endif %}
+{% endfor %}
+
+<section class="hero">
+    <div class="hero__main">
+        <p class="eyebrow">교사용 로컬 웹앱</p>
+        <h1>스캔한 시험지를 업로드하고, 검토 우선순위가 잡힌 피드백 배치를 바로 시작합니다.</h1>
+        <p class="hero__lead">
+            답안지와 학생 시험지 파일을 넣으면 자동 채점 초안과 학생용 피드백 PDF 준비 상태를 한 화면에서 관리할 수 있습니다.
+            낮은 신뢰도, 주관식, AI 설명 문항은 자동으로 검토 큐에 모입니다.
+        </p>
+        <div class="hero__metrics" aria-label="작업 현황 요약">
+            <article class="metric-card">
+                <span class="metric-card__label">최근 배치</span>
+                <strong class="metric-card__value">{{ overview.total }}</strong>
+            </article>
+            <article class="metric-card">
+                <span class="metric-card__label">검토 대기</span>
+                <strong class="metric-card__value">{{ overview.review }}</strong>
+            </article>
+            <article class="metric-card">
+                <span class="metric-card__label">최종 확정</span>
+                <strong class="metric-card__value">{{ overview.finalized }}</strong>
+            </article>
+        </div>
+    </div>
+    <aside class="hero__aside panel panel--accent">
+        <h2>이번 작업 흐름</h2>
+        <ol class="workflow-list">
+            <li>답안지 파일 1개와 학생 시험지 파일 여러 개를 업로드합니다.</li>
+            <li>자동 채점 초안이 생성되면 검토 필요 문항이 먼저 표시됩니다.</li>
+            <li>교사가 설명과 점수를 확인한 뒤 학생용 PDF를 확정합니다.</li>
+        </ol>
+        <p class="helper-text">정확한 좌표가 없어도 요약 페이지 중심으로 학생 피드백을 내보낼 수 있습니다.</p>
+    </aside>
+</section>
+
+<section class="content-grid content-grid--home">
+    <article class="panel">
+        <div class="section-heading">
+            <div>
+                <p class="section-heading__eyebrow">새 배치 만들기</p>
+                <h2>답안지와 학생 파일 업로드</h2>
+            </div>
+            <span class="chip chip--neutral">로컬 파일만 사용</span>
+        </div>
+
+        {% if error_message %}
+            <div class="notice notice--error" role="alert">
+                <strong>업로드를 계속할 수 없습니다.</strong>
+                <p>{{ error_message }}</p>
+            </div>
+        {% endif %}
+
+        <form class="upload-form" action="/batches" method="post" enctype="multipart/form-data">
+            <div class="form-field">
+                <label for="answer_key">답안지 파일</label>
+                <input id="answer_key" name="answer_key" type="file" accept=".pdf,.json" required>
+                <p class="field-help">정답, 배점, 해설이 포함된 PDF 또는 JSON 파일을 업로드합니다.</p>
+            </div>
+
+            <div class="form-field">
+                <label for="student_files">학생 시험지 파일</label>
+                <input id="student_files" name="student_files" type="file" accept=".pdf,.json" multiple required>
+                <p class="field-help">여러 학생 파일을 한 번에 넣을 수 있습니다. 스캔본 PDF와 테스트용 JSON을 모두 허용합니다.</p>
+            </div>
+
+            <div class="form-actions">
+                <button class="button button--primary" type="submit">배치 시작</button>
+                <p class="helper-text">업로드 후 자동으로 배치 현황 화면으로 이동합니다.</p>
+            </div>
+        </form>
+    </article>
+
+    <article class="panel">
+        <div class="section-heading">
+            <div>
+                <p class="section-heading__eyebrow">검토 포인트</p>
+                <h2>교사가 먼저 확인할 정보</h2>
+            </div>
+        </div>
+        <div class="criteria-list">
+            <article class="criteria-item">
+                <span class="chip chip--confidence chip--low">낮은 신뢰도</span>
+                <p>OCR 신뢰도가 낮거나 답이 비어 있으면 자동으로 검토 필요로 표시됩니다.</p>
+            </article>
+            <article class="criteria-item">
+                <span class="chip chip--status chip--needs_review">검토 필요</span>
+                <p>주관식, 해설이 부족한 문항, AI가 만든 설명은 학생 PDF 확정 전에 다시 확인합니다.</p>
+            </article>
+            <article class="criteria-item">
+                <span class="chip chip--source chip--teacher">교사 확정</span>
+                <p>교사가 수정한 설명은 최종 학생 피드백의 우선 소스가 됩니다.</p>
+            </article>
+        </div>
+    </article>
+</section>
+
+<section class="panel">
+    <div class="section-heading">
+        <div>
+            <p class="section-heading__eyebrow">최근 작업</p>
+            <h2>배치 현황</h2>
+        </div>
+    </div>
+
+    {% if batch_list %}
+        <div class="batch-card-list">
+            {% for item in batch_list %}
+                {% set item_status = item.status|default("pending") %}
+                <article class="batch-card">
+                    <div class="batch-card__header">
+                        <div>
+                            <h3>{{ item.exam_title|default(item.title|default("이름 없는 배치")) }}</h3>
+                            <p class="batch-card__meta">
+                                생성 시각 {{ item.created_at|default(item.created_label|default("방금")) }}
+                                {% if item.id is defined %}· 배치 ID {{ item.id }}{% endif %}
+                            </p>
+                        </div>
+                        <span class="chip chip--status chip--{{ item_status }}">
+                            {% if item_status == "needs_review" %}
+                                검토 필요
+                            {% elif item_status == "finalized" %}
+                                최종 확정
+                            {% elif item_status == "failed" %}
+                                처리 실패
+                            {% else %}
+                                처리 중
+                            {% endif %}
+                        </span>
+                    </div>
+
+                    <dl class="stat-list">
+                        <div>
+                            <dt>학생 수</dt>
+                            <dd>{{ item.submission_count|default(item.total_submissions|default("미정")) }}</dd>
+                        </div>
+                        <div>
+                            <dt>검토 문항</dt>
+                            <dd>{{ item.review_count|default(item.pending_review_count|default(0)) }}</dd>
+                        </div>
+                        <div>
+                            <dt>최종 확정</dt>
+                            <dd>{{ item.finalized_count|default(item.completed_count|default(0)) }}</dd>
+                        </div>
+                    </dl>
+
+                    {% if item.id is defined %}
+                        <a class="button button--secondary" href="/batches/{{ item.id }}">배치 열기</a>
+                    {% endif %}
+                </article>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <h3>아직 생성된 배치가 없습니다.</h3>
+            <p>첫 업로드를 시작하면 여기에서 검토 진행 상태와 학생별 점검 현황을 바로 확인할 수 있습니다.</p>
+        </div>
+    {% endif %}
+</section>
+{% endblock %}

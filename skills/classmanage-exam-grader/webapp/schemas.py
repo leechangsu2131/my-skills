@@ -39,6 +39,8 @@ class StudentAnswerEntry(BaseModel):
     answer: str = ""
     confidence: ConfidenceLevel = "medium"
     page: int | None = None
+    bbox: list[float] | None = None
+    requires_review: bool = False
 
 
 class StudentAnswer(BaseModel):

@@ -14,6 +14,9 @@ class BatchRecord:
     title: str
     status: str
     folder: str
+    blank_exam_path: str | None = None
+    ocr_metadata_path: str | None = None
+    layout_status: str | None = None
 
 
 @dataclass(slots=True)
@@ -29,6 +32,7 @@ class SubmissionRecord:
     payload_path: str
     source_pdf_path: str
     output_pdf_path: str | None = None
+    error_message: str | None = None
 
 
 class WorkspaceStore:
@@ -52,7 +56,10 @@ class WorkspaceStore:
                     id text primary key,
                     title text not null,
                     status text not null,
-                    folder text not null
+                    folder text not null,
+                    blank_exam_path text,
+                    ocr_metadata_path text,
+                    layout_status text
                 );
                 create table if not exists submissions (
                     id text primary key,
@@ -66,6 +73,7 @@ class WorkspaceStore:
                     payload_path text not null,
                     source_pdf_path text not null,
                     output_pdf_path text,
+                    error_message text,
                     foreign key(batch_id) references batches(id)
                 );
                 """
@@ -73,12 +81,25 @@ class WorkspaceStore:
             self._migrate_schema(connection)
 
     def _migrate_schema(self, connection: sqlite3.Connection) -> None:
-        columns = {
+        batch_columns = {
+            row["name"]
+            for row in connection.execute("pragma table_info(batches)").fetchall()
+        }
+        if "blank_exam_path" not in batch_columns:
+            connection.execute("alter table batches add column blank_exam_path text")
+        if "ocr_metadata_path" not in batch_columns:
+            connection.execute("alter table batches add column ocr_metadata_path text")
+        if "layout_status" not in batch_columns:
+            connection.execute("alter table batches add column layout_status text")
+
+        submission_columns = {
             row["name"]
             for row in connection.execute("pragma table_info(submissions)").fetchall()
         }
-        if "output_pdf_path" not in columns:
+        if "output_pdf_path" not in submission_columns:
             connection.execute("alter table submissions add column output_pdf_path text")
+        if "error_message" not in submission_columns:
+            connection.execute("alter table submissions add column error_message text")
 
     def create_batch(self, title: str) -> BatchRecord:
         batch_id = uuid4().hex[:12]
@@ -87,10 +108,44 @@ class WorkspaceStore:
         record = BatchRecord(id=batch_id, title=title, status="processed", folder=str(batch_folder))
         with self._connect() as connection:
             connection.execute(
-                "insert into batches(id, title, status, folder) values(?, ?, ?, ?)",
-                (record.id, record.title, record.status, record.folder),
+                """
+                insert into batches(id, title, status, folder, blank_exam_path, ocr_metadata_path, layout_status)
+                values(?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    record.id,
+                    record.title,
+                    record.status,
+                    record.folder,
+                    record.blank_exam_path,
+                    record.ocr_metadata_path,
+                    record.layout_status,
+                ),
             )
         return record
+
+    def update_batch_assets(
+        self,
+        batch_id: str,
+        *,
+        blank_exam_path: Path,
+        ocr_metadata_path: Path | None = None,
+        layout_status: str = "pending",
+    ) -> None:
+        with self._connect() as connection:
+            connection.execute(
+                """
+                update batches
+                set blank_exam_path = ?, ocr_metadata_path = ?, layout_status = ?
+                where id = ?
+                """,
+                (
+                    str(blank_exam_path),
+                    str(ocr_metadata_path) if ocr_metadata_path else None,
+                    layout_status,
+                    batch_id,
+                ),
+            )
 
     def update_batch_title(self, batch_id: str, title: str) -> None:
         with self._connect() as connection:
@@ -112,6 +167,7 @@ class WorkspaceStore:
         payload_path: Path,
         source_pdf_path: Path,
         output_pdf_path: Path | None = None,
+        error_message: str | None = None,
     ) -> SubmissionRecord:
         submission_id = uuid4().hex[:12]
         record = SubmissionRecord(
@@ -126,14 +182,15 @@ class WorkspaceStore:
             payload_path=str(payload_path),
             source_pdf_path=str(source_pdf_path),
             output_pdf_path=str(output_pdf_path) if output_pdf_path else None,
+            error_message=error_message,
         )
         with self._connect() as connection:
             connection.execute(
                 """
                 insert into submissions(
                     id, batch_id, student_name, student_number, status, total_score, total_points,
-                    review_count, payload_path, source_pdf_path, output_pdf_path
-                ) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    review_count, payload_path, source_pdf_path, output_pdf_path, error_message
+                ) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """,
                 (
                     record.id,
@@ -147,6 +204,7 @@ class WorkspaceStore:
                     record.payload_path,
                     record.source_pdf_path,
                     record.output_pdf_path,
+                    record.error_message,
                 ),
             )
         return record
@@ -167,13 +225,23 @@ class WorkspaceStore:
 
     def list_batches(self) -> list[BatchRecord]:
         with self._connect() as connection:
-            rows = connection.execute("select id, title, status, folder from batches order by rowid desc").fetchall()
+            rows = connection.execute(
+                """
+                select id, title, status, folder, blank_exam_path, ocr_metadata_path, layout_status
+                from batches
+                order by rowid desc
+                """
+            ).fetchall()
         return [BatchRecord(**dict(row)) for row in rows]
 
     def get_batch(self, batch_id: str) -> BatchRecord:
         with self._connect() as connection:
             row = connection.execute(
-                "select id, title, status, folder from batches where id = ?",
+                """
+                select id, title, status, folder, blank_exam_path, ocr_metadata_path, layout_status
+                from batches
+                where id = ?
+                """,
                 (batch_id,),
             ).fetchone()
         if row is None:
@@ -185,7 +253,7 @@ class WorkspaceStore:
             rows = connection.execute(
                 """
                 select id, batch_id, student_name, student_number, status, total_score, total_points,
-                       review_count, payload_path, source_pdf_path, output_pdf_path
+                       review_count, payload_path, source_pdf_path, output_pdf_path, error_message
                 from submissions where batch_id = ? order by rowid asc
                 """,
                 (batch_id,),
@@ -197,7 +265,7 @@ class WorkspaceStore:
             row = connection.execute(
                 """
                 select id, batch_id, student_name, student_number, status, total_score, total_points,
-                       review_count, payload_path, source_pdf_path, output_pdf_path
+                       review_count, payload_path, source_pdf_path, output_pdf_path, error_message
                 from submissions where id = ?
                 """,
                 (submission_id,),

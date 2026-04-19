@@ -153,6 +153,9 @@
                                 <span class="table-secondary">
                                     {% if row.student_number is defined %}번호 {{ row.student_number }}{% else %}학생 번호 미입력{% endif %}
                                 </span>
+                                {% if row_status == "failed" and row.error_message %}
+                                    <span class="table-secondary">실패 사유: {{ row.error_message }}</span>
+                                {% endif %}
                             </th>
                             <td>
                                 <span class="chip chip--status chip--{{ row_status }}">

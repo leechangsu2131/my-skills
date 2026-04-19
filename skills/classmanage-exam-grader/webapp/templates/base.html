@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}시험 피드백 스튜디오{% endblock %}</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    {% block head %}{% endblock %}
+</head>
+{% set current_path = request.url.path if request is defined and request.url is defined else "" %}
+{% set active_batch_id = "" %}
+{% if batch is defined and batch and batch.id is defined %}
+    {% set active_batch_id = batch.id %}
+{% elif submission is defined and submission and submission.batch_id is defined %}
+    {% set active_batch_id = submission.batch_id %}
+{% endif %}
+<body class="{% block body_class %}page-shell{% endblock %}">
+    <a class="skip-link" href="#main-content">본문으로 바로가기</a>
+    <div class="site-backdrop"></div>
+    <div class="app-shell">
+        <header class="site-header">
+            <div class="site-header__inner">
+                <a class="brand" href="/">
+                    <span class="brand__eyebrow">Teacher Review Workstation</span>
+                    <span class="brand__name">시험 피드백 스튜디오</span>
+                </a>
+                <nav class="site-nav" aria-label="주요 탐색">
+                    <a href="/" class="{% if current_path == '/' %}is-active{% endif %}">업로드</a>
+                    {% if active_batch_id %}
+                        <a href="/batches/{{ active_batch_id }}" class="{% if '/batches/' in current_path %}is-active{% endif %}">배치 현황</a>
+                    {% endif %}
+                    {% if submission is defined and submission and submission.id is defined %}
+                        <a href="/submissions/{{ submission.id }}/review" class="{% if '/review' in current_path %}is-active{% endif %}">검토 화면</a>
+                    {% endif %}
+                </nav>
+            </div>
+        </header>
+
+        <main id="main-content" class="page-frame">
+            {% block content %}{% endblock %}
+        </main>
+
+        <footer class="site-footer">
+            <p>교사의 검토 속도와 학생의 이해도를 함께 높이는 로컬 시험 피드백 워크스테이션</p>
+        </footer>
+    </div>
+</body>
+</html>

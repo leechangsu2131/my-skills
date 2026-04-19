@@ -31,6 +31,7 @@ def test_batch_overview_rolls_up_submission_review_state(tmp_path) -> None:
     client.post(
         "/batches",
         files=[
+            ("blank_exam", ("blank.pdf", b"%PDF-1.4", "application/pdf")),
             ("answer_key", ("answer_key.json", json.dumps(answer_key_payload), "application/json")),
             ("student_files", ("student.json", json.dumps(student_payload), "application/json")),
         ],

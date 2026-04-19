@@ -19,15 +19,27 @@ def parse_answer_key_file(path: Path) -> dict:
     return parse_answer_key_pdf(str(path))
 
 
-def parse_student_file(path: Path) -> dict:
+def parse_student_file(
+    path: Path,
+    *,
+    blank_exam_path: Path | None = None,
+    metadata_dir: Path | None = None,
+) -> dict:
     if path.suffix.lower() == ".json":
         return json.loads(path.read_text(encoding="utf-8"))
-    return extract_answers(str(path))
+    if blank_exam_path is None:
+        raise ValueError("blank_exam_path is required for PDF student parsing")
+    return extract_answers(
+        str(path),
+        blank_exam_path=str(blank_exam_path),
+        metadata_dir=metadata_dir,
+    )
 
 
 def build_reviewed_submission(student_answers: dict, answer_key: dict) -> ReviewedSubmission:
     graded = grade_student(student_answers, answer_key, load_config())
     merged = merge_analysis(graded)
+    confidence_map = {"high": 0.95, "medium": 0.7, "low": 0.35}
     questions_by_q = {
         question["q_num"]: question
         for question in answer_key.get("questions", [])
@@ -41,6 +53,7 @@ def build_reviewed_submission(student_answers: dict, answer_key: dict) -> Review
     for detail in merged["details"]:
         question = questions_by_q.get(detail["q_num"], {})
         student_entry = answers_by_q.get(detail["q_num"], {})
+        needs_review = bool(student_entry.get("requires_review")) or detail["correct"] is None
         feedback_text = (
             question.get("explanation")
             or question.get("rubric")
@@ -57,8 +70,8 @@ def build_reviewed_submission(student_answers: dict, answer_key: dict) -> Review
                 points_possible=detail["points_possible"],
                 feedback_text=feedback_text,
                 feedback_source="answer_key" if question.get("explanation") or question.get("rubric") else "system",
-                feedback_confidence=0.95 if question.get("explanation") or question.get("rubric") else 0.5,
-                review_status="needs_review" if detail["correct"] is None else "approved",
+                feedback_confidence=confidence_map.get(student_entry.get("confidence", "medium"), 0.5),
+                review_status="needs_review" if needs_review else "approved",
                 page=student_entry.get("page"),
                 question_text=question.get("question_text"),
                 rubric=question.get("rubric"),

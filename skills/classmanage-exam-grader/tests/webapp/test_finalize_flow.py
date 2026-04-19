@@ -32,6 +32,7 @@ def test_review_approve_intent_finalizes_student_pdf(tmp_path) -> None:
     client.post(
         "/batches",
         files=[
+            ("blank_exam", ("blank.pdf", b"%PDF-1.4", "application/pdf")),
             ("answer_key", ("answer_key.json", json.dumps(answer_key_payload), "application/json")),
             ("student_files", ("student.json", json.dumps(student_payload), "application/json")),
         ],

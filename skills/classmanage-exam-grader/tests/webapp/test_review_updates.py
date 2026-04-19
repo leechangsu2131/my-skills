@@ -31,6 +31,7 @@ def test_teacher_review_edit_persists_feedback_changes(tmp_path) -> None:
     client.post(
         "/batches",
         files=[
+            ("blank_exam", ("blank.pdf", b"%PDF-1.4", "application/pdf")),
             ("answer_key", ("answer_key.json", json.dumps(answer_key_payload), "application/json")),
             ("student_files", ("student.json", json.dumps(student_payload), "application/json")),
         ],

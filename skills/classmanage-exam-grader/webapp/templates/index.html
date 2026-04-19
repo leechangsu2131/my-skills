@@ -70,6 +70,11 @@
 
         <form class="upload-form" action="/batches" method="post" enctype="multipart/form-data">
             <div class="form-field">
+                <label for="blank_exam">빈 시험지 PDF</label>
+                <input id="blank_exam" name="blank_exam" type="file" accept=".pdf" required>
+                <p class="field-help">학생이 쓰지 않은 원본 시험지 PDF를 올려 문항 좌표와 정렬 기준으로 사용합니다.</p>
+            </div>
+            <div class="form-field">
                 <label for="answer_key">답안지 파일</label>
                 <input id="answer_key" name="answer_key" type="file" accept=".pdf,.json" required>
                 <p class="field-help">정답, 배점, 해설이 포함된 PDF 또는 JSON 파일을 업로드합니다.</p>

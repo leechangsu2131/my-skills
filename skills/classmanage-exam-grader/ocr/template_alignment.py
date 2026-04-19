@@ -58,3 +58,31 @@ def align_page_images(template_page: np.ndarray, student_page: np.ndarray) -> Al
         width=student_page.shape[1],
         height=student_page.shape[0],
     )
+
+
+def transform_bbox(
+    bbox: list[float],
+    matrix: np.ndarray,
+    width: int,
+    height: int,
+) -> list[float]:
+    x1, y1, x2, y2 = bbox
+    corners = np.float32(
+        [
+            [x1, y1],
+            [x2, y1],
+            [x2, y2],
+            [x1, y2],
+        ]
+    ).reshape(-1, 1, 2)
+    transformed = cv2.perspectiveTransform(corners, matrix)
+    xs = transformed[:, 0, 0]
+    ys = transformed[:, 0, 1]
+
+    projected = [
+        float(np.clip(xs.min(), 0, max(width - 1, 0))),
+        float(np.clip(ys.min(), 0, max(height - 1, 0))),
+        float(np.clip(xs.max(), 0, max(width - 1, 0))),
+        float(np.clip(ys.max(), 0, max(height - 1, 0))),
+    ]
+    return projected

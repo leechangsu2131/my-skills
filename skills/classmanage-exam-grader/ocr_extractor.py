@@ -21,6 +21,7 @@ from ocr.paddle_backend import PaddleOcrBackend
 from ocr.question_layout import build_question_layout
 from ocr.template_alignment import align_page_images
 from ocr.template_alignment import render_pdf_pages
+from ocr.template_alignment import transform_bbox
 
 
 SKILL_DIR = Path(__file__).parent
@@ -139,12 +140,25 @@ def extract_answers(
             encoding="utf-8",
         )
 
+    page_alignments: dict[int, Any] = {}
+    for region in layout.items:
+        if region.page_index not in page_alignments:
+            page_alignments[region.page_index] = align_page_images(
+                blank_pages[region.page_index],
+                student_pages[region.page_index],
+            )
+
     answers = []
     for region in layout.items:
-        blank_page = blank_pages[region.page_index]
         student_page = student_pages[region.page_index]
-        alignment = align_page_images(blank_page, student_page)
-        x1, y1, x2, y2 = [int(value) for value in region.answer_bbox]
+        alignment = page_alignments[region.page_index]
+        projected_bbox = transform_bbox(
+            region.answer_bbox,
+            alignment.matrix,
+            alignment.width,
+            alignment.height,
+        )
+        x1, y1, x2, y2 = [int(value) for value in projected_bbox]
         crop = student_page[max(y1, 0):max(y2, 0), max(x1, 0):max(x2, 0)]
         if crop.size == 0:
             answer_text = ""
@@ -161,7 +175,7 @@ def extract_answers(
                 "answer": answer_text,
                 "confidence": _bucket_confidence(confidence_score),
                 "page": region.page_index + 1,
-                "bbox": region.answer_bbox,
+                "bbox": projected_bbox,
                 "requires_review": confidence_score < 0.6 or not answer_text,
                 "alignment_score": alignment.score,
             }

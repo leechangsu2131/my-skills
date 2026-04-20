@@ -18,7 +18,6 @@ from webapp.services.pipeline import (
 from webapp.store import BatchRecord, SubmissionRecord
 from webapp.store import WorkspaceStore
 
-
 APP_DIR = Path(__file__).parent
 TEMPLATES = Jinja2Templates(directory=str(APP_DIR / "templates"))
 
@@ -245,7 +244,7 @@ def create_app(workspace: str | Path | None = None) -> FastAPI:
                 item = item.model_copy(
                     update={
                         "feedback_text": feedback_text,
-                        "review_status": review_status,
+                        "review_status": _normalize_review_status(review_status),
                         "feedback_source": "teacher",
                         "feedback_confidence": 1.0,
                     }
@@ -352,7 +351,13 @@ def _build_item_view(item: ReviewItem) -> dict[str, Any]:
 
 
 def _load_review_payload(store: WorkspaceStore, submission: SubmissionRecord) -> ReviewedSubmission:
-    return ReviewedSubmission.model_validate(store.load_payload(submission.payload_path))
+    raw_payload = store.load_payload(submission.payload_path)
+    normalized_payload = _normalize_review_payload(raw_payload)
+    payload = ReviewedSubmission.model_validate(normalized_payload)
+    recalculated = _recalculate_submission(payload)
+    if normalized_payload != raw_payload or recalculated.model_dump(mode="json") != payload.model_dump(mode="json"):
+        store.save_payload(Path(submission.payload_path), recalculated.model_dump(mode="json"))
+    return recalculated
 
 
 def _apply_form_review_updates(
@@ -365,7 +370,7 @@ def _apply_form_review_updates(
     for item in payload.items:
         q_num = item.q_num
         feedback_text = str(form.get(f"feedback_{q_num}", item.feedback_text))
-        review_status = str(form.get(f"review_status_{q_num}", item.review_status))
+        review_status = _normalize_review_status(str(form.get(f"review_status_{q_num}", item.review_status)))
         points_earned = float(form.get(f"points_earned_{q_num}", item.points_earned))
         changed = (
             feedback_text != item.feedback_text
@@ -401,6 +406,26 @@ def _recalculate_submission(payload: ReviewedSubmission) -> ReviewedSubmission:
             "review_count": review_count,
         }
     )
+
+
+def _normalize_review_payload(payload: dict[str, Any]) -> dict[str, Any]:
+    normalized = {
+        **payload,
+        "items": [
+            {
+                **item,
+                "review_status": _normalize_review_status(item.get("review_status")),
+            }
+            for item in payload.get("items", [])
+        ],
+    }
+    return normalized
+
+
+def _normalize_review_status(value: Any) -> str:
+    if value == "approved":
+        return "approved"
+    return "needs_review"
 
 
 def _finalize_submission(store: WorkspaceStore, submission: SubmissionRecord, payload: ReviewedSubmission) -> Path:

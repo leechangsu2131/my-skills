@@ -7,15 +7,13 @@
 {% set question_items = review_items if review_items is defined else (items if items is defined else []) %}
 {% set student_name = submission.student_name|default("이름 미확인 학생") if submission is defined else "이름 미확인 학생" %}
 {% set student_status = submission.review_status|default(submission.status|default("needs_review")) if submission is defined else "needs_review" %}
-{% set summary = namespace(total=question_items|length, pending=0, approved=0, flagged=0) %}
+{% set summary = namespace(total=question_items|length, approved=0, flagged=0) %}
 {% for item in question_items %}
-    {% set review_status = item.review_status|default("pending") %}
+    {% set review_status = item.review_status|default("needs_review") %}
     {% if review_status == "approved" %}
         {% set summary.approved = summary.approved + 1 %}
-    {% elif review_status == "needs_review" %}
-        {% set summary.flagged = summary.flagged + 1 %}
     {% else %}
-        {% set summary.pending = summary.pending + 1 %}
+        {% set summary.flagged = summary.flagged + 1 %}
     {% endif %}
 {% endfor %}
 
@@ -59,7 +57,7 @@
 
         {% if question_items %}
             {% for item in question_items %}
-                {% set item_status = item.review_status|default("pending") %}
+                {% set item_status = item.review_status|default("needs_review") %}
                 {% set confidence = item.feedback_confidence|default(item.ocr_confidence|default(item.confidence|default("medium"))) %}
                 {% set feedback_source = item.feedback_source|default("answer_key") %}
                 <article class="panel question-card" id="question-{{ item.q_num|default(loop.index) }}">
@@ -141,7 +139,6 @@
                             <div class="form-field">
                                 <label for="review_status_{{ item.q_num|default(loop.index) }}">검토 상태</label>
                                 <select id="review_status_{{ item.q_num|default(loop.index) }}" name="review_status_{{ item.q_num|default(loop.index) }}">
-                                    <option value="pending" {% if item_status == "pending" %}selected{% endif %}>검토 중</option>
                                     <option value="needs_review" {% if item_status == "needs_review" %}selected{% endif %}>추가 확인 필요</option>
                                     <option value="approved" {% if item_status == "approved" %}selected{% endif %}>학생용 확정</option>
                                 </select>
@@ -221,7 +218,7 @@
                 </div>
                 <nav class="anchor-list" aria-label="문항 바로가기">
                     {% for item in question_items %}
-                        {% set item_status = item.review_status|default("pending") %}
+                        {% set item_status = item.review_status|default("needs_review") %}
                         <a href="#question-{{ item.q_num|default(loop.index) }}">
                             <span>문항 {{ item.q_num|default(loop.index) }}</span>
                             <span class="chip chip--status chip--{{ item_status }}">
@@ -230,7 +227,7 @@
                                 {% elif item_status == "needs_review" %}
                                     검토
                                 {% else %}
-                                    진행 중
+                                    검토
                                 {% endif %}
                             </span>
                         </a>

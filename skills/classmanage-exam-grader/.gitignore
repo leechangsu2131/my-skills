@@ -6,3 +6,4 @@ data/web/
 .worktrees/
 __pycache__/
 *.pyc
+.venv/

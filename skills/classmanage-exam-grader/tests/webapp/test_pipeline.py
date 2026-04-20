@@ -16,7 +16,10 @@ def test_pipeline_uses_existing_pdf_engine_for_pdf_inputs(tmp_path, monkeypatch)
     )
     monkeypatch.setattr(
         "webapp.services.pipeline.extract_answers",
-        lambda path, *, blank_exam_path, metadata_dir=None: {"student_name": "Lee Bora", "answers": []},
+        lambda path, *, blank_exam_path, metadata_dir=None, **kwargs: {
+            "student_name": "Lee Bora",
+            "answers": [],
+        },
     )
 
     assert parse_answer_key_file(answer_pdf)["exam_title"] == "PDF Quiz"
@@ -31,7 +34,7 @@ def test_parse_student_file_passes_blank_exam_to_extractor(tmp_path, monkeypatch
 
     calls: dict[str, str] = {}
 
-    def fake_extract_answers(path: str, *, blank_exam_path: str, metadata_dir=None):
+    def fake_extract_answers(path: str, *, blank_exam_path: str, metadata_dir=None, **kwargs):
         calls["path"] = path
         calls["blank_exam_path"] = blank_exam_path
         return {"student_name": "Lee Bora", "answers": []}
@@ -78,7 +81,7 @@ def test_pdf_student_extraction_returns_layout_aware_answers(tmp_path, monkeypat
 
     monkeypatch.setattr(
         "webapp.services.pipeline.extract_answers",
-        lambda path, *, blank_exam_path, metadata_dir=None: {
+        lambda path, *, blank_exam_path, metadata_dir=None, **kwargs: {
             "student_name": "Moon",
             "answers": [
                 {

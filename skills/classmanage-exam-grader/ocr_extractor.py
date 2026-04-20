@@ -19,6 +19,7 @@ from typing import Optional
 
 from ocr.paddle_backend import PaddleOcrBackend
 from ocr.question_layout import build_question_layout
+from ocr.student_pages import select_student_pages_for_template
 from ocr.template_alignment import align_page_images
 from ocr.template_alignment import render_pdf_pages
 from ocr.template_alignment import transform_bbox
@@ -104,14 +105,31 @@ def extract_answers(
     *,
     blank_exam_path: str,
     metadata_dir: str | Path | None = None,
+    student_page_offset: int | None = None,
+    auto_pick_student_pages: bool | None = None,
 ) -> dict:
     config = load_config()
+    ocr_cfg = config.get("ocr", {})
+    auto_pick = (
+        auto_pick_student_pages
+        if auto_pick_student_pages is not None
+        else ocr_cfg.get("auto_pick_page_window", True)
+    )
+    effective_offset = (
+        student_page_offset if student_page_offset is not None else ocr_cfg.get("student_page_offset")
+    )
+    align_flag_below = float(ocr_cfg.get("flag_alignment_review_below", 0.35))
+
     backend = PaddleOcrBackend(lang=config.get("paddle_ocr_language", "korean"))
 
     blank_pages = render_pdf_pages(Path(blank_exam_path))
-    student_pages = render_pdf_pages(Path(pdf_path))
-    if len(blank_pages) != len(student_pages):
-        raise ValueError("Blank exam and student exam page counts do not match")
+    student_pages_full = render_pdf_pages(Path(pdf_path))
+    student_pages, page_meta = select_student_pages_for_template(
+        blank_pages,
+        student_pages_full,
+        fixed_offset=effective_offset,
+        auto_pick=auto_pick,
+    )
 
     metadata_root = Path(metadata_dir) if metadata_dir else None
     detections_by_page: dict[int, list[dict[str, Any]]] = {}
@@ -137,6 +155,10 @@ def extract_answers(
         }
         (metadata_root / "layout.json").write_text(
             json.dumps(layout_payload, ensure_ascii=False, indent=2),
+            encoding="utf-8",
+        )
+        (metadata_root / "student_pages.json").write_text(
+            json.dumps(page_meta, ensure_ascii=False, indent=2),
             encoding="utf-8",
         )
 
@@ -168,6 +190,7 @@ def extract_answers(
             answer_text = " ".join(line["text"] for line in lines).strip()
             confidence_score = max((line["confidence"] for line in lines), default=0.0)
 
+        low_alignment = alignment.score < align_flag_below
         answers.append(
             {
                 "q_num": region.q_num,
@@ -176,9 +199,16 @@ def extract_answers(
                 "confidence": _bucket_confidence(confidence_score),
                 "page": region.page_index + 1,
                 "bbox": projected_bbox,
-                "requires_review": confidence_score < 0.6 or not answer_text,
+                "requires_review": confidence_score < 0.6 or not answer_text or low_alignment,
                 "alignment_score": alignment.score,
             }
+        )
+
+    ocr_meta = dict(page_meta)
+    if ocr_meta.get("mean_alignment_score") is None and answers:
+        ocr_meta["mean_alignment_score"] = round(
+            sum(item.get("alignment_score", 0.0) for item in answers) / max(len(answers), 1),
+            4,
         )
 
     return {
@@ -186,6 +216,7 @@ def extract_answers(
         "student_number": None,
         "exam_title": Path(blank_exam_path).stem,
         "answers": answers,
+        "ocr_meta": ocr_meta,
     }
 
 
@@ -203,6 +234,8 @@ def extract_batch(
     *,
     blank_exam_path: str,
     metadata_dir: str | Path | None = None,
+    student_page_offset: int | None = None,
+    auto_pick_student_pages: bool | None = None,
 ) -> list[dict]:
     input_path = Path(input_dir)
     output_path = Path(output_dir)
@@ -219,6 +252,8 @@ def extract_batch(
                 str(pdf_file),
                 blank_exam_path=blank_exam_path,
                 metadata_dir=metadata_dir,
+                student_page_offset=student_page_offset,
+                auto_pick_student_pages=auto_pick_student_pages,
             )
             out_file = output_path / f"{pdf_file.stem}_answers.json"
             out_file.write_text(json.dumps(answers, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -245,6 +280,17 @@ def main() -> None:
     parser.add_argument("--batch", type=str, help="Batch input directory")
     parser.add_argument("--output", type=str, help="Output directory")
     parser.add_argument("--metadata-dir", type=str, help="Optional OCR metadata directory")
+    parser.add_argument(
+        "--student-page-offset",
+        type=int,
+        default=None,
+        help="0-based index of the first exam page inside the student PDF (when scan has extra pages)",
+    )
+    parser.add_argument(
+        "--no-auto-page-window",
+        action="store_true",
+        help="Disable automatic search when student PDF is longer than the blank template",
+    )
     args = parser.parse_args()
 
     config = load_config()
@@ -256,6 +302,8 @@ def main() -> None:
             args.output or default_output,
             blank_exam_path=args.blank_exam,
             metadata_dir=args.metadata_dir,
+            student_page_offset=args.student_page_offset,
+            auto_pick_student_pages=False if args.no_auto_page_window else None,
         )
         summary_path = Path(args.output or default_output) / "_batch_summary.json"
         summary_path.write_text(json.dumps(results, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -266,6 +314,8 @@ def main() -> None:
             args.pdf,
             blank_exam_path=args.blank_exam,
             metadata_dir=args.metadata_dir,
+            student_page_offset=args.student_page_offset,
+            auto_pick_student_pages=False if args.no_auto_page_window else None,
         )
         output_dir = Path(args.output or default_output)
         output_dir.mkdir(parents=True, exist_ok=True)

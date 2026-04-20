@@ -24,6 +24,8 @@ def parse_student_file(
     *,
     blank_exam_path: Path | None = None,
     metadata_dir: Path | None = None,
+    student_page_offset: int | None = None,
+    auto_pick_student_pages: bool | None = None,
 ) -> dict:
     if path.suffix.lower() == ".json":
         return json.loads(path.read_text(encoding="utf-8"))
@@ -33,6 +35,8 @@ def parse_student_file(
         str(path),
         blank_exam_path=str(blank_exam_path),
         metadata_dir=metadata_dir,
+        student_page_offset=student_page_offset,
+        auto_pick_student_pages=auto_pick_student_pages,
     )
 
 

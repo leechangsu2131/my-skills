@@ -20,6 +20,31 @@ class QuestionLayout:
 QUESTION_RE = re.compile(r"^(\d+)[\.\)]?$")
 
 
+def parse_question_anchor_text(raw: str) -> int | None:
+    """Map OCR line text to a question number when it looks like an item label."""
+    text = str(raw).strip()
+    if not text:
+        return None
+
+    simple = QUESTION_RE.match(text)
+    if simple:
+        return int(simple.group(1))
+
+    paren = re.match(r"^\((\d{1,3})\)\s*$", text)
+    if paren:
+        return int(paren.group(1))
+
+    hangul = re.match(r"^(?:문항\s*)?(\d{1,3})\s*[\.:\)]", text)
+    if hangul:
+        return int(hangul.group(1))
+
+    q_prefix = re.match(r"^[Qq]\s*(\d{1,3})\s*$", text)
+    if q_prefix:
+        return int(q_prefix.group(1))
+
+    return None
+
+
 def build_question_layout(
     detections_by_page: dict[int, list[dict]],
     page_sizes: dict[int, tuple[int, int]],
@@ -29,9 +54,9 @@ def build_question_layout(
     for page_index, detections in detections_by_page.items():
         anchors: list[tuple[int, list[float]]] = []
         for detection in detections:
-            match = QUESTION_RE.match(str(detection["text"]).strip())
-            if match:
-                anchors.append((int(match.group(1)), detection["bbox"]))
+            q_num = parse_question_anchor_text(str(detection["text"]))
+            if q_num is not None:
+                anchors.append((q_num, detection["bbox"]))
 
         anchors.sort(key=lambda item: (item[1][1], item[0]))
         page_width, page_height = page_sizes[page_index]

@@ -96,6 +96,34 @@ class TestCompareAnswers(unittest.TestCase):
         result = compare_answers("24 cm", "24cm", [], "short_answer", self.config)
         self.assertTrue(result)
 
+    def test_fuzzy_ocr_match_tolerates_near_identical_strings(self):
+        config = {
+            "grading": {
+                **self.config["grading"],
+                "fuzzy_ocr_match": True,
+                "fuzzy_match_ratio": 0.85,
+                "fuzzy_min_length": 3,
+            }
+        }
+        result = compare_answers(
+            "삼각형의 넓이",
+            "삼각형의 넓이.",
+            [],
+            "short_answer",
+            config,
+        )
+        self.assertTrue(result)
+
+    def test_fuzzy_disabled_requires_exact(self):
+        result = compare_answers(
+            "정답입니자",
+            "정답입니다",
+            [],
+            "short_answer",
+            self.config,
+        )
+        self.assertFalse(result)
+
 
 class TestGradeStudent(unittest.TestCase):
     """전체 채점 테스트"""

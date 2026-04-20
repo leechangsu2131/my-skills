@@ -44,6 +44,8 @@ def create_app(workspace: str | Path | None = None) -> FastAPI:
         blank_exam: UploadFile | None = File(None),
         answer_key: UploadFile | None = File(None),
         student_files: list[UploadFile] | None = File(None),
+        page_align: str = Form("auto"),
+        student_page_offset: int = Form(0),
     ):
         blank_exam_name = _normalize_upload_name(blank_exam)
         if not blank_exam_name:
@@ -73,6 +75,9 @@ def create_app(workspace: str | Path | None = None) -> FastAPI:
             )
 
         title = Path(answer_key_name).stem
+        auto_pick_pages = page_align == "auto"
+        fixed_page_offset: int | None = None if auto_pick_pages else student_page_offset
+
         batch = store.create_batch(title)
         batch_folder = Path(batch.folder)
         inputs_dir = batch_folder / "inputs"
@@ -111,6 +116,8 @@ def create_app(workspace: str | Path | None = None) -> FastAPI:
                         student_path,
                         blank_exam_path=blank_exam_path,
                         metadata_dir=ocr_metadata_dir,
+                        student_page_offset=fixed_page_offset,
+                        auto_pick_student_pages=auto_pick_pages,
                     )
                     reviewed = build_reviewed_submission(parsed_student, parsed_answer_key)
                     payload_path = reviewed_dir / f"{student_path.stem}_reviewed.json"

@@ -9,4 +9,5 @@ pydantic>=2.11,<3
 httpx>=0.28,<1
 pytest>=9,<10
 paddleocr>=3,<4
+layoutparser>=0.3,<1
 python-certifi-win32>=1.6,<2

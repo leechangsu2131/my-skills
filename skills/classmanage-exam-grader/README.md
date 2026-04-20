@@ -26,6 +26,8 @@ The blank exam is used as the alignment template for question-region OCR.
 
 If a student PDF is **longer** than the blank (e.g. cover sheet or extra scans in one batch), use the web form’s **스캔 PDF 페이지 맞춤**: *자동* picks the contiguous window that best aligns to the template; *수동* sets a 0-based **시작 페이지** index. The CLI mirrors this via `ocr_extractor.py` (`--student-page-offset`, `--no-auto-page-window`) and `grade_exam.py ocr --blank-exam ...`.
 
+Question-region layout extraction is now built on `LayoutParser` geometry objects (`ocr/question_layout.py`), so OCR anchor parsing, deduplication, and answer-box construction all run through a single layout pipeline.
+
 ## What the web UI does
 
 1. Upload a blank exam PDF, one answer-key file, and one or more student files.

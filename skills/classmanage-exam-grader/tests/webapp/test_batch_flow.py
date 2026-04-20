@@ -60,7 +60,7 @@ def test_one_failed_student_does_not_fail_successful_submissions(tmp_path, monke
 
     calls = {"count": 0}
 
-    def fake_parse_student_file(path, *, blank_exam_path, metadata_dir=None):
+    def fake_parse_student_file(path, *, blank_exam_path, metadata_dir=None, **kwargs):
         calls["count"] += 1
         if calls["count"] == 1:
             return {

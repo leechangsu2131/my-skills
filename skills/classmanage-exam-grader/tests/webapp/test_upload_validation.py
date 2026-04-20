@@ -73,7 +73,7 @@ def test_failed_batch_detail_persists_error_message(tmp_path, monkeypatch) -> No
     app = create_app(tmp_path)
     client = TestClient(app)
 
-    def boom(_path, *, blank_exam_path, metadata_dir=None):
+    def boom(_path, *, blank_exam_path, metadata_dir=None, **kwargs):
         raise RuntimeError("student parse failed")
 
     monkeypatch.setattr("webapp.main.parse_student_file", boom)

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Any
 
 import cv2
 import fitz
@@ -28,23 +29,30 @@ def render_pdf_pages(pdf_path: Path, dpi: int = 160) -> list[np.ndarray]:
     return rendered_pages
 
 
-def align_page_images(template_page: np.ndarray, student_page: np.ndarray) -> AlignmentResult:
-    orb = cv2.ORB_create(1500)
-    template_keypoints, template_descriptors = orb.detectAndCompute(template_page, None)
-    student_keypoints, student_descriptors = orb.detectAndCompute(student_page, None)
+def _homography_from_feature_match(
+    template_page: np.ndarray,
+    student_page: np.ndarray,
+    *,
+    detector: Any,
+    matcher_norm: int,
+    min_matches: int,
+    top_k: int,
+) -> AlignmentResult:
+    template_keypoints, template_descriptors = detector.detectAndCompute(template_page, None)
+    student_keypoints, student_descriptors = detector.detectAndCompute(student_page, None)
 
     if template_descriptors is None or student_descriptors is None:
         raise ValueError("Unable to find alignment features on one of the pages")
 
-    matcher = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
+    matcher = cv2.BFMatcher(matcher_norm, crossCheck=True)
     matches = sorted(
         matcher.match(template_descriptors, student_descriptors),
         key=lambda item: item.distance,
     )
-    if len(matches) < 8:
+    if len(matches) < min_matches:
         raise ValueError("Not enough feature matches to align the student page")
 
-    best_matches = matches[:40]
+    best_matches = matches[:top_k]
     source_points = np.float32([template_keypoints[m.queryIdx].pt for m in best_matches]).reshape(-1, 1, 2)
     destination_points = np.float32([student_keypoints[m.trainIdx].pt for m in best_matches]).reshape(-1, 1, 2)
     matrix, mask = cv2.findHomography(source_points, destination_points, cv2.RANSAC, 5.0)
@@ -58,6 +66,28 @@ def align_page_images(template_page: np.ndarray, student_page: np.ndarray) -> Al
         width=student_page.shape[1],
         height=student_page.shape[0],
     )
+
+
+def align_page_images(template_page: np.ndarray, student_page: np.ndarray) -> AlignmentResult:
+    """Align template coordinates to student scan space; ORB first, then AKAZE."""
+    try:
+        return _homography_from_feature_match(
+            template_page,
+            student_page,
+            detector=cv2.ORB_create(2000),
+            matcher_norm=cv2.NORM_HAMMING,
+            min_matches=8,
+            top_k=48,
+        )
+    except ValueError:
+        return _homography_from_feature_match(
+            template_page,
+            student_page,
+            detector=cv2.AKAZE_create(),
+            matcher_norm=cv2.NORM_L2,
+            min_matches=8,
+            top_k=60,
+        )
 
 
 def transform_bbox(

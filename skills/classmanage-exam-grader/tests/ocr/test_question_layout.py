@@ -1,4 +1,12 @@
 from ocr.question_layout import build_question_layout
+from ocr.question_layout import parse_question_anchor_text
+
+
+def test_parse_question_anchor_accepts_common_labels() -> None:
+    assert parse_question_anchor_text("(1)") == 1
+    assert parse_question_anchor_text("문항 3.") == 3
+    assert parse_question_anchor_text("Q 12") == 12
+    assert parse_question_anchor_text("not a question") is None
 
 
 def test_build_question_layout_sorts_question_regions_by_page_then_number() -> None:

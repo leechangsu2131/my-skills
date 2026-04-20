@@ -49,15 +49,29 @@ def resolve_paths(config: dict) -> dict:
 
 
 def cmd_ocr(args, paths):
-    """1단계: 학생 시험지 OCR"""
+    """1단계: 학생 시험지 OCR (빈 시험지 템플릿 + Paddle OCR)"""
     print("\n" + "=" * 50)
-    print("📸 1단계: 학생 시험지 OCR (Gemini CLI)")
+    print("📸 1단계: 학생 시험지 OCR")
     print("=" * 50)
+
+    blank_exam = getattr(args, "blank_exam", None)
+    if not blank_exam:
+        print("❌ --blank-exam 으로 빈 시험지 PDF 경로를 지정하세요.")
+        return None
 
     students_dir = args.students or paths["input_students"]
     output_dir = args.extracted or paths["extracted"]
 
-    results = ocr_batch(students_dir, output_dir, getattr(args, "prompt", None))
+    offset = getattr(args, "student_page_offset", None)
+    no_auto = getattr(args, "no_auto_page_window", False)
+
+    results = ocr_batch(
+        students_dir,
+        output_dir,
+        blank_exam_path=blank_exam,
+        student_page_offset=offset,
+        auto_pick_student_pages=False if no_auto else None,
+    )
     return results
 
 
@@ -173,6 +187,10 @@ def cmd_all(args, paths):
     print("  시험 채점 자동화 파이프라인 시작")
     print("🚀" * 25)
 
+    if not getattr(args, "blank_exam", None):
+        print("❌ 전체 파이프라인에는 --blank-exam (빈 시험지 PDF)이 필요합니다.")
+        return
+
     # 1단계: OCR
     ocr_results = cmd_ocr(args, paths)
     if not ocr_results:
@@ -260,10 +278,10 @@ def main():
         epilog="""
 사용 예시:
   # 전체 파이프라인 (원클릭)
-  python grade_exam.py all --students ./pdfs/ --answer-key ./answer.pdf
+  python grade_exam.py all --blank-exam ./blank.pdf --students ./pdfs/ --answer-key ./answer.pdf
 
   # 단계별
-  python grade_exam.py ocr --students ./pdfs/
+  python grade_exam.py ocr --blank-exam ./blank.pdf --students ./pdfs/
   python grade_exam.py parse-key --answer-key ./answer.pdf
   python grade_exam.py grade
   python grade_exam.py grade-subj
@@ -280,6 +298,7 @@ def main():
 
     # all
     p_all = subparsers.add_parser("all", help="전체 파이프라인")
+    p_all.add_argument("--blank-exam", "-b", type=str, help="빈 시험지 PDF (문항 좌표·정렬 기준)")
     p_all.add_argument("--students", "-s", type=str, help="학생 시험지 PDF 폴더")
     p_all.add_argument("--answer-key", "-k", type=str, help="답안지 (PDF 또는 JSON)")
     p_all.add_argument("--analysis", "-a", type=str, help="외부 분석 JSON (선택)")
@@ -287,13 +306,29 @@ def main():
     p_all.add_argument("--interactive", "-i", action="store_true", help="대화형 답안지 입력")
     p_all.add_argument("--extracted", type=str, help="OCR 결과 폴더")
     p_all.add_argument("--graded", type=str, help="채점 결과 폴더")
-    p_all.add_argument("--prompt", type=str, help="커스텀 OCR 프롬프트")
+    p_all.add_argument(
+        "--student-page-offset",
+        type=int,
+        default=None,
+        help="학생 PDF에서 시험 첫 페이지의 0부터 시작하는 인덱스 (여분 페이지가 앞에 있을 때)",
+    )
+    p_all.add_argument(
+        "--no-auto-page-window",
+        action="store_true",
+        help="학생 PDF가 더 길 때 자동 구간 탐색 끄기 (수동 offset과 함께 사용)",
+    )
 
     # ocr
     p_ocr = subparsers.add_parser("ocr", help="1단계: 학생 시험지 OCR")
+    p_ocr.add_argument("--blank-exam", "-b", type=str, required=True, help="빈 시험지 PDF")
     p_ocr.add_argument("--students", "-s", type=str, help="학생 시험지 PDF 폴더")
     p_ocr.add_argument("--extracted", type=str, help="결과 저장 폴더")
-    p_ocr.add_argument("--prompt", type=str, help="커스텀 프롬프트")
+    p_ocr.add_argument("--student-page-offset", type=int, default=None, help="시험 시작 페이지 인덱스 (0부터)")
+    p_ocr.add_argument(
+        "--no-auto-page-window",
+        action="store_true",
+        help="자동 페이지 구간 탐색 끄기",
+    )
 
     # parse-key
     p_key = subparsers.add_parser("parse-key", help="2단계: 답안지 파싱")

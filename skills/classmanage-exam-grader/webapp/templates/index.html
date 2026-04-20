@@ -86,6 +86,26 @@
                 <p class="field-help">여러 학생 파일을 한 번에 넣을 수 있습니다. 스캔본 PDF와 테스트용 JSON을 모두 허용합니다.</p>
             </div>
 
+            <fieldset class="form-field">
+                <legend>스캔 PDF 페이지 맞춤</legend>
+                <p class="field-help">
+                    일괄 스캔으로 앞뒤에 여분 페이지가 붙은 경우, 빈 시험지와 페이지 수가 달라도 자동으로 시험 본문 구간을 찾습니다.
+                    자동이 맞지 않으면 수동으로 &ldquo;시작 페이지(0부터)&rdquo;를 지정하세요.
+                </p>
+                <div class="radio-row">
+                    <label>
+                        <input type="radio" name="page_align" value="auto" checked>
+                        자동 (권장)
+                    </label>
+                    <label>
+                        <input type="radio" name="page_align" value="manual">
+                        수동
+                    </label>
+                </div>
+                <label for="student_page_offset">시작 페이지 인덱스 (수동일 때만, 첫 장=0)</label>
+                <input id="student_page_offset" name="student_page_offset" type="number" min="0" step="1" value="0">
+            </fieldset>
+
             <div class="form-actions">
                 <button class="button button--primary" type="submit">배치 시작</button>
                 <p class="helper-text">업로드 후 자동으로 배치 현황 화면으로 이동합니다.</p>

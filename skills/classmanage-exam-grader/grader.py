@@ -8,6 +8,7 @@ grader.py - 학생 답안과 정답을 비교하여 채점하는 엔진.
 import json
 import re
 import unicodedata
+from difflib import SequenceMatcher
 from pathlib import Path
 from typing import Optional
 
@@ -44,6 +45,18 @@ def normalize_answer(answer: str, config: dict) -> str:
     return text
 
 
+def _fuzzy_ocr_match(norm_student: str, norm_correct: str, grading_config: dict, q_type: str) -> bool:
+    if not grading_config.get("fuzzy_ocr_match", False):
+        return False
+    if q_type == "descriptive":
+        return False
+    min_len = int(grading_config.get("fuzzy_min_length", 2))
+    if len(norm_student) < min_len or len(norm_correct) < min_len:
+        return False
+    ratio = float(grading_config.get("fuzzy_match_ratio", 0.88))
+    return SequenceMatcher(None, norm_student, norm_correct).ratio() >= ratio
+
+
 def compare_answers(student_answer: str, correct_answer: str,
                     alt_answers: list[str], q_type: str, config: dict) -> Optional[bool]:
     """단일 문제의 답을 비교합니다.
@@ -71,6 +84,13 @@ def compare_answers(student_answer: str, correct_answer: str,
     # 대체 정답 비교
     for alt in alt_answers:
         if norm_student == normalize_answer(alt, grading_config):
+            return True
+
+    if _fuzzy_ocr_match(norm_student, norm_correct, grading_config, q_type):
+        return True
+
+    for alt in alt_answers:
+        if _fuzzy_ocr_match(norm_student, normalize_answer(alt, grading_config), grading_config, q_type):
             return True
 
     return False

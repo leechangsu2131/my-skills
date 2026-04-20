@@ -351,6 +351,25 @@ textarea {
     font-weight: 700;
 }
 
+.radio-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin: 0.35rem 0 0.75rem;
+}
+
+fieldset.form-field {
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    padding: 1rem 1.25rem;
+    margin: 0;
+}
+
+fieldset.form-field legend {
+    padding: 0 0.35rem;
+    font-weight: 700;
+}
+
 input[type="file"],
 input[type="number"],
 select,

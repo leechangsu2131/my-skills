@@ -19,7 +19,15 @@
     "case_sensitive": false,
     "strip_whitespace": true,
     "normalize_numbers": true,
-    "descriptive_auto_grade": false
+    "descriptive_auto_grade": false,
+    "fuzzy_ocr_match": true,
+    "fuzzy_match_ratio": 0.88,
+    "fuzzy_min_length": 2
+  },
+  "ocr": {
+    "auto_pick_page_window": true,
+    "student_page_offset": null,
+    "flag_alignment_review_below": 0.35
   },
   "paths": {
     "input_students": "data/input/students",

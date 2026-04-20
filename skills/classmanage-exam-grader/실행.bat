@@ -3,34 +3,56 @@ setlocal
 
 cd /d "%~dp0"
 
-echo [1/3] Checking Python...
-where python >nul 2>nul
+set "APP_PYTHON=%~dp0.venv\Scripts\python.exe"
+
+echo [1/4] Preparing Python 3.11 environment...
+if not exist "%APP_PYTHON%" (
+    py -3.11 -c "import sys" >nul 2>nul
+    if errorlevel 1 (
+        echo Python 3.11 was not found.
+        echo Install Python 3.11, then run this file again.
+        pause
+        exit /b 1
+    )
+
+    py -3.11 -m venv .venv
+    if errorlevel 1 (
+        echo Failed to create the local Python 3.11 virtual environment.
+        pause
+        exit /b 1
+    )
+)
+
+"%APP_PYTHON%" -c "import sys; raise SystemExit(0 if sys.version_info[:2] == (3, 11) else 1)" >nul 2>nul
 if errorlevel 1 (
-    echo Python was not found in PATH.
-    echo Install Python first, then run this file again.
+    echo The local virtual environment is not using Python 3.11.
+    echo Delete the .venv folder and run this file again.
     pause
     exit /b 1
 )
 
-echo [2/3] Installing or updating required packages...
-python -m pip install -r requirements.txt
+echo [2/4] Checking OCR runtime...
+"%APP_PYTHON%" -c "import fastapi, uvicorn, paddleocr, paddle, certifi_win32" >nul 2>nul
 if errorlevel 1 (
-    echo Failed to install requirements.
-    echo If OCR later reports Paddle errors, install a compatible paddlepaddle runtime too.
-    pause
-    exit /b 1
+    echo [3/4] Installing or updating required packages...
+    "%APP_PYTHON%" -m pip install -r requirements.txt paddlepaddle
+    if errorlevel 1 (
+        echo Failed to install requirements for the Python 3.11 environment.
+        pause
+        exit /b 1
+    )
+) else (
+    echo [3/4] Reusing the existing Python 3.11 environment...
 )
 
-echo [3/3] Starting the web app...
+echo [4/4] Starting the web app...
 start "" http://127.0.0.1:8000
-python -m uvicorn webapp.main:app --reload
-
-set "EXIT_CODE=%errorlevel%"
-if not "%EXIT_CODE%"=="0" (
+"%APP_PYTHON%" -m uvicorn webapp.main:app --reload
+if errorlevel 1 (
     echo.
-    echo The server stopped with exit code %EXIT_CODE%.
-    echo If you saw a PaddleOCR or paddlepaddle error, install a compatible paddlepaddle package for this Python environment.
+    echo The server stopped unexpectedly.
+    echo If OCR model downloads fail on a school network, rerun once after the cert patch package is installed in .venv.
     pause
 )
 
-exit /b %EXIT_CODE%
+exit /b %errorlevel%

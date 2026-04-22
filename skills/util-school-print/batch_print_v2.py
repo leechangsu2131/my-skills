@@ -29,6 +29,7 @@
 """
 
 import csv
+import os
 import re
 import sys
 import time
@@ -39,28 +40,33 @@ from io import StringIO
 from urllib.request import urlopen
 from pathlib import Path
 
+try:
+    from dotenv import load_dotenv
+except ImportError:
+    sys.exit("❌ python-dotenv 없음 → pip install python-dotenv")
+
 # ─────────────────────────────────────────
-#  ★ 여기만 수정하세요 ★
+#  설정은 같은 폴더의 .env 파일에서 읽습니다
 # ─────────────────────────────────────────
+load_dotenv(Path(__file__).parent / ".env")
 
-HWPX_FILE          = r"C:\Users\user\hwpprint\안내장.hwpx"
-EXCEL_FILE         = r"C:\Users\user\hwpprint\학생명렬표.xlsx"
-SEPARATOR_TEMPLATE = r"C:\Users\user\hwpprint\간지_템플릿.hwpx"  # 아래 설명 참고
+HWPX_DIR           = os.getenv("HWPX_DIR", "")
+EXCEL_FILE         = os.getenv("EXCEL_FILE", "")
+SEPARATOR_TEMPLATE = os.getenv("SEPARATOR_TEMPLATE", "")
+GOOGLE_SHEET_CSV_URL = os.getenv("GOOGLE_SHEET_CSV_URL", "")
 
-# Google Sheets를 API 없이 읽고 싶다면 아래 CSV URL 사용:
-#   1) 시트 공유를 "링크가 있는 사용자(뷰어)"로 설정
-#   2) 시트 ID / gid를 넣어 CSV export URL 지정
-# 예) https://docs.google.com/spreadsheets/d/<SHEET_ID>/export?format=csv&gid=<GID>
-GOOGLE_SHEET_CSV_URL = ""   # 비워두면 EXCEL_FILE 사용
+SHEET_NAME  = os.getenv("SHEET_NAME",  "Sheet1")
+COL_GRADE   = os.getenv("COL_GRADE",  "학년")
+COL_CLASS   = os.getenv("COL_CLASS",  "반")
+COL_COUNT   = os.getenv("COL_COUNT",  "학생수")
 
-SHEET_NAME  = "Sheet1"
-COL_GRADE   = "학년"
-COL_CLASS   = "반"
-COL_COUNT   = "학생수"
-
-PRINTER_NAME = ""        # 비워두면 기본 프린터 / 예: "Fuji Apeos C2561 PCL6"
-JOB_DELAY    = 3         # 인쇄 Job 사이 대기(초)
-DRY_RUN      = False     # True → 실제 인쇄 없이 목록만 출력
+PRINTER_NAME    = os.getenv("PRINTER_NAME", "")       # 비워두면 기본 프린터
+JOB_DELAY       = int(os.getenv("JOB_DELAY", "3"))    # 인쇄 Job 사이 대기(초)
+DRY_RUN         = os.getenv("DRY_RUN", "false").lower() == "true"
+# 양면 인쇄: 0=단면, 1=양면(긴면/책형), 2=양면(짧은면/달력형) — 간지는 항상 0
+DUPLEX          = int(os.getenv("DUPLEX", "0"))
+# 간지 용지함: 0=기본값, 1=트레이1(A), 2=트레이2(B), 3=트레이3 ...
+SEPARATOR_TRAY  = int(os.getenv("SEPARATOR_TRAY", "0"))
 
 # ─────────────────────────────────────────
 
@@ -251,39 +257,161 @@ def get_hwp():
         sys.exit(f"❌ 한글 OLE 연결 실패: {e}")
 
 
-def print_hwpx(hwp, file_path: str, copies: int, printer: str) -> bool:
-    """지정 HWPX 파일을 열고 copies매 인쇄 후 닫음"""
+def _set_printer_bin(printer_name: str, bin_num: int) -> int:
+    """
+    win32print DEVMODE.DefaultSource 로 프린터 기본 용지함을 임시 변경.
+    원래 용지함 번호를 반환 (복원용).
+    - GetPrinter(9): 현재 사용자의 기본 프린터 설정 (관리자 권한 불필요)
+    """
+    if not printer_name or not bin_num:
+        return 0
+    try:
+        import win32print
+        h = win32print.OpenPrinter(printer_name)
+        info = win32print.GetPrinter(h, 9)          # level 9 = 사용자 권한
+        dm = info.get("pDevMode")
+        if dm is None:
+            win32print.ClosePrinter(h)
+            return 0
+        orig = dm.DefaultSource
+        dm.DefaultSource = bin_num
+        win32print.SetPrinter(h, 9, info, 0)
+        win32print.ClosePrinter(h)
+        log.debug(f"  트레이 DefaultSource 변경 성공: {orig} → {bin_num}")
+        return orig
+    except Exception as e:
+        log.warning(f"  트레이 변경 실패: {e}")
+        return 0
+
+
+def print_hwpx(hwp, file_path: str, copies: int, printer: str,
+               duplex: int = 0, paper_source: int = 0) -> bool:
+    """안내장 HWPX를 HWP OLE로 열고 copies매 인쇄 후 닫음"""
+    orig_bin = 0
+    if paper_source and printer:
+        orig_bin = _set_printer_bin(printer, paper_source)
+        time.sleep(1) # 프린터 설정 시스템 반영 대기
+
     try:
         hwp.Open(file_path, "HWPX", "forceopen:true")
-        time.sleep(0.5)  # 파일 열기 안정화 대기
+        time.sleep(1.5)
 
-        act  = hwp.HAction
-        pset = hwp.HParameterSet.HPrint
-        act.GetDefault("Print", pset.HSet)
-        pset.Copies = copies
+        act  = hwp.CreateAction("Print")
+        hset = act.CreateSet()
+        act.GetDefault(hset)
+
+        hset.SetItem("NumCopy", copies)
+        hset.SetItem("Range", 0)
+        hset.SetItem("Collate", True)
         if printer:
-            pset.PrinterName = printer
-        result = act.Execute("Print", pset.HSet)
+            hset.SetItem("UsePrinterName", printer)
+        if duplex:
+            hset.SetItem("Duplex", duplex)
 
-        hwp.Clear(1)  # 문서 닫기 (저장 안 함)
+        result = act.Execute(hset)
+        hwp.Clear(1)
         return bool(result)
     except Exception as e:
         log.error(f"  인쇄 오류: {e}")
+        try:
+            hwp.Clear(1)
+        except Exception:
+            pass
         return False
+    finally:
+        if orig_bin and printer:
+            _set_printer_bin(printer, orig_bin)
+
+
 
 
 # ──────────────────────────────────────────────────────────
-# 메인
+# 안내장 파일 선택 UI
+# ──────────────────────────────────────────────────────────
+
+def select_hwpx_file(hwpx_dir: str) -> str:
+    """
+    hwpx_dir 에서 *안내장.hwpx 패턴 파일을 찾아 번호 목록을 출력하고
+    사용자가 번호를 입력하면 해당 경로를 반환.
+    """
+    search_dir = Path(hwpx_dir)
+    if not search_dir.is_dir():
+        sys.exit(f"❌ HWPX_DIR 폴더 없음: {hwpx_dir}")
+
+    candidates = sorted(search_dir.glob("*안내장.hwpx"))
+    if not candidates:
+        sys.exit(f"❌ '{hwpx_dir}' 에서 *안내장.hwpx 파일을 찾을 수 없습니다.")
+
+    print()
+    print("━" * 50)
+    print("  인쇄할 안내장 파일을 선택하세요")
+    print("━" * 50)
+    for i, p in enumerate(candidates, 1):
+        print(f"  [{i}] {p.name}")
+    print()
+
+    while True:
+        raw = input(f"번호 입력 (1~{len(candidates)}): ").strip()
+        if raw.isdigit():
+            idx = int(raw)
+            if 1 <= idx <= len(candidates):
+                chosen = candidates[idx - 1]
+                print(f"  ✔ 선택됨: {chosen.name}")
+                print()
+                return str(chosen)
+        print(f"  1~{len(candidates)} 사이의 번호를 입력하세요.")
+    raise SystemExit("선택 오류")  # unreachable, linter용
+
+def filter_classes_ui(classes):
+    """로드된 학급 목록 중 인쇄할 대상을 선택하는 UI"""
+    print("\n" + "━" * 50)
+    print("  인쇄 범위 선택")
+    print("━" * 50)
+    print("  [1] 전체 인쇄 (기본)")
+    print("  [2] 특정 학년 선택 (예: 4,5,6)")
+    print("  [3] 특정 반 부분 검색 (예: 4학년 1반)")
+    
+    while True:
+        sel = input("번호 입력 (1~3, 기본 1): ").strip() or "1"
+        if sel == "1":
+            return classes
+        elif sel == "2":
+            g_input = input("인쇄할 학년을 쉼표(,)로 구분해 입력 (예: 4,5,6): ").strip()
+            target_grades = [g.strip() for g in g_input.split(",") if g.strip()]
+            filtered = [c for c in classes if str(c["grade"]) in target_grades]
+            if not filtered:
+                print("⚠️ 해당 학년이 없습니다. 다시 선택하세요.")
+                continue
+            return filtered
+        elif sel == "3":
+            q = input("검색어 입력 (예: 4학년 1반, 또는 4-1 등 엑셀 표기 기준): ").strip()
+            filtered = [c for c in classes if q in c["label"]]
+            if not filtered:
+                print("⚠️ 검색 결과가 없습니다. 다시 검색하세요.")
+                continue
+            print("\n[검색 결과]")
+            for idx, c in enumerate(filtered, 1):
+                print(f"  {idx}. {c['label']} ({c['count']}명)")
+            ok = input("위 반들을 인쇄할까요? (Y/N, 기본 Y): ").strip().upper() or "Y"
+            if ok == "Y":
+                return filtered
+            else:
+                continue
+        else:
+            print("⚠️ 잘못된 입력입니다.")
+
+
+# ──────────────────────────────────────────────────────────
+# 메인 루프
 # ──────────────────────────────────────────────────────────
 
 def main():
-    # 파일 확인
-    for path, label in [
-        (HWPX_FILE,          "안내장 HWPX"),
-        (SEPARATOR_TEMPLATE, "간지 템플릿 HWPX"),
-    ]:
-        if not Path(path).exists():
-            sys.exit(f"❌ {label} 파일 없음: {path}")
+    # ── 안내장 파일 선택 ──────────────────────────────────────
+    hwpx_file = select_hwpx_file(HWPX_DIR)
+
+    # ── 나머지 파일 확인 ─────────────────────────────────────
+    if not Path(SEPARATOR_TEMPLATE).exists():
+        sys.exit(f"❌ 간지 템플릿 HWPX 파일 없음: {SEPARATOR_TEMPLATE}")
 
     if not GOOGLE_SHEET_CSV_URL and not Path(EXCEL_FILE).exists():
         sys.exit(f"❌ 학생 명렬표 엑셀 파일 없음: {EXCEL_FILE}")
@@ -306,6 +434,8 @@ def main():
     if not classes:
         sys.exit("❌ 엑셀에서 반 데이터를 읽지 못했습니다.")
 
+    classes = filter_classes_ui(classes)
+
     total = sum(c["count"] for c in classes)
     log.info(f"총 {len(classes)}개 반 / 전체 {total}매 (+ 간지 {len(classes)}장) 예정")
     print()
@@ -323,7 +453,8 @@ def main():
     log.info("한글 OLE 기동 중...")
     hwp = get_hwp()
     printer_label = PRINTER_NAME or "(기본 프린터)"
-    log.info(f"프린터: {printer_label}")
+    duplex_label = {0: "단면", 1: "양면(긴면)", 2: "양면(짧은면)"}.get(DUPLEX, str(DUPLEX))
+    log.info(f"안내장: {Path(hwpx_file).name}  |  프린터: {printer_label}  |  인쇄방식: {duplex_label}")
     print()
 
     tmp_files = []  # 인쇄 후 삭제할 임시 파일 목록
@@ -342,18 +473,22 @@ def main():
             )
             tmp_files.append(sep_path)
 
-            log.info(f"  간지 인쇄 (1장)...")
-            ok_sep = print_hwpx(hwp, sep_path, copies=1, printer=PRINTER_NAME)
+            log.info(f"  간지 인쇄 (1장 / 트레이 {SEPARATOR_TRAY})...")
+            ok_sep = print_hwpx(hwp, sep_path, copies=1, printer=PRINTER_NAME,
+                                duplex=0, paper_source=SEPARATOR_TRAY)
             if ok_sep:
                 log.info(f"  ✓ 간지 전송 완료")
             else:
                 log.warning(f"  ✗ 간지 전송 실패")
 
+            log.info(f"  다음 안내장까지 {JOB_DELAY}초 대기...")
             time.sleep(JOB_DELAY)
 
-            # ② 안내장 인쇄
-            log.info(f"  안내장 인쇄 ({count}장)...")
-            ok_main = print_hwpx(hwp, HWPX_FILE, copies=count, printer=PRINTER_NAME)
+            # ② 안내장 인쇄 (트레이 1 고정)
+            MAIN_TRAY = 1
+            log.info(f"  안내장 인쇄 ({count}장 / 트레이 {MAIN_TRAY})...")
+            ok_main = print_hwpx(hwp, hwpx_file, copies=count, printer=PRINTER_NAME,
+                                 duplex=DUPLEX, paper_source=MAIN_TRAY)
             if ok_main:
                 log.info(f"  ✓ 안내장 전송 완료")
             else:

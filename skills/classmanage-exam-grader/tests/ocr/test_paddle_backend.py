@@ -5,7 +5,7 @@ from types import SimpleNamespace
 import numpy as np
 import pytest
 
-from ocr.paddle_backend import PaddleOcrBackend
+from packages.student_extraction.paddle_backend import PaddleOcrBackend
 
 
 def test_paddle_backend_raises_clear_error_when_runtime_missing(monkeypatch) -> None:

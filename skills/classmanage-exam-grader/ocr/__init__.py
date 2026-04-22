@@ -1,1 +1,1 @@
-"""OCR building blocks for blank-template-based exam extraction."""
+"""Backward-compatible OCR namespace for student extraction internals."""

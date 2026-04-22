@@ -1,9 +1,9 @@
-from answer_key_parser import parse_answer_key_pdf
+from packages.answer_key_extraction.service import parse_answer_key_pdf
 
 
 def test_parse_answer_key_pdf_uses_text_extraction_before_gemini(monkeypatch) -> None:
     monkeypatch.setattr(
-        "answer_key_parser._extract_pdf_text_pages",
+        "packages.answer_key_extraction.service._extract_pdf_text_pages",
         lambda path: [
             "\n".join(
                 [
@@ -47,7 +47,7 @@ def test_parse_answer_key_pdf_uses_text_extraction_before_gemini(monkeypatch) ->
     def fail(*args, **kwargs):
         raise AssertionError("Gemini fallback should not be used for text PDFs")
 
-    monkeypatch.setattr("answer_key_parser.run_gemini_ocr", fail)
+    monkeypatch.setattr("packages.answer_key_extraction.service.run_gemini_ocr", fail)
 
     result = parse_answer_key_pdf("answer.pdf")
 
@@ -62,10 +62,10 @@ def test_parse_answer_key_pdf_uses_text_extraction_before_gemini(monkeypatch) ->
 
 
 def test_parse_answer_key_pdf_falls_back_to_gemini_for_image_only_pdf(monkeypatch) -> None:
-    monkeypatch.setattr("answer_key_parser._extract_pdf_text_pages", lambda path: [""])
+    monkeypatch.setattr("packages.answer_key_extraction.service._extract_pdf_text_pages", lambda path: [""])
 
     monkeypatch.setattr(
-        "answer_key_parser.run_gemini_ocr",
+        "packages.answer_key_extraction.service.run_gemini_ocr",
         lambda *args, **kwargs: {
             "exam_title": "Gemini Quiz",
             "questions": [

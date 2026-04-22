@@ -1,6 +1,6 @@
 import numpy as np
 
-from ocr.student_pages import select_student_pages_for_template
+from packages.student_extraction.student_pages import select_student_pages_for_template
 
 
 def test_equal_length_returns_same_stack() -> None:
@@ -30,7 +30,7 @@ def test_auto_picks_highest_alignment_window(monkeypatch) -> None:
             return _Score(0.95)
         return _Score(0.1)
 
-    monkeypatch.setattr("ocr.student_pages.align_page_images", fake_align)
+    monkeypatch.setattr("packages.student_extraction.student_pages.align_page_images", fake_align)
 
     out, meta = select_student_pages_for_template(blank, student, auto_pick=True)
 

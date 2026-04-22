@@ -4,13 +4,15 @@ import json
 from pathlib import Path
 
 import fitz
-
-from analysis_merger import merge_analysis
-from answer_key_parser import load_answer_key_json, parse_answer_key_pdf
-from grader import grade_student, load_config
-from ocr_extractor import extract_answers
-from pdf_annotator import annotate_pdf
-from webapp.schemas import ReviewedSubmission, ReviewItem
+from packages.answer_key_extraction.service import load_answer_key_json
+from packages.answer_key_extraction.service import parse_answer_key_pdf
+from packages.annotation.service import annotate_pdf
+from packages.contracts.models import ReviewedSubmission
+from packages.contracts.models import ReviewItem
+from packages.grading.service import grade_student
+from packages.grading.service import load_config
+from packages.grading.service import merge_analysis
+from packages.student_extraction.service import extract_answers
 
 
 def parse_answer_key_file(path: Path) -> dict:

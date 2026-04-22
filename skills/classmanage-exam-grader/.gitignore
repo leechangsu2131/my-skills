@@ -7,3 +7,6 @@ data/web/
 __pycache__/
 *.pyc
 .venv/
+.tmp/
+.pytest_cache/
+.codex_tmp_*/

@@ -27,7 +27,9 @@
   "ocr": {
     "auto_pick_page_window": true,
     "student_page_offset": null,
-    "flag_alignment_review_below": 0.35
+    "flag_alignment_review_below": 0.35,
+    "render_dpi": 160,
+    "min_text_layer_lines_per_page": 4
   },
   "paths": {
     "input_students": "data/input/students",

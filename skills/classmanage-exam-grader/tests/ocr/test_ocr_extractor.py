@@ -2,7 +2,7 @@ from types import SimpleNamespace
 
 import numpy as np
 
-from ocr_extractor import extract_answers
+from packages.student_extraction.service import extract_answers
 
 
 def test_extract_answers_aligns_each_page_once_and_reuses_projection(tmp_path, monkeypatch) -> None:
@@ -14,7 +14,7 @@ def test_extract_answers_aligns_each_page_once_and_reuses_projection(tmp_path, m
     blank_page = np.full((80, 80), 255, dtype=np.uint8)
     student_page = np.full((80, 80), 255, dtype=np.uint8)
 
-    def fake_render_pdf_pages(path):
+    def fake_render_pdf_pages(path, dpi=160):
         if str(path) == str(blank_pdf):
             return [blank_page]
         return [student_page]
@@ -44,14 +44,20 @@ def test_extract_answers_aligns_each_page_once_and_reuses_projection(tmp_path, m
             height=80,
         )
 
-    monkeypatch.setattr("ocr_extractor.load_config", lambda: {})
-    monkeypatch.setattr("ocr_extractor.render_pdf_pages", fake_render_pdf_pages)
-    monkeypatch.setattr("ocr_extractor.PaddleOcrBackend", FakeBackend)
+    monkeypatch.setattr("packages.student_extraction.service.load_config", lambda: {})
+    monkeypatch.setattr("packages.student_extraction.service.render_pdf_pages", fake_render_pdf_pages)
+    monkeypatch.setattr("packages.student_extraction.service.PaddleOcrBackend", FakeBackend)
     monkeypatch.setattr(
-        "ocr_extractor.build_question_layout",
+        "packages.student_extraction.service.extract_line_detections_from_pdf_text_layer",
+        lambda *_args, **_kwargs: {},
+    )
+    monkeypatch.setattr("packages.student_extraction.service.has_enough_text_layer_content", lambda *_args, **_kwargs: False)
+    monkeypatch.setattr("packages.student_extraction.service.extract_text_from_render_bbox", lambda *_args, **_kwargs: "")
+    monkeypatch.setattr(
+        "packages.student_extraction.service.build_question_layout",
         lambda detections_by_page, page_sizes: SimpleNamespace(items=regions),
     )
-    monkeypatch.setattr("ocr_extractor.align_page_images", fake_align_page_images)
+    monkeypatch.setattr("packages.student_extraction.service.align_page_images", fake_align_page_images)
 
     result = extract_answers(str(student_pdf), blank_exam_path=str(blank_pdf))
 

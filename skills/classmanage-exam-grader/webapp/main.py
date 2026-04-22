@@ -7,8 +7,9 @@ from fastapi import FastAPI, File, Form, Request, UploadFile
 from fastapi.responses import FileResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from packages.contracts.models import ReviewedSubmission
+from packages.contracts.models import ReviewItem
 
-from webapp.schemas import ReviewItem, ReviewedSubmission
 from webapp.services.pipeline import (
     build_reviewed_submission,
     finalize_submission_pdf,

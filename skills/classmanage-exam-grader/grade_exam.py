@@ -31,13 +31,19 @@ from pathlib import Path
 SKILL_DIR = Path(__file__).parent
 sys.path.insert(0, str(SKILL_DIR))
 
-from ocr_extractor import extract_batch as ocr_batch, extract_answers
-from answer_key_parser import parse_answer_key_pdf, load_answer_key_json, create_answer_key_interactive, save_answer_key
-from grader import grade_batch, grade_student, load_config
-from analysis_merger import merge_batch as merge_analysis_batch
-from pdf_annotator import annotate_batch
-from llm_subjective_grader import grade_subjective_batch
-from html_reporter import generate_dashboard
+from packages.answer_key_extraction.service import create_answer_key_interactive
+from packages.answer_key_extraction.service import load_answer_key_json
+from packages.answer_key_extraction.service import parse_answer_key_pdf
+from packages.answer_key_extraction.service import save_answer_key
+from packages.annotation.service import annotate_batch
+from packages.export.service import generate_dashboard
+from packages.grading.service import grade_batch
+from packages.grading.service import grade_student
+from packages.grading.service import grade_subjective_batch
+from packages.grading.service import load_config
+from packages.grading.service import merge_batch as merge_analysis_batch
+from packages.student_extraction.service import extract_answers
+from packages.student_extraction.service import extract_batch as ocr_batch
 
 
 def resolve_paths(config: dict) -> dict:

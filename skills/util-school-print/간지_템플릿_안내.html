@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>간지 템플릿 설정 안내</title>
+<style>
+  body { font-family: 'Malgun Gothic', sans-serif; max-width: 720px; margin: 40px auto; color: #222; line-height: 1.7; }
+  h2 { color: #2c5f9e; border-bottom: 2px solid #2c5f9e; padding-bottom: 6px; }
+  .step { background: #f4f8ff; border-left: 4px solid #2c5f9e; padding: 14px 18px; margin: 16px 0; border-radius: 4px; }
+  .step b { color: #2c5f9e; }
+  .preview { border: 2px dashed #aaa; padding: 30px 40px; margin: 20px 0; text-align: center; background: #fafafa; border-radius: 6px; }
+  .preview .class-name { font-size: 2.4em; font-weight: bold; color: #1a1a1a; margin-bottom: 10px; }
+  .preview .count { font-size: 1.4em; color: #555; }
+  code { background: #eee; padding: 2px 6px; border-radius: 3px; font-family: Consolas, monospace; color: #c0392b; }
+  .tip { background: #fff8e1; border: 1px solid #ffe082; padding: 10px 16px; border-radius: 4px; margin: 14px 0; }
+  .tip::before { content: "💡 "; }
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; }
+  th { background: #2c5f9e; color: white; padding: 8px 12px; }
+  td { border: 1px solid #ddd; padding: 8px 12px; }
+  tr:nth-child(even) td { background: #f9f9f9; }
+</style>
+</head>
+<body>
+
+<h2>📄 간지 템플릿 HWPX 만들기</h2>
+
+<p>스크립트가 인쇄 전에 이 파일의 플레이스홀더를 자동으로 교체합니다.<br>
+<b>한 번만 만들어 두면 됩니다.</b></p>
+
+<h3>① 한글에서 새 문서 열기</h3>
+<div class="step">
+  파일 → 새 문서 (Ctrl+N)
+</div>
+
+<h3>② 아래 내용을 입력 (폰트 크게!)</h3>
+<div class="preview">
+  <div class="class-name">{{학년}}학년 {{반}}반</div>
+  <div class="count">총 {{학생수}}명</div>
+</div>
+
+<div class="tip">
+  중괄호 두 개 <code>{{</code> <code>}}</code> 안의 텍스트가 실제 값으로 자동 교체됩니다.<br>
+  폰트는 <b>36~48pt</b> 정도로 크게 설정하면 프린터 앞에서 한눈에 보입니다.
+</div>
+
+<h3>③ 사용 가능한 플레이스홀더</h3>
+<table>
+  <tr><th>입력할 텍스트</th><th>교체되는 값</th><th>예시 결과</th></tr>
+  <tr><td><code>{{학년}}</code></td><td>학년 숫자</td><td>3</td></tr>
+  <tr><td><code>{{반}}</code></td><td>반 숫자</td><td>2</td></tr>
+  <tr><td><code>{{학생수}}</code></td><td>해당 반 학생수</td><td>17</td></tr>
+</table>
+
+<p>예시: <code>{{학년}}학년 {{반}}반</code> → <b>3학년 2반</b></p>
+
+<h3>④ HWPX로 저장</h3>
+<div class="step">
+  파일 → 다른 이름으로 저장 → 파일 형식: <b>HWPX (*.hwpx)</b> 선택<br>
+  파일명: <code>간지_템플릿.hwpx</code>
+</div>
+
+<h3>⑤ 스크립트 설정</h3>
+<div class="step">
+  <code>batch_print_v2.py</code> 상단의<br>
+  <code>SEPARATOR_TEMPLATE = r"C:\...\간지_템플릿.hwpx"</code><br>
+  를 실제 저장 경로로 수정
+</div>
+
+<h3>최종 출력 결과</h3>
+<table>
+  <tr><th>출력 순서</th><th>내용</th><th>매수</th></tr>
+  <tr><td>1</td><td>🟨 간지: 3학년 1반 · 17명</td><td>1장</td></tr>
+  <tr><td>2</td><td>안내장</td><td>17장</td></tr>
+  <tr><td>3</td><td>🟨 간지: 3학년 2반 · 18명</td><td>1장</td></tr>
+  <tr><td>4</td><td>안내장</td><td>18장</td></tr>
+  <tr><td>…</td><td>…</td><td>…</td></tr>
+</table>
+
+<div class="tip">
+  간지를 <b>색지 트레이(트레이2)</b>에서 나오도록 설정하면 더 직관적입니다.<br>
+  프린터 속성 → 용지 소스에서 트레이를 지정하거나, 간지 문서 자체에서 색지 트레이를 설정하세요.
+</div>
+
+</body>
+</html>

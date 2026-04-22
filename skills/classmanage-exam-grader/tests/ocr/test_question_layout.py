@@ -1,5 +1,5 @@
-from ocr.question_layout import build_question_layout
-from ocr.question_layout import parse_question_anchor_text
+from packages.student_extraction.question_layout import build_question_layout
+from packages.student_extraction.question_layout import parse_question_anchor_text
 
 
 def test_parse_question_anchor_accepts_common_labels() -> None:

@@ -1,8 +1,8 @@
 import cv2
 import numpy as np
 
-from ocr.template_alignment import align_page_images
-from ocr.template_alignment import transform_bbox
+from packages.student_extraction.template_alignment import align_page_images
+from packages.student_extraction.template_alignment import transform_bbox
 
 
 def test_align_page_images_returns_homography_for_translated_page() -> None:

@@ -1,9 +1,9 @@
 import json
 
 from fastapi.testclient import TestClient
+from packages.contracts.models import ReviewedSubmission
 
 from webapp.main import create_app
-from webapp.schemas import ReviewedSubmission
 
 
 def test_uploading_json_inputs_creates_batch_and_review_page(tmp_path) -> None:

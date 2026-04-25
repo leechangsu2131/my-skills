@@ -2,6 +2,12 @@
 
 {% block title %}배치 현황 | 시험 피드백 스튜디오{% endblock %}
 
+{% block head %}
+{% if refresh_seconds %}
+    <meta http-equiv="refresh" content="{{ refresh_seconds }}">
+{% endif %}
+{% endblock %}
+
 {% block content %}
 {% set batch_title = batch.exam_title|default(batch.title|default("시험 배치")) if batch is defined else "시험 배치" %}
 {% set batch_status = batch.status|default("pending") if batch is defined else "pending" %}
@@ -48,6 +54,13 @@
 <section class="notice notice--error" role="alert">
     <strong>이 배치는 자동 처리 중 오류로 멈췄습니다.</strong>
     <p>{{ error_message }}</p>
+</section>
+{% endif %}
+
+{% if batch_status == "processing" %}
+<section class="notice" role="status">
+    <strong>배치를 백그라운드에서 처리 중입니다.</strong>
+    <p>이 화면은 {{ refresh_seconds or 5 }}초마다 자동으로 새로고침됩니다.</p>
 </section>
 {% endif %}
 

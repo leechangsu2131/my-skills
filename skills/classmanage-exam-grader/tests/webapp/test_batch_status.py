@@ -2,12 +2,14 @@ import json
 
 from fastapi.testclient import TestClient
 
+import webapp.main as web_main
 from webapp.main import _build_batch_view, create_app
 
 
-def test_batch_overview_rolls_up_submission_review_state(tmp_path) -> None:
+def test_batch_overview_rolls_up_submission_review_state(tmp_path, monkeypatch) -> None:
     app = create_app(tmp_path)
     client = TestClient(app)
+    monkeypatch.setattr("webapp.main._start_batch_processing", lambda **kwargs: web_main._process_batch(**kwargs))
 
     answer_key_payload = {
         "exam_title": "Linear Equations",

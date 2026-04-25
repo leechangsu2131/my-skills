@@ -47,21 +47,32 @@ class PaddleOcrBackend:
         return self._engine
 
     def detect_text(self, image: np.ndarray) -> list[dict]:
-        rgb_image = cv2.cvtColor(image, cv2.COLOR_GRAY2RGB) if image.ndim == 2 else image
+        rgb_image = self._to_rgb_image(image)
         results = self._run_ocr(rgb_image)
         normalized_results = self._normalize_results(results)
-        detections: list[dict] = []
-        for bbox, text, confidence in normalized_results:
-            xs = [point[0] for point in bbox]
-            ys = [point[1] for point in bbox]
-            detections.append(
-                {
-                    "text": text,
-                    "confidence": float(confidence),
-                    "bbox": [float(min(xs)), float(min(ys)), float(max(xs)), float(max(ys))],
-                }
-            )
-        return detections
+        return self._build_detections(normalized_results)
+
+    def detect_text_batch(self, images: list[np.ndarray]) -> list[list[dict]]:
+        if not images:
+            return []
+
+        engine = self._get_engine()
+        predict = getattr(engine, "predict", None)
+        if not callable(predict):
+            return [self.detect_text(image) for image in images]
+
+        rgb_images = [self._to_rgb_image(image) for image in images]
+        try:
+            results = predict(rgb_images, use_textline_orientation=self.use_angle_cls)
+        except TypeError as exc:
+            if "use_textline_orientation" not in str(exc):
+                raise
+            results = predict(rgb_images)
+
+        if not isinstance(results, list) or len(results) != len(rgb_images):
+            return [self.detect_text(image) for image in images]
+
+        return [self._build_detections(self._normalize_results(item)) for item in results]
 
     def _run_ocr(self, image: np.ndarray) -> Any:
         engine = self._get_engine()
@@ -75,6 +86,11 @@ class PaddleOcrBackend:
     def _normalize_results(self, results: Any) -> list[tuple[list[list[float]], str, float]]:
         if not results:
             return []
+
+        if isinstance(results, dict) and "rec_texts" in results:
+            return self._normalize_v3_result(results)
+        if hasattr(results, "get") and results.get("rec_texts") is not None:
+            return self._normalize_v3_result(results)
 
         first_item = results[0]
         if isinstance(first_item, dict) and "rec_texts" in first_item:
@@ -96,3 +112,23 @@ class PaddleOcrBackend:
         for bbox, text, confidence in zip(polygons, texts, scores):
             normalized.append((bbox, text, float(confidence)))
         return normalized
+
+    def _to_rgb_image(self, image: np.ndarray) -> np.ndarray:
+        return cv2.cvtColor(image, cv2.COLOR_GRAY2RGB) if image.ndim == 2 else image
+
+    def _build_detections(
+        self,
+        normalized_results: list[tuple[list[list[float]], str, float]],
+    ) -> list[dict]:
+        detections: list[dict] = []
+        for bbox, text, confidence in normalized_results:
+            xs = [point[0] for point in bbox]
+            ys = [point[1] for point in bbox]
+            detections.append(
+                {
+                    "text": text,
+                    "confidence": float(confidence),
+                    "bbox": [float(min(xs)), float(min(ys)), float(max(xs)), float(max(ys))],
+                }
+            )
+        return detections

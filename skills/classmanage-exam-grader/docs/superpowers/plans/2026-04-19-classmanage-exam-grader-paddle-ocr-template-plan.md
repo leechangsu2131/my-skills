@@ -10,6 +10,21 @@
 
 ---
 
+## 2026-04-25 Addendum
+
+This plan originally assumed Paddle OCR plus OpenCV would be sufficient for answer-region localization. Current implementation experience suggests a better split:
+
+- OpenCV remains the right tool for preprocessing, geometric alignment, contour helpers, and safe fallback crops.
+- YOLOv8 is the better long-term tool for locating answer-writing regions such as objective blanks, checkboxes, and answer boxes.
+
+The codebase now includes a hybrid entrypoint at `packages/student_extraction/answer_region_detector.py`.
+
+Current runtime status:
+
+- default mode: `opencv`
+- future preferred mode: `hybrid` or `yolo_first`
+- activation requirement: a trained YOLO weights file configured in `config.json`
+
 ## File Structure
 
 **Create:**

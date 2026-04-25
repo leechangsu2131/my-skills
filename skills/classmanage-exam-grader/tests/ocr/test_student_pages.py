@@ -1,6 +1,7 @@
 import numpy as np
 
 from packages.student_extraction.student_pages import select_student_pages_for_template
+from packages.student_extraction.student_pages import split_student_pages_for_template
 
 
 def test_equal_length_returns_same_stack() -> None:
@@ -66,3 +67,44 @@ def test_student_shorter_than_template_raises() -> None:
         assert "fewer pages" in str(exc).lower()
     else:
         raise AssertionError("expected ValueError")
+
+
+def test_exact_multiple_student_pdf_splits_into_sequential_groups() -> None:
+    blank = [np.zeros((6, 6), dtype=np.uint8) for _ in range(2)]
+    student = [np.full((6, 6), fill_value=index, dtype=np.uint8) for index in range(4)]
+
+    groups = split_student_pages_for_template(blank, student, auto_pick=True)
+
+    assert len(groups) == 2
+    assert [group_meta["student_page_offset"] for _pages, group_meta in groups] == [0, 2]
+    assert groups[0][0][0] is student[0]
+    assert groups[0][0][1] is student[1]
+    assert groups[1][0][0] is student[2]
+    assert groups[1][0][1] is student[3]
+
+
+def test_duplex_scan_groups_ignore_trailing_blank_back_pages() -> None:
+    blank = [np.zeros((24, 24), dtype=np.uint8) for _ in range(3)]
+    content_pages = [np.full((24, 24), fill_value=80 + index, dtype=np.uint8) for index in range(6)]
+    blank_back = np.full((24, 24), fill_value=255, dtype=np.uint8)
+    noisy_blank_back = blank_back.copy()
+    noisy_blank_back[0, 0] = 235
+    noisy_blank_back[5, 5] = 230
+    student = [
+        content_pages[0],
+        content_pages[1],
+        content_pages[2],
+        blank_back,
+        content_pages[3],
+        content_pages[4],
+        content_pages[5],
+        noisy_blank_back,
+    ]
+
+    groups = split_student_pages_for_template(blank, student, auto_pick=True)
+
+    assert len(groups) == 2
+    assert [group_meta["mode"] for _pages, group_meta in groups] == ["duplex_groups", "duplex_groups"]
+    assert [group_meta["student_page_offset"] for _pages, group_meta in groups] == [0, 4]
+    assert groups[0][0] == student[:3]
+    assert groups[1][0] == student[4:7]

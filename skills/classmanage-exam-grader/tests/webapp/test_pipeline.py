@@ -1,4 +1,5 @@
 from webapp.services.pipeline import parse_answer_key_file, parse_student_file
+from webapp.services.pipeline import parse_student_file_bundle
 from webapp.services.pipeline import build_reviewed_submission
 
 
@@ -73,6 +74,70 @@ def test_low_confidence_answer_defaults_to_review() -> None:
     assert reviewed.items[0].review_status == "needs_review"
 
 
+def test_build_reviewed_submission_carries_extraction_metadata() -> None:
+    answer_key = {
+        "exam_title": "Quiz",
+        "questions": [
+            {"q_num": 1, "type": "short_answer", "answer": "12", "points": 5}
+        ],
+    }
+    student_answers = {
+        "student_name": "Park",
+        "answers": [
+            {
+                "q_num": 1,
+                "type": "short_answer",
+                "answer": "12",
+                "confidence": "low",
+                "confidence_score": 0.42,
+                "alignment_score": 0.31,
+                "extraction_method": "page_fallback",
+                "review_reason": ["low_alignment", "fallback_used"],
+                "requires_review": True,
+                "page": 1,
+            }
+        ],
+    }
+
+    reviewed = build_reviewed_submission(student_answers, answer_key)
+
+    assert reviewed.items[0].extraction_method == "page_fallback"
+    assert reviewed.items[0].confidence_score == 0.42
+    assert reviewed.items[0].alignment_score == 0.31
+    assert reviewed.items[0].review_reason == ["low_alignment", "fallback_used"]
+
+
+def test_build_reviewed_submission_carries_review_crop_metadata() -> None:
+    answer_key = {
+        "exam_title": "Quiz",
+        "questions": [
+            {"q_num": 1, "type": "short_answer", "answer": "12", "points": 5}
+        ],
+    }
+    student_answers = {
+        "student_name": "Park",
+        "answers": [
+            {
+                "q_num": 1,
+                "type": "short_answer",
+                "answer": "12",
+                "confidence": "low",
+                "requires_review": True,
+                "page": 1,
+                "bbox": [40.0, 50.0, 120.0, 90.0],
+                "review_bbox": [18.0, 26.0, 220.0, 150.0],
+                "template_bbox": [16.0, 24.0, 210.0, 140.0],
+            }
+        ],
+    }
+
+    reviewed = build_reviewed_submission(student_answers, answer_key)
+
+    assert reviewed.items[0].bbox == [40.0, 50.0, 120.0, 90.0]
+    assert reviewed.items[0].review_bbox == [18.0, 26.0, 220.0, 150.0]
+    assert reviewed.items[0].template_bbox == [16.0, 24.0, 210.0, 140.0]
+
+
 def test_pdf_student_extraction_returns_layout_aware_answers(tmp_path, monkeypatch) -> None:
     blank_pdf = tmp_path / "blank.pdf"
     student_pdf = tmp_path / "student.pdf"
@@ -98,3 +163,22 @@ def test_pdf_student_extraction_returns_layout_aware_answers(tmp_path, monkeypat
     result = parse_student_file(student_pdf, blank_exam_path=blank_pdf)
 
     assert result["answers"][0]["answer"] == "42"
+
+
+def test_parse_student_file_bundle_expands_grouped_pdf_results(tmp_path, monkeypatch) -> None:
+    blank_pdf = tmp_path / "blank.pdf"
+    student_pdf = tmp_path / "merged.pdf"
+    blank_pdf.write_bytes(b"%PDF-1.4")
+    student_pdf.write_bytes(b"%PDF-1.4")
+
+    monkeypatch.setattr(
+        "webapp.services.pipeline.extract_answer_groups",
+        lambda path, *, blank_exam_path, metadata_dir=None, **kwargs: [
+            {"student_name": "Kim Minsu", "answers": []},
+            {"student_name": "Lee Damin", "answers": []},
+        ],
+    )
+
+    results = parse_student_file_bundle(student_pdf, blank_exam_path=blank_pdf)
+
+    assert [item["student_name"] for item in results] == ["Kim Minsu", "Lee Damin"]

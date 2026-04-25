@@ -23,3 +23,86 @@ def test_build_question_layout_sorts_question_regions_by_page_then_number() -> N
     assert [item.q_num for item in layout.items] == [1, 2]
     assert layout.items[0].page_index == 0
     assert layout.items[0].answer_bbox[1] < layout.items[1].answer_bbox[1]
+
+
+def test_build_question_layout_captures_question_snippet_and_marker_type() -> None:
+    detections_by_page = {
+        0: [
+            {"text": "1.", "confidence": 0.99, "bbox": [20, 40, 40, 60]},
+            {"text": "다음 중 알맞은 것은 ( )", "confidence": 0.95, "bbox": [55, 38, 180, 62]},
+        ]
+    }
+    page_sizes = {0: (600, 800)}
+
+    layout = build_question_layout(detections_by_page, page_sizes)
+
+    assert layout.items[0].question_text_snippet.startswith("다음 중")
+    assert layout.items[0].answer_marker_type == "괄호"
+    assert layout.items[0].question_text_bbox == [55.0, 38.0, 180.0, 62.0]
+
+
+def test_build_question_layout_limits_answer_bbox_to_same_column() -> None:
+    detections_by_page = {
+        0: [
+            {"text": "1.", "confidence": 0.99, "bbox": [20, 40, 40, 60]},
+            {"text": "1. left question", "confidence": 0.95, "bbox": [55, 38, 180, 62]},
+            {"text": "5.", "confidence": 0.99, "bbox": [330, 40, 350, 60]},
+            {"text": "5. right question", "confidence": 0.95, "bbox": [365, 38, 490, 62]},
+            {"text": "2.", "confidence": 0.99, "bbox": [20, 180, 40, 200]},
+            {"text": "2. left lower", "confidence": 0.95, "bbox": [55, 178, 170, 202]},
+        ]
+    }
+    page_sizes = {0: (600, 800)}
+
+    layout = build_question_layout(detections_by_page, page_sizes)
+
+    left_q1 = next(item for item in layout.items if item.q_num == 1)
+    right_q5 = next(item for item in layout.items if item.q_num == 5)
+    assert left_q1.answer_bbox[2] < 400
+    assert right_q5.answer_bbox[0] > 300
+
+
+def test_build_question_layout_prefers_compact_anchor_bbox_when_duplicate_question_labels_exist() -> None:
+    detections_by_page = {
+        0: [
+            {"text": "1.", "confidence": 0.90, "bbox": [20, 40, 35, 58]},
+            {"text": "1. left question", "confidence": 0.99, "bbox": [20, 38, 180, 62]},
+            {"text": "2.", "confidence": 0.99, "bbox": [20, 180, 35, 198]},
+        ]
+    }
+    page_sizes = {0: (600, 800)}
+
+    layout = build_question_layout(detections_by_page, page_sizes)
+
+    assert layout.items[0].anchor_bbox == [20.0, 40.0, 35.0, 58.0]
+
+
+def test_build_question_layout_shrinks_long_question_line_anchor_to_prefix_width() -> None:
+    detections_by_page = {
+        0: [
+            {"text": "1. left question", "confidence": 0.95, "bbox": [20, 40, 180, 62]},
+            {"text": "2. lower question", "confidence": 0.95, "bbox": [20, 180, 170, 202]},
+        ]
+    }
+    page_sizes = {0: (600, 800)}
+
+    layout = build_question_layout(detections_by_page, page_sizes)
+
+    assert layout.items[0].anchor_bbox[2] < 60
+
+
+def test_build_question_layout_prefers_real_question_anchor_over_top_header_title() -> None:
+    detections_by_page = {
+        0: [
+            {"text": "2.평면도형", "confidence": 0.98, "bbox": [90, 20, 180, 40]},
+            {"text": "1. 다음 중 알맞은 것을 고르시오 (   )", "confidence": 0.91, "bbox": [20, 80, 260, 100]},
+            {"text": "2. 다음 중 바르게 설명한 것을 고르시오 (   )", "confidence": 0.62, "bbox": [20, 140, 300, 160]},
+            {"text": "3. 다음 중 알맞은 것을 고르시오 (   )", "confidence": 0.91, "bbox": [20, 200, 260, 220]},
+        ]
+    }
+    page_sizes = {0: (600, 800)}
+
+    layout = build_question_layout(detections_by_page, page_sizes)
+
+    q2 = next(item for item in layout.items if item.q_num == 2)
+    assert q2.anchor_bbox[1] >= 140.0

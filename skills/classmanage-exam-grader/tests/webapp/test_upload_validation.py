@@ -3,6 +3,7 @@ import json
 
 from fastapi.testclient import TestClient
 
+import webapp.main as web_main
 from webapp.main import create_app
 
 
@@ -76,7 +77,11 @@ def test_failed_batch_detail_persists_error_message(tmp_path, monkeypatch) -> No
     def boom(_path, *, blank_exam_path, metadata_dir=None, **kwargs):
         raise RuntimeError("student parse failed")
 
-    monkeypatch.setattr("webapp.main.parse_student_file", boom)
+    monkeypatch.setattr(
+        "webapp.main._start_batch_processing",
+        lambda **kwargs: web_main._process_batch(**kwargs),
+    )
+    monkeypatch.setattr("webapp.services.batch_runner.parse_student_file_bundle", boom)
 
     client.post(
         "/batches",

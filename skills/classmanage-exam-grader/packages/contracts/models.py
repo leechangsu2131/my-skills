@@ -38,8 +38,14 @@ class StudentAnswerEntry(BaseModel):
     type: QuestionType = "unknown"
     answer: str = ""
     confidence: ConfidenceLevel = "medium"
+    confidence_score: float | None = None
+    alignment_score: float | None = None
+    extraction_method: str | None = None
+    review_reason: list[str] = Field(default_factory=list)
     page: int | None = None
     bbox: list[float] | None = None
+    review_bbox: list[float] | None = None
+    template_bbox: list[float] | None = None
     requires_review: bool = False
 
 
@@ -61,7 +67,19 @@ class ReviewItem(BaseModel):
     feedback_source: str
     feedback_confidence: float
     review_status: Literal["approved", "needs_review"]
+    confidence_score: float | None = None
+    alignment_score: float | None = None
+    extraction_method: str | None = None
+    review_reason: list[str] = Field(default_factory=list)
     page: int | None = None
+    bbox: list[float] | None = None
+    review_bbox: list[float] | None = None
+    template_bbox: list[float] | None = None
+    student_crop_url: str | None = None
+    reference_crop_url: str | None = None
+    student_page_url: str | None = None
+    reference_page_url: str | None = None
+    manual_page_review: bool = False
     question_text: str | None = None
     rubric: str | None = None
 

@@ -3,12 +3,14 @@ import json
 import fitz
 from fastapi.testclient import TestClient
 
+import webapp.main as web_main
 from webapp.main import create_app
 
 
-def test_review_approve_intent_finalizes_student_pdf(tmp_path) -> None:
+def test_review_approve_intent_finalizes_student_pdf(tmp_path, monkeypatch) -> None:
     app = create_app(tmp_path)
     client = TestClient(app)
+    monkeypatch.setattr("webapp.main._start_batch_processing", lambda **kwargs: web_main._process_batch(**kwargs))
 
     answer_key_payload = {
         "exam_title": "Linear Equations",

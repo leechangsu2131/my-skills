@@ -116,6 +116,78 @@
                         </div>
                     </dl>
 
+                    <dl class="answer-grid answer-grid--meta">
+                        <div>
+                            <dt>Extraction</dt>
+                            <dd>{{ item.extraction_method|default("primary") }}</dd>
+                        </div>
+                        <div>
+                            <dt>OCR score</dt>
+                            <dd>{% if item.confidence_score is not none %}{{ "%.2f"|format(item.confidence_score) }}{% else %}-{% endif %}</dd>
+                        </div>
+                        <div>
+                            <dt>Alignment</dt>
+                            <dd>{% if item.alignment_score is not none %}{{ "%.2f"|format(item.alignment_score) }}{% else %}-{% endif %}</dd>
+                        </div>
+                    </dl>
+
+                    {% if item.review_reason %}
+                        <div class="chip-row review-reason-row">
+                            {% for reason in item.review_reason %}
+                                <span class="chip chip--warning">{{ reason }}</span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    {% if item.student_crop_url or item.reference_crop_url %}
+                        <section class="comparison-panel">
+                            <div>
+                                <p class="section-heading__eyebrow">Visual Check</p>
+                                <p class="helper-text">Compare the student crop with the blank exam region, then quickly mark the answer as correct or incorrect.</p>
+                            </div>
+                            <div class="comparison-grid">
+                                {% if item.student_crop_url %}
+                                    <figure class="comparison-card">
+                                        <figcaption>Student crop</figcaption>
+                                        <img src="{{ item.student_crop_url }}" alt="Student crop for question {{ item.q_num|default(loop.index) }}">
+                                    </figure>
+                                {% endif %}
+                                {% if item.reference_crop_url %}
+                                    <figure class="comparison-card">
+                                        <figcaption>Blank exam region</figcaption>
+                                        <img src="{{ item.reference_crop_url }}" alt="Blank exam region for question {{ item.q_num|default(loop.index) }}">
+                                    </figure>
+                                {% endif %}
+                            </div>
+                        </section>
+                    {% endif %}
+
+                    {% if item.manual_page_review %}
+                        <section class="comparison-panel">
+                            <div>
+                                <p class="section-heading__eyebrow">Full Page Review</p>
+                                <p class="helper-text">If the crop is wrong, review the full page and finish grading manually.</p>
+                                <p class="helper-text">
+                                    <a href="/submissions/{{ submission.id if submission is defined and submission and submission.id is defined else '' }}/source" target="_blank" rel="noopener">Open original student PDF</a>
+                                </p>
+                            </div>
+                            <div class="comparison-grid">
+                                {% if item.student_page_url %}
+                                    <figure class="comparison-card">
+                                        <figcaption>Student page</figcaption>
+                                        <img src="{{ item.student_page_url }}" alt="Student page for question {{ item.q_num|default(loop.index) }}">
+                                    </figure>
+                                {% endif %}
+                                {% if item.reference_page_url %}
+                                    <figure class="comparison-card">
+                                        <figcaption>Blank exam page</figcaption>
+                                        <img src="{{ item.reference_page_url }}" alt="Blank exam page for question {{ item.q_num|default(loop.index) }}">
+                                    </figure>
+                                {% endif %}
+                            </div>
+                        </section>
+                    {% endif %}
+
                     <div class="question-card__body">
                         <div class="review-block">
                             <label for="feedback_{{ item.q_num|default(loop.index) }}">학생에게 보여줄 설명</label>
@@ -143,6 +215,25 @@
                                     <option value="approved" {% if item_status == "approved" %}selected{% endif %}>학생용 확정</option>
                                 </select>
                             </div>
+                        </div>
+                        <div class="review-block">
+                            <input type="hidden" name="manual_page_review_{{ item.q_num|default(loop.index) }}" value="0">
+                            <label for="manual_page_review_{{ item.q_num|default(loop.index) }}">Review fallback</label>
+                            <label for="manual_page_review_{{ item.q_num|default(loop.index) }}">
+                                <input
+                                    id="manual_page_review_{{ item.q_num|default(loop.index) }}"
+                                    name="manual_page_review_{{ item.q_num|default(loop.index) }}"
+                                    type="checkbox"
+                                    value="1"
+                                    {% if item.manual_page_review %}checked{% endif %}
+                                >
+                                Show full page when the crop is wrong
+                            </label>
+                            <p class="field-help">Use this when the extracted crop misses the real answer area on a two-column exam page.</p>
+                        </div>
+                        <div class="review-quick-actions">
+                            <button class="button button--secondary button--small" type="button" data-mark-correct="{{ item.q_num|default(loop.index) }}" data-max-points="{{ item.points_possible|default(item.max_points|default(0)) }}">정답 처리</button>
+                            <button class="button button--ghost button--small" type="button" data-mark-incorrect="{{ item.q_num|default(loop.index) }}">오답 처리</button>
                         </div>
                     </div>
                 </article>
@@ -237,4 +328,35 @@
         {% endif %}
     </aside>
 </section>
+<script>
+document.addEventListener("click", function (event) {
+    var correctButton = event.target.closest("[data-mark-correct]");
+    if (correctButton) {
+        var qNum = correctButton.getAttribute("data-mark-correct");
+        var maxPoints = correctButton.getAttribute("data-max-points") || "0";
+        var pointsInput = document.getElementById("points_earned_" + qNum);
+        var statusSelect = document.getElementById("review_status_" + qNum);
+        if (pointsInput) {
+            pointsInput.value = maxPoints;
+        }
+        if (statusSelect) {
+            statusSelect.value = "approved";
+        }
+        return;
+    }
+
+    var incorrectButton = event.target.closest("[data-mark-incorrect]");
+    if (incorrectButton) {
+        var badQNum = incorrectButton.getAttribute("data-mark-incorrect");
+        var badPointsInput = document.getElementById("points_earned_" + badQNum);
+        var badStatusSelect = document.getElementById("review_status_" + badQNum);
+        if (badPointsInput) {
+            badPointsInput.value = "0";
+        }
+        if (badStatusSelect) {
+            badStatusSelect.value = "approved";
+        }
+    }
+});
+</script>
 {% endblock %}

@@ -1,143 +1,127 @@
 ---
-name: exam-grader
-description: "Gemini CLI로 학생 시험지 PDF를 OCR하여 자동 채점하고, 결과를 원본 PDF에 기입하는 자동화 시스템"
+name: classmanage-exam-grader
+description: Local-first exam grading workstation with blank-template alignment, grouped student PDF support, teacher review, and annotated feedback PDFs.
 ---
 
-# 시험 채점 자동화 (Gemini CLI + PDF)
+# classmanage-exam-grader
 
-학생 시험지 PDF를 Gemini CLI의 멀티모달 분석으로 OCR → 채점 → PDF 결과 기입까지 자동화합니다.
+Use this project guide when you need to change exam grading behavior without re-reading the whole codebase.
 
-## 📁 파일 구조
+## Read This First
 
-```
-exam-grader/
-├── grade_exam.py               ← 메인 CLI (전체 파이프라인)
-├── ocr_extractor.py            ← Gemini CLI OCR 모듈
-├── answer_key_parser.py        ← 답안지 파서
-├── grader.py                   ← 채점 엔진
-├── analysis_merger.py          ← 외부 LLM 분석 병합
-├── pdf_annotator.py            ← PDF 결과 기입
-├── config.json                 ← 설정
-├── prompts/                    ← Gemini CLI 프롬프트
-│   ├── ocr_student_exam.txt
-│   └── ocr_answer_key.txt
-├── schemas/                    ← JSON 스키마
-└── data/                       ← 작업 데이터 (git 제외)
-    ├── input/students/         ← 학생 시험지 PDF
-    ├── input/answer_key/       ← 답안지 PDF
-    ├── extracted/              ← OCR 결과 JSON
-    ├── graded/                 ← 채점 결과 JSON
-    └── output/                 ← 채점 완료 PDF
-```
+- For product overview and runtime commands, read `README.md`.
+- For actual implementation, prefer `packages/*`, `webapp/services/*`, and `webapp/templates/*`.
+- Avoid starting from top-level compatibility files unless you are preserving legacy imports.
 
----
+## Canonical Boundaries
 
-## 🚀 빠른 시작
+- `apps/web/main.py`
+  Stable web entrypoint only.
+- `apps/cli/grade_exam.py`
+  Stable CLI entrypoint only.
+- `packages/contracts/`
+  Shared models and contracts.
+- `packages/student_extraction/`
+  Blank exam alignment, grouped student PDFs, duplex trailing blank pages, OCR, and answer extraction.
+- `packages/student_extraction/answer_region_detector.py`
+  YOLO-first or OpenCV-fallback answer-region routing for objective questions.
+- `packages/student_extraction/answer_regions.py`
+  OpenCV heuristics for objective answer blanks and prompt-localized crops.
+- `packages/answer_key_extraction/`
+  Answer key parsing.
+- `packages/grading/`
+  Scoring and analysis merge.
+- `packages/annotation/`
+  Annotated feedback PDFs.
+- `webapp/services/pipeline.py`
+  Adapter between engine outputs and review/finalization payloads.
+- `webapp/services/batch_runner.py`
+  Batch orchestration, background processing, submission creation, and batch status transitions.
+- `webapp/main.py`
+  Routes, request validation, and page composition.
 
-### 1. 사전 조건
+## Edit Map
 
-```powershell
-# Gemini CLI (이미 설치됨)
-gemini --version
+If the task is about one of these areas, open only the matching files first.
 
-# PyMuPDF (이미 설치됨)
-pip install PyMuPDF
-```
+- OCR quality, page alignment, grouped PDFs:
+  `packages/student_extraction/`
+- Objective answer box localization, YOLO/OpenCV handoff:
+  `packages/student_extraction/answer_region_detector.py`
+  `packages/student_extraction/answer_regions.py`
+  `packages/student_extraction/service.py`
+- Duplex scan trailing blank pages:
+  `packages/student_extraction/student_pages.py`
+- Answer key parsing:
+  `packages/answer_key_extraction/service.py`
+- Review payload fields:
+  `packages/contracts/models.py`
+  `webapp/services/pipeline.py`
+- Batch timing, background jobs, upload latency:
+  `webapp/services/batch_runner.py`
+- Batch page rendering:
+  `webapp/main.py`
+  `webapp/templates/batch_detail.html`
+- Review UI:
+  `webapp/templates/submission_review.html`
+- Final PDF output:
+  `packages/annotation/`
+  `webapp/services/pipeline.py`
 
-### 2. 시험지 준비
+## Rules For New Work
 
-- 학생 시험지 PDF를 `data/input/students/`에 넣기
-- 답안지 PDF를 `data/input/answer_key/`에 넣기
+- Prefer editing `packages/*` or `webapp/services/*` over top-level wrapper files.
+- Keep `webapp/main.py` thin. If logic grows, move it into `webapp/services/`.
+- Keep data shape changes centered in `packages/contracts/models.py`.
+- Add or update focused tests in `tests/` for the module you touched.
+- Do not put new domain logic into `apps/*`; those are entrypoints.
 
-### 3. 원클릭 실행
+## Current Behavioral Assumptions
 
-```powershell
-cd skills/exam-grader
-python grade_exam.py all --students data/input/students/ --answer-key data/input/answer_key/answer.pdf
-```
+- Batch input requires:
+  - one blank exam PDF
+  - one answer key
+  - one or more student files
+- Objective answer-region detection currently defaults to OpenCV heuristics.
+- If `config.json` provides `answer_region_detector.mode` plus a valid YOLO weights path, multiple-choice answer regions will try YOLO first and fall back to OpenCV automatically.
+- Grouped student PDFs are supported when:
+  - students are back-to-back at exactly `template_page_count`, or
+  - students are duplex scanned at `template_page_count + 1` with a nearly blank trailing page
+- Upload requests should return quickly; heavy OCR runs in the background through `webapp/services/batch_runner.py`
 
-### 4. 결과 확인
+## Current OCR Focus
 
-- `data/output/` 에서 `{학생명}_채점완료.pdf` 확인
-- `data/output/_grading_summary.json` 에서 전체 요약 확인
+When the task is about "the crop is wrong" or "the answer area is not being found correctly", start here in order:
 
----
+1. `packages/student_extraction/service.py`
+2. `packages/student_extraction/answer_region_detector.py`
+3. `packages/student_extraction/answer_regions.py`
+4. `packages/student_extraction/question_layout.py`
 
-## 📋 단계별 실행
+Use OpenCV for:
 
-```powershell
-# 1단계: 학생 시험지 OCR
-python grade_exam.py ocr --students data/input/students/
+- alignment and page cleanup
+- geometric crop refinement
+- line, contour, and fallback region detection
 
-# 2단계: 답안지 파싱 (PDF 또는 대화형)
-python grade_exam.py parse-key --answer-key data/input/answer_key/answer.pdf
-python grade_exam.py parse-key --interactive  # 수동 입력
+Use YOLOv8 for:
 
-# 3단계: 채점
-python grade_exam.py grade
+- locating objective answer blanks, answer boxes, checkboxes, or similar target regions
 
-# 4단계: 분석 병합 (선택)
-python grade_exam.py merge --analysis analysis.json
+Current default is still OpenCV-only unless YOLO weights are explicitly configured.
 
-# 5단계: PDF 기입
-python grade_exam.py annotate --students data/input/students/
-```
+## Verification Shortcuts
 
----
+When changing only one area, prefer a focused test run first.
 
-## 🔗 외부 LLM 분석 연동
+- Web batch behavior:
+  `tests/webapp/test_batch_flow.py`
+  `tests/webapp/test_upload_validation.py`
+  `tests/webapp/test_batch_status.py`
+- OCR page grouping:
+  `tests/ocr/test_student_pages.py`
+- Review payload behavior:
+  `tests/webapp/test_pipeline.py`
+  `tests/webapp/test_review_updates.py`
 
-다른 LLM이 오답 분석 파일을 제공하면 채점 결과에 병합할 수 있습니다.
-
-### 분석 파일 형식 (`analysis.json`)
-
-```json
-{
-  "analyst": "Claude 4",
-  "analyses": [
-    {
-      "q_num": 5,
-      "analysis": "곱셈의 교환법칙을 적용하지 못함",
-      "category": "개념오류",
-      "suggestion": "곱셈의 성질 복습 필요"
-    }
-  ]
-}
-```
-
-스키마: `schemas/analysis.schema.json`
-
----
-
-## ⚙️ 설정 (`config.json`)
-
-| 항목 | 설명 | 기본값 |
-|------|------|--------|
-| `gemini_model` | 사용할 Gemini 모델 | `gemini-2.5-flash` |
-| `annotation.correct_mark` | 정답 표시 | ⭕ |
-| `annotation.wrong_mark` | 오답 표시 | ❌ |
-| `annotation.add_summary_page` | 성적표 페이지 추가 | `true` |
-| `grading.case_sensitive` | 대소문자 구분 | `false` |
-| `grading.normalize_numbers` | 숫자 정규화 | `true` |
-| `grading.descriptive_auto_grade` | 서술형 자동채점 | `false` |
-
----
-
-## 🔄 워크플로우 연동
-
-### hitalk-score 연동 (향후)
-
-채점 완료 후 구글시트에 점수를 기입하고 하이톡으로 학부모에게 전송:
-
-```
-grade_exam.py all → 구글시트 기입 → hitalk_sender.py
-```
-
----
-
-## ⚠️ 주의사항
-
-- 서술형 문제는 자동 채점하지 않습니다 (`descriptive_auto_grade: false`)
-- OCR 결과는 반드시 확인 후 사용하세요 (특히 손글씨)
-- Gemini CLI 일일 한도에 주의하세요
-- 학생 개인정보가 포함된 데이터는 git에 올리지 마세요
+For full verification, run the main pytest suite from the project root.

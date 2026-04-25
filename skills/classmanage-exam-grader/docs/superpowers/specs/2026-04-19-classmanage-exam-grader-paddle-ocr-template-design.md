@@ -214,3 +214,30 @@ Explicitly excluded from v1:
 ## Summary
 
 This design improves recognition by making the exam layout explicit instead of treating every page as an unstructured OCR target. The blank exam becomes the template, Paddle OCR handles question-focused text extraction, Point-Checker contributes structural ideas rather than heavy runtime dependencies, and the existing grading/review/export flow remains the stable backbone of the product.
+
+## 2026-04-25 Status Update: Hybrid Answer Region Detection
+
+The original v1 design deliberately avoided adding YOLO-based region detection. That is no longer the preferred long-term direction for objective answer localization.
+
+Current implementation status:
+
+- OpenCV remains the foundation for preprocessing, alignment, crop cleanup, and fallback answer-region heuristics.
+- A new hybrid detector entrypoint now exists at `packages/student_extraction/answer_region_detector.py`.
+- Multiple-choice answer localization can now follow a `YOLO first -> OpenCV fallback` flow.
+- The default shipped config still runs in `opencv` mode so the system does not require YOLO weights to start.
+
+Why this changed:
+
+- Real scanned Korean exam sheets often place objective answers in thin `(   )` blanks at the end of the prompt line.
+- OpenCV can help recover many of these, but it is still brittle when answer blanks vary across page layouts, columns, or visual density.
+- YOLOv8 is a better fit for "what region should we inspect?" while OpenCV remains a better fit for "how do we normalize and crop this page?"
+
+Updated architectural rule:
+
+- Use OpenCV for image normalization, contour-based helpers, geometric transforms, and safe fallbacks.
+- Use YOLOv8 for locating answer blanks, answer boxes, check regions, and similar answer-writing targets once labeled data and weights are available.
+
+Practical consequence:
+
+- The next major OCR accuracy step is not more whole-pipeline OCR tuning.
+- It is training or supplying a YOLOv8 answer-region detector and wiring its checkpoint into `config.json -> answer_region_detector.weights_path`.

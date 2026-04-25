@@ -1,21 +1,17 @@
 from __future__ import annotations
-
 from pathlib import Path
 from typing import Any
 
-from fastapi import FastAPI, File, Form, Request, UploadFile
+from fastapi import FastAPI, File, Form, HTTPException, Request, UploadFile
 from fastapi.responses import FileResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from packages.contracts.models import ReviewedSubmission
 from packages.contracts.models import ReviewItem
 
-from webapp.services.pipeline import (
-    build_reviewed_submission,
-    finalize_submission_pdf,
-    parse_answer_key_file,
-    parse_student_file,
-)
+from webapp.services.batch_runner import process_batch as _process_batch
+from webapp.services.batch_runner import start_batch_processing as _start_batch_processing
+from webapp.services.pipeline import finalize_submission_pdf
 from webapp.store import BatchRecord, SubmissionRecord
 from webapp.store import WorkspaceStore
 
@@ -84,6 +80,7 @@ def create_app(workspace: str | Path | None = None) -> FastAPI:
         reviewed_dir = batch_folder / "reviewed"
         inputs_dir.mkdir(parents=True, exist_ok=True)
         reviewed_dir.mkdir(parents=True, exist_ok=True)
+        store.update_batch_status(batch.id, "processing")
 
         blank_exam_path = inputs_dir / blank_exam_name
         blank_exam_path.write_bytes(await blank_exam.read())
@@ -91,93 +88,23 @@ def create_app(workspace: str | Path | None = None) -> FastAPI:
 
         answer_key_path = inputs_dir / answer_key_name
         answer_key_path.write_bytes(await answer_key.read())
-        try:
-            parsed_answer_key = parse_answer_key_file(answer_key_path)
+        student_paths: list[Path] = []
+        for index, upload in enumerate(valid_student_files, start=1):
+            fallback_name = f"student-{index}{Path(upload.filename or '').suffix or '.json'}"
+            student_path = inputs_dir / (_normalize_upload_name(upload) or fallback_name)
+            student_path.write_bytes(await upload.read())
+            student_paths.append(student_path)
 
-            if parsed_answer_key.get("exam_title"):
-                store.update_batch_title(batch.id, parsed_answer_key["exam_title"])
-
-            ocr_metadata_dir = batch_folder / "ocr"
-            ocr_metadata_dir.mkdir(parents=True, exist_ok=True)
-            store.update_batch_assets(
-                batch.id,
-                blank_exam_path=blank_exam_path,
-                ocr_metadata_path=ocr_metadata_dir / "layout.json",
-                layout_status="ready",
-            )
-
-            batch_error_messages: list[str] = []
-            for index, upload in enumerate(valid_student_files, start=1):
-                fallback_name = f"student-{index}{Path(upload.filename or '').suffix or '.json'}"
-                student_path = inputs_dir / (_normalize_upload_name(upload) or fallback_name)
-                student_path.write_bytes(await upload.read())
-                try:
-                    parsed_student = parse_student_file(
-                        student_path,
-                        blank_exam_path=blank_exam_path,
-                        metadata_dir=ocr_metadata_dir,
-                        student_page_offset=fixed_page_offset,
-                        auto_pick_student_pages=auto_pick_pages,
-                    )
-                    reviewed = build_reviewed_submission(parsed_student, parsed_answer_key)
-                    payload_path = reviewed_dir / f"{student_path.stem}_reviewed.json"
-                    store.save_payload(payload_path, reviewed.model_dump(mode="json"))
-                    store.add_submission(
-                        batch_id=batch.id,
-                        student_name=reviewed.student_name,
-                        student_number=reviewed.student_number,
-                        status="needs_review" if reviewed.review_count else "approved",
-                        total_score=reviewed.total_score,
-                        total_points=reviewed.total_points,
-                        review_count=reviewed.review_count,
-                        payload_path=payload_path,
-                        source_pdf_path=student_path,
-                    )
-                except Exception as exc:
-                    error_message = str(exc).strip() or exc.__class__.__name__
-                    batch_error_messages.append(f"{student_path.name}: {error_message}")
-                    payload_path = reviewed_dir / f"{student_path.stem}_failed.json"
-                    store.save_payload(payload_path, {"error_message": error_message})
-                    store.add_submission(
-                        batch_id=batch.id,
-                        student_name=student_path.stem,
-                        student_number=None,
-                        status="failed",
-                        total_score=0,
-                        total_points=float(parsed_answer_key.get("total_points", 0)),
-                        review_count=0,
-                        payload_path=payload_path,
-                        source_pdf_path=student_path,
-                        error_message=error_message,
-                    )
-
-            submissions = store.list_submissions(batch.id)
-            if submissions and all(item.status == "failed" for item in submissions):
-                store.update_batch_status(batch.id, "failed")
-            elif any(item.status == "needs_review" for item in submissions):
-                store.update_batch_status(batch.id, "needs_review")
-            else:
-                store.update_batch_status(batch.id, "approved")
-
-            if batch_error_messages:
-                _write_batch_error(batch_folder, "\n".join(batch_error_messages))
-        except Exception as exc:
-            error_message = str(exc).strip() or exc.__class__.__name__
-            store.update_batch_status(batch.id, "failed")
-            _write_batch_error(batch_folder, error_message)
-            failed_batch = store.get_batch(batch.id)
-            submissions = store.list_submissions(batch.id)
-            return TEMPLATES.TemplateResponse(
-                request,
-                "batch_detail.html",
-                {
-                    "request": request,
-                    "batch": _build_batch_view(store, failed_batch),
-                    "submissions": [_build_submission_view(submission) for submission in submissions],
-                    "error_message": error_message,
-                },
-                status_code=200,
-            )
+        _start_batch_processing(
+            batch_id=batch.id,
+            store=store,
+            batch_folder=batch_folder,
+            blank_exam_path=blank_exam_path,
+            answer_key_path=answer_key_path,
+            student_paths=student_paths,
+            auto_pick_pages=auto_pick_pages,
+            fixed_page_offset=fixed_page_offset,
+        )
 
         return RedirectResponse(url=f"/batches/{batch.id}", status_code=303)
 
@@ -193,6 +120,7 @@ def create_app(workspace: str | Path | None = None) -> FastAPI:
                 "batch": _build_batch_view(store, batch),
                 "submissions": [_build_submission_view(submission) for submission in submissions],
                 "error_message": _read_batch_error(Path(batch.folder)),
+                "refresh_seconds": 5 if batch.status == "processing" else None,
             },
         )
 
@@ -260,6 +188,20 @@ def create_app(workspace: str | Path | None = None) -> FastAPI:
         )
         return RedirectResponse(url=f"/submissions/{submission_id}/review", status_code=303)
 
+    @app.get("/submissions/{submission_id}/artifacts/{artifact_name}")
+    async def submission_artifact(submission_id: str, artifact_name: str) -> FileResponse:
+        submission = store.get_submission(submission_id)
+        artifact_path = _resolve_submission_artifact_path(store, submission, artifact_name)
+        return FileResponse(artifact_path, media_type="image/png", filename=artifact_path.name)
+
+    @app.get("/submissions/{submission_id}/source")
+    async def submission_source_pdf(submission_id: str) -> FileResponse:
+        submission = store.get_submission(submission_id)
+        source_path = Path(submission.source_pdf_path)
+        if not source_path.exists():
+            raise HTTPException(status_code=404, detail="Source PDF not found")
+        return FileResponse(source_path, media_type="application/pdf", filename=source_path.name)
+
     @app.get("/submissions/{submission_id}/download")
     async def download_submission_pdf(submission_id: str) -> FileResponse:
         submission = store.get_submission(submission_id)
@@ -288,10 +230,6 @@ def _normalize_upload_name(upload: UploadFile | None) -> str | None:
     return filename or None
 
 
-def _write_batch_error(batch_folder: Path, error_message: str) -> None:
-    (batch_folder / "error.txt").write_text(error_message, encoding="utf-8")
-
-
 def _read_batch_error(batch_folder: Path) -> str | None:
     error_path = batch_folder / "error.txt"
     if not error_path.exists():
@@ -300,9 +238,20 @@ def _read_batch_error(batch_folder: Path) -> str | None:
     return message or None
 
 
+def _resolve_submission_artifact_path(store: WorkspaceStore, submission: SubmissionRecord, artifact_name: str) -> Path:
+    artifact_root = Path(store.get_batch(submission.batch_id).folder) / "artifacts" / submission.id
+    candidate = (artifact_root / artifact_name).resolve()
+    root_resolved = artifact_root.resolve()
+    if root_resolved not in candidate.parents or not candidate.exists():
+        raise HTTPException(status_code=404, detail="Artifact not found")
+    return candidate
+
+
 def _build_batch_view(store: WorkspaceStore, batch: BatchRecord) -> dict[str, Any]:
     submissions = store.list_submissions(batch.id)
-    if not submissions:
+    if batch.status == "processing":
+        status = "processing"
+    elif not submissions:
         status = "failed"
     elif any(row.status == "needs_review" for row in submissions):
         status = "needs_review"
@@ -348,6 +297,10 @@ def _build_item_view(item: ReviewItem) -> dict[str, Any]:
         **item.model_dump(mode="json"),
         "max_points": item.points_possible,
         "confidence": confidence,
+        "confidence_score": item.confidence_score,
+        "alignment_score": item.alignment_score,
+        "extraction_method": item.extraction_method,
+        "review_reason": item.review_reason,
     }
 
 
@@ -373,10 +326,12 @@ def _apply_form_review_updates(
         feedback_text = str(form.get(f"feedback_{q_num}", item.feedback_text))
         review_status = _normalize_review_status(str(form.get(f"review_status_{q_num}", item.review_status)))
         points_earned = float(form.get(f"points_earned_{q_num}", item.points_earned))
+        manual_page_review = _coerce_form_bool(form, f"manual_page_review_{q_num}", default=item.manual_page_review)
         changed = (
             feedback_text != item.feedback_text
             or review_status != item.review_status
             or points_earned != item.points_earned
+            or manual_page_review != item.manual_page_review
         )
         updated_items.append(
             item.model_copy(
@@ -384,6 +339,7 @@ def _apply_form_review_updates(
                     "feedback_text": feedback_text,
                     "review_status": review_status,
                     "points_earned": points_earned,
+                    "manual_page_review": manual_page_review,
                     "feedback_source": "teacher" if changed else item.feedback_source,
                     "feedback_confidence": 1.0 if changed else item.feedback_confidence,
                 }
@@ -429,12 +385,28 @@ def _normalize_review_status(value: Any) -> str:
     return "needs_review"
 
 
+def _coerce_form_bool(form: Any, key: str, *, default: bool = False) -> bool:
+    if hasattr(form, "getlist"):
+        values = list(form.getlist(key))
+        if values:
+            return any(_is_truthy_form_value(value) for value in values)
+    value = form.get(key)
+    if value is None:
+        return default
+    return _is_truthy_form_value(value)
+
+
+def _is_truthy_form_value(value: Any) -> bool:
+    normalized = str(value).strip().lower()
+    return normalized in {"1", "true", "yes", "on"}
+
+
 def _finalize_submission(store: WorkspaceStore, submission: SubmissionRecord, payload: ReviewedSubmission) -> Path:
     batch = store.get_batch(submission.batch_id)
     batch_folder = Path(batch.folder)
     output_dir = batch_folder / "output"
     output_dir.mkdir(parents=True, exist_ok=True)
-    output_path = output_dir / f"{Path(submission.source_pdf_path).stem}_feedback.pdf"
+    output_path = output_dir / f"{Path(submission.source_pdf_path).stem}_{submission.id}_feedback.pdf"
     result_path = finalize_submission_pdf(Path(submission.source_pdf_path), payload, output_path)
     store.update_submission_status(submission.id, "finalized", 0)
     store.update_submission_output(submission.id, result_path)

@@ -28,8 +28,27 @@
     "auto_pick_page_window": true,
     "student_page_offset": null,
     "flag_alignment_review_below": 0.35,
-    "render_dpi": 160,
+    "blank_layout_ocr_mode": "anchor_strips",
+    "layout_render_dpi": 36,
+    "enable_translation_correction": false,
+    "render_dpi": 120,
+    "highres_render_dpi": 240,
     "min_text_layer_lines_per_page": 4
+  },
+  "answer_region_detector": {
+    "mode": "opencv",
+    "ultralytics_repo_path": "C:\\Users\\user\\.gemini\\antigravity\\scratch\\repos\\ultralytics",
+    "weights_path": "",
+    "confidence": 0.25,
+    "class_aliases": [
+      "answer",
+      "answer_area",
+      "answer_blank",
+      "choice_blank",
+      "choice_box",
+      "checkbox",
+      "objective_answer"
+    ]
   },
   "paths": {
     "input_students": "data/input/students",

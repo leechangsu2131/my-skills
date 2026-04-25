@@ -35,7 +35,7 @@ echo [2/4] Checking OCR runtime...
 "%APP_PYTHON%" -c "import fastapi, uvicorn, paddleocr, paddle, certifi_win32" >nul 2>nul
 if errorlevel 1 (
     echo [3/4] Installing or updating required packages...
-    "%APP_PYTHON%" -m pip install -r requirements.txt paddlepaddle
+    "%APP_PYTHON%" -m pip install -r requirements.txt
     if errorlevel 1 (
         echo Failed to install requirements for the Python 3.11 environment.
         pause

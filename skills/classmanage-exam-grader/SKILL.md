@@ -10,6 +10,7 @@ Use this project guide when you need to change exam grading behavior without re-
 ## Read This First
 
 - For product overview and runtime commands, read `README.md`.
+- For Korean exam layout conventions that should guide parsing and answer-region decisions, read `docs/00-pm/2026-04-25-korean-exam-paper-structure-reference.md`.
 - For actual implementation, prefer `packages/*`, `webapp/services/*`, and `webapp/templates/*`.
 - Avoid starting from top-level compatibility files unless you are preserving legacy imports.
 
@@ -82,8 +83,14 @@ If the task is about one of these areas, open only the matching files first.
   - one blank exam PDF
   - one answer key
   - one or more student files
+- Korean school exam structure should be treated as a parsing prior:
+  - question anchors use `1.`, `2.`, `3.`
+  - `※` blocks often describe shared passages
+  - many pages use left-column-first, then right-column reading order
+  - score tags like `[5점]` and option rows `①` to `⑤` should not be confused with the question stem itself
 - Objective answer-region detection currently defaults to OpenCV heuristics.
-- If `config.json` provides `answer_region_detector.mode` plus a valid YOLO weights path, multiple-choice answer regions will try YOLO first and fall back to OpenCV automatically.
+- If `config.json` provides `answer_region_detector.mode` plus a valid YOLO weights path, and `ultralytics` is installed in the project `.venv`, multiple-choice answer regions will try YOLO first and fall back to OpenCV automatically.
+- If you are preparing a YOLO detector, follow `docs/00-pm/2026-04-25-yolo-answer-region-training-workflow.md` and keep the dataset question-crop-based rather than full-page-based.
 - Grouped student PDFs are supported when:
   - students are back-to-back at exactly `template_page_count`, or
   - students are duplex scanned at `template_page_count + 1` with a nearly blank trailing page

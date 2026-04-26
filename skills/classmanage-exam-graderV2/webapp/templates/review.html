@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>라벨링 수정 | YOLO Auto Labeler</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #111827; margin: 0; padding: 0; color: white; display: flex; flex-direction: column; height: 100vh; }
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background-color: #1f2937; border-bottom: 1px solid #374151; }
+        .header h1 { font-size: 18px; margin: 0; }
+        .header p { margin: 5px 0 0 0; font-size: 13px; color: #9ca3af; }
+        .btn { background-color: #2563eb; color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-weight: 500; border: none; cursor: pointer; }
+        .btn:hover { background-color: #1d4ed8; }
+        .btn-outline { background-color: transparent; color: #d1d5db; border: 1px solid #4b5563; }
+        .btn-outline:hover { background-color: #374151; }
+        .main { flex: 1; display: flex; justify-content: center; align-items: center; overflow: hidden; padding: 20px; }
+        canvas { box-shadow: 0 4px 20px rgba(0,0,0,0.5); cursor: crosshair; background-color: white; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div>
+            <h1>{{ image_name }}</h1>
+            <p>마우스 좌클릭 후 드래그하여 박스 생성 | 우클릭하여 박스 삭제</p>
+        </div>
+        <div>
+            <a href="/" class="btn btn-outline" style="margin-right: 10px;">취소하고 돌아가기</a>
+            <button class="btn" onclick="saveBboxes()">YOLO 형식으로 저장 (S)</button>
+        </div>
+    </div>
+
+    <div class="main" id="canvasContainer">
+        <canvas id="bboxCanvas"></canvas>
+    </div>
+
+    <script>
+        const canvas = document.getElementById("bboxCanvas");
+        const ctx = canvas.getContext("2d");
+        const container = document.getElementById("canvasContainer");
+        
+        const img = new Image();
+        img.src = "/images/{{ image_name }}?v=2.0";
+        
+        let bboxes = {{ initial_bboxes | tojson | safe }} || [];
+        
+        let isDrawing = false;
+        let startX = 0, startY = 0;
+        let currentX = 0, currentY = 0;
+        
+        // Disable context menu on right click
+        canvas.addEventListener('contextmenu', e => e.preventDefault());
+
+        img.onload = () => {
+            // 원본 해상도와 화면 크기를 고려하여 적절한 스케일 지정
+            const maxWidth = container.clientWidth;
+            const maxHeight = container.clientHeight;
+            
+            let scale = 1.0;
+            const scaleX = maxWidth / img.width;
+            const scaleY = maxHeight / img.height;
+            scale = Math.min(scaleX, scaleY);
+            // 너무 확대되지는 않도록 방지
+            if (scale > 1.0) scale = 1.0;
+            
+            canvas.width = img.width * scale;
+            canvas.height = img.height * scale;
+            ctx.scale(scale, scale);
+            
+            draw();
+        };
+        
+        function draw() {
+            ctx.clearRect(0, 0, img.width, img.height);
+            ctx.drawImage(img, 0, 0, img.width, img.height);
+            
+            ctx.lineWidth = 2;
+            
+            for (let box of bboxes) {
+                let bw = box.x_max - box.x_min;
+                let bh = box.y_max - box.y_min;
+                ctx.fillStyle = "rgba(0, 255, 0, 0.2)";
+                ctx.fillRect(box.x_min, box.y_min, bw, bh);
+                ctx.strokeStyle = "rgba(0, 255, 0, 0.9)";
+                ctx.strokeRect(box.x_min, box.y_min, bw, bh);
+            }
+            
+            if (isDrawing) {
+                ctx.strokeStyle = "rgba(255, 0, 0, 0.9)";
+                ctx.strokeRect(startX, startY, currentX - startX, currentY - startY);
+            }
+        }
+        
+        function getMousePos(evt) {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            const scale = img.width / canvas.width;
+            
+            return {
+                x: (evt.clientX - rect.left) * scaleX * scale,
+                y: (evt.clientY - rect.top) * scaleY * scale
+            };
+        }
+        
+        canvas.addEventListener('mousedown', function(e) {
+            const pos = getMousePos(e);
+            if (e.button === 0) { // Left click
+                isDrawing = true;
+                startX = pos.x;
+                startY = pos.y;
+            } else if (e.button === 2) { // Right click
+                for (let i = bboxes.length - 1; i >= 0; i--) {
+                    let b = bboxes[i];
+                    if (pos.x >= b.x_min && pos.x <= b.x_max && pos.y >= b.y_min && pos.y <= b.y_max) {
+                        bboxes.splice(i, 1);
+                        break;
+                    }
+                }
+                draw();
+            }
+        });
+        
+        canvas.addEventListener('mousemove', function(e) {
+            if (!isDrawing) return;
+            const pos = getMousePos(e);
+            currentX = pos.x;
+            currentY = pos.y;
+            draw();
+        });
+        
+        canvas.addEventListener('mouseup', function(e) {
+            if (e.button === 0 && isDrawing) {
+                isDrawing = false;
+                let x_min = Math.min(startX, currentX);
+                let x_max = Math.max(startX, currentX);
+                let y_min = Math.min(startY, currentY);
+                let y_max = Math.max(startY, currentY);
+                
+                if (x_max - x_min > 5 && y_max - y_min > 5) {
+                    bboxes.push({ x_min, y_min, x_max, y_max });
+                }
+                draw();
+            }
+        });
+        
+        async function saveBboxes() {
+            try {
+                const res = await fetch(`/api/save/{{ image_name }}`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ bboxes: bboxes })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    window.location.href = "/";
+                } else {
+                    alert("저장 실패: " + data.error);
+                }
+            } catch(e) {
+                alert("오류 발생: " + e);
+            }
+        }
+        
+        document.addEventListener('keydown', function(e) {
+            if (e.key.toLowerCase() === 's') {
+                saveBboxes();
+            }
+        });
+    </script>
+</body>
+</html>

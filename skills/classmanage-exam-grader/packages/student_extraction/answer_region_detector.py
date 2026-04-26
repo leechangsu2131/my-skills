@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import importlib.util
-import sys
 from pathlib import Path
 from typing import Any
 
@@ -14,8 +12,11 @@ DEFAULT_YOLO_ALIASES = (
     "answer_blank",
     "choice_blank",
     "choice_box",
+    "choice_answer_region",
     "checkbox",
     "objective_answer",
+    "short_answer_line",
+    "descriptive_answer_area",
 )
 
 
@@ -24,13 +25,11 @@ class HybridAnswerRegionDetector:
         self,
         *,
         mode: str = "opencv",
-        ultralytics_repo_path: str | None = None,
         weights_path: str | None = None,
         confidence: float = 0.25,
         class_aliases: list[str] | tuple[str, ...] | None = None,
     ) -> None:
         self.mode = str(mode or "opencv").strip().lower()
-        self.ultralytics_repo_path = ultralytics_repo_path
         self.weights_path = str(weights_path or "").strip()
         self.confidence = float(confidence)
         self.class_aliases = tuple(alias.strip().lower() for alias in (class_aliases or DEFAULT_YOLO_ALIASES))
@@ -46,6 +45,7 @@ class HybridAnswerRegionDetector:
         question_bbox: list[float],
         anchor_bbox: list[float],
         fallback_bbox: list[float],
+        prompt_bbox: list[float] | None = None,
     ) -> tuple[list[float], str]:
         if self._yolo_model is not None:
             yolo_bbox = self._detect_with_yolo(page, question_bbox=question_bbox)
@@ -57,10 +57,11 @@ class HybridAnswerRegionDetector:
             question_bbox=question_bbox,
             anchor_bbox=anchor_bbox,
             fallback_bbox=fallback_bbox,
+            prompt_bbox=prompt_bbox,
         )
 
     def _load_yolo_model(self) -> Any | None:
-        yolo_class = _resolve_yolo_class(self.ultralytics_repo_path)
+        yolo_class = _resolve_yolo_class()
         if yolo_class is None:
             return None
 
@@ -112,19 +113,13 @@ def build_answer_region_detector(config: dict[str, Any]) -> HybridAnswerRegionDe
     detector_cfg = dict(config.get("answer_region_detector", {}))
     return HybridAnswerRegionDetector(
         mode=str(detector_cfg.get("mode", "opencv")),
-        ultralytics_repo_path=str(detector_cfg.get("ultralytics_repo_path", "") or ""),
         weights_path=str(detector_cfg.get("weights_path", "") or ""),
         confidence=float(detector_cfg.get("confidence", 0.25)),
         class_aliases=detector_cfg.get("class_aliases"),
     )
 
 
-def _resolve_yolo_class(ultralytics_repo_path: str | None) -> Any | None:
-    if importlib.util.find_spec("ultralytics") is None and ultralytics_repo_path:
-        repo_path = str(Path(ultralytics_repo_path))
-        if Path(repo_path).exists() and repo_path not in sys.path:
-            sys.path.insert(0, repo_path)
-
+def _resolve_yolo_class(_unused_repo_path: str | None = None) -> Any | None:
     try:
         from ultralytics import YOLO
     except Exception:

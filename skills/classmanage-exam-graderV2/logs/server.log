@@ -1,0 +1,122 @@
+2026-04-26 15:14:26,396 [INFO] 
+2026-04-26 15:14:26,397 [INFO] 📄 PDF 변환 중: temp.pdf ...
+2026-04-26 15:14:26,922 [INFO]   -> 저장 완료: temp_page_01.jpg
+2026-04-26 15:14:27,456 [INFO]   -> 저장 완료: temp_page_02.jpg
+2026-04-26 15:14:27,912 [INFO]   -> 저장 완료: temp_page_03.jpg
+2026-04-26 15:14:33,002 [INFO] 
+2026-04-26 15:14:33,002 [INFO] 📄 PDF 변환 중: 학생시험지 3번까지.pdf ...
+2026-04-26 15:14:33,450 [INFO]   -> 저장 완료: 학생시험지 3번까지_page_01.jpg
+2026-04-26 15:14:33,928 [INFO]   -> 저장 완료: 학생시험지 3번까지_page_02.jpg
+2026-04-26 15:14:34,422 [INFO]   -> 저장 완료: 학생시험지 3번까지_page_03.jpg
+2026-04-26 15:14:34,894 [INFO]   -> 저장 완료: 학생시험지 3번까지_page_04.jpg
+2026-04-26 15:14:35,497 [INFO]   -> 저장 완료: 학생시험지 3번까지_page_05.jpg
+2026-04-26 15:14:36,020 [INFO]   -> 저장 완료: 학생시험지 3번까지_page_06.jpg
+2026-04-26 15:14:36,531 [INFO]   -> 저장 완료: 학생시험지 3번까지_page_07.jpg
+2026-04-26 15:14:36,985 [INFO]   -> 저장 완료: 학생시험지 3번까지_page_08.jpg
+2026-04-26 15:14:37,491 [INFO]   -> 저장 완료: 학생시험지 3번까지_page_09.jpg
+2026-04-26 15:14:37,970 [INFO]   -> 저장 완료: 학생시험지 3번까지_page_10.jpg
+2026-04-26 15:14:38,452 [INFO]   -> 저장 완료: 학생시험지 3번까지_page_11.jpg
+2026-04-26 15:14:38,869 [INFO]   -> 저장 완료: 학생시험지 3번까지_page_12.jpg
+2026-04-26 15:14:41,557 [INFO] [C:\Users\lee21\.gemini\antigravity\scratch\my-skills\skills\classmanage-exam-graderV2\data\raw_images\학생시험지 3번까지_page_04.jpg] 정렬 실패: 매칭되는 특징점이 너무 적습니다. (0개)
+2026-04-26 15:14:43,836 [INFO] [C:\Users\lee21\.gemini\antigravity\scratch\my-skills\skills\classmanage-exam-graderV2\data\raw_images\학생시험지 3번까지_page_08.jpg] 정렬 실패: 매칭되는 특징점이 너무 적습니다. (0개)
+2026-04-26 15:14:46,099 [INFO] [C:\Users\lee21\.gemini\antigravity\scratch\my-skills\skills\classmanage-exam-graderV2\data\raw_images\학생시험지 3번까지_page_12.jpg] 정렬 실패: 매칭되는 특징점이 너무 적습니다. (0개)
+2026-04-26 15:48:14,188 [INFO] [app_started] {}
+2026-04-26 15:48:31,625 [INFO] 
+2026-04-26 15:48:31,626 [INFO] 📄 PDF 변환 중: temp.pdf ...
+2026-04-26 15:48:32,103 [INFO]   -> 저장 완료: temp_page_01.jpg
+2026-04-26 15:48:32,542 [INFO]   -> 저장 완료: temp_page_02.jpg
+2026-04-26 15:48:32,966 [INFO]   -> 저장 완료: temp_page_03.jpg
+2026-04-26 15:48:34,861 [INFO] 
+2026-04-26 15:48:34,861 [INFO] 📄 PDF 변환 중: 학생시험지 3번까지.pdf ...
+2026-04-26 15:48:35,347 [INFO]   -> 저장 완료: 학생시험지 3번까지_page_01.jpg
+2026-04-26 15:48:35,780 [INFO]   -> 저장 완료: 학생시험지 3번까지_page_02.jpg
+2026-04-26 15:48:36,243 [INFO]   -> 저장 완료: 학생시험지 3번까지_page_03.jpg
+2026-04-26 15:48:36,685 [INFO]   -> 저장 완료: 학생시험지 3번까지_page_04.jpg
+2026-04-26 15:48:37,178 [INFO]   -> 저장 완료: 학생시험지 3번까지_page_05.jpg
+2026-04-26 15:48:37,646 [INFO]   -> 저장 완료: 학생시험지 3번까지_page_06.jpg
+2026-04-26 15:48:38,091 [INFO]   -> 저장 완료: 학생시험지 3번까지_page_07.jpg
+2026-04-26 15:48:38,519 [INFO]   -> 저장 완료: 학생시험지 3번까지_page_08.jpg
+2026-04-26 15:48:39,017 [INFO]   -> 저장 완료: 학생시험지 3번까지_page_09.jpg
+2026-04-26 15:48:39,477 [INFO]   -> 저장 완료: 학생시험지 3번까지_page_10.jpg
+2026-04-26 15:48:39,903 [INFO]   -> 저장 완료: 학생시험지 3번까지_page_11.jpg
+2026-04-26 15:48:40,325 [INFO]   -> 저장 완료: 학생시험지 3번까지_page_12.jpg
+2026-04-26 15:48:42,871 [INFO] [C:\Users\lee21\.gemini\antigravity\scratch\my-skills\skills\classmanage-exam-graderV2\data\raw_images\학생시험지 3번까지_page_04.jpg] 정렬 실패: 매칭되는 특징점이 너무 적습니다. (0개)
+2026-04-26 15:48:45,143 [INFO] [C:\Users\lee21\.gemini\antigravity\scratch\my-skills\skills\classmanage-exam-graderV2\data\raw_images\학생시험지 3번까지_page_08.jpg] 정렬 실패: 매칭되는 특징점이 너무 적습니다. (0개)
+2026-04-26 15:48:47,197 [INFO] [C:\Users\lee21\.gemini\antigravity\scratch\my-skills\skills\classmanage-exam-graderV2\data\raw_images\학생시험지 3번까지_page_12.jpg] 정렬 실패: 매칭되는 특징점이 너무 적습니다. (0개)
+2026-04-26 16:04:50,176 [INFO] [app_started] {}
+2026-04-26 16:05:12,253 [INFO] [students_uploaded] {"count": 12, "files": ["학생시험지 3번까지_page_01.jpg", "학생시험지 3번까지_page_02.jpg", "학생시험지 3번까지_page_03.jpg", "학생시험지 3번까지_page_04.jpg", "학생시험지 3번까지_page_05.jpg", "학생시험지 3번까지_page_06.jpg", "학생시험지 3번까지_page_07.jpg", "학생시험지 3번까지_page_08.jpg", "학생시험지 3번까지_page_09.jpg", "학생시험지 3번까지_page_10.jpg", "학생시험지 3번까지_page_11.jpg", "학생시험지 3번까지_page_12.jpg"]}
+2026-04-26 16:05:44,707 [INFO] [pipeline_done] {"ok": 9, "fail": 3}
+2026-04-26 16:13:12,259 [INFO] [app_started] {}
+2026-04-26 16:16:47,652 [INFO] [app_started] {}
+2026-04-26 16:17:13,787 [INFO] [pipeline_done] {"ok": 0, "fail": 12}
+2026-04-26 16:21:22,393 [INFO] [template_uploaded] {"type": "pdf"}
+2026-04-26 17:19:51,009 [INFO] [app_started] {}
+2026-04-26 17:23:26,574 [INFO] [app_started] {}
+2026-04-26 17:23:41,121 [INFO] [app_started] {}
+2026-04-26 20:02:40,283 [INFO] [app_started] {}
+2026-04-26 20:45:38,574 [INFO] [app_started] {}
+2026-04-26 20:47:26,407 [INFO] [regions_loaded] {}
+2026-04-26 21:03:50,564 [INFO] [app_started] {}
+2026-04-26 21:05:22,525 [INFO] [app_started] {}
+2026-04-26 21:08:32,456 [INFO] [app_started] {}
+2026-04-26 21:08:33,960 [INFO] [regions_loaded] {}
+2026-04-26 21:08:49,053 [INFO] [template_uploaded] {"type": "pdf", "pages": 3}
+2026-04-26 21:08:49,566 [INFO] [regions_loaded] {}
+2026-04-26 21:09:17,705 [INFO] [students_uploaded] {"count": 12, "files": ["학생시험지 3번까지_page_01.jpg", "학생시험지 3번까지_page_02.jpg", "학생시험지 3번까지_page_03.jpg", "학생시험지 3번까지_page_04.jpg", "학생시험지 3번까지_page_05.jpg", "학생시험지 3번까지_page_06.jpg", "학생시험지 3번까지_page_07.jpg", "학생시험지 3번까지_page_08.jpg", "학생시험지 3번까지_page_09.jpg", "학생시험지 3번까지_page_10.jpg", "학생시험지 3번까지_page_11.jpg", "학생시험지 3번까지_page_12.jpg"]}
+2026-04-26 21:09:18,130 [INFO] [regions_loaded] {}
+2026-04-26 21:11:44,278 [INFO] [regions_saved] {"count": 20}
+2026-04-26 21:12:38,240 [INFO] [regions_saved] {"count": 20}
+2026-04-26 21:13:08,438 [INFO] [regions_saved] {"count": 20}
+2026-04-26 21:13:27,095 [INFO] [regions_saved] {"count": 20}
+2026-04-26 21:13:37,625 [INFO] [pipeline_done] {"ok": 0, "fail": 12}
+2026-04-26 21:14:52,544 [INFO] [pipeline_done] {"ok": 0, "fail": 12}
+2026-04-26 21:15:12,617 [INFO] [regions_loaded] {}
+2026-04-26 21:18:03,500 [INFO] [regions_loaded] {}
+2026-04-26 21:19:40,927 [INFO] [regions_loaded] {}
+2026-04-26 21:20:05,752 [INFO] [app_started] {}
+2026-04-26 21:20:07,207 [INFO] [regions_loaded] {}
+2026-04-26 21:20:38,350 [INFO] [regions_saved] {"count": 20}
+2026-04-26 21:22:14,470 [INFO] [regions_saved] {"count": 20}
+2026-04-26 21:23:18,858 [INFO] [regions_saved] {"count": 20}
+2026-04-26 21:23:58,360 [INFO] [regions_saved] {"count": 20}
+2026-04-26 21:24:10,963 [INFO] [pipeline_done] {"ok": 0, "fail": 12}
+2026-04-26 21:24:19,675 [INFO] [regions_loaded] {}
+2026-04-26 21:29:03,275 [INFO] [regions_loaded] {}
+2026-04-26 21:35:08,758 [INFO] [app_started] {}
+2026-04-26 21:39:21,758 [INFO] [pipeline_done] {"ok": 0, "fail": 12}
+2026-04-26 21:39:26,539 [INFO] [regions_loaded] {}
+2026-04-26 21:39:51,055 [INFO] [pipeline_done] {"ok": 0, "fail": 12}
+2026-04-26 21:39:54,811 [INFO] [regions_loaded] {}
+2026-04-26 21:40:19,594 [INFO] [page_needs_review] {"page": 1}
+2026-04-26 21:42:31,077 [INFO] [app_started] {}
+2026-04-26 21:42:56,010 [INFO] [app_started] {}
+2026-04-26 21:46:14,734 [INFO] [regions_loaded] {}
+2026-04-26 21:46:19,037 [INFO] [regions_loaded] {}
+2026-04-26 21:46:41,704 [INFO] [pipeline_done] {"ok": 0, "fail": 24}
+2026-04-26 21:46:47,594 [INFO] [regions_loaded] {}
+2026-04-26 21:50:40,474 [INFO] [app_started] {}
+2026-04-26 21:53:26,098 [INFO] [regions_loaded] {}
+2026-04-26 21:53:52,380 [INFO] [pipeline_done] {"ok": 0, "fail": 12}
+2026-04-26 21:53:55,398 [INFO] [regions_loaded] {}
+2026-04-26 21:57:58,305 [INFO] [app_started] {}
+2026-04-26 21:58:59,017 [INFO] [regions_loaded] {}
+2026-04-26 21:59:01,538 [INFO] [regions_loaded] {}
+2026-04-26 22:04:14,003 [INFO] [app_started] {}
+2026-04-26 22:05:46,439 [INFO] [regions_loaded] {}
+2026-04-26 22:05:59,466 [INFO] [pipeline_done] {"ok": 0, "fail": 12}
+2026-04-26 22:06:01,088 [INFO] [regions_loaded] {}
+2026-04-26 22:10:42,878 [INFO] [regions_loaded] {}
+2026-04-26 22:11:00,910 [INFO] [pipeline_done] {"ok": 0, "fail": 12}
+2026-04-26 22:11:03,105 [INFO] [regions_loaded] {}
+2026-04-26 22:15:04,871 [INFO] [regions_loaded] {}
+2026-04-26 22:15:17,563 [INFO] [pipeline_done] {"ok": 0, "fail": 12}
+2026-04-26 22:15:19,984 [INFO] [regions_loaded] {}
+2026-04-26 22:19:06,084 [INFO] [pipeline_done] {"ok": 0, "fail": 12}
+2026-04-26 22:19:07,207 [INFO] [regions_loaded] {}
+2026-04-26 22:21:01,620 [INFO] [regions_loaded] {}
+2026-04-26 22:21:10,059 [INFO] [regions_loaded] {}
+2026-04-26 22:21:21,481 [INFO] [pipeline_done] {"ok": 0, "fail": 12}
+2026-04-26 22:21:22,524 [INFO] [regions_loaded] {}
+2026-04-26 22:24:51,654 [INFO] [regions_loaded] {}
+2026-04-26 22:25:02,749 [INFO] [pipeline_done] {"ok": 0, "fail": 12}
+2026-04-26 22:25:04,181 [INFO] [regions_loaded] {}

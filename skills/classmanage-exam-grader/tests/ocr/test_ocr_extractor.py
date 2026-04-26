@@ -223,6 +223,82 @@ def test_extract_answers_uses_anchor_strip_layout_detection_for_scanned_blank_pa
     assert any(shape[1] < blank_page.shape[1] for shape in detect_shapes)
 
 
+def test_extract_answers_retries_layout_detection_with_full_page_ocr_when_anchor_coverage_is_sparse(tmp_path, monkeypatch) -> None:
+    blank_pdf = tmp_path / "blank.pdf"
+    student_pdf = tmp_path / "student.pdf"
+    blank_pdf.write_bytes(b"%PDF-1.4")
+    student_pdf.write_bytes(b"%PDF-1.4")
+
+    blank_page = np.full((90, 120), 255, dtype=np.uint8)
+    student_page = np.full((90, 120), 255, dtype=np.uint8)
+    detect_shapes: list[tuple[int, int]] = []
+
+    def fake_render_pdf_pages(path, dpi=160):
+        if str(path) == str(blank_pdf):
+            return [blank_page]
+        return [student_page]
+
+    class FakeBackend:
+        def __init__(self, *args, **kwargs) -> None:
+            pass
+
+        def detect_text(self, image):
+            shape = tuple(image.shape[:2])
+            detect_shapes.append(shape)
+            height, width = shape
+            if width < blank_page.shape[1]:
+                return [{"text": "1.", "confidence": 0.99, "bbox": [4, 12, 24, 20]}]
+            if shape == tuple(blank_page.shape[:2]):
+                return [
+                    {"text": "1.", "confidence": 0.99, "bbox": [5, 10, 15, 18]},
+                    {"text": "2.", "confidence": 0.99, "bbox": [5, 45, 15, 53]},
+                ]
+            return []
+
+    monkeypatch.setattr(
+        "packages.student_extraction.service.load_config",
+        lambda: {
+            "ocr": {
+                "render_dpi": 160,
+                "layout_render_dpi": 50,
+                "blank_layout_ocr_mode": "anchor_strips",
+                "enable_translation_correction": False,
+            }
+        },
+    )
+    monkeypatch.setattr("packages.student_extraction.service.render_pdf_pages", fake_render_pdf_pages)
+    monkeypatch.setattr("packages.student_extraction.service.PaddleOcrBackend", FakeBackend)
+    monkeypatch.setattr(
+        "packages.student_extraction.service.extract_line_detections_from_pdf_text_layer",
+        lambda *_args, **_kwargs: {0: []},
+    )
+    monkeypatch.setattr("packages.student_extraction.service.has_enough_text_layer_content", lambda *_args, **_kwargs: False)
+    monkeypatch.setattr("packages.student_extraction.service.extract_text_from_render_bbox", lambda *_args, **_kwargs: "42")
+    monkeypatch.setattr(
+        "packages.student_extraction.service.align_page_images",
+        lambda *_args, **_kwargs: SimpleNamespace(
+            matrix=np.eye(3),
+            score=1.0,
+            width=120,
+            height=90,
+        ),
+    )
+
+    extract_answers(
+        str(student_pdf),
+        blank_exam_path=str(blank_pdf),
+        answer_key={
+            "questions": [
+                {"q_num": 1, "type": "multiple_choice"},
+                {"q_num": 2, "type": "multiple_choice"},
+            ]
+        },
+    )
+
+    assert any(shape[1] < blank_page.shape[1] for shape in detect_shapes)
+    assert detect_shapes.count(tuple(blank_page.shape[:2])) >= 1
+
+
 def test_extract_answers_uses_answer_key_to_fill_missing_regions(tmp_path, monkeypatch) -> None:
     blank_pdf = tmp_path / "blank.pdf"
     student_pdf = tmp_path / "student.pdf"

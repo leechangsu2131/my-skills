@@ -4,6 +4,7 @@ import cv2
 import numpy as np
 
 from packages.student_extraction.answer_regions import localize_multiple_choice_answer_bbox
+from packages.student_extraction.answer_regions import localize_short_answer_bbox
 from packages.student_extraction.question_layout import QuestionLayout
 from packages.student_extraction.question_layout import QuestionRegion
 from packages.student_extraction.service import _refine_layout_answer_regions
@@ -104,6 +105,144 @@ def test_localize_multiple_choice_answer_bbox_handles_thin_wide_parentheses() ->
     assert marker_type == "parenthesized_blank"
     assert bbox[0] < 266.0
     assert bbox[2] > 296.0
+
+
+def test_localize_multiple_choice_answer_bbox_prefers_horizontal_blank_line_when_parentheses_absent() -> None:
+    page = np.full((180, 640), 255, dtype=np.uint8)
+    cv2.putText(page, "7.", (14, 52), cv2.FONT_HERSHEY_SIMPLEX, 0.9, 0, 2)
+    cv2.putText(page, "QUESTION TEXT", (64, 52), cv2.FONT_HERSHEY_SIMPLEX, 0.9, 0, 2)
+    cv2.putText(page, "MORE TEXT", (64, 82), cv2.FONT_HERSHEY_SIMPLEX, 0.9, 0, 2)
+    cv2.line(page, (286, 92), (420, 92), 0, 2)
+
+    bbox, marker_type = localize_multiple_choice_answer_bbox(
+        page,
+        question_bbox=[10.0, 20.0, 600.0, 128.0],
+        anchor_bbox=[14.0, 30.0, 44.0, 54.0],
+        fallback_bbox=[520.0, 22.0, 594.0, 56.0],
+    )
+
+    assert marker_type == "choice_answer_line"
+    assert bbox[0] < 300.0
+    assert bbox[2] > 410.0
+    assert bbox[1] > 70.0
+
+
+def test_localize_multiple_choice_answer_bbox_prefers_rectangular_choice_box_when_present() -> None:
+    page = np.full((180, 640), 255, dtype=np.uint8)
+    cv2.putText(page, "11.", (14, 52), cv2.FONT_HERSHEY_SIMPLEX, 0.9, 0, 2)
+    cv2.putText(page, "QUESTION TEXT", (74, 52), cv2.FONT_HERSHEY_SIMPLEX, 0.9, 0, 2)
+    cv2.rectangle(page, (332, 56), (404, 100), 0, 2)
+
+    bbox, marker_type = localize_multiple_choice_answer_bbox(
+        page,
+        question_bbox=[10.0, 20.0, 600.0, 128.0],
+        anchor_bbox=[14.0, 30.0, 54.0, 54.0],
+        fallback_bbox=[520.0, 22.0, 594.0, 56.0],
+    )
+
+    assert marker_type == "choice_box"
+    assert bbox[0] < 340.0
+    assert bbox[2] > 396.0
+    assert bbox[3] > 92.0
+
+
+def test_localize_multiple_choice_answer_bbox_prefers_labeled_bottom_answer_line_over_internal_figure_lines() -> None:
+    page = np.full((260, 640), 255, dtype=np.uint8)
+    cv2.putText(page, "7.", (14, 42), cv2.FONT_HERSHEY_SIMPLEX, 0.9, 0, 2)
+    cv2.putText(page, "QUESTION TEXT", (64, 42), cv2.FONT_HERSHEY_SIMPLEX, 0.9, 0, 2)
+
+    # Internal figure line that should not win.
+    cv2.line(page, (250, 118), (520, 118), 0, 2)
+
+    # Labeled answer line near the bottom: dark label blob + line to the right.
+    cv2.circle(page, (286, 194), 18, 0, -1)
+    cv2.line(page, (318, 194), (454, 194), 0, 2)
+
+    bbox, marker_type = localize_multiple_choice_answer_bbox(
+        page,
+        question_bbox=[10.0, 20.0, 600.0, 228.0],
+        anchor_bbox=[14.0, 20.0, 44.0, 46.0],
+        fallback_bbox=[520.0, 24.0, 594.0, 58.0],
+    )
+
+    assert marker_type == "labeled_choice_answer_line"
+    assert bbox[1] > 176.0
+    assert bbox[2] > 440.0
+
+
+def test_localize_multiple_choice_answer_bbox_avoids_false_parentheses_inside_figures_when_prompt_bbox_is_narrow() -> None:
+    page = np.full((280, 720), 255, dtype=np.uint8)
+    cv2.putText(page, "5.", (18, 42), cv2.FONT_HERSHEY_SIMPLEX, 0.9, 0, 2)
+    cv2.putText(page, "WRITE ALL NON-ANGLES", (72, 42), cv2.FONT_HERSHEY_SIMPLEX, 0.9, 0, 2)
+
+    # Figure content that looks like parentheses but lives below the prompt line.
+    cv2.ellipse(page, (330, 116), (26, 54), 0, 210, 330, 0, 2)
+    cv2.ellipse(page, (410, 116), (26, 54), 0, 30, 150, 0, 2)
+
+    # Real labeled answer line near the bottom.
+    cv2.circle(page, (364, 228), 18, 0, -1)
+    cv2.line(page, (398, 228), (566, 228), 0, 2)
+
+    bbox, marker_type = localize_multiple_choice_answer_bbox(
+        page,
+        question_bbox=[12.0, 18.0, 690.0, 252.0],
+        anchor_bbox=[18.0, 18.0, 48.0, 44.0],
+        fallback_bbox=[560.0, 24.0, 684.0, 56.0],
+        prompt_bbox=[12.0, 18.0, 690.0, 64.0],
+    )
+
+    assert marker_type == "labeled_choice_answer_line"
+    assert bbox[1] > 210.0
+    assert bbox[2] > 540.0
+
+
+def test_localize_short_answer_bbox_prefers_parenthesized_blank_in_prompt() -> None:
+    page = np.full((180, 640), 255, dtype=np.uint8)
+    cv2.putText(page, "11.", (14, 52), cv2.FONT_HERSHEY_SIMPLEX, 0.9, 0, 2)
+    cv2.putText(page, "RIGHT ANGLES ARE", (74, 52), cv2.FONT_HERSHEY_SIMPLEX, 0.9, 0, 2)
+    cv2.putText(page, "(", (346, 54), cv2.FONT_HERSHEY_SIMPLEX, 1.0, 0, 2)
+    cv2.putText(page, ")", (386, 54), cv2.FONT_HERSHEY_SIMPLEX, 1.0, 0, 2)
+    cv2.putText(page, "TOTAL", (420, 52), cv2.FONT_HERSHEY_SIMPLEX, 0.9, 0, 2)
+
+    bbox, marker_type = localize_short_answer_bbox(
+        page,
+        question_bbox=[10.0, 20.0, 600.0, 120.0],
+        anchor_bbox=[14.0, 30.0, 44.0, 54.0],
+        prompt_bbox=[10.0, 20.0, 600.0, 74.0],
+    )
+
+    assert marker_type == "parenthesized_blank"
+    assert bbox[0] < 360.0
+    assert bbox[2] > 380.0
+
+
+def test_refine_layout_answer_regions_uses_parenthesized_blank_for_short_answer_prompts() -> None:
+    page = np.full((180, 640), 255, dtype=np.uint8)
+    cv2.putText(page, "11.", (14, 52), cv2.FONT_HERSHEY_SIMPLEX, 0.9, 0, 2)
+    cv2.putText(page, "RIGHT ANGLES ARE", (74, 52), cv2.FONT_HERSHEY_SIMPLEX, 0.9, 0, 2)
+    cv2.putText(page, "(", (346, 54), cv2.FONT_HERSHEY_SIMPLEX, 1.0, 0, 2)
+    cv2.putText(page, ")", (386, 54), cv2.FONT_HERSHEY_SIMPLEX, 1.0, 0, 2)
+    cv2.putText(page, "TOTAL", (420, 52), cv2.FONT_HERSHEY_SIMPLEX, 0.9, 0, 2)
+
+    layout = QuestionLayout(
+        items=[
+            QuestionRegion(
+                q_num=11,
+                page_index=0,
+                anchor_bbox=[14.0, 30.0, 44.0, 54.0],
+                answer_bbox=[74.0, 22.0, 604.0, 96.0],
+                question_bbox=[10.0, 20.0, 604.0, 120.0],
+                question_text_bbox=[74.0, 24.0, 520.0, 60.0],
+            )
+        ]
+    )
+
+    refined = _refine_layout_answer_regions(layout, [page], {11: "short_answer"})
+    region = refined.items[0]
+
+    assert region.answer_marker_type == "parenthesized_blank"
+    assert region.answer_bbox[0] < 360.0
+    assert region.answer_bbox[2] > 380.0
 
 
 def test_refine_layout_answer_regions_prefers_injected_detector_for_multiple_choice() -> None:

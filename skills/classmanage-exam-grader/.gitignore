@@ -3,6 +3,8 @@ data/extracted/
 data/graded/
 data/output/
 data/web/
+data/yolo_answer_regions/
+runs/
 .worktrees/
 __pycache__/
 *.pyc

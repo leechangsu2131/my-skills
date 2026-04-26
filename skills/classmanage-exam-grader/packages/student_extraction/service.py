@@ -15,6 +15,7 @@ from typing import Optional
 import cv2
 from packages.student_extraction.answer_region_detector import build_answer_region_detector
 from packages.student_extraction.answer_regions import localize_multiple_choice_answer_bbox
+from packages.student_extraction.answer_regions import localize_short_answer_bbox
 from packages.student_extraction.paddle_backend import PaddleOcrBackend
 from packages.student_extraction.pdf_text_layer import extract_line_detections_from_pdf_text_layer
 from packages.student_extraction.pdf_text_layer import extract_text_from_render_bbox
@@ -33,6 +34,8 @@ from packages.student_extraction.template_alignment import transform_bbox
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 PROMPT_PATH = PROJECT_ROOT / "prompts" / "ocr_student_exam.txt"
 CONFIG_PATH = PROJECT_ROOT / "config.json"
+LAYOUT_RETRY_MIN_COVERAGE = 0.75
+LAYOUT_RETRY_DPI_FLOOR = 160
 
 
 def load_config() -> dict:
@@ -173,6 +176,12 @@ def extract_answer_groups(
         blank_text_detections,
         min_lines_per_page=int(ocr_cfg.get("min_text_layer_lines_per_page", 4)),
     )
+    question_type_by_num = {
+        int(question["q_num"]): str(question.get("type", "unknown"))
+        for question in (answer_key or {}).get("questions", [])
+        if question.get("q_num") is not None
+    }
+    expected_question_numbers = sorted(question_type_by_num)
     detections_by_page: dict[int, list[dict[str, Any]]] = {}
     page_sizes: dict[int, tuple[int, int]] = {}
     if use_blank_text_layer:
@@ -180,22 +189,36 @@ def extract_answer_groups(
         for page_index, blank_page in enumerate(blank_pages):
             page_sizes[page_index] = (blank_page.shape[1], blank_page.shape[0])
     else:
-        for page_index, blank_page in enumerate(blank_layout_pages):
-            if blank_layout_ocr_mode == "anchor_strips":
-                detections = _detect_text_in_anchor_strips(blank_page, backend)
-            else:
-                detections = backend.detect_text(blank_page)
-            detections_by_page[page_index] = detections
-            page_sizes[page_index] = (blank_page.shape[1], blank_page.shape[0])
+        detections_by_page, page_sizes = _detect_layout_text_by_page(
+            blank_layout_pages,
+            backend,
+            mode=blank_layout_ocr_mode,
+        )
 
     layout = build_question_layout(detections_by_page, page_sizes)
+    if (
+        not use_blank_text_layer
+        and expected_question_numbers
+        and _should_retry_layout_detection(layout, expected_question_numbers)
+    ):
+        retry_layout_dpi = max(render_dpi, layout_render_dpi, LAYOUT_RETRY_DPI_FLOOR)
+        retry_layout_pages = blank_layout_pages
+        if retry_layout_dpi != layout_render_dpi:
+            retry_layout_pages = render_pdf_pages(blank_exam_file, dpi=retry_layout_dpi)
+        retry_detections_by_page, retry_page_sizes = _detect_layout_text_by_page(
+            retry_layout_pages,
+            backend,
+            mode="full_page",
+        )
+        retry_layout = build_question_layout(retry_detections_by_page, retry_page_sizes)
+        if _layout_question_coverage(retry_layout, expected_question_numbers) >= _layout_question_coverage(
+            layout,
+            expected_question_numbers,
+        ):
+            layout = retry_layout
+            blank_layout_pages = retry_layout_pages
     if not use_blank_text_layer and layout_render_dpi != render_dpi:
         layout = _scale_layout_to_render_pages(layout, blank_layout_pages, blank_pages)
-    question_type_by_num = {
-        int(question["q_num"]): str(question.get("type", "unknown"))
-        for question in (answer_key or {}).get("questions", [])
-        if question.get("q_num") is not None
-    }
     question_spec_by_num = {
         int(question["q_num"]): dict(question)
         for question in (answer_key or {}).get("questions", [])
@@ -206,7 +229,7 @@ def extract_answer_groups(
         layout = _complete_layout_with_expected_questions(
             layout,
             blank_pages,
-            sorted(question_type_by_num),
+            expected_question_numbers,
         )
         layout = _refine_layout_answer_regions(
             layout,
@@ -316,6 +339,41 @@ def _detect_text_in_anchor_strips(page: Any, backend: PaddleOcrBackend) -> list[
                 }
             )
     return detections
+
+
+def _detect_layout_text_by_page(
+    pages: list[Any],
+    backend: PaddleOcrBackend,
+    *,
+    mode: str,
+) -> tuple[dict[int, list[dict[str, Any]]], dict[int, tuple[int, int]]]:
+    detections_by_page: dict[int, list[dict[str, Any]]] = {}
+    page_sizes: dict[int, tuple[int, int]] = {}
+    normalized_mode = str(mode or "anchor_strips").strip().lower()
+    for page_index, page in enumerate(pages):
+        if normalized_mode == "anchor_strips":
+            detections = _detect_text_in_anchor_strips(page, backend)
+        else:
+            detections = backend.detect_text(page)
+        detections_by_page[page_index] = detections
+        page_sizes[page_index] = (page.shape[1], page.shape[0])
+    return detections_by_page, page_sizes
+
+
+def _layout_question_coverage(layout: QuestionLayout, expected_question_numbers: list[int]) -> float:
+    if not expected_question_numbers:
+        return 1.0
+    expected = {int(value) for value in expected_question_numbers}
+    observed = {
+        int(getattr(item, "q_num"))
+        for item in layout.items
+        if int(getattr(item, "q_num")) in expected
+    }
+    return float(len(observed)) / float(len(expected))
+
+
+def _should_retry_layout_detection(layout: QuestionLayout, expected_question_numbers: list[int]) -> bool:
+    return _layout_question_coverage(layout, expected_question_numbers) < LAYOUT_RETRY_MIN_COVERAGE
 
 
 def _scale_layout_to_render_pages(
@@ -490,23 +548,34 @@ def _refine_layout_answer_regions(
         base_question_bbox = list(region.question_bbox or bounded_question_bbox)
         content_question_bbox = _shrink_question_bbox_to_content(page, base_question_bbox)
         question_type = question_type_by_num.get(region.q_num)
+        prompt_search_bbox = _build_prompt_search_bbox(region, base_question_bbox, page)
 
         if question_type == "multiple_choice":
-            prompt_question_bbox = list(bounded_question_bbox)
+            prompt_question_bbox = list(base_question_bbox)
             fallback_bbox = _build_prompt_choice_bbox(region, prompt_question_bbox)
             if answer_region_detector is not None and hasattr(answer_region_detector, "localize_multiple_choice"):
-                answer_bbox, marker_type = answer_region_detector.localize_multiple_choice(
-                    page,
-                    question_bbox=prompt_question_bbox,
-                    anchor_bbox=region.anchor_bbox,
-                    fallback_bbox=fallback_bbox,
-                )
+                try:
+                    answer_bbox, marker_type = answer_region_detector.localize_multiple_choice(
+                        page,
+                        question_bbox=prompt_question_bbox,
+                        anchor_bbox=region.anchor_bbox,
+                        fallback_bbox=fallback_bbox,
+                        prompt_bbox=prompt_search_bbox,
+                    )
+                except TypeError:
+                    answer_bbox, marker_type = answer_region_detector.localize_multiple_choice(
+                        page,
+                        question_bbox=prompt_question_bbox,
+                        anchor_bbox=region.anchor_bbox,
+                        fallback_bbox=fallback_bbox,
+                    )
             else:
                 answer_bbox, marker_type = localize_multiple_choice_answer_bbox(
                     page,
                     question_bbox=prompt_question_bbox,
                     anchor_bbox=region.anchor_bbox,
                     fallback_bbox=fallback_bbox,
+                    prompt_bbox=prompt_search_bbox,
                 )
             refined_items.append(
                 _copy_region(
@@ -515,6 +584,24 @@ def _refine_layout_answer_regions(
                     answer_bbox=answer_bbox,
                     answer_marker_type=marker_type,
                     extraction_mode="prompt_choice",
+                )
+            )
+            continue
+
+        short_answer_bbox, marker_type = localize_short_answer_bbox(
+            page,
+            question_bbox=content_question_bbox,
+            anchor_bbox=region.anchor_bbox,
+            prompt_bbox=prompt_search_bbox,
+        )
+        if marker_type != "blank":
+            refined_items.append(
+                _copy_region(
+                    region,
+                    question_bbox=content_question_bbox,
+                    answer_bbox=short_answer_bbox,
+                    answer_marker_type=marker_type,
+                    extraction_mode="answer_line",
                 )
             )
             continue
@@ -542,6 +629,22 @@ def _refine_layout_answer_regions(
         )
 
     return QuestionLayout(items=refined_items)
+
+
+def _build_prompt_search_bbox(region: QuestionRegion, question_bbox: list[float], page: Any) -> list[float] | None:
+    if not region.question_text_bbox:
+        return None
+
+    qx1, qy1, qx2, _qy2 = [float(value) for value in question_bbox]
+    tx1, ty1, _tx2, ty2 = [float(value) for value in region.question_text_bbox]
+    _ax1, ay1, _ax2, ay2 = [float(value) for value in region.anchor_bbox]
+    anchor_height = max(ay2 - ay1, 1.0)
+    return [
+        max(0.0, min(qx1, tx1) - 4.0),
+        max(0.0, min(ay1, ty1) - 8.0),
+        min(float(page.shape[1] - 1), qx2),
+        min(float(page.shape[0] - 1), max(ty2, ay2) + max(anchor_height * 1.4, 22.0)),
+    ]
 
 
 def _coerce_region(item: Any) -> QuestionRegion:

@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ClassExamGrade</title>
+<style>
+:root{--bg:#0f172a;--card:#1e293b;--panel:#111827;--border:#334155;--blue:#3b82f6;--green:#22c55e;--yellow:#f59e0b;--red:#ef4444;--text:#f1f5f9;--muted:#94a3b8}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:radial-gradient(circle at top left,#162033 0,#0f172a 55%,#0b1220 100%);color:var(--text);min-height:100vh;padding:28px}
+button,input{font:inherit}
+.shell{max-width:1100px;margin:0 auto}
+.hero{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:24px}
+.hero h1{font-size:28px;font-weight:800}
+.hero p{font-size:13px;color:var(--muted);margin-top:6px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 16px;border-radius:10px;border:none;cursor:pointer;font-size:13px;font-weight:700;transition:.15s}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn-blue{background:var(--blue);color:#fff}.btn-blue:hover:not(:disabled){background:#2563eb}
+.btn-ghost{background:#334155;color:var(--text)}.btn-ghost:hover:not(:disabled){background:#475569}
+.btn-green{background:var(--green);color:#052e16}.btn-green:hover:not(:disabled){background:#16a34a}
+.panel{background:rgba(30,41,59,.92);border:1px solid var(--border);border-radius:18px;padding:22px 24px;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+.panel + .panel{margin-top:16px}
+.panel-title{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+.panel-title h2{font-size:18px}
+.root-row{font-size:13px;color:var(--muted)}
+.project-list{display:flex;flex-direction:column;gap:12px}
+.project-card{display:grid;grid-template-columns:1fr auto;gap:16px;align-items:center;background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:16px}
+.project-card.is-last{border-color:#2563eb;box-shadow:0 0 0 1px rgba(59,130,246,.35)}
+.project-main{display:flex;flex-direction:column;gap:8px}
+.project-name{font-size:17px;font-weight:800}
+.project-meta{font-size:12px;color:var(--muted)}
+.badge-row{display:flex;flex-wrap:wrap;gap:8px}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:999px;font-size:11px;font-weight:700;background:#1e293b;border:1px solid var(--border)}
+.badge.ok{color:#86efac}
+.badge.no{color:#fca5a5}
+.empty{padding:24px;border:1px dashed var(--border);border-radius:14px;text-align:center;color:var(--muted);background:rgba(15,23,42,.6)}
+.modal-backdrop{position:fixed;inset:0;background:rgba(2,6,23,.72);display:none;align-items:center;justify-content:center;padding:18px;z-index:20}
+.modal{width:min(560px,100%);background:var(--card);border:1px solid var(--border);border-radius:18px;padding:22px}
+.modal h3{font-size:20px;margin-bottom:14px}
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.field label{font-size:12px;color:var(--muted);font-weight:700}
+.field input{background:#0b1220;color:var(--text);border:1px solid var(--border);border-radius:10px;padding:11px 12px}
+.field small{font-size:11px;color:var(--muted)}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.path-preview{background:#0b1220;border:1px solid var(--border);border-radius:10px;padding:12px;font-size:12px;line-height:1.6;color:#cbd5e1;word-break:break-all}
+.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:14px}
+.status-line{font-size:12px;color:var(--muted);min-height:18px}
+@media (max-width: 720px){
+  body{padding:16px}
+  .hero{flex-direction:column}
+  .project-card{grid-template-columns:1fr}
+  .two-col{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="hero">
+    <div>
+      <h1>📚 ClassExamGrade</h1>
+      <p id="root-display">저장 위치를 불러오는 중...</p>
+    </div>
+    <div class="row">
+      <button class="btn btn-ghost" onclick="openSettings()">⚙️ 설정</button>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title">
+      <h2>프로젝트</h2>
+      <button class="btn btn-blue" onclick="openCreateProject()">+ 새 프로젝트 만들기</button>
+    </div>
+    <div class="status-line" id="home-status"></div>
+    <div id="project-list" class="project-list"></div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="settings-modal">
+  <div class="modal">
+    <h3>설정</h3>
+    <div class="field">
+      <label for="settings-root-dir">프로젝트 저장 위치</label>
+      <input id="settings-root-dir" type="text">
+      <small>변경 시 기존 프로젝트는 새 위치로 이동되지 않습니다.</small>
+    </div>
+    <div class="row" style="gap:8px">
+      <button class="btn btn-ghost" onclick="pickFolder('settings-root-dir')">폴더 선택</button>
+    </div>
+    <div class="status-line" id="settings-status"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('settings-modal')">닫기</button>
+      <button class="btn btn-green" onclick="saveSettingsForm()">저장</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="project-modal">
+  <div class="modal">
+    <h3>새 프로젝트</h3>
+    <div class="field">
+      <label for="project-name">이름</label>
+      <input id="project-name" type="text" placeholder="3학년 2반 수학 1단원" oninput="updateProjectPreview()">
+      <small>폴더명은 공백을 <code>_</code>로 바꾸고 특수문자를 제거해서 생성합니다.</small>
+    </div>
+    <div class="two-col">
+      <div class="field">
+        <label for="project-grade">학년</label>
+        <input id="project-grade" type="text" placeholder="3학년" oninput="syncProjectName()">
+      </div>
+      <div class="field">
+        <label for="project-class">반</label>
+        <input id="project-class" type="text" placeholder="2반" oninput="syncProjectName()">
+      </div>
+    </div>
+    <div class="two-col">
+      <div class="field">
+        <label for="project-subject">과목</label>
+        <input id="project-subject" type="text" placeholder="수학" oninput="syncProjectName()">
+      </div>
+      <div class="field">
+        <label for="project-exam-name">시험명</label>
+        <input id="project-exam-name" type="text" placeholder="1단원 평가" oninput="syncProjectName()">
+      </div>
+    </div>
+    <div class="field">
+      <label for="project-root-dir">저장 위치</label>
+      <input id="project-root-dir" type="text">
+    </div>
+    <div class="row" style="gap:8px">
+      <button class="btn btn-ghost" onclick="pickFolder('project-root-dir')">변경</button>
+    </div>
+    <div class="field" style="margin-top:12px">
+      <label>생성될 프로젝트 경로</label>
+      <div class="path-preview" id="project-path-preview">-</div>
+    </div>
+    <div class="status-line" id="project-status"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('project-modal')">취소</button>
+      <button class="btn btn-green" onclick="createProjectForm()">만들기</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let settings = null;
+let projects = [];
+let lastProject = null;
+let autoFillName = true;
+
+window.addEventListener('DOMContentLoaded', async () => {
+  await loadSettings();
+  await loadProjects();
+});
+
+async function loadSettings() {
+  const response = await fetch('/api/settings');
+  settings = await response.json();
+  document.getElementById('root-display').textContent = settings.root_dir;
+  document.getElementById('settings-root-dir').value = settings.root_dir;
+  document.getElementById('project-root-dir').value = settings.root_dir;
+  lastProject = settings.last_project || null;
+  updateProjectPreview();
+}
+
+async function loadProjects() {
+  const response = await fetch('/api/projects');
+  const data = await response.json();
+  projects = data.projects || [];
+  lastProject = data.last_project || lastProject;
+  renderProjects();
+}
+
+function renderProjects() {
+  const list = document.getElementById('project-list');
+  if (!projects.length) {
+    list.innerHTML = `<div class="empty">아직 프로젝트가 없습니다. 새 프로젝트를 만들어 시작하세요.</div>`;
+    return;
+  }
+
+  list.innerHTML = projects.map((project) => {
+    const status = project.status || {};
+    const isLast = project.slug === lastProject;
+    return `
+      <div class="project-card ${isLast ? 'is-last' : ''}">
+        <div class="project-main">
+          <div class="project-name">📁 ${escapeHtml(project.name)}</div>
+          <div class="project-meta">
+            ${escapeHtml(project.grade || '-')} · ${escapeHtml(project.class || '-')} ·
+            ${escapeHtml(project.subject || '-')} · ${escapeHtml(project.exam_name || '-')}
+          </div>
+          <div class="project-meta">
+            ${project.total_questions || 0}문항 · 학생 ${project.student_count || 0}명 · ${formatDate(project.updated_at)}
+          </div>
+          <div class="badge-row">
+            ${renderBadge(status.template_ready, '템플릿')}
+            ${renderBadge(status.regions_ready, 'regions')}
+            ${renderBadge(status.alignment_done, '정렬')}
+            ${renderBadge(status.review_done, '검수')}
+          </div>
+        </div>
+        <div class="row" style="gap:8px">
+          <button class="btn btn-blue" onclick="openProject('${encodeURIComponent(project.slug)}', this)">열기</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function renderBadge(value, label) {
+  return `<span class="badge ${value ? 'ok' : 'no'}">${value ? '✅' : '❌'} ${label}</span>`;
+}
+
+function formatDate(value) {
+  if (!value) return '-';
+  return value.replace('T', ' ').slice(0, 16);
+}
+
+function openSettings() {
+  document.getElementById('settings-root-dir').value = settings.root_dir;
+  document.getElementById('settings-status').textContent = '';
+  showModal('settings-modal');
+}
+
+function openCreateProject() {
+  autoFillName = true;
+  document.getElementById('project-name').value = '';
+  document.getElementById('project-grade').value = '';
+  document.getElementById('project-class').value = '';
+  document.getElementById('project-subject').value = '';
+  document.getElementById('project-exam-name').value = '';
+  document.getElementById('project-root-dir').value = settings.root_dir;
+  document.getElementById('project-status').textContent = '';
+  updateProjectPreview();
+  showModal('project-modal');
+}
+
+function showModal(id) {
+  document.getElementById(id).style.display = 'flex';
+}
+
+function closeModal(id) {
+  document.getElementById(id).style.display = 'none';
+}
+
+function syncProjectName() {
+  if (!autoFillName) return;
+  const parts = [
+    document.getElementById('project-grade').value.trim(),
+    document.getElementById('project-class').value.trim(),
+    document.getElementById('project-subject').value.trim(),
+    document.getElementById('project-exam-name').value.trim(),
+  ].filter(Boolean);
+  document.getElementById('project-name').value = parts.join(' ');
+  updateProjectPreview();
+}
+
+function updateProjectPreview() {
+  const nameInput = document.getElementById('project-name');
+  autoFillName = !nameInput.dataset.manual || nameInput.value.trim() === '';
+  const rootDir = document.getElementById('project-root-dir').value.trim() || settings.root_dir;
+  const slug = slugify(nameInput.value.trim() || 'project');
+  document.getElementById('project-path-preview').textContent = `${rootDir}\\${slug}`;
+}
+
+document.getElementById('project-name').addEventListener('input', () => {
+  document.getElementById('project-name').dataset.manual = 'true';
+  autoFillName = false;
+  updateProjectPreview();
+});
+
+async function saveSettingsForm() {
+  const rootDir = document.getElementById('settings-root-dir').value.trim();
+  const response = await fetch('/api/settings', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ root_dir: rootDir }),
+  });
+  const data = await response.json();
+  if (data.success) {
+    settings = data.settings;
+    document.getElementById('settings-status').textContent = '저장되었습니다.';
+    closeModal('settings-modal');
+    await loadSettings();
+    await loadProjects();
+  } else {
+    document.getElementById('settings-status').textContent = data.error || '저장 실패';
+  }
+}
+
+async function pickFolder(targetId) {
+  const response = await fetch('/api/settings/pick-root', { method: 'POST' });
+  const data = await response.json();
+  if (data.success && data.path) {
+    document.getElementById(targetId).value = data.path;
+    updateProjectPreview();
+  }
+}
+
+async function createProjectForm() {
+  const payload = {
+    name: document.getElementById('project-name').value.trim(),
+    grade: document.getElementById('project-grade').value.trim(),
+    class: document.getElementById('project-class').value.trim(),
+    subject: document.getElementById('project-subject').value.trim(),
+    exam_name: document.getElementById('project-exam-name').value.trim(),
+  };
+  const rootDir = document.getElementById('project-root-dir').value.trim();
+  document.getElementById('project-status').textContent = '생성 중...';
+
+  if (rootDir && rootDir !== settings.root_dir) {
+    await fetch('/api/settings', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ root_dir: rootDir }),
+    });
+    await loadSettings();
+  }
+
+  const response = await fetch('/api/projects', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  const data = await response.json();
+  if (!data.success) {
+    document.getElementById('project-status').textContent = data.error || '프로젝트 생성 실패';
+    return;
+  }
+
+  closeModal('project-modal');
+  await loadProjects();
+  await openProject(encodeURIComponent(data.project.slug));
+}
+
+async function openProject(encodedSlug, button) {
+  if (button) button.disabled = true;
+  document.getElementById('home-status').textContent = '프로젝트 여는 중...';
+  try {
+    const response = await fetch(`/api/projects/${encodedSlug}/open`, { method: 'POST' });
+    if (!response.ok) {
+      const data = await response.json();
+      throw new Error(data.detail || data.error || '프로젝트 열기 실패');
+    }
+    window.location.href = '/dashboard';
+  } catch (error) {
+    document.getElementById('home-status').textContent = error.message || '프로젝트 열기 실패';
+  } finally {
+    if (button) button.disabled = false;
+  }
+}
+
+function slugify(value) {
+  return (value || '')
+    .trim()
+    .replace(/[<>:"/\\|?*]+/g, '_')
+    .replace(/\s+/g, '_')
+    .replace(/_+/g, '_')
+    .replace(/^[._ ]+|[._ ]+$/g, '') || 'project';
+}
+
+function escapeHtml(value) {
+  return String(value ?? '')
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
+}
+</script>
+</body>
+</html>

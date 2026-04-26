@@ -3,535 +3,532 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>시험지 라벨링 시스템 V2</title>
+<title>ClassExamGrade Dashboard</title>
 <style>
-:root{--bg:#0f172a;--card:#1e293b;--border:#334155;--blue:#3b82f6;--green:#22c55e;--yellow:#f59e0b;--red:#ef4444;--text:#f1f5f9;--muted:#94a3b8}
+:root{--bg:#0f172a;--card:#1e293b;--panel:#111827;--border:#334155;--blue:#3b82f6;--green:#22c55e;--yellow:#f59e0b;--red:#ef4444;--text:#f1f5f9;--muted:#94a3b8}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:24px}
-h1{font-size:22px;font-weight:700;margin-bottom:6px}
-.sub{color:var(--muted);font-size:13px;margin-bottom:28px}
-/* 스텝 카드 */
-.step{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px 24px;margin-bottom:16px;position:relative}
-.step-num{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:var(--blue);font-size:12px;font-weight:700;margin-right:8px;flex-shrink:0}
-.step-title{font-size:15px;font-weight:600;display:flex;align-items:center;margin-bottom:10px}
-.step-desc{font-size:12px;color:var(--muted);margin-bottom:14px;line-height:1.6}
-/* 버튼 */
-.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;border:none;cursor:pointer;font-size:13px;font-weight:600;transition:.15s}
-.btn-blue{background:var(--blue);color:#fff}.btn-blue:hover{background:#2563eb}
-.btn-green{background:var(--green);color:#fff}.btn-green:hover{background:#16a34a}
-.btn-yellow{background:var(--yellow);color:#000}.btn-yellow:hover{background:#d97706}
-.btn-ghost{background:#334155;color:var(--text)}.btn-ghost:hover{background:#475569}
-.btn:disabled{opacity:.4;cursor:not-allowed}
-/* 파일 입력 */
-.file-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.file-label{font-size:11px;color:var(--muted);margin-top:6px}
-/* 상태 뱃지 */
-.badge{display:inline-block;font-size:11px;padding:2px 8px;border-radius:999px;font-weight:600}
-.badge-ok{background:#14532d;color:#86efac}
-.badge-warn{background:#78350f;color:#fde68a}
-.badge-err{background:#7f1d1d;color:#fca5a5}
-/* AI 브릿지 박스 */
-.bridge-box{background:#0f172a;border:1px solid var(--border);border-radius:8px;padding:16px}
-.prompt-preview{font-family:monospace;font-size:11px;background:#0f172a;border:1px solid #1e3a5f;border-radius:6px;padding:10px;color:#7dd3fc;margin:10px 0;line-height:1.6;white-space:pre-wrap;word-break:break-all}
-#json-input{width:100%;height:160px;background:#0f172a;border:1px solid var(--border);border-radius:6px;padding:10px;color:#86efac;font-family:monospace;font-size:12px;resize:vertical;margin-top:8px}
-#json-input::placeholder{color:#334155}
-#json-status{font-size:12px;margin-top:8px;min-height:20px}
-/* 결과 그리드 */
-.img-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-top:14px}
-.img-card{background:#0f172a;border:1px solid var(--border);border-radius:8px;overflow:hidden}
-.img-card img{width:100%;height:120px;object-fit:cover;display:block}
-.img-card-info{padding:8px 10px;font-size:11px;color:var(--muted);display:flex;justify-content:space-between;align-items:center}
-/* 상태 바 */
-#status-bar{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--border);padding:8px 24px;font-size:12px;color:var(--muted);display:flex;gap:16px}
+a{color:inherit}
+.topbar{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:24px}
+.topbar-left{display:flex;flex-direction:column;gap:6px}
+.topbar-title{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.topbar-title h1{font-size:24px;font-weight:700}
+.topbar-meta{font-size:13px;color:var(--muted)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 16px;border-radius:10px;border:none;cursor:pointer;font-size:13px;font-weight:600;text-decoration:none;transition:.15s}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn-blue{background:var(--blue);color:#fff}.btn-blue:hover:not(:disabled){background:#2563eb}
+.btn-green{background:var(--green);color:#052e16}.btn-green:hover:not(:disabled){background:#16a34a}
+.btn-ghost{background:#334155;color:var(--text)}.btn-ghost:hover:not(:disabled){background:#475569}
+.btn-yellow{background:var(--yellow);color:#111827}.btn-yellow:hover:not(:disabled){background:#d97706}
+.step{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:22px 24px;margin-bottom:16px}
+.step-title{display:flex;align-items:center;gap:10px;font-size:16px;font-weight:700;margin-bottom:10px}
+.step-num{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:999px;background:var(--blue);color:#fff;font-size:12px;font-weight:700}
+.step-desc{font-size:12px;line-height:1.6;color:var(--muted);margin-bottom:14px}
+.status-card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:14px}
+.status-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.status-card h3{font-size:13px;margin-bottom:10px}
+.status-sub{font-size:11px;color:var(--muted);margin-bottom:10px}
+.thumb-row{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px}
+.thumb{display:flex;flex-direction:column;gap:4px;align-items:center;min-width:90px}
+.thumb img{width:80px;height:110px;object-fit:cover;border:1px solid var(--border);border-radius:6px;background:#fff}
+.thumb span{font-size:10px;color:var(--muted);text-align:center;max-width:90px;word-break:break-all}
+.bridge-box{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:16px}
+.prompt-preview{font-family:Consolas,monospace;font-size:11px;background:#07101d;border:1px solid #1e3a5f;border-radius:8px;padding:12px;color:#7dd3fc;margin:10px 0;line-height:1.7;white-space:pre-wrap;word-break:break-word}
+#json-input{width:100%;height:180px;background:#07101d;border:1px solid var(--border);border-radius:8px;padding:12px;color:#86efac;font-family:Consolas,monospace;font-size:12px;resize:vertical}
+#json-status,#editor-save-status,#pipeline-status{font-size:12px;min-height:18px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.editor-shell{display:none}
+.editor-layout{display:flex;gap:12px;align-items:flex-start}
+.editor-left{flex:1;min-width:0}
+.editor-side{width:190px;flex-shrink:0}
+.editor-side-title{font-size:12px;font-weight:700;color:#7dd3fc;margin-bottom:6px}
+#editor-panel{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:12px;font-size:12px;color:var(--muted)}
+.canvas-wrap{border:1px solid var(--border);border-radius:10px;overflow:hidden}
+#preview-canvas{display:block;width:100%;height:auto}
+.legend{display:flex;gap:10px;margin-top:8px;font-size:11px;color:var(--muted)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px;vertical-align:middle}
+#status-bar{position:fixed;left:0;right:0;bottom:0;background:rgba(15,23,42,0.96);border-top:1px solid var(--border);padding:8px 24px;font-size:12px;color:var(--muted);display:flex;gap:14px;overflow:auto}
+@media (max-width: 900px){
+  body{padding:16px}
+  .topbar{flex-direction:column}
+  .editor-layout{flex-direction:column}
+  .editor-side{width:100%}
+}
 </style>
 </head>
-
 <body>
-<h1>📋 시험지 라벨링 시스템 V2</h1>
-<p class="sub">수동 기반 워크플로우 — 파일 준비 → 프롬프트 생성 → 캔버스 수정 → 정렬 → 검수</p>
+<script>
+const currentProject = {{ project|tojson }};
+</script>
 
-<!-- STEP 0: 파일 현황 -->
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="topbar-title">
+      <a href="/" class="btn btn-ghost">◀ 목록으로</a>
+      <h1>📁 {{ project.name }}</h1>
+    </div>
+    <div class="topbar-meta">
+      {{ project.grade }} · {{ project.class }} · {{ project.subject }} · {{ project.exam_name }}
+    </div>
+  </div>
+</div>
+
 <div class="step">
-  <div class="step-title"><span class="step-num">0</span>파일 현황 및 업로드</div>
-  <p class="step-desc">각 단계에 필요한 파일들을 준비합니다.</p>
-  <div id="file-status-container" style="display:flex; flex-direction:column; gap:12px;">로딩 중...</div>
-  
+  <div class="step-title"><span class="step-num">0</span>파일 준비 및 현황</div>
+  <p class="step-desc">현재 열린 프로젝트 안에서만 템플릿, 답안지, 학생 PDF를 관리합니다.</p>
+  <div id="file-status-container">로딩 중...</div>
   <div style="display:none">
-    <input type="file" id="tmpl-file" accept=".pdf" onchange="uploadTemplate()">
+    <input type="file" id="tmpl-file" accept=".pdf,.jpg,.jpeg,.png" onchange="uploadTemplate()">
     <input type="file" id="ans-file" accept=".pdf" onchange="uploadAnswers()">
     <input type="file" id="stu-files" accept=".pdf,.jpg,.jpeg,.png" multiple onchange="uploadStudents()">
   </div>
 </div>
 
-<!-- STEP 1: Gemini 프롬프트 및 JSON 수신 -->
 <div class="step">
-  <div class="step-title"><span class="step-num">1</span>Gemini 프롬프트 및 JSON 수신</div>
-  <p class="step-desc">모든 빈 시험지 이미지를 한 번에 첨부하고, 아래 프롬프트를 사용하여 전체 문항 좌표를 추출합니다.</p>
-  
+  <div class="step-title"><span class="step-num">1</span>Gemini 프롬프트 및 regions.json 저장</div>
+  <p class="step-desc">템플릿 페이지 수를 기준으로 프롬프트를 생성하고, AI 응답 JSON을 프로젝트의 <code>json/regions.json</code>으로 저장합니다.</p>
   <div class="bridge-box">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-      <span style="font-size:12px;font-weight:600;color:var(--muted)">📋 전체 페이지 프롬프트 자동 생성</span>
-      <button class="btn btn-ghost" onclick="copyPrompt()" style="padding:4px 10px;font-size:11px">복사</button>
+    <div class="row" style="justify-content:space-between;margin-bottom:8px">
+      <strong style="font-size:12px;color:var(--muted)">전체 페이지용 프롬프트</strong>
+      <button class="btn btn-ghost" onclick="copyPrompt(event)" style="padding:5px 10px;font-size:11px">복사</button>
     </div>
-    <div class="prompt-preview" id="prompt-text">템플릿을 업로드하면 프롬프트가 자동 생성됩니다.</div>
-    
-    <hr style="border-color:var(--border);margin:12px 0">
-    <label style="font-size:12px;font-weight:600;color:var(--muted)">✏️ Gemini 결과 붙여넣기</label>
-    <textarea id="json-input" placeholder='여기에 Gemini 결과물을 붙여넣으세요. ```json ... ``` 코드블록은 자동 제거됩니다.' oninput="onJsonInput()"></textarea>
-    
-    <div id="json-status" style="margin-top:8px;font-size:12px;min-height:18px"></div>
-    <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
-      <button class="btn btn-yellow" onclick="doValidateAll()">🔍 JSON 파싱 및 전체 요약 보기</button>
-      <button class="btn btn-green" id="save-regions-btn" onclick="doSaveAll()" disabled>✅ 전체 regions.json 저장</button>
+    <div class="prompt-preview" id="prompt-text">템플릿을 업로드하면 프롬프트가 생성됩니다.</div>
+    <label for="json-input" style="display:block;font-size:12px;font-weight:700;color:var(--muted);margin:8px 0">Gemini/Claude 결과 붙여넣기</label>
+    <textarea id="json-input" placeholder='```json ... ``` 형태도 그대로 붙여 넣어도 됩니다.' oninput="onJsonInput()"></textarea>
+    <div id="json-status" style="margin-top:8px"></div>
+    <div class="row" style="margin-top:10px">
+      <button class="btn btn-yellow" onclick="doValidateAll()">JSON 검사</button>
+      <button class="btn btn-green" id="save-regions-btn" onclick="doSaveAll()" disabled>regions.json 저장</button>
     </div>
   </div>
 </div>
 
-<!-- STEP 2: 답안 영역 수정 에디터 -->
 <div class="step">
-  <div class="step-title"><span class="step-num">2</span>답안 영역 수정 에디터</div>
-  <p class="step-desc">regions.json 저장 후, 페이지별로 정밀하게 박스를 수정합니다.</p>
-  <div style="margin-bottom:12px; display:flex; align-items:center; gap:8px;">
-    <label style="font-size:12px;font-weight:600;color:var(--muted)">📄 편집할 페이지 선택:</label>
-    <select id="prompt-page-select" class="btn bg" onchange="loadEditorForPage()">
-      {% for tmpl in templates %}
-      <option value="{{ tmpl }}">{{ tmpl }}</option>
-      {% endfor %}
-      {% if not templates %}
-      <option value="blank_p1.jpg">blank_p1.jpg</option>
-      {% endif %}
-    </select>
-    <button class="btn btn-ghost" onclick="loadEditorForPage()" style="padding:4px 10px;font-size:11px;">불러오기</button>
+  <div class="step-title"><span class="step-num">2</span>문항 박스 편집</div>
+  <p class="step-desc">페이지별 템플릿 위에서 문항 박스를 이동, 크기 조절, 추가, 삭제할 수 있습니다.</p>
+  <div class="row" style="margin-bottom:12px">
+    <label for="prompt-page-select" style="font-size:12px;font-weight:700;color:var(--muted)">편집 페이지</label>
+    <select id="prompt-page-select" class="btn btn-ghost" onchange="loadEditorForPage()"></select>
+    <button class="btn btn-ghost" onclick="loadEditorForPage()">불러오기</button>
   </div>
-  
-  <div id="editor-container" style="display:none;">
-    <div style="display:flex;gap:12px;align-items:flex-start">
-      <div style="flex:1;min-width:0">
-        <div style="display:flex;gap:6px;margin-bottom:6px;flex-wrap:wrap;align-items:center">
-          <button class="btn btn-ghost" id="mode-select-btn" onclick="setEditorMode('select')" style="font-size:11px;padding:4px 10px">&#9654; 선택/이동</button>
-          <button class="btn btn-ghost" id="mode-draw-btn"   onclick="setEditorMode('draw')"   style="font-size:11px;padding:4px 10px">&#10011; 새 박스</button>
-          <button class="btn btn-ghost" id="del-btn" onclick="deleteSelected()" style="font-size:11px;padding:4px 10px;color:#ef4444" disabled>&#10006; 삭제</button>
-          <span id="mode-label" style="font-size:11px;color:#64748b">클릭=선택 · 드래그=이동 · 모서리=크기</span>
+  <div id="editor-container" class="editor-shell">
+    <div class="editor-layout">
+      <div class="editor-left">
+        <div class="row" style="margin-bottom:6px">
+          <button class="btn btn-ghost" id="mode-select-btn" onclick="setEditorMode('select')" style="font-size:11px;padding:5px 10px">선택/이동</button>
+          <button class="btn btn-ghost" id="mode-draw-btn" onclick="setEditorMode('draw')" style="font-size:11px;padding:5px 10px">박스 추가</button>
+          <button class="btn btn-ghost" id="del-btn" onclick="deleteSelected()" style="font-size:11px;padding:5px 10px;color:var(--red)" disabled>삭제</button>
+          <span id="mode-label" style="font-size:11px;color:var(--muted)">클릭으로 선택하고 드래그로 이동/크기 조절합니다.</span>
         </div>
-        <div style="border:1px solid var(--border);border-radius:8px;overflow:hidden">
-          <canvas id="preview-canvas" style="display:block;width:100%;height:auto"></canvas>
+        <div class="canvas-wrap">
+          <canvas id="preview-canvas"></canvas>
         </div>
-        <div style="display:flex;gap:10px;margin-top:6px;font-size:11px">
-          <span><span style="width:10px;height:10px;background:rgba(59,130,246,0.6);display:inline-block;vertical-align:middle;border-radius:2px"></span> 객관식</span>
-          <span><span style="width:10px;height:10px;background:rgba(34,197,94,0.6);display:inline-block;vertical-align:middle;border-radius:2px"></span> 단답형</span>
-          <span><span style="width:10px;height:10px;background:rgba(249,115,22,0.6);display:inline-block;vertical-align:middle;border-radius:2px"></span> 서술형</span>
+        <div class="legend">
+          <span><i style="background:rgba(59,130,246,0.6)"></i>객관식</span>
+          <span><i style="background:rgba(34,197,94,0.6)"></i>정답형</span>
+          <span><i style="background:rgba(249,115,22,0.6)"></i>서술형</span>
         </div>
       </div>
-      <div style="width:175px;flex-shrink:0">
-        <div style="font-size:11px;font-weight:600;color:#7dd3fc;margin-bottom:6px">선택 문항 편집</div>
-        <div id="editor-panel" style="background:#0f172a;border:1px solid var(--border);border-radius:8px;padding:12px;font-size:12px;color:#94a3b8">문항을 선택하세요</div>
+      <div class="editor-side">
+        <div class="editor-side-title">선택 문항 편집</div>
+        <div id="editor-panel">문항을 선택하면 여기에서 속성을 조절할 수 있습니다.</div>
       </div>
     </div>
-    <div style="margin-top:10px; display:flex; gap:8px; align-items:center;">
-      <button class="btn btn-ghost" onclick="undo()" id="btn-undo" disabled>↩ 실행취소</button>
-      <button class="btn btn-ghost" onclick="redo()" id="btn-redo" disabled>↪ 다시실행</button>
-      <button class="btn btn-ghost" onclick="resetEditor()">전체 초기화</button>
+    <div class="row" style="margin-top:10px">
+      <button class="btn btn-ghost" onclick="undo()" id="btn-undo" disabled>실행 취소</button>
+      <button class="btn btn-ghost" onclick="redo()" id="btn-redo" disabled>다시 실행</button>
+      <button class="btn btn-ghost" onclick="resetEditor()">현재 페이지 초기화</button>
       <div style="flex:1"></div>
-      <button class="btn btn-green" onclick="saveEditorForPage()">✅ 현재 페이지 수정 완료 (저장)</button>
-      <span id="editor-save-status" style="font-size:12px;margin-left:10px;"></span>
+      <button class="btn btn-green" onclick="saveEditorForPage()">현재 페이지 저장</button>
+      <span id="editor-save-status"></span>
     </div>
   </div>
 </div>
 
-<!-- STEP 3: 학생 시험지 정렬 -->
 <div class="step">
-  <div class="step-title"><span class="step-num">3</span>학생 시험지 정렬 파이프라인</div>
-  <p class="step-desc">업로드된 학생 시험지를 각 페이지에 맞는 템플릿 기준으로 원근 정렬합니다.</p>
-  <button class="btn btn-blue" id="pipeline-btn" onclick="runPipeline()">🚀 정렬 실행</button>
-  <span id="pipeline-status" style="font-size:12px;margin-left:10px;color:var(--muted)"></span>
+  <div class="step-title"><span class="step-num">3</span>학생 시험지 정렬</div>
+  <p class="step-desc">학생 PDF를 페이지 이미지로 분할하고, 각 페이지를 해당 템플릿 페이지에 맞춰 정렬합니다.</p>
+  <div class="row">
+    <button class="btn btn-blue" id="pipeline-btn" onclick="runPipeline()">정렬 실행</button>
+    <span id="pipeline-status"></span>
+  </div>
 </div>
 
-<!-- STEP 4: 정렬 검증 및 병합 -->
 <div class="step">
-  <div class="step-title"><span class="step-num">4</span>정렬 검증 (전체 오버레이) 및 완료</div>
-  <p class="step-desc">학생 필기를 모두 겹쳐 정렬 상태를 한눈에 확인합니다.</p>
-  <a href="/review" class="btn btn-green" style="text-decoration:none">🔍 전체 오버레이 검수 열기 →</a>
+  <div class="step-title"><span class="step-num">4</span>전체 오버레이 검수</div>
+  <p class="step-desc">정렬 결과를 학생별로 겹쳐 보고, 미세 위치 보정과 페이지별 검수를 진행합니다.</p>
+  <a href="/review" class="btn btn-green">전체 오버레이 검수 열기</a>
 </div>
 
-<div style="height:40px"></div>
+<div style="height:42px"></div>
 
-<!-- 상태 바 -->
 <div id="status-bar">
-  <span>🟢 서버: http://127.0.0.1:8080</span>
-  <span id="regions-status">regions.json: {% if has_regions %}✓ 있음{% else %}⚠️ 없음{% endif %}</span>
-  <span>template: {% if template_exists %}✓ 있음{% else %}⚠️ 없음{% endif %}</span>
+  <span>현재 프로젝트: {{ project.name }}</span>
+  <span id="regions-status">regions.json 상태 로딩 중...</span>
+  <span id="template-status">template 상태 로딩 중...</span>
 </div>
 
 <script>
 let globalRegions = { questions: [] };
 let fileStatus = null;
+let parsedAllData = null;
 
 window.addEventListener('DOMContentLoaded', async () => {
-    await loadFileStatus();
-    try {
-        const r = await fetch('/api/regions');
-        if (r.ok) {
-            globalRegions = await r.json();
-            if(!globalRegions.questions) globalRegions.questions = [];
-            
-            if (globalRegions.questions.length > 0) {
-                document.getElementById('json-input').value = JSON.stringify(globalRegions, null, 2);
-                doValidateAll();
-            }
-        }
-    } catch(e) {}
+  await loadFileStatus();
+  try {
+    const response = await fetch('/api/regions');
+    if (response.ok) {
+      globalRegions = await response.json();
+      if (!globalRegions.questions) globalRegions.questions = [];
+      if (globalRegions.questions.length > 0) {
+        document.getElementById('json-input').value = JSON.stringify(globalRegions, null, 2);
+        doValidateAll();
+      }
+    }
+  } catch (error) {
+    console.error(error);
+  }
 });
 
 async function loadFileStatus() {
-    document.getElementById('file-status-container').innerHTML = '로딩 중...';
-    try {
-        const r = await fetch('/api/files/status');
-        fileStatus = await r.json();
-        renderFileStatus();
-        updatePromptText();
-    } catch (e) {
-        document.getElementById('file-status-container').innerHTML = '❌ 상태를 불러올 수 없습니다.';
-    }
+  const container = document.getElementById('file-status-container');
+  container.textContent = '로딩 중...';
+  const response = await fetch('/api/project/status');
+  if (response.status === 409) {
+    window.location.href = '/';
+    return;
+  }
+  fileStatus = await response.json();
+  renderFileStatus();
+  syncPageSelect();
+  updatePromptText();
+  document.getElementById('regions-status').textContent =
+    fileStatus.regions && fileStatus.regions.exists
+      ? `regions.json: ${fileStatus.regions.question_count}문항`
+      : 'regions.json: 없음';
+  document.getElementById('template-status').textContent =
+    `template: ${fileStatus.template.count}페이지`;
+}
+
+function renderThumbRow(paths, folder) {
+  if (!paths.length) return '';
+  return `
+    <div class="thumb-row">
+      ${paths.map((name) => `
+        <div class="thumb">
+          <img src="/api/thumbnail?path=${encodeURIComponent(folder + '/' + name)}&size=120" alt="${name}">
+          <span>${name}</span>
+        </div>
+      `).join('')}
+    </div>
+  `;
 }
 
 function renderFileStatus() {
-    const c = document.getElementById('file-status-container');
-    let html = '';
-    
-    // 빈 시험지
-    html += `<div style="background:#0f172a; padding:12px; border-radius:8px; border:1px solid var(--border);">`;
-    if (fileStatus.template.count > 0) {
-        html += `<div style="margin-bottom:8px;">✅ <b>빈 시험지</b> (${fileStatus.template.count}장)</div>`;
-        html += `<div style="display:flex; gap:8px; overflow-x:auto;">`;
-        fileStatus.template.files.forEach(f => {
-            html += `<div style="text-align:center;">
-                <img src="/api/thumbnail?path=data/template/${f}&size=120" style="width:80px; height:auto; border:1px solid #334155; border-radius:4px;">
-                <div style="font-size:10px; margin-top:4px; color:var(--muted);">${f}</div>
-            </div>`;
-        });
-        html += `</div>`;
-        html += `<div style="margin-top:8px;"><button class="btn btn-ghost" style="font-size:11px;" onclick="document.getElementById('tmpl-file').click()">새 PDF 파일로 교체</button></div>`;
-    } else {
-        html += `<div style="margin-bottom:8px;">❌ <b>빈 시험지 없음</b></div>`;
-        html += `<button class="btn btn-blue" onclick="document.getElementById('tmpl-file').click()">📁 PDF 업로드 (페이지 자동 분할)</button>`;
-    }
-    html += `</div>`;
+  const container = document.getElementById('file-status-container');
+  const regions = fileStatus.regions || { exists: false };
+  const regionSummary = regions.exists
+    ? `${regions.question_count}문항 · 페이지 ${((regions.pages || []).join(', ') || '-')}`
+    : '아직 regions.json이 없습니다.';
 
-    // 답안지
-    html += `<div style="background:#0f172a; padding:12px; border-radius:8px; border:1px solid var(--border);">`;
-    if (fileStatus.answers.count > 0) {
-        html += `<div style="margin-bottom:8px;">✅ <b>답안지</b> (${fileStatus.answers.count}개)</div>`;
-        html += `<div style="display:flex; gap:8px; overflow-x:auto;">`;
-        fileStatus.answers.files.forEach(f => {
-            html += `<div style="text-align:center;">
-                <img src="/api/thumbnail?path=data/answers/${f}&size=120" style="width:80px; height:auto; border:1px solid #334155; border-radius:4px;">
-                <div style="font-size:10px; margin-top:4px; color:var(--muted);">${f}</div>
-            </div>`;
-        });
-        html += `</div>`;
-        html += `<div style="margin-top:8px;"><button class="btn btn-ghost" style="font-size:11px;" onclick="document.getElementById('ans-file').click()">새 PDF 파일로 교체</button></div>`;
-    } else {
-        html += `<div style="margin-bottom:8px;">❌ <b>답안지 없음</b></div>`;
-        html += `<button class="btn btn-blue" onclick="document.getElementById('ans-file').click()">📁 PDF 업로드</button>`;
-    }
-    html += `</div>`;
-    
-    // regions.json
-    html += `<div style="background:#0f172a; padding:12px; border-radius:8px; border:1px solid var(--border);">`;
-    if (fileStatus.regions && fileStatus.regions.exists) {
-        const r = fileStatus.regions;
-        const pageStr = (r.pages || []).map(p => `${p}p`).join(', ');
-        html += `<div style="margin-bottom:8px;">✅ <b>regions.json</b> (총 ${r.question_count}문항)</div>`;
-        html += `<div style="font-size:11px; color:var(--muted); margin-bottom:8px;">포함된 페이지: ${pageStr}</div>`;
-        html += `<div style="font-size:11px; color:var(--muted); margin-bottom:8px;">생성일시: ${r.created_at.replace('T', ' ').substring(0, 16)}</div>`;
-        html += `<div><button class="btn btn-ghost" style="font-size:11px;" onclick="document.getElementById('json-input').scrollIntoView();">⬇️ 에디터에서 보기</button></div>`;
-    } else {
-        html += `<div style="margin-bottom:8px;">❌ <b>regions.json 없음</b></div>`;
-        html += `<div style="font-size:11px; color:var(--muted);">아래 Step 1에서 Gemini를 통해 생성하세요.</div>`;
-    }
-    html += `</div>`;
-    
-    // 학생 파일
-    html += `<div style="background:#0f172a; padding:12px; border-radius:8px; border:1px solid var(--border);">`;
-    if (fileStatus.students.count > 0) {
-        html += `<div style="margin-bottom:8px;">✅ <b>학생 시험지</b> (${fileStatus.students.count}개 파일)</div>`;
-        html += `<div style="display:flex; gap:8px; overflow-x:auto;">`;
-        fileStatus.students.files.forEach(f => {
-            html += `<div style="text-align:center;">
-                <img src="/api/thumbnail?path=data/raw_pdfs/${f}&size=120" style="width:80px; height:auto; border:1px solid #334155; border-radius:4px;">
-                <div style="font-size:10px; margin-top:4px; color:var(--muted); max-width:80px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${f}</div>
-            </div>`;
-        });
-        html += `</div>`;
-        html += `<div style="margin-top:8px;"><button class="btn btn-ghost" style="font-size:11px;" onclick="document.getElementById('stu-files').click()">추가 업로드</button></div>`;
-    } else {
-        html += `<div style="margin-bottom:8px;">❌ <b>학생 시험지 없음</b></div>`;
-        html += `<button class="btn btn-blue" onclick="document.getElementById('stu-files').click()">📁 다중 PDF 업로드</button>`;
-    }
-    html += `</div>`;
-    
-    c.innerHTML = html;
+  container.innerHTML = `
+    <div class="status-grid">
+      <div class="status-card">
+        <h3>템플릿</h3>
+        <div class="status-sub">${fileStatus.template.count > 0 ? `${fileStatus.template.count}페이지 준비됨` : '템플릿 없음'}</div>
+        ${renderThumbRow(fileStatus.template.files, 'template')}
+        <div class="row" style="margin-top:10px">
+          <button class="btn ${fileStatus.template.count > 0 ? 'btn-ghost' : 'btn-blue'}" onclick="document.getElementById('tmpl-file').click()">
+            ${fileStatus.template.count > 0 ? '템플릿 교체' : '템플릿 업로드'}
+          </button>
+        </div>
+      </div>
+      <div class="status-card">
+        <h3>답안지</h3>
+        <div class="status-sub">${fileStatus.answers.count > 0 ? `${fileStatus.answers.count}개 업로드됨` : '답안지 PDF 없음'}</div>
+        ${renderThumbRow(fileStatus.answers.files, 'answers')}
+        <div class="row" style="margin-top:10px">
+          <button class="btn ${fileStatus.answers.count > 0 ? 'btn-ghost' : 'btn-blue'}" onclick="document.getElementById('ans-file').click()">
+            ${fileStatus.answers.count > 0 ? '답안지 교체' : '답안지 업로드'}
+          </button>
+        </div>
+      </div>
+      <div class="status-card">
+        <h3>regions.json</h3>
+        <div class="status-sub">${regionSummary}</div>
+        <div class="row" style="margin-top:10px">
+          <button class="btn btn-ghost" onclick="document.getElementById('json-input').scrollIntoView({behavior:'smooth'})">JSON 편집으로 이동</button>
+        </div>
+      </div>
+      <div class="status-card">
+        <h3>학생 PDF</h3>
+        <div class="status-sub">${fileStatus.students.count > 0 ? `${fileStatus.students.count}개 업로드됨` : '학생 PDF 없음'}</div>
+        ${renderThumbRow(fileStatus.students.files, 'students/raw')}
+        <div class="row" style="margin-top:10px">
+          <button class="btn ${fileStatus.students.count > 0 ? 'btn-ghost' : 'btn-blue'}" onclick="document.getElementById('stu-files').click()">
+            ${fileStatus.students.count > 0 ? '학생 파일 추가' : '학생 파일 업로드'}
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
 }
 
-// 업로드 로직들
-async function uploadTemplate(){
-  const fi = document.getElementById('tmpl-file');
-  if(!fi.files.length) return;
-  const fd = new FormData(); fd.append('file', fi.files[0]);
-  document.getElementById('file-status-container').innerHTML = '업로드 중...';
-  await fetch('/api/upload/template', {method:'POST', body:fd});
+function syncPageSelect() {
+  const select = document.getElementById('prompt-page-select');
+  const pages = (fileStatus && fileStatus.template.files.length)
+    ? fileStatus.template.files
+    : ['blank_p1.jpg'];
+  const current = select.value;
+  select.innerHTML = pages.map((name) => `<option value="${name}">${name}</option>`).join('');
+  if (pages.includes(current)) {
+    select.value = current;
+  }
+}
+
+async function uploadTemplate() {
+  const input = document.getElementById('tmpl-file');
+  if (!input.files.length) return;
+  const form = new FormData();
+  form.append('file', input.files[0]);
+  document.getElementById('file-status-container').textContent = '템플릿 업로드 중...';
+  await fetch('/api/upload/template', { method: 'POST', body: form });
   location.reload();
 }
-async function uploadAnswers(){
-  const fi = document.getElementById('ans-file');
-  if(!fi.files.length) return;
-  const fd = new FormData(); fd.append('file', fi.files[0]);
-  document.getElementById('file-status-container').innerHTML = '업로드 중...';
-  await fetch('/api/upload/answers', {method:'POST', body:fd});
+
+async function uploadAnswers() {
+  const input = document.getElementById('ans-file');
+  if (!input.files.length) return;
+  const form = new FormData();
+  form.append('file', input.files[0]);
+  document.getElementById('file-status-container').textContent = '답안지 업로드 중...';
+  await fetch('/api/upload/answers', { method: 'POST', body: form });
   location.reload();
 }
-async function uploadStudents(){
-  const fi = document.getElementById('stu-files');
-  if(!fi.files.length) return;
-  const fd = new FormData();
-  for(let f of fi.files) fd.append('files', f);
-  document.getElementById('file-status-container').innerHTML = '업로드 중...';
-  await fetch('/api/upload/students', {method:'POST', body:fd});
+
+async function uploadStudents() {
+  const input = document.getElementById('stu-files');
+  if (!input.files.length) return;
+  const form = new FormData();
+  for (const file of input.files) form.append('files', file);
+  document.getElementById('file-status-container').textContent = '학생 파일 업로드 중...';
+  await fetch('/api/upload/students', { method: 'POST', body: form });
   location.reload();
 }
 
 function updatePromptText() {
-  const pages = fileStatus ? fileStatus.template.count : 1;
+  const pageCount = fileStatus ? fileStatus.template.count : 1;
   const hasAnswers = fileStatus && fileStatus.answers.count > 0;
-  
-  let p = `첨부한 이미지들은 한국 초등학교 3학년 수학 단원평가 시험지입니다.
-이미지는 총 ${pages}장이며 각각 1페이지부터 ${pages}페이지까지입니다.
-
-[시험지 구조]
-- A4 세로, 좌우 2단 레이아웃
-- 객관식: 문항 끝 ( ) 괄호 안에 번호를 씀
-- 단답형: '답' 동그라미 아이콘 옆 밑줄 위에 씀
-- 서술형: '풀이' 줄 + '답' 줄 두 영역
-
-`;
-
+  let prompt = `첨부한 이미지는 시험지 템플릿입니다.\n`;
+  prompt += `페이지 수는 총 ${pageCount}장이고, 각 페이지는 1페이지부터 ${pageCount}페이지까지입니다.\n\n`;
+  prompt += `[요청]\n`;
+  prompt += `각 페이지의 모든 문항에서 학생이 답을 쓰는 영역의 bounding box를 찾아 주세요.\n`;
+  prompt += `응답은 설명 없이 JSON 코드블록 하나만 반환해 주세요.\n`;
+  prompt += `좌표는 각 페이지 이미지 기준 0~1 정규화 비율입니다.\n`;
+  prompt += `page 값은 실제 페이지 번호와 반드시 일치해야 합니다.\n\n`;
   if (hasAnswers) {
-    p += `[답안지 정보]
-(첨부된 정답지를 참고하여 객관식/단답형/서술형을 정확히 구분하세요)
-
-`;
+    prompt += `[참고]\n답안지 PDF도 함께 참고해서 객관식/정답형/서술형을 구분해 주세요.\n\n`;
   }
-
-  p += `각 페이지의 모든 문항에서 학생이 답을 적는 영역의 위치를
-아래 JSON 형식으로 한 번에 반환하세요.
-JSON 코드블록만 반환하고 설명은 쓰지 마세요.
-
-{
+  prompt += `{
   "questions": [
     {
       "number": 1,
       "page": 1,
       "type": "객관식",
       "box": {"x": 0.72, "y": 0.18, "w": 0.12, "h": 0.04}
-    },
-    {
-      "number": 9,
-      "page": 2,
-      "type": "객관식",
-      "box": {"x": 0.72, "y": 0.18, "w": 0.12, "h": 0.04}
     }
   ]
+}`;
+  document.getElementById('prompt-text').textContent = prompt;
 }
 
-좌표는 각 페이지 이미지 크기 기준 0~1 비율값.
-page 값은 반드시 이미지 순서(1, 2, 3...)와 일치해야 합니다.`;
-  
-  document.getElementById('prompt-text').textContent = p;
-}
-
-function copyPrompt(){
-  const txt = document.getElementById('prompt-text').textContent;
-  navigator.clipboard.writeText(txt).then(()=>{
-    const btn = event.target; btn.textContent = '✓ 복사됨!';
-    setTimeout(()=>btn.textContent='복사', 1500);
+function copyPrompt(event) {
+  navigator.clipboard.writeText(document.getElementById('prompt-text').textContent).then(() => {
+    const button = event.currentTarget;
+    const original = button.textContent;
+    button.textContent = '복사됨';
+    setTimeout(() => { button.textContent = original; }, 1200);
   });
 }
 
-function onJsonInput(){
+function onJsonInput() {
+  parsedAllData = null;
   document.getElementById('save-regions-btn').disabled = true;
   setJsonStatus('', '');
 }
 
 function extractJson(raw) {
-  let s = raw.trim();
-  const cbMatch = s.match(/```(?:json)?\s*([\s\S]*?)```/i);
-  if (cbMatch) { s = cbMatch[1].trim(); }
-  else {
+  let source = raw.trim();
+  const codeBlock = source.match(/```(?:json)?\s*([\s\S]*?)```/i);
+  if (codeBlock) {
+    source = codeBlock[1].trim();
+  } else {
     const start = Math.min(
-      s.indexOf('{') === -1 ? Infinity : s.indexOf('{'),
-      s.indexOf('[') === -1 ? Infinity : s.indexOf('[')
+      source.indexOf('{') === -1 ? Infinity : source.indexOf('{'),
+      source.indexOf('[') === -1 ? Infinity : source.indexOf('['),
     );
     if (start === Infinity) throw new SyntaxError('JSON 구조를 찾을 수 없습니다.');
-    s = s.slice(start, Math.max(s.lastIndexOf('}'), s.lastIndexOf(']')) + 1);
+    source = source.slice(start, Math.max(source.lastIndexOf('}'), source.lastIndexOf(']')) + 1);
   }
-  return JSON.parse(s);
+  return JSON.parse(source);
 }
 
-let _parsedAllData = null;
-
 function doValidateAll() {
-  _parsedAllData = null;
+  parsedAllData = null;
   const raw = document.getElementById('json-input').value;
-  if (!raw.trim()) { setJsonStatus('❌ 입력창이 비어있습니다.', 'red'); return; }
-
-  let data;
-  try { data = extractJson(raw); }
-  catch (e) {
-    setJsonStatus('❌ JSON 파싱 실패: ' + e.message, 'red');
+  if (!raw.trim()) {
+    setJsonStatus('입력창이 비어 있습니다.', 'red');
     return;
   }
 
-  let qs = data.questions;
-  if (!qs && Array.isArray(data)) qs = data;
-  if (!qs || !Array.isArray(qs)) {
-    setJsonStatus('❌ "questions" 배열을 찾을 수 없습니다.', 'red'); return;
+  let data;
+  try {
+    data = extractJson(raw);
+  } catch (error) {
+    setJsonStatus(`JSON 파싱 실패: ${error.message}`, 'red');
+    return;
   }
 
-  const pages = new Set(qs.map(q => q.page || 1));
-  let pageSummary = [];
-  for(let p=1; p<=fileStatus.template.count; p++) {
-      const c = qs.filter(q => (q.page||1) === p).length;
-      pageSummary.push(`${p}p: ${c}문항`);
+  let questions = data.questions;
+  if (!questions && Array.isArray(data)) questions = data;
+  if (!questions || !Array.isArray(questions)) {
+    setJsonStatus('"questions" 배열을 찾을 수 없습니다.', 'red');
+    return;
   }
 
-  setJsonStatus(`✅ 파싱 성공! 총 ${qs.length}문항 (${pageSummary.join(', ')})`, 'green');
+  const summary = [];
+  for (let page = 1; page <= (fileStatus.template.count || 1); page += 1) {
+    const count = questions.filter((q) => (q.page || 1) === page).length;
+    summary.push(`${page}p: ${count}문항`);
+  }
+
+  parsedAllData = { questions };
   document.getElementById('save-regions-btn').disabled = false;
-  _parsedAllData = { questions: qs };
+  setJsonStatus(`검사 완료: 총 ${questions.length}문항 (${summary.join(', ')})`, 'green');
 }
 
 async function doSaveAll() {
-  if (!_parsedAllData) return;
-  
-  const newPages = new Set(_parsedAllData.questions.map(q => q.page || 1));
-  const existingOtherQs = globalRegions.questions.filter(q => !newPages.has(q.page || 1));
-  globalRegions.questions = [...existingOtherQs, ..._parsedAllData.questions];
-  
+  if (!parsedAllData) return;
+  const newPages = new Set(parsedAllData.questions.map((q) => q.page || 1));
+  const others = globalRegions.questions.filter((q) => !newPages.has(q.page || 1));
+  globalRegions.questions = [...others, ...parsedAllData.questions];
+
   document.getElementById('save-regions-btn').disabled = true;
   setJsonStatus('저장 중...', 'muted');
-  const r = await fetch('/api/regions', {
-    method:'POST', headers:{'Content-Type':'application/json'},
-    body: JSON.stringify(globalRegions)
+  const response = await fetch('/api/regions', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(globalRegions),
   });
-  if(r.ok) {
-    setJsonStatus('✅ regions.json 저장/병합 완료!', 'green');
-    loadFileStatus(); // 현황 업데이트
+  if (response.ok) {
+    setJsonStatus('regions.json 저장 완료', 'green');
+    await loadFileStatus();
   } else {
-    setJsonStatus('❌ 저장 실패', 'red');
+    setJsonStatus('regions.json 저장 실패', 'red');
   }
 }
 
-// ── STEP 2: 에디터 ──────────────────────────────────
 function getSelectedPageNum() {
-  const sel = document.getElementById('prompt-page-select');
-  const val = sel ? sel.value : 'blank_p1.jpg';
-  const m = val.match(/blank_p(\d+)/i);
-  return m ? parseInt(m[1]) : 1;
+  const value = document.getElementById('prompt-page-select').value || 'blank_p1.jpg';
+  const match = value.match(/blank_p(\d+)/i);
+  return match ? parseInt(match[1], 10) : 1;
 }
 
 async function loadEditorForPage() {
   const page = getSelectedPageNum();
-  const qs = globalRegions.questions.filter(q => q.page === page);
-  
+  const questions = globalRegions.questions.filter((q) => (q.page || 1) === page);
   document.getElementById('editor-container').style.display = 'block';
-  document.getElementById('editor-save-status').textContent = '로딩 중...';
-  
+  document.getElementById('editor-save-status').textContent = '페이지 로딩 중...';
+
   try {
-    const bgImg = await new Promise((ok, fail) => {
-      const i = new Image();
-      i.onload = () => ok(i);
-      i.onerror = () => fail(new Error('템플릿 이미지 없음'));
-      const pageStr = document.getElementById('prompt-page-select').value;
-      i.src = '/api/template/' + encodeURIComponent(pageStr) + '?t=' + Date.now();
+    const backgroundImage = await new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => resolve(img);
+      img.onerror = () => reject(new Error('템플릿 이미지를 불러오지 못했습니다.'));
+      img.src = '/api/template/' + encodeURIComponent(document.getElementById('prompt-page-select').value) + '?t=' + Date.now();
     });
-    
-    // 에디터 초기화
-    if(typeof editorInit === 'function') {
-        editorInit(qs, bgImg);
-        setEditorMode('select');
-        document.getElementById('editor-save-status').textContent = `${page}페이지 로드 완료.`;
-        document.getElementById('editor-save-status').style.color = 'var(--green)';
-    } else {
-        document.getElementById('editor-save-status').textContent = '에디터 스크립트 로드 실패';
-    }
-  } catch (err) {
-    document.getElementById('editor-save-status').textContent = err.message;
+
+    editorInit(questions, backgroundImage);
+    setEditorMode('select');
+    setStatus('editor-save-status', `${page}페이지 로드 완료`, 'green');
+  } catch (error) {
+    setStatus('editor-save-status', error.message || '페이지 로드 실패', 'red');
   }
 }
 
 async function saveEditorForPage() {
-  const liveQs = (typeof editorGetQuestions === 'function') ? editorGetQuestions() : [];
-  const currentPageNum = getSelectedPageNum();
-  
-  liveQs.forEach(q => { if(!q.page) q.page = currentPageNum; });
-
-  const otherQs = globalRegions.questions.filter(q => q.page !== currentPageNum);
-  globalRegions.questions = [...otherQs, ...liveQs];
-  
-  document.getElementById('editor-save-status').textContent = '저장 중...';
-  document.getElementById('editor-save-status').style.color = 'var(--muted)';
-  
-  const r = await fetch('/api/regions', {
-    method:'POST', headers:{'Content-Type':'application/json'},
-    body: JSON.stringify(globalRegions)
+  const liveQuestions = typeof editorGetQuestions === 'function' ? editorGetQuestions() : [];
+  const page = getSelectedPageNum();
+  liveQuestions.forEach((question) => {
+    if (!question.page) question.page = page;
   });
-  if(r.ok) {
-    document.getElementById('editor-save-status').textContent = `✅ ${currentPageNum}페이지 저장 완료!`;
-    document.getElementById('editor-save-status').style.color = 'var(--green)';
+
+  const others = globalRegions.questions.filter((q) => (q.page || 1) !== page);
+  globalRegions.questions = [...others, ...liveQuestions];
+  setStatus('editor-save-status', '저장 중...', 'muted');
+
+  const response = await fetch('/api/regions', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(globalRegions),
+  });
+  if (response.ok) {
+    setStatus('editor-save-status', `${page}페이지 저장 완료`, 'green');
+    await loadFileStatus();
   } else {
-    document.getElementById('editor-save-status').textContent = '❌ 저장 실패';
-    document.getElementById('editor-save-status').style.color = 'var(--red)';
+    setStatus('editor-save-status', '저장 실패', 'red');
   }
 }
 
-// 파이프라인
-async function runPipeline(){
-  const tCount = fileStatus.template.count || 1;
-  let cycle = prompt(`학생 1명당 스캔된 페이지 수는 몇 장입니까?\n(빈 페이지를 포함한 물리적 스캔 장수. 다중 학생 PDF 업로드 시 필수)`, tCount);
+async function runPipeline() {
+  const templateCount = fileStatus.template.count || 1;
+  let cycle = prompt('학생 1명당 스캔된 페이지 수를 입력하세요.', templateCount);
   if (cycle === null) return;
-  cycle = parseInt(cycle);
-  if (isNaN(cycle) || cycle < 1) return alert('올바른 숫자를 입력하세요.');
-
-  const btn = document.getElementById('pipeline-btn');
-  btn.disabled = true;
-  document.getElementById('pipeline-status').textContent = '실행 중... (시간이 걸릴 수 있습니다)';
-  try{
-    const r = await fetch('/api/run_pipeline', {
-        method:'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({cycle: cycle})
-    });
-    const d = await r.json();
-    if(d.success){
-      document.getElementById('pipeline-status').textContent = `✅ 정렬 완료 (보정 성공 ${d.aligned}장, 보정 생략/원본 유지 ${d.failed}장) — 확인 후 진행하세요.`;
-      document.getElementById('pipeline-status').style.color = 'var(--green)';
-    } else {
-      document.getElementById('pipeline-status').textContent = '❌ ' + d.error;
-    }
-  } catch(e){
-    document.getElementById('pipeline-status').textContent = '❌ 서버 통신 오류';
+  cycle = parseInt(cycle, 10);
+  if (Number.isNaN(cycle) || cycle < 1) {
+    alert('올바른 숫자를 입력하세요.');
+    return;
   }
-  btn.disabled = false;
+
+  const button = document.getElementById('pipeline-btn');
+  button.disabled = true;
+  setStatus('pipeline-status', '정렬 실행 중...', 'muted');
+
+  try {
+    const response = await fetch('/api/run_pipeline', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ cycle }),
+    });
+    const data = await response.json();
+    if (data.success) {
+      setStatus(
+        'pipeline-status',
+        `정렬 완료: 성공 ${data.aligned}장, fallback ${data.failed}장`,
+        'green',
+      );
+      await loadFileStatus();
+    } else {
+      setStatus('pipeline-status', data.error || '정렬 실패', 'red');
+    }
+  } catch (error) {
+    setStatus('pipeline-status', '서버 통신 오류', 'red');
+  } finally {
+    button.disabled = false;
+  }
 }
 
-function setStatus(id, msg, col){
+function setStatus(id, message, color) {
   const el = document.getElementById(id);
-  if(!el) return;
-  el.textContent = msg;
-  el.style.color = col==='green'?'#22c55e':col==='red'?'#ef4444':'#94a3b8';
+  if (!el) return;
+  el.textContent = message;
+  el.style.color = color === 'green' ? '#22c55e' : color === 'red' ? '#ef4444' : '#94a3b8';
 }
-function setJsonStatus(msg, col){
-  setStatus('json-status', msg, col);
+
+function setJsonStatus(message, color) {
+  setStatus('json-status', message, color);
 }
 </script>
 <script src="/static/editor.js"></script>
 </body>
+</html>

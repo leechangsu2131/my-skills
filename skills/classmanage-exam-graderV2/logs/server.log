@@ -120,3 +120,6 @@
 2026-04-26 22:24:51,654 [INFO] [regions_loaded] {}
 2026-04-26 22:25:02,749 [INFO] [pipeline_done] {"ok": 0, "fail": 12}
 2026-04-26 22:25:04,181 [INFO] [regions_loaded] {}
+2026-04-27 07:20:13,151 [INFO] [app_started] {}
+2026-04-27 07:20:38,409 [INFO] [project_opened] {"project": "수학2"}
+2026-04-27 07:20:47,737 [INFO] [template_uploaded] {"type": "pdf", "pages": 3}

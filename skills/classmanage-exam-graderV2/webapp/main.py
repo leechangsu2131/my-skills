@@ -1,60 +1,69 @@
 """
-classmanage-exam-graderV2  ─  webapp/main.py (리팩토링 버전)
-목적: YOLO BBox 라벨 데이터 축적
-- AI API 없음
-- answers.json / 채점 / OCR 로직 없음
+Local FastAPI app for project-based exam alignment and review.
 """
-from fastapi import FastAPI, Request, UploadFile, File, HTTPException
-from fastapi.responses import FileResponse
+
+from pathlib import Path
+import json
+import logging
+import os
+import re
+import shutil
+import sys
+import tempfile
+import traceback
+
+from fastapi import FastAPI, File, HTTPException, Request, UploadFile
+from fastapi.responses import FileResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from pathlib import Path
-import json, os, sys, logging
 
-# ── 경로 설정 ──────────────────────────────────────────────
-BASE_DIR        = Path(__file__).parent.parent
-LOG_DIR         = BASE_DIR / "logs"
-PDF_DIR         = BASE_DIR / "data" / "raw_pdfs"
-RAW_DIR         = BASE_DIR / "data" / "raw_images"
-ALIGNED_DIR     = BASE_DIR / "data" / "aligned_images"
-TEMPLATE_DIR    = BASE_DIR / "data" / "template"
-ANSWERS_DIR     = BASE_DIR / "data" / "answers"
-ANNO_DIR        = BASE_DIR / "data" / "json"          # regions.json
-YOLO_DIR        = BASE_DIR / "data" / "yolo_labels"
 
-for d in [LOG_DIR, PDF_DIR, RAW_DIR, ALIGNED_DIR, TEMPLATE_DIR,
-          ANSWERS_DIR, ANNO_DIR, YOLO_DIR]:
-    d.mkdir(parents=True, exist_ok=True)
+BASE_DIR = Path(__file__).parent.parent
+APP_LOG_DIR = BASE_DIR / "logs"
+SETTINGS_FILE = BASE_DIR / "settings.json"
+STATIC_DIR = Path(__file__).parent / "static"
+TEMPLATE_DIR = Path(__file__).parent / "templates"
+IMG_EXT = {".jpg", ".jpeg", ".png"}
 
-# 마이그레이션: 기존 blank.jpg 가 있으면 blank_p1.jpg 로 이름 변경
-old_blank = TEMPLATE_DIR / "blank.jpg"
-if old_blank.exists():
-    old_blank.rename(TEMPLATE_DIR / "blank_p1.jpg")
+APP_LOG_DIR.mkdir(parents=True, exist_ok=True)
+STATIC_DIR.mkdir(parents=True, exist_ok=True)
 
-# ── 로깅 ──────────────────────────────────────────────────
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(message)s",
     handlers=[
-        logging.FileHandler(LOG_DIR / "server.log", encoding="utf-8"),
+        logging.FileHandler(APP_LOG_DIR / "server.log", encoding="utf-8"),
         logging.StreamHandler(sys.__stdout__),
-    ]
+    ],
 )
 
 sys.path.insert(0, str(BASE_DIR / "src"))
-import event_logger as _elog
-_elog.init(LOG_DIR)
+
+from aligner import align_image  # type: ignore
+from pdf_handler import convert_pdfs_to_images  # type: ignore
+import event_logger as _elog  # type: ignore
+from project_store import (  # type: ignore
+    create_project,
+    get_project_status,
+    load_settings,
+    project_paths,
+    refresh_project_metadata,
+    resolve_project_dir,
+    save_settings,
+    scan_projects,
+)
+
+
+app = FastAPI(title="Exam Grader V2")
+app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
+TEMPLATES = Jinja2Templates(directory=str(TEMPLATE_DIR))
+
+SETTINGS = load_settings(SETTINGS_FILE)
+CURRENT_PROJECT: Path | None = None
+
+_elog.init(APP_LOG_DIR)
 _elog.log_event("app_started")
 
-# ── FastAPI 앱 ────────────────────────────────────────────
-app = FastAPI(title="Exam Grader V2")
-STATIC_DIR = Path(__file__).parent / "static"
-STATIC_DIR.mkdir(exist_ok=True)
-app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
-TEMPLATES = Jinja2Templates(directory=str(Path(__file__).parent / "templates"))
-
-# ── 헬퍼 ─────────────────────────────────────────────────
-IMG_EXT = {".jpg", ".jpeg", ".png"}
 
 def _load_json(path: Path):
     if not path.exists():
@@ -64,294 +73,420 @@ def _load_json(path: Path):
     except Exception:
         return None
 
-def _imread_safe(path: str):
-    """한글 경로 대응 OpenCV 읽기"""
-    import cv2, numpy as np
-    arr = np.fromfile(path, np.uint8)
-    return cv2.imdecode(arr, cv2.IMREAD_COLOR)
 
-def _imwrite_safe(path: str, img):
-    """한글 경로 대응 OpenCV 쓰기"""
-    import cv2
-    ext = Path(path).suffix
-    ok, buf = cv2.imencode(ext, img)
-    if ok:
-        with open(path, "wb") as f:
-            buf.tofile(f)
+def _root_dir() -> Path:
+    return Path(SETTINGS["root_dir"])
 
-# ══════════════════════════════════════════════════════════
-# 페이지 라우트
-# ══════════════════════════════════════════════════════════
+
+def _ensure_current_project() -> Path:
+    global CURRENT_PROJECT
+    if CURRENT_PROJECT is None:
+        raise HTTPException(status_code=409, detail="No project is currently open")
+    if not CURRENT_PROJECT.exists():
+        CURRENT_PROJECT = None
+        raise HTTPException(status_code=409, detail="Current project no longer exists")
+    return CURRENT_PROJECT
+
+
+def _paths():
+    return project_paths(_ensure_current_project())
+
+
+def _switch_project(project_dir: Path) -> dict:
+    global CURRENT_PROJECT, SETTINGS
+    CURRENT_PROJECT = project_dir.resolve()
+    metadata = refresh_project_metadata(CURRENT_PROJECT, touch=False)
+    _elog.init(project_paths(CURRENT_PROJECT).logs_dir)
+    SETTINGS = save_settings(
+        SETTINGS_FILE,
+        {
+            "root_dir": SETTINGS["root_dir"],
+            "last_project": metadata["slug"],
+        },
+    )
+    _elog.log_event("project_opened", {"project": metadata["slug"]})
+    return metadata
+
+
+def _safe_project_file(relative_path: str) -> Path:
+    base = _paths().root.resolve()
+    candidate = (base / relative_path).resolve()
+    if not candidate.is_relative_to(base):
+        raise HTTPException(status_code=400, detail="Invalid path")
+    return candidate
+
+
+def _pick_directory(initial_dir: str | None) -> str | None:
+    import tkinter as tk
+    from tkinter import filedialog
+
+    root = tk.Tk()
+    root.withdraw()
+    root.attributes("-topmost", True)
+    selected = filedialog.askdirectory(initialdir=initial_dir or str(_root_dir()))
+    root.destroy()
+    return selected or None
+
 
 @app.get("/")
+async def project_selector(request: Request):
+    return TEMPLATES.TemplateResponse(
+        request=request,
+        name="project_select.html",
+        context={},
+    )
+
+
+@app.get("/dashboard")
 async def dashboard(request: Request):
-    """메인 대시보드 — AI 브릿지 + 업로드 + 파이프라인"""
-    aligned = sorted(p.name for p in ALIGNED_DIR.iterdir()
-                     if p.suffix.lower() in IMG_EXT)
-    has_regions = (ANNO_DIR / "regions.json").exists()
-    templates = sorted(p.name for p in TEMPLATE_DIR.iterdir() if p.suffix.lower() in IMG_EXT and p.name.startswith("blank_"))
-    return TEMPLATES.TemplateResponse(request, "index.html", {
-        "aligned_images": aligned,
-        "has_regions": has_regions,
-        "template_exists": len(templates) > 0,
-        "templates": templates
-    })
+    if CURRENT_PROJECT is None:
+        return RedirectResponse(url="/", status_code=303)
+
+    status = get_project_status(_ensure_current_project())
+    return TEMPLATES.TemplateResponse(
+        request=request,
+        name="index.html",
+        context={
+            "aligned_images": [],
+            "has_regions": status["regions"].get("exists", False),
+            "template_exists": status["template"]["count"] > 0,
+            "templates": status["template"]["files"],
+            "project": status["project"],
+        },
+    )
+
 
 @app.get("/review")
 async def review_page():
-    """오버레이 검수 에디터"""
+    if CURRENT_PROJECT is None:
+        return RedirectResponse(url="/", status_code=303)
     return FileResponse(str(STATIC_DIR / "review2.html"), media_type="text/html")
 
-# ══════════════════════════════════════════════════════════
-# API — 업로드 / 파이프라인
-# ══════════════════════════════════════════════════════════
+
+@app.get("/api/settings")
+async def get_settings():
+    return SETTINGS
+
+
+@app.post("/api/settings")
+async def update_settings(request: Request):
+    global SETTINGS
+    payload = await request.json()
+    new_root = payload.get("root_dir", SETTINGS.get("root_dir"))
+    last_project = SETTINGS.get("last_project")
+    if last_project and not resolve_project_dir(Path(new_root), last_project).exists():
+        last_project = None
+
+    SETTINGS = save_settings(
+        SETTINGS_FILE,
+        {
+            "root_dir": new_root,
+            "last_project": last_project,
+        },
+    )
+    return {"success": True, "settings": SETTINGS}
+
+
+@app.post("/api/settings/pick-root")
+async def pick_root_directory():
+    try:
+        selected = _pick_directory(SETTINGS.get("root_dir"))
+    except Exception as exc:
+        return {"success": False, "error": str(exc)}
+    if not selected:
+        return {"success": False, "cancelled": True}
+    return {"success": True, "path": selected}
+
+
+@app.get("/api/projects")
+async def list_projects():
+    return {
+        "projects": scan_projects(_root_dir()),
+        "last_project": SETTINGS.get("last_project"),
+    }
+
+
+@app.post("/api/projects")
+async def create_new_project(request: Request):
+    payload = await request.json()
+    if not payload.get("name"):
+        parts = [payload.get("grade"), payload.get("class"), payload.get("subject"), payload.get("exam_name")]
+        payload["name"] = " ".join(part for part in parts if part)
+
+    try:
+        project = create_project(_root_dir(), payload)
+    except FileExistsError as exc:
+        return {"success": False, "error": str(exc)}
+    except ValueError as exc:
+        return {"success": False, "error": str(exc)}
+
+    return {"success": True, "project": project}
+
+
+@app.post("/api/projects/{slug}/open")
+async def open_project(slug: str):
+    project_dir = resolve_project_dir(_root_dir(), slug)
+    if not (project_dir / "project.json").exists():
+        raise HTTPException(status_code=404, detail="Project not found")
+
+    project = _switch_project(project_dir)
+    return {"success": True, "project": project, "status": get_project_status(project_dir)}
+
+
+@app.get("/api/project/current")
+async def current_project_info():
+    if CURRENT_PROJECT is None:
+        return {"project": None}
+    return {"project": refresh_project_metadata(_ensure_current_project(), touch=False)}
+
+
+@app.get("/api/project/status")
+async def project_status():
+    return get_project_status(_ensure_current_project())
+
+
+@app.get("/api/files/status")
+async def legacy_files_status():
+    return get_project_status(_ensure_current_project())
+
 
 @app.post("/api/upload/template")
 async def upload_template(file: UploadFile = File(...)):
-    import shutil, tempfile
-    import traceback
-    
+    paths = _paths()
     try:
         ext = Path(file.filename).suffix.lower()
-        TEMPLATE_DIR.mkdir(exist_ok=True)
-        
-        # 기존 템플릿 파일 삭제
-        for p in TEMPLATE_DIR.glob("blank_*.jpg"):
-            p.unlink()
+        for path in paths.template_dir.glob("blank_*.jpg"):
+            path.unlink()
 
-        if ext in [".jpg", ".jpeg", ".png"]:
-            with open(TEMPLATE_DIR / "blank_p1.jpg", "wb") as f:
-                shutil.copyfileobj(file.file, f)
+        if ext in IMG_EXT:
+            with open(paths.template_dir / "blank_p1.jpg", "wb") as target:
+                shutil.copyfileobj(file.file, target)
             _elog.log_event("template_uploaded", {"type": "image", "pages": 1})
+            refresh_project_metadata(paths.root, touch=True)
             return {"success": True, "pages": 1}
 
-        elif ext == ".pdf":
-            import fitz
-            with tempfile.TemporaryDirectory() as tmp:
-                tmp_pdf = Path(tmp) / "t.pdf"
-                with open(tmp_pdf, "wb") as f:
-                    shutil.copyfileobj(file.file, f)
+        if ext == ".pdf":
+            with tempfile.TemporaryDirectory() as tmp_dir:
+                tmp_pdf = Path(tmp_dir) / "template.pdf"
+                with open(tmp_pdf, "wb") as target:
+                    shutil.copyfileobj(file.file, target)
+                import fitz
+
                 doc = fitz.open(str(tmp_pdf))
                 pages_count = len(doc)
-                for i, page in enumerate(doc):
-                    pix = page.get_pixmap(matrix=fitz.Matrix(300/72, 300/72), alpha=False)
-                    pix.save(str(TEMPLATE_DIR / f"blank_p{i+1}.jpg"))
+                for idx, page in enumerate(doc):
+                    pix = page.get_pixmap(
+                        matrix=fitz.Matrix(300 / 72, 300 / 72),
+                        alpha=False,
+                    )
+                    pix.save(str(paths.template_dir / f"blank_p{idx + 1}.jpg"))
                 doc.close()
+
             _elog.log_event("template_uploaded", {"type": "pdf", "pages": pages_count})
+            refresh_project_metadata(paths.root, touch=True)
             return {"success": True, "pages": pages_count}
-            
-        return {"success": False, "error": f"지원하지 않는 형식 ({ext})"}
-        
-    except Exception as e:
-        error_msg = str(e)
-        _elog.log_event("template_upload_error", {"error": error_msg, "traceback": traceback.format_exc()})
-        return {"success": False, "error": f"서버 처리 오류: {error_msg}"}
+
+        return {"success": False, "error": f"Unsupported template format: {ext}"}
+    except Exception as exc:
+        _elog.log_event(
+            "template_upload_error",
+            {"error": str(exc), "traceback": traceback.format_exc()},
+        )
+        return {"success": False, "error": str(exc)}
+
 
 @app.post("/api/upload/answers")
 async def upload_answers(file: UploadFile = File(...)):
-    import shutil
+    paths = _paths()
     try:
-        ANSWERS_DIR.mkdir(exist_ok=True)
-        for p in ANSWERS_DIR.glob("*.pdf"):
-            p.unlink()
-        
-        target_path = ANSWERS_DIR / "answer_key.pdf"
-        with open(target_path, "wb") as f:
-            shutil.copyfileobj(file.file, f)
-        _elog.log_event("answers_uploaded", {})
+        for path in paths.answers_dir.glob("*.pdf"):
+            path.unlink()
+
+        target = paths.answers_dir / "answer_key.pdf"
+        with open(target, "wb") as out:
+            shutil.copyfileobj(file.file, out)
+
+        _elog.log_event("answers_uploaded", {"file": target.name})
+        refresh_project_metadata(paths.root, touch=True)
         return {"success": True}
-    except Exception as e:
-        return {"success": False, "error": str(e)}
+    except Exception as exc:
+        return {"success": False, "error": str(exc)}
 
 
 @app.post("/api/upload/students")
 async def upload_students(files: list[UploadFile] = File(...)):
-    import shutil
-    import traceback
+    paths = _paths()
     saved = []
-    
     try:
-        for f in files:
-            ext = Path(f.filename).suffix.lower()
+        for file in files:
+            ext = Path(file.filename).suffix.lower()
             if ext == ".pdf":
-                out = PDF_DIR / f.filename
-                with open(out, "wb") as buf:
-                    shutil.copyfileobj(f.file, buf)
-                saved.append(out.name)
+                out = paths.student_pdf_dir / file.filename
             elif ext in IMG_EXT:
-                out = RAW_DIR / f.filename
-                with open(out, "wb") as buf:
-                    shutil.copyfileobj(f.file, buf)
-                saved.append(out.name)
-                
+                out = paths.student_page_dir / file.filename
+            else:
+                continue
+
+            with open(out, "wb") as buffer:
+                shutil.copyfileobj(file.file, buffer)
+            saved.append(out.name)
+
         _elog.log_event("students_uploaded", {"count": len(saved), "files": saved})
+        refresh_project_metadata(paths.root, touch=True)
         return {"success": True, "saved": saved}
-        
-    except Exception as e:
-        error_msg = str(e)
-        _elog.log_event("students_upload_error", {"error": error_msg, "traceback": traceback.format_exc()})
-        return {"success": False, "error": f"서버 처리 오류: {error_msg}"}
+    except Exception as exc:
+        _elog.log_event(
+            "students_upload_error",
+            {"error": str(exc), "traceback": traceback.format_exc()},
+        )
+        return {"success": False, "error": str(exc)}
 
 
 @app.post("/api/run_pipeline")
 async def run_pipeline(request: Request):
-    """PDF 분할 + ORB 정렬 일괄 실행"""
-    templates = list(TEMPLATE_DIR.glob("blank_*.jpg"))
+    paths = _paths()
+    templates = list(paths.template_dir.glob("blank_*.jpg"))
     if not templates:
-        return {"success": False, "error": "기준 시험지를 먼저 업로드하세요."}
+        return {"success": False, "error": "템플릿 시험지를 먼저 업로드하세요."}
 
     try:
-        data = await request.json()
-        cycle = int(data.get("cycle", 0))
-    except:
+        payload = await request.json()
+        cycle = int(payload.get("cycle", 0))
+    except Exception:
         cycle = len(templates)
 
-    from pdf_handler import convert_pdfs_to_images
-    from aligner import align_image
-    import re
+    pdf_files = list(paths.student_pdf_dir.glob("*.pdf"))
+    if pdf_files:
+        for path in paths.student_page_dir.glob("*"):
+            if path.is_file() and path.suffix.lower() in IMG_EXT:
+                path.unlink()
+        convert_pdfs_to_images(
+            str(paths.student_pdf_dir),
+            str(paths.student_page_dir),
+            dpi=300,
+            cycle=cycle,
+        )
 
-    # RAW_DIR 비우기 (이전 이미지 완전 정리)
-    for p in RAW_DIR.glob("*.*"):
-        if p.suffix.lower() in IMG_EXT and not p.name.startswith("blank_"):
-            p.unlink()
-            
-    # ALIGNED_DIR 비우기 (이전 보정본 완전 정리)
-    for p in ALIGNED_DIR.glob("*.*"):
-        if p.suffix.lower() in IMG_EXT and not p.name.startswith("blank_"):
-            p.unlink()
+    for path in paths.aligned_dir.glob("*"):
+        if path.is_file() and path.suffix.lower() in IMG_EXT:
+            path.unlink()
 
-    convert_pdfs_to_images(str(PDF_DIR), str(RAW_DIR), dpi=300, cycle=cycle)
-
-    images = [f for f in os.listdir(RAW_DIR)
-              if Path(f).suffix.lower() in IMG_EXT and not f.startswith("blank_")]
+    images = [
+        path.name
+        for path in paths.student_page_dir.iterdir()
+        if path.is_file() and path.suffix.lower() in IMG_EXT
+    ]
     if not images:
-        return {"success": False, "error": "처리할 학생 이미지가 없습니다."}
+        return {"success": False, "error": "정렬할 학생 이미지가 없습니다."}
 
     ok, fail = 0, 0
     for name in images:
-        # 파일명에서 페이지 번호 추출 (예: _stu001_p1.jpg -> 1, 또는 _page_01.jpg -> 1)
-        m = re.search(r'_p(\d+)\.jpg$', name, re.IGNORECASE)
-        if not m:
-            m = re.search(r'_page_(\d+)', name, re.IGNORECASE)
-        page_num = int(m.group(1)) if m else 1
-        
-        target_template = TEMPLATE_DIR / f"blank_p{page_num}.jpg"
+        match = re.search(r"_p(\d+)\.jpg$", name, re.IGNORECASE)
+        if not match:
+            match = re.search(r"_page_(\d+)", name, re.IGNORECASE)
+        page_num = int(match.group(1)) if match else 1
+
+        target_template = paths.template_dir / f"blank_p{page_num}.jpg"
         if not target_template.exists():
-            target_template = TEMPLATE_DIR / "blank_p1.jpg" # fallback
+            target_template = paths.template_dir / "blank_p1.jpg"
 
         result = align_image(
-            str(RAW_DIR / name),
+            str(paths.student_page_dir / name),
             str(target_template),
-            str(ALIGNED_DIR / f"aligned_{name}")
+            str(paths.aligned_dir / f"aligned_{name}"),
         )
         if result:
             ok += 1
         else:
             fail += 1
 
+    refresh_project_metadata(paths.root, touch=True)
     _elog.log_event("pipeline_done", {"ok": ok, "fail": fail})
     return {"success": True, "aligned": ok, "failed": fail}
 
-# ══════════════════════════════════════════════════════════
-# API — regions.json (AI 브릿지 핵심)
-# ══════════════════════════════════════════════════════════
 
 @app.get("/api/regions")
 async def get_regions():
-    data = _load_json(ANNO_DIR / "regions.json")
+    paths = _paths()
+    data = _load_json(paths.json_dir / "regions.json")
     if data is None:
-        raise HTTPException(status_code=404, detail={
-            "error": "regions.json 없음",
-            "guide": "대시보드에서 Gemini 결과를 붙여넣어 저장하세요."
-        })
+        raise HTTPException(
+            status_code=404,
+            detail={
+                "error": "regions.json not found",
+                "guide": "Gemini 결과를 붙여 넣어 regions.json을 먼저 저장하세요.",
+            },
+        )
     _elog.log_event("regions_loaded")
     return data
 
 
 @app.post("/api/regions")
 async def save_regions(request: Request):
+    paths = _paths()
     raw = await request.body()
-    # JSON 유효성 검증
     try:
         data = json.loads(raw)
-    except json.JSONDecodeError as e:
-        return {"success": False, "error": f"JSON 파싱 오류: {e}"}
-    # questions 키가 없으면 래핑
+    except json.JSONDecodeError as exc:
+        return {"success": False, "error": f"JSON parse error: {exc}"}
+
     if "questions" not in data and isinstance(data, list):
         data = {"questions": data}
-    (ANNO_DIR / "regions.json").write_text(
-        json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+
+    (paths.json_dir / "regions.json").write_text(
+        json.dumps(data, ensure_ascii=False, indent=2),
+        encoding="utf-8",
+    )
+    refresh_project_metadata(paths.root, touch=True)
     _elog.log_event("regions_saved", {"count": len(data.get("questions", []))})
     return {"success": True, "count": len(data.get("questions", []))}
 
-# ══════════════════════════════════════════════════════════
-# API — 이미지 서빙
-# ══════════════════════════════════════════════════════════
 
 @app.get("/api/templates")
 async def list_templates():
-    templates = sorted(p.name for p in TEMPLATE_DIR.iterdir()
-                       if p.suffix.lower() in IMG_EXT and p.name.startswith("blank_"))
+    paths = _paths()
+    templates = sorted(
+        p.name
+        for p in paths.template_dir.iterdir()
+        if p.is_file() and p.suffix.lower() in IMG_EXT and p.name.startswith("blank_")
+    )
     return {"pages": templates}
+
 
 @app.get("/api/template/{name}")
 async def serve_template(name: str):
-    p = TEMPLATE_DIR / name
-    if not p.exists() or not p.name.startswith("blank_"):
-        raise HTTPException(status_code=404, detail="해당 템플릿 페이지 없음")
-    return FileResponse(str(p), media_type="image/jpeg")
+    path = _paths().template_dir / name
+    if not path.exists() or not path.name.startswith("blank_"):
+        raise HTTPException(status_code=404, detail="Template page not found")
+    return FileResponse(str(path), media_type="image/jpeg")
 
-@app.get("/api/files/status")
-async def files_status():
-    import datetime
-    templates = sorted([p.name for p in TEMPLATE_DIR.iterdir() if p.suffix.lower() in IMG_EXT and p.name.startswith("blank_")])
-    answers = sorted([p.name for p in ANSWERS_DIR.iterdir() if p.suffix.lower() == ".pdf"])
-    
-    regions_path = ANNO_DIR / "regions.json"
-    regions_info = {"exists": False}
-    if regions_path.exists():
-        try:
-            data = json.loads(regions_path.read_text(encoding="utf-8"))
-            qs = data.get("questions", [])
-            if not isinstance(qs, list):
-                qs = data if isinstance(data, list) else []
-            pages = sorted(list(set(q.get("page", 1) for q in qs)))
-            mtime = datetime.datetime.fromtimestamp(regions_path.stat().st_mtime).isoformat()
-            regions_info = {
-                "exists": True,
-                "question_count": len(qs),
-                "pages": pages,
-                "created_at": mtime
-            }
-        except:
-            pass
-            
-    students = sorted([p.name for p in PDF_DIR.iterdir() if p.suffix.lower() == ".pdf"])
-    
-    return {
-        "template": {"files": templates, "count": len(templates)},
-        "answers": {"files": answers, "count": len(answers)},
-        "regions": regions_info,
-        "students": {"files": students, "count": len(students)}
-    }
 
 @app.get("/api/thumbnail")
 async def get_thumbnail(path: str, size: int = 120):
     from fastapi.responses import Response
-    import fitz, cv2, numpy as np
-    
-    full_path = BASE_DIR / path
+    import cv2
+    import fitz
+    import numpy as np
+
+    full_path = _safe_project_file(path)
     if not full_path.exists():
         raise HTTPException(status_code=404)
-        
+
     ext = full_path.suffix.lower()
     img_data = None
-    
+
     if ext == ".pdf":
         try:
             doc = fitz.open(str(full_path))
-            pix = doc.load_page(0).get_pixmap(matrix=fitz.Matrix(150/72, 150/72), alpha=False)
-            img_data = np.frombuffer(pix.samples, dtype=np.uint8).reshape(pix.h, pix.w, pix.n)
+            pix = doc.load_page(0).get_pixmap(
+                matrix=fitz.Matrix(150 / 72, 150 / 72),
+                alpha=False,
+            )
+            img_data = np.frombuffer(pix.samples, dtype=np.uint8).reshape(
+                pix.h,
+                pix.w,
+                pix.n,
+            )
             if pix.n == 4:
                 img_data = cv2.cvtColor(img_data, cv2.COLOR_RGBA2BGR)
             elif pix.n == 3:
@@ -360,141 +495,148 @@ async def get_thumbnail(path: str, size: int = 120):
         except Exception:
             raise HTTPException(status_code=500, detail="PDF thumbnail error")
     elif ext in IMG_EXT:
+        from aligner import _imread_safe  # type: ignore
+
         img_data = _imread_safe(str(full_path))
     else:
         raise HTTPException(status_code=400, detail="Unsupported format")
-        
+
     if img_data is not None:
-        h, w = img_data.shape[:2]
-        new_w = size
-        new_h = int(h * (size / w))
-        resized = cv2.resize(img_data, (new_w, new_h))
+        height, width = img_data.shape[:2]
+        new_width = size
+        new_height = int(height * (size / width))
+        resized = cv2.resize(img_data, (new_width, new_height))
         ok, buf = cv2.imencode(".jpg", resized)
         if ok:
             return Response(content=buf.tobytes(), media_type="image/jpeg")
-            
+
     raise HTTPException(status_code=500, detail="Thumbnail generation failed")
 
 
 @app.get("/api/students")
 async def list_students():
-    files = sorted(p.name for p in ALIGNED_DIR.iterdir()
-                   if p.suffix.lower() in IMG_EXT)
+    paths = _paths()
+    files = sorted(
+        p.name for p in paths.aligned_dir.iterdir() if p.is_file() and p.suffix.lower() in IMG_EXT
+    )
     return {"students": files}
 
 
 @app.get("/api/student/{name}")
 async def serve_aligned(name: str):
-    p = ALIGNED_DIR / name
-    if not p.exists():
+    path = _paths().aligned_dir / name
+    if not path.exists():
         raise HTTPException(status_code=404)
-    return FileResponse(str(p))
+    return FileResponse(str(path))
 
 
 @app.delete("/api/student/{name}")
 async def delete_student_page(name: str):
-    p_aligned = ALIGNED_DIR / name
+    paths = _paths()
+    aligned_path = paths.aligned_dir / name
     raw_name = name.replace("aligned_", "")
-    p_raw = RAW_DIR / raw_name
-    
+    raw_path = paths.student_page_dir / raw_name
+
     deleted = False
-    if p_aligned.exists():
-        p_aligned.unlink()
+    if aligned_path.exists():
+        aligned_path.unlink()
         deleted = True
-    if p_raw.exists():
-        p_raw.unlink()
+    if raw_path.exists():
+        raw_path.unlink()
         deleted = True
-        
+
     if deleted:
+        refresh_project_metadata(paths.root, touch=True)
         _elog.log_event("student_page_deleted", {"file": name})
         return {"success": True}
+
     raise HTTPException(status_code=404, detail="File not found")
 
 
 @app.post("/api/student/offset")
 async def save_student_offset(request: Request):
+    import cv2
+    import numpy as np
+    from aligner import _imread_safe, _imwrite_safe  # type: ignore
+
+    paths = _paths()
     data = await request.json()
     name = data.get("name")
     dx = int(data.get("dx", 0))
     dy = int(data.get("dy", 0))
-    
     if dx == 0 and dy == 0:
         return {"success": True}
-        
-    p = ALIGNED_DIR / name
-    if not p.exists():
+
+    path = paths.aligned_dir / name
+    if not path.exists():
         raise HTTPException(status_code=404, detail="File not found")
-        
-    import cv2
-    import numpy as np
-    from aligner import _imread_safe, _imwrite_safe
-    
-    img = _imread_safe(str(p))
+
+    img = _imread_safe(str(path))
     if img is None:
         raise HTTPException(status_code=500, detail="Cannot read image")
-        
-    h, w = img.shape[:2]
-    M = np.float32([[1, 0, dx], [0, 1, dy]])
-    shifted = cv2.warpAffine(img, M, (w, h), borderValue=(255,255,255))
-    _imwrite_safe(str(p), shifted)
-    
+
+    height, width = img.shape[:2]
+    matrix = np.float32([[1, 0, dx], [0, 1, dy]])
+    shifted = cv2.warpAffine(img, matrix, (width, height), borderValue=(255, 255, 255))
+    _imwrite_safe(str(path), shifted)
+
     _elog.log_event("student_manual_offset", {"file": name, "dx": dx, "dy": dy})
     return {"success": True}
 
+
 @app.post("/api/student/restore")
 async def restore_student_offset(request: Request):
+    paths = _paths()
     data = await request.json()
     name = data.get("name")
-    
+
     raw_name = name.replace("aligned_", "")
-    p_raw = RAW_DIR / raw_name
-    p_aligned = ALIGNED_DIR / name
-    
-    if not p_raw.exists():
+    raw_path = paths.student_page_dir / raw_name
+    aligned_path = paths.aligned_dir / name
+    if not raw_path.exists():
         raise HTTPException(status_code=404, detail="Raw file not found")
-        
-    from aligner import align_image
-    import re
-    m = re.search(r'_p(\d+)\.jpg$', raw_name, re.IGNORECASE)
-    if not m:
-        m = re.search(r'_page_(\d+)', raw_name, re.IGNORECASE)
-    page_num = int(m.group(1)) if m else 1
-    
-    target_template = TEMPLATE_DIR / f"blank_p{page_num}.jpg"
+
+    match = re.search(r"_p(\d+)\.jpg$", raw_name, re.IGNORECASE)
+    if not match:
+        match = re.search(r"_page_(\d+)", raw_name, re.IGNORECASE)
+    page_num = int(match.group(1)) if match else 1
+
+    target_template = paths.template_dir / f"blank_p{page_num}.jpg"
     if not target_template.exists():
-        target_template = TEMPLATE_DIR / "blank_p1.jpg"
-        
-    align_image(str(p_raw), str(target_template), str(p_aligned))
+        target_template = paths.template_dir / "blank_p1.jpg"
+
+    align_image(str(raw_path), str(target_template), str(aligned_path))
+    refresh_project_metadata(paths.root, touch=True)
     _elog.log_event("student_restored", {"file": name})
     return {"success": True}
 
 
 @app.get("/api/student/{name}/raw")
 async def serve_raw(name: str):
-    """aligned_ 접두어 제거 후 원본 반환"""
     raw_name = name.replace("aligned_", "")
-    p = RAW_DIR / raw_name
-    if not p.exists():
+    path = _paths().student_page_dir / raw_name
+    if not path.exists():
         raise HTTPException(status_code=404)
-    return FileResponse(str(p))
+    return FileResponse(str(path))
 
-# ══════════════════════════════════════════════════════════
-# API — YOLO 저장 / 로그
-# ══════════════════════════════════════════════════════════
 
 @app.post("/api/yolo_save")
 async def yolo_save(request: Request):
+    paths = _paths()
     payload = await request.json()
-    name    = payload.get("name", "template")
-    qs      = payload.get("questions", [])
-    lines   = []
-    for q in qs:
-        b  = q.get("box", {})
-        cx = b["x"] + b["w"] / 2
-        cy = b["y"] + b["h"] / 2
-        lines.append(f"0 {cx:.6f} {cy:.6f} {b['w']:.6f} {b['h']:.6f}")
-    out = YOLO_DIR / f"{Path(name).stem}.txt"
+    name = payload.get("name", "template")
+    questions = payload.get("questions", [])
+
+    lines = []
+    for question in questions:
+        box = question.get("box", {})
+        cx = box["x"] + box["w"] / 2
+        cy = box["y"] + box["h"] / 2
+        lines.append(f"0 {cx:.6f} {cy:.6f} {box['w']:.6f} {box['h']:.6f}")
+
+    out = paths.yolo_dir / f"{Path(name).stem}.txt"
     out.write_text("\n".join(lines), encoding="utf-8")
+    refresh_project_metadata(paths.root, touch=True)
     _elog.log_event("review_confirmed", {"file": name, "boxes": len(lines)})
     return {"success": True, "saved": str(out), "boxes": len(lines)}
 

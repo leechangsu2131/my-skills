@@ -1,0 +1,82 @@
+{"timestamp": "2026-04-26T15:48:14", "event": "app_started", "detail": {}}
+{"timestamp": "2026-04-26T16:04:50", "event": "app_started", "detail": {}}
+{"timestamp": "2026-04-26T16:05:12", "event": "students_uploaded", "detail": {"count": 12, "files": ["학생시험지 3번까지_page_01.jpg", "학생시험지 3번까지_page_02.jpg", "학생시험지 3번까지_page_03.jpg", "학생시험지 3번까지_page_04.jpg", "학생시험지 3번까지_page_05.jpg", "학생시험지 3번까지_page_06.jpg", "학생시험지 3번까지_page_07.jpg", "학생시험지 3번까지_page_08.jpg", "학생시험지 3번까지_page_09.jpg", "학생시험지 3번까지_page_10.jpg", "학생시험지 3번까지_page_11.jpg", "학생시험지 3번까지_page_12.jpg"]}}
+{"timestamp": "2026-04-26T16:05:44", "event": "pipeline_done", "detail": {"ok": 9, "fail": 3}}
+{"timestamp": "2026-04-26T16:13:12", "event": "app_started", "detail": {}}
+{"timestamp": "2026-04-26T16:16:47", "event": "app_started", "detail": {}}
+{"timestamp": "2026-04-26T16:17:13", "event": "pipeline_done", "detail": {"ok": 0, "fail": 12}}
+{"timestamp": "2026-04-26T16:21:22", "event": "template_uploaded", "detail": {"type": "pdf"}}
+{"timestamp": "2026-04-26T17:19:51", "event": "app_started", "detail": {}}
+{"timestamp": "2026-04-26T17:23:26", "event": "app_started", "detail": {}}
+{"timestamp": "2026-04-26T17:23:41", "event": "app_started", "detail": {}}
+{"timestamp": "2026-04-26T20:02:40", "event": "app_started", "detail": {}}
+{"timestamp": "2026-04-26T20:45:38", "event": "app_started", "detail": {}}
+{"timestamp": "2026-04-26T20:47:26", "event": "regions_loaded", "detail": {}}
+{"timestamp": "2026-04-26T21:03:50", "event": "app_started", "detail": {}}
+{"timestamp": "2026-04-26T21:05:22", "event": "app_started", "detail": {}}
+{"timestamp": "2026-04-26T21:08:32", "event": "app_started", "detail": {}}
+{"timestamp": "2026-04-26T21:08:33", "event": "regions_loaded", "detail": {}}
+{"timestamp": "2026-04-26T21:08:49", "event": "template_uploaded", "detail": {"type": "pdf", "pages": 3}}
+{"timestamp": "2026-04-26T21:08:49", "event": "regions_loaded", "detail": {}}
+{"timestamp": "2026-04-26T21:09:17", "event": "students_uploaded", "detail": {"count": 12, "files": ["학생시험지 3번까지_page_01.jpg", "학생시험지 3번까지_page_02.jpg", "학생시험지 3번까지_page_03.jpg", "학생시험지 3번까지_page_04.jpg", "학생시험지 3번까지_page_05.jpg", "학생시험지 3번까지_page_06.jpg", "학생시험지 3번까지_page_07.jpg", "학생시험지 3번까지_page_08.jpg", "학생시험지 3번까지_page_09.jpg", "학생시험지 3번까지_page_10.jpg", "학생시험지 3번까지_page_11.jpg", "학생시험지 3번까지_page_12.jpg"]}}
+{"timestamp": "2026-04-26T21:09:18", "event": "regions_loaded", "detail": {}}
+{"timestamp": "2026-04-26T21:11:44", "event": "regions_saved", "detail": {"count": 20}}
+{"timestamp": "2026-04-26T21:12:38", "event": "regions_saved", "detail": {"count": 20}}
+{"timestamp": "2026-04-26T21:13:08", "event": "regions_saved", "detail": {"count": 20}}
+{"timestamp": "2026-04-26T21:13:27", "event": "regions_saved", "detail": {"count": 20}}
+{"timestamp": "2026-04-26T21:13:37", "event": "pipeline_done", "detail": {"ok": 0, "fail": 12}}
+{"timestamp": "2026-04-26T21:14:52", "event": "pipeline_done", "detail": {"ok": 0, "fail": 12}}
+{"timestamp": "2026-04-26T21:15:12", "event": "regions_loaded", "detail": {}}
+{"timestamp": "2026-04-26T21:18:03", "event": "regions_loaded", "detail": {}}
+{"timestamp": "2026-04-26T21:19:40", "event": "regions_loaded", "detail": {}}
+{"timestamp": "2026-04-26T21:20:05", "event": "app_started", "detail": {}}
+{"timestamp": "2026-04-26T21:20:07", "event": "regions_loaded", "detail": {}}
+{"timestamp": "2026-04-26T21:20:38", "event": "regions_saved", "detail": {"count": 20}}
+{"timestamp": "2026-04-26T21:22:14", "event": "regions_saved", "detail": {"count": 20}}
+{"timestamp": "2026-04-26T21:23:18", "event": "regions_saved", "detail": {"count": 20}}
+{"timestamp": "2026-04-26T21:23:58", "event": "regions_saved", "detail": {"count": 20}}
+{"timestamp": "2026-04-26T21:24:10", "event": "pipeline_done", "detail": {"ok": 0, "fail": 12}}
+{"timestamp": "2026-04-26T21:24:19", "event": "regions_loaded", "detail": {}}
+{"timestamp": "2026-04-26T21:29:03", "event": "regions_loaded", "detail": {}}
+{"timestamp": "2026-04-26T21:35:08", "event": "app_started", "detail": {}}
+{"timestamp": "2026-04-26T21:39:21", "event": "pipeline_done", "detail": {"ok": 0, "fail": 12}}
+{"timestamp": "2026-04-26T21:39:26", "event": "regions_loaded", "detail": {}}
+{"timestamp": "2026-04-26T21:39:51", "event": "pipeline_done", "detail": {"ok": 0, "fail": 12}}
+{"timestamp": "2026-04-26T21:39:54", "event": "regions_loaded", "detail": {}}
+{"timestamp": "2026-04-26T21:40:19", "event": "page_needs_review", "detail": {"page": 1}}
+{"timestamp": "2026-04-26T21:42:31", "event": "app_started", "detail": {}}
+{"timestamp": "2026-04-26T21:42:56", "event": "app_started", "detail": {}}
+{"timestamp": "2026-04-26T21:46:14", "event": "regions_loaded", "detail": {}}
+{"timestamp": "2026-04-26T21:46:19", "event": "regions_loaded", "detail": {}}
+{"timestamp": "2026-04-26T21:46:41", "event": "pipeline_done", "detail": {"ok": 0, "fail": 24}}
+{"timestamp": "2026-04-26T21:46:47", "event": "regions_loaded", "detail": {}}
+{"timestamp": "2026-04-26T21:50:40", "event": "app_started", "detail": {}}
+{"timestamp": "2026-04-26T21:53:26", "event": "regions_loaded", "detail": {}}
+{"timestamp": "2026-04-26T21:53:52", "event": "pipeline_done", "detail": {"ok": 0, "fail": 12}}
+{"timestamp": "2026-04-26T21:53:55", "event": "regions_loaded", "detail": {}}
+{"timestamp": "2026-04-26T21:57:58", "event": "app_started", "detail": {}}
+{"timestamp": "2026-04-26T21:58:59", "event": "regions_loaded", "detail": {}}
+{"timestamp": "2026-04-26T21:59:01", "event": "regions_loaded", "detail": {}}
+{"timestamp": "2026-04-26T22:04:14", "event": "app_started", "detail": {}}
+{"timestamp": "2026-04-26T22:05:46", "event": "regions_loaded", "detail": {}}
+{"timestamp": "2026-04-26T22:05:59", "event": "pipeline_done", "detail": {"ok": 0, "fail": 12}}
+{"timestamp": "2026-04-26T22:06:01", "event": "regions_loaded", "detail": {}}
+{"timestamp": "2026-04-26T22:10:42", "event": "regions_loaded", "detail": {}}
+{"timestamp": "2026-04-26T22:11:00", "event": "pipeline_done", "detail": {"ok": 0, "fail": 12}}
+{"timestamp": "2026-04-26T22:11:03", "event": "regions_loaded", "detail": {}}
+{"timestamp": "2026-04-26T22:15:04", "event": "regions_loaded", "detail": {}}
+{"timestamp": "2026-04-26T22:15:17", "event": "pipeline_done", "detail": {"ok": 0, "fail": 12}}
+{"timestamp": "2026-04-26T22:15:19", "event": "regions_loaded", "detail": {}}
+{"timestamp": "2026-04-26T22:19:06", "event": "pipeline_done", "detail": {"ok": 0, "fail": 12}}
+{"timestamp": "2026-04-26T22:19:07", "event": "regions_loaded", "detail": {}}
+{"timestamp": "2026-04-26T22:21:01", "event": "regions_loaded", "detail": {}}
+{"timestamp": "2026-04-26T22:21:10", "event": "regions_loaded", "detail": {}}
+{"timestamp": "2026-04-26T22:21:21", "event": "pipeline_done", "detail": {"ok": 0, "fail": 12}}
+{"timestamp": "2026-04-26T22:21:22", "event": "regions_loaded", "detail": {}}
+{"timestamp": "2026-04-26T22:24:51", "event": "regions_loaded", "detail": {}}
+{"timestamp": "2026-04-26T22:25:02", "event": "pipeline_done", "detail": {"ok": 0, "fail": 12}}
+{"timestamp": "2026-04-26T22:25:04", "event": "regions_loaded", "detail": {}}
+{"timestamp": "2026-04-26T22:53:17", "event": "app_started", "detail": {}}
+{"timestamp": "2026-04-26T22:53:18", "event": "regions_loaded", "detail": {}}
+{"timestamp": "2026-04-26T22:53:58", "event": "pipeline_done", "detail": {"ok": 9, "fail": 3}}
+{"timestamp": "2026-04-26T22:54:01", "event": "regions_loaded", "detail": {}}

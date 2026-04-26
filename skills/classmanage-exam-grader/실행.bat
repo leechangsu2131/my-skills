@@ -32,7 +32,7 @@ if errorlevel 1 (
 )
 
 echo [2/4] Checking OCR runtime...
-"%APP_PYTHON%" -c "import fastapi, uvicorn, paddleocr, paddle, certifi_win32" >nul 2>nul
+"%APP_PYTHON%" -c "import fastapi, uvicorn, paddleocr, paddle, certifi_win32, ultralytics" >nul 2>nul
 if errorlevel 1 (
     echo [3/4] Installing or updating required packages...
     "%APP_PYTHON%" -m pip install -r requirements.txt
@@ -51,7 +51,7 @@ start "" http://127.0.0.1:8000
 if errorlevel 1 (
     echo.
     echo The server stopped unexpectedly.
-    echo If OCR model downloads fail on a school network, rerun once after the cert patch package is installed in .venv.
+    echo If OCR model downloads fail on a school network, rerun once after the required packages are installed in .venv.
     pause
 )
 

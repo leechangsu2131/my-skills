@@ -1,0 +1,218 @@
+{% extends "base.html" %}
+
+{% block title %}배치 현황 | 시험 피드백 스튜디오{% endblock %}
+
+{% block head %}
+{% if refresh_seconds %}
+    <meta http-equiv="refresh" content="{{ refresh_seconds }}">
+{% endif %}
+{% endblock %}
+
+{% block content %}
+{% set batch_title = batch.exam_title|default(batch.title|default("시험 배치")) if batch is defined else "시험 배치" %}
+{% set batch_status = batch.status|default("pending") if batch is defined else "pending" %}
+{% set submission_list = submissions if submissions is defined else [] %}
+{% set stats = namespace(total=submission_list|length, review=0, approved=0, finalized=0, flagged=0) %}
+{% for row in submission_list %}
+    {% set row_status = row.review_status|default(row.status|default("pending")) %}
+    {% if row_status == "needs_review" %}
+        {% set stats.review = stats.review + 1 %}
+    {% elif row_status == "finalized" %}
+        {% set stats.finalized = stats.finalized + 1 %}
+    {% elif row_status == "approved" %}
+        {% set stats.approved = stats.approved + 1 %}
+    {% endif %}
+    {% set stats.flagged = stats.flagged + (row.review_count|default(0)|int) %}
+{% endfor %}
+
+<section class="page-header">
+    <div>
+        <p class="eyebrow">배치 현황</p>
+        <h1>{{ batch_title }}</h1>
+        <p class="page-header__lead">
+            학생별 채점 초안, 검토 우선순위, 최종 확정 상태를 한 번에 확인합니다.
+            교사는 검토 필요가 남아 있는 학생부터 바로 리뷰 화면으로 이동할 수 있습니다.
+        </p>
+    </div>
+    <div class="header-actions">
+        <span class="chip chip--status chip--{{ batch_status }}">
+            {% if batch_status == "needs_review" %}
+                검토 필요
+            {% elif batch_status == "finalized" %}
+                최종 확정
+            {% elif batch_status == "failed" %}
+                처리 실패
+            {% else %}
+                처리 중
+            {% endif %}
+        </span>
+        <a class="button button--secondary" href="/">새 배치 업로드</a>
+    </div>
+</section>
+
+{% if error_message %}
+<section class="notice notice--error" role="alert">
+    <strong>이 배치는 자동 처리 중 오류로 멈췄습니다.</strong>
+    <p>{{ error_message }}</p>
+</section>
+{% endif %}
+
+{% if batch_status == "processing" %}
+<section class="notice" role="status">
+    <strong>배치를 백그라운드에서 처리 중입니다.</strong>
+    <p>이 화면은 {{ refresh_seconds or 5 }}초마다 자동으로 새로고침됩니다.</p>
+</section>
+{% endif %}
+
+<section class="stats-grid">
+    <article class="metric-card metric-card--wide">
+        <span class="metric-card__label">전체 학생</span>
+        <strong class="metric-card__value">{{ batch.submission_count|default(stats.total) if batch is defined else stats.total }}</strong>
+    </article>
+    <article class="metric-card">
+        <span class="metric-card__label">검토 대상 학생</span>
+        <strong class="metric-card__value">{{ batch.review_submission_count|default(stats.review) if batch is defined else stats.review }}</strong>
+    </article>
+    <article class="metric-card">
+        <span class="metric-card__label">검토 문항 수</span>
+        <strong class="metric-card__value">{{ batch.review_count|default(stats.flagged) if batch is defined else stats.flagged }}</strong>
+    </article>
+    <article class="metric-card">
+        <span class="metric-card__label">최종 확정 학생</span>
+        <strong class="metric-card__value">{{ batch.finalized_count|default(stats.finalized) if batch is defined else stats.finalized }}</strong>
+    </article>
+</section>
+
+<section class="content-grid">
+    <article class="panel">
+        <div class="section-heading">
+            <div>
+                <p class="section-heading__eyebrow">검토 우선순위</p>
+                <h2>먼저 봐야 할 학생</h2>
+            </div>
+            <span class="chip chip--warning">{{ stats.flagged }}개 문항 대기</span>
+        </div>
+
+        {% set queue = namespace(has_items=false) %}
+        <div class="queue-list">
+            {% for row in submission_list %}
+                {% set row_status = row.review_status|default(row.status|default("pending")) %}
+                {% if row_status == "needs_review" or row.review_count|default(0)|int > 0 %}
+                    {% set queue.has_items = true %}
+                    <article class="queue-item">
+                        <div>
+                            <h3>{{ row.student_name|default("이름 미확인 학생") }}</h3>
+                            <p>{{ row.review_count|default(0) }}개 문항 검토 필요{% if row.student_number is defined %} · 번호 {{ row.student_number }}{% endif %}</p>
+                        </div>
+                        {% if row.id is defined %}
+                            <a class="button button--secondary" href="/submissions/{{ row.id }}/review">검토 시작</a>
+                        {% endif %}
+                    </article>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        {% if not queue.has_items %}
+            <div class="empty-state empty-state--compact">
+                <h3>현재 우선 검토 대상이 없습니다.</h3>
+                <p>모든 학생이 자동 승인되었거나 아직 채점 파이프라인이 진행 중입니다.</p>
+            </div>
+        {% endif %}
+    </article>
+
+    <article class="panel panel--accent">
+        <div class="section-heading">
+            <div>
+                <p class="section-heading__eyebrow">배치 메모</p>
+                <h2>교사 확인 기준</h2>
+            </div>
+        </div>
+        <ul class="check-list">
+            <li>AI 설명 문항은 학생에게 바로 노출되지 않도록 한 번 더 읽습니다.</li>
+            <li>OCR이 흔들린 학생은 학생 답안과 정답이 뒤바뀌지 않았는지 확인합니다.</li>
+            <li>최종 확정 후에는 학생용 PDF에 O/X 표시와 설명 요약이 함께 들어갑니다.</li>
+        </ul>
+    </article>
+</section>
+
+<section class="panel">
+    <div class="section-heading">
+        <div>
+            <p class="section-heading__eyebrow">학생별 진행 현황</p>
+            <h2>제출물 목록</h2>
+        </div>
+    </div>
+
+    {% if submission_list %}
+        <div class="table-wrapper">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th scope="col">학생</th>
+                        <th scope="col">상태</th>
+                        <th scope="col">점수</th>
+                        <th scope="col">검토 필요</th>
+                        <th scope="col">신뢰도</th>
+                        <th scope="col">동작</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in submission_list %}
+                        {% set row_status = row.review_status|default(row.status|default("pending")) %}
+                        {% set confidence = row.confidence|default(row.overall_confidence|default("medium")) %}
+                        <tr>
+                            <th scope="row">
+                                <span class="table-primary">{{ row.student_name|default("이름 미확인 학생") }}</span>
+                                <span class="table-secondary">
+                                    {% if row.student_number is defined %}번호 {{ row.student_number }}{% else %}학생 번호 미입력{% endif %}
+                                </span>
+                                {% if row_status == "failed" and row.error_message %}
+                                    <span class="table-secondary">실패 사유: {{ row.error_message }}</span>
+                                {% endif %}
+                            </th>
+                            <td>
+                                <span class="chip chip--status chip--{{ row_status }}">
+                                    {% if row_status == "needs_review" %}
+                                        검토 필요
+                                    {% elif row_status == "approved" %}
+                                        자동 승인
+                                    {% elif row_status == "finalized" %}
+                                        최종 확정
+                                    {% elif row_status == "failed" %}
+                                        실패
+                                    {% else %}
+                                        처리 중
+                                    {% endif %}
+                                </span>
+                            </td>
+                            <td>{{ row.total_score|default(0) }} / {{ row.total_points|default(row.max_score|default(0)) }}</td>
+                            <td>{{ row.review_count|default(0) }}</td>
+                            <td>
+                                <span class="chip chip--confidence chip--{{ confidence }}">
+                                    {% if confidence == "high" %}
+                                        높음
+                                    {% elif confidence == "low" %}
+                                        낮음
+                                    {% else %}
+                                        보통
+                                    {% endif %}
+                                </span>
+                            </td>
+                            <td>
+                                {% if row.id is defined %}
+                                    <a class="button button--secondary button--small" href="/submissions/{{ row.id }}/review">검토 열기</a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <h3>아직 표시할 학생 제출물이 없습니다.</h3>
+            <p>업로드 직후라면 OCR과 채점 파이프라인이 진행 중일 수 있습니다.</p>
+        </div>
+    {% endif %}
+</section>
+{% endblock %}

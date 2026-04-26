@@ -45,6 +45,8 @@ classmanage-exam-grader/
 
 If you are changing one feature, start with the smallest matching module instead of reading the whole repo.
 
+For Korean exam-sheet structure conventions that should guide parsing, see `docs/00-pm/2026-04-25-korean-exam-paper-structure-reference.md`.
+
 - Student scan alignment, OCR, grouped PDFs, duplex blank pages:
   `packages/student_extraction/`
 - Objective answer-region localization and detector handoff:
@@ -97,6 +99,8 @@ The student extraction path now uses a hybrid answer-region strategy:
 - A YOLOv8 hook exists for locating objective answer regions when a trained detector is available.
 - The current default runtime mode is still `opencv`, so the system works without YOLO weights.
 - When YOLO is configured, the detector runs first for multiple-choice answer regions and OpenCV remains the fallback.
+- The OpenCV fallback now covers parenthesized blanks, horizontal answer lines, and rectangular choice boxes more explicitly than before.
+- Question prompt parsing now tries to merge multi-line stems while ignoring score tags like `[5점]` and option rows such as `①` to `⑤`.
 
 The handoff lives in:
 
@@ -111,7 +115,6 @@ Example:
 ```json
 "answer_region_detector": {
   "mode": "opencv",
-  "ultralytics_repo_path": "C:\\Users\\user\\.gemini\\antigravity\\scratch\\repos\\ultralytics",
   "weights_path": "",
   "confidence": 0.25,
   "class_aliases": [
@@ -120,8 +123,11 @@ Example:
     "answer_blank",
     "choice_blank",
     "choice_box",
+    "choice_answer_region",
     "checkbox",
-    "objective_answer"
+    "objective_answer",
+    "short_answer_line",
+    "descriptive_answer_area"
   ]
 }
 ```
@@ -129,7 +135,15 @@ Example:
 To enable YOLO-backed answer-region detection, set:
 
 - `mode` to `hybrid`, `yolo`, or `yolo_first`
+- install `ultralytics` into the project `.venv` with `.\.venv\Scripts\python.exe -m pip install -r requirements.txt`
 - `weights_path` to a trained detector checkpoint
+
+For the local training workflow, use question-crop datasets rather than full-page exam images. The project now includes:
+
+- `.\.venv\Scripts\python.exe -m apps.cli.init_answer_region_yolo_dataset`
+- `.\.venv\Scripts\python.exe -m apps.cli.train_answer_region_yolo --device cpu --model yolov8n.pt`
+
+The detailed workflow and class guidance live in `docs/00-pm/2026-04-25-yolo-answer-region-training-workflow.md`.
 
 If YOLO is unavailable or returns no region, the pipeline falls back to the OpenCV path automatically.
 
@@ -163,6 +177,8 @@ cd C:\Users\user\.gemini\antigravity\scratch\repos\my-skills\skills\classmanage-
 Open [http://127.0.0.1:8000](http://127.0.0.1:8000).
 
 The upload request now returns quickly and the heavy OCR work runs in the background. The batch detail page auto-refreshes while the batch is in `processing`.
+
+The launcher batch file creates `.venv` and installs the Python packages used by OpenCV, PaddleOCR, and YOLO from `requirements.txt`.
 
 ## CLI
 

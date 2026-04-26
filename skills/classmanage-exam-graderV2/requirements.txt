@@ -1,0 +1,8 @@
+opencv-python
+numpy
+Pillow
+PyMuPDF
+fastapi
+uvicorn
+jinja2
+python-multipart

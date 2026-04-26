@@ -21,6 +21,29 @@ QUESTION_NUMBER_RE = re.compile(r"^\d{1,3}$")
 RUBRIC_BLOCK_RE = re.compile(r"(?ms)^\s*(\d{1,3})\.\s*(.*?)(?=^\s*\d{1,3}\.\s|\Z)")
 PRIVATE_USE_RE = re.compile(r"[\ue000-\uf8ff]")
 MULTIPLE_CHOICE_CHARS = "①②③④⑤⑥⑦⑧⑨⑩㉠㉡㉢㉣㉤"
+ANSWER_KEY_NUMBER_COL_MAX = 0.14
+ANSWER_KEY_ANSWER_COL_MIN = 0.14
+ANSWER_KEY_ANSWER_COL_MAX = 0.32
+PRIVATE_USE_TRANSLATIONS = str.maketrans(
+    {
+        "\ue034": "1",
+        "\ue035": "2",
+        "\ue036": "3",
+        "\ue037": "4",
+        "\ue038": "5",
+        "\ue039": "6",
+        "\ue03a": "7",
+        "\ue03b": "8",
+        "\ue03c": "9",
+        "\ue03d": "0",
+        "\ue044": "(",
+        "\ue045": ")",
+        "\ue046": "-",
+        "\ue047": "=",
+        "\ue048": "+",
+        "\uf000": "예",
+    }
+)
 
 
 def load_config() -> dict:
@@ -109,7 +132,9 @@ def _parse_text_answer_key_pdf(pdf_path: Path) -> dict | None:
     if not _looks_like_text_answer_key(page_texts):
         return None
 
-    question_rows = _extract_question_rows(page_texts[0])
+    question_rows = _extract_question_rows_from_words(_extract_first_page_words(pdf_path))
+    if not question_rows:
+        question_rows = _extract_question_rows(page_texts[0])
     if not question_rows:
         return None
 
@@ -118,7 +143,11 @@ def _parse_text_answer_key_pdf(pdf_path: Path) -> dict | None:
     questions = []
     for row in question_rows:
         rubric = rubrics.get(row["q_num"])
-        answer, alt_answers, q_type = _normalize_parsed_answer(row["answer"], rubric)
+        answer, alt_answers, q_type = _normalize_parsed_answer(
+            row["answer"],
+            rubric,
+            force_type=row.get("force_type"),
+        )
         questions.append(
             {
                 "q_num": row["q_num"],
@@ -143,6 +172,16 @@ def _extract_pdf_text_pages(pdf_path: Path) -> list[str]:
     document = fitz.open(pdf_path)
     try:
         return [page.get_text("text") for page in document]
+    finally:
+        document.close()
+
+
+def _extract_first_page_words(pdf_path: Path) -> list[tuple]:
+    document = fitz.open(pdf_path)
+    try:
+        if len(document) == 0:
+            return []
+        return document[0].get_text("words")
     finally:
         document.close()
 
@@ -193,6 +232,47 @@ def _extract_question_rows(first_page_text: str) -> list[dict[str, str | int]]:
     return rows
 
 
+def _extract_question_rows_from_words(first_page_words: list[tuple]) -> list[dict[str, str | int]]:
+    if not first_page_words:
+        return []
+
+    page_width = max(float(word[2]) for word in first_page_words)
+    number_x_max = page_width * ANSWER_KEY_NUMBER_COL_MAX
+    answer_x_min = page_width * ANSWER_KEY_ANSWER_COL_MIN
+    answer_x_max = page_width * ANSWER_KEY_ANSWER_COL_MAX
+    sorted_words = sorted(first_page_words, key=lambda word: (float(word[1]), float(word[0])))
+    question_words = [
+        word
+        for word in sorted_words
+        if float(word[0]) <= number_x_max and QUESTION_NUMBER_RE.fullmatch(str(word[4]))
+    ]
+    if not question_words:
+        return []
+
+    rows: list[dict[str, str | int]] = []
+    for index, word in enumerate(question_words):
+        q_num = int(str(word[4]))
+        if rows and q_num != rows[-1]["q_num"] + 1:
+            break
+
+        row_top = float(word[1]) - 2.0
+        row_bottom = float(question_words[index + 1][1]) - 2.0 if index + 1 < len(question_words) else float(word[3]) + 24.0
+        answer_tokens: list[tuple[float, str]] = []
+        for candidate in sorted_words:
+            center_x = (float(candidate[0]) + float(candidate[2])) / 2.0
+            center_y = (float(candidate[1]) + float(candidate[3])) / 2.0
+            if answer_x_min <= center_x <= answer_x_max and row_top <= center_y < row_bottom:
+                answer_tokens.append((float(candidate[0]), str(candidate[4])))
+
+        answer = " ".join(token for _, token in sorted(answer_tokens))
+        row: dict[str, str | int] = {"q_num": q_num, "answer": answer}
+        if not answer.strip():
+            row["force_type"] = "descriptive"
+        rows.append(row)
+
+    return rows
+
+
 def _find_next_question_index(lines: list[str], start_index: int, next_q_num: int) -> int | None:
     marker = str(next_q_num)
     for index in range(start_index, len(lines)):
@@ -217,15 +297,21 @@ def _extract_rubric_blocks(page_texts: list[str]) -> dict[int, str]:
     joined = "\n".join(page_texts)
     for match in RUBRIC_BLOCK_RE.finditer(joined):
         q_num = int(match.group(1))
-        block = re.sub(r"\s+", " ", match.group(2)).strip()
+        block = _decode_private_use_symbols(re.sub(r"\s+", " ", match.group(2)).strip())
         if "채점 기준" not in block and "배점" not in block:
             continue
         rubrics[q_num] = block
     return rubrics
 
 
-def _normalize_parsed_answer(raw_answer: str, rubric: str | None) -> tuple[str, list[str], str]:
-    answer = " ".join(raw_answer.split()).strip(" ,")
+def _normalize_parsed_answer(
+    raw_answer: str,
+    rubric: str | None,
+    *,
+    force_type: str | None = None,
+) -> tuple[str, list[str], str]:
+    decoded_answer = _decode_private_use_symbols(raw_answer)
+    answer = " ".join(decoded_answer.split()).strip(" ,")
     alt_answers: list[str] = []
 
     if "해설 참조" in answer:
@@ -238,14 +324,18 @@ def _normalize_parsed_answer(raw_answer: str, rubric: str | None) -> tuple[str, 
     if numeric_with_unit is not None:
         alt_answers.append(numeric_with_unit.group(1))
 
-    q_type = _infer_question_type(raw_answer, rubric)
+    q_type = force_type or _infer_question_type(decoded_answer, rubric)
     deduped_alt_answers = []
     for item in alt_answers:
         cleaned = item.strip()
         if cleaned and cleaned != answer and cleaned not in deduped_alt_answers:
             deduped_alt_answers.append(cleaned)
 
-    return answer or raw_answer.strip(), deduped_alt_answers, q_type
+    return answer or decoded_answer.strip(), deduped_alt_answers, q_type
+
+
+def _decode_private_use_symbols(text: str) -> str:
+    return text.translate(PRIVATE_USE_TRANSLATIONS)
 
 
 def _infer_question_type(raw_answer: str, rubric: str | None) -> str:

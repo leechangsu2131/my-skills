@@ -29,6 +29,11 @@ These files now work together as one answer-region subsystem:
 - The codebase now supports a `YOLO first -> OpenCV fallback` structure for multiple-choice answer regions.
 - Default config still uses `opencv` mode.
 - A trained YOLO checkpoint is still needed before the detector path becomes active in production.
+- The OpenCV fallback now detects more than prompt-end parentheses alone:
+  - parenthesized blanks
+  - horizontal answer lines
+  - rectangular choice boxes
+- Layout metadata also preserves multi-line Korean question stems more accurately by excluding score tags and option rows from the prompt bbox.
 
 ## Refactor Guidance
 

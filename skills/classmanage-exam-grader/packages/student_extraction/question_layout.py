@@ -39,13 +39,21 @@ class TextBlock:
     block: Rectangle
     text: str
     score: float
+    source_block: Rectangle | None = None
 
     @property
     def coordinates(self) -> tuple[float, float, float, float]:
         return self.block.coordinates
 
+    @property
+    def source_coordinates(self) -> tuple[float, float, float, float]:
+        if self.source_block is None:
+            return self.block.coordinates
+        return self.source_block.coordinates
 
-QUESTION_RE = re.compile(r"^(\d+)[\.\)]?$")
+
+QUESTION_RE = re.compile(r"^(\d+)[\.\)]$")
+QUESTION_SCORE_RE = re.compile(r"^\[\s*\d+\s*점\s*\]$")
 ANCHOR_MIN_CONFIDENCE = 0.35
 TOP_HEADER_RATIO = 0.08
 ANSWER_LEFT_PADDING = 12.0
@@ -114,6 +122,7 @@ def build_question_layout(
                 detections,
                 anchor,
                 page_width=int(column_end),
+                block_bottom=next_top,
             )
             answer_rect = Rectangle(
                 x_1=x2 + ANSWER_LEFT_PADDING,
@@ -145,6 +154,7 @@ def _to_text_block(detection: dict) -> TextBlock:
         block=rect,
         text=str(detection.get("text", "")),
         score=float(detection.get("confidence", 1.0)),
+        source_block=rect,
     )
 
 
@@ -159,6 +169,7 @@ def _to_anchor_text_block(detection: dict) -> TextBlock:
         block=Rectangle(x_1=x1, y_1=y1, x_2=min(x2, x1 + anchor_width), y_2=y2),
         text=text,
         score=block.score,
+        source_block=block.source_block,
     )
 
 
@@ -276,39 +287,94 @@ def _extract_question_metadata(
     anchor: TextBlock,
     *,
     page_width: int,
+    block_bottom: float,
 ) -> tuple[str, str, list[float] | None]:
-    anchor_x1, anchor_y1, anchor_x2, anchor_y2 = [float(value) for value in anchor.coordinates]
-    anchor_center_y = (anchor_y1 + anchor_y2) / 2.0
+    anchor_x1, anchor_y1, anchor_x2, _anchor_y2 = [float(value) for value in anchor.coordinates]
     candidates: list[dict] = []
+    inline_prompt = _inline_prompt_from_anchor(anchor)
+    if inline_prompt is not None:
+        inline_text, inline_bbox = inline_prompt
+        candidates.append(
+            {
+                "text": inline_text,
+                "confidence": float(anchor.score or 1.0),
+                "bbox": inline_bbox,
+            }
+        )
     for detection in detections:
         text = str(detection.get("text", "")).strip()
         if not text or text == anchor.text.strip():
             continue
+        if parse_question_anchor_text(text) is not None:
+            continue
         x1, y1, x2, y2 = [float(value) for value in detection["bbox"]]
-        center_y = (y1 + y2) / 2.0
         if x1 < anchor_x2 - 2:
             continue
         if x1 > float(page_width) or x2 > float(page_width) + 8.0:
             continue
-        if abs(center_y - anchor_center_y) > max(24.0, (anchor_y2 - anchor_y1) * 1.6):
+        if y2 < anchor_y1 - 4.0:
+            continue
+        if y1 >= float(block_bottom) - 2.0:
             continue
         candidates.append(detection)
 
-    candidates.sort(key=lambda item: (item["bbox"][0], item["bbox"][1]))
+    candidates.sort(key=lambda item: (item["bbox"][1], item["bbox"][0]))
     if not candidates:
         return "", "빈줄", None
 
-    lead = candidates[0]
-    text = str(lead.get("text", "")).strip()
-    x1, y1, x2, y2 = [float(value) for value in lead["bbox"]]
+    option_candidates = [item for item in candidates if _is_option_line(str(item.get("text", "")).strip())]
+    option_top = min((float(item["bbox"][1]) for item in option_candidates), default=float("inf"))
+    prompt_candidates = [
+        item
+        for item in candidates
+        if not _is_score_tag(str(item.get("text", "")).strip())
+        and not _is_option_line(str(item.get("text", "")).strip())
+        and float(item["bbox"][1]) < option_top - 2.0
+    ]
+    if not prompt_candidates:
+        prompt_candidates = [
+            item for item in candidates if not _is_score_tag(str(item.get("text", "")).strip())
+        ]
+    if not prompt_candidates:
+        return "", "빈줄", None
+
+    lead = prompt_candidates[0]
+    lead_text = str(lead.get("text", "")).strip()
+    x1, y1, x2, y2 = _union_detection_bboxes(prompt_candidates)
+    marker_text = " ".join(str(item.get("text", "")).strip() for item in prompt_candidates[:3])
     return (
-        text[:40],
-        _infer_answer_marker_type(text),
+        lead_text[:40],
+        _infer_answer_marker_type(marker_text or lead_text),
         [
-            max(anchor_x2, x1),
-            max(0.0, y1),
-            min(float(page_width - 1), x2),
-            max(y1 + 1.0, y2),
+            max(anchor_x2, float(x1)),
+            max(0.0, float(y1)),
+            min(float(page_width - 1), float(x2)),
+            max(float(y1) + 1.0, float(y2)),
+        ],
+    )
+
+
+def _inline_prompt_from_anchor(anchor: TextBlock) -> tuple[str, list[float]] | None:
+    text = str(anchor.text or "").strip()
+    inline_text = re.sub(r"^(?:문항\s*)?\d{1,3}\s*[\.:\)]\s*", "", text)
+    inline_text = re.sub(r"^\(\d{1,3}\)\s*", "", inline_text)
+    inline_text = re.sub(r"^[Qq]\s*\d{1,3}\s*", "", inline_text)
+    inline_text = inline_text.strip()
+    if not inline_text or inline_text == text:
+        return None
+
+    source_x1, source_y1, source_x2, source_y2 = [float(value) for value in anchor.source_coordinates]
+    anchor_right = float(anchor.coordinates[2])
+    if source_x2 <= anchor_right + 1.0:
+        return None
+
+    return (
+        inline_text,
+        [
+            anchor_right,
+            source_y1,
+            source_x2,
+            source_y2,
         ],
     )
 
@@ -316,11 +382,32 @@ def _extract_question_metadata(
 def _infer_answer_marker_type(text: str) -> str:
     if "(" in text or ")" in text:
         return "괄호"
-    if "□" in text or "☐" in text or "▢" in text:
-        return "네모칸"
-    if "___" in text or "____" in text or "‾" in text:
+    if any(marker in text for marker in ("①", "②", "③", "④", "⑤")):
+        return "객관식"
+    if "___" in text or "____" in text or "‗" in text:
         return "밑줄"
     return "빈줄"
+
+
+def _is_option_line(text: str) -> bool:
+    stripped = text.strip()
+    if not stripped:
+        return False
+    if stripped[0] in "①②③④⑤":
+        return True
+    return sum(stripped.count(marker) for marker in "①②③④⑤") >= 2
+
+
+def _is_score_tag(text: str) -> bool:
+    return bool(QUESTION_SCORE_RE.fullmatch(text.strip()))
+
+
+def _union_detection_bboxes(detections: list[dict]) -> tuple[float, float, float, float]:
+    x1 = min(float(item["bbox"][0]) for item in detections)
+    y1 = min(float(item["bbox"][1]) for item in detections)
+    x2 = max(float(item["bbox"][2]) for item in detections)
+    y2 = max(float(item["bbox"][3]) for item in detections)
+    return x1, y1, x2, y2
 
 
 def _normalize_bbox(

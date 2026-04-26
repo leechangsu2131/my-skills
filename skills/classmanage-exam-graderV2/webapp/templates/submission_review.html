@@ -1,0 +1,362 @@
+{% extends "base.html" %}
+
+{% block title %}학생 검토 | 시험 피드백 스튜디오{% endblock %}
+
+{% block content %}
+{% set batch_id = batch.id if batch is defined and batch and batch.id is defined else (submission.batch_id if submission is defined and submission and submission.batch_id is defined else "") %}
+{% set question_items = review_items if review_items is defined else (items if items is defined else []) %}
+{% set student_name = submission.student_name|default("이름 미확인 학생") if submission is defined else "이름 미확인 학생" %}
+{% set student_status = submission.review_status|default(submission.status|default("needs_review")) if submission is defined else "needs_review" %}
+{% set summary = namespace(total=question_items|length, approved=0, flagged=0) %}
+{% for item in question_items %}
+    {% set review_status = item.review_status|default("needs_review") %}
+    {% if review_status == "approved" %}
+        {% set summary.approved = summary.approved + 1 %}
+    {% else %}
+        {% set summary.flagged = summary.flagged + 1 %}
+    {% endif %}
+{% endfor %}
+
+<section class="page-header">
+    <div>
+        <p class="eyebrow">학생 검토</p>
+        <h1>{{ student_name }}</h1>
+        <p class="page-header__lead">
+            학생 답안, 정답, 자동 생성 설명을 한 화면에서 보고 교사가 최종 피드백을 확정합니다.
+            저장 후 다시 돌아와도 현재 검토 상태를 이어서 확인할 수 있어야 합니다.
+        </p>
+    </div>
+    <div class="header-actions">
+        {% if batch_id %}
+            <a class="button button--ghost" href="/batches/{{ batch_id }}">배치로 돌아가기</a>
+        {% endif %}
+        <span class="chip chip--status chip--{{ student_status }}">
+            {% if student_status == "approved" %}
+                자동 승인
+            {% elif student_status == "finalized" %}
+                최종 확정
+            {% else %}
+                검토 필요
+            {% endif %}
+        </span>
+    </div>
+</section>
+
+<section class="review-layout">
+    <form class="review-main" action="/submissions/{{ submission.id if submission is defined and submission and submission.id is defined else '' }}/review" method="post">
+        <section class="panel review-toolbar">
+            <div>
+                <p class="section-heading__eyebrow">검토 작업</p>
+                <h2>설명 수정과 상태 확정</h2>
+            </div>
+            <div class="form-actions">
+                <button class="button button--secondary" type="submit" name="intent" value="save">저장하고 계속 보기</button>
+                <button class="button button--primary" type="submit" name="intent" value="approve">검토 완료로 표시</button>
+            </div>
+        </section>
+
+        {% if question_items %}
+            {% for item in question_items %}
+                {% set item_status = item.review_status|default("needs_review") %}
+                {% set confidence = item.feedback_confidence|default(item.ocr_confidence|default(item.confidence|default("medium"))) %}
+                {% set feedback_source = item.feedback_source|default("answer_key") %}
+                <article class="panel question-card" id="question-{{ item.q_num|default(loop.index) }}">
+                    <header class="question-card__header">
+                        <div>
+                            <p class="section-heading__eyebrow">문항 {{ item.q_num|default(loop.index) }}</p>
+                            <h2>{{ item.question_text|default("문항 텍스트가 아직 연결되지 않았습니다.") }}</h2>
+                        </div>
+                        <div class="chip-row">
+                            <span class="chip chip--status chip--{{ item_status }}">
+                                {% if item_status == "approved" %}
+                                    승인
+                                {% elif item_status == "needs_review" %}
+                                    검토 필요
+                                {% else %}
+                                    검토 중
+                                {% endif %}
+                            </span>
+                            <span class="chip chip--confidence chip--{{ confidence }}">
+                                {% if confidence == "high" %}
+                                    신뢰도 높음
+                                {% elif confidence == "low" %}
+                                    신뢰도 낮음
+                                {% else %}
+                                    신뢰도 보통
+                                {% endif %}
+                            </span>
+                            <span class="chip chip--source chip--{{ feedback_source }}">
+                                {% if feedback_source == "teacher" %}
+                                    교사 수정
+                                {% elif feedback_source == "ai" %}
+                                    AI 초안
+                                {% else %}
+                                    답안지 기준
+                                {% endif %}
+                            </span>
+                        </div>
+                    </header>
+
+                    <dl class="answer-grid">
+                        <div>
+                            <dt>학생 답안</dt>
+                            <dd>{{ item.student_answer|default(item.answer_text|default(item.answer|default("미입력"))) }}</dd>
+                        </div>
+                        <div>
+                            <dt>정답</dt>
+                            <dd>{{ item.correct_answer|default(item.answer_key|default(item.expected_answer|default("검토 필요"))) }}</dd>
+                        </div>
+                        <div>
+                            <dt>배점 / 획득 점수</dt>
+                            <dd>{{ item.points|default(item.max_points|default(0)) }} / {{ item.points_earned|default(0) }}</dd>
+                        </div>
+                        <div>
+                            <dt>페이지</dt>
+                            <dd>{{ item.page|default("페이지 정보 없음") }}</dd>
+                        </div>
+                    </dl>
+
+                    <dl class="answer-grid answer-grid--meta">
+                        <div>
+                            <dt>Extraction</dt>
+                            <dd>{{ item.extraction_method|default("primary") }}</dd>
+                        </div>
+                        <div>
+                            <dt>OCR score</dt>
+                            <dd>{% if item.confidence_score is not none %}{{ "%.2f"|format(item.confidence_score) }}{% else %}-{% endif %}</dd>
+                        </div>
+                        <div>
+                            <dt>Alignment</dt>
+                            <dd>{% if item.alignment_score is not none %}{{ "%.2f"|format(item.alignment_score) }}{% else %}-{% endif %}</dd>
+                        </div>
+                    </dl>
+
+                    {% if item.review_reason %}
+                        <div class="chip-row review-reason-row">
+                            {% for reason in item.review_reason %}
+                                <span class="chip chip--warning">{{ reason }}</span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    {% if item.student_crop_url or item.reference_crop_url %}
+                        <section class="comparison-panel">
+                            <div>
+                                <p class="section-heading__eyebrow">Visual Check</p>
+                                <p class="helper-text">Compare the student crop with the blank exam region, then quickly mark the answer as correct or incorrect.</p>
+                            </div>
+                            <div class="comparison-grid">
+                                {% if item.student_crop_url %}
+                                    <figure class="comparison-card">
+                                        <figcaption>Student crop</figcaption>
+                                        <img src="{{ item.student_crop_url }}" alt="Student crop for question {{ item.q_num|default(loop.index) }}">
+                                    </figure>
+                                {% endif %}
+                                {% if item.reference_crop_url %}
+                                    <figure class="comparison-card">
+                                        <figcaption>Blank exam region</figcaption>
+                                        <img src="{{ item.reference_crop_url }}" alt="Blank exam region for question {{ item.q_num|default(loop.index) }}">
+                                    </figure>
+                                {% endif %}
+                            </div>
+                        </section>
+                    {% endif %}
+
+                    {% if item.manual_page_review %}
+                        <section class="comparison-panel">
+                            <div>
+                                <p class="section-heading__eyebrow">Full Page Review</p>
+                                <p class="helper-text">If the crop is wrong, review the full page and finish grading manually.</p>
+                                <p class="helper-text">
+                                    <a href="/submissions/{{ submission.id if submission is defined and submission and submission.id is defined else '' }}/source" target="_blank" rel="noopener">Open original student PDF</a>
+                                </p>
+                            </div>
+                            <div class="comparison-grid">
+                                {% if item.student_page_url %}
+                                    <figure class="comparison-card">
+                                        <figcaption>Student page</figcaption>
+                                        <img src="{{ item.student_page_url }}" alt="Student page for question {{ item.q_num|default(loop.index) }}">
+                                    </figure>
+                                {% endif %}
+                                {% if item.reference_page_url %}
+                                    <figure class="comparison-card">
+                                        <figcaption>Blank exam page</figcaption>
+                                        <img src="{{ item.reference_page_url }}" alt="Blank exam page for question {{ item.q_num|default(loop.index) }}">
+                                    </figure>
+                                {% endif %}
+                            </div>
+                        </section>
+                    {% endif %}
+
+                    <div class="question-card__body">
+                        <div class="review-block">
+                            <label for="feedback_{{ item.q_num|default(loop.index) }}">학생에게 보여줄 설명</label>
+                            <textarea id="feedback_{{ item.q_num|default(loop.index) }}" name="feedback_{{ item.q_num|default(loop.index) }}" rows="5">{{ item.feedback_text|default(item.explanation|default("")) }}</textarea>
+                            <p class="field-help">학생이 왜 틀렸는지, 어떤 개념을 다시 보면 되는지 짧고 분명하게 적습니다.</p>
+                        </div>
+
+                        <div class="review-controls">
+                            <div class="form-field">
+                                <label for="points_earned_{{ item.q_num|default(loop.index) }}">획득 점수</label>
+                                <input
+                                    id="points_earned_{{ item.q_num|default(loop.index) }}"
+                                    name="points_earned_{{ item.q_num|default(loop.index) }}"
+                                    type="number"
+                                    min="0"
+                                    max="{{ item.points|default(item.max_points|default(100)) }}"
+                                    value="{{ item.points_earned|default(0) }}"
+                                >
+                            </div>
+
+                            <div class="form-field">
+                                <label for="review_status_{{ item.q_num|default(loop.index) }}">검토 상태</label>
+                                <select id="review_status_{{ item.q_num|default(loop.index) }}" name="review_status_{{ item.q_num|default(loop.index) }}">
+                                    <option value="needs_review" {% if item_status == "needs_review" %}selected{% endif %}>추가 확인 필요</option>
+                                    <option value="approved" {% if item_status == "approved" %}selected{% endif %}>학생용 확정</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="review-block">
+                            <input type="hidden" name="manual_page_review_{{ item.q_num|default(loop.index) }}" value="0">
+                            <label for="manual_page_review_{{ item.q_num|default(loop.index) }}">Review fallback</label>
+                            <label for="manual_page_review_{{ item.q_num|default(loop.index) }}">
+                                <input
+                                    id="manual_page_review_{{ item.q_num|default(loop.index) }}"
+                                    name="manual_page_review_{{ item.q_num|default(loop.index) }}"
+                                    type="checkbox"
+                                    value="1"
+                                    {% if item.manual_page_review %}checked{% endif %}
+                                >
+                                Show full page when the crop is wrong
+                            </label>
+                            <p class="field-help">Use this when the extracted crop misses the real answer area on a two-column exam page.</p>
+                        </div>
+                        <div class="review-quick-actions">
+                            <button class="button button--secondary button--small" type="button" data-mark-correct="{{ item.q_num|default(loop.index) }}" data-max-points="{{ item.points_possible|default(item.max_points|default(0)) }}">정답 처리</button>
+                            <button class="button button--ghost button--small" type="button" data-mark-incorrect="{{ item.q_num|default(loop.index) }}">오답 처리</button>
+                        </div>
+                    </div>
+                </article>
+            {% endfor %}
+
+            <section class="panel review-toolbar review-toolbar--bottom">
+                <div>
+                    <p class="section-heading__eyebrow">마무리</p>
+                    <h2>검토 내용 저장</h2>
+                </div>
+                <div class="form-actions">
+                    <button class="button button--secondary" type="submit" name="intent" value="save">중간 저장</button>
+                    <button class="button button--primary" type="submit" name="intent" value="approve">학생 PDF 확정 준비</button>
+                </div>
+            </section>
+        {% else %}
+            <section class="panel empty-state">
+                <h2>아직 표시할 문항이 없습니다.</h2>
+                <p>채점 결과가 준비되지 않았거나 검토 데이터가 아직 연결되지 않았습니다.</p>
+            </section>
+        {% endif %}
+    </form>
+
+    <aside class="review-sidebar">
+        <section class="panel panel--accent">
+            <div class="section-heading">
+                <div>
+                    <p class="section-heading__eyebrow">학생 요약</p>
+                    <h2>검토 진행도</h2>
+                </div>
+            </div>
+            <dl class="stat-list stat-list--compact">
+                <div>
+                    <dt>학생 번호</dt>
+                    <dd>{{ submission.student_number|default("미입력") if submission is defined else "미입력" }}</dd>
+                </div>
+                <div>
+                    <dt>총점</dt>
+                    <dd>{{ submission.total_score|default(0) if submission is defined else 0 }} / {{ submission.total_points|default(submission.max_score|default(0)) if submission is defined else 0 }}</dd>
+                </div>
+                <div>
+                    <dt>확정 문항</dt>
+                    <dd>{{ summary.approved }} / {{ summary.total }}</dd>
+                </div>
+                <div>
+                    <dt>추가 확인</dt>
+                    <dd>{{ summary.flagged }}</dd>
+                </div>
+            </dl>
+        </section>
+
+        <section class="panel">
+            <div class="section-heading">
+                <div>
+                    <p class="section-heading__eyebrow">검토 체크리스트</p>
+                    <h2>학생용 피드백 기준</h2>
+                </div>
+            </div>
+            <ul class="check-list">
+                <li>학생 답안이 OCR 오인식인지 실제 오답인지 먼저 확인합니다.</li>
+                <li>설명은 지적보다 학습 안내 중심으로 작성합니다.</li>
+                <li>최종 확정 후 PDF에는 O/X 표시와 요약 설명이 함께 들어갑니다.</li>
+            </ul>
+        </section>
+
+        {% if question_items %}
+            <section class="panel">
+                <div class="section-heading">
+                    <div>
+                        <p class="section-heading__eyebrow">빠른 이동</p>
+                        <h2>문항 바로가기</h2>
+                    </div>
+                </div>
+                <nav class="anchor-list" aria-label="문항 바로가기">
+                    {% for item in question_items %}
+                        {% set item_status = item.review_status|default("needs_review") %}
+                        <a href="#question-{{ item.q_num|default(loop.index) }}">
+                            <span>문항 {{ item.q_num|default(loop.index) }}</span>
+                            <span class="chip chip--status chip--{{ item_status }}">
+                                {% if item_status == "approved" %}
+                                    승인
+                                {% elif item_status == "needs_review" %}
+                                    검토
+                                {% else %}
+                                    검토
+                                {% endif %}
+                            </span>
+                        </a>
+                    {% endfor %}
+                </nav>
+            </section>
+        {% endif %}
+    </aside>
+</section>
+<script>
+document.addEventListener("click", function (event) {
+    var correctButton = event.target.closest("[data-mark-correct]");
+    if (correctButton) {
+        var qNum = correctButton.getAttribute("data-mark-correct");
+        var maxPoints = correctButton.getAttribute("data-max-points") || "0";
+        var pointsInput = document.getElementById("points_earned_" + qNum);
+        var statusSelect = document.getElementById("review_status_" + qNum);
+        if (pointsInput) {
+            pointsInput.value = maxPoints;
+        }
+        if (statusSelect) {
+            statusSelect.value = "approved";
+        }
+        return;
+    }
+
+    var incorrectButton = event.target.closest("[data-mark-incorrect]");
+    if (incorrectButton) {
+        var badQNum = incorrectButton.getAttribute("data-mark-incorrect");
+        var badPointsInput = document.getElementById("points_earned_" + badQNum);
+        var badStatusSelect = document.getElementById("review_status_" + badQNum);
+        if (badPointsInput) {
+            badPointsInput.value = "0";
+        }
+        if (badStatusSelect) {
+            badStatusSelect.value = "approved";
+        }
+    }
+});
+</script>
+{% endblock %}

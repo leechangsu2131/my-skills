@@ -37,7 +37,6 @@
   },
   "answer_region_detector": {
     "mode": "opencv",
-    "ultralytics_repo_path": "C:\\Users\\user\\.gemini\\antigravity\\scratch\\repos\\ultralytics",
     "weights_path": "",
     "confidence": 0.25,
     "class_aliases": [
@@ -46,8 +45,11 @@
       "answer_blank",
       "choice_blank",
       "choice_box",
+      "choice_answer_region",
       "checkbox",
-      "objective_answer"
+      "objective_answer",
+      "short_answer_line",
+      "descriptive_answer_area"
     ]
   },
   "paths": {

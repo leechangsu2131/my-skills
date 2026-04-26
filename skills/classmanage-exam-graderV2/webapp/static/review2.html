@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>오버레이 정렬 검수 (페이지 단위) | V2</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#111827;color:#f3f4f6;display:flex;flex-direction:column;height:100vh;overflow:hidden}
+
+/* 툴바 */
+#tb{display:flex;align-items:center;gap:12px;padding:10px 16px;background:#1f2937;border-bottom:1px solid #374151;flex-shrink:0}
+#tb h1{font-size:15px;font-weight:700;color:#e5e7eb;white-space:nowrap;margin-right:10px}
+.sep{width:1px;height:24px;background:#374151}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;padding:6px 12px;border-radius:6px;border:none;cursor:pointer;font-size:13px;font-weight:600;white-space:nowrap;transition:0.15s}
+.btn:disabled{opacity:0.4;cursor:not-allowed}
+.bg{background:#374151;color:#d1d5db}.bg:hover:not(:disabled){background:#4b5563}
+.bp{background:#2563eb;color:#fff}.bp:hover:not(:disabled){background:#1d4ed8}
+.bg-green{background:#059669;color:#fff}.bg-green:hover:not(:disabled){background:#047857}
+.bg-yellow{background:#d97706;color:#fff}.bg-yellow:hover:not(:disabled){background:#b45309}
+
+.nav-group{display:flex;align-items:center;gap:6px;background:#111827;padding:4px;border-radius:8px;border:1px solid #374151}
+.nav-text{font-size:13px;font-weight:600;min-width:120px;text-align:center;color:#60a5fa}
+
+#main{flex:1;overflow:hidden;display:flex;background:#374151}
+
+/* 사이드바 */
+#sidebar{width:220px;background:#1f2937;border-right:1px solid #374151;display:flex;flex-direction:column;}
+.sb-header{padding:12px;font-size:13px;font-weight:600;border-bottom:1px solid #374151;color:#9ca3af}
+#student-list{flex:1;overflow-y:auto;padding:8px;font-size:12px;display:flex;flex-direction:column;gap:6px;}
+.stu-item{display:flex;align-items:center;gap:6px;}
+.stu-item input{accent-color:#2563eb;cursor:pointer;}
+.stu-item label{cursor:pointer;word-break:break-all;}
+
+#cw{flex:1;overflow:auto;display:flex;justify-content:center;align-items:flex-start;padding:20px}
+#ow{position:relative;display:inline-block;line-height:0;box-shadow:0 10px 25px rgba(0,0,0,0.5)}
+
+#cs,#ct,#cb{position:absolute;top:0;left:0;pointer-events:none}
+#cs{position:relative}
+
+</style>
+</head>
+<body>
+
+<div id="tb">
+  <h1>🔍 전체 오버레이 검수</h1>
+  
+  <div class="nav-group">
+    <button class="btn bg" onclick="prevPage()" id="btn-prev">◀ 이전</button>
+    <div class="nav-text" id="page-indicator">0 / 0 페이지</div>
+    <button class="btn bg" onclick="nextPage()" id="btn-next">다음 ▶</button>
+  </div>
+
+  <div class="sep"></div>
+
+  <div style="display:flex;flex-direction:column;gap:4px;">
+      <div style="display:flex;align-items:center;gap:6px;">
+          <input type="checkbox" id="chk-show-regions" checked onchange="drawAll()">
+          <label for="chk-show-regions" style="font-size:11px;color:#9ca3af;cursor:pointer;">답안 영역 표시</label>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;">
+          <label style="font-size:11px;color:#9ca3af;width:70px;">학생 투명도</label>
+          <input type="range" id="sl-stu" min="0" max="100" value="80" style="width:80px;accent-color:#2563eb" oninput="updateOpacities()">
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;">
+          <label style="font-size:11px;color:#9ca3af;width:70px;">빈 시험지</label>
+          <input type="range" id="sl-tmpl" min="0" max="100" value="40" style="width:80px;accent-color:#059669" oninput="updateOpacities()">
+      </div>
+  </div>
+
+  <div class="sep" style="margin-left:auto"></div>
+
+  <button class="btn bg-green" onclick="markPage('ok')" id="btn-ok">이 페이지 정렬 양호 ✅</button>
+  <button class="btn bg-yellow" onclick="markPage('warn')" id="btn-warn">재정렬 필요 ⚠️</button>
+
+  <div class="sep"></div>
+  
+  <button class="btn bp" id="btn-finish" onclick="finishReview()" disabled>검수 완료 (YOLO 저장)</button>
+  <a href="/" class="btn bg" style="text-decoration:none;margin-left:6px">← 메인</a>
+</div>
+
+<div id="main">
+  <div id="sidebar">
+      <div class="sb-header">이 페이지 학생 목록</div>
+      <div style="display:flex; gap:4px; padding:4px 8px;">
+          <button class="btn bg" style="flex:1; font-size:10px; padding:2px" onclick="setAllStudents(true)">전체 선택</button>
+          <button class="btn bg" style="flex:1; font-size:10px; padding:2px" onclick="setAllStudents(false)">전체 해제</button>
+      </div>
+      <div id="student-list"></div>
+  </div>
+  <div id="cw" style="flex-direction:column; align-items:center; justify-content:flex-start;">
+    <div style="width:100%; max-width:800px; margin-bottom:8px;">
+        <div style="display:flex; gap:8px; margin-bottom:8px;">
+            <button id="btn-mode-offset" class="btn bp" onclick="setReviewMode('offset')">🤚 학생 이동 모드</button>
+            <button id="btn-mode-edit" class="btn bg" onclick="setReviewMode('edit')">✏️ 답안 영역 수정 모드</button>
+        </div>
+        <div id="offset-controls" style="font-size:11px; color:#fbbf24; height:24px;">
+            <span id="drag-help" style="display:none;">💡 드래그하여 선택된 학생들의 위치를 이동시킬 수 있습니다.</span>
+            <div style="float:right;">
+                <button id="btn-cancel-offset" class="btn bg" style="display:none; padding:2px 8px; font-size:11px;" onclick="cancelOffset()">취소</button>
+                <button id="btn-restore-offset" class="btn bg-red" style="padding:2px 8px; font-size:11px;" onclick="restoreOffset()" title="현재 선택된 학생들의 보정을 OpenCV 자동 정렬 시점으로 되돌립니다.">🔄 자동정렬 원본 복구</button>
+                <button id="btn-save-offset" class="btn bp" style="display:none; padding:2px 8px; font-size:11px;" onclick="saveOffset()">💾 현재 위치로 저장</button>
+            </div>
+        </div>
+        <div id="edit-controls" style="display:none; gap:6px; height:24px; align-items:center;">
+            <button class="btn bg" onclick="setEditorMode('select')" id="mode-select-btn" style="padding:2px 8px;">선택</button>
+            <button class="btn bg" onclick="setEditorMode('draw')" id="mode-draw-btn" style="padding:2px 8px;">새 영역 추가</button>
+            <div class="sep" style="height:16px;"></div>
+            <button class="btn bg" onclick="undo()" id="btn-undo" disabled style="padding:2px 8px;">↩️ 실행취소</button>
+            <button class="btn bg" onclick="redo()" id="btn-redo" disabled style="padding:2px 8px;">↪️ 재실행</button>
+            <div class="sep" style="height:16px;"></div>
+            <button class="btn bg-green" onclick="saveRegionsAPI()" style="padding:2px 8px;">💾 영역 변경사항 저장</button>
+        </div>
+    </div>
+    <div id="ow">
+      <canvas id="cs"></canvas>
+      <canvas id="ct"></canvas>
+      <canvas id="cb"></canvas>
+    </div>
+  </div>
+</div>
+
+<script>
+let studentFilesByPage = {};
+let pages = [];
+let currentIndex = -1;
+let pageStatus = []; // 'ok' | 'warn' | null
+let loadedStudents = []; // {name, img, active}
+
+let cW = 800, cH = 1100;
+let tmplImg = new Image();
+
+const CS = document.getElementById('cs');
+const CT = document.getElementById('ct');
+const CB = document.getElementById('cb');
+const ctxS = CS.getContext('2d');
+const ctxT = CT.getContext('2d');
+const ctxB = CB.getContext('2d');
+
+let regions = null;
+let questions = [];
+let pageQuestions = [];
+
+let currentMode = 'offset';
+let isDragging = false;
+let startX, startY;
+let initDx, initDy;
+
+window.onload = async () => {
+  await loadRegions();
+  await loadStudentList();
+  updateOpacities();
+  setupDragging();
+};
+
+function setupDragging() {
+  const ow = document.getElementById('ow');
+  ow.onmousedown = e => {
+      if (currentMode !== 'offset') return;
+      const activeStudents = loadedStudents.filter(x => x.active);
+      if(activeStudents.length === 0) return;
+      isDragging = true;
+      startX = e.clientX; startY = e.clientY;
+      activeStudents.forEach(s => {
+          s.initDx = s.dx || 0;
+          s.initDy = s.dy || 0;
+      });
+  };
+  window.onmousemove = e => {
+      if(!isDragging) return;
+      const rect = CS.getBoundingClientRect();
+      const scaleX = cW / rect.width;
+      const scaleY = cH / rect.height;
+      const deltaX = (e.clientX - startX) * scaleX;
+      const deltaY = (e.clientY - startY) * scaleY;
+      
+      const activeStudents = loadedStudents.filter(x => x.active);
+      activeStudents.forEach(s => {
+          s.dx = s.initDx + deltaX;
+          s.dy = s.initDy + deltaY;
+      });
+      drawAll();
+  };
+  window.onmouseup = e => {
+      if(!isDragging) return;
+      isDragging = false;
+      const activeStudents = loadedStudents.filter(x => x.active);
+      const moved = activeStudents.some(s => Math.abs(s.dx) > 1 || Math.abs(s.dy) > 1);
+      if (moved) {
+          document.getElementById('btn-save-offset').style.display = 'inline-block';
+          document.getElementById('btn-cancel-offset').style.display = 'inline-block';
+      }
+  };
+}
+
+function updateOpacities() {
+    const stuVal = document.getElementById('sl-stu').value;
+    const tmplVal = document.getElementById('sl-tmpl').value;
+    CS.style.opacity = stuVal / 100;
+    CT.style.opacity = tmplVal / 100;
+}
+
+function resize() {
+  [CS, CT, CB].forEach(c => { c.width = cW; c.height = cH; });
+  document.getElementById('ow').style.width = cW + 'px';
+  document.getElementById('ow').style.height = cH + 'px';
+}
+
+async function loadRegions() {
+  const r = await fetch('/api/regions');
+  if (r.ok) {
+    regions = await r.json();
+    questions = regions.questions || [];
+  }
+}
+
+async function loadStudentList() {
+  const r = await fetch('/api/students');
+  const d = await r.json();
+  const students = d.students || [];
+  
+  const pageSet = new Set();
+  studentFilesByPage = {};
+  students.forEach(name => {
+    let m = name.match(/_p(\d+)\.jpg$/i);
+    if (!m) m = name.match(/_page_(\d+)/i);
+    const p = m ? parseInt(m[1]) : 1;
+    pageSet.add(p);
+    if (!studentFilesByPage[p]) studentFilesByPage[p] = [];
+    studentFilesByPage[p].push(name);
+  });
+  
+  pages = Array.from(pageSet).sort((a,b)=>a-b);
+  pageStatus = new Array(pages.length).fill(null);
+  
+  if (pages.length > 0) {
+    loadPage(0);
+  } else {
+    document.getElementById('page-indicator').textContent = '데이터 없음';
+  }
+}
+
+function loadPage(idx) {
+  if (idx < 0 || idx >= pages.length) return;
+  setReviewMode('offset'); // 항상 이동 모드로 초기화
+  
+  currentIndex = idx;
+  const pageNum = pages[idx];
+  
+  document.getElementById('page-indicator').textContent = `${idx + 1} / ${pages.length} (페이지 ${pageNum})`;
+  document.getElementById('btn-prev').disabled = (idx === 0);
+  document.getElementById('btn-next').disabled = (idx === pages.length - 1);
+  
+  pageQuestions = questions.filter(q => q.page === pageNum);
+
+  tmplImg = new Image();
+  tmplImg.onload = () => {
+    cW = tmplImg.naturalWidth;
+    cH = tmplImg.naturalHeight;
+    resize();
+    drawAll();
+  };
+  tmplImg.src = '/api/template/blank_p' + pageNum + '.jpg?t=' + Date.now();
+  
+  const files = studentFilesByPage[pageNum] || [];
+  loadedStudents = [];
+  let loadedCount = 0;
+  
+  renderSidebar(files);
+  
+  ctxS.clearRect(0, 0, cW, cH);
+  
+  if (files.length === 0) {
+    drawAll();
+    updateFinishButton();
+    return;
+  }
+  
+  files.forEach(name => {
+    const img = new Image();
+    img.onload = () => {
+      loadedStudents.push({name: name, img: img, active: true});
+      loadedCount++;
+      if (loadedCount === files.length) {
+        drawAll();
+      }
+    };
+    img.src = '/api/student/' + encodeURIComponent(name) + '?t=' + Date.now();
+  });
+  
+  updateFinishButton();
+}
+
+function renderSidebar(files) {
+    const sl = document.getElementById('student-list');
+    sl.innerHTML = '';
+    files.forEach((name, i) => {
+        const div = document.createElement('div');
+        div.className = 'stu-item';
+        div.style.display = 'flex';
+        div.style.alignItems = 'center';
+        div.style.gap = '6px';
+        div.innerHTML = `
+          <input type="checkbox" id="chk-${i}" checked onchange="toggleStudent('${name}', this.checked)">
+          <span style="cursor:pointer; flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" onclick="focusStudent('${name}')" id="lbl-${name}">${name}</span>
+          <button class="btn" style="background:transparent; color:#ef4444; padding:2px 4px; font-size:12px; min-width:auto; height:auto;" onclick="deleteStudent('${name}')" title="이 페이지 이미지 삭제">🗑️</button>
+        `;
+        sl.appendChild(div);
+    });
+}
+
+function setAllStudents(val) {
+    loadedStudents.forEach((s, i) => {
+        s.active = val;
+        const chk = document.getElementById('chk-'+i);
+        if(chk) chk.checked = val;
+    });
+    focusedStudent = null;
+    document.getElementById('drag-help').style.display = 'inline-block';
+    document.getElementById('btn-save-offset').style.display = 'none';
+    document.getElementById('btn-cancel-offset').style.display = 'none';
+    drawAll();
+}
+
+let focusedStudent = null;
+function focusStudent(name) {
+    focusedStudent = name;
+    loadedStudents.forEach((s, i) => {
+        s.active = (s.name === name);
+        const chk = document.getElementById('chk-'+i);
+        if(chk) chk.checked = s.active;
+    });
+    document.getElementById('drag-help').style.display = 'inline-block';
+    document.getElementById('btn-save-offset').style.display = 'none';
+    document.getElementById('btn-cancel-offset').style.display = 'none';
+    drawAll();
+}
+
+function cancelOffset() {
+    const activeStudents = loadedStudents.filter(x => x.active);
+    activeStudents.forEach(s => { s.dx = 0; s.dy = 0; });
+    document.getElementById('btn-save-offset').style.display = 'none';
+    document.getElementById('btn-cancel-offset').style.display = 'none';
+    drawAll();
+}
+
+async function saveOffset() {
+    const activeStudents = loadedStudents.filter(x => x.active);
+    if(activeStudents.length === 0) return;
+    
+    const btn = document.getElementById('btn-save-offset');
+    btn.textContent = '저장 중...';
+    btn.disabled = true;
+    
+    let allOk = true;
+    for(const s of activeStudents) {
+        if(Math.abs(s.dx||0) < 1 && Math.abs(s.dy||0) < 1) continue;
+        const r = await fetch('/api/student/offset', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({name: s.name, dx: Math.round(s.dx||0), dy: Math.round(s.dy||0)})
+        });
+        if(!r.ok) allOk = false;
+        else {
+            s.dx = 0; s.dy = 0;
+            const img = new Image();
+            img.onload = () => { s.img = img; drawAll(); };
+            img.src = '/api/student/' + encodeURIComponent(s.name) + '?t=' + Date.now();
+        }
+    }
+    
+    if(!allOk) alert('일부 위치 저장에 실패했습니다.');
+    
+    btn.textContent = '💾 현재 위치로 저장';
+    btn.disabled = false;
+    btn.style.display = 'none';
+    document.getElementById('btn-cancel-offset').style.display = 'none';
+}
+
+async function restoreOffset() {
+    const activeStudents = loadedStudents.filter(x => x.active);
+    if(activeStudents.length === 0) return;
+    if(!confirm(`현재 화면에 선택된(활성화된) ${activeStudents.length}명 학생의 보정을 OpenCV 파이프라인 정렬 직후의 원본 상태로 완전히 복구하시겠습니까?\n(수동 이동한 내역이 모두 초기화됩니다)`)) return;
+    
+    const btn = document.getElementById('btn-restore-offset');
+    btn.textContent = '복구 중...';
+    btn.disabled = true;
+    
+    let allOk = true;
+    for(const s of activeStudents) {
+        s.dx = 0; s.dy = 0;
+        const r = await fetch('/api/student/restore', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({name: s.name})
+        });
+        if(!r.ok) allOk = false;
+        else {
+            const img = new Image();
+            img.onload = () => { s.img = img; drawAll(); };
+            img.src = '/api/student/' + encodeURIComponent(s.name) + '?t=' + Date.now();
+        }
+    }
+    
+    if(!allOk) alert('일부 원본 복구에 실패했습니다.');
+    
+    btn.textContent = '🔄 자동정렬 원본 복구';
+    btn.disabled = false;
+    document.getElementById('btn-save-offset').style.display = 'none';
+    document.getElementById('btn-cancel-offset').style.display = 'none';
+    drawAll();
+}
+
+async function deleteStudent(name) {
+    if(!confirm(`'${name}' 파일을 정말 삭제하시겠습니까?\n(빈 페이지 등 불필요한 스캔본일 경우 삭제)`)) return;
+    const r = await fetch('/api/student/' + encodeURIComponent(name), { method: 'DELETE' });
+    if(r.ok) {
+        loadedStudents = loadedStudents.filter(s => s.name !== name);
+        const p = pages[currentIndex];
+        if(studentFilesByPage[p]) {
+            studentFilesByPage[p] = studentFilesByPage[p].filter(n => n !== name);
+            renderSidebar(studentFilesByPage[p]);
+        }
+        if(focusedStudent === name) focusedStudent = null;
+        drawAll();
+    } else {
+        alert('삭제 실패');
+    }
+}
+
+function toggleStudent(name, isActive) {
+    const s = loadedStudents.find(x => x.name === name);
+    if(s) {
+        s.active = isActive;
+        drawAll();
+    }
+}
+
+function prevPage() { loadPage(currentIndex - 1); }
+function nextPage() { loadPage(currentIndex + 1); }
+
+function drawAll() {
+  ctxS.clearRect(0, 0, cW, cH);
+  
+  ctxS.fillStyle = 'white';
+  ctxS.fillRect(0, 0, cW, cH);
+  
+  // 라벨 하이라이트 업데이트
+  loadedStudents.forEach(s => {
+      const lbl = document.getElementById('lbl-' + s.name);
+      if(lbl) lbl.style.color = (s.name === focusedStudent) ? '#fbbf24' : '#f3f4f6';
+  });
+  
+  const activeStudents = loadedStudents.filter(s => s.active);
+  if (activeStudents.length > 0) {
+    // 하나일 때는 선명하게 보기 위해 multiply 제외 (드래그 시에도 선명하게)
+    if (activeStudents.length > 1) {
+        ctxS.globalCompositeOperation = 'multiply';
+    }
+    activeStudents.forEach(s => {
+      ctxS.drawImage(s.img, s.dx || 0, s.dy || 0, cW, cH);
+    });
+    ctxS.globalCompositeOperation = 'source-over';
+  }
+
+  ctxT.clearRect(0, 0, cW, cH);
+  if (tmplImg.complete && tmplImg.naturalWidth > 0) {
+    ctxT.drawImage(tmplImg, 0, 0, cW, cH);
+  }
+
+  if (currentMode === 'edit') {
+      if(typeof redraw === 'function') redraw();
+  } else {
+      ctxB.clearRect(0, 0, cW, cH);
+      if (document.getElementById('chk-show-regions').checked) {
+          pageQuestions.forEach(q => {
+            const b = q.box;
+            if (!b) return;
+            const px = b.x * cW, py = b.y * cH, pw = b.w * cW, ph = b.h * cH;
+            ctxB.strokeStyle = '#ef4444';
+            ctxB.lineWidth = 1.5;
+            ctxB.strokeRect(px, py, pw, ph);
+          });
+      }
+  }
+}
+
+function setReviewMode(m) {
+    currentMode = m;
+    const btnO = document.getElementById('btn-mode-offset');
+    const btnE = document.getElementById('btn-mode-edit');
+    
+    if (m === 'offset') {
+        btnO.className = 'btn bp';
+        btnE.className = 'btn bg';
+        document.getElementById('offset-controls').style.display = 'block';
+        document.getElementById('edit-controls').style.display = 'none';
+        
+        document.getElementById('cb').style.pointerEvents = 'none';
+        
+        if (typeof _qs !== 'undefined') {
+            pageQuestions = JSON.parse(JSON.stringify(_qs));
+        }
+        drawAll();
+    } else {
+        btnE.className = 'btn bp';
+        btnO.className = 'btn bg';
+        document.getElementById('offset-controls').style.display = 'none';
+        document.getElementById('edit-controls').style.display = 'flex';
+        
+        document.getElementById('cb').style.pointerEvents = 'auto';
+        
+        editorInit(pageQuestions, null, 'cb');
+        setEditorMode('select');
+    }
+}
+
+async function saveRegionsAPI() {
+    const currentPageNum = pages[currentIndex];
+    _qs.forEach(q => { if(!q.page) q.page = currentPageNum; });
+    
+    const otherQs = questions.filter(q => q.page !== currentPageNum);
+    regions.questions = [...otherQs, ..._qs];
+    questions = regions.questions;
+    
+    const btn = document.querySelector('#edit-controls .bg-green');
+    btn.textContent = '저장 중...';
+    btn.disabled = true;
+    
+    const r = await fetch('/api/regions', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(regions)
+    });
+    
+    if(r.ok) {
+        alert('답안 영역이 저장되었습니다.');
+        pageQuestions = JSON.parse(JSON.stringify(_qs));
+    } else {
+        alert('저장 실패');
+    }
+    
+    btn.textContent = '💾 영역 변경사항 저장';
+    btn.disabled = false;
+}
+
+async function markPage(status) {
+  if (currentIndex < 0) return;
+  pageStatus[currentIndex] = status;
+  
+  await fetch('/api/log', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      event: status === 'ok' ? 'page_verified_ok' : 'page_needs_review',
+      detail: { page: pages[currentIndex] }
+    })
+  });
+  
+  updateFinishButton();
+  if (currentIndex < pages.length - 1) {
+    nextPage();
+  }
+}
+
+function updateFinishButton() {
+  const allChecked = pageStatus.every(s => s !== null) && pages.length > 0;
+  document.getElementById('btn-finish').disabled = !allChecked;
+}
+
+async function finishReview() {
+  document.getElementById('btn-finish').textContent = '저장 중...';
+  document.getElementById('btn-finish').disabled = true;
+  
+  let successCount = 0;
+  for (let p in studentFilesByPage) {
+      const qsForPage = questions.filter(q => q.page === parseInt(p));
+      const files = studentFilesByPage[p];
+      for(let name of files) {
+          try {
+            const res = await fetch('/api/yolo_save', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ name: name, questions: qsForPage })
+            });
+            if (res.ok) successCount++;
+          } catch (e) {
+            console.error('YOLO save error:', e);
+          }
+      }
+  }
+  
+  await fetch('/api/log', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      event: 'review_completed',
+      detail: { saved: successCount }
+    })
+  });
+  
+  alert(`YOLO 라벨 생성 완료 (${successCount}장)`);
+  window.location.href = '/';
+}
+</script>
+</body>
+</html>

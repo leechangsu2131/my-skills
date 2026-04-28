@@ -40,6 +40,7 @@ logging.basicConfig(
 sys.path.insert(0, str(BASE_DIR / "src"))
 
 from aligner import align_image  # type: ignore
+from assessment_bundle import merge_assessment_bundle, normalize_assessment_bundle  # type: ignore
 from pdf_handler import convert_pdfs_to_images  # type: ignore
 import event_logger as _elog  # type: ignore
 from project_store import (  # type: ignore
@@ -51,6 +52,18 @@ from project_store import (  # type: ignore
     resolve_project_dir,
     save_settings,
     scan_projects,
+)
+from ocr_engine import OcrEngine  # type: ignore
+from submission_store import (  # type: ignore
+    build_submission_manifest,
+    generate_reference_crops,
+    generate_student_crops,
+    list_students_from_aligned,
+    load_all_submission_results,
+    load_submission_result,
+    run_ocr_for_project,
+    score_project_submissions,
+    write_submission_manifests,
 )
 
 
@@ -78,8 +91,28 @@ def _root_dir() -> Path:
     return Path(SETTINGS["root_dir"])
 
 
+def _restore_current_project() -> Path | None:
+    global CURRENT_PROJECT
+    if CURRENT_PROJECT is not None and CURRENT_PROJECT.exists():
+        return CURRENT_PROJECT
+
+    last_project = SETTINGS.get("last_project")
+    if not last_project:
+        return None
+
+    project_dir = resolve_project_dir(_root_dir(), last_project)
+    if not (project_dir / "project.json").exists():
+        return None
+
+    CURRENT_PROJECT = project_dir.resolve()
+    return CURRENT_PROJECT
+
+
 def _ensure_current_project() -> Path:
     global CURRENT_PROJECT
+    restored = _restore_current_project()
+    if restored is not None:
+        return restored
     if CURRENT_PROJECT is None:
         raise HTTPException(status_code=409, detail="No project is currently open")
     if not CURRENT_PROJECT.exists():
@@ -139,7 +172,7 @@ async def project_selector(request: Request):
 
 @app.get("/dashboard")
 async def dashboard(request: Request):
-    if CURRENT_PROJECT is None:
+    if _restore_current_project() is None:
         return RedirectResponse(url="/", status_code=303)
 
     status = get_project_status(_ensure_current_project())
@@ -158,9 +191,41 @@ async def dashboard(request: Request):
 
 @app.get("/review")
 async def review_page():
-    if CURRENT_PROJECT is None:
+    if _restore_current_project() is None:
         return RedirectResponse(url="/", status_code=303)
     return FileResponse(str(STATIC_DIR / "review2.html"), media_type="text/html")
+
+
+@app.get("/grading")
+async def grading_overview(request: Request):
+    if _restore_current_project() is None:
+        return RedirectResponse(url="/", status_code=303)
+    paths = _paths()
+    submissions = load_all_submission_results(paths)
+    project = refresh_project_metadata(_ensure_current_project(), touch=False)
+    return TEMPLATES.TemplateResponse(
+        request=request,
+        name="grading_overview.html",
+        context={"project": project, "submissions": submissions},
+    )
+
+
+@app.get("/grading/student/{student_id}")
+async def grading_student(request: Request, student_id: str):
+    if _restore_current_project() is None:
+        return RedirectResponse(url="/", status_code=303)
+    paths = _paths()
+    submission = load_submission_result(paths, student_id)
+    if submission is None:
+        raise HTTPException(status_code=404, detail="Submission not found")
+    for item in submission.get("items", []):
+        crop_rel = item.get("crop_path")
+        item["student_crop_url"] = f"/api/file?path={crop_rel and ('artifacts/crops/' + crop_rel)}"
+    return TEMPLATES.TemplateResponse(
+        request=request,
+        name="grading_student.html",
+        context={"submission": submission, "student_id": student_id},
+    )
 
 
 @app.get("/api/settings")
@@ -235,7 +300,7 @@ async def open_project(slug: str):
 
 @app.get("/api/project/current")
 async def current_project_info():
-    if CURRENT_PROJECT is None:
+    if _restore_current_project() is None:
         return {"project": None}
     return {"project": refresh_project_metadata(_ensure_current_project(), touch=False)}
 
@@ -425,21 +490,116 @@ async def get_regions():
 async def save_regions(request: Request):
     paths = _paths()
     raw = await request.body()
+    save_mode = request.query_params.get("mode", "replace_all")
     try:
-        data = json.loads(raw)
+        payload = json.loads(raw)
     except json.JSONDecodeError as exc:
         return {"success": False, "error": f"JSON parse error: {exc}"}
 
-    if "questions" not in data and isinstance(data, list):
-        data = {"questions": data}
+    raw_text = None
+    bundle_payload = payload
+    if isinstance(payload, dict) and "bundle" in payload:
+        bundle_payload = payload.get("bundle", {})
+        raw_text = payload.get("raw_text")
+
+    try:
+        incoming = normalize_assessment_bundle(bundle_payload)
+    except (ValueError, KeyError, TypeError) as exc:
+        return {"success": False, "error": str(exc)}
+
+    existing = _load_json(paths.json_dir / "regions.json")
+    try:
+        data = merge_assessment_bundle(existing, incoming, save_mode)
+    except ValueError as exc:
+        return {"success": False, "error": str(exc)}
+
+    latest_bundle_path = paths.json_dir / "gemini_bundle_latest.json"
+    latest_bundle_path.write_text(
+        json.dumps(
+            {
+                "save_mode": save_mode,
+                "bundle": incoming,
+                "raw_text": raw_text,
+            },
+            ensure_ascii=False,
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
 
     (paths.json_dir / "regions.json").write_text(
         json.dumps(data, ensure_ascii=False, indent=2),
         encoding="utf-8",
     )
     refresh_project_metadata(paths.root, touch=True)
-    _elog.log_event("regions_saved", {"count": len(data.get("questions", []))})
-    return {"success": True, "count": len(data.get("questions", []))}
+    question_count = len(data.get("questions", []))
+    answer_count = len(data.get("answers", []))
+    _elog.log_event("regions_saved", {"count": question_count, "answers": answer_count, "mode": save_mode})
+    return {"success": True, "count": question_count, "answers": answer_count, "mode": save_mode}
+
+
+@app.post("/api/grading/prepare")
+async def prepare_grading():
+    paths = _paths()
+    bundle = _load_json(paths.json_dir / "regions.json")
+    if not bundle:
+        return {"success": False, "error": "regions.json not found"}
+
+    questions = bundle.get("questions", [])
+    if not isinstance(questions, list) or not questions:
+        return {"success": False, "error": "questions not found in regions bundle"}
+
+    aligned_files = list_students_from_aligned(paths.aligned_dir)
+    grouped = build_submission_manifest(aligned_files)
+    manifests = write_submission_manifests(paths, grouped, questions)
+    ref_count = generate_reference_crops(paths, questions)
+    student_crop_count = generate_student_crops(paths, manifests)
+
+    return {
+        "success": True,
+        "students": len(manifests),
+        "reference_crops": ref_count,
+        "student_crops": student_crop_count,
+    }
+
+
+@app.post("/api/grading/ocr")
+async def run_ocr():
+    paths = _paths()
+    try:
+        engine = OcrEngine()
+    except RuntimeError as exc:
+        return {"success": False, "error": str(exc)}
+    updated = run_ocr_for_project(paths, engine)
+    return {"success": True, "updated": updated}
+
+
+@app.post("/api/grading/score")
+async def score_grading_results():
+    paths = _paths()
+    bundle = _load_json(paths.json_dir / "regions.json")
+    if not bundle:
+        return {"success": False, "error": "regions.json not found"}
+    answers = bundle.get("answers", [])
+    if not isinstance(answers, list):
+        return {"success": False, "error": "answers not found in regions bundle"}
+    if not answers:
+        return {"success": False, "error": "No answers saved in regions bundle"}
+    count = score_project_submissions(paths, answers)
+    return {"success": True, "students": count}
+
+
+@app.get("/api/file")
+async def serve_project_file(path: str):
+    full_path = _safe_project_file(path)
+    if not full_path.exists():
+        raise HTTPException(status_code=404, detail="File not found")
+    media_type = None
+    if full_path.suffix.lower() == ".png":
+        media_type = "image/png"
+    elif full_path.suffix.lower() in {".jpg", ".jpeg"}:
+        media_type = "image/jpeg"
+    return FileResponse(str(full_path), media_type=media_type)
 
 
 @app.get("/api/templates")

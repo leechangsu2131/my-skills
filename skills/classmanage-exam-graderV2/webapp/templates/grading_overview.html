@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>채점 결과 | ClassExamGrade</title>
+<style>
+:root{--bg:#0f172a;--card:#1e293b;--panel:#111827;--border:#334155;--blue:#3b82f6;--green:#22c55e;--yellow:#f59e0b;--red:#ef4444;--text:#f1f5f9;--muted:#94a3b8}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:24px}
+a{color:inherit;text-decoration:none}
+.shell{max-width:1100px;margin:0 auto}
+.top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:20px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 16px;border-radius:10px;border:none;background:#334155;color:var(--text);font-size:13px;font-weight:700}
+.panel{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px}
+.list{display:flex;flex-direction:column;gap:12px}
+.row{display:grid;grid-template-columns:1fr auto;gap:16px;align-items:center;background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:14px}
+.meta{font-size:12px;color:var(--muted);margin-top:6px}
+.badge{display:inline-flex;padding:4px 8px;border-radius:999px;font-size:11px;font-weight:700;border:1px solid var(--border);margin-right:6px}
+.warn{color:#fbbf24}.ok{color:#86efac}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="top">
+    <div>
+      <h1>채점 결과</h1>
+      <div class="meta">현재 프로젝트: {{ project.name }}</div>
+    </div>
+    <a class="btn" href="/dashboard">← 대시보드</a>
+  </div>
+
+  <div class="panel">
+    <div class="list">
+      {% if submissions %}
+        {% for row in submissions %}
+        <div class="row">
+          <div>
+            <div><strong>{{ row.student_id }}</strong></div>
+            <div class="meta">
+              점수 {{ row.total_score or 0 }} / {{ row.total_points or 0 }}
+            </div>
+            <div class="meta">
+              <span class="badge {% if row.needs_review_count %}warn{% else %}ok{% endif %}">
+                {% if row.needs_review_count %}검토 필요 {{ row.needs_review_count }}문항{% else %}검토 필요 없음{% endif %}
+              </span>
+            </div>
+          </div>
+          <a class="btn" href="/grading/student/{{ row.student_id }}">상세 보기</a>
+        </div>
+        {% endfor %}
+      {% else %}
+        <div class="meta">아직 채점 결과가 없습니다. 대시보드에서 준비/OCR/채점을 먼저 실행하세요.</div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+</body>
+</html>

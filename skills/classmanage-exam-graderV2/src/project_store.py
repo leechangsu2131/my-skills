@@ -21,6 +21,10 @@ class ProjectPaths:
     json_dir: Path
     yolo_dir: Path
     logs_dir: Path
+    artifacts_dir: Path
+    submissions_dir: Path
+    crops_dir: Path
+    exports_dir: Path
 
 
 def _now_iso() -> str:
@@ -90,6 +94,10 @@ def project_paths(project_dir: Path) -> ProjectPaths:
         json_dir=project_dir / "json",
         yolo_dir=project_dir / "yolo_labels",
         logs_dir=project_dir / "logs",
+        artifacts_dir=project_dir / "artifacts",
+        submissions_dir=project_dir / "artifacts" / "submissions",
+        crops_dir=project_dir / "artifacts" / "crops",
+        exports_dir=project_dir / "artifacts" / "exports",
     )
 
 
@@ -104,6 +112,10 @@ def _ensure_project_dirs(paths: ProjectPaths) -> None:
         paths.json_dir,
         paths.yolo_dir,
         paths.logs_dir,
+        paths.artifacts_dir,
+        paths.submissions_dir,
+        paths.crops_dir,
+        paths.exports_dir,
     ):
         directory.mkdir(parents=True, exist_ok=True)
 

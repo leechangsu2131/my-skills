@@ -107,6 +107,20 @@ class ProjectStoreTests(unittest.TestCase):
             self.assertTrue(project_info["status"]["alignment_done"])
             self.assertTrue(project_info["status"]["review_done"])
 
+    def test_project_paths_include_grading_artifact_directories(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root_dir = Path(tmp) / "projects"
+            project = create_project(root_dir, {"name": "수학2"})
+            paths = project_paths(root_dir / project["slug"])
+
+            self.assertEqual(paths.artifacts_dir.name, "artifacts")
+            self.assertEqual(paths.submissions_dir.name, "submissions")
+            self.assertEqual(paths.exports_dir.name, "exports")
+            self.assertTrue(paths.artifacts_dir.is_dir())
+            self.assertTrue(paths.submissions_dir.is_dir())
+            self.assertTrue(paths.crops_dir.is_dir())
+            self.assertTrue(paths.exports_dir.is_dir())
+
     def test_slugify_replaces_spaces_and_invalid_chars(self):
         self.assertEqual(
             slugify_project_name("3학년 2반: 수학 / 1단원"),

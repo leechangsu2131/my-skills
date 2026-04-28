@@ -79,7 +79,6 @@ const currentProject = {{ project|tojson }};
   <div id="file-status-container">로딩 중...</div>
   <div style="display:none">
     <input type="file" id="tmpl-file" accept=".pdf,.jpg,.jpeg,.png" onchange="uploadTemplate()">
-    <input type="file" id="ans-file" accept=".pdf" onchange="uploadAnswers()">
     <input type="file" id="stu-files" accept=".pdf,.jpg,.jpeg,.png" multiple onchange="uploadStudents()">
   </div>
 </div>
@@ -169,7 +168,7 @@ const currentProject = {{ project|tojson }};
 </div>
 
 <script>
-let globalRegions = { questions: [] };
+let globalRegions = { questions: [], answers: [], total_points: 0 };
 let fileStatus = null;
 let parsedAllData = null;
 
@@ -180,6 +179,8 @@ window.addEventListener('DOMContentLoaded', async () => {
     if (response.ok) {
       globalRegions = await response.json();
       if (!globalRegions.questions) globalRegions.questions = [];
+      if (!globalRegions.answers) globalRegions.answers = [];
+      if (typeof globalRegions.total_points !== 'number') globalRegions.total_points = 0;
       if (globalRegions.questions.length > 0) {
         document.getElementById('json-input').value = JSON.stringify(globalRegions, null, 2);
         doValidateAll();
@@ -244,16 +245,6 @@ function renderFileStatus() {
         </div>
       </div>
       <div class="status-card">
-        <h3>답안지</h3>
-        <div class="status-sub">${fileStatus.answers.count > 0 ? `${fileStatus.answers.count}개 업로드됨` : '답안지 PDF 없음'}</div>
-        ${renderThumbRow(fileStatus.answers.files, 'answers')}
-        <div class="row" style="margin-top:10px">
-          <button class="btn ${fileStatus.answers.count > 0 ? 'btn-ghost' : 'btn-blue'}" onclick="document.getElementById('ans-file').click()">
-            ${fileStatus.answers.count > 0 ? '답안지 교체' : '답안지 업로드'}
-          </button>
-        </div>
-      </div>
-      <div class="status-card">
         <h3>regions.json</h3>
         <div class="status-sub">${regionSummary}</div>
         <div class="row" style="margin-top:10px">
@@ -278,7 +269,7 @@ function syncPageSelect() {
   const select = document.getElementById('prompt-page-select');
   const pages = (fileStatus && fileStatus.template.files.length)
     ? fileStatus.template.files
-    : ['blank_p1.jpg'];
+    : ['blank_p1.png'];
   const current = select.value;
   select.innerHTML = pages.map((name) => `<option value="${name}">${name}</option>`).join('');
   if (pages.includes(current)) {
@@ -296,16 +287,6 @@ async function uploadTemplate() {
   location.reload();
 }
 
-async function uploadAnswers() {
-  const input = document.getElementById('ans-file');
-  if (!input.files.length) return;
-  const form = new FormData();
-  form.append('file', input.files[0]);
-  document.getElementById('file-status-container').textContent = '답안지 업로드 중...';
-  await fetch('/api/upload/answers', { method: 'POST', body: form });
-  location.reload();
-}
-
 async function uploadStudents() {
   const input = document.getElementById('stu-files');
   if (!input.files.length) return;
@@ -318,17 +299,15 @@ async function uploadStudents() {
 
 function updatePromptText() {
   const pageCount = fileStatus ? fileStatus.template.count : 1;
-  const hasAnswers = fileStatus && fileStatus.answers.count > 0;
-  let prompt = `첨부한 이미지는 시험지 템플릿입니다.\n`;
+  let prompt = `첨부한 이미지 파일(N장)은 시험지 템플릿(빈 시험지)입니다.\n`;
+  prompt += `또한 첨부한 PDF 파일은 답안지(정답지)입니다.\n`;
   prompt += `페이지 수는 총 ${pageCount}장이고, 각 페이지는 1페이지부터 ${pageCount}페이지까지입니다.\n\n`;
   prompt += `[요청]\n`;
-  prompt += `각 페이지의 모든 문항에서 학생이 답을 쓰는 영역의 bounding box를 찾아 주세요.\n`;
+  prompt += `1) 시험지 템플릿(이미지) 기준으로 각 페이지의 모든 문항에서 학생 답안 영역 bounding box를 찾아 주세요.\n`;
+  prompt += `2) 답안지(PDF)를 참고하여 각 문항의 정답, 배점, 유형을 추출해 주세요.\n`;
   prompt += `응답은 설명 없이 JSON 코드블록 하나만 반환해 주세요.\n`;
-  prompt += `좌표는 각 페이지 이미지 기준 0~1 정규화 비율입니다.\n`;
+  prompt += `좌표는 각 템플릿 페이지 이미지 기준 0~1 정규화 비율입니다.\n`;
   prompt += `page 값은 실제 페이지 번호와 반드시 일치해야 합니다.\n\n`;
-  if (hasAnswers) {
-    prompt += `[참고]\n답안지 PDF도 함께 참고해서 객관식/정답형/서술형을 구분해 주세요.\n\n`;
-  }
   prompt += `{
   "questions": [
     {
@@ -337,7 +316,16 @@ function updatePromptText() {
       "type": "객관식",
       "box": {"x": 0.72, "y": 0.18, "w": 0.12, "h": 0.04}
     }
-  ]
+  ],
+  "answers": [
+    {
+      "number": 1,
+      "answer": "3",
+      "points": 5,
+      "type": "객관식"
+    }
+  ],
+  "total_points": 100
 }`;
   document.getElementById('prompt-text').textContent = prompt;
 }
@@ -402,9 +390,14 @@ function doValidateAll() {
     summary.push(`${page}p: ${count}문항`);
   }
 
-  parsedAllData = { questions };
+  let answers = data.answers;
+  if (!answers || !Array.isArray(answers)) answers = [];
+  const totalPoints = Number(data.total_points || 0);
+
+  parsedAllData = { questions, answers, total_points: totalPoints };
   document.getElementById('save-regions-btn').disabled = false;
-  setJsonStatus(`검사 완료: 총 ${questions.length}문항 (${summary.join(', ')})`, 'green');
+  const answerMsg = answers.length > 0 ? ` · 답지 ${answers.length}문항` : '';
+  setJsonStatus(`검사 완료: 총 ${questions.length}문항 (${summary.join(', ')})${answerMsg}`, 'green');
 }
 
 async function doSaveAll() {
@@ -412,6 +405,8 @@ async function doSaveAll() {
   const newPages = new Set(parsedAllData.questions.map((q) => q.page || 1));
   const others = globalRegions.questions.filter((q) => !newPages.has(q.page || 1));
   globalRegions.questions = [...others, ...parsedAllData.questions];
+  globalRegions.answers = parsedAllData.answers || [];
+  globalRegions.total_points = parsedAllData.total_points || 0;
 
   document.getElementById('save-regions-btn').disabled = true;
   setJsonStatus('저장 중...', 'muted');
@@ -429,7 +424,7 @@ async function doSaveAll() {
 }
 
 function getSelectedPageNum() {
-  const value = document.getElementById('prompt-page-select').value || 'blank_p1.jpg';
+  const value = document.getElementById('prompt-page-select').value || 'blank_p1.png';
   const match = value.match(/blank_p(\d+)/i);
   return match ? parseInt(match[1], 10) : 1;
 }

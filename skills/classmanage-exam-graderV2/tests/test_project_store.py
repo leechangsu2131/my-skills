@@ -81,8 +81,8 @@ class ProjectStoreTests(unittest.TestCase):
             project_dir = root_dir / project["slug"]
             paths = project_paths(project_dir)
 
-            (paths.template_dir / "blank_p1.jpg").write_bytes(b"1")
-            (paths.template_dir / "blank_p2.jpg").write_bytes(b"2")
+            (paths.template_dir / "blank_p1.png").write_bytes(b"1")
+            (paths.template_dir / "blank_p2.png").write_bytes(b"2")
             (paths.answers_dir / "answer_key.pdf").write_bytes(b"pdf")
             (paths.student_pdf_dir / "bundle.pdf").write_bytes(b"pdf")
             (paths.student_page_dir / "exam_stu001_p1.jpg").write_bytes(b"img")

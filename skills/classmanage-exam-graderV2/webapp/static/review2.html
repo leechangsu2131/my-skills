@@ -222,7 +222,7 @@ async function loadStudentList() {
   const pageSet = new Set();
   studentFilesByPage = {};
   students.forEach(name => {
-    let m = name.match(/_p(\d+)\.jpg$/i);
+    let m = name.match(/_p(\d+)\.png$/i);
     if (!m) m = name.match(/_page_(\d+)/i);
     const p = m ? parseInt(m[1]) : 1;
     pageSet.add(p);
@@ -260,7 +260,7 @@ function loadPage(idx) {
     resize();
     drawAll();
   };
-  tmplImg.src = '/api/template/blank_p' + pageNum + '.jpg?t=' + Date.now();
+  tmplImg.src = '/api/template/blank_p' + pageNum + '.png?t=' + Date.now();
   
   const files = studentFilesByPage[pageNum] || [];
   loadedStudents = [];
@@ -498,9 +498,6 @@ function setReviewMode(m) {
         
         document.getElementById('cb').style.pointerEvents = 'none';
         
-        if (typeof _qs !== 'undefined') {
-            pageQuestions = JSON.parse(JSON.stringify(_qs));
-        }
         drawAll();
     } else {
         btnE.className = 'btn bp';
@@ -510,17 +507,22 @@ function setReviewMode(m) {
         
         document.getElementById('cb').style.pointerEvents = 'auto';
         
+        const currentPageNum = pages[currentIndex];
+        const freshQuestions = questions.filter(q => q.page === currentPageNum);
+        pageQuestions = JSON.parse(JSON.stringify(freshQuestions));
         editorInit(pageQuestions, null, 'cb');
         setEditorMode('select');
+        document.getElementById('cb').style.cursor = 'default';
     }
 }
 
 async function saveRegionsAPI() {
     const currentPageNum = pages[currentIndex];
+    if (typeof _qs === 'undefined') return;
     _qs.forEach(q => { if(!q.page) q.page = currentPageNum; });
     
     const otherQs = questions.filter(q => q.page !== currentPageNum);
-    regions.questions = [...otherQs, ..._qs];
+    regions.questions = [...otherQs, ...JSON.parse(JSON.stringify(_qs))];
     questions = regions.questions;
     
     const btn = document.querySelector('#edit-controls .bg-green');
@@ -603,5 +605,6 @@ async function finishReview() {
   window.location.href = '/';
 }
 </script>
+<script src="/static/editor.js"></script>
 </body>
 </html>

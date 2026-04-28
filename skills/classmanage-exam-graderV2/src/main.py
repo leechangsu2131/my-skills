@@ -21,7 +21,7 @@ def load_bboxes_from_json(json_path: str) -> list[dict]:
 def batch_align_images(raw_dir: str, template_path: str, aligned_dir: str):
     """raw_images 폴더의 모든 이미지를 템플릿에 맞춰 일괄 정렬합니다."""
     print("\n[🚀 Phase 0: 일괄 이미지 정렬(Batch Alignment) 시작]")
-    images = [f for f in os.listdir(raw_dir) if f.lower().endswith(('.png', '.jpg', '.jpeg')) and f.lower() != 'blank.jpg']
+    images = [f for f in os.listdir(raw_dir) if f.lower().endswith(('.png', '.jpg', '.jpeg')) and f.lower() != 'blank.png']
     
     if not images:
         print("정렬할 이미지가 없습니다.")
@@ -69,7 +69,7 @@ if __name__ == "__main__":
     ALIGNED_DATA_DIR = os.path.join(BASE_DIR, "data", "aligned_images")
     JSON_DIR = os.path.join(BASE_DIR, "data", "json_labels")
     LABEL_DIR = os.path.join(BASE_DIR, "data", "yolo_labels")
-    TEMPLATE_PATH = os.path.join(BASE_DIR, "data", "template", "blank.jpg")
+    TEMPLATE_PATH = os.path.join(BASE_DIR, "data", "template", "blank.png")
     
     os.makedirs(PDF_DIR, exist_ok=True)
     os.makedirs(RAW_DATA_DIR, exist_ok=True)

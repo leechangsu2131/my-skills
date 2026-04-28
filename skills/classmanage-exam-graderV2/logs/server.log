@@ -123,3 +123,19 @@
 2026-04-27 07:20:13,151 [INFO] [app_started] {}
 2026-04-27 07:20:38,409 [INFO] [project_opened] {"project": "수학2"}
 2026-04-27 07:20:47,737 [INFO] [template_uploaded] {"type": "pdf", "pages": 3}
+2026-04-28 11:23:58,110 [INFO] [app_started] {}
+2026-04-28 11:24:00,186 [INFO] [project_opened] {"project": "수학2"}
+2026-04-28 11:24:00,715 [INFO] [regions_loaded] {}
+2026-04-28 11:25:30,347 [INFO] [regions_loaded] {}
+2026-04-28 11:25:33,071 [INFO] [regions_loaded] {}
+2026-04-28 12:15:12,602 [INFO] [regions_loaded] {}
+2026-04-28 12:57:41,901 [INFO] [app_started] {}
+2026-04-28 12:57:45,503 [INFO] [app_started] {}
+2026-04-28 12:57:50,978 [INFO] [app_started] {}
+2026-04-28 12:57:58,147 [INFO] [app_started] {}
+2026-04-28 12:58:01,849 [INFO] [app_started] {}
+2026-04-28 13:03:43,042 [INFO] [app_started] {}
+2026-04-28 13:03:50,773 [INFO] [project_opened] {"project": "수학2"}
+2026-04-28 13:03:51,591 [INFO] [regions_loaded] {}
+2026-04-28 13:04:05,823 [INFO] [pipeline_done] {"ok": 9, "fail": 3}
+2026-04-28 13:04:07,118 [INFO] [regions_loaded] {}

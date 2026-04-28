@@ -1,0 +1,366 @@
+import streamlit as st
+import pandas as pd
+import requests
+import time
+import os
+from io import BytesIO
+from math import radians, cos, sin, asin, sqrt
+from dotenv import load_dotenv
+
+st.set_page_config(page_title="장소 거리·시간 조회", page_icon="📍", layout="wide")
+
+# ──────────────────────────────────────────────
+# .env 파일에서 API 키 로드
+# ──────────────────────────────────────────────
+
+load_dotenv()
+ENV_API_KEY = os.getenv("KAKAO_API_KEY", "")
+
+# ──────────────────────────────────────────────
+# Kakao API 함수
+# ──────────────────────────────────────────────
+
+HEADERS = {}  # 앱 실행 시 채워짐
+
+
+def make_headers(api_key: str) -> dict:
+    return {"Authorization": f"KakaoAK {api_key}"}
+
+
+def search_keyword(query: str) -> tuple:
+    """키워드로 장소 검색 → (경도, 위도, 도로명주소, 장소명) 반환"""
+    url = "https://dapi.kakao.com/v2/local/search/keyword.json"
+    params = {"query": query, "size": 1}
+    try:
+        res = requests.get(url, headers=HEADERS, params=params, timeout=5)
+        if res.status_code == 200:
+            docs = res.json().get("documents", [])
+            if docs:
+                d = docs[0]
+                return (
+                    float(d["x"]),       # 경도 (longitude)
+                    float(d["y"]),       # 위도 (latitude)
+                    d.get("road_address_name") or d.get("address_name", ""),
+                    d.get("place_name", ""),
+                )
+    except Exception:
+        pass
+    return None, None, None, None
+
+
+def search_address(query: str) -> tuple:
+    """주소 검색 → (경도, 위도) 반환"""
+    url = "https://dapi.kakao.com/v2/local/search/address.json"
+    params = {"query": query, "size": 1}
+    try:
+        res = requests.get(url, headers=HEADERS, params=params, timeout=5)
+        if res.status_code == 200:
+            docs = res.json().get("documents", [])
+            if docs:
+                return float(docs[0]["x"]), float(docs[0]["y"])
+    except Exception:
+        pass
+    return None, None
+
+
+def get_directions(origin_lng, origin_lat, dest_lng, dest_lat) -> tuple:
+    """카카오 모빌리티 길찾기 → (거리km, 소요시간분) 반환"""
+    url = "https://apis-navi.kakaomobility.com/v1/directions"
+    params = {
+        "origin": f"{origin_lng},{origin_lat}",
+        "destination": f"{dest_lng},{dest_lat}",
+        "priority": "RECOMMEND",   # RECOMMEND / TIME / DISTANCE
+    }
+    try:
+        res = requests.get(url, headers=HEADERS, params=params, timeout=8)
+        if res.status_code == 200:
+            data = res.json()
+            routes = data.get("routes", [])
+            if routes and routes[0].get("result_code") == 0:
+                summary = routes[0]["summary"]
+                dist_km = round(summary["distance"] / 1000, 1)
+                dur_min = round(summary["duration"] / 60, 0)
+                return dist_km, int(dur_min)
+    except Exception:
+        pass
+    return None, None
+
+
+def haversine_km(lng1, lat1, lng2, lat2) -> float:
+    """직선거리 계산 (API 실패 시 폴백)"""
+    R = 6371
+    dlat = radians(lat2 - lat1)
+    dlng = radians(lng2 - lng1)
+    a = sin(dlat/2)**2 + cos(radians(lat1)) * cos(radians(lat2)) * sin(dlng/2)**2
+    return round(2 * R * asin(sqrt(a)), 1)
+
+
+# ──────────────────────────────────────────────
+# 사이드바: API 키 입력
+# ──────────────────────────────────────────────
+
+with st.sidebar:
+    st.header("🔑 API 키 설정")
+
+    # .env에서 로드된 키가 있으면 사용, 없으면 수동 입력
+    if ENV_API_KEY:
+        api_key = ENV_API_KEY
+        st.success("✅ .env 파일에서 API 키 로드됨")
+        st.caption(f"키 끝자리: ...{api_key[-4:]}")
+    else:
+        st.markdown("""
+**.env 파일 설정**
+1. 폴더에 `.env` 파일 생성
+2. 아래 내용 추가:
+   ```
+   KAKAO_API_KEY=your_rest_api_key_here
+   ```
+
+**또는 수동 입력**
+- [카카오 개발자 센터](https://developers.kakao.com)에서 발급
+""")
+        api_key = st.text_input("Kakao REST API 키", type="password", placeholder="여기에 붙여넣기")
+
+    if api_key:
+        HEADERS.update(make_headers(api_key))
+        if not ENV_API_KEY:
+            st.success("✅ 키 입력 완료")
+    else:
+        st.warning("API 키를 입력해주세요")
+
+    st.divider()
+    route_priority = st.radio(
+        "경로 탐색 기준",
+        ["RECOMMEND (추천)", "TIME (최단시간)", "DISTANCE (최단거리)"],
+        index=0,
+    )
+    PRIORITY = route_priority.split(" ")[0]
+
+    st.divider()
+    st.caption("무료 쿼터\n- 로컬 검색: 하루 300,000건\n- 길찾기: 하루 300건 (기본)")
+
+
+# ──────────────────────────────────────────────
+# 메인 화면
+# ──────────────────────────────────────────────
+
+st.title("📍 장소별 거리 · 소요시간 조회")
+st.caption("엑셀 파일의 장소들까지 거리와 소요시간을 계산합니다 (카카오맵 기반)")
+
+# ─ 1. 파일 소스 선택 ─
+st.subheader("1️⃣ 엑셀 파일 선택")
+
+DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data")
+os.makedirs(DATA_DIR, exist_ok=True)
+
+local_files = [f for f in os.listdir(DATA_DIR) if f.endswith((".xlsx", ".xls"))]
+
+source = st.radio("파일 소스", ["📁 data 폴더에서 선택", "📤 파일 직접 업로드"], horizontal=True)
+
+xl = None
+df = None
+
+if source == "📁 data 폴더에서 선택":
+    if not local_files:
+        st.warning(f"`data/` 폴더에 엑셀 파일이 없습니다. (`{DATA_DIR}`)")
+        with st.expander("📋 엑셀 파일 예시 보기"):
+            sample = pd.DataFrame({
+                "번호": [1, 2, 3],
+                "장소명": ["강남초등학교", "서초중학교", "송파고등학교"],
+                "방문시간": ["09:00", "11:00", "14:00"],
+                "담당자": ["홍길동", "김철수", "이영희"],
+                "비고": ["정기방문", "상담", "수업지원"],
+            })
+            st.dataframe(sample, hide_index=True)
+        st.stop()
+
+    selected_file = st.selectbox("data 폴더 내 파일", local_files)
+    file_path = os.path.join(DATA_DIR, selected_file)
+    xl = pd.ExcelFile(file_path)
+else:
+    uploaded = st.file_uploader("엑셀 파일 (.xlsx, .xls)", type=["xlsx", "xls"])
+    if not uploaded:
+        with st.expander("📋 엑셀 파일 예시 보기"):
+            sample = pd.DataFrame({
+                "번호": [1, 2, 3],
+                "장소명": ["강남초등학교", "서초중학교", "송파고등학교"],
+                "방문시간": ["09:00", "11:00", "14:00"],
+                "담당자": ["홍길동", "김철수", "이영희"],
+                "비고": ["정기방문", "상담", "수업지원"],
+            })
+            st.dataframe(sample, hide_index=True)
+        st.stop()
+    xl = pd.ExcelFile(uploaded)
+
+# ─ 2. 시트 & 헤더 설정 ─
+col_left, col_right = st.columns(2)
+with col_left:
+    sheet = st.selectbox("시트 선택", xl.sheet_names)
+with col_right:
+    header_row = st.number_input("헤더 행 (1부터 시작)", min_value=1, value=1, step=1)
+
+if source == "📁 data 폴더에서 선택":
+    df = pd.read_excel(file_path, sheet_name=sheet, header=int(header_row) - 1)
+else:
+    df = pd.read_excel(uploaded, sheet_name=sheet, header=int(header_row) - 1)
+
+st.markdown("**미리보기** (상위 5행)")
+st.dataframe(df.head(), use_container_width=True)
+
+# ─ 3. 열 역할 지정 ─
+st.subheader("2️⃣ 열 역할 지정")
+cols = list(df.columns)
+c1, c2, c3 = st.columns(3)
+with c1:
+    place_col = st.selectbox("📌 장소명 열", cols)
+with c2:
+    time_col = st.selectbox("🕐 시간 열", cols, index=min(1, len(cols)-1))
+with c3:
+    info_cols = st.multiselect("ℹ️ 추가 정보 열 (선택)", [c for c in cols if c not in [place_col, time_col]])
+
+region_prefix = st.text_input(
+    "🗺️ 지역 접두사 (선택, 검색 정확도 향상)",
+    placeholder="예: 서울시 강남구  →  '강남초등학교' 대신 '서울시 강남구 강남초등학교'로 검색",
+)
+
+# ─ 4. 내 위치 ─
+st.subheader("3️⃣ 내 출발 위치")
+my_location = st.text_input("출발 위치 (주소 또는 장소명)", placeholder="예: 서울시청 / 강남역 / 서울 마포구 합정동 428")
+origin_prefix = st.text_input(
+    "🗺️ 출발 위치 지역 접두사 (선택, 검색 정확도 향상)",
+    placeholder="예: 광주시  →  '화정초등학교' 대신 '광주시 화정초등학교'로 검색",
+)
+
+# ─ 5. 실행 ─
+st.subheader("4️⃣ 조회 실행")
+
+btn_disabled = not api_key or not my_location
+if btn_disabled:
+    st.info("API 키와 출발 위치를 입력하면 조회 버튼이 활성화됩니다.")
+
+if st.button("🚀 거리 · 소요시간 계산", disabled=btn_disabled, type="primary", use_container_width=True):
+
+    # 내 위치 좌표 조회
+    with st.spinner("출발 위치 좌표 변환 중..."):
+        origin_query = f"{origin_prefix} {my_location}".strip() if origin_prefix else my_location
+        my_lng, my_lat, my_addr, _ = search_keyword(origin_query)
+        if not my_lng:
+            my_lng, my_lat = search_address(origin_query)
+            if my_lng:
+                my_addr = origin_query
+
+    if not my_lng:
+        st.error("❌ 출발 위치를 찾을 수 없습니다.\n\n**해결 방법:**\n1. 지역 접두사를 추가해보세요 (예: `광주시 화정초등학교`)\n2. 더 구체적인 주소를 입력해보세요 (예: `광주광역시 서구 화정동 123`)")
+        st.stop()
+
+    st.success(f"✅ 출발 위치 확인: **{my_addr or my_location}** (위도 {my_lat:.5f}, 경도 {my_lng:.5f})")
+
+    # 각 장소 처리
+    valid_rows = df[df[place_col].notna()].copy()
+    total = len(valid_rows)
+    results = []
+    progress = st.progress(0, text="조회 시작...")
+
+    for idx, (_, row) in enumerate(valid_rows.iterrows()):
+        place = str(row[place_col]).strip()
+        query = f"{region_prefix} {place}".strip() if region_prefix else place
+        stored_time = row.get(time_col, "")
+        extra = {c: row[c] for c in info_cols}
+
+        # 장소 좌표 검색
+        p_lng, p_lat, p_addr, matched = search_keyword(query)
+        time.sleep(0.1)  # API rate limit 방지
+        if not p_lng:
+            p_lng, p_lat = search_address(query)
+            if p_lng:
+                matched = query
+                p_addr = query
+
+        dist_km, dur_min, note = None, None, ""
+
+        if p_lng:
+            dist_km, dur_min = get_directions(my_lng, my_lat, p_lng, p_lat)
+            time.sleep(0.15)
+            if dist_km is None:
+                # 길찾기 실패 시 직선거리로 폴백
+                dist_km = haversine_km(my_lng, my_lat, p_lng, p_lat)
+                note = "직선거리"
+        else:
+            matched = "❌ 장소 미발견"
+
+        result = {
+            "장소명": place,
+            "검색 결과": matched or "❌ 미발견",
+            "주소": p_addr or "",
+            "저장 시간": stored_time,
+            "거리 (km)": dist_km if dist_km is not None else "-",
+            "소요시간 (분)": dur_min if dur_min is not None else "-",
+            "비고": note,
+        }
+        result.update(extra)
+        results.append(result)
+
+        pct = (idx + 1) / total
+        progress.progress(pct, text=f"({idx+1}/{total}) {place} 조회 중...")
+
+    progress.empty()
+
+    # ─ 결과 출력 ─
+    result_df = pd.DataFrame(results)
+
+    st.subheader("📊 결과")
+
+    # 요약 카드
+    numeric_rows = result_df[result_df["거리 (km)"] != "-"]
+    m1, m2, m3, m4 = st.columns(4)
+    m1.metric("전체 장소", f"{total}곳")
+    m2.metric("조회 성공", f"{len(numeric_rows)}곳")
+    fail_cnt = total - len(numeric_rows)
+    m3.metric("실패/미발견", f"{fail_cnt}곳")
+    if len(numeric_rows) > 0:
+        avg_d = numeric_rows["거리 (km)"].mean()
+        m4.metric("평균 거리", f"{avg_d:.1f} km")
+
+    # 정렬
+    sort_by = st.radio("정렬 기준", ["거리 (km)", "소요시간 (분)", "저장 시간"], horizontal=True)
+    ok_df = result_df[result_df["거리 (km)"] != "-"].copy()
+    fail_df = result_df[result_df["거리 (km)"] == "-"].copy()
+    try:
+        ok_df = ok_df.sort_values(sort_by, ascending=True)
+    except Exception:
+        pass
+    display_df = pd.concat([ok_df, fail_df], ignore_index=True)
+
+    # 컬러 강조: 거리 가까운 순
+    def highlight_dist(val):
+        if val == "-":
+            return "color: #999"
+        try:
+            v = float(val)
+            if v <= 5:
+                return "color: #0a8a0a; font-weight: bold"
+            elif v <= 15:
+                return "color: #e67e00"
+            else:
+                return "color: #cc3300"
+        except Exception:
+            return ""
+
+    try:
+        styled = display_df.style.map(highlight_dist, subset=["거리 (km)"])
+    except AttributeError:
+        styled = display_df.style.applymap(highlight_dist, subset=["거리 (km)"])
+    st.dataframe(styled, use_container_width=True, hide_index=True)
+
+    st.caption("🟢 5km 이내  🟠 5~15km  🔴 15km 초과 | '직선거리' 표시: 길찾기 API 미응답 시 직선거리로 대체")
+
+    # 엑셀 다운로드
+    buf = BytesIO()
+    display_df.to_excel(buf, index=False)
+    buf.seek(0)
+    st.download_button(
+        "⬇️ 결과 엑셀 다운로드",
+        data=buf,
+        file_name="거리_소요시간_결과.xlsx",
+        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    )

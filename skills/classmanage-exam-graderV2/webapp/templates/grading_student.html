@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ student_id }} 채점 상세</title>
+<style>
+:root{--bg:#0f172a;--card:#1e293b;--panel:#111827;--border:#334155;--text:#f1f5f9;--muted:#94a3b8;--green:#22c55e;--red:#ef4444;--yellow:#f59e0b}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:24px}
+a{color:inherit;text-decoration:none}
+.shell{max-width:1200px;margin:0 auto}
+.top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:20px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 16px;border-radius:10px;border:none;background:#334155;color:var(--text);font-size:13px;font-weight:700}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px}
+.img-wrap{margin:12px 0;background:#fff;border-radius:10px;overflow:hidden;border:1px solid var(--border)}
+.img-wrap img{display:block;max-width:100%;height:auto}
+.meta{font-size:12px;color:var(--muted);line-height:1.7}
+.ok{color:var(--green)}.bad{color:var(--red)}.warn{color:#fbbf24}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="top">
+    <div>
+      <h1>{{ student_id }} 채점 상세</h1>
+      <div class="meta">총점 {{ submission.total_score or 0 }} / {{ submission.total_points or 0 }}</div>
+    </div>
+    <a class="btn" href="/grading">← 결과 목록</a>
+  </div>
+
+  <div class="grid">
+    {% for item in submission.items %}
+    <div class="card">
+      <div><strong>{{ item.page }}페이지 {{ item.question_number }}번</strong></div>
+      <div class="img-wrap">
+        <img src="{{ item.student_crop_url }}" alt="crop">
+      </div>
+      <div class="meta">OCR: {{ item.recognized_answer or "-" }}</div>
+      <div class="meta">정답: {{ item.expected_answer or "-" }}</div>
+      <div class="meta">점수: {{ item.points_earned or 0 }} / {{ item.points_possible or 0 }}</div>
+      <div class="meta">
+        {% if item.is_correct %}
+          <span class="ok">정답</span>
+        {% else %}
+          <span class="bad">오답 또는 미채점</span>
+        {% endif %}
+        {% if item.needs_review %}
+          · <span class="warn">검토 필요</span>
+        {% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+</body>
+</html>

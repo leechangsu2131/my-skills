@@ -139,3 +139,50 @@
 2026-04-28 13:03:51,591 [INFO] [regions_loaded] {}
 2026-04-28 13:04:05,823 [INFO] [pipeline_done] {"ok": 9, "fail": 3}
 2026-04-28 13:04:07,118 [INFO] [regions_loaded] {}
+2026-04-28 13:29:14,080 [INFO] [project_opened] {"project": "수학2"}
+2026-04-28 13:29:14,753 [INFO] [regions_loaded] {}
+2026-04-28 13:47:35,717 [INFO] [app_started] {}
+2026-04-28 13:47:43,124 [INFO] [app_started] {}
+2026-04-28 13:47:54,790 [INFO] [app_started] {}
+2026-04-28 13:51:38,334 [INFO] [app_started] {}
+2026-04-28 14:01:08,005 [INFO] [app_started] {}
+2026-04-28 14:01:12,280 [INFO] [app_started] {}
+2026-04-28 14:03:41,883 [INFO] [app_started] {}
+2026-04-28 14:03:48,502 [INFO] [app_started] {}
+2026-04-28 14:04:58,034 [INFO] [app_started] {}
+2026-04-28 14:05:11,161 [INFO] [app_started] {}
+2026-04-28 14:07:54,030 [INFO] [app_started] {}
+2026-04-28 14:07:56,248 [INFO] [project_opened] {"project": "수학2"}
+2026-04-28 14:07:57,026 [INFO] [regions_loaded] {}
+2026-04-28 14:08:20,324 [INFO] [pipeline_done] {"ok": 9, "fail": 3}
+2026-04-28 14:08:21,701 [INFO] [regions_loaded] {}
+2026-04-28 14:08:24,189 [INFO] [page_verified_ok] {"page": 1}
+2026-04-28 14:08:25,042 [INFO] [page_verified_ok] {"page": 2}
+2026-04-28 14:08:25,746 [INFO] [page_verified_ok] {"page": 3}
+2026-04-28 14:08:26,505 [INFO] [page_verified_ok] {"page": 4}
+2026-04-28 14:08:28,553 [INFO] [review_confirmed] {"file": "aligned_학생시험지 3번까지_stu001_p1.png", "boxes": 8}
+2026-04-28 14:08:28,581 [INFO] [review_confirmed] {"file": "aligned_학생시험지 3번까지_stu002_p1.png", "boxes": 8}
+2026-04-28 14:08:28,603 [INFO] [review_confirmed] {"file": "aligned_학생시험지 3번까지_stu003_p1.png", "boxes": 8}
+2026-04-28 14:08:28,627 [INFO] [review_confirmed] {"file": "aligned_학생시험지 3번까지_stu001_p2.png", "boxes": 8}
+2026-04-28 14:08:28,646 [INFO] [review_confirmed] {"file": "aligned_학생시험지 3번까지_stu002_p2.png", "boxes": 8}
+2026-04-28 14:08:28,671 [INFO] [review_confirmed] {"file": "aligned_학생시험지 3번까지_stu003_p2.png", "boxes": 8}
+2026-04-28 14:08:28,691 [INFO] [review_confirmed] {"file": "aligned_학생시험지 3번까지_stu001_p3.png", "boxes": 4}
+2026-04-28 14:08:28,729 [INFO] [review_confirmed] {"file": "aligned_학생시험지 3번까지_stu002_p3.png", "boxes": 4}
+2026-04-28 14:08:28,755 [INFO] [review_confirmed] {"file": "aligned_학생시험지 3번까지_stu003_p3.png", "boxes": 4}
+2026-04-28 14:08:28,779 [INFO] [review_confirmed] {"file": "aligned_학생시험지 3번까지_stu001_p4.png", "boxes": 0}
+2026-04-28 14:08:28,804 [INFO] [review_confirmed] {"file": "aligned_학생시험지 3번까지_stu002_p4.png", "boxes": 0}
+2026-04-28 14:08:28,827 [INFO] [review_confirmed] {"file": "aligned_학생시험지 3번까지_stu003_p4.png", "boxes": 0}
+2026-04-28 14:08:28,830 [INFO] [review_completed] {"saved": 12}
+2026-04-28 14:19:00,547 [INFO] [project_opened] {"project": "수학2"}
+2026-04-28 14:19:01,204 [INFO] [regions_loaded] {}
+2026-04-28 15:53:06,214 [INFO] [app_started] {}
+2026-04-28 15:54:13,689 [INFO] [app_started] {}
+2026-04-28 18:16:45,327 [INFO] [app_started] {}
+2026-04-28 18:17:01,920 [INFO] [app_started] {}
+2026-04-28 18:18:01,545 [INFO] [regions_loaded] {}
+2026-04-28 18:18:11,644 [INFO] [regions_saved] {"count": 20, "answers": 20, "mode": "answers_only"}
+2026-04-28 18:18:11,651 [INFO] [regions_loaded] {}
+2026-04-28 18:20:52,657 [INFO] [app_started] {}
+2026-04-28 18:23:49,976 [INFO] [app_started] {}
+2026-04-28 18:25:04,561 [INFO] [regions_loaded] {}
+2026-04-28 18:25:16,584 [INFO] [regions_loaded] {}

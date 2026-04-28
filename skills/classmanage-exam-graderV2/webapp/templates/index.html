@@ -35,7 +35,7 @@ a{color:inherit}
 .bridge-box{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:16px}
 .prompt-preview{font-family:Consolas,monospace;font-size:11px;background:#07101d;border:1px solid #1e3a5f;border-radius:8px;padding:12px;color:#7dd3fc;margin:10px 0;line-height:1.7;white-space:pre-wrap;word-break:break-word}
 #json-input{width:100%;height:180px;background:#07101d;border:1px solid var(--border);border-radius:8px;padding:12px;color:#86efac;font-family:Consolas,monospace;font-size:12px;resize:vertical}
-#json-status,#editor-save-status,#pipeline-status{font-size:12px;min-height:18px}
+#json-status,#editor-save-status,#pipeline-status,#grading-status{font-size:12px;min-height:18px}
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .editor-shell{display:none}
 .editor-layout{display:flex;gap:12px;align-items:flex-start}
@@ -97,7 +97,12 @@ const currentProject = {{ project|tojson }};
     <div id="json-status" style="margin-top:8px"></div>
     <div class="row" style="margin-top:10px">
       <button class="btn btn-yellow" onclick="doValidateAll()">JSON 검사</button>
-      <button class="btn btn-green" id="save-regions-btn" onclick="doSaveAll()" disabled>regions.json 저장</button>
+      <button class="btn btn-green" id="save-all-btn" onclick="doSaveAll('replace_all')" disabled>전체 저장</button>
+      <button class="btn btn-ghost" id="save-answers-btn" onclick="doSaveAll('answers_only')" disabled>정답만 업데이트</button>
+      <button class="btn btn-ghost" id="save-questions-btn" onclick="doSaveAll('questions_only')" disabled>정답영역만 업데이트</button>
+    </div>
+    <div style="margin-top:8px;font-size:11px;color:var(--muted)">
+      `정답만 업데이트`는 기존 문항 박스를 유지하고 `answers`, `total_points`만 갱신합니다.
     </div>
   </div>
 </div>
@@ -157,6 +162,18 @@ const currentProject = {{ project|tojson }};
   <div class="step-title"><span class="step-num">4</span>전체 오버레이 검수</div>
   <p class="step-desc">정렬 결과를 학생별로 겹쳐 보고, 미세 위치 보정과 페이지별 검수를 진행합니다.</p>
   <a href="/review" class="btn btn-green">전체 오버레이 검수 열기</a>
+</div>
+
+<div class="step">
+  <div class="step-title"><span class="step-num">5</span>OCR 채점 및 결과 확인</div>
+  <p class="step-desc">채점용 crop 생성, OCR 실행, 자동 채점을 순서대로 수행한 뒤 결과 화면에서 학생별 결과를 확인합니다.</p>
+  <div class="row">
+    <button class="btn btn-ghost" onclick="runGradingPrepare()">채점 준비</button>
+    <button class="btn btn-ghost" onclick="runGradingOcr()">OCR 실행</button>
+    <button class="btn btn-green" onclick="runGradingScore()">자동 채점</button>
+    <a href="/grading" class="btn btn-yellow">결과 보기</a>
+    <span id="grading-status"></span>
+  </div>
 </div>
 
 <div style="height:42px"></div>
@@ -341,8 +358,15 @@ function copyPrompt(event) {
 
 function onJsonInput() {
   parsedAllData = null;
-  document.getElementById('save-regions-btn').disabled = true;
+  setSaveButtonsDisabled(true);
   setJsonStatus('', '');
+}
+
+function setSaveButtonsDisabled(disabled) {
+  ['save-all-btn', 'save-answers-btn', 'save-questions-btn'].forEach((id) => {
+    const button = document.getElementById(id);
+    if (button) button.disabled = disabled;
+  });
 }
 
 function extractJson(raw) {
@@ -395,31 +419,33 @@ function doValidateAll() {
   const totalPoints = Number(data.total_points || 0);
 
   parsedAllData = { questions, answers, total_points: totalPoints };
-  document.getElementById('save-regions-btn').disabled = false;
+  setSaveButtonsDisabled(false);
   const answerMsg = answers.length > 0 ? ` · 답지 ${answers.length}문항` : '';
   setJsonStatus(`검사 완료: 총 ${questions.length}문항 (${summary.join(', ')})${answerMsg}`, 'green');
 }
 
-async function doSaveAll() {
+async function doSaveAll(mode) {
   if (!parsedAllData) return;
-  const newPages = new Set(parsedAllData.questions.map((q) => q.page || 1));
-  const others = globalRegions.questions.filter((q) => !newPages.has(q.page || 1));
-  globalRegions.questions = [...others, ...parsedAllData.questions];
-  globalRegions.answers = parsedAllData.answers || [];
-  globalRegions.total_points = parsedAllData.total_points || 0;
-
-  document.getElementById('save-regions-btn').disabled = true;
+  setSaveButtonsDisabled(true);
   setJsonStatus('저장 중...', 'muted');
-  const response = await fetch('/api/regions', {
+  const url = new URL('/api/regions', window.location.origin);
+  url.searchParams.set('mode', mode || 'replace_all');
+  const saveResponse = await fetch(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(globalRegions),
+    body: JSON.stringify({
+      bundle: parsedAllData,
+      raw_text: document.getElementById('json-input').value,
+    }),
   });
-  if (response.ok) {
-    setJsonStatus('regions.json 저장 완료', 'green');
+  const result = await saveResponse.json();
+  if (saveResponse.ok && result.success) {
+    globalRegions = await (await fetch('/api/regions')).json();
+    setJsonStatus(`저장 완료 (${result.mode})`, 'green');
     await loadFileStatus();
   } else {
-    setJsonStatus('regions.json 저장 실패', 'red');
+    setJsonStatus(result.error || 'regions.json 저장 실패', 'red');
+    setSaveButtonsDisabled(false);
   }
 }
 
@@ -510,6 +536,51 @@ async function runPipeline() {
     setStatus('pipeline-status', '서버 통신 오류', 'red');
   } finally {
     button.disabled = false;
+  }
+}
+
+async function runGradingPrepare() {
+  setStatus('grading-status', '채점 준비 중...', 'muted');
+  try {
+    const response = await fetch('/api/grading/prepare', { method: 'POST' });
+    const data = await response.json();
+    if (data.success) {
+      setStatus('grading-status', `준비 완료: 학생 ${data.students}명, crop ${data.student_crops}개`, 'green');
+    } else {
+      setStatus('grading-status', data.error || '채점 준비 실패', 'red');
+    }
+  } catch (error) {
+    setStatus('grading-status', '채점 준비 중 통신 오류', 'red');
+  }
+}
+
+async function runGradingOcr() {
+  setStatus('grading-status', 'OCR 실행 중...', 'muted');
+  try {
+    const response = await fetch('/api/grading/ocr', { method: 'POST' });
+    const data = await response.json();
+    if (data.success) {
+      setStatus('grading-status', `OCR 완료: ${data.updated}명`, 'green');
+    } else {
+      setStatus('grading-status', data.error || 'OCR 실패', 'red');
+    }
+  } catch (error) {
+    setStatus('grading-status', 'OCR 중 통신 오류', 'red');
+  }
+}
+
+async function runGradingScore() {
+  setStatus('grading-status', '자동 채점 중...', 'muted');
+  try {
+    const response = await fetch('/api/grading/score', { method: 'POST' });
+    const data = await response.json();
+    if (data.success) {
+      setStatus('grading-status', `자동 채점 완료: ${data.students}명`, 'green');
+    } else {
+      setStatus('grading-status', data.error || '자동 채점 실패', 'red');
+    }
+  } catch (error) {
+    setStatus('grading-status', '자동 채점 중 통신 오류', 'red');
   }
 }
 

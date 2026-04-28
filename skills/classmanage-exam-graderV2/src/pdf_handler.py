@@ -3,7 +3,7 @@ import fitz  # PyMuPDF
 
 def convert_pdfs_to_images(pdf_dir: str, image_output_dir: str, dpi: int = 300, cycle: int = None) -> int:
     """
-    지정된 디렉토리의 모든 PDF 파일을 읽어와 각 페이지를 고화질 이미지(JPG)로 변환합니다.
+    지정된 디렉토리의 모든 PDF 파일을 읽어와 각 페이지를 고화질 이미지(PNG)로 변환합니다.
     cycle이 주어지면 N장 단위로 학생을 분리하여 파일명을 부여합니다.
     반환값: 변환된 총 페이지(이미지) 수
     """
@@ -36,9 +36,9 @@ def convert_pdfs_to_images(pdf_dir: str, image_output_dir: str, dpi: int = 300, 
                 if cycle is not None and cycle > 0:
                     stu_idx = (page_num // cycle) + 1
                     p_idx = (page_num % cycle) + 1
-                    img_filename = f"{base_name}_stu{stu_idx:03d}_p{p_idx}.jpg"
+                    img_filename = f"{base_name}_stu{stu_idx:03d}_p{p_idx}.png"
                 else:
-                    img_filename = f"{base_name}_page_{page_num + 1:02d}.jpg"
+                    img_filename = f"{base_name}_page_{page_num + 1:02d}.png"
                     
                 img_path = os.path.join(image_output_dir, img_filename)
                 

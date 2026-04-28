@@ -73,8 +73,12 @@ function editorInit(questions, bgImg, canvasId='preview-canvas'){
   _drag = null;
   const cv = document.getElementById(canvasId);
   
-  // ★ 핵심: canvas.width/height를 절대 바꾸지 않는다
-  // 이미 resize() 등이 올바르게 설정해둔 값을 그대로 읽는다
+  // 배경 이미지가 주어지면 캔버스 내부 해상도를 원본과 맞춰 좌표 오차를 방지한다.
+  if (bgImg && bgImg.naturalWidth > 0 && bgImg.naturalHeight > 0) {
+    cv.width = bgImg.naturalWidth;
+    cv.height = bgImg.naturalHeight;
+  }
+
   _cW = cv.width;
   _cH = cv.height;
   
@@ -101,14 +105,20 @@ function editorInit(questions, bgImg, canvasId='preview-canvas'){
 /* ── 모드 전환 ───────────────────────────────────────── */
 function setEditorMode(m){
   _mode = m;
-  document.getElementById('preview-canvas').style.cursor =
-    m==='draw' ? 'crosshair' : 'default';
+  const canvasId = window._currentEditorCanvas || 'preview-canvas';
+  const cv = document.getElementById(canvasId);
+  if (cv) {
+    cv.style.cursor = m === 'draw' ? 'crosshair' : 'default';
+  }
   ['select','draw'].forEach(k=>{
     const b = document.getElementById('mode-'+k+'-btn');
     if(b) b.style.background = k===m ? '#1d4ed8' : '';
   });
-  document.getElementById('mode-label').textContent =
-    m==='draw' ? '드래그로 새 박스를 그리세요' : '클릭=선택 · 드래그=이동 · 모서리=크기조절';
+  const modeLabel = document.getElementById('mode-label');
+  if (modeLabel) {
+    modeLabel.textContent =
+      m==='draw' ? '드래그로 새 박스를 그리세요' : '클릭=선택 · 드래그=이동 · 모서리=크기조절';
+  }
 }
 
 /* ── 좌표 변환 ───────────────────────────────────────── */
@@ -193,7 +203,10 @@ function _onMove(e){
   if(_drag.type === 'draw'){
     _drag.x1 = p.x; _drag.y1 = p.y;
     redraw();
-    const ctx = document.getElementById('preview-canvas').getContext('2d');
+    const cid = window._currentEditorCanvas || 'preview-canvas';
+    const curCanvas = document.getElementById(cid);
+    if (!curCanvas) return;
+    const ctx = curCanvas.getContext('2d');
     const x=Math.min(_drag.x0,_drag.x1), y=Math.min(_drag.y0,_drag.y1);
     const w=Math.abs(_drag.x1-_drag.x0), h=Math.abs(_drag.y1-_drag.y0);
     ctx.strokeStyle='#fbbf24'; ctx.lineWidth=2; ctx.setLineDash([4,3]);
@@ -251,8 +264,10 @@ function deleteSelected(){
 
 /* ── 패널 업데이트 ───────────────────────────────────── */
 function updatePanel(){
-  document.getElementById('del-btn').disabled = (_sel<0);
+  const delBtn = document.getElementById('del-btn');
+  if (delBtn) delBtn.disabled = (_sel<0);
   const panel = document.getElementById('editor-panel');
+  if (!panel) return;
   if(_sel<0){ panel.innerHTML='<span style="color:#64748b">문항을 선택하세요</span>'; return; }
   const q = _qs[_sel]; const b = q.box;
   panel.innerHTML = `

@@ -195,7 +195,7 @@ def refresh_project_metadata(project_dir: Path, touch: bool = False) -> dict:
     data = _load_project_json(project_dir)
 
     template_files = sorted(
-        p.name for p in paths.template_dir.glob("blank_*.jpg") if p.is_file()
+        p.name for p in paths.template_dir.glob("blank_*.png") if p.is_file()
     )
     regions_path = paths.json_dir / "regions.json"
     questions: list[dict] = []

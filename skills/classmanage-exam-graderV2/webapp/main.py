@@ -255,11 +255,11 @@ async def upload_template(file: UploadFile = File(...)):
     paths = _paths()
     try:
         ext = Path(file.filename).suffix.lower()
-        for path in paths.template_dir.glob("blank_*.jpg"):
+        for path in paths.template_dir.glob("blank_*.png"):
             path.unlink()
 
         if ext in IMG_EXT:
-            with open(paths.template_dir / "blank_p1.jpg", "wb") as target:
+            with open(paths.template_dir / "blank_p1.png", "wb") as target:
                 shutil.copyfileobj(file.file, target)
             _elog.log_event("template_uploaded", {"type": "image", "pages": 1})
             refresh_project_metadata(paths.root, touch=True)
@@ -279,7 +279,7 @@ async def upload_template(file: UploadFile = File(...)):
                         matrix=fitz.Matrix(300 / 72, 300 / 72),
                         alpha=False,
                     )
-                    pix.save(str(paths.template_dir / f"blank_p{idx + 1}.jpg"))
+                    pix.save(str(paths.template_dir / f"blank_p{idx + 1}.png"))
                 doc.close()
 
             _elog.log_event("template_uploaded", {"type": "pdf", "pages": pages_count})
@@ -345,7 +345,7 @@ async def upload_students(files: list[UploadFile] = File(...)):
 @app.post("/api/run_pipeline")
 async def run_pipeline(request: Request):
     paths = _paths()
-    templates = list(paths.template_dir.glob("blank_*.jpg"))
+    templates = list(paths.template_dir.glob("blank_*.png"))
     if not templates:
         return {"success": False, "error": "템플릿 시험지를 먼저 업로드하세요."}
 
@@ -381,14 +381,14 @@ async def run_pipeline(request: Request):
 
     ok, fail = 0, 0
     for name in images:
-        match = re.search(r"_p(\d+)\.jpg$", name, re.IGNORECASE)
+        match = re.search(r"_p(\d+)\.png$", name, re.IGNORECASE)
         if not match:
             match = re.search(r"_page_(\d+)", name, re.IGNORECASE)
         page_num = int(match.group(1)) if match else 1
 
-        target_template = paths.template_dir / f"blank_p{page_num}.jpg"
+        target_template = paths.template_dir / f"blank_p{page_num}.png"
         if not target_template.exists():
-            target_template = paths.template_dir / "blank_p1.jpg"
+            target_template = paths.template_dir / "blank_p1.png"
 
         result = align_image(
             str(paths.student_page_dir / name),
@@ -458,7 +458,8 @@ async def serve_template(name: str):
     path = _paths().template_dir / name
     if not path.exists() or not path.name.startswith("blank_"):
         raise HTTPException(status_code=404, detail="Template page not found")
-    return FileResponse(str(path), media_type="image/jpeg")
+    media_type = "image/png" if path.suffix.lower() == ".png" else "image/jpeg"
+    return FileResponse(str(path), media_type=media_type)
 
 
 @app.get("/api/thumbnail")
@@ -596,14 +597,14 @@ async def restore_student_offset(request: Request):
     if not raw_path.exists():
         raise HTTPException(status_code=404, detail="Raw file not found")
 
-    match = re.search(r"_p(\d+)\.jpg$", raw_name, re.IGNORECASE)
+    match = re.search(r"_p(\d+)\.png$", raw_name, re.IGNORECASE)
     if not match:
         match = re.search(r"_page_(\d+)", raw_name, re.IGNORECASE)
     page_num = int(match.group(1)) if match else 1
 
-    target_template = paths.template_dir / f"blank_p{page_num}.jpg"
+    target_template = paths.template_dir / f"blank_p{page_num}.png"
     if not target_template.exists():
-        target_template = paths.template_dir / "blank_p1.jpg"
+        target_template = paths.template_dir / "blank_p1.png"
 
     align_image(str(raw_path), str(target_template), str(aligned_path))
     refresh_project_metadata(paths.root, touch=True)

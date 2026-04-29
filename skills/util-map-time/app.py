@@ -28,10 +28,81 @@ st.set_page_config(page_title="스마트 경로 조회", page_icon="📍", layou
 # ──────────────────────────────────────────────
 st.markdown("""
 <style>
-    [data-testid="stMetricValue"] { font-size: 1.6rem; font-weight: 700; }
-    .stTabs [data-baseweb="tab"] { font-size: 1rem; padding: 10px 20px; }
-    .stTabs [aria-selected="true"] { font-weight: 700; }
-    div[data-testid="column"] { padding: 4px; }
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+    html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
+
+    .stApp {
+        background: linear-gradient(180deg, #fff9e9 0%, #f4eeda 100%);
+    }
+
+    [data-testid="stMetricValue"] { font-size: 1.6rem; font-weight: 700; color: #1e1c10; }
+
+    .stTabs [data-baseweb="tab"] {
+        font-size: 0.95rem;
+        padding: 10px 16px;
+        border-radius: 8px 8px 0 0;
+    }
+    .stTabs [aria-selected="true"] {
+        font-weight: 700;
+        color: #6a5f00;
+        border-bottom: 3px solid #6a5f00;
+    }
+
+    div[data-testid="column"] { padding: 6px; }
+
+    div[data-testid="stForm"] {
+        background: #faf3df;
+        border: 1px solid #e8e2cf;
+        border-radius: 12px;
+        padding: 16px;
+    }
+
+    .stButton>button {
+        border-radius: 9999px !important;
+        font-weight: 600 !important;
+        transition: all 0.2s ease;
+    }
+    .stButton>button:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+
+    .stTextInput>div>div>input, .stTextArea>div>div>textarea {
+        border-radius: 8px !important;
+        border: 1px solid #cdc7aa !important;
+        background: #faf3df !important;
+    }
+    .stTextInput>div>div>input:focus, .stTextArea>div>div>textarea:focus {
+        border-color: #6a5f00 !important;
+        box-shadow: 0 0 0 2px rgba(106,95,0,0.15) !important;
+    }
+
+    .stSelectbox>div>div, .stFileUploader>div>div {
+        border-radius: 8px !important;
+    }
+
+    div[data-testid="stDataFrame"] {
+        border-radius: 12px;
+        border: 1px solid #e8e2cf;
+        overflow: hidden;
+    }
+
+    h2, h3 { color: #1e1c10; }
+    .stCaption { color: #4b4732; }
+
+    .info-box {
+        background: #fee500;
+        border-left: 4px solid #6a5f00;
+        padding: 12px 16px;
+        border-radius: 8px;
+        margin: 8px 0;
+    }
+    .card {
+        background: #ffffff;
+        border: 1px solid #e8e2cf;
+        border-radius: 12px;
+        padding: 16px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        margin-bottom: 12px;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -134,6 +205,33 @@ def test_directions_api():
     return err
 
 
+def get_route_with_waypoint(a_lng, a_lat, x_lng, x_lat, b_lng, b_lat, priority="RECOMMEND") -> tuple:
+    """A → X → B 경유 경로 → (총거리km, 총시간분, 오류문자열)"""
+    url = "https://apis-navi.kakaomobility.com/v1/directions"
+    params = {
+        "origin": f"{a_lng},{a_lat}",
+        "destination": f"{b_lng},{b_lat}",
+        "waypoints": f"{x_lng},{x_lat}",
+        "priority": priority,
+    }
+    try:
+        res = requests.get(url, headers=HEADERS, params=params, timeout=8)
+        if res.status_code in (401, 403):
+            return None, None, (
+                f"길찾기 API 인증 오류 ({res.status_code}) — "
+                f"카카오 개발자 센터 → 내 애플리케이션 → [앱] → 제품 설정 → '카카오맵' 활성화 필요"
+            )
+        if res.status_code != 200:
+            return None, None, f"HTTP {res.status_code}"
+        routes = res.json().get("routes", [])
+        if routes and routes[0].get("result_code") == 0:
+            s = routes[0]["summary"]
+            return round(s["distance"] / 1000, 1), int(s["duration"] / 60), ""
+        return None, None, f"경로 없음 (code={routes[0].get('result_code') if routes else 'N/A'})"
+    except Exception as e:
+        return None, None, str(e)
+
+
 def haversine(lng1, lat1, lng2, lat2) -> float:
     R = 6371
     dlat, dlng = radians(lat2-lat1), radians(lng2-lng1)
@@ -208,12 +306,13 @@ with st.sidebar:
 # ──────────────────────────────────────────────
 
 st.title("📍 스마트 경로 조회")
-st.caption("카카오맵 기반 | 거리·소요시간 계산 · 다중 경로 매트릭스 · 최적 중간지점 탐색")
+st.caption("카카오맵 기반 | 거리·소요시간 계산 · 다중 경로 매트릭스 · 최적 중간지점 탐색 · 경유지 비교")
 
-tab1, tab2, tab3 = st.tabs([
+tab1, tab2, tab3, tab4 = st.tabs([
     "🚗 단일 출발 → 여러 장소",
-    "🔀 여러 출발 → 여러 도착",
-    "📍 최적 중간지점 찾기",
+    "� 여러 출발 → 여러 도착",
+    "📍 최적 중간지점",
+    "🛣️ 경유지 비교 (A→X→B)",
 ])
 
 
@@ -822,4 +921,178 @@ with tab3:
         cand_df.to_excel(buf3, index=False)
         buf3.seek(0)
         st.download_button("⬇️ 결과 엑셀 다운로드", buf3, "중간지점_결과.xlsx",
+                           "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+
+
+# ═══════════════════════════════════════════════
+# TAB 4 : 경유지 비교 (A → X → B)
+# ═══════════════════════════════════════════════
+
+with tab4:
+    st.subheader("🛣️ 경유지 비교 (A → X → B)")
+    st.caption("고정 출발지 A(근무지)와 고정 도착지 B(집) 사이에 경유지 X 후보를 넣었을 때 총 소요시간을 비교합니다.")
+
+    c1, c2 = st.columns(2)
+    with c1:
+        a_loc = st.text_input("🅐 출발지 (근무지)", placeholder="경주 ○○초등학교", key="t4_a")
+        a_prefix = st.text_input("A 지역 접두사 (선택)", placeholder="경주", key="t4_ap")
+    with c2:
+        b_loc = st.text_input("🅑 도착지 (집)", placeholder="경주시 ○○동", key="t4_b")
+        b_prefix = st.text_input("B 지역 접두사 (선택)", placeholder="경주", key="t4_bp")
+
+    st.divider()
+    t4_mode = st.radio("경유지 입력 방식", ["📝 직접 입력", "📁 엑셀 파일"], horizontal=True, key="t4_mode")
+
+    x_raw = ""
+    x_prefix = ""
+
+    if t4_mode == "📝 직접 입력":
+        x_raw = st.text_area("🔀 경유지 X 목록 (한 줄에 하나씩)", placeholder="경주교육지원청\n경주시청\n경주경찰서", height=140, key="t4_x")
+        x_prefix = st.text_input("경유지 지역 접두사 (선택)", placeholder="경주", key="t4_xp")
+    else:
+        src_t4 = st.radio("파일 소스", ["📁 data 폴더", "📤 직접 업로드"], horizontal=True, key="t4_src")
+        xl_t4, file_src_t4 = None, None
+        if src_t4 == "📁 data 폴더":
+            local_files_t4 = [f for f in os.listdir(DATA_DIR) if f.endswith((".xlsx", ".xls"))]
+            if local_files_t4:
+                sel_t4 = st.selectbox("파일 선택", local_files_t4, key="t4_sel")
+                file_src_t4 = os.path.join(DATA_DIR, sel_t4)
+                xl_t4 = pd.ExcelFile(file_src_t4)
+            else:
+                st.warning("data/ 폴더에 엑셀 파일이 없습니다.")
+        else:
+            up_t4 = st.file_uploader("엑셀 업로드", type=["xlsx", "xls"], key="t4_up")
+            if up_t4:
+                file_src_t4 = up_t4
+                xl_t4 = pd.ExcelFile(up_t4)
+
+        if xl_t4:
+            c1, c2 = st.columns(2)
+            with c1: sheet_t4 = st.selectbox("시트", xl_t4.sheet_names, key="t4_sh")
+            with c2: hrow_t4 = st.number_input("헤더 행", 1, value=1, key="t4_hr")
+            df_t4 = pd.read_excel(file_src_t4, sheet_name=sheet_t4, header=int(hrow_t4) - 1)
+            st.dataframe(df_t4.head(3), use_container_width=True)
+            cols_t4 = list(df_t4.columns)
+            x_col = st.selectbox("🔀 경유지 열", cols_t4, key="t4_xc")
+            x_prefix = st.text_input("경유지 지역 접두사", placeholder="경주", key="t4_xp2")
+            x_raw = "\n".join(df_t4[x_col].dropna().astype(str).tolist())
+            st.caption(f"경유지 {len(df_t4[x_col].dropna())}곳 로드됨")
+
+    if st.button("🚀 경유지별 소요시간 계산", type="primary", use_container_width=True, key="t4_btn",
+                 disabled=not api_key or not a_loc or not b_loc or not x_raw.strip()):
+
+        with st.spinner("출발지/도착지 조회 중..."):
+            a_lng, a_lat, a_addr, a_matched = search_place(f"{a_prefix} {a_loc}".strip())
+            if not a_lng:
+                st.error("출발지(A)를 찾을 수 없습니다.")
+                st.stop()
+            b_lng, b_lat, b_addr, b_matched = search_place(f"{b_prefix} {b_loc}".strip())
+            if not b_lng:
+                st.error("도착지(B)를 찾을 수 없습니다.")
+                st.stop()
+            st.success(f"✅ A: {a_matched or a_loc} | B: {b_matched or b_loc}")
+
+            direct_dist, direct_time, direct_err = get_route(a_lng, a_lat, b_lng, b_lat, priority)
+            if direct_err:
+                st.warning(f"⚠️ A→B 직행 경로 오류: {direct_err}")
+                direct_time = None
+
+        x_list = [x.strip() for x in x_raw.strip().splitlines() if x.strip()]
+        st.info(f"경유지 {len(x_list)}곳 계산 중... (API 예상 소모: {len(x_list)*2+1}회)")
+
+        results4 = []
+        prog4 = st.progress(0, "계산 중...")
+
+        for i, x_name in enumerate(x_list):
+            q = f"{x_prefix} {x_name}".strip() if x_prefix else x_name
+            x_lng, x_lat, x_addr, x_matched = search_place(q)
+            time.sleep(0.1)
+
+            if not x_lng:
+                results4.append({
+                    "경유지(X)": x_name,
+                    "주소": "❌ 미발견",
+                    "A→X 거리(km)": "-",
+                    "A→X 시간(분)": "-",
+                    "X→B 거리(km)": "-",
+                    "X→B 시간(분)": "-",
+                    "총 거리(km)": "-",
+                    "총 시간(분)": "-",
+                    "직행 대비 +분": "-",
+                    "비고": "",
+                    "_lng": None,
+                    "_lat": None,
+                })
+                continue
+
+            ax_dist, ax_time, ax_err = get_route(a_lng, a_lat, x_lng, x_lat, priority)
+            time.sleep(0.15)
+            xb_dist, xb_time, xb_err = get_route(x_lng, x_lat, b_lng, b_lat, priority)
+            time.sleep(0.15)
+
+            if ax_err or xb_err:
+                ax_dist_fb = haversine(a_lng, a_lat, x_lng, x_lat)
+                xb_dist_fb = haversine(x_lng, x_lat, b_lng, b_lat)
+                total_dist = round(ax_dist_fb + xb_dist_fb, 1)
+                total_time = None
+                note = "직선거리"
+            else:
+                total_dist = round((ax_dist or 0) + (xb_dist or 0), 1)
+                total_time = (ax_time or 0) + (xb_time or 0)
+                note = ""
+
+            if direct_time is not None and total_time is not None:
+                extra = total_time - direct_time
+                extra_str = f"+{extra}분" if extra > 0 else f"{extra}분"
+            else:
+                extra_str = "-"
+
+            results4.append({
+                "경유지(X)": x_name,
+                "주소": x_addr or "",
+                "A→X 거리(km)": ax_dist if ax_dist is not None else "-",
+                "A→X 시간(분)": ax_time if ax_time is not None else "-",
+                "X→B 거리(km)": xb_dist if xb_dist is not None else "-",
+                "X→B 시간(분)": xb_time if xb_time is not None else "-",
+                "총 거리(km)": total_dist if total_dist is not None else "-",
+                "총 시간(분)": total_time if total_time is not None else "-",
+                "직행 대비 +분": extra_str,
+                "비고": note,
+                "_lng": x_lng,
+                "_lat": x_lat,
+            })
+            prog4.progress((i + 1) / len(x_list), f"{x_name} 완료...")
+
+        prog4.empty()
+        rdf4 = pd.DataFrame(results4)
+        st.markdown("### 결과 요약")
+        st.dataframe(rdf4[[c for c in rdf4.columns if not c.startswith("_")]], use_container_width=True)
+
+        if HAS_FOLIUM and any(rdf4["_lng"].notna()):
+            m4 = folium.Map(location=[rdf4["_lat"].mean(), rdf4["_lng"].mean()], zoom_start=12)
+            folium.Marker([a_lat, a_lng], popup=f"A (근무지)<br>{a_matched or a_loc}",
+                          icon=folium.Icon(color="red", icon="home")).add_to(m4)
+            folium.Marker([b_lat, b_lng], popup=f"B (집)<br>{b_matched or b_loc}",
+                          icon=folium.Icon(color="orange", icon="home")).add_to(m4)
+
+            x_colors = ["blue", "green", "purple", "darkred", "cadetblue",
+                        "darkblue", "pink", "gray", "lightred", "lightblue"]
+            for idx, row in rdf4.iterrows():
+                if pd.notna(row["_lng"]):
+                    color = x_colors[idx % len(x_colors)]
+                    popup = f"{row['경유지(X)']}<br>총 {row['총 시간(분)']}분"
+                    folium.Marker([row["_lat"], row["_lng"]], popup=popup,
+                                  icon=folium.Icon(color=color, icon="star")).add_to(m4)
+                    folium.PolyLine([[a_lat, a_lng], [row["_lat"], row["_lng"]]],
+                                    color=color, weight=2.5, opacity=0.6).add_to(m4)
+                    folium.PolyLine([[row["_lat"], row["_lng"]], [b_lat, b_lng]],
+                                    color=color, weight=2.5, opacity=0.6).add_to(m4)
+
+            st_folium(m4, use_container_width=True, height=500, returned_objects=[], key="tab4_map")
+
+        buf4 = BytesIO()
+        out_df = rdf4[[c for c in rdf4.columns if not c.startswith("_")]]
+        out_df.to_excel(buf4, index=False)
+        buf4.seek(0)
+        st.download_button("⬇️ 결과 엑셀 다운로드", buf4, "경유지비교_결과.xlsx",
                            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")

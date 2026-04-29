@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Waypoint Comparison</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed-dim": "#bdc2ff",
+                        "primary-fixed-dim": "#dec800",
+                        "surface-container": "#f4eeda",
+                        "on-error-container": "#93000a",
+                        "primary-container": "#fee500",
+                        "error": "#ba1a1a",
+                        "inverse-surface": "#333123",
+                        "surface-container-low": "#faf3df",
+                        "surface-container-high": "#eee8d4",
+                        "on-tertiary-container": "#636565",
+                        "outline-variant": "#cdc7aa",
+                        "tertiary": "#5d5f5f",
+                        "surface-dim": "#e0dac7",
+                        "on-background": "#1e1c10",
+                        "on-error": "#ffffff",
+                        "inverse-primary": "#dec800",
+                        "on-surface-variant": "#4b4732",
+                        "tertiary-container": "#e3e3e3",
+                        "on-secondary-fixed-variant": "#343d96",
+                        "tertiary-fixed-dim": "#c6c6c7",
+                        "secondary": "#4c56af",
+                        "secondary-container": "#959efd",
+                        "surface": "#fff9e9",
+                        "background": "#fff9e9",
+                        "tertiary-fixed": "#e2e2e2",
+                        "primary-fixed": "#fde400",
+                        "surface-tint": "#6a5f00",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-variant": "#e8e2cf",
+                        "on-tertiary": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "outline": "#7c775f",
+                        "on-surface": "#1e1c10",
+                        "error-container": "#ffdad6",
+                        "on-secondary": "#ffffff",
+                        "on-primary-fixed-variant": "#504700",
+                        "secondary-fixed": "#e0e0ff",
+                        "on-tertiary-fixed-variant": "#454747",
+                        "on-primary-fixed": "#201c00",
+                        "on-secondary-container": "#27308a",
+                        "surface-container-highest": "#e8e2cf",
+                        "inverse-on-surface": "#f7f1dd",
+                        "surface-bright": "#fff9e9",
+                        "on-secondary-fixed": "#000767",
+                        "primary": "#6a5f00",
+                        "on-tertiary-fixed": "#1a1c1c",
+                        "on-primary-container": "#716600"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-mobile": "16px",
+                        "xl": "32px",
+                        "gutter": "12px",
+                        "lg": "24px",
+                        "md": "16px",
+                        "base": "4px",
+                        "xs": "4px",
+                        "sm": "8px"
+                    },
+                    "fontFamily": {
+                        "title-sm": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "label-xs": ["Inter"],
+                        "body-md": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "data-tabular": ["Inter"]
+                    },
+                    "fontSize": {
+                        "title-sm": ["18px", {"lineHeight": "24px", "fontWeight": "600"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "label-xs": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "display-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "data-tabular": ["14px", {"lineHeight": "20px", "fontWeight": "500"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .fill-icon {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background font-body-md antialiased min-h-screen flex flex-col pb-24 md:pb-0">
+<!-- TopAppBar -->
+<header class="bg-white/95 dark:bg-slate-900/95 backdrop-blur-md text-slate-900 dark:text-slate-50 font-['Inter'] font-bold text-lg tracking-tight docked full-width top-0 border-b border-slate-200 dark:border-slate-800 shadow-none flex justify-between items-center w-full px-4 h-14 sticky z-40 md:hidden">
+<button class="text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors duration-200 active:opacity-70 p-2 rounded-full">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<span class="text-blue-900 dark:text-yellow-400 font-black tracking-tighter">Route Analysis</span>
+<button class="text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors duration-200 active:opacity-70 p-2 rounded-full">
+<span class="material-symbols-outlined" data-icon="vpn_key">vpn_key</span>
+</button>
+</header>
+<!-- Web Top Nav (Hidden on Mobile) -->
+<header class="hidden md:flex bg-surface text-on-surface border-b border-outline-variant h-16 items-center px-lg sticky top-0 z-40 w-full justify-between">
+<div class="flex items-center gap-md">
+<span class="text-primary font-title-sm">Route Analysis</span>
+</div>
+<nav class="flex gap-lg">
+<a class="text-on-surface-variant font-body-md hover:text-primary transition-colors flex items-center gap-xs" href="#">
+<span class="material-symbols-outlined text-[20px]">directions</span>
+                Routes
+            </a>
+<a class="text-on-surface-variant font-body-md hover:text-primary transition-colors flex items-center gap-xs" href="#">
+<span class="material-symbols-outlined text-[20px]">grid_view</span>
+                Matrix
+            </a>
+<a class="text-on-surface-variant font-body-md hover:text-primary transition-colors flex items-center gap-xs" href="#">
+<span class="material-symbols-outlined text-[20px]">location_searching</span>
+                Midpoint
+            </a>
+<a class="text-primary font-title-sm border-b-2 border-primary flex items-center gap-xs pb-1" href="#">
+<span class="material-symbols-outlined text-[20px]">alt_route</span>
+                Compare
+            </a>
+</nav>
+<div class="flex items-center gap-sm">
+<button class="p-2 text-on-surface-variant hover:bg-surface-container rounded-full transition-colors">
+<span class="material-symbols-outlined">settings</span>
+</button>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow flex flex-col items-center w-full max-w-7xl mx-auto px-margin-mobile md:px-lg py-lg gap-xl">
+<!-- Header Section -->
+<div class="w-full">
+<h1 class="font-headline-md text-headline-md text-on-background mb-xs">Waypoint Compare</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">Analyze total routing time (A → X → B) against direct travel.</p>
+</div>
+<!-- Input Grid -->
+<div class="w-full grid grid-cols-1 md:grid-cols-2 gap-md">
+<!-- Origin / Dest Card -->
+<div class="bg-surface-container-lowest rounded-lg border border-outline-variant p-md flex flex-col gap-sm">
+<div class="flex items-center gap-xs text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">trip_origin</span>
+<span class="font-label-xs text-label-xs uppercase">Primary Route</span>
+</div>
+<div class="relative mt-xs">
+<div class="absolute left-4 top-0 bottom-0 w-[2px] bg-outline-variant z-0 mt-6 mb-6"></div>
+<div class="relative z-10 flex items-center gap-md mb-sm">
+<div class="w-2 h-2 rounded-full bg-primary ring-4 ring-surface-container-lowest flex-shrink-0 ml-3"></div>
+<div class="flex-grow">
+<label class="block font-label-xs text-label-xs text-on-surface-variant mb-1">Start Point A</label>
+<input class="w-full bg-surface-container-lowest border-b-2 border-outline-variant focus:border-primary focus:ring-0 px-0 py-1 font-body-md text-on-background transition-colors placeholder-on-surface-variant" placeholder="Enter origin..." type="text" value="San Francisco Distribution Center"/>
+</div>
+</div>
+<div class="relative z-10 flex items-center gap-md">
+<div class="w-2 h-2 rounded-full bg-error ring-4 ring-surface-container-lowest flex-shrink-0 ml-3"></div>
+<div class="flex-grow">
+<label class="block font-label-xs text-label-xs text-on-surface-variant mb-1">End Point B</label>
+<input class="w-full bg-surface-container-lowest border-b-2 border-outline-variant focus:border-primary focus:ring-0 px-0 py-1 font-body-md text-on-background transition-colors placeholder-on-surface-variant" placeholder="Enter destination..." type="text" value="Los Angeles Regional Hub"/>
+</div>
+</div>
+</div>
+<div class="mt-sm flex justify-between items-center bg-surface-container p-sm rounded-DEFAULT">
+<span class="font-body-md text-on-surface-variant">Direct Estimate:</span>
+<span class="font-data-tabular text-data-tabular text-on-background">5h 45m</span>
+</div>
+</div>
+<!-- Candidate Waypoints Card -->
+<div class="bg-surface-container-lowest rounded-lg border border-outline-variant p-md flex flex-col">
+<div class="flex justify-between items-center mb-md">
+<div class="flex items-center gap-xs text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">add_location_alt</span>
+<span class="font-label-xs text-label-xs uppercase">Candidate Waypoints (X)</span>
+</div>
+<button class="bg-primary text-on-primary rounded-DEFAULT p-1 hover:bg-surface-tint transition-colors">
+<span class="material-symbols-outlined text-[20px]">add</span>
+</button>
+</div>
+<div class="flex flex-col gap-xs overflow-y-auto max-h-[180px] pr-2">
+<!-- Waypoint Item -->
+<div class="flex justify-between items-center bg-surface p-sm rounded-DEFAULT border border-outline-variant">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-outline text-[20px]">location_on</span>
+<span class="font-body-md text-on-background">San Jose Facility</span>
+</div>
+<button class="text-on-surface-variant hover:text-error transition-colors">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<!-- Waypoint Item -->
+<div class="flex justify-between items-center bg-surface p-sm rounded-DEFAULT border border-outline-variant">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-outline text-[20px]">location_on</span>
+<span class="font-body-md text-on-background">Fresno Depot</span>
+</div>
+<button class="text-on-surface-variant hover:text-error transition-colors">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<!-- Waypoint Item -->
+<div class="flex justify-between items-center bg-surface p-sm rounded-DEFAULT border border-outline-variant">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-outline text-[20px]">location_on</span>
+<span class="font-body-md text-on-background">Bakersfield Stop</span>
+</div>
+<button class="text-on-surface-variant hover:text-error transition-colors">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Data Table Section -->
+<div class="w-full bg-surface-container-lowest rounded-lg border border-outline-variant overflow-hidden">
+<div class="p-md border-b border-outline-variant bg-surface-container-low flex justify-between items-center">
+<h2 class="font-title-sm text-title-sm text-on-background">Impact Analysis</h2>
+<button class="flex items-center gap-xs text-primary font-label-xs text-label-xs uppercase hover:text-surface-tint transition-colors">
+<span class="material-symbols-outlined text-[16px]">download</span> Export
+                </button>
+</div>
+<div class="overflow-x-auto w-full">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="border-b border-outline-variant bg-surface">
+<th class="p-md font-label-xs text-label-xs text-on-surface-variant uppercase tracking-wider">Waypoint (X)</th>
+<th class="p-md font-label-xs text-label-xs text-on-surface-variant uppercase tracking-wider">Leg 1 (A→X)</th>
+<th class="p-md font-label-xs text-label-xs text-on-surface-variant uppercase tracking-wider">Leg 2 (X→B)</th>
+<th class="p-md font-label-xs text-label-xs text-on-surface-variant uppercase tracking-wider">Total Time</th>
+<th class="p-md font-label-xs text-label-xs text-on-surface-variant uppercase tracking-wider text-right">+ Mins vs Direct</th>
+</tr>
+</thead>
+<tbody class="font-data-tabular text-data-tabular">
+<tr class="border-b border-surface-variant hover:bg-surface-container-low transition-colors">
+<td class="p-md font-body-md text-on-background flex items-center gap-xs">
+<div class="w-1 h-4 bg-primary-container rounded-full"></div>
+                                San Jose Facility
+                            </td>
+<td class="p-md text-on-surface-variant">1h 10m</td>
+<td class="p-md text-on-surface-variant">5h 05m</td>
+<td class="p-md text-on-background font-medium">6h 15m</td>
+<td class="p-md text-right">
+<span class="bg-surface-container px-2 py-1 rounded-DEFAULT text-on-background">+30m</span>
+</td>
+</tr>
+<tr class="border-b border-surface-variant hover:bg-surface-container-low transition-colors">
+<td class="p-md font-body-md text-on-background flex items-center gap-xs">
+<div class="w-1 h-4 bg-secondary-container rounded-full"></div>
+                                Fresno Depot
+                            </td>
+<td class="p-md text-on-surface-variant">2h 45m</td>
+<td class="p-md text-on-surface-variant">3h 30m</td>
+<td class="p-md text-on-background font-medium">6h 15m</td>
+<td class="p-md text-right">
+<span class="bg-surface-container px-2 py-1 rounded-DEFAULT text-on-background">+30m</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="p-md font-body-md text-on-background flex items-center gap-xs">
+<div class="w-1 h-4 bg-error-container rounded-full"></div>
+                                Bakersfield Stop
+                            </td>
+<td class="p-md text-on-surface-variant">4h 20m</td>
+<td class="p-md text-on-surface-variant">1h 55m</td>
+<td class="p-md text-on-background font-medium">6h 15m</td>
+<td class="p-md text-right">
+<span class="bg-surface-container px-2 py-1 rounded-DEFAULT text-on-background">+30m</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl font-['Inter'] text-[10px] font-semibold uppercase tracking-wider fixed bottom-0 w-full z-50 border-t border-slate-200 dark:border-slate-800 shadow-[0_-4px_12px_rgba(0,0,0,0.05)] fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-safe h-16 md:hidden">
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 pt-2 pb-1 hover:text-blue-700 dark:hover:text-yellow-200 scale-95 active:scale-90 transition-transform duration-150 w-full" href="#">
+<span class="material-symbols-outlined mb-1">directions</span>
+            Routes
+        </a>
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 pt-2 pb-1 hover:text-blue-700 dark:hover:text-yellow-200 scale-95 active:scale-90 transition-transform duration-150 w-full" href="#">
+<span class="material-symbols-outlined mb-1">grid_view</span>
+            Matrix
+        </a>
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 pt-2 pb-1 hover:text-blue-700 dark:hover:text-yellow-200 scale-95 active:scale-90 transition-transform duration-150 w-full" href="#">
+<span class="material-symbols-outlined mb-1">location_searching</span>
+            Midpoint
+        </a>
+<a class="flex flex-col items-center justify-center text-blue-900 dark:text-yellow-400 border-t-2 border-yellow-400 dark:border-yellow-400 pt-2 pb-1 hover:text-blue-700 dark:hover:text-yellow-200 scale-95 active:scale-90 transition-transform duration-150 w-full" href="#">
+<span class="material-symbols-outlined mb-1 fill-icon">alt_route</span>
+            Compare
+        </a>
+</nav>
+</body></html>

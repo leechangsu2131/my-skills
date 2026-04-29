@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>스마트 경로 조회</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=Noto+Sans+KR:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+:root {
+  --bg: #fff9e9;
+  --surface: #ffffff;
+  --surface-low: #faf3df;
+  --surface-mid: #f4eeda;
+  --border: #cdc7aa;
+  --primary: #1a237e;
+  --primary-lt: #e0e0ff;
+  --primary-dk: #111858;
+  --kakao: #fee500;
+  --kakao-dim: #dec800;
+  --accent: #6a5f00;
+  --success: #16a34a;
+  --danger: #dc2626;
+  --warn: #d97706;
+  --text: #1e1c10;
+  --muted: #4b4732;
+  --light: #7c775f;
+  --r: 12px;
+  --shadow: 0 4px 12px rgba(0,0,0,.04);
+  --shadow-lg: 0 4px 14px rgba(0,0,0,.1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter','Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+.material-symbols-outlined{font-family:'Material Symbols Outlined';font-variation-settings:'FILL' 0,'wght' 450,'GRAD' 0,'opsz' 24;font-size:21px;line-height:1}
+
+/* ── HEADER ── */
+.header{background:rgba(255,255,255,.94);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);padding:0 28px;display:flex;align-items:center;gap:14px;height:58px;position:sticky;top:0;z-index:200}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-icon{width:34px;height:34px;background:var(--kakao);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--primary);box-shadow:0 0 0 1px rgba(106,95,0,.18) inset}
+.logo h1{font-size:1.05rem;font-weight:800;color:var(--primary)}
+.logo span{font-size:.75rem;color:var(--light);font-weight:400;margin-left:2px}
+.header-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+
+/* ── API PANEL ── */
+.api-panel{background:var(--surface-low);border-bottom:1px solid var(--border);padding:14px 28px;display:none}
+.api-panel.open{display:block}
+.api-row{display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap}
+.api-row .fg{display:flex;flex-direction:column;gap:4px}
+.api-row label{font-size:.78rem;color:var(--muted);font-weight:500}
+.api-row input{padding:8px 12px;border:1px solid var(--border);border-radius:7px;font-size:.88rem;width:340px;font-family:inherit;background:#fff}
+.api-setup{font-size:.78rem;color:var(--muted);margin-top:10px;line-height:1.8}
+.api-setup code{background:var(--surface-mid);padding:1px 6px;border-radius:4px;font-family:'DM Mono',monospace;font-size:.82rem}
+.api-setup a{color:var(--primary)}
+.scope-panel{background:var(--surface);border-bottom:1px solid var(--border);padding:12px 28px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.scope-title{font-size:.78rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.scope-panel select{width:auto;min-width:160px;padding:7px 28px 7px 10px;background:var(--surface-low)}
+.scope-summary{font-size:.8rem;color:var(--muted)}
+.quick-locs{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+
+/* ── TABS ── */
+.tabs{background:rgba(255,255,255,.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);display:flex;padding:0 20px;overflow-x:auto;gap:2px;position:sticky;top:58px;z-index:190}
+.tab-btn{padding:13px 18px;border:none;background:none;font-family:inherit;font-size:.86rem;color:#8c98ad;border-top:3px solid transparent;border-bottom:3px solid transparent;cursor:pointer;white-space:nowrap;transition:.2s;font-weight:700;display:inline-flex;align-items:center;gap:7px}
+.tab-btn:hover{color:var(--primary)}
+.tab-btn.active{color:var(--primary);border-bottom-color:var(--kakao)}
+.tab-icon{font-size:20px}
+.tab-label{display:inline}
+
+/* ── LAYOUT ── */
+.content{max-width:1160px;margin:0 auto;padding:24px 20px 36px}
+.tab-panel{display:none}.tab-panel.active{display:block}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:720px){.grid2{grid-template-columns:1fr}}
+
+/* ── CARD ── */
+.card{background:var(--surface);border-radius:16px;padding:20px 22px;box-shadow:var(--shadow);margin-bottom:16px;border:1px solid var(--border);position:relative;overflow:hidden}
+.card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--kakao)}
+.card:nth-of-type(even)::before{background:#959efd}
+.card-title{font-size:1rem;font-weight:800;margin-bottom:14px;display:flex;align-items:center;gap:7px;color:var(--text)}
+.section-intro{font-size:.82rem;color:var(--muted);margin-bottom:14px;line-height:1.7}
+
+/* ── FORM ── */
+.form-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.fg{display:flex;flex-direction:column;gap:4px;flex:1;min-width:180px}
+.fg label{font-size:.78rem;color:var(--muted);font-weight:600;letter-spacing:.3px;text-transform:uppercase}
+input[type=text],input[type=number],input[type=password],textarea,select{padding:10px 12px;border:1px solid var(--border);border-bottom:2px solid var(--border);border-radius:8px;font-size:.9rem;font-family:inherit;width:100%;transition:.18s;background:var(--surface-low);color:var(--text)}
+input:focus,textarea:focus,select:focus{outline:none;border-color:var(--border);border-bottom-color:var(--kakao);box-shadow:none;background:#fff}
+textarea{resize:vertical;line-height:1.6}
+.file-label{display:inline-flex;align-items:center;gap:7px;padding:10px 15px;background:var(--surface-low);border:1.5px dashed var(--border);border-radius:12px;cursor:pointer;font-size:.85rem;color:var(--muted);transition:.18s;font-weight:700}
+.file-label:hover{border-color:var(--kakao-dim);color:var(--primary);background:#fff8cc}
+input[type=file]{display:none}
+
+/* ── BUTTONS ── */
+.btn{padding:9px 18px;border:none;border-radius:8px;font-family:inherit;font-size:.88rem;font-weight:600;cursor:pointer;transition:.18s;display:inline-flex;align-items:center;gap:7px;letter-spacing:-.1px}
+.btn-primary{background:var(--kakao);color:#201c00}
+.btn-primary:hover{background:var(--kakao-dim);transform:translateY(-1px);box-shadow:var(--shadow-lg)}
+.btn-primary:disabled{background:var(--border);color:var(--light);cursor:not-allowed;transform:none;box-shadow:none}
+.btn-sm{padding:6px 13px;font-size:.8rem}
+.btn-ghost{background:transparent;color:var(--primary);border:1px solid var(--border)}
+.btn-ghost:hover{background:var(--bg)}
+.btn-success{background:var(--success);color:#fff}
+.btn-full{width:100%;justify-content:center;padding:12px}
+.btn-row{display:flex;gap:8px;align-items:center;justify-content:flex-end}
+
+/* ── PROGRESS ── */
+.prog-wrap{margin-top:12px;display:none}
+.prog-track{background:var(--surface-mid);border-radius:99px;height:6px;overflow:hidden}
+.prog-bar{height:100%;background:linear-gradient(90deg,var(--kakao),var(--primary));border-radius:99px;transition:width .3s;width:0}
+.prog-label{font-size:.78rem;color:var(--muted);margin-top:5px}
+
+/* ── TABLE ── */
+.tbl-wrap{overflow-x:auto;border-radius:8px;border:1px solid var(--border)}
+table{width:100%;border-collapse:collapse;font-size:.82rem}
+thead th{background:var(--surface-low);padding:10px 12px;text-align:left;font-weight:800;border-bottom:1px solid var(--border);white-space:nowrap;font-size:.76rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+tbody td{padding:9px 12px;border-bottom:1px solid #f1f4f9}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover{background:#fafbff}
+tbody tr.best-row{background:#fffde7}
+tbody tr.best-row td{font-weight:600}
+.near{color:var(--success);font-weight:700}
+.mid{color:var(--warn)}
+.far{color:var(--danger)}
+.mono{font-family:'DM Mono',monospace}
+
+/* ── METRICS ── */
+.metrics{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+.metric{background:var(--surface-low);border-radius:12px;padding:12px 16px;flex:1;min-width:110px;border:1px solid var(--border)}
+.metric-lbl{font-size:.72rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.4px;margin-bottom:5px}
+.metric-val{font-size:1.45rem;font-weight:800;color:var(--primary);font-family:'DM Mono',monospace}
+
+/* ── ALERTS ── */
+.alert{padding:11px 14px;border-radius:8px;font-size:.82rem;margin-bottom:12px;line-height:1.6}
+.alert-info{background:var(--surface-low);color:var(--primary);border-left:4px solid var(--kakao)}
+.alert-warn{background:#fffbeb;color:#78350f;border-left:3px solid var(--accent)}
+.alert-success{background:#f0fdf4;color:#14532d;border-left:3px solid var(--success)}
+.alert-error{background:#fef2f2;color:#7f1d1d;border-left:3px solid var(--danger)}
+
+/* ── BEST CARD ── */
+.best-card{border-radius:var(--r);padding:20px 22px;margin-bottom:16px}
+.best-card-a{background:linear-gradient(135deg,#fffbeb,#fef9ec);border:2px solid var(--accent)}
+.best-card-b{background:linear-gradient(135deg,#f0fdf4,#ecfdf5);border:2px solid var(--success)}
+
+/* ── MAP ── */
+.map-box{border-radius:10px;overflow:hidden;border:1px solid var(--border)}
+
+/* ── RADIO/CHECK ── */
+.radio-row{display:flex;gap:16px;flex-wrap:wrap}
+.radio-row label{display:flex;align-items:center;gap:7px;cursor:pointer;font-size:.88rem;font-weight:500}
+
+/* ── DIVIDER ── */
+hr{border:none;border-top:1px solid var(--border);margin:16px 0}
+
+/* ── SPINNER ── */
+.spin{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── PREVIEW TABLE ── */
+.preview-tbl{overflow-x:auto;max-height:100px;border-radius:6px;border:1px solid var(--border);margin-top:8px;font-size:.78rem}
+.preview-tbl table{border-collapse:collapse;min-width:100%}
+.preview-tbl td,.preview-tbl th{padding:4px 9px;border:1px solid #f1f4f9;white-space:nowrap}
+.preview-tbl thead th{background:var(--bg);font-weight:600}
+
+/* ── TAG ── */
+.tag{display:inline-block;padding:2px 9px;border-radius:99px;font-size:.72rem;font-weight:600}
+.tag-blue{background:var(--primary-lt);color:var(--primary)}
+.tag-green{background:#dcfce7;color:var(--success)}
+.tag-gray{background:var(--bg);color:var(--muted)}
+@media(max-width:720px){
+  body{padding-bottom:84px}
+  .header{height:56px;padding:0 18px}
+  .logo h1{font-size:1rem}
+  .logo span{display:none}
+  .header-right .btn{padding:7px 10px;font-size:0}
+  .header-right .btn::after{content:"API";font-size:.78rem}
+  .tabs{position:fixed;left:0;right:0;bottom:0;top:auto;height:76px;border-top:1px solid var(--border);border-bottom:none;padding:0 10px;justify-content:space-around;box-shadow:0 -6px 22px rgba(0,0,0,.08)}
+  .tab-btn{height:76px;flex:1;flex-direction:column;justify-content:center;gap:5px;padding:8px 4px;border-top:3px solid transparent;border-bottom:none;font-size:.68rem;letter-spacing:.04em;text-transform:uppercase}
+  .tab-btn.active{border-top-color:var(--kakao);border-bottom-color:transparent}
+  .tab-icon{font-size:24px}
+  .tab-label{max-width:72px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .content{padding:22px 16px 24px}
+  .card{border-radius:12px;padding:18px 20px}
+  .scope-panel{padding:10px 16px;align-items:flex-start}
+  .quick-locs{width:100%;margin-left:0}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="logo">
+    <div class="logo-icon">📍</div>
+    <h1>스마트 경로 조회 <span>카카오맵 기반</span></h1>
+  </div>
+  <div class="header-right">
+    <span id="apiStatus" style="font-size:.78rem"></span>
+    <button class="btn btn-ghost btn-sm" onclick="toggleApiPanel()">🔑 API 키 설정</button>
+  </div>
+</div>
+
+<!-- API PANEL -->
+<div class="api-panel" id="apiPanel">
+  <div class="api-row">
+    <div class="fg">
+      <label>Kakao REST API 키 <span style="color:var(--danger)">*</span></label>
+      <input type="password" id="apiKey" placeholder="REST API 키 붙여넣기" oninput="onKeyInput()">
+    </div>
+    <div class="fg" style="flex:0">
+      <label>&nbsp;</label>
+      <button class="btn btn-primary btn-sm" onclick="testApi()">🔬 연결 테스트</button>
+    </div>
+    <span id="testResult" style="font-size:.82rem;align-self:flex-end;padding-bottom:2px"></span>
+  </div>
+  <div class="api-setup">
+    <b>최초 설정 (1회):</b><br>
+    1. <a href="https://developers.kakao.com" target="_blank">developers.kakao.com</a> 로그인 → 내 애플리케이션 → 앱 추가 → <b>REST API 키</b> 복사<br>
+    2. 이 폴더에 <code>.env</code> 파일 생성: <code>KAKAO_API_KEY=복사한키</code><br>
+    3. 터미널에서 <code>python server.py</code> 실행<br>
+    4. 브라우저에서 <code>http://localhost:8080</code> 접속 (서버가 API 키를 .env에서 읽고 프록시 처리)<br>
+    <span style="color:var(--success)">✅ 프록시 서버 사용 시 Web 도메인 등록 불필요 (CORS + 인증 자동 처리)</span>
+  </div>
+</div>
+
+<!-- SEARCH SCOPE -->
+<div class="scope-panel">
+  <span class="scope-title">검색 범위</span>
+  <select id="searchScope" onchange="applyScopeDefaults()">
+    <option value="city" id="scopeCity">시/군 단위</option>
+    <option value="province">도 단위</option>
+    <option value="nation">전국</option>
+  </select>
+  <span class="scope-summary" id="scopeSummary">.env 기본 지역을 불러오는 중...</span>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <button class="tab-btn active"  onclick="showTab('t1',this)"><span class="material-symbols-outlined tab-icon">directions</span><span class="tab-label">Routes</span></button>
+  <button class="tab-btn"         onclick="showTab('t2',this)"><span class="material-symbols-outlined tab-icon">grid_view</span><span class="tab-label">Matrix</span></button>
+  <button class="tab-btn"         onclick="showTab('t3',this)"><span class="material-symbols-outlined tab-icon">location_searching</span><span class="tab-label">Midpoint</span></button>
+  <button class="tab-btn"         onclick="showTab('t4',this)"><span class="material-symbols-outlined tab-icon">alt_route</span><span class="tab-label">Compare</span></button>
+</div>
+
+<div class="content">
+
+<!-- ══════ TAB 1 ══════ -->
+<div id="t1" class="tab-panel active">
+  <div class="card">
+    <div class="card-title">📂 엑셀 파일 & 열 설정</div>
+    <div class="form-row">
+      <label class="file-label" for="f1">📎 엑셀 파일 선택
+        <input type="file" id="f1" accept=".xlsx,.xls" onchange="loadXL('f1','pv1','cs1',['pc1','tc1'])">
+      </label>
+      <div class="fg" style="max-width:100px">
+        <label>헤더 행</label>
+        <input type="number" id="hr1" value="1" min="1" style="width:70px">
+      </div>
+    </div>
+    <div id="pv1" class="preview-tbl" style="display:none"></div>
+    <div id="cs1" style="display:none;margin-top:12px">
+      <div class="form-row">
+        <div class="fg"><label>📌 장소명 열</label><select id="pc1"></select></div>
+        <div class="fg"><label>🕐 시간 열</label><select id="tc1"></select></div>
+        <div class="fg"><label>🗺️ 목적지 지역 접두사</label><input type="text" id="dp1" placeholder="예: 경주"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🏠 출발 위치</div>
+    <div class="form-row">
+      <div class="fg"><label>출발지 (장소명 또는 주소)</label><input type="text" id="orig1" placeholder="예: 경주 건천초등학교"></div>
+      <div class="fg" style="max-width:200px"><label>출발지 지역 접두사</label><input type="text" id="op1" placeholder="예: 경주"></div>
+    </div>
+    <button class="btn btn-primary btn-full" id="cb1" onclick="runTab1()" disabled>🚀 거리 · 소요시간 계산</button>
+    <div class="prog-wrap" id="pw1"><div class="prog-track"><div class="prog-bar" id="pb1"></div></div><div class="prog-label" id="pl1"></div></div>
+  </div>
+
+  <div id="res1" style="display:none">
+    <div class="metrics" id="mt1"></div>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <div class="card-title" style="margin:0">📊 결과</div>
+        <div class="btn-row">
+          <label style="font-size:.8rem;color:var(--muted)">정렬</label>
+          <select id="sort1" onchange="sortT1()" style="width:auto;padding:6px 10px;font-size:.8rem">
+            <option value="dist">거리순</option><option value="time">시간순</option><option value="saved">저장시간순</option>
+          </select>
+          <button class="btn btn-success btn-sm" onclick="dlSheet(td1,'결과_단일출발.xlsx')">⬇️ 엑셀</button>
+        </div>
+      </div>
+      <div class="tbl-wrap" id="tbl1"></div>
+    </div>
+    <div class="card"><div class="card-title">🗺️ 지도</div><div class="map-box" id="map1" style="height:420px"></div></div>
+  </div>
+</div>
+
+<!-- ══════ TAB 2 ══════ -->
+<div id="t2" class="tab-panel">
+  <div class="card">
+    <div class="card-title">🔀 여러 출발지 × 여러 도착지 — 전체 매트릭스</div>
+    <p class="section-intro">각 출발지에서 각 목적지까지의 거리·소요시간을 표로 일괄 계산합니다. API 소비: 출발지 수 × 도착지 수 건</p>
+    <div class="grid2">
+      <div>
+        <div class="fg" style="margin-bottom:10px"><label>🟥 출발지 목록 (한 줄에 하나)</label>
+          <textarea id="ori2" rows="6" placeholder="경주역&#10;경주 황성공원&#10;경북 경주시 건천읍 XX로 60"></textarea>
+        </div>
+        <div class="fg"><label>출발지 지역 접두사</label><input type="text" id="opfx2" placeholder="예: 경주"></div>
+      </div>
+      <div>
+        <div class="fg" style="margin-bottom:10px"><label>🟦 도착지 목록 (한 줄에 하나)</label>
+          <textarea id="dst2" rows="6" placeholder="건천초등학교&#10;황성초등학교&#10;용황초등학교&#10;흥무초등학교"></textarea>
+        </div>
+        <div class="fg"><label>도착지 지역 접두사</label><input type="text" id="dpfx2" placeholder="예: 경주"></div>
+      </div>
+    </div>
+    <button class="btn btn-primary btn-full" id="cb2" onclick="runTab2()" disabled>🚀 매트릭스 계산</button>
+    <div class="prog-wrap" id="pw2"><div class="prog-track"><div class="prog-bar" id="pb2"></div></div><div class="prog-label" id="pl2"></div></div>
+  </div>
+
+  <div id="res2" style="display:none">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <div class="card-title" style="margin:0">⏱️ 소요시간 (분) / 📏 거리 (km)</div>
+        <button class="btn btn-success btn-sm" onclick="dlMatrix()">⬇️ 엑셀</button>
+      </div>
+      <div class="tbl-wrap" id="mtx2"></div>
+    </div>
+    <div class="card"><div class="card-title">🗺️ 지도</div><div class="map-box" id="map2" style="height:420px"></div></div>
+  </div>
+</div>
+
+<!-- ══════ TAB 3 ══════ -->
+<div id="t3" class="tab-panel">
+  <div class="card">
+    <div class="card-title">👥 참여자 위치</div>
+    <p class="section-intro">여러 사람의 위치를 입력하면 총 이동시간이 가장 적은 중간지점을 찾아드립니다.</p>
+    <div class="fg" style="margin-bottom:10px">
+      <label>참여자 목록 (이름: 위치, 한 줄에 한 명)</label>
+      <textarea id="ppl3" rows="5" placeholder="홍길동: 경주역&#10;김철수: 경주 외동읍&#10;이영희: 경주 건천읍"></textarea>
+    </div>
+    <div class="fg" style="max-width:220px"><label>지역 접두사</label><input type="text" id="ppfx3" placeholder="예: 경주"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🎯 후보 중간지점 방식</div>
+    <div class="radio-row" style="margin-bottom:14px">
+      <label><input type="radio" name="m3" value="excel" checked onchange="upMode3()"> 📋 엑셀 장소 중 선택 (A안)</label>
+      <label><input type="radio" name="m3" value="grid" onchange="upMode3()"> 🌐 격자 탐색 (B안)</label>
+      <label><input type="radio" name="m3" value="both" onchange="upMode3()"> 🔀 A+B 둘 다</label>
+    </div>
+    <div id="es3">
+      <label class="file-label" for="f3">📎 엑셀 파일 선택
+        <input type="file" id="f3" accept=".xlsx,.xls" onchange="loadXL('f3','pv3','cs3',['pc3'])">
+      </label>
+      <div id="pv3" class="preview-tbl" style="display:none"></div>
+      <div id="cs3" style="display:none;margin-top:10px">
+        <div class="form-row">
+          <div class="fg"><label>📌 장소명 열</label><select id="pc3"></select></div>
+          <div class="fg"><label>후보지 지역 접두사</label><input type="text" id="cpfx3" placeholder="예: 경주"></div>
+        </div>
+      </div>
+    </div>
+    <div id="gs3" style="display:none;margin-top:12px">
+      <div class="fg" style="max-width:320px">
+        <label>격자 간격 (도) — 작을수록 정밀, 느림</label>
+        <input type="range" id="gstep" min="0.01" max="0.1" step="0.01" value="0.03" oninput="document.getElementById('gv').textContent=this.value" style="width:100%;padding:0">
+        <span style="font-size:.8rem;color:var(--muted)">간격: <b id="gv">0.03</b>도</span>
+      </div>
+    </div>
+    <hr>
+    <div class="form-row" style="align-items:flex-end">
+      <div class="fg" style="max-width:200px">
+        <label>상위 N개만 실제 길찾기 수행</label>
+        <input type="number" id="topn3" value="5" min="1" max="30">
+      </div>
+      <span style="font-size:.78rem;color:var(--muted);padding-bottom:10px">직선거리로 1차 필터 → API 절약</span>
+    </div>
+    <button class="btn btn-primary btn-full" id="cb3" onclick="runTab3()" disabled>🔍 최적 중간지점 탐색</button>
+    <div class="prog-wrap" id="pw3"><div class="prog-track"><div class="prog-bar" id="pb3"></div></div><div class="prog-label" id="pl3"></div></div>
+  </div>
+
+  <div id="res3" style="display:none">
+    <div class="best-card best-card-a" id="bc3"></div>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <div class="card-title" style="margin:0">📊 후보지 비교</div>
+        <button class="btn btn-success btn-sm" onclick="dlSheet(cd3,'중간지점_결과.xlsx')">⬇️ 엑셀</button>
+      </div>
+      <div class="tbl-wrap" id="ctbl3"></div>
+    </div>
+    <div class="card"><div class="card-title">🗺️ 지도</div><div class="map-box" id="map3" style="height:460px"></div></div>
+  </div>
+</div>
+
+<!-- ══════ TAB 4 ══════ -->
+<div id="t4" class="tab-panel">
+  <div class="alert alert-info">
+    💡 <b>경유지 비교 (A→X→B)</b> — 출발지 A와 도착지 B를 고정하고, 경유지 X가 달라질 때 총 소요시간을 비교합니다.<br>
+    예: <b>근무지(A) → 출장지(X) → 집(B)</b> — 어느 출장지를 들러도 가장 귀가 부담이 적은지 한눈에 확인
+  </div>
+  <div class="grid2">
+    <div class="card">
+      <div class="card-title">🅐 출발지 · 근무지</div>
+      <div class="fg" style="margin-bottom:10px"><label>장소명 또는 주소</label><input type="text" id="pa4" placeholder="예: 경주 건천초등학교"></div>
+      <div class="quick-locs">
+        <button class="btn btn-ghost btn-sm" onclick="fillDefaultLocation('work','pa4')">회사 입력</button>
+        <button class="btn btn-ghost btn-sm" onclick="fillDefaultLocation('home','pa4')">집 입력</button>
+      </div>
+      <div class="fg"><label>지역 접두사</label><input type="text" id="pxa4" placeholder="예: 경주"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">🅑 도착지 · 집</div>
+      <div class="fg" style="margin-bottom:10px"><label>장소명 또는 주소</label><input type="text" id="pb4" placeholder="예: 경주시 ○○동 ○○로 00"></div>
+      <div class="quick-locs">
+        <button class="btn btn-ghost btn-sm" onclick="fillDefaultLocation('work','pb4')">회사 입력</button>
+        <button class="btn btn-ghost btn-sm" onclick="fillDefaultLocation('home','pb4')">집 입력</button>
+      </div>
+      <div class="fg"><label>지역 접두사</label><input type="text" id="pxb4" placeholder="예: 경주"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🔀 경유지 X 목록</div>
+    <div class="radio-row" style="margin-bottom:12px">
+      <label><input type="radio" name="xs4" value="text" checked onchange="upXSrc4()"> 📝 직접 입력</label>
+      <label><input type="radio" name="xs4" value="excel" onchange="upXSrc4()"> 📎 엑셀 불러오기</label>
+    </div>
+    <div id="xt4">
+      <div class="fg"><label>경유지 목록 (한 줄에 하나)</label>
+        <textarea id="wps4" rows="6" placeholder="경주교육지원청&#10;경주시청&#10;경주경찰서&#10;경주우체국&#10;경주세무서"></textarea>
+      </div>
+    </div>
+    <div id="xe4" style="display:none">
+      <label class="file-label" for="f4">📎 엑셀 파일 선택
+        <input type="file" id="f4" accept=".xlsx,.xls" onchange="loadXL('f4','pv4','cs4',['pc4'])">
+      </label>
+      <div id="pv4" class="preview-tbl" style="display:none"></div>
+      <div id="cs4" style="display:none;margin-top:10px">
+        <div class="form-row">
+          <div class="fg"><label>📌 장소명 열</label><select id="pc4"></select></div>
+          <div class="fg"><label>지역 접두사</label><input type="text" id="xpfx4" placeholder="예: 경주"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button class="btn btn-primary btn-full" id="cb4" onclick="runTab4()" disabled style="margin-bottom:16px">🚀 경유지별 소요시간 비교</button>
+  <div class="prog-wrap" id="pw4" style="margin-bottom:16px"><div class="prog-track"><div class="prog-bar" id="pbar4"></div></div><div class="prog-label" id="pl4"></div></div>
+
+  <div id="res4" style="display:none">
+    <div class="best-card best-card-b" id="bc4"></div>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <div class="card-title" style="margin:0">📊 경유지별 비교 (시간순 정렬)</div>
+        <button class="btn btn-success btn-sm" onclick="dlSheet(wd4,'경유지_비교.xlsx')">⬇️ 엑셀</button>
+      </div>
+      <div class="tbl-wrap" id="tbl4"></div>
+    </div>
+    <div class="card"><div class="card-title">🗺️ 지도</div><div class="map-box" id="map4" style="height:460px"></div></div>
+  </div>
+</div>
+
+</div><!-- /content -->
+
+<script>
+// ════════════════════════════════════════
+//  GLOBALS
+// ════════════════════════════════════════
+let API_KEY = localStorage.getItem('k_key') || '';
+let APP_CONFIG = {home:'', work:'', regionCity:'', regionProvince:'', defaultScope:'city'};
+let SEARCH_SCOPE = localStorage.getItem('search_scope') || 'city';
+const MAPS = {};
+let XL = {};   // parsed excel: {fileId: rows[][]}
+let td1=[], cd3=[], wd4=[];  // table data for download
+let m2ori=[], m2dst=[], m2tmat={}, m2dmat={};  // tab2 matrix data
+
+// Load API key from server (.env) if available
+fetch('/api/config').then(r=>r.ok?r.json():null).then(cfg=>{
+  if(cfg && cfg.apiKey){
+    API_KEY = cfg.apiKey;
+    localStorage.setItem('k_key', API_KEY);
+    document.getElementById('apiKey').value=API_KEY;
+    refreshKeyStatus();
+    document.getElementById('apiStatus').innerHTML += ' <span style="color:var(--muted)">(서버)</span>';
+  }
+  if(cfg && cfg.app){
+    APP_CONFIG = {...APP_CONFIG, ...cfg.app};
+    SEARCH_SCOPE = localStorage.getItem('search_scope') || APP_CONFIG.defaultScope || 'city';
+    applyScopeDefaults(false);
+  }
+}).catch(()=>{});
+
+if(API_KEY){ document.getElementById('apiKey').value=API_KEY; refreshKeyStatus(); }
+applyScopeDefaults(false);
+
+// ════════════════════════════════════════
+//  UI HELPERS
+// ════════════════════════════════════════
+function showTab(id,btn){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+function toggleApiPanel(){ document.getElementById('apiPanel').classList.toggle('open'); }
+function $id(id){ return document.getElementById(id); }
+function show(id,v=true){ $id(id).style.display = v?'':'none'; }
+function esc(s){ return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
+function setProg(barId,lblId,pct,txt){ $id(barId).style.width=pct+'%'; $id(lblId).textContent=txt; }
+
+function currentScopePrefix(){
+  if(SEARCH_SCOPE==='city') return APP_CONFIG.regionCity || '';
+  if(SEARCH_SCOPE==='province') return APP_CONFIG.regionProvince || '';
+  return '';
+}
+function prefixQuery(prefix, query){
+  const p=(prefix||'').trim();
+  const q=(query||'').trim();
+  return p ? `${p} ${q}` : q;
+}
+function scopedPrefix(inputId){
+  const manual = $id(inputId)?.value.trim() || '';
+  return manual || currentScopePrefix();
+}
+function applyScopeDefaults(save=true){
+  const sel=$id('searchScope');
+  if(!sel) return;
+  sel.value = SEARCH_SCOPE;
+  if(!['city','province','nation'].includes(sel.value)) sel.value='city';
+  SEARCH_SCOPE = sel.value;
+  if(save) localStorage.setItem('search_scope', SEARCH_SCOPE);
+  const prefix=currentScopePrefix();
+  const label = SEARCH_SCOPE==='city' ? '시/군 단위' : SEARCH_SCOPE==='province' ? '도 단위' : '전국';
+  $id('scopeSummary').textContent = prefix ? `${label}: "${prefix}" 자동 적용` : `${label}: 접두사 없이 검색`;
+  ['op1','dp1','opfx2','dpfx2','ppfx3','cpfx3','pxa4','pxb4','xpfx4'].forEach(id=>{
+    const el=$id(id);
+    if(el) el.placeholder = prefix ? `자동: ${prefix} (직접 입력 시 우선)` : '직접 입력 시 우선';
+  });
+}
+function fillDefaultLocation(kind, targetId){
+  const label = kind === 'home' ? 'DEFAULT_HOME' : 'DEFAULT_WORK';
+  const value = APP_CONFIG[kind] || '';
+  if(!value){
+    alert(`.env의 ${label} 값을 서버가 아직 읽지 못했습니다. start.bat으로 서버를 다시 시작해보세요.`);
+    return;
+  }
+  $id(targetId).value = value;
+}
+
+function onKeyInput(){
+  API_KEY = $id('apiKey').value.trim();
+  localStorage.setItem('k_key', API_KEY);
+  refreshKeyStatus();
+}
+function refreshKeyStatus(){
+  const ok = !!API_KEY;
+  ['cb1','cb2','cb3','cb4'].forEach(id=>{ const el=$id(id); if(el) el.disabled=!ok; });
+  $id('apiStatus').innerHTML = ok ? '<span style="color:var(--success)">✅ 키 설정됨</span>' : '';
+}
+
+function distCls(v){
+  if(v===null||v===undefined||v==='-') return '';
+  const n=parseFloat(v);
+  return n<=5?'near':n<=15?'mid':'far';
+}
+
+function renderTable(containerId, rows, cols, bestIdx=-1){
+  let h='<table><thead><tr>'+cols.map(c=>`<th>${esc(c)}</th>`).join('')+'</tr></thead><tbody>';
+  rows.forEach((row,i)=>{
+    h+=`<tr class="${i===bestIdx?'best-row':''}">`;
+    cols.forEach(c=>{
+      const v=row[c]??'-';
+      const cls=(c.includes('거리')||c.includes('km'))&&typeof row[c]==='number'?distCls(row[c]):'';
+      h+=`<td class="${cls} ${typeof v==='number'?'mono':''}">${esc(v)}</td>`;
+    });
+    h+='</tr>';
+  });
+  $id(containerId).innerHTML=h+'</tbody></table>';
+}
+
+function dlSheet(data, filename){
+  if(!data||!data.length){ alert('다운로드할 데이터가 없습니다.'); return; }
+  const ws=XLSX.utils.json_to_sheet(data);
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,'결과');
+  XLSX.writeFile(wb,filename);
+}
+
+// ════════════════════════════════════════
+//  EXCEL
+// ════════════════════════════════════════
+function loadXL(fid, pvId, csId, selIds){
+  const file=$id(fid).files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const wb=XLSX.read(e.target.result,{type:'binary'});
+    const ws=wb.Sheets[wb.SheetNames[0]];
+    const rows=XLSX.utils.sheet_to_json(ws,{header:1});
+    XL[fid]=rows;
+    // preview
+    if(rows.length){
+      let t='<table><thead><tr>'+rows[0].map(c=>`<th>${esc(c)}</th>`).join('')+'</tr></thead><tbody>';
+      rows.slice(1,4).forEach(r=>{ t+='<tr>'+r.map(c=>`<td>${esc(c??'')}</td>`).join('')+'</tr>'; });
+      $id(pvId).innerHTML=t+'</tbody></table>'; show(pvId);
+    }
+    // column selects
+    const hdr=rows[0]||[];
+    selIds.forEach((sid,i)=>{
+      const sel=$id(sid); if(!sel) return;
+      sel.innerHTML=hdr.map((h,j)=>`<option value="${j}">${esc(h)}</option>`).join('');
+      sel.selectedIndex=Math.min(i,hdr.length-1);
+    });
+    $id(csId).style.display=''; show(csId);
+  };
+  reader.readAsBinaryString(file);
+}
+
+function xlCol(fid, selId, headerRow=1){
+  const rows=XL[fid]; if(!rows) return [];
+  const col=parseInt($id(selId).value);
+  return rows.slice(headerRow).map(r=>(r[col]??'').toString().trim()).filter(Boolean);
+}
+
+// ════════════════════════════════════════
+//  KAKAO API
+// ════════════════════════════════════════
+async function searchPlace(query){
+  // 1st: school category
+  for(const cat of ['SC4','']){
+    let url=`/api/proxy/kakao/keyword?query=${encodeURIComponent(query)}&size=5`;
+    if(cat) url+=`&category_group_code=${cat}`;
+    try{
+      const r=await fetch(url);
+      if(r.ok){
+        const docs=(await r.json()).documents||[];
+        const best=pickBest(docs,query);
+        if(best) return best;
+      } else if(r.status===401){ throw new Error('AUTH'); }
+    }catch(e){ if(e.message==='AUTH') throw e; }
+  }
+  return null;
+}
+
+function pickBest(docs,query){
+  if(!docs.length) return null;
+  const q=query.replace(/\s/g,'');
+  let best=null,bs=-1;
+  docs.forEach(d=>{
+    const sc=[...q].filter(c=>d.place_name.includes(c)).length/Math.max(q.length,1);
+    if(sc>bs){bs=sc;best=d;}
+  });
+  if(!best||bs<0.25) return null;
+  return {lng:+best.x,lat:+best.y,addr:best.road_address_name||best.address_name||'',name:best.place_name};
+}
+
+async function getRoute(oLng,oLat,dLng,dLat,wayLng,wayLat){
+  // wayLng/wayLat optional
+  let url=`/api/proxy/kakao/directions?origin=${oLng},${oLat}&destination=${dLng},${dLat}&priority=RECOMMEND`;
+  if(wayLng!=null) url+=`&waypoints=${wayLng},${wayLat}`;
+  try{
+    const r=await fetch(url);
+    if(!r.ok){
+      if(r.status===401||r.status===403) return {dist:null,time:null,note:'길찾기API인증오류'};
+      return fallback(oLng,oLat,dLng,dLat);
+    }
+    const routes=(await r.json()).routes||[];
+    if(routes.length&&routes[0].result_code===0){
+      const s=routes[0].summary;
+      return {dist:Math.round(s.distance/100)/10, time:Math.round(s.duration/60), note:''};
+    }
+    return fallback(oLng,oLat,dLng,dLat);
+  }catch(e){ return fallback(oLng,oLat,dLng,dLat); }
+}
+
+function fallback(lng1,lat1,lng2,lat2){ return {dist:hav(lng1,lat1,lng2,lat2),time:null,note:'직선거리'}; }
+function hav(lng1,lat1,lng2,lat2){
+  const R=6371,r=x=>x*Math.PI/180;
+  const dl=r(lat2-lat1),dg=r(lng2-lng1);
+  return Math.round(2*R*Math.asin(Math.sqrt(Math.sin(dl/2)**2+Math.cos(r(lat1))*Math.cos(r(lat2))*Math.sin(dg/2)**2))*10)/10;
+}
+
+async function testApi(){
+  const btn=event.target; btn.disabled=true; btn.innerHTML='<span class="spin"></span> 테스트 중';
+  const el=$id('testResult');
+  try{
+    const p=await searchPlace('서울시청');
+    if(!p){ el.innerHTML='<span style="color:var(--danger)">❌ 장소검색 실패 (API키 또는 도메인 등록 확인)</span>'; }
+    else{
+      const rt=await getRoute(126.9784,37.5665,127.0276,37.4979);
+      const dirOk=rt.note!=='직선거리'&&rt.time!==null;
+      el.innerHTML=`<span style="color:var(--success)">✅ 장소검색 OK</span>&nbsp;${dirOk?'<span style="color:var(--success)">✅ 길찾기 OK</span>':'<span style="color:var(--warn)">⚠️ 길찾기 제한 (직선거리 대체, 카카오내비 활성화 필요)</span>'}`;
+    }
+  }catch(e){ el.innerHTML=`<span style="color:var(--danger)">❌ ${esc(e.message)}</span>`; }
+  btn.textContent='🔬 연결 테스트'; btn.disabled=false;
+}
+
+// ════════════════════════════════════════
+//  MAP (Leaflet)
+// ════════════════════════════════════════
+const COLORS=['#ef4444','#3b82f6','#16a34a','#f59e0b','#8b5cf6','#ec4899','#0ea5e9','#f97316'];
+function mkIcon(color,label=''){
+  return L.divIcon({
+    html:`<div style="background:${color};color:#fff;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;border:2.5px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.25)">${label}</div>`,
+    className:'',iconSize:[30,30],iconAnchor:[15,15],popupAnchor:[0,-18]
+  });
+}
+function mkMap(id,lat,lng,zoom=11){
+  if(MAPS[id]){ MAPS[id].remove(); }
+  const m=L.map(id).setView([lat,lng],zoom);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OSM'}).addTo(m);
+  MAPS[id]=m; return m;
+}
+
+// ════════════════════════════════════════
+//  TAB 1 — Single origin → many places
+// ════════════════════════════════════════
+async function runTab1(){
+  const origin=$id('orig1').value.trim();
+  if(!origin){alert('출발 위치를 입력해주세요.');return;}
+  const rows=XL['f1'];
+  if(!rows){alert('엑셀 파일을 선택해주세요.');return;}
+  const hr=parseInt($id('hr1').value)||1;
+  const pcol=parseInt($id('pc1').value), tcol=parseInt($id('tc1').value);
+  const dp=scopedPrefix('dp1'), op=scopedPrefix('op1');
+  const places=rows.slice(hr).filter(r=>r[pcol]).map(r=>({name:(r[pcol]??'').toString().trim(),saved:(r[tcol]??'').toString().trim()}));
+  if(!places.length){alert('장소 데이터가 없습니다.');return;}
+
+  $id('cb1').disabled=true; show('pw1'); show('res1',false);
+  let done=0; const total=places.length+1;
+
+  const oq=prefixQuery(op, origin);
+  setProg('pb1','pl1',0,'출발지 조회 중...');
+  const oP=await searchPlace(oq); done++;
+  if(!oP){alert(`출발지 "${origin}" 를 찾을 수 없습니다. 지역 접두사를 추가해보세요.`);show('pw1',false);$id('cb1').disabled=false;return;}
+
+  td1=[];
+  for(const p of places){
+    setProg('pb1','pl1',Math.round(done/total*100),`(${done}/${total}) ${p.name} 조회 중...`);
+    const q=prefixQuery(dp, p.name);
+    const dest=await searchPlace(q); await sleep(90);
+    let dist='-',time='-',note='',matched='❌ 미발견',addr='',_lng=null,_lat=null;
+    if(dest){
+      matched=dest.name; addr=dest.addr; _lng=dest.lng; _lat=dest.lat;
+      const rt=await getRoute(oP.lng,oP.lat,dest.lng,dest.lat); await sleep(140);
+      dist=rt.dist??'-'; time=rt.time??'-'; note=rt.note;
+    }
+    td1.push({'장소명':p.name,'검색결과':matched,'주소':addr,'저장시간':p.saved,'거리(km)':dist,'소요시간(분)':time,'비고':note,_lng,_lat});
+    done++;
+  }
+  setProg('pb1','pl1',100,'완료!'); setTimeout(()=>show('pw1',false),800);
+  drawRes1(oP); $id('cb1').disabled=false;
+}
+
+function drawRes1(oP){
+  show('res1');
+  const ok=td1.filter(r=>r['거리(km)']!=='-');
+  $id('mt1').innerHTML=`
+    <div class="metric"><div class="metric-lbl">전체</div><div class="metric-val">${td1.length}곳</div></div>
+    <div class="metric"><div class="metric-lbl">조회 성공</div><div class="metric-val" style="color:var(--success)">${ok.length}곳</div></div>
+    <div class="metric"><div class="metric-lbl">실패</div><div class="metric-val" style="color:var(--danger)">${td1.length-ok.length}곳</div></div>
+    ${ok.length?`<div class="metric"><div class="metric-lbl">평균 거리</div><div class="metric-val">${(ok.reduce((s,r)=>s+(+r['거리(km)']),0)/ok.length).toFixed(1)}km</div></div>`:''}
+  `;
+  sortT1();
+  // map
+  const m=mkMap('map1',oP.lat,oP.lng);
+  L.marker([oP.lat,oP.lng],{icon:mkIcon('#ef4444','A')}).bindPopup(`<b>출발지</b><br>${esc(oP.name)}`).addTo(m);
+  td1.filter(r=>r._lat).forEach((r,i)=>{
+    L.marker([r._lat,r._lng],{icon:mkIcon(COLORS[(i+1)%COLORS.length],'●')})
+      .bindPopup(`<b>${esc(r['장소명'])}</b><br>${esc(r['주소'])}<br>거리: ${r['거리(km)']}km / ${r['소요시간(분)']}분`).addTo(m);
+    L.polyline([[oP.lat,oP.lng],[r._lat,r._lng]],{color:'#94a3b8',weight:1.5,opacity:.5,dashArray:'5'}).addTo(m);
+  });
+}
+function sortT1(){
+  const by=$id('sort1').value;
+  const sorted=[...td1].sort((a,b)=>{
+    if(by==='dist') return (+a['거리(km)']||999)-(+b['거리(km)']||999);
+    if(by==='time') return (+a['소요시간(분)']||999)-(+b['소요시간(분)']||999);
+    return String(a['저장시간']).localeCompare(String(b['저장시간']));
+  });
+  renderTable('tbl1',sorted,['장소명','검색결과','주소','저장시간','거리(km)','소요시간(분)','비고']);
+}
+
+// ════════════════════════════════════════
+//  TAB 2 — Matrix
+// ════════════════════════════════════════
+async function runTab2(){
+  const oris=$id('ori2').value.trim().split('\n').map(s=>s.trim()).filter(Boolean);
+  const dsts=$id('dst2').value.trim().split('\n').map(s=>s.trim()).filter(Boolean);
+  const opfx=scopedPrefix('opfx2'), dpfx=scopedPrefix('dpfx2');
+  if(!oris.length||!dsts.length){alert('출발지와 도착지를 입력해주세요.');return;}
+
+  $id('cb2').disabled=true; show('pw2'); show('res2',false);
+  const tot=oris.length+dsts.length+oris.length*dsts.length; let done=0;
+  const tick=(lbl)=>{done++;setProg('pb2','pl2',Math.round(done/tot*100),lbl);};
+
+  m2ori=[]; m2dst=[]; m2tmat={}; m2dmat={};
+  for(const o of oris){
+    const p=await searchPlace(prefixQuery(opfx, o)); await sleep(90);
+    m2ori.push({name:o,...p,ok:!!p}); tick(`출발지 조회: ${o}`);
+  }
+  for(const d of dsts){
+    const p=await searchPlace(prefixQuery(dpfx, d)); await sleep(90);
+    m2dst.push({name:d,...p,ok:!!p}); tick(`도착지 조회: ${d}`);
+  }
+  for(const o of m2ori){
+    m2tmat[o.name]={}; m2dmat[o.name]={};
+    for(const d of m2dst){
+      if(o.ok&&d.ok){
+        const rt=await getRoute(o.lng,o.lat,d.lng,d.lat); await sleep(140);
+        m2tmat[o.name][d.name]=rt.time!==null?rt.time+(rt.note?'★':''): '-';
+        m2dmat[o.name][d.name]=rt.dist??'-';
+      } else { m2tmat[o.name][d.name]='-'; m2dmat[o.name][d.name]='-'; }
+      tick(`${o.name} → ${d.name}`);
+    }
+  }
+  setProg('pb2','pl2',100,'완료!'); setTimeout(()=>show('pw2',false),800);
+  drawMatrix(); drawMap2(); show('res2'); $id('cb2').disabled=false;
+}
+
+function drawMatrix(){
+  const dNames=m2dst.map(d=>d.name);
+  // Combined: time / dist per cell
+  let h='<table><thead><tr><th>출발↓ / 도착→</th>'+dNames.map(d=>`<th>${esc(d)}</th>`).join('')+'</tr></thead><tbody>';
+  m2ori.forEach(o=>{
+    h+=`<tr><td style="font-weight:600">${esc(o.name)}</td>${dNames.map(d=>{
+      const t=m2tmat[o.name]?.[d]??'-', km=m2dmat[o.name]?.[d]??'-';
+      return `<td><span class="mono" style="font-size:.9rem">${esc(t)}<span style="font-size:.7rem;color:var(--muted)">분</span></span><br><span style="font-size:.75rem;color:var(--light)">${esc(km)}km</span></td>`;
+    }).join('')}</tr>`;
+  });
+  $id('mtx2').innerHTML=h+'</tbody></table>';
+}
+
+function drawMap2(){
+  const all=[...m2ori,...m2dst].filter(p=>p.ok);
+  if(!all.length) return;
+  const cLat=all.reduce((s,p)=>s+p.lat,0)/all.length, cLng=all.reduce((s,p)=>s+p.lng,0)/all.length;
+  const m=mkMap('map2',cLat,cLng);
+  m2ori.filter(p=>p.ok).forEach(o=>L.marker([o.lat,o.lng],{icon:mkIcon('#ef4444','출')}).bindPopup(`<b>출발: ${esc(o.name)}</b>`).addTo(m));
+  m2dst.filter(p=>p.ok).forEach(d=>L.marker([d.lat,d.lng],{icon:mkIcon('#3b82f6','착')}).bindPopup(`<b>도착: ${esc(d.name)}</b>`).addTo(m));
+  m2ori.filter(o=>o.ok).forEach(o=>m2dst.filter(d=>d.ok).forEach(d=>
+    L.polyline([[o.lat,o.lng],[d.lat,d.lng]],{color:'#94a3b8',weight:1,opacity:.35}).addTo(m)));
+}
+
+function dlMatrix(){
+  const wb=XLSX.utils.book_new(), dNames=m2dst.map(d=>d.name);
+  const tRows=m2ori.map(o=>{ const r={'출발지':o.name}; dNames.forEach(d=>r[d]=m2tmat[o.name]?.[d]??'-'); return r; });
+  const dRows=m2ori.map(o=>{ const r={'출발지':o.name}; dNames.forEach(d=>r[d]=m2dmat[o.name]?.[d]??'-'); return r; });
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(tRows),'소요시간(분)');
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(dRows),'거리(km)');
+  XLSX.writeFile(wb,'매트릭스_결과.xlsx');
+}
+
+// ════════════════════════════════════════
+//  TAB 3 — Meeting point optimizer
+// ════════════════════════════════════════
+function upMode3(){
+  const v=document.querySelector('input[name="m3"]:checked').value;
+  $id('es3').style.display=v==='grid'?'none':'';
+  $id('gs3').style.display=v==='excel'?'none':'';
+}
+
+async function runTab3(){
+  const pLines=$id('ppl3').value.trim().split('\n').map(s=>s.trim()).filter(Boolean);
+  const ppfx=scopedPrefix('ppfx3');
+  const mode=document.querySelector('input[name="m3"]:checked').value;
+  const topN=parseInt($id('topn3').value)||5;
+  if(pLines.length<2){alert('최소 2명 이상 입력해주세요.');return;}
+
+  $id('cb3').disabled=true; show('pw3'); show('res3',false);
+  let done=0, total=pLines.length+1;
+
+  // Geocode people
+  const people=[];
+  for(const ln of pLines){
+    const [lbl,loc]=ln.includes(':')?ln.split(':',2):[`참여자${people.length+1}`,ln];
+    setProg('pb3','pl3',Math.round(done/total*100),`${lbl.trim()} 위치 조회 중...`);
+    const q=prefixQuery(ppfx, loc.trim());
+    const p=await searchPlace(q); await sleep(90);
+    people.push({label:lbl.trim(),loc:loc.trim(),...p,ok:!!p}); done++;
+  }
+  const okP=people.filter(p=>p.ok);
+  if(okP.length<2){alert('위치 조회 실패. 지역 접두사를 추가해보세요.');show('pw3',false);$id('cb3').disabled=false;return;}
+
+  // Collect candidates
+  let cands=[];
+  if(mode!=='grid'){
+    const rows=XL['f3'];
+    if(rows){
+      const col=parseInt($id('pc3').value), pfx=scopedPrefix('cpfx3');
+      const names=rows.slice(1).map(r=>(r[col]??'').toString().trim()).filter(Boolean);
+      total+=names.length;
+      for(const n of names){
+        setProg('pb3','pl3',Math.round(done/total*100),`후보 조회: ${n}`);
+        const p=await searchPlace(prefixQuery(pfx, n)); await sleep(80);
+        if(p) cands.push({name:n,...p,src:'엑셀'}); done++;
+      }
+    }
+  }
+  if(mode!=='excel'){
+    const gs=parseFloat($id('gstep').value);
+    const cLat=okP.reduce((s,p)=>s+p.lat,0)/okP.length, cLng=okP.reduce((s,p)=>s+p.lng,0)/okP.length;
+    const span=Math.max(Math.max(...okP.map(p=>p.lat))-Math.min(...okP.map(p=>p.lat)), Math.max(...okP.map(p=>p.lng))-Math.min(...okP.map(p=>p.lng)));
+    const pad=span*.3+gs, steps=Math.floor(2*pad/gs);
+    for(let i=0;i<=steps;i++) for(let j=0;j<=steps;j++){
+      const lat=Math.round((cLat-pad+i*gs)*1e5)/1e5, lng=Math.round((cLng-pad+j*gs)*1e5)/1e5;
+      cands.push({name:`격자(${lat},${lng})`,lat,lng,addr:'',src:'격자'});
+    }
+  }
+  if(!cands.length){alert('후보 지점이 없습니다.');show('pw3',false);$id('cb3').disabled=false;return;}
+
+  // 1st pass: straight-line filter
+  cands.forEach(c=>{ c.straight=okP.reduce((s,p)=>s+hav(p.lng,p.lat,c.lng,c.lat),0); });
+  cands.sort((a,b)=>a.straight-b.straight);
+  const top=cands.slice(0,topN);
+
+  // 2nd pass: real routing
+  total=done+okP.length*top.length;
+  cd3=[];
+  for(const c of top){
+    let totT=0,totD=0,hasNote=false;
+    for(const p of okP){
+      setProg('pb3','pl3',Math.round(done/total*100),`${p.label} → ${c.name}`);
+      const rt=await getRoute(p.lng,p.lat,c.lng,c.lat); await sleep(140);
+      totT+=rt.time||0; totD+=rt.dist||0; if(rt.note) hasNote=true; done++;
+    }
+    c.totT=totT; c.totD=Math.round(totD*10)/10; c.note=hasNote?'직선포함':'';
+    cd3.push({'장소':c.name,'출처':c.src,'주소':c.addr||'','총이동시간(분)':totT,'총이동거리(km)':c.totD,'직선합(km)':Math.round(c.straight*10)/10,'비고':c.note});
+  }
+  top.sort((a,b)=>a.totT-b.totT); cd3.sort((a,b)=>a['총이동시간(분)']-b['총이동시간(분)']);
+
+  setProg('pb3','pl3',100,'완료!'); setTimeout(()=>show('pw3',false),800);
+  const best=top[0];
+
+  $id('bc3').innerHTML=`
+    <div class="card-title">🏆 최적 중간지점</div>
+    <div style="font-size:1.35rem;font-weight:700;color:#92400e;margin-bottom:6px">${esc(best.name)}</div>
+    ${best.addr?`<div style="color:var(--muted);font-size:.85rem;margin-bottom:14px">📍 ${esc(best.addr)}</div>`:''}
+    <div class="metrics">
+      <div class="metric"><div class="metric-lbl">총 이동시간</div><div class="metric-val">${best.totT}분</div></div>
+      <div class="metric"><div class="metric-lbl">총 이동거리</div><div class="metric-val">${best.totD}km</div></div>
+      <div class="metric"><div class="metric-lbl">1인당 평균</div><div class="metric-val">${Math.round(best.totT/okP.length)}분</div></div>
+    </div>
+  `;
+
+  renderTable('ctbl3',cd3,['장소','출처','주소','총이동시간(분)','총이동거리(km)','직선합(km)','비고'],0);
+  show('res3');
+
+  const m=mkMap('map3',best.lat,best.lng,12);
+  L.marker([best.lat,best.lng],{icon:mkIcon('#f59e0b','★')}).bindPopup(`<b>🏆 ${esc(best.name)}</b><br>총 ${best.totT}분`).addTo(m);
+  okP.forEach((p,i)=>{
+    L.marker([p.lat,p.lng],{icon:mkIcon(COLORS[i%COLORS.length],(i+1).toString())}).bindPopup(`<b>${esc(p.label)}</b>`).addTo(m);
+    L.polyline([[p.lat,p.lng],[best.lat,best.lng]],{color:COLORS[i%COLORS.length],weight:2.5,opacity:.75}).addTo(m);
+  });
+  top.slice(1,5).forEach(c=>L.circleMarker([c.lat,c.lng],{radius:5,color:'#94a3b8',fill:true,fillOpacity:.5}).bindPopup(`${esc(c.name)}<br>${c.totT}분`).addTo(m));
+  $id('cb3').disabled=false;
+}
+
+// ════════════════════════════════════════
+//  TAB 4 — A→X→B Waypoint Comparison
+// ════════════════════════════════════════
+function upXSrc4(){
+  const v=document.querySelector('input[name="xs4"]:checked').value;
+  $id('xt4').style.display=v==='text'?'':'none';
+  $id('xe4').style.display=v==='excel'?'':'none';
+}
+
+async function runTab4(){
+  const strA=$id('pa4').value.trim(), strB=$id('pb4').value.trim();
+  const pxA=scopedPrefix('pxa4'), pxB=scopedPrefix('pxb4');
+  if(!strA||!strB){alert('출발지(A)와 도착지(B)를 모두 입력해주세요.');return;}
+
+  const xSrc=document.querySelector('input[name="xs4"]:checked').value;
+  let wpNames=[];
+  if(xSrc==='text'){
+    wpNames=$id('wps4').value.trim().split('\n').map(s=>s.trim()).filter(Boolean);
+  } else {
+    const rows=XL['f4'];
+    if(rows){ const col=parseInt($id('pc4').value); wpNames=rows.slice(1).map(r=>(r[col]??'').toString().trim()).filter(Boolean); }
+  }
+  if(!wpNames.length){alert('경유지(X) 목록을 입력해주세요.');return;}
+
+  $id('cb4').disabled=true; show('pw4'); show('res4',false);
+  const total=2+1+wpNames.length*2; let done=0;
+  const tick=(lbl)=>{done++;setProg('pbar4','pl4',Math.round(done/total*100),lbl);};
+
+  tick('A 위치 조회 중...');
+  const pA=await searchPlace(prefixQuery(pxA, strA)); tick('B 위치 조회 중...');
+  const pB=await searchPlace(prefixQuery(pxB, strB)); tick('');
+
+  if(!pA){alert(`출발지(A) "${strA}" 를 찾을 수 없습니다.`);show('pw4',false);$id('cb4').disabled=false;return;}
+  if(!pB){alert(`도착지(B) "${strB}" 를 찾을 수 없습니다.`);show('pw4',false);$id('cb4').disabled=false;return;}
+
+  // A→B direct
+  const direct=await getRoute(pA.lng,pA.lat,pB.lng,pB.lat); await sleep(140);
+  const dirT=direct.time, dirD=direct.dist;
+
+  const xPfx=scopedPrefix('xpfx4');
+  wd4=[];
+  const ptsList=[];
+
+  for(const xn of wpNames){
+    tick(`경유지 조회: ${xn}`);
+    const pX=await searchPlace(prefixQuery(xPfx, xn)); await sleep(90);
+    if(!pX){ wd4.push({'경유지(X)':xn,'검색결과':'❌ 미발견','주소':'','A→X(km)':'-','A→X(분)':'-','X→B(km)':'-','X→B(분)':'-','총거리(km)':'-','총시간(분)':'-','직행대비(분)':'-','비고':'미발견',_lng:null,_lat:null}); tick(''); continue; }
+
+    tick(`경로 계산: ${xn}`);
+    // Call A→X and X→B separately for detail, and A→X→B for total
+    const ax=await getRoute(pA.lng,pA.lat,pX.lng,pX.lat); await sleep(120);
+    const xb=await getRoute(pX.lng,pX.lat,pB.lng,pB.lat); await sleep(120);
+
+    const totT=(ax.time||0)+(xb.time||0);
+    const totD=Math.round(((ax.dist||0)+(xb.dist||0))*10)/10;
+    const extra=(dirT!==null&&ax.time!==null&&xb.time!==null)?totT-dirT:null;
+    const note=[ax.note,xb.note].filter(Boolean).join(',');
+
+    wd4.push({
+      '경유지(X)':xn,'검색결과':pX.name,'주소':pX.addr,
+      'A→X(km)':ax.dist??'-','A→X(분)':ax.time??'-',
+      'X→B(km)':xb.dist??'-','X→B(분)':xb.time??'-',
+      '총거리(km)':totD,'총시간(분)':totT,
+      '직행대비(분)':extra!==null?(extra>=0?`+${extra}`:`${extra}`):'-',
+      '비고':note,_lng:pX.lng,_lat:pX.lat
+    });
+    ptsList.push({...wd4[wd4.length-1],_pX:pX});
+  }
+
+  wd4.sort((a,b)=>{
+    const ta=+a['총시간(분)']||99999, tb=+b['총시간(분)']||99999; return ta-tb;
+  });
+  ptsList.sort((a,b)=>(+a['총시간(분)']||99999)-(+b['총시간(분)']||99999));
+
+  setProg('pbar4','pl4',100,'완료!'); setTimeout(()=>show('pw4',false),800);
+
+  const best=wd4.find(r=>r['총시간(분)']!=='-');
+  if(best){
+    $id('bc4').innerHTML=`
+      <div class="card-title">🏆 최적 경유지</div>
+      <div style="font-size:1.3rem;font-weight:700;color:var(--success);margin-bottom:6px">${esc(best['경유지(X)'])} <span style="font-size:.9rem;color:var(--muted)">(${esc(best['검색결과'])})</span></div>
+      ${best['주소']?`<div style="color:var(--muted);font-size:.83rem;margin-bottom:14px">📍 ${esc(best['주소'])}</div>`:''}
+      <div class="metrics">
+        <div class="metric"><div class="metric-lbl">총 소요시간</div><div class="metric-val">${best['총시간(분)']}분</div></div>
+        <div class="metric"><div class="metric-lbl">총 거리</div><div class="metric-val">${best['총거리(km)']}km</div></div>
+        <div class="metric"><div class="metric-lbl">직행 대비</div><div class="metric-val" style="color:var(--warn)">${best['직행대비(분)']}분</div></div>
+        ${dirT!==null?`<div class="metric"><div class="metric-lbl">직행 A→B</div><div class="metric-val" style="color:var(--muted)">${dirT}분 (${dirD}km)</div></div>`:''}
+      </div>
+    `;
+  }
+
+  show('res4');
+  renderTable('tbl4',wd4,['경유지(X)','검색결과','주소','A→X(km)','A→X(분)','X→B(km)','X→B(분)','총거리(km)','총시간(분)','직행대비(분)','비고'],0);
+
+  // Map
+  const m=mkMap('map4',pA.lat,pA.lng,10);
+  L.marker([pA.lat,pA.lng],{icon:mkIcon('#ef4444','A')}).bindPopup(`<b>🅐 출발: ${esc(pA.name)}</b>`).addTo(m);
+  L.marker([pB.lat,pB.lng],{icon:mkIcon('#1d4ed8','B')}).bindPopup(`<b>🅑 도착: ${esc(pB.name)}</b>`).addTo(m);
+  if(dirT) L.polyline([[pA.lat,pA.lng],[pB.lat,pB.lng]],{color:'#cbd5e1',weight:2,opacity:.5,dashArray:'8'}).bindPopup(`직행: ${dirT}분`).addTo(m);
+
+  ptsList.filter(r=>r._pX).forEach((r,i)=>{
+    const isBest=i===0;
+    const clr=isBest?'#f59e0b':COLORS[(i+1)%COLORS.length];
+    const pX=r._pX;
+    L.marker([pX.lat,pX.lng],{icon:mkIcon(clr,isBest?'★':(i+1).toString())})
+      .bindPopup(`<b>${esc(r['경유지(X)'])}</b><br>A→X: ${r['A→X(분)']}분 · X→B: ${r['X→B(분)']}분<br><b>총 ${r['총시간(분)']}분</b><br>직행대비 ${r['직행대비(분)']}분`).addTo(m);
+    L.polyline([[pA.lat,pA.lng],[pX.lat,pX.lng],[pB.lat,pB.lng]],{color:clr,weight:isBest?3:1.5,opacity:isBest?.9:.35}).addTo(m);
+  });
+  $id('cb4').disabled=false;
+}
+</script>
+</body>
+</html>

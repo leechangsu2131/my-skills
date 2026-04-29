@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Matrix Analysis</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap');
+        .material-symbols-outlined {
+            font-family: 'Material Symbols Outlined';
+            font-weight: normal;
+            font-style: normal;
+            font-size: 24px;
+            line-height: 1;
+            letter-spacing: normal;
+            text-transform: none;
+            display: inline-block;
+            white-space: nowrap;
+            word-wrap: normal;
+            direction: ltr;
+            -webkit-font-feature-settings: 'liga';
+            -webkit-font-smoothing: antialiased;
+        }
+    </style>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "secondary-fixed-dim": "#bdc2ff",
+                    "primary-fixed-dim": "#dec800",
+                    "surface-container": "#f4eeda",
+                    "on-error-container": "#93000a",
+                    "primary-container": "#fee500",
+                    "error": "#ba1a1a",
+                    "inverse-surface": "#333123",
+                    "surface-container-low": "#faf3df",
+                    "surface-container-high": "#eee8d4",
+                    "on-tertiary-container": "#636565",
+                    "outline-variant": "#cdc7aa",
+                    "tertiary": "#5d5f5f",
+                    "surface-dim": "#e0dac7",
+                    "on-background": "#1e1c10",
+                    "on-error": "#ffffff",
+                    "inverse-primary": "#dec800",
+                    "on-surface-variant": "#4b4732",
+                    "tertiary-container": "#e3e3e3",
+                    "on-secondary-fixed-variant": "#343d96",
+                    "tertiary-fixed-dim": "#c6c6c7",
+                    "secondary": "#4c56af",
+                    "secondary-container": "#959efd",
+                    "surface": "#fff9e9",
+                    "background": "#fff9e9",
+                    "tertiary-fixed": "#e2e2e2",
+                    "primary-fixed": "#fde400",
+                    "surface-tint": "#6a5f00",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-variant": "#e8e2cf",
+                    "on-tertiary": "#ffffff",
+                    "on-primary": "#ffffff",
+                    "outline": "#7c775f",
+                    "on-surface": "#1e1c10",
+                    "error-container": "#ffdad6",
+                    "on-secondary": "#ffffff",
+                    "on-primary-fixed-variant": "#504700",
+                    "secondary-fixed": "#e0e0ff",
+                    "on-tertiary-fixed-variant": "#454747",
+                    "on-primary-fixed": "#201c00",
+                    "on-secondary-container": "#27308a",
+                    "surface-container-highest": "#e8e2cf",
+                    "inverse-on-surface": "#f7f1dd",
+                    "surface-bright": "#fff9e9",
+                    "on-secondary-fixed": "#000767",
+                    "primary": "#6a5f00",
+                    "on-tertiary-fixed": "#1a1c1c",
+                    "on-primary-container": "#716600"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin-mobile": "16px",
+                    "xl": "32px",
+                    "gutter": "12px",
+                    "lg": "24px",
+                    "md": "16px",
+                    "base": "4px",
+                    "xs": "4px",
+                    "sm": "8px"
+            },
+            "fontFamily": {
+                    "title-sm": [
+                            "Inter"
+                    ],
+                    "headline-md": [
+                            "Inter"
+                    ],
+                    "label-xs": [
+                            "Inter"
+                    ],
+                    "body-md": [
+                            "Inter"
+                    ],
+                    "display-lg": [
+                            "Inter"
+                    ],
+                    "data-tabular": [
+                            "Inter"
+                    ]
+            },
+            "fontSize": {
+                    "title-sm": [
+                            "18px",
+                            {
+                                    "lineHeight": "24px",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "headline-md": [
+                            "24px",
+                            {
+                                    "lineHeight": "32px",
+                                    "letterSpacing": "-0.01em",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "label-xs": [
+                            "12px",
+                            {
+                                    "lineHeight": "16px",
+                                    "letterSpacing": "0.05em",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "body-md": [
+                            "16px",
+                            {
+                                    "lineHeight": "24px",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "display-lg": [
+                            "32px",
+                            {
+                                    "lineHeight": "40px",
+                                    "letterSpacing": "-0.02em",
+                                    "fontWeight": "700"
+                            }
+                    ],
+                    "data-tabular": [
+                            "14px",
+                            {
+                                    "lineHeight": "20px",
+                                    "fontWeight": "500"
+                            }
+                    ]
+            }
+        },
+        },
+      }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex flex-col antialiased">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md shadow-none flex justify-between items-center px-4 h-14 border-b border-slate-200 dark:border-slate-800 transition-colors duration-200">
+<button class="text-blue-900 dark:text-yellow-400 hover:bg-slate-100 dark:hover:bg-slate-800 p-2 rounded-full transition-colors duration-200 active:opacity-70 flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<h1 class="text-slate-900 dark:text-slate-50 font-['Inter'] font-bold text-lg tracking-tight">Matrix Analysis</h1>
+<button class="text-blue-900 dark:text-yellow-400 hover:bg-slate-100 dark:hover:bg-slate-800 p-2 rounded-full transition-colors duration-200 active:opacity-70 flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="vpn_key">vpn_key</span>
+</button>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow pt-[72px] pb-[88px] px-margin-mobile flex flex-col gap-lg max-w-5xl mx-auto w-full">
+<!-- Input Section Bento Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-md">
+<!-- Origins List -->
+<div class="bg-surface-container-low border border-outline-variant/30 rounded-xl p-md shadow-sm">
+<div class="flex items-center gap-sm mb-sm text-on-surface">
+<span class="material-symbols-outlined text-primary" data-weight="fill" style="font-variation-settings: 'FILL' 1;">trip_origin</span>
+<h2 class="font-title-sm text-title-sm">Origins List</h2>
+</div>
+<div class="space-y-sm">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant/60" style="font-size: 20px;">location_on</span>
+<input class="w-full bg-surface border border-outline-variant/50 rounded-lg py-2 pl-10 pr-3 text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors font-body-md text-body-md placeholder-on-surface-variant/50" placeholder="Add origin location..." type="text"/>
+</div>
+<div class="flex items-center justify-between bg-surface border border-outline-variant/30 rounded-lg p-2">
+<span class="font-data-tabular text-data-tabular text-on-surface truncate pr-2">Warehouse A, North Dist.</span>
+<button class="text-on-surface-variant hover:text-error transition-colors"><span class="material-symbols-outlined" style="font-size: 18px;">close</span></button>
+</div>
+<div class="flex items-center justify-between bg-surface border border-outline-variant/30 rounded-lg p-2">
+<span class="font-data-tabular text-data-tabular text-on-surface truncate pr-2">Port Terminal 3</span>
+<button class="text-on-surface-variant hover:text-error transition-colors"><span class="material-symbols-outlined" style="font-size: 18px;">close</span></button>
+</div>
+</div>
+</div>
+<!-- Destinations List -->
+<div class="bg-surface-container-low border border-outline-variant/30 rounded-xl p-md shadow-sm">
+<div class="flex items-center gap-sm mb-sm text-on-surface">
+<span class="material-symbols-outlined text-secondary" data-weight="fill" style="font-variation-settings: 'FILL' 1;">pin_drop</span>
+<h2 class="font-title-sm text-title-sm">Destinations List</h2>
+</div>
+<div class="space-y-sm">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant/60" style="font-size: 20px;">search</span>
+<input class="w-full bg-surface border border-outline-variant/50 rounded-lg py-2 pl-10 pr-3 text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors font-body-md text-body-md placeholder-on-surface-variant/50" placeholder="Add destination..." type="text"/>
+</div>
+<div class="flex items-center justify-between bg-surface border border-outline-variant/30 rounded-lg p-2">
+<span class="font-data-tabular text-data-tabular text-on-surface truncate pr-2">Retail Center South</span>
+<button class="text-on-surface-variant hover:text-error transition-colors"><span class="material-symbols-outlined" style="font-size: 18px;">close</span></button>
+</div>
+<div class="flex items-center justify-between bg-surface border border-outline-variant/30 rounded-lg p-2">
+<span class="font-data-tabular text-data-tabular text-on-surface truncate pr-2">City Hall Annex</span>
+<button class="text-on-surface-variant hover:text-error transition-colors"><span class="material-symbols-outlined" style="font-size: 18px;">close</span></button>
+</div>
+<div class="flex items-center justify-between bg-surface border border-outline-variant/30 rounded-lg p-2">
+<span class="font-data-tabular text-data-tabular text-on-surface truncate pr-2">Industrial Park East</span>
+<button class="text-on-surface-variant hover:text-error transition-colors"><span class="material-symbols-outlined" style="font-size: 18px;">close</span></button>
+</div>
+</div>
+</div>
+</div>
+<!-- Action Button -->
+<div class="flex justify-end">
+<button class="bg-primary-container text-on-primary-container font-title-sm text-title-sm px-lg py-3 rounded-lg shadow-[0_4px_12px_rgba(0,0,0,0.08)] hover:bg-primary-fixed transition-colors flex items-center gap-2 active:scale-95 duration-150">
+<span class="material-symbols-outlined" data-weight="fill" style="font-variation-settings: 'FILL' 1;">analytics</span>
+                Calculate Matrix
+            </button>
+</div>
+<!-- Results Matrix Grid -->
+<div class="bg-surface-container-lowest border border-outline-variant/30 rounded-xl shadow-sm overflow-hidden flex flex-col mt-md">
+<div class="p-md border-b border-outline-variant/20 bg-surface-container-low flex justify-between items-center">
+<h3 class="font-title-sm text-title-sm text-on-surface">Travel Times (Mins)</h3>
+<span class="font-label-xs text-label-xs text-on-surface-variant px-2 py-1 bg-surface rounded-full border border-outline-variant/30">Live Traffic</span>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-variant/30 text-on-surface-variant font-label-xs text-label-xs uppercase tracking-wider">
+<th class="p-3 border-b border-r border-outline-variant/20 font-medium w-1/4">Origin \ Dest</th>
+<th class="p-3 border-b border-r border-outline-variant/20 font-medium text-center">Retail S.</th>
+<th class="p-3 border-b border-r border-outline-variant/20 font-medium text-center">City Hall</th>
+<th class="p-3 border-b border-outline-variant/20 font-medium text-center">Ind. Park</th>
+</tr>
+</thead>
+<tbody class="font-data-tabular text-data-tabular text-on-surface divide-y divide-outline-variant/20">
+<tr class="hover:bg-surface-variant/20 transition-colors">
+<td class="p-3 border-r border-outline-variant/20 bg-surface-variant/10 font-medium truncate max-w-[120px]" title="Warehouse A">Warehouse A</td>
+<td class="p-3 border-r border-outline-variant/20 text-center">
+<span class="inline-flex items-center justify-center w-8 h-8 rounded bg-error-container text-on-error-container font-semibold">42</span>
+</td>
+<td class="p-3 border-r border-outline-variant/20 text-center">
+<span class="inline-flex items-center justify-center w-8 h-8 rounded bg-surface text-on-surface">28</span>
+</td>
+<td class="p-3 text-center">
+<span class="inline-flex items-center justify-center w-8 h-8 rounded bg-tertiary-container text-on-tertiary-container">15</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-variant/20 transition-colors">
+<td class="p-3 border-r border-outline-variant/20 bg-surface-variant/10 font-medium truncate max-w-[120px]" title="Port Terminal 3">Port Term 3</td>
+<td class="p-3 border-r border-outline-variant/20 text-center">
+<span class="inline-flex items-center justify-center w-8 h-8 rounded bg-surface text-on-surface">35</span>
+</td>
+<td class="p-3 border-r border-outline-variant/20 text-center">
+<span class="inline-flex items-center justify-center w-8 h-8 rounded bg-tertiary-container text-on-tertiary-container">18</span>
+</td>
+<td class="p-3 text-center">
+<span class="inline-flex items-center justify-center w-8 h-8 rounded bg-error-container text-on-error-container font-semibold">55</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="p-3 bg-surface-variant/10 border-t border-outline-variant/20 text-right">
+<span class="font-label-xs text-label-xs text-on-surface-variant">Last updated: Just now</span>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-safe h-16 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-t border-slate-100 dark:border-slate-800 shadow-[0_-4px_12px_rgba(0,0,0,0.05)] transition-colors duration-200">
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 pt-2 pb-1 hover:text-blue-700 dark:hover:text-yellow-200 scale-95 active:scale-90 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="directions">directions</span>
+<span class="font-['Inter'] text-[10px] font-semibold uppercase tracking-wider">Routes</span>
+</a>
+<a class="flex flex-col items-center justify-center text-blue-900 dark:text-yellow-400 border-t-2 border-yellow-400 dark:border-yellow-400 pt-2 pb-1 hover:text-blue-700 dark:hover:text-yellow-200 scale-95 active:scale-90 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="grid_view" data-weight="fill" style="font-variation-settings: 'FILL' 1;">grid_view</span>
+<span class="font-['Inter'] text-[10px] font-semibold uppercase tracking-wider">Matrix</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 pt-2 pb-1 hover:text-blue-700 dark:hover:text-yellow-200 scale-95 active:scale-90 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="location_searching">location_searching</span>
+<span class="font-['Inter'] text-[10px] font-semibold uppercase tracking-wider">Midpoint</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 pt-2 pb-1 hover:text-blue-700 dark:hover:text-yellow-200 scale-95 active:scale-90 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="alt_route">alt_route</span>
+<span class="font-['Inter'] text-[10px] font-semibold uppercase tracking-wider">Compare</span>
+</a>
+</nav>
+</body></html>

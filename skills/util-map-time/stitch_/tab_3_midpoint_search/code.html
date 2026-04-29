@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>Optimal Midpoint Search</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed-dim": "#bdc2ff",
+                        "primary-fixed-dim": "#dec800",
+                        "surface-container": "#f4eeda",
+                        "on-error-container": "#93000a",
+                        "primary-container": "#fee500",
+                        "error": "#ba1a1a",
+                        "inverse-surface": "#333123",
+                        "surface-container-low": "#faf3df",
+                        "surface-container-high": "#eee8d4",
+                        "on-tertiary-container": "#636565",
+                        "outline-variant": "#cdc7aa",
+                        "tertiary": "#5d5f5f",
+                        "surface-dim": "#e0dac7",
+                        "on-background": "#1e1c10",
+                        "on-error": "#ffffff",
+                        "inverse-primary": "#dec800",
+                        "on-surface-variant": "#4b4732",
+                        "tertiary-container": "#e3e3e3",
+                        "on-secondary-fixed-variant": "#343d96",
+                        "tertiary-fixed-dim": "#c6c6c7",
+                        "secondary": "#4c56af",
+                        "secondary-container": "#959efd",
+                        "surface": "#fff9e9",
+                        "background": "#fff9e9",
+                        "tertiary-fixed": "#e2e2e2",
+                        "primary-fixed": "#fde400",
+                        "surface-tint": "#6a5f00",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-variant": "#e8e2cf",
+                        "on-tertiary": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "outline": "#7c775f",
+                        "on-surface": "#1e1c10",
+                        "error-container": "#ffdad6",
+                        "on-secondary": "#ffffff",
+                        "on-primary-fixed-variant": "#504700",
+                        "secondary-fixed": "#e0e0ff",
+                        "on-tertiary-fixed-variant": "#454747",
+                        "on-primary-fixed": "#201c00",
+                        "on-secondary-container": "#27308a",
+                        "surface-container-highest": "#e8e2cf",
+                        "inverse-on-surface": "#f7f1dd",
+                        "surface-bright": "#fff9e9",
+                        "on-secondary-fixed": "#000767",
+                        "primary": "#6a5f00",
+                        "on-tertiary-fixed": "#1a1c1c",
+                        "on-primary-container": "#716600"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-mobile": "16px",
+                        "xl": "32px",
+                        "gutter": "12px",
+                        "lg": "24px",
+                        "md": "16px",
+                        "base": "4px",
+                        "xs": "4px",
+                        "sm": "8px"
+                    },
+                    "fontFamily": {
+                        "title-sm": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "label-xs": ["Inter"],
+                        "body-md": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "data-tabular": ["Inter"]
+                    },
+                    "fontSize": {
+                        "title-sm": ["18px", { "lineHeight": "24px", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "label-xs": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "display-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "data-tabular": ["14px", { "lineHeight": "20px", "fontWeight": "500" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+        .pt-safe { padding-top: env(safe-area-inset-top); }
+        
+        /* Focus styles for input fields */
+        input:focus {
+            border-bottom-width: 2px;
+            border-color: #fee500; /* primary-container */
+            outline: none;
+            box-shadow: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background antialiased pb-24 pt-14 selection:bg-primary-container selection:text-on-primary-container">
+<!-- TopAppBar -->
+<header class="fixed top-0 left-0 w-full z-50 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 shadow-none flex justify-between items-center w-full px-4 h-14 pt-safe transition-colors duration-200">
+<button class="flex items-center justify-center w-10 h-10 text-slate-900 dark:text-slate-50 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full active:opacity-70 transition-colors">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">menu</span>
+</button>
+<h1 class="text-slate-900 dark:text-slate-50 font-['Inter'] font-bold text-lg tracking-tight">Route Analysis</h1>
+<button class="flex items-center justify-center w-10 h-10 text-slate-900 dark:text-slate-50 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full active:opacity-70 transition-colors">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">vpn_key</span>
+</button>
+</header>
+<main class="w-full max-w-3xl mx-auto flex flex-col min-h-screen">
+<!-- Map Visualization Placeholder (Level 0) -->
+<div class="relative w-full h-[353px] bg-surface-container-high overflow-hidden shrink-0">
+<img alt="Map visualization" class="w-full h-full object-cover opacity-70" data-alt="Clean, minimalist city map view with subtle street lines and soft topographical shading in light neutral colors." data-location="Seoul" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAPUCKaU8bWPSUvRKnBt70epzA1ADal6heCDVIzIFDvLwVB9CV4iX9sWNaoUpQR_YD4bHlnpKvQixqehq3G49X9VGZuAZZJxaKrhR_KaxG9OQ4dQ2AdRq7WGVT7LHuiVkIs1WGsUsjXhEr2qHSUwANSBPYf0UWhYjlFCvJl_e200a8OyGvsqM1XVX5i2scn6hHu4YTwtHzDdsa4Xu-JOsrp3ATFInNVM1WPujmMZaewxV17d88cQxFqwG-iNCSEKqDsSCiKGDAhXyM"/>
+<!-- Map Overlay Gradient for depth -->
+<div class="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent"></div>
+<!-- Participant Markers on Map -->
+<div class="absolute top-1/4 left-1/4 transform -translate-x-1/2 -translate-y-1/2 flex flex-col items-center">
+<div class="w-8 h-8 bg-secondary rounded-full flex items-center justify-center shadow-[0px_4px_12px_rgba(0,0,0,0.08)] border-2 border-white">
+<span class="text-on-secondary font-label-xs text-label-xs">P1</span>
+</div>
+</div>
+<div class="absolute top-1/3 right-1/4 transform translate-x-1/2 -translate-y-1/2 flex flex-col items-center">
+<div class="w-8 h-8 bg-secondary rounded-full flex items-center justify-center shadow-[0px_4px_12px_rgba(0,0,0,0.08)] border-2 border-white">
+<span class="text-on-secondary font-label-xs text-label-xs">P2</span>
+</div>
+</div>
+<!-- Suggested Midpoint Marker -->
+<div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col items-center z-10 animate-pulse">
+<div class="w-10 h-10 bg-primary-container rounded-full flex items-center justify-center shadow-[0px_8px_24px_rgba(0,0,0,0.12)] border-2 border-white relative">
+<span class="material-symbols-outlined text-on-primary-container" style="font-variation-settings: 'FILL' 1;">star</span>
+<!-- Glow effect -->
+<div class="absolute inset-0 rounded-full border border-primary-container animate-ping opacity-50"></div>
+</div>
+<span class="mt-1 font-label-xs text-label-xs text-on-surface bg-surface-container/80 backdrop-blur-sm px-2 py-0.5 rounded shadow-sm">Midpoint</span>
+</div>
+<!-- Connection Lines (Simulated with SVG) -->
+<svg class="absolute inset-0 w-full h-full pointer-events-none" style="z-index: 1;">
+<path d="M 25% 25% L 50% 50%" fill="none" opacity="0.6" stroke="#4c56af" stroke-dasharray="4 4" stroke-width="2"></path>
+<path d="M 75% 33% L 50% 50%" fill="none" opacity="0.6" stroke="#4c56af" stroke-dasharray="4 4" stroke-width="2"></path>
+</svg>
+</div>
+<!-- Content Area (Level 1 & 3) -->
+<div class="flex-1 px-margin-mobile py-lg flex flex-col gap-xl -mt-6 relative z-20">
+<!-- Input Form Card (Level 1) -->
+<div class="bg-surface rounded-xl shadow-[0px_8px_24px_rgba(0,0,0,0.12)] p-md flex flex-col gap-md border border-outline-variant/30">
+<h2 class="font-title-sm text-title-sm text-on-surface">Find Optimal Midpoint</h2>
+<div class="flex flex-col gap-sm">
+<!-- Participant 1 Input -->
+<div class="flex items-center gap-sm bg-surface-container-low rounded-lg p-2 border-b border-transparent focus-within:border-primary-container transition-colors">
+<span class="material-symbols-outlined text-tertiary" style="font-variation-settings: 'FILL' 0;">person</span>
+<input class="w-full bg-transparent border-none text-on-surface font-body-md text-body-md placeholder:text-outline p-0 focus:ring-0" placeholder="Participant 1 Location (e.g. Home)" type="text" value="Gangnam Station"/>
+</div>
+<!-- Participant 2 Input -->
+<div class="flex items-center gap-sm bg-surface-container-low rounded-lg p-2 border-b border-transparent focus-within:border-primary-container transition-colors">
+<span class="material-symbols-outlined text-tertiary" style="font-variation-settings: 'FILL' 0;">person</span>
+<input class="w-full bg-transparent border-none text-on-surface font-body-md text-body-md placeholder:text-outline p-0 focus:ring-0" placeholder="Participant 2 Location (e.g. Office)" type="text" value="Hongdae Station"/>
+</div>
+<!-- Add another button -->
+<button class="flex items-center gap-xs text-secondary font-label-xs text-label-xs w-fit py-2 hover:opacity-80 transition-opacity">
+<span class="material-symbols-outlined text-[16px]">add</span>
+                        Add Participant
+                    </button>
+</div>
+<!-- Search Button (Level 2) -->
+<button class="w-full bg-primary-container text-on-primary-container font-title-sm text-title-sm py-3 rounded-lg shadow-[0px_4px_12px_rgba(0,0,0,0.08)] flex items-center justify-center gap-sm hover:brightness-95 active:scale-[0.98] transition-all mt-xs">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">location_searching</span>
+                    Search Midpoint
+                </button>
+</div>
+<!-- Recommended Places Section -->
+<div class="flex flex-col gap-md">
+<div class="flex justify-between items-baseline">
+<h3 class="font-title-sm text-title-sm text-on-surface">Recommended Venues</h3>
+<span class="font-label-xs text-label-xs text-tertiary">Near suggested midpoint</span>
+</div>
+<!-- Place List (Bento-ish layout) -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-md">
+<!-- Place Card 1 -->
+<div class="bg-surface rounded-lg border border-outline-variant/50 overflow-hidden flex flex-col hover:shadow-md transition-shadow">
+<div class="h-24 bg-surface-container-highest relative">
+<img alt="Cafe interior" class="w-full h-full object-cover" data-alt="Modern, bright cafe interior with warm lighting, wooden tables, and plants, inviting atmosphere." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDn-LA82Oi8DOUKwxmwfHBh8vbMJLEhePytpH0UOIPiPA4RM99SoFxM_eOZacy19cMRJXqN6mCWSUsfT6B_YBOL0ckSjWmMce0zaeO3rJsUNe86ZPdpr7kUBsWK4CTl6rUvGZ41AXH-19AbXdkUr-U4wVE-FpYsp7_komQBGIXImWZ1ka-KbAtghuFIFB-o9uIBprnZ75tcbHu8dN-IoEBediheXdJKgFAXwlrQAhiEQq_mgSEOqeBN0kG9WcOkBmUjqz8iBCl0Kq8"/>
+<div class="absolute top-2 right-2 bg-surface/90 backdrop-blur text-on-surface font-label-xs text-label-xs px-2 py-0.5 rounded shadow-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px] text-primary-container" style="font-variation-settings: 'FILL' 1;">star</span>
+                                4.8
+                            </div>
+</div>
+<div class="p-sm flex flex-col gap-xs">
+<h4 class="font-body-md text-body-md font-semibold text-on-surface line-clamp-1">The Blue Roasters</h4>
+<div class="flex items-center gap-xs text-tertiary">
+<span class="material-symbols-outlined text-[14px]">local_cafe</span>
+<span class="font-data-tabular text-data-tabular text-xs">Cafe • 120m away</span>
+</div>
+</div>
+</div>
+<!-- Place Card 2 -->
+<div class="bg-surface rounded-lg border border-outline-variant/50 overflow-hidden flex flex-col hover:shadow-md transition-shadow">
+<div class="h-24 bg-surface-container-highest relative">
+<img alt="Restaurant interior" class="w-full h-full object-cover" data-alt="Cozy, dimly lit restaurant setting with elegant table arrangements and soft background blur." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD8GwEBVcyqzuxygM4-oUreHczPybfZxBAj0yfvESMnjqNjM8cbnIDw4f5V153MCWpD6FnZVh3pHgUfNTVg454y4Vp7QZi2wrLw_kR2eeOBFadhsTxJykH68xfz1lXUmYX-9Tbo_6LbXudycvxW_NAFAi2OB-a8M_jkLlA5GrKjYcxpc3eGkxIkRtq76nh_PgvKoFUOecKb4XYs-8K10IX7HKNdcYV4VbZAHfmDkf-FaU2VkcW1V7f8X3N-plHV3YXvh0iFE-_lJAk"/>
+<div class="absolute top-2 right-2 bg-surface/90 backdrop-blur text-on-surface font-label-xs text-label-xs px-2 py-0.5 rounded shadow-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px] text-primary-container" style="font-variation-settings: 'FILL' 1;">star</span>
+                                4.5
+                            </div>
+</div>
+<div class="p-sm flex flex-col gap-xs">
+<h4 class="font-body-md text-body-md font-semibold text-on-surface line-clamp-1">Seoul Dining Co.</h4>
+<div class="flex items-center gap-xs text-tertiary">
+<span class="material-symbols-outlined text-[14px]">restaurant</span>
+<span class="font-data-tabular text-data-tabular text-xs">Dining • 250m away</span>
+</div>
+</div>
+</div>
+<!-- Place Card 3 -->
+<div class="bg-surface rounded-lg border border-outline-variant/50 overflow-hidden flex flex-col hover:shadow-md transition-shadow hidden md:flex">
+<div class="h-24 bg-surface-container-highest relative">
+<img alt="Workspace" class="w-full h-full object-cover" data-alt="Clean, minimalist shared workspace with natural light, modern desks, and ergonomic chairs." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDSC5YZxEFmhUfE2UzXVNY6VPNek5a_eUU0iSf0__s4xJAZEkl93tF2m4FU6d08-Nsg2tyua8rm0dBVQXfr907rCgb9JChV1T9ctldpEWSGW0pLJKMWxTBt3mR8Wq7kmbkGySd_M9Hf5tEAqlAthJ5S1RSGhTKTpnlqSm11ITi64a0YogOFnb5sh__s6MzEZCWUGsmBv3C2gARmKNQBXfkNXqyra18gJU2KWbVWVKmNc8Yprewvx4CDxCbyIRYV-H6Ekne2pO5Dz2o"/>
+<div class="absolute top-2 right-2 bg-surface/90 backdrop-blur text-on-surface font-label-xs text-label-xs px-2 py-0.5 rounded shadow-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px] text-primary-container" style="font-variation-settings: 'FILL' 1;">star</span>
+                                4.7
+                            </div>
+</div>
+<div class="p-sm flex flex-col gap-xs">
+<h4 class="font-body-md text-body-md font-semibold text-on-surface line-clamp-1">Open Desk Hub</h4>
+<div class="flex items-center gap-xs text-tertiary">
+<span class="material-symbols-outlined text-[14px]">desk</span>
+<span class="font-data-tabular text-data-tabular text-xs">Workspace • 300m away</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-safe h-16 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-t border-slate-100 dark:border-slate-800 shadow-[0_-4px_12px_rgba(0,0,0,0.05)] z-50 md:hidden transition-transform duration-150">
+<!-- Routes (Inactive) -->
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 pt-2 pb-1 hover:text-blue-700 dark:hover:text-yellow-200 transition-colors w-1/4" href="#">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 0;">directions</span>
+<span class="font-['Inter'] text-[10px] font-semibold uppercase tracking-wider">Routes</span>
+</a>
+<!-- Matrix (Inactive) -->
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 pt-2 pb-1 hover:text-blue-700 dark:hover:text-yellow-200 transition-colors w-1/4" href="#">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 0;">grid_view</span>
+<span class="font-['Inter'] text-[10px] font-semibold uppercase tracking-wider">Matrix</span>
+</a>
+<!-- Midpoint (Active) -->
+<a class="flex flex-col items-center justify-center text-blue-900 dark:text-yellow-400 border-t-2 border-yellow-400 dark:border-yellow-400 pt-2 pb-1 w-1/4" href="#">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">location_searching</span>
+<span class="font-['Inter'] text-[10px] font-semibold uppercase tracking-wider">Midpoint</span>
+</a>
+<!-- Compare (Inactive) -->
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 pt-2 pb-1 hover:text-blue-700 dark:hover:text-yellow-200 transition-colors w-1/4" href="#">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 0;">alt_route</span>
+<span class="font-['Inter'] text-[10px] font-semibold uppercase tracking-wider">Compare</span>
+</a>
+</nav>
+</body></html>

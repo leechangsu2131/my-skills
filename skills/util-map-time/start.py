@@ -69,7 +69,7 @@ for _ in range(20):
         sys.exit(proc.returncode or 1)
 
     try:
-        with urllib.request.urlopen("http://localhost:8080/api/config", timeout=1):
+        with urllib.request.urlopen("http://localhost:5020/api/config", timeout=1):
             server_ready = True
             break
     except Exception:
@@ -77,7 +77,7 @@ for _ in range(20):
 
 if not server_ready:
     msg(
-        "[ERROR] Server did not respond at http://localhost:8080",
+        "[ERROR] Server did not respond at http://localhost:5020",
         "The port may already be in use, or server.py may have crashed.",
     )
     proc.terminate()
@@ -85,11 +85,11 @@ if not server_ready:
     sys.exit(1)
 
 # Open browser
-print("Opening browser at http://localhost:8080 ...")
-webbrowser.open("http://localhost:8080")
+print("Opening browser at http://localhost:5020 ...")
+webbrowser.open("http://localhost:5020")
 
 msg(
-    "Server is running at http://localhost:8080",
+    "Server is running at http://localhost:5020",
     "Close the server window (black window) to stop.",
 )
 

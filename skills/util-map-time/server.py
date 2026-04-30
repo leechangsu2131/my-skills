@@ -6,13 +6,13 @@ Mini proxy server for app.html
 
 Usage:
     python server.py
-    -> open http://localhost:8080
+    -> open http://localhost:5020
 """
 import os, json, urllib.parse, urllib.request
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 from pathlib import Path
 
-PORT = 8080
+PORT = 5020
 ROOT = Path(__file__).parent
 
 # ── load .env ──

@@ -1,0 +1,46 @@
+﻿python : Traceback (most recent call last):
+위치 줄:1 문자:1
++ python -c "
++ ~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Traceback (most recent call last)::String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  File "<string>", line 6, in <module>
+  File "C:\Users\user\AppData\Local\Programs\Python\Python311\Lib\site-packages\pandas\io\excel\_base.py", line 1621, i
+n __init__
+    self._reader = self._engines[engine](
+                   ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\AppData\Local\Programs\Python\Python311\Lib\site-packages\pandas\io\excel\_openpyxl.py", line 560
+, in __init__
+    super().__init__(
+  File "C:\Users\user\AppData\Local\Programs\Python\Python311\Lib\site-packages\pandas\io\excel\_base.py", line 554, in
+ __init__
+    self.book = self.load_workbook(self.handles.handle, engine_kwargs)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\AppData\Local\Programs\Python\Python311\Lib\site-packages\pandas\io\excel\_openpyxl.py", line 579
+, in load_workbook
+    return load_workbook(
+           ^^^^^^^^^^^^^^
+  File "C:\Users\user\AppData\Local\Programs\Python\Python311\Lib\site-packages\openpyxl\reader\excel.py", line 348, in
+ load_workbook
+    reader.read()
+  File "C:\Users\user\AppData\Local\Programs\Python\Python311\Lib\site-packages\openpyxl\reader\excel.py", line 297, in
+ read
+    self.read_custom()
+  File "C:\Users\user\AppData\Local\Programs\Python\Python311\Lib\site-packages\openpyxl\reader\excel.py", line 182, in
+ read_custom
+    self.wb.custom_doc_props = CustomPropertyList.from_tree(src)
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\AppData\Local\Programs\Python\Python311\Lib\site-packages\openpyxl\packaging\custom.py", line 221
+, in from_tree
+    new_prop = typ(name=prop.name, value=value)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\AppData\Local\Programs\Python\Python311\Lib\site-packages\openpyxl\packaging\custom.py", line 136
+, in __init__
+    self.name = name
+    ^^^^^^^^^
+  File "C:\Users\user\AppData\Local\Programs\Python\Python311\Lib\site-packages\openpyxl\descriptors\base.py", line 46,
+ in __set__
+    raise TypeError(msg)
+TypeError: <class 'openpyxl.packaging.custom.StringProperty'>.name should be <class 'str'> but value is <class 'NoneTyp
+e'>

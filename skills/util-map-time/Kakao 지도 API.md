@@ -23,13 +23,13 @@ source: "https://apis.map.kakao.com/web/guide/"
 5\. 페이지 상단에서 JavaScript 키를 확인하고 복사하여, 지도 API의 appkey로 사용합니다.  
 6\. 앱을 실행합니다.
 
-- 등록한 도메인(예: http://localhost:8080)에서 웹 서버를 실행시켜 위 파일을 엽니다.
+- 등록한 도메인(예: http://localhost:5020)에서 웹 서버를 실행시켜 위 파일을 엽니다.
 ```shell
 # Python이 설치된 컴퓨터에서는 해당 폴더로 이동 후
 $ cd /path/to/your/folder/
 
 # 다음과 같이 테스트용 웹 서버를 실행할 수 있습니다.
-$ python -m SimpleHTTPServer 8080
+$ python -m SimpleHTTPServer 5020
 ```
 - 브라우저를 열어 위 도메인에 접속합니다.
 

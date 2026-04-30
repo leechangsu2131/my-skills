@@ -5,54 +5,154 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{{ student_id }} 채점 상세</title>
 <style>
-:root{--bg:#0f172a;--card:#1e293b;--panel:#111827;--border:#334155;--text:#f1f5f9;--muted:#94a3b8;--green:#22c55e;--red:#ef4444;--yellow:#f59e0b}
+:root{--bg:#0f172a;--card:#1e293b;--panel:#111827;--border:#334155;--text:#f1f5f9;--muted:#94a3b8;--green:#22c55e;--red:#ef4444;--yellow:#f59e0b;--blue:#3b82f6}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:24px}
 a{color:inherit;text-decoration:none}
-.shell{max-width:1200px;margin:0 auto}
+.shell{max-width:1240px;margin:0 auto}
 .top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:20px}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 16px;border-radius:10px;border:none;background:#334155;color:var(--text);font-size:13px;font-weight:700}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px}
+.actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 16px;border-radius:10px;border:none;background:#334155;color:var(--text);font-size:13px;font-weight:700;cursor:pointer}
+.btn-primary{background:var(--blue);color:#fff}.btn-green{background:var(--green);color:#052e16}.btn-red{background:#7f1d1d;color:#fecaca}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:14px}
 .card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px}
-.img-wrap{margin:12px 0;background:#fff;border-radius:10px;overflow:hidden;border:1px solid var(--border)}
+.card.needs-review{border-color:rgba(245,158,11,.65)}
+.card.correct{border-color:rgba(34,197,94,.65)}
+.card.incorrect{border-color:rgba(239,68,68,.65)}
+.card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:10px}
+.badge{display:inline-flex;padding:4px 8px;border-radius:999px;font-size:11px;font-weight:700;border:1px solid var(--border)}
+.badge.warn{color:#fbbf24}.badge.ok{color:#86efac}.badge.bad{color:#fca5a5}
+.crop-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.img-wrap{background:#fff;border-radius:10px;overflow:hidden;border:1px solid var(--border);min-height:92px;display:flex;align-items:center;justify-content:center}
 .img-wrap img{display:block;max-width:100%;height:auto}
+.img-label{font-size:11px;color:var(--muted);margin-bottom:4px}
 .meta{font-size:12px;color:var(--muted);line-height:1.7}
-.ok{color:var(--green)}.bad{color:var(--red)}.warn{color:#fbbf24}
+.form-grid{display:grid;grid-template-columns:1fr 92px;gap:8px;margin-top:12px}
+.field{display:flex;flex-direction:column;gap:5px}
+label{font-size:11px;color:var(--muted);font-weight:700}
+input,select{width:100%;border:1px solid var(--border);border-radius:8px;background:#0f172a;color:var(--text);padding:8px;font-size:13px}
+.quick{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.empty{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:22px;color:var(--muted)}
+@media (max-width:760px){body{padding:16px}.top{flex-direction:column}.crop-grid{grid-template-columns:1fr}.form-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 <div class="shell">
-  <div class="top">
-    <div>
-      <h1>{{ student_id }} 채점 상세</h1>
-      <div class="meta">총점 {{ submission.total_score or 0 }} / {{ submission.total_points or 0 }}</div>
+  <form method="post">
+    <div class="top">
+      <div>
+        <h1>{{ student_id }} 채점 상세</h1>
+        <div class="meta">총점 {{ submission.total_score or 0 }} / {{ submission.total_points or 0 }} · 검토 필요 {{ submission.needs_review_count or 0 }}문항</div>
+      </div>
+      <div class="actions">
+        <a class="btn" href="/grading">← 결과 목록</a>
+        <button class="btn btn-primary" type="submit">검토 내용 저장</button>
+      </div>
     </div>
-    <a class="btn" href="/grading">← 결과 목록</a>
-  </div>
 
-  <div class="grid">
-    {% for item in submission.items %}
-    <div class="card">
-      <div><strong>{{ item.page }}페이지 {{ item.question_number }}번</strong></div>
-      <div class="img-wrap">
-        <img src="{{ item.student_crop_url }}" alt="crop">
+    {% if items %}
+    <div class="grid">
+      {% for item in items %}
+      {% set item_id = item.item_id or (student_id ~ '_q' ~ item.question_number) %}
+      {% set points_possible = item.points_possible or item.points or 0 %}
+      {% set is_correct = item.is_correct %}
+      {% set needs_review = item.needs_review %}
+      <div class="card {% if needs_review %}needs-review{% elif is_correct %}correct{% else %}incorrect{% endif %}">
+        <div class="card-head">
+          <div>
+            <strong>{{ item.page }}페이지 {{ item.question_number }}번</strong>
+            <div class="meta" style="word-break:break-all">{{ item_id }}</div>
+          </div>
+          {% if needs_review %}
+            <span class="badge warn">검토 필요</span>
+          {% elif is_correct %}
+            <span class="badge ok">정답 확정</span>
+          {% else %}
+            <span class="badge bad">오답 확정</span>
+          {% endif %}
+        </div>
+
+        <div class="crop-grid">
+          <div>
+            <div class="img-label">학생 답안</div>
+            <div class="img-wrap">
+              {% if item.student_crop_url %}
+                <img src="{{ item.student_crop_url }}" alt="student crop">
+              {% else %}
+                <span class="meta">crop 없음</span>
+              {% endif %}
+            </div>
+          </div>
+          <div>
+            <div class="img-label">빈 시험지 기준 영역</div>
+            <div class="img-wrap">
+              {% if item.reference_crop_url %}
+                <img src="{{ item.reference_crop_url }}" alt="reference crop">
+              {% else %}
+                <span class="meta">기준 crop 없음</span>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+
+        <div class="meta">OCR 신뢰도: {{ "%.2f"|format(item.ocr_confidence or 0) }}</div>
+        <div class="meta">정답: {{ item.expected_answer or "-" }}</div>
+
+        <div class="form-grid">
+          <div class="field">
+            <label for="recognized_{{ item_id }}">인식/수정 답안</label>
+            <input id="recognized_{{ item_id }}" name="recognized_answer__{{ item_id }}" value="{{ item.recognized_answer or '' }}">
+          </div>
+          <div class="field">
+            <label for="points_{{ item_id }}">점수</label>
+            <input id="points_{{ item_id }}" name="points_earned__{{ item_id }}" type="number" min="0" max="{{ points_possible }}" value="{{ item.points_earned or 0 }}">
+          </div>
+        </div>
+
+        <div class="field" style="margin-top:8px">
+          <label for="status_{{ item_id }}">검토 판정</label>
+          <select id="status_{{ item_id }}" name="review_status__{{ item_id }}">
+            <option value="review" {% if needs_review %}selected{% endif %}>검토 필요 유지</option>
+            <option value="correct" {% if not needs_review and is_correct %}selected{% endif %}>정답 확정</option>
+            <option value="incorrect" {% if not needs_review and not is_correct %}selected{% endif %}>오답 확정</option>
+          </select>
+        </div>
+
+        <div class="quick">
+          <button class="btn btn-green" type="button" data-mark-correct="{{ item_id }}" data-max-points="{{ points_possible }}">정답 처리</button>
+          <button class="btn btn-red" type="button" data-mark-incorrect="{{ item_id }}">오답 처리</button>
+        </div>
       </div>
-      <div class="meta">OCR: {{ item.recognized_answer or "-" }}</div>
-      <div class="meta">정답: {{ item.expected_answer or "-" }}</div>
-      <div class="meta">점수: {{ item.points_earned or 0 }} / {{ item.points_possible or 0 }}</div>
-      <div class="meta">
-        {% if item.is_correct %}
-          <span class="ok">정답</span>
-        {% else %}
-          <span class="bad">오답 또는 미채점</span>
-        {% endif %}
-        {% if item.needs_review %}
-          · <span class="warn">검토 필요</span>
-        {% endif %}
-      </div>
+      {% endfor %}
     </div>
-    {% endfor %}
-  </div>
+    <div class="actions" style="margin-top:16px">
+      <button class="btn btn-primary" type="submit">검토 내용 저장</button>
+    </div>
+    {% else %}
+      <div class="empty">아직 표시할 문항이 없습니다. 대시보드에서 채점 준비와 OCR을 먼저 실행해 주세요.</div>
+    {% endif %}
+  </form>
 </div>
+<script>
+document.addEventListener('click', (event) => {
+  const correct = event.target.closest('[data-mark-correct]');
+  if (correct) {
+    const id = correct.dataset.markCorrect;
+    const points = document.getElementById('points_' + id);
+    const status = document.getElementById('status_' + id);
+    if (points) points.value = correct.dataset.maxPoints || '0';
+    if (status) status.value = 'correct';
+    return;
+  }
+  const incorrect = event.target.closest('[data-mark-incorrect]');
+  if (incorrect) {
+    const id = incorrect.dataset.markIncorrect;
+    const points = document.getElementById('points_' + id);
+    const status = document.getElementById('status_' + id);
+    if (points) points.value = '0';
+    if (status) status.value = 'incorrect';
+  }
+});
+</script>
 </body>
 </html>

@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import re
 from pathlib import Path
+from typing import Any, Callable
 
 from answer_normalizer import normalize_objective_answer, normalize_short_answer
 from grader import grade_submission_item
@@ -11,6 +12,7 @@ from region_cropper import crop_question_region
 
 
 STUDENT_PAGE_RE = re.compile(r"_stu(?P<student>\d+)_p(?P<page>\d+)\.png$", re.IGNORECASE)
+OcrProgressCallback = Callable[[dict[str, Any]], None]
 
 
 def build_submission_manifest(file_names: list[str]) -> dict[str, dict]:
@@ -109,8 +111,28 @@ def generate_student_crops(paths: ProjectPaths, manifests: list[dict]) -> int:
     return count
 
 
-def run_ocr_for_project(paths: ProjectPaths, engine) -> int:
+def count_ocr_work_items(paths: ProjectPaths) -> int:
+    total = 0
+    for manifest_path in paths.submissions_dir.glob("*.json"):
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        for item in manifest.get("items", []):
+            crop_path = paths.crops_dir / item.get("crop_path", "")
+            if crop_path.exists():
+                total += 1
+    return total
+
+
+def run_ocr_for_project(
+    paths: ProjectPaths,
+    engine,
+    progress_callback: OcrProgressCallback | None = None,
+) -> int:
     updated = 0
+    processed = 0
+    total = count_ocr_work_items(paths)
+    if progress_callback is not None:
+        progress_callback({"total": total, "processed": processed})
+
     for manifest_path in paths.submissions_dir.glob("*.json"):
         manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
         changed = False
@@ -119,6 +141,16 @@ def run_ocr_for_project(paths: ProjectPaths, engine) -> int:
             crop_path = paths.crops_dir / item.get("crop_path", "")
             if not crop_path.exists():
                 continue
+
+            if progress_callback is not None:
+                progress_callback(
+                    {
+                        "total": total,
+                        "processed": processed,
+                        "current_student": item.get("student_id", manifest_path.stem),
+                        "current_item": item.get("item_id", ""),
+                    }
+                )
 
             ocr_result = engine.read_text(crop_path)
             candidates = ocr_result.get("candidates", [])
@@ -149,6 +181,17 @@ def run_ocr_for_project(paths: ProjectPaths, engine) -> int:
                 item["review_reasons"] = []
 
             changed = True
+            processed += 1
+            if progress_callback is not None:
+                progress_callback(
+                    {
+                        "total": total,
+                        "processed": processed,
+                        "current_student": item.get("student_id", manifest_path.stem),
+                        "current_item": item.get("item_id", ""),
+                        "last_confidence": best_confidence,
+                    }
+                )
 
         if changed:
             manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -191,6 +234,52 @@ def score_project_submissions(paths: ProjectPaths, answers: list[dict]) -> int:
         manifest_path.write_text(json.dumps(scored, ensure_ascii=False, indent=2), encoding="utf-8")
         count += 1
     return count
+
+
+def update_submission_review(paths: ProjectPaths, student_id: str, form_data) -> dict | None:
+    path = paths.submissions_dir / f"{student_id}.json"
+    if not path.exists():
+        return None
+
+    submission = json.loads(path.read_text(encoding="utf-8"))
+    for item in submission.get("items", []):
+        item_id = str(item.get("item_id") or f"{student_id}_q{item.get('question_number', '')}")
+        recognized = form_data.get(f"recognized_answer__{item_id}")
+        if recognized is not None:
+            item["recognized_answer"] = str(recognized).strip()
+
+        points_possible = int(item.get("points_possible", item.get("points", 0)) or 0)
+        points_raw = form_data.get(f"points_earned__{item_id}")
+        try:
+            points_earned = int(points_raw) if points_raw not in (None, "") else int(item.get("points_earned", 0) or 0)
+        except (TypeError, ValueError):
+            points_earned = 0
+        points_earned = max(0, min(points_earned, points_possible))
+
+        review_status = str(form_data.get(f"review_status__{item_id}") or "review")
+        if review_status == "correct":
+            item["is_correct"] = True
+            item["needs_review"] = False
+            if points_raw in (None, ""):
+                points_earned = points_possible
+        elif review_status == "incorrect":
+            item["is_correct"] = False
+            item["needs_review"] = False
+            if points_raw in (None, ""):
+                points_earned = 0
+        else:
+            item["is_correct"] = False
+            item["needs_review"] = True
+
+        item["points_possible"] = points_possible
+        item["points_earned"] = points_earned
+        item["review_status"] = "needs_review" if item.get("needs_review") else "approved"
+
+    submission["total_points"] = sum(int(item.get("points_possible", 0) or 0) for item in submission.get("items", []))
+    submission["total_score"] = sum(int(item.get("points_earned", 0) or 0) for item in submission.get("items", []))
+    submission["needs_review_count"] = sum(1 for item in submission.get("items", []) if item.get("needs_review"))
+    path.write_text(json.dumps(submission, ensure_ascii=False, indent=2), encoding="utf-8")
+    return submission
 
 
 def load_all_submission_results(paths: ProjectPaths) -> list[dict]:

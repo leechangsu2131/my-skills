@@ -186,3 +186,39 @@
 2026-04-28 18:23:49,976 [INFO] [app_started] {}
 2026-04-28 18:25:04,561 [INFO] [regions_loaded] {}
 2026-04-28 18:25:16,584 [INFO] [regions_loaded] {}
+2026-04-30 13:11:28,098 [INFO] [app_started] {}
+2026-04-30 13:14:37,220 [INFO] [app_started] {}
+2026-04-30 13:16:21,143 [INFO] [app_started] {}
+2026-04-30 13:25:37,233 [INFO] [app_started] {}
+2026-04-30 13:25:40,989 [INFO] [project_opened] {"project": "수학2"}
+2026-04-30 13:25:41,891 [INFO] [regions_loaded] {}
+2026-04-30 13:33:13,832 [INFO] [app_started] {}
+2026-04-30 13:49:11,739 [INFO] [app_started] {}
+2026-04-30 13:49:49,688 [INFO] [app_started] {}
+2026-04-30 13:50:03,981 [INFO] [app_started] {}
+2026-04-30 13:52:20,216 [INFO] [regions_loaded] {}
+2026-04-30 13:53:30,084 [INFO] [project_opened] {"project": "수학2"}
+2026-04-30 13:53:30,807 [INFO] [regions_loaded] {}
+2026-04-30 13:53:48,146 [INFO] [pipeline_done] {"ok": 9, "fail": 3}
+2026-04-30 13:53:50,380 [INFO] [regions_loaded] {}
+2026-04-30 13:53:57,231 [INFO] [regions_loaded] {}
+2026-04-30 13:57:00,663 [INFO] [app_started] {}
+2026-04-30 14:06:33,431 [INFO] [project_opened] {"project": "수학2"}
+2026-04-30 14:06:34,094 [INFO] [regions_loaded] {}
+2026-04-30 14:13:18,341 [INFO] [regions_loaded] {}
+2026-04-30 14:13:24,214 [INFO] [regions_loaded] {}
+2026-04-30 14:14:13,325 [INFO] [app_started] {}
+2026-04-30 14:14:19,638 [INFO] [app_started] {}
+2026-04-30 14:14:33,846 [INFO] [app_started] {}
+2026-04-30 14:14:40,784 [INFO] [app_started] {}
+2026-04-30 14:15:26,148 [ERROR] OCR failed
+Traceback (most recent call last):
+  File "C:\Users\user\.gemini\antigravity\scratch\repos\my-skills\skills\classmanage-exam-graderV2\webapp\main.py", line 656, in run_ocr
+    status = _ocr_status_snapshot()
+                        ^^^^^^^
+NameError: name 'asyncio' is not defined
+2026-04-30 14:18:44,531 [INFO] [app_started] {}
+2026-04-30 14:25:48,014 [INFO] [project_opened] {"project": "수학2"}
+2026-04-30 14:25:48,460 [INFO] [regions_loaded] {}
+2026-04-30 14:27:11,395 [INFO] [app_started] {}
+2026-04-30 14:28:26,134 [INFO] [app_started] {}

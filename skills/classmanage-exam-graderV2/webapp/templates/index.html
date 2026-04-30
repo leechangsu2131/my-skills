@@ -37,6 +37,13 @@ a{color:inherit}
 #json-input{width:100%;height:180px;background:#07101d;border:1px solid var(--border);border-radius:8px;padding:12px;color:#86efac;font-family:Consolas,monospace;font-size:12px;resize:vertical}
 #json-status,#editor-save-status,#pipeline-status,#grading-status{font-size:12px;min-height:18px}
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.ocr-progress{display:none;margin-top:14px;background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:14px}
+.ocr-progress-head{display:flex;justify-content:space-between;gap:12px;align-items:center;font-size:12px;font-weight:700;margin-bottom:8px}
+.ocr-progress-track{height:10px;background:#0f172a;border:1px solid var(--border);border-radius:999px;overflow:hidden}
+.ocr-progress-bar{width:0;height:100%;background:var(--blue);transition:width .25s ease,background .2s ease}
+.ocr-progress-bar.done{background:var(--green)}
+.ocr-progress-bar.error{background:var(--red)}
+.ocr-progress-meta{font-size:11px;color:var(--muted);margin-top:8px;min-height:15px}
 .editor-shell{display:none}
 .editor-layout{display:flex;gap:12px;align-items:flex-start}
 .editor-left{flex:1;min-width:0}
@@ -169,10 +176,20 @@ const currentProject = {{ project|tojson }};
   <p class="step-desc">채점용 crop 생성, OCR 실행, 자동 채점을 순서대로 수행한 뒤 결과 화면에서 학생별 결과를 확인합니다.</p>
   <div class="row">
     <button class="btn btn-ghost" onclick="runGradingPrepare()">채점 준비</button>
-    <button class="btn btn-ghost" onclick="runGradingOcr()">OCR 실행</button>
+    <button class="btn btn-ghost" id="grading-ocr-btn" onclick="runGradingOcr()">OCR 실행</button>
     <button class="btn btn-green" onclick="runGradingScore()">자동 채점</button>
     <a href="/grading" class="btn btn-yellow">결과 보기</a>
     <span id="grading-status"></span>
+  </div>
+  <div class="ocr-progress" id="ocr-progress-panel">
+    <div class="ocr-progress-head">
+      <span id="ocr-progress-title">OCR 대기 중</span>
+      <span id="ocr-progress-count">0 / 0</span>
+    </div>
+    <div class="ocr-progress-track">
+      <div class="ocr-progress-bar" id="ocr-progress-bar"></div>
+    </div>
+    <div class="ocr-progress-meta" id="ocr-progress-meta"></div>
   </div>
 </div>
 
@@ -188,9 +205,11 @@ const currentProject = {{ project|tojson }};
 let globalRegions = { questions: [], answers: [], total_points: 0 };
 let fileStatus = null;
 let parsedAllData = null;
+let ocrProgressTimer = null;
 
 window.addEventListener('DOMContentLoaded', async () => {
   await loadFileStatus();
+  await refreshOcrProgress();
   try {
     const response = await fetch('/api/regions');
     if (response.ok) {
@@ -554,13 +573,95 @@ async function runGradingPrepare() {
   }
 }
 
+function renderOcrProgress(status) {
+  const panel = document.getElementById('ocr-progress-panel');
+  const title = document.getElementById('ocr-progress-title');
+  const count = document.getElementById('ocr-progress-count');
+  const bar = document.getElementById('ocr-progress-bar');
+  const meta = document.getElementById('ocr-progress-meta');
+  const button = document.getElementById('grading-ocr-btn');
+  if (!panel || !title || !count || !bar || !meta) return;
+
+  const state = status && status.state ? status.state : 'idle';
+  const total = Number(status && status.total ? status.total : 0);
+  const processed = Number(status && status.processed ? status.processed : 0);
+  const percent = Number(status && typeof status.percent === 'number'
+    ? status.percent
+    : (total > 0 ? Math.round((processed / total) * 100) : 0));
+
+  if (state === 'idle') {
+    panel.style.display = 'none';
+    if (button) button.disabled = false;
+    return;
+  }
+
+  panel.style.display = 'block';
+  bar.classList.toggle('done', state === 'done');
+  bar.classList.toggle('error', state === 'error');
+  bar.style.width = `${Math.max(0, Math.min(100, percent))}%`;
+  if (button) button.disabled = state === 'running';
+
+  if (state === 'running') {
+    title.textContent = 'OCR 실행 중';
+    count.textContent = total > 0 ? `${processed} / ${total} (${percent}%)` : `${processed}개 처리 중`;
+    const current = status.current_item ? `현재 문항: ${status.current_item}` : 'OCR 엔진 준비 중';
+    meta.textContent = current;
+  } else if (state === 'done') {
+    title.textContent = 'OCR 완료';
+    count.textContent = total > 0 ? `${processed} / ${total} (100%)` : '완료';
+    meta.textContent = `갱신된 학생 manifest: ${status.updated || 0}개`;
+  } else if (state === 'error') {
+    title.textContent = 'OCR 실패';
+    count.textContent = total > 0 ? `${processed} / ${total}` : '오류';
+    meta.textContent = status.error || 'OCR 중 오류가 발생했습니다.';
+  }
+}
+
+function ensureOcrPolling() {
+  if (ocrProgressTimer) return;
+  ocrProgressTimer = setInterval(refreshOcrProgress, 1000);
+}
+
+function stopOcrPolling() {
+  if (!ocrProgressTimer) return;
+  clearInterval(ocrProgressTimer);
+  ocrProgressTimer = null;
+}
+
+async function refreshOcrProgress() {
+  try {
+    const response = await fetch('/api/grading/ocr/status', { cache: 'no-store' });
+    const data = await response.json();
+    if (!data.success || !data.status) return;
+    renderOcrProgress(data.status);
+    if (data.status.state === 'running') {
+      ensureOcrPolling();
+    } else {
+      stopOcrPolling();
+      if (data.status.state === 'done') {
+        setStatus('grading-status', `OCR 완료: ${data.status.updated || 0}명`, 'green');
+      } else if (data.status.state === 'error') {
+        setStatus('grading-status', data.status.error || 'OCR 실패', 'red');
+      }
+    }
+  } catch (error) {
+    stopOcrPolling();
+  }
+}
+
 async function runGradingOcr() {
-  setStatus('grading-status', 'OCR 실행 중...', 'muted');
+  setStatus('grading-status', 'OCR 시작 중...', 'muted');
   try {
     const response = await fetch('/api/grading/ocr', { method: 'POST' });
     const data = await response.json();
     if (data.success) {
-      setStatus('grading-status', `OCR 완료: ${data.updated}명`, 'green');
+      renderOcrProgress(data.status || {});
+      ensureOcrPolling();
+      setStatus(
+        'grading-status',
+        data.started ? 'OCR 실행을 시작했습니다.' : '이미 OCR이 실행 중입니다.',
+        'muted',
+      );
     } else {
       setStatus('grading-status', data.error || 'OCR 실패', 'red');
     }

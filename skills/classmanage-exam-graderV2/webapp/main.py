@@ -2,6 +2,7 @@
 Local FastAPI app for project-based exam alignment and review.
 """
 
+from datetime import datetime
 from pathlib import Path
 import json
 import logging
@@ -11,6 +12,7 @@ import shutil
 import sys
 import tempfile
 import traceback
+from threading import Lock, Thread
 
 from fastapi import FastAPI, File, HTTPException, Request, UploadFile
 from fastapi.responses import FileResponse, RedirectResponse
@@ -56,6 +58,7 @@ from project_store import (  # type: ignore
 from ocr_engine import OcrEngine  # type: ignore
 from submission_store import (  # type: ignore
     build_submission_manifest,
+    count_ocr_work_items,
     generate_reference_crops,
     generate_student_crops,
     list_students_from_aligned,
@@ -63,6 +66,7 @@ from submission_store import (  # type: ignore
     load_submission_result,
     run_ocr_for_project,
     score_project_submissions,
+    update_submission_review,
     write_submission_manifests,
 )
 
@@ -73,6 +77,20 @@ TEMPLATES = Jinja2Templates(directory=str(TEMPLATE_DIR))
 
 SETTINGS = load_settings(SETTINGS_FILE)
 CURRENT_PROJECT: Path | None = None
+OCR_LOCK = Lock()
+OCR_STATUS_LOCK = Lock()
+OCR_STATUS = {
+    "state": "idle",
+    "total": 0,
+    "processed": 0,
+    "updated": 0,
+    "current_student": "",
+    "current_item": "",
+    "last_confidence": None,
+    "error": "",
+    "started_at": None,
+    "finished_at": None,
+}
 
 _elog.init(APP_LOG_DIR)
 _elog.log_event("app_started")
@@ -123,6 +141,75 @@ def _ensure_current_project() -> Path:
 
 def _paths():
     return project_paths(_ensure_current_project())
+
+
+def _now_iso() -> str:
+    return datetime.now().replace(microsecond=0).isoformat()
+
+
+def _set_ocr_status(**updates) -> None:
+    with OCR_STATUS_LOCK:
+        OCR_STATUS.update(updates)
+
+
+def _ocr_status_snapshot() -> dict:
+    with OCR_STATUS_LOCK:
+        status = dict(OCR_STATUS)
+    total = int(status.get("total") or 0)
+    processed = int(status.get("processed") or 0)
+    if total > 0:
+        status["percent"] = min(100, round((processed / total) * 100))
+    elif status.get("state") == "done":
+        status["percent"] = 100
+    else:
+        status["percent"] = 0
+    return status
+
+
+def _ocr_progress(progress: dict) -> None:
+    _set_ocr_status(state="running", **progress)
+
+
+def _run_ocr_worker(paths) -> None:
+    try:
+        total = count_ocr_work_items(paths)
+        _set_ocr_status(total=total, processed=0)
+        engine = OcrEngine()
+        updated = run_ocr_for_project(paths, engine, progress_callback=_ocr_progress)
+        _set_ocr_status(
+            state="done",
+            processed=total,
+            updated=updated,
+            current_student="",
+            current_item="",
+            error="",
+            finished_at=_now_iso(),
+        )
+    except Exception as exc:
+        logging.exception("OCR failed")
+        _set_ocr_status(state="error", error=str(exc), finished_at=_now_iso())
+    finally:
+        OCR_LOCK.release()
+
+
+def _start_ocr_job(paths) -> bool:
+    if not OCR_LOCK.acquire(blocking=False):
+        return False
+
+    _set_ocr_status(
+        state="running",
+        total=0,
+        processed=0,
+        updated=0,
+        current_student="",
+        current_item="",
+        last_confidence=None,
+        error="",
+        started_at=_now_iso(),
+        finished_at=None,
+    )
+    Thread(target=_run_ocr_worker, args=(paths,), daemon=True).start()
+    return True
 
 
 def _switch_project(project_dir: Path) -> dict:
@@ -218,14 +305,34 @@ async def grading_student(request: Request, student_id: str):
     submission = load_submission_result(paths, student_id)
     if submission is None:
         raise HTTPException(status_code=404, detail="Submission not found")
-    for item in submission.get("items", []):
+    items = submission.get("items", [])
+    for item in items:
         crop_rel = item.get("crop_path")
-        item["student_crop_url"] = f"/api/file?path={crop_rel and ('artifacts/crops/' + crop_rel)}"
+        item["student_crop_url"] = f"/api/file?path=artifacts/crops/{crop_rel}" if crop_rel else ""
+        page = int(item.get("page", 1) or 1)
+        qnum = int(item.get("question_number", 0) or 0)
+        reference_crop = paths.crops_dir / "reference" / f"p{page}_q{qnum}.png"
+        item["reference_crop_url"] = (
+            f"/api/file?path=artifacts/crops/reference/p{page}_q{qnum}.png"
+            if reference_crop.exists()
+            else ""
+        )
     return TEMPLATES.TemplateResponse(
         request=request,
         name="grading_student.html",
-        context={"submission": submission, "student_id": student_id},
+        context={"submission": submission, "student_id": student_id, "items": items},
     )
+
+
+@app.post("/grading/student/{student_id}")
+async def save_grading_student_review(request: Request, student_id: str):
+    if _restore_current_project() is None:
+        return RedirectResponse(url="/", status_code=303)
+    form = await request.form()
+    updated = update_submission_review(_paths(), student_id, form)
+    if updated is None:
+        raise HTTPException(status_code=404, detail="Submission not found")
+    return RedirectResponse(url=f"/grading/student/{student_id}", status_code=303)
 
 
 @app.get("/api/settings")
@@ -566,12 +673,19 @@ async def prepare_grading():
 @app.post("/api/grading/ocr")
 async def run_ocr():
     paths = _paths()
-    try:
-        engine = OcrEngine()
-    except RuntimeError as exc:
-        return {"success": False, "error": str(exc)}
-    updated = run_ocr_for_project(paths, engine)
-    return {"success": True, "updated": updated}
+    started = _start_ocr_job(paths)
+    status = _ocr_status_snapshot()
+    return {
+        "success": True,
+        "started": started,
+        "status": status,
+        "message": "OCR started" if started else "OCR is already running",
+    }
+
+
+@app.get("/api/grading/ocr/status")
+async def get_ocr_status():
+    return {"success": True, "status": _ocr_status_snapshot()}
 
 
 @app.post("/api/grading/score")

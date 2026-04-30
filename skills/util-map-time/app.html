@@ -219,7 +219,7 @@ hr{border:none;border-top:1px solid var(--border);margin:16px 0}
     1. <a href="https://developers.kakao.com" target="_blank">developers.kakao.com</a> 로그인 → 내 애플리케이션 → 앱 추가 → <b>REST API 키</b> 복사<br>
     2. 이 폴더에 <code>.env</code> 파일 생성: <code>KAKAO_API_KEY=복사한키</code><br>
     3. 터미널에서 <code>python server.py</code> 실행<br>
-    4. 브라우저에서 <code>http://localhost:8080</code> 접속 (서버가 API 키를 .env에서 읽고 프록시 처리)<br>
+    4. 브라우저에서 <code>http://localhost:5020</code> 접속 (서버가 API 키를 .env에서 읽고 프록시 처리)<br>
     <span style="color:var(--success)">✅ 프록시 서버 사용 시 Web 도메인 등록 불필요 (CORS + 인증 자동 처리)</span>
   </div>
 </div>
@@ -249,21 +249,27 @@ hr{border:none;border-top:1px solid var(--border);margin:16px 0}
 <div id="t1" class="tab-panel active">
   <div class="card">
     <div class="card-title">📂 엑셀 파일 & 열 설정</div>
-    <div class="form-row">
+    <div class="form-row" style="align-items:flex-end;flex-wrap:wrap;gap:10px">
       <label class="file-label" for="f1">📎 엑셀 파일 선택
-        <input type="file" id="f1" accept=".xlsx,.xls" onchange="loadXL('f1','pv1','cs1',['pc1','tc1'])">
+        <input type="file" id="f1" accept=".xlsx,.xls" onchange="loadXL('f1','pv1','cs1',['pc1'])">
       </label>
-      <div class="fg" style="max-width:100px">
-        <label>헤더 행</label>
-        <input type="number" id="hr1" value="1" min="1" style="width:70px">
+      <div id="f1_sheetWrap"></div>
+      <div class="fg" style="max-width:130px">
+        <label title="파일 로드 시 자동 감지">데이터 시작행 <span style="color:var(--success);font-size:.7rem">자동</span></label>
+        <input type="number" id="hr1" value="1" min="1" style="width:80px" title="자동 감지된 행 (수정 가능)" onchange="reapplySheet('f1','pv1','cs1',['pc1'])">
       </div>
     </div>
     <div id="pv1" class="preview-tbl" style="display:none"></div>
     <div id="cs1" style="display:none;margin-top:12px">
-      <div class="form-row">
-        <div class="fg"><label>📌 장소명 열</label><select id="pc1"></select></div>
-        <div class="fg"><label>🕐 시간 열</label><select id="tc1"></select></div>
+      <div class="form-row" style="align-items:center">
+        <div class="fg" style="max-width:200px"><label>📌 장소명 열</label><select id="pc1"></select></div>
         <div class="fg"><label>🗺️ 목적지 지역 접두사</label><input type="text" id="dp1" placeholder="예: 경주"></div>
+      </div>
+      <div class="form-row" style="margin-top:12px">
+        <div class="fg">
+          <label style="font-size:0.8rem;color:var(--muted)">💡 지도 & 결과 표에 추가로 표시할 정보 열 (클릭하여 켜기/끄기)</label>
+          <div id="extraInfoTags" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:4px"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -271,7 +277,14 @@ hr{border:none;border-top:1px solid var(--border);margin:16px 0}
   <div class="card">
     <div class="card-title">🏠 출발 위치</div>
     <div class="form-row">
-      <div class="fg"><label>출발지 (장소명 또는 주소)</label><input type="text" id="orig1" placeholder="예: 경주 건천초등학교"></div>
+      <div class="fg">
+        <label>출발지 (장소명 또는 주소)</label>
+        <input type="text" id="orig1" placeholder="예: 경주 건천초등학교">
+        <div class="quick-locs" style="margin-top:6px">
+          <button class="btn btn-ghost btn-sm" onclick="fillDefaultLocation('work','orig1')">🏢 회사 입력</button>
+          <button class="btn btn-ghost btn-sm" onclick="fillDefaultLocation('home','orig1')">🏠 집 입력</button>
+        </div>
+      </div>
       <div class="fg" style="max-width:200px"><label>출발지 지역 접두사</label><input type="text" id="op1" placeholder="예: 경주"></div>
     </div>
     <button class="btn btn-primary btn-full" id="cb1" onclick="runTab1()" disabled>🚀 거리 · 소요시간 계산</button>
@@ -286,9 +299,9 @@ hr{border:none;border-top:1px solid var(--border);margin:16px 0}
         <div class="btn-row">
           <label style="font-size:.8rem;color:var(--muted)">정렬</label>
           <select id="sort1" onchange="sortT1()" style="width:auto;padding:6px 10px;font-size:.8rem">
-            <option value="dist">거리순</option><option value="time">시간순</option><option value="saved">저장시간순</option>
+            <option value="dist">거리순</option><option value="time">시간순</option>
           </select>
-          <button class="btn btn-success btn-sm" onclick="dlSheet(td1,'결과_단일출발.xlsx')">⬇️ 엑셀</button>
+          <button class="btn btn-success btn-sm" onclick="dlSheet(window.tableData1 || td1,'결과_단일출발.xlsx')">⬇️ 엑셀</button>
         </div>
       </div>
       <div class="tbl-wrap" id="tbl1"></div>
@@ -304,10 +317,15 @@ hr{border:none;border-top:1px solid var(--border);margin:16px 0}
     <p class="section-intro">각 출발지에서 각 목적지까지의 거리·소요시간을 표로 일괄 계산합니다. API 소비: 출발지 수 × 도착지 수 건</p>
     <div class="grid2">
       <div>
-        <div class="fg" style="margin-bottom:10px"><label>🟥 출발지 목록 (한 줄에 하나)</label>
-          <textarea id="ori2" rows="6" placeholder="경주역&#10;경주 황성공원&#10;경북 경주시 건천읍 XX로 60"></textarea>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+          <label class="fg" style="flex:none;font-size:.78rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.3px">🟥 출발지 목록 (한 줄에 하나)</label>
+          <div class="quick-locs" style="margin:0;gap:6px">
+            <button class="btn btn-ghost btn-sm" style="font-size:.75rem;padding:4px 10px" onclick="appendMyLocation('work','ori2')">+회사</button>
+            <button class="btn btn-ghost btn-sm" style="font-size:.75rem;padding:4px 10px" onclick="appendMyLocation('home','ori2')">+집</button>
+          </div>
         </div>
-        <div class="fg"><label>출발지 지역 접두사</label><input type="text" id="opfx2" placeholder="예: 경주"></div>
+        <textarea id="ori2" rows="6" placeholder="경주역&#10;경주 황성공원&#10;경북 경주시 건천읍 XX로 60"></textarea>
+        <div class="fg" style="margin-top:8px"><label>출발지 지역 접두사</label><input type="text" id="opfx2" placeholder="예: 경주"></div>
       </div>
       <div>
         <div class="fg" style="margin-bottom:10px"><label>🟦 도착지 목록 (한 줄에 하나)</label>
@@ -338,7 +356,13 @@ hr{border:none;border-top:1px solid var(--border);margin:16px 0}
     <div class="card-title">👥 참여자 위치</div>
     <p class="section-intro">여러 사람의 위치를 입력하면 총 이동시간이 가장 적은 중간지점을 찾아드립니다.</p>
     <div class="fg" style="margin-bottom:10px">
-      <label>참여자 목록 (이름: 위치, 한 줄에 한 명)</label>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+        <label style="font-size:.78rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.3px">참여자 목록 (이름: 위치, 한 줄에 한 명)</label>
+        <div class="quick-locs" style="margin:0;gap:6px">
+          <button class="btn btn-ghost btn-sm" style="font-size:.75rem;padding:4px 10px" onclick="appendMyLocation('work','ppl3','나')">+나(회사)</button>
+          <button class="btn btn-ghost btn-sm" style="font-size:.75rem;padding:4px 10px" onclick="appendMyLocation('home','ppl3','나')">+나(집)</button>
+        </div>
+      </div>
       <textarea id="ppl3" rows="5" placeholder="홍길동: 경주역&#10;김철수: 경주 외동읍&#10;이영희: 경주 건천읍"></textarea>
     </div>
     <div class="fg" style="max-width:220px"><label>지역 접두사</label><input type="text" id="ppfx3" placeholder="예: 경주"></div>
@@ -352,9 +376,12 @@ hr{border:none;border-top:1px solid var(--border);margin:16px 0}
       <label><input type="radio" name="m3" value="both" onchange="upMode3()"> 🔀 A+B 둘 다</label>
     </div>
     <div id="es3">
-      <label class="file-label" for="f3">📎 엑셀 파일 선택
-        <input type="file" id="f3" accept=".xlsx,.xls" onchange="loadXL('f3','pv3','cs3',['pc3'])">
-      </label>
+      <div style="display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap">
+        <label class="file-label" for="f3">📎 엑셀 파일 선택
+          <input type="file" id="f3" accept=".xlsx,.xls" onchange="loadXL('f3','pv3','cs3',['pc3'])">
+        </label>
+        <div id="f3_sheetWrap"></div>
+      </div>
       <div id="pv3" class="preview-tbl" style="display:none"></div>
       <div id="cs3" style="display:none;margin-top:10px">
         <div class="form-row">
@@ -434,9 +461,12 @@ hr{border:none;border-top:1px solid var(--border);margin:16px 0}
       </div>
     </div>
     <div id="xe4" style="display:none">
-      <label class="file-label" for="f4">📎 엑셀 파일 선택
-        <input type="file" id="f4" accept=".xlsx,.xls" onchange="loadXL('f4','pv4','cs4',['pc4'])">
-      </label>
+      <div style="display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap">
+        <label class="file-label" for="f4">📎 엑셀 파일 선택
+          <input type="file" id="f4" accept=".xlsx,.xls" onchange="loadXL('f4','pv4','cs4',['pc4'])">
+        </label>
+        <div id="f4_sheetWrap"></div>
+      </div>
       <div id="pv4" class="preview-tbl" style="display:none"></div>
       <div id="cs4" style="display:none;margin-top:10px">
         <div class="form-row">
@@ -529,26 +559,53 @@ function scopedPrefix(inputId){
 function applyScopeDefaults(save=true){
   const sel=$id('searchScope');
   if(!sel) return;
-  sel.value = SEARCH_SCOPE;
-  if(!['city','province','nation'].includes(sel.value)) sel.value='city';
-  SEARCH_SCOPE = sel.value;
-  if(save) localStorage.setItem('search_scope', SEARCH_SCOPE);
+  
+  if(save){
+    SEARCH_SCOPE = sel.value;
+    localStorage.setItem('search_scope', SEARCH_SCOPE);
+  } else {
+    if(!['city','province','nation'].includes(SEARCH_SCOPE)) SEARCH_SCOPE='city';
+    sel.value = SEARCH_SCOPE;
+  }
+
   const prefix=currentScopePrefix();
   const label = SEARCH_SCOPE==='city' ? '시/군 단위' : SEARCH_SCOPE==='province' ? '도 단위' : '전국';
   $id('scopeSummary').textContent = prefix ? `${label}: "${prefix}" 자동 적용` : `${label}: 접두사 없이 검색`;
+  
+  const hidePrefix = SEARCH_SCOPE === 'city';
   ['op1','dp1','opfx2','dpfx2','ppfx3','cpfx3','pxa4','pxb4','xpfx4'].forEach(id=>{
     const el=$id(id);
-    if(el) el.placeholder = prefix ? `자동: ${prefix} (직접 입력 시 우선)` : '직접 입력 시 우선';
+    if(el) {
+      el.placeholder = prefix ? `자동: ${prefix} (직접 입력 시 우선)` : '직접 입력 시 우선';
+      if(el.parentElement && el.parentElement.classList.contains('fg')) {
+        el.parentElement.style.display = hidePrefix ? 'none' : '';
+      }
+    }
   });
 }
 function fillDefaultLocation(kind, targetId){
   const label = kind === 'home' ? 'DEFAULT_HOME' : 'DEFAULT_WORK';
   const value = APP_CONFIG[kind] || '';
   if(!value){
-    alert(`.env의 ${label} 값을 서버가 아직 읽지 못했습니다. start.bat으로 서버를 다시 시작해보세요.`);
+    alert(`.env의 ${label} 값이 설정되지 않았습니다.\nstart.bat으로 서버를 시작하고 .env에 ${label}=값 형식으로 입력하세요.`);
     return;
   }
   $id(targetId).value = value;
+}
+
+// textarea에 내 위치를 한 줄 추가 (Tab2/Tab3 용)
+function appendMyLocation(kind, textareaId, name){
+  const label = kind === 'home' ? 'DEFAULT_HOME' : 'DEFAULT_WORK';
+  const value = APP_CONFIG[kind] || '';
+  if(!value){
+    alert(`.env의 ${label} 값이 설정되지 않았습니다.\nstart.bat으로 서버를 시작하고 .env에 ${label}=값 형식으로 입력하세요.`);
+    return;
+  }
+  const el = $id(textareaId);
+  const line = name ? `${name}: ${value}` : value;
+  const cur = el.value.trimEnd();
+  el.value = cur ? cur + '\n' + line : line;
+  el.focus();
 }
 
 function onKeyInput(){
@@ -591,38 +648,151 @@ function dlSheet(data, filename){
 }
 
 // ════════════════════════════════════════
-//  EXCEL
+//  EXCEL — 다중시트 · 병합셀 헤더 자동 처리
 // ════════════════════════════════════════
+
+/**
+ * XL[fid] = { wb, raw[][], dataStart(0-idx), headers[], sheetName }
+ * raw: sheet_to_json(header:1) 전체 행
+ * dataStart: 순번 1이 시작되는 행 인덱스
+ * headers: 병합셀 2행 결합 컬럼명
+ */
 function loadXL(fid, pvId, csId, selIds){
   const file=$id(fid).files[0]; if(!file) return;
+  const selStr = Array.isArray(selIds) ? selIds.join(',') : selIds;
   const reader=new FileReader();
   reader.onload=e=>{
-    const wb=XLSX.read(e.target.result,{type:'binary'});
-    const ws=wb.Sheets[wb.SheetNames[0]];
-    const rows=XLSX.utils.sheet_to_json(ws,{header:1});
-    XL[fid]=rows;
-    // preview
-    if(rows.length){
-      let t='<table><thead><tr>'+rows[0].map(c=>`<th>${esc(c)}</th>`).join('')+'</tr></thead><tbody>';
-      rows.slice(1,4).forEach(r=>{ t+='<tr>'+r.map(c=>`<td>${esc(c??'')}</td>`).join('')+'</tr>'; });
-      $id(pvId).innerHTML=t+'</tbody></table>'; show(pvId);
-    }
-    // column selects
-    const hdr=rows[0]||[];
-    selIds.forEach((sid,i)=>{
-      const sel=$id(sid); if(!sel) return;
-      sel.innerHTML=hdr.map((h,j)=>`<option value="${j}">${esc(h)}</option>`).join('');
-      sel.selectedIndex=Math.min(i,hdr.length-1);
-    });
-    $id(csId).style.display=''; show(csId);
+    try{
+      const wb=XLSX.read(e.target.result,{type:'binary',cellDates:false});
+      XL[fid]={wb};
+      // 시트 선택 UI (다중 시트인 경우)
+      const wrap=$id(fid+'_sheetWrap');
+      if(wrap){
+        if(wb.SheetNames.length>1){
+          wrap.innerHTML=`<div class="fg" style="max-width:240px"><label>📑 시트 선택</label>`+
+            `<select id="${fid}_sheet" onchange="applySheet('${fid}','${pvId}','${csId}','${selStr}',this.value)">`+
+            wb.SheetNames.map(s=>`<option value="${esc(s)}">${esc(s)}</option>`).join('')+
+            `</select></div>`;
+        } else { wrap.innerHTML=''; }
+      }
+      applySheet(fid,pvId,csId,selStr,wb.SheetNames[0]);
+    }catch(err){ alert('엑셀 읽기 실패: '+err.message); }
   };
   reader.readAsBinaryString(file);
 }
 
-function xlCol(fid, selId, headerRow=1){
-  const rows=XL[fid]; if(!rows) return [];
+function applySheet(fid, pvId, csId, selIds, sheetName){
+  if(typeof selIds==='string') selIds=selIds.split(',');
+  const wb=XL[fid]?.wb; if(!wb) return;
+  const ws=wb.Sheets[sheetName];
+  const raw=XLSX.utils.sheet_to_json(ws,{header:1,defval:''});
+  if(!raw.length){ alert('시트에 데이터가 없습니다.'); return; }
+
+  // ── 1) 데이터 시작행 자동 감지: 첫 열 값이 숫자 1인 행
+  let dataStart=1;
+  for(let i=0;i<Math.min(raw.length,20);i++){
+    const v=raw[i][0];
+    if(v===1||v==='1'||Number(v)===1){dataStart=i;break;}
+  }
+
+  // ── 2) 2행 헤더 결합 (병합셀 복원)
+  //   dataStart-2 = 그룹헤더행, dataStart-1 = 세부헤더행
+  //   세부헤더가 비어있으면 그룹헤더 사용
+  const nCols=Math.max(...raw.slice(0,dataStart+1).map(r=>r.length),0);
+  const rowA=dataStart>=2?(raw[dataStart-2]||[]):[];
+  const rowB=dataStart>=1?(raw[dataStart-1]||[]):[];
+  const seen={};
+  const headers=Array.from({length:nCols},(_,i)=>{
+    const a=String(rowA[i]??'').trim().replace(/\n/g,' ');
+    const b=String(rowB[i]??'').trim().replace(/\n/g,' ');
+    let h=(b&&b!=='undefined')?b:(a||`열${i+1}`);
+    seen[h]=(seen[h]||0)+1;
+    return seen[h]>1?`${h}_${seen[h]}`:h;
+  });
+
+  XL[fid]={...XL[fid],raw,dataStart,headers,sheetName};
+
+  // hr 입력란 동기화
+  const hrEl=$id(fid.replace('f','hr'));
+  if(hrEl){ hrEl.value=dataStart+1; }
+
+  // ── 3) 미리보기: 감지된 헤더 + 첫 3 데이터행
+  const dataRows=raw.slice(dataStart,dataStart+3);
+  let t='<table><thead><tr>'+headers.map(h=>`<th>${esc(h)}</th>`).join('')+'</tr></thead><tbody>';
+  dataRows.forEach(r=>{ t+='<tr>'+Array.from({length:nCols},(_,j)=>`<td>${esc(r[j]??'')}</td>`).join('')+'</tr>'; });
+  $id(pvId).innerHTML=t+'</tbody></table>'; show(pvId);
+
+  // ── 4) 열 선택 드롭다운
+  selIds.forEach((sid,i)=>{
+    const sel=$id(sid); if(!sel) return;
+    sel.innerHTML=headers.map((h,j)=>`<option value="${j}">${esc(h)}</option>`).join('');
+    sel.selectedIndex=Math.min(i,headers.length-1);
+  });
+  if(fid==='f1') renderExtraCols(headers);
+  show(csId);
+}
+
+// hr 수동 변경 시 재파싱
+function reapplySheet(fid, pvId, csId, selIds){
+  if(typeof selIds==='string') selIds=selIds.split(',');
+  const xl=XL[fid]; if(!xl?.raw) return;
+  const hr=parseInt($id(fid.replace('f','hr')).value)||1;
+  xl.dataStart=hr-1;
+  // 헤더 재계산
+  const raw=xl.raw, nCols=Math.max(...raw.slice(0,hr+1).map(r=>r.length),0);
+  const rowA=hr>=2?(raw[hr-2]||[]):[];
+  const rowB=hr>=1?(raw[hr-1]||[]):[];
+  const seen={};
+  xl.headers=Array.from({length:nCols},(_,i)=>{
+    const a=String(rowA[i]??'').trim().replace(/\n/g,' ');
+    const b=String(rowB[i]??'').trim().replace(/\n/g,' ');
+    let h=(b&&b!=='undefined')?b:(a||`열${i+1}`);
+    seen[h]=(seen[h]||0)+1;
+    return seen[h]>1?`${h}_${seen[h]}`:h;
+  });
+  const dataRows=raw.slice(xl.dataStart,xl.dataStart+3);
+  let t='<table><thead><tr>'+xl.headers.map(h=>`<th>${esc(h)}</th>`).join('')+'</tr></thead><tbody>';
+  dataRows.forEach(r=>{ t+='<tr>'+Array.from({length:nCols},(_,j)=>`<td>${esc(r[j]??'')}</td>`).join('')+'</tr>'; });
+  $id(pvId).innerHTML=t+'</tbody></table>'; show(pvId);
+  selIds.forEach((sid,i)=>{
+    const sel=$id(sid); if(!sel) return;
+    sel.innerHTML=xl.headers.map((h,j)=>`<option value="${j}">${esc(h)}</option>`).join('');
+    sel.selectedIndex=Math.min(i,xl.headers.length-1);
+  });
+  if(fid==='f1') renderExtraCols(xl.headers);
+  show(csId);
+}
+
+function renderExtraCols(headers) {
+  const wrap = $id('extraInfoTags');
+  if(!wrap) return;
+  window.extraColsSelected = window.extraColsSelected || new Set();
+  wrap.innerHTML = headers.map((h, i) => {
+    const isSel = window.extraColsSelected.has(i);
+    const cls = isSel ? 'btn-primary' : 'btn-ghost';
+    return `<button class="btn btn-sm ${cls}" style="padding:4px 10px;font-size:0.75rem;border:1px solid var(--border)" onclick="toggleExtraCol(${i}, this)">${esc(h)}</button>`;
+  }).join('');
+}
+
+function toggleExtraCol(idx, btn) {
+  window.extraColsSelected = window.extraColsSelected || new Set();
+  if(window.extraColsSelected.has(idx)) {
+    window.extraColsSelected.delete(idx);
+    btn.className = 'btn btn-sm btn-ghost';
+  } else {
+    window.extraColsSelected.add(idx);
+    btn.className = 'btn btn-sm btn-primary';
+  }
+  btn.style.border = '1px solid var(--border)';
+  if($id('res1') && $id('res1').style.display !== 'none') {
+    updateRes1UI();
+  }
+}
+
+function xlCol(fid, selId){
+  const xl=XL[fid]; if(!xl?.raw) return [];
   const col=parseInt($id(selId).value);
-  return rows.slice(headerRow).map(r=>(r[col]??'').toString().trim()).filter(Boolean);
+  return xl.raw.slice(xl.dataStart).map(r=>(r[col]??'').toString().trim()).filter(Boolean);
 }
 
 // ════════════════════════════════════════
@@ -721,12 +891,16 @@ function mkMap(id,lat,lng,zoom=11){
 async function runTab1(){
   const origin=$id('orig1').value.trim();
   if(!origin){alert('출발 위치를 입력해주세요.');return;}
-  const rows=XL['f1'];
-  if(!rows){alert('엑셀 파일을 선택해주세요.');return;}
-  const hr=parseInt($id('hr1').value)||1;
-  const pcol=parseInt($id('pc1').value), tcol=parseInt($id('tc1').value);
+  const xl=XL['f1'];
+  if(!xl?.raw){alert('엑셀 파일을 선택해주세요.');return;}
+  const pcol=parseInt($id('pc1').value);
   const dp=scopedPrefix('dp1'), op=scopedPrefix('op1');
-  const places=rows.slice(hr).filter(r=>r[pcol]).map(r=>({name:(r[pcol]??'').toString().trim(),saved:(r[tcol]??'').toString().trim()}));
+  const headers=xl.headers;
+  
+  const places=xl.raw.slice(xl.dataStart).filter(r=>r[pcol]).map(r=>({
+    name:(r[pcol]??'').toString().trim(),
+    rawRow: r
+  }));
   if(!places.length){alert('장소 데이터가 없습니다.');return;}
 
   $id('cb1').disabled=true; show('pw1'); show('res1',false);
@@ -748,7 +922,7 @@ async function runTab1(){
       const rt=await getRoute(oP.lng,oP.lat,dest.lng,dest.lat); await sleep(140);
       dist=rt.dist??'-'; time=rt.time??'-'; note=rt.note;
     }
-    td1.push({'장소명':p.name,'검색결과':matched,'주소':addr,'저장시간':p.saved,'거리(km)':dist,'소요시간(분)':time,'비고':note,_lng,_lat});
+    td1.push({'장소명':p.name,'검색결과':matched,'주소':addr,'거리(km)':dist,'소요시간(분)':time,'비고':note,_lng,_lat,_rawRow:p.rawRow});
     done++;
   }
   setProg('pb1','pl1',100,'완료!'); setTimeout(()=>show('pw1',false),800);
@@ -757,6 +931,13 @@ async function runTab1(){
 
 function drawRes1(oP){
   show('res1');
+  window.lastOriginP = oP;
+  updateRes1UI();
+}
+
+function updateRes1UI(){
+  const oP = window.lastOriginP;
+  if(!oP) return;
   const ok=td1.filter(r=>r['거리(km)']!=='-');
   $id('mt1').innerHTML=`
     <div class="metric"><div class="metric-lbl">전체</div><div class="metric-val">${td1.length}곳</div></div>
@@ -765,23 +946,59 @@ function drawRes1(oP){
     ${ok.length?`<div class="metric"><div class="metric-lbl">평균 거리</div><div class="metric-val">${(ok.reduce((s,r)=>s+(+r['거리(km)']),0)/ok.length).toFixed(1)}km</div></div>`:''}
   `;
   sortT1();
-  // map
-  const m=mkMap('map1',oP.lat,oP.lng);
+  
+  let m=MAPS['map1'];
+  if(!m) {
+    m=mkMap('map1',oP.lat,oP.lng);
+  } else {
+    m.eachLayer(l => {
+      if((l instanceof L.Marker) || (l instanceof L.Polyline)) m.removeLayer(l);
+    });
+  }
+  
   L.marker([oP.lat,oP.lng],{icon:mkIcon('#ef4444','A')}).bindPopup(`<b>출발지</b><br>${esc(oP.name)}`).addTo(m);
+  
+  const headers = XL['f1']?.headers || [];
+  const exIndices = Array.from(window.extraColsSelected || []).sort((a,b)=>a-b);
+  
   td1.filter(r=>r._lat).forEach((r,i)=>{
+    let exHtml = '';
+    if(exIndices.length > 0) {
+       exHtml = exIndices.map(idx => `<div style="margin-bottom:4px"><b>${esc(headers[idx])}:</b> ${esc((r._rawRow[idx]??'').toString().trim())}</div>`).join('') + '<hr style="margin:6px 0;border-top:1px solid #e2e8f0">';
+    }
     L.marker([r._lat,r._lng],{icon:mkIcon(COLORS[(i+1)%COLORS.length],'●')})
-      .bindPopup(`<b>${esc(r['장소명'])}</b><br>${esc(r['주소'])}<br>거리: ${r['거리(km)']}km / ${r['소요시간(분)']}분`).addTo(m);
+      .bindPopup(`<div style="min-width:180px;font-size:13px"><b>${esc(r['장소명'])}</b><br><span style="color:#64748b;font-size:11px">${esc(r['주소'])}</span><br><hr style="margin:6px 0;border-top:1px solid #e2e8f0">${exHtml}<b>거리:</b> ${r['거리(km)']}km<br><b>소요시간:</b> ${r['소요시간(분)']}분</div>`).addTo(m);
     L.polyline([[oP.lat,oP.lng],[r._lat,r._lng]],{color:'#94a3b8',weight:1.5,opacity:.5,dashArray:'5'}).addTo(m);
   });
 }
+
 function sortT1(){
   const by=$id('sort1').value;
   const sorted=[...td1].sort((a,b)=>{
     if(by==='dist') return (+a['거리(km)']||999)-(+b['거리(km)']||999);
     if(by==='time') return (+a['소요시간(분)']||999)-(+b['소요시간(분)']||999);
-    return String(a['저장시간']).localeCompare(String(b['저장시간']));
+    return 0;
   });
-  renderTable('tbl1',sorted,['장소명','검색결과','주소','저장시간','거리(km)','소요시간(분)','비고']);
+  
+  const headers = XL['f1']?.headers || [];
+  const exIndices = Array.from(window.extraColsSelected || []).sort((a,b)=>a-b);
+  
+  const cols = ['장소명','검색결과','주소'];
+  exIndices.forEach(idx => cols.push(headers[idx]));
+  cols.push('거리(km)','소요시간(분)','비고');
+  
+  const tableData = sorted.map(r => {
+    const row = {...r};
+    exIndices.forEach(idx => {
+       row[headers[idx]] = (r._rawRow[idx] ?? '').toString().trim();
+    });
+    delete row._rawRow;
+    delete row._lng;
+    delete row._lat;
+    return row;
+  });
+  window.tableData1 = tableData;
+  renderTable('tbl1',tableData,cols);
 }
 
 // ════════════════════════════════════════

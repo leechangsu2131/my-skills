@@ -206,11 +206,21 @@ def score_submission(submission: dict, answers: list[dict]) -> dict:
         for answer in answers
         if isinstance(answer, dict)
     }
+    answers_by_number = {
+        int(answer.get("number", 0)): answer
+        for answer in answers
+        if isinstance(answer, dict)
+    }
     total = 0
     earned = 0
     for item in submission.get("items", []):
         key = (int(item.get("page", 1)), int(item.get("question_number", 0)))
+        q_num = int(item.get("question_number", 0))
+        
         answer = answers_by_key.get(key)
+        if answer is None:
+            answer = answers_by_number.get(q_num)
+            
         if answer is None:
             item["is_correct"] = False
             item["points_possible"] = 0

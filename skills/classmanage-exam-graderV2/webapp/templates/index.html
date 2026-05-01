@@ -1,255 +1,614 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ClassExamGrade Dashboard</title>
-<style>
-:root{--bg:#0f172a;--card:#1e293b;--panel:#111827;--border:#334155;--blue:#3b82f6;--green:#22c55e;--yellow:#f59e0b;--red:#ef4444;--text:#f1f5f9;--muted:#94a3b8}
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:24px}
-a{color:inherit}
-.topbar{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:24px}
-.topbar-left{display:flex;flex-direction:column;gap:6px}
-.topbar-title{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.topbar-title h1{font-size:24px;font-weight:700}
-.topbar-meta{font-size:13px;color:var(--muted)}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 16px;border-radius:10px;border:none;cursor:pointer;font-size:13px;font-weight:600;text-decoration:none;transition:.15s}
-.btn:disabled{opacity:.45;cursor:not-allowed}
-.btn-blue{background:var(--blue);color:#fff}.btn-blue:hover:not(:disabled){background:#2563eb}
-.btn-green{background:var(--green);color:#052e16}.btn-green:hover:not(:disabled){background:#16a34a}
-.btn-ghost{background:#334155;color:var(--text)}.btn-ghost:hover:not(:disabled){background:#475569}
-.btn-yellow{background:var(--yellow);color:#111827}.btn-yellow:hover:not(:disabled){background:#d97706}
-.step{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:22px 24px;margin-bottom:16px}
-.step-title{display:flex;align-items:center;gap:10px;font-size:16px;font-weight:700;margin-bottom:10px}
-.step-num{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:999px;background:var(--blue);color:#fff;font-size:12px;font-weight:700}
-.step-desc{font-size:12px;line-height:1.6;color:var(--muted);margin-bottom:14px}
-.status-card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:14px}
-.status-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
-.status-card h3{font-size:13px;margin-bottom:10px}
-.status-sub{font-size:11px;color:var(--muted);margin-bottom:10px}
-.thumb-row{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px}
-.thumb{display:flex;flex-direction:column;gap:4px;align-items:center;min-width:90px}
-.thumb img{width:80px;height:110px;object-fit:cover;border:1px solid var(--border);border-radius:6px;background:#fff}
-.thumb span{font-size:10px;color:var(--muted);text-align:center;max-width:90px;word-break:break-all}
-.bridge-box{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:16px}
-.prompt-preview{font-family:Consolas,monospace;font-size:11px;background:#07101d;border:1px solid #1e3a5f;border-radius:8px;padding:12px;color:#7dd3fc;margin:10px 0;line-height:1.7;white-space:pre-wrap;word-break:break-word}
-#json-input{width:100%;height:180px;background:#07101d;border:1px solid var(--border);border-radius:8px;padding:12px;color:#86efac;font-family:Consolas,monospace;font-size:12px;resize:vertical}
-#json-status,#editor-save-status,#pipeline-status,#grading-status{font-size:12px;min-height:18px}
-.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.ocr-progress{display:none;margin-top:14px;background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:14px}
-.ocr-progress-head{display:flex;justify-content:space-between;gap:12px;align-items:center;font-size:12px;font-weight:700;margin-bottom:8px}
-.ocr-progress-track{height:10px;background:#0f172a;border:1px solid var(--border);border-radius:999px;overflow:hidden}
-.ocr-progress-bar{width:0;height:100%;background:var(--blue);transition:width .25s ease,background .2s ease}
-.ocr-progress-bar.done{background:var(--green)}
-.ocr-progress-bar.error{background:var(--red)}
-.ocr-progress-meta{font-size:11px;color:var(--muted);margin-top:8px;min-height:15px}
-.editor-shell{display:none}
-.editor-layout{display:flex;gap:12px;align-items:flex-start}
-.editor-left{flex:1;min-width:0}
-.editor-side{width:190px;flex-shrink:0}
-.editor-side-title{font-size:12px;font-weight:700;color:#7dd3fc;margin-bottom:6px}
-#editor-panel{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:12px;font-size:12px;color:var(--muted)}
-.canvas-wrap{border:1px solid var(--border);border-radius:10px;overflow:hidden}
-#preview-canvas{display:block;width:100%;height:auto}
-.legend{display:flex;gap:10px;margin-top:8px;font-size:11px;color:var(--muted)}
-.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px;vertical-align:middle}
-#status-bar{position:fixed;left:0;right:0;bottom:0;background:rgba(15,23,42,0.96);border-top:1px solid var(--border);padding:8px 24px;font-size:12px;color:var(--muted);display:flex;gap:14px;overflow:auto}
-@media (max-width: 900px){
-  body{padding:16px}
-  .topbar{flex-direction:column}
-  .editor-layout{flex-direction:column}
-  .editor-side{width:100%}
-}
-</style>
-</head>
-<body>
-<script>
-const currentProject = {{ project|tojson }};
-</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ClassExamGrade Dashboard</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #1e293b;
+      --panel: #111827;
+      --border: #334155;
+      --blue: #3b82f6;
+      --green: #22c55e;
+      --yellow: #f59e0b;
+      --red: #ef4444;
+      --text: #f1f5f9;
+      --muted: #94a3b8
+    }
 
-<div class="topbar">
-  <div class="topbar-left">
-    <div class="topbar-title">
-      <a href="/" class="btn btn-ghost">◀ 목록으로</a>
-      <h1>📁 {{ project.name }}</h1>
-    </div>
-    <div class="topbar-meta">
-      {{ project.grade }} · {{ project.class }} · {{ project.subject }} · {{ project.exam_name }}
-    </div>
-  </div>
-</div>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
 
-<div class="step">
-  <div class="step-title"><span class="step-num">0</span>파일 준비 및 현황</div>
-  <p class="step-desc">현재 열린 프로젝트 안에서만 템플릿, 답안지, 학생 PDF를 관리합니다.</p>
-  <div id="file-status-container">로딩 중...</div>
-  <div style="display:none">
-    <input type="file" id="tmpl-file" accept=".pdf,.jpg,.jpeg,.png" onchange="uploadTemplate()">
-    <input type="file" id="stu-files" accept=".pdf,.jpg,.jpeg,.png" multiple onchange="uploadStudents()">
-  </div>
-</div>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 24px
+    }
 
-<div class="step">
-  <div class="step-title"><span class="step-num">1</span>Gemini 프롬프트 및 regions.json 저장</div>
-  <p class="step-desc">템플릿 페이지 수를 기준으로 프롬프트를 생성하고, AI 응답 JSON을 프로젝트의 <code>json/regions.json</code>으로 저장합니다.</p>
-  <div class="bridge-box">
-    <div class="row" style="justify-content:space-between;margin-bottom:8px">
-      <strong style="font-size:12px;color:var(--muted)">전체 페이지용 프롬프트</strong>
-      <button class="btn btn-ghost" onclick="copyPrompt(event)" style="padding:5px 10px;font-size:11px">복사</button>
-    </div>
-    <div class="prompt-preview" id="prompt-text">템플릿을 업로드하면 프롬프트가 생성됩니다.</div>
-    <label for="json-input" style="display:block;font-size:12px;font-weight:700;color:var(--muted);margin:8px 0">Gemini/Claude 결과 붙여넣기</label>
-    <textarea id="json-input" placeholder='```json ... ``` 형태도 그대로 붙여 넣어도 됩니다.' oninput="onJsonInput()"></textarea>
-    <div id="json-status" style="margin-top:8px"></div>
-    <div class="row" style="margin-top:10px">
-      <button class="btn btn-yellow" onclick="doValidateAll()">JSON 검사</button>
-      <button class="btn btn-green" id="save-all-btn" onclick="doSaveAll('replace_all')" disabled>전체 저장</button>
-      <button class="btn btn-ghost" id="save-answers-btn" onclick="doSaveAll('answers_only')" disabled>정답만 업데이트</button>
-      <button class="btn btn-ghost" id="save-questions-btn" onclick="doSaveAll('questions_only')" disabled>정답영역만 업데이트</button>
-    </div>
-    <div style="margin-top:8px;font-size:11px;color:var(--muted)">
-      `정답만 업데이트`는 기존 문항 박스를 유지하고 `answers`, `total_points`만 갱신합니다.
-    </div>
-  </div>
-</div>
+    a {
+      color: inherit
+    }
 
-<div class="step">
-  <div class="step-title"><span class="step-num">2</span>문항 박스 편집</div>
-  <p class="step-desc">페이지별 템플릿 위에서 문항 박스를 이동, 크기 조절, 추가, 삭제할 수 있습니다.</p>
-  <div class="row" style="margin-bottom:12px">
-    <label for="prompt-page-select" style="font-size:12px;font-weight:700;color:var(--muted)">편집 페이지</label>
-    <select id="prompt-page-select" class="btn btn-ghost" onchange="loadEditorForPage()"></select>
-    <button class="btn btn-ghost" onclick="loadEditorForPage()">불러오기</button>
-  </div>
-  <div id="editor-container" class="editor-shell">
-    <div class="editor-layout">
-      <div class="editor-left">
-        <div class="row" style="margin-bottom:6px">
-          <button class="btn btn-ghost" id="mode-select-btn" onclick="setEditorMode('select')" style="font-size:11px;padding:5px 10px">선택/이동</button>
-          <button class="btn btn-ghost" id="mode-draw-btn" onclick="setEditorMode('draw')" style="font-size:11px;padding:5px 10px">박스 추가</button>
-          <button class="btn btn-ghost" id="del-btn" onclick="deleteSelected()" style="font-size:11px;padding:5px 10px;color:var(--red)" disabled>삭제</button>
-          <span id="mode-label" style="font-size:11px;color:var(--muted)">클릭으로 선택하고 드래그로 이동/크기 조절합니다.</span>
-        </div>
-        <div class="canvas-wrap">
-          <canvas id="preview-canvas"></canvas>
-        </div>
-        <div class="legend">
-          <span><i style="background:rgba(59,130,246,0.6)"></i>객관식</span>
-          <span><i style="background:rgba(34,197,94,0.6)"></i>정답형</span>
-          <span><i style="background:rgba(249,115,22,0.6)"></i>서술형</span>
-        </div>
-      </div>
-      <div class="editor-side">
-        <div class="editor-side-title">선택 문항 편집</div>
-        <div id="editor-panel">문항을 선택하면 여기에서 속성을 조절할 수 있습니다.</div>
-      </div>
-    </div>
-    <div class="row" style="margin-top:10px">
-      <button class="btn btn-ghost" onclick="undo()" id="btn-undo" disabled>실행 취소</button>
-      <button class="btn btn-ghost" onclick="redo()" id="btn-redo" disabled>다시 실행</button>
-      <button class="btn btn-ghost" onclick="resetEditor()">현재 페이지 초기화</button>
-      <div style="flex:1"></div>
-      <button class="btn btn-green" onclick="saveEditorForPage()">현재 페이지 저장</button>
-      <span id="editor-save-status"></span>
-    </div>
-  </div>
-</div>
+    .topbar {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 24px
+    }
 
-<div class="step">
-  <div class="step-title"><span class="step-num">3</span>학생 시험지 정렬</div>
-  <p class="step-desc">학생 PDF를 페이지 이미지로 분할하고, 각 페이지를 해당 템플릿 페이지에 맞춰 정렬합니다.</p>
-  <div class="row">
-    <button class="btn btn-blue" id="pipeline-btn" onclick="runPipeline()">정렬 실행</button>
-    <span id="pipeline-status"></span>
-  </div>
-</div>
+    .topbar-left {
+      display: flex;
+      flex-direction: column;
+      gap: 6px
+    }
 
-<div class="step">
-  <div class="step-title"><span class="step-num">4</span>전체 오버레이 검수</div>
-  <p class="step-desc">정렬 결과를 학생별로 겹쳐 보고, 미세 위치 보정과 페이지별 검수를 진행합니다.</p>
-  <a href="/review" class="btn btn-green">전체 오버레이 검수 열기</a>
-</div>
+    .topbar-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap
+    }
 
-<div class="step">
-  <div class="step-title"><span class="step-num">5</span>OCR 채점 및 결과 확인</div>
-  <p class="step-desc">채점용 crop 생성, OCR 실행, 자동 채점을 순서대로 수행한 뒤 결과 화면에서 학생별 결과를 확인합니다.</p>
-  <div class="row">
-    <button class="btn btn-ghost" onclick="runGradingPrepare()">채점 준비</button>
-    <button class="btn btn-ghost" id="grading-ocr-btn" onclick="runGradingOcr()">OCR 실행</button>
-    <button class="btn btn-green" onclick="runGradingScore()">자동 채점</button>
-    <a href="/grading" class="btn btn-yellow">결과 보기</a>
-    <span id="grading-status"></span>
-  </div>
-  <div class="ocr-progress" id="ocr-progress-panel">
-    <div class="ocr-progress-head">
-      <span id="ocr-progress-title">OCR 대기 중</span>
-      <span id="ocr-progress-count">0 / 0</span>
-    </div>
-    <div class="ocr-progress-track">
-      <div class="ocr-progress-bar" id="ocr-progress-bar"></div>
-    </div>
-    <div class="ocr-progress-meta" id="ocr-progress-meta"></div>
-  </div>
-</div>
+    .topbar-title h1 {
+      font-size: 24px;
+      font-weight: 700
+    }
 
-<div style="height:42px"></div>
+    .topbar-meta {
+      font-size: 13px;
+      color: var(--muted)
+    }
 
-<div id="status-bar">
-  <span>현재 프로젝트: {{ project.name }}</span>
-  <span id="regions-status">regions.json 상태 로딩 중...</span>
-  <span id="template-status">template 상태 로딩 중...</span>
-</div>
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 9px 16px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: .15s
+    }
 
-<script>
-let globalRegions = { questions: [], answers: [], total_points: 0 };
-let fileStatus = null;
-let parsedAllData = null;
-let ocrProgressTimer = null;
+    .btn:disabled {
+      opacity: .45;
+      cursor: not-allowed
+    }
 
-window.addEventListener('DOMContentLoaded', async () => {
-  await loadFileStatus();
-  await refreshOcrProgress();
-  try {
-    const response = await fetch('/api/regions');
-    if (response.ok) {
-      globalRegions = await response.json();
-      if (!globalRegions.questions) globalRegions.questions = [];
-      if (!globalRegions.answers) globalRegions.answers = [];
-      if (typeof globalRegions.total_points !== 'number') globalRegions.total_points = 0;
-      if (globalRegions.questions.length > 0) {
-        document.getElementById('json-input').value = JSON.stringify(globalRegions, null, 2);
-        doValidateAll();
+    .btn-blue {
+      background: var(--blue);
+      color: #fff
+    }
+
+    .btn-blue:hover:not(:disabled) {
+      background: #2563eb
+    }
+
+    .btn-green {
+      background: var(--green);
+      color: #052e16
+    }
+
+    .btn-green:hover:not(:disabled) {
+      background: #16a34a
+    }
+
+    .btn-ghost {
+      background: #334155;
+      color: var(--text)
+    }
+
+    .btn-ghost:hover:not(:disabled) {
+      background: #475569
+    }
+
+    .btn-yellow {
+      background: var(--yellow);
+      color: #111827
+    }
+
+    .btn-yellow:hover:not(:disabled) {
+      background: #d97706
+    }
+
+    .step {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 22px 24px;
+      margin-bottom: 16px
+    }
+
+    .step-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 10px
+    }
+
+    .step-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 999px;
+      background: var(--blue);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700
+    }
+
+    .step-desc {
+      font-size: 12px;
+      line-height: 1.6;
+      color: var(--muted);
+      margin-bottom: 14px
+    }
+
+    .status-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px
+    }
+
+    .status-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px
+    }
+
+    .status-card h3 {
+      font-size: 13px;
+      margin-bottom: 10px
+    }
+
+    .status-sub {
+      font-size: 11px;
+      color: var(--muted);
+      margin-bottom: 10px
+    }
+
+    .thumb-row {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 4px
+    }
+
+    .thumb {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      align-items: center;
+      min-width: 90px
+    }
+
+    .thumb img {
+      width: 80px;
+      height: 110px;
+      object-fit: cover;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: #fff
+    }
+
+    .thumb span {
+      font-size: 10px;
+      color: var(--muted);
+      text-align: center;
+      max-width: 90px;
+      word-break: break-all
+    }
+
+    .bridge-box {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px
+    }
+
+    .prompt-preview {
+      font-family: Consolas, monospace;
+      font-size: 11px;
+      background: #07101d;
+      border: 1px solid #1e3a5f;
+      border-radius: 8px;
+      padding: 12px;
+      color: #7dd3fc;
+      margin: 10px 0;
+      line-height: 1.7;
+      white-space: pre-wrap;
+      word-break: break-word
+    }
+
+    #json-input {
+      width: 100%;
+      height: 180px;
+      background: #07101d;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      color: #86efac;
+      font-family: Consolas, monospace;
+      font-size: 12px;
+      resize: vertical
+    }
+
+    #json-status,
+    #editor-save-status,
+    #pipeline-status,
+    #grading-status {
+      font-size: 12px;
+      min-height: 18px
+    }
+
+    .row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center
+    }
+
+    .ocr-progress {
+      display: none;
+      margin-top: 14px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px
+    }
+
+    .ocr-progress-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 8px
+    }
+
+    .ocr-progress-track {
+      height: 10px;
+      background: #0f172a;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      overflow: hidden
+    }
+
+    .ocr-progress-bar {
+      width: 0;
+      height: 100%;
+      background: var(--blue);
+      transition: width .25s ease, background .2s ease
+    }
+
+    .ocr-progress-bar.done {
+      background: var(--green)
+    }
+
+    .ocr-progress-bar.error {
+      background: var(--red)
+    }
+
+    .ocr-progress-meta {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 8px;
+      min-height: 15px
+    }
+
+    .editor-shell {
+      display: none
+    }
+
+    .editor-layout {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start
+    }
+
+    .editor-left {
+      flex: 1;
+      min-width: 0
+    }
+
+    .editor-side {
+      width: 190px;
+      flex-shrink: 0
+    }
+
+    .editor-side-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: #7dd3fc;
+      margin-bottom: 6px
+    }
+
+    #editor-panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      font-size: 12px;
+      color: var(--muted)
+    }
+
+    .canvas-wrap {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden
+    }
+
+    #preview-canvas {
+      display: block;
+      width: 100%;
+      height: auto
+    }
+
+    .legend {
+      display: flex;
+      gap: 10px;
+      margin-top: 8px;
+      font-size: 11px;
+      color: var(--muted)
+    }
+
+    .legend i {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+      margin-right: 4px;
+      vertical-align: middle
+    }
+
+    #status-bar {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(15, 23, 42, 0.96);
+      border-top: 1px solid var(--border);
+      padding: 8px 24px;
+      font-size: 12px;
+      color: var(--muted);
+      display: flex;
+      gap: 14px;
+      overflow: auto
+    }
+
+    @media (max-width: 900px) {
+      body {
+        padding: 16px
+      }
+
+      .topbar {
+        flex-direction: column
+      }
+
+      .editor-layout {
+        flex-direction: column
+      }
+
+      .editor-side {
+        width: 100%
       }
     }
-  } catch (error) {
-    console.error(error);
-  }
-});
+  </style>
+</head>
 
-async function loadFileStatus() {
-  const container = document.getElementById('file-status-container');
-  container.textContent = '로딩 중...';
-  const response = await fetch('/api/project/status');
-  if (response.status === 409) {
-    window.location.href = '/';
-    return;
-  }
-  fileStatus = await response.json();
-  renderFileStatus();
-  syncPageSelect();
-  updatePromptText();
-  document.getElementById('regions-status').textContent =
-    fileStatus.regions && fileStatus.regions.exists
-      ? `regions.json: ${fileStatus.regions.question_count}문항`
-      : 'regions.json: 없음';
-  document.getElementById('template-status').textContent =
-    `template: ${fileStatus.template.count}페이지`;
-}
+<body>
+  <script>
+    const currentProject = {{ project| tojson }};
+  </script>
 
-function renderThumbRow(paths, folder) {
-  if (!paths.length) return '';
-  return `
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-title">
+        <a href="/" class="btn btn-ghost">◀ 목록으로</a>
+        <h1>📁 {{ project.name }}</h1>
+      </div>
+      <div class="topbar-meta">
+        {{ project.grade }} · {{ project.class }} · {{ project.subject }} · {{ project.exam_name }}
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-title"><span class="step-num">0</span>파일 준비 및 현황</div>
+    <p class="step-desc">현재 열린 프로젝트 안에서만 템플릿, 답안지, 학생 PDF를 관리합니다.</p>
+    <div id="file-status-container">로딩 중...</div>
+    <div style="display:none">
+      <input type="file" id="tmpl-file" accept=".pdf,.jpg,.jpeg,.png" onchange="uploadTemplate()">
+      <input type="file" id="stu-files" accept=".pdf,.jpg,.jpeg,.png" multiple onchange="uploadStudents()">
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-title"><span class="step-num">1</span>Gemini 프롬프트 및 regions.json 저장</div>
+    <p class="step-desc">템플릿 페이지 수를 기준으로 프롬프트를 생성하고, AI 응답 JSON을 프로젝트의 <code>json/regions.json</code>으로 저장합니다.</p>
+    <div class="bridge-box">
+      <div class="row" style="justify-content:space-between;margin-bottom:8px">
+        <strong style="font-size:12px;color:var(--muted)">전체 페이지용 프롬프트</strong>
+        <button class="btn btn-ghost" onclick="copyPrompt(event)" style="padding:5px 10px;font-size:11px">복사</button>
+      </div>
+      <div class="prompt-preview" id="prompt-text">템플릿을 업로드하면 프롬프트가 생성됩니다.</div>
+      <label for="json-input"
+        style="display:block;font-size:12px;font-weight:700;color:var(--muted);margin:8px 0">Gemini/Claude 결과
+        붙여넣기</label>
+      <textarea id="json-input" placeholder='```json ... ``` 형태도 그대로 붙여 넣어도 됩니다.' oninput="onJsonInput()"></textarea>
+      <div id="json-status" style="margin-top:8px"></div>
+      <div class="row" style="margin-top:10px">
+        <button class="btn btn-yellow" onclick="doValidateAll()">JSON 검사</button>
+        <button class="btn btn-green" id="save-all-btn" onclick="doSaveAll('replace_all')" disabled>전체 저장</button>
+        <button class="btn btn-ghost" id="save-answers-btn" onclick="doSaveAll('answers_only')" disabled>정답만
+          업데이트</button>
+        <button class="btn btn-ghost" id="save-questions-btn" onclick="doSaveAll('questions_only')" disabled>정답영역만
+          업데이트</button>
+      </div>
+      <div style="margin-top:8px;font-size:11px;color:var(--muted)">
+        `정답만 업데이트`는 기존 문항 박스를 유지하고 `answers`, `total_points`만 갱신합니다.
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-title"><span class="step-num">2</span>문항 박스 편집</div>
+    <p class="step-desc">페이지별 템플릿 위에서 문항 박스를 이동, 크기 조절, 추가, 삭제할 수 있습니다.</p>
+    <div class="row" style="margin-bottom:12px">
+      <label for="prompt-page-select" style="font-size:12px;font-weight:700;color:var(--muted)">편집 페이지</label>
+      <select id="prompt-page-select" class="btn btn-ghost" onchange="loadEditorForPage()"></select>
+      <button class="btn btn-ghost" onclick="loadEditorForPage()">불러오기</button>
+    </div>
+    <div id="editor-container" class="editor-shell">
+      <div class="editor-layout">
+        <div class="editor-left">
+          <div class="row" style="margin-bottom:6px">
+            <button class="btn btn-ghost" id="mode-select-btn" onclick="setEditorMode('select')"
+              style="font-size:11px;padding:5px 10px">선택/이동</button>
+            <button class="btn btn-ghost" id="mode-draw-btn" onclick="setEditorMode('draw')"
+              style="font-size:11px;padding:5px 10px">박스 추가</button>
+            <button class="btn btn-ghost" id="del-btn" onclick="deleteSelected()"
+              style="font-size:11px;padding:5px 10px;color:var(--red)" disabled>삭제</button>
+            <span id="mode-label" style="font-size:11px;color:var(--muted)">클릭으로 선택하고 드래그로 이동/크기 조절합니다.</span>
+          </div>
+          <div class="canvas-wrap">
+            <canvas id="preview-canvas"></canvas>
+          </div>
+          <div class="legend">
+            <span><i style="background:rgba(59,130,246,0.6)"></i>객관식</span>
+            <span><i style="background:rgba(34,197,94,0.6)"></i>정답형</span>
+            <span><i style="background:rgba(249,115,22,0.6)"></i>서술형</span>
+          </div>
+        </div>
+        <div class="editor-side">
+          <div class="editor-side-title">선택 문항 편집</div>
+          <div id="editor-panel">문항을 선택하면 여기에서 속성을 조절할 수 있습니다.</div>
+        </div>
+      </div>
+      <div class="row" style="margin-top:10px">
+        <button class="btn btn-ghost" onclick="undo()" id="btn-undo" disabled>실행 취소</button>
+        <button class="btn btn-ghost" onclick="redo()" id="btn-redo" disabled>다시 실행</button>
+        <button class="btn btn-ghost" onclick="resetEditor()">현재 페이지 초기화</button>
+        <div style="flex:1"></div>
+        <button class="btn btn-green" onclick="saveEditorForPage()">현재 페이지 저장</button>
+        <span id="editor-save-status"></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-title"><span class="step-num">3</span>학생 시험지 정렬</div>
+    <p class="step-desc">학생 PDF를 페이지 이미지로 분할하고, 각 페이지를 해당 템플릿 페이지에 맞춰 정렬합니다.</p>
+    <div class="row">
+      <button class="btn btn-blue" id="pipeline-btn" onclick="runPipeline()">정렬 실행</button>
+      <span id="pipeline-status"></span>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-title"><span class="step-num">4</span>전체 오버레이 검수</div>
+    <p class="step-desc">정렬 결과를 학생별로 겹쳐 보고, 미세 위치 보정과 페이지별 검수를 진행합니다.</p>
+    <a href="/review" class="btn btn-green">전체 오버레이 검수 열기</a>
+  </div>
+
+  <div class="step">
+    <div class="step-title"><span class="step-num">5</span>OCR 채점 및 결과 확인</div>
+    <p class="step-desc">채점용 crop 생성, OCR 실행, 자동 채점을 순서대로 수행한 뒤 결과 화면에서 학생별 결과를 확인합니다.</p>
+    <div class="row">
+      <button class="btn btn-ghost" onclick="runGradingPrepare()">채점 준비</button>
+      <button class="btn btn-ghost" id="grading-ocr-btn" onclick="runGradingOcr()">OCR 실행</button>
+      <button class="btn btn-green" onclick="runGradingScore()">자동 채점</button>
+      <a href="/grading" class="btn btn-yellow">결과 보기</a>
+      <span id="grading-status"></span>
+    </div>
+    <div class="ocr-progress" id="ocr-progress-panel">
+      <div class="ocr-progress-head">
+        <span id="ocr-progress-title">OCR 대기 중</span>
+        <span id="ocr-progress-count">0 / 0</span>
+      </div>
+      <div class="ocr-progress-track">
+        <div class="ocr-progress-bar" id="ocr-progress-bar"></div>
+      </div>
+      <div class="ocr-progress-meta" id="ocr-progress-meta"></div>
+    </div>
+  </div>
+
+  <div style="height:42px"></div>
+
+  <div id="status-bar">
+    <span>현재 프로젝트: {{ project.name }}</span>
+    <span id="regions-status">regions.json 상태 로딩 중...</span>
+    <span id="template-status">template 상태 로딩 중...</span>
+  </div>
+
+  <script>
+    let globalRegions = { questions: [], answers: [], total_points: 0 };
+    let fileStatus = null;
+    let parsedAllData = null;
+    let ocrProgressTimer = null;
+
+    window.addEventListener('DOMContentLoaded', async () => {
+      await loadFileStatus();
+      await refreshOcrProgress();
+      try {
+        const response = await fetch('/api/regions');
+        if (response.ok) {
+          globalRegions = await response.json();
+          if (!globalRegions.questions) globalRegions.questions = [];
+          if (!globalRegions.answers) globalRegions.answers = [];
+          if (typeof globalRegions.total_points !== 'number') globalRegions.total_points = 0;
+          if (globalRegions.questions.length > 0) {
+            document.getElementById('json-input').value = JSON.stringify(globalRegions, null, 2);
+            doValidateAll();
+          }
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    });
+
+    async function loadFileStatus() {
+      const container = document.getElementById('file-status-container');
+      container.textContent = '로딩 중...';
+      const response = await fetch('/api/project/status');
+      if (response.status === 409) {
+        window.location.href = '/';
+        return;
+      }
+      fileStatus = await response.json();
+      renderFileStatus();
+      syncPageSelect();
+      updatePromptText();
+      document.getElementById('regions-status').textContent =
+        fileStatus.regions && fileStatus.regions.exists
+          ? `regions.json: ${fileStatus.regions.question_count}문항`
+          : 'regions.json: 없음';
+      document.getElementById('template-status').textContent =
+        `template: ${fileStatus.template.count}페이지`;
+    }
+
+    function renderThumbRow(paths, folder) {
+      if (!paths.length) return '';
+      return `
     <div class="thumb-row">
       ${paths.map((name) => `
         <div class="thumb">
@@ -259,16 +618,16 @@ function renderThumbRow(paths, folder) {
       `).join('')}
     </div>
   `;
-}
+    }
 
-function renderFileStatus() {
-  const container = document.getElementById('file-status-container');
-  const regions = fileStatus.regions || { exists: false };
-  const regionSummary = regions.exists
-    ? `${regions.question_count}문항 · 페이지 ${((regions.pages || []).join(', ') || '-')}`
-    : '아직 regions.json이 없습니다.';
+    function renderFileStatus() {
+      const container = document.getElementById('file-status-container');
+      const regions = fileStatus.regions || { exists: false };
+      const regionSummary = regions.exists
+        ? `${regions.question_count}문항 · 페이지 ${((regions.pages || []).join(', ') || '-')}`
+        : '아직 regions.json이 없습니다.';
 
-  container.innerHTML = `
+      container.innerHTML = `
     <div class="status-grid">
       <div class="status-card">
         <h3>템플릿</h3>
@@ -299,52 +658,52 @@ function renderFileStatus() {
       </div>
     </div>
   `;
-}
+    }
 
-function syncPageSelect() {
-  const select = document.getElementById('prompt-page-select');
-  const pages = (fileStatus && fileStatus.template.files.length)
-    ? fileStatus.template.files
-    : ['blank_p1.png'];
-  const current = select.value;
-  select.innerHTML = pages.map((name) => `<option value="${name}">${name}</option>`).join('');
-  if (pages.includes(current)) {
-    select.value = current;
-  }
-}
+    function syncPageSelect() {
+      const select = document.getElementById('prompt-page-select');
+      const pages = (fileStatus && fileStatus.template.files.length)
+        ? fileStatus.template.files
+        : ['blank_p1.png'];
+      const current = select.value;
+      select.innerHTML = pages.map((name) => `<option value="${name}">${name}</option>`).join('');
+      if (pages.includes(current)) {
+        select.value = current;
+      }
+    }
 
-async function uploadTemplate() {
-  const input = document.getElementById('tmpl-file');
-  if (!input.files.length) return;
-  const form = new FormData();
-  form.append('file', input.files[0]);
-  document.getElementById('file-status-container').textContent = '템플릿 업로드 중...';
-  await fetch('/api/upload/template', { method: 'POST', body: form });
-  location.reload();
-}
+    async function uploadTemplate() {
+      const input = document.getElementById('tmpl-file');
+      if (!input.files.length) return;
+      const form = new FormData();
+      form.append('file', input.files[0]);
+      document.getElementById('file-status-container').textContent = '템플릿 업로드 중...';
+      await fetch('/api/upload/template', { method: 'POST', body: form });
+      location.reload();
+    }
 
-async function uploadStudents() {
-  const input = document.getElementById('stu-files');
-  if (!input.files.length) return;
-  const form = new FormData();
-  for (const file of input.files) form.append('files', file);
-  document.getElementById('file-status-container').textContent = '학생 파일 업로드 중...';
-  await fetch('/api/upload/students', { method: 'POST', body: form });
-  location.reload();
-}
+    async function uploadStudents() {
+      const input = document.getElementById('stu-files');
+      if (!input.files.length) return;
+      const form = new FormData();
+      for (const file of input.files) form.append('files', file);
+      document.getElementById('file-status-container').textContent = '학생 파일 업로드 중...';
+      await fetch('/api/upload/students', { method: 'POST', body: form });
+      location.reload();
+    }
 
-function updatePromptText() {
-  const pageCount = fileStatus ? fileStatus.template.count : 1;
-  let prompt = `첨부한 이미지 파일(N장)은 시험지 템플릿(빈 시험지)입니다.\n`;
-  prompt += `또한 첨부한 PDF 파일은 답안지(정답지)입니다.\n`;
-  prompt += `페이지 수는 총 ${pageCount}장이고, 각 페이지는 1페이지부터 ${pageCount}페이지까지입니다.\n\n`;
-  prompt += `[요청]\n`;
-  prompt += `1) 시험지 템플릿(이미지) 기준으로 각 페이지의 모든 문항에서 학생 답안 영역 bounding box를 찾아 주세요.\n`;
-  prompt += `2) 답안지(PDF)를 참고하여 각 문항의 정답, 배점, 유형을 추출해 주세요.\n`;
-  prompt += `응답은 설명 없이 JSON 코드블록 하나만 반환해 주세요.\n`;
-  prompt += `좌표는 각 템플릿 페이지 이미지 기준 0~1 정규화 비율입니다.\n`;
-  prompt += `page 값은 실제 페이지 번호와 반드시 일치해야 합니다.\n\n`;
-  prompt += `{
+    function updatePromptText() {
+      const pageCount = fileStatus ? fileStatus.template.count : 1;
+      let prompt = `첨부한 이미지 파일(N장)은 시험지 템플릿(빈 시험지)입니다.\n`;
+      prompt += `또한 첨부한 PDF 파일은 답안지(정답지)입니다.\n`;
+      prompt += `페이지 수는 총 ${pageCount}장이고, 각 페이지는 1페이지부터 ${pageCount}페이지까지입니다.\n\n`;
+      prompt += `[요청]\n`;
+      prompt += `1) 시험지 템플릿(이미지) 기준으로 각 페이지의 모든 문항에서 학생 답안 영역 bounding box를 찾아 주세요.\n`;
+      prompt += `2) 답안지(PDF)를 참고하여 각 문항의 정답, 배점, 유형을 추출해 주세요.\n`;
+      prompt += `응답은 설명 없이 JSON 코드블록 하나만 반환해 주세요.\n`;
+      prompt += `좌표는 각 템플릿 페이지 이미지 기준 0~1 정규화 비율입니다.\n`;
+      prompt += `page 값은 실제 페이지 번호와 반드시 일치해야 합니다.\n\n`;
+      prompt += `{
   "questions": [
     {
       "number": 1,
@@ -363,339 +722,340 @@ function updatePromptText() {
   ],
   "total_points": 100
 }`;
-  document.getElementById('prompt-text').textContent = prompt;
-}
-
-function copyPrompt(event) {
-  navigator.clipboard.writeText(document.getElementById('prompt-text').textContent).then(() => {
-    const button = event.currentTarget;
-    const original = button.textContent;
-    button.textContent = '복사됨';
-    setTimeout(() => { button.textContent = original; }, 1200);
-  });
-}
-
-function onJsonInput() {
-  parsedAllData = null;
-  setSaveButtonsDisabled(true);
-  setJsonStatus('', '');
-}
-
-function setSaveButtonsDisabled(disabled) {
-  ['save-all-btn', 'save-answers-btn', 'save-questions-btn'].forEach((id) => {
-    const button = document.getElementById(id);
-    if (button) button.disabled = disabled;
-  });
-}
-
-function extractJson(raw) {
-  let source = raw.trim();
-  const codeBlock = source.match(/```(?:json)?\s*([\s\S]*?)```/i);
-  if (codeBlock) {
-    source = codeBlock[1].trim();
-  } else {
-    const start = Math.min(
-      source.indexOf('{') === -1 ? Infinity : source.indexOf('{'),
-      source.indexOf('[') === -1 ? Infinity : source.indexOf('['),
-    );
-    if (start === Infinity) throw new SyntaxError('JSON 구조를 찾을 수 없습니다.');
-    source = source.slice(start, Math.max(source.lastIndexOf('}'), source.lastIndexOf(']')) + 1);
-  }
-  return JSON.parse(source);
-}
-
-function doValidateAll() {
-  parsedAllData = null;
-  const raw = document.getElementById('json-input').value;
-  if (!raw.trim()) {
-    setJsonStatus('입력창이 비어 있습니다.', 'red');
-    return;
-  }
-
-  let data;
-  try {
-    data = extractJson(raw);
-  } catch (error) {
-    setJsonStatus(`JSON 파싱 실패: ${error.message}`, 'red');
-    return;
-  }
-
-  let questions = data.questions;
-  if (!questions && Array.isArray(data)) questions = data;
-  if (!questions || !Array.isArray(questions)) {
-    setJsonStatus('"questions" 배열을 찾을 수 없습니다.', 'red');
-    return;
-  }
-
-  const summary = [];
-  for (let page = 1; page <= (fileStatus.template.count || 1); page += 1) {
-    const count = questions.filter((q) => (q.page || 1) === page).length;
-    summary.push(`${page}p: ${count}문항`);
-  }
-
-  let answers = data.answers;
-  if (!answers || !Array.isArray(answers)) answers = [];
-  const totalPoints = Number(data.total_points || 0);
-
-  parsedAllData = { questions, answers, total_points: totalPoints };
-  setSaveButtonsDisabled(false);
-  const answerMsg = answers.length > 0 ? ` · 답지 ${answers.length}문항` : '';
-  setJsonStatus(`검사 완료: 총 ${questions.length}문항 (${summary.join(', ')})${answerMsg}`, 'green');
-}
-
-async function doSaveAll(mode) {
-  if (!parsedAllData) return;
-  setSaveButtonsDisabled(true);
-  setJsonStatus('저장 중...', 'muted');
-  const url = new URL('/api/regions', window.location.origin);
-  url.searchParams.set('mode', mode || 'replace_all');
-  const saveResponse = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      bundle: parsedAllData,
-      raw_text: document.getElementById('json-input').value,
-    }),
-  });
-  const result = await saveResponse.json();
-  if (saveResponse.ok && result.success) {
-    globalRegions = await (await fetch('/api/regions')).json();
-    setJsonStatus(`저장 완료 (${result.mode})`, 'green');
-    await loadFileStatus();
-  } else {
-    setJsonStatus(result.error || 'regions.json 저장 실패', 'red');
-    setSaveButtonsDisabled(false);
-  }
-}
-
-function getSelectedPageNum() {
-  const value = document.getElementById('prompt-page-select').value || 'blank_p1.png';
-  const match = value.match(/blank_p(\d+)/i);
-  return match ? parseInt(match[1], 10) : 1;
-}
-
-async function loadEditorForPage() {
-  const page = getSelectedPageNum();
-  const questions = globalRegions.questions.filter((q) => (q.page || 1) === page);
-  document.getElementById('editor-container').style.display = 'block';
-  document.getElementById('editor-save-status').textContent = '페이지 로딩 중...';
-
-  try {
-    const backgroundImage = await new Promise((resolve, reject) => {
-      const img = new Image();
-      img.onload = () => resolve(img);
-      img.onerror = () => reject(new Error('템플릿 이미지를 불러오지 못했습니다.'));
-      img.src = '/api/template/' + encodeURIComponent(document.getElementById('prompt-page-select').value) + '?t=' + Date.now();
-    });
-
-    editorInit(questions, backgroundImage);
-    setEditorMode('select');
-    setStatus('editor-save-status', `${page}페이지 로드 완료`, 'green');
-  } catch (error) {
-    setStatus('editor-save-status', error.message || '페이지 로드 실패', 'red');
-  }
-}
-
-async function saveEditorForPage() {
-  const liveQuestions = typeof editorGetQuestions === 'function' ? editorGetQuestions() : [];
-  const page = getSelectedPageNum();
-  liveQuestions.forEach((question) => {
-    if (!question.page) question.page = page;
-  });
-
-  const others = globalRegions.questions.filter((q) => (q.page || 1) !== page);
-  globalRegions.questions = [...others, ...liveQuestions];
-  setStatus('editor-save-status', '저장 중...', 'muted');
-
-  const response = await fetch('/api/regions', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(globalRegions),
-  });
-  if (response.ok) {
-    setStatus('editor-save-status', `${page}페이지 저장 완료`, 'green');
-    await loadFileStatus();
-  } else {
-    setStatus('editor-save-status', '저장 실패', 'red');
-  }
-}
-
-async function runPipeline() {
-  const templateCount = fileStatus.template.count || 1;
-  let cycle = prompt('학생 1명당 스캔된 페이지 수를 입력하세요.', templateCount);
-  if (cycle === null) return;
-  cycle = parseInt(cycle, 10);
-  if (Number.isNaN(cycle) || cycle < 1) {
-    alert('올바른 숫자를 입력하세요.');
-    return;
-  }
-
-  const button = document.getElementById('pipeline-btn');
-  button.disabled = true;
-  setStatus('pipeline-status', '정렬 실행 중...', 'muted');
-
-  try {
-    const response = await fetch('/api/run_pipeline', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ cycle }),
-    });
-    const data = await response.json();
-    if (data.success) {
-      setStatus(
-        'pipeline-status',
-        `정렬 완료: 성공 ${data.aligned}장, fallback ${data.failed}장`,
-        'green',
-      );
-      await loadFileStatus();
-    } else {
-      setStatus('pipeline-status', data.error || '정렬 실패', 'red');
+      document.getElementById('prompt-text').textContent = prompt;
     }
-  } catch (error) {
-    setStatus('pipeline-status', '서버 통신 오류', 'red');
-  } finally {
-    button.disabled = false;
-  }
-}
 
-async function runGradingPrepare() {
-  setStatus('grading-status', '채점 준비 중...', 'muted');
-  try {
-    const response = await fetch('/api/grading/prepare', { method: 'POST' });
-    const data = await response.json();
-    if (data.success) {
-      setStatus('grading-status', `준비 완료: 학생 ${data.students}명, crop ${data.student_crops}개`, 'green');
-    } else {
-      setStatus('grading-status', data.error || '채점 준비 실패', 'red');
+    function copyPrompt(event) {
+      navigator.clipboard.writeText(document.getElementById('prompt-text').textContent).then(() => {
+        const button = event.currentTarget;
+        const original = button.textContent;
+        button.textContent = '복사됨';
+        setTimeout(() => { button.textContent = original; }, 1200);
+      });
     }
-  } catch (error) {
-    setStatus('grading-status', '채점 준비 중 통신 오류', 'red');
-  }
-}
 
-function renderOcrProgress(status) {
-  const panel = document.getElementById('ocr-progress-panel');
-  const title = document.getElementById('ocr-progress-title');
-  const count = document.getElementById('ocr-progress-count');
-  const bar = document.getElementById('ocr-progress-bar');
-  const meta = document.getElementById('ocr-progress-meta');
-  const button = document.getElementById('grading-ocr-btn');
-  if (!panel || !title || !count || !bar || !meta) return;
+    function onJsonInput() {
+      parsedAllData = null;
+      setSaveButtonsDisabled(true);
+      setJsonStatus('', '');
+    }
 
-  const state = status && status.state ? status.state : 'idle';
-  const total = Number(status && status.total ? status.total : 0);
-  const processed = Number(status && status.processed ? status.processed : 0);
-  const percent = Number(status && typeof status.percent === 'number'
-    ? status.percent
-    : (total > 0 ? Math.round((processed / total) * 100) : 0));
+    function setSaveButtonsDisabled(disabled) {
+      ['save-all-btn', 'save-answers-btn', 'save-questions-btn'].forEach((id) => {
+        const button = document.getElementById(id);
+        if (button) button.disabled = disabled;
+      });
+    }
 
-  if (state === 'idle') {
-    panel.style.display = 'none';
-    if (button) button.disabled = false;
-    return;
-  }
+    function extractJson(raw) {
+      let source = raw.trim();
+      const codeBlock = source.match(/```(?:json)?\s*([\s\S]*?)```/i);
+      if (codeBlock) {
+        source = codeBlock[1].trim();
+      } else {
+        const start = Math.min(
+          source.indexOf('{') === -1 ? Infinity : source.indexOf('{'),
+          source.indexOf('[') === -1 ? Infinity : source.indexOf('['),
+        );
+        if (start === Infinity) throw new SyntaxError('JSON 구조를 찾을 수 없습니다.');
+        source = source.slice(start, Math.max(source.lastIndexOf('}'), source.lastIndexOf(']')) + 1);
+      }
+      return JSON.parse(source);
+    }
 
-  panel.style.display = 'block';
-  bar.classList.toggle('done', state === 'done');
-  bar.classList.toggle('error', state === 'error');
-  bar.style.width = `${Math.max(0, Math.min(100, percent))}%`;
-  if (button) button.disabled = state === 'running';
+    function doValidateAll() {
+      parsedAllData = null;
+      const raw = document.getElementById('json-input').value;
+      if (!raw.trim()) {
+        setJsonStatus('입력창이 비어 있습니다.', 'red');
+        return;
+      }
 
-  if (state === 'running') {
-    title.textContent = 'OCR 실행 중';
-    count.textContent = total > 0 ? `${processed} / ${total} (${percent}%)` : `${processed}개 처리 중`;
-    const current = status.current_item ? `현재 문항: ${status.current_item}` : 'OCR 엔진 준비 중';
-    meta.textContent = current;
-  } else if (state === 'done') {
-    title.textContent = 'OCR 완료';
-    count.textContent = total > 0 ? `${processed} / ${total} (100%)` : '완료';
-    meta.textContent = `갱신된 학생 manifest: ${status.updated || 0}개`;
-  } else if (state === 'error') {
-    title.textContent = 'OCR 실패';
-    count.textContent = total > 0 ? `${processed} / ${total}` : '오류';
-    meta.textContent = status.error || 'OCR 중 오류가 발생했습니다.';
-  }
-}
+      let data;
+      try {
+        data = extractJson(raw);
+      } catch (error) {
+        setJsonStatus(`JSON 파싱 실패: ${error.message}`, 'red');
+        return;
+      }
 
-function ensureOcrPolling() {
-  if (ocrProgressTimer) return;
-  ocrProgressTimer = setInterval(refreshOcrProgress, 1000);
-}
+      let questions = data.questions;
+      if (!questions && Array.isArray(data)) questions = data;
+      if (!questions || !Array.isArray(questions)) {
+        setJsonStatus('"questions" 배열을 찾을 수 없습니다.', 'red');
+        return;
+      }
 
-function stopOcrPolling() {
-  if (!ocrProgressTimer) return;
-  clearInterval(ocrProgressTimer);
-  ocrProgressTimer = null;
-}
+      const summary = [];
+      for (let page = 1; page <= (fileStatus.template.count || 1); page += 1) {
+        const count = questions.filter((q) => (q.page || 1) === page).length;
+        summary.push(`${page}p: ${count}문항`);
+      }
 
-async function refreshOcrProgress() {
-  try {
-    const response = await fetch('/api/grading/ocr/status', { cache: 'no-store' });
-    const data = await response.json();
-    if (!data.success || !data.status) return;
-    renderOcrProgress(data.status);
-    if (data.status.state === 'running') {
-      ensureOcrPolling();
-    } else {
-      stopOcrPolling();
-      if (data.status.state === 'done') {
-        setStatus('grading-status', `OCR 완료: ${data.status.updated || 0}명`, 'green');
-      } else if (data.status.state === 'error') {
-        setStatus('grading-status', data.status.error || 'OCR 실패', 'red');
+      let answers = data.answers;
+      if (!answers || !Array.isArray(answers)) answers = [];
+      const totalPoints = Number(data.total_points || 0);
+
+      parsedAllData = { questions, answers, total_points: totalPoints };
+      setSaveButtonsDisabled(false);
+      const answerMsg = answers.length > 0 ? ` · 답지 ${answers.length}문항` : '';
+      setJsonStatus(`검사 완료: 총 ${questions.length}문항 (${summary.join(', ')})${answerMsg}`, 'green');
+    }
+
+    async function doSaveAll(mode) {
+      if (!parsedAllData) return;
+      setSaveButtonsDisabled(true);
+      setJsonStatus('저장 중...', 'muted');
+      const url = new URL('/api/regions', window.location.origin);
+      url.searchParams.set('mode', mode || 'replace_all');
+      const saveResponse = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          bundle: parsedAllData,
+          raw_text: document.getElementById('json-input').value,
+        }),
+      });
+      const result = await saveResponse.json();
+      if (saveResponse.ok && result.success) {
+        globalRegions = await (await fetch('/api/regions')).json();
+        setJsonStatus(`저장 완료 (${result.mode})`, 'green');
+        await loadFileStatus();
+      } else {
+        setJsonStatus(result.error || 'regions.json 저장 실패', 'red');
+        setSaveButtonsDisabled(false);
       }
     }
-  } catch (error) {
-    stopOcrPolling();
-  }
-}
 
-async function runGradingOcr() {
-  setStatus('grading-status', 'OCR 시작 중...', 'muted');
-  try {
-    const response = await fetch('/api/grading/ocr', { method: 'POST' });
-    const data = await response.json();
-    if (data.success) {
-      renderOcrProgress(data.status || {});
-      ensureOcrPolling();
-      setStatus(
-        'grading-status',
-        data.started ? 'OCR 실행을 시작했습니다.' : '이미 OCR이 실행 중입니다.',
-        'muted',
-      );
-    } else {
-      setStatus('grading-status', data.error || 'OCR 실패', 'red');
+    function getSelectedPageNum() {
+      const value = document.getElementById('prompt-page-select').value || 'blank_p1.png';
+      const match = value.match(/blank_p(\d+)/i);
+      return match ? parseInt(match[1], 10) : 1;
     }
-  } catch (error) {
-    setStatus('grading-status', 'OCR 중 통신 오류', 'red');
-  }
-}
 
-async function runGradingScore() {
-  setStatus('grading-status', '자동 채점 중...', 'muted');
-  try {
-    const response = await fetch('/api/grading/score', { method: 'POST' });
-    const data = await response.json();
-    if (data.success) {
-      setStatus('grading-status', `자동 채점 완료: ${data.students}명`, 'green');
-    } else {
-      setStatus('grading-status', data.error || '자동 채점 실패', 'red');
+    async function loadEditorForPage() {
+      const page = getSelectedPageNum();
+      const questions = globalRegions.questions.filter((q) => (q.page || 1) === page);
+      document.getElementById('editor-container').style.display = 'block';
+      document.getElementById('editor-save-status').textContent = '페이지 로딩 중...';
+
+      try {
+        const backgroundImage = await new Promise((resolve, reject) => {
+          const img = new Image();
+          img.onload = () => resolve(img);
+          img.onerror = () => reject(new Error('템플릿 이미지를 불러오지 못했습니다.'));
+          img.src = '/api/template/' + encodeURIComponent(document.getElementById('prompt-page-select').value) + '?t=' + Date.now();
+        });
+
+        editorInit(questions, backgroundImage);
+        setEditorMode('select');
+        setStatus('editor-save-status', `${page}페이지 로드 완료`, 'green');
+      } catch (error) {
+        setStatus('editor-save-status', error.message || '페이지 로드 실패', 'red');
+      }
     }
-  } catch (error) {
-    setStatus('grading-status', '자동 채점 중 통신 오류', 'red');
-  }
-}
 
-function setStatus(id, message, color) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  el.textContent = message;
-  el.style.color = color === 'green' ? '#22c55e' : color === 'red' ? '#ef4444' : '#94a3b8';
-}
+    async function saveEditorForPage() {
+      const liveQuestions = typeof editorGetQuestions === 'function' ? editorGetQuestions() : [];
+      const page = getSelectedPageNum();
+      liveQuestions.forEach((question) => {
+        if (!question.page) question.page = page;
+      });
 
-function setJsonStatus(message, color) {
-  setStatus('json-status', message, color);
-}
-</script>
-<script src="/static/editor.js"></script>
+      const others = globalRegions.questions.filter((q) => (q.page || 1) !== page);
+      globalRegions.questions = [...others, ...liveQuestions];
+      setStatus('editor-save-status', '저장 중...', 'muted');
+
+      const response = await fetch('/api/regions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(globalRegions),
+      });
+      if (response.ok) {
+        setStatus('editor-save-status', `${page}페이지 저장 완료`, 'green');
+        await loadFileStatus();
+      } else {
+        setStatus('editor-save-status', '저장 실패', 'red');
+      }
+    }
+
+    async function runPipeline() {
+      const templateCount = fileStatus.template.count || 1;
+      let cycle = prompt('학생 1명당 스캔된 페이지 수를 입력하세요.', templateCount);
+      if (cycle === null) return;
+      cycle = parseInt(cycle, 10);
+      if (Number.isNaN(cycle) || cycle < 1) {
+        alert('올바른 숫자를 입력하세요.');
+        return;
+      }
+
+      const button = document.getElementById('pipeline-btn');
+      button.disabled = true;
+      setStatus('pipeline-status', '정렬 실행 중...', 'muted');
+
+      try {
+        const response = await fetch('/api/run_pipeline', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ cycle }),
+        });
+        const data = await response.json();
+        if (data.success) {
+          setStatus(
+            'pipeline-status',
+            `정렬 완료: 성공 ${data.aligned}장, fallback ${data.failed}장`,
+            'green',
+          );
+          await loadFileStatus();
+        } else {
+          setStatus('pipeline-status', data.error || '정렬 실패', 'red');
+        }
+      } catch (error) {
+        setStatus('pipeline-status', '서버 통신 오류', 'red');
+      } finally {
+        button.disabled = false;
+      }
+    }
+
+    async function runGradingPrepare() {
+      setStatus('grading-status', '채점 준비 중...', 'muted');
+      try {
+        const response = await fetch('/api/grading/prepare', { method: 'POST' });
+        const data = await response.json();
+        if (data.success) {
+          setStatus('grading-status', `준비 완료: 학생 ${data.students}명, crop ${data.student_crops}개`, 'green');
+        } else {
+          setStatus('grading-status', data.error || '채점 준비 실패', 'red');
+        }
+      } catch (error) {
+        setStatus('grading-status', '채점 준비 중 통신 오류', 'red');
+      }
+    }
+
+    function renderOcrProgress(status) {
+      const panel = document.getElementById('ocr-progress-panel');
+      const title = document.getElementById('ocr-progress-title');
+      const count = document.getElementById('ocr-progress-count');
+      const bar = document.getElementById('ocr-progress-bar');
+      const meta = document.getElementById('ocr-progress-meta');
+      const button = document.getElementById('grading-ocr-btn');
+      if (!panel || !title || !count || !bar || !meta) return;
+
+      const state = status && status.state ? status.state : 'idle';
+      const total = Number(status && status.total ? status.total : 0);
+      const processed = Number(status && status.processed ? status.processed : 0);
+      const percent = Number(status && typeof status.percent === 'number'
+        ? status.percent
+        : (total > 0 ? Math.round((processed / total) * 100) : 0));
+
+      if (state === 'idle') {
+        panel.style.display = 'none';
+        if (button) button.disabled = false;
+        return;
+      }
+
+      panel.style.display = 'block';
+      bar.classList.toggle('done', state === 'done');
+      bar.classList.toggle('error', state === 'error');
+      bar.style.width = `${Math.max(0, Math.min(100, percent))}%`;
+      if (button) button.disabled = state === 'running';
+
+      if (state === 'running') {
+        title.textContent = 'OCR 실행 중';
+        count.textContent = total > 0 ? `${processed} / ${total} (${percent}%)` : `${processed}개 처리 중`;
+        const current = status.current_item ? `현재 문항: ${status.current_item}` : 'OCR 엔진 준비 중';
+        meta.textContent = current;
+      } else if (state === 'done') {
+        title.textContent = 'OCR 완료';
+        count.textContent = total > 0 ? `${processed} / ${total} (100%)` : '완료';
+        meta.textContent = `갱신된 학생 manifest: ${status.updated || 0}개`;
+      } else if (state === 'error') {
+        title.textContent = 'OCR 실패';
+        count.textContent = total > 0 ? `${processed} / ${total}` : '오류';
+        meta.textContent = status.error || 'OCR 중 오류가 발생했습니다.';
+      }
+    }
+
+    function ensureOcrPolling() {
+      if (ocrProgressTimer) return;
+      ocrProgressTimer = setInterval(refreshOcrProgress, 1000);
+    }
+
+    function stopOcrPolling() {
+      if (!ocrProgressTimer) return;
+      clearInterval(ocrProgressTimer);
+      ocrProgressTimer = null;
+    }
+
+    async function refreshOcrProgress() {
+      try {
+        const response = await fetch('/api/grading/ocr/status', { cache: 'no-store' });
+        const data = await response.json();
+        if (!data.success || !data.status) return;
+        renderOcrProgress(data.status);
+        if (data.status.state === 'running') {
+          ensureOcrPolling();
+        } else {
+          stopOcrPolling();
+          if (data.status.state === 'done') {
+            setStatus('grading-status', `OCR 완료: ${data.status.updated || 0}명`, 'green');
+          } else if (data.status.state === 'error') {
+            setStatus('grading-status', data.status.error || 'OCR 실패', 'red');
+          }
+        }
+      } catch (error) {
+        stopOcrPolling();
+      }
+    }
+
+    async function runGradingOcr() {
+      setStatus('grading-status', 'OCR 시작 중...', 'muted');
+      try {
+        const response = await fetch('/api/grading/ocr', { method: 'POST' });
+        const data = await response.json();
+        if (data.success) {
+          renderOcrProgress(data.status || {});
+          ensureOcrPolling();
+          setStatus(
+            'grading-status',
+            data.started ? 'OCR 실행을 시작했습니다.' : '이미 OCR이 실행 중입니다.',
+            'muted',
+          );
+        } else {
+          setStatus('grading-status', data.error || 'OCR 실패', 'red');
+        }
+      } catch (error) {
+        setStatus('grading-status', 'OCR 중 통신 오류', 'red');
+      }
+    }
+
+    async function runGradingScore() {
+      setStatus('grading-status', '자동 채점 중...', 'muted');
+      try {
+        const response = await fetch('/api/grading/score', { method: 'POST' });
+        const data = await response.json();
+        if (data.success) {
+          setStatus('grading-status', `자동 채점 완료: ${data.students}명`, 'green');
+        } else {
+          setStatus('grading-status', data.error || '자동 채점 실패', 'red');
+        }
+      } catch (error) {
+        setStatus('grading-status', '자동 채점 중 통신 오류', 'red');
+      }
+    }
+
+    function setStatus(id, message, color) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.textContent = message;
+      el.style.color = color === 'green' ? '#22c55e' : color === 'red' ? '#ef4444' : '#94a3b8';
+    }
+
+    function setJsonStatus(message, color) {
+      setStatus('json-status', message, color);
+    }
+  </script>
+  <script src="/static/editor.js"></script>
 </body>
+
 </html>

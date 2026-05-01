@@ -106,7 +106,7 @@ def _load_json(path: Path):
 
 
 def _root_dir() -> Path:
-    return Path(SETTINGS["root_dir"])
+    return Path(SETTINGS["root_dir"]).expanduser().resolve()
 
 
 def _restore_current_project() -> Path | None:

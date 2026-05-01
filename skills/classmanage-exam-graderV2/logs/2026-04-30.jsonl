@@ -20,3 +20,9 @@
 {"timestamp": "2026-04-30T14:29:02", "event": "app_started", "detail": {}}
 {"timestamp": "2026-04-30T14:29:41", "event": "app_started", "detail": {}}
 {"timestamp": "2026-04-30T14:34:12", "event": "regions_loaded", "detail": {}}
+{"timestamp": "2026-04-30T17:22:39", "event": "app_started", "detail": {}}
+{"timestamp": "2026-04-30T17:22:48", "event": "app_started", "detail": {}}
+{"timestamp": "2026-04-30T17:31:15", "event": "app_started", "detail": {}}
+{"timestamp": "2026-04-30T17:36:23", "event": "app_started", "detail": {}}
+{"timestamp": "2026-04-30T17:38:16", "event": "regions_saved", "detail": {"count": 20, "answers": 20, "mode": "answers_only"}}
+{"timestamp": "2026-04-30T17:38:16", "event": "regions_loaded", "detail": {}}

@@ -52,9 +52,16 @@ def _normalize_root_dir(value: str | None) -> Path:
 def _normalize_settings(data: dict | None) -> dict:
     data = data or {}
     root_dir = _normalize_root_dir(data.get("root_dir"))
+    
+    home_str = str(Path.home())
+    root_str = str(root_dir)
+    if root_str.startswith(home_str):
+        root_str = "~" + root_str[len(home_str):]
+        root_str = root_str.replace("\\", "/")
+        
     last_project = data.get("last_project") or None
     return {
-        "root_dir": str(root_dir),
+        "root_dir": root_str,
         "last_project": last_project,
         "app_version": APP_VERSION,
     }
@@ -73,7 +80,7 @@ def load_settings(settings_path: Path) -> dict:
 
 def save_settings(settings_path: Path, data: dict | None) -> dict:
     settings = _normalize_settings(data)
-    root_dir = Path(settings["root_dir"])
+    root_dir = Path(settings["root_dir"]).expanduser().resolve()
     root_dir.mkdir(parents=True, exist_ok=True)
     settings_path.write_text(
         json.dumps(settings, ensure_ascii=False, indent=2),

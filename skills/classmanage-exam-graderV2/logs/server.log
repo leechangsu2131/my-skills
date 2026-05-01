@@ -222,3 +222,104 @@ NameError: name 'asyncio' is not defined
 2026-04-30 14:25:48,460 [INFO] [regions_loaded] {}
 2026-04-30 14:27:11,395 [INFO] [app_started] {}
 2026-04-30 14:28:26,134 [INFO] [app_started] {}
+2026-04-30 17:22:39,008 [INFO] [app_started] {}
+2026-04-30 17:22:48,724 [INFO] [app_started] {}
+2026-04-30 17:24:27,523 [INFO] [project_opened] {"project": "수학2"}
+2026-04-30 17:24:28,555 [INFO] [regions_loaded] {}
+2026-04-30 17:25:03,123 [INFO] [regions_loaded] {}
+2026-04-30 17:25:07,644 [INFO] [regions_loaded] {}
+2026-04-30 17:25:19,352 [ERROR] OCR failed
+Traceback (most recent call last):
+  File "C:\Users\lee21\.gemini\antigravity\scratch\my-skills\skills\classmanage-exam-graderV2\webapp\main.py", line 177, in _run_ocr_worker
+    engine = OcrEngine()
+             ^^^^^^^^^^^
+  File "C:\Users\lee21\.gemini\antigravity\scratch\my-skills\skills\classmanage-exam-graderV2\src\ocr_engine.py", line 18, in __init__
+    self._reader = _create_paddle_reader(PaddleOCR)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lee21\.gemini\antigravity\scratch\my-skills\skills\classmanage-exam-graderV2\src\ocr_engine.py", line 38, in _create_paddle_reader
+    return factory(**options)
+           ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lee21\.gemini\antigravity\scratch\my-skills\skills\classmanage-exam-graderV2\.venv\Lib\site-packages\paddleocr\_pipelines\ocr.py", line 163, in __init__
+    super().__init__(**base_params)
+  File "C:\Users\lee21\.gemini\antigravity\scratch\my-skills\skills\classmanage-exam-graderV2\.venv\Lib\site-packages\paddleocr\_pipelines\base.py", line 67, in __init__
+    self.paddlex_pipeline = self._create_paddlex_pipeline()
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lee21\.gemini\antigravity\scratch\my-skills\skills\classmanage-exam-graderV2\.venv\Lib\site-packages\paddleocr\_pipelines\base.py", line 105, in _create_paddlex_pipeline
+    return create_pipeline(config=self._merged_paddlex_config, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lee21\.gemini\antigravity\scratch\my-skills\skills\classmanage-exam-graderV2\.venv\Lib\site-packages\paddlex\inference\pipelines\__init__.py", line 169, in create_pipeline
+    pipeline = BasePipeline.get(pipeline_name)(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lee21\.gemini\antigravity\scratch\my-skills\skills\classmanage-exam-graderV2\.venv\Lib\site-packages\paddlex\utils\deps.py", line 208, in _wrapper
+    return old_init_func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lee21\.gemini\antigravity\scratch\my-skills\skills\classmanage-exam-graderV2\.venv\Lib\site-packages\paddlex\inference\pipelines\_parallel.py", line 135, in __init__
+    self._pipeline = self._create_internal_pipeline(config, self.device)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lee21\.gemini\antigravity\scratch\my-skills\skills\classmanage-exam-graderV2\.venv\Lib\site-packages\paddlex\inference\pipelines\_parallel.py", line 190, in _create_internal_pipeline
+    pipeline = self._pipeline_cls(
+               ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lee21\.gemini\antigravity\scratch\my-skills\skills\classmanage-exam-graderV2\.venv\Lib\site-packages\paddlex\inference\pipelines\ocr\pipeline.py", line 126, in __init__
+    self.text_det_model = self.create_model(
+                          ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lee21\.gemini\antigravity\scratch\my-skills\skills\classmanage-exam-graderV2\.venv\Lib\site-packages\paddlex\inference\pipelines\base.py", line 143, in create_model
+    return create_predictor(
+           ^^^^^^^^^^^^^^^^^
+  File "C:\Users\lee21\.gemini\antigravity\scratch\my-skills\skills\classmanage-exam-graderV2\.venv\Lib\site-packages\paddlex\inference\models\__init__.py", line 457, in create_predictor
+    requested_engine.ensure_environment()
+  File "C:\Users\lee21\.gemini\antigravity\scratch\my-skills\skills\classmanage-exam-graderV2\.venv\Lib\site-packages\paddlex\inference\models\engines\paddle.py", line 98, in ensure_environment
+    raise RuntimeError(
+RuntimeError: Engine 'paddle_static' is unavailable because dependency 'paddlepaddle' is not installed.
+2026-04-30 17:30:26,541 [INFO] [regions_loaded] {}
+2026-04-30 17:30:40,508 [INFO] [project_opened] {"project": "수학2"}
+2026-04-30 17:30:41,391 [INFO] [regions_loaded] {}
+2026-04-30 17:30:46,976 [ERROR] OCR failed
+Traceback (most recent call last):
+  File "C:\Users\lee21\.gemini\antigravity\scratch\my-skills\skills\classmanage-exam-graderV2\webapp\main.py", line 177, in _run_ocr_worker
+    engine = OcrEngine()
+             ^^^^^^^^^^^
+  File "C:\Users\lee21\.gemini\antigravity\scratch\my-skills\skills\classmanage-exam-graderV2\src\ocr_engine.py", line 18, in __init__
+    self._reader = _create_paddle_reader(PaddleOCR)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lee21\.gemini\antigravity\scratch\my-skills\skills\classmanage-exam-graderV2\src\ocr_engine.py", line 38, in _create_paddle_reader
+    return factory(**options)
+           ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lee21\.gemini\antigravity\scratch\my-skills\skills\classmanage-exam-graderV2\.venv\Lib\site-packages\paddleocr\_pipelines\ocr.py", line 163, in __init__
+    super().__init__(**base_params)
+  File "C:\Users\lee21\.gemini\antigravity\scratch\my-skills\skills\classmanage-exam-graderV2\.venv\Lib\site-packages\paddleocr\_pipelines\base.py", line 67, in __init__
+    self.paddlex_pipeline = self._create_paddlex_pipeline()
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lee21\.gemini\antigravity\scratch\my-skills\skills\classmanage-exam-graderV2\.venv\Lib\site-packages\paddleocr\_pipelines\base.py", line 105, in _create_paddlex_pipeline
+    return create_pipeline(config=self._merged_paddlex_config, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lee21\.gemini\antigravity\scratch\my-skills\skills\classmanage-exam-graderV2\.venv\Lib\site-packages\paddlex\inference\pipelines\__init__.py", line 169, in create_pipeline
+    pipeline = BasePipeline.get(pipeline_name)(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lee21\.gemini\antigravity\scratch\my-skills\skills\classmanage-exam-graderV2\.venv\Lib\site-packages\paddlex\utils\deps.py", line 208, in _wrapper
+    return old_init_func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lee21\.gemini\antigravity\scratch\my-skills\skills\classmanage-exam-graderV2\.venv\Lib\site-packages\paddlex\inference\pipelines\_parallel.py", line 135, in __init__
+    self._pipeline = self._create_internal_pipeline(config, self.device)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lee21\.gemini\antigravity\scratch\my-skills\skills\classmanage-exam-graderV2\.venv\Lib\site-packages\paddlex\inference\pipelines\_parallel.py", line 190, in _create_internal_pipeline
+    pipeline = self._pipeline_cls(
+               ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lee21\.gemini\antigravity\scratch\my-skills\skills\classmanage-exam-graderV2\.venv\Lib\site-packages\paddlex\inference\pipelines\ocr\pipeline.py", line 126, in __init__
+    self.text_det_model = self.create_model(
+                          ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lee21\.gemini\antigravity\scratch\my-skills\skills\classmanage-exam-graderV2\.venv\Lib\site-packages\paddlex\inference\pipelines\base.py", line 143, in create_model
+    return create_predictor(
+           ^^^^^^^^^^^^^^^^^
+  File "C:\Users\lee21\.gemini\antigravity\scratch\my-skills\skills\classmanage-exam-graderV2\.venv\Lib\site-packages\paddlex\inference\models\__init__.py", line 457, in create_predictor
+    requested_engine.ensure_environment()
+  File "C:\Users\lee21\.gemini\antigravity\scratch\my-skills\skills\classmanage-exam-graderV2\.venv\Lib\site-packages\paddlex\inference\models\engines\paddle.py", line 98, in ensure_environment
+    raise RuntimeError(
+RuntimeError: Engine 'paddle_static' is unavailable because dependency 'paddlepaddle' is not installed.
+2026-04-30 17:31:15,296 [INFO] [app_started] {}
+2026-04-30 17:31:17,379 [INFO] [project_opened] {"project": "수학2"}
+2026-04-30 17:31:18,293 [INFO] [regions_loaded] {}
+2026-04-30 17:33:47,678 [INFO] [regions_saved] {"count": 20, "answers": 20, "mode": "answers_only"}
+2026-04-30 17:33:47,683 [INFO] [regions_loaded] {}
+2026-04-30 17:36:23,703 [INFO] [app_started] {}
+2026-04-30 17:38:16,317 [INFO] [regions_saved] {"count": 20, "answers": 20, "mode": "answers_only"}
+2026-04-30 17:38:16,322 [INFO] [regions_loaded] {}

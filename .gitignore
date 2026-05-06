@@ -77,3 +77,7 @@ skills/music-class-helper/tmp*/
 skills/social-class-helper/social_class_data.json
 skills/social-class-helper/chrome_profile/
 skills/social-class-helper/tmp*/
+
+# personal-record-trade secrets
+skills/personal-record-trade/service_account.json
+skills/personal-record-trade/sheet_id.txt

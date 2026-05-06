@@ -116,10 +116,12 @@ class ProjectStoreTests(unittest.TestCase):
             self.assertEqual(paths.artifacts_dir.name, "artifacts")
             self.assertEqual(paths.submissions_dir.name, "submissions")
             self.assertEqual(paths.exports_dir.name, "exports")
+            self.assertEqual(paths.marked_dir.name, "marked")
             self.assertTrue(paths.artifacts_dir.is_dir())
             self.assertTrue(paths.submissions_dir.is_dir())
             self.assertTrue(paths.crops_dir.is_dir())
             self.assertTrue(paths.exports_dir.is_dir())
+            self.assertTrue(paths.marked_dir.is_dir())
 
     def test_slugify_replaces_spaces_and_invalid_chars(self):
         self.assertEqual(

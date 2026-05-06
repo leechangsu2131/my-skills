@@ -43,10 +43,32 @@ input,select{width:100%;border:1px solid var(--border);border-radius:8px;backgro
       <div>
         <h1>{{ student_id }} 채점 상세</h1>
         <div class="meta">총점 {{ submission.total_score or 0 }} / {{ submission.total_points or 0 }} · 검토 필요 {{ submission.needs_review_count or 0 }}문항</div>
+        <div style="margin-top:8px">
+          <a class="btn btn-ghost" href="/api/answers/view" target="_blank" style="font-size:11px">📄 원본 정답지 보기</a>
+        </div>
       </div>
       <div class="actions">
         <a class="btn" href="/grading">← 결과 목록</a>
+        <button class="btn btn-green" type="button" id="make-marked">마킹본 생성</button>
         <button class="btn btn-primary" type="submit">검토 내용 저장</button>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-head">
+        <div>
+          <strong>마킹된 학생 시험지</strong>
+          <div class="meta">검토 확정된 답안 영역 위에 O 또는 / 표시를 그립니다.</div>
+        </div>
+      </div>
+      <div class="quick" id="marked-links">
+        {% if marked_pages %}
+          {% for page in marked_pages %}
+            <a class="btn" href="{{ page.url }}" target="_blank">{{ page.name }}</a>
+          {% endfor %}
+        {% else %}
+          <span class="meta">아직 생성된 파일이 없습니다.</span>
+        {% endif %}
       </div>
     </div>
 
@@ -153,6 +175,24 @@ document.addEventListener('click', (event) => {
     if (status) status.value = 'incorrect';
   }
 });
+
+const makeMarked = document.getElementById('make-marked');
+if (makeMarked) {
+  makeMarked.addEventListener('click', async () => {
+    makeMarked.disabled = true;
+    makeMarked.textContent = '마킹본 생성 중...';
+    try {
+      const response = await fetch('/api/grading/mark/{{ student_id }}', {method: 'POST'});
+      const data = await response.json();
+      if (!data.success) throw new Error(data.error || 'marked render failed');
+      window.location.reload();
+    } catch (error) {
+      alert(error.message || String(error));
+      makeMarked.disabled = false;
+      makeMarked.textContent = '마킹본 생성';
+    }
+  });
+}
 </script>
 </body>
 </html>

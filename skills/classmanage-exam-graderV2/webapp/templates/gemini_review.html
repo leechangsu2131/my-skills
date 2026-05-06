@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gemini 재판독 브릿지</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #1e293b;
+      --panel: #111827;
+      --border: #334155;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --green: #22c55e;
+      --red: #ef4444;
+      --yellow: #f59e0b;
+      --blue: #3b82f6
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 24px
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none
+    }
+
+    .shell {
+      max-width: 1400px;
+      margin: 0 auto
+    }
+
+    .top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 20px
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 9px 16px;
+      border-radius: 10px;
+      border: none;
+      background: #334155;
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer
+    }
+
+    .btn-primary {
+      background: var(--blue);
+      color: #fff
+    }
+
+    .btn-green {
+      background: var(--green);
+      color: #052e16
+    }
+
+    .btn-red {
+      background: #7f1d1d;
+      color: #fecaca
+    }
+
+    .btn-yellow {
+      background: var(--yellow);
+      color: #111827
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px
+    }
+
+    @media (max-width: 900px) {
+      .grid {
+        grid-template-columns: 1fr
+      }
+    }
+
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px
+    }
+
+    .item-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      margin-bottom: 12px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start
+    }
+
+    .item-card img {
+      max-width: 200px;
+      max-height: 80px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: #fff
+    }
+
+    textarea {
+      width: 100%;
+      background: #0f172a;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      padding: 12px;
+      font-size: 13px;
+      font-family: monospace;
+      resize: vertical
+    }
+
+    .preview-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+      font-size: 12px
+    }
+
+    .preview-table th,
+    .preview-table td {
+      padding: 8px;
+      border-bottom: 1px solid var(--border);
+      text-align: left
+    }
+
+    .preview-table input {
+      background: #0f172a;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text);
+      padding: 4px 8px;
+      font-size: 12px;
+      width: 100%
+    }
+
+    .preview-crop {
+      max-width: 180px;
+      max-height: 70px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: #fff;
+      display: block;
+      margin-top: 6px
+    }
+
+    .preview-meta {
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.5;
+      margin-top: 4px
+    }
+  </style>
+</head>
+
+<body>
+  <div class="shell">
+    <div class="top">
+      <div>
+        <h1>🤖 Gemini 재판독 (저신뢰 {{ total }}문항)</h1>
+        <div style="font-size:12px;color:var(--muted);margin-top:6px">OCR 신뢰도가 낮거나 판독이 안 된 문항을 Gemini에게 맡겨 다시 채점합니다.
+        </div>
+      </div>
+      <div class="actions">
+        <a class="btn" href="/grading">← 결과 목록</a>
+      </div>
+    </div>
+
+    <div class="grid">
+      <!-- 좌측: 문항 목록 -->
+      <div class="panel">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+          <h3>검토 문항 목록</h3>
+          <label style="font-size:12px;cursor:pointer">
+            <input type="checkbox" id="check-all" checked onchange="toggleAll()"> 전체 선택
+          </label>
+        </div>
+
+        <div style="max-height:70vh;overflow-y:auto;padding-right:8px" id="items-container">
+          {% for item in flagged_items %}
+          {% set item_id = item.item_id %}
+          <div class="item-card">
+            <input type="checkbox" class="item-check" value="{{ item_id }}" checked
+              data-ocr="{{ item.recognized_answer or '' }}"
+              data-crop="/api/file?path=artifacts/crops/{{ item.crop_path }}"
+              data-label="{{ item.student_id }} - {{ item.page }}p {{ item.question_number }}번"
+              data-expected="{{ item.expected_answer or '-' }}">
+            <div style="flex:1">
+              <div style="font-size:12px;font-weight:700;margin-bottom:4px">{{ item.student_id }} - {{ item.page }}p {{
+                item.question_number }}번</div>
+              <div style="font-size:11px;color:var(--muted);margin-bottom:8px">ID: {{ item_id }}</div>
+              {% if item.crop_path %}
+              <img src="/api/file?path=artifacts/crops/{{ item.crop_path }}" alt="crop">
+              {% endif %}
+              <div style="font-size:11px;margin-top:8px">
+                <span style="color:var(--muted)">OCR 판독:</span> "{{ item.recognized_answer or '' }}" ({{
+                "%.2f"|format(item.ocr_confidence or 0) }})<br>
+                <span style="color:var(--muted)">정답:</span> {{ item.expected_answer or '-' }}
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+          {% if not flagged_items %}
+          <div style="color:var(--muted);font-size:13px;text-align:center;padding:20px">검토할 문항이 없습니다.</div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- 우측: Gemini 브릿지 -->
+      <div class="panel">
+        <h3>Gemini 브릿지</h3>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:16px;line-height:1.5">
+          1. 아래 버튼을 눌러 선택된 문항을 PDF 한 묶음으로 다운로드하세요.<br>
+          2. Gemini 웹에 PDF를 첨부하고 프롬프트를 붙여넣으세요.<br>
+          3. Gemini가 반환한 JSON을 아래 입력창에 넣고 재채점하세요.
+        </div>
+
+        <div style="margin-bottom:20px;display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-primary" onclick="downloadPacketPdf(event)">1️⃣ 선택 문항 PDF 다운로드</button>
+          <button class="btn" onclick="generatePrompt()">2️⃣ 프롬프트 생성 및 복사</button>
+          <button class="btn" onclick="downloadCrops(event)" title="Gemini가 PDF를 잘 읽지 못할 때만 사용하세요.">보조: Crop
+            ZIP</button>
+        </div>
+
+        <textarea id="prompt-area" rows="8" style="margin-bottom:20px" readonly
+          placeholder="프롬프트를 생성하면 여기에 표시됩니다."></textarea>
+
+        <div style="margin-bottom:12px;font-weight:700;font-size:13px">3️⃣ Gemini 결과 JSON 붙여넣기</div>
+        <textarea id="json-input" rows="8" placeholder="```json\n...\n```"></textarea>
+
+      <div style="margin-top:12px;display:flex;gap:8px">
+        <button class="btn btn-yellow" onclick="previewResults()">미리보기</button>
+        <button class="btn btn-green" id="apply-btn" disabled onclick="applyResults()">적용 및 재채점</button>
+        <button class="btn" onclick="saveCurrentGeminiJson(event)">JSON 저장</button>
+      </div>
+
+        <div id="preview-area" style="margin-top:20px;display:none">
+          <h4>미리보기 및 수정</h4>
+          <table class="preview-table">
+            <thead>
+              <tr>
+                <th>문항ID</th>
+                <th>Crop / 정답</th>
+                <th>OCR 결과</th>
+                <th>Gemini 결과</th>
+                <th>상태</th>
+              </tr>
+            </thead>
+            <tbody id="preview-tbody">
+            </tbody>
+          </table>
+        </div>
+        <div id="status-msg" style="margin-top:12px;font-size:12px"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function getSelectedItems() {
+      const checks = document.querySelectorAll('.item-check:checked');
+      return Array.from(checks).map(cb => cb.value);
+    }
+
+    function toggleAll() {
+      const checked = document.getElementById('check-all').checked;
+      document.querySelectorAll('.item-check').forEach(cb => cb.checked = checked);
+    }
+
+    async function downloadPacketPdf(event) {
+      const item_ids = getSelectedItems();
+      if (item_ids.length === 0) return alert('선택된 문항이 없습니다.');
+
+      const btn = event.target;
+      btn.textContent = '다운로드 중...';
+      btn.disabled = true;
+
+      try {
+        const res = await fetch('/api/grading/gemini-review/packet-pdf', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ item_ids })
+        });
+
+        if (res.ok) {
+          const blob = await res.blob();
+          if (blob.type && blob.type.includes('application/json')) {
+            const text = await blob.text();
+            const data = JSON.parse(text);
+            throw new Error(data.error || 'PDF 생성 실패');
+          }
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = 'gemini_review_packet.pdf';
+          document.body.appendChild(a);
+          a.click();
+          window.URL.revokeObjectURL(url);
+          a.remove();
+        } else {
+          alert('다운로드 실패');
+        }
+      } catch (e) {
+        alert('오류 발생: ' + (e.message || e));
+      } finally {
+        btn.textContent = '1️⃣ 선택 문항 PDF 다운로드';
+        btn.disabled = false;
+      }
+    }
+
+    async function downloadCrops(event) {
+      const item_ids = getSelectedItems();
+      if (item_ids.length === 0) return alert('선택된 문항이 없습니다.');
+
+      const btn = event.target;
+      btn.textContent = 'ZIP 다운로드 중...';
+      btn.disabled = true;
+
+      try {
+        const res = await fetch('/api/grading/gemini-review/crops-zip', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ item_ids })
+        });
+
+        if (res.ok) {
+          const blob = await res.blob();
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = 'review_crops.zip';
+          document.body.appendChild(a);
+          a.click();
+          window.URL.revokeObjectURL(url);
+          a.remove();
+        } else {
+          alert('다운로드 실패');
+        }
+      } catch (e) {
+        alert('오류 발생: ' + e);
+      } finally {
+        btn.textContent = '보조: Crop ZIP';
+        btn.disabled = false;
+      }
+    }
+
+    function generatePrompt() {
+      const item_ids = getSelectedItems();
+      if (item_ids.length === 0) return alert('선택된 문항이 없습니다.');
+
+      const samples = item_ids.slice(0, 2).map(id => `  {"item_id": "${id}", "recognized_answer": "답안"}`).join(',\n');
+
+      const prompt = `첨부한 PDF는 한국 초등학교 3학년 시험지에서
+학생이 답을 적은 영역 crop들을 여러 카드로 묶은 재판독용 문서입니다.
+각 카드의 "ID: ..." 값이 문항 식별자(item_id)입니다.
+
+각 카드 안의 crop 이미지에서 학생이 손으로 쓴 답안을 읽어주세요.
+객관식은 숫자(①②③④⑤), 단답형은 텍스트 그대로 읽어주세요.
+판독 불가능한 경우 "판독불가"라고 써주세요.
+카드에 적힌 현재 OCR/정답 정보는 참고용입니다. 학생 답안 crop을 우선 판독하세요.
+
+JSON 코드블록만 반환하세요:
+[
+${samples}
+]`;
+
+      const area = document.getElementById('prompt-area');
+      area.value = prompt;
+
+      navigator.clipboard.writeText(prompt).then(() => {
+        alert('프롬프트가 복사되었습니다. Gemini에 붙여넣으세요.');
+      });
+    }
+
+    let currentParsedData = null;
+
+    window.addEventListener('DOMContentLoaded', loadLatestGeminiJson);
+
+    async function loadLatestGeminiJson() {
+      try {
+        const res = await fetch('/api/grading/gemini-review/latest', { cache: 'no-store' });
+        const data = await res.json();
+        if (!data.success || !Array.isArray(data.results) || data.results.length === 0) return;
+        const input = document.getElementById('json-input');
+        if (!input || input.value.trim()) return;
+        input.value = JSON.stringify(data.results, null, 2);
+        const status = document.getElementById('status-msg');
+        if (status) {
+          status.textContent = `저장된 Gemini 결과 ${data.results.length}건을 불러왔습니다.`;
+          status.style.color = 'var(--green)';
+        }
+      } catch (error) {
+        // 저장된 결과가 없어도 정상 흐름입니다.
+      }
+    }
+
+    function parseGeminiJsonInput() {
+      const raw = document.getElementById('json-input').value.trim();
+      if (!raw) throw new Error('JSON을 입력하세요.');
+
+      let source = raw;
+      const match = raw.match(/```(?:json)?\s*([\s\S]*?)```/i);
+      if (match) source = match[1];
+
+      const data = JSON.parse(source);
+      if (!Array.isArray(data)) throw new Error('배열 형태가 아닙니다.');
+      return data;
+    }
+
+    async function saveCurrentGeminiJson(event) {
+      let payload;
+      try {
+        payload = parseGeminiJsonInput();
+      } catch (error) {
+        alert('JSON 파싱 실패: ' + error.message);
+        return;
+      }
+      const btn = event.target;
+      btn.disabled = true;
+      btn.textContent = '저장 중...';
+      try {
+        const res = await fetch('/api/grading/gemini-review/latest', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data.success) {
+          document.getElementById('status-msg').textContent = `Gemini JSON 저장 완료: ${data.count}건`;
+          document.getElementById('status-msg').style.color = 'var(--green)';
+          currentParsedData = payload;
+        } else {
+          alert(data.error || '저장 실패');
+        }
+      } catch (error) {
+        alert('통신 오류: ' + error);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'JSON 저장';
+      }
+    }
+
+    function previewResults() {
+      try {
+        const data = parseGeminiJsonInput();
+
+        currentParsedData = data;
+        const tbody = document.getElementById('preview-tbody');
+        tbody.innerHTML = '';
+
+        // Map existing items
+        const itemMap = {};
+        document.querySelectorAll('.item-check').forEach(cb => {
+          itemMap[cb.value] = {
+            ocr: cb.getAttribute('data-ocr') || '',
+            crop: cb.getAttribute('data-crop') || '',
+            label: cb.getAttribute('data-label') || cb.value,
+            expected: cb.getAttribute('data-expected') || '-'
+          };
+        });
+
+        data.forEach((row, i) => {
+          const itemId = row.item_id;
+          const info = itemMap[itemId] || { ocr: '(없음)', crop: '', label: itemId, expected: '-' };
+          const ocr = info.ocr;
+          const gemini = row.recognized_answer || '';
+
+          const isChanged = ocr !== gemini;
+          const statusIcon = isChanged ? '✏️ 변경' : '✅ 동일';
+
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+        <td>${itemId}</td>
+        <td>
+          <div style="font-weight:700;font-size:11px">${info.label}</div>
+          ${info.crop ? `<img class="preview-crop" src="${info.crop}" alt="crop ${itemId}">` : '<span style="color:var(--muted)">crop 없음</span>'}
+          <div class="preview-meta">정답: ${info.expected}</div>
+        </td>
+        <td style="color:var(--muted)">${ocr}</td>
+        <td>
+          <input type="text" id="gemini-val-${i}" value="${gemini.replace(/"/g, '&quot;')}">
+        </td>
+        <td>${statusIcon}</td>
+      `;
+          tbody.appendChild(tr);
+        });
+
+        document.getElementById('preview-area').style.display = 'block';
+        document.getElementById('apply-btn').disabled = false;
+        document.getElementById('status-msg').textContent = `${data.length}건 미리보기 완료`;
+        document.getElementById('status-msg').style.color = 'var(--green)';
+
+      } catch (e) {
+        alert('JSON 파싱 실패: ' + e.message);
+      }
+    }
+
+    async function applyResults() {
+      if (!currentParsedData) return;
+
+      // Read values back from inputs
+      const payload = currentParsedData.map((row, i) => {
+        const el = document.getElementById(`gemini-val-${i}`);
+        return {
+          item_id: row.item_id,
+          recognized_answer: el ? el.value : row.recognized_answer
+        };
+      });
+
+      const btn = document.getElementById('apply-btn');
+      btn.disabled = true;
+      btn.textContent = '적용 중...';
+
+      try {
+        const res = await fetch('/grading/gemini-review/apply', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data.success) {
+          alert(`성공: ${data.updated}건 업데이트 됨`);
+          location.reload();
+        } else {
+          alert('오류: ' + (data.error || '알 수 없는 오류'));
+        }
+      } catch (e) {
+        alert('통신 오류: ' + e);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '적용 및 재채점';
+      }
+    }
+  </script>
+</body>
+
+</html>

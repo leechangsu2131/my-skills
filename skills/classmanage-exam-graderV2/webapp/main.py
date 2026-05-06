@@ -43,6 +43,14 @@ sys.path.insert(0, str(BASE_DIR / "src"))
 
 from aligner import align_image  # type: ignore
 from assessment_bundle import merge_assessment_bundle, normalize_assessment_bundle  # type: ignore
+from gemini_review_packet import build_gemini_review_packet_pdf, collect_review_items  # type: ignore
+from marked_exam_renderer import (  # type: ignore
+    build_all_marked_pdf,
+    build_all_marked_pdfs_zip,
+    build_student_marked_pdf,
+    mark_all_submissions,
+    mark_submission_pages,
+)
 from pdf_handler import convert_pdfs_to_images  # type: ignore
 import event_logger as _elog  # type: ignore
 from project_store import (  # type: ignore
@@ -66,6 +74,7 @@ from submission_store import (  # type: ignore
     load_submission_result,
     run_ocr_for_project,
     score_project_submissions,
+    score_submission,
     update_submission_review,
     write_submission_manifests,
 )
@@ -168,6 +177,55 @@ def _ocr_status_snapshot() -> dict:
 
 def _ocr_progress(progress: dict) -> None:
     _set_ocr_status(state="running", **progress)
+
+
+def _gemini_review_dir(paths) -> Path:
+    out_dir = paths.artifacts_dir / "gemini_review"
+    out_dir.mkdir(parents=True, exist_ok=True)
+    return out_dir
+
+
+def _gemini_review_latest_path(paths) -> Path:
+    return _gemini_review_dir(paths) / "gemini_review.json"
+
+
+def _save_latest_gemini_review(paths, results: list[dict]) -> Path:
+    out_path = _gemini_review_latest_path(paths)
+    out_path.write_text(
+        json.dumps(
+            {
+                "saved_at": _now_iso(),
+                "results": results,
+            },
+            ensure_ascii=False,
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
+    return out_path
+
+
+def _load_answer_bundle_answers(paths) -> list[dict]:
+    bundle = _load_json(paths.json_dir / "regions.json")
+    answers = bundle.get("answers", []) if isinstance(bundle, dict) else []
+    return answers if isinstance(answers, list) else []
+
+
+def _rescore_student_submission(paths, student_id: str) -> bool:
+    manifest_path = paths.submissions_dir / f"{student_id}.json"
+    if not manifest_path.exists():
+        return False
+    submission = json.loads(manifest_path.read_text(encoding="utf-8"))
+    scored = score_submission(submission, _load_answer_bundle_answers(paths))
+    manifest_path.write_text(
+        json.dumps(scored, ensure_ascii=False, indent=2),
+        encoding="utf-8",
+    )
+    return True
+
+
+def _rescore_all_submissions(paths) -> int:
+    return score_project_submissions(paths, _load_answer_bundle_answers(paths))
 
 
 def _run_ocr_worker(paths) -> None:
@@ -290,10 +348,25 @@ async def grading_overview(request: Request):
     paths = _paths()
     submissions = load_all_submission_results(paths)
     project = refresh_project_metadata(_ensure_current_project(), touch=False)
+    for submission in submissions:
+        student_id = submission.get("student_id", "")
+        marked_dir = paths.marked_dir / "students" / student_id
+        marked_files = sorted(path.name for path in marked_dir.glob("*.png")) if marked_dir.exists() else []
+        submission["marked_files"] = marked_files
+        submission["marked_count"] = len(marked_files)
+        pdf_path = marked_dir / f"{student_id}_marked.pdf"
+        submission["marked_pdf_exists"] = pdf_path.exists()
+    
+    total_flagged = sum(
+        1 for s in submissions
+        for item in s.get("items", [])
+        if item.get("needs_review")
+    )
+    
     return TEMPLATES.TemplateResponse(
         request=request,
         name="grading_overview.html",
-        context={"project": project, "submissions": submissions},
+        context={"project": project, "submissions": submissions, "total_flagged": total_flagged},
     )
 
 
@@ -306,6 +379,21 @@ async def grading_student(request: Request, student_id: str):
     if submission is None:
         raise HTTPException(status_code=404, detail="Submission not found")
     items = submission.get("items", [])
+    marked_dir = paths.marked_dir / "students" / student_id
+    marked_files = sorted(marked_dir.glob("*.png")) if marked_dir.exists() else []
+    marked_pages = [
+        {
+            "name": path.name,
+            "url": f"/api/file?path=artifacts/marked/students/{student_id}/{path.name}",
+        }
+        for path in marked_files
+    ]
+    marked_pdf = marked_dir / f"{student_id}_marked.pdf"
+    marked_pdf_url = (
+        f"/api/grading/marked/{student_id}/pdf"
+        if marked_pdf.exists()
+        else ""
+    )
     for item in items:
         crop_rel = item.get("crop_path")
         item["student_crop_url"] = f"/api/file?path=artifacts/crops/{crop_rel}" if crop_rel else ""
@@ -320,7 +408,13 @@ async def grading_student(request: Request, student_id: str):
     return TEMPLATES.TemplateResponse(
         request=request,
         name="grading_student.html",
-        context={"submission": submission, "student_id": student_id, "items": items},
+        context={
+            "submission": submission,
+            "student_id": student_id,
+            "items": items,
+            "marked_pages": marked_pages,
+            "marked_pdf_url": marked_pdf_url,
+        },
     )
 
 
@@ -333,6 +427,275 @@ async def save_grading_student_review(request: Request, student_id: str):
     if updated is None:
         raise HTTPException(status_code=404, detail="Submission not found")
     return RedirectResponse(url=f"/grading/student/{student_id}", status_code=303)
+
+
+@app.post("/api/grading/mark/{student_id}")
+async def mark_student_exam(student_id: str):
+    if _restore_current_project() is None:
+        return {"success": False, "error": "No project is currently open"}
+    try:
+        paths = _paths()
+        _rescore_student_submission(paths, student_id)
+        outputs = mark_submission_pages(paths, student_id)
+        pdf_path = build_student_marked_pdf(paths, student_id)
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail="Submission not found")
+    return {
+        "success": True,
+        "student_id": student_id,
+        "pages": len(outputs),
+        "pdf": f"artifacts/marked/students/{student_id}/{pdf_path.name}",
+        "files": [
+            f"artifacts/marked/students/{student_id}/{path.name}"
+            for path in outputs
+        ],
+    }
+
+
+@app.post("/api/grading/mark-all")
+async def mark_all_student_exams():
+    if _restore_current_project() is None:
+        return {"success": False, "error": "No project is currently open"}
+    paths = _paths()
+    _rescore_all_submissions(paths)
+    results = mark_all_submissions(paths)
+    zip_path = build_all_marked_pdfs_zip(paths)
+    combined_pdf_path = build_all_marked_pdf(paths)
+    return {
+        "success": True,
+        "students": len(results),
+        "pages": sum(len(paths) for paths in results.values()),
+        "zip": f"artifacts/marked/{zip_path.name}",
+        "combined_pdf": f"artifacts/marked/{combined_pdf_path.name}",
+    }
+
+
+@app.get("/api/grading/marked/status")
+async def marked_outputs_status():
+    paths = _paths()
+    students = []
+    for submission in load_all_submission_results(paths):
+        student_id = submission.get("student_id", "")
+        marked_dir = paths.marked_dir / "students" / student_id
+        pages = sorted(marked_dir.glob("*.png")) if marked_dir.exists() else []
+        pdf_path = marked_dir / f"{student_id}_marked.pdf"
+        students.append(
+            {
+                "student_id": student_id,
+                "page_count": len(pages),
+                "pdf_exists": pdf_path.exists(),
+            }
+        )
+    return {"success": True, "students": students}
+
+
+@app.get("/api/grading/marked/all/download")
+async def download_all_marked_pdfs():
+    zip_path = build_all_marked_pdfs_zip(_paths())
+    return FileResponse(
+        str(zip_path),
+        media_type="application/zip",
+        filename=zip_path.name,
+    )
+
+
+@app.get("/api/grading/marked/all/pdf")
+async def download_all_marked_combined_pdf():
+    try:
+        pdf_path = build_all_marked_pdf(_paths())
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail="Marked PDF not found")
+    return FileResponse(
+        str(pdf_path),
+        media_type="application/pdf",
+        headers={"Content-Disposition": f'inline; filename="{pdf_path.name}"'},
+    )
+
+
+@app.get("/api/grading/marked/{student_id}/pdf")
+async def download_marked_student_pdf(student_id: str):
+    paths = _paths()
+    pdf_path = paths.marked_dir / "students" / student_id / f"{student_id}_marked.pdf"
+    if not pdf_path.exists():
+        try:
+            pdf_path = build_student_marked_pdf(paths, student_id)
+        except FileNotFoundError:
+            raise HTTPException(status_code=404, detail="Marked PDF not found")
+    return FileResponse(
+        str(pdf_path),
+        media_type="application/pdf",
+        headers={"Content-Disposition": f'inline; filename="{pdf_path.name}"'},
+    )
+
+
+@app.get("/api/grading/marked/{student_id}/download")
+async def download_marked_student_pdf_attachment(student_id: str):
+    paths = _paths()
+    pdf_path = paths.marked_dir / "students" / student_id / f"{student_id}_marked.pdf"
+    if not pdf_path.exists():
+        try:
+            pdf_path = build_student_marked_pdf(paths, student_id)
+        except FileNotFoundError:
+            raise HTTPException(status_code=404, detail="Marked PDF not found")
+    return FileResponse(
+        str(pdf_path),
+        media_type="application/pdf",
+        filename=pdf_path.name,
+    )
+
+
+@app.get("/grading/gemini-review")
+async def gemini_review_page(request: Request):
+    if _restore_current_project() is None:
+        return RedirectResponse(url="/", status_code=303)
+    paths = _paths()
+    submissions = load_all_submission_results(paths)
+    
+    flagged_items = []
+    for submission in submissions:
+        for item in submission.get("items", []):
+            if item.get("needs_review"):
+                item["student_id"] = submission["student_id"]
+                flagged_items.append(item)
+    
+    return TEMPLATES.TemplateResponse(
+        request=request,
+        name="gemini_review.html",
+        context={
+            "flagged_items": flagged_items,
+            "total": len(flagged_items)
+        }
+    )
+
+
+@app.post("/grading/gemini-review/apply")
+async def apply_gemini_review(request: Request):
+    if _restore_current_project() is None:
+        return RedirectResponse(url="/", status_code=303)
+    paths = _paths()
+    payload = await request.json()
+    if not isinstance(payload, list):
+        return {"success": False, "error": "Gemini 결과는 JSON 배열이어야 합니다."}
+    _save_latest_gemini_review(paths, payload)
+    
+    bundle = _load_json(paths.json_dir / "regions.json")
+    answers = bundle.get("answers", []) if bundle else []
+    
+    updated = 0
+    changed_students = set()
+    for correction in payload:
+        item_id = str(correction.get("item_id") or "")
+        new_answer = str(correction.get("recognized_answer", "")).strip()
+        if not item_id:
+            continue
+
+        student_id = item_id.split("_", 1)[0]
+        manifest_path = paths.submissions_dir / f"{student_id}.json"
+        if not manifest_path.exists():
+            continue
+        
+        submission = json.loads(manifest_path.read_text(encoding="utf-8"))
+        changed = False
+        for item in submission.get("items", []):
+            if item.get("item_id") == item_id:
+                item["recognized_answer"] = new_answer
+                item["needs_review"] = False
+                item["review_reasons"] = ["gemini_corrected"]
+                updated += 1
+                changed = True
+                break
+
+        if changed:
+            score_submission(submission, answers)
+            manifest_path.write_text(
+                json.dumps(submission, ensure_ascii=False, indent=2),
+                encoding="utf-8"
+            )
+            changed_students.add(student_id)
+
+    for student_id in changed_students:
+        try:
+            build_student_marked_pdf(paths, student_id)
+        except FileNotFoundError:
+            pass
+    
+    return {"success": True, "updated": updated}
+
+
+@app.get("/api/grading/gemini-review/latest")
+async def latest_gemini_review():
+    if _restore_current_project() is None:
+        return {"success": False, "error": "No project is currently open"}
+    path = _gemini_review_latest_path(_paths())
+    if not path.exists():
+        return {"success": True, "results": [], "saved_at": None}
+    data = _load_json(path) or {}
+    return {
+        "success": True,
+        "results": data.get("results", []),
+        "saved_at": data.get("saved_at"),
+    }
+
+
+@app.post("/api/grading/gemini-review/latest")
+async def save_latest_gemini_review(request: Request):
+    if _restore_current_project() is None:
+        return {"success": False, "error": "No project is currently open"}
+    payload = await request.json()
+    if not isinstance(payload, list):
+        return {"success": False, "error": "Gemini 결과는 JSON 배열이어야 합니다."}
+    path = _save_latest_gemini_review(_paths(), payload)
+    return {"success": True, "saved": str(path), "count": len(payload)}
+
+
+@app.post("/api/grading/gemini-review/crops-zip")
+async def download_review_crops(request: Request):
+    if _restore_current_project() is None:
+        return RedirectResponse(url="/", status_code=303)
+    import zipfile, io
+    from fastapi.responses import StreamingResponse
+    
+    paths = _paths()
+    payload = await request.json()
+    item_ids = payload.get("item_ids", [])
+    
+    buf = io.BytesIO()
+    with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as zf:
+        submissions = load_all_submission_results(paths)
+        for submission in submissions:
+            for item in submission.get("items", []):
+                if item.get("item_id") not in item_ids:
+                    continue
+                crop_path = paths.crops_dir / item.get("crop_path", "")
+                if crop_path.exists():
+                    zf.write(crop_path, f"{item['item_id']}.png")
+    
+    buf.seek(0)
+    return StreamingResponse(
+        buf,
+        media_type="application/zip",
+        headers={
+            "Content-Disposition": "attachment; filename=review_crops.zip"
+        }
+    )
+
+
+@app.post("/api/grading/gemini-review/packet-pdf")
+async def download_review_packet_pdf(request: Request):
+    if _restore_current_project() is None:
+        return RedirectResponse(url="/", status_code=303)
+    paths = _paths()
+    payload = await request.json()
+    item_ids = payload.get("item_ids", [])
+    items = collect_review_items(paths, item_ids)
+    if not items:
+        return {"success": False, "error": "선택된 문항 crop이 없습니다."}
+    pdf_path = build_gemini_review_packet_pdf(paths, items)
+    return FileResponse(
+        str(pdf_path),
+        media_type="application/pdf",
+        filename=pdf_path.name,
+    )
 
 
 @app.get("/api/settings")
@@ -483,6 +846,19 @@ async def upload_answers(file: UploadFile = File(...)):
         return {"success": True}
     except Exception as exc:
         return {"success": False, "error": str(exc)}
+
+
+@app.get("/api/answers/view")
+async def view_answers_pdf():
+    paths = _paths()
+    pdf_files = list(paths.answers_dir.glob("*.pdf"))
+    if not pdf_files:
+        raise HTTPException(status_code=404, detail="정답지 PDF가 없습니다.")
+    return FileResponse(
+        str(pdf_files[0]),
+        media_type="application/pdf",
+        headers={"Content-Disposition": "inline"}
+    )
 
 
 @app.post("/api/upload/students")

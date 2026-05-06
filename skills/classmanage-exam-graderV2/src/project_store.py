@@ -25,6 +25,7 @@ class ProjectPaths:
     submissions_dir: Path
     crops_dir: Path
     exports_dir: Path
+    marked_dir: Path
 
 
 def _now_iso() -> str:
@@ -105,6 +106,7 @@ def project_paths(project_dir: Path) -> ProjectPaths:
         submissions_dir=project_dir / "artifacts" / "submissions",
         crops_dir=project_dir / "artifacts" / "crops",
         exports_dir=project_dir / "artifacts" / "exports",
+        marked_dir=project_dir / "artifacts" / "marked",
     )
 
 
@@ -123,6 +125,7 @@ def _ensure_project_dirs(paths: ProjectPaths) -> None:
         paths.submissions_dir,
         paths.crops_dir,
         paths.exports_dir,
+        paths.marked_dir,
     ):
         directory.mkdir(parents=True, exist_ok=True)
 

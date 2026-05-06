@@ -323,3 +323,75 @@ RuntimeError: Engine 'paddle_static' is unavailable because dependency 'paddlepa
 2026-04-30 17:36:23,703 [INFO] [app_started] {}
 2026-04-30 17:38:16,317 [INFO] [regions_saved] {"count": 20, "answers": 20, "mode": "answers_only"}
 2026-04-30 17:38:16,322 [INFO] [regions_loaded] {}
+2026-05-01 10:22:18,253 [INFO] [app_started] {}
+2026-05-01 10:26:09,652 [INFO] [app_started] {}
+2026-05-01 10:26:10,357 [INFO] [project_opened] {"project": "수학2"}
+2026-05-01 10:27:58,764 [INFO] [project_opened] {"project": "수학2"}
+2026-05-01 10:27:59,728 [INFO] [regions_loaded] {}
+2026-05-01 10:29:02,848 [INFO] [regions_loaded] {}
+2026-05-01 10:35:14,866 [INFO] [regions_loaded] {}
+2026-05-01 10:36:22,564 [INFO] [regions_saved] {"count": 20, "answers": 20, "mode": "answers_only"}
+2026-05-01 10:38:32,865 [INFO] [regions_loaded] {}
+2026-05-01 10:42:33,761 [INFO] [app_started] {}
+2026-05-01 10:42:34,104 [INFO] [app_started] {}
+2026-05-01 10:43:55,498 [INFO] [app_started] {}
+2026-05-01 10:43:55,616 [INFO] [app_started] {}
+2026-05-01 11:16:47,849 [INFO] [app_started] {}
+2026-05-01 11:16:50,703 [INFO] [project_opened] {"project": "수학2"}
+2026-05-01 11:16:51,887 [INFO] [regions_loaded] {}
+2026-05-01 14:16:02,583 [INFO] [app_started] {}
+2026-05-01 14:16:04,965 [INFO] [project_opened] {"project": "수학2"}
+2026-05-01 14:16:06,222 [INFO] [regions_loaded] {}
+2026-05-01 15:11:36,065 [INFO] [app_started] {}
+2026-05-01 15:11:48,869 [INFO] [app_started] {}
+2026-05-01 15:12:21,472 [INFO] [app_started] {}
+2026-05-01 15:13:04,521 [INFO] [app_started] {}
+2026-05-01 15:14:06,769 [INFO] [app_started] {}
+2026-05-01 15:16:04,046 [INFO] [regions_loaded] {}
+2026-05-01 15:16:10,484 [INFO] [project_opened] {"project": "수학2"}
+2026-05-01 15:16:11,456 [INFO] [regions_loaded] {}
+2026-05-01 15:17:02,221 [INFO] [app_started] {}
+2026-05-01 15:17:04,152 [INFO] [project_opened] {"project": "수학2"}
+2026-05-01 15:17:05,074 [INFO] [regions_loaded] {}
+2026-05-01 15:18:28,398 [INFO] [app_started] {}
+2026-05-01 15:18:51,411 [INFO] [project_opened] {"project": "수학2"}
+2026-05-01 15:18:52,340 [INFO] [regions_loaded] {}
+2026-05-01 15:19:07,152 [INFO] [regions_loaded] {}
+2026-05-01 15:19:19,837 [INFO] [regions_loaded] {}
+2026-05-01 15:20:13,101 [INFO] [project_opened] {"project": "수학2"}
+2026-05-01 15:20:14,026 [INFO] [regions_loaded] {}
+2026-05-01 15:32:06,833 [INFO] [app_started] {}
+2026-05-01 15:33:57,486 [INFO] [regions_loaded] {}
+2026-05-01 15:39:25,969 [INFO] [app_started] {}
+2026-05-01 15:42:34,287 [INFO] [regions_loaded] {}
+2026-05-01 15:42:59,374 [INFO] [regions_loaded] {}
+2026-05-02 13:42:18,445 [INFO] [app_started] {}
+2026-05-02 13:43:14,541 [INFO] [project_opened] {"project": "수학2"}
+2026-05-02 13:43:15,812 [INFO] [regions_loaded] {}
+2026-05-02 14:03:29,502 [INFO] [regions_loaded] {}
+2026-05-02 14:03:44,961 [INFO] [project_opened] {"project": "수학2"}
+2026-05-02 14:03:45,781 [INFO] [regions_loaded] {}
+2026-05-02 14:03:54,935 [INFO] [project_opened] {"project": "수학2"}
+2026-05-02 14:03:55,741 [INFO] [regions_loaded] {}
+2026-05-02 14:04:49,766 [INFO] [project_opened] {"project": "수학2"}
+2026-05-02 14:04:50,599 [INFO] [regions_loaded] {}
+2026-05-02 15:20:25,645 [INFO] [project_opened] {"project": "수학2"}
+2026-05-02 15:20:26,761 [INFO] [regions_loaded] {}
+2026-05-02 15:21:00,630 [INFO] [project_opened] {"project": "수학2"}
+2026-05-02 15:21:01,460 [INFO] [regions_loaded] {}
+2026-05-02 15:34:09,606 [INFO] [app_started] {}
+2026-05-02 15:34:11,801 [INFO] [project_opened] {"project": "수학2"}
+2026-05-02 15:34:12,852 [INFO] [regions_loaded] {}
+2026-05-02 15:55:17,193 [INFO] [app_started] {}
+2026-05-02 15:55:30,997 [INFO] [app_started] {}
+2026-05-02 15:56:53,128 [INFO] [app_started] {}
+2026-05-02 15:58:39,543 [INFO] [regions_loaded] {}
+2026-05-02 16:03:51,676 [INFO] [project_opened] {"project": "수학2"}
+2026-05-02 16:03:52,533 [INFO] [regions_loaded] {}
+2026-05-02 16:04:52,661 [INFO] [project_opened] {"project": "수학2"}
+2026-05-02 16:04:53,518 [INFO] [regions_loaded] {}
+2026-05-02 16:36:23,152 [INFO] [app_started] {}
+2026-05-02 16:37:20,601 [INFO] [regions_loaded] {}
+2026-05-02 16:54:15,155 [INFO] [app_started] {}
+2026-05-02 16:54:46,593 [INFO] [regions_loaded] {}
+2026-05-02 16:55:30,836 [INFO] [regions_loaded] {}

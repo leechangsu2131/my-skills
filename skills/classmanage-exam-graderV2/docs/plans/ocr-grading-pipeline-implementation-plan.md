@@ -2,9 +2,9 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Extend the current alignment and overlay-review tool into a grading pipeline that accepts the existing Gemini-web JSON bundle (`questions + answers + total_points`), crops answer regions from aligned student pages, runs OCR, scores each response, supports low-confidence human review, and exports teacher-ready results.
+**Goal:** Extend the current alignment and overlay-review tool into a grading pipeline that accepts the existing Gemini-web JSON bundle (`questions + answers + total_points`), crops answer regions from aligned student pages, runs OCR, scores each response, supports low-confidence human review, renders marked exam PDFs, and exports teacher-ready results.
 
-**Architecture:** Keep the current external Gemini-web workflow as the upstream source of question boxes and answer keys. Continue using the saved assessment bundle as the project-level source of truth, then add deterministic project artifacts for `submissions`, `crops`, `ocr`, `grading`, and `exports` so each stage can be rerun without repeating alignment. Reuse the current FastAPI app and add a separate grading workflow instead of overloading `/review`, which should stay focused on alignment and answer-region verification.
+**Architecture:** Keep the current external Gemini-web workflow as the upstream source of question boxes and answer keys. Continue using the saved assessment bundle as the project-level source of truth, then add deterministic project artifacts for `submissions`, `crops`, `ocr`, `grading`, `marked`, and `exports` so each stage can be rerun without repeating alignment. Reuse the current FastAPI app and add a separate grading workflow instead of overloading `/review`, which should stay focused on alignment and answer-region verification.
 
 **Tech Stack:** FastAPI, OpenCV, Pillow, PyMuPDF, PaddleOCR, JSON artifacts, Jinja2, `pytest` for new regression tests, `openpyxl` for Excel export, standard-library `csv`.
 
@@ -16,7 +16,7 @@
 - `src/project_store.py`
   - Add project artifact directories for grading outputs.
 - `webapp/main.py`
-  - Add grading preparation, OCR, scoring, review, and export routes.
+  - Add grading preparation, OCR, scoring, review, marked-exam, and export routes.
 - `webapp/templates/index.html`
   - Tighten validation and status display for the combined Gemini bundle.
 - `README.md`
@@ -39,6 +39,8 @@
   - Compare normalized OCR output with answer-key entries and compute scores.
 - `src/report_exporter.py`
   - Build CSV/XLSX export files and summary statistics.
+- `src/marked_exam_renderer.py`
+  - Render red-pencil style grading marks over aligned student pages and build marked PDFs.
 
 **New templates**
 - `webapp/templates/grading_overview.html`
@@ -53,6 +55,8 @@
 - `tests/test_answer_normalizer.py`
 - `tests/test_grader.py`
 - `tests/test_report_exporter.py`
+- `tests/test_marked_exam_renderer.py`
+- `tests/test_grading_student_page.py`
 
 **Project artifact layout to add**
 - `<project>/artifacts/submissions/`
@@ -63,6 +67,12 @@
   - Student answer crops grouped by student
 - `<project>/artifacts/exports/`
   - CSV/XLSX outputs
+- `<project>/artifacts/marked/students/<student_id>/`
+  - Marked PNG pages and per-student PDF
+- `<project>/artifacts/marked/marked_exams_combined.pdf`
+  - One combined PDF containing all marked student pages
+- `<project>/artifacts/marked/marked_exams_all.zip`
+  - ZIP archive containing each student's marked PDF
 
 ---
 
@@ -831,6 +841,101 @@ Expected: all tests pass
 git add src/report_exporter.py requirements.txt webapp/main.py tests/test_report_exporter.py
 git commit -m "feat: add grading exports"
 ```
+
+---
+
+### Task 7: Render marked exam PDFs for teacher return
+
+**Files:**
+- Create: `src/marked_exam_renderer.py`
+- Modify: `src/project_store.py`
+- Modify: `webapp/main.py`
+- Modify: `webapp/templates/index.html`
+- Modify: `webapp/templates/grading_overview.html`
+- Modify: `webapp/templates/grading_student.html`
+- Test: `tests/test_marked_exam_renderer.py`
+- Test: `tests/test_grading_student_page.py`
+
+- [x] **Step 1: Add tests for red-pencil marks**
+
+Expected behavior:
+- Correct answers draw a large red circle around the answer region.
+- Incorrect answers draw a large red slash across the answer region.
+- Items still marked `needs_review` are skipped.
+- The score header appears only on the first page for each student and is large enough to be visible near the top of the page.
+
+- [x] **Step 2: Add marked artifact directory**
+
+`ProjectPaths` now includes:
+
+```python
+marked_dir=project_dir / "artifacts" / "marked"
+```
+
+- [x] **Step 3: Implement marked page rendering**
+
+`mark_submission_pages(paths, student_id)` reads `<project>/artifacts/submissions/<student_id>.json`, opens each aligned page, and draws marks using the stored answer-region `box`. It does not OCR or infer question-number positions.
+
+- [x] **Step 4: Build PDF outputs**
+
+Implemented:
+
+```python
+build_student_marked_pdf(paths, student_id)
+build_all_marked_pdf(paths)
+build_all_marked_pdfs_zip(paths)
+```
+
+Outputs:
+
+```text
+artifacts/marked/students/stu001/stu001_p1_marked.png
+artifacts/marked/students/stu001/stu001_marked.pdf
+artifacts/marked/marked_exams_combined.pdf
+artifacts/marked/marked_exams_all.zip
+```
+
+- [x] **Step 5: Add API routes**
+
+Implemented:
+
+```text
+POST /api/grading/mark/{student_id}
+POST /api/grading/mark-all
+GET /api/grading/marked/status
+GET /api/grading/marked/{student_id}/pdf
+GET /api/grading/marked/{student_id}/download
+GET /api/grading/marked/all/pdf
+GET /api/grading/marked/all/download
+```
+
+- [x] **Step 6: Add dashboard Step 6**
+
+Dashboard now includes `마킹본 만들기` with:
+- `전체 마킹본 생성`
+- `전체 통합 PDF`
+- `학생별 PDF ZIP`
+- student-level preview/download list after marked PDFs exist
+
+- [x] **Step 7: Verify**
+
+Run:
+
+```powershell
+.venv\Scripts\python.exe -m pytest -q
+```
+
+Expected:
+
+```text
+29 passed
+```
+
+---
+
+## Deferred Work
+
+- Web LLM ZIP-image reading is deferred. Current web LLMs did not reliably read images inside uploaded ZIP archives after decompression, so the system keeps Gemini/Claude web usage at the JSON/text handoff boundary and performs local crop/PDF rendering inside this app.
 
 ---
 

@@ -224,6 +224,19 @@
       padding: 16px
     }
 
+    .file-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 10px
+    }
+
+    .file-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px
+    }
+
     .prompt-preview {
       font-family: Consolas, monospace;
       font-size: 11px;
@@ -254,7 +267,8 @@
     #json-status,
     #editor-save-status,
     #pipeline-status,
-    #grading-status {
+    #grading-status,
+    #marked-status {
       font-size: 12px;
       min-height: 18px
     }
@@ -411,6 +425,13 @@
       .editor-side {
         width: 100%
       }
+
+      #answer-review-section > div[style*="grid-template-columns"] {
+        grid-template-columns: 1fr !important;
+      }
+      #answer-pdf-panel iframe {
+        height: 50vh !important;
+      }
     }
   </style>
 </head>
@@ -438,6 +459,7 @@
     <div id="file-status-container">로딩 중...</div>
     <div style="display:none">
       <input type="file" id="tmpl-file" accept=".pdf,.jpg,.jpeg,.png" onchange="uploadTemplate()">
+      <input type="file" id="ans-file" accept=".pdf" onchange="uploadAnswers()">
       <input type="file" id="stu-files" accept=".pdf,.jpg,.jpeg,.png" multiple onchange="uploadStudents()">
     </div>
   </div>
@@ -468,6 +490,29 @@
         `정답만 업데이트`는 기존 문항 박스를 유지하고 `answers`, `total_points`만 갱신합니다.
       </div>
     </div>
+    <details id="answer-review-section" style="margin-top:12px; display:none;">
+      <summary style="cursor:pointer;font-weight:700;color:var(--yellow)">
+        📋 정답 검토 및 수정
+      </summary>
+
+      <div style="display:grid; grid-template-columns:55% 45%; gap:16px; margin-top:12px; align-items:flex-start">
+        
+        <div>
+          <div style="font-size:11px;color:var(--muted);margin-bottom:8px">
+            Gemini가 추출한 정답을 확인하고 틀린 부분을 수정하세요.
+          </div>
+          <div id="answer-review-body"></div>
+          <div class="row" style="margin-top:10px;gap:8px">
+            <button class="btn btn-green" onclick="saveAnswerEdits()">정답 수정 저장</button>
+            <span id="answer-save-status" style="font-size:12px"></span>
+          </div>
+        </div>
+
+        <div id="answer-pdf-panel">
+        </div>
+
+      </div>
+    </details>
   </div>
 
   <div class="step">
@@ -538,6 +583,7 @@
       <button class="btn btn-ghost" id="grading-ocr-btn" onclick="runGradingOcr()">OCR 실행</button>
       <button class="btn btn-green" onclick="runGradingScore()">자동 채점</button>
       <a href="/grading" class="btn btn-yellow">결과 보기</a>
+      <a href="/grading/gemini-review" class="btn btn-ghost">🔍 Gemini 재판독</a>
       <span id="grading-status"></span>
     </div>
     <div class="ocr-progress" id="ocr-progress-panel">
@@ -550,6 +596,19 @@
       </div>
       <div class="ocr-progress-meta" id="ocr-progress-meta"></div>
     </div>
+  </div>
+
+  <div class="step">
+    <div class="step-title"><span class="step-num">6</span>마킹본 만들기</div>
+    <p class="step-desc">교사가 확정한 채점 결과를 학생 시험지 위에 빨간 연필 느낌으로 표시하고, 학생별 PDF 또는 전체 ZIP으로 내려받습니다.</p>
+    <div class="row">
+      <button class="btn btn-green" onclick="runMarkedAll()">전체 마킹본 생성</button>
+      <a href="/grading" class="btn btn-yellow">채점 결과 화면에서 확인</a>
+      <a href="/api/grading/marked/all/pdf" class="btn btn-ghost" target="_blank">전체 통합 PDF</a>
+      <a href="/api/grading/marked/all/download" class="btn btn-ghost">학생별 PDF ZIP</a>
+      <span id="marked-status"></span>
+    </div>
+    <div id="marked-downloads" style="margin-top:12px"></div>
   </div>
 
   <div style="height:42px"></div>
@@ -568,6 +627,7 @@
 
     window.addEventListener('DOMContentLoaded', async () => {
       await loadFileStatus();
+      await loadMarkedDownloads();
       await refreshOcrProgress();
       try {
         const response = await fetch('/api/regions');
@@ -579,6 +639,10 @@
           if (globalRegions.questions.length > 0) {
             document.getElementById('json-input').value = JSON.stringify(globalRegions, null, 2);
             doValidateAll();
+          }
+          if (globalRegions.answers && globalRegions.answers.length > 0) {
+            renderAnswerReview(globalRegions.answers);
+            document.getElementById('answer-review-section').open = false;
           }
         }
       } catch (error) {
@@ -604,6 +668,9 @@
           : 'regions.json: 없음';
       document.getElementById('template-status').textContent =
         `template: ${fileStatus.template.count}페이지`;
+      if (typeof renderAnswerPdfPanel === 'function') {
+        renderAnswerPdfPanel();
+      }
     }
 
     function renderThumbRow(paths, folder) {
@@ -647,6 +714,28 @@
         </div>
       </div>
       <div class="status-card">
+        <h3>정답지 PDF</h3>
+        <div class="status-sub">
+          ${fileStatus.answers.count > 0
+            ? `${fileStatus.answers.files[0]} 업로드됨`
+            : '정답지 없음 (Gemini 프롬프트에 첨부용)'}
+        </div>
+        ${fileStatus.answers.count > 0
+          ? renderThumbRow(fileStatus.answers.files, 'answers')
+          : ''}
+        <div class="row" style="margin-top:10px">
+          <button class="btn ${fileStatus.answers.count > 0 ? 'btn-ghost' : 'btn-blue'}"
+            onclick="document.getElementById('ans-file').click()">
+            ${fileStatus.answers.count > 0 ? '정답지 교체' : '정답지 업로드'}
+          </button>
+          ${fileStatus.answers.count > 0
+            ? `<a class="btn btn-ghost"
+                 href="/api/answers/view"
+                 target="_blank">정답지 PDF 보기</a>`
+            : ''}
+        </div>
+      </div>
+      <div class="status-card">
         <h3>학생 PDF</h3>
         <div class="status-sub">${fileStatus.students.count > 0 ? `${fileStatus.students.count}개 업로드됨` : '학생 PDF 없음'}</div>
         ${renderThumbRow(fileStatus.students.files, 'students/raw')}
@@ -679,6 +768,16 @@
       form.append('file', input.files[0]);
       document.getElementById('file-status-container').textContent = '템플릿 업로드 중...';
       await fetch('/api/upload/template', { method: 'POST', body: form });
+      location.reload();
+    }
+
+    async function uploadAnswers() {
+      const input = document.getElementById('ans-file');
+      if (!input.files.length) return;
+      const form = new FormData();
+      form.append('file', input.files[0]);
+      document.getElementById('file-status-container').textContent = '정답지 업로드 중...';
+      await fetch('/api/upload/answers', { method: 'POST', body: form });
       location.reload();
     }
 
@@ -821,9 +920,144 @@
         globalRegions = await (await fetch('/api/regions')).json();
         setJsonStatus(`저장 완료 (${result.mode})`, 'green');
         await loadFileStatus();
+        renderAnswerReview(globalRegions.answers);
       } else {
         setJsonStatus(result.error || 'regions.json 저장 실패', 'red');
         setSaveButtonsDisabled(false);
+      }
+    }
+
+    function escapeHtml(unsafe) {
+      return (unsafe || '').toString()
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function renderAnswerReview(answers) {
+      if (!answers || answers.length === 0) {
+        document.getElementById('answer-review-section').style.display = 'none';
+        return;
+      }
+      document.getElementById('answer-review-section').style.display = 'block';
+
+      const body = document.getElementById('answer-review-body');
+      body.innerHTML = `
+        <div style="display:grid;
+          grid-template-columns: 60px 80px 1fr 80px 80px;
+          gap:6px; font-size:11px; color:var(--muted);
+          padding:4px 0; border-bottom:1px solid var(--border);
+          margin-bottom:6px">
+          <span>문항</span><span>유형</span>
+          <span>정답</span><span>배점</span><span>페이지</span>
+        </div>
+        ${answers.map((a, i) => `
+        <div style="display:grid;
+          grid-template-columns: 60px 80px 1fr 80px 80px;
+          gap:6px; align-items:center; margin-bottom:4px">
+          <span style="font-size:12px;font-weight:700">${a.number}번</span>
+          <select data-idx="${i}" data-field="type"
+            onchange="onAnswerEdit(this)"
+            style="background:#0f172a;color:var(--text);
+              border:1px solid var(--border);border-radius:6px;
+              padding:3px;font-size:11px">
+            ${['객관식','단답형','서술형'].map(t =>
+              `<option${t===a.type?' selected':''}>${t}</option>`
+            ).join('')}
+          </select>
+          <input type="text" data-idx="${i}" data-field="answer"
+            value="${escapeHtml(String(a.answer || ''))}"
+            onchange="onAnswerEdit(this)"
+            style="background:#0f172a;color:var(--text);
+              border:1px solid var(--border);border-radius:6px;
+              padding:4px 6px;font-size:12px;width:100%">
+          <input type="number" data-idx="${i}" data-field="points"
+            value="${a.points || 0}" min="0"
+            onchange="onAnswerEdit(this)"
+            style="background:#0f172a;color:var(--text);
+              border:1px solid var(--border);border-radius:6px;
+              padding:4px;font-size:12px;width:100%">
+          <span style="font-size:11px;color:var(--muted)">${a.page || '-'}p</span>
+        </div>`).join('')}
+      `;
+
+      renderAnswerPdfPanel();
+    }
+
+    function renderAnswerPdfPanel() {
+      const panel = document.getElementById('answer-pdf-panel');
+      if (!panel) return;
+
+      const hasAnswers = fileStatus && fileStatus.answers && fileStatus.answers.count > 0;
+
+      if (!hasAnswers) {
+        panel.innerHTML = `
+          <div style="background:var(--panel);border:1px dashed var(--border);
+            border-radius:10px;padding:20px;text-align:center;color:var(--muted)">
+            <div style="font-size:24px;margin-bottom:8px">📄</div>
+            <div style="font-size:12px">정답지 PDF를 업로드하면<br>여기서 바로 확인할 수 있습니다.</div>
+            <button class="btn btn-ghost"
+              style="margin-top:12px;font-size:11px"
+              onclick="document.getElementById('ans-file').click()">
+              정답지 업로드
+            </button>
+          </div>`;
+        return;
+      }
+
+      panel.innerHTML = `
+        <div style="position:sticky;top:16px">
+          <div style="display:flex;justify-content:space-between;
+            align-items:center;margin-bottom:6px">
+            <span style="font-size:12px;font-weight:700;color:var(--muted)">
+              📄 정답지
+            </span>
+            <a href="/api/answers/view" target="_blank"
+              style="font-size:11px;color:var(--blue)">
+              새 탭에서 열기 ↗
+            </a>
+          </div>
+          <iframe
+            src="/api/answers/view"
+            style="width:100%;
+              height:75vh;
+              border:1px solid var(--border);
+              border-radius:10px;
+              background:#fff"
+            title="정답지 PDF">
+          </iframe>
+        </div>`;
+    }
+
+
+    function onAnswerEdit(el) {
+      const idx = parseInt(el.dataset.idx);
+      const field = el.dataset.field;
+      if (!globalRegions.answers) return;
+      if (field === 'points') {
+        globalRegions.answers[idx][field] = parseInt(el.value) || 0;
+      } else {
+        globalRegions.answers[idx][field] = el.value;
+      }
+    }
+
+    async function saveAnswerEdits() {
+      setStatus('answer-save-status', '저장 중...', 'muted');
+      const response = await fetch('/api/regions?mode=answers_only', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          bundle: globalRegions,
+          raw_text: null
+        })
+      });
+      const data = await response.json();
+      if (data.success) {
+        setStatus('answer-save-status', '정답 저장 완료', 'green');
+      } else {
+        setStatus('answer-save-status', data.error || '저장 실패', 'red');
       }
     }
 
@@ -1041,6 +1275,51 @@
         }
       } catch (error) {
         setStatus('grading-status', '자동 채점 중 통신 오류', 'red');
+      }
+    }
+
+    async function runMarkedAll() {
+      setStatus('marked-status', '마킹본 생성 중...', 'muted');
+      try {
+        const response = await fetch('/api/grading/mark-all', { method: 'POST' });
+        const data = await response.json();
+        if (data.success) {
+          setStatus('marked-status', `마킹본 생성 완료: 학생 ${data.students}명, ${data.pages}쪽`, 'green');
+          await loadMarkedDownloads();
+        } else {
+          setStatus('marked-status', data.error || '마킹본 생성 실패', 'red');
+        }
+      } catch (error) {
+        setStatus('marked-status', '마킹본 생성 중 통신 오류', 'red');
+      }
+    }
+
+    async function loadMarkedDownloads() {
+      const host = document.getElementById('marked-downloads');
+      if (!host) return;
+      try {
+        const response = await fetch('/api/grading/marked/status', { cache: 'no-store' });
+        const data = await response.json();
+        if (!data.success || !data.students || data.students.length === 0) {
+          host.innerHTML = '<div class="muted" style="font-size:12px">아직 생성된 마킹본 PDF가 없습니다.</div>';
+          return;
+        }
+        host.innerHTML = `
+          <div class="file-grid">
+            ${data.students.map((row) => `
+              <div class="file-card">
+                <strong>${row.student_id}</strong>
+                <div class="muted" style="font-size:11px;margin-top:4px">마킹 페이지 ${row.page_count || 0}쪽</div>
+                <div class="row" style="margin-top:8px">
+                  ${row.pdf_exists ? `<a class="btn btn-ghost" target="_blank" href="/api/grading/marked/${row.student_id}/pdf">미리보기</a>` : ''}
+                  <a class="btn btn-ghost" href="/api/grading/marked/${row.student_id}/download">개별 다운로드</a>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        `;
+      } catch (error) {
+        host.innerHTML = '<div class="muted" style="font-size:12px">마킹본 목록을 불러오지 못했습니다.</div>';
       }
     }
 

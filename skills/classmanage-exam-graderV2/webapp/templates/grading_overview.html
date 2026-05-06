@@ -11,7 +11,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
 a{color:inherit;text-decoration:none}
 .shell{max-width:1100px;margin:0 auto}
 .top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:20px}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 16px;border-radius:10px;border:none;background:#334155;color:var(--text);font-size:13px;font-weight:700}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 16px;border-radius:10px;border:none;background:#334155;color:var(--text);font-size:13px;font-weight:700;cursor:pointer}
+.btn-green{background:var(--green);color:#052e16}
 .panel{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px}
 .list{display:flex;flex-direction:column;gap:12px}
 .row{display:grid;grid-template-columns:1fr auto;gap:16px;align-items:center;background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:14px}
@@ -27,7 +28,15 @@ a{color:inherit;text-decoration:none}
       <h1>채점 결과</h1>
       <div class="meta">현재 프로젝트: {{ project.name }}</div>
     </div>
-    <a class="btn" href="/dashboard">← 대시보드</a>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-green" type="button" id="mark-all">전체 마킹본 생성</button>
+      {% if total_flagged > 0 %}
+      <a class="btn btn-yellow" href="/grading/gemini-review" style="color:#000">🤖 Gemini 재판독 (저신뢰 {{ total_flagged }}문항)</a>
+      {% else %}
+      <a class="btn" href="/grading/gemini-review">🤖 Gemini 재판독 (없음)</a>
+      {% endif %}
+      <a class="btn" href="/">← 대시보드</a>
+    </div>
   </div>
 
   <div class="panel">
@@ -44,6 +53,7 @@ a{color:inherit;text-decoration:none}
               <span class="badge {% if row.needs_review_count %}warn{% else %}ok{% endif %}">
                 {% if row.needs_review_count %}검토 필요 {{ row.needs_review_count }}문항{% else %}검토 필요 없음{% endif %}
               </span>
+              <span class="badge ok">마킹본 {{ row.marked_count or 0 }}쪽</span>
             </div>
           </div>
           <a class="btn" href="/grading/student/{{ row.student_id }}">상세 보기</a>
@@ -55,5 +65,24 @@ a{color:inherit;text-decoration:none}
     </div>
   </div>
 </div>
+<script>
+const markAll = document.getElementById('mark-all');
+if (markAll) {
+  markAll.addEventListener('click', async () => {
+    markAll.disabled = true;
+    markAll.textContent = '전체 마킹본 생성 중...';
+    try {
+      const response = await fetch('/api/grading/mark-all', {method: 'POST'});
+      const data = await response.json();
+      if (!data.success) throw new Error(data.error || 'marked render failed');
+      window.location.reload();
+    } catch (error) {
+      alert(error.message || String(error));
+      markAll.disabled = false;
+      markAll.textContent = '전체 마킹본 생성';
+    }
+  });
+}
+</script>
 </body>
 </html>

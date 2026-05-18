@@ -60,17 +60,17 @@ try:
 except Exception:
     pass
 
-def set_bin(bin_num: int) -> int:
+def set_bin(bin_num: int | None) -> int | None:
     """PRINTER_INFO_9 로 사용자 권한 영역의 DEVMODE.DefaultSource 변경"""
-    if not PRINTER_NAME or not bin_num:
-        return 0
+    if not PRINTER_NAME or bin_num is None:
+        return None
     try:
         h = win32print.OpenPrinter(PRINTER_NAME)
         info = win32print.GetPrinter(h, 9)  # 2가 아닌 9 (사용자 권한 통과)
         dm = info.get("pDevMode")
         if dm is None:
             win32print.ClosePrinter(h)
-            return 0
+            return None
         orig = dm.DefaultSource
         dm.DefaultSource = bin_num
         win32print.SetPrinter(h, 9, info, 0)
@@ -79,7 +79,7 @@ def set_bin(bin_num: int) -> int:
         return orig
     except Exception as e:
         print(f"  트레이 설정 실패: {e}")
-        return 0
+        return None
 
 def do_print(file_path: str, n: int, label: str) -> bool:
     print(f"  [{label}] 열기...")
@@ -102,7 +102,7 @@ def do_print(file_path: str, n: int, label: str) -> bool:
 try:
     # 윈도우 인쇄 스풀러 안정화를 위해 변경 -> 인쇄 -> 복원 순으로 명확하게 처리합니다.
     
-    orig = 0
+    orig = None
     print("\n[STEP 1] 간지 인쇄")
     orig = set_bin(SEPARATOR_TRAY) # 트레이 3(B세트)으로 변경
     time.sleep(1) # 프린터 설정 적용 대기
@@ -117,7 +117,7 @@ try:
     do_print(hwpx_file, copies, "안내장")
 
     print("\n[STEP 3] 트레이 원복")
-    if orig:
+    if orig is not None:
         set_bin(orig) # 맨 처음 설정으로 원복
 
     print("\n━" * 55)

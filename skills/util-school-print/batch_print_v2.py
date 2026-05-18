@@ -67,6 +67,10 @@ DRY_RUN         = os.getenv("DRY_RUN", "false").lower() == "true"
 DUPLEX          = int(os.getenv("DUPLEX", "0"))
 # 간지 용지함: 0=기본값, 1=트레이1(A), 2=트레이2(B), 3=트레이3 ...
 SEPARATOR_TRAY  = int(os.getenv("SEPARATOR_TRAY", "0"))
+# 인쇄 종료 후 사용자별 프린터 기본 용지함을 되돌릴 값. 비워두면 건너뜀.
+# FUJIFILM Apeos C2561 기준: 15=자동, 1=트레이1, 3=트레이2.
+_post_print_tray = os.getenv("POST_PRINT_TRAY", "15").strip()
+POST_PRINT_TRAY  = int(_post_print_tray) if _post_print_tray else None
 
 # ─────────────────────────────────────────
 
@@ -257,14 +261,14 @@ def get_hwp():
         sys.exit(f"❌ 한글 OLE 연결 실패: {e}")
 
 
-def _set_printer_bin(printer_name: str, bin_num: int) -> int:
+def _set_printer_bin(printer_name: str, bin_num: int | None) -> int | None:
     """
     win32print DEVMODE.DefaultSource 로 프린터 기본 용지함을 임시 변경.
-    원래 용지함 번호를 반환 (복원용).
+    원래 용지함 번호를 반환 (복원용). 0도 "자동/기본값"일 수 있으므로 유효값으로 취급.
     - GetPrinter(9): 현재 사용자의 기본 프린터 설정 (관리자 권한 불필요)
     """
-    if not printer_name or not bin_num:
-        return 0
+    if not printer_name or bin_num is None:
+        return None
     try:
         import win32print
         h = win32print.OpenPrinter(printer_name)
@@ -272,7 +276,7 @@ def _set_printer_bin(printer_name: str, bin_num: int) -> int:
         dm = info.get("pDevMode")
         if dm is None:
             win32print.ClosePrinter(h)
-            return 0
+            return None
         orig = dm.DefaultSource
         dm.DefaultSource = bin_num
         win32print.SetPrinter(h, 9, info, 0)
@@ -281,13 +285,24 @@ def _set_printer_bin(printer_name: str, bin_num: int) -> int:
         return orig
     except Exception as e:
         log.warning(f"  트레이 변경 실패: {e}")
-        return 0
+        return None
+
+
+def _restore_printer_default_after_run(printer: str) -> bool:
+    """배치 인쇄 후 다음 일반 인쇄가 트레이2에 묶이지 않도록 사용자 기본 용지함을 정리."""
+    if POST_PRINT_TRAY is None:
+        return False
+    orig = _set_printer_bin(printer, POST_PRINT_TRAY)
+    if orig is None:
+        return False
+    log.info(f"프린터 기본 용지함 정리: {orig} → {POST_PRINT_TRAY}")
+    return True
 
 
 def print_hwpx(hwp, file_path: str, copies: int, printer: str,
                duplex: int = 0, paper_source: int = 0) -> bool:
     """안내장 HWPX를 HWP OLE로 열고 copies매 인쇄 후 닫음"""
-    orig_bin = 0
+    orig_bin = None
     if paper_source and printer:
         orig_bin = _set_printer_bin(printer, paper_source)
         time.sleep(1) # 프린터 설정 시스템 반영 대기
@@ -319,7 +334,7 @@ def print_hwpx(hwp, file_path: str, copies: int, printer: str,
             pass
         return False
     finally:
-        if orig_bin and printer:
+        if orig_bin is not None and printer:
             _set_printer_bin(printer, orig_bin)
 
 
@@ -501,7 +516,11 @@ def main():
 
     finally:
         # 임시 간지 파일 삭제
-        hwp.Quit()
+        try:
+            hwp.Quit()
+        except Exception as e:
+            log.warning(f"한글 종료 중 오류: {e}")
+        _restore_printer_default_after_run(PRINTER_NAME)
         for f in tmp_files:
             try:
                 Path(f).unlink()

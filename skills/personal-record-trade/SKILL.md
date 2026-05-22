@@ -1,42 +1,65 @@
 ---
-name: record-trade
-description: Adds a trading entry via natural language to the user's Google Sheet trading journal
+name: personal-record-trade
+description: "Use this skill when Codex needs to record a new trade entry in the user's Google Sheets trade journal from natural language, brokerage screenshots, or parsed execution details. This skill is for trade-entry capture and append workflows using the existing 2_add_trade.py script. For portfolio analysis, return checks, rebalancing signals, trade-signal review, journal review, or Google Sheets range-based inspection, use $personal-analyze-trade instead."
 ---
-# 매매일지 자동화 워크플로우 (Skill)
 
-이 스킬은 사용자가 자연어로 제공한 매매 기록을 구글 시트 "자산현황포트폴리오"의 '📒 매매일지' 탭에 자동으로 추가하는 역할을 합니다.
+# Personal Record Trade
 
-## 사용 조건
-1. 사용자가 "/record-trade [자연어 매매 기록]" 형식으로 명령어를 입력합니다. 또는 자연스럽게 일상어로 거래 내역을 말할 때 본 스킬을 발동합니다.
-   (예: "오늘 SCHD 10주를 41,000원에 매수함. 배당락일 전이라 포모 와서 샀음. 만족도는 6점")
+## Scope
 
-## 설정
-- `.env` 파일에 `GOOGLE_SA_*` 인증 정보와 `GOOGLE_SHEET_ID`가 설정되어 있어야 합니다.
-- `.env.example`을 참고하여 `.env`를 생성하세요.
+Use this skill only when the main task is to add a new trade record to the Google Sheet `📒 매매일지` tab.
 
-## 동작 절차 (AI 행동 지침)
-2. AI는 입력된 자연어를 분석하여 다음 15개의 열(Column) 데이터 배열로 완벽하게 매핑합니다. 빈 값이 있다면 빈 문자열("")로 처리합니다:
-   - A(매매일): YYYY-MM-DD 형식 (제공되지 않으면 현재 시스템 날짜 기준 파악, '오늘=당일', '어제=D-1' 등)
-   - B(종목티커): 알 수 있을 경우 기입
-   - C(종목명): (예: 타임폴리오코스닥ETF)
-   - D(매매 구분): "매수" 또는 "매도"
-   - E(수량): 숫자 (예: "10")
-   - F(단가): 숫자 (원화)
-   - G(금액): 수량 * 단가 (자동 계산, 또는 직접 말한 금액)
-   - H(매매 이유): 왜 이 종목을 샀는지/팔았는지
-   - I(타이밍 이유): 왜 하필 지금 샀는지/팔았는지
-   - J(만족도): -10~10점 사이 점수
-   - K(사후분석): 공란 (사후에 기록하는 용도)
-   - L(컨디션): 당시 심리/건강 상태 (상/중/하)
-   - M(인지오류): 인지적 편향 (예: 앵커링효과, 이익확정, 손실회피, 추세추종, 포모, 군중심리 등)
-   - N(해결전략): 인지오류에 대한 피드백이나 다짐
-   - O(비고): 기타 메모
+Use `$personal-analyze-trade` instead when the task is to inspect or analyze the investment sheet, including portfolio status, returns, target weights, trade signals, sector exposure, closed positions, strategy review, or position retrospectives.
 
-3. 위에서 추출된 값을 JSON 형태의 `--json` 파라미터로 조합합니다.
+## Trigger Examples
 
-4. `2_add_trade.py`를 사용하여 아래 명령어로 데이터를 시트에 추가합니다:
+- `/record-trade 오늘 SCHD 10주를 41,000원에 매수함. 배당락일 전이라 포모 와서 샀음. 만족도는 6점`
+- `이 체결 스크린샷을 매매일지에 추가해줘.`
+- `방금 산 NVDA 10주를 투자 매매일지에 기록해줘.`
+
+## Setup
+
+- `.env` must contain the Google credentials expected by `gsheet_auth.py`, including `GOOGLE_SA_*` values and `GOOGLE_SHEET_ID`.
+- Keep the existing scripts and resources in this folder. Do not recreate the portfolio spreadsheet unless the user explicitly asks for setup or migration work.
+
+## Trade Entry Workflow
+
+1. Parse the user's natural-language trade entry or brokerage screenshot into structured trade fields.
+2. Normalize dates to `YYYY-MM-DD`. Interpret relative dates from the current system date, such as `오늘` as today and `어제` as yesterday.
+3. Map missing optional values to an empty string.
+4. Run `2_add_trade.py` with a JSON payload.
+5. Report the recorded trade back to the user as a concise Markdown table.
+
+## JSON Fields
+
+Use the fields accepted by `2_add_trade.py`:
+
+| Field | Meaning |
+| --- | --- |
+| `date` | 매매일, `YYYY-MM-DD` |
+| `ticker` | 종목 티커 or 코드 |
+| `name` | 종목명 |
+| `type` | 매수 or 매도 |
+| `qty` | 수량 |
+| `price` | 단가, 원화 기준 when possible |
+| `amount` | 총 거래금액 |
+| `reason` | 매매 이유 |
+| `timing` | 타이밍 이유 |
+| `score` | 만족도, -10 to 10 |
+| `analysis` | 사후분석, usually blank for new entries |
+| `condition` | 당시 컨디션 or 심리 상태 |
+| `bias` | 인지오류 or 편향 |
+| `fix` | 해결전략 or 다음 행동 원칙 |
+| `memo` | 기타 메모 |
+
+Example:
+
 ```bash
-python 2_add_trade.py --json '{"date":"2025-05-02","ticker":"NVDA","name":"NVIDIA","type":"매수","qty":10,"price":294130,"amount":2941300,"reason":"AI수혜","timing":"과매도","score":"6","condition":"상","bias":"포모","fix":"기대값계산","memo":""}'
+python 2_add_trade.py --json '{"date":"2026-05-22","ticker":"NVDA","name":"NVIDIA","type":"매수","qty":10,"price":294130,"amount":2941300,"reason":"AI 수혜","timing":"조정 구간","score":"6","analysis":"","condition":"중","bias":"포모","fix":"분할매수 유지","memo":""}'
 ```
 
-5. 명령 실행 완료 후, 성공적으로 시트에 기록된 내용을 예쁜 마크다운 표 형식으로 정리해서 보고합니다.
+## Boundaries
+
+- Do not use this skill for read-only portfolio review. Use `$personal-analyze-trade`.
+- Do not perform broad Google Sheets analysis here. This skill may confirm the append result, but deeper review belongs to `$personal-analyze-trade`.
+- Do not change formulas, dashboard ranges, or portfolio structure unless the user explicitly requests maintenance work.

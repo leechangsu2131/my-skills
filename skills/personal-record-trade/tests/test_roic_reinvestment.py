@@ -2,6 +2,7 @@ import pytest
 
 from valuation_app.roic_reinvestment import (
     build_reinvestment_matrix,
+    build_roic_metric_explanations,
     calc_economic_profit,
     calc_ev_nopat_multiple,
     calc_implied_future_roic_from_invested_capital,
@@ -84,3 +85,12 @@ def test_build_reinvestment_matrix():
     assert rows[0]["growth_rate"] == 0.03
     assert rows[0][0.10] == pytest.approx(0.30)
     assert rows[1][0.25] == pytest.approx(0.20)
+
+
+def test_build_roic_metric_explanations_are_beginner_friendly():
+    rows = build_roic_metric_explanations()
+
+    assert rows[0]["지표"] == "현재 ROIC"
+    assert "현재 사업 수익성" in rows[0]["무슨 뜻인가"]
+    assert any(row["지표"] == "현재 NOPAT 기준 역산" and "해가 안 나옵니다" in row["어떻게 읽나"] for row in rows)
+    assert any(row["지표"] == "주가 내포 미래 ROIC" and "억지로 설명하려면" in row["어떻게 읽나"] for row in rows)

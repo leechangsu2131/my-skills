@@ -18,6 +18,7 @@ from valuation_app.repository import load_market_data, load_metric_observations
 from valuation_app.reverse_dcf import build_required_fcf_matrix, calc_normalized_fcf, required_fcf_multiple
 from valuation_app.roic_reinvestment import (
     build_reinvestment_matrix,
+    build_roic_metric_explanations,
     calc_economic_profit,
     calc_ev_nopat_multiple,
     calc_implied_future_roic_from_invested_capital,
@@ -542,6 +543,13 @@ def render_roic_reinvestment_tab(input_set: ValuationInputSet) -> None:
             "투하자본 기준으로 역산한 미래 ROIC가 매우 높습니다. "
             "이 값은 현재 주가가 단순히 현재 이익의 연장이 아니라 큰 폭의 정상화 이익, 높은 마진, 또는 긴 경쟁우위 기간을 요구한다는 뜻입니다."
         )
+
+    st.markdown("#### 숫자 읽는 법")
+    st.info(
+        "요약하면 현재 수익성은 자본비용을 살짝 밑돌고, 현재 주가는 현재 이익만으로 설명되지 않습니다. "
+        "따라서 시장은 큰 폭의 이익 정상화, 마진 개선, 고부가 제품 믹스, 또는 긴 경쟁우위 기간을 요구하고 있다고 읽어야 합니다."
+    )
+    st.table(pd.DataFrame(build_roic_metric_explanations()))
 
     st.markdown("#### 목표 ROIC별 필요 재투자율")
     st.caption(

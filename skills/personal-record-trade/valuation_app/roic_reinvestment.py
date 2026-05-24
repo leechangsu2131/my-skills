@@ -20,6 +20,23 @@ def calc_implied_roic_from_value_driver(
     return growth_rate / denominator
 
 
+def calc_max_ev_nopat_multiple(wacc: float, growth_rate: float) -> float | None:
+    if wacc <= growth_rate:
+        return None
+    return 1.0 / (wacc - growth_rate)
+
+
+def calc_implied_future_roic_from_invested_capital(
+    enterprise_value: float | int,
+    invested_capital: float | int | None,
+    wacc: float,
+    growth_rate: float,
+) -> float | None:
+    if invested_capital is None or invested_capital <= 0 or wacc <= growth_rate:
+        return None
+    return growth_rate + enterprise_value * (wacc - growth_rate) / invested_capital
+
+
 def calc_reinvestment_rate(growth_rate: float, roic: float | int | None) -> float | None:
     if roic is None or roic <= 0:
         return None

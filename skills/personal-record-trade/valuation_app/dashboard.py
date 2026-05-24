@@ -11,6 +11,12 @@ from valuation_app.formatting import format_krw, format_ratio, source_label, sta
 from valuation_app.models import AuditCheck, MetricObservation, ValuationInputSet
 from valuation_app.repository import load_market_data, load_metric_observations
 from valuation_app.reverse_dcf import build_required_fcf_matrix, calc_normalized_fcf, required_fcf_multiple
+from valuation_app.value_attribution import (
+    build_value_attribution_table,
+    calc_future_expectation_ratio,
+    calc_future_expectation_value,
+    calc_no_growth_value,
+)
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -89,6 +95,20 @@ def _reverse_dcf_matrix(
     matrix.columns = [format_ratio(value) for value in matrix.columns]
     matrix.index.name = "WACC \\ g"
     return matrix
+
+
+def _value_attribution_rows(rows: list[dict[str, float | None]]) -> list[dict[str, str]]:
+    formatted = []
+    for row in rows:
+        formatted.append(
+            {
+                "WACC": format_ratio(row["wacc"]),
+                "현재 수익력 가치": format_krw(row["no_growth_value"]),
+                "미래 기대 가치": format_krw(row["future_expectation_value"]),
+                "미래 기대 비중": format_ratio(row["future_expectation_ratio"]),
+            }
+        )
+    return formatted
 
 
 def _format_sensitivity_cell(value: float | None, unit: str) -> str:
@@ -215,10 +235,77 @@ def render_reverse_dcf_tab(input_set: ValuationInputSet) -> None:
         )
 
 
+def render_value_attribution_tab(input_set: ValuationInputSet) -> None:
+    enterprise_value = input_set.inputs.get("enterprise_value")
+    nopat = input_set.inputs.get("nopat")
+    operating_income = input_set.inputs.get("operating_income")
+    tax_rate = input_set.inputs.get("tax_rate")
+
+    st.markdown("현재 EV를 현재 수익력 가치와 미래 기대 가치로 나눠 봅니다.")
+    st.code(
+        "현재 수익력 가치 = NOPAT / WACC\n미래 기대 가치 = EV - 현재 수익력 가치",
+        language="text",
+    )
+
+    if enterprise_value is None or nopat is None:
+        st.error("Value Attribution에 필요한 EV 또는 NOPAT이 없습니다. 먼저 데이터 검산을 확인하세요.")
+        return
+
+    left, right = st.columns([1, 1])
+    wacc = left.slider("Value Attribution WACC", min_value=5.0, max_value=13.0, value=9.0, step=0.5) / 100.0
+    right.caption("WACC가 낮을수록 같은 NOPAT의 현재 수익력 가치가 커집니다.")
+
+    no_growth_value = calc_no_growth_value(nopat, wacc)
+    future_value = calc_future_expectation_value(enterprise_value, no_growth_value)
+    future_ratio = calc_future_expectation_ratio(future_value, enterprise_value)
+    no_growth_ratio = calc_future_expectation_ratio(no_growth_value, enterprise_value)
+
+    m1, m2, m3, m4 = st.columns(4)
+    m1.metric("EV", format_krw(enterprise_value))
+    m2.metric("NOPAT", format_krw(nopat))
+    m3.metric("현재 수익력 가치", format_krw(no_growth_value))
+    m4.metric("미래 기대 비중", format_ratio(future_ratio))
+
+    split_df = pd.DataFrame(
+        [
+            {"구분": "현재 수익력 가치", "비중": no_growth_ratio or 0.0},
+            {"구분": "미래 기대 가치", "비중": future_ratio or 0.0},
+        ]
+    ).set_index("구분")
+    st.bar_chart(split_df)
+
+    if future_ratio is not None and future_ratio >= 0.7:
+        st.warning(
+            "EV의 대부분이 미래 기대 가치입니다. 이는 곧바로 고평가라는 뜻은 아니지만, "
+            "성장·마진·ROIC 가정이 실망하면 가격 민감도가 커질 수 있다는 뜻입니다."
+        )
+    else:
+        st.info("현재 수익력 가치가 EV의 큰 부분을 설명할수록 가격은 현재 이익 기반에 더 많이 기대고 있습니다.")
+
+    st.markdown("#### WACC 민감도")
+    attribution_rows = build_value_attribution_table(
+        enterprise_value=enterprise_value,
+        nopat=nopat,
+        wacc_values=[0.07, 0.08, 0.09, 0.10, 0.11],
+    )
+    st.dataframe(_value_attribution_rows(attribution_rows), use_container_width=True, hide_index=True)
+
+    with st.expander("입력값 출처와 계산 흐름"):
+        st.markdown(
+            f"""
+            - 영업이익: `{format_krw(operating_income)}`
+            - 세율: `{format_ratio(tax_rate)}`
+            - NOPAT: `{format_krw(nopat)}`
+            - 직접 계산 EV: `{format_krw(enterprise_value)}`
+            - 공식: `NOPAT / WACC`, `EV - 현재 수익력 가치`
+            """
+        )
+
+
 def main() -> None:
     st.set_page_config(page_title="삼성전기 가치분석", layout="wide")
     st.title("삼성전기 시장내포 가치분석")
-    st.caption("Phase 1-2: 출처와 검산을 확인한 뒤, 현재 EV가 요구하는 FCF를 Reverse DCF로 역산합니다.")
+    st.caption("Phase 1-3: 출처와 검산, Reverse DCF, 현재 수익력과 미래 기대 가치 분해를 함께 봅니다.")
 
     observations = load_metric_observations(METRICS_PATH)
     market = load_market_data(MARKET_PATH)
@@ -243,8 +330,8 @@ def main() -> None:
     q1.metric("2026 Q1 매출", format_krw(input_set.inputs.get("latest_quarter_revenue")))
     q2.metric("2026 Q1 영업이익", format_krw(input_set.inputs.get("latest_quarter_operating_income")))
 
-    tab_audit, tab_inputs, tab_reverse_dcf, tab_formula, tab_source = st.tabs(
-        ["1. 검산", "2. 입력값", "3. Reverse DCF", "4. 공식", "5. 출처 상세"]
+    tab_audit, tab_inputs, tab_reverse_dcf, tab_value_attribution, tab_formula, tab_source = st.tabs(
+        ["1. 검산", "2. 입력값", "3. Reverse DCF", "4. Value Attribution", "5. 공식", "6. 출처 상세"]
     )
 
     with tab_audit:
@@ -257,6 +344,9 @@ def main() -> None:
 
     with tab_reverse_dcf:
         render_reverse_dcf_tab(input_set)
+
+    with tab_value_attribution:
+        render_value_attribution_tab(input_set)
 
     with tab_formula:
         st.markdown(

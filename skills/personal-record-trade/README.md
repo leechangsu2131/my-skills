@@ -192,5 +192,6 @@ python -m streamlit run valuation_app/dashboard.py --server.port 8501
 - FCF, 순부채, NOPAT, 투하자본, ROIC 검산
 - 입력값별 출처 상세 패널
 - Reverse DCF: 현재 EV가 요구하는 FCF와 WACC/영구성장률 민감도
+- Value Attribution: 현재 수익력 가치와 미래 기대 가치 분해
 
-이 화면에서 검산을 통과한 공통 입력값을 Reverse DCF와 다음 단계인 Value Attribution 렌즈가 사용합니다.
+이 화면에서 검산을 통과한 공통 입력값을 Reverse DCF, Value Attribution, 다음 단계의 매출·마진 시나리오 렌즈가 사용합니다.

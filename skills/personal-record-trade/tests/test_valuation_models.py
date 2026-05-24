@@ -74,3 +74,65 @@ def test_input_set_and_override_models():
 
     assert input_set.inputs["market_cap"] == 101_233_310_302_208.0
     assert override.metric_key == "tax_rate"
+
+
+def test_metric_observation_rejects_extra_fields():
+    with pytest.raises(ValidationError):
+        MetricObservation(
+            metric_key="revenue",
+            label="Revenue",
+            value=1,
+            period="2025A",
+            source_method="manual",
+            confidence=0.5,
+            source_methd="manual",
+        )
+
+
+def test_valuation_input_set_rejects_invalid_valuation_date():
+    with pytest.raises(ValidationError):
+        ValuationInputSet(
+            ticker="009150",
+            company_name="Samsung Electro-Mechanics",
+            valuation_date="2026-13-40",
+            inputs={"market_cap": 1},
+            observation_keys={"market_cap": "market_cap_2026_05_22"},
+        )
+
+
+def test_user_override_rejects_invalid_changed_at():
+    with pytest.raises(ValidationError):
+        UserOverride(
+            metric_key="tax_rate",
+            previous_value=0.183,
+            new_value=0.22,
+            reason="Sensitivity check",
+            changed_at="not-a-datetime",
+        )
+
+
+def test_metric_observation_rejects_confidence_outside_bounds():
+    with pytest.raises(ValidationError):
+        MetricObservation(
+            metric_key="fcf",
+            label="FCF",
+            value=1,
+            period="2025A",
+            source_method="manual",
+            confidence=1.1,
+        )
+
+
+def test_audit_check_rejects_negative_tolerance():
+    with pytest.raises(ValidationError):
+        AuditCheck(
+            check_key="fcf_reconciliation",
+            label="FCF check",
+            formula="FCF = CFO - CAPEX",
+            expected_value=1,
+            actual_value=1,
+            tolerance=-0.01,
+            status="pass",
+            inputs=["op_cashflow", "capex"],
+            explanation="No negative tolerances.",
+        )

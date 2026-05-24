@@ -1,8 +1,9 @@
 from __future__ import annotations
 
+from datetime import date, datetime
 from typing import Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 SourceMethod = Literal[
@@ -16,11 +17,15 @@ SourceMethod = Literal[
 
 AuditStatus = Literal["pass", "warning", "fail", "manual_override"]
 
+Number = int | float
+
 
 class MetricObservation(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
     metric_key: str
     label: str
-    value: float | None
+    value: Number | None
     unit: str = "KRW"
     period: str
     source_method: SourceMethod
@@ -28,34 +33,40 @@ class MetricObservation(BaseModel):
     report_code: str | None = None
     statement_name: str | None = None
     original_account_name: str | None = None
-    original_amount: float | None = None
+    original_amount: Number | None = None
     confidence: float = Field(ge=0.0, le=1.0)
     note: str = ""
 
 
 class AuditCheck(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
     check_key: str
     label: str
     formula: str
-    expected_value: float | None
-    actual_value: float | None
-    tolerance: float
+    expected_value: Number | None
+    actual_value: Number | None
+    tolerance: float = Field(ge=0.0)
     status: AuditStatus
     inputs: list[str]
     explanation: str
 
 
 class ValuationInputSet(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
     ticker: str
     company_name: str
-    valuation_date: str
-    inputs: dict[str, float | None]
+    valuation_date: date
+    inputs: dict[str, Number | None]
     observation_keys: dict[str, str]
 
 
 class UserOverride(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
     metric_key: str
-    previous_value: float | None
-    new_value: float | None
+    previous_value: Number | None
+    new_value: Number | None
     reason: str
-    changed_at: str
+    changed_at: datetime

@@ -309,3 +309,9 @@ Correction:
   `EV = Invested Capital × (Future ROIC - g) / (WACC - g)`
   so `Future ROIC = g + EV × (WACC - g) / Invested Capital`.
 - This better answers the user's intended question: what future normalized business quality is the current price asking for?
+
+Follow-up:
+
+- The user asked what each ROIC tab metric means.
+- Add a "숫자 읽는 법" section directly inside tab 6 so explanations sit next to the numbers rather than only in the conversation.
+- Keep it beginner-friendly: each row should answer "무슨 뜻인가" and "어떻게 읽나".

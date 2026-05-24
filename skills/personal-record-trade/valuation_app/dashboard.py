@@ -15,6 +15,15 @@ from valuation_app.margin_scenario import (
 )
 from valuation_app.models import AuditCheck, MetricObservation, ValuationInputSet
 from valuation_app.repository import load_market_data, load_metric_observations
+from valuation_app.relative_valuation import (
+    build_relative_metric_explanations,
+    calc_ev_to_nopat,
+    calc_ev_to_sales,
+    calc_implied_nopat_margin_from_ev_sales,
+    calc_implied_operating_margin_from_ev_sales,
+    calc_implied_roe_from_pb,
+    calc_price_to_book,
+)
 from valuation_app.reverse_dcf import build_required_fcf_matrix, calc_normalized_fcf, required_fcf_multiple
 from valuation_app.roic_reinvestment import (
     build_reinvestment_matrix,
@@ -588,10 +597,88 @@ def render_roic_reinvestment_tab(input_set: ValuationInputSet) -> None:
         )
 
 
+def render_relative_valuation_tab(input_set: ValuationInputSet) -> None:
+    market_cap = input_set.inputs.get("market_cap")
+    enterprise_value = input_set.inputs.get("enterprise_value")
+    revenue = input_set.inputs.get("revenue")
+    nopat = input_set.inputs.get("nopat")
+    total_equity = input_set.inputs.get("total_equity")
+    tax_rate = input_set.inputs.get("tax_rate") or 0.183
+
+    st.markdown("상대가치는 싸다/비싸다 결론이 아니라, 현재 가격을 여러 분모로 나눠 시장의 요구조건을 보는 보조 렌즈입니다.")
+    st.code(
+        "P/B = 시가총액 / 자본총계\n"
+        "내포 ROE = g + P/B × (요구수익률 - g)\n"
+        "EV/Sales = EV / 매출\n"
+        "필요 NOPAT margin = EV/Sales × (WACC - g) / ((1 - g/ROIC) × (1 + g))\n"
+        "필요 영업이익률 = 필요 NOPAT margin / (1 - 세율)",
+        language="text",
+    )
+
+    if market_cap is None or enterprise_value is None:
+        st.error("상대가치 분석에 필요한 시가총액 또는 EV가 없습니다. 먼저 데이터 검산을 확인하세요.")
+        return
+
+    c1, c2, c3, c4 = st.columns(4)
+    required_return = c1.slider("Equity 요구수익률", min_value=5.0, max_value=15.0, value=10.0, step=0.5) / 100.0
+    wacc = c2.slider("Relative WACC", min_value=5.0, max_value=13.0, value=9.0, step=0.5) / 100.0
+    growth_rate = c3.slider("Relative 성장률 g", min_value=0.0, max_value=8.0, value=3.0, step=0.5) / 100.0
+    target_roic = c4.slider("Relative 목표 ROIC", min_value=5.0, max_value=40.0, value=25.0, step=0.5) / 100.0
+
+    price_to_book = calc_price_to_book(market_cap, total_equity)
+    ev_sales = calc_ev_to_sales(enterprise_value, revenue)
+    ev_nopat = calc_ev_to_nopat(enterprise_value, nopat)
+    implied_roe = calc_implied_roe_from_pb(price_to_book, required_return, growth_rate)
+    implied_nopat_margin = calc_implied_nopat_margin_from_ev_sales(ev_sales, wacc, growth_rate, target_roic)
+    implied_operating_margin = calc_implied_operating_margin_from_ev_sales(
+        ev_sales, wacc, growth_rate, target_roic, float(tax_rate)
+    )
+
+    m1, m2, m3, m4 = st.columns(4)
+    m1.metric("P/E", "데이터 필요")
+    m2.metric("P/B", _format_multiple(price_to_book))
+    m3.metric("P/B 내포 ROE", format_ratio(implied_roe))
+    m4.metric("EV/Sales", _format_multiple(ev_sales))
+
+    n1, n2, n3 = st.columns(3)
+    n1.metric("EV/Sales 필요 NOPAT margin", format_ratio(implied_nopat_margin))
+    n2.metric("EV/Sales 필요 영업이익률", format_ratio(implied_operating_margin))
+    n3.metric("EV/NOPAT", _format_multiple(ev_nopat))
+
+    if implied_roe is not None and implied_roe >= 0.3:
+        st.warning(
+            "P/B 기준 내포 ROE가 매우 높습니다. 이는 장부자본 대비 현재 주가가 높은 수익성 회복 또는 긴 초과수익 기간을 요구한다는 뜻입니다."
+        )
+    if implied_operating_margin is not None and implied_operating_margin >= 0.4:
+        st.warning(
+            "EV/Sales 기준 필요 영업이익률이 매우 높습니다. 매출 규모 확대만으로는 부족하고 제품 믹스, 마진, 재투자 효율을 함께 검증해야 합니다."
+        )
+
+    st.markdown("#### 숫자 읽는 법")
+    st.info(
+        "P/B와 EV/Sales가 높게 나오면 그 자체가 결론은 아닙니다. "
+        "중요한 질문은 이 배수를 정당화할 ROE, 마진, 성장률이 현실적인가입니다."
+    )
+    st.table(pd.DataFrame(build_relative_metric_explanations()))
+
+    with st.expander("입력값 출처와 계산 흐름"):
+        st.markdown(
+            f"""
+            - 시가총액: `{format_krw(market_cap)}`
+            - EV: `{format_krw(enterprise_value)}`
+            - 매출: `{format_krw(revenue)}`
+            - NOPAT: `{format_krw(nopat)}`
+            - 자본총계: `{format_krw(total_equity)}`
+            - 세율: `{format_ratio(tax_rate)}`
+            - P/E: 순이익 데이터가 없어 아직 계산하지 않습니다.
+            """
+        )
+
+
 def main() -> None:
     st.set_page_config(page_title="삼성전기 가치분석", layout="wide")
     st.title("삼성전기 시장내포 가치분석")
-    st.caption("Phase 1-5: 출처와 검산, Reverse DCF, 가치 분해, 매출·마진, ROIC·재투자 품질을 함께 봅니다.")
+    st.caption("Phase 1-6: 출처와 검산, Reverse DCF, 가치 분해, 매출·마진, ROIC, 상대가치를 함께 봅니다.")
 
     observations = load_metric_observations(METRICS_PATH)
     market = load_market_data(MARKET_PATH)
@@ -623,6 +710,7 @@ def main() -> None:
         tab_value_attribution,
         tab_margin_scenario,
         tab_roic,
+        tab_relative,
         tab_formula,
         tab_source,
     ) = st.tabs(
@@ -633,8 +721,9 @@ def main() -> None:
             "4. Value Attribution",
             "5. 매출·마진",
             "6. ROIC",
-            "7. 공식",
-            "8. 출처 상세",
+            "7. 상대가치",
+            "8. 공식",
+            "9. 출처 상세",
         ]
     )
 
@@ -658,6 +747,9 @@ def main() -> None:
     with tab_roic:
         render_roic_reinvestment_tab(input_set)
 
+    with tab_relative:
+        render_relative_valuation_tab(input_set)
+
     with tab_formula:
         st.markdown(
             """
@@ -670,6 +762,9 @@ def main() -> None:
             - `경제적 이익 = NOPAT - 투하자본 × WACC`
             - `재투자율 = 성장률 / ROIC`
             - `EV/NOPAT = (1 - g/ROIC) / (WACC - g)`
+            - `P/B = 시가총액 / 자본총계`
+            - `내포 ROE = g + P/B × (요구수익률 - g)`
+            - `EV/Sales = EV / 매출`
             """
         )
         st.warning("이 화면은 투자 권유가 아니라 다음 가치평가 단계로 넘길 입력값의 신뢰도를 확인하는 화면입니다.")

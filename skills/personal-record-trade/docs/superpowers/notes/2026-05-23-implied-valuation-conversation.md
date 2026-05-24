@@ -315,3 +315,24 @@ Follow-up:
 - The user asked what each ROIC tab metric means.
 - Add a "숫자 읽는 법" section directly inside tab 6 so explanations sit next to the numbers rather than only in the conversation.
 - Keep it beginner-friendly: each row should answer "무슨 뜻인가" and "어떻게 읽나".
+
+## Implementation Progress Notes - Relative Valuation Lens
+
+The user asked to proceed to the next step after the ROIC explanations.
+
+Design intent:
+
+- Add relative valuation as a supporting lens, not a standalone buy/sell conclusion.
+- Use currently available audited inputs:
+  - `P/B = market cap / total equity`
+  - `EV/Sales = EV / revenue`
+  - `EV/NOPAT = EV / NOPAT`
+- Do not fabricate P/E because net income is not yet in the normalized dataset. Show `데이터 필요` instead.
+- Translate multiples into implied operating questions:
+  - P/B -> implied ROE
+  - EV/Sales -> required NOPAT margin and operating margin
+  - EV/NOPAT -> current earnings burden
+
+Next likely lens:
+
+- CAP / competitive advantage period, to ask how long abnormal returns must persist if the required ROIC or margin assumptions are not immediately realistic.

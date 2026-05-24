@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import pandas as pd
 import streamlit as st
 
 from valuation_app.audit import run_audit
@@ -9,7 +10,7 @@ from valuation_app.calculations import calc_required_fcf
 from valuation_app.formatting import format_krw, format_ratio, source_label, status_label
 from valuation_app.models import AuditCheck, MetricObservation, ValuationInputSet
 from valuation_app.repository import load_market_data, load_metric_observations
-from valuation_app.reverse_dcf import build_required_fcf_table, calc_normalized_fcf, required_fcf_multiple
+from valuation_app.reverse_dcf import build_required_fcf_matrix, calc_normalized_fcf, required_fcf_multiple
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -51,20 +52,6 @@ def _format_multiple(value: float | int | None) -> str:
     return f"{value:.1f}배"
 
 
-def _reverse_dcf_rows(rows: list[dict[str, float | None]]) -> list[dict[str, str]]:
-    formatted = []
-    for row in rows:
-        formatted.append(
-            {
-                "WACC": format_ratio(row["wacc"]),
-                "영구성장률": format_ratio(row["terminal_growth"]),
-                "필요 FCF": format_krw(row["required_fcf"]),
-                "현재 FCF 대비": _format_multiple(row["current_fcf_multiple"]),
-            }
-        )
-    return formatted
-
-
 def _observation_rows(observations: list[MetricObservation]) -> list[dict[str, str]]:
     rows = []
     for obs in observations:
@@ -81,6 +68,35 @@ def _observation_rows(observations: list[MetricObservation]) -> list[dict[str, s
             }
         )
     return rows
+
+
+def _reverse_dcf_matrix(
+    enterprise_value: float | int,
+    current_fcf: float | int | None,
+    wacc_values: list[float],
+    terminal_growth_values: list[float],
+    metric: str,
+) -> pd.DataFrame:
+    rows = build_required_fcf_matrix(
+        enterprise_value=enterprise_value,
+        current_fcf=current_fcf,
+        wacc_values=wacc_values,
+        terminal_growth_values=terminal_growth_values,
+        metric=metric,
+    )
+    matrix = pd.DataFrame(rows).set_index("wacc")
+    matrix.index = [format_ratio(value) for value in matrix.index]
+    matrix.columns = [format_ratio(value) for value in matrix.columns]
+    matrix.index.name = "WACC \\ g"
+    return matrix
+
+
+def _format_sensitivity_cell(value: float | None, unit: str) -> str:
+    if value is None or pd.isna(value):
+        return "-"
+    if unit == "krw_trillion":
+        return f"{value / 1_000_000_000_000:.1f}조"
+    return f"{value:.1f}배"
 
 
 def render_source_panel(obs: MetricObservation) -> None:
@@ -137,13 +153,29 @@ def render_reverse_dcf_tab(input_set: ValuationInputSet) -> None:
         st.info("현재 FCF와 필요 FCF의 차이가 작을수록 가격이 현재 현금창출력에 더 많이 기대고 있다는 뜻입니다.")
 
     st.markdown("#### WACC / 영구성장률 민감도")
-    sensitivity = build_required_fcf_table(
-        enterprise_value=float(enterprise_value),
-        current_fcf=current_fcf,
-        wacc_values=[0.07, 0.08, 0.09, 0.10, 0.11],
-        terminal_growth_values=[0.01, 0.02, 0.03, 0.04],
+    st.caption("행은 WACC, 열은 영구성장률입니다. 전형적인 DCF 민감도 표처럼 볼 수 있게 낮은 요구치는 녹색, 높은 요구치는 붉은색으로 표시합니다.")
+    wacc_grid = [0.07, 0.08, 0.09, 0.10, 0.11]
+    growth_grid = [0.01, 0.02, 0.03, 0.04]
+    required_matrix = _reverse_dcf_matrix(float(enterprise_value), current_fcf, wacc_grid, growth_grid, "required_fcf")
+    multiple_matrix = _reverse_dcf_matrix(
+        float(enterprise_value), current_fcf, wacc_grid, growth_grid, "current_fcf_multiple"
     )
-    st.dataframe(_reverse_dcf_rows(sensitivity), use_container_width=True, hide_index=True)
+
+    s_required, s_multiple = st.tabs(["필요 FCF", "현재 FCF 대비 배수"])
+    with s_required:
+        st.dataframe(
+            required_matrix.style.format(lambda value: _format_sensitivity_cell(value, "krw_trillion")).background_gradient(
+                cmap="RdYlGn_r", axis=None
+            ),
+            use_container_width=True,
+        )
+    with s_multiple:
+        st.dataframe(
+            multiple_matrix.style.format(lambda value: _format_sensitivity_cell(value, "multiple")).background_gradient(
+                cmap="RdYlGn_r", axis=None
+            ),
+            use_container_width=True,
+        )
 
     st.markdown("#### 정상화 FCF 사고실험")
     base_options = ["2025 연간 매출", "2026 Q1 run-rate"]
@@ -160,7 +192,7 @@ def render_reverse_dcf_tab(input_set: ValuationInputSet) -> None:
         latest_margin = round(float(latest_quarter_operating_income) / float(latest_quarter_revenue) * 100, 1)
 
     s1, s2, s3 = st.columns(3)
-    op_margin = s1.slider("정상화 영업이익률", min_value=0.0, max_value=25.0, value=latest_margin, step=0.5) / 100.0
+    op_margin = s1.slider("정상화 영업이익률", min_value=0.0, max_value=40.0, value=latest_margin, step=0.5) / 100.0
     scenario_tax_rate = s2.slider("세율", min_value=0.0, max_value=40.0, value=round(float(tax_rate) * 100, 1), step=0.1) / 100.0
     fcf_conversion = s3.slider("NOPAT → FCF 전환율", min_value=0.0, max_value=120.0, value=70.0, step=5.0) / 100.0
 
@@ -176,6 +208,11 @@ def render_reverse_dcf_tab(input_set: ValuationInputSet) -> None:
         "정상화 FCF = 매출 × 영업이익률 × (1 - 세율) × FCF 전환율. "
         "이 사고실험은 정답이 아니라 현재 가격이 요구하는 규모감을 몸으로 익히기 위한 장치입니다."
     )
+    if op_margin >= 0.25:
+        st.warning(
+            "영업이익률 25% 이상은 강한 프리미엄/구조적 개선 가정입니다. "
+            "불가능하다는 뜻은 아니지만, 과거 실적과 peer margin으로 별도 검증해야 합니다."
+        )
 
 
 def main() -> None:

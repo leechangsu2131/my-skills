@@ -175,7 +175,7 @@ pip install -r requirements-valuation.txt
 ### 테스트
 
 ```bash
-python -m pytest tests/test_valuation_models.py tests/test_valuation_calculations.py tests/test_valuation_repository.py tests/test_valuation_audit.py tests/test_valuation_formatting.py -v
+python -m pytest tests/test_valuation_models.py tests/test_valuation_calculations.py tests/test_valuation_repository.py tests/test_valuation_audit.py tests/test_valuation_formatting.py tests/test_reverse_dcf.py tests/test_value_attribution.py tests/test_margin_scenario.py tests/test_roic_reinvestment.py -v
 ```
 
 ### 실행
@@ -194,5 +194,6 @@ python -m streamlit run valuation_app/dashboard.py --server.port 8501
 - Reverse DCF: 현재 EV가 요구하는 FCF와 WACC/영구성장률 민감도
 - Value Attribution: 현재 수익력 가치와 미래 기대 가치 분해
 - 매출·마진 시나리오: 필요 FCF를 설명하는 매출 성장률과 영업이익률 조합
+- ROIC·재투자 품질: 현재 ROIC, 경제적 이익, EV/NOPAT, 목표 성장률별 필요 재투자율
 
-이 화면에서 검산을 통과한 공통 입력값을 Reverse DCF, Value Attribution, 매출·마진 시나리오와 다음 단계의 ROIC 렌즈가 사용합니다.
+이 화면에서 검산을 통과한 공통 입력값을 Reverse DCF, Value Attribution, 매출·마진 시나리오, ROIC 렌즈와 다음 단계의 상대가치 렌즈가 사용합니다.

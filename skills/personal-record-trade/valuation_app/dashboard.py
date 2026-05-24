@@ -16,6 +16,13 @@ from valuation_app.margin_scenario import (
 from valuation_app.models import AuditCheck, MetricObservation, ValuationInputSet
 from valuation_app.repository import load_market_data, load_metric_observations
 from valuation_app.reverse_dcf import build_required_fcf_matrix, calc_normalized_fcf, required_fcf_multiple
+from valuation_app.roic_reinvestment import (
+    build_reinvestment_matrix,
+    calc_economic_profit,
+    calc_ev_nopat_multiple,
+    calc_implied_roic_from_value_driver,
+    calc_reinvestment_rate,
+)
 from valuation_app.value_attribution import (
     build_value_attribution_table,
     calc_future_expectation_ratio,
@@ -152,6 +159,15 @@ def _margin_scenario_matrix(
     return matrix
 
 
+def _reinvestment_matrix(growth_rates: list[float], roic_values: list[float]) -> pd.DataFrame:
+    rows = build_reinvestment_matrix(growth_rates=growth_rates, roic_values=roic_values)
+    matrix = pd.DataFrame(rows).set_index("growth_rate")
+    matrix.index = [format_ratio(value) for value in matrix.index]
+    matrix.columns = [format_ratio(value) for value in matrix.columns]
+    matrix.index.name = "성장률 \\ ROIC"
+    return matrix
+
+
 def _format_sensitivity_cell(value: float | None, unit: str) -> str:
     if value is None or pd.isna(value):
         return "-"
@@ -161,6 +177,12 @@ def _format_sensitivity_cell(value: float | None, unit: str) -> str:
 
 
 def _format_coverage_cell(value: float | None) -> str:
+    if value is None or pd.isna(value):
+        return "-"
+    return format_ratio(value)
+
+
+def _format_reinvestment_cell(value: float | None) -> str:
     if value is None or pd.isna(value):
         return "-"
     return format_ratio(value)
@@ -442,10 +464,98 @@ def render_margin_scenario_tab(input_set: ValuationInputSet) -> None:
     )
 
 
+def render_roic_reinvestment_tab(input_set: ValuationInputSet) -> None:
+    enterprise_value = input_set.inputs.get("enterprise_value")
+    operating_income = input_set.inputs.get("operating_income")
+    tax_rate = input_set.inputs.get("tax_rate")
+    nopat = input_set.inputs.get("nopat")
+    total_equity = input_set.inputs.get("total_equity")
+    net_debt = input_set.inputs.get("net_debt")
+    invested_capital = input_set.inputs.get("invested_capital")
+    roic = input_set.inputs.get("roic")
+
+    st.markdown("현재 가격이 요구하는 수익성의 질을 ROIC와 재투자율로 나눠 봅니다.")
+    st.code(
+        "ROIC = NOPAT / 투하자본\n"
+        "경제적 이익 = NOPAT - 투하자본 × WACC\n"
+        "재투자율 = 성장률 / ROIC\n"
+        "EV/NOPAT = (1 - g/ROIC) / (WACC - g)",
+        language="text",
+    )
+
+    if enterprise_value is None or nopat is None or invested_capital is None or roic is None:
+        st.error("ROIC 분석에 필요한 EV, NOPAT, 투하자본 또는 ROIC가 없습니다. 먼저 데이터 검산을 확인하세요.")
+        return
+
+    c1, c2, c3 = st.columns(3)
+    wacc = c1.slider("ROIC WACC", min_value=5.0, max_value=13.0, value=9.0, step=0.5) / 100.0
+    growth_rate = c2.slider("목표 성장률 g", min_value=0.0, max_value=10.0, value=3.0, step=0.5) / 100.0
+    target_roic = c3.slider("목표 ROIC", min_value=5.0, max_value=40.0, value=25.0, step=0.5) / 100.0
+
+    economic_profit = calc_economic_profit(float(nopat), float(invested_capital), wacc)
+    ev_nopat = calc_ev_nopat_multiple(float(enterprise_value), float(nopat))
+    implied_roic = calc_implied_roic_from_value_driver(ev_nopat, wacc, growth_rate)
+    reinvestment_rate = calc_reinvestment_rate(growth_rate, target_roic)
+
+    m1, m2, m3, m4 = st.columns(4)
+    m1.metric("현재 ROIC", format_ratio(roic), delta=f"WACC 대비 {format_ratio(float(roic) - wacc)}")
+    m2.metric("경제적 이익", format_krw(economic_profit))
+    m3.metric("EV/NOPAT", _format_multiple(ev_nopat))
+    m4.metric("공식상 역산 ROIC", format_ratio(implied_roic))
+
+    if economic_profit < 0:
+        st.warning(
+            "현재 ROIC가 선택한 WACC보다 낮아 경제적 이익이 음수입니다. "
+            "즉 현재 수익력만 놓고 보면 자본비용을 아직 충분히 넘지 못합니다."
+        )
+    else:
+        st.info("현재 ROIC가 선택한 WACC를 넘어서고 있어 현재 수익력은 경제적 이익을 만들고 있습니다.")
+
+    if implied_roic is None:
+        st.warning(
+            "선택한 WACC/g와 현재 EV/NOPAT에서는 단일 단계 가치드라이버 공식의 분모가 0 이하입니다. "
+            "이는 가격이 단순 1단계 ROIC보다 정상화 마진, 매출 성장, 긴 경쟁우위 기간 같은 다단계 가정을 요구한다는 뜻으로 읽어야 합니다."
+        )
+
+    st.markdown("#### 목표 ROIC별 필요 재투자율")
+    st.caption(
+        "재투자율 = 성장률 / ROIC입니다. 25%는 제한이 아니라 비교 기준입니다. "
+        "높은 성장률을 낮은 ROIC로 만들려면 이익 대부분을 다시 투자해야 합니다."
+    )
+    r1, r2 = st.columns([1, 2])
+    r1.metric("선택한 목표 ROIC의 필요 재투자율", format_ratio(reinvestment_rate))
+    if reinvestment_rate is not None and reinvestment_rate > 1:
+        r2.warning("필요 재투자율이 100%를 넘습니다. 이 성장률은 현재 이익 전부를 재투자해도 부족하다는 뜻입니다.")
+    else:
+        r2.info("같은 성장률이라도 ROIC가 높을수록 필요한 재투자율은 낮아집니다.")
+
+    reinvestment_grid = _reinvestment_matrix(
+        growth_rates=[0.02, 0.03, 0.05, 0.07, 0.10],
+        roic_values=[0.08, 0.12, 0.16, 0.20, 0.25, 0.30, 0.40],
+    )
+    st.dataframe(
+        reinvestment_grid.style.format(_format_reinvestment_cell).background_gradient(cmap="RdYlGn_r", axis=None),
+        use_container_width=True,
+    )
+
+    with st.expander("입력값 출처와 계산 흐름"):
+        st.markdown(
+            f"""
+            - 영업이익: `{format_krw(operating_income)}`
+            - 세율: `{format_ratio(tax_rate)}`
+            - NOPAT: `{format_krw(nopat)}`
+            - 자본총계: `{format_krw(total_equity)}`
+            - 순부채: `{format_krw(net_debt)}`
+            - 투하자본: `{format_krw(invested_capital)}`
+            - 공식: `ROIC = NOPAT / 투하자본`, `경제적 이익 = NOPAT - 투하자본 × WACC`
+            """
+        )
+
+
 def main() -> None:
     st.set_page_config(page_title="삼성전기 가치분석", layout="wide")
     st.title("삼성전기 시장내포 가치분석")
-    st.caption("Phase 1-4: 출처와 검산, Reverse DCF, 가치 분해, 매출·마진 시나리오를 함께 봅니다.")
+    st.caption("Phase 1-5: 출처와 검산, Reverse DCF, 가치 분해, 매출·마진, ROIC·재투자 품질을 함께 봅니다.")
 
     observations = load_metric_observations(METRICS_PATH)
     market = load_market_data(MARKET_PATH)
@@ -470,8 +580,26 @@ def main() -> None:
     q1.metric("2026 Q1 매출", format_krw(input_set.inputs.get("latest_quarter_revenue")))
     q2.metric("2026 Q1 영업이익", format_krw(input_set.inputs.get("latest_quarter_operating_income")))
 
-    tab_audit, tab_inputs, tab_reverse_dcf, tab_value_attribution, tab_margin_scenario, tab_formula, tab_source = st.tabs(
-        ["1. 검산", "2. 입력값", "3. Reverse DCF", "4. Value Attribution", "5. 매출·마진", "6. 공식", "7. 출처 상세"]
+    (
+        tab_audit,
+        tab_inputs,
+        tab_reverse_dcf,
+        tab_value_attribution,
+        tab_margin_scenario,
+        tab_roic,
+        tab_formula,
+        tab_source,
+    ) = st.tabs(
+        [
+            "1. 검산",
+            "2. 입력값",
+            "3. Reverse DCF",
+            "4. Value Attribution",
+            "5. 매출·마진",
+            "6. ROIC",
+            "7. 공식",
+            "8. 출처 상세",
+        ]
     )
 
     with tab_audit:
@@ -491,6 +619,9 @@ def main() -> None:
     with tab_margin_scenario:
         render_margin_scenario_tab(input_set)
 
+    with tab_roic:
+        render_roic_reinvestment_tab(input_set)
+
     with tab_formula:
         st.markdown(
             """
@@ -500,6 +631,9 @@ def main() -> None:
             - `NOPAT = 영업이익 × (1 - 세율)`
             - `투하자본 = 자본총계 + 순부채`
             - `ROIC = NOPAT / 투하자본`
+            - `경제적 이익 = NOPAT - 투하자본 × WACC`
+            - `재투자율 = 성장률 / ROIC`
+            - `EV/NOPAT = (1 - g/ROIC) / (WACC - g)`
             """
         )
         st.warning("이 화면은 투자 권유가 아니라 다음 가치평가 단계로 넘길 입력값의 신뢰도를 확인하는 화면입니다.")

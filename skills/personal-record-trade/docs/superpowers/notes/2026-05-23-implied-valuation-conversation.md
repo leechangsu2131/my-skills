@@ -273,3 +273,19 @@ Design implication:
   - current price, shares, market cap, EV
   - debt, cash, equity, invested capital, operating profit, operating cash flow, capex, FCF
   - source links and timestamps
+
+## Implementation Progress Notes - ROIC Lens
+
+The user asked to continue the multi-lens analysis after Reverse DCF, Value Attribution, and revenue/margin scenarios. The next implemented lens is ROIC / Reinvestment Quality.
+
+Design intent:
+
+- Show why ROIC matters before using it as a formula input.
+- Make 25% ROIC a user-adjustable comparison point, not a hidden ceiling or claim.
+- Explain current ROIC versus WACC through economic profit.
+- Show `Reinvestment Rate = g / ROIC` so the user can see how growth quality changes with business quality.
+- Show the McKinsey value-driver formula transparently, but warn when the one-stage formula breaks under current EV/NOPAT because that means the price likely requires multi-stage margin recovery, revenue growth, or long competitive advantage duration.
+
+Next likely lens:
+
+- Relative valuation, using P/E, P/B, EV/NOPAT or EV/EBIT, and EV/Sales only after the user can see how each multiple maps back to growth, margin, ROIC, or book-return assumptions.

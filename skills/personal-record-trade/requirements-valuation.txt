@@ -1,3 +1,4 @@
 pydantic>=2.7.0
 pytest>=8.2.0
 streamlit>=1.35.0
+pandas>=2.2.0

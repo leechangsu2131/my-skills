@@ -33,6 +33,34 @@ def build_required_fcf_table(
     return rows
 
 
+def build_required_fcf_matrix(
+    enterprise_value: float | int,
+    current_fcf: float | int | None,
+    wacc_values: list[float],
+    terminal_growth_values: list[float],
+    metric: str = "required_fcf",
+) -> list[dict[float | str, float | None]]:
+    if metric not in {"required_fcf", "current_fcf_multiple"}:
+        raise ValueError("metric must be 'required_fcf' or 'current_fcf_multiple'.")
+
+    rows: list[dict[float | str, float | None]] = []
+    for wacc in wacc_values:
+        row: dict[float | str, float | None] = {"wacc": wacc}
+        for terminal_growth in terminal_growth_values:
+            try:
+                required_fcf = calc_required_fcf(enterprise_value, wacc, terminal_growth)
+            except ValueError:
+                row[terminal_growth] = None
+                continue
+
+            if metric == "required_fcf":
+                row[terminal_growth] = required_fcf
+            else:
+                row[terminal_growth] = required_fcf_multiple(required_fcf, current_fcf)
+        rows.append(row)
+    return rows
+
+
 def calc_normalized_fcf(
     revenue: float | int,
     operating_margin: float,

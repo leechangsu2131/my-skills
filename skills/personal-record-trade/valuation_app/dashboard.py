@@ -20,7 +20,9 @@ from valuation_app.roic_reinvestment import (
     build_reinvestment_matrix,
     calc_economic_profit,
     calc_ev_nopat_multiple,
+    calc_implied_future_roic_from_invested_capital,
     calc_implied_roic_from_value_driver,
+    calc_max_ev_nopat_multiple,
     calc_reinvestment_rate,
 )
 from valuation_app.value_attribution import (
@@ -185,6 +187,12 @@ def _format_coverage_cell(value: float | None) -> str:
 def _format_reinvestment_cell(value: float | None) -> str:
     if value is None or pd.isna(value):
         return "-"
+    return format_ratio(value)
+
+
+def _format_roic_solution(value: float | None) -> str:
+    if value is None:
+        return "해 없음"
     return format_ratio(value)
 
 
@@ -479,7 +487,9 @@ def render_roic_reinvestment_tab(input_set: ValuationInputSet) -> None:
         "ROIC = NOPAT / 투하자본\n"
         "경제적 이익 = NOPAT - 투하자본 × WACC\n"
         "재투자율 = 성장률 / ROIC\n"
-        "EV/NOPAT = (1 - g/ROIC) / (WACC - g)",
+        "현재 NOPAT 기준: EV/NOPAT = (1 - g/ROIC) / (WACC - g)\n"
+        "투하자본 기준: EV = 투하자본 × (미래 ROIC - g) / (WACC - g)\n"
+        "→ 미래 ROIC = g + EV × (WACC - g) / 투하자본",
         language="text",
     )
 
@@ -494,14 +504,23 @@ def render_roic_reinvestment_tab(input_set: ValuationInputSet) -> None:
 
     economic_profit = calc_economic_profit(float(nopat), float(invested_capital), wacc)
     ev_nopat = calc_ev_nopat_multiple(float(enterprise_value), float(nopat))
+    max_ev_nopat = calc_max_ev_nopat_multiple(wacc, growth_rate)
     implied_roic = calc_implied_roic_from_value_driver(ev_nopat, wacc, growth_rate)
+    implied_future_roic = calc_implied_future_roic_from_invested_capital(
+        float(enterprise_value), float(invested_capital), wacc, growth_rate
+    )
     reinvestment_rate = calc_reinvestment_rate(growth_rate, target_roic)
 
     m1, m2, m3, m4 = st.columns(4)
     m1.metric("현재 ROIC", format_ratio(roic), delta=f"WACC 대비 {format_ratio(float(roic) - wacc)}")
-    m2.metric("경제적 이익", format_krw(economic_profit))
-    m3.metric("EV/NOPAT", _format_multiple(ev_nopat))
-    m4.metric("공식상 역산 ROIC", format_ratio(implied_roic))
+    m2.metric("주가 내포 미래 ROIC", format_ratio(implied_future_roic))
+    m3.metric("경제적 이익", format_krw(economic_profit))
+    m4.metric("EV/NOPAT", _format_multiple(ev_nopat))
+
+    d1, d2, d3 = st.columns(3)
+    d1.metric("현재 NOPAT 기준 역산", _format_roic_solution(implied_roic))
+    d2.metric("1단계 공식 최대 EV/NOPAT", _format_multiple(max_ev_nopat))
+    d3.metric("현재 대비 미래 ROIC 배수", _format_multiple(None if implied_future_roic is None or not roic else implied_future_roic / float(roic)))
 
     if economic_profit < 0:
         st.warning(
@@ -513,8 +532,15 @@ def render_roic_reinvestment_tab(input_set: ValuationInputSet) -> None:
 
     if implied_roic is None:
         st.warning(
-            "선택한 WACC/g와 현재 EV/NOPAT에서는 단일 단계 가치드라이버 공식의 분모가 0 이하입니다. "
-            "이는 가격이 단순 1단계 ROIC보다 정상화 마진, 매출 성장, 긴 경쟁우위 기간 같은 다단계 가정을 요구한다는 뜻으로 읽어야 합니다."
+            "현재 NOPAT를 고정한 EV/NOPAT 공식에서는 해가 없습니다. "
+            f"선택한 WACC/g에서 이 공식이 설명할 수 있는 최대 배수는 {_format_multiple(max_ev_nopat)}인데, "
+            f"현재 배수는 {_format_multiple(ev_nopat)}이기 때문입니다."
+        )
+
+    if implied_future_roic is not None and implied_future_roic >= 0.4:
+        st.warning(
+            "투하자본 기준으로 역산한 미래 ROIC가 매우 높습니다. "
+            "이 값은 현재 주가가 단순히 현재 이익의 연장이 아니라 큰 폭의 정상화 이익, 높은 마진, 또는 긴 경쟁우위 기간을 요구한다는 뜻입니다."
         )
 
     st.markdown("#### 목표 ROIC별 필요 재투자율")
@@ -547,7 +573,9 @@ def render_roic_reinvestment_tab(input_set: ValuationInputSet) -> None:
             - 자본총계: `{format_krw(total_equity)}`
             - 순부채: `{format_krw(net_debt)}`
             - 투하자본: `{format_krw(invested_capital)}`
-            - 공식: `ROIC = NOPAT / 투하자본`, `경제적 이익 = NOPAT - 투하자본 × WACC`
+            - 현재 NOPAT 기준 역산: `{_format_roic_solution(implied_roic)}`
+            - 주가 내포 미래 ROIC: `{format_ratio(implied_future_roic)}`
+            - 공식: `ROIC = NOPAT / 투하자본`, `미래 ROIC = g + EV × (WACC - g) / 투하자본`
             """
         )
 

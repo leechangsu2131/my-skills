@@ -289,3 +289,23 @@ Design intent:
 Next likely lens:
 
 - Relative valuation, using P/E, P/B, EV/NOPAT or EV/EBIT, and EV/Sales only after the user can see how each multiple maps back to growth, margin, ROIC, or book-return assumptions.
+
+## Implementation Progress Notes - ROIC Diagnostic Correction
+
+The user noticed that tab 6 did not calculate the future expected ROIC embedded in the current price.
+
+Root cause:
+
+- The first implementation only used the current NOPAT based formula:
+  `EV/NOPAT = (1 - g/ROIC) / (WACC - g)`.
+- Samsung Electro-Mechanics' current EV/NOPAT is about `135.1x`.
+- At WACC `9%` and perpetual growth `3%`, that one-stage formula can explain at most `1 / (9% - 3%) = 16.7x`, even if ROIC tends toward infinity.
+- Therefore the displayed `None` was mathematically valid but product-wise confusing.
+
+Correction:
+
+- Keep the current NOPAT diagnostic and explicitly show `해 없음` when the formula cannot solve.
+- Add the invested-capital based implied future ROIC:
+  `EV = Invested Capital × (Future ROIC - g) / (WACC - g)`
+  so `Future ROIC = g + EV × (WACC - g) / Invested Capital`.
+- This better answers the user's intended question: what future normalized business quality is the current price asking for?

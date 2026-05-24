@@ -4,8 +4,10 @@ from valuation_app.roic_reinvestment import (
     build_reinvestment_matrix,
     calc_economic_profit,
     calc_ev_nopat_multiple,
+    calc_implied_future_roic_from_invested_capital,
     calc_growth_from_reinvestment,
     calc_implied_roic_from_value_driver,
+    calc_max_ev_nopat_multiple,
     calc_reinvestment_rate,
 )
 
@@ -34,6 +36,27 @@ def test_calc_implied_roic_from_value_driver_matches_mckinsey_example():
 def test_calc_implied_roic_returns_none_when_denominator_is_not_positive():
     assert calc_implied_roic_from_value_driver(135.0984103354, 0.09, 0.03) is None
     assert calc_implied_roic_from_value_driver(20, 0.03, 0.03) is None
+
+
+def test_calc_max_ev_nopat_multiple():
+    assert calc_max_ev_nopat_multiple(0.09, 0.03) == pytest.approx(16.6666666667)
+    assert calc_max_ev_nopat_multiple(0.03, 0.03) is None
+
+
+def test_calc_implied_future_roic_from_invested_capital():
+    implied_roic = calc_implied_future_roic_from_invested_capital(
+        enterprise_value=100_809_295_265_792,
+        invested_capital=9_117_746_517_534,
+        wacc=0.09,
+        growth_rate=0.03,
+    )
+
+    assert implied_roic == pytest.approx(0.6933829647)
+
+
+def test_calc_implied_future_roic_from_invested_capital_returns_none_when_formula_invalid():
+    assert calc_implied_future_roic_from_invested_capital(100, 0, 0.09, 0.03) is None
+    assert calc_implied_future_roic_from_invested_capital(100, 100, 0.03, 0.03) is None
 
 
 def test_calc_reinvestment_rate_and_growth_from_reinvestment():

@@ -191,5 +191,6 @@ python -m streamlit run valuation_app/dashboard.py --server.port 8501
 - 주가, 주식수, 시가총액, EV 계산 입력
 - FCF, 순부채, NOPAT, 투하자본, ROIC 검산
 - 입력값별 출처 상세 패널
+- Reverse DCF: 현재 EV가 요구하는 FCF와 WACC/영구성장률 민감도
 
-이 화면에서 검산을 통과한 공통 입력값을 다음 단계인 Reverse DCF와 Value Attribution 렌즈가 사용합니다.
+이 화면에서 검산을 통과한 공통 입력값을 Reverse DCF와 다음 단계인 Value Attribution 렌즈가 사용합니다.

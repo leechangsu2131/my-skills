@@ -159,3 +159,37 @@ Obsidian (PARA 구조)
 - GOOGLEFINANCE KRX historical → 일부 종목 지원 제한 → `6_offline_analysis.py` 사용
 - 비트코인(BTC) 거래일 365일 vs 주식 252일 불일치 → `5_add_googlefinance.py`에서 FILTER로 처리됨
 - Google Sheets API 할당량: 분당 60회 → `5_add_googlefinance.py`에 `time.sleep()` 포함
+
+---
+
+## 삼성전기 가치분석 대시보드
+
+삼성전기 `009150`을 한 종목씩 깊게 분석하기 위한 시장내포 가치분석 도구입니다. 첫 화면은 가치평가 결론이 아니라 데이터 무결성 확인입니다.
+
+### 설치
+
+```bash
+pip install -r requirements-valuation.txt
+```
+
+### 테스트
+
+```bash
+python -m pytest tests/test_valuation_models.py tests/test_valuation_calculations.py tests/test_valuation_repository.py tests/test_valuation_audit.py tests/test_valuation_formatting.py -v
+```
+
+### 실행
+
+```bash
+python -m streamlit run valuation_app/dashboard.py --server.port 8501
+```
+
+### 현재 구현 범위
+
+- 2025년 연간 seed data
+- 2026년 1분기 seed data
+- 주가, 주식수, 시가총액, EV 계산 입력
+- FCF, 순부채, NOPAT, 투하자본, ROIC 검산
+- 입력값별 출처 상세 패널
+
+이 화면에서 검산을 통과한 공통 입력값을 다음 단계인 Reverse DCF와 Value Attribution 렌즈가 사용합니다.

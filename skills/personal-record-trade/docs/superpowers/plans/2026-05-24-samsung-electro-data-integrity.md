@@ -326,9 +326,9 @@ def test_calc_nopat_and_invested_capital_and_roic():
     invested_capital = calc_invested_capital(9_541_761_553_950, -424_015_036_416)
     roic = calc_roic(nopat, invested_capital)
 
-    assert round(nopat) == 746_492_672_214
+    assert round(nopat) == 746_191_572_614
     assert invested_capital == 9_117_746_517_534
-    assert round(roic, 4) == 0.0819
+    assert round(roic, 4) == 0.0818
 
 
 def test_calc_roic_returns_none_when_invested_capital_is_zero():
@@ -804,7 +804,7 @@ def test_run_audit_calculates_passes_and_warning_for_reported_ev_gap():
     assert statuses["net_debt_reconciliation"] == "pass"
     assert statuses["reported_ev_gap"] == "warning"
     assert derived_map["enterprise_value"] == 100_809_295_265_792
-    assert round(derived_map["roic"], 4) == 0.0819
+    assert round(derived_map["roic"], 4) == 0.0818
     assert input_set.inputs["enterprise_value"] == 100_809_295_265_792
 ```
 

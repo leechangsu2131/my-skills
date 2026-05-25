@@ -195,6 +195,6 @@ python -m streamlit run valuation_app/dashboard.py --server.port 8501
 - Value Attribution: 현재 수익력 가치와 미래 기대 가치 분해
 - 매출·마진 시나리오: 필요 FCF를 설명하는 매출 성장률과 영업이익률 조합
 - ROIC·재투자 품질: 현재 ROIC, 주가 내포 미래 ROIC, 경제적 이익, EV/NOPAT, 목표 성장률별 필요 재투자율
-- 상대가치: P/B 내포 ROE, EV/Sales 필요 마진, EV/NOPAT 가격 부담
+- 상대가치: P/E, EPS 기준 P/E, P/B 내포 ROE, EV/Sales 필요 마진, EV/NOPAT 가격 부담
 
 이 화면에서 검산을 통과한 공통 입력값을 Reverse DCF, Value Attribution, 매출·마진 시나리오, ROIC, 상대가치 렌즈와 다음 단계의 CAP 렌즈가 사용합니다.

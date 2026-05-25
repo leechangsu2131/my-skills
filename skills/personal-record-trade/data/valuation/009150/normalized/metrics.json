@@ -30,6 +30,36 @@
     "note": ""
   },
   {
+    "metric_key": "net_income",
+    "label": "Net Income",
+    "value": 679304726000,
+    "unit": "KRW",
+    "period": "2025A",
+    "source_method": "dart_direct",
+    "report_year": "2025",
+    "report_code": "11011",
+    "statement_name": "Consolidated Financial Statements Note 23. Earnings per share",
+    "original_account_name": "Profit for the year attributable to ordinary equity holders of the parent",
+    "original_amount": 679304726000,
+    "confidence": 1.0,
+    "note": "2025 audit report note 23; original disclosure is KRW 679,304,726 thousand, normalized to KRW."
+  },
+  {
+    "metric_key": "eps",
+    "label": "EPS",
+    "value": 9345,
+    "unit": "KRW/share",
+    "period": "2025A",
+    "source_method": "dart_direct",
+    "report_year": "2025",
+    "report_code": "11011",
+    "statement_name": "Consolidated Financial Statements Note 23. Earnings per share",
+    "original_account_name": "Basic (diluted) earnings per share",
+    "original_amount": 9345,
+    "confidence": 1.0,
+    "note": "Ordinary shares basic and diluted EPS."
+  },
+  {
     "metric_key": "ebit",
     "label": "EBIT",
     "value": 972249110800,

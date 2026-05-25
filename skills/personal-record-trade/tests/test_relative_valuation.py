@@ -7,6 +7,8 @@ from valuation_app.relative_valuation import (
     calc_implied_nopat_margin_from_ev_sales,
     calc_implied_operating_margin_from_ev_sales,
     calc_implied_roe_from_pb,
+    calc_pe_from_eps,
+    calc_price_to_earnings,
     calc_price_to_book,
 )
 
@@ -15,9 +17,19 @@ def test_calc_price_to_book():
     assert calc_price_to_book(101_233_310_302_208, 9_541_761_553_950) == pytest.approx(10.6094990668)
 
 
+def test_calc_price_to_earnings():
+    assert calc_price_to_earnings(101_233_310_302_208, 679_304_726_000) == pytest.approx(149.0248873997)
+
+
+def test_calc_pe_from_eps():
+    assert calc_pe_from_eps(1_340_000, 9_345) == pytest.approx(143.3921883360)
+
+
 def test_calc_price_to_book_returns_none_when_equity_is_not_positive():
     assert calc_price_to_book(100, 0) is None
     assert calc_price_to_book(100, -1) is None
+    assert calc_price_to_earnings(100, 0) is None
+    assert calc_pe_from_eps(100, -1) is None
 
 
 def test_calc_ev_to_sales_and_ev_to_nopat():
@@ -72,5 +84,6 @@ def test_build_relative_metric_explanations_are_beginner_friendly():
 
     assert rows[0]["지표"] == "P/E"
     assert "순이익" in rows[0]["무슨 뜻인가"]
+    assert "현재 데이터셋" not in rows[0]["어떻게 읽나"]
     assert any(row["지표"] == "P/B" and "내포 ROE" in row["어떻게 읽나"] for row in rows)
     assert any(row["지표"] == "EV/Sales" and "필요 마진" in row["어떻게 읽나"] for row in rows)

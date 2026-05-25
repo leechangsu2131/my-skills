@@ -26,6 +26,7 @@
 - 탭 4: 매출/마진 시나리오.
 - 탭 6: ROIC/재투자 품질, 경제적 이익, 주가 내포 미래 ROIC 설명.
 - 탭 7: 상대가치. P/E, EPS 기준 P/E, P/B 내포 ROE, EV/Sales 필요 마진, EV/NOPAT.
+- 탭 8: CAP. 초과가치, 현재/정상화 경제적 이익, 단순 CAP, 할인 CAP, ROIC별 초과수익 PV.
 - 사용자 대화 기록 보존.
 - PER 누락 문제 수정. 2025 감사보고서 Note 23 기반 순이익과 EPS 추가.
 
@@ -42,35 +43,7 @@
 9. Narrative Consistency: AI 서버, MLCC, FC-BGA, 전장, 사이클 회복 스토리가 숫자와 맞는가?
 10. Synthesis: 수렴/발산 지점과 다음 분기 체크리스트.
 
-## 다음 작업 1: CAP 렌즈
-
-목적:
-
-- 현재 가격이 요구하는 초과수익 지속기간을 보여준다.
-- 사용자가 "높은 ROIC가 몇 년이나 유지되어야 하나"를 직관적으로 보게 한다.
-
-권장 구현 파일:
-
-- 새 파일: `valuation_app/cap_duration.py`
-- 새 테스트: `tests/test_cap_duration.py`
-- 수정: `valuation_app/dashboard.py`
-- 수정: `README.md` 또는 이 문서
-
-핵심 공식:
-
-```text
-Economic Profit = (ROIC - WACC) * Invested Capital
-Excess Value = EV - No Growth Value
-No Growth Value = NOPAT / WACC
-CAP years = years needed for discounted economic profit to explain Excess Value
-```
-
-주의:
-
-- 현재 ROIC가 WACC보다 낮으면 CAP 공식이 직관적으로 깨집니다. 이 경우 "현재 수익력 기준 초과수익이 없으므로, 시장은 미래 ROIC 회복을 먼저 요구한다"라고 설명해야 합니다.
-- 단순 perpetuity 식만 쓰지 말고 5년, 10년, 15년, 20년 기간 표를 같이 보여주는 편이 초보자에게 낫습니다.
-
-## 다음 작업 2: Risk/Downside 렌즈
+## 다음 작업 1: Risk/Downside 렌즈
 
 목적:
 
@@ -84,7 +57,7 @@ CAP years = years needed for discounted economic profit to explain Excess Value
 - 민감도 표는 행/열 레이블을 명확히 표시합니다.
 - `현재 가격 대비 괴리율 = (추정 가치 - 현재 EV) / 현재 EV`를 같이 표시합니다.
 
-## 다음 작업 3: Narrative Consistency
+## 다음 작업 2: Narrative Consistency
 
 목적:
 
@@ -109,7 +82,7 @@ CAP years = years needed for discounted economic profit to explain Excess Value
 현재 앱에서 연결되는 렌즈: 매출/마진, ROIC, CAP
 ```
 
-## 다음 작업 4: 데이터 파이프라인
+## 다음 작업 3: 데이터 파이프라인
 
 목적:
 
@@ -135,4 +108,3 @@ CAP years = years needed for discounted economic profit to explain Excess Value
 - 계산 실패나 `해 없음`이 나올 때 이유가 보인다.
 - 테스트가 있다.
 - 브라우저에서 Traceback 없이 표시된다.
-

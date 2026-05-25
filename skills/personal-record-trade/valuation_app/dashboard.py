@@ -33,7 +33,29 @@ from valuation_app.relative_valuation import (
     calc_price_to_earnings,
     calc_price_to_book,
 )
+from valuation_app.narrative_consistency import (
+    build_narrative_explanation,
+    get_samsung_electro_narratives,
+)
+from valuation_app.synthesis import (
+    build_next_quarter_checklist,
+    build_synthesis_explanation,
+    evaluate_signals,
+)
+from valuation_app.advanced_reverse import (
+    calc_implied_expected_return,
+    calc_implied_growth_from_peg,
+    calc_implied_market_share,
+    decompose_expected_return,
+)
 from valuation_app.reverse_dcf import build_required_fcf_matrix, calc_normalized_fcf, required_fcf_multiple
+from valuation_app.risk_downside import (
+    build_margin_wacc_sensitivity,
+    build_risk_metric_explanations,
+    build_scenario_table,
+    build_wacc_growth_sensitivity,
+    rank_value_drivers,
+)
 from valuation_app.roic_reinvestment import (
     build_reinvestment_matrix,
     build_roic_metric_explanations,
@@ -837,10 +859,533 @@ def render_cap_duration_tab(input_set: ValuationInputSet) -> None:
         )
 
 
+def render_risk_downside_tab(input_set: ValuationInputSet) -> None:
+    enterprise_value = input_set.inputs.get("enterprise_value")
+    annual_revenue = input_set.inputs.get("revenue")
+    tax_rate = input_set.inputs.get("tax_rate") or 0.183
+    latest_quarter_revenue = input_set.inputs.get("latest_quarter_revenue")
+    latest_quarter_operating_income = input_set.inputs.get("latest_quarter_operating_income")
+
+    st.markdown("핵심 가정이 빗나가면 가치가 얼마나 흔들리는지 민감도 표와 시나리오로 봅니다.")
+    st.code(
+        "추정 EV = 정상화 FCF / (WACC - g)\n"
+        "정상화 FCF = 매출 × 영업이익률 × (1 - 세율) × FCF 전환율\n"
+        "괴리율 = (추정 EV - 현재 EV) / 현재 EV",
+        language="text",
+    )
+
+    if enterprise_value is None or annual_revenue is None:
+        st.error("리스크 분석에 필요한 EV 또는 매출이 없습니다. 먼저 데이터 검산을 확인하세요.")
+        return
+
+    latest_margin = 0.11
+    if latest_quarter_revenue and latest_quarter_operating_income:
+        latest_margin = round(float(latest_quarter_operating_income) / float(latest_quarter_revenue), 3)
+
+    c1, c2, c3 = st.columns(3)
+    base_margin = c1.slider(
+        "Risk 정상화 영업이익률", min_value=0.0, max_value=80.0,
+        value=round(latest_margin * 100, 1), step=0.5,
+    ) / 100.0
+    fcf_conversion = c2.slider("Risk FCF 전환율", min_value=10.0, max_value=120.0, value=70.0, step=5.0) / 100.0
+    delta_pct = c3.slider("가치 동인 변동폭", min_value=0.5, max_value=5.0, value=1.0, step=0.5) / 100.0
+
+    current_ev = float(enterprise_value)
+    base_revenue = float(annual_revenue)
+
+    # --- WACC/g 민감도 표 ---
+    st.markdown("#### WACC / 영구성장률 민감도: 추정 EV")
+    st.caption("행은 WACC, 열은 영구성장률입니다. 각 칸은 해당 가정에서의 추정 EV(조원)입니다.")
+    wacc_grid = [0.07, 0.08, 0.09, 0.10, 0.11, 0.12]
+    growth_grid = [0.01, 0.02, 0.03, 0.04]
+    ev_matrix_rows = build_wacc_growth_sensitivity(
+        base_revenue=base_revenue, operating_margin=base_margin, tax_rate=float(tax_rate),
+        fcf_conversion=fcf_conversion, wacc_values=wacc_grid, growth_values=growth_grid,
+        current_ev=current_ev, metric="implied_ev",
+    )
+    ev_matrix = pd.DataFrame(ev_matrix_rows).set_index("wacc")
+    ev_matrix.index = [format_ratio(v) for v in ev_matrix.index]
+    ev_matrix.columns = [format_ratio(v) for v in ev_matrix.columns]
+    ev_matrix.index.name = "WACC \\ g"
+    st.dataframe(
+        ev_matrix.style.format(lambda v: _format_sensitivity_cell(v, "krw_trillion")).background_gradient(
+            cmap="RdYlGn", axis=None
+        ),
+        use_container_width=True,
+    )
+
+    # --- WACC/g 괴리율 ---
+    st.markdown("#### WACC / 영구성장률 민감도: 현재 EV 대비 괴리율")
+    st.caption("양수(녹색)면 현재 가격 대비 저평가 방향, 음수(붉은색)면 고평가 방향입니다. 단 모형 가정에 강하게 의존합니다.")
+    gap_matrix_rows = build_wacc_growth_sensitivity(
+        base_revenue=base_revenue, operating_margin=base_margin, tax_rate=float(tax_rate),
+        fcf_conversion=fcf_conversion, wacc_values=wacc_grid, growth_values=growth_grid,
+        current_ev=current_ev, metric="ev_gap",
+    )
+    gap_matrix = pd.DataFrame(gap_matrix_rows).set_index("wacc")
+    gap_matrix.index = [format_ratio(v) for v in gap_matrix.index]
+    gap_matrix.columns = [format_ratio(v) for v in gap_matrix.columns]
+    gap_matrix.index.name = "WACC \\ g"
+    st.dataframe(
+        gap_matrix.style.format(_format_coverage_cell).background_gradient(
+            cmap="RdYlGn", axis=None
+        ),
+        use_container_width=True,
+    )
+
+    # --- 마진/WACC 민감도 ---
+    st.markdown("#### 영업이익률 / WACC 민감도: 괴리율")
+    st.caption("행은 영업이익률, 열은 WACC입니다. 영구성장률 3%를 가정합니다.")
+    margin_grid = [0.08, 0.12, 0.20, 0.35, 0.50, 0.80]
+    margin_wacc_grid = [0.07, 0.08, 0.09, 0.10, 0.11, 0.12]
+    margin_wacc_rows = build_margin_wacc_sensitivity(
+        base_revenue=base_revenue, tax_rate=float(tax_rate), fcf_conversion=fcf_conversion,
+        margin_values=margin_grid, wacc_values=margin_wacc_grid, terminal_growth=0.03,
+        current_ev=current_ev, metric="ev_gap",
+    )
+    mw_matrix = pd.DataFrame(margin_wacc_rows).set_index("margin")
+    mw_matrix.index = [format_ratio(v) for v in mw_matrix.index]
+    mw_matrix.columns = [format_ratio(v) for v in mw_matrix.columns]
+    mw_matrix.index.name = "OPM \\ WACC"
+    st.dataframe(
+        mw_matrix.style.format(_format_coverage_cell).background_gradient(
+            cmap="RdYlGn", axis=None
+        ),
+        use_container_width=True,
+    )
+
+    # --- 베어/베이스/불 시나리오 ---
+    st.markdown("#### 베어 / 베이스 / 불 시나리오")
+    st.caption("각 시나리오는 매출 성장률, 영업이익률, WACC, 영구성장률을 달리한 가정 세트입니다.")
+    scenarios = [
+        {"name": "🐻 베어", "revenue_growth": 0.0, "operating_margin": 0.08, "wacc": 0.11, "terminal_growth": 0.02},
+        {"name": "⚖️ 베이스", "revenue_growth": 0.10, "operating_margin": base_margin, "wacc": 0.09, "terminal_growth": 0.03},
+        {"name": "🐂 불", "revenue_growth": 0.30, "operating_margin": 0.18, "wacc": 0.08, "terminal_growth": 0.03},
+    ]
+    scenario_results = build_scenario_table(
+        base_revenue=base_revenue, scenarios=scenarios,
+        tax_rate=float(tax_rate), fcf_conversion=fcf_conversion, current_ev=current_ev,
+    )
+
+    scenario_cols = st.columns(3)
+    for i, result in enumerate(scenario_results):
+        with scenario_cols[i]:
+            st.markdown(f"##### {result['시나리오']}")
+            st.metric("추정 EV", format_krw(result["추정 EV"]))
+            gap_val = result["현재 EV 대비 괴리율"]
+            gap_label = format_ratio(gap_val) if gap_val is not None else "-"
+            st.metric("괴리율", gap_label)
+            st.caption(
+                f"매출 +{format_ratio(result['매출 성장률'])} · OPM {format_ratio(result['영업이익률'])} · "
+                f"WACC {format_ratio(result['WACC'])} · g {format_ratio(result['영구성장률'])}"
+            )
+
+    scenario_df = []
+    for r in scenario_results:
+        scenario_df.append({
+            "시나리오": r["시나리오"],
+            "정상화 FCF": format_krw(r["정상화 FCF"]),
+            "추정 EV": format_krw(r["추정 EV"]),
+            "괴리율": format_ratio(r["현재 EV 대비 괴리율"]),
+        })
+    st.dataframe(scenario_df, use_container_width=True, hide_index=True)
+
+    # --- 가치 동인 순위 ---
+    st.markdown("#### 가치 동인 순위")
+    st.caption(f"각 변수를 {format_ratio(delta_pct)} 움직였을 때 추정 EV가 얼마나 변하는지 비교합니다. 절대 변동이 큰 순서로 정렬됩니다.")
+    drivers = rank_value_drivers(
+        base_revenue=base_revenue, base_margin=base_margin,
+        base_tax_rate=float(tax_rate), base_fcf_conversion=fcf_conversion,
+        base_wacc=0.09, base_terminal_growth=0.03, current_ev=current_ev,
+        delta=delta_pct,
+    )
+    driver_rows = []
+    for d in drivers:
+        driver_rows.append({
+            "변수": d["변수"],
+            "기준값": format_ratio(d["기준값"]) if isinstance(d["기준값"], float) and d["기준값"] < 10 else format_krw(d["기준값"]),
+            "변동폭": format_ratio(d["변동폭"]),
+            "EV 변화": format_krw(d["EV 변화"]),
+            "EV 변화율": format_ratio(d["EV 변화율"]),
+        })
+    st.dataframe(driver_rows, use_container_width=True, hide_index=True)
+
+    most_sensitive = drivers[0]["변수"] if drivers else "-"
+    st.info(f"현재 가정에서 가장 민감한 변수는 **{most_sensitive}**입니다. 이 변수가 기대와 다르게 움직이면 가격 충격이 가장 큽니다.")
+
+    # --- 숫자 읽는 법 ---
+    st.markdown("#### 숫자 읽는 법")
+    st.info(
+        "민감도 표는 정답이 아니라 '무엇이 틀리면 얼마나 흔들리는가'를 미리 연습하는 도구입니다. "
+        "괴리율이 큰 조합은 해당 가정이 빗나갈 때 가격 하락 리스크가 크다는 신호입니다."
+    )
+    st.table(pd.DataFrame(build_risk_metric_explanations()))
+
+    with st.expander("입력값 출처와 계산 흐름"):
+        st.markdown(
+            f"""
+            - 매출: `{format_krw(annual_revenue)}`
+            - 정상화 영업이익률: `{format_ratio(base_margin)}`
+            - 세율: `{format_ratio(tax_rate)}`
+            - FCF 전환율: `{format_ratio(fcf_conversion)}`
+            - 현재 EV: `{format_krw(enterprise_value)}`
+            - 공식: `추정 EV = 매출 × OPM × (1 - 세율) × FCF전환율 / (WACC - g)`
+            """
+        )
+
+
+def render_narrative_tab() -> None:
+    st.markdown(build_narrative_explanation())
+
+    stories = get_samsung_electro_narratives()
+    
+    for story in stories:
+        with st.container():
+            st.markdown(f"### {story['title']}")
+            st.write(story["description"])
+            
+            c1, c2 = st.columns([1, 1])
+            with c1:
+                st.markdown("**🔍 확인할 숫자**")
+                for metric in story["metrics_to_watch"]:
+                    st.markdown(f"- {metric}")
+                    
+                st.markdown("**🔗 연결되는 렌즈**")
+                for tab in story["related_tabs"]:
+                    st.markdown(f"- {tab}")
+                    
+            with c2:
+                st.success(f"**📈 Bull Signal (스토리가 맞을 때)**\n\n{story['bull_signal']}")
+                st.error(f"**📉 Bear Signal (스토리가 틀릴 때)**\n\n{story['bear_signal']}")
+                
+            st.divider()
+
+
+def render_synthesis_tab(input_set: ValuationInputSet) -> None:
+    st.markdown(build_synthesis_explanation())
+    
+    st.markdown("### 📊 수렴과 발산 (Signal Summary)")
+    st.caption("여러 렌즈의 분석 결과를 모아 현재 주가에 내포된 시장의 기대치가 어떤 상태인지 종합합니다.")
+    
+    signals = evaluate_signals(input_set)
+    if not signals:
+        st.warning("입력값이 부족하여 종합 신호를 계산할 수 없습니다.")
+    else:
+        for signal in signals:
+            status = signal["상태"]
+            # 상태에 따른 색상 지정
+            if "여유" in status or "우수" in status:
+                color = "green"
+            elif "부담" in status or "요구" in status or "파괴" in status:
+                color = "red"
+            else:
+                color = "orange"
+                
+            st.markdown(f"**{signal['분야']}**: :{color}[{status}]")
+            st.write(signal["해석"])
+            if signal["수치 형태"] == "ratio":
+                st.caption(f"산출된 지표 수치: {signal['핵심 수치']*100:.1f}%")
+            else:
+                st.caption(f"산출된 지표 수치: {signal['핵심 수치']:.1f}배")
+            st.write("---")
+
+    st.markdown("### ✅ 다음 분기 관전 포인트 (Checklist)")
+    st.caption("다음 실적 발표 때 반드시 확인해서 시장의 기대치(위의 신호)가 충족되고 있는지 점검하세요.")
+    
+    checklist = build_next_quarter_checklist()
+    for item in checklist:
+        with st.expander(f"[{item['카테고리']}] {item['확인 포인트']}"):
+            st.markdown(f"**판단 기준**: {item['판단 기준']}")
+
+
+def render_peg_tab(input_set: ValuationInputSet, market: dict) -> None:
+    st.markdown("### 멀티플 기반 단기 기대성장률 역산 (Implied Growth from PEG)")
+    st.caption("현재 PER 수준과 산업/기업에 적정하다고 판단하는 PEG를 입력하면, 시장이 단기적으로 요구하는 이익 성장률을 역산합니다.")
+    
+    mc = market.get("market_cap")
+    ni = input_set.inputs.get("net_income")
+    
+    if mc is None or ni is None or ni <= 0:
+        st.warning("PER 산출을 위한 기초 데이터(시가총액, 양수의 순이익)가 부족합니다.")
+        return
+        
+    per_actual = mc / ni
+    
+    col1, col2 = st.columns(2)
+    col1.metric("현재 시장 적용 PER", f"{per_actual:.1f} 배", help="시가총액 / 최근 순이익")
+    
+    peg_val = col2.slider(
+        "적정 기준 PEG 선택", 
+        min_value=0.5, max_value=5.0, value=1.5, step=0.1,
+        help="성숙 제조업 0.5~1.0, 일반 IT 1~2, 고성장 SaaS 2~4 수준"
+    )
+    
+    implied_growth = calc_implied_growth_from_peg(per_actual, peg_val)
+    if implied_growth is not None:
+        fair_per = peg_val * (implied_growth * 100)
+        
+        st.success(
+            f"적정 PEG **{peg_val:.1f}** 배를 가정할 때, 현재 PER({per_actual:.1f}배)을 정당화하려면 "
+            f"시장은 단기적으로 **연평균 {implied_growth*100:.1f}%**의 이익 성장을 기대하고 있습니다."
+        )
+        
+        st.markdown(
+            f"""
+            **[수식의 투명한 이해]**
+            * **시장의 기대 성장률(%)** = `현재 PER ÷ 적용 PEG`
+            * **역산 결과**: `{implied_growth*100:.1f}% = {per_actual:.1f}배 ÷ {peg_val:.1f}배`
+            
+            **[내포된 시나리오 검산]**
+            * `현재 요구되는 적정 PER = 적용 PEG × 이익성장률(%)`
+            * 만약 이 회사가 정말로 향후 **{implied_growth*100:.1f}%**씩 성장한다고 가정하면, 우리가 허용한 적정 PEG({peg_val:.1f}) 하에서 **지금 당장** 부여받을 수 있는 합당한 PER은 **{fair_per:.1f}배**가 됩니다.
+            * 즉, 현재 주가(PER {per_actual:.1f}배)는 "회사가 향후 연 {implied_growth*100:.1f}%씩 고성장할 것"이라는 장밋빛 시나리오를 **현재 가격에 이미 100% 선반영(Priced-in)**하고 있다는 뜻입니다.
+            * ⏳ **요구되는 지속 기간(Duration)**: 시장에서 통상적으로 보는 PEG 배수는 단 1년짜리 짝수 성장이 아닙니다. 현재 주가를 정당화하려면 저 엄청난 성장률(연 {implied_growth*100:.1f}%)을 **향후 3~5년간 쉼 없이 연속으로(CAGR)** 달성해내야 함을 암묵적으로 의미합니다.
+            * ⚠️ **주의 (멀티플 수축)**: 고성장기가 끝나고 향후 이익성장률이 정상 수준(예: 10%)으로 둔화되면, 투자자들이 허용하는 PER도 평균 수준(10~15배)으로 급격히 회귀합니다(Multiple Contraction). 따라서 성장이 1~2년 만에 예상보다 빨리 꺾이는 순간 주가는 폭락할 수 있습니다.
+            """
+        )
+        
+        st.markdown("---")
+        
+        st.markdown("#### ⏳ 기간 및 멀티플 수축 기반 정밀 역산")
+        st.caption("단순 PEG를 넘어, 'n년 뒤 평범한 주식(정상 PER)으로 돌아갈 때 내 기대수익률을 맞추려면 그동안 매년 몇 %씩 성장해야 하는가?'를 정밀하게 역산합니다.")
+        
+        hist_per = market.get("historical_average_per", 15.0)
+        peer_per = market.get("peer_average_per", 15.0)
+        st.info(f"💡 **파이프라인 자동 추출 기준점**: 과거 평균 PER **{hist_per:.1f}배** / 글로벌 Peer 평균 PER **{peer_per:.1f}배**")
+        
+        col_n, col_term, col_ret = st.columns(3)
+        duration_n = col_n.slider("고성장 지속 기간 (n년)", min_value=1, max_value=15, value=5, step=1)
+        terminal_per = col_term.slider("고성장 종료 후 정상 PER", min_value=5.0, max_value=50.0, value=float(hist_per), step=1.0)
+        target_return = col_ret.slider(
+            "투자자 목표 수익률 (%)", 
+            min_value=0.0, max_value=30.0, value=10.0, step=1.0,
+            help="투자자가 이 주식을 보유하는 동안 최소한 얻고자 하는 연평균 기대 수익률(예: 기회비용, 할인율 등). 0%로 두면 '본전'을 찾기 위한 성장률이 나옵니다."
+        ) / 100.0
+        
+        if terminal_per > 0 and duration_n > 0:
+            implied_g_contraction = ((per_actual / terminal_per) ** (1 / duration_n)) * (1 + target_return) - 1
+            
+            # Export용 Session State 저장
+            st.session_state["export_peg_n_years"] = duration_n
+            st.session_state["export_peg_terminal_per"] = terminal_per
+            st.session_state["export_peg_implied_g"] = implied_g_contraction
+            
+            st.info(
+                f"현재 주가를 정당화하려면, 이 회사는 **향후 {duration_n}년 동안 연평균 {implied_g_contraction*100:.1f}%씩 연속으로 이익이 성장**해야 합니다."
+            )
+            
+            st.markdown(
+                f"""
+                **[시뮬레이션 해설]**
+                * 투자자가 현재 **PER {per_actual:.1f}배**에 진입하여, 매년 **{target_return*100:.0f}%**의 목표 수익률을 달성한다고 가정합니다.
+                * **{duration_n}년 뒤** 고성장이 끝나 시장의 환호가 식으면서 주식의 PER이 **{terminal_per:.1f}배**로 폭락(Multiple Contraction)한다고 가정합니다.
+                * 이 끔찍한 멀티플 수축을 주가 하락 없이 모두 견뎌내고 내 수익률까지 챙기려면, 회사가 그 {duration_n}년 내내 **연평균 {implied_g_contraction*100:.1f}%**라는 무시무시한 속도로 이익을 불려줘야만 수학적으로 아귀가 맞습니다.
+                * *💡 수식: 요구 성장률 = [ (현재 PER ÷ 미래 정상 PER)^(1/n) × (1 + 목표 수익률) ] - 1*
+                """
+            )
+
+        st.markdown("---")
+        st.markdown("#### 💡 이 성장률이 현실 가능한가?")
+        st.markdown(
+            f"단순히 PEG가 싸 보인다고 저평가가 아닙니다. "
+            f"**연평균 {implied_growth*100:.1f}%**의 성장을 이뤄내려면 다음 질문들을 통과해야 합니다.\n\n"
+            "- **지속 기간**: 이 폭발적인 성장을 과연 몇 년이나 유지할 수 있는가?\n"
+            "- **시장 규모(TAM)**: 목표 성장을 달성할 만큼 전방 시장이 충분히 큰가?\n"
+            "- **경쟁 심화**: 고성장 시장에 필연적으로 들어오는 경쟁자들을 막아낼 진입장벽이 있는가?\n"
+            "- **마진 유지**: 점유율을 뺏기 위해 판관비나 가격 할인을 남발해 마진이 훼손되지는 않는가?\n"
+            "- **자본 효율성(ROIC)**: 성장을 위해 번 돈보다 더 많은 돈을 때려 박아야 하는(현금 소모적) 구조는 아닌가?\n\n"
+            "> *PEG 역산은 가치평가의 끝이 아니라, 위 질문들을 던지기 위한 **출발점**입니다.*"
+        )
+    st.divider()
+
+    st.markdown("##### 📌 시장의 내포 기대수익률 & 기대 FCF 역산 (Implied Expected Return)")
+    st.caption("현재 가격표(기업가치)와 할인율(WACC), 영구성장률(g)을 넣으면 **시장이 요구하는 기대 FCF**와 **내포 기대수익률**이 자동으로 역산됩니다.")
+    
+    ev = input_set.inputs.get("enterprise_value")
+    fcf = input_set.inputs.get("fcf")
+    if ev is not None and fcf is not None:
+        col_w, col_g = st.columns(2)
+        wacc = col_w.number_input("WACC (할인율, %)", min_value=1.0, max_value=30.0, value=9.0, step=0.5) / 100.0
+        lt_growth = col_g.number_input("장기 영구성장률 (g, %)", min_value=-5.0, max_value=10.0, value=3.0, step=0.5) / 100.0
+        
+        if wacc > lt_growth:
+            required_fcf = ev * (wacc - lt_growth)
+            fcf_multiple = required_fcf / fcf if fcf > 0 else None
+            
+            st.markdown("---")
+            m1, m2, m3, m4 = st.columns(4)
+            current_yield = fcf / ev
+            current_implied = current_yield + lt_growth
+
+            m1.metric("현재 FCF", f"{fcf/1e12:.2f}조 원")
+            m2.metric("시장이 요구하는 기대 FCF", f"{required_fcf/1e12:.2f}조 원")
+            if fcf_multiple is not None:
+                m3.metric("FCF 갭 배수", f"{fcf_multiple:.1f}배")
+            m4.metric(
+                "현재 가격의 내포 기대수익률",
+                f"{wacc*100:.1f}%",
+                help=(
+                    f"기대 FCF({required_fcf/1e12:.1f}조)가 실현될 때 투자자가 얻는 수익률 = WACC.\n"
+                    f"현재 FCF({fcf/1e12:.2f}조) 기준 실질 수익률은 {current_implied*100:.1f}%에 불과합니다."
+                )
+            )
+            
+            st.markdown("---")
+            
+            if fcf_multiple is not None and fcf_multiple > 5:
+                st.error(
+                    f"**시장은 현재 FCF({fcf/1e12:.2f}조)가 앞으로 {fcf_multiple:.0f}배({required_fcf/1e12:.1f}조)로 "
+                    f"폭발적으로 성장할 것을 기대하고 있습니다.**  \n"
+                    f"이 기대가 달성되어야만 투자자의 기대수익률 **{wacc*100:.1f}%**가 실현됩니다.  \n"
+                    f"현재 FCF가 그대로 유지된다면 실질 내포 수익률은 **{current_implied*100:.1f}%**입니다."
+                )
+            elif fcf_multiple is not None and fcf_multiple > 2:
+                st.warning(
+                    f"시장은 현재 FCF 대비 {fcf_multiple:.1f}배의 성장({required_fcf/1e12:.1f}조)을 기대합니다.  \n"
+                    f"이 기대가 충족될 때 내포 기대수익률: **{wacc*100:.1f}%**"
+                )
+            else:
+                st.success(
+                    f"현재 FCF 수준이 시장의 기대치({required_fcf/1e12:.1f}조)에 근접합니다.  \n"
+                    f"내포 기대수익률: **{wacc*100:.1f}%**"
+                )
+            
+            st.caption(
+                f"수식: 기대 FCF = EV × (WACC − g) = {ev/1e12:.1f}조 × ({wacc*100:.1f}% − {lt_growth*100:.1f}%) = {required_fcf/1e12:.2f}조  |  "
+                f"현재 내포 수익률 = FCF Yield + g = {current_yield*100:.1f}% + {lt_growth*100:.1f}% = {current_implied*100:.1f}%"
+            )
+        else:
+            st.warning("WACC는 영구성장률(g)보다 커야 합니다.")
+
+
+def render_tam_tab(input_set: ValuationInputSet, market: dict) -> None:
+    st.markdown("### TAM 기반 시장 점유율 역산 (Implied Market Share)")
+    st.caption("Reverse DCF가 요구하는 먼 미래의 필수 매출액을 달성하려면, 타겟 시장(TAM)에서 몇 %의 점유율을 차지해야 하는지 파악하여 현실성/버블 여부를 진단합니다.")
+    
+    # 1. 기초 데이터 및 파이프라인 앵커링
+    current_rev = input_set.inputs.get("revenue", 0)
+    current_tam = market.get("current_tam", 40000000000000)  # default 40T
+    projected_tam = market.get("projected_tam_5yr", 60000000000000)  # default 60T
+    
+    current_share = (current_rev / current_tam) * 100 if current_tam > 0 else 0
+    
+    st.info(
+        f"💡 **파이프라인 자동 추출 기준점 (Anchor)**  \n"
+        f"- **현재 매출액**: {current_rev/1_000_000_000_000:.1f}조 원  \n"
+        f"- **현재 글로벌 TAM**: {current_tam/1_000_000_000_000:.1f}조 원 👉 **(현재 시장 점유율: {current_share:.1f}%)**  \n"
+        f"- **향후 예측 TAM**: {projected_tam/1_000_000_000_000:.1f}조 원"
+    )
+    
+    st.markdown("#### 1. 요구 매출 및 TAM 시뮬레이션")
+    
+    target_rev_default = (current_rev / 1_000_000_000_000) * 1.5 if current_rev > 0 else 15.0
+        
+    col1, col2 = st.columns(2)
+    req_rev = col1.number_input(
+        "요구되는 타겟 매출 (조원, 예: 5년 뒤)", 
+        min_value=1.0, max_value=1000.0, value=float(target_rev_default), step=1.0,
+        help="Reverse DCF나 PEG 역산을 통해 도출된 미래 필수 달성 매출액을 입력합니다."
+    )
+    est_tam = col2.number_input(
+        "해당 시점 글로벌 전체 TAM 예측치 (조원)", 
+        min_value=10.0, max_value=5000.0, value=float(projected_tam/1_000_000_000_000), step=5.0
+    )
+    
+    implied_share = calc_implied_market_share(req_rev, est_tam)
+    if implied_share is not None:
+        st.success(
+            f"요구되는 타겟 매출 **{req_rev:.1f}조 원**을 달성하기 위해서는, "
+            f"해당 시점 글로벌 시장(TAM {est_tam:.1f}조)에서 **{implied_share*100:.1f}%의 점유율**을 차지해야만 합니다."
+        )
+        
+        st.markdown(
+            f"""
+            **[수식의 투명한 이해]**
+            * `미래 요구 점유율(%) = 역산된 요구 매출({req_rev:.1f}조) ÷ 미래 예상 TAM({est_tam:.1f}조) = {implied_share*100:.1f}%`
+            * 현재 시장 점유율 **{current_share:.1f}%** 대비 **{abs(implied_share*100 - current_share):.1f}%p**의 점유율 변동이 필요합니다.
+            """
+        )
+        
+        st.markdown("---")
+        st.markdown(f"#### 💡 이 {implied_share*100:.1f}%라는 점유율이 현실 가능한가?")
+        st.markdown(
+            f"단순히 시장이 커진다고 내 매출이 저절로 오르는 것은 아닙니다. 현재 주가에 내포된 저 점유율을 달성하려면 다음의 질문들을 통과해야 합니다.\n\n"
+            "- **TAM의 환상**: 우리가 설정한 미래 TAM({est_tam:.1f}조) 자체가 증권사나 업계의 과도한 장밋빛 전망(뻥튀기)은 아닌가?\n"
+            "- **경쟁 강도**: 현재 1, 2위를 다투는 글로벌 경쟁자들이 순순히 저 점유율({implied_share*100:.1f}%)을 내어줄 것인가?\n"
+            "- **기술적 해자(Moat)**: 경쟁사의 파이를 빼앗아올 만큼 압도적인 기술 격차나 가격 경쟁력을 새롭게 확보했는가?\n"
+            "- **수익성 훼손**: 무리하게 점유율을 끌어올리기 위해 판관비를 쏟아붓거나 단가 인하를 단행하여, 결국 영업이익률(OPM)이 망가지는 '상처뿐인 영광'은 아닌가?\n\n"
+            "> *TAM 역산은 요구 점유율을 계산하는 것으로 끝나는 것이 아니라, 비즈니스 모델의 한계를 묻는 **출발점**입니다.*"
+        )
+
+    st.divider()
+    st.markdown("#### 2. 🚀 내포 기대치 역산 샌드박스 (Top-Down Implied Share)")
+    st.caption("현재 주가를 정당화하기 위해(또는 목표 수익률을 내기 위해) **미래에 도대체 몇 %의 시장 점유율을 차지해야 하는지**를 역추산하여 현재 가격의 거품을 진단합니다.")
+    
+    # 2. 기초 변수 추출
+    current_op = input_set.inputs.get("operating_income", 0)
+    current_opm = (current_op / current_rev) * 100 if current_rev > 0 else 10.0
+    tax_rate = input_set.inputs.get("tax_rate", 0.22)
+    current_mcap = market.get("market_cap", 0)
+    hist_per = market.get("historical_average_per", 15.0)
+    
+    col_a, col_b, col_c = st.columns(3)
+    sim_n_years = col_a.slider("투자기간 (n년 뒤)", min_value=1, max_value=15, value=5, step=1)
+    sim_tam_cagr = col_b.slider("글로벌 TAM 연평균 성장률 (%)", min_value=-10.0, max_value=50.0, value=10.0, step=1.0) / 100.0
+    sim_target_return = col_c.slider("투자자 목표 수익률 (%)", min_value=0.0, max_value=30.0, value=0.0, step=1.0, help="0%로 두면 현재 시총을 정당화(본전)하기 위한 요구 점유율이 나옵니다.") / 100.0
+    
+    col_d, col_e, col_f = st.columns(3)
+    sim_opm = col_d.slider("미래 목표 영업이익률 (OPM, %)", min_value=1.0, max_value=50.0, value=float(current_opm), step=1.0) / 100.0
+    sim_per = col_e.slider("미래 타겟 PER (멀티플 수축 반영, 배)", min_value=5.0, max_value=50.0, value=float(hist_per), step=1.0)
+    
+    if current_mcap > 0 and current_tam > 0:
+        # 역방향 계산 로직 (Reverse Engineering)
+        target_future_mcap = current_mcap * ((1 + sim_target_return) ** sim_n_years)
+        req_future_ni = target_future_mcap / sim_per
+        req_future_op = req_future_ni / (1 - tax_rate)
+        req_future_rev = req_future_op / sim_opm
+        
+        future_tam = current_tam * ((1 + sim_tam_cagr) ** sim_n_years)
+        
+        implied_target_share = req_future_rev / future_tam
+        
+        # Export용 Session State 저장
+        st.session_state["export_tam_n_years"] = sim_n_years
+        st.session_state["export_tam_cagr"] = sim_tam_cagr
+        st.session_state["export_tam_target_return"] = sim_target_return
+        st.session_state["export_tam_implied_share"] = implied_target_share
+        
+        st.markdown("##### 📊 가격표에 선반영된 요구 시장 점유율")
+        
+        res_col1, res_col2, res_col3, res_col4 = st.columns(4)
+        res_col1.metric("목표 미래 시가총액", f"{target_future_mcap/1_000_000_000_000:.1f}조")
+        res_col2.metric("요구되는 미래 매출", f"{req_future_rev/1_000_000_000_000:.1f}조")
+        res_col3.metric(f"{sim_n_years}년 뒤 예상 TAM", f"{future_tam/1_000_000_000_000:.1f}조")
+        
+        share_diff = (implied_target_share * 100) - current_share
+        delta_str = f"{share_diff:+.1f}%p 쟁탈 필요"
+        res_col4.metric("내포된 요구 점유율", f"{implied_target_share*100:.1f}%", delta=delta_str, delta_color="inverse")
+        
+        with st.expander("🔍 역산 도출 과정 (수식 투명 공개)", expanded=True):
+            st.markdown(
+                f"""
+                - **1단계 (요구 순이익)**: 목표 시가총액({target_future_mcap/1e12:.1f}조) ÷ 타겟 PER({sim_per:.1f}배) = **{req_future_ni/1e12:.1f}조 원**
+                - **2단계 (요구 영업이익)**: 요구 순이익({req_future_ni/1e12:.1f}조) ÷ (1 - 유효세율 {tax_rate*100:.0f}%) = **{req_future_op/1e12:.1f}조 원**
+                - **3단계 (요구 매출액)**: 요구 영업이익({req_future_op/1e12:.1f}조) ÷ 영업이익률({sim_opm*100:.1f}%) = **{req_future_rev/1e12:.1f}조 원**
+                - **4단계 (요구 점유율)**: 요구 매출액({req_future_rev/1e12:.1f}조) ÷ 미래 글로벌 TAM({future_tam/1e12:.1f}조) = **{implied_target_share*100:.1f}%**
+                """
+            )
+        
+        st.info(
+            f"**[가격표에 내포된 시장의 기대]**  \n"
+            f"현재 시가총액({current_mcap/1_000_000_000_000:.1f}조)을 정당화하려면(목표수익률 {sim_target_return*100:.0f}%), "
+            f"미래에 산업이 매년 {sim_tam_cagr*100:.1f}%씩 성장하고 회사가 {sim_opm*100:.1f}%의 마진을 낸다는 가정 하에 "
+            f"멀티플이 {sim_per:.1f}배로 수축하더라도 **글로벌 파이의 {implied_target_share*100:.1f}%를 장악해야만 합니다.**  \n"
+            f"👉 *현재 점유율({current_share:.1f}%) 대비 이 점유율을 달성하는 것이 현실적으로 가능한가요?*"
+        )
 def main() -> None:
     st.set_page_config(page_title="삼성전기 가치분석", layout="wide")
     st.title("삼성전기 시장내포 가치분석")
-    st.caption("Phase 1-7: 출처와 검산, Reverse DCF, 가치 분해, 매출·마진, ROIC, 상대가치, CAP를 함께 봅니다.")
+    st.caption("Phase 1-10: 출처와 검산, Reverse DCF, 가치 분해, 매출·마진, ROIC, 상대가치, CAP, 리스크, 내러티브, 종합 결론, Advanced 역산을 함께 봅니다.")
 
     observations = load_metric_observations(METRICS_PATH)
     market = load_market_data(MARKET_PATH)
@@ -874,6 +1419,11 @@ def main() -> None:
         tab_roic,
         tab_relative,
         tab_cap,
+        tab_risk,
+        tab_narrative,
+        tab_synthesis,
+        tab_peg,
+        tab_tam,
         tab_formula,
         tab_source,
     ) = st.tabs(
@@ -886,8 +1436,13 @@ def main() -> None:
             "6. ROIC",
             "7. 상대가치",
             "8. CAP",
-            "9. 공식",
-            "10. 출처 상세",
+            "9. 리스크",
+            "10. 내러티브",
+            "11. 종합 결론",
+            "12. PEG 역산",
+            "13. TAM 역산",
+            "14. 공식",
+            "15. 출처 상세",
         ]
     )
 
@@ -917,6 +1472,21 @@ def main() -> None:
     with tab_cap:
         render_cap_duration_tab(input_set)
 
+    with tab_risk:
+        render_risk_downside_tab(input_set)
+
+    with tab_narrative:
+        render_narrative_tab()
+
+    with tab_synthesis:
+        render_synthesis_tab(input_set)
+
+    with tab_peg:
+        render_peg_tab(input_set, market)
+
+    with tab_tam:
+        render_tam_tab(input_set, market)
+
     with tab_formula:
         st.markdown(
             """
@@ -937,18 +1507,79 @@ def main() -> None:
             - `초과가치 = EV - NOPAT / WACC`
             - `연간 경제적 이익 = 투하자본 × (ROIC - WACC)`
             - `단순 CAP = 초과가치 / 연간 경제적 이익`
+            - `추정 EV = 정상화 FCF / (WACC - g)`
+            - `괴리율 = (추정 EV - 현재 EV) / 현재 EV`
             """
         )
         st.warning("이 화면은 투자 권유가 아니라 다음 가치평가 단계로 넘길 입력값의 신뢰도를 확인하는 화면입니다.")
 
     with tab_source:
-        selected_label = st.selectbox(
-            "출처를 볼 입력값",
-            options=[obs.label for obs in all_observations],
-        )
-        selected = next(obs for obs in all_observations if obs.label == selected_label)
-        render_source_panel(selected)
+        st.markdown("데이터 출처 및 투명성")
+        st.dataframe(pd.DataFrame([obs.dict() for obs in all_observations]))
 
+    # === LLM Export Sidebar (맨 하단 배치하여 session_state의 최신 역산값을 활용) ===
+    st.sidebar.header("📥 LLM Export")
+    st.sidebar.caption("현재 화면에 분석된 모든 데이터와 내포 기대치 역산 결과를 다른 AI(ChatGPT, Claude 등)에 전달합니다.")
+    
+    import json
+    export_dict = {
+        "market_data": market,
+        "financial_inputs": input_set.inputs
+    }
+    json_str = json.dumps(export_dict, ensure_ascii=False, indent=2)
+    st.sidebar.download_button(
+        label="📄 JSON 다운로드 (원본 데이터)",
+        data=json_str,
+        file_name=f"{market.get('ticker', 'ticker')}_valuation.json",
+        mime="application/json"
+    )
+    
+    # Markdown Export 생성 로직
+    md_str = f"""# {market.get('company_name', 'Company')} ({market.get('ticker', 'Ticker')}) 시장 내포 가치 역산(Reverse Engineering) 데이터
+
+당신은 최고 수준의 가치평가 전문가입니다. 아래 데이터를 바탕으로, 이 기업의 '현재 주가'에 선반영된 시장의 엄청난 기대를 짚어내고 그것이 현실적인지 비판적으로 토론해 주세요.
+
+## 1. 시장 데이터 (Market Data)
+- **현재 시가총액**: {market.get('market_cap', 0):,} 원
+- **현재 주가**: {market.get('price', 0):,} 원
+- **과거 평균 PER**: {market.get('historical_average_per', 15.0)} 배
+- **현재 글로벌 TAM**: {market.get('current_tam', 0):,} 원
+
+## 2. 주요 재무 입력값 (Financial Inputs)
+"""
+    for k, v in input_set.inputs.items():
+        if isinstance(v, (int, float)):
+            md_str += f"- **{k}**: {v:,}\n"
+        else:
+            md_str += f"- **{k}**: {v}\n"
+            
+    md_str += "\n## 3. 내포 기대치 역산 결과 (Implied Market Expectations)\n"
+    
+    peg_g = st.session_state.get("export_peg_implied_g", None)
+    if peg_g is not None:
+        peg_n = st.session_state.get("export_peg_n_years", 5)
+        peg_per = st.session_state.get("export_peg_terminal_per", 15.0)
+        md_str += f"### A. 성장성 (PEG 멀티플 수축 방어)\n"
+        md_str += f"- **가정**: {peg_n}년 뒤 회사의 성장이 둔화되어 PER이 정상적인 **{peg_per:.1f}배**로 폭락(Multiple Contraction)한다고 가정.\n"
+        md_str += f"- **역산 결과 (주가 본전 요구 성장률)**: 현재 시가총액에 진입한 투자자가 손해를 보지 않으려면, 회사는 향후 {peg_n}년 동안 **매년 연평균 {peg_g*100:.1f}%씩** 이익이 복리로 성장해야 함.\n\n"
+        
+    tam_share = st.session_state.get("export_tam_implied_share", None)
+    if tam_share is not None:
+        tam_n = st.session_state.get("export_tam_n_years", 5)
+        tam_cagr = st.session_state.get("export_tam_cagr", 0.1)
+        tam_ret = st.session_state.get("export_tam_target_return", 0.0)
+        md_str += f"### B. 시장 점유율 (TAM 파이 쟁탈전)\n"
+        md_str += f"- **가정**: {tam_n}년 동안 글로벌 시장이 매년 **{tam_cagr*100:.1f}%** 성장한다고 가정.\n"
+        md_str += f"- **목표 수익률**: 투자자가 연평균 **{tam_ret*100:.1f}%**의 수익을 원함.\n"
+        md_str += f"- **역산 결과 (요구 시장 점유율)**: 이 시나리오 하에서 목표 수익률을 달성하려면 회사는 미래 글로벌 시장의 **{tam_share*100:.1f}%**를 장악해야 함.\n\n"
+        
+    st.sidebar.download_button(
+        label="📝 Markdown 다운로드 (추천!)",
+        data=md_str,
+        file_name=f"{market.get('ticker', 'ticker')}_valuation.md",
+        mime="text/markdown",
+        help="원본 데이터는 물론 역산 분석 결과까지 담겨있어 다른 LLM에게 질문하기 가장 좋은 포맷입니다."
+    )
 
 if __name__ == "__main__":
     main()

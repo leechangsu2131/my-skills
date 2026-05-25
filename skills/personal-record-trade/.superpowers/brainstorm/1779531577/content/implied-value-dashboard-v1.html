@@ -1,0 +1,167 @@
+<style>
+  .dash-shell { display: grid; gap: 18px; }
+  .dash-top { display: grid; grid-template-columns: 1.1fr .9fr; gap: 14px; }
+  .dash-card { border: 1px solid #d9e1ec; background: #fff; border-radius: 8px; padding: 14px; }
+  .dash-title { display:flex; justify-content:space-between; align-items:center; gap: 12px; margin-bottom: 12px; }
+  .ticker { font-size: 26px; font-weight: 760; color: #172033; letter-spacing: 0; }
+  .price { font-size: 20px; font-weight: 720; color: #0f766e; }
+  .small { color:#687385; font-size: 12px; }
+  .metric-grid { display:grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 8px; }
+  .metric { background:#f6f8fb; border:1px solid #e4e9f1; border-radius:6px; padding:10px; min-height:62px; }
+  .metric strong { display:block; font-size:17px; color:#172033; margin-top:4px; }
+  .mode-row { display:flex; justify-content:space-between; align-items:center; margin-top: 12px; }
+  .toggle { display:inline-flex; background:#edf2f7; border-radius:6px; padding:3px; gap:3px; }
+  .toggle span { padding:6px 10px; border-radius:5px; font-size:12px; }
+  .toggle .on { background:#172033; color:#fff; }
+  .main-grid { display:grid; grid-template-columns: 1fr 320px; gap: 14px; }
+  .model-grid { display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px; }
+  .model { border:1px solid #d9e1ec; border-radius:8px; padding:12px; background:#fff; min-height: 112px; }
+  .model h4 { margin:0 0 8px 0; font-size:14px; color:#172033; }
+  .model .big { font-size:24px; font-weight:760; color:#1f4f7a; }
+  .model .line { display:flex; justify-content:space-between; font-size:12px; color:#687385; margin-top:7px; }
+  .assumptions { display:grid; gap:8px; }
+  .input-line { display:flex; justify-content:space-between; align-items:center; gap:10px; border-bottom:1px solid #edf1f5; padding:8px 0; }
+  .input-pill { min-width:70px; text-align:right; background:#f6f8fb; border:1px solid #dce4ef; border-radius:6px; padding:6px 8px; font-weight:650; color:#172033; }
+  .bottom-grid { display:grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .heatmap { display:grid; grid-template-columns: 72px repeat(4,1fr); gap:4px; align-items:stretch; }
+  .heatmap div { padding:8px 6px; font-size:11px; text-align:center; border-radius:5px; background:#f2f5f9; }
+  .heatmap .h { background:#172033; color:#fff; font-weight:700; }
+  .heatmap .ok { background:#d9f3ea; }
+  .heatmap .warn { background:#fff1cf; }
+  .heatmap .bad { background:#f9d3d3; }
+  .risk-list { display:grid; gap:8px; }
+  .risk { display:flex; justify-content:space-between; gap:10px; background:#f8fafc; border:1px solid #e5ebf2; border-radius:6px; padding:9px; font-size:12px; }
+  @media (max-width: 900px) {
+    .dash-top, .main-grid, .bottom-grid { grid-template-columns: 1fr; }
+    .metric-grid, .model-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  }
+</style>
+
+<h2>개별 종목 정밀 분석 대시보드</h2>
+<p class="subtitle">추천안 A: 기본 화면은 핵심 역산 모델, 고급 모드에서 특수 모델과 리스크 연계를 확장합니다.</p>
+
+<div class="mockup">
+  <div class="mockup-header">Preview: Implied Market Expectations Dashboard</div>
+  <div class="mockup-body">
+    <div class="dash-shell">
+      <div class="dash-top">
+        <div class="dash-card">
+          <div class="dash-title">
+            <div>
+              <div class="ticker">NVDA</div>
+              <div class="small">NVIDIA Corp · 자동수집 + 수동보정 가능</div>
+            </div>
+            <div class="price">$132.40</div>
+          </div>
+          <div class="metric-grid">
+            <div class="metric"><span class="small">Market Cap</span><strong>$3.2T</strong></div>
+            <div class="metric"><span class="small">EV/FCF</span><strong>62.4x</strong></div>
+            <div class="metric"><span class="small">P/E</span><strong>39.8x</strong></div>
+            <div class="metric"><span class="small">P/B</span><strong>33.1x</strong></div>
+          </div>
+          <div class="mode-row">
+            <span class="small">기본 모드: 핵심 가정만 노출</span>
+            <div class="toggle"><span class="on">Basic</span><span>Advanced</span></div>
+          </div>
+        </div>
+
+        <div class="dash-card">
+          <div class="dash-title">
+            <strong>시장 내포 결론</strong>
+            <span class="small">자동 요약</span>
+          </div>
+          <p style="margin:0;color:#334155;font-size:14px;line-height:1.45">
+            현재 가격은 높은 FCF 성장률과 장기 ROIC 프리미엄을 동시에 요구합니다.
+            WACC가 1%p 올라가면 implied g가 크게 상승하므로, 핵심 리스크는
+            “성장률”보다 “할인율 민감도”에 있습니다.
+          </p>
+        </div>
+      </div>
+
+      <div class="main-grid">
+        <div class="dash-card">
+          <div class="dash-title">
+            <strong>핵심 역산 모델</strong>
+            <span class="small">Basic model set</span>
+          </div>
+          <div class="model-grid">
+            <div class="model">
+              <h4>Reverse DCF</h4>
+              <div class="big">8.7%</div>
+              <div class="line"><span>Implied perpetual FCF g</span><span>높음</span></div>
+            </div>
+            <div class="model">
+              <h4>EV/NOPAT → ROIC</h4>
+              <div class="big">31%</div>
+              <div class="line"><span>Implied ROIC</span><span>WACC 대비 +22%p</span></div>
+            </div>
+            <div class="model">
+              <h4>P/B → ROE</h4>
+              <div class="big">24%</div>
+              <div class="line"><span>Implied sustainable ROE</span><span>프리미엄</span></div>
+            </div>
+            <div class="model">
+              <h4>Value Attribution</h4>
+              <div class="big">72%</div>
+              <div class="line"><span>Growth value weight</span><span>성장 기대 큼</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="dash-card">
+          <div class="dash-title">
+            <strong>Assumptions</strong>
+            <span class="small">수동 보정</span>
+          </div>
+          <div class="assumptions">
+            <div class="input-line"><span>WACC</span><span class="input-pill">10.0%</span></div>
+            <div class="input-line"><span>Terminal g</span><span class="input-pill">4.0%</span></div>
+            <div class="input-line"><span>Tax rate</span><span class="input-pill">18.0%</span></div>
+            <div class="input-line"><span>FCF</span><span class="input-pill">$39.2B</span></div>
+            <div class="input-line"><span>NOPAT</span><span class="input-pill">$44.8B</span></div>
+            <div class="input-line"><span>Net debt</span><span class="input-pill">-$18B</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bottom-grid">
+        <div class="dash-card">
+          <div class="dash-title"><strong>WACC × FCF 민감도</strong><span class="small">Downside map</span></div>
+          <div class="heatmap">
+            <div></div><div class="h">9%</div><div class="h">10%</div><div class="h">11%</div><div class="h">12%</div>
+            <div class="h">FCF -10%</div><div class="ok">+12%</div><div class="warn">-4%</div><div class="bad">-19%</div><div class="bad">-31%</div>
+            <div class="h">Base</div><div class="ok">+24%</div><div class="ok">+5%</div><div class="warn">-12%</div><div class="bad">-26%</div>
+            <div class="h">FCF +10%</div><div class="ok">+36%</div><div class="ok">+15%</div><div class="warn">-3%</div><div class="bad">-18%</div>
+          </div>
+        </div>
+
+        <div class="dash-card">
+          <div class="dash-title"><strong>체크리스트 판정</strong><span class="small">Consistency · Historical · Peer</span></div>
+          <div class="risk-list">
+            <div class="risk"><span>역산 성장률 vs 과거 FCF 성장</span><strong>검토 필요</strong></div>
+            <div class="risk"><span>Implied ROIC vs peer 최고치</span><strong>공격적</strong></div>
+            <div class="risk"><span>CAP 지속 가능성</span><strong>스토리 의존</strong></div>
+            <div class="risk"><span>모형 간 수렴도</span><strong>부분 수렴</strong></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="options">
+  <div class="option" data-choice="approve_layout" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>이 화면 구조로 진행</h3>
+      <p>한 종목 정밀 분석에 맞게 핵심 모델, 가정, 민감도, 체크리스트를 한 화면에 둡니다.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="revise_layout" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>구조 수정</h3>
+      <p>예: 입력 패널을 더 크게, 모델 카드를 더 많이, 또는 리포트형 설명을 우선 배치합니다.</p>
+    </div>
+  </div>
+</div>

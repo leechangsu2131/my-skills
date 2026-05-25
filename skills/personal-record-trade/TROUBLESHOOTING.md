@@ -185,3 +185,54 @@ chcp 65001
 - `source_method`가 `dart_direct`, `calculated`, `market`, `manual` 중 적절한가?
 - `statement_name`, `original_account_name`, `original_amount`가 채워져 있는가?
 - 관련 테스트가 있는가?
+
+## Risk/Downside 탭에서 민감도 표가 빈칸으로 보이는 경우
+
+원인:
+
+- WACC가 영구성장률 이하일 때 영구가치 공식이 성립하지 않아 `None`을 반환합니다.
+- 이 경우 해당 셀은 `-`로 표시됩니다.
+
+해결:
+
+- 이는 정상 동작입니다. WACC > g인 조합만 유효한 추정 EV를 보여줍니다.
+- 민감도 표의 왼쪽 위(낮은 WACC, 높은 g)에서 빈칸이 많으면 정상입니다.
+
+## Risk/Downside 탭에서 괴리율이 극단적으로 보이는 경우
+
+가능한 의미:
+
+- 정상화 영업이익률이 현재 실적과 크게 다릅니다.
+- FCF 전환율 가정이 사업 특성에 맞지 않습니다.
+- 단일 단계 영구가치 모형의 한계로, WACC와 g의 작은 차이가 극단적인 결과를 만듭니다.
+
+해야 할 일:
+
+- 매출/마진 시나리오 탭에서 비슷한 가정을 넣어 교차 확인합니다.
+- Reverse DCF 탭의 민감도와 비교합니다.
+- 정상화 영업이익률 슬라이더를 조정하며 결과의 안정성을 확인합니다.
+
+관련 테스트:
+
+```powershell
+python -m pytest tests/test_risk_downside.py -v
+```
+
+## 종합 결론 탭(11번) 또는 Advanced 역산 탭(12번)이 안 보이거나 에러가 나는 경우
+
+원인:
+
+- 대시보드 렌더링 시 `st.tabs`의 개수와 배열된 탭 이름의 개수가 일치하지 않는 경우.
+- `evaluate_signals()` 또는 `calc_implied_growth_from_peg()` 모듈을 찾을 수 없는 경우.
+
+해결:
+
+- `dashboard.py`의 `st.tabs([...])` 리스트 안에 "12. Advanced 역산"이 정확히 12번째에 있는지 확인합니다. (총 14개)
+- 좌변 변수 튜플 `(tab_audit, ..., tab_advanced, tab_formula, tab_source)`의 개수가 일치하는지 확인합니다.
+
+관련 테스트:
+
+```powershell
+python -m pytest tests/test_synthesis.py tests/test_advanced_reverse.py -v
+```
+

@@ -36,8 +36,8 @@ Invoke-WebRequest -Uri 'http://localhost:8501/_stcore/health' -UseBasicParsing
 변경 후 최소한 아래를 실행합니다.
 
 ```powershell
-python -m pytest tests/test_valuation_models.py tests/test_valuation_calculations.py tests/test_valuation_repository.py tests/test_valuation_audit.py tests/test_valuation_formatting.py tests/test_reverse_dcf.py tests/test_value_attribution.py tests/test_margin_scenario.py tests/test_roic_reinvestment.py tests/test_relative_valuation.py tests/test_cap_duration.py -q
-python -m py_compile valuation_app/dashboard.py valuation_app/relative_valuation.py valuation_app/reverse_dcf.py valuation_app/roic_reinvestment.py valuation_app/cap_duration.py
+python -m pytest tests/test_valuation_models.py tests/test_valuation_calculations.py tests/test_valuation_repository.py tests/test_valuation_audit.py tests/test_valuation_formatting.py tests/test_reverse_dcf.py tests/test_value_attribution.py tests/test_margin_scenario.py tests/test_roic_reinvestment.py tests/test_relative_valuation.py tests/test_cap_duration.py tests/test_risk_downside.py tests/test_narrative_consistency.py tests/test_synthesis.py tests/test_advanced_reverse.py -q
+python -m py_compile valuation_app/dashboard.py valuation_app/relative_valuation.py valuation_app/reverse_dcf.py valuation_app/roic_reinvestment.py valuation_app/cap_duration.py valuation_app/risk_downside.py valuation_app/narrative_consistency.py valuation_app/synthesis.py valuation_app/advanced_reverse.py
 ```
 
 프론트 화면을 바꿨다면 브라우저에서 직접 확인합니다. 특히 ImportError, Traceback, 탭 미표시, 숫자 포맷 깨짐을 봅니다.
@@ -55,6 +55,10 @@ python -m py_compile valuation_app/dashboard.py valuation_app/relative_valuation
 - `valuation_app/roic_reinvestment.py`: ROIC, 경제적 이익, 재투자율, 주가 내포 미래 ROIC.
 - `valuation_app/relative_valuation.py`: P/E, P/B, EV/Sales, EV/NOPAT 등 상대가치 렌즈.
 - `valuation_app/cap_duration.py`: 초과수익 지속기간과 ROIC별 경제적 이익 PV.
+- `valuation_app/risk_downside.py`: WACC/g 민감도, 마진/WACC 민감도, 베어/베이스/불 시나리오, 가치 동인 순위.
+- `valuation_app/narrative_consistency.py`: 6대 핵심 사업 스토리와 연결 지표.
+- `valuation_app/synthesis.py`: 여러 렌즈의 분석 결과를 모아 수렴/발산 지점 요약 및 체크리스트.
+- `valuation_app/advanced_reverse.py`: PEG, TAM, 기대수익률 등 Advanced 역산 방법론.
 - `data/valuation/009150/normalized/metrics.json`: 삼성전기 정규화 재무 seed.
 - `data/valuation/009150/normalized/market.json`: 삼성전기 시장 데이터 seed.
 - `tests/`: 계산과 데이터 로딩 회귀 테스트.
@@ -72,8 +76,12 @@ python -m py_compile valuation_app/dashboard.py valuation_app/relative_valuation
 5. ROIC: 현재 ROIC, 경제적 이익, 주가 내포 미래 ROIC, 필요 재투자율.
 6. 상대가치: P/E, EPS 기준 P/E, P/B 내포 ROE, EV/Sales 필요 마진, EV/NOPAT.
 7. CAP: 초과가치, 현재/정상화 경제적 이익, 단순 CAP, 할인 CAP, ROIC별 초과수익 PV.
+8. Risk/Downside: WACC/g 민감도, 마진/WACC 민감도, 베어/베이스/불 시나리오, 가치 동인 순위.
+9. Narrative Consistency: 핵심 사업 스토리와 재무 지표 연결.
+10. Synthesis: 수렴/발산 종합 및 다음 분기 체크리스트.
+11. Advanced 역산: 기대수익률 분해, PEG 역산, 점유율/TAM 버블 진단.
 
-다음 큰 렌즈는 Risk/Downside입니다.
+다음 큰 렌즈는 없으며, 다음 작업은 **데이터 파이프라인 (DART 수집 자동화 및 매핑 보조)**입니다.
 
 ## 데이터 원칙
 

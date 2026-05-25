@@ -6,6 +6,10 @@
   "price": 1340000,
   "shares_outstanding": 72693696,
   "market_cap": 101233310302208,
+  "historical_average_per": 14.5,
+  "peer_average_per": 16.0,
+  "current_tam": 40000000000000,
+  "projected_tam_5yr": 60000000000000,
   "reported_enterprise_value": 101064883830784,
   "currency": "KRW",
   "note": "seed data; 주말에는 마지막 거래일 기준으로 표시"

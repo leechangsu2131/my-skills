@@ -1,0 +1,130 @@
+<style>
+  .lens { display:grid; gap:16px; color:#172033; }
+  .hero { display:grid; grid-template-columns:minmax(0,1fr) 360px; gap:14px; align-items:start; }
+  .panel { background:#fff; border:1px solid #d8e1eb; border-radius:8px; padding:14px; }
+  .badge { display:inline-flex; border-radius:99px; padding:4px 8px; background:#eef6f2; color:#0f766e; font-size:11px; font-weight:750; }
+  .badge.gray { background:#f1f5f9; color:#475569; }
+  .badge.orange { background:#fff7ed; color:#9a3412; }
+  .title { font-size:25px; font-weight:780; letter-spacing:0; margin:8px 0; }
+  .title span { color:#0f766e; }
+  .plain { margin:0; color:#405064; font-size:14px; line-height:1.55; }
+  .workflow { display:grid; grid-template-columns: repeat(5,minmax(0,1fr)); gap:9px; }
+  .step { border:1px solid #e2e8f0; border-radius:8px; padding:10px; background:#fff; min-height:122px; position:relative; }
+  .step.active { border-color:#0f766e; background:#f4fbf8; box-shadow:0 0 0 2px rgba(15,118,110,.10); }
+  .step.done { background:#f8fafc; }
+  .num { width:24px; height:24px; border-radius:50%; display:grid; place-items:center; background:#172033; color:#fff; font-size:11px; font-weight:750; margin-bottom:7px; }
+  .step.active .num { background:#0f766e; }
+  .step h4 { margin:0 0 6px; font-size:13px; }
+  .step p { margin:0; color:#596678; font-size:11px; line-height:1.35; }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  .table { display:grid; gap:5px; }
+  .row { display:grid; grid-template-columns: 1fr 1fr 1fr; gap:6px; font-size:12px; }
+  .cell { border:1px solid #e2e8f0; border-radius:6px; padding:8px; background:#fff; min-height:36px; display:grid; align-items:center; }
+  .head { background:#172033; color:#fff; font-weight:750; text-align:center; }
+  .soft { background:#f8fafc; font-weight:750; }
+  .cash { background:#e9f7ee; }
+  .relative { background:#eef4ff; }
+  .risk { background:#fff7ed; }
+  .synthesis { background:#f7efff; }
+  .palette { display:grid; gap:8px; margin-top:10px; }
+  .palette-item { border:1px solid #e2e8f0; border-radius:7px; padding:8px; background:#fff; }
+  .palette-item strong { display:flex; justify-content:space-between; gap:8px; font-size:12px; margin-bottom:4px; }
+  .palette-item span { color:#596678; display:block; font-size:11px; line-height:1.35; }
+  .tag { border-radius:99px; padding:2px 6px; font-size:10px; font-weight:750; background:#f1f5f9; color:#475569; white-space:nowrap; }
+  .tag.on { background:#0f766e; color:#fff; }
+  .quote { border-radius:8px; padding:12px; border:1px solid #cfe4de; background:#f4fbf8; color:#124e45; font-size:13px; line-height:1.45; }
+  @media (max-width: 980px) {
+    .hero, .grid2, .workflow, .row { grid-template-columns:1fr; }
+  }
+</style>
+
+<h2>삼성전기: 다중 렌즈 가치분석 워크플로우</h2>
+<p class="subtitle">다모다란 FCFF는 하나의 렌즈입니다. 이제 여러 방법을 순서대로 적용하고, 결론이 수렴하는지 봅니다.</p>
+
+<div class="mockup">
+  <div class="mockup-header">Multi-lens valuation workflow · Samsung Electro-Mechanics</div>
+  <div class="mockup-body">
+    <div class="lens">
+      <div class="hero">
+        <div class="panel">
+          <span class="badge">Product direction</span>
+          <div class="title">한 모델의 답이 아니라, <span>여러 렌즈의 수렴/발산</span>을 본다</div>
+          <p class="plain">
+            현금흐름 DCF는 가장 정석적인 렌즈지만 모든 질문에 답하지는 못합니다.
+            삼성전기처럼 사이클, 고부가 제품 믹스, 투자 회수, 시장 내러티브가 섞인 기업은
+            현금흐름, 상대가치, ROIC, CAP, 리스크, 내러티브를 차례대로 통과시켜야 합니다.
+          </p>
+        </div>
+        <div class="panel">
+          <span class="badge gray">분석 원칙</span>
+          <div class="palette">
+            <div class="palette-item"><strong>각 렌즈는 하나의 질문 <span class="tag on">중요</span></strong><span>모형을 먼저 고르지 않고, 질문에 맞는 모형을 고릅니다.</span></div>
+            <div class="palette-item"><strong>결론보다 전제 추적 <span class="tag">투명성</span></strong><span>공식, 대입값, 출처, 사용자 가정을 함께 봅니다.</span></div>
+            <div class="palette-item"><strong>수렴/발산을 기록 <span class="tag">엣지</span></strong><span>방법들이 충돌하면 그 지점이 투자 질문입니다.</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <span class="badge gray">순차 분석 로드맵</span>
+        <div class="workflow" style="margin-top:10px">
+          <div class="step done"><div class="num">1</div><h4>시장/출처 무결성</h4><p>현재 가격, 연간/분기 실적, 자동 데이터 충돌 여부 확인.</p></div>
+          <div class="step done"><div class="num">2</div><h4>FCFF / Reverse DCF</h4><p>다모다란식 현금흐름 렌즈. 현재 FCF로 설명 가능한지 진단.</p></div>
+          <div class="step active"><div class="num">3</div><h4>Value Attribution</h4><p>현재 수익력 가치와 미래 기대 가치를 분해.</p></div>
+          <div class="step"><div class="num">4</div><h4>마진/매출 시나리오</h4><p>어떤 매출과 OPM 조합이 필요한지 역산.</p></div>
+          <div class="step"><div class="num">5</div><h4>ROIC / 재투자</h4><p>성장이 좋은 투자수익률로 만들어지는지 확인.</p></div>
+          <div class="step"><div class="num">6</div><h4>상대가치</h4><p>P/E, P/B, EV/EBIT, EV/Sales, peer와 비교.</p></div>
+          <div class="step"><div class="num">7</div><h4>CAP / 해자 기간</h4><p>초과수익이 몇 년 지속되어야 하는지 진단.</p></div>
+          <div class="step"><div class="num">8</div><h4>리스크/다운사이드</h4><p>성장, 마진, WACC, ROIC 미달 시 가격 민감도.</p></div>
+          <div class="step"><div class="num">9</div><h4>내러티브 정합성</h4><p>AI, MLCC, FC-BGA, 실리콘 캐패시터 스토리와 숫자 연결.</p></div>
+          <div class="step"><div class="num">10</div><h4>종합</h4><p>어느 가정이 핵심인지, 무엇을 추적할지 정리.</p></div>
+        </div>
+      </div>
+
+      <div class="grid2">
+        <div class="panel">
+          <span class="badge gray">렌즈별 역할</span>
+          <div class="table" style="margin-top:10px">
+            <div class="row"><div class="cell head">렌즈</div><div class="cell head">답하는 질문</div><div class="cell head">삼성전기에서의 의미</div></div>
+            <div class="row"><div class="cell cash">FCFF</div><div class="cell">현금흐름으로 가격이 설명되나?</div><div class="cell">현재 FCF만으로는 설명력 낮음</div></div>
+            <div class="row"><div class="cell cash">Value Attribution</div><div class="cell">미래 기대가 얼마나 큰가?</div><div class="cell">현재 수익력보다 기대 비중 큼</div></div>
+            <div class="row"><div class="cell relative">상대가치</div><div class="cell">시장은 peer 대비 얼마나 프리미엄을 주나?</div><div class="cell">AI 부품 프리미엄의 크기 확인</div></div>
+            <div class="row"><div class="cell risk">ROIC/CAP</div><div class="cell">그 성장이 질 좋은 성장인가?</div><div class="cell">투자 회수와 해자 지속기간 확인</div></div>
+            <div class="row"><div class="cell synthesis">내러티브</div><div class="cell">스토리와 숫자가 맞나?</div><div class="cell">MLCC/FC-BGA/실리콘 캐패시터 스토리 검증</div></div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <span class="badge orange">다모다란의 위치</span>
+          <p class="plain" style="margin-top:10px">
+            다모다란 템플릿은 이 로드맵의 2~5단계에 강합니다. 특히 FCFF, sales-to-capital,
+            ROIC, Diagnostics는 계속 가져갑니다. 다만 상대가치, 시장 내러티브, CAP 지속기간,
+            소스 충돌, 초보자용 설명은 우리 도구가 별도 렌즈로 보강합니다.
+          </p>
+        </div>
+      </div>
+
+      <div class="quote">
+        새 제품 문장: “이 도구는 하나의 내재가치 숫자를 만드는 계산기가 아니라, 같은 회사를 여러 관점에서 통과시키며
+        시장의 믿음이 어디서 강하고 약한지 찾는 분석 동반자입니다.”
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="options">
+  <div class="option" data-choice="multi_lens_approve" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>이 다중 렌즈 워크플로우로 진행</h3>
+      <p>삼성전기를 10단계 렌즈로 순차 분석하고 수렴/발산을 기록합니다.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="multi_lens_revise" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>순서 수정</h3>
+      <p>예: 상대가치를 더 앞에 두거나, 내러티브부터 시작하거나, DCF를 뒤로 보냅니다.</p>
+    </div>
+  </div>
+</div>

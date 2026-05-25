@@ -54,7 +54,7 @@ python -m streamlit run valuation_app/dashboard.py --server.port 8502
 먼저 문법 확인:
 
 ```powershell
-python -m py_compile valuation_app/dashboard.py valuation_app/relative_valuation.py valuation_app/reverse_dcf.py valuation_app/roic_reinvestment.py
+python -m py_compile valuation_app/dashboard.py valuation_app/relative_valuation.py valuation_app/reverse_dcf.py valuation_app/roic_reinvestment.py valuation_app/cap_duration.py
 ```
 
 그 다음 관련 테스트만 좁혀서 실행합니다.
@@ -66,7 +66,7 @@ python -m pytest tests/test_relative_valuation.py -v
 마지막으로 전체 valuation 테스트를 실행합니다.
 
 ```powershell
-python -m pytest tests/test_valuation_models.py tests/test_valuation_calculations.py tests/test_valuation_repository.py tests/test_valuation_audit.py tests/test_valuation_formatting.py tests/test_reverse_dcf.py tests/test_value_attribution.py tests/test_margin_scenario.py tests/test_roic_reinvestment.py tests/test_relative_valuation.py -q
+python -m pytest tests/test_valuation_models.py tests/test_valuation_calculations.py tests/test_valuation_repository.py tests/test_valuation_audit.py tests/test_valuation_formatting.py tests/test_reverse_dcf.py tests/test_value_attribution.py tests/test_margin_scenario.py tests/test_roic_reinvestment.py tests/test_relative_valuation.py tests/test_cap_duration.py -q
 ```
 
 ## PER이 `데이터 필요`로 보이는 경우

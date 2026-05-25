@@ -338,6 +338,24 @@ Design intent:
   - EV/Sales -> required NOPAT margin and operating margin
   - EV/NOPAT -> current earnings burden
 
+## Implementation Progress Notes - CAP Lens
+
+The user asked to continue the next planned work after relative valuation.
+
+Design intent:
+
+- Add CAP / competitive advantage period as the next lens.
+- Ask how long abnormal returns must persist if the required ROIC or margin assumptions are not immediately realistic.
+- Keep the current negative economic profit visible instead of hiding it.
+- Separate two ideas:
+  - current annual economic profit, which is negative when current ROIC is below WACC
+  - normalized annual economic profit, which depends on a user-selected normalized ROIC assumption
+- Show both simple CAP and discounted CAP:
+  - `Simple CAP = Excess Value / Annual Economic Profit`
+  - discounted CAP solves for the period where discounted annual economic profit equals excess value
+- If discounted CAP is `불가능`, explain that the selected ROIC would not explain current excess value even if it persisted forever under the simplified no-growth economic-profit frame.
+- Add a ROIC-by-period table so the user can see how much 5, 10, 15, 20, and 30 years of economic profit are worth.
+
 Next likely lens:
 
-- CAP / competitive advantage period, to ask how long abnormal returns must persist if the required ROIC or margin assumptions are not immediately realistic.
+- Risk / Downside, to show how value changes when WACC, normalized margin, revenue growth, or FCF conversion disappoint.

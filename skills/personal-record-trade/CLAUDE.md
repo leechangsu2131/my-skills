@@ -36,8 +36,8 @@ Invoke-WebRequest -Uri 'http://localhost:8501/_stcore/health' -UseBasicParsing
 변경 후 최소한 아래를 실행합니다.
 
 ```powershell
-python -m pytest tests/test_valuation_models.py tests/test_valuation_calculations.py tests/test_valuation_repository.py tests/test_valuation_audit.py tests/test_valuation_formatting.py tests/test_reverse_dcf.py tests/test_value_attribution.py tests/test_margin_scenario.py tests/test_roic_reinvestment.py tests/test_relative_valuation.py -q
-python -m py_compile valuation_app/dashboard.py valuation_app/relative_valuation.py valuation_app/reverse_dcf.py valuation_app/roic_reinvestment.py
+python -m pytest tests/test_valuation_models.py tests/test_valuation_calculations.py tests/test_valuation_repository.py tests/test_valuation_audit.py tests/test_valuation_formatting.py tests/test_reverse_dcf.py tests/test_value_attribution.py tests/test_margin_scenario.py tests/test_roic_reinvestment.py tests/test_relative_valuation.py tests/test_cap_duration.py -q
+python -m py_compile valuation_app/dashboard.py valuation_app/relative_valuation.py valuation_app/reverse_dcf.py valuation_app/roic_reinvestment.py valuation_app/cap_duration.py
 ```
 
 프론트 화면을 바꿨다면 브라우저에서 직접 확인합니다. 특히 ImportError, Traceback, 탭 미표시, 숫자 포맷 깨짐을 봅니다.
@@ -54,6 +54,7 @@ python -m py_compile valuation_app/dashboard.py valuation_app/relative_valuation
 - `valuation_app/margin_scenario.py`: 매출/마진 조합 시나리오.
 - `valuation_app/roic_reinvestment.py`: ROIC, 경제적 이익, 재투자율, 주가 내포 미래 ROIC.
 - `valuation_app/relative_valuation.py`: P/E, P/B, EV/Sales, EV/NOPAT 등 상대가치 렌즈.
+- `valuation_app/cap_duration.py`: 초과수익 지속기간과 ROIC별 경제적 이익 PV.
 - `data/valuation/009150/normalized/metrics.json`: 삼성전기 정규화 재무 seed.
 - `data/valuation/009150/normalized/market.json`: 삼성전기 시장 데이터 seed.
 - `tests/`: 계산과 데이터 로딩 회귀 테스트.
@@ -70,8 +71,9 @@ python -m py_compile valuation_app/dashboard.py valuation_app/relative_valuation
 4. 매출/마진 시나리오: 필요 FCF를 만족시키는 매출 성장률과 영업이익률 조합.
 5. ROIC: 현재 ROIC, 경제적 이익, 주가 내포 미래 ROIC, 필요 재투자율.
 6. 상대가치: P/E, EPS 기준 P/E, P/B 내포 ROE, EV/Sales 필요 마진, EV/NOPAT.
+7. CAP: 초과가치, 현재/정상화 경제적 이익, 단순 CAP, 할인 CAP, ROIC별 초과수익 PV.
 
-다음 큰 렌즈는 CAP, 즉 경쟁우위 기간입니다.
+다음 큰 렌즈는 Risk/Downside입니다.
 
 ## 데이터 원칙
 
@@ -97,4 +99,3 @@ python -m py_compile valuation_app/dashboard.py valuation_app/relative_valuation
 - `.superpowers/`는 로컬 작업 흔적이므로 사용자가 명시하지 않으면 커밋하지 않습니다.
 - 사용자 변경을 되돌리지 않습니다.
 - 문서나 앱을 바꾼 뒤 테스트와 브라우저 확인을 하고 작게 커밋합니다.
-

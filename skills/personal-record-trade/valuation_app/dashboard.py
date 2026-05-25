@@ -7,6 +7,13 @@ import streamlit as st
 
 from valuation_app.audit import run_audit
 from valuation_app.calculations import calc_required_fcf
+from valuation_app.cap_duration import (
+    build_cap_duration_table,
+    build_cap_metric_explanations,
+    calc_annual_economic_profit_from_roic,
+    calc_discounted_cap_years,
+    calc_simple_payback_years,
+)
 from valuation_app.formatting import format_krw, format_ratio, source_label, status_label
 from valuation_app.margin_scenario import (
     build_margin_scenario_matrix,
@@ -218,6 +225,27 @@ def _format_roic_solution(value: float | None) -> str:
     if value is None:
         return "해 없음"
     return format_ratio(value)
+
+
+def _format_years(value: float | None) -> str:
+    if value is None or pd.isna(value):
+        return "불가능"
+    return f"{value:.1f}년"
+
+
+def _cap_duration_rows(rows: list[dict[float | str, float | None]], periods: list[int]) -> list[dict[str, str]]:
+    formatted: list[dict[str, str]] = []
+    for row in rows:
+        item = {
+            "ROIC": format_ratio(row["roic"]),
+            "연간 경제적 이익": format_krw(row["annual_economic_profit"]),
+            "단순 CAP": _format_years(row["simple_payback_years"]),
+            "할인 CAP": _format_years(row["discounted_cap_years"]),
+        }
+        for years in periods:
+            item[f"{years}년 PV"] = format_krw(row[years])
+        formatted.append(item)
+    return formatted
 
 
 def render_source_panel(obs: MetricObservation) -> None:
@@ -707,10 +735,112 @@ def render_relative_valuation_tab(input_set: ValuationInputSet) -> None:
         )
 
 
+def render_cap_duration_tab(input_set: ValuationInputSet) -> None:
+    enterprise_value = input_set.inputs.get("enterprise_value")
+    nopat = input_set.inputs.get("nopat")
+    invested_capital = input_set.inputs.get("invested_capital")
+    roic = input_set.inputs.get("roic")
+
+    st.markdown("CAP는 현재 가격이 요구하는 초과수익이 몇 년이나 지속되어야 하는지 보는 렌즈입니다.")
+    st.code(
+        "현재 수익력 가치 = NOPAT / WACC\n"
+        "초과가치 = EV - 현재 수익력 가치\n"
+        "연간 경제적 이익 = 투하자본 × (ROIC - WACC)\n"
+        "단순 CAP = 초과가치 / 연간 경제적 이익\n"
+        "할인 CAP = 연간 경제적 이익의 할인현재가치가 초과가치와 같아지는 기간",
+        language="text",
+    )
+
+    if enterprise_value is None or nopat is None or invested_capital is None or roic is None:
+        st.error("CAP 분석에 필요한 EV, NOPAT, 투하자본 또는 ROIC가 없습니다. 먼저 데이터 검산을 확인하세요.")
+        return
+
+    c1, c2, c3 = st.columns(3)
+    wacc = c1.slider("CAP WACC", min_value=5.0, max_value=13.0, value=9.0, step=0.5) / 100.0
+    reference_growth = c2.slider("참고 성장률 g", min_value=0.0, max_value=8.0, value=3.0, step=0.5) / 100.0
+    implied_future_roic = calc_implied_future_roic_from_invested_capital(
+        float(enterprise_value), float(invested_capital), wacc, reference_growth
+    )
+    default_normalized_roic = min(120.0, max(10.0, round((implied_future_roic or float(roic)) * 100.0)))
+    normalized_roic = c3.slider(
+        "정상화 ROIC 가정",
+        min_value=5.0,
+        max_value=120.0,
+        value=float(default_normalized_roic),
+        step=1.0,
+    ) / 100.0
+
+    no_growth_value = calc_no_growth_value(float(nopat), wacc)
+    excess_value = calc_future_expectation_value(float(enterprise_value), no_growth_value)
+    current_annual_ep = calc_annual_economic_profit_from_roic(float(invested_capital), float(roic), wacc)
+    normalized_annual_ep = calc_annual_economic_profit_from_roic(float(invested_capital), normalized_roic, wacc)
+    simple_cap = calc_simple_payback_years(excess_value, normalized_annual_ep)
+    discounted_cap = calc_discounted_cap_years(excess_value, normalized_annual_ep, wacc)
+    perpetuity_ep_value = None if normalized_annual_ep is None or normalized_annual_ep <= 0 else normalized_annual_ep / wacc
+
+    m1, m2, m3, m4 = st.columns(4)
+    m1.metric("초과가치", format_krw(excess_value))
+    m2.metric("현재 연간 경제적 이익", format_krw(current_annual_ep))
+    m3.metric("정상화 연간 경제적 이익", format_krw(normalized_annual_ep))
+    m4.metric("단순 CAP", _format_years(simple_cap))
+
+    d1, d2, d3 = st.columns(3)
+    d1.metric("할인 CAP", _format_years(discounted_cap))
+    d2.metric("경제적 이익 영구가치", format_krw(perpetuity_ep_value))
+    d3.metric("참고 주가 내포 미래 ROIC", format_ratio(implied_future_roic))
+
+    if current_annual_ep is not None and current_annual_ep <= 0:
+        st.warning(
+            "현재 ROIC가 WACC보다 낮아 현재 연간 경제적 이익은 음수입니다. "
+            "따라서 현재 수익성 그대로는 경쟁우위 기간을 계산할 수 없고, 먼저 정상화 ROIC 회복 가정이 필요합니다."
+        )
+
+    if discounted_cap is None and excess_value > 0:
+        st.warning(
+            "선택한 정상화 ROIC로 만든 연간 경제적 이익은, 영구히 지속된다고 가정해도 현재 초과가치를 할인 기준으로 모두 설명하지 못합니다. "
+            "이는 시장 가격이 더 높은 정상화 ROIC, 성장하는 경제적 이익, 또는 다른 비영업 가치까지 요구한다는 신호입니다."
+        )
+
+    st.markdown("#### 숫자 읽는 법")
+    st.info(
+        "CAP는 '좋은 수익성이 있다'에서 한 걸음 더 들어가 그 수익성이 얼마나 오래 지속되어야 하는지 묻습니다. "
+        "삼성전기처럼 현재 ROIC가 낮고 가격이 높은 경우에는 CAP가 길게 나오거나 불가능으로 나오는데, "
+        "이때 핵심 질문은 고부가 MLCC, FC-BGA, 전장 부품이 실제로 ROIC를 얼마나 회복시킬 수 있느냐입니다."
+    )
+    st.table(pd.DataFrame(build_cap_metric_explanations()))
+
+    st.markdown("#### ROIC별 초과수익 기간 표")
+    st.caption("각 ROIC가 매년 같은 경제적 이익을 만든다고 놓고, 5년/10년/15년/20년/30년 동안의 할인현재가치를 비교합니다.")
+    periods = [5, 10, 15, 20, 30]
+    table_rows = build_cap_duration_table(
+        excess_value=excess_value,
+        invested_capital=float(invested_capital),
+        roic_values=[0.12, 0.20, 0.40, 0.70, 1.00, 1.20],
+        wacc=wacc,
+        periods=periods,
+    )
+    st.dataframe(_cap_duration_rows(table_rows, periods), use_container_width=True, hide_index=True)
+
+    with st.expander("입력값 출처와 계산 흐름"):
+        st.markdown(
+            f"""
+            - EV: `{format_krw(enterprise_value)}`
+            - NOPAT: `{format_krw(nopat)}`
+            - WACC: `{format_ratio(wacc)}`
+            - 투하자본: `{format_krw(invested_capital)}`
+            - 현재 ROIC: `{format_ratio(roic)}`
+            - 정상화 ROIC 가정: `{format_ratio(normalized_roic)}`
+            - 현재 수익력 가치: `{format_krw(no_growth_value)}`
+            - 초과가치: `{format_krw(excess_value)}`
+            - 공식: `초과가치 = EV - NOPAT / WACC`, `연간 경제적 이익 = 투하자본 × (ROIC - WACC)`
+            """
+        )
+
+
 def main() -> None:
     st.set_page_config(page_title="삼성전기 가치분석", layout="wide")
     st.title("삼성전기 시장내포 가치분석")
-    st.caption("Phase 1-6: 출처와 검산, Reverse DCF, 가치 분해, 매출·마진, ROIC, 상대가치를 함께 봅니다.")
+    st.caption("Phase 1-7: 출처와 검산, Reverse DCF, 가치 분해, 매출·마진, ROIC, 상대가치, CAP를 함께 봅니다.")
 
     observations = load_metric_observations(METRICS_PATH)
     market = load_market_data(MARKET_PATH)
@@ -743,6 +873,7 @@ def main() -> None:
         tab_margin_scenario,
         tab_roic,
         tab_relative,
+        tab_cap,
         tab_formula,
         tab_source,
     ) = st.tabs(
@@ -754,8 +885,9 @@ def main() -> None:
             "5. 매출·마진",
             "6. ROIC",
             "7. 상대가치",
-            "8. 공식",
-            "9. 출처 상세",
+            "8. CAP",
+            "9. 공식",
+            "10. 출처 상세",
         ]
     )
 
@@ -782,6 +914,9 @@ def main() -> None:
     with tab_relative:
         render_relative_valuation_tab(input_set)
 
+    with tab_cap:
+        render_cap_duration_tab(input_set)
+
     with tab_formula:
         st.markdown(
             """
@@ -799,6 +934,9 @@ def main() -> None:
             - `P/B = 시가총액 / 자본총계`
             - `내포 ROE = g + P/B × (요구수익률 - g)`
             - `EV/Sales = EV / 매출`
+            - `초과가치 = EV - NOPAT / WACC`
+            - `연간 경제적 이익 = 투하자본 × (ROIC - WACC)`
+            - `단순 CAP = 초과가치 / 연간 경제적 이익`
             """
         )
         st.warning("이 화면은 투자 권유가 아니라 다음 가치평가 단계로 넘길 입력값의 신뢰도를 확인하는 화면입니다.")

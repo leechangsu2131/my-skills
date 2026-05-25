@@ -198,3 +198,13 @@ python -m streamlit run valuation_app/dashboard.py --server.port 8501
 - 상대가치: P/E, EPS 기준 P/E, P/B 내포 ROE, EV/Sales 필요 마진, EV/NOPAT 가격 부담
 
 이 화면에서 검산을 통과한 공통 입력값을 Reverse DCF, Value Attribution, 매출·마진 시나리오, ROIC, 상대가치 렌즈와 다음 단계의 CAP 렌즈가 사용합니다.
+
+### 이어받기 문서
+
+다른 IDE나 에이전트가 작업을 이어받을 때는 아래 순서로 읽습니다.
+
+1. `CLAUDE.md`: 프로젝트 원칙, 실행법, 데이터/화면/검증 규칙
+2. `PLANS.md`: 현재 진행 상태와 다음 구현 순서
+3. `TROUBLESHOOTING.md`: Streamlit, 데이터, PER, ROIC, 인코딩 문제 해결법
+4. `docs/superpowers/notes/2026-05-23-implied-valuation-conversation.md`: 사용자와의 설계 대화 기록
+5. `docs/superpowers/specs/2026-05-24-samsung-electro-implied-valuation-design.md`: 삼성전기 가치분석 대시보드 설계

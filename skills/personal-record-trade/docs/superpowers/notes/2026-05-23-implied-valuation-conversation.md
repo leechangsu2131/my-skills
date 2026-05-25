@@ -327,7 +327,12 @@ Design intent:
   - `P/B = market cap / total equity`
   - `EV/Sales = EV / revenue`
   - `EV/NOPAT = EV / NOPAT`
-- Do not fabricate P/E because net income is not yet in the normalized dataset. Show `데이터 필요` instead.
+- Initial implementation showed P/E as `데이터 필요` because net income was not in the local normalized seed.
+- User correctly noted that PER is a basic market metric and net income should be available.
+- Add 2025 net income and EPS from Samsung Electro-Mechanics' 2025 audit report Note 23:
+  - Profit attributable to ordinary equity holders of the parent: KRW `679,304,726,000`
+  - Basic diluted EPS for ordinary shares: KRW `9,345`
+- Show both market-cap based P/E and EPS-based P/E because current price, share count, and market cap may have timing or class-treatment differences.
 - Translate multiples into implied operating questions:
   - P/B -> implied ROE
   - EV/Sales -> required NOPAT margin and operating margin

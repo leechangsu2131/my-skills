@@ -22,6 +22,8 @@ from valuation_app.relative_valuation import (
     calc_implied_nopat_margin_from_ev_sales,
     calc_implied_operating_margin_from_ev_sales,
     calc_implied_roe_from_pb,
+    calc_pe_from_eps,
+    calc_price_to_earnings,
     calc_price_to_book,
 )
 from valuation_app.reverse_dcf import build_required_fcf_matrix, calc_normalized_fcf, required_fcf_multiple
@@ -51,7 +53,19 @@ MARKET_PATH = ROOT / "data/valuation/009150/normalized/market.json"
 def _display_value(obs: MetricObservation) -> str:
     if obs.unit == "ratio":
         return format_ratio(obs.value)
+    if obs.unit == "KRW/share":
+        return _format_price(obs.value)
     return format_krw(obs.value)
+
+
+def _display_original_value(obs: MetricObservation) -> str:
+    if obs.original_amount is None:
+        return "-"
+    if obs.unit == "ratio":
+        return format_ratio(obs.original_amount)
+    if obs.unit == "KRW/share":
+        return _format_price(obs.original_amount)
+    return format_krw(obs.original_amount)
 
 
 def _format_price(value: float | int | None) -> str:
@@ -214,7 +228,7 @@ def render_source_panel(obs: MetricObservation) -> None:
     st.write(f"보고서 코드: `{obs.report_code or '-'}`")
     st.write(f"재무제표: `{obs.statement_name or '-'}`")
     st.write(f"원문 계정명: `{obs.original_account_name or '-'}`")
-    st.write(f"원문 금액: `{format_krw(obs.original_amount) if obs.original_amount is not None else '-'}`")
+    st.write(f"원문 금액: `{_display_original_value(obs)}`")
     st.write(f"신뢰도: `{format_ratio(obs.confidence)}`")
     st.info(obs.note or "메모 없음")
 
@@ -602,11 +616,16 @@ def render_relative_valuation_tab(input_set: ValuationInputSet) -> None:
     enterprise_value = input_set.inputs.get("enterprise_value")
     revenue = input_set.inputs.get("revenue")
     nopat = input_set.inputs.get("nopat")
+    net_income = input_set.inputs.get("net_income")
+    eps = input_set.inputs.get("eps")
+    price = input_set.inputs.get("price")
     total_equity = input_set.inputs.get("total_equity")
     tax_rate = input_set.inputs.get("tax_rate") or 0.183
 
     st.markdown("상대가치는 싸다/비싸다 결론이 아니라, 현재 가격을 여러 분모로 나눠 시장의 요구조건을 보는 보조 렌즈입니다.")
     st.code(
+        "P/E = 시가총액 / 순이익\n"
+        "EPS 기준 P/E = 주가 / EPS\n"
         "P/B = 시가총액 / 자본총계\n"
         "내포 ROE = g + P/B × (요구수익률 - g)\n"
         "EV/Sales = EV / 매출\n"
@@ -625,6 +644,8 @@ def render_relative_valuation_tab(input_set: ValuationInputSet) -> None:
     growth_rate = c3.slider("Relative 성장률 g", min_value=0.0, max_value=8.0, value=3.0, step=0.5) / 100.0
     target_roic = c4.slider("Relative 목표 ROIC", min_value=5.0, max_value=40.0, value=25.0, step=0.5) / 100.0
 
+    price_to_earnings = calc_price_to_earnings(market_cap, net_income)
+    pe_from_eps = calc_pe_from_eps(price, eps)
     price_to_book = calc_price_to_book(market_cap, total_equity)
     ev_sales = calc_ev_to_sales(enterprise_value, revenue)
     ev_nopat = calc_ev_to_nopat(enterprise_value, nopat)
@@ -635,15 +656,24 @@ def render_relative_valuation_tab(input_set: ValuationInputSet) -> None:
     )
 
     m1, m2, m3, m4 = st.columns(4)
-    m1.metric("P/E", "데이터 필요")
+    m1.metric("P/E", _format_multiple(price_to_earnings))
     m2.metric("P/B", _format_multiple(price_to_book))
     m3.metric("P/B 내포 ROE", format_ratio(implied_roe))
     m4.metric("EV/Sales", _format_multiple(ev_sales))
 
-    n1, n2, n3 = st.columns(3)
-    n1.metric("EV/Sales 필요 NOPAT margin", format_ratio(implied_nopat_margin))
-    n2.metric("EV/Sales 필요 영업이익률", format_ratio(implied_operating_margin))
-    n3.metric("EV/NOPAT", _format_multiple(ev_nopat))
+    n1, n2, n3, n4 = st.columns(4)
+    n1.metric("EPS 기준 P/E", _format_multiple(pe_from_eps))
+    n2.metric("EV/Sales 필요 NOPAT margin", format_ratio(implied_nopat_margin))
+    n3.metric("EV/Sales 필요 영업이익률", format_ratio(implied_operating_margin))
+    n4.metric("EV/NOPAT", _format_multiple(ev_nopat))
+
+    if price_to_earnings is not None and pe_from_eps is not None:
+        pe_gap = abs(price_to_earnings - pe_from_eps) / price_to_earnings
+        if pe_gap >= 0.02:
+            st.warning(
+                "시가총액 기준 P/E와 EPS 기준 P/E가 다릅니다. "
+                "이는 현재가, 주식수, 시가총액 기준 시점이나 보통주/우선주 처리 차이 때문일 수 있어 시장 데이터 검산이 필요합니다."
+            )
 
     if implied_roe is not None and implied_roe >= 0.3:
         st.warning(
@@ -668,9 +698,11 @@ def render_relative_valuation_tab(input_set: ValuationInputSet) -> None:
             - EV: `{format_krw(enterprise_value)}`
             - 매출: `{format_krw(revenue)}`
             - NOPAT: `{format_krw(nopat)}`
+            - 순이익: `{format_krw(net_income)}`
+            - EPS: `{_format_price(eps)}`
             - 자본총계: `{format_krw(total_equity)}`
             - 세율: `{format_ratio(tax_rate)}`
-            - P/E: 순이익 데이터가 없어 아직 계산하지 않습니다.
+            - P/E 출처: 2025 감사보고서 Note 23의 보통주 귀속 순이익과 EPS
             """
         )
 
@@ -762,6 +794,8 @@ def main() -> None:
             - `경제적 이익 = NOPAT - 투하자본 × WACC`
             - `재투자율 = 성장률 / ROIC`
             - `EV/NOPAT = (1 - g/ROIC) / (WACC - g)`
+            - `P/E = 시가총액 / 순이익`
+            - `EPS 기준 P/E = 주가 / EPS`
             - `P/B = 시가총액 / 자본총계`
             - `내포 ROE = g + P/B × (요구수익률 - g)`
             - `EV/Sales = EV / 매출`

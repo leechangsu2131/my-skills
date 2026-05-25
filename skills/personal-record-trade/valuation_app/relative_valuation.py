@@ -11,6 +11,14 @@ def calc_price_to_book(market_cap: float | int | None, total_equity: float | int
     return _safe_multiple(market_cap, total_equity)
 
 
+def calc_price_to_earnings(market_cap: float | int | None, net_income: float | int | None) -> float | None:
+    return _safe_multiple(market_cap, net_income)
+
+
+def calc_pe_from_eps(price: float | int | None, eps: float | int | None) -> float | None:
+    return _safe_multiple(price, eps)
+
+
 def calc_ev_to_sales(enterprise_value: float | int | None, revenue: float | int | None) -> float | None:
     return _safe_multiple(enterprise_value, revenue)
 
@@ -63,7 +71,7 @@ def build_relative_metric_explanations() -> list[dict[str, str]]:
         {
             "지표": "P/E",
             "무슨 뜻인가": "시가총액이 순이익의 몇 배인지 보는 지표입니다.",
-            "어떻게 읽나": "삼성전기 현재 데이터셋에는 순이익이 없어 계산하지 않습니다. 다음 데이터 보강 때 추가해야 합니다.",
+            "어떻게 읽나": "PER이 높을수록 현재 순이익보다 미래 이익 증가에 더 많이 기대고 있다는 뜻입니다.",
         },
         {
             "지표": "P/B",

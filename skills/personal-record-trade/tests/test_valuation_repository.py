@@ -11,6 +11,8 @@ def test_load_metric_observations_from_seed_data():
     keys = {obs.metric_key for obs in observations}
 
     assert "revenue" in keys
+    assert "net_income" in keys
+    assert "eps" in keys
     assert "op_cashflow" in keys
     assert "latest_quarter_operating_income" in keys
     assert len(observations) >= 10

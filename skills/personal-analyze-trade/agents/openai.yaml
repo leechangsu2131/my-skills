@@ -1,0 +1,4 @@
+interface:
+  display_name: "Personal Analyze Trade"
+  short_description: "Google Sheets 투자 포트폴리오 조회와 매매 분석"
+  default_prompt: "Use $personal-analyze-trade to review my portfolio, trade signals, and recent journal entries."

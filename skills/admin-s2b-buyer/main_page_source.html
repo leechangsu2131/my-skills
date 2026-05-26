@@ -1,0 +1,1400 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html><head>
+<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+<meta http-equiv="X-UA-Compatible" content="requiresActiveX=true">
+<meta http-equiv="Content-Type" content="text/html; charset=EUC-KR">
+<title>지정정보처리장치 S2B</title>
+<meta name="keywords" content="S2B,지정정보처리장치,행정안전부 지정고시,교육기관 및 지방자치단체를 위한 전자조달시스템">
+<meta name="description" content="지정정보처리장치,행정안전부 지정고시,교육기관 및 지방자치단체를 위한 전자조달시스템">
+<link href="./scrweb/images/favicon.ico/s2b.ico?v=2" rel="shortcut icon"> 
+<link rel="stylesheet" type="text/css" href="./scrweb/css/main2020/main.css?num=260310">
+<link rel="stylesheet" type="text/css" href="./scrweb/css/main2020/YouTubePopUp.css">
+<link href="/S2BNCustomer/S2B/scrweb/css/jquery.simplyscroll.css" type="text/css" rel="stylesheet">
+
+<script type="text/javascript" async="" src="https://www.google-analytics.com/analytics.js"></script><script type="text/javascript" async="" src="https://www.googletagmanager.com/gtag/js?id=G-7N9G9N6N6X&amp;cx=c&amp;gtm=4e65k1"></script><script type="text/javascript" src="/S2BNCustomer/S2B/scrweb/js/v1/common/jquery-1.12.4.min.js"></script>
+<script type="text/javascript" src="./scrweb/js/common.js"></script>
+<script type="text/javascript" src="./scrweb/js/slide.js"></script> <!-- Main Slide 2019 add -->
+<script type="text/javascript" src="./scrweb/js/YouTubePopUp.jquery.js?num=1705510626"></script>
+
+<script type="text/javascript">
+var logo_timer = setInterval('fnRollingLogo("next")', 5000);
+function autoLogoRolling(){
+		logo_timer = setInterval('fnRollingLogo("next")', 5000);
+}
+
+$(document).ready(function(){
+	
+	var bannerCount = $('#slider ul li').length;
+	$('.main_banner_num').text('1/'+bannerCount)
+	
+	$('#logopause').click(function(){
+		clearInterval(logo_timer);
+		$(this).addClass('hide');
+		$('#logoplay').removeClass('hide');
+    });
+
+	$('#logoplay').click(function(){
+		autoLogoRolling();
+		$(this).addClass('hide');
+		$('#logopause').removeClass('hide');
+	});
+	
+	$("a.bla-1").YouTubePopUp();
+	
+	//공지사항  ajax
+	getNoticeAjaxTable();
+	
+	//행정안전부 고시 ajax
+	getGosiData();
+	
+	// 검색하기 
+	$("#mainSearchButton").click(function(){				
+		estimateInfoSearch();
+	});
+	//검색 키이벤트처리
+	$("#estimateInfoMainSchKeyWord").keydown(function(key){
+		if(key.keyCode == 13){
+			estimateInfoSearch();
+		}
+	});
+	
+	//검색 하기
+	estimateInfoSearch = function(){
+		var estimateInfoMainSchKeyWord = $("#estimateInfoMainSchKeyWord").val();
+		if(estimateInfoMainSchKeyWord == "" || estimateInfoMainSchKeyWord.length <= 0 || $("#estimateInfoMainSchKeyWord").val() == "견적정보 검색") {
+            alert("검색할 단어를 입력해주세요.");
+            $("#estimateInfoMainSchKeyWord").focus();
+            return false;
+        }    
+        if(!queryValidationCheck(estimateInfoMainSchKeyWord)) {
+            alert("특수문자는 입력할 수 없습니다.");
+            $("#estimateInfoMainSchKeyWord").focus();
+            return false;
+        }
+		
+		searching('','','',estimateInfoMainSchKeyWord,'');
+	};
+	
+	
+	$(".popup_close").click(function(){
+		$("#cover_wrap").hide();
+	});
+
+	//우리지역 검색 말풍선
+	$('input[name="locationGbn"]').on('change',function(){
+	    var selectValue = $("input[name='locationGbn']:checked").val();
+	    //var txt = '우리지역 검색은 행정상의 주소가 아닌 나이스 학교코드를 기준으로 지역을 구분하고 있습니다.';
+	    if(selectValue == 'local') {
+		    $('.layerbox_locationGbn').show();
+	    } else {
+	    	$('.layerbox_locationGbn').hide();
+	    }
+	}
+	);
+	
+	$("#locationRadio").hover(function(){
+	    var selectValue = $("input[name='locationGbn']:checked").val();
+	    //var txt = '우리지역 검색은 행정상의 주소가 아닌 나이스 학교코드를 기준으로 지역을 구분하고 있습니다.';
+	    if(selectValue == 'local') {
+		    $('.layerbox_locationGbn').show();
+	    } else {
+	    	$('.layerbox_locationGbn').hide();
+	    }		
+	},function(){
+		$('.layerbox_locationGbn').hide();
+	}
+	);
+	
+	//우리지역 검색 세팅
+	var userCity = 'R10';
+	var sidoArr = ["C10", "D10", "F10", "G10", "H10", "J10", "K10", "M10", "N10", "P10", "Q10", "R10", "S10", "T10"];
+	if(sidoArr.indexOf(userCity) > -1){
+		$("input[name='locationGbn']")[1].checked = true;
+		//$('.layerbox_locationGbn').show();
+	}
+
+	//팝업처리(개인이용자, 그외) 
+	
+		var url = "/S2BNCustomer/popup.do?forwadName=loginPopup_p";
+		$("#popup").attr('src', url);
+	
+	
+	
+	//부산지역 팝업 설정
+	var cookie= getCookie("S2B_POP");
+	if(userCity == "C10" && cookie!= "S2B_POP"){
+		window.open('/S2BNCustomer/S2B/scrweb/common/surveyEventPopup.jsp','','width=600, height=430 , fullscreen=no, location=no, scrollbars=no, menubar=no, toolbar=no, titlebar=no, directories=no, resizable=no');
+	}
+	//충북 지역 팝업 설정
+	if(userCity == "M10" && cookie!= "S2B_POP"){
+		window.open('/S2BNCustomer/S2B/scrweb/common/surveyEventPopup.jsp','','width=500, height=570 , fullscreen=no, location=no, scrollbars=no, menubar=no, toolbar=no, titlebar=no, directories=no, resizable=no');
+	}
+		
+	//충남, 대전 지역 팝업 설정
+	if((userCity == "N10" || userCity == "G10") && cookie!= "S2B_POP"){
+		window.open('/S2BNCustomer/S2B/scrweb/common/surveyEventPopup.jsp','','width=500, height=630 , fullscreen=no, location=no, scrollbars=no, menubar=no, toolbar=no, titlebar=no, directories=no, resizable=no');
+	}
+	//세종지역 팝업설정
+	if(userCity == "I10" && cookie!= "S2B_POP"){
+		window.open('/S2BNCustomer/S2B/scrweb/common/surveyEventPopup.jsp','','width=600, height=630 , fullscreen=no, location=no, scrollbars=no, menubar=no, toolbar=no, titlebar=no, directories=no, resizable=no');
+	}
+	//경남지역 팝업설정
+	if(userCity == "S10" && cookie!= "S2B_POP"){
+		window.open('/S2BNCustomer/S2B/scrweb/common/surveyEventPopup.jsp','','width=400, height=530 , fullscreen=no, location=no, scrollbars=no, menubar=no, toolbar=no, titlebar=no, directories=no, resizable=no');
+	}
+	
+	var event_cookie = getCookie("S2B_POP2");
+	if(event_cookie != "S2B_POP2"){
+		window.open('/S2BNCustomer/S2B/scrweb/common/surveyEventPopup2.jsp','','width=400, height=430 , fullscreen=no, location=no, scrollbars=no, menubar=no, toolbar=no, titlebar=no, directories=no, resizable=no');
+	}
+	
+});
+function queryValidationCheck(input) {
+    if(input.length > 0) {
+        //var regex = /[~!@\#$%<>^&*\()\-=+_\']/gi;
+        var regex = /[<>]/gi;
+
+        if(regex.test(input)) {
+            return false;
+        } else {
+            return true;
+        }
+    } else {
+        return false;
+    }
+}
+//카테고리+검색어+물품명만 클릭 
+function searching(categoryLevel1Code, categoryLevel2Code, categoryLevel3Code, searchQuery, searchField){
+	var locationGbn = $("input[name='locationGbn']:checked").val();
+	if(locationGbn == "local"){
+		var loginYn = 'Y';
+		if(loginYn == "N"){
+			alert("우리지역 검색은 로그인 이후 검색 가능합니다.");
+			return;
+		}
+	}
+	
+	location.href="https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/s2bCustomerSearch.jsp?actionType=MAIN_SEARCH&searchField="+searchField+"&startIndex=&viewCount=50&viewType=LIST&sortField=RANK&priceMin=0&priceMax=0&priceMinSet=0&priceMaxSet=0&categoryLevel1Code="+categoryLevel1Code+"&categoryLevel2Code="+categoryLevel2Code+"&categoryLevel3Code="+categoryLevel3Code+"&categoryLevel3Name=&areaCode=&categoryWinStatus=none&companyCodeParam=&priceNewSet=true&publicPurchaseCode=&f_edufine_code=&submit_yn=Y&searchQuery="+searchQuery+"&searchRequery=&locationGbn="+locationGbn;
+}
+
+function getNoticeAjaxTable(){
+	ajaxDataNotice();	
+}
+function getGosiData(){
+	 ajaxGosiData();
+}
+
+
+function ajaxDataNotice(){
+    $.ajax({
+    	url		: '/S2BNCustomer/Tcmu100NoSession.do',
+    	data	: {forwardName : 'mainNotice2020'},
+    	type	: 'POST',
+    	async	: false,
+    	success:function(data){
+            data = data.replace(/\r/gi, "");
+            data = data.replace(/\n/gi, "");
+            $("#noticeTable").append(data);
+		}
+    });
+}
+function ajaxGosiData(){    
+    $.ajax({
+    	url		: '/S2BNCustomer/Tcmu100NoSession.do',
+    	data	: {forwardName : 'ajaxGosiData'},
+    	type	: 'POST',
+    	async	: false,
+    	success:function(data){
+            data = data.replace(/\r/gi, "");
+            data = data.replace(/\n/gi, "");
+            if(data.indexOf("DOCTYPE HTML PUBLIC") > 0 ) {
+            	$("#gosiTitle").text("행정안전부 고시 제2023-16호");
+            } else {
+            	$("#gosiTitle").text(data);
+            }
+		}
+    });
+}
+
+//공지사항 상세보기
+function boardRead3(mCode){
+	var form = document.customer600Form;
+
+    form.forwardName.value = 'read';
+    form.division.value = '1';
+    form.elements['customer600VO.manageCode'].value = mCode;
+    actSubmit(form);
+}
+
+// 언론보도 목록 클릭 시, 팝업창 오픈
+function mediaLinkOpen(url){
+	MM_openBrWindow(url,'remoteService','toolbar=yes,menubar=yes,location=yes,status=yes,resizable=yes,fullscreen=no','target=_blank');
+}
+
+// 공지사항 | 언론보도 클릭 이벤트
+function selectNoticeList(param){
+	if(param == "noticeList"){
+		$("#noticeList").show();
+		$("#mediaList").hide();
+		$("#noticeA").css('color', '#000');
+		$("#mediaA").css('color', '#BFBFBF')
+	}else{
+		$("#noticeList").hide();
+		$("#mediaList").show();
+		$("#noticeA").css('color', '#BFBFBF');
+		$("#mediaA").css('color', '#000')
+	}
+}
+
+// 공지시항 또는 언론보드 목록 이동
+function listMore(param){
+	var form = document.customer600Form;
+	
+	if(param == 'noticeMore'){
+		form.forwardName.value = 'board';
+	    form.division.value = '1';
+	    actSubmit(form);	
+	}else{
+		window.location = '/S2BNCustomer/introduce.do?forwardName=mediaReport&loggerCP=/S2B소개/언론보도';
+	}    
+}
+
+//질문과 답변 링크
+/* function goBoardList(flag){
+
+	var form = document.customer600Form; 
+	form.elements['division'].value = flag;
+	form.forwardName.value = "board2";
+	if(flag == '7'){
+		form.loggerCP.value="/고객지원/질문과 답변";
+	}else{
+		form.loggerCP.value="";
+	}
+	actSubmit(form);   
+} */
+function goBoardList(flag){
+
+	var form = document.LoginForm; 
+	form.elements['fromFlag'].value = "boardList";
+	form.elements['division'].value = flag;
+	form.target = "_parent";
+	actSubmit(form);   
+
+}
+function showMenu(num){
+	if(num == 1){
+		$("#menu1").show();
+		$("#menu2").hide();
+		$("#menu3").hide();
+		$("#menu4").hide();
+	}else if(num == 2){
+		$("#menu1").hide();
+		$("#menu2").show();
+		$("#menu3").hide();
+		$("#menu4").hide();
+	}else if(num == 3){
+		$("#menu1").hide();
+		$("#menu2").hide();
+		$("#menu3").show();
+		$("#menu4").hide();
+	}else if(num == 4){
+		$("#menu1").hide();
+		$("#menu2").hide();
+		$("#menu3").hide();
+		$("#menu4").show();
+	}
+}
+
+
+//top menu 링크 이동
+function fncGoMenu(section){
+    // 1인수의 즉시견적
+    if(section == 'tgruMain'){
+    	 window.location = 'https://www.s2b.kr/S2BNCustomer/EstimateInfoMain.do';
+    }else if(section == 'tgru'){
+        window.location = 'https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/s2bCustomerSearch.jsp?loggerCP=/즉시견적/물품정보 검색&search=1';
+    }else if(section == 'tgru1'){
+        window.location = 'https://www.s2b.kr/S2BNCustomer/remc100.do?forwardName=estimateList&loggerCP=/즉시견적/선택물품함 목록';
+    }else if(section == 'tgru2'){
+        window.location = 'https://www.s2b.kr/S2BNCustomer/remd100.do?forwardName=negoList&loggerCP=/즉시견적/수의시담 목록';
+    }else if(section == 'tgru3'){
+        window.location = 'https://www.s2b.kr/S2BNCustomer/reme100.do?loggerCP=/즉시견적/계약상대자 결정';
+    }else if(section == 'tgru4'){
+        window.location = 'https://www.s2b.kr/S2BNCustomer/remf100.do?loggerCP=/즉시견적/검수 목록';
+    }else if(section == 'tgru5'){
+        window.location = 'https://www.s2b.kr/S2BNCustomer/remg200.do?loggerCP=/즉시견적/결제 목록';
+    }else if(section == 'tgru6'){
+        // 즉시견적 변경계약 목록
+        window.location = 'https://www.s2b.kr/S2BNCustomer/remh100.do';
+    }else if(section == 'tgru07'){
+        window.location = 'https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/s2bCustomerSearch.jsp?setLocal=all&actionType=ONLY_CATEGORY&CERT_CODE_YN=Y&publicPurchaseCode=0&loggerCP=/즉시견적/물품정보 검색';  // 즉시견적 공공물품 검색
+    }else if(section == 'tgru08'){
+        window.location = 'https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/s2bCustomerSearch.jsp?loggerCP=/즉시견적/중기간경쟁제품 검색&actionType=ONLY_CATEGORY&searchField=ALL&categoryLevel1Code=142000000000';   // 즉시견적 중기간경쟁제품 검색
+    }else if(section == 'tgru8'){
+        window.location = 'https://www.s2b.kr/S2BNCustomer/reme100.do?forwardName=list_cancel&loggerCP=/즉시견적/계약상대자 결정 취소 목록';
+    }else if(section == 'tgru7'){
+        window.location = 'https://www.s2b.kr/S2BNCustomer/remi100.do?loggerCP=/즉시견적/계약 목록';
+    }else if(section == 'tomu1'){   // 1인수의 수의계약
+        window.location = 'https://www.s2b.kr/S2BNCustomer/tcmu100.do?forwardName=register1&fromFlag=G&loggerCP=/수의계약/안내공고 작성';
+    }else if(section == 'tomu1_1'){
+        window.location = 'https://www.s2b.kr/S2BNCustomer/Tcmu200.do?forwardName=tempSaveList&loggerCP=/수의계약/안내공고 임시저장 목록';
+    }else if(section == 'tomu1_2'){
+        window.location = 'https://www.s2b.kr/S2BNCustomer/Tcmu200.do?selPrivateContract=1&loggerCP=/수의계약/안내공고_받은견적';
+    }else if(section == 'tomu1_3'){
+        window.location = 'https://www.s2b.kr/S2BNCustomer/Tcmu300.do?loggerCP=/수의계약/계약상대자결정 목록';
+    }else if(section == 'tomu1_4'){
+        window.location = 'https://www.s2b.kr/S2BNCustomer/Tcmu500.do?loggerCP=/수의계약/검수목록';
+    }else if(section == 'tomu1_5'){
+        window.location = 'https://www.s2b.kr/S2BNCustomer/Tcmu600.do?loggerCP=/수의계약/세금계산서_결제목록';
+    }else if(section == 'tomu1_6'){
+        window.location = 'https://www.s2b.kr/S2BNCustomer/Tcmu700.do';   // 1인수의 변경계약 목록
+    }else if(section == 'tomu1_7'){
+        window.location = 'https://www.s2b.kr/S2BNCustomer/Tcmu200.do?forwardName=editList&loggerCP=/수의계약/수의시담 목록';
+    }else if(section == 'tomu1_8'){   
+        window.location = 'https://www.s2b.kr/S2BNCustomer/Tcmu300.do?forwardName=listNew&loggerCP=/수의계약/계약목록';
+    }else if(section == 'tomu2'){   // 2인수의 수의계약
+        window.location = 'https://www.s2b.kr/S2BNCustomer/tcmu100.do?forwardName=register2&fromFlag=G&loggerCP=/수의계약/안내공고 작성';
+    }else if(section == 'tomu2_1'){
+        window.location = 'https://www.s2b.kr/S2BNCustomer/Tcmu200.do?forwardName=tempSaveList&loggerCP=/수의계약/안내공고 임시저장 목록';
+    }else if(section == 'tomu2_2'){
+        window.location = 'https://www.s2b.kr/S2BNCustomer/Tcmu200.do?selPrivateContract=2&loggerCP=/수의계약/안내공고_받은견적';
+    }else if(section == 'tomu2_3'){
+        window.location = 'https://www.s2b.kr/S2BNCustomer/Tcmu300.do?loggerCP=/수의계약/계약상대자결정 목록';
+    }else if(section == 'tomu2_4'){
+        window.location = 'https://www.s2b.kr/S2BNCustomer/Tcmu500.do?loggerCP=/수의계약/검수목록';
+    }else if(section == 'tomu2_5'){
+        window.location = 'https://www.s2b.kr/S2BNCustomer/Tcmu600.do?loggerCP=/수의계약/세금계산서_결제목록';
+    }else if(section == 'tomu2_6'){
+        window.location = 'https://www.s2b.kr/S2BNCustomer/Tcmu700.do';   // 2인수의 변경계약 목록
+    }else if(section == 'tomu2_7'){
+        window.location = 'https://www.s2b.kr/S2BNCustomer/Tcmu300.do?forwardName=listNew&loggerCP=/수의계약/계약목록';
+    }else if(section == 'ttmu'){    // 입찰
+        window.location = 'https://www.s2b.kr/S2BNCustomer/stmb001.do?loggerCP=/입찰/입찰공고문 목록';
+    }else if(section == 'ttmu1_1'){
+        window.location = 'https://www.s2b.kr/S2BNCustomer/stma001.do?forwardName=list_s&loggerCP=/입찰/입찰공고문 목록';
+    }else if(section == 'ttmu1_2'){
+        window.location = 'https://www.s2b.kr/S2BNCustomer/stmd001.do?loggerCP=/입찰/개찰결과 조회';
+    }else if(section == 'ttmu1'){
+        window.location = 'https://www.s2b.kr/S2BNCustomer/stma001.do?forwardName=register_s&loggerCP=/입찰/입찰공고문 작성';
+    }else if(section == 'ttmu2'){
+        window.location = 'https://www.s2b.kr/S2BNCustomer/stmb001.do?forwardName=list_d&loggerCP=/입찰/개찰대상 목록';
+    }else if(section == 'ttmu3'){
+        window.location = 'https://www.s2b.kr/S2BNCustomer/stmg001.do?loggerCP=/입찰/검수 목록';
+    }else if(section == 'ttmu4'){
+        window.location = 'https://www.s2b.kr/S2BNCustomer/stmh001.do?loggerCP=/입찰/결제 목록';
+    }else if(section == 'ttmu5'){
+        window.location = 'https://www.s2b.kr/S2BNCustomer/stmz001.do?loggerCP=/입찰/완료 목록';
+    }else if(section == 'ttmu6'){
+        window.location = 'https://www.s2b.kr/S2BNCustomer/cfile001.do?loggerCP=/입찰/문서고 관리';
+    }else if(section == 'tmmu'){    // 계약현황 / 수의계약 계약현황
+        window.location = 'https://www.s2b.kr/S2BNCustomer/tcmo001.do?forwardName=list01';
+    }else if(section == 'tmmu2'){   // 입찰 계약현황
+        window.location = 'https://www.s2b.kr/S2BNCustomer/stmo001.do';
+    }else if(section == 'tcmp1'){   // 발주계획 CNI002
+        window.location = 'https://www.s2b.kr/S2BNCustomer/tcmp100.do';
+    }else if(section == 'tcmp3'){   // 사전규격
+        window.location = 'https://www.s2b.kr/S2BNCustomer/tcmp300.do';
+    }else if(section == 'login'){   //계약법령 준수를 위한 시스템 개선 CNI002
+        window.location = 'https://www.s2b.kr/S2BNCustomer/Login.do';
+    }else if(section == 'schoolmaterialmall'){  //계약법령 준수를 위한 시스템 개선 CNI002 - 학습준비물 전용물
+        window.location = 'https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/schoolmaterialmall.jsp?categoryLevel1Code=130000000000';
+    }else if(section == 'kindergartenMall'){    //계약법령 준수를 위한 시스템 개선 CNI002 - 유아,유치부 기획
+        window.location = 'https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/kindergartenMall.jsp';
+    }else if(section == 'newtermmall'){ //계약법령 준수를 위한 시스템 개선 CNI002 - 신학기 최다 구매물품
+        window.location = 'https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/newtermmall.jsp';
+    }else if(section == 'suppliesMall'){    //계약법령 준수를 위한 시스템 개선 CNI002 - 행정소모품전
+        window.location = 'https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/suppliesMall.jsp';
+    }else if(section == 'tcmp4'){
+		window.location = 'https://www.s2b.kr/S2BNCustomer/tcmp100.do?forwardName=failDeliveryList';
+	}else if(section == 'bordEvent'){
+        window.location = 'https://www.s2b.kr/S2BNCustomer/customer600No.do?forwardName=read&division=1&customer600VO.manageCode=201910010000030045';
+	}else if(section == 'goTeachiWorld'){
+		window.open('https://resort.teachiworld.com/s2/lifeculture/etc/ev20240311_join.jsp',"_blank","");
+	}else if(section == 'cleaningGoodsEvent'){
+		window.location = 'https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/cleaningGoodsEvent.jsp';
+	}else if(section == 'summerEvnet'){
+		window.location = 'https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/summerGoodsEvent.jsp';
+	}else if(section == 'kcsrh'){
+		window.location = 'https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/s2bCustomerSearch.jsp?setLocal=all&loggerCP=/즉시견적/어린이제품kc인증&actionType=ONLY_CATEGORY&CERT_CODE_119=Y&kcMall=Y';
+	}else if(section == 'fireSafeCollection'){
+    	window.location = 'https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/fireSafeCollection.jsp';
+    }else if(section == 'winElec'){
+		window.location = 'https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/winElecCollection.jsp';
+    }else if(section == 'survey'){
+        window.location = 'https://www.s2b.kr/S2BNCustomer/customer600No.do?forwardName=read&division=1&customer600VO.manageCode=202006260000032899';
+    }else if(section == 'commuterCarSafe'){
+		window.location = 'https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/commuterCarSafeEvent2.jsp';
+    }else if(section == 'onlineSchool'){
+    	window.location = 'https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/onlineSchoolCollection.jsp';
+    }else if(section == 'afterschool'){ //초등 돌봄 교실 기획전
+		var edu = 'R10';
+		if(edu == "C10") {window.location = 'https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/afterschool.jsp';} //부산
+		else if(edu == "E10"){window.location = 'https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/afterschoolV2.jsp';}
+		else {window.location = 'https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/afterschoolV10.jsp';} //서울
+    }else if(section == 'deskdivider'){
+        window.location = 'https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/s2bCustomerSearch.jsp?actionType=ONLY_CATEGORY&searchField=ALL&startIndex=&viewCount=50&viewType=LIST&sortField=RANK&priceMin=0&priceMax=0&priceMinSet=0&priceMaxSet=0&categoryLevel1Code=107000000000&categoryLevel2Code=107000300000&categoryLevel3Code=107000300011&categoryWinStatus=none&priceNewSet=true&submit_yn=Y';
+    }else if(section == 'stationery'){ //문구사무용품모음전
+        window.location = 'https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/stationeryCollection.jsp';
+    }else if(section == 'fineDust'){ //미세먼지 대비용품 모음전
+        window.location = 'https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/fineDust.jsp';
+    }else if(section == 'mobileWeb'){ //개인이용자 모바일 웹 안내
+        window.location = 'https://www.s2b.kr/S2BNCustomer/customer600No.do?forwardName=read&division=1&customer600VO.manageCode=202012110000035238';
+    }else if(section == 'preventive'){ //방역 위생모음전
+        window.location = 'https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/preventiveCollection.jsp';
+    }else if(section == 'newYearEvent'){ //새학기 비품류 모음전
+        window.location = 'https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/newYearEvent.jsp';
+    }else if(section == 'digitalClass'){ //디지털기반 교수학습 물품 모음전
+        window.location = 'https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/digitalClass.jsp';
+    }else if(section == 'privacy'){ //프라이버시 보호 물품 모음전
+        window.location = 'https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/privacyCollection.jsp';
+    }else if(section == 'indoorAct'){ //실내체육교구모음전
+        window.location = 'https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/indoorActCollection.jsp';
+    }else if(section == 'feedingTool'){ //급식환경개선 모음전
+        window.location = 'https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/feedingToolCollection.jsp';
+    }else if(section == 'eduToolCollection'){ //신학기 학습용품/교구 모음전
+        window.location = 'https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/eduToolCollection.jsp';
+    }else if(section == 'experimentKit'){ //탐구실험모음전
+        window.location = 'https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/experimentKit.jsp';
+    }else if(section == 'safeCSAT'){ //수능시험장 안전용품 모음전
+        window.location = 'https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/safeCSATCollection.jsp';
+    }else if(section == 'diyTool'){ //만들기용품 모음전
+        window.location = 'https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/diyToolCollection.jsp';
+    }else if(section == 'safeSchool'){ //학교안전용품모음전
+        window.location = 'https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/safeSchool.jsp';
+    }else if(section == 'aed'){ //자동심장충격기
+        window.location = 'https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/aedCollection.jsp';
+    }else if(section == 'babyProduct'){ //어린이집,유치원인기물품모음전
+        window.location = 'https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/babyProduct.jsp';
+    }else if(section == 'bookManage'){ //도서관리용품 모음전
+        window.location = 'https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/bookManage.jsp';
+    }else if(section == 'goTheKmall'){ //더케이몰
+    	window.open('http://www.thekmall.co.kr/views/event/202207_thekmall_chulcheck_event.html',"_blank","");
+    }else if(section == 'RFIDCollection'){ //RFID물품관리모음전
+        window.location = 'https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/RFIDCollection.jsp';
+    }else if(section == 'goL2BService'){ //지자체서비스이동
+        window.location = 'https://www.s2b.kr/L2BNCustomer/L2B/index.jsp';
+    }else if(section == 'preventDisaster'){ //재난대비비상용품모음전
+        window.location = 'https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/preventDisaster.jsp';
+    }else if(section == 'preMall'){ //공공기관우선구매몰
+        window.location = 'https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/s2bCustomerSearch.jsp?actionType=ONLY_CATEGORY&CERT_CODE_YN=Y&publicPurchaseCode=0&loggerCP=/즉시견적/물품정보 검색';
+    }else if(section == 'teachingAid'){ //교과과정별교구상설전
+        window.location = 'https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/teachingAidMall.jsp';
+    }else if(section == 'serviceMall'){ //용역전용몰
+        window.location = 'https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/serviceMall.jsp';
+    }else if(section == 'smartClass'){ //미래교실교육용품모음전
+        window.location = 'https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/smartClass.jsp';
+    }else if(section == 'athleticMall'){ //체육대회모음전
+        window.location = 'https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/athleticMall.jsp';
+    }else if(section == 'reSetting'){ //환경정리&개선 모음전
+        window.location = 'https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/reSettingCollection.jsp';
+    }else if(section == 'medical'){ //의약품및보건용품모음전
+        window.location = 'https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/medicalCollection.jsp';
+    }else if(section == 'specialEdu'){ //교육특강모음전
+        window.location = 'https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/specialEdu.jsp';
+    }else if(section == 's2bEvent'){ //S2B이벤트 / S2B우수기관선정기념이벤트
+    	//goS2BEventPage();
+		
+			window.location = 'https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/surveyEvent.jsp';
+		
+    }else if(section == 'startUpProduct'){ //창업기업제품기획전
+        window.location = 'https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/startUpProduct.jsp';
+    }else if(section == 'christmas'){ //크리스마스용품모음전
+        window.location = 'https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/christmas.jsp';
+    }else if(section == 'noticeBanner'){ //게시물 이동
+    	boardRead3('202508070000069024');
+    }else if(section == 'guideMOU'){ //MOU안내페이지
+    	window.location = 'https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/extraView.jsp';
+    }else if(section == 'eduTech'){ //에듀테크모음전
+    	window.location = 'https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/eduTechCollection.jsp';
+    }else if(section == 'endofyear'){ //연말결산모음전
+    	window.location = 'https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/endofyear.jsp';
+    }else if(section == 'newItemContest'){ //신제품경진대회 기획전
+    	window.location = 'https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/newItemContest.jsp';
+    }else if(section == 'scienceMall'){ //과학기기모음전
+    	window.location = 'https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/scienceMall.jsp';
+    }else if(section == 'electProduct'){ //전자기기전산용품 모음전
+    	window.location = 'https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/electProduct.jsp';
+    }else if(section == 'popularBest'){ //인기BEST모음전
+    	window.location = 'https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/popularBest.jsp';
+    }else if(section == 'eduTechEvent'){ //에듀테크 이벤트
+    	window.location = 'https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/eduTechEvent.jsp';
+    }else if(section == 'edutechEventResult'){ //에듀테크 이벤트
+    	window.location = 'https://www.s2b.kr/S2BNCustomer/customer600No.do?forwardName=read&division=1&customer600VO.manageCode=202411200000063242';
+    }else if(section == 'schoolAllProduct'){ //신설학교&공간재구조화 모음전
+    	window.location = 'https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/schoolAllProduct.jsp';
+    }else if(section == 'snowClear'){ //신설학교&공간재구조화 모음전
+    	window.location = 'https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/snowClearEvent.jsp';
+    }else if(section == 'certBestItem'){ //장애인기업 인증 BEST 물품 모음전
+    	window.location = 'https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/certBestItem.jsp';
+    }else if(section == 'cmmTemplete'){ //공통페이지
+    	window.location = 'https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/cmmTemplete.jsp';
+    }else if(section == 'disabledCertItem'){ //장애인인증제품통합모음전
+    	window.location = 'https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/disabledCertItem.jsp';
+    }else if(section == 'severeDisabledItem'){ //중증장애인생산품모음전
+    	window.location = 'https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/severeDisabledItem.jsp';
+    }else if(section == 'greenItem'){ //녹색제품모음전
+    	window.location = 'https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/greenItem.jsp';
+    }else if(section == 'localEconomyEvent'){ //지역경쟁 상생이벤트
+    	window.location = 'https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/localEconomyEvent.jsp';
+    }else if(section == 'localEconomyEvent02'){ //지역경쟁 상생이벤트 추가
+    	var loginYn = 'Y';
+    	if(loginYn == 'N'){
+    		window.location.href = "http://www.s2b.kr/S2BNCustomer/Login.do";
+    		return;
+    	}
+    	window.open("https://naver.me/x2ckj2yQ", "s2bEvent");
+    }else if(section == 'livingElectronic'){//필수생활가전 모음전
+    	window.location = 'https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/livingElectronic.jsp'
+    }else if(section == 'seoulFeedingTool'){
+    	window.location = 'https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/seoulFeedingTool.jsp'
+    }else if(section == 'performanceAchivement'){
+    	var loginYn = 'Y';
+    	if(loginYn == 'N'){
+    		window.location.href = "http://www.s2b.kr/S2BNCustomer/Login.do";
+    		return;
+    	}
+    	window.open("https://naver.me/5FE2ZKLH", "s2bEvent");
+    }else if(section == 'disabledCompany'){
+    	window.location = 'https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/disabledCompany.jsp'
+    }else if(section == 'snowClearKeepWarm'){
+    	window.location = 'https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/snowClearKeepWarm.jsp'
+    }else if(section == 'localEconomyResult'){
+    	var loginYn = 'Y';
+    	if(loginYn == 'N'){
+    		window.location.href = "http://www.s2b.kr/S2BNCustomer/Login.do";
+    		return;
+    	}
+    	window.location = 'https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/localEconomyResult.jsp';
+    }else if(section == 'performanceAchivementResult'){
+    	window.location = 'https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/performanceAchivementResult.jsp'
+    }else if(section == 'disabledSales'){
+    	window.location = 'https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/disabledSales.jsp'
+    }else if(section == 'stationeryLiving'){
+    	window.location = 'https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/stationeryLiving.jsp'
+    }else if(section == 'babyProductBusan'){
+    	window.location = 'https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/babyProductBusan.jsp'
+    }else if(section == 'disabledCertSeason'){ //장애인기업 인증제품 시즌 모음전
+    	window.location = 'https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/disabledCertSeason.jsp';
+    }else if(section == 'summerConcenGoodsEvent'){ //여름철 수요 집중 가전 기획전
+    	window.location = 'https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/summerConcenGoodsEvent.jsp';
+    }
+    
+}
+
+//견적검색_전국지역
+function searchingTop(categoryLevel1Code, categoryLevel2Code, categoryLevel3Code, searchQuery, searchField){
+    location.href="http://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/s2bCustomerSearch.jsp?setLocal=all&actionType=ONLY_CATEGORY&searchField="+searchField+"&startIndex=&viewCount=50&viewType=LIST&sortField=RANK&priceMin=0&priceMax=0&priceMinSet=0&priceMaxSet=0&categoryLevel1Code="+categoryLevel1Code+"&categoryLevel2Code="+categoryLevel2Code+"&categoryLevel3Code="+categoryLevel3Code+"&categoryLevel3Name=&areaCode=&categoryWinStatus=none&companyCodeParam=&priceNewSet=true&publicPurchaseCode=&f_edufine_code=&submit_yn=Y&searchQuery="+searchQuery+"&searchRequery=";
+}
+
+//KTCU Family 바로가기
+function goThere(){
+    if(!document.theForm01.theMenu01.selectedIndex==""){
+        window.open(document.theForm01.theMenu01.options[document.theForm01.theMenu01.selectedIndex].value,"_blank","");
+    }
+}
+
+// 교육청 바로가기
+function goThere1(){
+    if(!document.theForm02.theMenu02.selectedIndex==""){
+        window.open(document.theForm02.theMenu02.options[document.theForm02.theMenu02.selectedIndex].value,"_blank","");
+    }
+}
+
+// 시도청 바로가기
+function goThere5(){
+    if(!document.theForm05.theMenu02.selectedIndex==""){
+        window.open(document.theForm05.theMenu02.options[document.theForm05.theMenu02.selectedIndex].value,"_blank","");
+    }
+}
+
+// 공공기관 바로가기
+function goThere2(){
+    if(!document.theForm03.theMenu03.selectedIndex==""){
+        window.open(document.theForm03.theMenu03.options[document.theForm03.theMenu03.selectedIndex].value,"_blank","");
+    }
+}
+
+// 교육연수원 바로가기
+function goThere3(){
+    if(!document.theForm04.theMenu04.selectedIndex==""){
+        window.open(document.theForm04.theMenu04.options[document.theForm04.theMenu04.selectedIndex].value,"_blank","");
+    }
+}       
+
+// 이용약관
+function openServicePopup(){
+    window.open('/S2BNCustomer/S2B/scrweb/html_include/view_service.jsp','','width=670, height=700 , fullscreen=no, location=no, scrollbars=yes, menubar=no, toolbar=no, titlebar=no, directories=no, resizable=no');
+}
+
+// 개인정보 취급방침
+function openPrivacyPopup(){
+    window.open('/S2BNCustomer/S2B/scrweb/html_include/view_privacy_new.jsp','','width=670, height=700 , fullscreen=no, location=no, scrollbars=yes, menubar=no, toolbar=no, titlebar=no, directories=no, resizable=no');
+}        
+
+// 원격서비스 신청
+function remoteService(){
+    MM_openBrWindow('https://as82.kr/s2b','remoteService','toolbar=yes,menubar=yes,location=yes,status=yes,resizable=yes,fullscreen=no','target=_blank');
+}
+// 원격서비스 신청 popup용
+function MM_openBrWindow(theURL,winName,features) {
+    window.open(theURL,winName,features);
+}
+
+//자료 & 서식 링크
+function selectBoard(num){
+    var form = document.customer600Form;
+    form.forwardName.value = 'board';
+    form.division.value = num;
+    form.target = "_parent"; 
+
+    if(num == 'l'){
+        form.loggerCP.value = "/고객지원/법령정보";
+        form.action="/S2BNCustomer/customer600No.do";
+    }else if(num == 'm'){
+        form.loggerCP.value = "/고객지원/S2B운영규정";
+        form.action="/S2BNCustomer/customer600No.do";
+    }else if(num == 'e'){
+        form.loggerCP.value = "/고객지원/일반자료";
+        form.action="/S2BNCustomer/customer600No.do";
+    }else if(num == 'p'){
+        form.loggerCP.value = "/고객지원/설계자료";
+    }else{
+        form.loggerCP.value = "";
+    }
+    actSubmit(form);
+}
+
+//로그아웃
+function retrieveLogOut(){
+    var form = document.m_leftForm;
+    if(confirm("로그아웃 하시겠습니까?")){
+        form.pageNo.value = 1;
+        form.forwardName.value = 'logOut';
+        actSubmit(form);
+    }
+}
+
+var myDeskFlag = "N";
+//마이데스크
+function myDesk(){
+	if( myDeskFlag == "N" ) {
+		myDeskFlag = "Y";
+		
+		window.location.href = "/S2BNCustomer/Tmmu200.do?forwardName=newList";
+	} else {
+		alert('데이터 조회 중 입니다. 잠시만 기다려 주십시오');
+	}
+}
+
+//통합계약 분기 
+function intergratedContract(sido){
+	// 서울 교육청 
+	if(sido=='B10' || sido=='B80'){
+		location.href="/S2BNCustomer/sgpa100No.do?forwardName=main";
+	// 전북교육청
+	}else if(sido=='P10'){
+		location.href="/S2BNCustomer/sgpa100No.do?forwardName=main13";
+	// 경남 교육청
+	}else if(sido=='S10'){
+		location.href="/S2BNCustomer/sgpa100No.do?forwardName=main04";
+	}else{
+		alert("소속교육청에서 진행중인 통합계약이 없습니다.");
+		return;
+	}
+	
+}
+//계약진행팝업
+function workProgressInfo(){
+	
+	var url = "";
+	if(url != ""){
+		window.open(url, 'workProgressInfo', 'width=600, height=550');
+	}else{
+		location.href="/S2BNCustomer/S2B/login.jsp";
+	}
+	
+}
+//이용수수료
+function goUsageCharge(){
+	
+	var totalComTAmt = "null";  
+	if(totalComTAmt > 0  && totalComTAmt != "0"){
+		window.open('/S2BNCustomer/S2B/scrweb/html_include/nonPaymentInfoPopup.jsp', 'nonPaymentAmtPop', 'width=340, height=200');
+	}
+	location.href="/S2BNCustomer/adju100.do?forwardName=list";		
+}
+//원격지원사이트 오픈
+function remoteService(){
+	MM_openBrWindow('https://as82.kr/s2b','remoteService','toolbar=yes,menubar=yes,location=yes,status=yes,resizable=yes,fullscreen=no','target=_blank');
+}
+function memberJoin(){
+	var loc1 = screen.availWidth;
+	var loc2 = screen.availHeight;
+	var url="/S2BNCustomer/S2B/scrweb/html_include/view_join_member.jsp";
+	win=window.open(url,"memberJoin","width=427, height=190,scrollbars=yes,align=left,left="+(loc1)/10+",top="+(loc2)/10);
+	win.focus();
+}
+function showYoutube(){
+	$("#divYoutube").show();
+	$("#divYoutube").focus();
+}
+function hideYoutube(){
+	$("#divYoutube").hide();
+}
+function openYoutube(division){
+	var loc1 = screen.availWidth;
+	var loc2 = screen.availHeight;
+	var url="/S2BNCustomer/S2B/scrweb/html_include/view_movie.jsp?division="+division;
+	win=window.open(url,"memberJoin","width=940, height=530,scrollbars=yes,align=left,left="+(loc1)/10+",top="+(loc2)/10);
+	win.focus();
+}
+function openYoutubeTab() {
+	var url="https://www.youtube.com/channel/UCo6IZie9tJbjCmCANvyZ-Tg";
+    win=window.open(url,"youtube");
+    win.focus();	
+}
+function openMenual(division){
+
+	var url = "";
+	if(division=='1') url="/S2BNCustomer/S2B/scrweb/common/s2b_movie_manual_s.jsp"; //수요기관
+	else if(division=='2') url="/S2BNCustomer/S2B/scrweb/common/s2b_movie_manual_p.jsp"; //개인이용자
+	else if(division=='4') url="/S2BNCustomer/S2B/scrweb/common/s2b_movie_manual.jsp"; //공급업체
+	
+	if(division!='3'){
+		location.href = url;
+	}else{  //에듀파인연계
+	    var loc1 =    screen.availWidth;
+	    var loc2 =    screen.availHeight;
+	    win=window.open("/S2BNCustomer/S2B/scrweb/common/s2b_movie_manual_s_edu.jsp","p_school_edu","width=600,height=460,scrollbars=no,align=left,left="+(loc1)/5+",top="+(loc2)/5);
+	    win.focus();
+	}
+}
+
+function overBackImg(){
+	for(i=0; i<5; i++) $("#boxCss" + i).attr('class',"");
+}
+
+function overOutImg(num){
+	$("#boxCss" + num).attr('class',"box_select");
+}
+var logo_idx = 0;
+function fnRollingLogo(val){
+           var slider = $('#slider > ul');
+           var speed = 2000;
+           var timer = 0;
+           var slider_len = slider.find('li').length;             //슬라이더 갯수
+           //var slider_width = slider.find('li').outerWidth();      //슬라이더 각 요소 넓이
+			var slider_width = 1400;      //슬라이더 각 요소 넓이
+			
+           var slide_item;
+
+           if(val == 'prev'){
+               if(!slider.is(':animated')){
+                   logo_idx--;
+                   if(logo_idx < 0){
+                       logo_idx = slider_len -1;
+                   }
+                   slide_item = slider.find('li').eq(-2).nextAll().clone(true);
+                   slide_item.prependTo(slider);
+                   slider.find('li').eq(-2).nextAll().remove();
+                   slider.css('left', - slider_width + 'px');
+                   slider.animate({'left' : '0px'}, speed, function(){});
+               }
+           }else{
+               if(!slider.is(':animated')){
+                   logo_idx++;
+                   if(logo_idx >= slider_len){
+                       logo_idx = 0;
+                   }
+						//$($('#slider > ul > li').eq(1)).css("margin-left","-100px");
+                   	slider.animate({'left' : '-1400px'}, speed, function(){
+                       slide_item = slider.find('li').eq(0).clone(true);
+                       slide_item.appendTo(slider);
+                       slider.find('li').eq(0).remove();
+                       slider.css('left', '0px');
+						$($('#slider > ul > li').eq(0)).css("margin-left","");
+                   });
+					
+					
+               }
+           }
+			$(".main_banner_num").html(logo_idx+1+"/"+slider_len);
+       }
+
+	//전북지역 바로검색 이미지 처리 이벤트
+	function changeBoxImg(state, edufineSidoS2B, className){
+		overBackImg();
+		$("#overImg3").attr('class', className);
+		
+		if(state=="on") $("#boxIconIMG").attr('src',"./scrweb/images/main2020/boxicon" + edufineSidoS2B + "_on.jpg");
+		else if(state=="off") $("#boxIconIMG").attr('src',"./scrweb/images/main2020/boxicon" + edufineSidoS2B + "_off.jpg");
+	}
+    //에듀테크몰 로그인 연계 S2B 세션체크
+    function goEdutech(){
+        var form = document.EdutechForm;
+        form.forwardName.value = 'edutech';
+        actSubmit(form);
+    }
+
+	//쿠키 처리
+	function getCookie(Name) {
+		var search = Name + "=";
+		if (document.cookie.length > 0) { // 쿠키가 설정되어 있다면
+			offset = document.cookie.indexOf(search);
+
+			if (offset != -1) { // 쿠키가 존재하면
+				offset += search.length;
+				// set index of beginning of value
+				end = document.cookie.indexOf(";", offset);
+				// 쿠키 값의 마지막 위치 인덱스 번호 설정
+				if (end == -1)
+					end = document.cookie.length;
+				return unescape(document.cookie.substring(offset, end));
+			}
+		}
+		return "";
+	}
+
+	//이벤트 페이지 이동
+	function goS2BEventPage(){
+		location.href="https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/localEconomyEvent.jsp";
+	}
+
+	//목표대비 실적달성 이벤트 페이지 이동
+	function openPerfomanceAchiveEventPage(){
+		var loginYn = 'Y';
+		if(loginYn == "N"){
+			window.location.href = "http://www.s2b.kr/S2BNCustomer/Login.do";
+			return;
+		}
+		window.open("https://naver.me/5FE2ZKLH", "s2bEvent");
+	}
+
+</script>
+<script type="text/javascript" async="" src="https://ssl.pstatic.net/melona/libs/gfp-nac-module/synchronizer.js"></script></head>
+<body><form name="LoginForm" method="post" action="/S2BNCustomer/Login.do">
+  <input type="hidden" name="pageNo" value="1" style="">
+  <input type="hidden" name="orderBy" value="" style="">
+  <input type="hidden" name="forwardName" value="default" style="">
+  <input type="hidden" name="fromFlag" value="" style="">
+  <input type="hidden" name="articleNo" value="" style="">
+  <input type="hidden" name="division" value="" style="">
+</form>
+<form name="customer600Form" method="post" action="/S2BNCustomer/customer600No.do">
+    <input type="hidden" name="pageNo" value="1" style="">
+    <input type="hidden" name="orderBy" value="" style="">
+    <input type="hidden" name="forwardName" value="default" style="">
+    <input type="hidden" name="customer600VO.manageCode" value="" style="">
+    <input type="hidden" name="division" value="" style="">
+    <input type="hidden" name="loggerCP" id="loggerCP" style="">
+</form>
+<form name="EdutechForm" method="post" action="/S2BNCustomer/Edutech.do">
+  <input type="hidden" name="forwardName" value="default" style="">
+</form>
+
+
+
+    
+
+	<div id="total_wrap">
+
+
+		<div id="cover_wrap">
+			<div id="red_band" style="height:90px;">
+				<div id="band_cont">
+					<ul class="orenge_banner">
+						<!-- <li class="orenge_cont band_menu3"> 띠배너 3개,텍스트2줄 // <li class="orenge_cont band_menu2"> 띠배너 2개,텍스트1줄 -->
+						<li class="orenge_cont band_menu3" style="width:31%">
+							<div class="top_icon"><img src="./scrweb/images/main2020/top_icon13.png"></div>
+							<a href="JavaScript:boardRead3('202405170000060713');" style="padding-top: 12px;">
+							<span class="orange">S2B 이용수수료 부과지침 개정</span>
+							<span class="white">안내</span>
+							</a>
+						</li>
+						<li class="orenge_cont band_menu3" style="width:35%">
+							<div class="top_icon"><img src="./scrweb/images/main2020/top_icon05.png"></div>
+							<a href="JavaScript:boardRead3('202308180000056424');" style="padding-top: 12px;">
+							<span class="white">견적정보</span>
+							<span class="orange">'간편결제' </span>
+							<span class="white">기능 추가안내</span>
+							</a>
+						</li>
+						<li class="orenge_cont band_menu3" style="width:34%">
+						    <div class="top_icon"><img src="./scrweb/images/main2020/top_icon05.png"></div>
+							<a href="JavaScript:boardRead3('202307270000056061');" style="padding-top: 12px;">
+							<span class="white">견적정보</span>
+							<span class="orange">'선결제' </span>
+							<span class="white">기능 추가안내</span>
+							</a>
+						</li>
+					</ul>
+				</div>
+				<div class="popup_close">
+					<img src="./scrweb/images/main2020/close.png" width="20px">
+				</div>
+			</div>
+		</div>
+
+        
+		<div id="header" class="w1200">
+			<div class="left_header"><!--200603-->
+				<h1><img src="./scrweb/images/main2020/sub_ci.gif" alt="s2b로고"></h1><!--200603-->
+                <div class="section_main_header"><!--200603-->
+                    <dl class="t_help">
+                        <dt id="gosiTitle">행정안전부 고시 제2023-16호</dt>
+                        <dd><a href="/S2BNCustomer/S2B/index.jsp"><img src="./scrweb/images/main2020/ci_s2b_3.gif"></a></dd>
+                    </dl>
+                </div>        				
+			</div>
+			<div class="right_header">
+					<form name="m_leftForm" method="post" action="/S2BNCustomer/m_left.do">
+	                    <input type="hidden" name="pageNo" value="1" style="">
+	                    <input type="hidden" name="orderBy" value="" style="">
+	                    <input type="hidden" name="forwardName" value="default" style="">
+	               		</form> 
+					<ul id="gnb">
+
+					<li><a class="card_bt" href="JavaScript:boardRead3('202308180000056424');"><img src="./scrweb/images/main2020/s2b_card.png">S2B전용카드</a></li>
+					<li><a href="JavaScript:goEdutech();"><img src="./scrweb/images/main2020/edutechmall_s.png"></a></li>
+					
+						
+							<li class="util_menu logout bluefont">	
+							화천초등학교
+
+                       		<span class="admin_name bluefont">(이창수)</span>
+							</li>
+							<li><a href="javascript:retrieveLogOut();">로그아웃</a></li>
+							<li><a href="javascript:myDesk();">마이데스크</a></li>
+						
+												
+					
+									
+					<li><a href="/S2BNCustomer/S2B/scrweb/common/s2b_use_info01.jsp?loggerCP=/고객지원/이용안내">이용안내</a></li>
+					<li><a href="/S2BNCustomer/S2B/siteMap.jsp">사이트맵</a></li>					
+				</ul>
+			</div>
+		</div>
+	
+		<div id="content">
+
+			<!--홍보동영상 팝업 시작-->
+			<div class="video_popup hide" id="divYoutube">	
+			</div>
+			<!--홍보동영상 팝업 끝-->
+
+			<div id="main_banner">
+				<div class="main_banner_img" id="slider">
+					<ul style="left: 0px;">
+						
+						
+					    
+					    
+						
+						
+						
+						<li><a href="JavaScript:fncGoMenu('summerConcenGoodsEvent');"><img src="./scrweb/images/main2020/main_banner_82.jpg" alt="여름철 수요 집중 가전 기획전"></a></li>
+						<li><a href="JavaScript:fncGoMenu('stationeryLiving');"><img src="./scrweb/images/main2020/main_banner_24.jpg" alt="2025 문구생활 신제품 경진대회 기획전"></a></li>
+						<li><a href="JavaScript:fncGoMenu('disabledCertSeason');"><img src="./scrweb/images/main2020/main_banner_81.jpg" alt="장애인기업 인증제품 시즌 모음전"></a></li>
+						<li><a href="JavaScript:fncGoMenu('babyProduct');"><img src="./scrweb/images/main2020/main_banner_38.jpg" alt="어린이집,유치원인기물품모음전"></a></li>
+						
+						<li><a href="JavaScript:fncGoMenu('livingElectronic');"><img src="./scrweb/images/main2020/main_banner_27.jpg" alt="생활필수가전모음전"></a></li>
+
+						<li><a href="JavaScript:fncGoMenu('cmmTemplete');"><img src="./scrweb/images/main2020/main_banner_26.jpg" alt="원가계산용역기관안내"></a></li>
+					<li><a href="JavaScript:fncGoMenu('s2bEvent');"><img src="./scrweb/images/main2020/main_banner_09.jpg" alt="S2B우수기관선정기념이벤트"></a></li></ul>
+					<div class="dimmed"></div>
+				</div>
+
+				<div class="main_banner_bt w1200">
+					<div class="main_banner_navi_bts">
+						<a href="javascript:fnRollingLogo('prev')"><img width="20px" src="./scrweb/images/main2020/left_bt.png"></a>
+						<a href="javascript:fnRollingLogo('next')"><img width="20px" src="./scrweb/images/main2020/right_bt.png"></a>
+					</div>
+					<p class="main_banner_num">2/7</p>
+					<div class="main_banner_move_bts">
+						<span id="logopause"><img src="./scrweb/images/main2020/pause.png"></span>
+						<span id="logoplay" class="hide"><img src="./scrweb/images/main2020/play.png"></span>
+						<a class="hide" href=""><img src="./scrweb/images/main2020/play.png"></a>
+					</div>
+				</div>
+
+				<div class="search_menu_wrap w1200">
+					<div class="search_menu_01">
+						<h2><a href="javascript:showMenu(1);">1인수의<br>견적정보</a></h2>
+						<div class="m_01" id="menu1">
+							<form action="#" method="get">
+								<fieldset>
+									<div id="locationRadio" class="radio_box"><!--210414-->
+										<input type="radio" name="locationGbn" value="all" checked="checked" style="">전국검색 
+										<input type="radio" name="locationGbn" value="local" style="">우리지역
+						                <div class="layerbox_locationGbn" style="display:none;border-radius:5px;text-align:left;border:1px #ccc solid;	background:#f8ea6c;padding:7px;max-width:260px;position:absolute;top:10px;z-index:2;left:210px;">
+						                    <div class="layerbox_locationGbn_txt" style="width:100%;">우리지역 검색은 행정상의 주소가 아닌<br>나이스 학교코드를 기준으로 지역을 구분<br>하고 있습니다.
+						                    </div>
+						                </div>
+									</div><!--210414-->
+									<div class="search_box">
+										<label class="hide" for="search">견적정보 검색</label>
+										<input hidden="hidden" style="">
+										<input type="text" id="estimateInfoMainSchKeyWord" name="estimateInfoMainSchKeyWord" placeholder="견적정보 검색" style="">
+									</div>
+									<img src="./scrweb/images/main2020/search.png" id="mainSearchButton" width="42" height="42" style="cursor: pointer;">
+								</fieldset>
+							</form>
+							<ul>
+								<li><a href="javaScript:fncGoMenu('tgruMain');">견적서 상세검색</a></li>
+								<li><a href="javaScript:fncGoMenu('tgru07');">공공구매 검색</a></li>
+								<li><a href="javaScript:fncGoMenu('kcsrh');">어린이<br>안전제품 검색</a></li>
+								<li><a href="javaScript:fncGoMenu('tgru1');">견적서 접수목록</a></li>
+								<li><a href="javaScript:fncGoMenu('tgru3');">계약상대자<br>결정목록</a></li>
+								<li><a href="javaScript:fncGoMenu('tgru7');">계약목록</a></li>
+								<li><a href="javaScript:fncGoMenu('tgru4');">검수목록</a></li>
+								<li><a href="javaScript:fncGoMenu('tgru5');">결제목록</a></li>
+							</ul>
+						</div>
+					</div>
+					<div class="search_menu_02">
+						<h2><a href="javascript:showMenu(2);">1인수의<br>견적요청</a></h2>
+						<div class="m_02 hide" id="menu2">
+							<ul>
+								<li><a href="javaScript:fncGoMenu('tomu1');">견적요청서 작성</a></li>
+								<li><a href="javaScript:fncGoMenu('tomu1_1');">임시저장목록</a></li>
+								<li><a href="javaScript:fncGoMenu('tomu1_2');">받은견적</a></li>
+								<li><a href="javaScript:fncGoMenu('tomu1_7');">수의시담 목록</a></li>
+								<li><a href="javaScript:fncGoMenu('tomu1_3');">계약상대자<br>결정목록</a></li>
+								<li><a href="javaScript:fncGoMenu('tomu1_8');">계약목록</a></li>	
+								<li><a href="javaScript:fncGoMenu('tomu1_4');">검수목록</a></li>
+								<li><a href="javaScript:fncGoMenu('tomu1_5');">결제목록</a></li>	
+							</ul>
+						</div>
+					</div>
+					<div class="search_menu_03">
+						<h2><a href="javascript:showMenu(3);">2인수의<br>안내공고</a></h2>
+						<div class="m_03 hide" id="menu3">
+							<ul>
+								<li><a href="javaScript:fncGoMenu('tomu2');">안내공고서 작성</a></li>
+								<li><a href="javaScript:fncGoMenu('tomu2_1');">임시저장목록</a></li>
+								<li><a href="javaScript:fncGoMenu('tomu2_2');">받은견적</a></li>
+								<li><a href="javaScript:fncGoMenu('tomu2_3');">계약상대자<br>결정목록</a></li>
+								<li><a href="javaScript:fncGoMenu('tomu2_7');">계약목록</a></li>	
+								<li><a href="javaScript:fncGoMenu('tomu2_4');">검수목록</a></li>
+								<li><a href="javaScript:fncGoMenu('tomu2_5');">결제목록</a></li>	
+							</ul>
+						</div>
+					</div>
+					<div class="search_menu_04">
+						<h2><a href="javascript:showMenu(4);">입찰</a></h2>
+						<div class="m_04 hide" id="menu4">
+							<ul>
+								<li><a href="javaScript:fncGoMenu('ttmu1');">입찰공고문 작성</a></li>
+								<li><a href="javaScript:fncGoMenu('ttmu1_1');">입찰공고문 목록</a></li>
+								<li><a href="javaScript:fncGoMenu('ttmu');">입찰공고목록</a></li>
+								<li><a href="javaScript:fncGoMenu('ttmu2');">개찰대상목록</a></li>
+								<li><a href="javaScript:fncGoMenu('ttmu1_2');">개찰결과조회</a></li>
+								<li><a href="javaScript:fncGoMenu('ttmu3');">검수목록</a></li>
+								<li><a href="javaScript:fncGoMenu('ttmu4');">결제목록</a></li>	
+								<li><a href="javaScript:fncGoMenu('ttmu5');">완료목록</a></li>	
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div id="content_group_wrap">
+				<div id="content_group_01" class="w1200">
+					<ul class="menubar">
+						<li><a href="/S2BNCustomer/tbmu210.do?forwardName=firstlist">공급업체조회</a><img src="./scrweb/images/main2020/menubar_07.png"></li>
+						<li><a href="/S2BNCustomer/tcmo001.do">S2B공고현황</a><img src="./scrweb/images/main2020/menubar_01.png"></li>
+						<li><a href="/S2BNCustomer/contractCustomer.do">전자계약현황</a><img src="./scrweb/images/main2020/menubar_02.png"></li>
+						<li><a href="/S2BNCustomer/Tmmu200.do?forwardName=newList">진행중 계약</a><img src="./scrweb/images/main2020/menubar_03.png"></li>
+						<li><a href="javascript:workProgressInfo();">계약지연현황</a><img src="./scrweb/images/main2020/menubar_04.png"></li>
+						<li style="width:13%"><a href="javascript:goUsageCharge();">이용수수료</a><img src="./scrweb/images/main2020/menubar_05.png"></li>
+						<li style="width:12%"><a href="javascript:selectBoard('e');">자료실</a><img src="./scrweb/images/main2020/menubar_06.png"></li>
+					</ul>
+				</div>
+				<div id="content_group_02">
+					<ul class="bbox_wrap w1200">
+						<li id="boxCss0" class="box_select">
+							<a class="bbox_menu_00" id="overImg0" onmouseover="overBackImg()" onmouseout="overOutImg(0)" href="javascript:goEdutech();">
+							<dl>
+								<dt>에듀테크몰</dt>
+								<dd>에듀테크 제품을 <br>구매할 수 있는 전용몰</dd>
+							</dl>
+							</a>
+						</li>
+						<li id="boxCss1">
+							<a class="bbox_menu_01" id="overImg1" onmouseover="overBackImg()" onmouseout="overOutImg(1)" href="/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/s2bCustomerSearch.jsp?setLocal=all&amp;actionType=ONLY_CATEGORY&amp;CERT_CODE_YN=Y&amp;publicPurchaseCode=0&amp;loggerCP=/즉시견적/물품정보 검색">
+							<dl>
+								<dt>공공기관 우선구매몰</dt>
+								<dd>장애인기업, 사회적기업,<br>중소기업 등의 생산품을 <br>구매할 수 있는 전용몰</dd>
+							</dl>
+							</a>
+						</li>
+						
+						<li id="boxCss2">
+							<a class="bbox_menu_03" id="overImg3" onmouseover="overBackImg()" onmouseout="overOutImg(2)" href="/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/afterschoolV9.jsp">
+							<dl style="padding-top: 24px;">
+								<dt style="margin-bottom: 4px;">경북형 늘봄학교<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;&nbsp;초등돌봄교실</dt>
+								<dd>구매편의 제공을 위해<br>늘봄학교&amp;초등돌봄교실의<br>필요물품을 모아둔 기획전</dd>
+							</dl>
+							</a>
+						</li>
+						
+						<li id="boxCss3">
+							
+								<a class="bbox_menu_02" id="overImg2" onmouseover="overBackImg()" onmouseout="overOutImg(3)" href="/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/eventcollection.jsp">
+									<dl>
+									<dt>기획전 모음</dt>
+									<dd>S2B에서 진행되고있는 <br>기획전/모음전을 한눈에</dd>
+								</dl>
+								</a>
+							
+						</li>
+						
+						<li id="boxCss4">
+							<a class="bbox_menu_04" id="overImg4" onmouseover="overBackImg(4)" onmouseout="overOutImg(4)" href="/S2BNCustomer/S2B/scrweb/booksearch/bookSearchMain.jsp">
+							<dl>
+								<dt>도서 검색 서비스</dt>
+								<dd>도서검색부터 견적요청까지<br>Non-Stop</dd>
+							</dl>
+							</a>
+						</li>
+					</ul>
+				</div>
+
+					<div id="content_group_03" class="w1200" style="height:247px;">
+						<div class="notice" id="noticeTable">
+							<h2><a href="javascript:selectNoticeList('noticeList')" id="noticeA" style="color: rgb(0, 0, 0);">공지사항</a> <font color="#BFBFBF">ㅣ</font> <a href="javascript:selectNoticeList('mediaList')" id="mediaA" style="color: rgb(191, 191, 191);">언론보도</a></h2> 
+						<script type="text/javascript">function left_over(obj){		obj.className="ahover"; }function left_out(obj){	obj.className=""; }</script><div id="noticeList">	<ul>									   		<li>	   			<a href="javascript:boardRead3('202605260000075951')" onmouseover="left_over(this)" onmouseout="left_out(this)">S2B 시스템 작업 완료에 따른 후속 안내</a>	   				   				<img src="./scrweb/images/main2020/new_icon.png" width="17" height="17">	   				   			<span>	   				2026-05-26	   			</span>	   		</li>									   		<li>	   			<a href="javascript:boardRead3('202605200000075828')" onmouseover="left_over(this)" onmouseout="left_out(this)">조달청 연계 서비스 이용 지연 안내</a>	   				   				<img src="./scrweb/images/main2020/new_icon.png" width="17" height="17">	   				   			<span>	   				2026-05-20	   			</span>	   		</li>									   		<li>	   			<a href="javascript:boardRead3('202605110000075553')" onmouseover="left_over(this)" onmouseout="left_out(this)">[필독] 5/11(월) S2B 접속 지연 관련 공 ...</a>	   				   			<span>	   				2026-05-11	   			</span>	   		</li>									   		<li>	   			<a href="javascript:boardRead3('202605110000075544')" onmouseover="left_over(this)" onmouseout="left_out(this)">[긴급] S2B 접속 지연 안내</a>	   				   			<span>	   				2026-05-11	   			</span>	   		</li>		           		</ul>	<p><a href="javascript:listMore('noticeMore')"><img src="./scrweb/images/main2020/plus.png"></a></p></div><div id="mediaList" style="display: none;">	<ul>									   		<li>	   			<a href="javascript:mediaLinkOpen('https://www.inews365.com/news/article.html?no=911461')" onmouseover="left_over(this)" onmouseout="left_out(this)">충북도교육청, 학교장터 '충북지역사랑장...</a>	   				   			<span>	   				2026-03-22	   			</span>	   		</li>									   		<li>	   			<a href="javascript:mediaLinkOpen('https://www.inews24.com/v')" onmouseover="left_over(this)" onmouseout="left_out(this)">학교장터 ‘충북지역사랑장터’ 개설…지...</a>	   				   			<span>	   				2026-03-22	   			</span>	   		</li>									   		<li>	   			<a href="javascript:mediaLinkOpen('https://www.ajunews.com/view/20260318213056792')" onmouseover="left_over(this)" onmouseout="left_out(this)">부산시교육청, 유보통합·교권 보호·학 ...</a>	   				   			<span>	   				2026-03-18	   			</span>	   		</li>									   		<li>	   			<a href="javascript:mediaLinkOpen('https://www.news1.kr/local/busan-gyeongnam/6104973')" onmouseover="left_over(this)" onmouseout="left_out(this)">부산교육청, 어린이집 계약업무 부담 ↓ ...</a>	   				   			<span>	   				2026-03-18	   			</span>	   		</li>		           		</ul>	<p><a href="javascript:listMore('mediaMore')"><img src="./scrweb/images/main2020/plus.png"></a></p></div><script type="text/javascript">	selectNoticeList('noticeList');</script></div>
+						<div class="sbox_wrap">
+							<ul>
+							  <li><a href="javascript:alert('물품등록요청은 이용이 중지되었습니다.\n1인수의(견적요청)을 이용해주시기 바랍니다.')" class="smenu_01"><span>물품등록요청</span></a></li>
+							  <li><a href="/S2BNCustomer/istran100.do?loggerCP=/고객지원/교육연수" class="smenu_02"><span>교육연수신청</span></a></li>
+							  <li><a href="/S2BNCustomer/customer600No.do?forwardName=faqList" class="smenu_03" style="width:22%"><span>FAQ</span></a></li>
+							  <li><a href="/S2BNCustomer/Limit100.do?forwardName=default" class="smenu_07"><span>이용제한신청</span></a></li>
+							</ul>
+							<ul>
+							  <li><a href="/S2BNCustomer/customer600.do?forwardName=board2&amp;division=7" class="smenu_04"><span>질문과답변</span></a></li>		 				
+							  <li><a href="javascript:remoteService();" class="smenu_05"><span>원격지원</span></a></li>
+							  <li><a href="javascript:selectBoard('l');" class="smenu_06" style="width:22%"><span>법령정보</span></a></li>
+							  <li><a href="/S2BNCustomer/S2B/loginVendor.jsp" class="smenu_08"><span class="line2">규정위반신고<br><span class="small_txt">(공급업체)</span><br></span></a></li>
+							</ul>
+						</div>
+					</div>
+					<div id="content_group_04" class="w1200">
+						<div class="video">
+							<img src="./scrweb/images/main2020/video_banner2.jpg" usemap="#videoBannerMap" width="875px">
+							<map name="videoBannerMap">
+								<area shape="rect" coords="179,64,301,95" href="JavaScript:openYoutubeTab()" alt="동영상더보기">
+								<area shape="rect" coords="347,15,462,100" href="JavaScript:openMenual('1')" alt="수요기관">
+								<area shape="rect" coords="470,17,587,99" href="JavaScript:openMenual('2')" alt="개인이용자">
+								<area shape="rect" coords="598,15,709,97" href="JavaScript:openMenual('3')" alt="에듀파인연계">
+								<area shape="rect" coords="722,16,835,100" href="JavaScript:openMenual('4')" alt="공급업체">
+							</map>
+						</div>				
+						<ul class="area_banner">
+				           <li class="bns01">
+				           		
+		                          
+		                             <a href="JavaScript:intergratedContract('R10');">통합계약</a>
+		                          
+		                          
+		                      	
+				           </li>
+		                   <li class="bns02"><a href="/S2BNCustomer/customer600No.do?forwardName=boards&amp;division=s&amp;loggerCP=/고객지원/S2B이달의우수기관"><span>이달의<br>우수기관</span></a></li>
+		                   <li class="bns03"><a href="/S2BNCustomer/tbmu210.do?forwardName=firstlist"><span>공급업체<br>조회</span></a></li>
+		                </ul>
+		            </div>
+		            <br><br>					
+			</div>
+		</div>
+		<div id="footer_total_wrap">
+			<div class="family_site w1200">
+               <ul>
+               <li>
+                   <form name="theForm02">
+                       <select name="theMenu02" onchange="goThere1();">
+                           <option value="">교육청</option>
+                           <option value="http://www.sen.go.kr">서울특별시 교육청</option>
+                           <option value="http://www.pen.go.kr">부산광역시 교육청</option>
+                           <option value="http://www.dge.go.kr">대구광역시 교육청</option>
+                           <option value="http://www.ice.go.kr">인천광역시 교육청</option>
+                           <option value="http://www.gen.go.kr">광주광역시 교육청</option>
+                           <option value="http://www.dje.go.kr">대전광역시 교육청</option>
+                           <option value="http://www.use.go.kr">울산광역시 교육청</option>
+                           <option value="http://www.sje.go.kr">세종특별자치시 교육청</option>
+                           <option value="http://www.goe.go.kr">경기도 교육청</option>
+                           <option value="https://www.gwe.go.kr/">강원특별자치도 교육청</option>
+                           <option value="http://www.cbe.go.kr">충청북도 교육청</option>
+                           <option value="http://www.cne.go.kr">충청남도 교육청</option>
+                           <option value="http://www.gbe.kr">경상북도 교육청</option>
+                           <option value="http://www.gne.go.kr">경상남도 교육청</option>
+                           <option value="http://www.jbe.go.kr">전북특별자치도 교육청</option>
+                           <option value="http://www.jne.go.kr">전라남도 교육청</option>
+                           <option value="http://www.jje.go.kr">제주특별자치도 교육청</option>
+                       </select>
+                   </form>
+               </li>
+               <li>
+				<form name="theForm04">
+                        <select name="theMenu04" size="1" onchange="goThere3();">
+                            <option value="">교육연수원</option>
+                            <option value="http://www.seti.go.kr">서울특별시 교육연수원</option>
+                            <option value="http://www.ieti.or.kr">인천광역시 교육연수원</option>
+                            <option value="https://www.gtie.go.kr">경기도 남부교육연수원</option>
+                            <option value="https://www.goenti.kr">경기도 북부교육연수원</option>
+                            <option value="http://www.yulgog.org">경기도 율곡교육연수원</option>
+                            <option value="https://www.geti.or.kr">강원특별자치도 교육연수원</option>
+                            <option value="http://www.teti.kr">대전광역시 교육연수원</option>
+                            <option value="http://www.ceti.or.kr">충청남도 교육연수원</option>
+                            <option value="https://danjae.go.kr">충청북도 단재교육연수원</option>
+                            <option value="http://edu.beti.go.kr">부산광역시 교육연수원</option>
+                            <option value="https://edu.deti.or.kr">대구광역시 교육연수원</option>
+                            <option value="https://edu.ueti.or.kr">울산광역시 교육연수원</option>
+                            <option value="https://www.sjti.kr">세종특별자치시 교육연수원</option>
+                            <option value="http://www.gneti.or.kr">경상남도 교육연수원</option>
+                            <option value="http://www.gbeti.or.kr">경상북도 교육연수원</option>
+                            <option value="http://eduup.gen.go.kr">광주광역시 교육연수원</option>
+                            <option value="https://www.jnstudy.kr">전라남도 교육연수원</option>
+                            <option value="http://www.jbstudy.kr">전북특별자치도 교육연수원</option>
+                            <option value="http://www.tamna.or.kr">탐라 교육연수원</option>
+                        </select>
+                  </form>
+               </li>
+               <li>
+                   <form name="theForm05">
+                       <select name="theMenu02" size="1" onchange="goThere5();">
+                           <option value="">시도청</option>
+                           <option value="http://www.seoul.go.kr ">서울특별시청</option>
+                           <option value="http://www.busan.go.kr ">부산광역시청</option>
+                           <option value="http://www.daegu.go.kr">대구광역시청</option>
+                           <option value="http://www.incheon.go.kr">인천광역시청</option>
+                           <option value="http://www.gwangju.go.kr ">광주광역시청</option>
+                           <option value="http://www.daejeon.go.kr">대전광역시청</option>
+                           <option value="http://www.ulsan.go.kr ">울산광역시청</option>
+                           <option value="http://www.sejong.go.kr">세종특별자치시청</option>
+                           <option value="http://www.gg.go.kr ">경기도청</option>
+                           <option value="https://state.gwd.go.kr ">강원특별자치도청</option>
+                           <option value="http://www.chungbuk.go.kr">충청북도청</option>
+                           <option value="http://www.chungnam.go.kr">충청남도청</option>
+                           <option value="http://www.gyeongbuk.go.kr ">경상북도청</option>
+                           <option value="http://www.gyeongnam.go.kr">경상남도청</option>
+                           <option value="http://www.jeonbuk.go.kr">전북특별자치도청</option>
+                           <option value="http://www.jeonnam.go.kr">전라남도청</option>
+                           <option value="http://www.jeju.go.kr">제주특별자치도청</option>
+                       </select>
+                   </form>
+               </li>
+               <li>
+                   <form name="theForm03">
+                       <select name="theMenu03" size="1" onchange="goThere2();">
+                           <option value="theMenu03" onchange="goThere2();">공공기관</option>
+                           <option value="http://www.moe.go.kr/">교육부</option>
+                           <option value="http://www.mois.go.kr/">행정안전부</option>
+                           <option value="http://www.smba.go.kr/">중소벤처기업부</option>
+                           <option value="http://www.kbiz.or.kr/">중소기업중앙회</option>
+                           <option value="http://www.motie.go.kr">산업통상지원부</option>
+                           <option value="http://www.law.go.kr">국가법령정보센터</option>
+                           <option value="http://www.epeople.go.kr/">국민신문고</option>
+                           <option value="http://www.ftc.go.kr/">공정거래위원회</option>
+                           <option value="http://www.kca.go.kr/">한국소비자원</option>
+                           <option value="http://www.bai.go.kr/">감사원</option>
+                           <option value="http://www.acrc.go.kr/">국민권익위원회</option>
+                           <option value="http://kess.kedi.re.kr/">교육통계서비스</option>
+                       </select>
+                   </form>
+               </li>
+               <li>
+					<form name="theForm01">
+                        <select name="theMenu01" onchange="goThere()">
+                            <option value="">패밀리사이트</option>
+                            <option value="http://www.ktcu.or.kr">The-K한국교직원공제회</option>
+                            <option value="https://www.thekmall.co.kr/">The-K교직원나라</option>
+                            <option value="http://thek-hotel.co.kr/">The-K호텔앤리조트</option>
+                            <option value="http://www.ramadajeju.co.kr">The-K제주호텔</option>
+                            <option value="http://www.thekbank.co.kr/">The-K저축은행</option>
+                            <option value="http://www.sophiagreen.co.kr/">The-K소피아그린</option>
+                            <option value="https://www.yedaham.co.kr">The-K예다함상조</option>
+                            <option value="https://www.educar.co.kr/">하나손해보험</option>
+                        </select>
+                     </form>
+               </li>
+               </ul> 
+            </div>			
+			<div id="footer_wrap" class="w1200">
+				<div class="footer_menu">
+					<ul>
+						<li><a href="/S2BNCustomer/S2B/scrweb/common/s2b_info01_intro.jsp">S2B소개</a></li>
+						<li><a href="/S2BNCustomer/S2B/scrweb/common/s2b_faq_school.jsp">FAQ</a></li>
+						<li><a href="javascript:openServicePopup();">이용약관</a></li>
+						<li><a href="javascript:openPrivacyPopup();" style="font-weight:700;"><b>개인정보처리방침</b></a></li>
+					</ul>
+				</div>
+				<div class="sns">
+					<ul>
+						<li><a title="유투브(새창열림)" href="https://www.youtube.com/channel/UCo6IZie9tJbjCmCANvyZ-Tg" target="_blank"><img src="./scrweb/images/main2020/youtube.png" alt="유투브"></a></li>
+						<li><a title="블로그(새창열림)" href="http://blog.naver.com/the-ks2b" target="_blank"><img src="./scrweb/images/main2020/blog.png" alt="블로그"></a></li>
+						<li><a title="페이스북(새창열림)" href="https://www.facebook.com/s2b.kr/?ref=bookmarks" target="_blank"><img src="./scrweb/images/main2020/facebook.png" alt="페이스북"></a></li>
+						<li><a title="인스타그램(새창열림)" href="https://www.instagram.com/withs2b/" target="_blank"><img src="./scrweb/images/main2020/insta.png" alt="인스타"></a></li>
+					</ul>
+				</div>
+				<div class="copyright">
+					<p class="address"><a href="http://www.ktcu.or.kr/" target="_blank">The-K한국교직원공제회 S2B</a><span class="vline"></span>    (03127) 서울특별시 종로구 창경궁로136 보령빌딩 6층   <br>
+					위탁운영 : The-K 교직원나라, 대표이사 : 정성욱<span class="vline"></span>사업자등록번호 : 106-81-95139<span class="vline"></span>E-mail : s2b@s2b.kr<span class="vline"></span>고객센터 : 1577-3309(평일 09시 ~ 18시)</p>
+					<p class="mark">Copyright(c) The-k 한국교직원공제회 All right reserved.</p>
+				</div>
+			</div>
+		</div>
+	</div>	
+	
+	<!--  popup include -->
+    <iframe src="/S2BNCustomer/popup.do?forwadName=loginPopup_p" name="popup" id="popup" width="0" height="0" scrolling="no" frameborder="0"></iframe>
+	
+
+
+<script language="JavaScript">
+    var _CZ_HTTP_HOST = "tsvc1.teachiworld.com:8080"; var _CZ_HTTPS_HOST = "ssl.logger.co.kr"; var _CZ_U = "12"; var _CZ_URL="s2b.kr/S2BNCustomer/S2B/index.jsp";var _CZ_IDX="15";
+    var _cz_host=document.location.protocol.indexOf("https")!=-1?"https://"+_CZ_HTTPS_HOST:"http://"+_CZ_HTTP_HOST;
+    var _cz_img=new Image();
+
+    function _cz_mouseClick(e) {
+        if(document.location.href.indexOf(_CZ_URL) < 0) return;
+        var ax,ay,rx,px,ww; if(!e) e=window.event;
+        if( e.srcElement.isnotClick == "Y" ) {}else{
+            if(typeof(window.innerWidth)=='number'){ww=window.innerWidth;}else if(document.documentElement && (document.documentElement.clientWidth || document.documentElement.clientHeight)){ww=document.documentElement.clientWidth;}else if(document.body && (document.body.clientWidth || document.body.clientHeight)){ww=document.body.clientWidth;}
+            ax=e.clientX+document.body.scrollLeft; ay=e.clientY+document.body.scrollTop; rx=Math.round(ax-ww/2); px=Math.round(ax/ww*100);
+            _cz_img.src=_cz_host+"/tracker_clickzone.jsp?u="+_CZ_U+"&czIdx="+_CZ_IDX+"&ax="+ax+"&ay="+ay+"&rx="+rx+"&px="+px+"&ww="+ww;
+        }
+    }
+    document.onmousedown=_cz_mouseClick;
+</script>
+<!-- END OF LOGGER(TM) CLICKZONE(TM) SCRIPT -->
+
+
+
+<script type="text/javascript">
+<!--
+var _TRK_PI = "LIR";
+var _TRK_SX = "U";
+var _TRK_AG = "XX";
+//-->
+</script>
+
+<script language="JavaScript" src="/S2BNCustomer/S2B/scrweb/js/logger.js"></script>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=UA-173155725-2"></script>;
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-173155725-2');
+</script>
+<!--  Naver Analytics -->
+<script async="" type="text/javascript" src="//wcs.naver.net/wcslog.js"></script>
+<script type="text/javascript">
+if(!wcs_add) var wcs_add = {};
+wcs_add["wa"] = "79da37dc102d30";
+if(window.wcs) {
+wcs_do();
+}
+</script>
+
+
+</body></html>

@@ -73,27 +73,49 @@ async def search_items(page, query):
     print("  📊 검색 결과 파싱 중...")
     items = await page.evaluate('''() => {
         const results = [];
-        // 물품 상세 페이지로 이동하는 링크들을 모두 찾음
-        const links = document.querySelectorAll('a[href^="javascript:goViewPage("]');
+        // 물품 체크박스(name="checkFlag")를 기준으로 각 행(tr)을 찾습니다.
+        const checkboxes = document.querySelectorAll('input[name="checkFlag"]');
         
-        links.forEach(link => {
-            const href = link.getAttribute('href');
-            // href="javascript:goViewPage('202407159099092');" 에서 ID 추출
-            const match = href.match(/'([^']+)'/);
-            const itemId = match ? match[1] : '';
+        checkboxes.forEach(chk => {
+            const tr = chk.closest('tr');
+            if (!tr) return;
             
-            if (itemId) {
-                // 부모 요소들을 거슬러 올라가서 가격 정보 등을 찾을 수 있지만,
-                // 우선은 링크 텍스트 자체(상품명 + 규격)를 가져옴
-                let title = link.textContent.replace(/\\s+/g, ' ').trim();
-                
-                // 중복 추가 방지
-                if (!results.find(r => r.id === itemId)) {
-                    results.push({
-                        id: itemId,
-                        title: title
-                    });
-                }
+            const itemId = chk.value;
+            if (!itemId) return;
+            
+            // 이미지
+            let image = '';
+            const imgEl = tr.querySelector('img.detail_img');
+            if (imgEl && imgEl.getAttribute('src')) {
+                image = 'https://www.s2b.kr' + imgEl.getAttribute('src');
+            }
+            
+            // 제목
+            let title = '';
+            const titleA = tr.querySelector('.obj_name .l01 a');
+            if (titleA) {
+                title = titleA.textContent.replace(/\\s+/g, ' ').trim();
+            }
+            
+            // 가격
+            let price = '';
+            const priceLi = tr.querySelector('.lt_mulpumprice li:first-child');
+            if (priceLi) {
+                price = priceLi.textContent.trim();
+            }
+            
+            // 링크 (S2B 특성상 세션 연동이 필요할 수 있으나 유추된 팝업 주소 제공)
+            const link = 'https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/search/estimateInfoSchMain.jsp?param_value=' + itemId;
+            
+            // 중복 방지
+            if (!results.find(r => r.id === itemId)) {
+                results.push({
+                    id: itemId,
+                    title: title,
+                    price: price,
+                    image: image,
+                    link: link
+                });
             }
         });
         return results;

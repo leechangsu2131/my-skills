@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>S2B 학교장터 자동 구매</title>
+  <style>
+    :root {
+      --navy:       #1a4f7a;
+      --blue:       #2471a3;
+      --blue-light: #aed6f1;
+      --bg:         #eef2f7;
+      --card:       #ffffff;
+      --border:     #d0dae6;
+      --text:       #2c3e50;
+      --muted:      #7f8c9a;
+      --green:      #1e8449;
+      --green-bg:   #eafaf1;
+      --red:        #c0392b;
+      --red-bg:     #fdedec;
+      --orange:     #e67e22;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Malgun Gothic', '맑은 고딕', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 14px;
+      min-height: 100vh;
+    }
+
+    /* ── 헤더 ── */
+    header {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--blue) 100%);
+      color: #fff;
+      padding: 0 28px;
+      height: 58px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.25);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    header .icon { font-size: 26px; line-height: 1; }
+    header h1   { font-size: 17px; font-weight: 700; letter-spacing: -.3px; }
+    header p    { font-size: 12px; opacity: .7; margin-top: 2px; }
+
+    /* ── 레이아웃 ── */
+    .layout {
+      max-width: 1200px;
+      margin: 24px auto;
+      padding: 0 20px;
+      display: grid;
+      grid-template-columns: 270px 1fr;
+      gap: 18px;
+    }
+
+    /* ── 카드 ── */
+    .card {
+      background: var(--card);
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+      padding: 20px;
+    }
+    .card-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--navy);
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 11px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* ── 인증 카드 ── */
+    .auth-card { grid-row: 1 / 3; }
+
+    .env-badge {
+      background: var(--green-bg);
+      border: 1px solid #a9dfbf;
+      border-radius: 8px;
+      padding: 9px 12px;
+      font-size: 12px;
+      color: var(--green);
+      margin-bottom: 14px;
+      display: none;
+      line-height: 1.6;
+    }
+    .env-badge strong { display: block; margin-bottom: 2px; }
+
+    .field { margin-bottom: 13px; }
+    .field label {
+      display: block;
+      font-size: 11.5px;
+      color: var(--muted);
+      margin-bottom: 5px;
+      font-weight: 600;
+    }
+    .field input {
+      width: 100%;
+      padding: 9px 11px;
+      border: 1.5px solid var(--border);
+      border-radius: 7px;
+      font-size: 13px;
+      font-family: inherit;
+      transition: border-color .15s;
+      background: #fafbfc;
+    }
+    .field input:focus { outline: none; border-color: var(--blue); background: #fff; }
+
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 16px 0;
+    }
+
+    .check-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 14px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .check-row input[type="checkbox"] { width: 15px; height: 15px; cursor: pointer; accent-color: var(--blue); }
+    .check-row label { cursor: pointer; font-size: 13px; }
+
+    .btn-group { display: flex; flex-direction: column; gap: 8px; }
+
+    .btn {
+      width: 100%;
+      padding: 13px;
+      border: none;
+      border-radius: 9px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background .2s, transform .1s, opacity .2s;
+      font-family: inherit;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .btn:active:not(:disabled) { transform: scale(.98); }
+    .btn:disabled { opacity: .5; cursor: not-allowed; }
+
+    .btn-search {
+      background: var(--blue);
+      color: #fff;
+    }
+    .btn-search:hover:not(:disabled) { background: #1a5f94; }
+
+    .btn-cart {
+      background: var(--green);
+      color: #fff;
+    }
+    .btn-cart:hover:not(:disabled) { background: #196f3d; }
+
+    .btn-close-browser {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 500;
+      padding: 8px;
+    }
+    .btn-close-browser:hover:not(:disabled) { color: var(--red); border-color: var(--red); }
+
+    .session-badge {
+      display: none;
+      align-items: center;
+      gap: 6px;
+      font-size: 11.5px;
+      padding: 7px 10px;
+      border-radius: 7px;
+      margin-bottom: 10px;
+    }
+    .session-badge.active {
+      display: flex;
+      background: #eafaf1;
+      color: var(--green);
+      border: 1px solid #a9dfbf;
+    }
+    .session-badge .dot {
+      width: 8px; height: 8px;
+      background: var(--green);
+      border-radius: 50%;
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: .4; }
+    }
+
+    /* ── 품목 카드 ── */
+    .items-card { display: flex; flex-direction: column; }
+
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; min-width: 380px; }
+    thead tr { background: var(--navy); }
+    th {
+      color: #fff;
+      font-size: 12.5px;
+      font-weight: 600;
+      padding: 10px 10px;
+      text-align: left;
+      white-space: nowrap;
+    }
+    th:first-child { border-radius: 7px 0 0 0; width: 40px; text-align: center; }
+    th:last-child  { border-radius: 0 7px 0 0; width: 58px; text-align: center; }
+
+    td {
+      padding: 6px 8px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+    tbody tr:hover td { background: #f5f8fb; }
+    tbody tr:last-child td { border-bottom: none; }
+
+    .row-num { text-align: center; color: var(--muted); font-size: 12px; }
+
+    td input[type="text"] {
+      width: 100%;
+      padding: 6px 8px;
+      border: 1.5px solid transparent;
+      border-radius: 5px;
+      font-size: 13px;
+      font-family: inherit;
+      background: transparent;
+      transition: border-color .15s, background .15s;
+    }
+    td input[type="text"]:focus {
+      border-color: var(--blue);
+      background: #fff;
+      outline: none;
+    }
+
+    .btn-del {
+      padding: 4px 10px;
+      background: none;
+      border: 1px solid #f5b7b1;
+      color: var(--red);
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 12px;
+      transition: all .15s;
+      white-space: nowrap;
+    }
+    .btn-del:hover { background: var(--red); color: #fff; border-color: var(--red); }
+
+    .btn-add {
+      margin-top: 10px;
+      padding: 9px;
+      background: none;
+      border: 2px dashed var(--border);
+      border-radius: 7px;
+      color: var(--muted);
+      font-size: 13px;
+      font-family: inherit;
+      cursor: pointer;
+      width: 100%;
+      transition: all .2s;
+    }
+    .btn-add:hover { border-color: var(--blue); color: var(--blue); background: #f0f6ff; }
+
+    /* ── 검색 결과 카드 ── */
+    .results-card {
+      grid-column: 1 / -1;
+      display: none;
+    }
+    .results-card.show { display: block; }
+
+    .results-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+    .results-toolbar .select-all-wrap {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .results-toolbar .select-all-wrap input { width: 16px; height: 16px; accent-color: var(--blue); cursor: pointer; }
+    .results-toolbar .selected-count {
+      font-size: 12px;
+      color: var(--muted);
+      margin-left: auto;
+    }
+
+    .result-section { margin-bottom: 18px; }
+
+    .result-section-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 14px;
+      background: linear-gradient(135deg, #f0f5fb 0%, #e8eef5 100%);
+      border-radius: 8px;
+      margin-bottom: 8px;
+    }
+    .result-query {
+      font-weight: 700;
+      color: var(--navy);
+      font-size: 13px;
+    }
+    .result-count {
+      font-size: 11px;
+      color: var(--muted);
+      background: #fff;
+      padding: 2px 9px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+    }
+    .section-select-all {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      color: var(--muted);
+      cursor: pointer;
+      user-select: none;
+    }
+    .section-select-all input { width: 14px; height: 14px; accent-color: var(--blue); cursor: pointer; }
+
+    .no-results {
+      padding: 16px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+      background: #fafbfc;
+      border-radius: 8px;
+      border: 1px dashed var(--border);
+    }
+
+    .result-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 5px;
+      transition: border-color .15s, background .15s, box-shadow .15s;
+    }
+    .result-item:hover {
+      border-color: var(--blue-light);
+      background: #f8fbff;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+    }
+    .result-item.checked {
+      border-color: var(--blue);
+      background: #f0f7ff;
+    }
+
+    .result-item .item-check {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--blue);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .result-item .item-img {
+      width: 68px;
+      height: 68px;
+      border-radius: 6px;
+      overflow: hidden;
+      flex-shrink: 0;
+      background: #f5f5f5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #eee;
+    }
+    .result-item .item-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .result-item .item-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .result-item .item-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--navy);
+      text-decoration: none;
+      display: block;
+      line-height: 1.4;
+      margin-bottom: 5px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+    .result-item .item-title:hover {
+      text-decoration: underline;
+      color: var(--blue);
+    }
+    .result-item .item-meta {
+      display: flex;
+      gap: 14px;
+      font-size: 12px;
+      color: var(--muted);
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .result-item .item-price {
+      color: var(--red);
+      font-weight: 700;
+      font-size: 14px;
+    }
+    .result-item .item-id {
+      font-size: 11px;
+      background: #f0f3f6;
+      padding: 2px 7px;
+      border-radius: 4px;
+    }
+
+    .result-item .item-qty-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      flex-shrink: 0;
+    }
+    .result-item .item-qty-wrap > label {
+      font-size: 11px;
+      color: var(--muted);
+      font-weight: 600;
+    }
+    .result-item .item-cart-qty {
+      width: 58px;
+      padding: 5px;
+      text-align: center;
+      border: 1.5px solid var(--border);
+      border-radius: 5px;
+      font-size: 13px;
+      font-family: inherit;
+    }
+    .result-item .item-cart-qty:focus {
+      border-color: var(--blue);
+      outline: none;
+    }
+
+    /* ── 로그 카드 ── */
+    .log-card { grid-column: 1 / -1; }
+
+    #log {
+      background: #0f1923;
+      color: #cdd6e0;
+      font-family: 'D2Coding', 'Consolas', 'Courier New', monospace;
+      font-size: 12.5px;
+      line-height: 1.7;
+      padding: 14px 16px;
+      border-radius: 8px;
+      height: 240px;
+      overflow-y: auto;
+      border: 1px solid #1e2d3d;
+    }
+    .log-placeholder { color: #3d5066; }
+    .log-line { padding: 0; }
+    .log-line.ok      { color: #6ee7b7; }
+    .log-line.err     { color: #fc8181; }
+    .log-line.info    { color: #93c5fd; }
+    .log-line.section { color: #fbbf24; }
+
+    .log-footer {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .btn-clear {
+      padding: 8px 14px;
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      color: var(--muted);
+      font-size: 13px;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all .15s;
+    }
+    .btn-clear:hover { color: var(--text); border-color: var(--text); }
+
+    .btn-download {
+      padding: 9px 18px;
+      background: var(--green);
+      color: #fff;
+      border: none;
+      border-radius: 7px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      display: none;
+      align-items: center;
+      gap: 6px;
+      transition: background .2s;
+    }
+    .btn-download:hover { background: #196f3d; }
+    .btn-download.show  { display: inline-flex; }
+
+    /* ── 스피너 ── */
+    .spinner {
+      display: inline-block;
+      width: 13px;
+      height: 13px;
+      border: 2px solid rgba(255,255,255,.35);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+      vertical-align: middle;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── 이미지 placeholder ── */
+    .img-placeholder {
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      color: #ccc; font-size: 11px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="icon">🏫</div>
+  <div>
+    <h1>S2B 학교장터 자동 견적 담기</h1>
+    <p>검색 → 물품 선택 → 견적신청</p>
+  </div>
+</header>
+
+<div class="layout">
+
+  <!-- ── 왼쪽: 로그인 + 버튼 ── -->
+  <div class="card auth-card">
+    <div class="card-title">🔐 S2B 로그인 정보</div>
+
+    <div class="env-badge" id="envBadge">
+      <strong>✅ .env 파일 인증정보 감지됨</strong>
+      비워두면 .env 값을 자동 사용합니다.
+    </div>
+
+    <div class="field">
+      <label>아이디</label>
+      <input type="text" id="uid" placeholder="S2B 개인이용자 ID" autocomplete="username">
+    </div>
+    <div class="field">
+      <label>비밀번호</label>
+      <input type="password" id="pwd" placeholder="비워두면 .env 값 사용" autocomplete="current-password">
+    </div>
+
+    <hr class="divider">
+
+    <div class="session-badge" id="sessionBadge">
+      <span class="dot"></span>
+      브라우저 세션 활성 중
+    </div>
+
+    <div class="check-row">
+      <input type="checkbox" id="dryRun">
+      <label for="dryRun">🧪 테스트 모드 (실제 담기 안 함)</label>
+    </div>
+
+    <div class="btn-group">
+      <button class="btn btn-search" id="btnSearch" onclick="doSearch()">
+        🔍 물품 검색
+      </button>
+      <button class="btn btn-cart" id="btnCart" onclick="doAddToCart()" disabled>
+        📦 견적신청
+      </button>
+      <button class="btn btn-close-browser" id="btnClose" onclick="doCloseBrowser()" style="display:none">
+        🔒 브라우저 세션 종료
+      </button>
+    </div>
+  </div>
+
+  <!-- ── 오른쪽: 품목 검색어 입력 ── -->
+  <div class="card items-card">
+    <div class="card-title">📋 검색할 품목 목록</div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>검색어 (품목명)</th>
+            <th>삭제</th>
+          </tr>
+        </thead>
+        <tbody id="itemBody"></tbody>
+      </table>
+    </div>
+    <button class="btn-add" onclick="addRow()">＋ 행 추가</button>
+  </div>
+
+  <!-- ── 검색 결과 (처음에 숨김) ── -->
+  <div class="card results-card" id="resultsCard">
+    <div class="card-title">🔍 검색 결과 — 원하는 물품을 선택하세요</div>
+    <div class="results-toolbar">
+      <label class="select-all-wrap">
+        <input type="checkbox" id="globalSelectAll" checked onchange="toggleGlobalSelectAll(this.checked)">
+        전체 선택 / 해제
+      </label>
+      <span class="selected-count" id="selectedCount">0개 선택됨</span>
+    </div>
+    <div id="resultsContainer"></div>
+  </div>
+
+  <!-- ── 하단: 진행 로그 ── -->
+  <div class="card log-card">
+    <div class="card-title">📊 진행 상황</div>
+    <div id="log">
+      <span class="log-placeholder">검색 또는 견적신청 후 진행 로그가 여기 표시됩니다.</span>
+    </div>
+    <div class="log-footer">
+      <button class="btn-clear" onclick="clearLog()">로그 지우기</button>
+      <button class="btn-download" id="btnDownload" onclick="downloadReport()">
+        📥 결과 Excel 다운로드
+      </button>
+    </div>
+  </div>
+
+</div><!-- /layout -->
+
+<script>
+  let rowSeq = 0;
+  let es = null;
+
+  /* ── 초기화 ─────────────────────────────────────────── */
+  addRow(); addRow(); addRow();
+
+  fetch('/api/env-status')
+    .then(r => r.json())
+    .then(d => {
+      if (d.has_uid && d.has_pwd)
+        document.getElementById('envBadge').style.display = 'block';
+    })
+    .catch(() => {});
+
+  /* ── 검색어 행 관리 ─────────────────────────────────── */
+  function addRow() {
+    const tbody = document.getElementById('itemBody');
+    const tr = document.createElement('tr');
+    tr.dataset.seq = ++rowSeq;
+    tr.innerHTML = `
+      <td class="row-num">-</td>
+      <td><input type="text" class="item-name" placeholder="예: 초시계, A4 복사용지 등"></td>
+      <td style="text-align:center">
+        <button class="btn-del" onclick="delRow(this)">삭제</button>
+      </td>`;
+    tbody.appendChild(tr);
+    renumber();
+    tr.querySelector('.item-name').focus();
+  }
+
+  function delRow(btn) {
+    btn.closest('tr').remove();
+    renumber();
+  }
+
+  function renumber() {
+    document.querySelectorAll('#itemBody tr').forEach((tr, i) => {
+      tr.querySelector('.row-num').textContent = i + 1;
+    });
+  }
+
+  document.getElementById('itemBody').addEventListener('keydown', e => {
+    if (e.key !== 'Enter') return;
+    e.preventDefault();
+    const inputs = [...document.querySelectorAll('#itemBody input')];
+    const idx = inputs.indexOf(e.target);
+    if (idx >= 0 && idx < inputs.length - 1) {
+      inputs[idx + 1].focus();
+    } else {
+      addRow();
+    }
+  });
+
+  function getItems() {
+    const items = [];
+    document.querySelectorAll('#itemBody tr').forEach(tr => {
+      const name = tr.querySelector('.item-name').value.trim();
+      if (name) items.push({ name, quantity: 1 });
+    });
+    return items;
+  }
+
+  /* ── 로그 출력 ───────────────────────────────────────── */
+  function appendLog(text) {
+    const log = document.getElementById('log');
+    const ph  = log.querySelector('.log-placeholder');
+    if (ph) ph.remove();
+
+    const div = document.createElement('div');
+    div.className = 'log-line';
+
+    if (/✅|성공|완료/.test(text))          div.classList.add('ok');
+    else if (/❌|실패|오류/.test(text))     div.classList.add('err');
+    else if (/🔍|🌐|📊|📋|🏫|👉|🔐|📦/.test(text)) div.classList.add('info');
+    else if (/──|==/.test(text))             div.classList.add('section');
+
+    div.textContent = text;
+    log.appendChild(div);
+    log.scrollTop = log.scrollHeight;
+  }
+
+  function clearLog() {
+    document.getElementById('log').innerHTML =
+      '<span class="log-placeholder">검색 또는 견적신청 후 진행 로그가 여기 표시됩니다.</span>';
+    document.getElementById('btnDownload').classList.remove('show');
+  }
+
+  /* ── SSE 연결 ────────────────────────────────────────── */
+  function connectSSE(mode) {
+    if (es) es.close();
+    es = new EventSource('/api/stream');
+
+    es.onmessage = e => {
+      if (e.data === 'ping') return;
+      let msg;
+      try { msg = JSON.parse(e.data); } catch { return; }
+
+      if (msg.type === 'log') {
+        appendLog(msg.text);
+      } else if (msg.type === 'search_results') {
+        renderResults(msg.data);
+      } else if (msg.type === 'report') {
+        document.getElementById('btnDownload').classList.add('show');
+      } else if (msg.type === 'done') {
+        es.close();
+        if (mode === 'search') {
+          unlockBtn('search');
+          document.getElementById('btnCart').disabled = false;
+          document.getElementById('btnClose').style.display = 'block';
+          document.getElementById('sessionBadge').classList.add('active');
+        } else if (mode === 'cart') {
+          unlockBtn('cart');
+        }
+      }
+    };
+
+    es.onerror = () => {
+      appendLog('❌ 서버 연결이 끊겼습니다.');
+      es.close();
+      unlockBtn('search');
+      unlockBtn('cart');
+    };
+  }
+
+  /* ── 검색 실행 ───────────────────────────────────────── */
+  async function doSearch() {
+    const items = getItems();
+    if (!items.length) { alert('검색할 품목명을 하나 이상 입력해주세요.'); return; }
+
+    const uid = document.getElementById('uid').value.trim();
+    const pwd = document.getElementById('pwd').value.trim();
+
+    lockBtn('search');
+    document.getElementById('btnCart').disabled = true;
+    clearLog();
+    hideResults();
+
+    let resp;
+    try {
+      resp = await fetch('/api/search', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ items, uid, pwd }),
+      });
+    } catch (e) {
+      alert('서버 연결 실패: ' + e.message);
+      unlockBtn('search');
+      return;
+    }
+
+    if (!resp.ok) {
+      const err = await resp.json();
+      alert(err.error || '알 수 없는 오류');
+      unlockBtn('search');
+      return;
+    }
+
+    connectSSE('search');
+  }
+
+  /* ── 견적신청 실행 ───────────────────────────────────── */
+  async function doAddToCart() {
+    const selected = getSelectedItems();
+    if (!selected.length) { alert('선택된 물품이 없습니다.\n검색 결과에서 원하는 물품을 체크해주세요.'); return; }
+
+    const dry_run = document.getElementById('dryRun').checked;
+
+    lockBtn('cart');
+    clearLog();
+    document.getElementById('btnDownload').classList.remove('show');
+
+    let resp;
+    try {
+      resp = await fetch('/api/add-to-cart', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ selected, dry_run }),
+      });
+    } catch (e) {
+      alert('서버 연결 실패: ' + e.message);
+      unlockBtn('cart');
+      return;
+    }
+
+    if (!resp.ok) {
+      const err = await resp.json();
+      alert(err.error || '알 수 없는 오류');
+      unlockBtn('cart');
+      return;
+    }
+
+    connectSSE('cart');
+  }
+
+  /* ── 브라우저 세션 종료 ──────────────────────────────── */
+  async function doCloseBrowser() {
+    if (!confirm('브라우저 세션을 종료하시겠습니까?\n견적신청을 하려면 다시 검색해야 합니다.')) return;
+    try {
+      await fetch('/api/close-browser', { method: 'POST' });
+    } catch (e) {}
+    document.getElementById('sessionBadge').classList.remove('active');
+    document.getElementById('btnClose').style.display = 'none';
+    document.getElementById('btnCart').disabled = true;
+    hideResults();
+    appendLog('🔒 브라우저 세션이 종료되었습니다.');
+  }
+
+  /* ── 버튼 상태 관리 ──────────────────────────────────── */
+  function lockBtn(which) {
+    const btn = document.getElementById(which === 'search' ? 'btnSearch' : 'btnCart');
+    btn.disabled = true;
+    btn.dataset.origText = btn.innerHTML;
+    btn.innerHTML = '<span class="spinner"></span> 진행 중...';
+  }
+
+  function unlockBtn(which) {
+    const btn = document.getElementById(which === 'search' ? 'btnSearch' : 'btnCart');
+    btn.disabled = false;
+    if (btn.dataset.origText) {
+      btn.innerHTML = btn.dataset.origText;
+    } else {
+      btn.innerHTML = which === 'search' ? '🔍 물품 검색' : '📦 견적신청';
+    }
+  }
+
+  /* ── 검색 결과 렌더링 ────────────────────────────────── */
+  const PLACEHOLDER_IMG = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='68' height='68'%3E%3Crect width='68' height='68' fill='%23f0f0f0'/%3E%3Ctext x='34' y='38' text-anchor='middle' font-size='10' fill='%23bbb' font-family='sans-serif'%3E이미지%3C/text%3E%3C/svg%3E";
+
+  function renderResults(data) {
+    const container = document.getElementById('resultsContainer');
+    container.innerHTML = '';
+
+    const entries = Object.entries(data);
+    if (entries.length === 0) return;
+
+    for (const [query, items] of entries) {
+      const section = document.createElement('div');
+      section.className = 'result-section';
+      section.dataset.query = query;
+
+      // 섹션 헤더
+      const hdr = document.createElement('div');
+      hdr.className = 'result-section-header';
+      hdr.innerHTML = `
+        <span class="result-query">🔍 "${query}"</span>
+        <span class="result-count">${items.length}개</span>
+        <label class="section-select-all">
+          <input type="checkbox" checked onchange="toggleSectionSelect(this)">
+          전체
+        </label>
+      `;
+      section.appendChild(hdr);
+
+      if (items.length === 0) {
+        const noRes = document.createElement('div');
+        noRes.className = 'no-results';
+        noRes.textContent = '검색 결과가 없습니다.';
+        section.appendChild(noRes);
+      } else {
+        items.forEach(item => {
+          const card = document.createElement('div');
+          card.className = 'result-item checked';
+          card.dataset.id = item.id || '';
+          card.dataset.title = item.title || '';
+          card.dataset.image = item.image || '';
+          card.dataset.price = item.price || '';
+          card.dataset.link = item.link || '';
+
+          card.innerHTML = `
+            <input type="checkbox" class="item-check" checked onchange="onItemCheckChange(this)">
+            <div class="item-img">
+              <img src="${item.image || PLACEHOLDER_IMG}" alt=""
+                   onerror="this.src='${PLACEHOLDER_IMG}'">
+            </div>
+            <div class="item-info">
+              <a class="item-title" href="${item.link || '#'}" target="_blank" title="${(item.title||'').replace(/"/g,'&quot;')}">${item.title || '제목 없음'}</a>
+              <div class="item-meta">
+                <span class="item-price">💰 ${item.price || '가격 미정'}</span>
+                <span class="item-id">📋 ${item.id || ''}</span>
+              </div>
+            </div>
+            <div class="item-qty-wrap">
+              <label>수량</label>
+              <input type="number" class="item-cart-qty" value="1" min="1">
+            </div>
+          `;
+          section.appendChild(card);
+        });
+      }
+
+      container.appendChild(section);
+    }
+
+    document.getElementById('resultsCard').classList.add('show');
+    document.getElementById('globalSelectAll').checked = true;
+    updateSelectedCount();
+  }
+
+  function hideResults() {
+    document.getElementById('resultsCard').classList.remove('show');
+    document.getElementById('resultsContainer').innerHTML = '';
+  }
+
+  /* ── 선택 관리 ───────────────────────────────────────── */
+  function onItemCheckChange(checkbox) {
+    const card = checkbox.closest('.result-item');
+    card.classList.toggle('checked', checkbox.checked);
+    updateSelectedCount();
+    updateSectionSelectAll(card.closest('.result-section'));
+  }
+
+  function toggleSectionSelect(checkbox) {
+    const section = checkbox.closest('.result-section');
+    const items = section.querySelectorAll('.item-check');
+    items.forEach(chk => {
+      chk.checked = checkbox.checked;
+      chk.closest('.result-item').classList.toggle('checked', checkbox.checked);
+    });
+    updateSelectedCount();
+  }
+
+  function toggleGlobalSelectAll(checked) {
+    document.querySelectorAll('.item-check').forEach(chk => {
+      chk.checked = checked;
+      chk.closest('.result-item').classList.toggle('checked', checked);
+    });
+    document.querySelectorAll('.section-select-all input').forEach(chk => {
+      chk.checked = checked;
+    });
+    updateSelectedCount();
+  }
+
+  function updateSectionSelectAll(section) {
+    if (!section) return;
+    const all = section.querySelectorAll('.item-check');
+    const checked = section.querySelectorAll('.item-check:checked');
+    const sectionChk = section.querySelector('.section-select-all input');
+    if (sectionChk) sectionChk.checked = (all.length === checked.length);
+  }
+
+  function updateSelectedCount() {
+    const count = document.querySelectorAll('.item-check:checked').length;
+    document.getElementById('selectedCount').textContent = `${count}개 선택됨`;
+  }
+
+  function getSelectedItems() {
+    const items = [];
+    document.querySelectorAll('.result-item').forEach(card => {
+      const check = card.querySelector('.item-check');
+      if (!check || !check.checked) return;
+
+      items.push({
+        id:       card.dataset.id,
+        title:    card.dataset.title,
+        image:    card.dataset.image,
+        price:    card.dataset.price,
+        link:     card.dataset.link,
+        quantity: parseInt(card.querySelector('.item-cart-qty')?.value) || 1,
+      });
+    });
+    return items;
+  }
+
+  /* ── 리포트 다운로드 ─────────────────────────────────── */
+  function downloadReport() {
+    window.location.href = '/api/download';
+  }
+</script>
+</body>
+</html>

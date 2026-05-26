@@ -2,9 +2,9 @@ import os
 import sys
 
 try:
-    import OpenDartReader
+    from opendartreader import OpenDartReader
 except ImportError:
-    print("OpenDartReader 라이브러리가 설치되어 있지 않습니다.")
+    print("opendartreader 라이브러리가 설치되어 있지 않습니다.")
     print("설치: pip install OpenDartReader")
     sys.exit(1)
 

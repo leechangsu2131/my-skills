@@ -159,3 +159,57 @@ Obsidian (PARA 구조)
 - GOOGLEFINANCE KRX historical → 일부 종목 지원 제한 → `6_offline_analysis.py` 사용
 - 비트코인(BTC) 거래일 365일 vs 주식 252일 불일치 → `5_add_googlefinance.py`에서 FILTER로 처리됨
 - Google Sheets API 할당량: 분당 60회 → `5_add_googlefinance.py`에 `time.sleep()` 포함
+
+---
+
+## 삼성전기 가치분석 대시보드
+
+삼성전기 `009150`을 한 종목씩 깊게 분석하기 위한 시장내포 가치분석 도구입니다. 첫 화면은 가치평가 결론이 아니라 데이터 무결성 확인입니다.
+
+### 설치
+
+```bash
+pip install -r requirements-valuation.txt
+```
+
+### 테스트
+
+```bash
+python -m pytest tests/test_valuation_models.py tests/test_valuation_calculations.py tests/test_valuation_repository.py tests/test_valuation_audit.py tests/test_valuation_formatting.py tests/test_reverse_dcf.py tests/test_value_attribution.py tests/test_margin_scenario.py tests/test_roic_reinvestment.py tests/test_relative_valuation.py tests/test_cap_duration.py tests/test_risk_downside.py tests/test_narrative_consistency.py tests/test_synthesis.py tests/test_advanced_reverse.py -v
+```
+
+### 실행
+
+```bash
+python -m streamlit run valuation_app/dashboard.py --server.port 8501
+```
+
+### 현재 구현 범위
+
+- 2025년 연간 seed data
+- 2026년 1분기 seed data
+- 주가, 주식수, 시가총액, EV 계산 입력
+- FCF, 순부채, NOPAT, 투하자본, ROIC 검산
+- 입력값별 출처 상세 패널
+- Reverse DCF: 현재 EV가 요구하는 FCF와 WACC/영구성장률 민감도
+- Value Attribution: 현재 수익력 가치와 미래 기대 가치 분해
+- 매출·마진 시나리오: 필요 FCF를 설명하는 매출 성장률과 영업이익률 조합
+- ROIC·재투자 품질: 현재 ROIC, 주가 내포 미래 ROIC, 경제적 이익, EV/NOPAT, 목표 성장률별 필요 재투자율
+- 상대가치: P/E, EPS 기준 P/E, P/B 내포 ROE, EV/Sales 필요 마진, EV/NOPAT 가격 부담
+- CAP: 현재 주가가 요구하는 초과수익 지속기간과 ROIC별 초과수익 PV
+- Risk/Downside: WACC/g 민감도, 마진/WACC 민감도, 베어/베이스/불 시나리오, 가치 동인 순위
+- Narrative Consistency: 삼성전기 핵심 사업 스토리 6개와 재무 지표 연결
+- Synthesis: 모든 렌즈의 분석 결과를 종합한 수렴/발산 시그널 및 다음 분기 체크리스트
+- Advanced 역산: 기대수익률 분해, PEG 기반 이익성장률 역산, 목표 점유율(TAM) 역산
+
+이 화면에서 검산을 통과한 공통 입력값을 Reverse DCF, Value Attribution, 매출·마진 시나리오, ROIC, 상대가치, CAP, Risk/Downside, 내러티브 일관성, 종합 결론, Advanced 역산 렌즈가 사용합니다.
+
+### 이어받기 문서
+
+다른 IDE나 에이전트가 작업을 이어받을 때는 아래 순서로 읽습니다.
+
+1. `CLAUDE.md`: 프로젝트 원칙, 실행법, 데이터/화면/검증 규칙
+2. `PLANS.md`: 현재 진행 상태와 다음 구현 순서
+3. `TROUBLESHOOTING.md`: Streamlit, 데이터, PER, ROIC, 인코딩 문제 해결법
+4. `docs/superpowers/notes/2026-05-23-implied-valuation-conversation.md`: 사용자와의 설계 대화 기록
+5. `docs/superpowers/specs/2026-05-24-samsung-electro-implied-valuation-design.md`: 삼성전기 가치분석 대시보드 설계

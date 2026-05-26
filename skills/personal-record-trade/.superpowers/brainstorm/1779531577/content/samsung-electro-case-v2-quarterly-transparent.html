@@ -1,0 +1,169 @@
+<style>
+  .lab { display:grid; gap:18px; color:#172033; }
+  .hero { display:grid; grid-template-columns: 1fr 360px; gap:14px; }
+  .panel { background:#fff; border:1px solid #d8e1eb; border-radius:8px; padding:14px; }
+  .badge { display:inline-flex; border-radius:99px; padding:4px 8px; background:#eef6f2; color:#0f766e; font-size:11px; font-weight:750; }
+  .badge.warn { background:#fff7ed; color:#9a3412; }
+  .badge.gray { background:#f1f5f9; color:#475569; }
+  .title { font-size:26px; font-weight:780; letter-spacing:0; margin:8px 0; }
+  .title span { color:#0f766e; }
+  .plain { margin:0; color:#405064; font-size:14px; line-height:1.55; }
+  .data-grid { display:grid; grid-template-columns: repeat(3,1fr); gap:10px; }
+  .data-card { border:1px solid #e2e8f0; border-radius:8px; background:#fff; padding:12px; min-height:118px; }
+  .data-card h4 { margin:0 0 8px; font-size:13px; }
+  .big { font-size:22px; font-weight:780; margin-bottom:4px; }
+  .sub { color:#687385; font-size:11px; line-height:1.35; }
+  .row { display:flex; justify-content:space-between; gap:10px; border-bottom:1px solid #edf1f5; padding:7px 0; font-size:12px; }
+  .row:last-child { border-bottom:0; }
+  .row strong { text-align:right; }
+  .main { display:grid; grid-template-columns: 1fr 360px; gap:14px; }
+  .step-box { display:grid; gap:10px; }
+  .question-card { border:1px solid #d8e1eb; border-radius:8px; padding:12px; background:#fff; }
+  .question-card.active { border-color:#0f766e; box-shadow:0 0 0 2px rgba(15,118,110,.12); }
+  .question-card h4 { margin:0 0 6px; font-size:15px; }
+  .question-card p { margin:0; font-size:12px; color:#596678; line-height:1.45; }
+  .audit { display:grid; gap:10px; }
+  .formula { font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace; background:#172033; color:#f8fafc; border-radius:6px; padding:9px 10px; font-size:12px; line-height:1.45; }
+  .calc-table { display:grid; gap:6px; }
+  .calc-row { display:grid; grid-template-columns: 1fr 1fr 1.2fr; gap:8px; font-size:12px; border:1px solid #e2e8f0; border-radius:6px; padding:8px; background:#fff; }
+  .calc-row.header { background:#172033; color:#fff; font-weight:750; }
+  .signal { border-radius:8px; padding:12px; border:1px solid #fed7aa; background:#fff7ed; color:#7c2d12; font-size:13px; line-height:1.45; }
+  .formula-library { display:grid; grid-template-columns: repeat(4,1fr); gap:10px; }
+  .model { border:1px solid #e2e8f0; border-radius:8px; padding:10px; background:#fff; }
+  .model strong { display:block; font-size:13px; margin-bottom:6px; }
+  .model p { margin:0; font-size:11px; color:#596678; line-height:1.35; }
+  .source-list { display:grid; gap:7px; }
+  .source { border:1px solid #e2e8f0; border-radius:7px; padding:8px; font-size:12px; background:#fff; }
+  .source strong { display:block; margin-bottom:4px; }
+  .source span { color:#687385; line-height:1.35; display:block; }
+  @media (max-width: 940px) {
+    .hero, .main, .data-grid, .formula-library, .calc-row { grid-template-columns:1fr; }
+  }
+</style>
+
+<h2>삼성전기 분석: 연간 + 최신 분기 + 투명 계산</h2>
+<p class="subtitle">분석은 질문 중심으로 진행하되, v3처럼 공식과 출처를 항상 옆에 둡니다.</p>
+
+<div class="mockup">
+  <div class="mockup-header">Case study v2: Samsung Electro-Mechanics · 009150.KS</div>
+  <div class="mockup-body">
+    <div class="lab">
+      <div class="hero">
+        <div class="panel">
+          <span class="badge">Step 1 · 미래 기대 크기</span>
+          <div class="title">현재 시총은 <span>2025년 실적</span>보다 훨씬 앞을 봅니다</div>
+          <p class="plain">
+            먼저 연간 자료로 체력을 보고, 최신 분기로 방향성을 확인합니다. 그 다음 현재 EV가 요구하는
+            정상화 FCF/마진/ROIC를 역산합니다. 이 순서가 중요한 이유는 삼성전기가 단순 과거 FCF보다
+            사이클 회복과 AI/고부가 제품 기대를 크게 반영하는 케이스이기 때문입니다.
+          </p>
+        </div>
+        <div class="panel">
+          <span class="badge warn">Source conflict detector</span>
+          <div class="row"><span>공식 1Q26 영업이익</span><strong>2,806억원</strong></div>
+          <div class="row"><span>자동 수집값</span><strong>충돌 감지</strong></div>
+          <div class="row"><span>처리 원칙</span><strong>공식 IR 우선</strong></div>
+          <p class="plain" style="font-size:12px;margin-top:8px">자동 데이터는 편리하지만, 분기 실적처럼 중요한 숫자는 공식 발표와 맞는지 검증합니다.</p>
+        </div>
+      </div>
+
+      <div class="data-grid">
+        <div class="data-card">
+          <h4>시장 데이터</h4>
+          <div class="big">101.2조원</div>
+          <div class="sub">시가총액 · 2026-05-22 종가 1,340,000원 기준 자동수집</div>
+        </div>
+        <div class="data-card">
+          <h4>2025 연간 베이스라인</h4>
+          <div class="big">매출 11.31조 / OP 0.91조</div>
+          <div class="sub">공식 재무정보. 연간 자료는 회사의 현재 체력과 사이클 위치를 보여줍니다.</div>
+        </div>
+        <div class="data-card">
+          <h4>2026년 1분기 모멘텀</h4>
+          <div class="big">매출 3.21조 / OP 0.28조</div>
+          <div class="sub">매출 +17% YoY, OP +40% YoY. 일회성 퇴직급여 714억원 반영.</div>
+        </div>
+      </div>
+
+      <div class="main">
+        <div class="panel">
+          <span class="badge">분석 진행 순서</span>
+          <div class="step-box" style="margin-top:10px">
+            <div class="question-card active">
+              <h4>1. 현재 가격에 들어간 미래 기대 크기</h4>
+              <p>2025년 FCF 0.24조원으로 EV 101조원을 설명하려 하면 숫자가 극단적으로 나옵니다. 따라서 이 결과는 “현재 FCF로는 설명 불가”라는 신호로 읽습니다.</p>
+            </div>
+            <div class="question-card">
+              <h4>2. 정상화 마진은 어디까지 올라야 하나</h4>
+              <p>1Q26 매출이 3조원을 넘은 만큼, 연환산 매출과 목표 영업이익률을 조합해 필요한 영업이익/FCF 레벨을 역산합니다.</p>
+            </div>
+            <div class="question-card">
+              <h4>3. 투자자본 대비 ROIC가 충분한가</h4>
+              <p>FC-BGA, MLCC, 실리콘 캐패시터 증설이 자본집약적이므로 성장률보다 ROIC가 핵심 검증 항목입니다.</p>
+            </div>
+            <div class="question-card">
+              <h4>4. 초과수익 지속기간은 몇 년이어야 하나</h4>
+              <p>AI 서버/전장 수요가 단기 사이클인지 구조적 해자인지 CAP로 확인합니다.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel audit">
+          <span class="badge gray">v3 Audit trail</span>
+          <strong>지금 쓰는 계산식</strong>
+          <div class="formula">Required FCF1 = EV × (WACC - g)<br>FCF yield = FCF / EV</div>
+          <div class="calc-table">
+            <div class="calc-row header"><span>항목</span><span>값</span><span>의미</span></div>
+            <div class="calc-row"><span>EV</span><strong>약 101.1조</strong><span>시장 전체 기업가치</span></div>
+            <div class="calc-row"><span>2025 FCF</span><strong>약 0.24조</strong><span>현재 현금창출력</span></div>
+            <div class="calc-row"><span>FCF Yield</span><strong>약 0.24%</strong><span>현재 FCF 기준 매우 낮음</span></div>
+            <div class="calc-row"><span>WACC 9%, g 3%</span><strong>필요 FCF1 약 6.1조</strong><span>영구 FCF 단순식 기준</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="signal">
+        Step 1의 임시 결론: 시장은 2025년 FCF 자체가 아니라, 향후 몇 년간 매출 성장, 마진 개선,
+        투자 회수, 고부가 제품 믹스 개선이 함께 일어나는 시나리오를 가격에 넣고 있습니다.
+        따라서 다음 화면은 “정상화 영업이익률과 FCF 전환율”을 역산하는 화면이어야 합니다.
+      </div>
+
+      <div class="panel">
+        <span class="badge gray">v3 일반 모형도 계속 보이게 유지</span>
+        <div class="formula-library" style="margin-top:10px">
+          <div class="model"><strong>Reverse DCF</strong><p>현재 FCF로 설명 가능한지 먼저 경고등을 켭니다.</p></div>
+          <div class="model"><strong>Value Attribution</strong><p>현재 수익력 가치와 미래 성장 기대를 분리합니다.</p></div>
+          <div class="model"><strong>EV/Sales → Margin</strong><p>매출 성장과 정상화 마진을 직접 연결합니다.</p></div>
+          <div class="model"><strong>ROIC / CAP</strong><p>성장의 질과 지속기간을 검증합니다.</p></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <span class="badge gray">출처 라벨</span>
+        <div class="source-list" style="margin-top:10px">
+          <div class="source"><strong>공식 연간 자료</strong><span>Samsung Electro-Mechanics Financial Information, 2021~2025</span></div>
+          <div class="source"><strong>공식 최신 분기</strong><span>Samsung Electro-Mechanics Q1 2026 Business Performance, 2026-04-30</span></div>
+          <div class="source"><strong>시장 데이터</strong><span>yfinance / market quote, refreshed with timestamp</span></div>
+          <div class="source"><strong>사용자 가정</strong><span>WACC, terminal growth, normalized margin, FCF conversion</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="options">
+  <div class="option" data-choice="quarterly_transparent_approve" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>이 구조로 다음 단계 진행</h3>
+      <p>연간+분기 자료를 같이 보고, v3 계산/출처 패널을 항상 유지합니다.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="quarterly_transparent_revise" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>구조 추가 수정</h3>
+      <p>예: 분기 추세 차트, 사업부별 매출, 공식/자동 데이터 비교표를 더 강조합니다.</p>
+    </div>
+  </div>
+</div>

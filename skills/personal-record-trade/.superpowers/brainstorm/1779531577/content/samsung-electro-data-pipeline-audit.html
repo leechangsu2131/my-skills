@@ -1,0 +1,107 @@
+<style>
+  .data-layer { display:grid; gap:16px; color:#172033; }
+  .top { display:grid; grid-template-columns:minmax(0,1.2fr) minmax(280px,.8fr); gap:14px; align-items:start; }
+  .panel { background:#fff; border:1px solid #d8e1eb; border-radius:8px; padding:14px; }
+  .label { display:inline-flex; border-radius:99px; padding:4px 8px; background:#eef6f2; color:#0f766e; font-size:11px; font-weight:750; }
+  .label.blue { background:#eef4ff; color:#1d4ed8; }
+  .label.amber { background:#fff7ed; color:#9a3412; }
+  .label.rose { background:#fff1f2; color:#be123c; }
+  .title { font-size:24px; font-weight:780; letter-spacing:0; margin:8px 0 6px; }
+  .title span { color:#0f766e; }
+  .plain { margin:0; color:#405064; font-size:14px; line-height:1.55; }
+  .flow { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:8px; margin-top:12px; }
+  .box { border:1px solid #e2e8f0; border-radius:8px; padding:10px; min-height:120px; background:#fff; }
+  .box h4 { margin:0 0 6px; font-size:13px; }
+  .box p { margin:0; color:#596678; font-size:11px; line-height:1.4; }
+  .box .num { width:24px; height:24px; border-radius:50%; display:grid; place-items:center; background:#172033; color:#fff; font-size:11px; font-weight:750; margin-bottom:8px; }
+  .box.raw { background:#f8fafc; }
+  .box.llm { background:#f6f0ff; border-color:#ddd0ff; }
+  .box.audit { background:#fff7ed; border-color:#fed7aa; }
+  .box.model { background:#eefbf5; border-color:#bbf7d0; }
+  .box.view { background:#eef4ff; border-color:#bfdbfe; }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  .mini-table { display:grid; gap:6px; }
+  .row { display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px; font-size:12px; }
+  .cell { border:1px solid #e2e8f0; border-radius:6px; padding:8px; background:#fff; min-height:36px; display:grid; align-items:center; }
+  .head { background:#172033; color:#fff; font-weight:750; text-align:center; }
+  .soft { background:#f8fafc; font-weight:750; }
+  .ok { background:#ecfdf5; color:#047857; font-weight:750; }
+  .warn { background:#fff7ed; color:#9a3412; font-weight:750; }
+  .source-card { display:grid; gap:8px; }
+  .source-item { border:1px solid #e2e8f0; border-radius:8px; padding:10px; background:#fff; }
+  .source-item strong { display:flex; justify-content:space-between; gap:8px; margin-bottom:4px; font-size:12px; }
+  .source-item span { color:#596678; font-size:11px; line-height:1.35; display:block; }
+  .pill { border-radius:99px; padding:2px 6px; font-size:10px; font-weight:750; background:#f1f5f9; color:#475569; white-space:nowrap; }
+  .pill.calc { background:#eef6f2; color:#0f766e; }
+  .pill.llm { background:#f6f0ff; color:#6d28d9; }
+  .pill.manual { background:#fff1f2; color:#be123c; }
+  .formula { border:1px solid #d8e1eb; border-radius:8px; padding:12px; background:#f8fafc; font-size:13px; line-height:1.55; color:#273142; }
+  .formula code { background:#fff; border:1px solid #e2e8f0; border-radius:5px; padding:2px 5px; }
+  @media (max-width: 980px) {
+    .top, .grid2, .flow, .row { grid-template-columns:1fr; }
+  }
+</style>
+
+<h2>삼성전기 데이터 수집층: DART와 LLM을 어디에 써야 하나</h2>
+<p class="subtitle">사용자가 준 DART → LLM → Sheets 설계는 매우 유용합니다. 다만 이 도구에서는 “숫자를 넣는 자동화”보다 “출처와 검산이 보이는 데이터 층”으로 써야 합니다.</p>
+
+<div class="mockup">
+  <div class="mockup-header">Proposed source-integrity layer before valuation lenses</div>
+  <div class="mockup-body">
+    <div class="data-layer">
+      <div class="top">
+        <div class="panel">
+          <span class="label">핵심 판단</span>
+          <div class="title">LLM은 <span>재무제표 번역자</span>이고, 최종 판단자는 아니다</div>
+          <p class="plain">
+            DART 계정명은 회사와 보고서마다 조금씩 다르기 때문에 LLM이 계정과목을 읽어 핵심 지표 후보를 찾는 역할은 좋습니다.
+            대신 숫자마다 원문 계정, 보고서, 계산식, 검산 통과 여부를 붙여야 초보자도 “왜 이 값이 들어갔는지” 따라갈 수 있습니다.
+          </p>
+          <div class="flow">
+            <div class="box raw"><div class="num">1</div><h4>DART 원문</h4><p>사업보고서, 분기보고서, 연결 재무제표 행을 그대로 보관합니다.</p></div>
+            <div class="box llm"><div class="num">2</div><h4>LLM 매핑</h4><p>영업현금흐름, CAPEX, 부채, 현금 등 후보 계정을 찾습니다.</p></div>
+            <div class="box audit"><div class="num">3</div><h4>검산 로그</h4><p>FCF, 순부채, 투하자본 등 계산값을 원천값과 대조합니다.</p></div>
+            <div class="box model"><div class="num">4</div><h4>모형 입력</h4><p>Reverse DCF, ROIC, P/B, EV/Sales 등 여러 렌즈가 같은 입력을 씁니다.</p></div>
+            <div class="box view"><div class="num">5</div><h4>설명 화면</h4><p>결론 전에 가정, 공식, 출처, 민감도를 한 화면에서 보여줍니다.</p></div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <span class="label amber">보강 필요</span>
+          <div class="source-card" style="margin-top:10px">
+            <div class="source-item"><strong>시트 직접 업데이트 <span class="pill manual">위험</span></strong><span>Google Sheets는 출력 대상이면 좋지만, 유일한 저장소가 되면 출처 추적이 약해집니다.</span></div>
+            <div class="source-item"><strong>LLM 숫자만 반환 <span class="pill llm">불투명</span></strong><span>metric, source_account, statement, report_code, confidence를 함께 반환해야 합니다.</span></div>
+            <div class="source-item"><strong>검산을 먼저 보여주기 <span class="pill calc">필수</span></strong><span>가치평가 결과보다 FCF와 순부채가 어떻게 계산됐는지 먼저 보여줘야 합니다.</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid2">
+        <div class="panel">
+          <span class="label blue">예시: 데이터 출처 표</span>
+          <div class="mini-table" style="margin-top:10px">
+            <div class="row"><div class="cell head">입력값</div><div class="cell head">출처</div><div class="cell head">상태</div></div>
+            <div class="row"><div class="cell soft">영업이익</div><div class="cell">DART 2025 사업보고서, 손익계산서</div><div class="cell ok">직접 추출</div></div>
+            <div class="row"><div class="cell soft">FCF</div><div class="cell">영업CF - CAPEX</div><div class="cell ok">계산 검산</div></div>
+            <div class="row"><div class="cell soft">시가총액</div><div class="cell">시장 데이터, 기준일 표시</div><div class="cell warn">시장일 확인</div></div>
+            <div class="row"><div class="cell soft">투하자본</div><div class="cell">자본총계 + 순부채</div><div class="cell ok">계산값</div></div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <span class="label rose">초보자 화면 원칙</span>
+          <div class="formula" style="margin-top:10px">
+            <div><strong>결론 전에 보여줄 것</strong></div>
+            <div style="margin-top:8px">1. 이 숫자가 어디서 왔는가</div>
+            <div>2. 어떤 계산식에 들어가는가</div>
+            <div>3. 계산식은 손으로 따라갈 수 있는가</div>
+            <div>4. 값이 바뀌면 결론이 얼마나 흔들리는가</div>
+            <div style="margin-top:10px"><code>FCF = 영업활동현금흐름 - CAPEX</code></div>
+            <div><code>EV = 시가총액 + 순부채</code></div>
+            <div><code>순부채 = 단기차입금 + 장기차입금 - 현금</code></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

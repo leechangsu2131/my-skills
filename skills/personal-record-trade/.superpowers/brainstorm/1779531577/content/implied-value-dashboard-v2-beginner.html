@@ -1,0 +1,189 @@
+<style>
+  .learn-shell { display:grid; gap:18px; color:#172033; }
+  .hero-panel { border:1px solid #d8e1eb; background:#fff; border-radius:8px; padding:16px; display:grid; grid-template-columns: 1fr 280px; gap:18px; }
+  .question { font-size:13px; color:#596678; margin-bottom:6px; }
+  .answer { font-size:28px; font-weight:780; letter-spacing:0; margin-bottom:8px; }
+  .answer span { color:#0f766e; }
+  .plain { font-size:14px; line-height:1.55; color:#334155; margin:0; }
+  .confidence { background:#f7fafc; border:1px solid #e2e8f0; border-radius:8px; padding:12px; display:grid; gap:10px; align-content:start; }
+  .bar { height:10px; background:linear-gradient(90deg,#5bb98c 0 38%,#f3c05a 38% 68%,#e26b6b 68%); border-radius:99px; position:relative; }
+  .pin { position:absolute; top:-5px; left:64%; width:4px; height:20px; border-radius:99px; background:#172033; }
+  .label-row { display:flex; justify-content:space-between; font-size:11px; color:#687385; }
+  .top-grid { display:grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap:10px; }
+  .mini { background:#fff; border:1px solid #d8e1eb; border-radius:8px; padding:12px; min-height:78px; }
+  .mini .label { color:#687385; font-size:11px; text-transform:none; letter-spacing:0; }
+  .mini strong { display:block; font-size:20px; margin-top:6px; }
+  .mini small { display:block; color:#687385; margin-top:4px; line-height:1.35; }
+  .flow { border:1px solid #d8e1eb; background:#fff; border-radius:8px; padding:14px; }
+  .flow-row { display:grid; grid-template-columns: repeat(5,minmax(0,1fr)); gap:8px; align-items:stretch; }
+  .step { background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:10px; position:relative; min-height:96px; }
+  .step:not(:last-child)::after { content:"→"; position:absolute; right:-14px; top:38px; color:#7b8798; font-weight:800; }
+  .step-num { width:22px; height:22px; border-radius:50%; background:#172033; color:#fff; display:grid; place-items:center; font-size:11px; font-weight:750; margin-bottom:7px; }
+  .step h4 { margin:0 0 5px 0; font-size:13px; }
+  .step p { margin:0; font-size:11px; color:#596678; line-height:1.35; }
+  .main-grid { display:grid; grid-template-columns: 1fr 330px; gap:14px; }
+  .card { border:1px solid #d8e1eb; background:#fff; border-radius:8px; padding:14px; }
+  .card-title { display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:12px; }
+  .card-title strong { font-size:15px; }
+  .pill { display:inline-flex; border-radius:99px; padding:4px 8px; background:#eef6f2; color:#0f766e; font-size:11px; font-weight:700; }
+  .model-list { display:grid; gap:10px; }
+  .model-row { display:grid; grid-template-columns: 152px 1fr 110px; gap:10px; align-items:center; border:1px solid #e2e8f0; border-radius:8px; padding:10px; background:#fff; }
+  .model-name { font-weight:750; }
+  .formula { background:#f8fafc; border:1px solid #e8eef5; border-radius:6px; padding:8px; color:#334155; font-size:12px; line-height:1.35; }
+  .result { text-align:right; }
+  .result strong { display:block; font-size:20px; color:#1f4f7a; }
+  .result span { display:block; font-size:11px; color:#687385; margin-top:3px; }
+  .assumption-list { display:grid; gap:8px; }
+  .assumption { border-bottom:1px solid #edf1f5; padding-bottom:8px; }
+  .assumption-top { display:flex; justify-content:space-between; align-items:center; gap:10px; }
+  .assumption-top strong { font-size:13px; }
+  .input { background:#f8fafc; border:1px solid #dce4ef; border-radius:6px; padding:6px 8px; min-width:78px; text-align:right; font-weight:750; }
+  .why { margin-top:5px; font-size:11px; color:#687385; line-height:1.35; }
+  .explain-grid { display:grid; grid-template-columns: 1fr 1fr; gap:14px; }
+  .callout { border-radius:8px; padding:12px; border:1px solid #e2e8f0; background:#f8fafc; }
+  .callout h4 { margin:0 0 7px 0; font-size:13px; }
+  .callout p { margin:0; color:#475569; font-size:12px; line-height:1.45; }
+  .checklist { display:grid; gap:7px; margin-top:10px; }
+  .check { display:flex; justify-content:space-between; gap:10px; font-size:12px; border:1px solid #e2e8f0; background:#fff; border-radius:6px; padding:8px; }
+  @media (max-width: 940px) {
+    .hero-panel, .main-grid, .explain-grid { grid-template-columns:1fr; }
+    .top-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+    .flow-row { grid-template-columns:1fr; }
+    .step:not(:last-child)::after { content:"↓"; right:50%; top:auto; bottom:-17px; }
+    .model-row { grid-template-columns:1fr; }
+    .result { text-align:left; }
+  }
+</style>
+
+<h2>초보자 친화형 정밀 분석 화면</h2>
+<p class="subtitle">숫자를 먼저 던지는 대신, “현재 주가가 정당화되려면 시장은 무엇을 믿어야 하는가?”를 단계별로 보여줍니다.</p>
+
+<div class="mockup">
+  <div class="mockup-header">Preview: Beginner-friendly investment decision support</div>
+  <div class="mockup-body">
+    <div class="learn-shell">
+      <div class="hero-panel">
+        <div>
+          <div class="question">오늘의 핵심 질문</div>
+          <div class="answer">NVDA 가격은 <span>어떤 믿음</span>을 요구하나?</div>
+          <p class="plain">
+            현재 주가를 정당화하려면 시장은 이 회사가 장기적으로 높은 현금흐름 성장률과
+            높은 자본수익률을 유지한다고 보는 중입니다. 아래 계산은 “맞다/틀리다”가 아니라
+            그 믿음이 얼마나 공격적인지 드러내는 도구입니다.
+          </p>
+        </div>
+        <div class="confidence">
+          <strong>기대 강도: 높음</strong>
+          <div class="bar"><div class="pin"></div></div>
+          <div class="label-row"><span>보수적</span><span>중립</span><span>공격적</span></div>
+          <p class="plain" style="font-size:12px">초보자용 해석: 기대 강도가 높을수록 실적이 조금만 흔들려도 주가 변동이 커질 수 있습니다.</p>
+        </div>
+      </div>
+
+      <div class="top-grid">
+        <div class="mini"><div class="label">현재 가격</div><strong>$132.40</strong><small>자동 수집</small></div>
+        <div class="mini"><div class="label">내포 FCF 성장률</div><strong>8.7%</strong><small>Reverse DCF 기준</small></div>
+        <div class="mini"><div class="label">내포 ROIC</div><strong>31%</strong><small>WACC 10% 대비 큼</small></div>
+        <div class="mini"><div class="label">성장가치 비중</div><strong>72%</strong><small>현재 이익보다 미래 기대 비중 큼</small></div>
+      </div>
+
+      <div class="flow">
+        <div class="card-title"><strong>계산 흐름을 한눈에 보기</strong><span class="pill">Beginner mode</span></div>
+        <div class="flow-row">
+          <div class="step"><div class="step-num">1</div><h4>시장 가격</h4><p>주가와 시가총액을 가져와 시장이 매긴 값을 확인합니다.</p></div>
+          <div class="step"><div class="step-num">2</div><h4>기업가치</h4><p>시가총액에 순부채를 더해 EV를 계산합니다.</p></div>
+          <div class="step"><div class="step-num">3</div><h4>현재 현금흐름</h4><p>FCF, NOPAT 등 현재 수익력을 정리합니다.</p></div>
+          <div class="step"><div class="step-num">4</div><h4>필요한 가정</h4><p>WACC, 세율, 장기 성장률 같은 민감한 값을 보정합니다.</p></div>
+          <div class="step"><div class="step-num">5</div><h4>시장 믿음 역산</h4><p>현재 가격이 요구하는 성장률, ROIC, ROE를 계산합니다.</p></div>
+        </div>
+      </div>
+
+      <div class="main-grid">
+        <div class="card">
+          <div class="card-title"><strong>모형별 결과와 쉬운 설명</strong><span class="pill">핵심 4개</span></div>
+          <div class="model-list">
+            <div class="model-row">
+              <div class="model-name">Reverse DCF</div>
+              <div class="formula">EV와 FCF를 넣고 “몇 % 성장해야 지금 가격이 맞나?”를 역산합니다.</div>
+              <div class="result"><strong>8.7%</strong><span>장기 FCF 성장</span></div>
+            </div>
+            <div class="model-row">
+              <div class="model-name">EV/NOPAT</div>
+              <div class="formula">영업이익이 얼마나 높은 자본수익률을 내야 하는지 봅니다.</div>
+              <div class="result"><strong>31%</strong><span>내포 ROIC</span></div>
+            </div>
+            <div class="model-row">
+              <div class="model-name">P/B</div>
+              <div class="formula">장부가 대비 가격이 요구하는 자기자본수익률을 계산합니다.</div>
+              <div class="result"><strong>24%</strong><span>내포 ROE</span></div>
+            </div>
+            <div class="model-row">
+              <div class="model-name">Value Split</div>
+              <div class="formula">현재 수익력 가치와 미래 성장 기대 가치를 나눕니다.</div>
+              <div class="result"><strong>72%</strong><span>성장 기대 비중</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title"><strong>내가 바꿀 수 있는 가정</strong><span class="pill">왜 중요한가</span></div>
+          <div class="assumption-list">
+            <div class="assumption">
+              <div class="assumption-top"><strong>WACC</strong><span class="input">10.0%</span></div>
+              <div class="why">할인율입니다. 1%p만 바뀌어도 적정가와 implied growth가 크게 흔들립니다.</div>
+            </div>
+            <div class="assumption">
+              <div class="assumption-top"><strong>Terminal g</strong><span class="input">4.0%</span></div>
+              <div class="why">아주 먼 미래의 성장률입니다. GDP 성장률보다 높으면 보수적으로 검토합니다.</div>
+            </div>
+            <div class="assumption">
+              <div class="assumption-top"><strong>FCF</strong><span class="input">$39.2B</span></div>
+              <div class="why">회사가 실제로 남기는 현금입니다. 회계상 이익보다 투자 판단에 더 직접적입니다.</div>
+            </div>
+            <div class="assumption">
+              <div class="assumption-top"><strong>Tax rate</strong><span class="input">18%</span></div>
+              <div class="why">NOPAT 계산에 쓰입니다. 국가/일회성 요인을 확인해야 합니다.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="explain-grid">
+        <div class="callout">
+          <h4>초보자용 해석 문장</h4>
+          <p>
+            “이 주식이 비싸다”가 아니라 “이 가격은 앞으로도 높은 성장과 높은 수익성이
+            오래 유지된다는 믿음을 포함한다”는 뜻입니다. 투자 판단은 그 믿음이 현실적인지
+            확인하는 과정입니다.
+          </p>
+        </div>
+        <div class="callout">
+          <h4>검토 체크리스트</h4>
+          <div class="checklist">
+            <div class="check"><span>과거 5년 성장률과 비교</span><strong>필수</strong></div>
+            <div class="check"><span>동종 기업 ROIC와 비교</span><strong>필수</strong></div>
+            <div class="check"><span>WACC 민감도 확인</span><strong>강조</strong></div>
+            <div class="check"><span>시장 스토리와 숫자의 정합성</span><strong>검토</strong></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="options">
+  <div class="option" data-choice="beginner_layout_approve" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>이 초보자 친화형 구조로 진행</h3>
+      <p>결론, 계산 흐름, 모형별 쉬운 설명, 가정의 의미를 함께 보여주는 화면입니다.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="needs_more_changes" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>추가 수정</h3>
+      <p>예: 더 교육용으로, 더 투자 판단 중심으로, 또는 차트/그래프를 더 많이 넣는 방향입니다.</p>
+    </div>
+  </div>
+</div>

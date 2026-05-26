@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+import json
 
 import pandas as pd
 import streamlit as st
@@ -48,6 +49,8 @@ from valuation_app.advanced_reverse import (
     calc_implied_market_share,
     decompose_expected_return,
 )
+from valuation_app.export_builder import build_export_json, build_export_markdown
+from valuation_app.export_saver import save_analysis, get_save_history
 from valuation_app.reverse_dcf import build_required_fcf_matrix, calc_normalized_fcf, required_fcf_multiple
 from valuation_app.risk_downside import (
     build_margin_wacc_sensitivity,
@@ -75,8 +78,29 @@ from valuation_app.value_attribution import (
 
 
 ROOT = Path(__file__).resolve().parents[1]
-METRICS_PATH = ROOT / "data/valuation/009150/normalized/metrics.json"
-MARKET_PATH = ROOT / "data/valuation/009150/normalized/market.json"
+DATA_ROOT = ROOT / "data" / "valuation"
+
+
+def _discover_tickers() -> list[tuple[str, str]]:
+    """data/valuation/ 아래의 종목 폴더를 스캔하여 (ticker, display_label) 리스트 반환."""
+    if not DATA_ROOT.exists():
+        return []
+    results = []
+    for d in sorted(DATA_ROOT.iterdir()):
+        if not d.is_dir():
+            continue
+        market_path = d / "normalized" / "market.json"
+        if market_path.exists():
+            try:
+                with market_path.open("r", encoding="utf-8") as f:
+                    mkt = json.load(f)
+                label = f"{mkt.get('company_name', d.name)} ({d.name})"
+                results.append((d.name, label))
+            except Exception:
+                results.append((d.name, d.name))
+        else:
+            results.append((d.name, d.name))
+    return results
 
 
 def _display_value(obs: MetricObservation) -> str:
@@ -1353,6 +1377,8 @@ def render_tam_tab(input_set: ValuationInputSet, market: dict) -> None:
         st.session_state["export_tam_cagr"] = sim_tam_cagr
         st.session_state["export_tam_target_return"] = sim_target_return
         st.session_state["export_tam_implied_share"] = implied_target_share
+        st.session_state["export_tam_opm"] = sim_opm
+        st.session_state["export_tam_per"] = sim_per
         
         st.markdown("##### 📊 가격표에 선반영된 요구 시장 점유율")
         
@@ -1383,14 +1409,39 @@ def render_tam_tab(input_set: ValuationInputSet, market: dict) -> None:
             f"👉 *현재 점유율({current_share:.1f}%) 대비 이 점유율을 달성하는 것이 현실적으로 가능한가요?*"
         )
 def main() -> None:
-    st.set_page_config(page_title="삼성전기 가치분석", layout="wide")
-    st.title("삼성전기 시장내포 가치분석")
-    st.caption("Phase 1-10: 출처와 검산, Reverse DCF, 가치 분해, 매출·마진, ROIC, 상대가치, CAP, 리스크, 내러티브, 종합 결론, Advanced 역산을 함께 봅니다.")
+    st.set_page_config(page_title="시장내포 가치분석", layout="wide")
 
-    observations = load_metric_observations(METRICS_PATH)
-    market = load_market_data(MARKET_PATH)
+    # === 사이드바: 종목 선택 ===
+    st.sidebar.header("📊 종목 선택")
+    available = _discover_tickers()
+    if not available:
+        st.error("data/valuation/ 폴더에 분석 가능한 종목 데이터가 없습니다. 파이프라인을 먼저 실행하세요.")
+        st.stop()
+
+    ticker_ids = [t[0] for t in available]
+    ticker_labels = [t[1] for t in available]
+    selected_idx = st.sidebar.selectbox(
+        "분석할 종목",
+        range(len(available)),
+        format_func=lambda i: ticker_labels[i],
+    )
+    selected_ticker = ticker_ids[selected_idx]
+
+    metrics_path = DATA_ROOT / selected_ticker / "normalized" / "metrics.json"
+    market_path = DATA_ROOT / selected_ticker / "normalized" / "market.json"
+
+    if not metrics_path.exists() or not market_path.exists():
+        st.error(f"{selected_ticker} 종목의 정규화 데이터(metrics.json / market.json)가 없습니다.")
+        st.stop()
+
+    observations = load_metric_observations(metrics_path)
+    market = load_market_data(market_path)
     input_set, checks, derived = run_audit(observations, market)
     all_observations = observations + derived
+
+    company_name = market.get("company_name", selected_ticker)
+    st.title(f"{company_name} 시장내포 가치분석")
+    st.caption("출처와 검산, Reverse DCF, 가치 분해, 매출·마진, ROIC, 상대가치, CAP, 리스크, 내러티브, 종합 결론, Advanced 역산을 함께 봅니다.")
 
     st.subheader("시장 기준")
     c1, c2, c3, c4 = st.columns(4)
@@ -1517,69 +1568,51 @@ def main() -> None:
         st.markdown("데이터 출처 및 투명성")
         st.dataframe(pd.DataFrame([obs.dict() for obs in all_observations]))
 
-    # === LLM Export Sidebar (맨 하단 배치하여 session_state의 최신 역산값을 활용) ===
+    # === LLM Export & Save Sidebar ===
+    st.sidebar.markdown("---")
     st.sidebar.header("📥 LLM Export")
-    st.sidebar.caption("현재 화면에 분석된 모든 데이터와 내포 기대치 역산 결과를 다른 AI(ChatGPT, Claude 등)에 전달합니다.")
-    
-    import json
-    export_dict = {
-        "market_data": market,
-        "financial_inputs": input_set.inputs
-    }
-    json_str = json.dumps(export_dict, ensure_ascii=False, indent=2)
+    st.sidebar.caption("현재 화면에 분석된 모든 데이터와 내포 기대치 역산 결과를 다른 AI에 전달합니다.")
+
+    # session_state를 일반 dict로 복사 (export_builder는 Streamlit 비의존)
+    session_snapshot = {k: v for k, v in st.session_state.items() if k.startswith("export_")}
+    # market_cap, net_income 등 export_builder가 참조하는 값 보충
+    session_snapshot_inputs = dict(input_set.inputs)
+    session_snapshot_inputs["market_cap"] = market.get("market_cap", 0)
+    session_snapshot_inputs["net_income"] = input_set.inputs.get("net_income", 0)
+
+    json_str = build_export_json(market, input_set.inputs)
+    md_str = build_export_markdown(market, session_snapshot_inputs, session_snapshot)
+
     st.sidebar.download_button(
         label="📄 JSON 다운로드 (원본 데이터)",
         data=json_str,
         file_name=f"{market.get('ticker', 'ticker')}_valuation.json",
-        mime="application/json"
+        mime="application/json",
     )
-    
-    # Markdown Export 생성 로직
-    md_str = f"""# {market.get('company_name', 'Company')} ({market.get('ticker', 'Ticker')}) 시장 내포 가치 역산(Reverse Engineering) 데이터
-
-당신은 최고 수준의 가치평가 전문가입니다. 아래 데이터를 바탕으로, 이 기업의 '현재 주가'에 선반영된 시장의 엄청난 기대를 짚어내고 그것이 현실적인지 비판적으로 토론해 주세요.
-
-## 1. 시장 데이터 (Market Data)
-- **현재 시가총액**: {market.get('market_cap', 0):,} 원
-- **현재 주가**: {market.get('price', 0):,} 원
-- **과거 평균 PER**: {market.get('historical_average_per', 15.0)} 배
-- **현재 글로벌 TAM**: {market.get('current_tam', 0):,} 원
-
-## 2. 주요 재무 입력값 (Financial Inputs)
-"""
-    for k, v in input_set.inputs.items():
-        if isinstance(v, (int, float)):
-            md_str += f"- **{k}**: {v:,}\n"
-        else:
-            md_str += f"- **{k}**: {v}\n"
-            
-    md_str += "\n## 3. 내포 기대치 역산 결과 (Implied Market Expectations)\n"
-    
-    peg_g = st.session_state.get("export_peg_implied_g", None)
-    if peg_g is not None:
-        peg_n = st.session_state.get("export_peg_n_years", 5)
-        peg_per = st.session_state.get("export_peg_terminal_per", 15.0)
-        md_str += f"### A. 성장성 (PEG 멀티플 수축 방어)\n"
-        md_str += f"- **가정**: {peg_n}년 뒤 회사의 성장이 둔화되어 PER이 정상적인 **{peg_per:.1f}배**로 폭락(Multiple Contraction)한다고 가정.\n"
-        md_str += f"- **역산 결과 (주가 본전 요구 성장률)**: 현재 시가총액에 진입한 투자자가 손해를 보지 않으려면, 회사는 향후 {peg_n}년 동안 **매년 연평균 {peg_g*100:.1f}%씩** 이익이 복리로 성장해야 함.\n\n"
-        
-    tam_share = st.session_state.get("export_tam_implied_share", None)
-    if tam_share is not None:
-        tam_n = st.session_state.get("export_tam_n_years", 5)
-        tam_cagr = st.session_state.get("export_tam_cagr", 0.1)
-        tam_ret = st.session_state.get("export_tam_target_return", 0.0)
-        md_str += f"### B. 시장 점유율 (TAM 파이 쟁탈전)\n"
-        md_str += f"- **가정**: {tam_n}년 동안 글로벌 시장이 매년 **{tam_cagr*100:.1f}%** 성장한다고 가정.\n"
-        md_str += f"- **목표 수익률**: 투자자가 연평균 **{tam_ret*100:.1f}%**의 수익을 원함.\n"
-        md_str += f"- **역산 결과 (요구 시장 점유율)**: 이 시나리오 하에서 목표 수익률을 달성하려면 회사는 미래 글로벌 시장의 **{tam_share*100:.1f}%**를 장악해야 함.\n\n"
-        
     st.sidebar.download_button(
         label="📝 Markdown 다운로드 (추천!)",
         data=md_str,
         file_name=f"{market.get('ticker', 'ticker')}_valuation.md",
         mime="text/markdown",
-        help="원본 데이터는 물론 역산 분석 결과까지 담겨있어 다른 LLM에게 질문하기 가장 좋은 포맷입니다."
+        help="원본 데이터는 물론 역산 분석 결과까지 담겨있어 다른 LLM에게 질문하기 가장 좋은 포맷입니다.",
     )
+
+    # === 서버 측 자동 저장 ===
+    st.sidebar.markdown("---")
+    st.sidebar.header("📁 실시간 자동 저장")
+    
+    try:
+        save_dir = save_analysis(market, session_snapshot_inputs, session_snapshot)
+        st.sidebar.success(f"오늘자 분석 결과가 실시간 갱신되었습니다.\\n`{save_dir.relative_to(ROOT)}`")
+    except Exception as e:
+        st.sidebar.error(f"자동 저장 실패: {e}")
+
+    # 과거 저장 이력 표시
+    history = get_save_history(market)
+    if history:
+        st.sidebar.caption(f"이 종목의 저장 이력: {len(history)}일 (최근: {history[0]})")
+    else:
+        st.sidebar.caption("이 종목의 저장 이력이 없습니다.")
 
 if __name__ == "__main__":
     main()

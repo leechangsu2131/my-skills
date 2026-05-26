@@ -1,0 +1,167 @@
+<style>
+  .lab { display:grid; gap:16px; color:#172033; }
+  .hero { display:grid; grid-template-columns:minmax(0,1fr) 370px; gap:14px; align-items:start; }
+  .panel { background:#fff; border:1px solid #d8e1eb; border-radius:8px; padding:14px; }
+  .palette { background:#fff; border:1px solid #cfe4de; border-radius:8px; padding:12px; position:sticky; top:12px; }
+  .badge { display:inline-flex; border-radius:99px; padding:4px 8px; background:#eef6f2; color:#0f766e; font-size:11px; font-weight:750; }
+  .badge.gray { background:#f1f5f9; color:#475569; }
+  .badge.warn { background:#fff7ed; color:#9a3412; }
+  .title { font-size:25px; font-weight:780; letter-spacing:0; margin:8px 0; }
+  .title span { color:#0f766e; }
+  .plain { margin:0; color:#405064; font-size:14px; line-height:1.55; }
+  .model-list { display:grid; gap:8px; margin-top:10px; }
+  .model { border:1px solid #e2e8f0; border-radius:7px; padding:8px; background:#fff; }
+  .model.active { border-color:#0f766e; background:#f4fbf8; }
+  .model strong { display:flex; justify-content:space-between; gap:8px; font-size:12px; margin-bottom:4px; }
+  .model p { margin:0; color:#596678; font-size:11px; line-height:1.35; }
+  .tag { border-radius:99px; padding:2px 6px; font-size:10px; font-weight:750; background:#f1f5f9; color:#475569; white-space:nowrap; }
+  .tag.on { background:#0f766e; color:#fff; }
+  .spine { display:grid; grid-template-columns: repeat(5,minmax(0,1fr)); gap:8px; }
+  .spine-step { border:1px solid #e2e8f0; border-radius:8px; padding:9px; background:#fff; min-height:86px; }
+  .spine-step.active { border-color:#0f766e; background:#f4fbf8; }
+  .spine-step strong { display:block; font-size:12px; margin-bottom:5px; }
+  .spine-step span { display:block; color:#596678; font-size:11px; line-height:1.35; }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  .formula { font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace; background:#172033; color:#f8fafc; border-radius:6px; padding:9px 10px; font-size:12px; line-height:1.45; }
+  .value-bars { display:grid; gap:10px; margin-top:12px; }
+  .bar-row { display:grid; grid-template-columns: 135px 1fr 86px; gap:10px; align-items:center; font-size:12px; }
+  .bar-track { background:#edf2f7; border-radius:999px; height:18px; overflow:hidden; }
+  .bar-fill { height:100%; background:#0f766e; border-radius:999px; }
+  .bar-fill.future { background:#d97706; }
+  .bar-fill.current { background:#1f4f7a; }
+  .kpi-grid { display:grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap:10px; }
+  .kpi { border:1px solid #e2e8f0; border-radius:8px; background:#fff; padding:11px; min-height:88px; }
+  .kpi h4 { margin:0 0 7px; font-size:12px; color:#526174; }
+  .kpi .big { font-size:20px; font-weight:780; margin-bottom:4px; }
+  .kpi .sub { color:#687385; font-size:11px; line-height:1.35; }
+  .table { display:grid; gap:5px; margin-top:10px; }
+  .row { display:grid; grid-template-columns: 1.05fr .9fr 1.15fr; gap:6px; font-size:12px; }
+  .cell { border:1px solid #e2e8f0; border-radius:6px; padding:8px; background:#fff; min-height:34px; display:grid; align-items:center; }
+  .head { background:#172033; color:#fff; font-weight:750; text-align:center; }
+  .soft { background:#f8fafc; font-weight:750; }
+  .warnbox { border-radius:8px; padding:12px; border:1px solid #fed7aa; background:#fff7ed; color:#7c2d12; font-size:13px; line-height:1.45; }
+  .source-grid { display:grid; grid-template-columns: repeat(3,1fr); gap:10px; }
+  .source { border:1px solid #e2e8f0; border-radius:8px; padding:10px; background:#fff; font-size:12px; }
+  .source strong { display:block; margin-bottom:5px; }
+  .source span { color:#596678; line-height:1.35; display:block; }
+  @media (max-width: 980px) {
+    .hero, .grid2, .spine, .kpi-grid, .source-grid, .row { grid-template-columns:1fr; }
+    .palette { position:static; }
+  }
+</style>
+
+<h2>삼성전기 Step 3: Value Attribution + CAP</h2>
+<p class="subtitle">다모다란 템플릿의 “Stories to Numbers” 흐름을 가져와, 현재 가치와 미래 기대를 분해합니다.</p>
+
+<div class="mockup">
+  <div class="mockup-header">Case study v5: Value Attribution, CAP diagnostics, and Damodaran template map</div>
+  <div class="mockup-body">
+    <div class="lab">
+      <div class="hero">
+        <div class="panel">
+          <span class="badge">Step 3 · 현재 수익력 vs 미래 기대</span>
+          <div class="title">현재 가격의 대부분은 <span>미래 기대 가치</span>로 보입니다</div>
+          <p class="plain">
+            2025년 NOPAT을 현재 수익력으로 보고 WACC 9%로 자본화하면, 현재 EV의 작은 부분만 설명됩니다.
+            따라서 삼성전기의 핵심 질문은 “싸냐 비싸냐”보다 “미래 기대가 어느 정도 실현되어야 하냐”입니다.
+          </p>
+        </div>
+
+        <aside class="palette">
+          <span class="badge">v3 일반 모형 팔레트</span>
+          <div class="model-list">
+            <div class="model active"><strong>Reverse DCF <span class="tag on">진단 완료</span></strong><p>현재 FCF 기준으로는 설명력이 낮다는 경고를 확인했습니다.</p></div>
+            <div class="model active"><strong>Value Attribution <span class="tag on">현재</span></strong><p>현재 수익력 가치와 미래 기대 가치를 분해합니다.</p></div>
+            <div class="model active"><strong>CAP <span class="tag on">현재</span></strong><p>초과수익이 얼마나 오래/크게 필요할지 진단합니다.</p></div>
+            <div class="model"><strong>EV/Sales → Margin <span class="tag">보조</span></strong><p>필요 매출과 마진 조합을 계속 유지합니다.</p></div>
+            <div class="model"><strong>EV/NOPAT → ROIC <span class="tag">다음</span></strong><p>정상화 NOPAT이 요구하는 ROIC를 검증합니다.</p></div>
+            <div class="model"><strong>P/B → ROE <span class="tag">보조</span></strong><p>자기자본 수익성 기대치를 확인합니다.</p></div>
+          </div>
+        </aside>
+      </div>
+
+      <div class="panel">
+        <span class="badge gray">Damodaran template map</span>
+        <div class="spine" style="margin-top:10px">
+          <div class="spine-step"><strong>Input sheet</strong><span>실적, 가정, 산업 평균, WACC</span></div>
+          <div class="spine-step active"><strong>Stories to Numbers</strong><span>투자 스토리를 매출, 마진, 재투자로 변환</span></div>
+          <div class="spine-step"><strong>Valuation output</strong><span>FCFF, 할인, terminal value, equity bridge</span></div>
+          <div class="spine-step active"><strong>Diagnostics</strong><span>성장, 마진, 재투자, ROIC가 말이 되는지 점검</span></div>
+          <div class="spine-step"><strong>Sources/Audit</strong><span>공식/자동/사용자 가정 출처 추적</span></div>
+        </div>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi"><h4>2025 NOPAT</h4><div class="big">약 0.75조원</div><div class="sub">영업이익 0.91조 × (1-실효세율 약 18%)</div></div>
+        <div class="kpi"><h4>No-growth value</h4><div class="big">약 8.3조원</div><div class="sub">NOPAT / WACC 9%</div></div>
+        <div class="kpi"><h4>미래 기대 가치</h4><div class="big">약 92.8조원</div><div class="sub">EV 101.1조 - 현재 수익력 가치</div></div>
+      </div>
+
+      <div class="grid2">
+        <div class="panel">
+          <span class="badge gray">1. Value Attribution</span>
+          <div style="margin-top:10px" class="formula">
+            No-growth value = NOPAT / WACC<br>
+            Future expectation value = EV - No-growth value
+          </div>
+          <div class="value-bars">
+            <div class="bar-row">
+              <span>현재 수익력 가치</span>
+              <div class="bar-track"><div class="bar-fill current" style="width:8.2%"></div></div>
+              <strong>8%</strong>
+            </div>
+            <div class="bar-row">
+              <span>미래 기대 가치</span>
+              <div class="bar-track"><div class="bar-fill future" style="width:91.8%"></div></div>
+              <strong>92%</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <span class="badge gray">2. CAP 진단</span>
+          <div style="margin-top:10px" class="formula">
+            Economic profit = (ROIC - WACC) × Invested capital<br>
+            Excess value ≈ PV of future economic profit
+          </div>
+          <div class="table">
+            <div class="row"><div class="cell head">항목</div><div class="cell head">현재/예시</div><div class="cell head">해석</div></div>
+            <div class="row"><div class="cell soft">2025 ROIC</div><div class="cell">약 6.4%</div><div class="cell">WACC 9%보다 낮아 현재 기준 초과수익 없음</div></div>
+            <div class="row"><div class="cell soft">정상화 ROIC 예시</div><div class="cell">25%</div><div class="cell">고부가 제품 믹스와 투자 회수 가정 필요</div></div>
+            <div class="row"><div class="cell soft">현재 투자자본</div><div class="cell">약 11.7조</div><div class="cell">성장이 자본을 얼마나 더 필요로 하는지 중요</div></div>
+            <div class="row"><div class="cell soft">핵심 진단</div><div class="cell">기간만으로 부족</div><div class="cell">높은 ROIC와 투자자본 확장이 함께 필요</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="warnbox">
+        Step 3 해석: 현재 수익력 가치가 EV의 약 8%에 그친다는 것은 “시장이 틀렸다”는 뜻이 아니라,
+        삼성전기 가격이 매우 큰 미래 스토리를 포함한다는 뜻입니다. 이 스토리가 말이 되려면
+        고부가 매출 확대, 높은 정상화 마진, 높은 ROIC, 그리고 초과수익 지속기간이 동시에 필요합니다.
+      </div>
+
+      <div class="source-grid">
+        <div class="source"><strong>템플릿에서 가져올 것</strong><span>Input, Stories to Numbers, Valuation Output, Diagnostics의 4단 구조.</span></div>
+        <div class="source"><strong>우리 도구에서 바꿀 것</strong><span>스프레드시트식 셀 나열 대신 질문 중심 카드와 계산 감사 추적으로 표시.</span></div>
+        <div class="source"><strong>다음 단계</strong><span>정상화 ROIC와 재투자율을 넣고, 어떤 성장 스토리가 숫자로 성립하는지 검증.</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="options">
+  <div class="option" data-choice="value_attribution_cap_approve" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>이 단계로 진행</h3>
+      <p>Value Attribution과 CAP 진단을 삼성전기 분석의 중심축으로 사용합니다.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="value_attribution_cap_revise" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>수정</h3>
+      <p>예: 현재 수익력 기준을 1Q26 run-rate로 변경하거나, CAP 계산을 더 자세히 보여줍니다.</p>
+    </div>
+  </div>
+</div>

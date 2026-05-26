@@ -1,0 +1,122 @@
+<style>
+  .guide { display:grid; gap:16px; color:#172033; }
+  .hero { display:grid; grid-template-columns:minmax(0,1fr) 360px; gap:14px; align-items:start; }
+  .panel { background:#fff; border:1px solid #d8e1eb; border-radius:8px; padding:14px; }
+  .badge { display:inline-flex; border-radius:99px; padding:4px 8px; background:#eef6f2; color:#0f766e; font-size:11px; font-weight:750; }
+  .badge.gray { background:#f1f5f9; color:#475569; }
+  .title { font-size:25px; font-weight:780; letter-spacing:0; margin:8px 0; }
+  .title span { color:#0f766e; }
+  .plain { margin:0; color:#405064; font-size:14px; line-height:1.55; }
+  .principles { display:grid; gap:9px; margin-top:10px; }
+  .principle { border:1px solid #e2e8f0; border-radius:8px; padding:10px; background:#fff; }
+  .principle strong { display:block; font-size:13px; margin-bottom:5px; }
+  .principle span { display:block; font-size:12px; color:#596678; line-height:1.4; }
+  .spine { display:grid; grid-template-columns: repeat(5,minmax(0,1fr)); gap:8px; }
+  .spine-step { border:1px solid #e2e8f0; border-radius:8px; padding:9px; background:#fff; min-height:92px; }
+  .spine-step.active { border-color:#0f766e; background:#f4fbf8; }
+  .spine-step strong { display:block; font-size:12px; margin-bottom:5px; }
+  .spine-step span { display:block; color:#596678; font-size:11px; line-height:1.35; }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  .input-map { display:grid; gap:6px; margin-top:10px; }
+  .map-row { display:grid; grid-template-columns: 1fr 1.05fr; gap:8px; font-size:12px; }
+  .cell { border:1px solid #e2e8f0; border-radius:6px; padding:8px; background:#fff; min-height:34px; display:grid; align-items:center; }
+  .head { background:#172033; color:#fff; font-weight:750; text-align:center; }
+  .input { background:#fff8c5; }
+  .calc { background:#e9f7ee; }
+  .story { background:#f8fafc; }
+  .workflow { display:grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap:10px; }
+  .workflow-step { border:1px solid #e2e8f0; border-radius:8px; padding:10px; background:#fff; min-height:110px; }
+  .workflow-step strong { display:block; font-size:13px; margin-bottom:6px; }
+  .workflow-step span { display:block; color:#596678; font-size:12px; line-height:1.4; }
+  .quote { border-radius:8px; padding:12px; border:1px solid #cfe4de; background:#f4fbf8; color:#124e45; font-size:13px; line-height:1.45; }
+  @media (max-width: 980px) {
+    .hero, .grid2, .spine, .workflow, .map-row { grid-template-columns:1fr; }
+  }
+</style>
+
+<h2>다모다란 엑셀 설명에서 가져올 제품 원칙</h2>
+<p class="subtitle">영상의 핵심은 엑셀 사용법보다 “사용자가 가치평가를 소유하게 만드는 방식”입니다.</p>
+
+<div class="mockup">
+  <div class="mockup-header">Damodaran FCFF Simple Ginsu → Product design principles</div>
+  <div class="mockup-body">
+    <div class="guide">
+      <div class="hero">
+        <div class="panel">
+          <span class="badge">Tool philosophy</span>
+          <div class="title">모델이 말하는 것이 아니라, <span>내 가정이 말하게</span> 만들기</div>
+          <p class="plain">
+            다모다란의 설명은 “복잡한 엑셀 모델을 믿어라”가 아닙니다. 오히려 모든 숫자는 손으로도
+            따라갈 수 있어야 하고, 스프레드시트는 사용자의 스토리를 숫자로 바꾸는 도구여야 한다는
+            쪽에 가깝습니다.
+          </p>
+        </div>
+        <div class="panel">
+          <span class="badge gray">우리 도구에 적용</span>
+          <div class="principles">
+            <div class="principle"><strong>노란색: 사용자가 바꾸는 입력</strong><span>성장률, 마진, WACC, sales-to-capital 같은 판단값.</span></div>
+            <div class="principle"><strong>초록색: 계산 결과</strong><span>FCFF, terminal value, equity value처럼 입력에서 흘러나온 값.</span></div>
+            <div class="principle"><strong>회색: 출처 데이터</strong><span>공식 IR, 시장 데이터, 자동수집값, 충돌 여부.</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <span class="badge gray">FCFF Simple Ginsu 구조</span>
+        <div class="spine" style="margin-top:10px">
+          <div class="spine-step active"><strong>1. Input sheet</strong><span>회사, 산업, 실적, 재무상태, 주가, 세율, WACC 입력</span></div>
+          <div class="spine-step active"><strong>2. Stories to Numbers</strong><span>왜 그런 성장률과 마진을 쓰는지 서술</span></div>
+          <div class="spine-step"><strong>3. Valuation output</strong><span>매출, EBIT, 세금, 재투자, FCFF, terminal value</span></div>
+          <div class="spine-step active"><strong>4. Diagnostics</strong><span>성장, 마진, 재투자, ROIC, 가격 대비 가치 점검</span></div>
+          <div class="spine-step"><strong>5. Ginsu sheets</strong><span>R&D, lease, cost of capital, failure rate, industry averages</span></div>
+        </div>
+      </div>
+
+      <div class="grid2">
+        <div class="panel">
+          <span class="badge gray">첫 화면에 필요한 입력 묶음</span>
+          <div class="input-map">
+            <div class="map-row"><div class="cell head">입력 묶음</div><div class="cell head">삼성전기 적용</div></div>
+            <div class="map-row"><div class="cell input">회사/산업/국가</div><div class="cell">삼성전기 · 전자부품/MLCC/패키지기판 · 한국</div></div>
+            <div class="map-row"><div class="cell input">최근 연간 + 최신 분기</div><div class="cell">2025 연간 + 2026년 1분기 공식 자료</div></div>
+            <div class="map-row"><div class="cell input">시장 데이터</div><div class="cell">주가, 주식수, 시총, 순부채</div></div>
+            <div class="map-row"><div class="cell input">핵심 forecast levers</div><div class="cell">매출 성장, 목표 OPM, 수렴연도, sales-to-capital, WACC</div></div>
+            <div class="map-row"><div class="cell calc">계산 결과</div><div class="cell">FCFF, 현재 수익력 가치, 미래 기대 가치, CAP 진단</div></div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <span class="badge gray">영상에서 얻은 UX 원칙</span>
+          <div class="workflow" style="margin-top:10px">
+            <div class="workflow-step"><strong>1. 먼저 회사를 고른다</strong><span>추상 모델이 아니라 삼성전기처럼 실제 회사에서 시작.</span></div>
+            <div class="workflow-step"><strong>2. 최소 자료만 준비</strong><span>연간 1개와 최신 분기 1개면 출발 가능.</span></div>
+            <div class="workflow-step"><strong>3. 스토리를 먼저 쓴다</strong><span>왜 성장하고 왜 마진이 오를지 설명하게 함.</span></div>
+            <div class="workflow-step"><strong>4. 진단이 입력을 되돌려줌</strong><span>가치가 너무 높거나 낮으면 어느 입력이 원인인지 알려줌.</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="quote">
+        제품 문장으로 바꾸면: “이 모델은 정답을 주는 기계가 아니라, 내 투자 스토리가 어떤 숫자를 요구하는지
+        보여주는 투명한 작업대입니다.”
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="options">
+  <div class="option" data-choice="damodaran_principles_approve" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>이 원칙을 제품 설계에 반영</h3>
+      <p>삼성전기 분석 화면에 스토리 입력, 진단, 색상 규칙, 템플릿 맵을 고정합니다.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="damodaran_principles_revise" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>더 수정</h3>
+      <p>예: 더 엑셀식으로, 더 초보자용으로, 또는 삼성전기 분석에 바로 통합합니다.</p>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,170 @@
+<style>
+  .lab { display:grid; gap:16px; color:#172033; }
+  .hero { display:grid; grid-template-columns:minmax(0,1fr) 360px; gap:14px; align-items:start; }
+  .panel { background:#fff; border:1px solid #d8e1eb; border-radius:8px; padding:14px; }
+  .palette { background:#fff; border:1px solid #cfe4de; border-radius:8px; padding:12px; position:sticky; top:12px; }
+  .badge { display:inline-flex; border-radius:99px; padding:4px 8px; background:#eef6f2; color:#0f766e; font-size:11px; font-weight:750; }
+  .badge.gray { background:#f1f5f9; color:#475569; }
+  .badge.warn { background:#fff7ed; color:#9a3412; }
+  .title { font-size:25px; font-weight:780; letter-spacing:0; margin:8px 0; }
+  .title span { color:#0f766e; }
+  .plain { margin:0; color:#405064; font-size:14px; line-height:1.55; }
+  .model-list { display:grid; gap:8px; margin-top:10px; }
+  .model { border:1px solid #e2e8f0; border-radius:7px; padding:8px; background:#fff; }
+  .model.active { border-color:#0f766e; background:#f4fbf8; }
+  .model strong { display:flex; justify-content:space-between; gap:8px; font-size:12px; margin-bottom:4px; }
+  .model p { margin:0; color:#596678; font-size:11px; line-height:1.35; }
+  .tag { border-radius:99px; padding:2px 6px; font-size:10px; font-weight:750; background:#f1f5f9; color:#475569; white-space:nowrap; }
+  .tag.on { background:#0f766e; color:#fff; }
+  .data-strip { display:grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap:10px; }
+  .metric { border:1px solid #e2e8f0; border-radius:8px; background:#fff; padding:11px; }
+  .metric h4 { margin:0 0 7px; font-size:12px; color:#526174; }
+  .metric .big { font-size:19px; font-weight:780; margin-bottom:4px; }
+  .metric .sub { color:#687385; font-size:11px; line-height:1.35; }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  .formula { font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace; background:#172033; color:#f8fafc; border-radius:6px; padding:9px 10px; font-size:12px; line-height:1.45; }
+  .spread-table, .scenario-table { display:grid; gap:5px; margin-top:10px; }
+  .spread-row { display:grid; grid-template-columns: .9fr .8fr .8fr 1fr; gap:6px; font-size:12px; }
+  .scenario-row { display:grid; grid-template-columns: .9fr repeat(4,1fr); gap:5px; font-size:11px; }
+  .cell { border:1px solid #e2e8f0; border-radius:6px; padding:8px; background:#fff; min-height:34px; display:grid; align-items:center; }
+  .head { background:#172033; color:#fff; font-weight:750; text-align:center; }
+  .soft { background:#f8fafc; font-weight:750; }
+  .ok { background:#d9f3ea; }
+  .mid { background:#fff1cf; }
+  .bad { background:#f9d3d3; }
+  .note { border-radius:8px; padding:12px; border:1px solid #fed7aa; background:#fff7ed; color:#7c2d12; font-size:13px; line-height:1.45; }
+  .trace { display:grid; grid-template-columns: repeat(3,1fr); gap:10px; }
+  .trace-card { border:1px solid #e2e8f0; border-radius:8px; padding:10px; background:#fff; font-size:12px; }
+  .trace-card strong { display:block; margin-bottom:5px; }
+  .trace-card span { color:#596678; line-height:1.35; display:block; }
+  @media (max-width: 980px) {
+    .hero, .grid2, .data-strip, .trace, .spread-row, .scenario-row { grid-template-columns:1fr; }
+    .palette { position:static; }
+  }
+</style>
+
+<h2>삼성전기 Step 2: 정상화 FCF 시나리오 지도</h2>
+<p class="subtitle">한 숫자로 결론 내리지 않고, 어떤 조합이 현재 가격을 설명하는지 지도로 봅니다.</p>
+
+<div class="mockup">
+  <div class="mockup-header">Case study v4: Scenario map with persistent v3 model palette</div>
+  <div class="mockup-body">
+    <div class="lab">
+      <div class="hero">
+        <div class="panel">
+          <span class="badge">Step 2 · 정상화 FCF 역산</span>
+          <div class="title">현재 EV가 요구하는 것은 <span>몇 조원의 정상화 FCF</span>인가?</div>
+          <p class="plain">
+            삼성전기의 현재 가격을 단순 영구가치 공식에 넣으면, 할인율과 장기성장률 차이에 따라
+            필요한 1년차 FCF가 크게 달라집니다. 이 값과 “매출 × 영업이익률 × 세후 × FCF 전환율”로 만든
+            정상화 FCF를 비교하면 시장 기대의 강도를 직관적으로 볼 수 있습니다.
+          </p>
+        </div>
+
+        <aside class="palette">
+          <span class="badge">v3 일반 모형 팔레트</span>
+          <div class="model-list">
+            <div class="model active"><strong>Reverse DCF <span class="tag on">진단</span></strong><p>필요 FCF를 먼저 계산해 기대 강도를 봅니다.</p></div>
+            <div class="model active"><strong>Value Attribution <span class="tag on">다음</span></strong><p>현재 수익력 가치와 성장 기대 가치를 나눕니다.</p></div>
+            <div class="model active"><strong>EV/Sales → Margin <span class="tag on">현재</span></strong><p>매출과 마진 조합으로 필요한 FCF를 만듭니다.</p></div>
+            <div class="model"><strong>EV/NOPAT → ROIC <span class="tag">검증</span></strong><p>성장의 질을 자본수익률로 확인합니다.</p></div>
+            <div class="model"><strong>P/B → ROE <span class="tag">보조</span></strong><p>장부가 대비 기대 수익성을 확인합니다.</p></div>
+            <div class="model"><strong>CAP <span class="tag">후속</span></strong><p>초과수익 지속기간을 확인합니다.</p></div>
+          </div>
+        </aside>
+      </div>
+
+      <div class="data-strip">
+        <div class="metric"><h4>EV</h4><div class="big">약 101.1조원</div><div class="sub">시총 + 순부채, 자동수집 기준</div></div>
+        <div class="metric"><h4>2025 FCF</h4><div class="big">약 0.24조원</div><div class="sub">OCF-CAPEX, 낮은 기준점</div></div>
+        <div class="metric"><h4>1Q26 매출 Run-rate</h4><div class="big">약 12.8조원</div><div class="sub">3.2091조 × 4</div></div>
+        <div class="metric"><h4>1Q26 OP Margin</h4><div class="big">8.7%</div><div class="sub">일회성 퇴직급여 제외 시 약 11.0%</div></div>
+      </div>
+
+      <div class="grid2">
+        <div class="panel">
+          <span class="badge gray">1. 현재 EV가 요구하는 FCF</span>
+          <div style="margin-top:10px" class="formula">Required FCF1 = EV × (WACC - terminal g)</div>
+          <div class="spread-table">
+            <div class="spread-row">
+              <div class="cell head">시나리오</div><div class="cell head">WACC</div><div class="cell head">g</div><div class="cell head">필요 FCF1</div>
+            </div>
+            <div class="spread-row">
+              <div class="cell soft">낙관</div><div class="cell">7%</div><div class="cell">4%</div><div class="cell ok">약 3.0조</div>
+            </div>
+            <div class="spread-row">
+              <div class="cell soft">중립</div><div class="cell">9%</div><div class="cell">3%</div><div class="cell mid">약 6.1조</div>
+            </div>
+            <div class="spread-row">
+              <div class="cell soft">보수</div><div class="cell">10%</div><div class="cell">2%</div><div class="cell bad">약 8.1조</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <span class="badge gray">2. 정상화 FCF를 만드는 공식</span>
+          <div style="margin-top:10px" class="formula">Normalized FCF = Revenue × OPM × (1 - tax) × FCF conversion</div>
+          <p class="plain" style="font-size:12px;margin-top:10px">
+            예시 전제: 세율 22%, FCF 전환율 70%. 즉 영업이익이 전부 현금으로 남는다고 보지 않고,
+            운전자본과 CAPEX를 감안해 일부만 FCF로 전환된다고 봅니다.
+          </p>
+        </div>
+      </div>
+
+      <div class="panel">
+        <span class="badge gray">3. 매출 × 영업이익률 시나리오: 중립 필요 FCF 6.1조 대비 충족률</span>
+        <div class="scenario-table">
+          <div class="scenario-row">
+            <div class="cell head">Revenue</div><div class="cell head">OPM 10%</div><div class="cell head">OPM 15%</div><div class="cell head">OPM 20%</div><div class="cell head">OPM 25%</div>
+          </div>
+          <div class="scenario-row">
+            <div class="cell soft">12.8조<br><small>1Q26 run-rate</small></div>
+            <div class="cell bad">0.70조<br>12%</div><div class="cell bad">1.05조<br>17%</div><div class="cell bad">1.40조<br>23%</div><div class="cell bad">1.75조<br>29%</div>
+          </div>
+          <div class="scenario-row">
+            <div class="cell soft">15조</div>
+            <div class="cell bad">0.82조<br>14%</div><div class="cell bad">1.23조<br>20%</div><div class="cell bad">1.64조<br>27%</div><div class="cell mid">2.05조<br>34%</div>
+          </div>
+          <div class="scenario-row">
+            <div class="cell soft">18조</div>
+            <div class="cell bad">0.98조<br>16%</div><div class="cell mid">1.47조<br>24%</div><div class="cell mid">1.97조<br>33%</div><div class="cell mid">2.46조<br>41%</div>
+          </div>
+          <div class="scenario-row">
+            <div class="cell soft">22조</div>
+            <div class="cell mid">1.20조<br>20%</div><div class="cell mid">1.80조<br>30%</div><div class="cell mid">2.40조<br>40%</div><div class="cell ok">3.00조<br>50%</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        해석: 중립 할인 스프레드(WACC 9%, g 3%)에서는 22조 매출과 25% 영업이익률을 가정해도
+        단순 영구가치 기준 필요 FCF의 약 절반만 채웁니다. 따라서 현재 가격을 설명하려면
+        단순 “마진 회복”만으로는 부족하고, 더 긴 고성장 기간, 더 낮은 할인 스프레드, 더 높은 FCF 전환율,
+        또는 장기간 초과수익 지속(CAP)이 함께 필요합니다.
+      </div>
+
+      <div class="trace">
+        <div class="trace-card"><strong>공식 연간</strong><span>2025 매출 11.3145조, 영업이익 0.9133조.</span></div>
+        <div class="trace-card"><strong>공식 분기</strong><span>1Q26 매출 3.2091조, OP 0.2806조, 일회성 비용 0.0714조.</span></div>
+        <div class="trace-card"><strong>다음 단계</strong><span>Value Attribution + CAP로 “몇 년 동안 초과수익이 지속되어야 하는가”를 확인합니다.</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="options">
+  <div class="option" data-choice="scenario_map_approve" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>이 시나리오 지도 방식으로 진행</h3>
+      <p>단일 정답 대신 필요한 FCF, 마진, 성장기간을 단계적으로 좁혀갑니다.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="scenario_map_revise" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>지도 수정</h3>
+      <p>예: 더 쉬운 단위, 차트형, 사업부별 매출 시나리오, 또는 더 보수적인 전제로 바꿉니다.</p>
+    </div>
+  </div>
+</div>

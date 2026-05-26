@@ -1,0 +1,1498 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head>
+<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+
+<meta http-equiv="X-UA-Compatible" content="requiresActiveX=true">
+<title>S2B</title>
+<link rel="stylesheet" type="text/css" href="/S2BNCustomer/S2B/scrweb/css/main2019/common.css">
+<link rel="stylesheet" type="text/css" href="/S2BNCustomer/S2B/scrweb/css/main2019/layout_v01.css">
+<link rel="stylesheet" type="text/css" href="/S2BNCustomer/S2B/scrweb/js/tooltip/tip-yellow/tip-yellow.css">
+<script type="text/javascript" async="" src="https://www.google-analytics.com/analytics.js"></script><script type="text/javascript" async="" src="https://www.googletagmanager.com/gtag/js?id=G-7N9G9N6N6X&amp;cx=c&amp;gtm=4e65k1"></script><script type="text/javascript" src="/S2BNCustomer/S2B/scrweb/js/v1/common/jquery-3.5.1.min.js"></script>
+<script language="javascript" src="/S2BNCustomer/S2B/scrweb/swf/swf_s2b.js"></script>
+<script language="javascript" src="/S2BNCustomer/S2B/scrweb/js/common.js"></script>
+<script language="javascript" src="/S2BNCustomer/S2B/scrweb/js/login.js"></script> 
+<script language="javascript" src="/S2BNCustomer/S2B/scrweb/js/seal.js"></script>
+<script language="javascript" src="/S2BNCustomer/S2B/scrweb/js/tooltip/jquery.poshytip.min.js"></script>
+<style>
+/* Login */
+.login_container {position:relative}
+.login_container .quick_banner{position:absolute;top:35px;margin-left:380px;left:50%}
+</style>
+
+<script type="text/javascript" src="/S2BNCustomer/pluginfree/js/nppfs-1.13.0.js"></script>
+
+<script language="JavaScript">
+var referer = window.location.href;
+referer = referer.replace(/\//gi,'%2F').replace(/:/gi,'%3A').replace(/\?/,'%3F').replace(/=/,'%3D').replace(/&/,'%26');
+function goVeraPage(){
+	var url = '/S2BNCustomer/S2B/veraport_install.jsp?url='+referer;
+	
+	location.href = url;
+}
+
+
+
+function nprotect_check(){
+	npPfsCtrl.IsInstall({
+		success : function(){
+			//설치됨
+			npPfsStartup(document.m_leftForm, true, true, false, false, "npkencrypt", "on");
+		},
+		fail : function (){
+			//미설치
+		}
+	})
+}
+
+
+//Create Base64 Object
+var Base64 = {
+		_keyStr : "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",
+		encode : function (input) {var output = "";var chr1, chr2, chr3, enc1, enc2, enc3, enc4;var i = 0;while (i < input.length) {chr1 = input.charCodeAt(i++);chr2 = input.charCodeAt(i++);chr3 = input.charCodeAt(i++);enc1 = chr1 >> 2;enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);enc4 = chr3 & 63;if (isNaN(chr2)) {enc3 = enc4 = 64;} else if (isNaN(chr3)) {enc4 = 64;}output = output +this._keyStr.charAt(enc1) + this._keyStr.charAt(enc2) +this._keyStr.charAt(enc3) + this._keyStr.charAt(enc4);}return output;},
+		decode : function (input){var output = "";var chr1, chr2, chr3;var enc1, enc2, enc3, enc4;var i = 0;input = input.replace(/[^A-Za-z0-9+/=]/g, "");while (i < input.length){enc1 = this._keyStr.indexOf(input.charAt(i++));enc2 = this._keyStr.indexOf(input.charAt(i++));enc3 = this._keyStr.indexOf(input.charAt(i++));enc4 = this._keyStr.indexOf(input.charAt(i++));chr1 = (enc1 << 2) | (enc2 >> 4);chr2 = ((enc2 & 15) << 4) | (enc3 >> 2);chr3 = ((enc3 & 3) << 6) | enc4;output = output + String.fromCharCode(chr1);if (enc3 != 64) {output = output + String.fromCharCode(chr2);}if (enc4 != 64) {output = output + String.fromCharCode(chr3);}}return output;}
+}
+
+var loginType = 0;
+$(document).ready(function() {
+    
+	//탭 초기화 및 설정
+    var type = "null";
+    intiView(type);
+ 
+    //On Click Event
+    $("ul.tabs li").click(function() {
+    	$("ul.tabs li").removeClass("active"); //Remove any "active" class
+        $(this).addClass("active"); //Add "active" class to selected tab
+        $(".tab_content").hide(); //Hide all tab content
+        var activeTab = $(this).find("a").attr("href"); //Find the rel attribute value to identify the active tab + content
+
+        if(activeTab=='#splogin'){
+        	loginType = 1;
+        	document.getElementById("sclogin").style.display="none";
+        	document.getElementById("prlogin").style.display="none";
+        	document.getElementById("splogin").style.display="block";
+        //수요기관 탭 선택
+        }else if(activeTab=='#sclogin'){
+        	document.getElementById("sclogin").style.display="block";
+        	document.getElementById("prlogin").style.display="none";
+        	document.getElementById("splogin").style.display="none";      	
+        //개인이용자 탭
+        }else if(activeTab=='#prlogin'){
+        	document.getElementById("sclogin").style.display="none";
+        	document.getElementById("prlogin").style.display="block";
+        	document.getElementById("splogin").style.display="none";
+        	
+        	OnePassInfoPopup();
+        }
+        //$(activeTab).fadeIn(); //Fade in the active content
+        return false;
+    }); 
+    
+	var form1 = document.school_loginForm;
+	var form2 = document.personal_loginForm;
+	var form3 = document.vendor_loginForm;
+
+	if(form1.elements['uid'].value.length > 0){
+		form1.uid.style.backgroundImage = "";
+	}if(form2.elements['uid'].value.length > 0){
+		form2.uid.style.backgroundImage = "";
+	}if(form3.elements['uid'].value.length > 0){
+		form3.uid.style.backgroundImage = "";
+	}
+	
+	nprotect_check();
+	
+	
+	//행정안전부 고시 ajax
+	getGosiData();
+});
+
+function getGosiData(){
+	 ajaxGosiData();
+}
+
+function ajaxGosiData(){    
+   $.ajax({
+   	url		: '/S2BNCustomer/Tcmu100NoSession.do',
+   	data	: {forwardName : 'ajaxGosiData'},
+   	type	: 'POST',
+   	async	: false,
+   	success:function(data){
+   		data = data.replace(/\r/gi, "");
+        data = data.replace(/\n/gi, "");
+        if(data.indexOf("DOCTYPE HTML PUBLIC") > 0 ) {
+        	$("#gosiTitle").text("행정안전부 고시 제2023-16호");
+        } else {
+        	$("#gosiTitle").text(data);
+        }
+		}
+   });
+}
+
+var spMsg = '개인이용자는 공동인증서 로그인이 불가합니다.\n';
+	spMsg += '행정전자서명(EPKI) 서비스 준비 중에 있습니다.\n';
+	spMsg += '       아이디 로그인을 해주시기 바랍니다.\n';
+//아이디 입력란 공백일 경우 '아이디' 출력
+function Imginsert_id(formName){
+	var text=document.forms[formName].uid.value;				//텍스트라인의 밸류값
+	text=text.replace(/(~\s*)/g,"");
+	
+	if(!text)
+		// 공백이라면 이미지를 넣습니다.
+	    document.forms[formName].uid.style.backgroundImage="url(/S2BNCustomer/S2B/scrweb/images/main2019/txt_id.gif)";
+	   //document.forms[formName].uid.value= "아이디";
+
+}
+
+// 비밀번호 입력란 공백일 경우 '비밀번호' 출력
+function Imginsert_pwd(formName){
+	var text=document.forms[formName].pwd.value;						//텍스트라인의 밸류값
+	text=text.replace(/(~\s*)/g,"");
+	
+	if(!text)
+		// 공백이라면 이미지를 넣습니다.
+		document.forms[formName].pwd.style.backgroundImage="url(/S2BNCustomer/S2B/scrweb/images/main2019/txt_pwd.gif)";
+}
+
+
+// 로그인
+function retrieveLogin2(formName, index){
+	
+    var form = document.forms[formName];
+    var subForm = document.m_leftForm;
+	
+    
+    /*
+    if(form.uid.value == ''|| form.uid.value =='아이디'){
+    	alert("아이디를 입력하세요");
+    	form.uid.focus();
+    	return;
+    }else if(form.pwd.value =='' || form.pwd.value =='비밀번호'){
+    	alert("비밀번호를 입력하세요");
+    	form.pwd.focus();
+    	return;
+    */
+    if(formName == "school_loginForm"){
+        if(form.uid.value == ""){
+	    	alert("아이디를 입력하세요");
+	    	form.uid.focus();
+	    	return;
+        }
+
+        if(form.pwd.value == ""){
+        	alert("비밀번호를 입력하세요");
+        	form.pwd.focus();
+        	return;
+        }
+    }
+    if(formName == "personal_loginForm"){
+        if(form.uid.value == ""){
+	    	alert("아이디를 입력하세요");
+	    	form.uid.focus();
+	    	return;
+        }
+
+        if(form.pwd.value == ""){
+        	alert("비밀번호를 입력하세요");
+        	form.pwd.focus();
+        	return;
+        }
+    }
+    if(formName == "vendor_loginForm"){
+        if(form.uid.value == ""){
+	    	alert("아이디를 입력하세요");
+	    	form.uid.focus();
+	    	return;
+        }
+
+        if(form.pwd.value == ""){
+        	alert("비밀번호를 입력하세요");
+        	form.pwd.focus();
+        	return;
+        }
+    }
+    //else{
+		
+    	
+	    if(index == 2){
+	        subForm.forwardName.value = 'reqlogin';
+	        subForm.action='https://www.s2b.kr/S2BNCustomer/personal200.do?comment='+'null'+'&goods='+'null';
+	    }else if(index == 1){
+		     subForm.forwardName.value = 'login2';
+		     subForm.action='https://www.s2b.kr/S2BNCustomer/m_left.do?comment='+'null'+'&goods='+'null';
+	    }else {
+	        subForm.forwardName.value = 'login2';      
+	        subForm.action='https://www.s2b.kr/S2BNVendor/Login1.do?comment='+'null'+'&goods='+'null';
+	    }
+	    
+	    subForm.elements['userCode'].value = form.uid.value;
+	    subForm.elements['pwd'].value = form.pwd.value;
+	    subForm.elements['fromFlag'].value = 'null';
+	    subForm.elements['goodsName'].value = 'null';
+	    subForm.elements['goodsCode'].value = 'null';
+	    subForm.elements['categoryCode'].value = 'null';
+	    subForm.elements['categoryCode2'].value = 'null';
+	    subForm.elements['division'].value = 'null';
+	    subForm.elements['articleNo'].value = 'null';
+	    subForm.elements['toUrl'].value = 'null';
+		subForm.elements['isS2BNew'].value = 'true';
+		
+		if( form.loginKeep != null && form.loginKeep != undefined) {
+			if (form.loginKeep.checked) subForm.elements['loginKeep'].value = 'Y';	
+		}
+		
+		
+		if(index == 2){
+			saveidP(form);
+		}else if(index == 1){
+			saveidS(form);
+	    }else{
+	    	saveidV(form);
+		}
+	   
+	    subForm.submit();
+
+	//}
+}
+
+function goEduPassLoginPopup(){
+	
+	var pop_title = "EduDigitalOnePass";
+	
+	var loc1 = screen.availWidth;
+    var loc2 = screen.availHeight;
+    win=window.open("",pop_title,"width=816,height=874,scrollbars=no,align=left,left="+(loc1)/10+",top="+(loc2)/10);
+    win.focus();
+	
+	var form = document.eduPassLogin;
+	form.target = pop_title;
+	form.submit();
+}
+
+function goEduPassJoinPopup(){
+	
+	var loc1 = screen.availWidth;
+    var loc2 = screen.availHeight;
+    var url = "https://edupass.neisplus.kr/nxuiPtl/index.html";
+    win=window.open(url,"edupassJoinPop","width=1620,height=874,scrollbars=no,align=left,left="+(loc1)/10+",top="+(loc2)/10);
+    win.focus();
+}
+    
+// 엔터 입력시 로그인 실행
+function checkEnter_sub2(formName){
+	nets=(navigator.appName == 'Netscape')?1:0;
+	expl=(navigator.appName != 'Netscape')?1:0;
+	if(nets) {
+		if(formName == 'school_loginForm'){
+			document.onkeypress=keypresscauseNets_sub_s;
+			document.captureEvents(Event.KEYPRESS);
+		}else if(formName == 'personal_loginForm'){
+			document.onkeypress=keypresscauseNets_sub_p;
+			document.captureEvents(Event.KEYPRESS);
+		}else if(formName == 'vendor_loginForm'){
+			document.onkeypress=keypresscauseNets_sub_v;
+			document.captureEvents(Event.KEYPRESS);
+		}
+	}
+	if(expl) {
+		if(formName == 'school_loginForm'){
+			document.onkeypress=keypresscauseExpl_sub_s;
+		}else if(formName == 'personal_loginForm'){
+			document.onkeypress=keypresscauseExpl_sub_p;
+		}else if(formName == 'vendor_loginForm'){
+			document.onkeypress=keypresscauseExpl_sub_v;
+		}
+	}
+}
+
+function keypresscauseExpl_sub_s() {
+	if(expl) {
+		if (event.keyCode == 13) {
+			retrieveLogin2('school_loginForm',1);		}
+	}
+}
+function keypresscauseNets_sub_s(e) {
+	if(nets) {
+		if(e.which == 13) {
+			retrieveLogin2('school_loginForm',1);		}
+	}
+}
+function keypresscauseExpl_sub_p() {
+	if(expl) {
+		if (event.keyCode == 13) {
+			retrieveLogin2('personal_loginForm',2);		}
+	}
+}
+function keypresscauseNets_sub_p(e) {
+	if(nets) {
+		if(e.which == 13) {
+			retrieveLogin2('personal_loginForm',2);		}
+	}
+}
+function keypresscauseExpl_sub_v() {
+	if(expl) {
+		if (event.keyCode == 13) {
+			retrieveLogin2('vendor_loginForm',3);		}
+	}
+}
+function keypresscauseNets_sub_v(e) {
+	if(nets) {
+		if(e.which == 13) {
+			retrieveLogin2('vendor_loginForm',3);		}
+	}
+}
+// 아이디 입력칸 지우기
+function removeid2(formName){
+	var form = document.forms[formName];
+	form.elements['uid'].value = "";
+}
+  
+// 비밀번호 입력칸 지우기
+function deleteBox2(formName){
+	var form = document.forms[formName];
+	form.elements['pwd'].value = "";
+}
+
+//공동인증서 등록방법 안내 팝업 공급업체
+function fncCertificateInfo(){
+	var loc1 = screen.availWidth;
+    var loc2 = screen.availHeight;
+    var url = "/S2BNCustomer/S2B/scrweb/html_include/certificateInfoPop.jsp";
+    win=window.open(url,"certificateInfoPop","width=517,height=560,scrollbars=no,align=left,left="+(loc1)/10+",top="+(loc2)/10);
+    win.focus();
+}
+
+//공동인증서 등록방법 안내 팝업 이용기관
+function fncCertificateInfo_sc(){
+	var loc1 = screen.availWidth;
+    var loc2 = screen.availHeight;
+    var url = "/S2BNCustomer/S2B/scrweb/html_include/certificateInfoPop_sc.jsp";
+    win=window.open(url,"certificateInfoPop","width=517,height=580,scrollbars=no,align=left,left="+(loc1)/10+",top="+(loc2)/10);
+    win.focus();
+}
+
+//공동인증서 등록 / 재등록 팝업
+function fncCertificateInsert(formName){		
+	var loc1 = screen.availWidth;
+    var loc2 = screen.availHeight;
+    var url = "";
+    
+    if(formName == "school_loginForm"){
+	    url = "/S2BNCustomer/S2B/scrweb/html_include/certificateInsertPop.jsp";	    
+	    win=window.open(url,"certificateInsertPop","width=375,height=295,scrollbars=no,align=left,left="+(loc1)/10+",top="+(loc2)/10);
+	    win.focus();
+    }else if(formName == "vendor_loginForm"){
+	    url = "https://www.s2b.kr/S2BNVendor/Login1.do?forwardName=certInsertPop2";
+	    win=window.open(url,"certificateInsertPop","width=366,height=278,scrollbars=no,align=left,left="+(loc1)/10+",top="+(loc2)/10);
+	    win.focus();
+    }
+}
+
+function getPromotion(issueComp, certEndDate){
+	var today = new Date();
+	var monthAgo = new Date(today);
+	monthAgo.setMonth(today.getMonth() + 2);
+	var year = monthAgo.getFullYear();
+	var month = ("0" + (1 + monthAgo.getMonth())).slice(-2);
+	var day = ("0" + (monthAgo.getDate())).slice(-2);
+	var monthAgo_full = year + "" + month + "" + day;
+	monthAgo_full = Number(monthAgo_full);
+	
+	if( issueComp != "TradeSignCA4"){
+		if(monthAgo_full >= Number(certEndDate)){
+			return "ebizPromotion";
+		}else{
+			return "";
+		}		
+	}else{
+		return "";
+	}
+	
+}
+
+//인증서 로그인
+function fncCertificateLogin(form_name){
+	var form = document.m_leftForm;
+	if(form_name == 'personal_loginForm'){
+		alert("서비스 준비 중 입니다.");
+		return;
+	}
+	if(form_name != 'vendor_loginForm'){
+		certificateCheck(form,function mlCallBack(code, message){
+			if(code==0){
+				var form = document.m_leftForm;
+				form.strChallenge.value = encodeURIComponent( message.encMsg );
+				//form.strVidrnd.value = encodeURIComponent(message.vidRandom);
+				form.elements['fromFlag'].value = 'null';
+				form.elements['division'].value = 'null';
+			    form.elements['toUrl'].value = 'null';
+				form.elements['isS2BNew'].value = 'true';
+
+				form.pageNo.value = 1;
+		  	    form.forwardName.value = 'login3';
+				form.action='https://www.s2b.kr/S2BNCustomer/m_left.do?comment='+'null'+'&goods='+'null';
+				form.submit();
+			} else if(code == 999){
+				// 취소 버튼 선택
+			}else{
+				alert("결과값 수신에 실패하였습니다.");
+				return;
+			}
+			});
+	}else{
+		certificateCheck(form,function mlCallBack(code, message){
+			if(code==0){
+				var form = document.m_leftForm;
+				form.strChallenge.value = encodeURIComponent( message.encMsg );
+				form.elements['fromFlag'].value = 'null';
+			    form.elements['toUrl'].value = 'null';
+				form.elements['isS2BNew'].value = 'true';
+				form.pageNo.value = 1;
+		  	    form.forwardName.value = 'login3';
+		  	    
+				var getVal = $("#dscert").contents().find("#tabledataTable tr");
+				var selSeq = -1;
+				for(var i=0; i<getVal.length; i++){
+					var getVal2 = $(getVal).eq(i).children("td").attr("class");					
+					var text = "MLjqui-grid-cell-selected";
+					var findVal = getVal2.includes(text);					
+					if(findVal == true){
+						selSeq = i;
+					}
+				}
+				var ownNm = getVal.eq(selSeq).children("td:eq(0)").text();
+				var issueComp = getVal.eq(selSeq).children("td:eq(2)").text();
+				var certEndDate = getVal.eq(selSeq).children("td:eq(3)").text();
+					certEndDate = certEndDate.replaceAll("-",""); 				
+				var promotion = getPromotion(issueComp , certEndDate);
+						  	    
+		  	  	form.action='https://www.s2b.kr/S2BNVendor/Login1.do?comment='+'null'+'&goods='+'null'+'&promotion='+promotion+'&certEndDate='+certEndDate;
+		  		form.submit();
+			} else if(code == 999){
+				// 취소 버튼 선택
+			} else{
+				alert("결과값 수신에 실패하였습니다.");
+				return;
+			}
+			});
+	}
+}
+
+//공동인증서 발급신청 페이지 이동
+function fncCertAccept2(){
+	var loc1 = screen.availWidth;
+    var loc2 = screen.availHeight;
+    //var url = "http://teachiworld.signra.com";	    
+    //win=window.open(url,"certAccept","width=800,height=950,scrollbars=yes,align=left,left="+(loc1)/20+",top="+(loc2)/25);
+    var url = "./S2B/loginCertOpen.jsp";	    
+    win=window.open(url,"certAccept","width=254,height=228,scrollbars=no,align=left,left="+(loc1)/20+",top="+(loc2)/25);
+    win.focus();
+}
+
+//공동인증서 발급신청 페이지 이동
+function fncCertAccept(){
+	var loc1 = screen.availWidth;
+    var loc2 = screen.availHeight;
+    
+	var url = "http://www.s2b.kr/S2BNCustomer/S2B/scrweb/html_include/bridgePage.jsp";
+	win = window.open(url,"signra","width=860,height=705,scrollbars=yes,align=left,left="+(loc1)/20+",top="+(loc2)/25);
+    win.focus();
+}
+
+
+
+// 기관 회원 개인 회원  가입동의 및 회원가입확인 화면으로 이동 aoddydrl119
+function goSchoolMemberAgreement_new(frm){
+	var form = document.m_leftForm;
+	var domain = 'null';
+	
+	if(frm == "personal_loginForm"){
+		window.document.location.href = "https://www.s2b.kr/S2BNCustomer/personal100.do";
+	}else if(frm == "school_loginForm"){
+		form.target = "_parent";
+		form.action="/S2BNCustomer/checkSchool.do";
+		actSubmit(form);
+	}else if(frm == "vendor_loginForm"){
+		//form.forwardName.value = 'searchBusinessNum';
+		//form.gubun.value = 'business';
+		if(domain == "seoul"){
+			form.action = "https://www.s2b.kr/S2BNCustomer/S2B/scrweb/html_include/_blank_seoul_gate.jsp?paramUrl=https://www.s2b.kr/S2BNCustomer/m_left.do?forwardName=searchBusinessNum";
+		}else{
+			form.action = "https://www.s2b.kr/S2BNCustomer/S2B/scrweb/html_include/visitant_view11.jsp?path_11st=" + null;
+		}
+		//form.action="https://www.s2b.kr/S2BNCustomer/m_left.do";
+		form.submit();
+	}
+
+}
+
+// ***** 기관 회원 개인 회원 ID 찾기  by aoddydrl119******/ 
+function SearchId_new(frm){
+	var form = document.m_leftForm;
+	/*
+	if(form.memberType[0].checked){
+		var url = "/S2BNCustomer/personal200.do?forwardName=reqSearchIdPw&gubun=id";
+		win=window.open(url, "searchId", "width=485, height=200");
+		win.focus();
+	}else{
+		var url = "/S2BNCustomer/m_left.do?forwardName=searchIdPw&gubun=id";
+		window.open(url, "searchId", "width=485, height=200");
+	}
+	*/
+	if(frm == "personal_loginForm"){
+		var url = "/S2BNCustomer/personal200.do?forwardName=reqSearchIdPw&gubun=id";
+		win=window.open(url, "searchId", "width=485, height=200");
+		win.focus();
+	}else if(frm == "school_loginForm"){
+		var url = "/S2BNCustomer/m_left.do?forwardName=searchIdPw&gubun=id";
+		window.open(url, "searchId", "width=485, height=200");
+	}else if(frm == "vendor_loginForm"){
+		var loc1 = screen.availWidth;
+	    var loc2 = screen.availHeight;
+	    var url = "https://www.s2b.kr/S2BNVendor/Login1.do?forwardName=newSearchId";
+	    win=window.open(url,"newSearchId","width=374,height=285,scrollbars=no,align=left,left="+(loc1)/10+",top="+(loc2)/10);
+	    win.focus();
+	}
+}
+
+
+//***** 기관 회원 개인 회원 비밀번호 찾기 by aoddydrl119  ******/ 
+function SearchPwd_new(frm){
+	var form = document.m_leftForm;
+	/*
+	if(form.memberType[0].checked){
+		var url = "/S2BNCustomer/personal200.do?forwardName=reqSearchIdPw&gubun=pw";
+		win=window.open(url, "searchId", "width=485, height=280");
+		win.focus();
+	}else{
+		var url = "/S2BNCustomer/m_left.do?forwardName=searchIdPw&gubun=pw";
+		window.open(url, "searchId", "width=485, height=280");
+	}
+	*/
+	if(frm == "personal_loginForm"){
+		var url = "/S2BNCustomer/personal200.do?forwardName=reqSearchIdPw&gubun=pw";
+		win=window.open(url, "searchId", "width=485, height=280");
+		win.focus();
+	}else if(frm == "school_loginForm"){
+		var url = "/S2BNCustomer/m_left.do?forwardName=searchIdPw&gubun=pw";
+		window.open(url, "searchId", "width=485, height=280");
+	}else if(frm == "vendor_loginForm"){
+		var loc1 = screen.availWidth;
+	    var loc2 = screen.availHeight;
+	    var url = "https://www.s2b.kr/S2BNVendor/Login1.do?forwardName=newSearchPw";
+	    win=window.open(url,"newSearchPw","width=374,height=317,scrollbars=no,align=left,left="+(loc1)/10+",top="+(loc2)/10);
+	    win.focus();
+	}
+
+}
+
+//기관 회원  ID 쿠키 저장
+function saveidS(form) {
+	  var expdate = new Date();
+	  // 기본적으로 30일동안 기억하게 함. 일수를 조절하려면 * 30에서 숫자를 조절하면 됨
+	  if (form.login_check.checked)
+	    expdate.setTime(expdate.getTime() + 1000 * 3600 * 24 * 30); // 30일
+	  else
+	    expdate.setTime(expdate.getTime() - 1); // 쿠키 삭제조건
+	  
+	  //크롬에서 데이터 이상값 확인  Base64으로 인코딩시 변경된걸로 확인함
+	  //setCookie("saveidS", Base64.encode(form.uid.value), expdate);
+	  setCookie("saveidS", form.uid.value, expdate);
+	}
+//개인회원 ID 쿠키 저장
+function saveidP(form) {
+	  var expdate = new Date();
+	  // 기본적으로 30일동안 기억하게 함. 일수를 조절하려면 * 30에서 숫자를 조절하면 됨
+	  if (form.login_check.checked)
+	    expdate.setTime(expdate.getTime() + 1000 * 3600 * 24 * 30); // 30일
+	  else
+	    expdate.setTime(expdate.getTime() - 1); // 쿠키 삭제조건	  
+	    //setCookie("saveidP", Base64.encode(form.uid.value), expdate);
+	  setCookie("saveidP", form.uid.value, expdate);
+}
+//업체 ID 쿠키 저장
+function saveidV(form) {
+	  var expdate = new Date();
+	  // 기본적으로 30일동안 기억하게 함. 일수를 조절하려면 * 30에서 숫자를 조절하면 됨
+	  if (form.login_check.checked)
+	    expdate.setTime(expdate.getTime() + 1000 * 3600 * 24 * 30); // 30일
+	  else
+	    expdate.setTime(expdate.getTime() - 1); // 쿠키 삭제조건
+	  //setCookie("saveidV", Base64.encode(form.uid.value), expdate);
+	  setCookie("saveidV", form.uid.value, expdate);
+}
+//개인회원 ID 
+function getidP(form) {
+  //form.login_check.checked = ((form.uid.value = Base64.decode(getCookie("saveidP"))) != ""); 
+	form.login_check.checked = ((form.uid.value = getCookie("saveidP")) != ""); 
+}
+//기관회원  ID 
+function getidS(form) {
+	//form.login_check.checked = ((form.uid.value = Base64.decode(getCookie("saveidS"))) != "");
+	form.login_check.checked = ((form.uid.value = getCookie("saveidS")) != "");
+}
+//업체 ID 
+function getidV(form) {
+  //form.login_check.checked = ((form.uid.value = Base64.decode(getCookie("saveidV"))) != "");
+	form.login_check.checked = ((form.uid.value = getCookie("saveidV")) != "");
+}
+//회원 구분 체크박스변경시
+function changeUser(obj){
+
+	 var form = document.m_leftForm;
+	 form.userCode.value = '';
+	     	
+}
+function getCookie(name) { //쿠키 가져오기
+
+  var Found = false;
+  var start, end;
+  var i = 0;
+
+  while(i <= document.cookie.length) {
+   start = i
+   end = start + name.length
+
+   if(document.cookie.substring(start, end) == name) {
+	Found = true;
+	break;
+   }
+   i++;
+  }
+
+  if(Found == true) {
+   start = end + 1;
+   end = document.cookie.indexOf(";", start);
+
+   if(end < start) {
+	end = document.cookie.length;
+   }
+   return document.cookie.substring(start, end)
+  }
+  return "";
+ }
+function p_popup(){
+	var cookie = getCookie("personalInfo_popup");	
+	
+  	if(cookie == ""){
+  		openWinCenter('https://www.s2b.kr/S2BNCustomer/S2B/scrweb/ssmu/personal/personalInfo_pop.jsp','personalAuthorityInfo_popup','width=300, height=490 , fullscreen=no, location=no, scrollbars=no, menubar=no, toolbar=no, titlebar=no, directories=no, resizable=no');
+	}
+	
+}	
+
+function loginCheck2(){
+	var form1 = document.school_loginForm;
+	var form2 = document.personal_loginForm;
+	var form3 = document.vendor_loginForm;
+	
+	form1.login_check.checked = ((form.userCode.value = getCookie("saveid")) != "");
+	form2.login_check.checked = ((form.userCode.value = getCookie("saveidP")) != "");
+	form3.login_check.checked = ((form.userCode.value = getCookie("saveid")) != "");
+}
+
+
+
+function intiView(type){
+	var scobj = document.getElementById('sclogin');
+	var spobj = document.getElementById('splogin');
+	var probj = document.getElementById('prlogin');
+
+	document.personal_loginForm.loginKeep.checked = getCookie("keepLogin");
+	if(type == 'sp'){
+	 	$(".tab_content").hide(); //Hide all content
+		$("ul.tabs li").removeClass("active"); 
+	 	$("ul.tabs li:eq(2)").addClass("active").show(); //Activate first tab
+	 	$(".tab_content:eq(2)").show(); //Show first tab content
+	 	loginType = 1;
+		return false;
+	}else if(type == 'pr' ){
+	 	$(".tab_content").hide(); //Hide all content
+		$("ul.tabs li").removeClass("active"); 
+	 	$("ul.tabs li:eq(1)").addClass("active").show(); //Activate first tab
+	 	$(".tab_content:eq(1)").show(); //Show first tab content
+	 	//loginType = 0;
+		return false;
+	}else{
+	    $(".tab_content").hide(); //Hide all content
+	    $("ul.tabs li:first").addClass("active").show(); //Activate first tab
+	    $(".tab_content:first").show(); //Show first tab content
+	   // loginType = 0;
+	    return false;
+	}
+}
+//사이트 련결 지연
+function fncban01(){
+	var loc1 = screen.availWidth;
+    var loc2 = screen.availHeight;
+    //var url = "http://teachiworld.signra.com";	    
+    //win=window.open(url,"certAccept","width=800,height=950,scrollbars=yes,align=left,left="+(loc1)/20+",top="+(loc2)/25);
+    var url = "https://www.s2b.kr/S2BNCustomer/S2B/scrweb/html_include/ban_01.jsp";	    
+    win=window.open(url,"ban01","width=365,height=372,scrollbars=no,align=left");
+    win.focus();
+}
+//로그인 시도 시 튕김 혀상
+function fncban02(){
+	var loc1 = screen.availWidth;
+    var loc2 = screen.availHeight;
+    //var url = "http://teachiworld.signra.com";	    
+    //win=window.open(url,"certAccept","width=800,height=950,scrollbars=yes,align=left,left="+(loc1)/20+",top="+(loc2)/25);
+    var url = "https://www.s2b.kr/S2BNCustomer/S2B/scrweb/html_include/ban_02.jsp";	    
+    win=window.open(url,"ban02","width=423,height=318,scrollbars=no,align=left,left="+(loc1)/20+",top="+(loc2)/25);
+    win.focus();
+}
+//윈도우10 이용시 로그인 불가 
+function fncban03(){
+	var loc1 = screen.availWidth;
+    var loc2 = screen.availHeight;
+    //var url = "http://teachiworld.signra.com";	    
+    //win=window.open(url,"certAccept","width=800,height=950,scrollbars=yes,align=left,left="+(loc1)/20+",top="+(loc2)/25);
+    var url = "https://www.s2b.kr/S2BNCustomer/S2B/scrweb/html_include/ban_03.jsp";	    
+    win=window.open(url,"ban03","width=400,height=350,scrollbars=no,align=left,left="+(loc1)/20+",top="+(loc2)/25);
+    win.focus();
+}
+
+//개인이용자 교육디지털원패스 로그인 안내 팝업
+function OnePassInfoPopup(){
+	var loc1 = screen.availWidth;
+    var loc2 = screen.availHeight;
+    var url = "/S2BNCustomer/S2B/scrweb/html_include/ban_04.jsp";
+    
+	var cookie = getCookie("OnePassInfo_popup");	
+	
+  	if(cookie == ""){
+  	    win=window.open(url,"ban04","width=600,height=878,scrollbars=no,align=left,left="+(loc1)/20+",top="+(loc2)/25);
+  	    win.focus();  		
+  	}
+}
+</script>
+<!--[if IE 5]>
+<link rel="stylesheet" type="text/css" href="/S2BNCustomer/S2B/scrweb/css/main2019/ie5.css">
+<![endif]-->
+<script type="text/javascript" async="" src="https://ssl.pstatic.net/melona/libs/gfp-nac-module/synchronizer.js"></script><style id="poshytip-css-tip-yellow" type="text/css">div.tip-yellow{visibility:hidden;position:absolute;top:0;left:0;}div.tip-yellow table.tip-table, div.tip-yellow table.tip-table td{margin:0;font-family:inherit;font-size:inherit;font-weight:inherit;font-style:inherit;font-variant:inherit;vertical-align:middle;}div.tip-yellow td.tip-bg-image span{display:block;font:1px/1px sans-serif;height:10px;width:10px;overflow:hidden;}div.tip-yellow td.tip-right{background-position:100% 0;}div.tip-yellow td.tip-bottom{background-position:100% 100%;}div.tip-yellow td.tip-left{background-position:0 100%;}div.tip-yellow div.tip-inner{background-position:-10px -10px;}div.tip-yellow div.tip-arrow{visibility:hidden;position:absolute;overflow:hidden;font:1px/1px sans-serif;}</style></head>
+
+<body>        
+
+
+
+
+
+
+<script type="text/javascript" src="/S2BNCustomer/MagicLine4Web/ML4Web/js/crypto/magicjs_1.2.7.2.min.js"></script>
+<script type="text/javascript" src="/S2BNCustomer/MagicLine4Web/ML4Web/js/magic_e2e.js"></script><form id="encFrm" name="encFrm" method="post"><input type="hidden" id="encData" name="encData" style=""></form>
+
+<script type="text/javascript" src="/S2BNCustomer/MagicLine4Web/ML4Web/js/ext/jquery.blockUI.js"></script>
+<script type="text/javascript" src="/S2BNCustomer/MagicLine4Web/ML4Web/js/ext/json2.js"></script>
+<!-- ML4WEB JS -->
+<script type="text/javascript" src="/S2BNCustomer/MagicLine4Web/ML4Web/js/ext/ML_Config.js"></script>
+
+<script type="text/javascript">
+
+	// 서명 이벤트 발생 시 script function 정의
+	// 폼 strVidrnd,strResponse,strChallenge 이름이 틀린 경우는 파라메터로 이름을 넘겨준다.
+	function certificateCheck(form,mlCallBack){
+		var signData = "2026-05-26-11:17:28";
+		
+		if(form.certType == undefined){			
+			//인증서 구분 input 생성
+			var certType = document.createElement('input');
+			certType.setAttribute('type','hidden');
+			certType.setAttribute('name','certType');
+			certType.setAttribute('value','dream');
+			form.appendChild(certType);
+		}
+		
+		//form 데이터 암호화
+		/*
+		var ml = new MagicE2E(sessionString);
+		var certType = document.createElement('input');
+		certType.setAttribute('type','hidden');
+		certType.setAttribute('name','encData');
+		certType.setAttribute('value',ml.Encrypt($(form).serialize()));
+		form.appendChild(certType); */
+		
+		magicline.uiapi.blockUI();
+		magicline.uiapi.ML_funProcInitCheck(function(code,data){
+			if( code == 0 ){
+				magicline.uiapi.completeInit();
+				magicline.uiapi.genHash( 'sha256', signData, function(code, obj){
+					// form 에 strResponse이 없을때 strResponse을 포함한 name을 찾아 넣어준다.
+					var hashData = "";
+					if(form.strResponse != undefined){
+						form.strResponse.value = obj.hash;
+						hashData = obj.hash;
+					}else{
+						var input = form.querySelectorAll('input[name*=strResponse]');
+						if(input.length > 0){
+							var strResponse = form.querySelectorAll('input[name*=strResponse]')[0];
+							strResponse.value = obj.hash;
+							hashData = obj.hash;
+						}
+					}
+					//obj.resulthex
+					magicline.uiapi.MakeSignData( hashData, null, mlCallBack);
+					
+				});
+			}
+		});
+		
+		
+	}
+	
+	
+</script>
+<div id="dscertContainer" style="display: none;">
+	<iframe id="dscert" name="dscert" src="" scrolling="no" width="100%" height="100%" frameborder="0" allowtransparency="true" style="position:fixed;z-index:100010;top:0px;left:0px;width:100%;height:100%;"></iframe>
+</div>
+
+<div id="wrap" class="wrap">
+  <form name="m_leftForm" method="post" action="/S2BNCustomer/m_left.do;s2bncustomer=cb0GqVCYWJVdrvpMvDN1zYn4W9VQxrWncnvrZDLHVtq5GrVjRYDB!366941797!985893505" style="margin:0;" target="_parent">
+  <input type="hidden" name="pageNo" value="1" style="">
+  <input type="hidden" name="orderBy" value="" style="">
+  <input type="hidden" name="forwardName" value="default" style="">
+  <input type="hidden" name="fromFlag" value="" style="">
+  <input type="hidden" name="toUrl" value="" style="">
+  <input type="hidden" name="goodsName" value="" style="">
+  <input type="hidden" name="goodsCode" value="" style="">
+  <input type="hidden" name="categoryCode" value="" style="">
+  <input type="hidden" name="categoryCode2" value="" style="">
+  <input type="hidden" name="division" value="" style="">
+  <input type="hidden" name="articleNo" value="" style="">
+  <input type="hidden" name="strResponse" value="" style="">
+  <input type="hidden" name="strChallenge" value="" style="">
+  <input type="hidden" name="strVidrnd" value="" style="">
+  <input type="hidden" name="userCode" value="" style="">
+  <input type="hidden" name="pwd" value="" style="">
+  <input type="hidden" name="workProgressInfoSendSmsYn" value="N" style="">
+  <input type="hidden" name="isS2BNew" style="">
+  <input type="hidden" name="gubun" style="">
+  <input type="hidden" name="loginKeep" style="">
+  <input type="hidden" name="userDomain" value="null" style="">
+  
+</form>
+
+	<form name="personal600Form" method="post" action="/S2BNCustomer/personal600.do;s2bncustomer=cb0GqVCYWJVdrvpMvDN1zYn4W9VQxrWncnvrZDLHVtq5GrVjRYDB!366941797!985893505">
+		<input type="hidden" name="forwardName" value="default" style="">
+		<input type="hidden" name="edupass_userInnb" value="" style="">
+		<input type="hidden" name="edupass_userId" value="" style="">
+		<input type="hidden" name="edupass_userNm" value="" style="">
+		<input type="hidden" name="edupass_eduDgtlOpsUserScCd" value="" style="">
+		<input type="hidden" name="edupass_eduDgtlOpsUserScNm" value="" style="">
+		<input type="hidden" name="edupass_cddcCd" value="" style="">
+		<input type="hidden" name="edupass_ogdpInstCd" value="" style="">
+		<input type="hidden" name="edupass_hffcStsCd" value="" style="">
+		<input type="hidden" name="edupass_hffcStsNm" value="" style="">
+		<input type="hidden" name="edupass_userScCd" value="" style="">
+		<input type="hidden" name="edupass_userScNm" value="" style="">
+  		
+	</form>
+	
+    <form action="https://edupass.neisplus.kr/S2B/login.do" name="eduPassLogin" method="post">
+		<input type="hidden" name="secretKey" id="secretKey" value="TiXDyy4cChqKxuUP0SjT8eE9YtylVfOmJU9LolGjYhY=" style="">
+	</form>
+	
+	<!-- Header -->
+	<div id="header_wrap" class="login_wrap">
+
+        
+        <div id="header" class="w1200">
+    	<!-- Section Main Header-->
+      	<div class="section_main_header">
+        	<div class="left_header">
+				<h1><a href="https://www.s2b.kr/S2BNCustomer/S2B/index.jsp"><img src="/S2BNCustomer/S2B/scrweb/images/main2020/sub_ci.gif" alt="s2b로고"></a></h1>
+	               <div class="section_main_header">
+	                   <dl class="t_log">
+	                       <dt id="gosiTitle">행정안전부 고시 제2023-16호</dt>
+	                       <dd><a href="https://www.s2b.kr/S2BNCustomer/S2B/index.jsp"><img src="/S2BNCustomer/S2B/scrweb/images/main2020/ci_s2b_3.gif"></a></dd>
+	                   </dl>
+	               </div>
+			</div>
+            <!-- Util Menu -->
+            <div class="util_menu" style="margin-top:50px;"> 
+                    <ul>
+                        <!-- 로그인 -->                   
+						
+                            
+                            
+                                <li class="login">
+                            		<a href="/S2BNCustomer/Login.do">로그인</a>
+                       			</li>   
+                            
+                          
+                        <li class="">
+                            <a href="/S2BNCustomer/Tmmu200.do?forwardName=newList">마이데스크</a>
+                        </li>
+                        <li class="">
+                            <a href="/S2BNCustomer/S2B/scrweb/common/s2b_use_info01.jsp?loggerCP=/고객지원/이용안내">이용안내</a>
+                        </li>
+                        <li class="">
+                           <a href="/S2BNCustomer/S2B/siteMap.jsp">사이트맵</a>
+                        </li>					
+                    </ul>                
+                </div>                    
+            <!-- Util Menu //-->
+      	</div>
+      	
+        <!-- Section Main Header//-->
+    </div>
+        <!-- Header section//-->
+    </div>
+    <!-- Header //-->
+    
+    <!-- Main Container -->
+  	<!-- Login-->
+    <div class="login_container">
+	    <!-- quick banner start -->
+	    <!-- <div class="quick_banner">
+	       <a href="/L2BNCustomer/L2B/index.jsp">
+	       <img src="/S2BNCustomer/S2B/scrweb/images/main2020/quick_banner.png" alt="지방자치단체 전용서비스"/>
+	       </a>
+	    </div> -->
+	    <!-- quick banner end //-->
+    <div class="section_login">
+    <ul class="tabs">
+        <li class="t1 active"><a href="#sclogin">수요기관</a></li>
+        <li class="t2"><a href="#prlogin">개인이용자</a></li>
+        <li class="t3"><a href="#splogin">공급업체</a></li>
+    </ul>
+    <!-- Tab Content-->
+    <div class="tab_container">
+                <!-- 수요기관 로그인-->
+                <form name="school_loginForm">
+                <div id="sclogin" class="tab_content" style="">
+                   <!-- 공동인증서-->
+                   <div class="login_type1">
+                   	<div class="login_area">
+						<h1>공동인증서 로그인</h1>
+                        <dl class="section_certify">
+                        	<dd><div class="btn_l btn_certify"><a href="javascript:fncCertificateLogin('school_loginForm');">공동인증서 로그인</a></div></dd>
+                            <dd class="mb5"><div class="btn_l btn_apply"><a href="http://www.tradesign.net/s2b/s2b_issue_edu.jsp" target="_blank">공동인증서 신청</a></div></dd>
+                            <dd class="t_help2 tl">&nbsp;</dd>
+                        </dl>
+                      </div>
+                    <div class="bottom_btn">
+                        	<dl>
+                        	<dd><a href="javascript:fncCertificateInsert('school_loginForm');">공동인증서 등록/재등록</a></dd>
+                            <dd class="m0"><a href="javascript:fncCertificateInfo_sc();">공동인증서 등록안내</a></dd>
+                            </dl>                            	
+                           	<div><a class="cColor btn_install" href="javascript:goVeraPage();">프로그램 통합설치 </a></div>
+                        </div>
+                    </div>
+                    <!-- 공동인증서-->
+                    <!-- 아이디로그인 -->
+                    <div class="login_type2">
+                   	<div class="login_area2">
+						<h1>아이디 로그인</h1>
+                        <dl class="section_idpass">
+                        	<dd><input type="text" name="uid" style="background: url(&quot;/S2BNCustomer/S2B/scrweb/images/main2019/txt_id.gif&quot;) no-repeat;" onfocus="this.style.backgroundImage='none';removeid2('school_loginForm');" onblur="return Imginsert_id('school_loginForm')" onkeypress="checkEnter_sub2('school_loginForm');" tabindex="1"></dd>
+                            <dd class="mb5"><input type="password" name="pwd" style="background: url(&quot;/S2BNCustomer/S2B/scrweb/images/main2019/txt_pwd.gif&quot;) no-repeat;" onfocus="this.style.backgroundImage='none';deleteBox2('school_loginForm');" onblur="return Imginsert_pwd('school_loginForm')" onkeypress="checkEnter_sub2('school_loginForm');" tabindex="2"></dd>
+                            <dd class="t_help2 tl"><input type="checkbox" name="login_check" value="checkbox" tabindex="4" style="">&nbsp;아이디 저장</dd>
+                        </dl>
+                        <div class="btn_l btn_login"><a href="javascript:retrieveLogin2('school_loginForm',1);" tabindex="3">로그인</a></div>
+                      </div>
+                    <div class="bottom_btn">
+                        	<dl>
+                        	<dd><a href="javascript:goSchoolMemberAgreement_new('school_loginForm');" tabindex="5">수요기관 등록</a></dd>
+                            <dd><a href="javascript:SearchId_new('school_loginForm');" tabindex="6">아이디 찾기</a></dd>
+                            <dd class="m0"><a href="javascript:SearchPwd_new('school_loginForm');" tabindex="7">비밀번호 찾기</a></dd>
+                            </dl>
+                        </div>
+                    </div>
+                    <!-- 아이디로그인//-->
+                </div>
+                </form>
+                <!-- 수요기관 로그인//-->
+                
+                <!-- 개인이용자 로그인 -->
+                <form name="personal_loginForm">
+                <div id="prlogin" class="tab_content" style="display: none;">
+                    <!-- 공동인증서-->
+                   <div class="login_type1">
+                   <!-- 2024.05.20 교육디지털원패스 -->
+                   		<div class="login_area">
+	                       	<dl class="section_certify_edupass">
+						    	<dd><div class="btn_l btn_certify"><a href="javascript:goEduPassLoginPopup();">교육디지털원패스 로그인</a></div></dd>
+							</dl>
+						</div>
+	                   <div class="bottom_btn">
+	                   		<dl>
+	                   			<dd style="text-align:center;">교육디지털원패스 가입 후 이용 가능합니다.</dd>
+	                   		</dl>
+	                       	<dl>
+	                       		<dd><a href="javascript:goEduPassJoinPopup();">교육디지털원패스 가입하기</a></dd>
+	                        </dl>
+	                        <br>
+	                        <br>
+	                        <br>
+	                        <br>
+	                        <br>
+	                   </div>
+                    </div>
+                    <!-- 2024.05.20 교육디지털원패스 -->
+                    <!-- 공동인증서-->
+                    <!-- 아이디로그인 -->
+                    <div class="login_type2">
+                   	<div class="login_area2">
+						<h1>아이디 로그인</h1>
+                        <dl class="section_idpass">
+ <script>
+  $( function() {
+	  $('#loginkeeptip').poshytip();
+  } );
+  </script>
+                        	<dd><input type="text" name="uid" style="background: url(&quot;/S2BNCustomer/S2B/scrweb/images/main2019/txt_id.gif&quot;) no-repeat;" onfocus="this.style.backgroundImage='none';removeid2('personal_loginForm');" onblur="return Imginsert_id('personal_loginForm')" onkeypress="checkEnter_sub2('personal_loginForm');" tabindex="1"></dd>
+                            <dd class="mb5"><input type="password" name="pwd" style="background: url(&quot;/S2BNCustomer/S2B/scrweb/images/main2019/txt_pwd.gif&quot;) no-repeat;" onfocus="this.style.backgroundImage='none';deleteBox2('personal_loginForm');" onblur="return Imginsert_pwd('personal_loginForm')" onkeypress="checkEnter_sub2('personal_loginForm');" tabindex="2"></dd>
+                            <dd class="t_help2 tl"><input type="checkbox" name="login_check" value="checkbox" tabindex="4" style="">&nbsp;아이디 저장 &nbsp;&nbsp;<input type="checkbox" name="loginKeep" value="Y" tabindex="8" style="">&nbsp;로그인 유지 <img src="/S2BNCustomer/S2B/scrweb/images/ssmu/icon_help.png" id="loginkeeptip" style="cursor:pointer" title="30일 동안 해당 PC에서 S2B를 사용하지 않으면 &lt;BR&gt;로그인 유지는 해제될 수 있습니다."></dd>
+                         </dl>
+                        <div class="btn_l btn_login"><a href="javascript:retrieveLogin2('personal_loginForm',2);" tabindex="3">로그인</a></div>
+                      </div>
+                    <div class="bottom_btn sty2">
+                        	<dl>
+                        	<dd><a href="javascript:goSchoolMemberAgreement_new('personal_loginForm');" tabindex="5">개인이용자 등록</a></dd>
+                            <dd><a href="javascript:SearchId_new('personal_loginForm');" tabindex="6">아이디 찾기</a></dd>
+                            <dd class="m0"><a href="javascript:SearchPwd_new('personal_loginForm');" tabindex="7">비밀번호 찾기</a></dd>
+                            </dl>
+                        </div>
+                    </div>
+                    <!-- 아이디로그인//--> 
+                </div>
+                </form>
+                <!-- 개인이용자 로그인 //--> 
+                <script>
+                 	// 화면 그려진 후 intiView가 실행되면 수요기관, 개인이용자, 공급업체 form이 그려졌다가 hide 되기 때문에 그려질 때, 개인이용자와 공급업체탭은 hide되도록 설정
+	                $(".tab_content:eq(1)").hide(); // Hide second tab content
+	  			</script>
+	  			
+                <!-- 공급업체 로그인 -->
+                <form name="vendor_loginForm">
+                <div id="splogin" class="tab_content" style="display: none;">
+                    <!-- 공동인증서-->
+                   <div class="login_type1">
+                   	<div class="login_area">
+						<h1>공동인증서 로그인</h1>
+                        <dl class="section_certify">
+                        	<dd><div class="btn_l btn_certify"><a href="javascript:fncCertificateLogin('vendor_loginForm');">공동인증서 로그인</a></div></dd>
+                            <dd class="mb5"><div class="btn_l btn_apply"><a href="http://www.tradesign.net/s2b/s2b_issue_coop.jsp" target="_blank">공동인증서 신청</a></div></dd>
+                            <dd class="t_help2 tl">&nbsp;</dd>
+                        </dl>
+                      </div>
+                    <div class="bottom_btn">
+                        	<dl>
+                        	<dd><a href="javascript:fncCertificateInsert('vendor_loginForm')">공동인증서 등록/재등록</a></dd>
+                            <dd class="m0"><a href="javascript:fncCertificateInfo();">공동인증서 등록안내</a></dd>
+                            </dl>
+                            <div><a class="vColor btn_install" href="javascript:goVeraPage();">프로그램 통합설치 </a></div>
+                        </div>
+                    </div>
+                    <!-- 공동인증서-->
+                    <!-- 아이디로그인 -->
+                    <div class="login_type2">
+                   	<div class="login_area2">
+						<h1>아이디 로그인</h1>
+                        <dl class="section_idpass">
+                        	<dd><input type="text" name="uid" style="background: url(&quot;/S2BNCustomer/S2B/scrweb/images/main2019/txt_id.gif&quot;) no-repeat;" onfocus="this.style.backgroundImage='none'; removeid2('vendor_loginForm');" onblur="return Imginsert_id('vendor_loginForm')" onkeypress="checkEnter_sub2('vendor_loginForm');" tabindex="1"></dd>
+                            <dd class="mb5"><input type="password" name="pwd" style="background: url(&quot;/S2BNCustomer/S2B/scrweb/images/main2019/txt_pwd.gif&quot;) no-repeat;" onfocus="this.style.backgroundImage='none';deleteBox2('vendor_loginForm');" onblur="return Imginsert_pwd('vendor_loginForm')" onkeypress="checkEnter_sub2('vendor_loginForm');" tabindex="2"></dd>
+                            <dd class="t_help2 tl"><input type="checkbox" name="login_check" value="checkbox" tabindex="4" style="">&nbsp;아이디 저장</dd>
+                        </dl>
+                        <div class="btn_l btn_login"><a href="javascript:retrieveLogin2('vendor_loginForm',3);" tabindex="3">로그인</a></div>
+                      </div>
+                    <div class="bottom_btn">
+                        	<dl>
+                        	<dd><a href="javascript:goSchoolMemberAgreement_new('vendor_loginForm');" tabindex="5">공급업체 등록</a></dd>
+                            <dd><a href="javascript:SearchId_new('vendor_loginForm');" tabindex="6">아이디 찾기</a></dd>
+                            <dd class="m0"><a href="javascript:SearchPwd_new('vendor_loginForm');" tabindex="7">비밀번호 찾기</a></dd>
+                            </dl>
+                        </div>
+                    </div>
+                    <!-- 아이디로그인//--> 
+                </div>
+                </form>
+                <!-- 공급업체 로그인 //--> 
+                <script>
+                 	// 화면 그려진 후 intiView가 실행되면 수요기관, 개인이용자, 공급업체 form이 그려졌다가 hide 되기 때문에 그려질 때, 개인이용자와 공급업체탭은 hide되도록 설정
+	                $(".tab_content:eq(2)").hide(); // Hide second tab content
+	  			</script>
+            </div>
+    <!-- Tab Content//-->
+    
+    <!--Help Text-->
+    <div class="section_help" style="height:760px">
+    	<div class="l_help fl" style="width: 50%; padding-right:30px;">
+    	<h1>안내사항</h1>
+        <ul>
+        	<li>1. 아이디 로그인
+            	<ul>
+                	<li>기관회원/개인회원의 경우 범용공동인증서가 없거나, 등록하지 않은 경우 이용</li>
+                </ul>
+            </li>
+            <li>2. 공동인증서 등록
+            	<ul>
+                	<li>공동인증서 등록/재등록을 선택하여 등록</li>
+                    <li>사업자용 범용공동인증서 등록</li>
+                    <li>개인 공동인증서 등록 불가<br>※ 아이디 로그인 후 MY desk &gt; 회원정보에서도 공동인증서 등록가능</li>
+                </ul>
+            </li>
+            <li>3. 개인이용자 로그인 유지
+            	<ul>
+            		<li>개인정보 보호를 위해 개인PC에서만 사용하시기바랍니다.</li>
+            		<li>브라우저의 쿠키를 삭제하거나, 로그아웃 시 로그인 유지는 해제됩니다.</li>
+            	</ul>
+            </li> 
+                       
+        </ul>
+        </div>
+        <div class="r_help fr" style="width:50%; border-left:1px solid #e0e0e0; padding-left:30px;">
+        	<h1>로그인 실패 등의 접속불가 시 조치사항</h1>
+	        <ul>
+	        	<li>1. 인터넷 익스플로러<br>&nbsp;&nbsp;&nbsp;&nbsp;가. 호환성 보기 사이트 추가
+	        	    <ul>
+	                	<li>상단메뉴 도구 → 호환성보기설정 → 이 웹사이트 추가란에 "s2b.kr" 입력후 추가 버튼 클릭 → 닫기<br>※http://www.s2b.kr, http://*. 형식은 불가<br></li>
+	                </ul>
+	            </li>
+	            <li>&nbsp;&nbsp;&nbsp;&nbsp;나. 쿠키 및 캐시 삭제
+	            	<ul>
+	                	<li>상단메뉴 도구 → 인터넷옵션 → (일반탭)검색기록의 "삭제"버튼 클릭 → (팝업창)"임시임터넷파일 및 웹사이트파일", "쿠키 및 웹사이트데이터"2가지 항목에 체크 → "삭제"버튼 클릭</li>
+	                </ul>
+	            </li>
+	            <li>&nbsp;&nbsp;&nbsp;&nbsp;다. 팝업차단 해제
+	            	<ul>
+	                	<li>상단메뉴 도구 → 인터넷옵션 → 개인정보탭 클릭 → "팝업차단사용"체크가 되어 있을 경우 체크 해제 → 확인버튼 클릭<br>※ S2B만 팝업해제를 원할 경우 "팝업차단사용" 옆 설정 버튼 클릭 → 허용</li>
+	                </ul>
+	            </li>
+	            <li>2. 크롬<br>&nbsp;&nbsp;&nbsp;&nbsp;가. 쿠키 및 캐시 삭제
+	            	<ul>
+	            		<li>Chrome 열기 → 오른쪽상단에서 <img src="/S2BNCustomer/S2B/scrweb/images/button/btn_chrome_menu.png" width="11px"> 클릭 → 도구 더보기를 클릭 → 인터넷 사용 기록 삭제를 클릭 → 상단에서 기간을 선택(전체기간 선택) → '쿠키 및 기타사이트 데이와'와 '캐시된 이미지 또는 파일' → 체크박스를 선택</li>
+	            	</ul>
+	            </li>
+	            <li>3. 엣지<br>&nbsp;&nbsp;&nbsp;&nbsp;가. 쿠키 및 캐시 삭제
+	            	<ul>
+	            		<li>엣지 열기 → 오른쪽상단에서 <img src="/S2BNCustomer/S2B/scrweb/images/button/btn_edge_menu.png"> 클릭 → 설정 클릭 → 개인정보, 검색 및 서비스 클릭 → 검색데이터 지우기에서 "지울항목 선택"버튼 클릭 → (팝업창)"쿠키 및 기타 사이트 데이터", "캐시된 이미지 및 파일" 선택  → 지금 지우기 버튼 클릭</li>
+	            	</ul>
+	            </li>
+	            <li>4. 공동인증서 로그인, 전자서명 프로그램 및 키보드 보안 프로그램 설치<a href="javascript:goVeraPage();" class="btn_s">설치하기</a>
+	            </li>
+	        </ul>
+        </div>
+    </div>
+    <!--Help Text//-->
+    </div>
+
+    </div>
+    <!-- Login //-->
+    <!-- Main Container //-->   
+     <!-- Footer -->
+	
+
+
+
+
+
+
+
+<link href="/S2BNCustomer/S2B/scrweb/images/favicon.ico/s2b.ico" rel="shortcut icon"> 
+<script language="javascript" src="/S2BNCustomer/S2B/scrweb/js/seal.js"></script>
+<script>
+//KTCU Family
+function goThere(){
+    if(!document.theForm01.theMenu01.selectedIndex==""){
+        window.open(document.theForm01.theMenu01.options[document.theForm01.theMenu01.selectedIndex].value,"_blank","");
+    }
+}
+
+// 교육청 바로가기
+function goThere1(){
+    if(!document.theForm02.theMenu02.selectedIndex==""){
+        window.open(document.theForm02.theMenu02.options[document.theForm02.theMenu02.selectedIndex].value,"_blank","");
+    }
+}
+
+// 시도청 바로가기
+function goThere5(){
+    if(!document.theForm05.theMenu02.selectedIndex==""){
+        window.open(document.theForm05.theMenu02.options[document.theForm05.theMenu02.selectedIndex].value,"_blank","");
+    }
+}
+
+// 공공기관 바로가기
+function goThere2(){
+    if(!document.theForm03.theMenu03.selectedIndex==""){
+        window.open(document.theForm03.theMenu03.options[document.theForm03.theMenu03.selectedIndex].value,"_blank","");
+    }
+}
+
+// 교육연수원 바로가기
+function goThere3(){
+    if(!document.theForm04.theMenu04.selectedIndex==""){
+        window.open(document.theForm04.theMenu04.options[document.theForm04.theMenu04.selectedIndex].value,"_blank","");
+    }
+}       
+// 이용약관
+function openServicePopup(){
+    window.open('/S2BNCustomer/S2B/scrweb/html_include/view_service.jsp','','width=670, height=700 , fullscreen=no, location=no, scrollbars=yes, menubar=no, toolbar=no, titlebar=no, directories=no, resizable=no');
+}
+
+// 개인정보 취급방침
+function openPrivacyPopup(){
+    window.open('/S2BNCustomer/S2B/scrweb/html_include/view_privacy_new.jsp','','width=670, height=700 , fullscreen=no, location=no, scrollbars=yes, menubar=no, toolbar=no, titlebar=no, directories=no, resizable=no');
+}        
+
+$('.organBtn').click(function(){
+    if($(this).hasClass('prev')){
+        fnRollingLogo('prev');
+    }else{
+        fnRollingLogo('next');
+    }
+});
+
+var logo_idx = 0;
+
+function fnRollingLogo(val){
+    var slider = $('.organBannerList > ul');
+    var speed = 500;
+    var timer = 0;
+    var slider_len = slider.find('li').length;             //슬라이더 갯수
+    var slider_width = slider.find('li').outerWidth();      //슬라이더 각 요소 넓이
+    var slide_item;
+
+    if(val == 'prev'){
+        if(!slider.is(':animated')){
+            logo_idx--;
+            if(logo_idx < 0){
+                logo_idx = slider_len -1;
+            }
+            slide_item = slider.find('li').eq(-2).nextAll().clone(true);
+            slide_item.prependTo(slider);
+            slider.find('li').eq(-2).nextAll().remove();
+            slider.css('left', - slider_width + 'px');
+            slider.animate({'left' : '0px'}, speed, function(){});
+        }
+    }else{
+        if(!slider.is(':animated')){
+            logo_idx++;
+            if(logo_idx >= slider_len){
+                logo_idx = 0;
+            }
+            slider.animate({'left' : -slider_width+'px'}, speed, function(){
+                slide_item = slider.find('li').eq(0).clone(true);
+                slide_item.appendTo(slider);
+                slider.find('li').eq(0).remove();
+                slider.css('left', '0px');
+            });
+        }
+    }
+}
+
+var logo_timer = setInterval('fnRollingLogo("next")', 3000);
+
+function autoLogoRolling(){
+    logo_timer = setInterval('fnRollingLogo("next")', 3000);
+}
+
+</script>
+
+ <div id="footer_wrap">    	
+    	<!-- Footer Banner -->
+        <div class="section_footer1">
+        	<div class="mainBannerArea">
+            	<div class="organBannerArea">
+                	<div class="organBannerList">
+		            <ul style="left: 0px;">
+		            <!--  행전안정부 -->
+		             
+		            <!--  교육부 -->
+		            
+		            <!-- 중소벤처기업부 -->
+		            
+		            <!--  KBIZ 중소기업중앙회 -->
+		            
+		            <!-- 공공구매종합정보 -->
+		            
+		            <!--  케리스 -->
+		            
+		            <!-- 나이스 -->
+		             
+		            <!-- 학교알리미 -->
+		            
+		           <li class="bn01"><a href="http://www.mois.go.kr" target="_blank"><img src="/S2BNCustomer/S2B/scrweb/images/main2019/footer_bn01.jpg" alt="행전안정부"></a></li><li class="bn02"><a href="http://www.moe.go.kr/" target="_blank"><img src="/S2BNCustomer/S2B/scrweb/images/main2019/footer_bn02.jpg" alt="교육부"></a></li><li class="bn03"><a href="http://www.smba.go.kr/" target="_blank"><img src="/S2BNCustomer/S2B/scrweb/images/main2019/footer_bn03.jpg" alt="중소벤처기업부"></a></li><li class="bn04"><a href="http://www.kbiz.or.kr/" target="_blank"><img src="/S2BNCustomer/S2B/scrweb/images/main2019/footer_bn04.jpg" alt="KBIZ 중소기업중앙회"></a></li><li class="bn05"><a href="http://www.smpp.go.kr/smpp/index.do" target="_blank"><img src="/S2BNCustomer/S2B/scrweb/images/main2019/footer_bn05.jpg" alt="공공구매종합정보"></a></li><li class="bn06"><a href="http://www.keris.or.kr/" target="_blank"><img src="/S2BNCustomer/S2B/scrweb/images/main2019/footer_bn06.jpg" alt="KERIS"></a></li><li class="bn07"><a href="http://www.neis.go.kr/" target="_blank"><img src="/S2BNCustomer/S2B/scrweb/images/main2019/footer_bn07.jpg" alt="나이스"></a></li><li class="bn08"><a href="http://www.schoolinfo.go.kr/index.jsp" target="_blank"><img src="/S2BNCustomer/S2B/scrweb/images/main2019/footer_bn08.jpg" alt="학교알리미"></a></li></ul>
+           		   </div>
+           		 </div>
+           	</div>
+        </div>
+        <!-- Footer Banner //-->
+    	
+      <div class="section_footer2">
+        <!-- Footer Util -->
+        <div class="footer_util">
+            <ul class="link_util">
+            <li><a href="/S2BNCustomer/S2B/scrweb/common/s2b_info01_intro.jsp">S2B소개</a></li>
+            <li><a href="/S2BNCustomer/S2B/scrweb/common/s2b_faq_school.jsp">FAQ</a></li>
+            <li><a href="javascript:openPrivacyPopup();" style="font-weight:700;">개인정보처리방침</a></li>
+            <li><a href="javascript:openServicePopup();">이용약관</a></li>
+            </ul>
+        
+            <!-- family Site -->
+            <div class="family_site">
+               <ul>
+               <li>
+                   <form name="theForm02">
+                       <select name="theMenu02" size="1" onchange="goThere1();">
+                           <option selected="" value="">교육청 바로가기</option>
+                           <option value="http://www.sen.go.kr">서울특별시 교육청</option>
+                           <option value="http://www.pen.go.kr">부산광역시 교육청</option>
+                           <option value="http://www.dge.go.kr">대구광역시 교육청</option>
+                           <option value="http://www.ice.go.kr">인천광역시 교육청</option>
+                           <option value="http://www.gen.go.kr">광주광역시 교육청</option>
+                           <option value="http://www.dje.go.kr">대전광역시 교육청</option>
+                           <option value="http://www.use.go.kr">울산광역시 교육청</option>
+                           <option value="http://www.sje.go.kr">세종특별자치시 교육청</option>
+                           <option value="http://www.goe.go.kr">경기도 교육청</option>
+                           <option value="http://www.kwe.go.kr">강원도 교육청</option>
+                           <option value="http://www.cbe.go.kr">충청북도 교육청</option>
+                           <option value="http://www.cne.go.kr">충청남도 교육청</option>
+                           <option value="http://www.gbe.kr">경상북도 교육청</option>
+                           <option value="http://www.gne.go.kr">경상남도 교육청</option>
+                           <option value="http://www.jbe.go.kr">전라북도 교육청</option>
+                           <option value="http://www.jne.go.kr">전라남도 교육청</option>
+                           <option value="http://www.jje.go.kr">제주특별자치도 교육청</option>
+                       </select>
+                   </form>
+               </li>
+               <li>
+				<form name="theForm04">
+                        <select name="theMenu04" size="1" onchange="goThere3();">
+                            <option selected="" value="">교육연수원 바로가기</option>
+                            <option value="http://www.seti.go.kr">서울특별시 교육연수원</option>
+                            <option value="http://www.ieti.or.kr">인천광역시 교육연수원</option>
+                            <option value="http://www.gtie.go.kr">경기도 교육연수원</option>
+                            <option value="http://www.yulgog.org">경기도 율곡교육연수원</option>
+                            <option value="http://www.geti.or.kr">강원도 교육연수원</option>
+                            <option value="http://www.teti.kr">대전광역시 교육연수원</option>
+                            <option value="http://www.ceti.or.kr">충청남도 교육연수원</option>
+                            <option value="http://eduup.danjae.org">충청북도 단재교육연수원</option>
+                            <option value="http://edu.beti.go.kr">부산광역시 교육연수원</option>
+                            <option value="http://www.deti.or.kr">대구광역시 교육연수원</option>
+                            <option value="http://www.ueti.or.kr">울산광역시 교육연수원</option>
+                            <option value="http://www.gneti.or.kr">경상남도 교육연수원</option>
+                            <option value="http://www.gbeti.or.kr">경상북도 교육연수원</option>
+                            <option value="http://eduup.gen.go.kr">광주광역시 교육연수원</option>
+                            <option value="http://www.jeti.or.kr">전라남도 교육연수원</option>
+                            <option value="http://www.jbstudy.kr">전라북도 교육연수원</option>
+                            <option value="http://www.tamna.or.kr">탐라 교육연수원</option>
+                        </select>
+                  </form>
+               </li>
+               <li>
+                   <form name="theForm05">
+                       <select name="theMenu02" size="1" onchange="goThere5();">
+                           <option selected="" value="">시도청 바로가기</option>
+                           <option value="http://www.seoul.go.kr ">서울특별시청</option>
+                           <option value="http://www.busan.go.kr ">부산광역시청</option>
+                           <option value="http://www.daegu.go.kr">대구광역시청</option>
+                           <option value="http://www.incheon.go.kr">인천광역시청</option>
+                           <option value="http://www.gwangju.go.kr ">광주광역시청</option>
+                           <option value="http://www.daejeon.go.kr">대전광역시청</option>
+                           <option value="http://www.ulsan.go.kr ">울산광역시청</option>
+                           <option value="http://www.sejong.go.kr">세종특별자치시청</option>
+                           <option value="http://www.gg.go.kr ">경기도청</option>
+                           <option value="http://www.provin.gangwon.kr ">강원도청</option>
+                           <option value="http://www.chungbuk.go.kr">충청북도청</option>
+                           <option value="http://www.chungnam.go.kr">충청남도청</option>
+                           <option value="http://www.gyeongbuk.go.kr ">경상북도청</option>
+                           <option value="http://www.gyeongnam.go.kr">경상남도청</option>
+                           <option value="http://www.jeonbuk.go.kr">전라북도청</option>
+                           <option value="http://www.jeonnam.go.kr">전라남도청</option>
+                           <option value="http://www.jeju.go.kr">제주특별자치도청</option>
+                       </select>
+                   </form>
+               </li>
+               <li>
+                   <form name="theForm03">
+                       <select name="theMenu03" size="1" onchange="goThere2();">
+                           <option selected="" value="">공공기관 바로가기</option>
+                           <option value="http://www.moe.go.kr/">교육부</option>
+                           <option value="http://www.mois.go.kr/">행정안전부</option>
+                           <option value="http://www.smba.go.kr/">중소벤처기업부</option>
+                           <option value="http://www.kbiz.or.kr/">중소기업중앙회</option>
+                           <option value="http://www.motie.go.kr">산업통상지원부</option>
+                           <option value="http://www.law.go.kr">국가법령정보센터</option>
+                           <option value="http://www.epeople.go.kr/">국민신문고</option>
+                           <option value="http://www.ftc.go.kr/">공정거래위원회</option>
+                           <option value="http://www.kca.go.kr/">한국소비자원</option>
+                           <option value="http://www.bai.go.kr/">감사원</option>
+                           <option value="http://www.acrc.go.kr/">국민권익위원회</option>
+                           <option value="http://kess.kedi.re.kr/">교육통계서비스</option>
+                       </select>
+                   </form>
+               </li>
+               <li style="margin:0">
+					<form name="theForm01">
+                        <select name="theMenu01" size="1" onchange="goThere()" style="width:130px;">
+                            <option selected="" value="">KTCU Family</option>
+                            <option value="http://www.ktcu.or.kr">The-K한국교직원공제회</option>
+                            <option value="http://www.teachiworld.com">The-K교직원나라</option>
+                            <option value="http://thek-hotel.co.kr/">The-K 호텔앤리조트</option>
+                            <option value="http://www.ramadajeju.co.kr">The-K 제주호텔</option>
+                            <option value="https://www.educar.co.kr/">The-K 손해보험</option>
+                            <option value="http://www.thekbank.co.kr/">The-K 저축은행</option>
+                            <option value="http://www.sophiagreen.co.kr/">The-K 소피아그린</option>
+                            <option value="https://www.third-age.co.kr">The-K 서드에이지</option>
+                            <option value="https://www.yedaham.co.kr">The-K 예다함상조</option>
+                        </select>
+                     </form>
+               </li>
+               </ul> 
+            </div>
+            <!-- family Site -->
+        </div>
+        <!-- Footer Util //-->
+        
+        <!-- Copyright -->
+        <div class="copyright">
+        	<p class="logo"><a href="http://www.ktcu.or.kr/" target="_blank"><img src="/S2BNCustomer/S2B/scrweb/images/main2019/footer_logo.png"></a></p>
+            <div class="adress">
+            (03127) 서울특별시 종로구 창경궁로136 보령빌딩 6층&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;문의전화 : 1577-3309&nbsp;(운영시간 평일 09시 ~ 18시, 공휴일 제외)<br>
+            이메일 : s2b@s2b.kr&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;위탁운영 : The-K 교직원나라(주)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;대표이사 : 정성욱&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;사업자등록번호 : 106-81-95139 <br>
+Copyright(c) The-K 한국교직원공제회  All right reserved.
+            </div>
+            <div class="mark"><a href="javascript:cert_status('24efe3e0656f0e031f22bc7512091b','www.s2b.kr');"><img src="/S2BNCustomer/S2B/scrweb/images/main2019/footer_mark.png"></a></div>
+        </div>
+        <!-- Copyright -->
+        </div>
+        
+</div>
+<!-- Footer //-->
+
+
+
+
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=UA-173155725-2"></script>
+<script>
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	gtag('js', new Date());
+	gtag('config', 'UA-173155725-2');
+</script>
+<!--  Naver Analytics -->
+<script async="" type="text/javascript" src="//wcs.naver.net/wcslog.js"></script>
+<script type="text/javascript">
+	if(!wcs_add) var wcs_add = {};
+	wcs_add["wa"] = "79da37dc102d30";
+	if(window.wcs) {
+		wcs_do();
+	}
+</script>
+
+
+<!-- logger 수집용 : S -->
+<script language="JavaScript" src="/S2BNCustomer/S2B/scrweb/js/logger.js"></script>
+<!-- logger 수집용 : E -->
+   
+<!--  popup include -->
+<iframe src="/S2BNCustomer/popup.do?forwardName=loginPopup" name="popup" width="0" height="0" scrolling="no" frameborder="0"></iframe>
+</div>
+
+<script>
+getidS(document.school_loginForm);getidV(document.vendor_loginForm);getidP(document.personal_loginForm);
+</script>
+
+<div class="tip-yellow"><div class="tip-inner tip-bg-image"></div><div class="tip-arrow tip-arrow-top tip-arrow-right tip-arrow-bottom tip-arrow-left"></div></div></body></html>

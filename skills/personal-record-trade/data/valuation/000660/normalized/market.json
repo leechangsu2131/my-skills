@@ -1,16 +1,15 @@
 {
   "ticker": "000660",
   "company_name": "SK하이닉스",
-  "valuation_date": "2026-05-26",
-  "market_data_as_of": "2026-05-26",
-  "price": 2052000,
-  "shares_outstanding": 708300000,
-  "market_cap": 1453581600000000,
-  "historical_average_per": 12.0,
-  "peer_average_per": 14.0,
-  "current_tam": 200000000000000,
-  "projected_tam_5yr": 600000000000000,
-  "reported_enterprise_value": 1453581600000000,
+  "valuation_date": "2026-05-27",
+  "market_data_as_of": "2026-05-27",
+  "price": 2243000,
+  "shares_outstanding": 712702365,
+  "market_cap": 1598591404695000,
+  "historical_average_per": 15.0,
+  "peer_average_per": 15.0,
+  "current_tam": 40000000000000,
+  "projected_tam_5yr": 60000000000000,
   "currency": "KRW",
-  "note": "HBM AI 메모리 슈퍼사이클 수혜주. 2024 사업연도 기준. TAM은 AI 메모리(HBM 포함) 글로벌 시장. 시장데이터는 2026-05-26 종가 기준. DART 공시 수기 입력 — 파이프라인 수집 필요."
+  "note": "Auto-fetched via pykrx"
 }

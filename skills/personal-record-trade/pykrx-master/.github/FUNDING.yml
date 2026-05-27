@@ -1,0 +1,9 @@
+# GitHub Sponsors 설정
+# 저장소에 "Sponsor" 버튼이 자동으로 표시됩니다
+
+github: sharebook-kr
+
+# 다른 후원 플랫폼을 추가하려면 아래 주석을 해제하고 사용하세요
+# patreon: your-username
+# ko_fi: your-username
+# custom: ["https://toss.me/your-link", "https://buymeacoffee.com/your-username"]

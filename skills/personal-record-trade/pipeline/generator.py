@@ -19,11 +19,29 @@ def save_valuation_data(ticker: str, market_data: dict, metrics_data: list):
             json.dump(market_data, f, ensure_ascii=False, indent=2)
         print(f"✅ Market 데이터 저장 완료: {market_path}")
         
-    # metrics.json 저장
+    # metrics.json 병합 저장
     if metrics_data:
+        existing_metrics = []
+        if os.path.exists(metrics_path):
+            with open(metrics_path, 'r', encoding='utf-8') as f:
+                try:
+                    existing_metrics = json.load(f)
+                except json.JSONDecodeError:
+                    existing_metrics = []
+                    
+        # 기존 데이터를 딕셔너리로 (period + metric_key 기준)
+        metrics_dict = {f"{item['period']}_{item['metric_key']}": item for item in existing_metrics}
+        
+        # 새 데이터 덮어쓰기/추가
+        for item in metrics_data:
+            key = f"{item['period']}_{item['metric_key']}"
+            metrics_dict[key] = item
+            
+        final_metrics = list(metrics_dict.values())
+        
         with open(metrics_path, 'w', encoding='utf-8') as f:
-            json.dump(metrics_data, f, ensure_ascii=False, indent=2)
-        print(f"✅ Metrics 데이터 저장 완료: {metrics_path}")
+            json.dump(final_metrics, f, ensure_ascii=False, indent=2)
+        print(f"✅ Metrics 데이터 병합 저장 완료: {metrics_path} (총 {len(final_metrics)}개 항목)")
 
 if __name__ == "__main__":
     pass

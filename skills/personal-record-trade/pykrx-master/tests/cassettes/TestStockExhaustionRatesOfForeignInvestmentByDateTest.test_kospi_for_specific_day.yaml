@@ -1,0 +1,49 @@
+interactions:
+- request:
+    body: searchType=2&strtDd=20200120&endDd=20200120&isuCd=KR7005930003&bld=dbms%2FMDC%2FSTAT%2Fstandard%2FMDCSTAT03702
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate, br, zstd
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '110'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Referer:
+      - https://data.krx.co.kr/contents/MDC/MDI/outerLoader/index.cmd
+      User-Agent:
+      - Mozilla/5.0
+    method: POST
+    uri: https://data.krx.co.kr/comm/bldAttendant/getJsonData.cmd
+  response:
+    body:
+      string: '{"output":[{"TRD_DD":"2020/01/20","TDD_CLSPRC":"62,400","FLUC_TP_CD":"1","CMPPREVDD_PRC":"1,100","FLUC_RT":"1.79","LIST_SHRS":"5,969,782,550","FORN_HD_QTY":"3,411,538,909","FORN_SHR_RT":"57.15","FORN_ORD_LMT_QTY":"5,969,782,550","FORN_LMT_EXHST_RT":"57.15"}],"CURRENT_DATETIME":"2026.01.25
+        PM 08:29:08"}'
+    headers:
+      Cache-Control:
+      - max-age=0, no-cache, no-store
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '303'
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sun, 25 Jan 2026 11:29:08 GMT
+      Expires:
+      - Sun, 25 Jan 2026 11:29:08 GMT
+      Pragma:
+      - no-cache
+      Set-Cookie:
+      - __smVisitorID=5zc4MaqWfMy; Expires=Mon, 25-Jan-2027 11:29:08 GMT; Path=/
+      - __smVisitorID=jp-_uEqaoTi; Expires=Mon, 25-Jan-2027 11:29:08 GMT; Path=/
+      - __smVisitorID=sAPhzBHnuTz; Expires=Mon, 25-Jan-2027 11:29:08 GMT; Path=/
+      - JSESSIONID=iRb1Rd0Q6BjZUDWjK4nEafzXuUCroYbwcbhggSZ68wpxqADttazUQbaEDe1715Ak.bWRjX2RvbWFpbi9tZGNvd2FwMi1tZGNhcHAwMQ==;
+        Domain=.krx.co.kr; Path=/; HttpOnly
+    status:
+      code: 200
+      message: OK
+version: 1

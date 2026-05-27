@@ -3,6 +3,11 @@ from __future__ import annotations
 from pathlib import Path
 import json
 
+import sys
+import os
+# 프로젝트 루트 디렉토리를 sys.path에 추가하여 어디서 실행하든 모듈을 찾을 수 있게 함
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 import pandas as pd
 import streamlit as st
 
@@ -36,7 +41,7 @@ from valuation_app.relative_valuation import (
 )
 from valuation_app.narrative_consistency import (
     build_narrative_explanation,
-    get_samsung_electro_narratives,
+    get_company_narratives,
 )
 from valuation_app.synthesis import (
     build_next_quarter_checklist,
@@ -152,13 +157,33 @@ def _format_multiple(value: float | int | None) -> str:
 def _observation_rows(observations: list[MetricObservation]) -> list[dict[str, str]]:
     rows = []
     for obs in observations:
+        dart_val_str = _display_value(obs)
+        yf_val_str = "-"
+        diff_str = "-"
+        
+        if hasattr(obs, 'yf_value') and obs.yf_value is not None and obs.yf_value != 0:
+            if obs.unit == "ratio":
+                yf_val_str = format_ratio(obs.yf_value)
+            elif obs.unit == "KRW/share":
+                yf_val_str = _format_price(obs.yf_value)
+            else:
+                yf_val_str = format_krw(obs.yf_value)
+                
+            if obs.value is not None:
+                diff = (obs.value - obs.yf_value) / abs(obs.yf_value) * 100
+                diff_str = f"{diff:+.2f}%"
+                if diff == 0:
+                    diff_str = "0.00%"
+                
         rows.append(
             {
                 "입력값": obs.label,
-                "값": _display_value(obs),
                 "기간": obs.period,
+                "DART 값": dart_val_str,
+                "yfinance 값": yf_val_str,
+                "오차율": diff_str,
                 "출처": source_label(obs.source_method),
-                "보고서": obs.report_code or "-",
+                "보고서": obs.statement_name or "-",
                 "원문 계정": obs.original_account_name or "-",
                 "신뢰도": format_ratio(obs.confidence),
                 "메모": obs.note,
@@ -1058,10 +1083,10 @@ def render_risk_downside_tab(input_set: ValuationInputSet) -> None:
         )
 
 
-def render_narrative_tab() -> None:
-    st.markdown(build_narrative_explanation())
+def render_narrative_tab(ticker: str, company_name: str) -> None:
+    st.markdown(build_narrative_explanation(company_name))
 
-    stories = get_samsung_electro_narratives()
+    stories = get_company_narratives(ticker)
     
     for story in stories:
         with st.container():
@@ -1503,7 +1528,16 @@ def main() -> None:
 
     with tab_inputs:
         st.markdown("같은 입력값을 Reverse DCF, Value Attribution, ROIC, 상대가치 렌즈가 공유합니다.")
-        st.dataframe(_observation_rows(all_observations), use_container_width=True, hide_index=True)
+        
+        unique_periods = sorted(list({obs.period for obs in all_observations}), reverse=True)
+        selected_periods = st.multiselect(
+            "표시할 기간 선택", 
+            options=unique_periods, 
+            default=[unique_periods[0]] if unique_periods else None
+        )
+        
+        filtered_observations = [obs for obs in all_observations if obs.period in selected_periods]
+        st.dataframe(_observation_rows(filtered_observations), use_container_width=True, hide_index=True)
 
     with tab_reverse_dcf:
         render_reverse_dcf_tab(input_set)
@@ -1527,7 +1561,7 @@ def main() -> None:
         render_risk_downside_tab(input_set)
 
     with tab_narrative:
-        render_narrative_tab()
+        render_narrative_tab(selected_ticker, company_name)
 
     with tab_synthesis:
         render_synthesis_tab(input_set)

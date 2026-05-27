@@ -1,0 +1,58 @@
+interactions:
+- request:
+    body: isuCd=KR7069500007&strtDd=20210104&endDd=20210108&bld=dbms%2FMDC%2FSTAT%2Fstandard%2FMDCSTAT04501
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate, br, zstd
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '97'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Referer:
+      - https://data.krx.co.kr/contents/MDC/MDI/outerLoader/index.cmd
+      User-Agent:
+      - Mozilla/5.0
+    method: POST
+    uri: https://data.krx.co.kr/comm/bldAttendant/getJsonData.cmd
+  response:
+    body:
+      string: '{"output":[{"TRD_DD":"2021/01/08","TDD_CLSPRC":"43,545","FLUC_TP_CD":"1","CMPPREVDD_PRC":"1,845","FLUC_RT":"4.42","LST_NAV":"43,651.13","TDD_OPNPRC":"42,245","TDD_HGPRC":"43,785","TDD_LWPRC":"42,115","ACC_TRDVOL":"11,521,190","ACC_TRDVAL":"494,420,112,265","MKTCAP":"6,518,686,500,000","INVSTASST_NETASST_TOTAMT":"6,196,278,518,911","LIST_SHRS":"149,700,000","IDX_IND_NM":"코스피
+        200","OBJ_STKPRC_IDX":"430.22","FLUC_TP_CD1":"1","CMPPREVDD_IDX":"19.41","IDX_FLUC_RT":"4.72"},{"TRD_DD":"2021/01/07","TDD_CLSPRC":"41,700","FLUC_TP_CD":"1","CMPPREVDD_PRC":"950","FLUC_RT":"2.33","LST_NAV":"41,709.04","TDD_OPNPRC":"41,210","TDD_HGPRC":"42,040","TDD_LWPRC":"41,190","ACC_TRDVOL":"8,752,407","ACC_TRDVAL":"364,764,290,470","MKTCAP":"6,177,855,000,000","INVSTASST_NETASST_TOTAMT":"6,243,842,734,584","LIST_SHRS":"148,150,000","IDX_IND_NM":"코스피
+        200","OBJ_STKPRC_IDX":"410.81","FLUC_TP_CD1":"1","CMPPREVDD_IDX":"8.73","IDX_FLUC_RT":"2.17"},{"TRD_DD":"2021/01/06","TDD_CLSPRC":"40,750","FLUC_TP_CD":"2","CMPPREVDD_PRC":"400","FLUC_RT":"-0.97","LST_NAV":"40,835.69","TDD_OPNPRC":"41,270","TDD_HGPRC":"41,680","TDD_LWPRC":"40,595","ACC_TRDVOL":"15,221,599","ACC_TRDVAL":"625,103,057,790","MKTCAP":"5,880,225,000,000","INVSTASST_NETASST_TOTAMT":"6,049,807,550,104","LIST_SHRS":"144,300,000","IDX_IND_NM":"코스피
+        200","OBJ_STKPRC_IDX":"402.08","FLUC_TP_CD1":"2","CMPPREVDD_IDX":"3.95","IDX_FLUC_RT":"-0.97"},{"TRD_DD":"2021/01/05","TDD_CLSPRC":"41,150","FLUC_TP_CD":"1","CMPPREVDD_PRC":"610","FLUC_RT":"1.50","LST_NAV":"41,230.17","TDD_OPNPRC":"40,325","TDD_HGPRC":"41,150","TDD_LWPRC":"40,200","ACC_TRDVOL":"9,126,676","ACC_TRDVAL":"370,933,192,250","MKTCAP":"5,623,147,500,000","INVSTASST_NETASST_TOTAMT":"5,949,512,833,326","LIST_SHRS":"136,650,000","IDX_IND_NM":"코스피
+        200","OBJ_STKPRC_IDX":"406.03","FLUC_TP_CD1":"1","CMPPREVDD_IDX":"6.15","IDX_FLUC_RT":"1.54"},{"TRD_DD":"2021/01/04","TDD_CLSPRC":"40,540","FLUC_TP_CD":"1","CMPPREVDD_PRC":"1,040","FLUC_RT":"2.63","LST_NAV":"40,615.17","TDD_OPNPRC":"39,585","TDD_HGPRC":"40,615","TDD_LWPRC":"39,405","ACC_TRDVOL":"12,185,235","ACC_TRDVAL":"489,888,903,885","MKTCAP":"5,787,085,000,000","INVSTASST_NETASST_TOTAMT":"5,550,062,900,449","LIST_SHRS":"142,750,000","IDX_IND_NM":"코스피
+        200","OBJ_STKPRC_IDX":"399.88","FLUC_TP_CD1":"1","CMPPREVDD_IDX":"10.59","IDX_FLUC_RT":"2.72"}],"CURRENT_DATETIME":"2026.01.25
+        PM 08:24:51"}'
+    headers:
+      Cache-Control:
+      - max-age=0, no-cache, no-store
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Length:
+      - '726'
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sun, 25 Jan 2026 11:24:51 GMT
+      Expires:
+      - Sun, 25 Jan 2026 11:24:51 GMT
+      Pragma:
+      - no-cache
+      Set-Cookie:
+      - __smVisitorID=NDlt5coxE9s; Expires=Mon, 25-Jan-2027 11:24:50 GMT; Path=/
+      - __smVisitorID=zcKklmmeZix; Expires=Mon, 25-Jan-2027 11:24:50 GMT; Path=/
+      - __smVisitorID=Zj8tv-JYY77; Expires=Mon, 25-Jan-2027 11:24:50 GMT; Path=/
+      - JSESSIONID=DPrE1g3sipSNDdEvFXw8Gnab98Zrw1GXcVMNDGT3NAPsXxIDtdYGMbeGImlISUtx.bWRjX2RvbWFpbi9tZGNvd2FwMi1tZGNhcHAwMQ==;
+        Domain=.krx.co.kr; Path=/; HttpOnly
+      Vary:
+      - Accept-Encoding
+    status:
+      code: 200
+      message: OK
+version: 1

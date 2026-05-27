@@ -1,0 +1,48 @@
+interactions:
+- request:
+    body: trdDd=20200105&mktTpCd=1&bld=dbms%2FMDC%2FSTAT%2Fsrt%2FMDCSTAT30401
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate, br, zstd
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '67'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Referer:
+      - https://data.krx.co.kr/contents/MDC/MDI/outerLoader/index.cmd
+      User-Agent:
+      - Mozilla/5.0
+    method: POST
+    uri: https://data.krx.co.kr/comm/bldAttendant/getJsonData.cmd
+  response:
+    body:
+      string: '{"OutBlock_1":[],"CURRENT_DATETIME":"2026.01.25 PM 08:30:34"}'
+    headers:
+      Cache-Control:
+      - max-age=0, no-cache, no-store
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '61'
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sun, 25 Jan 2026 11:30:34 GMT
+      Expires:
+      - Sun, 25 Jan 2026 11:30:34 GMT
+      Pragma:
+      - no-cache
+      Set-Cookie:
+      - __smVisitorID=RkpeprvtN94; Expires=Mon, 25-Jan-2027 11:30:34 GMT; Path=/
+      - __smVisitorID=VFsTSO5tqly; Expires=Mon, 25-Jan-2027 11:30:34 GMT; Path=/
+      - __smVisitorID=gl5KfKf9SOH; Expires=Mon, 25-Jan-2027 11:30:34 GMT; Path=/
+      - JSESSIONID=MFD0xWbW70h1EZHeKP7a6M6oKSIy1TJBcPlRP8rOUv4fRMqHtzvWyR1bpT1z0hsi.bWRjX2RvbWFpbi9tZGNvd2FwMS1tZGNhcHAxMQ==;
+        Domain=.krx.co.kr; Path=/; HttpOnly
+    status:
+      code: 200
+      message: OK
+version: 1

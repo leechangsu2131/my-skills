@@ -1,0 +1,191 @@
+<style>
+  .lab { display:grid; gap:16px; color:#172033; }
+  .hero { display:grid; grid-template-columns: minmax(0,1fr) 360px; gap:14px; align-items:start; }
+  .panel { background:#fff; border:1px solid #d8e1eb; border-radius:8px; padding:14px; }
+  .model-palette { background:#fff; border:1px solid #cfe4de; border-radius:8px; padding:12px; position:sticky; top:12px; }
+  .badge { display:inline-flex; border-radius:99px; padding:4px 8px; background:#eef6f2; color:#0f766e; font-size:11px; font-weight:750; }
+  .badge.warn { background:#fff7ed; color:#9a3412; }
+  .badge.gray { background:#f1f5f9; color:#475569; }
+  .title { font-size:25px; font-weight:780; letter-spacing:0; margin:8px 0; }
+  .title span { color:#0f766e; }
+  .plain { margin:0; color:#405064; font-size:14px; line-height:1.55; }
+  .model-list { display:grid; gap:8px; margin-top:10px; }
+  .model { border:1px solid #e2e8f0; border-radius:7px; padding:9px; background:#fff; }
+  .model.active { border-color:#0f766e; background:#f4fbf8; }
+  .model strong { display:flex; justify-content:space-between; gap:8px; font-size:12px; margin-bottom:5px; }
+  .model p { margin:0; color:#596678; font-size:11px; line-height:1.35; }
+  .tag { border-radius:99px; padding:2px 6px; font-size:10px; font-weight:750; background:#f1f5f9; color:#475569; white-space:nowrap; }
+  .tag.on { background:#0f766e; color:#fff; }
+  .top-data { display:grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap:10px; }
+  .data-card { border:1px solid #e2e8f0; border-radius:8px; background:#fff; padding:11px; min-height:94px; }
+  .data-card h4 { margin:0 0 7px; font-size:12px; color:#526174; }
+  .big { font-size:19px; font-weight:780; margin-bottom:4px; }
+  .sub { color:#687385; font-size:11px; line-height:1.35; }
+  .analysis-grid { display:grid; grid-template-columns: 1fr 1fr; gap:14px; }
+  .step-list { display:grid; gap:9px; }
+  .step { border:1px solid #e2e8f0; border-radius:8px; padding:10px; background:#fff; }
+  .step.active { border-color:#0f766e; box-shadow:0 0 0 2px rgba(15,118,110,.12); }
+  .step h4 { margin:0 0 6px; font-size:14px; }
+  .step p { margin:0; font-size:12px; color:#596678; line-height:1.45; }
+  .formula { font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace; background:#172033; color:#f8fafc; border-radius:6px; padding:9px 10px; font-size:12px; line-height:1.45; }
+  .calc-table { display:grid; gap:6px; margin-top:10px; }
+  .calc-row { display:grid; grid-template-columns: 1.05fr .95fr 1.2fr; gap:8px; font-size:12px; border:1px solid #e2e8f0; border-radius:6px; padding:8px; background:#fff; }
+  .calc-row.header { background:#172033; color:#fff; font-weight:750; }
+  .warning { border-radius:8px; padding:12px; border:1px solid #fed7aa; background:#fff7ed; color:#7c2d12; font-size:13px; line-height:1.45; }
+  .source-grid { display:grid; grid-template-columns: repeat(4,1fr); gap:8px; }
+  .source { border:1px solid #e2e8f0; border-radius:7px; padding:8px; background:#fff; font-size:12px; }
+  .source strong { display:block; margin-bottom:4px; }
+  .source span { color:#687385; line-height:1.35; display:block; }
+  @media (max-width: 980px) {
+    .hero, .analysis-grid, .top-data, .source-grid, .calc-row { grid-template-columns:1fr; }
+    .model-palette { position:static; }
+  }
+</style>
+
+<h2>삼성전기 분석: 모형 팔레트 상시 표시</h2>
+<p class="subtitle">케이스 분석을 진행하면서도 v3 일반 모형과 계산 근거가 화면 오른쪽에 계속 보이도록 조정했습니다.</p>
+
+<div class="mockup">
+  <div class="mockup-header">Case study v3: Samsung Electro-Mechanics · 009150.KS</div>
+  <div class="mockup-body">
+    <div class="lab">
+      <div class="hero">
+        <div class="panel">
+          <span class="badge">Step 2 · 정상화 마진/FCF 역산 시작</span>
+          <div class="title">질문: <span>어느 정도 마진과 FCF</span>가 되어야 현재 가격이 설명될까?</div>
+          <p class="plain">
+            연간 자료로는 2025년 체력을 보고, 2026년 1분기로는 회복 속도를 봅니다.
+            현재 시장가격은 2025년 FCF만으로 설명하기 어렵기 때문에, 다음 단계는
+            정상화 매출, 영업이익률, FCF 전환율 조합을 역산하는 것입니다.
+          </p>
+        </div>
+
+        <aside class="model-palette">
+          <span class="badge">v3 일반 모형 팔레트</span>
+          <div class="model-list">
+            <div class="model active">
+              <strong>Reverse DCF <span class="tag on">경고등</span></strong>
+              <p>현재 FCF로 EV가 설명되는지 먼저 확인합니다. 설명이 안 되면 다음 모형으로 이동합니다.</p>
+            </div>
+            <div class="model active">
+              <strong>Value Attribution <span class="tag on">사용</span></strong>
+              <p>현재 수익력 가치와 미래 성장 기대 가치를 분해합니다.</p>
+            </div>
+            <div class="model active">
+              <strong>EV/Sales → Margin <span class="tag on">다음</span></strong>
+              <p>삼성전기처럼 매출 성장과 마진 회복이 핵심일 때 직관적입니다.</p>
+            </div>
+            <div class="model">
+              <strong>EV/NOPAT → ROIC <span class="tag">검증</span></strong>
+              <p>고부가 제품 투자가 충분한 자본수익률을 내는지 봅니다.</p>
+            </div>
+            <div class="model">
+              <strong>P/B → ROE <span class="tag">보조</span></strong>
+              <p>자기자본 대비 시장이 요구하는 수익성을 확인합니다.</p>
+            </div>
+            <div class="model">
+              <strong>CAP <span class="tag">고급</span></strong>
+              <p>초과수익이 몇 년 지속되어야 하는지 확인합니다.</p>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <div class="top-data">
+        <div class="data-card">
+          <h4>시장가격</h4>
+          <div class="big">1,340,000원</div>
+          <div class="sub">2026-05-22 종가, 시총 약 101.2조원</div>
+        </div>
+        <div class="data-card">
+          <h4>2025 연간</h4>
+          <div class="big">매출 11.31조</div>
+          <div class="sub">영업이익 0.91조, FCF 약 0.24조</div>
+        </div>
+        <div class="data-card">
+          <h4>1Q26 공식</h4>
+          <div class="big">매출 3.21조</div>
+          <div class="sub">영업이익 0.28조, OP +40% YoY</div>
+        </div>
+        <div class="data-card">
+          <h4>소스 상태</h4>
+          <div class="big">공식 IR 우선</div>
+          <div class="sub">자동 분기값 충돌 감지, 공식값으로 분석</div>
+        </div>
+      </div>
+
+      <div class="analysis-grid">
+        <div class="panel">
+          <span class="badge gray">분석 순서</span>
+          <div class="step-list" style="margin-top:10px">
+            <div class="step">
+              <h4>1. 현재 FCF로 설명 가능한가?</h4>
+              <p>2025 FCF/EV는 약 0.24%입니다. 여기서 바로 “비싸다”가 아니라, 시장이 정상화 FCF를 보고 있음을 표시합니다.</p>
+            </div>
+            <div class="step active">
+              <h4>2. 필요한 정상화 마진/FCF는?</h4>
+              <p>연환산 매출, 목표 영업이익률, FCF 전환율을 바꿔가며 현재 EV가 요구하는 현금창출력을 봅니다.</p>
+            </div>
+            <div class="step">
+              <h4>3. ROIC가 성장을 뒷받침하는가?</h4>
+              <p>고부가 부품 증설이 자본집약적이므로, 성장보다 성장의 질이 중요합니다.</p>
+            </div>
+            <div class="step">
+              <h4>4. 지속기간은 충분한가?</h4>
+              <p>AI 서버/전장 수요가 몇 년 지속되어야 현재 가격이 말이 되는지 CAP로 확인합니다.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <span class="badge gray">Step 2 계산 패널</span>
+          <div style="margin-top:10px" class="formula">
+            Required FCF1 = EV × (WACC - g)<br>
+            Required OPM = Required NOPAT / Revenue / (1 - tax rate)<br>
+            FCF conversion = FCF / NOPAT
+          </div>
+          <div class="calc-table">
+            <div class="calc-row header"><span>항목</span><span>예시값</span><span>왜 중요한가</span></div>
+            <div class="calc-row"><span>EV</span><strong>약 101.1조</strong><span>현재 시장이 매긴 기업가치</span></div>
+            <div class="calc-row"><span>WACC - g</span><strong>6.0%</strong><span>예: WACC 9%, g 3%</span></div>
+            <div class="calc-row"><span>필요 FCF</span><strong>약 6.1조</strong><span>영구 FCF 단순식 기준</span></div>
+            <div class="calc-row"><span>1Q26 연환산 매출</span><strong>약 12.8조</strong><span>3.2091조 × 4</span></div>
+            <div class="calc-row"><span>직관</span><strong>마진만으로 부족</strong><span>성장, 기간, 재투자 회수까지 함께 필요</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="warning">
+        이 계산은 일부러 단순화한 “첫 경고등”입니다. 필요 FCF 6.1조원은 2025 FCF 0.24조원과 큰 차이가 있으므로,
+        시스템은 바로 정답을 말하지 않고 “어떤 조합의 매출 성장, 마진, FCF 전환율, 초과수익 지속기간이 필요한가”로 분석을 넘깁니다.
+      </div>
+
+      <div class="panel">
+        <span class="badge gray">출처와 전제</span>
+        <div class="source-grid" style="margin-top:10px">
+          <div class="source"><strong>공식 연간</strong><span>삼성전기 Financial Information 2021~2025</span></div>
+          <div class="source"><strong>공식 분기</strong><span>1Q26 Business Performance, 2026-04-30</span></div>
+          <div class="source"><strong>시장 데이터</strong><span>yfinance/시장 quote, 타임스탬프 표시</span></div>
+          <div class="source"><strong>사용자 가정</strong><span>WACC, g, 정상화 OPM, FCF conversion</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="options">
+  <div class="option" data-choice="model_palette_approve" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>이 배치로 진행</h3>
+      <p>v3 일반 모형을 오른쪽 상단에 상시 표시하고, 삼성전기 분석을 계속 진행합니다.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="model_palette_revise" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>더 수정</h3>
+      <p>예: 모형 팔레트를 더 크게, 계산 패널을 더 쉽게, 또는 차트 중심으로 조정합니다.</p>
+    </div>
+  </div>
+</div>

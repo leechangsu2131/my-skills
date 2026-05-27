@@ -1,0 +1,170 @@
+<style>
+  .case-shell { display:grid; gap:18px; color:#172033; }
+  .case-hero { display:grid; grid-template-columns: 1fr 340px; gap:14px; }
+  .panel { background:#fff; border:1px solid #d8e1eb; border-radius:8px; padding:14px; }
+  .eyebrow { display:inline-flex; border-radius:99px; padding:4px 8px; background:#eef6f2; color:#0f766e; font-size:11px; font-weight:750; }
+  .title { font-size:26px; font-weight:780; margin:8px 0 8px; letter-spacing:0; }
+  .title span { color:#0f766e; }
+  .plain { color:#405064; font-size:14px; line-height:1.55; margin:0; }
+  .snapshot { display:grid; gap:8px; }
+  .snap-row { display:flex; justify-content:space-between; gap:12px; border-bottom:1px solid #edf1f5; padding-bottom:7px; font-size:12px; }
+  .snap-row:last-child { border-bottom:0; padding-bottom:0; }
+  .snap-row strong { text-align:right; }
+  .question-flow { display:grid; grid-template-columns: repeat(4,1fr); gap:10px; }
+  .q-card { border:1px solid #d8e1eb; border-radius:8px; background:#fff; padding:12px; min-height:122px; }
+  .q-num { width:24px; height:24px; border-radius:50%; display:grid; place-items:center; background:#172033; color:#fff; font-weight:750; font-size:12px; margin-bottom:8px; }
+  .q-card h4 { margin:0 0 6px; font-size:14px; }
+  .q-card p { margin:0; color:#596678; font-size:12px; line-height:1.4; }
+  .selected { border-color:#0f766e; box-shadow:0 0 0 2px rgba(15,118,110,.12); }
+  .selected .q-num { background:#0f766e; }
+  .main-grid { display:grid; grid-template-columns: 1fr 330px; gap:14px; }
+  .why-box { display:grid; gap:10px; }
+  .why-row { display:grid; grid-template-columns: 170px 1fr; gap:12px; align-items:start; border:1px solid #e2e8f0; border-radius:8px; padding:10px; background:#fff; }
+  .why-row strong { font-size:13px; }
+  .why-row p { margin:0; color:#596678; font-size:12px; line-height:1.45; }
+  .formula-warning { background:#fff7ed; border:1px solid #fed7aa; border-radius:8px; padding:12px; color:#7c2d12; font-size:13px; line-height:1.45; }
+  .model-map { display:grid; gap:8px; }
+  .model-row { display:grid; grid-template-columns: 1fr auto; gap:10px; border:1px solid #e2e8f0; border-radius:7px; padding:9px; background:#fff; font-size:12px; }
+  .tag { border-radius:99px; padding:4px 8px; font-size:11px; font-weight:750; background:#f1f5f9; color:#475569; white-space:nowrap; }
+  .tag.primary { background:#eef6f2; color:#0f766e; }
+  .trace-grid { display:grid; grid-template-columns: repeat(3,1fr); gap:10px; }
+  .trace { background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:10px; }
+  .trace strong { display:block; font-size:13px; margin-bottom:6px; }
+  .trace p { margin:0; color:#596678; font-size:12px; line-height:1.4; }
+  .next-step { border:1px solid #d8e1eb; border-radius:8px; padding:14px; background:#fff; }
+  @media (max-width: 940px) {
+    .case-hero, .main-grid, .question-flow, .trace-grid { grid-template-columns:1fr; }
+    .why-row { grid-template-columns:1fr; }
+  }
+</style>
+
+<h2>삼성전기와 함께 만드는 가치분석 흐름</h2>
+<p class="subtitle">수식이 아니라 투자 질문에서 출발합니다. 수식은 뒤에서 근거와 감사 추적으로 따라옵니다.</p>
+
+<div class="mockup">
+  <div class="mockup-header">Case study: Samsung Electro-Mechanics · 009150.KS</div>
+  <div class="mockup-body">
+    <div class="case-shell">
+      <div class="case-hero">
+        <div class="panel">
+          <span class="eyebrow">Case Lab · 삼성전기</span>
+          <div class="title">첫 질문: 이 주가는 <span>무슨 회복/성장</span>을 믿고 있나?</div>
+          <p class="plain">
+            삼성전기는 2025년 실적만 놓고 단순 멀티플을 보면 설명이 어려운 가격대입니다.
+            그래서 첫 화면의 역할은 “싸다/비싸다”가 아니라, 현재 가격이 어떤 미래를 요구하는지
+            하나씩 드러내는 것입니다.
+          </p>
+        </div>
+        <div class="panel snapshot">
+          <strong>데이터 스냅샷</strong>
+          <div class="snap-row"><span>종가</span><strong>1,340,000원<br><small>2026-05-22</small></strong></div>
+          <div class="snap-row"><span>시가총액</span><strong>약 101.2조원<br><small>자동수집값</small></strong></div>
+          <div class="snap-row"><span>2025 매출</span><strong>11.31조원<br><small>회사 IR</small></strong></div>
+          <div class="snap-row"><span>2025 영업이익</span><strong>0.91조원<br><small>회사 IR</small></strong></div>
+          <div class="snap-row"><span>2025 FCF</span><strong>0.24조원<br><small>OCF-CAPEX</small></strong></div>
+        </div>
+      </div>
+
+      <div class="question-flow">
+        <div class="q-card selected">
+          <div class="q-num">1</div>
+          <h4>미래 기대 크기</h4>
+          <p>현재 주가가 2025년 수익력보다 얼마나 먼 미래를 보고 있는지 확인합니다.</p>
+        </div>
+        <div class="q-card">
+          <div class="q-num">2</div>
+          <h4>마진 회복</h4>
+          <p>AI/고부가 제품 믹스가 영업이익률을 어디까지 끌어올려야 하는지 봅니다.</p>
+        </div>
+        <div class="q-card">
+          <div class="q-num">3</div>
+          <h4>자본효율</h4>
+          <p>FC-BGA, MLCC 투자가 충분한 ROIC를 만들 수 있는지 역산합니다.</p>
+        </div>
+        <div class="q-card">
+          <div class="q-num">4</div>
+          <h4>지속기간</h4>
+          <p>초과수익이 몇 년 유지되어야 현재 가격이 말이 되는지 CAP로 봅니다.</p>
+        </div>
+      </div>
+
+      <div class="main-grid">
+        <div class="panel">
+          <span class="eyebrow">왜 이 순서인가</span>
+          <div class="why-box" style="margin-top:10px">
+            <div class="why-row">
+              <strong>Reverse DCF를 먼저 쓰되, 결론으로 쓰지 않음</strong>
+              <p>2025 FCF가 작아서 단순 영구성장 모델은 “WACC에 가까운 성장률” 같은 불편한 결과를 냅니다. 이건 실패가 아니라, 시장이 현재 FCF가 아닌 미래 정상화 FCF를 보고 있다는 신호입니다.</p>
+            </div>
+            <div class="why-row">
+              <strong>삼성전기에는 Value Attribution이 중요</strong>
+              <p>현재 이익 기반 가치와 미래 성장 기대 가치를 나누면, 주가 중 얼마가 AI/고부가 부품 사이클에 걸린 돈인지 보입니다.</p>
+            </div>
+            <div class="why-row">
+              <strong>그 다음은 Margin, ROIC, CAP</strong>
+              <p>이 회사의 핵심은 “성장률 하나”보다 제품 믹스, 영업이익률, 투자수익률, 초과수익 지속기간입니다.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <span class="eyebrow">모형 선택</span>
+          <div class="model-map" style="margin-top:10px">
+            <div class="model-row"><span>Value Attribution</span><span class="tag primary">1순위</span></div>
+            <div class="model-row"><span>Reverse DCF 경고등</span><span class="tag primary">1순위</span></div>
+            <div class="model-row"><span>EV/Sales → implied margin</span><span class="tag primary">2순위</span></div>
+            <div class="model-row"><span>EV/NOPAT → implied ROIC</span><span class="tag primary">2순위</span></div>
+            <div class="model-row"><span>CAP 지속기간 역산</span><span class="tag">고급</span></div>
+            <div class="model-row"><span>P/E 단순 성장률</span><span class="tag">보조</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="formula-warning">
+        수식이 직관에 들어오지 않는 이유: 지금 필요한 질문은 “영구 FCF 성장률이 몇 %냐”보다
+        “2025년 0.24조 FCF가 어느 정도의 정상화 FCF/마진/ROIC로 바뀌어야 현재 시총 100조원을 설명하느냐”입니다.
+        그래서 이 케이스는 공식 선택 자체를 시스템이 설명해야 합니다.
+      </div>
+
+      <div class="trace-grid">
+        <div class="trace">
+          <strong>역사 데이터</strong>
+          <p>2021~2025 매출, 영업이익, 순이익, 자산, 부채비율은 회사 IR에서 가져옵니다.</p>
+        </div>
+        <div class="trace">
+          <strong>시장 데이터</strong>
+          <p>종가, 시가총액, 현금, 부채는 yfinance/시장 데이터에서 가져오고 날짜를 붙입니다.</p>
+        </div>
+        <div class="trace">
+          <strong>가정 데이터</strong>
+          <p>WACC, 정상화 마진, 장기 성장률, CAP 기간은 사용자가 조절하고 민감도를 봅니다.</p>
+        </div>
+      </div>
+
+      <div class="next-step">
+        <span class="eyebrow">다음 분석 단계</span>
+        <p class="plain" style="margin-top:8px">
+          1단계에서는 현재 주가가 2025년 실적 대비 얼마나 큰 미래 기대를 포함하는지 분해합니다.
+          그 다음 2단계에서 “정상화 영업이익률이 몇 %까지 가야 하는가”를 역산합니다.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="options">
+  <div class="option" data-choice="samsung_flow_approve" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>이 흐름으로 삼성전기 분석 시작</h3>
+      <p>미래 기대 크기 → 마진 회복 → ROIC → CAP 순서로 차근차근 분석합니다.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="samsung_flow_revise" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>분석 순서 수정</h3>
+      <p>예: MLCC/FC-BGA 사업 스토리부터, 또는 재무제표 정리부터 시작합니다.</p>
+    </div>
+  </div>
+</div>

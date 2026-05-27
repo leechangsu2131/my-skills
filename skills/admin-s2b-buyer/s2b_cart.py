@@ -122,16 +122,16 @@ async def run_cart_test():
             await browser.close()
             return
 
-        print("\\n2. 견적서 담기 테스트 (dry_run=True)...")
-        # 실제 담기를 하지 않고 UI까지만 조작하는 dry_run 모드 테스트
-        # 테스트용 물품 ID: 202407159099092 (A4용지)
-        item_id = "202407159099092"
-        success = await add_to_cart(page, item_id, quantity=2, dry_run=True)
-        
-        if success:
-            print("\\n✅ 견적서 담기 테스트 성공 (dry_run)!")
-        else:
-            print("\\n❌ 견적서 담기 테스트 실패")
+        print("\\n2. 견적서 담기 테스트 (dry_run=False)...")
+        item_ids = ["202604067720487", "202603107266074", "202410149686835"]
+        for item_id in item_ids:
+            print(f"\\n--- 테스트 물품: {item_id} ---")
+            success = await add_to_cart(page, item_id, quantity=1, dry_run=False)
+            if success:
+                print(f"✅ [{item_id}] 견적서 담기 성공!")
+            else:
+                print(f"❌ [{item_id}] 견적서 담기 실패")
+            await page.wait_for_timeout(2000)
 
         await page.wait_for_timeout(3000)
         await browser.close()

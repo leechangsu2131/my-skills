@@ -1,0 +1,53 @@
+flowchart TD
+    %% ══════════════════════════════════════
+    %%  공문 자동화 전체 흐름도
+    %% ══════════════════════════════════════
+
+    START([🗂️ ODT 공문 파일 수신]) --> PARSE
+
+    subgraph PHASE1["Phase 1 ✅ 완성 — parse_gongmun.py"]
+        PARSE["ODT 파일 열기\nzipfile + XML 파싱"]
+        PARSE --> EXTRACT["필드 추출\n시행번호 / 접수번호 / 일자\n제목 / 수신 / 발신처 / 관련공문"]
+        EXTRACT --> VALIDATE{추출 성공?}
+        VALIDATE -- 실패 --> ERR1["⚠️ 파싱 오류 출력\n수동 입력 안내"]
+        VALIDATE -- 성공 --> RESULT["📋 파싱 결과 dict 반환"]
+    end
+
+    RESULT --> SHOW["터미널/GUI에\n파싱 결과 미리보기 출력"]
+    SHOW --> CONFIRM{사용자 확인}
+    CONFIRM -- 수정 필요 --> EDIT["사용자가 값 직접 수정"]
+    EDIT --> CONFIRM
+    CONFIRM -- 진행 --> LAUNCH
+
+    subgraph PHASE2["Phase 2 🚧 구현 필요 — playwright_edufine.py"]
+        LAUNCH["Chromium 브라우저 실행\n에듀파인 URL 접속"]
+        LAUNCH --> LOGIN_WAIT["⏸️ 일시정지\n사용자 공동인증서 로그인 대기\n(수동)"]
+        LOGIN_WAIT --> LOGIN_DONE{로그인\n완료 감지}
+        LOGIN_DONE -- 미완료 --> LOGIN_WAIT
+        LOGIN_DONE -- 완료 --> NAV["기안 메뉴 탐색\n기안 양식 열기"]
+        NAV --> FILL["필드 자동 입력\n• 제목\n• 관련 공문번호\n• 시행일자 / 접수일자\n• 발신처"]
+        FILL --> BODY_WAIT["⏸️ 일시정지\n사용자 본문 붙여넣기 대기\n(LLM 초안 복붙)"]
+        BODY_WAIT --> DONE_WAIT{완료\n신호}
+        DONE_WAIT -- 계속 대기 --> BODY_WAIT
+        DONE_WAIT -- 완료 --> REVIEW["기안 화면 최종 확인\n(브라우저 유지)"]
+    end
+
+    REVIEW --> SUBMIT["⏸️ 사용자가 직접\n결재 상신 (수동)"]
+    SUBMIT --> END([✅ 완료])
+
+    subgraph PHASE3["Phase 3 🔲 선택 — gui_app.py"]
+        GUI["tkinter / PyQt6 GUI\n• 파일 선택 다이얼로그\n• 파싱 결과 미리보기 테이블\n• 에듀파인 자동 입력 버튼"]
+    end
+
+    %% 스타일
+    classDef done fill:#22c55e,color:#fff,stroke:none
+    classDef wip fill:#f59e0b,color:#fff,stroke:none
+    classDef todo fill:#94a3b8,color:#fff,stroke:none
+    classDef human fill:#3b82f6,color:#fff,stroke:none,stroke-dasharray:5 5
+    classDef error fill:#ef4444,color:#fff,stroke:none
+
+    class PARSE,EXTRACT,VALIDATE,RESULT done
+    class LAUNCH,LOGIN_DONE,NAV,FILL,REVIEW wip
+    class GUI todo
+    class LOGIN_WAIT,BODY_WAIT,SUBMIT human
+    class ERR1 error

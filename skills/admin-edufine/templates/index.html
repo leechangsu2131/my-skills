@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edufine Flow V3</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0f172a;
+            --surface: rgba(30, 41, 59, 0.7);
+            --surface-border: rgba(255, 255, 255, 0.1);
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #10b981;
+            --danger: #ef4444;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(59, 130, 246, 0.15), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(16, 185, 129, 0.15), transparent 25%);
+            background-attachment: fixed;
+        }
+        .container {
+            width: 90%;
+            max-width: 850px;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            background: var(--surface);
+            border: 1px solid var(--surface-border);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s ease;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 0 0 10px;
+            background: linear-gradient(135deg, #60a5fa, #34d399);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        p.subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            margin: 0;
+        }
+        .form-group {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        input[type="text"] {
+            flex: 1;
+            padding: 16px 20px;
+            border-radius: 12px;
+            border: 1px solid var(--surface-border);
+            background: rgba(15, 23, 42, 0.6);
+            color: var(--text);
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.2s;
+        }
+        input[type="text"]:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+        .btn {
+            padding: 16px 24px;
+            border-radius: 12px;
+            border: none;
+            background: var(--primary);
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .btn:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.4);
+        }
+        .btn:active {
+            transform: translateY(0);
+        }
+        .btn-accent {
+            background: var(--accent);
+        }
+        .btn-accent:hover {
+            background: #059669;
+            box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.4);
+        }
+        .btn-danger {
+            background: var(--danger);
+        }
+        .btn-danger:hover {
+            background: #dc2626;
+            box-shadow: 0 10px 15px -3px rgba(239, 68, 68, 0.4);
+        }
+        .console {
+            background: #0f172a;
+            border-radius: 16px;
+            padding: 20px;
+            height: 350px;
+            overflow-y: auto;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.95rem;
+            color: #a7f3d0;
+            border: 1px solid var(--surface-border);
+            margin-bottom: 30px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+            scroll-behavior: smooth;
+        }
+        .console p {
+            margin: 6px 0;
+            line-height: 1.5;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .console p.system { color: #94a3b8; }
+        .console p.highlight { color: #fcd34d; font-weight: bold; }
+        .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.3); }
+        .checkbox-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 30px;
+            color: var(--text-muted);
+        }
+        .checkbox-wrapper input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>Edufine Flow V4</h1>
+        <p class="subtitle">지능형 단일 공문 실기안 자동화 봇</p>
+    </div>
+
+    <div class="form-group" style="flex-direction: column; gap: 10px;">
+        <div style="display: flex; gap: 15px;">
+            <input type="text" id="filePath" placeholder="C:\path\to\document.odt (선택하지 않으면 빈 기안 또는 직접 입력한 내용으로 실행됩니다)" value="">
+            <button class="btn btn-accent" onclick="browseFile()" style="white-space: nowrap;">파일 찾기 📄</button>
+            <button class="btn" id="startBtn" onclick="startAutomation()">
+                기안 실행 ▶
+            </button>
+        </div>
+        
+        <div style="background: rgba(15, 23, 42, 0.4); border: 1px solid var(--surface-border); border-radius: 12px; padding: 15px; margin-top: 10px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <h3 style="margin: 0; font-size: 1.1rem; color: #a7f3d0;">🛒 구입 물품 목록 (S2B)</h3>
+                <button class="btn btn-accent" onclick="fetchS2B()" style="padding: 8px 16px; font-size: 0.9rem; background-color: #f59e0b; color: white;">S2B 장바구니 불러오기 🛒</button>
+            </div>
+            <textarea id="s2bItems" placeholder="[S2B 장바구니 불러오기] 버튼을 누르면 S2B에서 담은 물품 목록이 여기에 기록됩니다. (필요시 직접 수정 가능)" style="width: 100%; height: 80px; margin-bottom: 15px; padding: 10px; border-radius: 8px; background: rgba(15, 23, 42, 0.6); color: var(--text); border: 1px solid var(--surface-border); box-sizing: border-box; resize: vertical;"></textarea>
+            
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <h3 style="margin: 0; font-size: 1.1rem; color: #a7f3d0;">🤖 LLM 기안 작성 도우미</h3>
+                <button class="btn btn-accent" onclick="generatePrompt()" style="padding: 8px 16px; font-size: 0.9rem; background-color: #8b5cf6;">프롬프트 만들기 💡</button>
+            </div>
+            <textarea id="llmPrompt" placeholder="[프롬프트 만들기] 버튼을 누르면 여기에 질문이 만들어집니다. 복사해서 ChatGPT에 붙여넣으세요!" style="width: 100%; height: 80px; margin-bottom: 15px; padding: 10px; border-radius: 8px; background: #0f172a; color: var(--text-muted); border: 1px solid var(--surface-border); box-sizing: border-box;" readonly></textarea>
+            
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <input type="text" id="draftTitle" placeholder="ChatGPT가 작성해준 기안문 [제목]을 여기에 붙여넣으세요" style="padding: 12px; border-radius: 8px;">
+                <textarea id="draftSummary" placeholder="ChatGPT가 작성해준 기안문 [내용(개요)]을 여기에 붙여넣으세요" style="width: 100%; height: 100px; padding: 12px; border-radius: 8px; background: rgba(15, 23, 42, 0.6); color: var(--text); border: 1px solid var(--surface-border); box-sizing: border-box; resize: vertical; font-family: 'Inter', sans-serif;"></textarea>
+            </div>
+        </div>
+    </div>
+    
+    <div class="checkbox-wrapper">
+        <input type="checkbox" id="dryRun" name="dryRun">
+        <label for="dryRun">브라우저 폼 입력 없는 엑셀 리포트 테스트 모드 (Dry Run)</label>
+    </div>
+
+    <div class="console" id="logConsole">
+        <p class="system">시스템이 준비되었습니다. ODT 파일을 선택하고 [기안 실행] 버튼을 클릭하세요.</p>
+    </div>
+
+    <div id="interactiveControls" style="display: none; background: rgba(15, 23, 42, 0.4); border: 1px solid var(--surface-border); border-radius: 12px; padding: 15px; margin-top: 10px; text-align: center;">
+        <h3 style="margin-top: 0; color: #a7f3d0;">⏳ 봇 대기 중: 예산 선택 후 다음 작업을 선택하세요</h3>
+        <button class="btn btn-secondary" onclick="triggerEvent('add_row')" style="margin-right: 10px; background: #f59e0b;">기록된 물품으로 행추가 하기 ➕</button>
+        <button class="btn btn-primary" onclick="triggerEvent('next')">기안 완료 (다음 진행) ▶</button>
+    </div>
+</div>
+
+<script>
+    const logConsole = document.getElementById('logConsole');
+    let evtSource = null;
+
+    function appendLog(msg, type = 'normal') {
+        const p = document.createElement('p');
+        p.textContent = msg;
+        if (type === 'system') {
+            p.className = 'system';
+        } else if (msg.includes("[공문 수동 작업 대기]")) {
+            p.className = 'highlight';
+        }
+        logConsole.appendChild(p);
+        logConsole.scrollTop = logConsole.scrollHeight;
+        
+        // 동적 버튼 표시 로직
+        if (msg.includes("[공문 수동 작업 대기]")) {
+            document.getElementById('interactiveControls').style.display = 'flex';
+        }
+    }
+
+    function triggerEvent(eventType) {
+        if(eventType === 'next') {
+            document.getElementById('interactiveControls').style.display = 'none';
+        }
+        
+        let logMsg = eventType === 'next' ? "[시스템] '기안 완료' 신호를 봇에게 전송했습니다..." : "[시스템] '행추가' 신호를 봇에게 전송했습니다...";
+        appendLog(logMsg, 'system');
+        
+        let itemsText = document.getElementById('s2bItems') ? document.getElementById('s2bItems').value : "";
+        
+        fetch('/api/trigger-event', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({event: eventType, items: itemsText})
+        });
+    }
+
+    async function browseFile() {
+        try {
+            let res = await fetch('/api/browse-file');
+            let data = await res.json();
+            if(data.path) {
+                document.getElementById('filePath').value = data.path;
+            }
+        } catch(e) {
+            console.error(e);
+            alert("파일 탐색기를 여는 중 오류가 발생했습니다.");
+        }
+    }
+    
+    async function fetchS2B() {
+        const s2bArea = document.getElementById('s2bItems');
+        s2bArea.value = "S2B 장바구니 데이터를 읽어오는 중입니다. 브라우저 창이 열리면 잠시 대기해주세요...";
+        
+        try {
+            let res = await fetch('/api/fetch-s2b');
+            let data = await res.json();
+            if (data.error) {
+                s2bArea.value = "오류 발생: " + data.error;
+            } else {
+                s2bArea.value = data.item_list;
+            }
+        } catch(e) {
+            s2bArea.value = "서버와 통신하는 중 오류가 발생했습니다.";
+        }
+    }
+    
+    async function generatePrompt() {
+        const promptArea = document.getElementById('llmPrompt');
+        let filePath = document.getElementById('filePath').value;
+        let s2bItems = document.getElementById('s2bItems').value;
+        
+        promptArea.value = "프롬프트 데이터를 생성 중입니다. 잠시만 기다려주세요...";
+        
+        try {
+            let res = await fetch('/api/generate-prompt', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({path: filePath, items: s2bItems})
+            });
+            let data = await res.json();
+            if (data.error) {
+                promptArea.value = "오류 발생: " + data.error;
+            } else {
+                promptArea.value = data.prompt;
+                // 클립보드에 자동 복사 시도
+                try {
+                    await navigator.clipboard.writeText(data.prompt);
+                    alert("프롬프트가 클립보드에 복사되었습니다!\nChatGPT 입력창에 [붙여넣기] 하세요.");
+                } catch(err) {
+                    // 클립보드 접근 거부 시 직접 복사 안내
+                    alert("프롬프트가 생성되었습니다. 텍스트 박스 안의 내용을 직접 복사해주세요.");
+                }
+            }
+        } catch(e) {
+            promptArea.value = "서버와 통신하는 중 오류가 발생했습니다.";
+        }
+    }
+
+    function startAutomation() {
+        let filePath = document.getElementById('filePath').value;
+        const dryRun = document.getElementById('dryRun').checked;
+        const draftTitle = document.getElementById('draftTitle').value;
+        const draftSummary = document.getElementById('draftSummary').value;
+
+        document.getElementById('startBtn').disabled = true;
+        document.getElementById('startBtn').style.opacity = '0.5';
+        document.getElementById('interactiveControls').style.display = 'none';
+        logConsole.innerHTML = '';
+        appendLog('파이프라인을 초기화하는 중...', 'system');
+
+        fetch('/api/start', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({path: filePath, dry_run: dryRun, title: draftTitle, summary: draftSummary})
+        })
+        .then(res => res.json())
+        .then(data => {
+            if(data.error) {
+                appendLog(`에러: ${data.error}`, 'system');
+                document.getElementById('startBtn').disabled = false;
+                document.getElementById('startBtn').style.opacity = '1';
+                return;
+            }
+            if(!evtSource) setupSSE();
+        })
+        .catch(e => {
+            appendLog(`통신 오류: ${e}`, 'system');
+            document.getElementById('startBtn').disabled = false;
+            document.getElementById('startBtn').style.opacity = '1';
+        });
+    }
+
+    function setupSSE() {
+        if(evtSource) {
+            evtSource.close();
+        }
+        evtSource = new EventSource('/api/stream');
+        evtSource.onmessage = function(e) {
+            if (e.data === 'ping') return;
+            const data = JSON.parse(e.data);
+            if (data.type === 'log') {
+                appendLog(data.text);
+            } else if (data.type === 'done') {
+                appendLog('▶️ 전체 파이프라인 처리가 종료되었습니다.', 'system');
+                document.getElementById('startBtn').disabled = false;
+                document.getElementById('startBtn').style.opacity = '1';
+                evtSource.close();
+                evtSource = null;
+            }
+        };
+        evtSource.onerror = function() {
+            appendLog('서버 연결이 종료되었습니다. (버튼이 다시 활성화됩니다)', 'system');
+            document.getElementById('startBtn').disabled = false;
+            document.getElementById('startBtn').style.opacity = '1';
+            evtSource.close();
+            evtSource = null;
+        };
+    }
+</script>
+
+</body>
+</html>

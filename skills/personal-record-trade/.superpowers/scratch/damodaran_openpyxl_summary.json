@@ -1,0 +1,4095 @@
+{
+  "file": "D:\\Downloads\\fcffsimpleginzu.xlsx",
+  "sheets": [
+    {
+      "name": "Input sheet",
+      "max_row": 74,
+      "max_column": 14,
+      "freeze_panes": null,
+      "merged_ranges": [
+        "A5:J5",
+        "E33:J33",
+        "A43:B43",
+        "L23:N23",
+        "E21:N21",
+        "F7:I11",
+        "D11:D15",
+        "C35:D35"
+      ]
+    },
+    {
+      "name": "Valuation output",
+      "max_row": 40,
+      "max_column": 14,
+      "freeze_panes": null,
+      "merged_ranges": [
+        "D27:F32"
+      ]
+    },
+    {
+      "name": "Stories to Numbers",
+      "max_row": 40,
+      "max_column": 13,
+      "freeze_panes": null,
+      "merged_ranges": [
+        "A37:C37",
+        "H16:K27",
+        "E33:F33",
+        "E39:F39",
+        "A28:G28",
+        "A33:C33",
+        "H9:K14",
+        "A32:C32",
+        "D13:E13",
+        "A3:G6",
+        "A15:G15",
+        "A35:C35",
+        "A29:C29",
+        "A38:C38",
+        "A31:C31",
+        "A30:C30",
+        "A7:G7",
+        "A39:C39",
+        "A34:C34",
+        "H3:K6",
+        "A36:C36",
+        "A1:F1",
+        "H29:K39",
+        "A2:G2"
+      ]
+    },
+    {
+      "name": "Valuation as picture",
+      "max_row": 38,
+      "max_column": 16,
+      "freeze_panes": null,
+      "merged_ranges": [
+        "O3:P3",
+        "A3:N3",
+        "G32:I32",
+        "H6:I12",
+        "A5:C5",
+        "O6:P6",
+        "E5:F5",
+        "K5:L5",
+        "H5:I5",
+        "E6:F12",
+        "D32:E32",
+        "D33:E38",
+        "K6:L12",
+        "G33:I38"
+      ]
+    },
+    {
+      "name": "Diagnostics",
+      "max_row": 42,
+      "max_column": 7,
+      "freeze_panes": null,
+      "merged_ranges": [
+        "D1:E1",
+        "B37:C37"
+      ]
+    },
+    {
+      "name": "Option value",
+      "max_row": 29,
+      "max_column": 7,
+      "freeze_panes": null,
+      "merged_ranges": [
+        "A1:D2"
+      ]
+    },
+    {
+      "name": "Synthetic rating",
+      "max_row": 60,
+      "max_column": 25,
+      "freeze_panes": null,
+      "merged_ranges": [
+        "J19:T19",
+        "A1:L2"
+      ]
+    },
+    {
+      "name": "R& D converter",
+      "max_row": 141,
+      "max_column": 10,
+      "freeze_panes": null,
+      "merged_ranges": []
+    },
+    {
+      "name": "Operating lease converter",
+      "max_row": 34,
+      "max_column": 12,
+      "freeze_panes": null,
+      "merged_ranges": [
+        "H3:L11"
+      ]
+    },
+    {
+      "name": "Cost of capital worksheet",
+      "max_row": 89,
+      "max_column": 18,
+      "freeze_panes": null,
+      "merged_ranges": [
+        "M5:Q19",
+        "A4:E9",
+        "M44:O48",
+        "A80:F81",
+        "M60:O64",
+        "A69:F69",
+        "A15:F15",
+        "A1:K2",
+        "A65:F65",
+        "A3:E3"
+      ]
+    },
+    {
+      "name": "Failure Rate worksheet",
+      "max_row": 37,
+      "max_column": 24,
+      "freeze_panes": null,
+      "merged_ranges": [
+        "A19:A28",
+        "A4:K4",
+        "O17:X17"
+      ]
+    },
+    {
+      "name": "Country equity risk premiums",
+      "max_row": 228,
+      "max_column": 6,
+      "freeze_panes": null,
+      "merged_ranges": [
+        "A226:C226"
+      ]
+    },
+    {
+      "name": "Industry Averages(US)",
+      "max_row": 97,
+      "max_column": 27,
+      "freeze_panes": "E2",
+      "merged_ranges": []
+    },
+    {
+      "name": "Industry Average Beta (Global)",
+      "max_row": 97,
+      "max_column": 27,
+      "freeze_panes": null,
+      "merged_ranges": []
+    },
+    {
+      "name": "Input Stat Distributioons",
+      "max_row": 97,
+      "max_column": 20,
+      "freeze_panes": null,
+      "merged_ranges": [
+        "L1:N1",
+        "C1:E1",
+        "P1:R1",
+        "F1:H1",
+        "I1:K1"
+      ]
+    },
+    {
+      "name": "Trailing 12 month Worskheet",
+      "max_row": 45,
+      "max_column": 6,
+      "freeze_panes": null,
+      "merged_ranges": [
+        "C23:C28",
+        "A1:F4"
+      ]
+    },
+    {
+      "name": "Answer keys",
+      "max_row": 16,
+      "max_column": 10,
+      "freeze_panes": null,
+      "merged_ranges": []
+    }
+  ],
+  "defined_names": [],
+  "term_hits": {
+    "revenue": [
+      {
+        "cell": "Input sheet!A11",
+        "value": "Revenues",
+        "computed": "Revenues"
+      },
+      {
+        "cell": "Input sheet!E25",
+        "value": "Revenue growth in the most recent year =",
+        "computed": "Revenue growth in the most recent year ="
+      },
+      {
+        "cell": "Input sheet!A26",
+        "value": "Revenue growth rate for next year",
+        "computed": "Revenue growth rate for next year"
+      },
+      {
+        "cell": "Input sheet!A28",
+        "value": "Compounded annual revenue growth rate - years 2-5 =",
+        "computed": "Compounded annual revenue growth rate - years 2-5 ="
+      },
+      {
+        "cell": "Input sheet!E34",
+        "value": "Revenues in year 10, based on your revenue growth =",
+        "computed": "Revenues in year 10, based on your revenue growth ="
+      },
+      {
+        "cell": "Valuation output!A2",
+        "value": "Revenue growth rate",
+        "computed": "Revenue growth rate"
+      },
+      {
+        "cell": "Valuation output!A3",
+        "value": "Revenues",
+        "computed": "Revenues"
+      },
+      {
+        "cell": "Stories to Numbers!A9",
+        "value": "Revenues (a)",
+        "computed": "Revenues (a)"
+      },
+      {
+        "cell": "Stories to Numbers!B16",
+        "value": "Revenues",
+        "computed": "Revenues"
+      },
+      {
+        "cell": "Stories to Numbers!H16",
+        "value": "These are the numbers that come from your assumptions. The revenues over time reflect your revenue growth, the operating margins evolve towards your target margin and your tax rate will change, if you have set it to. The reinvestment is estimated using the sales to capital ratio for the first 10 years and based on a reinvestment rate in stable growth (g/ ROC).",
+        "computed": "These are the numbers that come from your assumptions. The revenues over time reflect your revenue growth, the operating margins evolve towards your target margin and your tax rate will change, if you have set it to. The reinvestment is estimated using the sales to capital ratio for the first 10 years and based on a reinvestment rate in stable growth (g/ ROC)."
+      },
+      {
+        "cell": "Valuation as picture!A7",
+        "value": "Revenue Growth",
+        "computed": "Revenue Growth"
+      },
+      {
+        "cell": "Valuation as picture!A8",
+        "value": "Revenue",
+        "computed": "Revenue"
+      },
+      {
+        "cell": "Valuation as picture!D16",
+        "value": "Revenue Growth",
+        "computed": "Revenue Growth"
+      },
+      {
+        "cell": "Valuation as picture!D17",
+        "value": "Revenue",
+        "computed": "Revenue"
+      },
+      {
+        "cell": "Diagnostics!A1",
+        "value": "Step 1: Check revenue growth rate",
+        "computed": "Step 1: Check revenue growth rate"
+      },
+      {
+        "cell": "Diagnostics!G2",
+        "value": "1. If you are forecasting a revenue growth rate > industry average, is your company small?",
+        "computed": "1. If you are forecasting a revenue growth rate > industry average, is your company small?"
+      },
+      {
+        "cell": "Diagnostics!A3",
+        "value": "Annual Revenue Growth Rate",
+        "computed": "Annual Revenue Growth Rate"
+      },
+      {
+        "cell": "Diagnostics!G3",
+        "value": "2. If your forecasted revenue growth rate is very different from your company's most recent year of growth, what is the reason?",
+        "computed": "2. If your forecasted revenue growth rate is very different from your company's most recent year of growth, what is the reason?"
+      },
+      {
+        "cell": "Diagnostics!A5",
+        "value": "Step 2: Check dollar revenues",
+        "computed": "Step 2: Check dollar revenues"
+      },
+      {
+        "cell": "Diagnostics!A7",
+        "value": "Revenues",
+        "computed": "Revenues"
+      },
+      {
+        "cell": "Diagnostics!G7",
+        "value": "2. How much revenues do the biggest companies in that market make today?",
+        "computed": "2. How much revenues do the biggest companies in that market make today?"
+      },
+      {
+        "cell": "Diagnostics!G21",
+        "value": "1. Is your reinvestment consitent with your revenue growth forecast?",
+        "computed": "1. Is your reinvestment consitent with your revenue growth forecast?"
+      },
+      {
+        "cell": "Diagnostics!A39",
+        "value": "Revenue growth rate (input cell B25, B27)",
+        "computed": "Revenue growth rate (input cell B25, B27)"
+      },
+      {
+        "cell": "Diagnostics!B39",
+        "value": "Increase revenue growth rate",
+        "computed": "Increase revenue growth rate"
+      },
+      {
+        "cell": "Diagnostics!C39",
+        "value": "Decrease revenue growth rate",
+        "computed": "Decrease revenue growth rate"
+      },
+      {
+        "cell": "Cost of capital worksheet!H4",
+        "value": "Revenues",
+        "computed": "Revenues"
+      },
+      {
+        "cell": "Cost of capital worksheet!M5",
+        "value": "The last two rows in each of country/region risk premium tables is set aside for your input to provide you with flexibility to enter some numbers directly. For instance, assume that you have a company that breaks its revenues down into three countries and then puts the rest into \"Rest of the World\". You can enter the \"Rest of the World\" in one of these two rows and enter an equity risk premium for the rest of the world. The easiest way to do that is to go into the country equity risk premium worksheet and change the GDP for the three countries that you have data for to zero and compute the global weighted average ERP for the remaining countries. With the regional worksheet, you can use the last two rows to enter the data for an individual country (usually the domestic country) that might be broken out though the rest of the revenues are broken down by region. You can look up the ERP for the country in the country ERP worksheet.",
+        "computed": "The last two rows in each of country/region risk premium tables is set aside for your input to provide you with flexibility to enter some numbers directly. For instance, assume that you have a company that breaks its revenues down into three countries and then puts the rest into \"Rest of the World\". You can enter the \"Rest of the World\" in one of these two rows and enter an equity risk premium for the rest of the world. The easiest way to do that is to go into the country equity risk premium worksheet and change the GDP for the three countries that you have data for to zero and compute the global weighted average ERP for the remaining countries. With the regional worksheet, you can use the last two rows to enter the data for an individual country (usually the domestic country) that might be broken out though the rest of the revenues are broken down by region. You can look up the ERP for the country in the country ERP worksheet."
+      },
+      {
+        "cell": "Cost of capital worksheet!H20",
+        "value": "Revenues",
+        "computed": "Revenues"
+      },
+      {
+        "cell": "Cost of capital worksheet!H35",
+        "value": "Revenues",
+        "computed": "Revenues"
+      },
+      {
+        "cell": "Cost of capital worksheet!H51",
+        "value": "Revenues",
+        "computed": "Revenues"
+      },
+      {
+        "cell": "Failure Rate worksheet!A36",
+        "value": "3. The likelihood of failure decreases as revenue growth increases, since hope for future growth will sustain the firm.",
+        "computed": "3. The likelihood of failure decreases as revenue growth increases, since hope for future growth will sustain the firm."
+      },
+      {
+        "cell": "Industry Averages(US)!C1",
+        "value": "Annual Average Revenue growth - Last 5 years",
+        "computed": "Annual Average Revenue growth - Last 5 years"
+      },
+      {
+        "cell": "Industry Averages(US)!T1",
+        "value": "Non-cash WC as % of Revenues",
+        "computed": "Non-cash WC as % of Revenues"
+      },
+      {
+        "cell": "Industry Averages(US)!U1",
+        "value": "Cap Ex as % of Revenues",
+        "computed": "Cap Ex as % of Revenues"
+      },
+      {
+        "cell": "Industry Averages(US)!V1",
+        "value": "Net Cap Ex as % of Revenues",
+        "computed": "Net Cap Ex as % of Revenues"
+      },
+      {
+        "cell": "Industry Average Beta (Global)!C1",
+        "value": "Annual Average Revenue growth - Last 5 years",
+        "computed": "Annual Average Revenue growth - Last 5 years"
+      },
+      {
+        "cell": "Industry Average Beta (Global)!T1",
+        "value": "Non-cash WC as % of Revenues",
+        "computed": "Non-cash WC as % of Revenues"
+      },
+      {
+        "cell": "Industry Average Beta (Global)!U1",
+        "value": "Cap Ex as % of Revenues",
+        "computed": "Cap Ex as % of Revenues"
+      },
+      {
+        "cell": "Industry Average Beta (Global)!V1",
+        "value": "Net Cap Ex as % of Revenues",
+        "computed": "Net Cap Ex as % of Revenues"
+      },
+      {
+        "cell": "Input Stat Distributioons!C1",
+        "value": "Revenue Growth Rate = Last 3 years",
+        "computed": "Revenue Growth Rate = Last 3 years"
+      },
+      {
+        "cell": "Trailing 12 month Worskheet!A7",
+        "value": "Revenues",
+        "computed": "Revenues"
+      }
+    ],
+    "operating": [
+      {
+        "cell": "Input sheet!A12",
+        "value": "Operating income or EBIT",
+        "computed": "Operating income or EBIT"
+      },
+      {
+        "cell": "Input sheet!A17",
+        "value": "Do you have operating lease commitments?",
+        "computed": "Do you have operating lease commitments?"
+      },
+      {
+        "cell": "Input sheet!A19",
+        "value": "Cross holdings and other non-operating assets",
+        "computed": "Cross holdings and other non-operating assets"
+      },
+      {
+        "cell": "Input sheet!E26",
+        "value": "Pre-tax operating margin in the most recent year =",
+        "computed": "Pre-tax operating margin in the most recent year ="
+      },
+      {
+        "cell": "Input sheet!A27",
+        "value": "Operating Margin for next year",
+        "computed": "Operating Margin for next year"
+      },
+      {
+        "cell": "Input sheet!A29",
+        "value": "Target pre-tax operating margin =",
+        "computed": "Target pre-tax operating margin ="
+      },
+      {
+        "cell": "Input sheet!E35",
+        "value": "Pre-tax Operating Income in year 10, based on your operating margin =",
+        "computed": "Pre-tax Operating Income in year 10, based on your operating margin ="
+      },
+      {
+        "cell": "Valuation output!A4",
+        "value": "EBIT (Operating) margin",
+        "computed": "EBIT (Operating) margin"
+      },
+      {
+        "cell": "Valuation output!A5",
+        "value": "EBIT (Operating income)",
+        "computed": "EBIT (Operating income)"
+      },
+      {
+        "cell": "Valuation output!B5",
+        "value": "=IF('Input sheet'!B17=\"Yes\",IF('Input sheet'!B16=\"Yes\",'Input sheet'!B12+'Operating lease converter'!F32+'R& D converter'!D39,'Input sheet'!B12+'Operating lease converter'!F32),IF('Input sheet'!B16=\"Yes\",'Input sheet'!B12+'R& D converter'!D39,'Input sheet'!B12))",
+        "computed": 13815
+      },
+      {
+        "cell": "Valuation output!A24",
+        "value": "Value of operating assets =",
+        "computed": "Value of operating assets ="
+      },
+      {
+        "cell": "Valuation output!B25",
+        "value": "=IF('Input sheet'!B17=\"Yes\",'Input sheet'!B15+'Operating lease converter'!C28,'Input sheet'!B15)",
+        "computed": 45063
+      },
+      {
+        "cell": "Valuation output!A28",
+        "value": "+ Non-operating assets",
+        "computed": "+ Non-operating assets"
+      },
+      {
+        "cell": "Valuation output!B39",
+        "value": "=IF('Input sheet'!B17=\"Yes\",IF('Input sheet'!B16=\"Yes\",'Input sheet'!B14+'Input sheet'!B15-'Input sheet'!B18+'Operating lease converter'!F33+'R& D converter'!D35,'Input sheet'!B14+'Input sheet'!B15-'Input sheet'!B18+'Operating lease converter'!F33),IF('Input sheet'!B16=\"Yes\",'Input sheet'!B14+'Input sheet'!B15-'Input sheet'!B18+'R& D converter'!D35,'Input sheet'!B14+'Input sheet'!B15-'Input sheet'!B18))",
+        "computed": 51916
+      },
+      {
+        "cell": "Stories to Numbers!A10",
+        "value": "Operating margin (b)",
+        "computed": "Operating margin (b)"
+      },
+      {
+        "cell": "Stories to Numbers!C16",
+        "value": "Operating Margin",
+        "computed": "Operating Margin"
+      },
+      {
+        "cell": "Stories to Numbers!H16",
+        "value": "These are the numbers that come from your assumptions. The revenues over time reflect your revenue growth, the operating margins evolve towards your target margin and your tax rate will change, if you have set it to. The reinvestment is estimated using the sales to capital ratio for the first 10 years and based on a reinvestment rate in stable growth (g/ ROC).",
+        "computed": "These are the numbers that come from your assumptions. The revenues over time reflect your revenue growth, the operating margins evolve towards your target margin and your tax rate will change, if you have set it to. The reinvestment is estimated using the sales to capital ratio for the first 10 years and based on a reinvestment rate in stable growth (g/ ROC)."
+      },
+      {
+        "cell": "Stories to Numbers!H29",
+        "value": "This is the output from your valuation. It reflects your cash flows being discounted back at the cost of capital to get to your operating asset value, which then gets adjusted for the likelihood that your firm will not make it. We add cash and non-operating assets, subtract out debt and minority interests to get to value of equity.",
+        "computed": "This is the output from your valuation. It reflects your cash flows being discounted back at the cost of capital to get to your operating asset value, which then gets adjusted for the likelihood that your firm will not make it. We add cash and non-operating assets, subtract out debt and minority interests to get to value of equity."
+      },
+      {
+        "cell": "Stories to Numbers!A32",
+        "value": "Value of operating assets =",
+        "computed": "Value of operating assets ="
+      },
+      {
+        "cell": "Stories to Numbers!A35",
+        "value": "+ Cash & Other Non-operating assets",
+        "computed": "+ Cash & Other Non-operating assets"
+      },
+      {
+        "cell": "Valuation as picture!A9",
+        "value": "Operating Margin",
+        "computed": "Operating Margin"
+      },
+      {
+        "cell": "Valuation as picture!A10",
+        "value": "Operating Income",
+        "computed": "Operating Income"
+      },
+      {
+        "cell": "Valuation as picture!D18",
+        "value": "Operating Margin",
+        "computed": "Operating Margin"
+      },
+      {
+        "cell": "Valuation as picture!D19",
+        "value": "Operating Income",
+        "computed": "Operating Income"
+      },
+      {
+        "cell": "Diagnostics!A12",
+        "value": "Operating Margin",
+        "computed": "Operating Margin"
+      },
+      {
+        "cell": "Diagnostics!A21",
+        "value": "PV of after-tax operating income for next 10 yearas",
+        "computed": "PV of after-tax operating income for next 10 yearas"
+      },
+      {
+        "cell": "Diagnostics!A40",
+        "value": "Operating margin (B26, B28)",
+        "computed": "Operating margin (B26, B28)"
+      },
+      {
+        "cell": "Diagnostics!B40",
+        "value": "Increase the target pre-tax operating margin",
+        "computed": "Increase the target pre-tax operating margin"
+      },
+      {
+        "cell": "Diagnostics!C40",
+        "value": "Decrease the target pre-tax operating margin",
+        "computed": "Decrease the target pre-tax operating margin"
+      },
+      {
+        "cell": "Synthetic rating!A1",
+        "value": "If you have negative operating income, this spreadsheet will offer you a D rating. Do not use that rating as your cost of debt for a going concern. Insread give your company a low, but going concern rating like BB and use that cost of debt.",
+        "computed": "If you have negative operating income, this spreadsheet will offer you a D rating. Do not use that rating as your cost of debt for a going concern. Insread give your company a low, but going concern rating like BB and use that cost of debt."
+      },
+      {
+        "cell": "Synthetic rating!F8",
+        "value": "=IF('Input sheet'!B17=\"Yes\",'Input sheet'!B12+'Operating lease converter'!F32,'Input sheet'!B12)",
+        "computed": 13815
+      },
+      {
+        "cell": "Synthetic rating!F9",
+        "value": "=IF('Input sheet'!B17=\"Yes\",'Cost of capital worksheet'!B31+'Operating lease converter'!C28*'Operating lease converter'!C15,'Cost of capital worksheet'!B31)",
+        "computed": 1581
+      },
+      {
+        "cell": "Synthetic rating!F13",
+        "value": "Note: If you get REF! All over the place, set the operating lease commitment question in cell F5",
+        "computed": "Note: If you get REF! All over the place, set the operating lease commitment question in cell F5"
+      },
+      {
+        "cell": "R& D converter!A2",
+        "value": "This spreadsheet converts R&D expenses from operating to capital expenses. It makes the appropriate adjustments to operating income, net",
+        "computed": "This spreadsheet converts R&D expenses from operating to capital expenses. It makes the appropriate adjustments to operating income, net"
+      },
+      {
+        "cell": "R& D converter!A39",
+        "value": "Adjustment to Operating Income =",
+        "computed": "Adjustment to Operating Income ="
+      },
+      {
+        "cell": "R& D converter!E39",
+        "value": "! A positive number indicates an increase in operating income (add to reported EBIT)",
+        "computed": "! A positive number indicates an increase in operating income (add to reported EBIT)"
+      },
+      {
+        "cell": "Operating lease converter!A1",
+        "value": "Operating Lease Converter",
+        "computed": "Operating Lease Converter"
+      },
+      {
+        "cell": "Operating lease converter!H3",
+        "value": "Until 2019, this worksheet had to be used for every firm with operating lease commitments, since accountants treated operating lease expenses as operating expenses. In 2019, IFRS and GAAP made the long-overdue change to treat leases as debt, and for firms that follow these standards, the conversion that I am doing on this spreadsheet is being done by accountants, with lease debt and operating income already adjusted. If that is the case, and you showed the lease debt as part of debt in the input page, please do not use this spreadsheet, since you will be double counting.",
+        "computed": "Until 2019, this worksheet had to be used for every firm with operating lease commitments, since accountants treated operating lease expenses as operating expenses. In 2019, IFRS and GAAP made the long-overdue change to treat leases as debt, and for firms that follow these standards, the conversion that I am doing on this spreadsheet is being done by accountants, with lease debt and operating income already adjusted. If that is the case, and you showed the lease debt as part of debt in the input page, please do not use this spreadsheet, since you will be double counting."
+      },
+      {
+        "cell": "Operating lease converter!A4",
+        "value": "Operating lease expense in current year =",
+        "computed": "Operating lease expense in current year ="
+      },
+      {
+        "cell": "Operating lease converter!A5",
+        "value": "Operating Lease Commitments (From footnote to financials)",
+        "computed": "Operating Lease Commitments (From footnote to financials)"
+      },
+      {
+        "cell": "Operating lease converter!A20",
+        "value": "Converting Operating Leases into debt",
+        "computed": "Converting Operating Leases into debt"
+      },
+      {
+        "cell": "Operating lease converter!A31",
+        "value": "Depreciation on Operating Lease Asset =",
+        "computed": "Depreciation on Operating Lease Asset ="
+      },
+      {
+        "cell": "Operating lease converter!A32",
+        "value": "Adjustment to Operating Earnings =",
+        "computed": "Adjustment to Operating Earnings ="
+      },
+      {
+        "cell": "Operating lease converter!G32",
+        "value": "! Add this amount to pre-tax operating income",
+        "computed": "! Add this amount to pre-tax operating income"
+      },
+      {
+        "cell": "Cost of capital worksheet!G3",
+        "value": "Operating Countries ERP calculator",
+        "computed": "Operating Countries ERP calculator"
+      },
+      {
+        "cell": "Cost of capital worksheet!G19",
+        "value": "Operating Regions ERP calculator",
+        "computed": "Operating Regions ERP calculator"
+      },
+      {
+        "cell": "Cost of capital worksheet!B25",
+        "value": "Operating regions",
+        "computed": "Operating regions"
+      },
+      {
+        "cell": "Cost of capital worksheet!B27",
+        "value": "=IF(B25=\"Will Input\",B26,IF(B25=\"Country of Incorporation\",VLOOKUP('Input sheet'!B7,'Country equity risk premiums'!A5:E195,4),IF(B25=\"Operating regions\",'Cost of capital worksheet'!K32,'Cost of capital worksheet'!K18)))",
+        "computed": 0.05641573374379239
+      },
+      {
+        "cell": "Cost of capital worksheet!A45",
+        "value": "Debt value of operating leases =",
+        "computed": "Debt value of operating leases ="
+      },
+      {
+        "cell": "Cost of capital worksheet!B45",
+        "value": "=IF('Input sheet'!B17=\"Yes\",'Operating lease converter'!F33,0)",
+        "computed": 0
+      },
+      {
+        "cell": "Cost of capital worksheet!A55",
+        "value": "Value of Debt in Operating leases =",
+        "computed": "Value of Debt in Operating leases ="
+      },
+      {
+        "cell": "Industry Averages(US)!D1",
+        "value": "Pre-tax Operating Margin (Unadjusted)",
+        "computed": "Pre-tax Operating Margin (Unadjusted)"
+      },
+      {
+        "cell": "Industry Averages(US)!AA1",
+        "value": "Pre-tax Operating Margin (Lease & R&D adjusted)",
+        "computed": "Pre-tax Operating Margin (Lease & R&D adjusted)"
+      },
+      {
+        "cell": "Industry Average Beta (Global)!D1",
+        "value": "Pre-tax Operating Margin (Unadjusted)",
+        "computed": "Pre-tax Operating Margin (Unadjusted)"
+      },
+      {
+        "cell": "Industry Average Beta (Global)!AA1",
+        "value": "Pre-tax Operating Margin (Lease & R&D adjusted)",
+        "computed": "Pre-tax Operating Margin (Lease & R&D adjusted)"
+      },
+      {
+        "cell": "Input Stat Distributioons!F1",
+        "value": "Pre-tax Operating Margin",
+        "computed": "Pre-tax Operating Margin"
+      },
+      {
+        "cell": "Trailing 12 month Worskheet!A9",
+        "value": "Operating income or EBIT",
+        "computed": "Operating income or EBIT"
+      },
+      {
+        "cell": "Trailing 12 month Worskheet!A13",
+        "value": "Do you have operating lease commitments?",
+        "computed": "Do you have operating lease commitments?"
+      },
+      {
+        "cell": "Trailing 12 month Worskheet!A15",
+        "value": "Non-operating assets",
+        "computed": "Non-operating assets"
+      },
+      {
+        "cell": "Trailing 12 month Worskheet!C23",
+        "value": "Copy into operating lease worksheet",
+        "computed": "Copy into operating lease worksheet"
+      }
+    ],
+    "margin": [
+      {
+        "cell": "Input sheet!A24",
+        "value": "Marginal tax rate =",
+        "computed": "Marginal tax rate ="
+      },
+      {
+        "cell": "Input sheet!E26",
+        "value": "Pre-tax operating margin in the most recent year =",
+        "computed": "Pre-tax operating margin in the most recent year ="
+      },
+      {
+        "cell": "Input sheet!A27",
+        "value": "Operating Margin for next year",
+        "computed": "Operating Margin for next year"
+      },
+      {
+        "cell": "Input sheet!E28",
+        "value": "Marginal sales to capital ratio  =",
+        "computed": "Marginal sales to capital ratio  ="
+      },
+      {
+        "cell": "Input sheet!A29",
+        "value": "Target pre-tax operating margin =",
+        "computed": "Target pre-tax operating margin ="
+      },
+      {
+        "cell": "Input sheet!A30",
+        "value": "Year of convergence for margin",
+        "computed": "Year of convergence for margin"
+      },
+      {
+        "cell": "Input sheet!E35",
+        "value": "Pre-tax Operating Income in year 10, based on your operating margin =",
+        "computed": "Pre-tax Operating Income in year 10, based on your operating margin ="
+      },
+      {
+        "cell": "Input sheet!A58",
+        "value": "I will assume that your effective tax rate will adjust to your marginal tax rate by your terminal year. If you override this assumption, I will leave the tax rate at your effective tax rate.",
+        "computed": "I will assume that your effective tax rate will adjust to your marginal tax rate by your terminal year. If you override this assumption, I will leave the tax rate at your effective tax rate."
+      },
+      {
+        "cell": "Valuation output!A4",
+        "value": "EBIT (Operating) margin",
+        "computed": "EBIT (Operating) margin"
+      },
+      {
+        "cell": "Stories to Numbers!A10",
+        "value": "Operating margin (b)",
+        "computed": "Operating margin (b)"
+      },
+      {
+        "cell": "Stories to Numbers!G10",
+        "value": "Margins improve, aided by cloud business & continued economies of scale.",
+        "computed": "Margins improve, aided by cloud business & continued economies of scale."
+      },
+      {
+        "cell": "Stories to Numbers!G11",
+        "value": "Global/US marginal tax rate over time",
+        "computed": "Global/US marginal tax rate over time"
+      },
+      {
+        "cell": "Stories to Numbers!C13",
+        "value": "Marginal ROIC =",
+        "computed": "Marginal ROIC ="
+      },
+      {
+        "cell": "Stories to Numbers!C16",
+        "value": "Operating Margin",
+        "computed": "Operating Margin"
+      },
+      {
+        "cell": "Stories to Numbers!H16",
+        "value": "These are the numbers that come from your assumptions. The revenues over time reflect your revenue growth, the operating margins evolve towards your target margin and your tax rate will change, if you have set it to. The reinvestment is estimated using the sales to capital ratio for the first 10 years and based on a reinvestment rate in stable growth (g/ ROC).",
+        "computed": "These are the numbers that come from your assumptions. The revenues over time reflect your revenue growth, the operating margins evolve towards your target margin and your tax rate will change, if you have set it to. The reinvestment is estimated using the sales to capital ratio for the first 10 years and based on a reinvestment rate in stable growth (g/ ROC)."
+      },
+      {
+        "cell": "Valuation as picture!A9",
+        "value": "Operating Margin",
+        "computed": "Operating Margin"
+      },
+      {
+        "cell": "Valuation as picture!D18",
+        "value": "Operating Margin",
+        "computed": "Operating Margin"
+      },
+      {
+        "cell": "Diagnostics!A11",
+        "value": "Step 3: Check your margins",
+        "computed": "Step 3: Check your margins"
+      },
+      {
+        "cell": "Diagnostics!G11",
+        "value": "1. What are the margins of the industry that the company is in?",
+        "computed": "1. What are the margins of the industry that the company is in?"
+      },
+      {
+        "cell": "Diagnostics!A12",
+        "value": "Operating Margin",
+        "computed": "Operating Margin"
+      },
+      {
+        "cell": "Diagnostics!C26",
+        "value": "Marginal (1-10)",
+        "computed": "Marginal (1-10)"
+      },
+      {
+        "cell": "Diagnostics!A40",
+        "value": "Operating margin (B26, B28)",
+        "computed": "Operating margin (B26, B28)"
+      },
+      {
+        "cell": "Diagnostics!B40",
+        "value": "Increase the target pre-tax operating margin",
+        "computed": "Increase the target pre-tax operating margin"
+      },
+      {
+        "cell": "Diagnostics!C40",
+        "value": "Decrease the target pre-tax operating margin",
+        "computed": "Decrease the target pre-tax operating margin"
+      },
+      {
+        "cell": "Failure Rate worksheet!A37",
+        "value": "4. The likelihood of failure decreases with better unit economics, higher gross margins on the additional units sold",
+        "computed": "4. The likelihood of failure decreases with better unit economics, higher gross margins on the additional units sold"
+      },
+      {
+        "cell": "Industry Averages(US)!D1",
+        "value": "Pre-tax Operating Margin (Unadjusted)",
+        "computed": "Pre-tax Operating Margin (Unadjusted)"
+      },
+      {
+        "cell": "Industry Averages(US)!AA1",
+        "value": "Pre-tax Operating Margin (Lease & R&D adjusted)",
+        "computed": "Pre-tax Operating Margin (Lease & R&D adjusted)"
+      },
+      {
+        "cell": "Industry Average Beta (Global)!D1",
+        "value": "Pre-tax Operating Margin (Unadjusted)",
+        "computed": "Pre-tax Operating Margin (Unadjusted)"
+      },
+      {
+        "cell": "Industry Average Beta (Global)!AA1",
+        "value": "Pre-tax Operating Margin (Lease & R&D adjusted)",
+        "computed": "Pre-tax Operating Margin (Lease & R&D adjusted)"
+      },
+      {
+        "cell": "Input Stat Distributioons!F1",
+        "value": "Pre-tax Operating Margin",
+        "computed": "Pre-tax Operating Margin"
+      },
+      {
+        "cell": "Trailing 12 month Worskheet!A20",
+        "value": "Marginal tax rate =",
+        "computed": "Marginal tax rate ="
+      }
+    ],
+    "tax": [
+      {
+        "cell": "Input sheet!A23",
+        "value": "Effective tax rate =",
+        "computed": "Effective tax rate ="
+      },
+      {
+        "cell": "Input sheet!A24",
+        "value": "Marginal tax rate =",
+        "computed": "Marginal tax rate ="
+      },
+      {
+        "cell": "Input sheet!E26",
+        "value": "Pre-tax operating margin in the most recent year =",
+        "computed": "Pre-tax operating margin in the most recent year ="
+      },
+      {
+        "cell": "Input sheet!A29",
+        "value": "Target pre-tax operating margin =",
+        "computed": "Target pre-tax operating margin ="
+      },
+      {
+        "cell": "Input sheet!E35",
+        "value": "Pre-tax Operating Income in year 10, based on your operating margin =",
+        "computed": "Pre-tax Operating Income in year 10, based on your operating margin ="
+      },
+      {
+        "cell": "Input sheet!A58",
+        "value": "I will assume that your effective tax rate will adjust to your marginal tax rate by your terminal year. If you override this assumption, I will leave the tax rate at your effective tax rate.",
+        "computed": "I will assume that your effective tax rate will adjust to your marginal tax rate by your terminal year. If you override this assumption, I will leave the tax rate at your effective tax rate."
+      },
+      {
+        "cell": "Input sheet!C62",
+        "value": "An NOL will shield your income from taxes, even after you start making money.",
+        "computed": "An NOL will shield your income from taxes, even after you start making money."
+      },
+      {
+        "cell": "Input sheet!A69",
+        "value": "I have assumed that none of the cash is trapped (in foreign countries) and that there is no additional tax liability coming due and that cash is a neutral asset.",
+        "computed": "I have assumed that none of the cash is trapped (in foreign countries) and that there is no additional tax liability coming due and that cash is a neutral asset."
+      },
+      {
+        "cell": "Input sheet!A71",
+        "value": "If yes, enter trapped cash (if taxes) or entire balance (if mistrust)",
+        "computed": "If yes, enter trapped cash (if taxes) or entire balance (if mistrust)"
+      },
+      {
+        "cell": "Input sheet!C71",
+        "value": "Cash that is trapped in foreign markets (and subject to additoinal tax) or cash that is being discounted by the market (because of management mistrust)",
+        "computed": "Cash that is trapped in foreign markets (and subject to additoinal tax) or cash that is being discounted by the market (because of management mistrust)"
+      },
+      {
+        "cell": "Input sheet!A72",
+        "value": "& Average tax rate of the foreign markets where the cash is trapped",
+        "computed": "& Average tax rate of the foreign markets where the cash is trapped"
+      },
+      {
+        "cell": "Input sheet!C72",
+        "value": "Additional tax rate due on trapped cash or discount being applied to cash balance because of mistrust.",
+        "computed": "Additional tax rate due on trapped cash or discount being applied to cash balance because of mistrust."
+      },
+      {
+        "cell": "Valuation output!A6",
+        "value": "Tax rate",
+        "computed": "Tax rate"
+      },
+      {
+        "cell": "Stories to Numbers!A11",
+        "value": "Tax rate",
+        "computed": "Tax rate"
+      },
+      {
+        "cell": "Stories to Numbers!G11",
+        "value": "Global/US marginal tax rate over time",
+        "computed": "Global/US marginal tax rate over time"
+      },
+      {
+        "cell": "Stories to Numbers!H16",
+        "value": "These are the numbers that come from your assumptions. The revenues over time reflect your revenue growth, the operating margins evolve towards your target margin and your tax rate will change, if you have set it to. The reinvestment is estimated using the sales to capital ratio for the first 10 years and based on a reinvestment rate in stable growth (g/ ROC).",
+        "computed": "These are the numbers that come from your assumptions. The revenues over time reflect your revenue growth, the operating margins evolve towards your target margin and your tax rate will change, if you have set it to. The reinvestment is estimated using the sales to capital ratio for the first 10 years and based on a reinvestment rate in stable growth (g/ ROC)."
+      },
+      {
+        "cell": "Diagnostics!A21",
+        "value": "PV of after-tax operating income for next 10 yearas",
+        "computed": "PV of after-tax operating income for next 10 yearas"
+      },
+      {
+        "cell": "Diagnostics!B40",
+        "value": "Increase the target pre-tax operating margin",
+        "computed": "Increase the target pre-tax operating margin"
+      },
+      {
+        "cell": "Diagnostics!C40",
+        "value": "Decrease the target pre-tax operating margin",
+        "computed": "Decrease the target pre-tax operating margin"
+      },
+      {
+        "cell": "Synthetic rating!A8",
+        "value": "Enter current Earnings before interest and taxes (EBIT) =",
+        "computed": "Enter current Earnings before interest and taxes (EBIT) ="
+      },
+      {
+        "cell": "R& D converter!A40",
+        "value": "Tax Effect of R&D Expensing",
+        "computed": "Tax Effect of R&D Expensing"
+      },
+      {
+        "cell": "Operating lease converter!A15",
+        "value": "Pre-tax Cost of Debt =",
+        "computed": "Pre-tax Cost of Debt ="
+      },
+      {
+        "cell": "Operating lease converter!G32",
+        "value": "! Add this amount to pre-tax operating income",
+        "computed": "! Add this amount to pre-tax operating income"
+      },
+      {
+        "cell": "Cost of capital worksheet!A33",
+        "value": "Approach for estimating pre-tax cost of debt",
+        "computed": "Approach for estimating pre-tax cost of debt"
+      },
+      {
+        "cell": "Cost of capital worksheet!A34",
+        "value": "If direct input, input the pre-tax cost of debt",
+        "computed": "If direct input, input the pre-tax cost of debt"
+      },
+      {
+        "cell": "Cost of capital worksheet!A37",
+        "value": "Pre-tax Cost of Debt =",
+        "computed": "Pre-tax Cost of Debt ="
+      },
+      {
+        "cell": "Cost of capital worksheet!A38",
+        "value": "Tax Rate =",
+        "computed": "Tax Rate ="
+      },
+      {
+        "cell": "Country equity risk premiums!F4",
+        "value": "Corporate Tax Rate",
+        "computed": "Corporate Tax Rate"
+      },
+      {
+        "cell": "Country equity risk premiums!D200",
+        "value": "Tax Rate",
+        "computed": "Tax Rate"
+      },
+      {
+        "cell": "Country equity risk premiums!D213",
+        "value": "Tax rate",
+        "computed": "Tax rate"
+      },
+      {
+        "cell": "Country equity risk premiums!D227",
+        "value": "Tax rate",
+        "computed": "Tax rate"
+      },
+      {
+        "cell": "Industry Averages(US)!D1",
+        "value": "Pre-tax Operating Margin (Unadjusted)",
+        "computed": "Pre-tax Operating Margin (Unadjusted)"
+      },
+      {
+        "cell": "Industry Averages(US)!E1",
+        "value": "After-tax ROC",
+        "computed": "After-tax ROC"
+      },
+      {
+        "cell": "Industry Averages(US)!F1",
+        "value": "Average effective tax rate",
+        "computed": "Average effective tax rate"
+      },
+      {
+        "cell": "Industry Averages(US)!K1",
+        "value": "Pre-tax cost of debt",
+        "computed": "Pre-tax cost of debt"
+      },
+      {
+        "cell": "Industry Averages(US)!AA1",
+        "value": "Pre-tax Operating Margin (Lease & R&D adjusted)",
+        "computed": "Pre-tax Operating Margin (Lease & R&D adjusted)"
+      },
+      {
+        "cell": "Industry Average Beta (Global)!D1",
+        "value": "Pre-tax Operating Margin (Unadjusted)",
+        "computed": "Pre-tax Operating Margin (Unadjusted)"
+      },
+      {
+        "cell": "Industry Average Beta (Global)!E1",
+        "value": "After-tax ROC",
+        "computed": "After-tax ROC"
+      },
+      {
+        "cell": "Industry Average Beta (Global)!F1",
+        "value": "Average effective tax rate",
+        "computed": "Average effective tax rate"
+      },
+      {
+        "cell": "Industry Average Beta (Global)!K1",
+        "value": "Pre-tax cost of debt",
+        "computed": "Pre-tax cost of debt"
+      },
+      {
+        "cell": "Industry Average Beta (Global)!AA1",
+        "value": "Pre-tax Operating Margin (Lease & R&D adjusted)",
+        "computed": "Pre-tax Operating Margin (Lease & R&D adjusted)"
+      },
+      {
+        "cell": "Input Stat Distributioons!F1",
+        "value": "Pre-tax Operating Margin",
+        "computed": "Pre-tax Operating Margin"
+      },
+      {
+        "cell": "Trailing 12 month Worskheet!A19",
+        "value": "Effective tax rate =",
+        "computed": "Effective tax rate ="
+      },
+      {
+        "cell": "Trailing 12 month Worskheet!A20",
+        "value": "Marginal tax rate =",
+        "computed": "Marginal tax rate ="
+      }
+    ],
+    "reinvestment": [
+      {
+        "cell": "Input sheet!A55",
+        "value": "I assume that reinvestment in a year translates into growth in the next year, i.e., there is a one year lag between reinvesting and generating growth from that reinvestment.",
+        "computed": "I assume that reinvestment in a year translates into growth in the next year, i.e., there is a one year lag between reinvesting and generating growth from that reinvestment."
+      },
+      {
+        "cell": "Valuation output!A8",
+        "value": "- Reinvestment",
+        "computed": "- Reinvestment"
+      },
+      {
+        "cell": "Stories to Numbers!F16",
+        "value": "Reinvestment",
+        "computed": "Reinvestment"
+      },
+      {
+        "cell": "Stories to Numbers!H16",
+        "value": "These are the numbers that come from your assumptions. The revenues over time reflect your revenue growth, the operating margins evolve towards your target margin and your tax rate will change, if you have set it to. The reinvestment is estimated using the sales to capital ratio for the first 10 years and based on a reinvestment rate in stable growth (g/ ROC).",
+        "computed": "These are the numbers that come from your assumptions. The revenues over time reflect your revenue growth, the operating margins evolve towards your target margin and your tax rate will change, if you have set it to. The reinvestment is estimated using the sales to capital ratio for the first 10 years and based on a reinvestment rate in stable growth (g/ ROC)."
+      },
+      {
+        "cell": "Valuation as picture!O10",
+        "value": "Reinvestment Rate",
+        "computed": "Reinvestment Rate"
+      },
+      {
+        "cell": "Valuation as picture!D21",
+        "value": "Reinvestment",
+        "computed": "Reinvestment"
+      },
+      {
+        "cell": "Diagnostics!A19",
+        "value": "Reinvestment effect on cash flows",
+        "computed": "Reinvestment effect on cash flows"
+      },
+      {
+        "cell": "Diagnostics!G21",
+        "value": "1. Is your reinvestment consitent with your revenue growth forecast?",
+        "computed": "1. Is your reinvestment consitent with your revenue growth forecast?"
+      },
+      {
+        "cell": "Diagnostics!A22",
+        "value": "Value effect of reinvestment for next 10 years",
+        "computed": "Value effect of reinvestment for next 10 years"
+      },
+      {
+        "cell": "Industry Averages(US)!W1",
+        "value": "Reinvestment Rate",
+        "computed": "Reinvestment Rate"
+      },
+      {
+        "cell": "Industry Averages(US)!Z1",
+        "value": "Equity Reinvestment Rate",
+        "computed": "Equity Reinvestment Rate"
+      },
+      {
+        "cell": "Industry Average Beta (Global)!W1",
+        "value": "Reinvestment Rate",
+        "computed": "Reinvestment Rate"
+      },
+      {
+        "cell": "Industry Average Beta (Global)!Z1",
+        "value": "Equity Reinvestment Rate",
+        "computed": "Equity Reinvestment Rate"
+      },
+      {
+        "cell": "Answer keys!J1",
+        "value": "Reinvestment lag",
+        "computed": "Reinvestment lag"
+      }
+    ],
+    "sales to capital": [
+      {
+        "cell": "Input sheet!E27",
+        "value": "Sales to capital ratio in most recent year =",
+        "computed": "Sales to capital ratio in most recent year ="
+      },
+      {
+        "cell": "Input sheet!E28",
+        "value": "Marginal sales to capital ratio  =",
+        "computed": "Marginal sales to capital ratio  ="
+      },
+      {
+        "cell": "Input sheet!A31",
+        "value": "Sales to capital ratio  (for years 1-5)",
+        "computed": "Sales to capital ratio  (for years 1-5)"
+      },
+      {
+        "cell": "Input sheet!A32",
+        "value": "Sales to capital ratio (for years 6-10)",
+        "computed": "Sales to capital ratio (for years 6-10)"
+      },
+      {
+        "cell": "Valuation output!A38",
+        "value": "Sales to capital ratio",
+        "computed": "Sales to capital ratio"
+      },
+      {
+        "cell": "Stories to Numbers!A12",
+        "value": "Sales to Capital  (c )",
+        "computed": "Sales to Capital  (c )"
+      },
+      {
+        "cell": "Stories to Numbers!H16",
+        "value": "These are the numbers that come from your assumptions. The revenues over time reflect your revenue growth, the operating margins evolve towards your target margin and your tax rate will change, if you have set it to. The reinvestment is estimated using the sales to capital ratio for the first 10 years and based on a reinvestment rate in stable growth (g/ ROC).",
+        "computed": "These are the numbers that come from your assumptions. The revenues over time reflect your revenue growth, the operating margins evolve towards your target margin and your tax rate will change, if you have set it to. The reinvestment is estimated using the sales to capital ratio for the first 10 years and based on a reinvestment rate in stable growth (g/ ROC)."
+      },
+      {
+        "cell": "Valuation as picture!D28",
+        "value": "Sales to Capital",
+        "computed": "Sales to Capital"
+      },
+      {
+        "cell": "Diagnostics!A17",
+        "value": "Sales to Capital",
+        "computed": "Sales to Capital"
+      },
+      {
+        "cell": "Diagnostics!A41",
+        "value": "Sales to Capital (B30-B32)",
+        "computed": "Sales to Capital (B30-B32)"
+      }
+    ],
+    "fcff": [
+      {
+        "cell": "Valuation output!A9",
+        "value": "FCFF",
+        "computed": "FCFF"
+      },
+      {
+        "cell": "Valuation output!A14",
+        "value": "PV(FCFF)",
+        "computed": "PV(FCFF)"
+      },
+      {
+        "cell": "Stories to Numbers!G16",
+        "value": "FCFF",
+        "computed": "FCFF"
+      },
+      {
+        "cell": "Valuation as picture!D22",
+        "value": "FCFF",
+        "computed": "FCFF"
+      },
+      {
+        "cell": "Diagnostics!A23",
+        "value": "PV of FCFF for next ten years",
+        "computed": "PV of FCFF for next ten years"
+      }
+    ],
+    "cost of capital": [
+      {
+        "cell": "Input sheet!E31",
+        "value": "Cost of capital =",
+        "computed": "Cost of capital ="
+      },
+      {
+        "cell": "Input sheet!A35",
+        "value": "Initial cost of capital =",
+        "computed": "Initial cost of capital ="
+      },
+      {
+        "cell": "Input sheet!B35",
+        "value": "='Cost of capital worksheet'!B13",
+        "computed": 0.0731766923949557
+      },
+      {
+        "cell": "Input sheet!C35",
+        "value": "Do not input. Go to cost of capital sheet.",
+        "computed": "Do not input. Go to cost of capital sheet."
+      },
+      {
+        "cell": "Input sheet!A44",
+        "value": "In stable growth, I will assume that your firm will have a cost of capital similar to that of typical mature companies (riskfree rate + 4.5%)",
+        "computed": "In stable growth, I will assume that your firm will have a cost of capital similar to that of typical mature companies (riskfree rate + 4.5%)"
+      },
+      {
+        "cell": "Input sheet!A46",
+        "value": "If yes, enter the cost of capital after year 10 =",
+        "computed": "If yes, enter the cost of capital after year 10 ="
+      },
+      {
+        "cell": "Input sheet!C46",
+        "value": "Though some sectors, even in stable growth, may have higher risk. If you change your risk free rate after year 10 (see cell B57 & 58), you should incorporate the change into your stable cost of capital estimate.",
+        "computed": "Though some sectors, even in stable growth, may have higher risk. If you change your risk free rate after year 10 (see cell B57 & 58), you should incorporate the change into your stable cost of capital estimate."
+      },
+      {
+        "cell": "Input sheet!A47",
+        "value": "I will assume that your firm will earn a return on capital equal to its cost of capital after year 10. I am assuming that whatever competitive advantages you have today will fade over time.",
+        "computed": "I will assume that your firm will earn a return on capital equal to its cost of capital after year 10. I am assuming that whatever competitive advantages you have today will fade over time."
+      },
+      {
+        "cell": "Input sheet!C48",
+        "value": "Mature companies find it difficult to generate returns that exceed the cost of capital",
+        "computed": "Mature companies find it difficult to generate returns that exceed the cost of capital"
+      },
+      {
+        "cell": "Valuation output!A12",
+        "value": "Cost of capital",
+        "computed": "Cost of capital"
+      },
+      {
+        "cell": "Valuation output!A17",
+        "value": "Terminal cost of capital",
+        "computed": "Terminal cost of capital"
+      },
+      {
+        "cell": "Stories to Numbers!A14",
+        "value": "Cost of capital (d)",
+        "computed": "Cost of capital (d)"
+      },
+      {
+        "cell": "Stories to Numbers!G14",
+        "value": "Cost of capital close to median company",
+        "computed": "Cost of capital close to median company"
+      },
+      {
+        "cell": "Stories to Numbers!H29",
+        "value": "This is the output from your valuation. It reflects your cash flows being discounted back at the cost of capital to get to your operating asset value, which then gets adjusted for the likelihood that your firm will not make it. We add cash and non-operating assets, subtract out debt and minority interests to get to value of equity.",
+        "computed": "This is the output from your valuation. It reflects your cash flows being discounted back at the cost of capital to get to your operating asset value, which then gets adjusted for the likelihood that your firm will not make it. We add cash and non-operating assets, subtract out debt and minority interests to get to value of equity."
+      },
+      {
+        "cell": "Valuation as picture!A1",
+        "value": "You can modify this picture and bring in relevant details to back up your cost of capital and other details that you think flesh out your company's valuation story.",
+        "computed": "You can modify this picture and bring in relevant details to back up your cost of capital and other details that you think flesh out your company's valuation story."
+      },
+      {
+        "cell": "Valuation as picture!O8",
+        "value": "Cost of capital",
+        "computed": "Cost of capital"
+      },
+      {
+        "cell": "Valuation as picture!D25",
+        "value": "Cost of Capital",
+        "computed": "Cost of Capital"
+      },
+      {
+        "cell": "Diagnostics!G30",
+        "value": "1. How does your cost of capital compare to the industry average?",
+        "computed": "1. How does your cost of capital compare to the industry average?"
+      },
+      {
+        "cell": "Diagnostics!A31",
+        "value": "Cost of capital",
+        "computed": "Cost of capital"
+      },
+      {
+        "cell": "Diagnostics!G31",
+        "value": "2. What is happenign to your cost of capital over time? Why?",
+        "computed": "2. What is happenign to your cost of capital over time? Why?"
+      },
+      {
+        "cell": "Diagnostics!B42",
+        "value": "Increase relative to your cost of capital",
+        "computed": "Increase relative to your cost of capital"
+      },
+      {
+        "cell": "Diagnostics!C42",
+        "value": "If higher than your cost of capital, lower towards your cost of capital",
+        "computed": "If higher than your cost of capital, lower towards your cost of capital"
+      },
+      {
+        "cell": "Synthetic rating!C7",
+        "value": "='Cost of capital worksheet'!B36",
+        "computed": 2
+      },
+      {
+        "cell": "Synthetic rating!F9",
+        "value": "=IF('Input sheet'!B17=\"Yes\",'Cost of capital worksheet'!B31+'Operating lease converter'!C28*'Operating lease converter'!C15,'Cost of capital worksheet'!B31)",
+        "computed": 1581
+      },
+      {
+        "cell": "Operating lease converter!C15",
+        "value": "='Cost of capital worksheet'!B37",
+        "computed": 0.0535
+      },
+      {
+        "cell": "Cost of capital worksheet!A1",
+        "value": "You can use this spreadsheet to compute your cost of capital. You can either use the built-in data to compute key inputs (beta, equity risk premium, default spread) or enter them directly. If you choose to use the built in ERP data, you can update the ERP numbers to reflect a more current mature market premuum (since the spreadsheet uses the start of the year numbers).",
+        "computed": "You can use this spreadsheet to compute your cost of capital. You can either use the built-in data to compute key inputs (beta, equity risk premium, default spread) or enter them directly. If you choose to use the built in ERP data, you can update the ERP numbers to reflect a more current mature market premuum (since the spreadsheet uses the start of the year numbers)."
+      },
+      {
+        "cell": "Cost of capital worksheet!A3",
+        "value": "Estimation of Current Cost of Capital",
+        "computed": "Estimation of Current Cost of Capital"
+      },
+      {
+        "cell": "Cost of capital worksheet!A4",
+        "value": "There are four ways in whch you can estimate your cost of capital. In the first, you can directly input a cost of captial. In the second, you can work through your company's cost of capital inputs in detail, entering business, geogaphical mix and debt, and I will help you estimate a cost of capital. In the third, you can look up the cost of capital for the industry or industries your firm belongs to and in the fourth, you can use a crosssectional distribution  of costs of capital for companies at the start of the year to make your estimate.",
+        "computed": "There are four ways in whch you can estimate your cost of capital. In the first, you can directly input a cost of captial. In the second, you can work through your company's cost of capital inputs in detail, entering business, geogaphical mix and debt, and I will help you estimate a cost of capital. In the third, you can look up the cost of capital for the industry or industries your firm belongs to and in the fourth, you can use a crosssectional distribution  of costs of capital for companies at the start of the year to make your estimate."
+      },
+      {
+        "cell": "Cost of capital worksheet!A12",
+        "value": "If direct input, enter cost of capital to use",
+        "computed": "If direct input, enter cost of capital to use"
+      },
+      {
+        "cell": "Cost of capital worksheet!A13",
+        "value": "Cost of capital based upon approach =",
+        "computed": "Cost of capital based upon approach ="
+      },
+      {
+        "cell": "Cost of capital worksheet!A15",
+        "value": "Approach 1: Detailed Cost of Capital",
+        "computed": "Approach 1: Detailed Cost of Capital"
+      },
+      {
+        "cell": "Cost of capital worksheet!B23",
+        "value": "=IF(B21=\"Single Business(US)\",VLOOKUP('Input sheet'!B8,'Industry Averages(US)'!A2:G95,7),IF(B21=\"Multibusiness(US)\",K48,IF(B21=\"Single Business(Global)\",VLOOKUP('Input sheet'!B9,'Industry Average Beta (Global)'!A2:G95,7),'Cost of capital worksheet'!K64)))",
+        "computed": 0.5128879692565596
+      },
+      {
+        "cell": "Cost of capital worksheet!B27",
+        "value": "=IF(B25=\"Will Input\",B26,IF(B25=\"Country of Incorporation\",VLOOKUP('Input sheet'!B7,'Country equity risk premiums'!A5:E195,4),IF(B25=\"Operating regions\",'Cost of capital worksheet'!K32,'Cost of capital worksheet'!K18)))",
+        "computed": 0.05641573374379239
+      },
+      {
+        "cell": "Cost of capital worksheet!L35",
+        "value": "Cost of capital",
+        "computed": "Cost of capital"
+      },
+      {
+        "cell": "Cost of capital worksheet!B37",
+        "value": "=IF(B33=\"Direct Input\",B34,IF(B33=\"Synthetic Rating\",'Synthetic rating'!D16,B24+VLOOKUP('Cost of capital worksheet'!B35,'Synthetic rating'!G42:H56,2)))",
+        "computed": 0.0535
+      },
+      {
+        "cell": "Cost of capital worksheet!L51",
+        "value": "Cost of capital",
+        "computed": "Cost of capital"
+      },
+      {
+        "cell": "Cost of capital worksheet!M60",
+        "value": "The cost of capital  is in US dollars, using the riskfree rate at the start of the year. It will be adjusted for the difference in riskfree rates to make it more current and to change currencies.",
+        "computed": "The cost of capital  is in US dollars, using the riskfree rate at the start of the year. It will be adjusted for the difference in riskfree rates to make it more current and to change currencies."
+      },
+      {
+        "cell": "Cost of capital worksheet!A61",
+        "value": "Weight in Cost of Capital",
+        "computed": "Weight in Cost of Capital"
+      },
+      {
+        "cell": "Cost of capital worksheet!A65",
+        "value": "Approach 2: industry average cost of capital, adjusted for riskfre rate differences",
+        "computed": "Approach 2: industry average cost of capital, adjusted for riskfre rate differences"
+      },
+      {
+        "cell": "Cost of capital worksheet!A67",
+        "value": "Cost of capital, adjusted for riskfree rate difference",
+        "computed": "Cost of capital, adjusted for riskfree rate difference"
+      },
+      {
+        "cell": "Cost of capital worksheet!A72",
+        "value": "Cost of capital based upon decile/group chosen",
+        "computed": "Cost of capital based upon decile/group chosen"
+      },
+      {
+        "cell": "Industry Averages(US)!M1",
+        "value": "Cost of capital",
+        "computed": "Cost of capital"
+      },
+      {
+        "cell": "Industry Average Beta (Global)!M1",
+        "value": "Cost of capital",
+        "computed": "Cost of capital"
+      },
+      {
+        "cell": "Input Stat Distributioons!L1",
+        "value": "Cost of Capital",
+        "computed": "Cost of Capital"
+      },
+      {
+        "cell": "Answer keys!I1",
+        "value": "Cost of Capital Approach",
+        "computed": "Cost of Capital Approach"
+      }
+    ],
+    "wacc": [
+      {
+        "cell": "Valuation as picture!D26",
+        "value": "Cumulated WACC",
+        "computed": "Cumulated WACC"
+      }
+    ],
+    "terminal": [
+      {
+        "cell": "Input sheet!A58",
+        "value": "I will assume that your effective tax rate will adjust to your marginal tax rate by your terminal year. If you override this assumption, I will leave the tax rate at your effective tax rate.",
+        "computed": "I will assume that your effective tax rate will adjust to your marginal tax rate by your terminal year. If you override this assumption, I will leave the tax rate at your effective tax rate."
+      },
+      {
+        "cell": "Valuation output!M1",
+        "value": "Terminal year",
+        "computed": "Terminal year"
+      },
+      {
+        "cell": "Valuation output!A16",
+        "value": "Terminal cash flow",
+        "computed": "Terminal cash flow"
+      },
+      {
+        "cell": "Valuation output!A17",
+        "value": "Terminal cost of capital",
+        "computed": "Terminal cost of capital"
+      },
+      {
+        "cell": "Valuation output!A18",
+        "value": "Terminal value",
+        "computed": "Terminal value"
+      },
+      {
+        "cell": "Valuation output!A19",
+        "value": "PV(Terminal value)",
+        "computed": "PV(Terminal value)"
+      },
+      {
+        "cell": "Stories to Numbers!A27",
+        "value": "Terminal year",
+        "computed": "Terminal year"
+      },
+      {
+        "cell": "Stories to Numbers!A29",
+        "value": "Terminal value",
+        "computed": "Terminal value"
+      },
+      {
+        "cell": "Stories to Numbers!A30",
+        "value": "PV(Terminal value)",
+        "computed": "PV(Terminal value)"
+      },
+      {
+        "cell": "Valuation as picture!O6",
+        "value": "Terminal Value",
+        "computed": "Terminal Value"
+      }
+    ],
+    "value": [
+      {
+        "cell": "Input sheet!A14",
+        "value": "Book value of equity",
+        "computed": "Book value of equity"
+      },
+      {
+        "cell": "Input sheet!A15",
+        "value": "Book value of debt",
+        "computed": "Book value of debt"
+      },
+      {
+        "cell": "Input sheet!A25",
+        "value": "The value drivers below:",
+        "computed": "The value drivers below:"
+      },
+      {
+        "cell": "Input sheet!C53",
+        "value": "B: Book value of capital, V= Estimated fair value for the company",
+        "computed": "B: Book value of capital, V= Estimated fair value for the company"
+      },
+      {
+        "cell": "Input sheet!A54",
+        "value": "Enter the distress proceeds as percentage of book or fair value",
+        "computed": "Enter the distress proceeds as percentage of book or fair value"
+      },
+      {
+        "cell": "Valuation output!A18",
+        "value": "Terminal value",
+        "computed": "Terminal value"
+      },
+      {
+        "cell": "Valuation output!A19",
+        "value": "PV(Terminal value)",
+        "computed": "PV(Terminal value)"
+      },
+      {
+        "cell": "Valuation output!A24",
+        "value": "Value of operating assets =",
+        "computed": "Value of operating assets ="
+      },
+      {
+        "cell": "Valuation output!D27",
+        "value": "If you get Value Errors all over, it is usually because your option worksheet has gone haywire. The fix is very low tech. Go into the option value worksheet, and in cell B17 of that worksheet (adjusted S), enter any number (say 5) and then undo what you did. Voila!",
+        "computed": "If you get Value Errors all over, it is usually because your option worksheet has gone haywire. The fix is very low tech. Go into the option value worksheet, and in cell B17 of that worksheet (adjusted S), enter any number (say 5) and then undo what you did. Voila!"
+      },
+      {
+        "cell": "Valuation output!A29",
+        "value": "Value of equity",
+        "computed": "Value of equity"
+      },
+      {
+        "cell": "Valuation output!A30",
+        "value": "- Value of options",
+        "computed": "- Value of options"
+      },
+      {
+        "cell": "Valuation output!B30",
+        "value": "=IF('Input sheet'!B37=\"No\",0,'Option value'!B29)",
+        "computed": 0
+      },
+      {
+        "cell": "Valuation output!A31",
+        "value": "Value of equity in common stock",
+        "computed": "Value of equity in common stock"
+      },
+      {
+        "cell": "Valuation output!A33",
+        "value": "Estimated value /share",
+        "computed": "Estimated value /share"
+      },
+      {
+        "cell": "Valuation output!A35",
+        "value": "Price as % of value",
+        "computed": "Price as % of value"
+      },
+      {
+        "cell": "Stories to Numbers!H3",
+        "value": "Tell your story about the company. Keep it focuses on the company's businesses and tie it into the three key levers of value: cash flows, growth and risk",
+        "computed": "Tell your story about the company. Keep it focuses on the company's businesses and tie it into the three key levers of value: cash flows, growth and risk"
+      },
+      {
+        "cell": "Stories to Numbers!A28",
+        "value": "The Value",
+        "computed": "The Value"
+      },
+      {
+        "cell": "Stories to Numbers!A29",
+        "value": "Terminal value",
+        "computed": "Terminal value"
+      },
+      {
+        "cell": "Stories to Numbers!H29",
+        "value": "This is the output from your valuation. It reflects your cash flows being discounted back at the cost of capital to get to your operating asset value, which then gets adjusted for the likelihood that your firm will not make it. We add cash and non-operating assets, subtract out debt and minority interests to get to value of equity.",
+        "computed": "This is the output from your valuation. It reflects your cash flows being discounted back at the cost of capital to get to your operating asset value, which then gets adjusted for the likelihood that your firm will not make it. We add cash and non-operating assets, subtract out debt and minority interests to get to value of equity."
+      },
+      {
+        "cell": "Stories to Numbers!A30",
+        "value": "PV(Terminal value)",
+        "computed": "PV(Terminal value)"
+      },
+      {
+        "cell": "Stories to Numbers!A32",
+        "value": "Value of operating assets =",
+        "computed": "Value of operating assets ="
+      },
+      {
+        "cell": "Stories to Numbers!A36",
+        "value": "Value of equity",
+        "computed": "Value of equity"
+      },
+      {
+        "cell": "Stories to Numbers!A37",
+        "value": "- Value of equity options",
+        "computed": "- Value of equity options"
+      },
+      {
+        "cell": "Stories to Numbers!A39",
+        "value": "Value per share",
+        "computed": "Value per share"
+      },
+      {
+        "cell": "Valuation as picture!O6",
+        "value": "Terminal Value",
+        "computed": "Terminal Value"
+      },
+      {
+        "cell": "Valuation as picture!A30",
+        "value": "% Under or Over Valued",
+        "computed": "% Under or Over Valued"
+      },
+      {
+        "cell": "Diagnostics!B20",
+        "value": "$ Value",
+        "computed": "$ Value"
+      },
+      {
+        "cell": "Diagnostics!C20",
+        "value": "As % of value",
+        "computed": "As % of value"
+      },
+      {
+        "cell": "Diagnostics!A22",
+        "value": "Value effect of reinvestment for next 10 years",
+        "computed": "Value effect of reinvestment for next 10 years"
+      },
+      {
+        "cell": "Diagnostics!A35",
+        "value": "Step 6: Price versus Value",
+        "computed": "Step 6: Price versus Value"
+      },
+      {
+        "cell": "Diagnostics!A36",
+        "value": "Your calculated value as a percent of current price",
+        "computed": "Your calculated value as a percent of current price"
+      },
+      {
+        "cell": "Diagnostics!B37",
+        "value": "=IF(B36=\"NA\",\"Value is negative. See below\",IF(B36>2,\"Value seems high. See below\",IF(B36<0.5,\"Value seems low. See below\",\" \")))",
+        "computed": ""
+      },
+      {
+        "cell": "Diagnostics!B38",
+        "value": "If calculated value is negative or looks too low",
+        "computed": "If calculated value is negative or looks too low"
+      },
+      {
+        "cell": "Diagnostics!C38",
+        "value": "If calculated value looks too high",
+        "computed": "If calculated value looks too high"
+      },
+      {
+        "cell": "Option value!A28",
+        "value": "Value per option =",
+        "computed": "Value per option ="
+      },
+      {
+        "cell": "Option value!A29",
+        "value": "Value of all options outstanding =",
+        "computed": "Value of all options outstanding ="
+      },
+      {
+        "cell": "R& D converter!A3",
+        "value": "income, the book value of assets and the book value of equity.",
+        "computed": "income, the book value of assets and the book value of equity."
+      },
+      {
+        "cell": "R& D converter!A35",
+        "value": "Value of Research Asset =",
+        "computed": "Value of Research Asset ="
+      },
+      {
+        "cell": "Operating lease converter!C21",
+        "value": "Present Value",
+        "computed": "Present Value"
+      },
+      {
+        "cell": "Operating lease converter!A28",
+        "value": "Debt Value of leases =",
+        "computed": "Debt Value of leases ="
+      },
+      {
+        "cell": "Cost of capital worksheet!A30",
+        "value": "Book Value of Straight Debt =",
+        "computed": "Book Value of Straight Debt ="
+      },
+      {
+        "cell": "Cost of capital worksheet!J35",
+        "value": "Estimated Value",
+        "computed": "Estimated Value"
+      },
+      {
+        "cell": "Cost of capital worksheet!A40",
+        "value": "Book Value of Convertible Debt =",
+        "computed": "Book Value of Convertible Debt ="
+      },
+      {
+        "cell": "Cost of capital worksheet!A43",
+        "value": "Market Value of Convertible =",
+        "computed": "Market Value of Convertible ="
+      },
+      {
+        "cell": "Cost of capital worksheet!A45",
+        "value": "Debt value of operating leases =",
+        "computed": "Debt value of operating leases ="
+      },
+      {
+        "cell": "Cost of capital worksheet!J51",
+        "value": "Estimated Value",
+        "computed": "Estimated Value"
+      },
+      {
+        "cell": "Cost of capital worksheet!A53",
+        "value": "Estimating Market Value of Straight Debt =",
+        "computed": "Estimating Market Value of Straight Debt ="
+      },
+      {
+        "cell": "Cost of capital worksheet!A54",
+        "value": "Estimated Value of Straight Debt in Convertible =",
+        "computed": "Estimated Value of Straight Debt in Convertible ="
+      },
+      {
+        "cell": "Cost of capital worksheet!A55",
+        "value": "Value of Debt in Operating leases =",
+        "computed": "Value of Debt in Operating leases ="
+      },
+      {
+        "cell": "Cost of capital worksheet!A56",
+        "value": "Estimated Value of Equity in Convertible =",
+        "computed": "Estimated Value of Equity in Convertible ="
+      },
+      {
+        "cell": "Cost of capital worksheet!A60",
+        "value": "Market Value",
+        "computed": "Market Value"
+      },
+      {
+        "cell": "Trailing 12 month Worskheet!A11",
+        "value": "Book value of equity",
+        "computed": "Book value of equity"
+      },
+      {
+        "cell": "Trailing 12 month Worskheet!A12",
+        "value": "Book value of debt",
+        "computed": "Book value of debt"
+      },
+      {
+        "cell": "Answer keys!B1",
+        "value": "Book or Market Value",
+        "computed": "Book or Market Value"
+      }
+    ],
+    "equity": [
+      {
+        "cell": "Input sheet!A14",
+        "value": "Book value of equity",
+        "computed": "Book value of equity"
+      },
+      {
+        "cell": "Valuation output!M12",
+        "value": "=IF('Input sheet'!B45=\"Yes\",'Input sheet'!B46,IF('Input sheet'!B64=\"Yes\",'Input sheet'!B65+'Country equity risk premiums'!B1,'Input sheet'!B34+'Country equity risk premiums'!B1))",
+        "computed": 0.0891
+      },
+      {
+        "cell": "Valuation output!A29",
+        "value": "Value of equity",
+        "computed": "Value of equity"
+      },
+      {
+        "cell": "Valuation output!A31",
+        "value": "Value of equity in common stock",
+        "computed": "Value of equity in common stock"
+      },
+      {
+        "cell": "Stories to Numbers!H29",
+        "value": "This is the output from your valuation. It reflects your cash flows being discounted back at the cost of capital to get to your operating asset value, which then gets adjusted for the likelihood that your firm will not make it. We add cash and non-operating assets, subtract out debt and minority interests to get to value of equity.",
+        "computed": "This is the output from your valuation. It reflects your cash flows being discounted back at the cost of capital to get to your operating asset value, which then gets adjusted for the likelihood that your firm will not make it. We add cash and non-operating assets, subtract out debt and minority interests to get to value of equity."
+      },
+      {
+        "cell": "Stories to Numbers!A36",
+        "value": "Value of equity",
+        "computed": "Value of equity"
+      },
+      {
+        "cell": "Stories to Numbers!A37",
+        "value": "- Value of equity options",
+        "computed": "- Value of equity options"
+      },
+      {
+        "cell": "Synthetic rating!D15",
+        "value": "=VLOOKUP('Input sheet'!B7,'Country equity risk premiums'!A5:C196,3)",
+        "computed": 0
+      },
+      {
+        "cell": "R& D converter!A3",
+        "value": "income, the book value of assets and the book value of equity.",
+        "computed": "income, the book value of assets and the book value of equity."
+      },
+      {
+        "cell": "Cost of capital worksheet!A1",
+        "value": "You can use this spreadsheet to compute your cost of capital. You can either use the built-in data to compute key inputs (beta, equity risk premium, default spread) or enter them directly. If you choose to use the built in ERP data, you can update the ERP numbers to reflect a more current mature market premuum (since the spreadsheet uses the start of the year numbers).",
+        "computed": "You can use this spreadsheet to compute your cost of capital. You can either use the built-in data to compute key inputs (beta, equity risk premium, default spread) or enter them directly. If you choose to use the built in ERP data, you can update the ERP numbers to reflect a more current mature market premuum (since the spreadsheet uses the start of the year numbers)."
+      },
+      {
+        "cell": "Cost of capital worksheet!I5",
+        "value": "=IF(H5=0,0,VLOOKUP(G5,'Country equity risk premiums'!$A$5:$D$196,4))",
+        "computed": 0.0433
+      },
+      {
+        "cell": "Cost of capital worksheet!M5",
+        "value": "The last two rows in each of country/region risk premium tables is set aside for your input to provide you with flexibility to enter some numbers directly. For instance, assume that you have a company that breaks its revenues down into three countries and then puts the rest into \"Rest of the World\". You can enter the \"Rest of the World\" in one of these two rows and enter an equity risk premium for the rest of the world. The easiest way to do that is to go into the country equity risk premium worksheet and change the GDP for the three countries that you have data for to zero and compute the global weighted average ERP for the remaining countries. With the regional worksheet, you can use the last two rows to enter the data for an individual country (usually the domestic country) that might be broken out though the rest of the revenues are broken down by region. You can look up the ERP for the country in the country ERP worksheet.",
+        "computed": "The last two rows in each of country/region risk premium tables is set aside for your input to provide you with flexibility to enter some numbers directly. For instance, assume that you have a company that breaks its revenues down into three countries and then puts the rest into \"Rest of the World\". You can enter the \"Rest of the World\" in one of these two rows and enter an equity risk premium for the rest of the world. The easiest way to do that is to go into the country equity risk premium worksheet and change the GDP for the three countries that you have data for to zero and compute the global weighted average ERP for the remaining countries. With the regional worksheet, you can use the last two rows to enter the data for an individual country (usually the domestic country) that might be broken out though the rest of the revenues are broken down by region. You can look up the ERP for the country in the country ERP worksheet."
+      },
+      {
+        "cell": "Cost of capital worksheet!I6",
+        "value": "=IF(H6=0,0,VLOOKUP(G6,'Country equity risk premiums'!$A$5:$D$196,4))",
+        "computed": 0.052715839731572595
+      },
+      {
+        "cell": "Cost of capital worksheet!I7",
+        "value": "=IF(H7=0,0,VLOOKUP(G7,'Country equity risk premiums'!$A$5:$D$196,4))",
+        "computed": 0
+      },
+      {
+        "cell": "Cost of capital worksheet!I8",
+        "value": "=IF(H8=0,0,VLOOKUP(G8,'Country equity risk premiums'!$A$5:$D$196,4))",
+        "computed": 0
+      },
+      {
+        "cell": "Cost of capital worksheet!I9",
+        "value": "=IF(H9=0,0,VLOOKUP(G9,'Country equity risk premiums'!$A$5:$D$196,4))",
+        "computed": 0
+      },
+      {
+        "cell": "Cost of capital worksheet!I10",
+        "value": "=IF(H10=0,0,VLOOKUP(G10,'Country equity risk premiums'!$A$5:$D$196,4))",
+        "computed": 0
+      },
+      {
+        "cell": "Cost of capital worksheet!I11",
+        "value": "=IF(H11=0,0,VLOOKUP(G11,'Country equity risk premiums'!$A$5:$D$196,4))",
+        "computed": 0
+      },
+      {
+        "cell": "Cost of capital worksheet!I12",
+        "value": "=IF(H12=0,0,VLOOKUP(G12,'Country equity risk premiums'!$A$5:$D$196,4))",
+        "computed": 0
+      },
+      {
+        "cell": "Cost of capital worksheet!I13",
+        "value": "=IF(H13=0,0,VLOOKUP(G13,'Country equity risk premiums'!$A$5:$D$196,4))",
+        "computed": 0
+      },
+      {
+        "cell": "Cost of capital worksheet!I14",
+        "value": "=IF(H14=0,0,VLOOKUP(G14,'Country equity risk premiums'!$A$5:$D$196,4))",
+        "computed": 0
+      },
+      {
+        "cell": "Cost of capital worksheet!I15",
+        "value": "=IF(H15=0,0,VLOOKUP(G15,'Country equity risk premiums'!$A$5:$D$196,4))",
+        "computed": 0
+      },
+      {
+        "cell": "Cost of capital worksheet!A17",
+        "value": "Equity",
+        "computed": "Equity"
+      },
+      {
+        "cell": "Cost of capital worksheet!G21",
+        "value": "='Country equity risk premiums'!A201",
+        "computed": "Africa"
+      },
+      {
+        "cell": "Cost of capital worksheet!I21",
+        "value": "='Country equity risk premiums'!B201",
+        "computed": 0.12636516288511693
+      },
+      {
+        "cell": "Cost of capital worksheet!G22",
+        "value": "='Country equity risk premiums'!A202",
+        "computed": "Asia"
+      },
+      {
+        "cell": "Cost of capital worksheet!I22",
+        "value": "='Country equity risk premiums'!B202",
+        "computed": 0.0587
+      },
+      {
+        "cell": "Cost of capital worksheet!G23",
+        "value": "='Country equity risk premiums'!A203",
+        "computed": "Australia & New Zealand"
+      },
+      {
+        "cell": "Cost of capital worksheet!I23",
+        "value": "='Country equity risk premiums'!B203",
+        "computed": 0.04334293324209606
+      },
+      {
+        "cell": "Cost of capital worksheet!G24",
+        "value": "='Country equity risk premiums'!A204",
+        "computed": "Caribbean"
+      },
+      {
+        "cell": "Cost of capital worksheet!I24",
+        "value": "='Country equity risk premiums'!B204",
+        "computed": 0.12432073131656701
+      },
+      {
+        "cell": "Cost of capital worksheet!G25",
+        "value": "='Country equity risk premiums'!A205",
+        "computed": "Central and South America"
+      },
+      {
+        "cell": "Cost of capital worksheet!I25",
+        "value": "='Country equity risk premiums'!B205",
+        "computed": 0.09150249497712071
+      },
+      {
+        "cell": "Cost of capital worksheet!G26",
+        "value": "='Country equity risk premiums'!A206",
+        "computed": "Eastern Europe"
+      },
+      {
+        "cell": "Cost of capital worksheet!I26",
+        "value": "='Country equity risk premiums'!B206",
+        "computed": 0.07727703456653685
+      },
+      {
+        "cell": "Cost of capital worksheet!A27",
+        "value": "Equity Risk Premium used in cost of equity =",
+        "computed": "Equity Risk Premium used in cost of equity ="
+      },
+      {
+        "cell": "Cost of capital worksheet!B27",
+        "value": "=IF(B25=\"Will Input\",B26,IF(B25=\"Country of Incorporation\",VLOOKUP('Input sheet'!B7,'Country equity risk premiums'!A5:E195,4),IF(B25=\"Operating regions\",'Cost of capital worksheet'!K32,'Cost of capital worksheet'!K18)))",
+        "computed": 0.05641573374379239
+      },
+      {
+        "cell": "Cost of capital worksheet!G27",
+        "value": "='Country equity risk premiums'!A207",
+        "computed": "Middle East"
+      },
+      {
+        "cell": "Cost of capital worksheet!I27",
+        "value": "='Country equity risk premiums'!B207",
+        "computed": 0.0642857466003489
+      },
+      {
+        "cell": "Cost of capital worksheet!G28",
+        "value": "='Country equity risk premiums'!A208",
+        "computed": "North America"
+      },
+      {
+        "cell": "Cost of capital worksheet!I28",
+        "value": "='Country equity risk premiums'!B208",
+        "computed": 0.0433
+      },
+      {
+        "cell": "Cost of capital worksheet!G29",
+        "value": "='Country equity risk premiums'!A209",
+        "computed": "Western Europe"
+      },
+      {
+        "cell": "Cost of capital worksheet!I29",
+        "value": "='Country equity risk premiums'!B209",
+        "computed": 0.054450110634666364
+      },
+      {
+        "cell": "Cost of capital worksheet!A56",
+        "value": "Estimated Value of Equity in Convertible =",
+        "computed": "Estimated Value of Equity in Convertible ="
+      },
+      {
+        "cell": "Cost of capital worksheet!A57",
+        "value": "Levered Beta for equity =",
+        "computed": "Levered Beta for equity ="
+      },
+      {
+        "cell": "Cost of capital worksheet!B59",
+        "value": "Equity",
+        "computed": "Equity"
+      },
+      {
+        "cell": "Country equity risk premiums!A2",
+        "value": "Changing this number will update all your country equity risk premiums.",
+        "computed": "Changing this number will update all your country equity risk premiums."
+      },
+      {
+        "cell": "Country equity risk premiums!D4",
+        "value": "Equity Risk Premium",
+        "computed": "Equity Risk Premium"
+      },
+      {
+        "cell": "Industry Averages(US)!H1",
+        "value": "Equity (Levered) Beta",
+        "computed": "Equity (Levered) Beta"
+      },
+      {
+        "cell": "Industry Averages(US)!I1",
+        "value": "Cost of equity",
+        "computed": "Cost of equity"
+      },
+      {
+        "cell": "Industry Averages(US)!Z1",
+        "value": "Equity Reinvestment Rate",
+        "computed": "Equity Reinvestment Rate"
+      },
+      {
+        "cell": "Industry Average Beta (Global)!H1",
+        "value": "Equity (Levered) Beta",
+        "computed": "Equity (Levered) Beta"
+      },
+      {
+        "cell": "Industry Average Beta (Global)!I1",
+        "value": "Cost of equity",
+        "computed": "Cost of equity"
+      },
+      {
+        "cell": "Industry Average Beta (Global)!Z1",
+        "value": "Equity Reinvestment Rate",
+        "computed": "Equity Reinvestment Rate"
+      },
+      {
+        "cell": "Trailing 12 month Worskheet!A11",
+        "value": "Book value of equity",
+        "computed": "Book value of equity"
+      }
+    ],
+    "debt": [
+      {
+        "cell": "Input sheet!A15",
+        "value": "Book value of debt",
+        "computed": "Book value of debt"
+      },
+      {
+        "cell": "Input sheet!C17",
+        "value": "If you lease or other contractual commitments that have not been converteed to debt already, say yes to this option and do the conversion.",
+        "computed": "If you lease or other contractual commitments that have not been converteed to debt already, say yes to this option and do the conversion."
+      },
+      {
+        "cell": "Input sheet!C51",
+        "value": "Many young, growth companies fail, especially if they have trouble raising cash. Many distressed companies fail, because they have trouble making debt payments.",
+        "computed": "Many young, growth companies fail, especially if they have trouble raising cash. Many distressed companies fail, because they have trouble making debt payments."
+      },
+      {
+        "cell": "Valuation output!A25",
+        "value": "- Debt",
+        "computed": "- Debt"
+      },
+      {
+        "cell": "Stories to Numbers!H29",
+        "value": "This is the output from your valuation. It reflects your cash flows being discounted back at the cost of capital to get to your operating asset value, which then gets adjusted for the likelihood that your firm will not make it. We add cash and non-operating assets, subtract out debt and minority interests to get to value of equity.",
+        "computed": "This is the output from your valuation. It reflects your cash flows being discounted back at the cost of capital to get to your operating asset value, which then gets adjusted for the likelihood that your firm will not make it. We add cash and non-operating assets, subtract out debt and minority interests to get to value of equity."
+      },
+      {
+        "cell": "Stories to Numbers!A34",
+        "value": "- Debt & Minority Interests",
+        "computed": "- Debt & Minority Interests"
+      },
+      {
+        "cell": "Synthetic rating!A1",
+        "value": "If you have negative operating income, this spreadsheet will offer you a D rating. Do not use that rating as your cost of debt for a going concern. Insread give your company a low, but going concern rating like BB and use that cost of debt.",
+        "computed": "If you have negative operating income, this spreadsheet will offer you a D rating. Do not use that rating as your cost of debt for a going concern. Insread give your company a low, but going concern rating like BB and use that cost of debt."
+      },
+      {
+        "cell": "Synthetic rating!A16",
+        "value": "Estimated Cost of Debt =",
+        "computed": "Estimated Cost of Debt ="
+      },
+      {
+        "cell": "Operating lease converter!H3",
+        "value": "Until 2019, this worksheet had to be used for every firm with operating lease commitments, since accountants treated operating lease expenses as operating expenses. In 2019, IFRS and GAAP made the long-overdue change to treat leases as debt, and for firms that follow these standards, the conversion that I am doing on this spreadsheet is being done by accountants, with lease debt and operating income already adjusted. If that is the case, and you showed the lease debt as part of debt in the input page, please do not use this spreadsheet, since you will be double counting.",
+        "computed": "Until 2019, this worksheet had to be used for every firm with operating lease commitments, since accountants treated operating lease expenses as operating expenses. In 2019, IFRS and GAAP made the long-overdue change to treat leases as debt, and for firms that follow these standards, the conversion that I am doing on this spreadsheet is being done by accountants, with lease debt and operating income already adjusted. If that is the case, and you showed the lease debt as part of debt in the input page, please do not use this spreadsheet, since you will be double counting."
+      },
+      {
+        "cell": "Operating lease converter!A15",
+        "value": "Pre-tax Cost of Debt =",
+        "computed": "Pre-tax Cost of Debt ="
+      },
+      {
+        "cell": "Operating lease converter!D15",
+        "value": "! If you do not have a cost of debt, use the synthetic rating estimator",
+        "computed": "! If you do not have a cost of debt, use the synthetic rating estimator"
+      },
+      {
+        "cell": "Operating lease converter!A20",
+        "value": "Converting Operating Leases into debt",
+        "computed": "Converting Operating Leases into debt"
+      },
+      {
+        "cell": "Operating lease converter!A28",
+        "value": "Debt Value of leases =",
+        "computed": "Debt Value of leases ="
+      },
+      {
+        "cell": "Operating lease converter!A33",
+        "value": "Adjustment to Total Debt outstanding =",
+        "computed": "Adjustment to Total Debt outstanding ="
+      },
+      {
+        "cell": "Operating lease converter!G33",
+        "value": "! Add this amount to debt",
+        "computed": "! Add this amount to debt"
+      },
+      {
+        "cell": "Cost of capital worksheet!A4",
+        "value": "There are four ways in whch you can estimate your cost of capital. In the first, you can directly input a cost of captial. In the second, you can work through your company's cost of capital inputs in detail, entering business, geogaphical mix and debt, and I will help you estimate a cost of capital. In the third, you can look up the cost of capital for the industry or industries your firm belongs to and in the fourth, you can use a crosssectional distribution  of costs of capital for companies at the start of the year to make your estimate.",
+        "computed": "There are four ways in whch you can estimate your cost of capital. In the first, you can directly input a cost of captial. In the second, you can work through your company's cost of capital inputs in detail, entering business, geogaphical mix and debt, and I will help you estimate a cost of capital. In the third, you can look up the cost of capital for the industry or industries your firm belongs to and in the fourth, you can use a crosssectional distribution  of costs of capital for companies at the start of the year to make your estimate."
+      },
+      {
+        "cell": "Cost of capital worksheet!A29",
+        "value": "Debt",
+        "computed": "Debt"
+      },
+      {
+        "cell": "Cost of capital worksheet!A30",
+        "value": "Book Value of Straight Debt =",
+        "computed": "Book Value of Straight Debt ="
+      },
+      {
+        "cell": "Cost of capital worksheet!A31",
+        "value": "Interest Expense on Debt =",
+        "computed": "Interest Expense on Debt ="
+      },
+      {
+        "cell": "Cost of capital worksheet!A33",
+        "value": "Approach for estimating pre-tax cost of debt",
+        "computed": "Approach for estimating pre-tax cost of debt"
+      },
+      {
+        "cell": "Cost of capital worksheet!A34",
+        "value": "If direct input, input the pre-tax cost of debt",
+        "computed": "If direct input, input the pre-tax cost of debt"
+      },
+      {
+        "cell": "Cost of capital worksheet!A37",
+        "value": "Pre-tax Cost of Debt =",
+        "computed": "Pre-tax Cost of Debt ="
+      },
+      {
+        "cell": "Cost of capital worksheet!A40",
+        "value": "Book Value of Convertible Debt =",
+        "computed": "Book Value of Convertible Debt ="
+      },
+      {
+        "cell": "Cost of capital worksheet!A45",
+        "value": "Debt value of operating leases =",
+        "computed": "Debt value of operating leases ="
+      },
+      {
+        "cell": "Cost of capital worksheet!A53",
+        "value": "Estimating Market Value of Straight Debt =",
+        "computed": "Estimating Market Value of Straight Debt ="
+      },
+      {
+        "cell": "Cost of capital worksheet!A54",
+        "value": "Estimated Value of Straight Debt in Convertible =",
+        "computed": "Estimated Value of Straight Debt in Convertible ="
+      },
+      {
+        "cell": "Cost of capital worksheet!A55",
+        "value": "Value of Debt in Operating leases =",
+        "computed": "Value of Debt in Operating leases ="
+      },
+      {
+        "cell": "Cost of capital worksheet!C59",
+        "value": "Debt",
+        "computed": "Debt"
+      },
+      {
+        "cell": "Industry Averages(US)!K1",
+        "value": "Pre-tax cost of debt",
+        "computed": "Pre-tax cost of debt"
+      },
+      {
+        "cell": "Industry Averages(US)!L1",
+        "value": "Market Debt/Capital",
+        "computed": "Market Debt/Capital"
+      },
+      {
+        "cell": "Industry Average Beta (Global)!K1",
+        "value": "Pre-tax cost of debt",
+        "computed": "Pre-tax cost of debt"
+      },
+      {
+        "cell": "Industry Average Beta (Global)!L1",
+        "value": "Market Debt/Capital",
+        "computed": "Market Debt/Capital"
+      },
+      {
+        "cell": "Input Stat Distributioons!P1",
+        "value": "Debt to Capital Ratio",
+        "computed": "Debt to Capital Ratio"
+      },
+      {
+        "cell": "Trailing 12 month Worskheet!A12",
+        "value": "Book value of debt",
+        "computed": "Book value of debt"
+      },
+      {
+        "cell": "Answer keys!D1",
+        "value": "Cost of debt",
+        "computed": "Cost of debt"
+      }
+    ],
+    "cash": [
+      {
+        "cell": "Input sheet!A18",
+        "value": "Cash and Marketable Securities",
+        "computed": "Cash and Marketable Securities"
+      },
+      {
+        "cell": "Input sheet!C51",
+        "value": "Many young, growth companies fail, especially if they have trouble raising cash. Many distressed companies fail, because they have trouble making debt payments.",
+        "computed": "Many young, growth companies fail, especially if they have trouble raising cash. Many distressed companies fail, because they have trouble making debt payments."
+      },
+      {
+        "cell": "Input sheet!A69",
+        "value": "I have assumed that none of the cash is trapped (in foreign countries) and that there is no additional tax liability coming due and that cash is a neutral asset.",
+        "computed": "I have assumed that none of the cash is trapped (in foreign countries) and that there is no additional tax liability coming due and that cash is a neutral asset."
+      },
+      {
+        "cell": "Input sheet!A71",
+        "value": "If yes, enter trapped cash (if taxes) or entire balance (if mistrust)",
+        "computed": "If yes, enter trapped cash (if taxes) or entire balance (if mistrust)"
+      },
+      {
+        "cell": "Input sheet!C71",
+        "value": "Cash that is trapped in foreign markets (and subject to additoinal tax) or cash that is being discounted by the market (because of management mistrust)",
+        "computed": "Cash that is trapped in foreign markets (and subject to additoinal tax) or cash that is being discounted by the market (because of management mistrust)"
+      },
+      {
+        "cell": "Input sheet!A72",
+        "value": "& Average tax rate of the foreign markets where the cash is trapped",
+        "computed": "& Average tax rate of the foreign markets where the cash is trapped"
+      },
+      {
+        "cell": "Input sheet!C72",
+        "value": "Additional tax rate due on trapped cash or discount being applied to cash balance because of mistrust.",
+        "computed": "Additional tax rate due on trapped cash or discount being applied to cash balance because of mistrust."
+      },
+      {
+        "cell": "Valuation output!A16",
+        "value": "Terminal cash flow",
+        "computed": "Terminal cash flow"
+      },
+      {
+        "cell": "Valuation output!A27",
+        "value": "+  Cash",
+        "computed": "+  Cash"
+      },
+      {
+        "cell": "Stories to Numbers!H3",
+        "value": "Tell your story about the company. Keep it focuses on the company's businesses and tie it into the three key levers of value: cash flows, growth and risk",
+        "computed": "Tell your story about the company. Keep it focuses on the company's businesses and tie it into the three key levers of value: cash flows, growth and risk"
+      },
+      {
+        "cell": "Stories to Numbers!A15",
+        "value": "The Cash Flows",
+        "computed": "The Cash Flows"
+      },
+      {
+        "cell": "Stories to Numbers!H29",
+        "value": "This is the output from your valuation. It reflects your cash flows being discounted back at the cost of capital to get to your operating asset value, which then gets adjusted for the likelihood that your firm will not make it. We add cash and non-operating assets, subtract out debt and minority interests to get to value of equity.",
+        "computed": "This is the output from your valuation. It reflects your cash flows being discounted back at the cost of capital to get to your operating asset value, which then gets adjusted for the likelihood that your firm will not make it. We add cash and non-operating assets, subtract out debt and minority interests to get to value of equity."
+      },
+      {
+        "cell": "Stories to Numbers!A35",
+        "value": "+ Cash & Other Non-operating assets",
+        "computed": "+ Cash & Other Non-operating assets"
+      },
+      {
+        "cell": "Diagnostics!A19",
+        "value": "Reinvestment effect on cash flows",
+        "computed": "Reinvestment effect on cash flows"
+      },
+      {
+        "cell": "Industry Averages(US)!T1",
+        "value": "Non-cash WC as % of Revenues",
+        "computed": "Non-cash WC as % of Revenues"
+      },
+      {
+        "cell": "Industry Average Beta (Global)!T1",
+        "value": "Non-cash WC as % of Revenues",
+        "computed": "Non-cash WC as % of Revenues"
+      },
+      {
+        "cell": "Trailing 12 month Worskheet!A14",
+        "value": "Cash and cross holdings",
+        "computed": "Cash and cross holdings"
+      },
+      {
+        "cell": "Trailing 12 month Worskheet!A45",
+        "value": "Content Costs (Cash Flows)",
+        "computed": "Content Costs (Cash Flows)"
+      }
+    ],
+    "roic": [
+      {
+        "cell": "Valuation output!A40",
+        "value": "ROIC",
+        "computed": "ROIC"
+      },
+      {
+        "cell": "Stories to Numbers!C13",
+        "value": "Marginal ROIC =",
+        "computed": "Marginal ROIC ="
+      },
+      {
+        "cell": "Valuation as picture!D29",
+        "value": "ROIC",
+        "computed": "ROIC"
+      }
+    ],
+    "roc": [
+      {
+        "cell": "Input sheet!A53",
+        "value": "What do you want to tie your proceeds in failure to?",
+        "computed": "What do you want to tie your proceeds in failure to?"
+      },
+      {
+        "cell": "Input sheet!A54",
+        "value": "Enter the distress proceeds as percentage of book or fair value",
+        "computed": "Enter the distress proceeds as percentage of book or fair value"
+      },
+      {
+        "cell": "Valuation output!A23",
+        "value": "Proceeds if firm fails =",
+        "computed": "Proceeds if firm fails ="
+      },
+      {
+        "cell": "Stories to Numbers!H16",
+        "value": "These are the numbers that come from your assumptions. The revenues over time reflect your revenue growth, the operating margins evolve towards your target margin and your tax rate will change, if you have set it to. The reinvestment is estimated using the sales to capital ratio for the first 10 years and based on a reinvestment rate in stable growth (g/ ROC).",
+        "computed": "These are the numbers that come from your assumptions. The revenues over time reflect your revenue growth, the operating margins evolve towards your target margin and your tax rate will change, if you have set it to. The reinvestment is estimated using the sales to capital ratio for the first 10 years and based on a reinvestment rate in stable growth (g/ ROC)."
+      },
+      {
+        "cell": "Diagnostics!D26",
+        "value": "ROC in year 10",
+        "computed": "ROC in year 10"
+      },
+      {
+        "cell": "Diagnostics!E26",
+        "value": "Stable ROC",
+        "computed": "Stable ROC"
+      },
+      {
+        "cell": "R& D converter!A81",
+        "value": "Food Processing",
+        "computed": "Food Processing"
+      },
+      {
+        "cell": "R& D converter!A87",
+        "value": "Grocery",
+        "computed": "Grocery"
+      },
+      {
+        "cell": "Country equity risk premiums!A125",
+        "value": "Morocco",
+        "computed": "Morocco"
+      },
+      {
+        "cell": "Industry Averages(US)!E1",
+        "value": "After-tax ROC",
+        "computed": "After-tax ROC"
+      },
+      {
+        "cell": "Industry Averages(US)!A36",
+        "value": "Food Processing",
+        "computed": "Food Processing"
+      },
+      {
+        "cell": "Industry Averages(US)!A75",
+        "value": "Retail (Grocery and Food)",
+        "computed": "Retail (Grocery and Food)"
+      },
+      {
+        "cell": "Industry Average Beta (Global)!E1",
+        "value": "After-tax ROC",
+        "computed": "After-tax ROC"
+      },
+      {
+        "cell": "Industry Average Beta (Global)!A36",
+        "value": "Food Processing",
+        "computed": "Food Processing"
+      },
+      {
+        "cell": "Industry Average Beta (Global)!A75",
+        "value": "Retail (Grocery and Food)",
+        "computed": "Retail (Grocery and Food)"
+      },
+      {
+        "cell": "Input Stat Distributioons!A37",
+        "value": "Food Processing",
+        "computed": "Food Processing"
+      },
+      {
+        "cell": "Input Stat Distributioons!A76",
+        "value": "Retail (Grocery and Food)",
+        "computed": "Retail (Grocery and Food)"
+      }
+    ]
+  },
+  "formula_samples": [
+    {
+      "cell": "Input sheet!I25",
+      "formula": "=IF(C11>0,(B11/C11)^(1/D11)-1, \"NA\")",
+      "computed": 0.03132072984526024
+    },
+    {
+      "cell": "Input sheet!J25",
+      "formula": "=VLOOKUP(B8,'Industry Averages(US)'!A2:S95,3)",
+      "computed": 0.16750833329999998
+    },
+    {
+      "cell": "Input sheet!K25",
+      "formula": "=VLOOKUP(B9,'Industry Average Beta (Global)'!A2:N95,3)",
+      "computed": 0.07284174603174602
+    },
+    {
+      "cell": "Input sheet!L25",
+      "formula": "=VLOOKUP($B$9,'Input Stat Distributioons'!$A$3:$R$96,3,FALSE)",
+      "computed": 0.0326
+    },
+    {
+      "cell": "Input sheet!M25",
+      "formula": "=VLOOKUP($B$9,'Input Stat Distributioons'!$A$3:$R$96,4,FALSE)",
+      "computed": 0.0612
+    },
+    {
+      "cell": "Input sheet!N25",
+      "formula": "=VLOOKUP($B$9,'Input Stat Distributioons'!$A$3:$R$96,5,FALSE)",
+      "computed": 0.121
+    },
+    {
+      "cell": "Input sheet!I26",
+      "formula": "='Valuation output'!B4",
+      "computed": 0.29732056386527494
+    },
+    {
+      "cell": "Input sheet!J26",
+      "formula": "=VLOOKUP(B8,'Industry Averages(US)'!A2:AA95,4)",
+      "computed": 0.20008555306144923
+    },
+    {
+      "cell": "Input sheet!K26",
+      "formula": "=VLOOKUP(B9,'Industry Average Beta (Global)'!A2:N95,4)",
+      "computed": 0.17273825570109677
+    },
+    {
+      "cell": "Input sheet!L26",
+      "formula": "=VLOOKUP($B$9,'Input Stat Distributioons'!$A$3:$R$96,6,FALSE)",
+      "computed": -0.08970873786407767
+    },
+    {
+      "cell": "Input sheet!M26",
+      "formula": "=VLOOKUP($B$9,'Input Stat Distributioons'!$A$3:$R$96,7,FALSE)",
+      "computed": 0.07810945273631842
+    },
+    {
+      "cell": "Input sheet!N26",
+      "formula": "=VLOOKUP($B$9,'Input Stat Distributioons'!$A$3:$R$96,8,FALSE)",
+      "computed": 0.1376079367995591
+    },
+    {
+      "cell": "Input sheet!B27",
+      "formula": "=I26",
+      "computed": 0.29732056386527494
+    },
+    {
+      "cell": "Input sheet!I27",
+      "formula": "=B11/'Valuation output'!B39",
+      "computed": 0.8950034671392249
+    },
+    {
+      "cell": "Input sheet!J27",
+      "formula": "=VLOOKUP(B8,'Industry Averages(US)'!A2:S95,14)",
+      "computed": 1.6739557556528541
+    },
+    {
+      "cell": "Input sheet!K27",
+      "formula": "=VLOOKUP(B9,'Industry Average Beta (Global)'!A2:N95,14)",
+      "computed": 1.7731795673077668
+    },
+    {
+      "cell": "Input sheet!L27",
+      "formula": "=VLOOKUP($B$9,'Input Stat Distributioons'!$A$3:$R$96,9,FALSE)",
+      "computed": 1.209404677086246
+    },
+    {
+      "cell": "Input sheet!M27",
+      "formula": "=VLOOKUP($B$9,'Input Stat Distributioons'!$A$3:$R$96,10,FALSE)",
+      "computed": 1.843188287921919
+    },
+    {
+      "cell": "Input sheet!N27",
+      "formula": "=VLOOKUP($B$9,'Input Stat Distributioons'!$A$3:$R$96,11,FALSE)",
+      "computed": 2.898466373715915
+    },
+    {
+      "cell": "Input sheet!B28",
+      "formula": "=B26",
+      "computed": 0.05
+    },
+    {
+      "cell": "Input sheet!I28",
+      "formula": "=IF(('Input sheet'!B11-'Input sheet'!C11)/(('Input sheet'!B14+'Input sheet'!B15-'Input sheet'!B18)-('Input sheet'!C14+'Input sheet'!C15-'Input sheet'!C18))>0,('Input sheet'!B11-'Input sheet'!C11)/(('Input sheet'!B14+'Input sheet'!B15-'Input sheet'!B18)-('Input sheet'!C14+'Input sheet'!C15-'Input sheet'!C18)),\"NA\")",
+      "computed": "NA"
+    },
+    {
+      "cell": "Input sheet!B29",
+      "formula": "=B27",
+      "computed": 0.29732056386527494
+    },
+    {
+      "cell": "Input sheet!I29",
+      "formula": "='Valuation output'!B7/'Valuation output'!B39",
+      "computed": 0.2195349217967486
+    },
+    {
+      "cell": "Input sheet!J29",
+      "formula": "=VLOOKUP(B8,'Industry Averages(US)'!A2:S95,5)",
+      "computed": 0.3060959745263867
+    },
+    {
+      "cell": "Input sheet!K29",
+      "formula": "=VLOOKUP(B9,'Industry Average Beta (Global)'!A2:N95,5)",
+      "computed": 0.26466406261132963
+    },
+    {
+      "cell": "Input sheet!J30",
+      "formula": "=VLOOKUP(B8,'Industry Averages(US)'!A2:S95,10)",
+      "computed": 0.476702678
+    },
+    {
+      "cell": "Input sheet!K30",
+      "formula": "=VLOOKUP(B8,'Industry Average Beta (Global)'!A2:Z95,10)",
+      "computed": 0.34852094064678985
+    },
+    {
+      "cell": "Input sheet!B31",
+      "formula": "=K27",
+      "computed": 1.7731795673077668
+    },
+    {
+      "cell": "Input sheet!I31",
+      "formula": "=B35",
+      "computed": 0.0731766923949557
+    },
+    {
+      "cell": "Input sheet!J31",
+      "formula": "=VLOOKUP(B8,'Industry Averages(US)'!A2:S95,13)",
+      "computed": 0.0659291553123623
+    },
+    {
+      "cell": "Input sheet!K31",
+      "formula": "=VLOOKUP(B8,'Industry Average Beta (Global)'!A2:Z95,13)",
+      "computed": 0.07391064244390748
+    },
+    {
+      "cell": "Input sheet!L31",
+      "formula": "=VLOOKUP($B$9,'Input Stat Distributioons'!$A$3:$R$96,12,FALSE)",
+      "computed": 0.07421564215721099
+    },
+    {
+      "cell": "Input sheet!M31",
+      "formula": "=VLOOKUP($B$9,'Input Stat Distributioons'!$A$3:$R$96,13,FALSE)",
+      "computed": 0.07932565172123435
+    },
+    {
+      "cell": "Input sheet!N31",
+      "formula": "=VLOOKUP($B$9,'Input Stat Distributioons'!$A$3:$R$96,14,FALSE)",
+      "computed": 0.08836354831506919
+    },
+    {
+      "cell": "Input sheet!B32",
+      "formula": "=B31",
+      "computed": 1.7731795673077668
+    },
+    {
+      "cell": "Input sheet!J34",
+      "formula": "='Valuation output'!M3",
+      "computed": 78207.49500208673
+    },
+    {
+      "cell": "Input sheet!B35",
+      "formula": "='Cost of capital worksheet'!B13",
+      "computed": 0.0731766923949557
+    },
+    {
+      "cell": "Input sheet!J35",
+      "formula": "='Valuation output'!M5",
+      "computed": 23252.6965125111
+    },
+    {
+      "cell": "Input sheet!J36",
+      "formula": "='Valuation output'!L40",
+      "computed": 0.2504785110758374
+    },
+    {
+      "cell": "Input sheet!B46",
+      "formula": "=B35",
+      "computed": 0.0731766923949557
+    },
+    {
+      "cell": "Input sheet!B62",
+      "formula": "=474.8+256.6",
+      "computed": 731.4000000000001
+    },
+    {
+      "cell": "Valuation output!C2",
+      "formula": "='Input sheet'!B26",
+      "computed": 0.05
+    },
+    {
+      "cell": "Valuation output!D2",
+      "formula": "='Input sheet'!B28",
+      "computed": 0.05
+    },
+    {
+      "cell": "Valuation output!E2",
+      "formula": "=D2",
+      "computed": 0.05
+    },
+    {
+      "cell": "Valuation output!F2",
+      "formula": "=E2",
+      "computed": 0.05
+    },
+    {
+      "cell": "Valuation output!G2",
+      "formula": "=F2",
+      "computed": 0.05
+    },
+    {
+      "cell": "Valuation output!H2",
+      "formula": "=G2-((G2-$M$2)/5)",
+      "computed": 0.04916
+    },
+    {
+      "cell": "Valuation output!I2",
+      "formula": "=G2-((G2-$M$2)/5)*2",
+      "computed": 0.04832
+    },
+    {
+      "cell": "Valuation output!J2",
+      "formula": "=G2-((G2-$M$2)/5)*3",
+      "computed": 0.04748
+    },
+    {
+      "cell": "Valuation output!K2",
+      "formula": "=G2-((G2-$M$2)/5)*4",
+      "computed": 0.04664
+    },
+    {
+      "cell": "Valuation output!L2",
+      "formula": "=G2-((G2-$M$2)/5)*5",
+      "computed": 0.0458
+    },
+    {
+      "cell": "Valuation output!M2",
+      "formula": "=IF('Input sheet'!B67=\"Yes\",'Input sheet'!B68,IF('Input sheet'!B64=\"Yes\",'Input sheet'!B65,'Input sheet'!B34))",
+      "computed": 0.0458
+    },
+    {
+      "cell": "Valuation output!B3",
+      "formula": "='Input sheet'!B11",
+      "computed": 46465
+    },
+    {
+      "cell": "Valuation output!C3",
+      "formula": "=B3*(1+C2)",
+      "computed": 48788.25
+    },
+    {
+      "cell": "Valuation output!D3",
+      "formula": "=C3*(1+D2)",
+      "computed": 51227.6625
+    },
+    {
+      "cell": "Valuation output!E3",
+      "formula": "=D3*(1+E2)",
+      "computed": 53789.045625
+    },
+    {
+      "cell": "Valuation output!F3",
+      "formula": "=E3*(1+F2)",
+      "computed": 56478.49790625
+    },
+    {
+      "cell": "Valuation output!G3",
+      "formula": "=F3*(1+G2)",
+      "computed": 59302.4228015625
+    },
+    {
+      "cell": "Valuation output!H3",
+      "formula": "=G3*(1+H2)",
+      "computed": 62217.729906487315
+    },
+    {
+      "cell": "Valuation output!I3",
+      "formula": "=H3*(1+I2)",
+      "computed": 65224.09061556878
+    },
+    {
+      "cell": "Valuation output!J3",
+      "formula": "=I3*(1+J2)",
+      "computed": 68320.93043799598
+    },
+    {
+      "cell": "Valuation output!K3",
+      "formula": "=J3*(1+K2)",
+      "computed": 71507.41863362411
+    },
+    {
+      "cell": "Valuation output!L3",
+      "formula": "=K3*(1+L2)",
+      "computed": 74782.4584070441
+    },
+    {
+      "cell": "Valuation output!M3",
+      "formula": "=L3*(1+M2)",
+      "computed": 78207.49500208673
+    },
+    {
+      "cell": "Valuation output!B4",
+      "formula": "=B5/B3",
+      "computed": 0.29732056386527494
+    },
+    {
+      "cell": "Valuation output!C4",
+      "formula": "='Input sheet'!B27",
+      "computed": 0.29732056386527494
+    },
+    {
+      "cell": "Valuation output!D4",
+      "formula": "=IF(D1>'Input sheet'!$B$30,'Input sheet'!$B$29,'Input sheet'!$B$29-(('Input sheet'!$B$29-$C$4)/'Input sheet'!$B$30)*('Input sheet'!$B$30-D1))",
+      "computed": 0.29732056386527494
+    },
+    {
+      "cell": "Valuation output!E4",
+      "formula": "=IF(E1>'Input sheet'!$B$30,'Input sheet'!$B$29,'Input sheet'!$B$29-(('Input sheet'!$B$29-$C$4)/'Input sheet'!$B$30)*('Input sheet'!$B$30-E1))",
+      "computed": 0.29732056386527494
+    },
+    {
+      "cell": "Valuation output!F4",
+      "formula": "=IF(F1>'Input sheet'!$B$30,'Input sheet'!$B$29,'Input sheet'!$B$29-(('Input sheet'!$B$29-$C$4)/'Input sheet'!$B$30)*('Input sheet'!$B$30-F1))",
+      "computed": 0.29732056386527494
+    },
+    {
+      "cell": "Valuation output!G4",
+      "formula": "=IF(G1>'Input sheet'!$B$30,'Input sheet'!$B$29,'Input sheet'!$B$29-(('Input sheet'!$B$29-$C$4)/'Input sheet'!$B$30)*('Input sheet'!$B$30-G1))",
+      "computed": 0.29732056386527494
+    },
+    {
+      "cell": "Valuation output!H4",
+      "formula": "=IF(H1>'Input sheet'!$B$30,'Input sheet'!$B$29,'Input sheet'!$B$29-(('Input sheet'!$B$29-$C$4)/'Input sheet'!$B$30)*('Input sheet'!$B$30-H1))",
+      "computed": 0.29732056386527494
+    },
+    {
+      "cell": "Valuation output!I4",
+      "formula": "=IF(I1>'Input sheet'!$B$30,'Input sheet'!$B$29,'Input sheet'!$B$29-(('Input sheet'!$B$29-$C$4)/'Input sheet'!$B$30)*('Input sheet'!$B$30-I1))",
+      "computed": 0.29732056386527494
+    },
+    {
+      "cell": "Valuation output!J4",
+      "formula": "=IF(J1>'Input sheet'!$B$30,'Input sheet'!$B$29,'Input sheet'!$B$29-(('Input sheet'!$B$29-$C$4)/'Input sheet'!$B$30)*('Input sheet'!$B$30-J1))",
+      "computed": 0.29732056386527494
+    },
+    {
+      "cell": "Valuation output!K4",
+      "formula": "=IF(K1>'Input sheet'!$B$30,'Input sheet'!$B$29,'Input sheet'!$B$29-(('Input sheet'!$B$29-$C$4)/'Input sheet'!$B$30)*('Input sheet'!$B$30-K1))",
+      "computed": 0.29732056386527494
+    },
+    {
+      "cell": "Valuation output!L4",
+      "formula": "=IF(L1>'Input sheet'!$B$30,'Input sheet'!$B$29,'Input sheet'!$B$29-(('Input sheet'!$B$29-$C$4)/'Input sheet'!$B$30)*('Input sheet'!$B$30-L1))",
+      "computed": 0.29732056386527494
+    },
+    {
+      "cell": "Valuation output!M4",
+      "formula": "=L4",
+      "computed": 0.29732056386527494
+    },
+    {
+      "cell": "Valuation output!B5",
+      "formula": "=IF('Input sheet'!B17=\"Yes\",IF('Input sheet'!B16=\"Yes\",'Input sheet'!B12+'Operating lease converter'!F32+'R& D converter'!D39,'Input sheet'!B12+'Operating lease converter'!F32),IF('Input sheet'!B16=\"Yes\",'Input sheet'!B12+'R& D converter'!D39,'Input sheet'!B12))",
+      "computed": 13815
+    },
+    {
+      "cell": "Valuation output!C5",
+      "formula": "=C4*C3",
+      "computed": 14505.75
+    },
+    {
+      "cell": "Valuation output!D5",
+      "formula": "=D4*D3",
+      "computed": 15231.0375
+    },
+    {
+      "cell": "Valuation output!E5",
+      "formula": "=E4*E3",
+      "computed": 15992.589375
+    },
+    {
+      "cell": "Valuation output!F5",
+      "formula": "=F4*F3",
+      "computed": 16792.21884375
+    },
+    {
+      "cell": "Valuation output!G5",
+      "formula": "=G4*G3",
+      "computed": 17631.829785937498
+    },
+    {
+      "cell": "Valuation output!H5",
+      "formula": "=H4*H3",
+      "computed": 18498.61053821419
+    },
+    {
+      "cell": "Valuation output!I5",
+      "formula": "=I4*I3",
+      "computed": 19392.463399420696
+    },
+    {
+      "cell": "Valuation output!J5",
+      "formula": "=J4*J3",
+      "computed": 20313.21756162519
+    },
+    {
+      "cell": "Valuation output!K5",
+      "formula": "=K4*K3",
+      "computed": 21260.62602869939
+    },
+    {
+      "cell": "Valuation output!L5",
+      "formula": "=L4*L3",
+      "computed": 22234.362700813825
+    },
+    {
+      "cell": "Valuation output!M5",
+      "formula": "=M4*M3",
+      "computed": 23252.6965125111
+    },
+    {
+      "cell": "Valuation output!N5",
+      "formula": "=M5-B5",
+      "computed": 9437.696512511098
+    },
+    {
+      "cell": "Valuation output!B6",
+      "formula": "='Input sheet'!B23",
+      "computed": 0.175
+    },
+    {
+      "cell": "Valuation output!C6",
+      "formula": "=B6",
+      "computed": 0.175
+    },
+    {
+      "cell": "Valuation output!D6",
+      "formula": "=C6",
+      "computed": 0.175
+    },
+    {
+      "cell": "Valuation output!E6",
+      "formula": "=D6",
+      "computed": 0.175
+    },
+    {
+      "cell": "Valuation output!F6",
+      "formula": "=E6",
+      "computed": 0.175
+    },
+    {
+      "cell": "Valuation output!G6",
+      "formula": "=F6",
+      "computed": 0.175
+    },
+    {
+      "cell": "Valuation output!H6",
+      "formula": "=G6+($M$6-$G$6)/5",
+      "computed": 0.19
+    },
+    {
+      "cell": "Valuation output!I6",
+      "formula": "=H6+($M$6-$G$6)/5",
+      "computed": 0.20500000000000002
+    },
+    {
+      "cell": "Valuation output!J6",
+      "formula": "=I6+($M$6-$G$6)/5",
+      "computed": 0.22000000000000003
+    },
+    {
+      "cell": "Valuation output!K6",
+      "formula": "=J6+($M$6-$G$6)/5",
+      "computed": 0.23500000000000004
+    },
+    {
+      "cell": "Valuation output!L6",
+      "formula": "=K6+($M$6-$G$6)/5",
+      "computed": 0.25000000000000006
+    },
+    {
+      "cell": "Valuation output!M6",
+      "formula": "=IF('Input sheet'!B59=\"Yes\",'Input sheet'!B23,'Input sheet'!B24)",
+      "computed": 0.25
+    },
+    {
+      "cell": "Valuation output!B7",
+      "formula": "=IF(B5>0,B5*(1-B6),B5)",
+      "computed": 11397.375
+    },
+    {
+      "cell": "Valuation output!C7",
+      "formula": "=IF(C5>0,IF(C5<B10,C5,C5-(C5-B10)*C6),C5)",
+      "computed": 11967.24375
+    },
+    {
+      "cell": "Valuation output!D7",
+      "formula": "=IF(D5>0,IF(D5<C10,D5,D5-(D5-C10)*D6),D5)",
+      "computed": 12565.6059375
+    },
+    {
+      "cell": "Valuation output!E7",
+      "formula": "=IF(E5>0,IF(E5<D10,E5,E5-(E5-D10)*E6),E5)",
+      "computed": 13193.886234375
+    },
+    {
+      "cell": "Valuation output!F7",
+      "formula": "=IF(F5>0,IF(F5<E10,F5,F5-(F5-E10)*F6),F5)",
+      "computed": 13853.580546093752
+    },
+    {
+      "cell": "Valuation output!G7",
+      "formula": "=IF(G5>0,IF(G5<F10,G5,G5-(G5-F10)*G6),G5)",
+      "computed": 14546.259573398436
+    },
+    {
+      "cell": "Valuation output!H7",
+      "formula": "=IF(H5>0,IF(H5<G10,H5,H5-(H5-G10)*H6),H5)",
+      "computed": 14983.874535953495
+    },
+    {
+      "cell": "Valuation output!I7",
+      "formula": "=IF(I5>0,IF(I5<H10,I5,I5-(I5-H10)*I6),I5)",
+      "computed": 15417.008402539454
+    },
+    {
+      "cell": "Valuation output!J7",
+      "formula": "=IF(J5>0,IF(J5<I10,J5,J5-(J5-I10)*J6),J5)",
+      "computed": 15844.30969806765
+    },
+    {
+      "cell": "Valuation output!K7",
+      "formula": "=IF(K5>0,IF(K5<J10,K5,K5-(K5-J10)*K6),K5)",
+      "computed": 16264.378911955031
+    },
+    {
+      "cell": "Valuation output!L7",
+      "formula": "=IF(L5>0,IF(L5<K10,L5,L5-(L5-K10)*L6),L5)",
+      "computed": 16675.772025610368
+    },
+    {
+      "cell": "Valuation output!M7",
+      "formula": "=M5*(1-M6)",
+      "computed": 17439.522384383323
+    },
+    {
+      "cell": "Valuation output!C8",
+      "formula": "=IF('Input sheet'!$B$56=\"No\",(D3-C3)/C38,IF('Input sheet'!$B$57=0,(C3-B3)/C38,IF('Input sheet'!$B$57=2,(E3-D3)/C38,IF('Input sheet'!$B$57=3,(F3-E3)/C38,(D3-C3)/C38))))",
+      "computed": 1375.7278422194875
+    },
+    {
+      "cell": "Valuation output!D8",
+      "formula": "=IF('Input sheet'!$B$56=\"No\",(E3-D3)/D38,IF('Input sheet'!$B$57=0,(D3-C3)/D38,IF('Input sheet'!$B$57=2,(F3-E3)/D38,IF('Input sheet'!$B$57=3,(G3-F3)/D38,(E3-D3)/D38))))",
+      "computed": 1444.5142343304628
+    },
+    {
+      "cell": "Valuation output!E8",
+      "formula": "=IF('Input sheet'!$B$56=\"No\",(F3-E3)/E38,IF('Input sheet'!$B$57=0,(E3-D3)/E38,IF('Input sheet'!$B$57=2,(G3-F3)/E38,IF('Input sheet'!$B$57=3,(H3-G3)/E38,(F3-E3)/E38))))",
+      "computed": 1516.7399460469858
+    },
+    {
+      "cell": "Valuation output!F8",
+      "formula": "=IF('Input sheet'!$B$56=\"No\",(G3-F3)/F38,IF('Input sheet'!$B$57=0,(F3-E3)/F38,IF('Input sheet'!$B$57=2,(H3-G3)/F38,IF('Input sheet'!$B$57=3,(I3-H3)/F38,(G3-F3)/F38))))",
+      "computed": 1592.5769433493344
+    },
+    {
+      "cell": "Valuation output!G8",
+      "formula": "=IF('Input sheet'!$B$56=\"No\",(H3-G3)/G38,IF('Input sheet'!$B$57=0,(G3-F3)/G38,IF('Input sheet'!$B$57=2,(I3-H3)/G38,IF('Input sheet'!$B$57=3,(J3-I3)/G38,(H3-G3)/G38))))",
+      "computed": 1644.1127332361225
+    },
+    {
+      "cell": "Valuation output!H8",
+      "formula": "=IF('Input sheet'!$B$56=\"No\",(I3-H3)/H38,IF('Input sheet'!$B$57=0,(H3-G3)/H38,IF('Input sheet'!$B$57=2,(J3-I3)/H38,IF('Input sheet'!$B$57=3,(K3-J3)/H38,(I3-H3)/H38))))",
+      "computed": 1695.463203225404
+    },
+    {
+      "cell": "Valuation output!I8",
+      "formula": "=IF('Input sheet'!$B$56=\"No\",(J3-I3)/I38,IF('Input sheet'!$B$57=0,(I3-H3)/I38,IF('Input sheet'!$B$57=2,(K3-J3)/I38,IF('Input sheet'!$B$57=3,(L3-K3)/I38,(J3-I3)/I38))))",
+      "computed": 1746.4896841379466
+    },
+    {
+      "cell": "Valuation output!J8",
+      "formula": "=IF('Input sheet'!$B$56=\"No\",(K3-J3)/J38,IF('Input sheet'!$B$57=0,(J3-I3)/J38,IF('Input sheet'!$B$57=2,(L3-K3)/J38,IF('Input sheet'!$B$57=3,(M3-L3)/J38,(K3-J3)/J38))))",
+      "computed": 1797.0476619388317
+    },
+    {
+      "cell": "Valuation output!K8",
+      "formula": "=IF('Input sheet'!$B$56=\"No\",(L3-K3)/K38,IF('Input sheet'!$B$57=0,(K3-J3)/K38,IF('Input sheet'!$B$57=2,L3*L2/K38,IF('Input sheet'!$B$57=3,M3*M2/K38,(L3-K3)/K38))))",
+      "computed": 1846.9870924536503
+    },
+    {
+      "cell": "Valuation output!L8",
+      "formula": "=IF('Input sheet'!$B$56=\"No\",(M3-L3)/L38,IF('Input sheet'!$B$57=0,(L3-K3)/L38,IF('Input sheet'!$B$57=2,M3*M2/L38,IF('Input sheet'!$B$57=3,K8*(1+M2),(M3-L3)/L38))))",
+      "computed": 1931.5791012880222
+    },
+    {
+      "cell": "Valuation output!M8",
+      "formula": "=IF(M2>0,(M2/M40)*M7,0)",
+      "computed": 8964.423402971448
+    },
+    {
+      "cell": "Valuation output!N8",
+      "formula": "=SUM(C8:M8)",
+      "computed": 25555.661845197697
+    },
+    {
+      "cell": "Valuation output!C9",
+      "formula": "=C7-C8",
+      "computed": 10591.515907780513
+    },
+    {
+      "cell": "Valuation output!D9",
+      "formula": "=D7-D8",
+      "computed": 11121.091703169537
+    },
+    {
+      "cell": "Valuation output!E9",
+      "formula": "=E7-E8",
+      "computed": 11677.146288328015
+    },
+    {
+      "cell": "Valuation output!F9",
+      "formula": "=F7-F8",
+      "computed": 12261.003602744417
+    },
+    {
+      "cell": "Valuation output!G9",
+      "formula": "=G7-G8",
+      "computed": 12902.146840162313
+    },
+    {
+      "cell": "Valuation output!H9",
+      "formula": "=H7-H8",
+      "computed": 13288.41133272809
+    },
+    {
+      "cell": "Valuation output!I9",
+      "formula": "=I7-I8",
+      "computed": 13670.518718401507
+    },
+    {
+      "cell": "Valuation output!J9",
+      "formula": "=J7-J8",
+      "computed": 14047.262036128817
+    },
+    {
+      "cell": "Valuation output!K9",
+      "formula": "=K7-K8",
+      "computed": 14417.391819501381
+    },
+    {
+      "cell": "Valuation output!L9",
+      "formula": "=L7-L8",
+      "computed": 14744.192924322346
+    },
+    {
+      "cell": "Valuation output!M9",
+      "formula": "=M7-M8",
+      "computed": 8475.098981411875
+    },
+    {
+      "cell": "Valuation output!B10",
+      "formula": "=IF('Input sheet'!B61=\"Yes\",'Input sheet'!B62,0)",
+      "computed": 0
+    },
+    {
+      "cell": "Valuation output!C10",
+      "formula": "=IF(C5<0,B10-C5,IF(B10>C5,B10-C5,0))",
+      "computed": 0
+    },
+    {
+      "cell": "Valuation output!D10",
+      "formula": "=IF(D5<0,C10-D5,IF(C10>D5,C10-D5,0))",
+      "computed": 0
+    },
+    {
+      "cell": "Valuation output!E10",
+      "formula": "=IF(E5<0,D10-E5,IF(D10>E5,D10-E5,0))",
+      "computed": 0
+    },
+    {
+      "cell": "Valuation output!F10",
+      "formula": "=IF(F5<0,E10-F5,IF(E10>F5,E10-F5,0))",
+      "computed": 0
+    },
+    {
+      "cell": "Valuation output!G10",
+      "formula": "=IF(G5<0,F10-G5,IF(F10>G5,F10-G5,0))",
+      "computed": 0
+    },
+    {
+      "cell": "Valuation output!H10",
+      "formula": "=IF(H5<0,G10-H5,IF(G10>H5,G10-H5,0))",
+      "computed": 0
+    },
+    {
+      "cell": "Valuation output!I10",
+      "formula": "=IF(I5<0,H10-I5,IF(H10>I5,H10-I5,0))",
+      "computed": 0
+    },
+    {
+      "cell": "Valuation output!J10",
+      "formula": "=IF(J5<0,I10-J5,IF(I10>J5,I10-J5,0))",
+      "computed": 0
+    },
+    {
+      "cell": "Valuation output!K10",
+      "formula": "=IF(K5<0,J10-K5,IF(J10>K5,J10-K5,0))",
+      "computed": 0
+    },
+    {
+      "cell": "Valuation output!L10",
+      "formula": "=IF(L5<0,K10-L5,IF(K10>L5,K10-L5,0))",
+      "computed": 0
+    },
+    {
+      "cell": "Valuation output!M10",
+      "formula": "=IF(M5<0,L10-M5,IF(L10>M5,L10-M5,0))",
+      "computed": 0
+    },
+    {
+      "cell": "Valuation output!C12",
+      "formula": "='Input sheet'!B35",
+      "computed": 0.0731766923949557
+    },
+    {
+      "cell": "Valuation output!D12",
+      "formula": "=C12",
+      "computed": 0.0731766923949557
+    },
+    {
+      "cell": "Valuation output!E12",
+      "formula": "=D12",
+      "computed": 0.0731766923949557
+    },
+    {
+      "cell": "Valuation output!F12",
+      "formula": "=E12",
+      "computed": 0.0731766923949557
+    },
+    {
+      "cell": "Valuation output!G12",
+      "formula": "=F12",
+      "computed": 0.0731766923949557
+    },
+    {
+      "cell": "Valuation output!H12",
+      "formula": "=G12-($G$12-$M$12)/5",
+      "computed": 0.07636135391596456
+    },
+    {
+      "cell": "Valuation output!I12",
+      "formula": "=H12-($G$12-$M$12)/5",
+      "computed": 0.07954601543697343
+    },
+    {
+      "cell": "Valuation output!J12",
+      "formula": "=I12-($G$12-$M$12)/5",
+      "computed": 0.0827306769579823
+    },
+    {
+      "cell": "Valuation output!K12",
+      "formula": "=J12-($G$12-$M$12)/5",
+      "computed": 0.08591533847899116
+    },
+    {
+      "cell": "Valuation output!L12",
+      "formula": "=K12-($G$12-$M$12)/5",
+      "computed": 0.08910000000000003
+    },
+    {
+      "cell": "Valuation output!M12",
+      "formula": "=IF('Input sheet'!B45=\"Yes\",'Input sheet'!B46,IF('Input sheet'!B64=\"Yes\",'Input sheet'!B65+'Country equity risk premiums'!B1,'Input sheet'!B34+'Country equity risk premiums'!B1))",
+      "computed": 0.0891
+    },
+    {
+      "cell": "Valuation output!C13",
+      "formula": "=1/(1+C12)",
+      "computed": 0.931813006270523
+    },
+    {
+      "cell": "Valuation output!D13",
+      "formula": "=C13*(1/(1+D12))",
+      "computed": 0.8682754786549097
+    },
+    {
+      "cell": "Valuation output!E13",
+      "formula": "=D13*(1/(1+E12))",
+      "computed": 0.8090703840364087
+    },
+    {
+      "cell": "Valuation output!F13",
+      "formula": "=E13*(1/(1+F12))",
+      "computed": 0.7539023068334126
+    },
+    {
+      "cell": "Valuation output!G13",
+      "formula": "=F13*(1/(1+G12))",
+      "computed": 0.7024959749647245
+    },
+    {
+      "cell": "Valuation output!H13",
+      "formula": "=G13*(1/(1+H12))",
+      "computed": 0.6526581174704372
+    },
+    {
+      "cell": "Valuation output!I13",
+      "formula": "=H13*(1/(1+I12))",
+      "computed": 0.6045672052304851
+    },
+    {
+      "cell": "Valuation output!J13",
+      "formula": "=I13*(1/(1+J12))",
+      "computed": 0.5583726572974403
+    },
+    {
+      "cell": "Valuation output!K13",
+      "formula": "=J13*(1/(1+K12))",
+      "computed": 0.5141953866123081
+    },
+    {
+      "cell": "Valuation output!L13",
+      "formula": "=K13*(1/(1+L12))",
+      "computed": 0.4721287178517199
+    },
+    {
+      "cell": "Valuation output!C14",
+      "formula": "=C9*C13",
+      "computed": 9869.312278991027
+    },
+    {
+      "cell": "Valuation output!D14",
+      "formula": "=D9*D13",
+      "computed": 9656.171221734676
+    },
+    {
+      "cell": "Valuation output!E14",
+      "formula": "=E9*E13",
+      "computed": 9447.633231946871
+    },
+    {
+      "cell": "Valuation output!F14",
+      "formula": "=F9*F13",
+      "computed": 9243.5989002018
+    },
+    {
+      "cell": "Valuation output!G14",
+      "formula": "=G9*G13",
+      "computed": 9063.706223617864
+    },
+    {
+      "cell": "Valuation output!H14",
+      "formula": "=H9*H13",
+      "computed": 8672.789524591139
+    },
+    {
+      "cell": "Valuation output!I14",
+      "formula": "=I9*I13",
+      "computed": 8264.747295635032
+    },
+    {
+      "cell": "Valuation output!J14",
+      "formula": "=J9*J13",
+      "computed": 7843.6070308667
+    },
+    {
+      "cell": "Valuation output!K14",
+      "formula": "=K9*K13",
+      "computed": 7413.356360569641
+    },
+    {
+      "cell": "Valuation output!L14",
+      "formula": "=L9*L13",
+      "computed": 6961.156901118709
+    },
+    {
+      "cell": "Valuation output!B16",
+      "formula": "=M9",
+      "computed": 8475.098981411875
+    },
+    {
+      "cell": "Valuation output!B17",
+      "formula": "=M12",
+      "computed": 0.0891
+    },
+    {
+      "cell": "Valuation output!B18",
+      "formula": "=B16/(B17-M2)",
+      "computed": 195729.76862383084
+    },
+    {
+      "cell": "Valuation output!B19",
+      "formula": "=B18*L13",
+      "computed": 92409.64470578305
+    },
+    {
+      "cell": "Valuation output!B20",
+      "formula": "=SUM(C14:L14)",
+      "computed": 86436.07896927345
+    },
+    {
+      "cell": "Valuation output!B21",
+      "formula": "=B19+B20",
+      "computed": 178845.7236750565
+    },
+    {
+      "cell": "Valuation output!B22",
+      "formula": "=IF('Input sheet'!B51=\"Yes\",'Input sheet'!B52,0)",
+      "computed": 0
+    },
+    {
+      "cell": "Valuation output!B23",
+      "formula": "=IF('Input sheet'!B53=\"B\",('Input sheet'!B14+'Input sheet'!B15)*'Input sheet'!B54,'Valuation output'!B21*'Input sheet'!B54)",
+      "computed": 89422.86183752825
+    },
+    {
+      "cell": "Valuation output!B24",
+      "formula": "=B21*(1-B22)+B23*B22",
+      "computed": 178845.7236750565
+    },
+    {
+      "cell": "Valuation output!B25",
+      "formula": "=IF('Input sheet'!B17=\"Yes\",'Input sheet'!B15+'Operating lease converter'!C28,'Input sheet'!B15)",
+      "computed": 45063
+    },
+    {
+      "cell": "Valuation output!B26",
+      "formula": "='Input sheet'!B20",
+      "computed": 1558
+    },
+    {
+      "cell": "Valuation output!B27",
+      "formula": "=IF('Input sheet'!B70=\"YES\",'Input sheet'!B18-'Input sheet'!B71*('Input sheet'!B24-'Input sheet'!B72),'Input sheet'!B18)",
+      "computed": 19000
+    },
+    {
+      "cell": "Valuation output!B28",
+      "formula": "='Input sheet'!B19",
+      "computed": 21119
+    },
+    {
+      "cell": "Valuation output!B29",
+      "formula": "=B24-B25-B26+B27+B28",
+      "computed": 172343.7236750565
+    },
+    {
+      "cell": "Valuation output!B30",
+      "formula": "=IF('Input sheet'!B37=\"No\",0,'Option value'!B29)",
+      "computed": 0
+    },
+    {
+      "cell": "Valuation output!B31",
+      "formula": "=B29-B30",
+      "computed": 172343.7236750565
+    },
+    {
+      "cell": "Valuation output!B32",
+      "formula": "='Input sheet'!B21",
+      "computed": 4315
+    },
+    {
+      "cell": "Valuation output!B33",
+      "formula": "=B31/B32",
+      "computed": 39.940608035934304
+    },
+    {
+      "cell": "Valuation output!B34",
+      "formula": "='Input sheet'!B22",
+      "computed": 72.28
+    },
+    {
+      "cell": "Valuation output!B35",
+      "formula": "=B34/B33",
+      "computed": 1.8096870216640206
+    },
+    {
+      "cell": "Valuation output!C38",
+      "formula": "='Input sheet'!B31",
+      "computed": 1.7731795673077668
+    },
+    {
+      "cell": "Valuation output!D38",
+      "formula": "='Input sheet'!B31",
+      "computed": 1.7731795673077668
+    },
+    {
+      "cell": "Valuation output!E38",
+      "formula": "=D38",
+      "computed": 1.7731795673077668
+    },
+    {
+      "cell": "Valuation output!F38",
+      "formula": "=E38",
+      "computed": 1.7731795673077668
+    },
+    {
+      "cell": "Valuation output!G38",
+      "formula": "=F38",
+      "computed": 1.7731795673077668
+    },
+    {
+      "cell": "Valuation output!H38",
+      "formula": "='Input sheet'!B32",
+      "computed": 1.7731795673077668
+    },
+    {
+      "cell": "Valuation output!I38",
+      "formula": "=H38",
+      "computed": 1.7731795673077668
+    },
+    {
+      "cell": "Valuation output!J38",
+      "formula": "=I38",
+      "computed": 1.7731795673077668
+    },
+    {
+      "cell": "Valuation output!K38",
+      "formula": "=J38",
+      "computed": 1.7731795673077668
+    },
+    {
+      "cell": "Valuation output!L38",
+      "formula": "=K38",
+      "computed": 1.7731795673077668
+    },
+    {
+      "cell": "Valuation output!B39",
+      "formula": "=IF('Input sheet'!B17=\"Yes\",IF('Input sheet'!B16=\"Yes\",'Input sheet'!B14+'Input sheet'!B15-'Input sheet'!B18+'Operating lease converter'!F33+'R& D converter'!D35,'Input sheet'!B14+'Input sheet'!B15-'Input sheet'!B18+'Operating lease converter'!F33),IF('Input sheet'!B16=\"Yes\",'Input sheet'!B14+'Input sheet'!B15-'Input sheet'!B18+'R& D converter'!D35,'Input sheet'!B14+'Input sheet'!B15-'Input sheet'!B18))",
+      "computed": 51916
+    },
+    {
+      "cell": "Valuation output!C39",
+      "formula": "=B39+C8",
+      "computed": 53291.72784221949
+    },
+    {
+      "cell": "Valuation output!D39",
+      "formula": "=C39+D8",
+      "computed": 54736.24207654995
+    },
+    {
+      "cell": "Valuation output!E39",
+      "formula": "=D39+E8",
+      "computed": 56252.98202259693
+    },
+    {
+      "cell": "Valuation output!F39",
+      "formula": "=E39+F8",
+      "computed": 57845.558965946264
+    },
+    {
+      "cell": "Valuation output!G39",
+      "formula": "=F39+G8",
+      "computed": 59489.671699182385
+    },
+    {
+      "cell": "Valuation output!H39",
+      "formula": "=G39+H8",
+      "computed": 61185.134902407786
+    },
+    {
+      "cell": "Valuation output!I39",
+      "formula": "=H39+I8",
+      "computed": 62931.62458654573
+    },
+    {
+      "cell": "Valuation output!J39",
+      "formula": "=I39+J8",
+      "computed": 64728.67224848456
+    },
+    {
+      "cell": "Valuation output!K39",
+      "formula": "=J39+K8",
+      "computed": 66575.6593409382
+    },
+    {
+      "cell": "Valuation output!L39",
+      "formula": "=K39+L8",
+      "computed": 68507.23844222623
+    },
+    {
+      "cell": "Valuation output!B40",
+      "formula": "=B7/B39",
+      "computed": 0.2195349217967486
+    },
+    {
+      "cell": "Valuation output!C40",
+      "formula": "=C7/B39",
+      "computed": 0.23051166788658603
+    },
+    {
+      "cell": "Valuation output!D40",
+      "formula": "=D7/C39",
+      "computed": 0.23578905106441506
+    },
+    {
+      "cell": "Valuation output!E40",
+      "formula": "=E7/D39",
+      "computed": 0.24104479470700663
+    },
+    {
+      "cell": "Valuation output!F40",
+      "formula": "=F7/E39",
+      "computed": 0.24627282053294067
+    },
+    {
+      "cell": "Valuation output!G40",
+      "formula": "=G7/F39",
+      "computed": 0.2514671797356446
+    },
+    {
+      "cell": "Valuation output!H40",
+      "formula": "=H7/G39",
+      "computed": 0.25187354557479313
+    },
+    {
+      "cell": "Valuation output!I40",
+      "formula": "=I7/H39",
+      "computed": 0.2519731046949568
+    },
+    {
+      "cell": "Valuation output!J40",
+      "formula": "=J7/I39",
+      "computed": 0.2517702316150763
+    },
+    {
+      "cell": "Valuation output!K40",
+      "formula": "=K7/J39",
+      "computed": 0.25127008398254014
+    },
+    {
+      "cell": "Valuation output!L40",
+      "formula": "=L7/K39",
+      "computed": 0.2504785110758374
+    },
+    {
+      "cell": "Valuation output!M40",
+      "formula": "=IF('Input sheet'!B48=\"Yes\",'Input sheet'!B49,'Valuation output'!L12)",
+      "computed": 0.08910000000000003
+    },
+    {
+      "cell": "Stories to Numbers!A1",
+      "formula": "='Input sheet'!B4",
+      "computed": "Coca Cola"
+    },
+    {
+      "cell": "Stories to Numbers!G1",
+      "formula": "='Input sheet'!B3",
+      "computed": "2024-09-01T00:00:00"
+    },
+    {
+      "cell": "Stories to Numbers!B9",
+      "formula": "='Valuation output'!B3",
+      "computed": 46465
+    },
+    {
+      "cell": "Stories to Numbers!C9",
+      "formula": "='Input sheet'!B26",
+      "computed": 0.05
+    },
+    {
+      "cell": "Stories to Numbers!D9",
+      "formula": "='Input sheet'!B28",
+      "computed": 0.05
+    },
+    {
+      "cell": "Stories to Numbers!F9",
+      "formula": "='Valuation output'!M2",
+      "computed": 0.0458
+    },
+    {
+      "cell": "Stories to Numbers!B10",
+      "formula": "='Valuation output'!B4",
+      "computed": 0.29732056386527494
+    },
+    {
+      "cell": "Stories to Numbers!C10",
+      "formula": "='Input sheet'!B27",
+      "computed": 0.29732056386527494
+    },
+    {
+      "cell": "Stories to Numbers!E10",
+      "formula": "='Valuation output'!G4",
+      "computed": 0.29732056386527494
+    },
+    {
+      "cell": "Stories to Numbers!F10",
+      "formula": "='Valuation output'!M4",
+      "computed": 0.29732056386527494
+    },
+    {
+      "cell": "Stories to Numbers!B11",
+      "formula": "='Valuation output'!B6",
+      "computed": 0.175
+    },
+    {
+      "cell": "Stories to Numbers!D11",
+      "formula": "=B11",
+      "computed": 0.175
+    },
+    {
+      "cell": "Stories to Numbers!F11",
+      "formula": "='Valuation output'!M6",
+      "computed": 0.25
+    },
+    {
+      "cell": "Stories to Numbers!C12",
+      "formula": "='Input sheet'!B31",
+      "computed": 1.7731795673077668
+    },
+    {
+      "cell": "Stories to Numbers!D12",
+      "formula": "='Input sheet'!B31",
+      "computed": 1.7731795673077668
+    },
+    {
+      "cell": "Stories to Numbers!E12",
+      "formula": "='Input sheet'!B32",
+      "computed": 1.7731795673077668
+    },
+    {
+      "cell": "Stories to Numbers!F12",
+      "formula": "='Valuation output'!M2/'Valuation output'!M40",
+      "computed": 0.5140291806958472
+    },
+    {
+      "cell": "Stories to Numbers!B13",
+      "formula": "='Valuation output'!B40",
+      "computed": 0.2195349217967486
+    }
+  ],
+  "comments": [
+    {
+      "cell": "Input sheet!B7",
+      "text": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924  Comment:     This is a pull down menu, and you should enter your country of incorporation. You can always add more details on geographic risk exposure in the cost of capital worksheet.",
+      "author": "tc={71F54301-01F9-6142-81B2-70E7EE6CDDF7}"
+    },
+    {
+      "cell": "Input sheet!B8",
+      "text": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924  Comment:     If you are in multiple businesses, make your judgment on the one industry group that it most falls into, and pick that one for this cell. Later, in the cost of capital section, you will be able to break the company down into more detail.",
+      "author": "tc={54FBC3F9-EB9F-7C41-8C6D-97F512BA685D}"
+    },
+    {
+      "cell": "Input sheet!B9",
+      "text": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924  Comment:     If you are in multiple businesses, make your judgment on the one industry group that it most falls into, and pick that one for this cell. In general, your pick here should match your pick in the cell above. Later, in the cost of capital section, you ",
+      "author": "tc={CA4A0E69-2EC1-064C-82D5-50B182E99825}"
+    },
+    {
+      "cell": "Input sheet!C10",
+      "text": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924  Comment:     Aswath Damodaran: If your last twelve months of data come from a 10K or Annual Report, the last 10K will be the previous year’s 10K or annual report. If your last twelve months are midway through a fiscal year, this will be the previous fiscal year. ",
+      "author": "tc={E0152BD4-8763-E340-9F3D-57E83246CD86}"
+    },
+    {
+      "cell": "Input sheet!D10",
+      "text": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924  Comment:     If your most recent year's numbers are your current, and you are entering the llast year's numbers for last year, enter 1. If you have trailing 12-month numbers, and you are entering the last fiscal year's numbers as trailing 12-month, enter teh frac",
+      "author": "tc={2D890560-A4D2-9046-BCC4-FEE8DA2A9099}"
+    },
+    {
+      "cell": "Input sheet!B11",
+      "text": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924  Comment:     Enter the revenues from the most recent twelve months. If your company had no revenues, enter a  small positive number. (You need a base for your growth rate)",
+      "author": "tc={09E9FA1F-138A-9547-B116-0278E256325D}"
+    },
+    {
+      "cell": "Input sheet!C11",
+      "text": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924  Comment:     Enter the revenues from the last annual report before your most recent 12 months ended.",
+      "author": "tc={B4FAFBEA-7EF5-9E49-BDDC-74E67266D7B3}"
+    },
+    {
+      "cell": "Input sheet!D11",
+      "text": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924  Comment:     If your most recent 12 months of data represent the most recent fiscal year, and your last 10 before LTM is the previous fiscal year, enter 1.00. If your most recent 12 months of data are midway through a fiscal year, enter the fraction of the most r",
+      "author": "tc={2F9D57EC-A335-6C45-8636-50B8E9391785}"
+    },
+    {
+      "cell": "Input sheet!B12",
+      "text": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924  Comment:     Enter the operating income or EBIT from the most recent 12 months, even if that number is negative. If you have operating leases or R&D and want to adjust for them, use the options below to start the process and enter the numbers in the relevant work",
+      "author": "tc={AFFC9966-65E7-7849-A618-5DEF034E694A}"
+    },
+    {
+      "cell": "Input sheet!C12",
+      "text": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924  Comment:     Enter the operating income or EBIT from the annual report or 10K in the fiscal year prior to your most recent 12 month data.",
+      "author": "tc={E540843E-F2A3-134C-8531-DA60E38A7694}"
+    },
+    {
+      "cell": "Input sheet!B14",
+      "text": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924  Comment:     Enter the book value of equity (total) from the end of the most recent 12 months (i.e. the most recent balance sheet, either from an annual report or quarterly report). This book equity will include everything - paid in capital, retained earnings etc",
+      "author": "tc={77A98811-E565-A44B-A04A-39493A90F633}"
+    },
+    {
+      "cell": "Input sheet!C14",
+      "text": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924  Comment:     Enter the book value of equity (total) from the end of the annual report in the fiscal year prior to your most recent 12 months.",
+      "author": "tc={1B0C707C-9FE4-EC47-8991-BFB3094AFE63}"
+    },
+    {
+      "cell": "Input sheet!B15",
+      "text": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924  Comment:     Enter the book value of interest bearing debt (short and long term) at your company from the most recent balance sheet. If your company is capitalizing leases, and you trust the accounting calculations, include those as well. (Do not include accounts",
+      "author": "tc={4EBAB3AE-4130-E345-91F6-F196751794B7}"
+    },
+    {
+      "cell": "Input sheet!C15",
+      "text": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924  Comment:     Enter the book value of interest bearing debt (short and long term) at your company from the balance sheet of the fiscal year prior to your most recent 12 months of data.",
+      "author": "tc={EEE67F91-B486-C642-BCF8-918B32B4F8EF}"
+    },
+    {
+      "cell": "Input sheet!B16",
+      "text": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924  Comment:     If you decide to challenge the accountants, and move an expense (like R&D or customer acquisition costs) from operating to capital expenses, enter yes here, but make sure that you go into the R&D worksheet and enter the numbers for your company.",
+      "author": "tc={2A62643D-C33C-9A46-A5F0-E66BADC89EAC}"
+    },
+    {
+      "cell": "Input sheet!B17",
+      "text": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924  Comment:     If your have lease commitments, and accountants are not treating it as debt, or you don’t trust the accountants, enter yes to this, and make sure you enter your company’s lease commitments into the operating lease converter. (But make sure then that ",
+      "author": "tc={AEED2D9E-7933-0546-A108-B06B6DBDF425}"
+    },
+    {
+      "cell": "Input sheet!B18",
+      "text": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924  Comment:     Enter the cash and marketable securities in your most recent balance sheet. In most companies, this will show up under current assets, and can either show up as a consolidated item or as sub-items for cash and short term investments.",
+      "author": "tc={E2546F12-07E7-8E43-BAF4-4BA7F486E85D}"
+    },
+    {
+      "cell": "Input sheet!C18",
+      "text": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924  Comment:     Enter the cash balance from the balance sheet of the fiscal year prior to your most recent twelve months.",
+      "author": "tc={7036E80F-6A3B-5240-ADB4-827D900C1913}"
+    },
+    {
+      "cell": "Input sheet!B19",
+      "text": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924  Comment:     The most common non-operating assets are minority holdings in other companies (which are not consolidated). You can find the value of these holdings on the balance sheet, and it can be either in book value terms or marked to market. If it is book val",
+      "author": "tc={4EF0786B-4C78-E749-BA0E-D37E40A13CCA}"
+    },
+    {
+      "cell": "Input sheet!B20",
+      "text": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924  Comment:     This is a uniquely accounting item and will be on the liability side of your company's balance sheet. It reflects the requirement that if you own more than 50% of another company or have effective control of it, you have to consolidate that company's",
+      "author": "tc={66B71247-062C-884C-A110-2FA7FC5BB361}"
+    },
+    {
+      "cell": "Input sheet!B21",
+      "text": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924  Comment:     Enter the most recent update you have on the number of shares. If you have different classes of shares, aggregate them all and enter one number. Count restricted stock units (RSUs) as shares but don't count shares underlying employee options.",
+      "author": "tc={51B4C672-001E-AC42-885D-01422D0EE688}"
+    },
+    {
+      "cell": "Input sheet!B22",
+      "text": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924  Comment:     Enter the most recent stock price (how about today's?) in here.",
+      "author": "tc={38AE7BD4-BE10-B140-8F0C-6498039783B4}"
+    },
+    {
+      "cell": "Input sheet!B23",
+      "text": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924  Comment:     Enter your effective (not marginal) tax rate for your firm. You will find this in your company's annual report. If you cannot, you can compute it as follows, from the income statement: Effective tax rate = Taxes paid/ Taxable income If your effective",
+      "author": "tc={218968A8-BC08-A64F-9F0E-C67E68AA4DD8}"
+    },
+    {
+      "cell": "Input sheet!B24",
+      "text": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924  Comment:     This is a statutory tax rate. I use the tax rate of the country the company is domiciled in. See the country equity risk premium worksheet embedded in this spreadsheet for country tax rates.",
+      "author": "tc={7EC7B7C4-E2EF-5C47-9F07-E86FFDCD3214}"
+    },
+    {
+      "cell": "Input sheet!B26",
+      "text": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924  Comment:     This will get you started on your revenue projections. While the bigger input will be the revenue growth rate for years 2-5, two cells down, the estimated growth in year 1 (next 12 months) is offered as a separate input for two reasons. (1) For some ",
+      "author": "tc={4B2B4743-2757-3E4B-9959-BA2D9ACB4202}"
+    },
+    {
+      "cell": "Input sheet!B27",
+      "text": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924  Comment:     Again, I am separating out the operating margin for next year, to allow you to use the superior information you may have for the near term to play out in this estimate.",
+      "author": "tc={751B8FE4-9055-B84E-A3C8-0E4DEADB3EA0}"
+    },
+    {
+      "cell": "Input sheet!B28",
+      "text": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924  Comment:     I don't have a crystal ball but you should look at  a. Revenue growth in your company in recent years b. Your company's revenues, relative to the overall market size and larger players in the sector.  Suggestion: Check your revenues in year 10 agains",
+      "author": "tc={5CA1C1D1-F4A5-8446-B5E9-71CD54EF2545}"
+    },
+    {
+      "cell": "Input sheet!B29",
+      "text": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924  Comment:     This is the operating margin that you expect your company to move to, over time. For mature companies, it can be close to or equal to the current operating margin. For growth companies (including money-losing), it may the industry average margin or a",
+      "author": "tc={3FA629D8-89D5-E143-B22C-AFE6CD0C8514}"
+    },
+    {
+      "cell": "Input sheet!B30",
+      "text": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924  Comment:     This is the forecast year in which your current margin will converge on target.",
+      "author": "tc={594B4E1B-3ACD-0F43-A4CB-A9BE88E089B5}"
+    },
+    {
+      "cell": "Input sheet!B31",
+      "text": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924  Comment:     You are probably wondering what this is but it is how I compute how much you are going to reinvest to keep your business growing in future years. The higher you set this number, the more efficiently you are growing and the higher the value of your gr",
+      "author": "tc={AE13966B-AB4E-B34C-AB49-2D7FEA7E9120}"
+    },
+    {
+      "cell": "Input sheet!B32",
+      "text": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924  Comment:     I give you a second chance to input the sales to invested capital to allow for the fact that as companies scale up they might need to reinvest less (or more) to get the same growth.",
+      "author": "tc={FBD5A24E-83BA-4543-B49C-42E85C8B9500}"
+    },
+    {
+      "cell": "Input sheet!B34",
+      "text": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924  Comment:     This should be today's long term riskfree rate. If you are working with a currency where the government has default risk, clean up the government bond rate to make it riskfree (by subtracting the default spread for the government).",
+      "author": "tc={48C76159-0827-874B-B96B-C4FD25D34B6A}"
+    },
+    {
+      "cell": "Input sheet!J34",
+      "text": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924  Comment:     Compare to your total market and check your market share.",
+      "author": "tc={41BD63FD-2E13-334D-AC8A-F4702E32C3C5}"
+    },
+    {
+      "cell": "Input sheet!B35",
+      "text": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924  Comment:     Use the cost of capital worksheet to either input directly, calculate from company details on business & geography mix, use an industry average or even a histogram across all companies.",
+      "author": "tc={A59C3A77-9765-B147-B40F-B2F3A4E48AC3}"
+    },
+    {
+      "cell": "Input sheet!J35",
+      "text": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924  Comment:     Determined by your target margin.",
+      "author": "tc={DB629F1F-F83F-F647-853F-47BFC31610CD}"
+    },
+    {
+      "cell": "Input sheet!J36",
+      "text": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924  Comment:     Function of both your target margin and your sales to capital ratio.",
+      "author": "tc={B1F53202-2F0D-D541-9E18-76005E4E45E4}"
+    },
+    {
+      "cell": "Input sheet!B37",
+      "text": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924  Comment:     Check your annual report or 10K for whether your companies has employee options still outstanding.",
+      "author": "tc={3B1FC220-3FE7-E54A-96FA-E03CEFCBFDE2}"
+    },
+    {
+      "cell": "Input sheet!B38",
+      "text": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924  Comment:     Check your company's annual report or 10K. If it does have options outstanding, enter the total number here (vested and non vested, in the money and out…",
+      "author": "tc={635D9BDD-F56D-3A4B-BB73-B545395723F2}"
+    },
+    {
+      "cell": "Input sheet!B39",
+      "text": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924  Comment:     Enter the weighted average strike price of your options. (Should be in your 10K or annual report.)",
+      "author": "tc={F6C404B5-0607-B64F-8A31-FA7F51831376}"
+    },
+    {
+      "cell": "Input sheet!B40",
+      "text": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924  Comment:     The weighted average maturity of your options should be reported in your financial statements.",
+      "author": "tc={84D307F5-C671-864E-A8B6-E08441B4818E}"
+    },
+    {
+      "cell": "Input sheet!B41",
+      "text": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924  Comment:     If you have a standard deviation for your stock, enter that number. If not, use the US and Global Industry average worksheets in this spreadsheet to look up the industry average standard deviation.",
+      "author": "tc={2377327B-59EE-3545-8F8A-AE8AED070076}"
+    },
+    {
+      "cell": "Input sheet!B46",
+      "text": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924  Comment:     You have three choices. You can move your cost of capital to the industry average or median, over time. That should on this page, to your right. Second, you can see the market-wide distribution in the cost of capital worksheet to look at the distribu",
+      "author": "tc={23A45B0B-C6F1-6248-99DC-D3FB7F79095D}"
+    },
+    {
+      "cell": "Input sheet!B49",
+      "text": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924  Comment:     Even if you believe your firm has significant competitive advantages, you should expect the return on capital for a company to come down over time, at least on new projects. If you don’t see long term competitive advantages, you should just leave the",
+      "author": "tc={C653EB8A-25F4-464F-BD99-C6B45BEA26C3}"
+    },
+    {
+      "cell": "Input sheet!B51",
+      "text": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924  Comment:     If your company is money-losing or in decline, and you believe that there is a significant chance it will not survive, enter yes here, and the inputs below. Failure can also be caused by catastrophes or government action.",
+      "author": "tc={BC8F5940-D88C-FF41-BFB0-C57C664414DF}"
+    },
+    {
+      "cell": "Input sheet!B52",
+      "text": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924  Comment:     Aswath Damodaran If you want to look at ways of estimating this probability, try the failure rate worksheet embedded in this spreadsheet.",
+      "author": "tc={E70E7C6A-F80C-1541-B56C-B7B598D70448}"
+    },
+    {
+      "cell": "Input sheet!B53",
+      "text": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924  Comment:     If the firm fail and has to liquidate its assets, you need to specify what the liquidation proceeds will be tied to. For young growth companies, I would tie it to value and with distressed firms (especially ones with significant assets in place), I w",
+      "author": "tc={2714D861-0A48-5D43-B0B4-66453AEB395D}"
+    },
+    {
+      "cell": "Input sheet!B54",
+      "text": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924  Comment:     You will generally not get 100% of fair value. How much less than 100% you get will depend on whether there are lots of potential buyers for your assets and how much of a hurry you are in to liquidate. It may well be zero for a young growth company w",
+      "author": "tc={BACA5868-B98A-F34A-BB35-5BF8D7D47027}"
+    },
+    {
+      "cell": "Input sheet!B56",
+      "text": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924  Comment:     The default in the spreadsheet is to assume that reinvestment in a year creates growth in the same year. That may work in service businesses or for companies that grow through acquisitions, but in some businesses, there will be a lag between when you",
+      "author": "tc={70BF85C9-F9B1-4243-88BC-086E5E41286E}"
+    },
+    {
+      "cell": "Input sheet!B57",
+      "text": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924  Comment:     The default is set to zero (contemporaneous growth, but you can a lag up to three years between investment and growth)",
+      "author": "tc={D5616C1A-972E-EA45-89C6-4108E9869A9C}"
+    },
+    {
+      "cell": "Input sheet!B59",
+      "text": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924  Comment:     In general, it is prudent to assume that your company, no matter how capable it is on the tax management front, will eventually have to pay its marginal tax rate. There are some companies, though, where the low effective tax rate comes from structura",
+      "author": "tc={864108E8-64F4-C649-B7F6-27546ED36042}"
+    },
+    {
+      "cell": "Input sheet!B62",
+      "text": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924  Comment:     This is the NOL from prior years carried forward into this year. Check the footnotes to your financial statements to see if there are any loss carry forwards.",
+      "author": "tc={52953B18-6ABF-C140-A50D-98AA9E44D651}"
+    },
+    {
+      "cell": "Input sheet!B64",
+      "text": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924  Comment:     My advice, in most cases is to leave this as no, and I will leave the current riskfree rate unchanged in perpetuity. If you do feel that interest rates will change over time, and you are inclined to forecast that level (normalized, historical average",
+      "author": "tc={25389A54-C635-ED40-849A-EEB0EC5D59A1}"
+    },
+    {
+      "cell": "Input sheet!B65",
+      "text": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924  Comment:     This is your forecast for the long-term, default free rate in the currency that you are working with, ten years from now.",
+      "author": "tc={2C7CA6D9-70A4-454D-A0BD-19CB3A5D02DF}"
+    },
+    {
+      "cell": "Input sheet!B67",
+      "text": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924  Comment:     Leave this  at no,  for the most part, but use yes, if you have a firm that you see declining after year 10 or growing at a rate much lower than the rest of the economy.",
+      "author": "tc={997F1F94-CD24-FE40-933F-77DF8B8E547F}"
+    },
+    {
+      "cell": "Input sheet!B68",
+      "text": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924  Comment:     Be VERY, VERY careful. This is a growth rate in perpetuity, after year 10. Entering numbers significantly (more than 1%) higher than the risk free rate will render your valuation close to useless.",
+      "author": "tc={FC146819-31BC-CD4B-BB8F-10573BD83B4A}"
+    },
+    {
+      "cell": "Input sheet!B70",
+      "text": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924  Comment:     US tax law no longer has the global taxation feature that it used to have prior to 2017. So, no is the better answer. However, it the tax laws revert back to pre-2017 standards, this option will come into play, as companies part their cash outside th",
+      "author": "tc={3402EFD0-3B2F-EB41-AC9A-ADE509BA8833}"
+    },
+    {
+      "cell": "Input sheet!B71",
+      "text": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924  Comment:     If your concern is that a portion of the cash is trapped in foreign markets and will be subject to tax, when returned, enter the trapped cash balance. If you feel that the entire cash balance is being discounted because markets don't trust managers, ",
+      "author": "tc={486B0BE4-91F5-A947-86B6-995AD147925C}"
+    },
+    {
+      "cell": "Input sheet!B72",
+      "text": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924  Comment:     This is the additional tax due, if the cash is trapped cash. If your concern is that all cash is being discounted by the market because of management mistrust, enter the percentage discount to apply to cash.",
+      "author": "tc={BC724579-4871-0448-B3E6-EFAC6D77BD38}"
+    },
+    {
+      "cell": "Synthetic rating!F8",
+      "text": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924  Comment:     If your most recent year's operating income is unusually low or high, you can use the average operating income from the last few years.",
+      "author": "tc={AA550503-3638-E344-A76C-EC9EE16E8E35}"
+    },
+    {
+      "cell": "Synthetic rating!F9",
+      "text": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924  Comment:     Enter the interest expense from the most recent income statement.",
+      "author": "tc={0773F50D-8F4A-8942-A093-8D85A28A7EFC}"
+    },
+    {
+      "cell": "Synthetic rating!F10",
+      "text": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924  Comment:     I use a 10 year government bond rate.",
+      "author": "tc={92B75667-258A-9041-A90E-BA34684C64D8}"
+    },
+    {
+      "cell": "R& D converter!F7",
+      "text": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924  Comment:     Enter the R&D expense in the most recent 12 months of data.",
+      "author": "tc={BC7D716B-CF00-F547-AE72-E2F45BCC1F61}"
+    },
+    {
+      "cell": "R& D converter!B10",
+      "text": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924  Comment:     Enter the R&D expenses from the years before the last 12 months, starting with the last year (-1), the year before that (-2) etc..",
+      "author": "tc={ED7E82EC-F310-0248-9E9E-817504C4829B}"
+    },
+    {
+      "cell": "R& D converter!D40",
+      "text": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924  Comment:     By expensing R&D rather than capitalizing it, the firm gets a tax benefit. This is the dollar value of that tax benefit.",
+      "author": "tc={592C6C60-5223-4B45-8A69-B291166B7E7E}"
+    },
+    {
+      "cell": "Operating lease converter!E4",
+      "text": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924  Comment:     Enter the operating lease expense in the most recent 12 months.",
+      "author": "tc={4E9D46C3-9490-AE49-9C1C-FE39D8287CF7}"
+    },
+    {
+      "cell": "Operating lease converter!B6",
+      "text": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924  Comment:     Enter the expected contractual lease commitments in future years, with a lump=sum after year 5. US companies report these numbers in the footnotes. European companies sometimes report them with years lumped together (Years 1&2, Years 3 through 5). If",
+      "author": "tc={088A5D00-F7DB-F641-B5E4-2511B8451119}"
+    },
+    {
+      "cell": "Cost of capital worksheet!B23",
+      "text": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924  Comment:     If you input a beta directly, I will unlever that beta using the current debt to equity ratio.",
+      "author": "tc={A23E286D-FDA4-E04B-B2B6-8101484E8233}"
+    },
+    {
+      "cell": "Cost of capital worksheet!B25",
+      "text": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924  Comment:     If you pick operating regions or countries, please input the revenues by country or region in the table to the right.",
+      "author": "tc={E56104C5-7C66-F848-B455-D4DEB1B906C4}"
+    },
+    {
+      "cell": "Cost of capital worksheet!B27",
+      "text": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924  Comment:     If your company has risk exposure in emergiing markets, incorporate that risk premiums here. See worksheet on country risk premiums.",
+      "author": "tc={48141766-7F07-C447-89ED-3E1A81023B2B}"
+    },
+    {
+      "cell": "Cost of capital worksheet!B31",
+      "text": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924  Comment:     Interest expense (gross) from most recent financial statement.",
+      "author": "tc={568DD258-B547-7D4B-8EA5-8936C8A36C7A}"
+    },
+    {
+      "cell": "Cost of capital worksheet!B32",
+      "text": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924  Comment:     Generally found in footnotes to financial statements. If you cannot find it, enter zero,",
+      "author": "tc={0B49E534-4839-224A-A0D8-3E69E03A9811}"
+    },
+    {
+      "cell": "Cost of capital worksheet!B33",
+      "text": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924  Comment:     Check to see if your company has a bond rating from S&P or Moodys and if it does, pick actual rating. Otherwise, you will have to use a rating based upon the interest coverage ratio. You can also override this choice, and directly input the pre-tax c",
+      "author": "tc={5A91BFC2-E30D-1B4A-87B9-BB138BF07698}"
+    },
+    {
+      "cell": "Cost of capital worksheet!B35",
+      "text": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924  Comment:     If you cannot find your rating on this pulldown menu, pick the closest one you can find.",
+      "author": "tc={99D69372-A294-2A49-8F68-E27D38561195}"
+    },
+    {
+      "cell": "Cost of capital worksheet!B36",
+      "text": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924  Comment:     This input is used only when you pick the synthetic rating option. 1: Large market cap (>$5 billion) and safe. 2: Small market cap (<$5 billion) or risky. If company has volatile earnings or is in risky business, use 2, even if large market cap.",
+      "author": "tc={CDB18AC1-A933-1F49-84C1-AA536ECAB35B}"
+    },
+    {
+      "cell": "Cost of capital worksheet!B37",
+      "text": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924  Comment:     Current, long term cost of borrowing money. If you have a rating use it, if not use a synthetic rating. See the worksheet attached.",
+      "author": "tc={40F47070-A7F9-764E-BF6F-3CDF01F6763D}"
+    },
+    {
+      "cell": "Country equity risk premiums!B1",
+      "text": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924  Comment:     This is the estimate for the ERP for a mature market, that then updates all of the ERP for other countries by adding the CRP to it. I update the ERP for the S&P 500 at the start of every month on my website (damodaran.com) and if you want, you can ch",
+      "author": "tc={C3B82CD1-0285-F746-B2B0-DC065BFFA19E}"
+    }
+  ]
+}

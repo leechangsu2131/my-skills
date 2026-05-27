@@ -34,6 +34,7 @@ class MetricObservation(BaseModel):
     statement_name: str | None = None
     original_account_name: str | None = None
     original_amount: Number | None = None
+    yf_value: Number | None = None
     confidence: float = Field(ge=0.0, le=1.0)
     note: str = ""
 

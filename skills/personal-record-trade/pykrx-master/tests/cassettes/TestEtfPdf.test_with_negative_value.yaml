@@ -1,0 +1,55 @@
+interactions:
+- request:
+    body: trdDd=20210402&isuCd=KR7114800006&bld=dbms%2FMDC%2FSTAT%2Fstandard%2FMDCSTAT05001
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate, br, zstd
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '81'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Referer:
+      - https://data.krx.co.kr/contents/MDC/MDI/outerLoader/index.cmd
+      User-Agent:
+      - Mozilla/5.0
+    method: POST
+    uri: https://data.krx.co.kr/comm/bldAttendant/getJsonData.cmd
+  response:
+    body:
+      string: '{"output":[{"COMPST_ISU_CD":"069500","COMPST_ISU_CD2":"KR7069500007","MKT_ID":"STK","SECUGRP_ID":"EF","COMPST_ISU_NM":"KODEX
+        200","COMPST_ISU_CU1_SHRS":"-324.00","VALU_AMT":"-","COMPST_AMT":"-13,946,580","COMPST_RTO":"-"},{"COMPST_ISU_CD":"KR4101R60000","COMPST_ISU_CD2":"KR4101R60000","MKT_ID":"DRV","SECUGRP_ID":"FU","COMPST_ISU_NM":"코스피200
+        F 202106","COMPST_ISU_CU1_SHRS":"-3.58","VALU_AMT":"-375,184,000","COMPST_AMT":"-","COMPST_RTO":"-"},{"COMPST_ISU_CD":"KRD010010001","COMPST_ISU_CD2":"KRD010010001","MKT_ID":"","SECUGRP_ID":"","COMPST_ISU_NM":"원화예금","COMPST_ISU_CU1_SHRS":"-","VALU_AMT":"-","COMPST_AMT":"388,739,133","COMPST_RTO":"-"},{"COMPST_ISU_CD":"CASH00000001","COMPST_ISU_CD2":"CASH00000001","MKT_ID":"","SECUGRP_ID":"","COMPST_ISU_NM":"설정현금액","COMPST_ISU_CU1_SHRS":"-","VALU_AMT":"-","COMPST_AMT":"388,739,133","COMPST_RTO":"-"}],"CURRENT_DATETIME":"2026.01.25
+        PM 08:25:18"}'
+    headers:
+      Cache-Control:
+      - max-age=0, no-cache, no-store
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Length:
+      - '339'
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sun, 25 Jan 2026 11:25:18 GMT
+      Expires:
+      - Sun, 25 Jan 2026 11:25:18 GMT
+      Pragma:
+      - no-cache
+      Set-Cookie:
+      - __smVisitorID=mZtaZbf1JQv; Expires=Mon, 25-Jan-2027 11:25:16 GMT; Path=/
+      - __smVisitorID=Md1q2OvEL79; Expires=Mon, 25-Jan-2027 11:25:16 GMT; Path=/
+      - __smVisitorID=s2kczQZHCPk; Expires=Mon, 25-Jan-2027 11:25:16 GMT; Path=/
+      - JSESSIONID=U1OSzl0dpGuIoGS6FRhlHja8XbpoFzKLc4JOVkqk8ZhJ8YOetqya3BHWKMtNqRTK.bWRjX2RvbWFpbi9tZGNvd2FwMi1tZGNhcHAwMQ==;
+        Domain=.krx.co.kr; Path=/; HttpOnly
+      Vary:
+      - Accept-Encoding
+    status:
+      code: 200
+      message: OK
+version: 1

@@ -1,0 +1,49 @@
+interactions:
+- request:
+    body: strtDd=20210115&endDd=20210122&isuCd=KR7005930003&inqTpCd=2&trdVolVal=1&askBid=3&bld=dbms%2FMDC%2FSTAT%2Fstandard%2FMDCSTAT02302
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate, br, zstd
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '128'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Referer:
+      - https://data.krx.co.kr/contents/MDC/MDI/outerLoader/index.cmd
+      User-Agent:
+      - Mozilla/5.0
+    method: POST
+    uri: https://data.krx.co.kr/comm/bldAttendant/getJsonData.cmd
+  response:
+    body:
+      string: '{"output":[{"TRD_DD":"2021/01/22","TRDVAL1":"-6,384,793","TRDVAL2":"56,478","TRDVAL3":"9,884,815","TRDVAL4":"-3,556,500","TRDVAL_TOT":"0"},{"TRD_DD":"2021/01/21","TRDVAL1":"-712,099","TRDVAL2":"-321,732","TRDVAL3":"2,890,389","TRDVAL4":"-1,856,558","TRDVAL_TOT":"0"},{"TRD_DD":"2021/01/20","TRDVAL1":"-4,157,919","TRDVAL2":"262,408","TRDVAL3":"4,917,655","TRDVAL4":"-1,022,144","TRDVAL_TOT":"0"},{"TRD_DD":"2021/01/19","TRDVAL1":"1,139,258","TRDVAL2":"-34,023","TRDVAL3":"-2,044,543","TRDVAL4":"939,308","TRDVAL_TOT":"0"},{"TRD_DD":"2021/01/18","TRDVAL1":"505,669","TRDVAL2":"262,604","TRDVAL3":"151,228","TRDVAL4":"-919,501","TRDVAL_TOT":"0"},{"TRD_DD":"2021/01/15","TRDVAL1":"-5,006,115","TRDVAL2":"288,832","TRDVAL3":"7,485,785","TRDVAL4":"-2,768,502","TRDVAL_TOT":"0"}],"CURRENT_DATETIME":"2026.01.25
+        PM 08:28:57"}'
+    headers:
+      Cache-Control:
+      - max-age=0, no-cache, no-store
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '818'
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sun, 25 Jan 2026 11:28:57 GMT
+      Expires:
+      - Sun, 25 Jan 2026 11:28:57 GMT
+      Pragma:
+      - no-cache
+      Set-Cookie:
+      - __smVisitorID=ZSx9b5ZtHe9; Expires=Mon, 25-Jan-2027 11:28:57 GMT; Path=/
+      - __smVisitorID=PHF9LX1GVKz; Expires=Mon, 25-Jan-2027 11:28:57 GMT; Path=/
+      - __smVisitorID=DNflLxRT-nL; Expires=Mon, 25-Jan-2027 11:28:57 GMT; Path=/
+      - JSESSIONID=560jLvTZqdczZO7zKVAJUjLzoLPMcEYDc483IE1UahUgwJButaGEEVylkkihH4Gs.bWRjX2RvbWFpbi9tZGNvd2FwMi1tZGNhcHAwMQ==;
+        Domain=.krx.co.kr; Path=/; HttpOnly
+    status:
+      code: 200
+      message: OK
+version: 1

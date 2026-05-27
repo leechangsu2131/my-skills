@@ -1,0 +1,53 @@
+interactions:
+- request:
+    body: strtDd=20210115&endDd=20210122&mktId=STK&etf=&etn=&elw=&inqTpCd=2&trdVolVal=2&askBid=3&bld=dbms%2FMDC%2FSTAT%2Fstandard%2FMDCSTAT02202
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate, br, zstd
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '134'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Referer:
+      - https://data.krx.co.kr/contents/MDC/MDI/outerLoader/index.cmd
+      User-Agent:
+      - Mozilla/5.0
+    method: POST
+    uri: https://data.krx.co.kr/comm/bldAttendant/getJsonData.cmd
+  response:
+    body:
+      string: '{"output":[{"TRD_DD":"2021/01/22","TRDVAL1":"-1,364,772,011,847","TRDVAL2":"24,513,231,108","TRDVAL3":"1,608,263,875,827","TRDVAL4":"-268,005,095,088","TRDVAL_TOT":"0"},{"TRD_DD":"2021/01/21","TRDVAL1":"-292,666,343,147","TRDVAL2":"-13,168,420,832","TRDVAL3":"-62,476,631,241","TRDVAL4":"368,311,395,220","TRDVAL_TOT":"0"},{"TRD_DD":"2021/01/20","TRDVAL1":"-1,234,485,992,694","TRDVAL2":"34,510,184,945","TRDVAL3":"1,436,793,223,994","TRDVAL4":"-236,817,416,245","TRDVAL_TOT":"0"},{"TRD_DD":"2021/01/19","TRDVAL1":"593,956,459,208","TRDVAL2":"21,472,281,148","TRDVAL3":"-1,025,418,915,468","TRDVAL4":"409,990,175,112","TRDVAL_TOT":"0"},{"TRD_DD":"2021/01/18","TRDVAL1":"-278,880,716,957","TRDVAL2":"-26,004,926,379","TRDVAL3":"514,299,140,387","TRDVAL4":"-209,413,497,051","TRDVAL_TOT":"0"},{"TRD_DD":"2021/01/15","TRDVAL1":"-1,414,745,885,546","TRDVAL2":"54,444,293,672","TRDVAL3":"2,113,924,037,705","TRDVAL4":"-753,622,445,831","TRDVAL_TOT":"0"}],"CURRENT_DATETIME":"2026.01.25
+        PM 08:28:49"}'
+    headers:
+      Cache-Control:
+      - max-age=0, no-cache, no-store
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Length:
+      - '397'
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sun, 25 Jan 2026 11:28:49 GMT
+      Expires:
+      - Sun, 25 Jan 2026 11:28:49 GMT
+      Pragma:
+      - no-cache
+      Set-Cookie:
+      - __smVisitorID=VwqEz3yVwpZ; Expires=Mon, 25-Jan-2027 11:28:48 GMT; Path=/
+      - __smVisitorID=57OKz0_NA_k; Expires=Mon, 25-Jan-2027 11:28:48 GMT; Path=/
+      - __smVisitorID=R9PqkTQGYJr; Expires=Mon, 25-Jan-2027 11:28:48 GMT; Path=/
+      - JSESSIONID=oapPJzToOWCJ1f61KbjV3eIDlldlsznQca8MkU9mttb1VsARtKFHYEBHxEDSw1Sr.bWRjX2RvbWFpbi9tZGNvd2FwMS1tZGNhcHAwMQ==;
+        Domain=.krx.co.kr; Path=/; HttpOnly
+      Vary:
+      - Accept-Encoding
+    status:
+      code: 200
+      message: OK
+version: 1

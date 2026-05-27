@@ -10,87 +10,95 @@ except ImportError:
     print("설치: pip install google-genai")
     sys.exit(1)
 
-def map_dart_to_metrics(dart_records: list, year: int) -> list:
+def map_dart_to_metrics(dart_records: list, year: int, quarter: str = "A", yf_data: dict = None) -> list:
     """
-    DART에서 추출한 Raw JSON 리스트를 LLM(Gemini)에 통과시켜
-    valuation_app이 요구하는 16개 핵심 지표 규격(metrics.json)으로 매핑합니다.
+    DART에서 추출한 Raw JSON 리스트를 규칙 기반으로 분석하여
+    valuation_app이 요구하는 핵심 지표 규격(metrics.json)으로 매핑합니다.
+    (기존 LLM 방식을 제거하고 Deterministic 파싱으로 변경)
     """
-    api_key = os.getenv("GEMINI_API_KEY")
-    if not api_key:
-        print("[오류] GEMINI_API_KEY 환경변수가 설정되지 않았습니다.")
-        sys.exit(1)
-
-    client = genai.Client(api_key=api_key)
+    import pandas as pd
     
-    # 1. 추출해야 할 타겟 스키마 정의
-    target_keys = [
-        "revenue", "operating_income", "net_income", "eps", "ebit", "tax_rate",
-        "op_cashflow", "capex", "fcf", "total_equity", "cash", "short_debt",
-        "long_debt", "net_debt"
-    ]
-    
-    # 2. LLM에 전달할 프롬프트 구성
-    prompt = f"""
-    당신은 대한민국 최고 수준의 공인회계사(CPA)이자 금융 데이터 엔지니어입니다.
-    아래 제공되는 DART(전자공시시스템)의 {year}년도 연결 재무제표 Raw 데이터를 분석하여, 
-    가치평가 모델이 요구하는 필수 재무 지표를 정확히 추출하고 표준 JSON 포맷으로 매핑해 주세요.
-
-    [추출해야 할 지표 목록 (metric_key)]
-    {', '.join(target_keys)}
-
-    [Raw 데이터 예시의 일부 필드 설명]
-    - fs_div: CFS(연결), OFS(별도) (반드시 CFS 기준 데이터 우선 사용)
-    - sj_div: BS(재무상태표), IS(손익계산서), CIS(포괄손익계산서), CF(현금흐름표)
-    - account_nm: 계정과목명 (예: '매출액', '영업이익', '영업활동현금흐름')
-    - thstrm_amount: 당기 금액 (목표 연도 금액)
-
-    [출력 포맷 (JSON Array)]
-    반드시 아래와 같은 JSON 배열 구조로만 출력하세요. 마크다운 블록(```json)이나 부가 설명은 절대 넣지 마세요.
-    [
-      {{
-        "metric_key": "revenue",
-        "label": "Revenue",
-        "value": 123456789000,
-        "unit": "KRW",
-        "period": "{year}A",
-        "source_method": "llm_mapped",
-        "report_year": "{year}",
-        "statement_name": "Consolidated Income Statement",
-        "original_account_name": "매출액",
-        "original_amount": 123456789000,
-        "confidence": 0.95,
-        "note": "DART CIS 추출"
-      }},
-      ... 나머지 지표들도 동일한 구조로 ...
-    ]
-    
-    [주의사항]
-    - CAPEX(자본적 지출)는 보통 현금흐름표의 '유형자산의 취득' 항목(음수)을 양수로 변환하여 기재합니다.
-    - FCF나 Net Debt 처럼 DART에 직접 없는 계정은 수집된 다른 계정을 조합하여 계산(value)해 주세요.
-    - 단위는 모두 '원(KRW)' 단위 절대값 정수로 변환하세요.
-
-    [DART Raw 데이터 (JSON)]
-    {json.dumps(dart_records, ensure_ascii=False)}
-    """
-    
-    print("LLM(Gemini)에 DART 데이터 분석 및 매핑을 요청합니다...")
-    try:
-        response = client.models.generate_content(
-            model='gemini-2.5-flash',
-            contents=prompt,
-            config=types.GenerateContentConfig(
-                temperature=0.0,
-                response_mime_type="application/json"
-            )
-        )
+    df = pd.DataFrame(dart_records)
+    # 연결재무제표(CFS)만 필터
+    if 'fs_div' in df.columns:
+        df = df[df['fs_div'] == 'CFS']
         
-        # JSON 파싱
-        mapped_metrics = json.loads(response.text)
-        return mapped_metrics
+    metrics = []
+    
+    def extract_value(keywords, is_negative=False, exclude_keywords=None):
+        exclude_keywords = exclude_keywords or []
+        for idx, row in df.iterrows():
+            acc_name = str(row.get('account_nm', '')).strip().replace(' ', '')
+            
+            if any(ex_kw in acc_name for ex_kw in exclude_keywords):
+                continue
+                
+            for kw in keywords:
+                if kw in acc_name:
+                    try:
+                        val = int(row.get('thstrm_amount', 0))
+                        return -val if is_negative else val
+                    except:
+                        pass
+        return 0
+
+    # 주요 항목 규칙 매핑
+    revenue = extract_value(['수익(매출액)', '매출액', '영업수익'])
+    op_income = extract_value(['영업이익', '영업이익(손실)'])
+    net_income = extract_value(['당기순이익', '연결당기순이익', '분기순이익', '반기순이익', '당기순이익(손실)', '분기순이익(손실)', '반기순이익(손실)'], exclude_keywords=['주당', '포괄', '지분', '비지배'])
+    op_cashflow = extract_value(['영업활동현금흐름', '영업활동으로인한현금흐름'])
+    capex = extract_value(['유형자산의취득', '유형자산취득', '유형자산의증가'], is_negative=True)
+    if capex < 0: capex = -capex # CAPEX는 보통 음수 표기되므로 양수로 통일
+    
+    total_equity = extract_value(['자본총계'])
+    cash = extract_value(['현금및현금성자산'])
+    short_debt = extract_value(['단기차입금', '유동성장기차입금'])
+    long_debt = extract_value(['장기차입금', '사채'])
+    
+    # 파생 지표
+    fcf = op_cashflow - capex if op_cashflow and capex else 0
+    net_debt = short_debt + long_debt - cash
+    ebit = op_income
+    tax_rate = 0.22 # 임시 고정값
+    eps = extract_value(['기본주당이익', '기본주당순이익', '주당순이익', '주당이익', '기본주당분기순이익', '기본주당반기순이익', '기본주당이익(손실)'])
+    
+    mapped_dict = {
+        "revenue": ("Revenue", revenue),
+        "operating_income": ("Operating Income", op_income),
+        "net_income": ("Net Income", net_income),
+        "eps": ("EPS", eps),
+        "ebit": ("EBIT", ebit),
+        "tax_rate": ("Tax Rate", tax_rate),
+        "op_cashflow": ("Operating Cash Flow", op_cashflow),
+        "capex": ("Capital Expenditures", capex),
+        "fcf": ("Free Cash Flow", fcf),
+        "total_equity": ("Total Equity", total_equity),
+        "cash": ("Cash and Cash Equivalents", cash),
+        "short_debt": ("Short-Term Debt", short_debt),
+        "long_debt": ("Long-Term Debt", long_debt),
+        "net_debt": ("Net Debt", net_debt),
+    }
+
+    for key, (label, val) in mapped_dict.items():
+        yf_val = yf_data.get(key) if yf_data else None
         
-    except Exception as e:
-        print(f"[오류] LLM 매핑 실패: {e}")
-        return None
+        metrics.append({
+            "metric_key": key,
+            "label": label,
+            "value": float(val) if key == "tax_rate" else int(val),
+            "unit": "ratio" if key == "tax_rate" else ("KRW/share" if key == "eps" else "KRW"),
+            "period": f"{year}{quarter}",
+            "source_method": "rule",
+            "report_year": str(year),
+            "statement_name": "Mapped from DART Raw",
+            "original_account_name": key,
+            "original_amount": val,
+            "yf_value": yf_val,
+            "confidence": 0.8,
+            "note": f"Deterministic mapping for {year} {quarter}"
+        })
+        
+    return metrics
 
 if __name__ == "__main__":
     print("이 모듈은 단독 실행보다 파이프라인에서 호출하여 사용합니다.")

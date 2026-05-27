@@ -1,0 +1,54 @@
+interactions:
+- request:
+    body: strtDd=20210115&endDd=20210122&mktId=STK&etf=&etn=&elw=&bld=dbms%2FMDC%2FSTAT%2Fstandard%2FMDCSTAT02201
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate, br, zstd
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '103'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Referer:
+      - https://data.krx.co.kr/contents/MDC/MDI/outerLoader/index.cmd
+      User-Agent:
+      - Mozilla/5.0
+    method: POST
+    uri: https://data.krx.co.kr/comm/bldAttendant/getJsonData.cmd
+  response:
+    body:
+      string: "{\"output\":[{\"INVST_TP_NM\":\"\uAE08\uC735\uD22C\uC790\",\"ASK_TRDVOL\":\"137,969,209\",\"BID_TRDVOL\":\"127,697,577\",\"NETBID_TRDVOL\":\"-10,271,632\",\"ASK_TRDVAL\":\"9,827,334,289,654\",\"BID_TRDVAL\":\"9,294,592,831,462\",\"NETBID_TRDVAL\":\"-532,741,458,192\",\"CONV_OBJ_TP_CD\":\"\"},{\"INVST_TP_NM\":\"\uBCF4\uD5D8\",\"ASK_TRDVOL\":\"15,737,709\",\"BID_TRDVOL\":\"8,577,242\",\"NETBID_TRDVOL\":\"-7,160,467\",\"ASK_TRDVAL\":\"912,820,396,542\",\"BID_TRDVAL\":\"560,818,697,065\",\"NETBID_TRDVAL\":\"-352,001,699,477\",\"CONV_OBJ_TP_CD\":\"\"},{\"INVST_TP_NM\":\"\uD22C\uC2E0\",\"ASK_TRDVOL\":\"46,872,846\",\"BID_TRDVOL\":\"34,307,243\",\"NETBID_TRDVOL\":\"-12,565,603\",\"ASK_TRDVAL\":\"1,790,231,574,897\",\"BID_TRDVAL\":\"1,421,181,450,288\",\"NETBID_TRDVAL\":\"-369,050,124,609\",\"CONV_OBJ_TP_CD\":\"\"},{\"INVST_TP_NM\":\"\uC0AC\uBAA8\",\"ASK_TRDVOL\":\"20,780,475\",\"BID_TRDVOL\":\"16,342,937\",\"NETBID_TRDVOL\":\"-4,437,538\",\"ASK_TRDVAL\":\"830,445,404,788\",\"BID_TRDVAL\":\"665,802,837,480\",\"NETBID_TRDVAL\":\"-164,642,567,308\",\"CONV_OBJ_TP_CD\":\"\"},{\"INVST_TP_NM\":\"\uC740\uD589\",\"ASK_TRDVOL\":\"2,236,667\",\"BID_TRDVOL\":\"632,814\",\"NETBID_TRDVOL\":\"-1,603,853\",\"ASK_TRDVAL\":\"58,624,439,870\",\"BID_TRDVAL\":\"37,109,603,010\",\"NETBID_TRDVAL\":\"-21,514,836,860\",\"CONV_OBJ_TP_CD\":\"\"},{\"INVST_TP_NM\":\"\uAE30\uD0C0\uAE08\uC735\",\"ASK_TRDVOL\":\"9,782,040\",\"BID_TRDVOL\":\"1,794,977\",\"NETBID_TRDVOL\":\"-7,987,063\",\"ASK_TRDVAL\":\"210,564,802,940\",\"BID_TRDVAL\":\"45,397,768,115\",\"NETBID_TRDVAL\":\"-165,167,034,825\",\"CONV_OBJ_TP_CD\":\"\"},{\"INVST_TP_NM\":\"\uC5F0\uAE30\uAE08
+        \uB4F1\",\"ASK_TRDVOL\":\"173,755,019\",\"BID_TRDVOL\":\"136,945,792\",\"NETBID_TRDVOL\":\"-36,809,227\",\"ASK_TRDVAL\":\"14,999,760,593,816\",\"BID_TRDVAL\":\"12,613,283,824,104\",\"NETBID_TRDVAL\":\"-2,386,476,769,712\",\"CONV_OBJ_TP_CD\":\"\"},{\"INVST_TP_NM\":\"\uAE30\uAD00\uD569\uACC4\",\"ASK_TRDVOL\":\"407,133,965\",\"BID_TRDVOL\":\"326,298,582\",\"NETBID_TRDVOL\":\"-80,835,383\",\"ASK_TRDVAL\":\"28,629,781,502,507\",\"BID_TRDVAL\":\"24,638,187,011,524\",\"NETBID_TRDVAL\":\"-3,991,594,490,983\",\"CONV_OBJ_TP_CD\":\"SS\"},{\"INVST_TP_NM\":\"\uAE30\uD0C0\uBC95\uC778\",\"ASK_TRDVOL\":\"44,561,821\",\"BID_TRDVOL\":\"42,901,283\",\"NETBID_TRDVOL\":\"-1,660,538\",\"ASK_TRDVAL\":\"1,133,386,091,596\",\"BID_TRDVAL\":\"1,229,152,735,258\",\"NETBID_TRDVAL\":\"95,766,643,662\",\"CONV_OBJ_TP_CD\":\"\"},{\"INVST_TP_NM\":\"\uAC1C\uC778\",\"ASK_TRDVOL\":\"6,695,122,935\",\"BID_TRDVOL\":\"6,790,067,943\",\"NETBID_TRDVOL\":\"94,945,008\",\"ASK_TRDVAL\":\"95,265,174,722,257\",\"BID_TRDVAL\":\"99,850,559,453,461\",\"NETBID_TRDVAL\":\"4,585,384,731,204\",\"CONV_OBJ_TP_CD\":\"\"},{\"INVST_TP_NM\":\"\uC678\uAD6D\uC778\",\"ASK_TRDVOL\":\"659,191,809\",\"BID_TRDVOL\":\"645,693,963\",\"NETBID_TRDVOL\":\"-13,497,846\",\"ASK_TRDVAL\":\"19,495,154,242,087\",\"BID_TRDVAL\":\"18,793,236,463,339\",\"NETBID_TRDVAL\":\"-701,917,778,748\",\"CONV_OBJ_TP_CD\":\"\"},{\"INVST_TP_NM\":\"\uAE30\uD0C0\uC678\uAD6D\uC778\",\"ASK_TRDVOL\":\"14,413,555\",\"BID_TRDVOL\":\"15,462,314\",\"NETBID_TRDVOL\":\"1,048,759\",\"ASK_TRDVAL\":\"229,509,598,479\",\"BID_TRDVAL\":\"241,870,493,344\",\"NETBID_TRDVAL\":\"12,360,894,865\",\"CONV_OBJ_TP_CD\":\"\"},{\"INVST_TP_NM\":\"\uC804\uCCB4\",\"ASK_TRDVOL\":\"7,820,424,085\",\"BID_TRDVOL\":\"7,820,424,085\",\"NETBID_TRDVOL\":\"0\",\"ASK_TRDVAL\":\"144,753,006,156,926\",\"BID_TRDVAL\":\"144,753,006,156,926\",\"NETBID_TRDVAL\":\"0\",\"CONV_OBJ_TP_CD\":\"TS\"}],\"CURRENT_DATETIME\":\"2026.01.25
+        PM 08:28:33\"}"
+    headers:
+      Cache-Control:
+      - max-age=0, no-cache, no-store
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Length:
+      - '996'
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sun, 25 Jan 2026 11:28:33 GMT
+      Expires:
+      - Sun, 25 Jan 2026 11:28:33 GMT
+      Pragma:
+      - no-cache
+      Set-Cookie:
+      - __smVisitorID=NYO0SKNVN8m; Expires=Mon, 25-Jan-2027 11:28:33 GMT; Path=/
+      - __smVisitorID=Qka-i5tMbQp; Expires=Mon, 25-Jan-2027 11:28:33 GMT; Path=/
+      - __smVisitorID=mAnPBWCOrnZ; Expires=Mon, 25-Jan-2027 11:28:33 GMT; Path=/
+      - JSESSIONID=pJGBMy58vBYwXv9ZKO0OCxzdAalMcmvWco6Sa2CN0MQCMz4PtAtUJUUuVtTeTTDr.bWRjX2RvbWFpbi9tZGNvd2FwMS1tZGNhcHAxMQ==;
+        Domain=.krx.co.kr; Path=/; HttpOnly
+      Vary:
+      - Accept-Encoding
+    status:
+      code: 200
+      message: OK
+version: 1

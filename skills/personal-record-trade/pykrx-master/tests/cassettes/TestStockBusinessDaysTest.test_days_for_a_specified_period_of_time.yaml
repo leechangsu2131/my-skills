@@ -1,0 +1,53 @@
+interactions:
+- request:
+    body: isuCd=KR7000020008&strtDd=20200101&endDd=20200115&adjStkPrc=2&bld=dbms%2FMDC%2FSTAT%2Fstandard%2FMDCSTAT01701
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate, br, zstd
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '109'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Referer:
+      - https://data.krx.co.kr/contents/MDC/MDI/outerLoader/index.cmd
+      User-Agent:
+      - Mozilla/5.0
+    method: POST
+    uri: https://data.krx.co.kr/comm/bldAttendant/getJsonData.cmd
+  response:
+    body:
+      string: '{"output":[{"TRD_DD":"2020/01/15","TDD_CLSPRC":"8,090","FLUC_TP_CD":"2","CMPPREVDD_PRC":"-50","FLUC_RT":"-0.61","TDD_OPNPRC":"8,160","TDD_HGPRC":"8,170","TDD_LWPRC":"8,000","ACC_TRDVOL":"72,255","ACC_TRDVAL":"584,326,530","MKTCAP":"225,965,592,300","LIST_SHRS":"27,931,470"},{"TRD_DD":"2020/01/14","TDD_CLSPRC":"8,140","FLUC_TP_CD":"2","CMPPREVDD_PRC":"-80","FLUC_RT":"-0.97","TDD_OPNPRC":"8,240","TDD_HGPRC":"8,240","TDD_LWPRC":"8,070","ACC_TRDVOL":"100,901","ACC_TRDVAL":"822,340,890","MKTCAP":"227,362,165,800","LIST_SHRS":"27,931,470"},{"TRD_DD":"2020/01/13","TDD_CLSPRC":"8,220","FLUC_TP_CD":"1","CMPPREVDD_PRC":"120","FLUC_RT":"1.48","TDD_OPNPRC":"8,140","TDD_HGPRC":"8,250","TDD_LWPRC":"8,070","ACC_TRDVOL":"91,646","ACC_TRDVAL":"749,103,590","MKTCAP":"229,596,683,400","LIST_SHRS":"27,931,470"},{"TRD_DD":"2020/01/10","TDD_CLSPRC":"8,100","FLUC_TP_CD":"1","CMPPREVDD_PRC":"200","FLUC_RT":"2.53","TDD_OPNPRC":"7,970","TDD_HGPRC":"8,140","TDD_LWPRC":"7,880","ACC_TRDVOL":"77,059","ACC_TRDVAL":"619,079,150","MKTCAP":"226,244,907,000","LIST_SHRS":"27,931,470"},{"TRD_DD":"2020/01/09","TDD_CLSPRC":"7,900","FLUC_TP_CD":"2","CMPPREVDD_PRC":"-30","FLUC_RT":"-0.38","TDD_OPNPRC":"8,020","TDD_HGPRC":"8,060","TDD_LWPRC":"7,900","ACC_TRDVOL":"50,346","ACC_TRDVAL":"400,667,630","MKTCAP":"220,658,613,000","LIST_SHRS":"27,931,470"},{"TRD_DD":"2020/01/08","TDD_CLSPRC":"7,930","FLUC_TP_CD":"2","CMPPREVDD_PRC":"-230","FLUC_RT":"-2.82","TDD_OPNPRC":"8,170","TDD_HGPRC":"8,170","TDD_LWPRC":"7,830","ACC_TRDVOL":"263,246","ACC_TRDVAL":"2,094,786,500","MKTCAP":"221,496,557,100","LIST_SHRS":"27,931,470"},{"TRD_DD":"2020/01/07","TDD_CLSPRC":"8,160","FLUC_TP_CD":"2","CMPPREVDD_PRC":"-20","FLUC_RT":"-0.24","TDD_OPNPRC":"8,200","TDD_HGPRC":"8,280","TDD_LWPRC":"8,090","ACC_TRDVOL":"117,904","ACC_TRDVAL":"960,724,080","MKTCAP":"227,920,795,200","LIST_SHRS":"27,931,470"},{"TRD_DD":"2020/01/06","TDD_CLSPRC":"8,180","FLUC_TP_CD":"2","CMPPREVDD_PRC":"-180","FLUC_RT":"-2.15","TDD_OPNPRC":"8,290","TDD_HGPRC":"8,330","TDD_LWPRC":"8,120","ACC_TRDVOL":"73,230","ACC_TRDVAL":"599,423,140","MKTCAP":"228,479,424,600","LIST_SHRS":"27,931,470"},{"TRD_DD":"2020/01/03","TDD_CLSPRC":"8,360","FLUC_TP_CD":"2","CMPPREVDD_PRC":"-40","FLUC_RT":"-0.48","TDD_OPNPRC":"8,400","TDD_HGPRC":"8,450","TDD_LWPRC":"8,290","ACC_TRDVOL":"96,437","ACC_TRDVAL":"805,426,020","MKTCAP":"233,507,089,200","LIST_SHRS":"27,931,470"},{"TRD_DD":"2020/01/02","TDD_CLSPRC":"8,400","FLUC_TP_CD":"1","CMPPREVDD_PRC":"90","FLUC_RT":"1.08","TDD_OPNPRC":"8,340","TDD_HGPRC":"8,400","TDD_LWPRC":"8,290","ACC_TRDVOL":"111,305","ACC_TRDVAL":"930,888,220","MKTCAP":"234,624,348,000","LIST_SHRS":"27,931,470"}],"CURRENT_DATETIME":"2026.01.25
+        PM 08:27:14"}'
+    headers:
+      Cache-Control:
+      - max-age=0, no-cache, no-store
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Length:
+      - '653'
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sun, 25 Jan 2026 11:27:14 GMT
+      Expires:
+      - Sun, 25 Jan 2026 11:27:14 GMT
+      Pragma:
+      - no-cache
+      Set-Cookie:
+      - __smVisitorID=GVqoeq7bo5f; Expires=Mon, 25-Jan-2027 11:27:14 GMT; Path=/
+      - __smVisitorID=Q83qWXmSW-8; Expires=Mon, 25-Jan-2027 11:27:14 GMT; Path=/
+      - __smVisitorID=MPlCStZ5Lhm; Expires=Mon, 25-Jan-2027 11:27:14 GMT; Path=/
+      - JSESSIONID=2AzLrV1zuNrbkgUGKCTC0DuFTV9RFFwDc1sD9VGUbO8GM0EMtWv8zsAHTLrfE9XC.bWRjX2RvbWFpbi9tZGNvd2FwMi1tZGNhcHAwMQ==;
+        Domain=.krx.co.kr; Path=/; HttpOnly
+      Vary:
+      - Accept-Encoding
+    status:
+      code: 200
+      message: OK
+version: 1

@@ -1,0 +1,54 @@
+interactions:
+- request:
+    body: strtDd=20260116&endDd=20260123&isuCd=KR70069M0006&bld=dbms%2FMDC%2FSTAT%2Fstandard%2FMDCSTAT04901
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate, br, zstd
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '97'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Referer:
+      - https://data.krx.co.kr/contents/MDC/MDI/outerLoader/index.cmd
+      User-Agent:
+      - Mozilla/5.0
+    method: POST
+    uri: https://data.krx.co.kr/comm/bldAttendant/getJsonData.cmd
+  response:
+    body:
+      string: '{"output":[{"CONV_OBJ_TP_CD":"","INVST_NM":"금융투자","ASK_TRDVOL":"1,227,682","BID_TRDVOL":"879,808","NETBID_TRDVOL":"-347,874","ASK_TRDVAL":"15,193,534,642","BID_TRDVAL":"10,895,889,652","NETBID_TRDVAL":"-4,297,644,990"},{"CONV_OBJ_TP_CD":"","INVST_NM":"보험","ASK_TRDVOL":"942","BID_TRDVOL":"6,608","NETBID_TRDVOL":"5,666","ASK_TRDVAL":"11,560,105","BID_TRDVAL":"81,540,862","NETBID_TRDVAL":"69,980,757"},{"CONV_OBJ_TP_CD":"","INVST_NM":"투신","ASK_TRDVOL":"0","BID_TRDVOL":"0","NETBID_TRDVOL":"0","ASK_TRDVAL":"0","BID_TRDVAL":"0","NETBID_TRDVAL":"0"},{"CONV_OBJ_TP_CD":"","INVST_NM":"사모","ASK_TRDVOL":"0","BID_TRDVOL":"0","NETBID_TRDVOL":"0","ASK_TRDVAL":"0","BID_TRDVAL":"0","NETBID_TRDVAL":"0"},{"CONV_OBJ_TP_CD":"","INVST_NM":"은행","ASK_TRDVOL":"8,041","BID_TRDVOL":"51,222","NETBID_TRDVOL":"43,181","ASK_TRDVAL":"99,729,337","BID_TRDVAL":"634,899,190","NETBID_TRDVAL":"535,169,853"},{"CONV_OBJ_TP_CD":"","INVST_NM":"기타금융","ASK_TRDVOL":"0","BID_TRDVOL":"0","NETBID_TRDVOL":"0","ASK_TRDVAL":"0","BID_TRDVAL":"0","NETBID_TRDVAL":"0"},{"CONV_OBJ_TP_CD":"","INVST_NM":"연기금
+        등","ASK_TRDVOL":"0","BID_TRDVOL":"0","NETBID_TRDVOL":"0","ASK_TRDVAL":"0","BID_TRDVAL":"0","NETBID_TRDVAL":"0"},{"CONV_OBJ_TP_CD":"TS","INVST_NM":"기관합계","ASK_TRDVOL":"1,236,665","BID_TRDVOL":"937,638","NETBID_TRDVOL":"-299,027","ASK_TRDVAL":"15,304,824,084","BID_TRDVAL":"11,612,329,704","NETBID_TRDVAL":"-3,692,494,380"},{"CONV_OBJ_TP_CD":"","INVST_NM":"기타법인","ASK_TRDVOL":"2,280","BID_TRDVOL":"1,317","NETBID_TRDVOL":"-963","ASK_TRDVAL":"28,263,550","BID_TRDVAL":"16,235,155","NETBID_TRDVAL":"-12,028,395"},{"CONV_OBJ_TP_CD":"","INVST_NM":"개인","ASK_TRDVOL":"361,008","BID_TRDVOL":"658,835","NETBID_TRDVOL":"297,827","ASK_TRDVAL":"4,473,328,481","BID_TRDVAL":"8,151,041,990","NETBID_TRDVAL":"3,677,713,509"},{"CONV_OBJ_TP_CD":"","INVST_NM":"외국인","ASK_TRDVOL":"26,520","BID_TRDVOL":"28,173","NETBID_TRDVOL":"1,653","ASK_TRDVAL":"328,099,673","BID_TRDVAL":"348,487,227","NETBID_TRDVAL":"20,387,554"},{"CONV_OBJ_TP_CD":"","INVST_NM":"기타외국인","ASK_TRDVOL":"1,269","BID_TRDVOL":"1,779","NETBID_TRDVOL":"510","ASK_TRDVAL":"15,704,225","BID_TRDVAL":"22,125,937","NETBID_TRDVAL":"6,421,712"},{"CONV_OBJ_TP_CD":"TS","INVST_NM":"전체","ASK_TRDVOL":"1,627,742","BID_TRDVOL":"1,627,742","NETBID_TRDVOL":"0","ASK_TRDVAL":"20,150,220,013","BID_TRDVAL":"20,150,220,013","NETBID_TRDVAL":"0"}],"CURRENT_DATETIME":"2026.01.25
+        PM 08:25:23"}'
+    headers:
+      Cache-Control:
+      - max-age=0, no-cache, no-store
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Length:
+      - '668'
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sun, 25 Jan 2026 11:25:23 GMT
+      Expires:
+      - Sun, 25 Jan 2026 11:25:23 GMT
+      Pragma:
+      - no-cache
+      Set-Cookie:
+      - __smVisitorID=zWSBTouziNY; Expires=Mon, 25-Jan-2027 11:25:23 GMT; Path=/
+      - __smVisitorID=VRcvLc_PwAR; Expires=Mon, 25-Jan-2027 11:25:23 GMT; Path=/
+      - __smVisitorID=mxLFt901EQz; Expires=Mon, 25-Jan-2027 11:25:23 GMT; Path=/
+      - JSESSIONID=bmUOvv0iO5ykX68OFvmtAz0JwYufuKK3c32NUe7fqTOeFLFJtW7X7pKedkkU7rg0.bWRjX2RvbWFpbi9tZGNvd2FwMS1tZGNhcHAxMQ==;
+        Domain=.krx.co.kr; Path=/; HttpOnly
+      Vary:
+      - Accept-Encoding
+    status:
+      code: 200
+      message: OK
+version: 1

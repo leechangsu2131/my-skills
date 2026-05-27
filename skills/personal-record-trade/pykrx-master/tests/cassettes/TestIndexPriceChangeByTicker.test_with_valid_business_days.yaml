@@ -1,0 +1,181 @@
+interactions:
+- request:
+    body: indIdx2=001&indIdx=1&strtDd=20210104&endDd=20210111&bld=dbms%2FMDC%2FSTAT%2Fstandard%2FMDCSTAT00301
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate, br, zstd
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '99'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Referer:
+      - https://data.krx.co.kr/contents/MDC/MDI/outerLoader/index.cmd
+      User-Agent:
+      - Mozilla/5.0
+    method: POST
+    uri: https://data.krx.co.kr/comm/bldAttendant/getJsonData.cmd
+  response:
+    body:
+      string: '{"output":[{"TRD_DD":"2021/01/11","CLSPRC_IDX":"3,148.45","FLUC_TP_CD":"2","PRV_DD_CMPR":"-3.73","UPDN_RATE":"-0.12","OPNPRC_IDX":"3,161.90","HGPRC_IDX":"3,266.23","LWPRC_IDX":"3,096.19","ACC_TRDVOL":"1,712,525,848","ACC_TRDVAL":"44,433,772,380,482","MKTCAP":"2,171,629,411,681,152"},{"TRD_DD":"2021/01/08","CLSPRC_IDX":"3,152.18","FLUC_TP_CD":"1","PRV_DD_CMPR":"120.50","UPDN_RATE":"3.97","OPNPRC_IDX":"3,040.11","HGPRC_IDX":"3,161.11","LWPRC_IDX":"3,040.11","ACC_TRDVOL":"1,297,903,388","ACC_TRDVAL":"40,909,490,005,818","MKTCAP":"2,170,537,648,432,200"},{"TRD_DD":"2021/01/07","CLSPRC_IDX":"3,031.68","FLUC_TP_CD":"1","PRV_DD_CMPR":"63.47","UPDN_RATE":"2.14","OPNPRC_IDX":"2,980.75","HGPRC_IDX":"3,055.28","LWPRC_IDX":"2,980.75","ACC_TRDVOL":"1,524,654,500","ACC_TRDVAL":"27,182,807,334,912","MKTCAP":"2,086,578,562,420,457"},{"TRD_DD":"2021/01/06","CLSPRC_IDX":"2,968.21","FLUC_TP_CD":"2","PRV_DD_CMPR":"-22.36","UPDN_RATE":"-0.75","OPNPRC_IDX":"2,993.34","HGPRC_IDX":"3,027.16","LWPRC_IDX":"2,961.37","ACC_TRDVOL":"1,793,418,534","ACC_TRDVAL":"29,909,396,443,430","MKTCAP":"2,044,102,754,101,965"},{"TRD_DD":"2021/01/05","CLSPRC_IDX":"2,990.57","FLUC_TP_CD":"1","PRV_DD_CMPR":"46.12","UPDN_RATE":"1.57","OPNPRC_IDX":"2,943.67","HGPRC_IDX":"2,990.57","LWPRC_IDX":"2,921.84","ACC_TRDVOL":"1,519,911,750","ACC_TRDVAL":"26,548,380,179,493","MKTCAP":"2,059,743,507,955,076"},{"TRD_DD":"2021/01/04","CLSPRC_IDX":"2,944.45","FLUC_TP_CD":"1","PRV_DD_CMPR":"70.98","UPDN_RATE":"2.47","OPNPRC_IDX":"2,874.50","HGPRC_IDX":"2,946.54","LWPRC_IDX":"2,869.11","ACC_TRDVOL":"1,026,510,465","ACC_TRDVAL":"25,011,393,960,858","MKTCAP":"2,028,846,031,822,322"}],"CURRENT_DATETIME":"2026.01.25
+        PM 08:26:57"}'
+    headers:
+      Cache-Control:
+      - max-age=0, no-cache, no-store
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Length:
+      - '583'
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sun, 25 Jan 2026 11:26:57 GMT
+      Expires:
+      - Sun, 25 Jan 2026 11:26:57 GMT
+      Pragma:
+      - no-cache
+      Set-Cookie:
+      - __smVisitorID=mpTMRBGbotg; Expires=Mon, 25-Jan-2027 11:26:57 GMT; Path=/
+      - __smVisitorID=jsva1b6u-BK; Expires=Mon, 25-Jan-2027 11:26:57 GMT; Path=/
+      - __smVisitorID=GP_UYI852FL; Expires=Mon, 25-Jan-2027 11:26:57 GMT; Path=/
+      - JSESSIONID=89Jy3pqrAFgAoDVQKM7pa3uoFN16COaWcmnNeF4EqpAqhdUKtHt7iWh77B0i3dUA.bWRjX2RvbWFpbi9tZGNvd2FwMi1tZGNhcHAxMQ==;
+        Domain=.krx.co.kr; Path=/; HttpOnly
+      Vary:
+      - Accept-Encoding
+    status:
+      code: 200
+      message: OK
+- request:
+    body: indIdx2=001&indIdx=1&strtDd=20210101&endDd=20210108&bld=dbms%2FMDC%2FSTAT%2Fstandard%2FMDCSTAT00301
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate, br, zstd
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '99'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Referer:
+      - https://data.krx.co.kr/contents/MDC/MDI/outerLoader/index.cmd
+      User-Agent:
+      - Mozilla/5.0
+    method: POST
+    uri: https://data.krx.co.kr/comm/bldAttendant/getJsonData.cmd
+  response:
+    body:
+      string: '{"output":[{"TRD_DD":"2021/01/08","CLSPRC_IDX":"3,152.18","FLUC_TP_CD":"1","PRV_DD_CMPR":"120.50","UPDN_RATE":"3.97","OPNPRC_IDX":"3,040.11","HGPRC_IDX":"3,161.11","LWPRC_IDX":"3,040.11","ACC_TRDVOL":"1,297,903,388","ACC_TRDVAL":"40,909,490,005,818","MKTCAP":"2,170,537,648,432,200"},{"TRD_DD":"2021/01/07","CLSPRC_IDX":"3,031.68","FLUC_TP_CD":"1","PRV_DD_CMPR":"63.47","UPDN_RATE":"2.14","OPNPRC_IDX":"2,980.75","HGPRC_IDX":"3,055.28","LWPRC_IDX":"2,980.75","ACC_TRDVOL":"1,524,654,500","ACC_TRDVAL":"27,182,807,334,912","MKTCAP":"2,086,578,562,420,457"},{"TRD_DD":"2021/01/06","CLSPRC_IDX":"2,968.21","FLUC_TP_CD":"2","PRV_DD_CMPR":"-22.36","UPDN_RATE":"-0.75","OPNPRC_IDX":"2,993.34","HGPRC_IDX":"3,027.16","LWPRC_IDX":"2,961.37","ACC_TRDVOL":"1,793,418,534","ACC_TRDVAL":"29,909,396,443,430","MKTCAP":"2,044,102,754,101,965"},{"TRD_DD":"2021/01/05","CLSPRC_IDX":"2,990.57","FLUC_TP_CD":"1","PRV_DD_CMPR":"46.12","UPDN_RATE":"1.57","OPNPRC_IDX":"2,943.67","HGPRC_IDX":"2,990.57","LWPRC_IDX":"2,921.84","ACC_TRDVOL":"1,519,911,750","ACC_TRDVAL":"26,548,380,179,493","MKTCAP":"2,059,743,507,955,076"},{"TRD_DD":"2021/01/04","CLSPRC_IDX":"2,944.45","FLUC_TP_CD":"1","PRV_DD_CMPR":"70.98","UPDN_RATE":"2.47","OPNPRC_IDX":"2,874.50","HGPRC_IDX":"2,946.54","LWPRC_IDX":"2,869.11","ACC_TRDVOL":"1,026,510,465","ACC_TRDVAL":"25,011,393,960,858","MKTCAP":"2,028,846,031,822,322"}],"CURRENT_DATETIME":"2026.01.25
+        PM 08:26:58"}'
+    headers:
+      Cache-Control:
+      - max-age=0, no-cache, no-store
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Length:
+      - '514'
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sun, 25 Jan 2026 11:26:58 GMT
+      Expires:
+      - Sun, 25 Jan 2026 11:26:58 GMT
+      Pragma:
+      - no-cache
+      Set-Cookie:
+      - __smVisitorID=jEcKAlw9Wnf; Expires=Mon, 25-Jan-2027 11:26:57 GMT; Path=/
+      - __smVisitorID=ZMnG3_xjUMv; Expires=Mon, 25-Jan-2027 11:26:57 GMT; Path=/
+      - __smVisitorID=sWwGOTdwIMc; Expires=Mon, 25-Jan-2027 11:26:57 GMT; Path=/
+      - JSESSIONID=8vH1aOZlRoRsjqOtKRtI8U4WBQaakZjVctjjEJanab00Vv4vtp2SZlrEl95CET82.bWRjX2RvbWFpbi9tZGNvd2FwMS1tZGNhcHAwMQ==;
+        Domain=.krx.co.kr; Path=/; HttpOnly
+      Vary:
+      - Accept-Encoding
+    status:
+      code: 200
+      message: OK
+- request:
+    body: idxIndMidclssCd=02&strtDd=20210104&endDd=20210108&bld=dbms%2FMDC%2FSTAT%2Fstandard%2FMDCSTAT00201
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate, br, zstd
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '97'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Referer:
+      - https://data.krx.co.kr/contents/MDC/MDI/outerLoader/index.cmd
+      User-Agent:
+      - Mozilla/5.0
+    method: POST
+    uri: https://data.krx.co.kr/comm/bldAttendant/getJsonData.cmd
+  response:
+    body:
+      string: "{\"output\":[{\"IDX_IND_NM\":\"\uCF54\uC2A4\uD53C\",\"OPN_DD_INDX\":\"2,873.47\",\"END_DD_INDX\":\"3,152.18\",\"FLUC_TP\":\"1\",\"PRV_DD_CMPR\":\"278.71\",\"FLUC_RT\":\"9.70\",\"ACC_TRDVOL\":\"7,162,398,637\",\"ACC_TRDVAL\":\"149,561,467,924,511\"},{\"IDX_IND_NM\":\"\uCF54\uC2A4\uD53C
+        200\",\"OPN_DD_INDX\":\"389.29\",\"END_DD_INDX\":\"430.22\",\"FLUC_TP\":\"1\",\"PRV_DD_CMPR\":\"40.93\",\"FLUC_RT\":\"10.51\",\"ACC_TRDVOL\":\"2,221,276,866\",\"ACC_TRDVAL\":\"119,905,899,468,167\"},{\"IDX_IND_NM\":\"\uCF54\uC2A4\uD53C
+        100\",\"OPN_DD_INDX\":\"2,974.06\",\"END_DD_INDX\":\"3,293.96\",\"FLUC_TP\":\"1\",\"PRV_DD_CMPR\":\"319.90\",\"FLUC_RT\":\"10.76\",\"ACC_TRDVOL\":\"1,142,234,783\",\"ACC_TRDVAL\":\"95,023,508,273,187\"},{\"IDX_IND_NM\":\"\uCF54\uC2A4\uD53C
+        50\",\"OPN_DD_INDX\":\"2,725.20\",\"END_DD_INDX\":\"3,031.59\",\"FLUC_TP\":\"1\",\"PRV_DD_CMPR\":\"306.39\",\"FLUC_RT\":\"11.24\",\"ACC_TRDVOL\":\"742,099,360\",\"ACC_TRDVAL\":\"79,663,247,553,065\"},{\"IDX_IND_NM\":\"\uCF54\uC2A4\uD53C
+        200 \uC911\uC18C\uD615\uC8FC\",\"OPN_DD_INDX\":\"1,151.78\",\"END_DD_INDX\":\"1,240.92\",\"FLUC_TP\":\"1\",\"PRV_DD_CMPR\":\"89.14\",\"FLUC_RT\":\"7.74\",\"ACC_TRDVOL\":\"1,079,042,083\",\"ACC_TRDVAL\":\"24,882,391,194,980\"},{\"IDX_IND_NM\":\"\uCF54\uC2A4\uD53C
+        200 \uCD08\uB300\uD615\uC81C\uC678 \uC9C0\uC218\",\"OPN_DD_INDX\":\"277.69\",\"END_DD_INDX\":\"308.12\",\"FLUC_TP\":\"1\",\"PRV_DD_CMPR\":\"30.43\",\"FLUC_RT\":\"10.96\",\"ACC_TRDVOL\":\"2,013,538,959\",\"ACC_TRDVAL\":\"102,487,968,280,615\"},{\"IDX_IND_NM\":\"\uCF54\uC2A4\uD53C200\uC81C\uC678
+        \uCF54\uC2A4\uD53C\uC9C0\uC218\",\"OPN_DD_INDX\":\"3,317.40\",\"END_DD_INDX\":\"3,455.55\",\"FLUC_TP\":\"1\",\"PRV_DD_CMPR\":\"138.15\",\"FLUC_RT\":\"4.16\",\"ACC_TRDVOL\":\"4,861,259,845\",\"ACC_TRDVAL\":\"25,152,209,090,831\"},{\"IDX_IND_NM\":\"\uCF54\uC2A4\uD53C
+        200 \uCEE4\uBBA4\uB2C8\uCF00\uC774\uC158\uC11C\uBE44\uC2A4\",\"OPN_DD_INDX\":\"2,593.90\",\"END_DD_INDX\":\"2,785.42\",\"FLUC_TP\":\"1\",\"PRV_DD_CMPR\":\"191.52\",\"FLUC_RT\":\"7.38\",\"ACC_TRDVOL\":\"78,059,433\",\"ACC_TRDVAL\":\"8,149,935,961,506\"},{\"IDX_IND_NM\":\"\uCF54\uC2A4\uD53C
+        200 \uAC74\uC124\",\"OPN_DD_INDX\":\"239.93\",\"END_DD_INDX\":\"263.86\",\"FLUC_TP\":\"1\",\"PRV_DD_CMPR\":\"23.93\",\"FLUC_RT\":\"9.97\",\"ACC_TRDVOL\":\"208,374,685\",\"ACC_TRDVAL\":\"3,153,166,861,035\"},{\"IDX_IND_NM\":\"\uCF54\uC2A4\uD53C
+        200 \uC911\uACF5\uC5C5\",\"OPN_DD_INDX\":\"272.42\",\"END_DD_INDX\":\"291.42\",\"FLUC_TP\":\"1\",\"PRV_DD_CMPR\":\"19.00\",\"FLUC_RT\":\"6.97\",\"ACC_TRDVOL\":\"264,698,164\",\"ACC_TRDVAL\":\"5,025,030,432,840\"},{\"IDX_IND_NM\":\"\uCF54\uC2A4\uD53C
+        200 \uCCA0\uAC15/\uC18C\uC7AC\",\"OPN_DD_INDX\":\"737.20\",\"END_DD_INDX\":\"816.58\",\"FLUC_TP\":\"1\",\"PRV_DD_CMPR\":\"79.38\",\"FLUC_RT\":\"10.77\",\"ACC_TRDVOL\":\"64,591,331\",\"ACC_TRDVAL\":\"2,346,804,143,410\"},{\"IDX_IND_NM\":\"\uCF54\uC2A4\uD53C
+        200 \uC5D0\uB108\uC9C0/\uD654\uD559\",\"OPN_DD_INDX\":\"1,798.11\",\"END_DD_INDX\":\"2,147.41\",\"FLUC_TP\":\"1\",\"PRV_DD_CMPR\":\"349.30\",\"FLUC_RT\":\"19.43\",\"ACC_TRDVOL\":\"140,610,623\",\"ACC_TRDVAL\":\"15,840,558,519,250\"},{\"IDX_IND_NM\":\"\uCF54\uC2A4\uD53C
+        200 \uC815\uBCF4\uAE30\uC220\",\"OPN_DD_INDX\":\"3,556.86\",\"END_DD_INDX\":\"4,045.72\",\"FLUC_TP\":\"1\",\"PRV_DD_CMPR\":\"488.86\",\"FLUC_RT\":\"13.74\",\"ACC_TRDVOL\":\"349,991,349\",\"ACC_TRDVAL\":\"34,128,126,308,554\"},{\"IDX_IND_NM\":\"\uCF54\uC2A4\uD53C
+        200 \uAE08\uC735\",\"OPN_DD_INDX\":\"600.92\",\"END_DD_INDX\":\"637.15\",\"FLUC_TP\":\"1\",\"PRV_DD_CMPR\":\"36.23\",\"FLUC_RT\":\"6.03\",\"ACC_TRDVOL\":\"438,711,362\",\"ACC_TRDVAL\":\"5,829,741,852,025\"},{\"IDX_IND_NM\":\"\uCF54\uC2A4\uD53C
+        200 \uC0DD\uD65C\uC18C\uBE44\uC7AC\",\"OPN_DD_INDX\":\"1,162.10\",\"END_DD_INDX\":\"1,192.28\",\"FLUC_TP\":\"1\",\"PRV_DD_CMPR\":\"30.18\",\"FLUC_RT\":\"2.60\",\"ACC_TRDVOL\":\"80,106,358\",\"ACC_TRDVAL\":\"4,401,353,171,420\"},{\"IDX_IND_NM\":\"\uCF54\uC2A4\uD53C
+        200 \uACBD\uAE30\uC18C\uBE44\uC7AC\",\"OPN_DD_INDX\":\"1,651.06\",\"END_DD_INDX\":\"1,937.61\",\"FLUC_TP\":\"1\",\"PRV_DD_CMPR\":\"286.55\",\"FLUC_RT\":\"17.36\",\"ACC_TRDVOL\":\"200,983,307\",\"ACC_TRDVAL\":\"20,099,088,021,995\"},{\"IDX_IND_NM\":\"\uCF54\uC2A4\uD53C
+        200 \uC0B0\uC5C5\uC7AC\",\"OPN_DD_INDX\":\"517.48\",\"END_DD_INDX\":\"553.50\",\"FLUC_TP\":\"1\",\"PRV_DD_CMPR\":\"36.02\",\"FLUC_RT\":\"6.96\",\"ACC_TRDVOL\":\"236,467,758\",\"ACC_TRDVAL\":\"6,011,239,987,042\"},{\"IDX_IND_NM\":\"\uCF54\uC2A4\uD53C
+        200 \uD5EC\uC2A4\uCF00\uC5B4\",\"OPN_DD_INDX\":\"3,178.49\",\"END_DD_INDX\":\"3,254.06\",\"FLUC_TP\":\"1\",\"PRV_DD_CMPR\":\"75.57\",\"FLUC_RT\":\"2.38\",\"ACC_TRDVOL\":\"158,682,496\",\"ACC_TRDVAL\":\"14,920,854,209,090\"},{\"IDX_IND_NM\":\"\uC74C\uC2DD\uB8CC\xB7\uB2F4\uBC30\",\"OPN_DD_INDX\":\"3,940.15\",\"END_DD_INDX\":\"4,168.40\",\"FLUC_TP\":\"1\",\"PRV_DD_CMPR\":\"228.25\",\"FLUC_RT\":\"5.79\",\"ACC_TRDVOL\":\"207,834,273\",\"ACC_TRDVAL\":\"1,565,315,576,786\"},{\"IDX_IND_NM\":\"\uC12C\uC720\xB7\uC758\uB958\",\"OPN_DD_INDX\":\"254.64\",\"END_DD_INDX\":\"258.29\",\"FLUC_TP\":\"1\",\"PRV_DD_CMPR\":\"3.65\",\"FLUC_RT\":\"1.43\",\"ACC_TRDVOL\":\"128,034,761\",\"ACC_TRDVAL\":\"494,766,193,739\"},{\"IDX_IND_NM\":\"\uC885\uC774\xB7\uBAA9\uC7AC\",\"OPN_DD_INDX\":\"392.31\",\"END_DD_INDX\":\"388.24\",\"FLUC_TP\":\"2\",\"PRV_DD_CMPR\":\"-4.07\",\"FLUC_RT\":\"-1.04\",\"ACC_TRDVOL\":\"153,888,548\",\"ACC_TRDVAL\":\"461,982,761,525\"},{\"IDX_IND_NM\":\"\uD654\uD559\",\"OPN_DD_INDX\":\"6,503.57\",\"END_DD_INDX\":\"7,373.22\",\"FLUC_TP\":\"1\",\"PRV_DD_CMPR\":\"869.65\",\"FLUC_RT\":\"13.37\",\"ACC_TRDVOL\":\"581,077,871\",\"ACC_TRDVAL\":\"18,725,085,788,517\"},{\"IDX_IND_NM\":\"\uC81C\uC57D\",\"OPN_DD_INDX\":\"21,085.04\",\"END_DD_INDX\":\"21,486.80\",\"FLUC_TP\":\"1\",\"PRV_DD_CMPR\":\"401.76\",\"FLUC_RT\":\"1.91\",\"ACC_TRDVOL\":\"555,120,621\",\"ACC_TRDVAL\":\"15,154,301,265,680\"},{\"IDX_IND_NM\":\"\uBE44\uAE08\uC18D\",\"OPN_DD_INDX\":\"2,071.15\",\"END_DD_INDX\":\"2,334.75\",\"FLUC_TP\":\"1\",\"PRV_DD_CMPR\":\"263.60\",\"FLUC_RT\":\"12.73\",\"ACC_TRDVOL\":\"86,487,635\",\"ACC_TRDVAL\":\"1,226,181,977,375\"},{\"IDX_IND_NM\":\"\uAE08\uC18D\",\"OPN_DD_INDX\":\"4,112.28\",\"END_DD_INDX\":\"4,494.82\",\"FLUC_TP\":\"1\",\"PRV_DD_CMPR\":\"382.54\",\"FLUC_RT\":\"9.30\",\"ACC_TRDVOL\":\"379,172,033\",\"ACC_TRDVAL\":\"3,712,991,742,774\"},{\"IDX_IND_NM\":\"\uAE30\uACC4\xB7\uC7A5\uBE44\",\"OPN_DD_INDX\":\"972.02\",\"END_DD_INDX\":\"1,040.42\",\"FLUC_TP\":\"1\",\"PRV_DD_CMPR\":\"68.40\",\"FLUC_RT\":\"7.04\",\"ACC_TRDVOL\":\"279,323,330\",\"ACC_TRDVAL\":\"2,556,317,721,999\"},{\"IDX_IND_NM\":\"\uC804\uAE30\uC804\uC790\",\"OPN_DD_INDX\":\"29,788.48\",\"END_DD_INDX\":\"33,017.48\",\"FLUC_TP\":\"1\",\"PRV_DD_CMPR\":\"3,229.00\",\"FLUC_RT\":\"10.84\",\"ACC_TRDVOL\":\"1,003,976,268\",\"ACC_TRDVAL\":\"39,478,535,839,241\"},{\"IDX_IND_NM\":\"\uC758\uB8CC\xB7\uC815\uBC00\uAE30\uAE30\",\"OPN_DD_INDX\":\"2,795.33\",\"END_DD_INDX\":\"2,819.57\",\"FLUC_TP\":\"1\",\"PRV_DD_CMPR\":\"24.24\",\"FLUC_RT\":\"0.87\",\"ACC_TRDVOL\":\"13,896,048\",\"ACC_TRDVAL\":\"141,113,143,380\"},{\"IDX_IND_NM\":\"\uC6B4\uC1A1\uC7A5\uBE44\xB7\uBD80\uD488\",\"OPN_DD_INDX\":\"1,924.37\",\"END_DD_INDX\":\"2,358.90\",\"FLUC_TP\":\"1\",\"PRV_DD_CMPR\":\"434.53\",\"FLUC_RT\":\"22.58\",\"ACC_TRDVOL\":\"705,682,215\",\"ACC_TRDVAL\":\"23,627,657,754,367\"},{\"IDX_IND_NM\":\"\uC720\uD1B5\",\"OPN_DD_INDX\":\"394.67\",\"END_DD_INDX\":\"421.76\",\"FLUC_TP\":\"1\",\"PRV_DD_CMPR\":\"27.09\",\"FLUC_RT\":\"6.86\",\"ACC_TRDVOL\":\"556,861,428\",\"ACC_TRDVAL\":\"4,327,014,932,076\"},{\"IDX_IND_NM\":\"\uC804\uAE30\xB7\uAC00\uC2A4\",\"OPN_DD_INDX\":\"844.83\",\"END_DD_INDX\":\"842.69\",\"FLUC_TP\":\"2\",\"PRV_DD_CMPR\":\"-2.14\",\"FLUC_RT\":\"-0.25\",\"ACC_TRDVOL\":\"39,724,732\",\"ACC_TRDVAL\":\"1,080,218,596,220\"},{\"IDX_IND_NM\":\"\uAC74\uC124\",\"OPN_DD_INDX\":\"106.20\",\"END_DD_INDX\":\"113.86\",\"FLUC_TP\":\"1\",\"PRV_DD_CMPR\":\"7.66\",\"FLUC_RT\":\"7.21\",\"ACC_TRDVOL\":\"320,786,060\",\"ACC_TRDVAL\":\"2,623,424,880,340\"},{\"IDX_IND_NM\":\"\uC6B4\uC1A1\xB7\uCC3D\uACE0\",\"OPN_DD_INDX\":\"1,755.95\",\"END_DD_INDX\":\"1,867.04\",\"FLUC_TP\":\"1\",\"PRV_DD_CMPR\":\"111.09\",\"FLUC_RT\":\"6.33\",\"ACC_TRDVOL\":\"606,006,915\",\"ACC_TRDVAL\":\"5,334,945,328,025\"},{\"IDX_IND_NM\":\"\uD1B5\uC2E0\",\"OPN_DD_INDX\":\"325.16\",\"END_DD_INDX\":\"352.63\",\"FLUC_TP\":\"1\",\"PRV_DD_CMPR\":\"27.47\",\"FLUC_RT\":\"8.45\",\"ACC_TRDVOL\":\"58,698,111\",\"ACC_TRDVAL\":\"1,863,977,857,270\"},{\"IDX_IND_NM\":\"\uAE08\uC735\",\"OPN_DD_INDX\":\"392.51\",\"END_DD_INDX\":\"424.57\",\"FLUC_TP\":\"1\",\"PRV_DD_CMPR\":\"32.06\",\"FLUC_RT\":\"8.17\",\"ACC_TRDVOL\":\"1,114,184,909\",\"ACC_TRDVAL\":\"13,948,778,576,211\"},{\"IDX_IND_NM\":\"\uC99D\uAD8C\",\"OPN_DD_INDX\":\"1,903.90\",\"END_DD_INDX\":\"2,082.91\",\"FLUC_TP\":\"1\",\"PRV_DD_CMPR\":\"179.01\",\"FLUC_RT\":\"9.40\",\"ACC_TRDVOL\":\"522,400,343\",\"ACC_TRDVAL\":\"2,065,288,914,522\"},{\"IDX_IND_NM\":\"\uBCF4\uD5D8\",\"OPN_DD_INDX\":\"12,660.89\",\"END_DD_INDX\":\"13,175.47\",\"FLUC_TP\":\"1\",\"PRV_DD_CMPR\":\"514.58\",\"FLUC_RT\":\"4.06\",\"ACC_TRDVOL\":\"295,620,661\",\"ACC_TRDVAL\":\"1,855,962,061,690\"},{\"IDX_IND_NM\":\"\uC77C\uBC18\uC11C\uBE44\uC2A4\",\"OPN_DD_INDX\":\"1,639.72\",\"END_DD_INDX\":\"1,747.11\",\"FLUC_TP\":\"1\",\"PRV_DD_CMPR\":\"107.39\",\"FLUC_RT\":\"6.55\",\"ACC_TRDVOL\":\"257,769,303\",\"ACC_TRDVAL\":\"12,513,139,633,872\"},{\"IDX_IND_NM\":\"\uC81C\uC870\",\"OPN_DD_INDX\":\"7,548.59\",\"END_DD_INDX\":\"8,371.68\",\"FLUC_TP\":\"1\",\"PRV_DD_CMPR\":\"823.09\",\"FLUC_RT\":\"10.90\",\"ACC_TRDVOL\":\"4,193,525,263\",\"ACC_TRDVAL\":\"107,780,810,257,224\"},{\"IDX_IND_NM\":\"\uCF54\uC2A4\uD53C
+        \uB300\uD615\uC8FC\",\"OPN_DD_INDX\":\"2,859.22\",\"END_DD_INDX\":\"3,163.89\",\"FLUC_TP\":\"1\",\"PRV_DD_CMPR\":\"304.67\",\"FLUC_RT\":\"10.66\",\"ACC_TRDVOL\":\"1,204,405,123\",\"ACC_TRDVAL\":\"92,422,948,841,858\"},{\"IDX_IND_NM\":\"\uCF54\uC2A4\uD53C
+        \uC911\uD615\uC8FC\",\"OPN_DD_INDX\":\"2,953.99\",\"END_DD_INDX\":\"3,135.97\",\"FLUC_TP\":\"1\",\"PRV_DD_CMPR\":\"181.98\",\"FLUC_RT\":\"6.16\",\"ACC_TRDVOL\":\"1,783,034,276\",\"ACC_TRDVAL\":\"32,559,938,328,172\"},{\"IDX_IND_NM\":\"\uCF54\uC2A4\uD53C
+        \uC18C\uD615\uC8FC\",\"OPN_DD_INDX\":\"2,210.75\",\"END_DD_INDX\":\"2,313.99\",\"FLUC_TP\":\"1\",\"PRV_DD_CMPR\":\"103.24\",\"FLUC_RT\":\"4.67\",\"ACC_TRDVOL\":\"4,042,530,505\",\"ACC_TRDVAL\":\"17,707,582,538,218\"},{\"IDX_IND_NM\":\"\uCF54\uC2A4\uD53C
+        200 \uBE44\uC911\uC0C1\uD55C 30%\",\"OPN_DD_INDX\":\"388.57\",\"END_DD_INDX\":\"429.44\",\"FLUC_TP\":\"1\",\"PRV_DD_CMPR\":\"40.87\",\"FLUC_RT\":\"10.52\",\"ACC_TRDVOL\":\"2,221,276,866\",\"ACC_TRDVAL\":\"119,905,899,468,167\"},{\"IDX_IND_NM\":\"\uCF54\uC2A4\uD53C
+        200 \uBE44\uC911\uC0C1\uD55C 25%\",\"OPN_DD_INDX\":\"383.08\",\"END_DD_INDX\":\"423.64\",\"FLUC_TP\":\"1\",\"PRV_DD_CMPR\":\"40.56\",\"FLUC_RT\":\"10.59\",\"ACC_TRDVOL\":\"2,221,276,866\",\"ACC_TRDVAL\":\"119,905,899,468,167\"},{\"IDX_IND_NM\":\"\uCF54\uC2A4\uD53C
+        200 \uBE44\uC911\uC0C1\uD55C 20%\",\"OPN_DD_INDX\":\"371.31\",\"END_DD_INDX\":\"410.90\",\"FLUC_TP\":\"1\",\"PRV_DD_CMPR\":\"39.59\",\"FLUC_RT\":\"10.66\",\"ACC_TRDVOL\":\"2,221,276,866\",\"ACC_TRDVAL\":\"119,905,899,468,167\"},{\"IDX_IND_NM\":\"\uC624\uB77D\xB7\uBB38\uD654\",\"OPN_DD_INDX\":\"-\",\"END_DD_INDX\":\"-\",\"FLUC_TP\":\"\",\"PRV_DD_CMPR\":\"-\",\"FLUC_RT\":\"-\",\"ACC_TRDVOL\":\"-\",\"ACC_TRDVAL\":\"-\"},{\"IDX_IND_NM\":\"IT
+        \uC11C\uBE44\uC2A4\",\"OPN_DD_INDX\":\"-\",\"END_DD_INDX\":\"-\",\"FLUC_TP\":\"\",\"PRV_DD_CMPR\":\"-\",\"FLUC_RT\":\"-\",\"ACC_TRDVOL\":\"-\",\"ACC_TRDVAL\":\"-\"},{\"IDX_IND_NM\":\"\uBD80\uB3D9\uC0B0\",\"OPN_DD_INDX\":\"-\",\"END_DD_INDX\":\"-\",\"FLUC_TP\":\"\",\"PRV_DD_CMPR\":\"-\",\"FLUC_RT\":\"-\",\"ACC_TRDVOL\":\"-\",\"ACC_TRDVAL\":\"-\"},{\"IDX_IND_NM\":\"\uCF54\uC2A4\uD53C
+        200 \uACBD\uAE30\uBC29\uC5B4\uC18C\uBE44\uC7AC\uC9C0\uC218\",\"OPN_DD_INDX\":\"1,307.14\",\"END_DD_INDX\":\"1,347.79\",\"FLUC_TP\":\"1\",\"PRV_DD_CMPR\":\"40.65\",\"FLUC_RT\":\"3.11\",\"ACC_TRDVOL\":\"290,058,473\",\"ACC_TRDVAL\":\"21,169,138,194,160\"},{\"IDX_IND_NM\":\"\uCF54\uC2A4\uD53C
+        200 TOP 10\",\"OPN_DD_INDX\":\"1,511.85\",\"END_DD_INDX\":\"1,698.14\",\"FLUC_TP\":\"1\",\"PRV_DD_CMPR\":\"186.29\",\"FLUC_RT\":\"12.32\",\"ACC_TRDVOL\":\"-\",\"ACC_TRDVAL\":\"-\"}],\"CURRENT_DATETIME\":\"2026.01.25
+        PM 08:26:58\"}"
+    headers:
+      Cache-Control:
+      - max-age=0, no-cache, no-store
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Length:
+      - '2576'
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sun, 25 Jan 2026 11:26:58 GMT
+      Expires:
+      - Sun, 25 Jan 2026 11:26:58 GMT
+      Pragma:
+      - no-cache
+      Set-Cookie:
+      - __smVisitorID=ZkVNPn8jA1B; Expires=Mon, 25-Jan-2027 11:26:58 GMT; Path=/
+      - __smVisitorID=M9ovbHFsL7Q; Expires=Mon, 25-Jan-2027 11:26:58 GMT; Path=/
+      - __smVisitorID=g0SBMjzDR8G; Expires=Mon, 25-Jan-2027 11:26:58 GMT; Path=/
+      - JSESSIONID=DM4rPgH7Awab7KSHKWYz1VPN6somfPCwcvrEZKjDe0hL2hjOtuJF3OqpY9qP1IBq.bWRjX2RvbWFpbi9tZGNvd2FwMi1tZGNhcHAxMQ==;
+        Domain=.krx.co.kr; Path=/; HttpOnly
+      Vary:
+      - Accept-Encoding
+    status:
+      code: 200
+      message: OK
+version: 1

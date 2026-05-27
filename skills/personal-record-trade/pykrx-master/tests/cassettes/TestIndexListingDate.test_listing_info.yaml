@@ -1,0 +1,144 @@
+interactions:
+- request:
+    body: idxIndMidclssCd=02&bld=dbms%2FMDC%2FSTAT%2Fstandard%2FMDCSTAT00401
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate, br, zstd
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '66'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Referer:
+      - https://data.krx.co.kr/contents/MDC/MDI/outerLoader/index.cmd
+      User-Agent:
+      - Mozilla/5.0
+    method: POST
+    uri: https://data.krx.co.kr/comm/bldAttendant/getJsonData.cmd
+  response:
+    body:
+      string: "{\"output\":[{\"IDX_NM\":\"\uCF54\uC2A4\uD53C\",\"IDX_ENG_NM\":\"KOSPI\",\"BAS_TM_CONTN\":\"1980.01.04\",\"ANNC_TM_CONTN\":\"1983.01.04\",\"BAS_IDX_CONTN\":\"100.00\",\"CALC_CYCLE_CONTN\":\"10\uCD08\",\"CALC_TM_CONTN\":\"09:00:30
+        ~ 15:30:00\",\"COMPST_ISU_CNT\":\"839\",\"IND_TP_CD\":\"1\",\"IDX_IND_CD\":\"001\"},{\"IDX_NM\":\"\uCF54\uC2A4\uD53C
+        200\",\"IDX_ENG_NM\":\"KOSPI 200\",\"BAS_TM_CONTN\":\"1990.01.03\",\"ANNC_TM_CONTN\":\"1994.06.15\",\"BAS_IDX_CONTN\":\"100.00\",\"CALC_CYCLE_CONTN\":\"1\uCD08\",\"CALC_TM_CONTN\":\"09:00:30
+        ~ 15:30:00\",\"COMPST_ISU_CNT\":\"200\",\"IND_TP_CD\":\"1\",\"IDX_IND_CD\":\"028\"},{\"IDX_NM\":\"\uCF54\uC2A4\uD53C
+        100\",\"IDX_ENG_NM\":\"KOSPI 100\",\"BAS_TM_CONTN\":\"2000.01.04\",\"ANNC_TM_CONTN\":\"2000.03.02\",\"BAS_IDX_CONTN\":\"1,000.00\",\"CALC_CYCLE_CONTN\":\"10\uCD08\",\"CALC_TM_CONTN\":\"09:00:30
+        ~ 15:30:00\",\"COMPST_ISU_CNT\":\"100\",\"IND_TP_CD\":\"1\",\"IDX_IND_CD\":\"034\"},{\"IDX_NM\":\"\uCF54\uC2A4\uD53C
+        50\",\"IDX_ENG_NM\":\"KOSPI 50\",\"BAS_TM_CONTN\":\"2000.01.04\",\"ANNC_TM_CONTN\":\"2000.03.02\",\"BAS_IDX_CONTN\":\"1,000.00\",\"CALC_CYCLE_CONTN\":\"10\uCD08\",\"CALC_TM_CONTN\":\"09:00:30
+        ~ 15:30:00\",\"COMPST_ISU_CNT\":\"50\",\"IND_TP_CD\":\"1\",\"IDX_IND_CD\":\"035\"},{\"IDX_NM\":\"\uCF54\uC2A4\uD53C
+        200 \uC911\uC18C\uD615\uC8FC\",\"IDX_ENG_NM\":\"KOSPI 200 MidSmallCap\",\"BAS_TM_CONTN\":\"2010.01.04\",\"ANNC_TM_CONTN\":\"2015.07.13\",\"BAS_IDX_CONTN\":\"1,000.00\",\"CALC_CYCLE_CONTN\":\"10\uCD08\",\"CALC_TM_CONTN\":\"09:00:30
+        ~ 15:30:00\",\"COMPST_ISU_CNT\":\"100\",\"IND_TP_CD\":\"1\",\"IDX_IND_CD\":\"167\"},{\"IDX_NM\":\"\uCF54\uC2A4\uD53C
+        200 \uCD08\uB300\uD615\uC81C\uC678 \uC9C0\uC218\",\"IDX_ENG_NM\":\"KOSPI 200
+        Ex-TOP\",\"BAS_TM_CONTN\":\"2010.01.04\",\"ANNC_TM_CONTN\":\"2018.11.12\",\"BAS_IDX_CONTN\":\"223.49\",\"CALC_CYCLE_CONTN\":\"2\uCD08\",\"CALC_TM_CONTN\":\"09:00:30
+        ~ 15:30:00\",\"COMPST_ISU_CNT\":\"198\",\"IND_TP_CD\":\"1\",\"IDX_IND_CD\":\"182\"},{\"IDX_NM\":\"\uCF54\uC2A4\uD53C200\uC81C\uC678
+        \uCF54\uC2A4\uD53C\uC9C0\uC218\",\"IDX_ENG_NM\":\"KOSPI ex-KOSPI 200\",\"BAS_TM_CONTN\":\"2010.01.04\",\"ANNC_TM_CONTN\":\"2020.04.27\",\"BAS_IDX_CONTN\":\"1,696.14\",\"CALC_CYCLE_CONTN\":\"2\uCD08\",\"CALC_TM_CONTN\":\"09:00:30
+        ~ 15:30:00\",\"COMPST_ISU_CNT\":\"639\",\"IND_TP_CD\":\"1\",\"IDX_IND_CD\":\"244\"},{\"IDX_NM\":\"\uCF54\uC2A4\uD53C
+        200 \uCEE4\uBBA4\uB2C8\uCF00\uC774\uC158\uC11C\uBE44\uC2A4\",\"IDX_ENG_NM\":\"KOSPI
+        200 Communication Service\",\"BAS_TM_CONTN\":\"2010.07.01\",\"ANNC_TM_CONTN\":\"2018.10.22\",\"BAS_IDX_CONTN\":\"1,000.00\",\"CALC_CYCLE_CONTN\":\"1\uCD08\",\"CALC_TM_CONTN\":\"09:00:30
+        ~ 15:30:00\",\"COMPST_ISU_CNT\":\"10\",\"IND_TP_CD\":\"1\",\"IDX_IND_CD\":\"150\"},{\"IDX_NM\":\"\uCF54\uC2A4\uD53C
+        200 \uAC74\uC124\",\"IDX_ENG_NM\":\"KOSPI 200 Constructions\",\"BAS_TM_CONTN\":\"2008.01.02\",\"ANNC_TM_CONTN\":\"2011.04.01\",\"BAS_IDX_CONTN\":\"1,000.00\",\"CALC_CYCLE_CONTN\":\"1\uCD08\",\"CALC_TM_CONTN\":\"09:00:30
+        ~ 15:30:00\",\"COMPST_ISU_CNT\":\"10\",\"IND_TP_CD\":\"1\",\"IDX_IND_CD\":\"151\"},{\"IDX_NM\":\"\uCF54\uC2A4\uD53C
+        200 \uC911\uACF5\uC5C5\",\"IDX_ENG_NM\":\"KOSPI 200 Heavy Industries\",\"BAS_TM_CONTN\":\"2008.01.02\",\"ANNC_TM_CONTN\":\"2011.04.01\",\"BAS_IDX_CONTN\":\"1,000.00\",\"CALC_CYCLE_CONTN\":\"1\uCD08\",\"CALC_TM_CONTN\":\"09:00:30
+        ~ 15:30:00\",\"COMPST_ISU_CNT\":\"17\",\"IND_TP_CD\":\"1\",\"IDX_IND_CD\":\"152\"},{\"IDX_NM\":\"\uCF54\uC2A4\uD53C
+        200 \uCCA0\uAC15/\uC18C\uC7AC\",\"IDX_ENG_NM\":\"KOSPI 200 Steels & Materials\",\"BAS_TM_CONTN\":\"2008.01.02\",\"ANNC_TM_CONTN\":\"2011.04.01\",\"BAS_IDX_CONTN\":\"1,000.00\",\"CALC_CYCLE_CONTN\":\"1\uCD08\",\"CALC_TM_CONTN\":\"09:00:30
+        ~ 15:30:00\",\"COMPST_ISU_CNT\":\"10\",\"IND_TP_CD\":\"1\",\"IDX_IND_CD\":\"153\"},{\"IDX_NM\":\"\uCF54\uC2A4\uD53C
+        200 \uC5D0\uB108\uC9C0/\uD654\uD559\",\"IDX_ENG_NM\":\"KOSPI 200 Energy &
+        Chemicals\",\"BAS_TM_CONTN\":\"2008.01.02\",\"ANNC_TM_CONTN\":\"2011.04.01\",\"BAS_IDX_CONTN\":\"1,000.00\",\"CALC_CYCLE_CONTN\":\"1\uCD08\",\"CALC_TM_CONTN\":\"09:00:30
+        ~ 15:30:00\",\"COMPST_ISU_CNT\":\"27\",\"IND_TP_CD\":\"1\",\"IDX_IND_CD\":\"154\"},{\"IDX_NM\":\"\uCF54\uC2A4\uD53C
+        200 \uC815\uBCF4\uAE30\uC220\",\"IDX_ENG_NM\":\"KOSPI 200 IT\",\"BAS_TM_CONTN\":\"2008.01.02\",\"ANNC_TM_CONTN\":\"2011.04.01\",\"BAS_IDX_CONTN\":\"1,000.00\",\"CALC_CYCLE_CONTN\":\"1\uCD08\",\"CALC_TM_CONTN\":\"09:00:30
+        ~ 15:30:00\",\"COMPST_ISU_CNT\":\"15\",\"IND_TP_CD\":\"1\",\"IDX_IND_CD\":\"155\"},{\"IDX_NM\":\"\uCF54\uC2A4\uD53C
+        200 \uAE08\uC735\",\"IDX_ENG_NM\":\"KOSPI 200 Financials\",\"BAS_TM_CONTN\":\"2008.01.02\",\"ANNC_TM_CONTN\":\"2011.04.01\",\"BAS_IDX_CONTN\":\"1,000.00\",\"CALC_CYCLE_CONTN\":\"1\uCD08\",\"CALC_TM_CONTN\":\"09:00:30
+        ~ 15:30:00\",\"COMPST_ISU_CNT\":\"22\",\"IND_TP_CD\":\"1\",\"IDX_IND_CD\":\"156\"},{\"IDX_NM\":\"\uCF54\uC2A4\uD53C
+        200 \uC0DD\uD65C\uC18C\uBE44\uC7AC\",\"IDX_ENG_NM\":\"KOSPI 200 Consumer Staples\",\"BAS_TM_CONTN\":\"2008.01.02\",\"ANNC_TM_CONTN\":\"2011.04.01\",\"BAS_IDX_CONTN\":\"1,000.00\",\"CALC_CYCLE_CONTN\":\"1\uCD08\",\"CALC_TM_CONTN\":\"09:00:30
+        ~ 15:30:00\",\"COMPST_ISU_CNT\":\"27\",\"IND_TP_CD\":\"1\",\"IDX_IND_CD\":\"157\"},{\"IDX_NM\":\"\uCF54\uC2A4\uD53C
+        200 \uACBD\uAE30\uC18C\uBE44\uC7AC\",\"IDX_ENG_NM\":\"KOSPI 200 Consumer Discretionary\",\"BAS_TM_CONTN\":\"2008.01.02\",\"ANNC_TM_CONTN\":\"2011.04.01\",\"BAS_IDX_CONTN\":\"1,000.00\",\"CALC_CYCLE_CONTN\":\"1\uCD08\",\"CALC_TM_CONTN\":\"09:00:30
+        ~ 15:30:00\",\"COMPST_ISU_CNT\":\"27\",\"IND_TP_CD\":\"1\",\"IDX_IND_CD\":\"158\"},{\"IDX_NM\":\"\uCF54\uC2A4\uD53C
+        200 \uC0B0\uC5C5\uC7AC\",\"IDX_ENG_NM\":\"KOSPI 200 Industrials\",\"BAS_TM_CONTN\":\"2010.07.01\",\"ANNC_TM_CONTN\":\"2015.07.13\",\"BAS_IDX_CONTN\":\"1,000.00\",\"CALC_CYCLE_CONTN\":\"1\uCD08\",\"CALC_TM_CONTN\":\"09:00:30
+        ~ 15:30:00\",\"COMPST_ISU_CNT\":\"20\",\"IND_TP_CD\":\"1\",\"IDX_IND_CD\":\"159\"},{\"IDX_NM\":\"\uCF54\uC2A4\uD53C
+        200 \uD5EC\uC2A4\uCF00\uC5B4\",\"IDX_ENG_NM\":\"KOSPI 200 Health Care\",\"BAS_TM_CONTN\":\"2010.07.01\",\"ANNC_TM_CONTN\":\"2015.07.13\",\"BAS_IDX_CONTN\":\"1,000.00\",\"CALC_CYCLE_CONTN\":\"1\uCD08\",\"CALC_TM_CONTN\":\"09:00:30
+        ~ 15:30:00\",\"COMPST_ISU_CNT\":\"15\",\"IND_TP_CD\":\"1\",\"IDX_IND_CD\":\"160\"},{\"IDX_NM\":\"\uC74C\uC2DD\uB8CC\xB7\uB2F4\uBC30\",\"IDX_ENG_NM\":\"Foods,
+        Beverages & Tobacco\",\"BAS_TM_CONTN\":\"1980.01.04\",\"ANNC_TM_CONTN\":\"1983.01.04\",\"BAS_IDX_CONTN\":\"100.00\",\"CALC_CYCLE_CONTN\":\"10\uCD08\",\"CALC_TM_CONTN\":\"09:00:30
+        ~ 15:30:00\",\"COMPST_ISU_CNT\":\"37\",\"IND_TP_CD\":\"1\",\"IDX_IND_CD\":\"005\"},{\"IDX_NM\":\"\uC12C\uC720\xB7\uC758\uB958\",\"IDX_ENG_NM\":\"Textiles
+        & Apparel\",\"BAS_TM_CONTN\":\"1980.01.04\",\"ANNC_TM_CONTN\":\"1983.01.04\",\"BAS_IDX_CONTN\":\"100.00\",\"CALC_CYCLE_CONTN\":\"10\uCD08\",\"CALC_TM_CONTN\":\"09:00:30
+        ~ 15:30:00\",\"COMPST_ISU_CNT\":\"29\",\"IND_TP_CD\":\"1\",\"IDX_IND_CD\":\"006\"},{\"IDX_NM\":\"\uC885\uC774\xB7\uBAA9\uC7AC\",\"IDX_ENG_NM\":\"Paper
+        & Forest Products\",\"BAS_TM_CONTN\":\"1980.01.04\",\"ANNC_TM_CONTN\":\"1983.01.04\",\"BAS_IDX_CONTN\":\"100.00\",\"CALC_CYCLE_CONTN\":\"10\uCD08\",\"CALC_TM_CONTN\":\"09:00:30
+        ~ 15:30:00\",\"COMPST_ISU_CNT\":\"19\",\"IND_TP_CD\":\"1\",\"IDX_IND_CD\":\"007\"},{\"IDX_NM\":\"\uD654\uD559\",\"IDX_ENG_NM\":\"Chemicals\",\"BAS_TM_CONTN\":\"1980.01.04\",\"ANNC_TM_CONTN\":\"1983.01.04\",\"BAS_IDX_CONTN\":\"100.00\",\"CALC_CYCLE_CONTN\":\"10\uCD08\",\"CALC_TM_CONTN\":\"09:00:30
+        ~ 15:30:00\",\"COMPST_ISU_CNT\":\"103\",\"IND_TP_CD\":\"1\",\"IDX_IND_CD\":\"008\"},{\"IDX_NM\":\"\uC81C\uC57D\",\"IDX_ENG_NM\":\"Pharmaceuticals\",\"BAS_TM_CONTN\":\"1980.01.04\",\"ANNC_TM_CONTN\":\"1983.01.04\",\"BAS_IDX_CONTN\":\"100.00\",\"CALC_CYCLE_CONTN\":\"10\uCD08\",\"CALC_TM_CONTN\":\"09:00:30
+        ~ 15:30:00\",\"COMPST_ISU_CNT\":\"49\",\"IND_TP_CD\":\"1\",\"IDX_IND_CD\":\"009\"},{\"IDX_NM\":\"\uBE44\uAE08\uC18D\",\"IDX_ENG_NM\":\"Non-metals\",\"BAS_TM_CONTN\":\"1980.01.04\",\"ANNC_TM_CONTN\":\"1983.01.04\",\"BAS_IDX_CONTN\":\"100.00\",\"CALC_CYCLE_CONTN\":\"10\uCD08\",\"CALC_TM_CONTN\":\"09:00:30
+        ~ 15:30:00\",\"COMPST_ISU_CNT\":\"21\",\"IND_TP_CD\":\"1\",\"IDX_IND_CD\":\"010\"},{\"IDX_NM\":\"\uAE08\uC18D\",\"IDX_ENG_NM\":\"Metals\",\"BAS_TM_CONTN\":\"1980.01.04\",\"ANNC_TM_CONTN\":\"1983.01.04\",\"BAS_IDX_CONTN\":\"100.00\",\"CALC_CYCLE_CONTN\":\"10\uCD08\",\"CALC_TM_CONTN\":\"09:00:30
+        ~ 15:30:00\",\"COMPST_ISU_CNT\":\"62\",\"IND_TP_CD\":\"1\",\"IDX_IND_CD\":\"011\"},{\"IDX_NM\":\"\uAE30\uACC4\xB7\uC7A5\uBE44\",\"IDX_ENG_NM\":\"Machinery
+        & Equipment\",\"BAS_TM_CONTN\":\"1980.01.04\",\"ANNC_TM_CONTN\":\"1983.01.04\",\"BAS_IDX_CONTN\":\"100.00\",\"CALC_CYCLE_CONTN\":\"10\uCD08\",\"CALC_TM_CONTN\":\"09:00:30
+        ~ 15:30:00\",\"COMPST_ISU_CNT\":\"31\",\"IND_TP_CD\":\"1\",\"IDX_IND_CD\":\"012\"},{\"IDX_NM\":\"\uC804\uAE30\uC804\uC790\",\"IDX_ENG_NM\":\"Electrical
+        Equipment & Electronics\",\"BAS_TM_CONTN\":\"1980.01.04\",\"ANNC_TM_CONTN\":\"1983.01.04\",\"BAS_IDX_CONTN\":\"100.00\",\"CALC_CYCLE_CONTN\":\"10\uCD08\",\"CALC_TM_CONTN\":\"09:00:30
+        ~ 15:30:00\",\"COMPST_ISU_CNT\":\"68\",\"IND_TP_CD\":\"1\",\"IDX_IND_CD\":\"013\"},{\"IDX_NM\":\"\uC758\uB8CC\xB7\uC815\uBC00\uAE30\uAE30\",\"IDX_ENG_NM\":\"Medical
+        and Precision Instruments\",\"BAS_TM_CONTN\":\"2000.01.04\",\"ANNC_TM_CONTN\":\"2000.11.06\",\"BAS_IDX_CONTN\":\"1,000.00\",\"CALC_CYCLE_CONTN\":\"10\uCD08\",\"CALC_TM_CONTN\":\"09:00:30
+        ~ 15:30:00\",\"COMPST_ISU_CNT\":\"8\",\"IND_TP_CD\":\"1\",\"IDX_IND_CD\":\"014\"},{\"IDX_NM\":\"\uC6B4\uC1A1\uC7A5\uBE44\xB7\uBD80\uD488\",\"IDX_ENG_NM\":\"Transportation
+        Equipment & Components\",\"BAS_TM_CONTN\":\"1980.01.04\",\"ANNC_TM_CONTN\":\"1983.01.04\",\"BAS_IDX_CONTN\":\"100.00\",\"CALC_CYCLE_CONTN\":\"10\uCD08\",\"CALC_TM_CONTN\":\"09:00:30
+        ~ 15:30:00\",\"COMPST_ISU_CNT\":\"60\",\"IND_TP_CD\":\"1\",\"IDX_IND_CD\":\"015\"},{\"IDX_NM\":\"\uC720\uD1B5\",\"IDX_ENG_NM\":\"Distribution\",\"BAS_TM_CONTN\":\"1980.01.04\",\"ANNC_TM_CONTN\":\"1983.01.04\",\"BAS_IDX_CONTN\":\"100.00\",\"CALC_CYCLE_CONTN\":\"10\uCD08\",\"CALC_TM_CONTN\":\"09:00:30
+        ~ 15:30:00\",\"COMPST_ISU_CNT\":\"64\",\"IND_TP_CD\":\"1\",\"IDX_IND_CD\":\"016\"},{\"IDX_NM\":\"\uC804\uAE30\xB7\uAC00\uC2A4\",\"IDX_ENG_NM\":\"Electricity
+        & Gas\",\"BAS_TM_CONTN\":\"2000.01.04\",\"ANNC_TM_CONTN\":\"2000.11.06\",\"BAS_IDX_CONTN\":\"1,000.00\",\"CALC_CYCLE_CONTN\":\"10\uCD08\",\"CALC_TM_CONTN\":\"09:00:30
+        ~ 15:30:00\",\"COMPST_ISU_CNT\":\"10\",\"IND_TP_CD\":\"1\",\"IDX_IND_CD\":\"017\"},{\"IDX_NM\":\"\uAC74\uC124\",\"IDX_ENG_NM\":\"Construction\",\"BAS_TM_CONTN\":\"1980.01.04\",\"ANNC_TM_CONTN\":\"1983.01.04\",\"BAS_IDX_CONTN\":\"100.00\",\"CALC_CYCLE_CONTN\":\"10\uCD08\",\"CALC_TM_CONTN\":\"09:00:30
+        ~ 15:30:00\",\"COMPST_ISU_CNT\":\"29\",\"IND_TP_CD\":\"1\",\"IDX_IND_CD\":\"018\"},{\"IDX_NM\":\"\uC6B4\uC1A1\xB7\uCC3D\uACE0\",\"IDX_ENG_NM\":\"Transportation
+        & Warehousing\",\"BAS_TM_CONTN\":\"1980.01.04\",\"ANNC_TM_CONTN\":\"1983.01.04\",\"BAS_IDX_CONTN\":\"100.00\",\"CALC_CYCLE_CONTN\":\"10\uCD08\",\"CALC_TM_CONTN\":\"09:00:30
+        ~ 15:30:00\",\"COMPST_ISU_CNT\":\"25\",\"IND_TP_CD\":\"1\",\"IDX_IND_CD\":\"019\"},{\"IDX_NM\":\"\uD1B5\uC2E0\",\"IDX_ENG_NM\":\"Telecommunications\",\"BAS_TM_CONTN\":\"2000.01.04\",\"ANNC_TM_CONTN\":\"2000.11.06\",\"BAS_IDX_CONTN\":\"1,000.00\",\"CALC_CYCLE_CONTN\":\"10\uCD08\",\"CALC_TM_CONTN\":\"09:00:30
+        ~ 15:30:00\",\"COMPST_ISU_CNT\":\"5\",\"IND_TP_CD\":\"1\",\"IDX_IND_CD\":\"020\"},{\"IDX_NM\":\"\uAE08\uC735\",\"IDX_ENG_NM\":\"Financials\",\"BAS_TM_CONTN\":\"1980.01.04\",\"ANNC_TM_CONTN\":\"1983.01.04\",\"BAS_IDX_CONTN\":\"100.00\",\"CALC_CYCLE_CONTN\":\"10\uCD08\",\"CALC_TM_CONTN\":\"09:00:30
+        ~ 15:30:00\",\"COMPST_ISU_CNT\":\"110\",\"IND_TP_CD\":\"1\",\"IDX_IND_CD\":\"021\"},{\"IDX_NM\":\"\uC99D\uAD8C\",\"IDX_ENG_NM\":\"Securities\",\"BAS_TM_CONTN\":\"1980.01.04\",\"ANNC_TM_CONTN\":\"1983.01.04\",\"BAS_IDX_CONTN\":\"100.00\",\"CALC_CYCLE_CONTN\":\"10\uCD08\",\"CALC_TM_CONTN\":\"09:00:30
+        ~ 15:30:00\",\"COMPST_ISU_CNT\":\"18\",\"IND_TP_CD\":\"1\",\"IDX_IND_CD\":\"024\"},{\"IDX_NM\":\"\uBCF4\uD5D8\",\"IDX_ENG_NM\":\"Insurance\",\"BAS_TM_CONTN\":\"1980.01.04\",\"ANNC_TM_CONTN\":\"1983.01.04\",\"BAS_IDX_CONTN\":\"100.00\",\"CALC_CYCLE_CONTN\":\"10\uCD08\",\"CALC_TM_CONTN\":\"09:00:30
+        ~ 15:30:00\",\"COMPST_ISU_CNT\":\"12\",\"IND_TP_CD\":\"1\",\"IDX_IND_CD\":\"025\"},{\"IDX_NM\":\"\uC77C\uBC18\uC11C\uBE44\uC2A4\",\"IDX_ENG_NM\":\"General
+        Services\",\"BAS_TM_CONTN\":\"2000.01.04\",\"ANNC_TM_CONTN\":\"2000.11.06\",\"BAS_IDX_CONTN\":\"1,000.00\",\"CALC_CYCLE_CONTN\":\"10\uCD08\",\"CALC_TM_CONTN\":\"09:00:30
+        ~ 15:30:00\",\"COMPST_ISU_CNT\":\"34\",\"IND_TP_CD\":\"1\",\"IDX_IND_CD\":\"026\"},{\"IDX_NM\":\"\uC81C\uC870\",\"IDX_ENG_NM\":\"Manufacturing\",\"BAS_TM_CONTN\":\"1980.01.04\",\"ANNC_TM_CONTN\":\"1989.01.04\",\"BAS_IDX_CONTN\":\"100.00\",\"CALC_CYCLE_CONTN\":\"10\uCD08\",\"CALC_TM_CONTN\":\"09:00:30
+        ~ 15:30:00\",\"COMPST_ISU_CNT\":\"495\",\"IND_TP_CD\":\"1\",\"IDX_IND_CD\":\"027\"},{\"IDX_NM\":\"\uCF54\uC2A4\uD53C
+        \uB300\uD615\uC8FC\",\"IDX_ENG_NM\":\"KOSPI LargeCap\",\"BAS_TM_CONTN\":\"2000.01.04\",\"ANNC_TM_CONTN\":\"2003.02.17\",\"BAS_IDX_CONTN\":\"1,000.00\",\"CALC_CYCLE_CONTN\":\"10\uCD08\",\"CALC_TM_CONTN\":\"09:00:30
+        ~ 15:30:00\",\"COMPST_ISU_CNT\":\"99\",\"IND_TP_CD\":\"1\",\"IDX_IND_CD\":\"002\"},{\"IDX_NM\":\"\uCF54\uC2A4\uD53C
+        \uC911\uD615\uC8FC\",\"IDX_ENG_NM\":\"KOSPI MidCap\",\"BAS_TM_CONTN\":\"2000.01.04\",\"ANNC_TM_CONTN\":\"2003.02.17\",\"BAS_IDX_CONTN\":\"1,000.00\",\"CALC_CYCLE_CONTN\":\"10\uCD08\",\"CALC_TM_CONTN\":\"09:00:30
+        ~ 15:30:00\",\"COMPST_ISU_CNT\":\"199\",\"IND_TP_CD\":\"1\",\"IDX_IND_CD\":\"003\"},{\"IDX_NM\":\"\uCF54\uC2A4\uD53C
+        \uC18C\uD615\uC8FC\",\"IDX_ENG_NM\":\"KOSPI SmallCap\",\"BAS_TM_CONTN\":\"2000.01.04\",\"ANNC_TM_CONTN\":\"2003.02.17\",\"BAS_IDX_CONTN\":\"1,000.00\",\"CALC_CYCLE_CONTN\":\"10\uCD08\",\"CALC_TM_CONTN\":\"09:00:30
+        ~ 15:30:00\",\"COMPST_ISU_CNT\":\"535\",\"IND_TP_CD\":\"1\",\"IDX_IND_CD\":\"004\"},{\"IDX_NM\":\"\uCF54\uC2A4\uD53C
+        200 \uBE44\uC911\uC0C1\uD55C 30%\",\"IDX_ENG_NM\":\"KOSPI 200 Capped 30%\",\"BAS_TM_CONTN\":\"1990.01.03\",\"ANNC_TM_CONTN\":\"2020.05.18\",\"BAS_IDX_CONTN\":\"100.00\",\"CALC_CYCLE_CONTN\":\"2\uCD08\",\"CALC_TM_CONTN\":\"09:00:30
+        ~ 15:30:00\",\"COMPST_ISU_CNT\":\"200\",\"IND_TP_CD\":\"1\",\"IDX_IND_CD\":\"224\"},{\"IDX_NM\":\"\uCF54\uC2A4\uD53C
+        200 \uBE44\uC911\uC0C1\uD55C 25%\",\"IDX_ENG_NM\":\"KOSPi 200 Capped 25%\",\"BAS_TM_CONTN\":\"2011.01.03\",\"ANNC_TM_CONTN\":\"2020.05.18\",\"BAS_IDX_CONTN\":\"273.81\",\"CALC_CYCLE_CONTN\":\"2\uCD08\",\"CALC_TM_CONTN\":\"09:00:30
+        ~ 15:30:00\",\"COMPST_ISU_CNT\":\"200\",\"IND_TP_CD\":\"1\",\"IDX_IND_CD\":\"227\"},{\"IDX_NM\":\"\uCF54\uC2A4\uD53C
+        200 \uBE44\uC911\uC0C1\uD55C 20%\",\"IDX_ENG_NM\":\"KOSPI 200 Capped 20%\",\"BAS_TM_CONTN\":\"2011.01.03\",\"ANNC_TM_CONTN\":\"2020.05.18\",\"BAS_IDX_CONTN\":\"273.81\",\"CALC_CYCLE_CONTN\":\"2\uCD08\",\"CALC_TM_CONTN\":\"09:00:30
+        ~ 15:30:00\",\"COMPST_ISU_CNT\":\"200\",\"IND_TP_CD\":\"1\",\"IDX_IND_CD\":\"232\"},{\"IDX_NM\":\"\uC624\uB77D\xB7\uBB38\uD654\",\"IDX_ENG_NM\":\"Entertainment
+        & Culture\",\"BAS_TM_CONTN\":\"2024.07.01\",\"ANNC_TM_CONTN\":\"2024.12.09\",\"BAS_IDX_CONTN\":\"1,000.00\",\"CALC_CYCLE_CONTN\":\"10\uCD08\",\"CALC_TM_CONTN\":\"09:00:30
+        ~ 15:30:00\",\"COMPST_ISU_CNT\":\"13\",\"IND_TP_CD\":\"1\",\"IDX_IND_CD\":\"047\"},{\"IDX_NM\":\"IT
+        \uC11C\uBE44\uC2A4\",\"IDX_ENG_NM\":\"IT Services\",\"BAS_TM_CONTN\":\"2024.07.01\",\"ANNC_TM_CONTN\":\"2024.12.09\",\"BAS_IDX_CONTN\":\"1,000.00\",\"CALC_CYCLE_CONTN\":\"10\uCD08\",\"CALC_TM_CONTN\":\"09:00:30
+        ~ 15:30:00\",\"COMPST_ISU_CNT\":\"26\",\"IND_TP_CD\":\"1\",\"IDX_IND_CD\":\"046\"},{\"IDX_NM\":\"\uBD80\uB3D9\uC0B0\",\"IDX_ENG_NM\":\"Real
+        Estate\",\"BAS_TM_CONTN\":\"2024.07.01\",\"ANNC_TM_CONTN\":\"2024.12.09\",\"BAS_IDX_CONTN\":\"1,000.00\",\"CALC_CYCLE_CONTN\":\"10\uCD08\",\"CALC_TM_CONTN\":\"09:00:30
+        ~ 15:30:00\",\"COMPST_ISU_CNT\":\"26\",\"IND_TP_CD\":\"1\",\"IDX_IND_CD\":\"045\"},{\"IDX_NM\":\"\uCF54\uC2A4\uD53C
+        200 \uACBD\uAE30\uBC29\uC5B4\uC18C\uBE44\uC7AC\uC9C0\uC218\",\"IDX_ENG_NM\":\"\",\"BAS_TM_CONTN\":\"2008.01.02\",\"ANNC_TM_CONTN\":\"2015.07.13\",\"BAS_IDX_CONTN\":\"1,000.00\",\"CALC_CYCLE_CONTN\":\"2\uCD08\",\"CALC_TM_CONTN\":\"09:00:30
+        ~ 15:30:00\",\"COMPST_ISU_CNT\":\"45\",\"IND_TP_CD\":\"1\",\"IDX_IND_CD\":\"168\"},{\"IDX_NM\":\"\uCF54\uC2A4\uD53C
+        200 TOP 10\",\"IDX_ENG_NM\":\"KOSPI 200 TOP 10\",\"BAS_TM_CONTN\":\"2015.01.02\",\"ANNC_TM_CONTN\":\"2021.06.14\",\"BAS_IDX_CONTN\":\"1,000.00\",\"CALC_CYCLE_CONTN\":\"2\uCD08\",\"CALC_TM_CONTN\":\"09:00:30
+        ~ 15:30:00\",\"COMPST_ISU_CNT\":\"10\",\"IND_TP_CD\":\"1\",\"IDX_IND_CD\":\"894\"}],\"CURRENT_DATETIME\":\"2026.01.25
+        PM 08:26:56\"}"
+    headers:
+      Cache-Control:
+      - max-age=0, no-cache, no-store
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Length:
+      - '1795'
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sun, 25 Jan 2026 11:26:56 GMT
+      Expires:
+      - Sun, 25 Jan 2026 11:26:56 GMT
+      Pragma:
+      - no-cache
+      Set-Cookie:
+      - __smVisitorID=gHBZsMqbkLK; Expires=Mon, 25-Jan-2027 11:26:55 GMT; Path=/
+      - __smVisitorID=PpFdE6LgIF1; Expires=Mon, 25-Jan-2027 11:26:55 GMT; Path=/
+      - __smVisitorID=swmQPcQYjbN; Expires=Mon, 25-Jan-2027 11:26:55 GMT; Path=/
+      - JSESSIONID=aD0CHUtVj2igpdqvFRV13fOI93i8W7RncaIKqvSqeLsZpiBkt6q1oGWSHfPR1Tqu.bWRjX2RvbWFpbi9tZGNvd2FwMS1tZGNhcHAwMQ==;
+        Domain=.krx.co.kr; Path=/; HttpOnly
+      Vary:
+      - Accept-Encoding
+    status:
+      code: 200
+      message: OK
+version: 1

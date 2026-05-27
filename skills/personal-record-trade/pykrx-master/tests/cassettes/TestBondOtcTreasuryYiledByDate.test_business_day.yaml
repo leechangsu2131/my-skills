@@ -1,0 +1,53 @@
+interactions:
+- request:
+    body: inqTpCd=E&strtDd=20220104&endDd=20220203&bndKindTpCd=3006&bld=dbms%2FMDC%2FSTAT%2Fstandard%2FMDCSTAT11402
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate, br, zstd
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '105'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Referer:
+      - https://data.krx.co.kr/contents/MDC/MDI/outerLoader/index.cmd
+      User-Agent:
+      - Mozilla/5.0
+    method: POST
+    uri: https://data.krx.co.kr/comm/bldAttendant/getJsonData.cmd
+  response:
+    body:
+      string: '{"output":[{"DISCLS_DD":"2022/02/03","LST_ORD_BAS_YD":"1.452","CMP_YD":"-0.011"},{"DISCLS_DD":"2022/01/28","LST_ORD_BAS_YD":"1.463","CMP_YD":"-0.010"},{"DISCLS_DD":"2022/01/27","LST_ORD_BAS_YD":"1.473","CMP_YD":"0.018"},{"DISCLS_DD":"2022/01/26","LST_ORD_BAS_YD":"1.455","CMP_YD":"0.002"},{"DISCLS_DD":"2022/01/25","LST_ORD_BAS_YD":"1.453","CMP_YD":"0.015"},{"DISCLS_DD":"2022/01/24","LST_ORD_BAS_YD":"1.438","CMP_YD":"-0.005"},{"DISCLS_DD":"2022/01/21","LST_ORD_BAS_YD":"1.443","CMP_YD":"-0.001"},{"DISCLS_DD":"2022/01/20","LST_ORD_BAS_YD":"1.444","CMP_YD":"0.011"},{"DISCLS_DD":"2022/01/19","LST_ORD_BAS_YD":"1.433","CMP_YD":"-0.015"},{"DISCLS_DD":"2022/01/18","LST_ORD_BAS_YD":"1.448","CMP_YD":"-0.007"},{"DISCLS_DD":"2022/01/17","LST_ORD_BAS_YD":"1.455","CMP_YD":"0.024"},{"DISCLS_DD":"2022/01/14","LST_ORD_BAS_YD":"1.431","CMP_YD":"0.027"},{"DISCLS_DD":"2022/01/13","LST_ORD_BAS_YD":"1.404","CMP_YD":"0.000"},{"DISCLS_DD":"2022/01/12","LST_ORD_BAS_YD":"1.404","CMP_YD":"-0.013"},{"DISCLS_DD":"2022/01/11","LST_ORD_BAS_YD":"1.417","CMP_YD":"0.000"},{"DISCLS_DD":"2022/01/10","LST_ORD_BAS_YD":"1.417","CMP_YD":"0.020"},{"DISCLS_DD":"2022/01/07","LST_ORD_BAS_YD":"1.397","CMP_YD":"0.003"},{"DISCLS_DD":"2022/01/06","LST_ORD_BAS_YD":"1.394","CMP_YD":"0.053"},{"DISCLS_DD":"2022/01/05","LST_ORD_BAS_YD":"1.341","CMP_YD":"-0.029"},{"DISCLS_DD":"2022/01/04","LST_ORD_BAS_YD":"1.370","CMP_YD":"0.007"}],"CURRENT_DATETIME":"2026.01.25
+        PM 08:24:25"}'
+    headers:
+      Cache-Control:
+      - max-age=0, no-cache, no-store
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Length:
+      - '292'
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sun, 25 Jan 2026 11:24:25 GMT
+      Expires:
+      - Sun, 25 Jan 2026 11:24:25 GMT
+      Pragma:
+      - no-cache
+      Set-Cookie:
+      - __smVisitorID=s7JgYy5mTlC; Expires=Mon, 25-Jan-2027 11:24:25 GMT; Path=/
+      - __smVisitorID=NJE8hiCyzrG; Expires=Mon, 25-Jan-2027 11:24:25 GMT; Path=/
+      - __smVisitorID=gwbMYw-SkE8; Expires=Mon, 25-Jan-2027 11:24:25 GMT; Path=/
+      - JSESSIONID=t6qB0fuZVNXd39h5FV3TFIzuuZ46j0QPcTaJ7ePDAMBpL8awt2So183KIvol9US8.bWRjX2RvbWFpbi9tZGNvd2FwMS1tZGNhcHAxMQ==;
+        Domain=.krx.co.kr; Path=/; HttpOnly
+      Vary:
+      - Accept-Encoding
+    status:
+      code: 200
+      message: OK
+version: 1

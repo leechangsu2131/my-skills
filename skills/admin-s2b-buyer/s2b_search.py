@@ -23,51 +23,71 @@ async def search_items(page, query):
     """
     print(f"🔍 물품 검색 시작: '{query}'")
 
-    # 1. 메인 페이지 검색창 이용
+    # 1. 페이지 상태에 따른 검색창/버튼 선택
     search_input = '#estimateInfoMainSchKeyWord'
-    search_btn = '#mainSearchButton'
-
+    
     try:
-        # 검색창이 보일 때까지 대기
-        await page.wait_for_selector(search_input, state='visible', timeout=10000)
-        
+        # 메인페이지 검색창 또는 결과페이지 검색창 대기
+        is_main = await page.locator(search_input).is_visible()
+        if not is_main:
+            search_input = '#searchQuery'
+            await page.wait_for_selector(search_input, state='visible', timeout=5000)
+            
         # 검색어 입력
         await page.fill(search_input, query)
         
-        # 검색 버튼 클릭
-        # navigation을 동시에 기다림
+        # 검색 실행 (Enter 키 입력)
         async with page.expect_navigation(timeout=30000):
-            await page.click(search_btn)
+            await page.press(search_input, 'Enter')
             
         print("  ✅ 검색어 입력 및 이동 완료")
         
     except Exception as e:
-        print(f"  ⚠ 메인 페이지 검색 UI 사용 실패: {e}")
+        print(f"  ⚠ 검색 UI 사용 실패: {e}")
         print("  ℹ 직접 URL 호출 방식으로 재시도합니다.")
         
         # URL 직접 호출 백폴백
-        # S2B는 간혹 euc-kr 인코딩을 사용할 수 있으나 기본 utf-8 시도
         query_encoded = urllib.parse.quote(query)
         search_url = f"https://www.s2b.kr/S2BNCustomer/S2B/scrweb/remu/rema/searchengine/s2bCustomerSearch.jsp?actionType=MAIN_SEARCH&searchQuery={query_encoded}"
         
         try:
             await page.goto(search_url, timeout=30000)
             print("  ✅ URL 직접 검색 이동 완료")
+            search_input = '#searchQuery' # 이동 후에는 결과페이지 검색창 사용
         except Exception as ex:
             print(f"  ❌ 검색 페이지 이동 실패: {ex}")
             await page.screenshot(path=os.path.join(SCRIPT_DIR, 'search_error.png'), full_page=True)
             return []
 
     # 2. 검색 결과 페이지 로딩 대기
+    item_link_selector = 'a[href^="javascript:goViewPage("]'
     try:
         # javascript:goViewPage(...) 링크가 나타날 때까지 대기
-        item_link_selector = 'a[href^="javascript:goViewPage("]'
-        await page.wait_for_selector(item_link_selector, state='attached', timeout=15000)
+        await page.wait_for_selector(item_link_selector, state='attached', timeout=10000)
         await page.wait_for_timeout(2000) # DOM 안정화 대기
     except Exception as e:
-        print(f"  ❌ 검색 결과를 찾을 수 없거나 페이지 로딩 시간 초과: {e}")
-        await page.screenshot(path=os.path.join(SCRIPT_DIR, 'search_no_results.png'), full_page=True)
-        return []
+        # 결과가 없고 검색어가 숫자(물품번호) 형태일 경우 S2B물품번호로 드롭다운 변경 후 재검색
+        if query.replace('-', '').isdigit():
+            print("  ℹ 검색 결과가 없습니다. 'S2B물품번호' 조건으로 재검색을 시도합니다.")
+            try:
+                # S2B물품번호 옵션을 가진 select 찾기
+                select_locator = page.locator('select').filter(has_text='S2B물품번호').first
+                await select_locator.select_option(label='S2B물품번호')
+                
+                # 검색어 다시 입력 및 클릭
+                await page.fill(search_input, query)
+                async with page.expect_navigation(timeout=30000):
+                    await page.press(search_input, 'Enter')
+                
+                # 결과 대기
+                await page.wait_for_selector(item_link_selector, state='attached', timeout=10000)
+                await page.wait_for_timeout(2000)
+            except Exception as ex:
+                print(f"  ❌ S2B물품번호 재검색 후에도 결과를 찾을 수 없습니다: {ex}")
+                return []
+        else:
+            print(f"  ❌ 검색 결과를 찾을 수 없거나 페이지 로딩 시간 초과: {e}")
+            return []
 
     # 3. 검색 결과 파싱
     print("  📊 검색 결과 파싱 중...")
@@ -162,22 +182,24 @@ async def run_search_test():
             return
 
         print("\\n2. 물품 검색 테스트...")
-        query = "A4용지"
-        items = await search_items(page, query)
+        queries = ["초시계", "202604067720487", "202603107266074", "202410149686835"]
         
-        if items:
-            print("\\n✅ 검색 테스트 성공!")
-            print(f"첫 번째 물품 선택: {items[0]}")
-        else:
-            print("\\n❌ 검색 테스트 실패 (결과 없음)")
+        for query in queries:
+            print(f"\\n--- 테스트: '{query}' ---")
+            items = await search_items(page, query)
+            if items:
+                print(f"✅ 검색 테스트 성공! 찾은 항목 수: {len(items)}")
+            else:
+                print(f"❌ 검색 테스트 실패 (결과 없음)")
+            await page.wait_for_timeout(2000)
 
         await page.wait_for_timeout(3000)
         await browser.close()
 
 if __name__ == "__main__":
+    import io
     # Windows CP949 인코딩 문제 방지
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace') if hasattr(sys, 'stdout') and hasattr(sys.stdout, 'buffer') else sys.stdout
     sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace') if hasattr(sys, 'stderr') and hasattr(sys.stderr, 'buffer') else sys.stderr
     
-    import io
     asyncio.run(run_search_test())

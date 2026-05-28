@@ -65,26 +65,26 @@ async def login(page, user_id=None, user_pw=None):
     pwd = user_pw or S2B_USER_PW
 
     if not uid or not pwd:
-        print("❌ S2B 계정 정보가 설정되지 않았습니다.")
+        print("[ERROR] S2B 계정 정보가 설정되지 않았습니다.")
         print("   .env 파일에 S2B_USER_ID, S2B_USER_PW를 설정해주세요.")
         return False
 
     try:
         # 1. 로그인 페이지 접속
-        print(f"🌐 S2B 로그인 페이지 접속 중...")
+        print(f"[WEB] S2B 로그인 페이지 접속 중...")
         await page.goto(S2B_LOGIN_URL, wait_until='domcontentloaded', timeout=30000)
         await page.wait_for_timeout(2000)  # 페이지 완전 로딩 대기
 
-        print(f"  📄 현재 URL: {page.url}")
-        print(f"  📄 페이지 제목: {await page.title()}")
+        print(f"   현재 URL: {page.url}")
+        print(f"   페이지 제목: {await page.title()}")
 
         # 2. 개인이용자 탭 선택
-        print(f"🔍 개인이용자 탭 클릭...")
+        print(f" 개인이용자 탭 클릭...")
         tab_selector = 'ul.tabs a[href="#prlogin"]'
         
         try:
             await page.click(tab_selector)
-            print("  ✅ 개인이용자 탭 클릭 성공")
+            print("  [SUCCESS] 개인이용자 탭 클릭 성공")
             await page.wait_for_timeout(1000)
         except Exception as e:
             print(f"  ⚠ 개인이용자 탭 클릭 실패: {e}")
@@ -93,7 +93,7 @@ async def login(page, user_id=None, user_pw=None):
             return False
 
         # 3. 아이디/비밀번호 입력
-        print(f"🔑 로그인 정보 입력 중... (ID: {uid[:2]}***)")
+        print(f" 로그인 정보 입력 중... (ID: {uid[:2]}***)")
         
         # 개인_loginForm 내부의 input 찾기
         id_selector = 'form[name="personal_loginForm"] input[name="uid"]'
@@ -101,29 +101,29 @@ async def login(page, user_id=None, user_pw=None):
         
         try:
             await page.fill(id_selector, uid)
-            print("  ✅ 아이디 입력 완료")
+            print("  [SUCCESS] 아이디 입력 완료")
         except Exception as e:
-            print(f"  ❌ 아이디 입력 실패: {e}")
+            print(f"  [ERROR] 아이디 입력 실패: {e}")
             await page.screenshot(path=os.path.join(SCRIPT_DIR, 'login_id_field_debug.png'), full_page=True)
             return False
 
         try:
             await page.fill(pw_selector, pwd)
-            print("  ✅ 비밀번호 입력 완료")
+            print("  [SUCCESS] 비밀번호 입력 완료")
         except Exception as e:
-            print(f"  ❌ 비밀번호 입력 실패: {e}")
+            print(f"  [ERROR] 비밀번호 입력 실패: {e}")
             await page.screenshot(path=os.path.join(SCRIPT_DIR, 'login_pw_field_debug.png'), full_page=True)
             return False
 
         # 4. 로그인 버튼 클릭
-        print(f"🖱️ 로그인 버튼 클릭 중...")
+        print(f"️ 로그인 버튼 클릭 중...")
         login_btn_selector = 'form[name="personal_loginForm"] .btn_login a'
         
         try:
             await page.click(login_btn_selector)
-            print("  ✅ 로그인 버튼 클릭 완료")
+            print("  [SUCCESS] 로그인 버튼 클릭 완료")
         except Exception as e:
-            print(f"  ❌ 로그인 버튼 클릭 실패: {e}")
+            print(f"  [ERROR] 로그인 버튼 클릭 실패: {e}")
             await page.screenshot(path=os.path.join(SCRIPT_DIR, 'login_button_debug.png'), full_page=True)
             return False
 
@@ -136,8 +136,8 @@ async def login(page, user_id=None, user_pw=None):
 
         current_url = page.url
         page_title = await page.title()
-        print(f"  📄 로그인 후 URL: {current_url}")
-        print(f"  📄 로그인 후 제목: {page_title}")
+        print(f"   로그인 후 URL: {current_url}")
+        print(f"   로그인 후 제목: {page_title}")
 
         # 로그인 성공 판별 (여러 조건)
         # 실패: 로그인 페이지에 여전히 있는 경우
@@ -145,24 +145,24 @@ async def login(page, user_id=None, user_pw=None):
             # 에러 메시지 확인
             error_msg = await _get_error_message(page)
             if error_msg:
-                print(f"  ❌ 로그인 실패: {error_msg}")
+                print(f"  [ERROR] 로그인 실패: {error_msg}")
             else:
-                print(f"  ❌ 로그인 실패: 로그인 페이지에서 벗어나지 못했습니다.")
+                print(f"  [ERROR] 로그인 실패: 로그인 페이지에서 벗어나지 못했습니다.")
 
             debug_path = os.path.join(SCRIPT_DIR, 'login_failed.png')
             await page.screenshot(path=debug_path, full_page=True)
-            print(f"  📸 실패 스크린샷 저장: {debug_path}")
+            print(f"   실패 스크린샷 저장: {debug_path}")
             return False
 
-        print(f"  ✅ 로그인 성공!")
+        print(f"  [SUCCESS] 로그인 성공!")
         return True
 
     except Exception as e:
-        print(f"❌ 로그인 중 오류 발생: {e}")
+        print(f"[ERROR] 로그인 중 오류 발생: {e}")
         try:
             debug_path = os.path.join(SCRIPT_DIR, 'login_error.png')
             await page.screenshot(path=debug_path, full_page=True)
-            print(f"  📸 오류 스크린샷 저장: {debug_path}")
+            print(f"   오류 스크린샷 저장: {debug_path}")
         except Exception:
             pass
         return False
@@ -209,7 +209,7 @@ async def _debug_page_elements(page):
                 tab_texts.append(f"    <{tag}> class='{classes}' href='{href}' onclick='{onclick[:50]}' → '{text.strip()}'")
 
         if tab_texts:
-            print("  📋 클릭 가능한 요소들:")
+            print("   클릭 가능한 요소들:")
             for t in tab_texts[:15]:
                 print(t)
     except Exception as e:
@@ -219,7 +219,7 @@ async def _debug_page_elements(page):
     try:
         inputs = await page.query_selector_all('input')
         if inputs:
-            print("  📋 입력 필드들:")
+            print("   입력 필드들:")
             for inp in inputs[:15]:
                 input_type = await inp.get_attribute('type') or 'text'
                 name = await inp.get_attribute('name') or '(없음)'
@@ -241,13 +241,13 @@ async def run_login_test(headless=False, take_screenshot=False):
     try:
         from playwright.async_api import async_playwright
     except ImportError:
-        print("❌ playwright가 설치되지 않았습니다.")
+        print("[ERROR] playwright가 설치되지 않았습니다.")
         print("  pip install playwright")
         print("  playwright install chromium")
         sys.exit(1)
 
     print("=" * 55)
-    print("🏫 S2B 학교장터 - 로그인 테스트")
+    print(" S2B 학교장터 - 로그인 테스트")
     print("=" * 55)
 
     async with async_playwright() as p:
@@ -268,10 +268,10 @@ async def run_login_test(headless=False, take_screenshot=False):
         if success and take_screenshot:
             screenshot_path = os.path.join(SCRIPT_DIR, 'login_success.png')
             await page.screenshot(path=screenshot_path, full_page=True)
-            print(f"📸 로그인 성공 스크린샷 저장: {screenshot_path}")
+            print(f" 로그인 성공 스크린샷 저장: {screenshot_path}")
 
         if success:
-            print("\n✅ 로그인 테스트 성공!")
+            print("\n[SUCCESS] 로그인 테스트 성공!")
             print(f"  현재 URL: {page.url}")
 
             # 로그인 후 잠시 대기 (확인용)
@@ -279,7 +279,7 @@ async def run_login_test(headless=False, take_screenshot=False):
                 print("  ℹ 브라우저를 5초간 유지합니다 (확인 후 자동 종료)...")
                 await page.wait_for_timeout(5000)
         else:
-            print("\n❌ 로그인 테스트 실패!")
+            print("\n[ERROR] 로그인 테스트 실패!")
             print("  ℹ 다음 사항을 확인해주세요:")
             print("    1. .env 파일에 S2B_USER_ID, S2B_USER_PW가 올바르게 설정되었는지")
             print("    2. 개인이용자 탭이 정상적으로 선택되었는지")

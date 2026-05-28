@@ -3,6 +3,13 @@ import sys
 import time
 import argparse
 import requests
+import urllib3
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+old_request = requests.Session.request
+def new_request(*args, **kwargs):
+    kwargs['verify'] = False
+    return old_request(*args, **kwargs)
+requests.Session.request = new_request
 
 # =====================================================
 # .env 파일에서 환경변수 로드
@@ -129,6 +136,8 @@ def get_books_to_request(title_filter=None):
 
 def update_notion_tag(page_id, tag_name):
     """노션 페이지의 도서관 태그를 업데이트합니다."""
+    if page_id == 'standalone_dummy_id':
+        return
     payload = {
         "properties": {
             COL_LIBRARY: {
@@ -140,6 +149,8 @@ def update_notion_tag(page_id, tag_name):
 
 def update_notion_status(page_id, status_text):
     """노션 페이지의 신청현황(select)을 업데이트합니다."""
+    if page_id == 'standalone_dummy_id':
+        return
     payload = {
         "properties": {
             "신청현황": {
@@ -422,11 +433,17 @@ def main():
                         help='실제 신청 없이 폼 확인만 수행')
     parser.add_argument('--max-books', type=int, default=None,
                         help='한 번 실행에 최대 신청 권수')
+    parser.add_argument('--standalone', action='store_true',
+                        help='노션을 거치지 않고 직접 도서 정보 입력')
     parser.add_argument('--title', type=str, default=None,
-                        help='특정 제목이 포함된 도서만 신청')
+                        help='특정 제목이 포함된 도서만 신청 (standalone에서는 신청할 도서 제목)')
+    parser.add_argument('--author', type=str, default=None,
+                        help='저자 (standalone 모드 전용)')
+    parser.add_argument('--isbn', type=str, default=None,
+                        help='ISBN (standalone 모드 전용)')
     args = parser.parse_args()
 
-    if not NOTION_TOKEN:
+    if not args.standalone and not NOTION_TOKEN:
         print("ERROR: NOTION_TOKEN이 설정되지 않았습니다.")
         sys.exit(1)
 
@@ -434,16 +451,28 @@ def main():
     accounts = load_library_accounts()
     print(f"📚 도서관 계정 {len(accounts)}개 로드됨")
 
-    # 미소장 도서 목록 가져오기 (특정 도서 지정 시 해당 도서만)
-    print("▶ 노션 DB에서 도서 조회 중...")
-    books = get_books_to_request(title_filter=args.title)
-    
-    # 제목 필터 적용
-    if args.title:
-        books = [b for b in books if args.title.lower() in b['title'].lower()]
-        print(f"  제목 '{args.title}' 필터 적용됨")
-    
-    print(f"  {len(books)}권 발견")
+    if args.standalone:
+        if not args.title:
+            print("ERROR: --standalone 모드에서는 --title 필수입니다.")
+            return
+        books = [{
+            'title': args.title,
+            'author': args.author or '',
+            'isbn': args.isbn or '',
+            'page_id': 'standalone_dummy_id'
+        }]
+        print("▶ Standalone 모드로 1권 직접 신청 준비")
+    else:
+        # 미소장 도서 목록 가져오기 (특정 도서 지정 시 해당 도서만)
+        print("▶ 노션 DB에서 도서 조회 중...")
+        books = get_books_to_request(title_filter=args.title)
+        
+        # 제목 필터 적용
+        if args.title:
+            books = [b for b in books if args.title.lower() in b['title'].lower()]
+            print(f"  제목 '{args.title}' 필터 적용됨")
+        
+        print(f"  {len(books)}권 발견")
 
     if not books:
         print("신청할 도서가 없습니다.")

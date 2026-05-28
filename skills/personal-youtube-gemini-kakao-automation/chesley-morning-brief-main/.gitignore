@@ -1,0 +1,14 @@
+# 가상환경 및 캐시
+.venv/
+__pycache__/
+*.pyc
+.chesley-brief-browser/
+.env
+
+# 데이터 및 로그 파일 (다른 PC와 공유하면 안 되는 파일)
+processed.json
+cron.log
+
+# 시스템 자동 생성 파일
+.DS_Store
+gemini_error.png

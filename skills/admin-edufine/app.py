@@ -2,6 +2,7 @@ import asyncio
 import threading
 import queue
 import sys
+import importlib
 import io
 import os
 import glob
@@ -125,6 +126,8 @@ def index():
 @app.route('/api/fetch-s2b', methods=['GET'])
 def fetch_s2b():
     import s2b_cart_scraper
+    import importlib
+    importlib.reload(s2b_cart_scraper)
     try:
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
@@ -134,7 +137,7 @@ def fetch_s2b():
         if not items:
             return jsonify({'error': '장바구니에 물품이 없거나 로그인에 실패했습니다.'})
             
-        item_list = "\n".join([f"- {item['name']} (수량: {item['quantity']}, 단가: {item['unit_price']}원)" for item in items])
+        item_list = "".join([f"{item['name']}\t\t{item['quantity']}\t\t{item['unit_price']}\n" for item in items])
         return jsonify({'item_list': item_list})
     except Exception as e:
         return jsonify({'error': str(e)})
@@ -188,31 +191,40 @@ def generate_prompt():
             prompt += "\n[작성 규칙]\n"
             prompt += "1. 제목: 원문 제목을 그대로 쓰지 말고, 우리 학교 입장의 처리 행위가 드러나도록 작성\n"
             prompt += "   예) 원문 \"체육시설 개선 사업비 교부 안내\" → 기안 제목 \"2026년 학교 체육시설 개선 사업비 수령 및 집행 계획\"\n"
-            prompt += "2. 본문 구성:\n"
             
-            if sihaeng_no:
-                prompt += f"   - 관련: {sender}-{sihaeng_no}({sihaeng_date}) 으로 시작\n"
-            elif jeopsu_no:
-                prompt += f"   - 관련: 본교 {jeopsu_no}({jeopsu_date}) 으로 시작\n"
-            else:
-                prompt += "   - 관련 공문번호로 시작\n"
-                
             if item_list:
-                prompt += "   - 공문 정보와 물품 목록을 바탕으로 2~3개 항목으로 간결하게 요약 작성\n"
+                prompt += "2. 본문 구성: 품의명세서 양식을 엄격하게 따를 것\n"
             else:
+                prompt += "2. 본문 구성:\n"
+                if sihaeng_no:
+                    prompt += f"   - 관련: {sender}-{sihaeng_no}({sihaeng_date}) 으로 시작\n"
+                elif jeopsu_no:
+                    prompt += f"   - 관련: 본교 {jeopsu_no}({jeopsu_date}) 으로 시작\n"
+                else:
+                    prompt += "   - 관련 공문번호로 시작\n"
                 prompt += "   - 2~3개 항목으로 간결하게 작성\n"
-            prompt += "   - 마지막 항목은 반드시 \"붙임\" 또는 \"이상\" 으로 마무리\n"
+                prompt += "   - 마지막 항목은 반드시 \"붙임\" 또는 \"이상\" 으로 마무리\n"
+                
             prompt += "3. 격식체(합쇼체) 사용\n"
             prompt += "4. 항목 번호는 1. 2. 3. 형식, 세부항목은 가. 나. 형식\n\n"
+            
             prompt += "[출력 형식]\n"
             prompt += "제목: (기안문 제목)\n\n"
             prompt += "본문:\n"
-            prompt += "1. 관련: ...\n"
-            prompt += "2. ...\n"
-            prompt += "3. ...\n"
-            prompt += "  가. ...\n"
-            prompt += "  나. ...\n"
-            prompt += "붙임 없음.  끝.\n"
+            
+            if item_list:
+                prompt += "1. 관련: (수신 공문번호, 없을시 생략가능)\n"
+                prompt += "2. (해당사업명) 관련 물품을 아래와 같이 구입하고자 합니다.\n"
+                prompt += "  가. 내역: (대표물품명) 외 O건\n"
+                prompt += "  나. 용도: (물품 구매 용도)\n"
+                prompt += "  다. 소요예산: 금O,OOO원\n"
+                prompt += "  라. 산출내역: 품목을 바탕으로 계산식 작성 (품의명세서 참조)\n"
+                prompt += "붙임  지출(지급)품의서 1부.  끝.\n"
+            else:
+                prompt += "1. 관련: ...\n"
+                prompt += "2. ...\n"
+                prompt += "3. ...\n"
+                prompt += "붙임 없음.  끝.\n"
             
         except Exception as e:
             return jsonify({'error': f"ODT 파싱 오류: {str(e)}"})
@@ -225,10 +237,19 @@ def generate_prompt():
         prompt += f"[물품 목록]\n{item_list}\n\n"
         prompt += "[작성 규칙]\n"
         prompt += "1. 제목: 간결하고 명확하게 작성 (예: 2026학년도 체육수업 교구 구입 품의)\n"
-        prompt += "2. 본문 구성:\n   - 관련: 2024학년도 학교회계 예산편성 기본지침 등 상투적인 문구로 시작\n   - 구매 목적과 물품 총괄 내용을 간단히 요약\n   - 2~3개 항목으로 작성하며 마지막은 '붙임' 또는 '이상'으로 마무리\n"
+        prompt += "2. 본문 구성: 아래 품의명세서 양식을 엄격하게 따를 것\n"
         prompt += "3. 격식체(합쇼체) 사용\n"
         prompt += "4. 항목 번호는 1. 2. 3. 형식, 세부항목은 가. 나. 형식\n\n"
-        prompt += "[출력 형식]\n제목: (기안문 제목)\n\n본문:\n1. 관련: ...\n2. ...\n붙임 없음. 끝.\n"
+        prompt += "[출력 형식]\n"
+        prompt += "제목: (기안문 제목)\n\n"
+        prompt += "본문:\n"
+        prompt += "1. 관련: (관련 근거, 없을시 생략가능)\n"
+        prompt += "2. (해당사업명) 관련 물품을 아래와 같이 구입하고자 합니다.\n"
+        prompt += "  가. 내역: (대표물품명) 외 O건\n"
+        prompt += "  나. 용도: (물품 구매 용도)\n"
+        prompt += "  다. 소요예산: 금O,OOO원\n"
+        prompt += "  라. 산출내역: 품목을 바탕으로 계산식 작성 (품의명세서 참조)\n"
+        prompt += "붙임  지출(지급)품의서 1부.  끝.\n"
 
     return jsonify({'prompt': prompt})
 
@@ -241,6 +262,8 @@ def start_automation():
             else:
                 # 이전 작업을 강제 종료 시도
                 import playwright_edufine
+                import importlib
+                importlib.reload(playwright_edufine)
                 playwright_edufine.stop_requested = True
                 
                 evt = getattr(playwright_edufine, 'next_event', None)

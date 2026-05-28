@@ -42,7 +42,7 @@ async def get_s2b_cart_items():
     await page.wait_for_load_state('domcontentloaded')
     
     print("[S2B Scraper] 품목 분석 중...")
-    items = await page.evaluate('''() => {
+    items = await page.evaluate(r'''() => {
         const results = [];
         const checkboxes = document.querySelectorAll('input[type="checkbox"]');
         checkboxes.forEach(cb => {
@@ -51,7 +51,11 @@ async def get_s2b_cart_items():
                 const tds = tr.querySelectorAll('td');
                 const aTag = tr.querySelector('a');
                 if (aTag && tds.length > 5) {
-                    const name = aTag.innerText.trim();
+                    let name = aTag.innerText.trim();
+                    // 이름에 포함된 [규격: 어쩌고] 또는 줄바꿈 등 지저분한 텍스트 제거
+                    name = name.replace(/\[규격.*?\]/g, '').replace(/\(수량:.*?\)/g, '').trim();
+                    name = name.split('\n')[0].trim(); // 첫 줄만 물품명으로 사용
+                    
                     // 수량
                     const qtyInput = tr.querySelector('input[name*="qty"]' ) || tr.querySelector('input[type="text"]');
                     let qty = '';
@@ -60,9 +64,9 @@ async def get_s2b_cart_items():
                     // 제시금액
                     let price = '';
                     tds.forEach(td => {
-                        const text = td.innerText.replace(/,/g, '').trim();
+                        const text = td.innerText.replace(/,/g, '').replace(/원/g, '').trim();
                         // 숫자만 있고 100 이상인 경우 금액일 확률이 높음 (수량은 보통 작음)
-                        if (/^\\d+$/.test(text) && parseInt(text) > 100) {
+                        if (/^\d+$/.test(text) && parseInt(text) > 100) {
                             if (!price) price = text;
                         }
                     });

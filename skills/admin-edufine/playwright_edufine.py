@@ -1,6 +1,7 @@
 import asyncio
 import time
 import os
+import sys
 from playwright.async_api import async_playwright
 
 # 외부(Flask 또는 CLI) 제어 신호 (process_batch 내에서 초기화됨)
@@ -10,34 +11,49 @@ current_event_type = None
 # 전역 상태 (중단 여부)
 stop_requested = False
 
+async def hover_and_click(page, selector, timeout=3000):
+    """
+    프레임을 순회하며 해당 텍스트를 가진 요소의 실제 화면 좌표(bounding_box)를 찾아
+    마우스를 자연스럽게 이동(Hover)시킨 후 클릭합니다.
+    """
+    start_time = time.time()
+    while time.time() - start_time < (timeout / 1000.0):
+        frames_to_check = [page] + page.frames
+        for frame in frames_to_check:
+            try:
+                locs = await frame.locator(selector).all()
+                for loc in locs:
+                    box = await loc.bounding_box()
+                    # 넥사크로 접근성 노드(x=-4979 등 화면 밖) 제외
+                    if box and box['width'] > 0 and box['height'] > 0 and box['x'] >= 0 and box['y'] >= 0:
+                        x = box['x'] + box['width'] / 2
+                        y = box['y'] + box['height'] / 2
+                        await page.mouse.move(x, y, steps=10)
+                        await page.wait_for_timeout(300)
+                        await page.mouse.click(x, y)
+                        return True
+            except:
+                continue
+        await asyncio.sleep(0.3)
+    return False
+
 async def close_popups(page):
     print("   -> 공지사항 등 팝업 창이 있는지 확인합니다...")
     try:
-        # 팝업이 렌더링될 시간을 잠시 대기 (id에 noticePopup이 포함된 요소 대기)
         try:
             await page.wait_for_selector("div[id*='noticePopup']", timeout=3000)
             print("   -> 공지사항 팝업 프레임을 감지했습니다.")
         except:
-            pass # 팝업이 없을 수도 있으므로 패스
-
-        # 팝업에 주로 등장하는 텍스트 목록 (띄어쓰기 주의)
+            pass
         target_texts = ["오늘 하루 이창을 열지 않음", "오늘 하루 이 창을 열지 않음", "확인", "닫기"]
         for text in target_texts:
-            elements = await page.locator(f"text='{text}'").all()
-            for el in elements:
-                if await el.is_visible(timeout=500):
-                    box = await el.bounding_box()
-                    if box:
-                        print(f"   -> 팝업 내 '{text}' 버튼 클릭 시도...")
-                        await el.click(force=True)
-                        await page.wait_for_timeout(500)
+            await hover_and_click(page, f"text='{text}'", timeout=1000)
     except Exception as e:
         print(f"   (팝업 닫기 중 오류: {e})")
 
 async def navigate_to_draft_page(page):
     print("   [네비게이션] 에듀파인 메뉴 자동 탐색을 시작합니다...")
     try:
-        # 이미 품의등록 화면인지 확인
         try:
             title_input = page.locator("input[id*='edtCnsulSj']")
             if await title_input.first.is_visible(timeout=2000):
@@ -46,45 +62,71 @@ async def navigate_to_draft_page(page):
         except:
             pass
             
-        # 네비게이션 시작 전 팝업 닫기
         await close_popups(page)
         
-        # '업무관리' -> '학교회계' 시스템 전환
-        # 넥사크로 FrameSet 내부 요소이며, 마우스 hover 시 드롭다운이 나타나는 구조
+        # '업무관리' -> '학교회계' 시스템 전환 (ID 명시적 클릭)
         try:
-            print("   -> '업무관리' 영역에 마우스 호버 (드롭다운 열기)...")
-            # 스크린샷 기준 '업무관리' 버튼 중심 좌표: 약 x=70, y=70
-            await page.mouse.move(70, 70)
-            await page.wait_for_timeout(1500)  # 드롭다운 애니메이션 대기
+            print("   -> 상단 시스템 드롭다운 메뉴 열기...")
+            sysbtn = page.locator("[id='mainframe.MainVFrameSet.TopFrame.form.cboJobList.comboedit']")
             
-            # 드롭다운이 나타나면 '학교회계' 텍스트를 찾아 클릭
-            try:
-                school_acct = page.locator("text='학교회계'").first
-                if await school_acct.is_visible(timeout=3000):
-                    print("   -> '학교회계' 메뉴 발견! 클릭합니다.")
-                    await school_acct.click()
-                    await page.wait_for_timeout(4000)  # 시스템 전환 + 메뉴 로딩 대기
+            # 드롭다운이 열릴 때까지 최대 3번 시도
+            acct_clicked = False
+            for attempt in range(3):
+                box = await sysbtn.bounding_box()
+                if box:
+                    x = box['x'] + box['width'] / 2
+                    y = box['y'] + box['height'] / 2
+                    await page.mouse.move(x, y, steps=5)
+                    await page.wait_for_timeout(200)
+                    await page.mouse.click(x, y)
+                    await page.wait_for_timeout(1500)
+                    
+                    print(f"   -> '학교회계' 메뉴 탐색 (시도 {attempt + 1})...")
+                    acct_items = await page.locator("[id^='mainframe.MainVFrameSet.TopFrame.form.cboJobList.combolist.item_']:has-text('학교회계')").all()
+                    
+                    for acct_item in acct_items:
+                        acct_box = await acct_item.bounding_box()
+                        # 화면에 보이는 항목인지 확인 (x >= 0)
+                        if acct_box and acct_box['width'] > 0 and acct_box['x'] >= 0 and acct_box['y'] >= 0:
+                            ax = acct_box['x'] + acct_box['width'] / 2
+                            ay = acct_box['y'] + acct_box['height'] / 2
+                            await page.mouse.move(ax, ay, steps=5)
+                            await page.wait_for_timeout(200)
+                            await page.mouse.click(ax, ay)
+                            print("   -> '학교회계' 시스템으로 전환 완료.")
+                            acct_clicked = True
+                            break
+                            
+                if acct_clicked:
+                    break
                 else:
-                    # 텍스트로 못 찾으면 드롭다운 내부 좌표로 직접 클릭 시도
-                    print("   -> 텍스트로 못 찾아서 드롭다운 좌표 클릭 시도...")
-                    await page.mouse.click(70, 120)  # 드롭다운 첫 번째 항목쯤
-                    await page.wait_for_timeout(4000)
-            except Exception as e:
-                print(f"   -> ('학교회계' 전환 스킵: {e})")
+                    print("   -> 드롭다운이 열리지 않았거나 '학교회계'가 보이지 않아 재시도합니다...")
+                    await page.wait_for_timeout(1000)
+                    
+            if acct_clicked:
+                await page.wait_for_timeout(4000)
+            else:
+                print("   -> '학교회계' 시스템 전환에 실패했습니다. (이미 학교회계이거나 드롭다운 오류)")
         except Exception as e:
             print(f"   (시스템 전환 오류 무시: {e})")
             
         print("   -> '사업담당' 메뉴 클릭")
-        await page.click("text=사업담당")
+        biz_clicked = await hover_and_click(page, "text='사업담당'", timeout=5000)
+        if not biz_clicked:
+            raise Exception("'사업담당' 메뉴를 찾을 수 없습니다. (학교회계 전환 실패 의심)")
         await page.wait_for_timeout(1500)
         
         print("   -> '품의/정산' 메뉴 클릭")
-        await page.click("text=품의/정산")
+        draft_clicked = await hover_and_click(page, "text='품의/정산'", timeout=3000)
+        if not draft_clicked:
+            raise Exception("'품의/정산' 메뉴를 찾을 수 없습니다.")
         await page.wait_for_timeout(1500)
         
         print("   -> '품의등록' 메뉴 클릭")
-        await page.click("text=품의등록")
-        await page.wait_for_timeout(3000) # 기안 폼 화면 로딩 대기
+        reg_clicked = await hover_and_click(page, "text='품의등록'", timeout=3000)
+        if not reg_clicked:
+            raise Exception("'품의등록' 메뉴를 찾을 수 없습니다.")
+        await page.wait_for_timeout(3000)
         
         print("   [네비게이션 완료] 품의 등록 화면에 진입했습니다.")
         return True
@@ -92,6 +134,7 @@ async def navigate_to_draft_page(page):
         print(f"   [네비게이션 오류] 메뉴 클릭 실패: {e}")
         print("   -> (수동으로 품의 등록 화면까지 이동해 주셔도 됩니다.)")
         return False
+
 
 async def fill_draft_form(page, item):
     print("   [폼 입력] 품의등록 폼에 데이터를 입력합니다...")
@@ -131,10 +174,23 @@ async def fill_draft_form(page, item):
         await page.wait_for_timeout(300)
         await summary_input.first.fill(summary[:1900], force=True) # 최대 글자수 고려
         
-        print("   -> '예산선택' 버튼 클릭 (팝업 열기)...")
-        bgt_btn = page.locator("text='예산선택'").first
-        await bgt_btn.click(force=True, timeout=3000)
-        await page.wait_for_timeout(1000)
+        print("   -> 예산 선택 여부 확인 중...")
+        empty_texts = await page.locator("text='조회 결과가 없습니다.'").all()
+        budget_empty = False
+        for text_el in empty_texts:
+            if await text_el.is_visible():
+                box = await text_el.bounding_box()
+                if box and box['y'] < 500: # 예산내역 영역
+                    budget_empty = True
+                    break
+                    
+        if budget_empty:
+            print("   -> '예산선택' 버튼 클릭 (팝업 열기)...")
+            bgt_btn = page.locator("text='예산선택'").first
+            await bgt_btn.click(force=True, timeout=3000)
+            await page.wait_for_timeout(1000)
+        else:
+            print("   -> 이미 예산이 선택되어 있습니다. (팝업 열기 생략)")
         
         return True
     except Exception as e:
@@ -159,7 +215,8 @@ async def add_draft_row(page):
             for btn in btns:
                 if await btn.is_visible():
                     box = await btn.bounding_box()
-                    if box:
+                    # 품목내역 그리드(아래쪽)의 행추가 버튼을 찾기 위해 y > 300 조건 추가
+                    if box and box['y'] > 300:
                         await page.mouse.click(box['x'] + box['width']/2, box['y'] + box['height']/2)
                         clicked = True
                         break
@@ -276,6 +333,31 @@ async def process_batch(parsed_items, dry_run=False):
             # 네비게이션 자동화 실행
             nav_success = await navigate_to_draft_page(page)
             
+            if not nav_success:
+                print("   [안내] 에듀파인 메뉴 자동 탐색에 실패했습니다.")
+                print("   👉 봇이 3초 단위로 화면을 확인 중입니다. 수동으로 [학교회계] -> [품의등록] 화면을 열어주세요...")
+                
+                wait_success = False
+                for _ in range(60): # 최대 3분 대기
+                    if stop_requested: break
+                    try:
+                        title_input = page.locator("input[id*='edtCnsulSj']")
+                        if await title_input.first.is_visible(timeout=500):
+                            print("   [안내] '품의등록' 화면 감지 완료! 폼 입력을 재개합니다.")
+                            wait_success = True
+                            break
+                    except:
+                        pass
+                    await page.wait_for_timeout(3000)
+                    
+                nav_success = wait_success
+                
+            if not nav_success:
+                entry['status'] = '실패'
+                entry['fail_reason'] = '메뉴 탐색 실패 (수동 이동 시간 초과)'
+                results.append(entry)
+                return results
+
             # 실제 폼 입력 단계
             print("-" * 60)
             print(f"[{title[:40]}] 공문 기안 폼 입력 대기...")
@@ -302,16 +384,39 @@ async def process_batch(parsed_items, dry_run=False):
                         items_text = getattr(sys.modules[__name__], 'current_items_text', '')
                         import re
                         parsed_items = []
-                        for line in items_text.split('\n'):
+                        current_name = None
+                        
+                        lines = items_text.strip().split('\n')
+                        for line in lines:
                             line = line.strip()
-                            if not line.startswith('- '): continue
-                            m = re.match(r'- (.+) \(수량: (\d+), 단가: (\d+)원\)', line)
-                            if m:
-                                parsed_items.append({
-                                    'name': m.group(1).strip(),
-                                    'quantity': int(m.group(2)),
-                                    'unit_price': int(m.group(3))
-                                })
+                            if not line: continue
+                            clean_line = re.sub(r'^[-*•]\s*', '', line)
+                            
+                            if '\t' in clean_line:
+                                parts = clean_line.split('\t')
+                                # parts could be like: ["다우리...", "", "2", "", "170500"]
+                                parts = [p.strip() for p in parts if p.strip()]
+                                if len(parts) >= 3:
+                                    parsed_items.append({'name': parts[0], 'quantity': int(parts[1].replace(',','')), 'unit_price': int(parts[2].replace(',',''))})
+                                continue
+                                
+                            if clean_line.startswith('['):
+                                m_nextline = re.search(r'수량:\s*(\d+).*?단가:\s*(\d+)', clean_line)
+                                if m_nextline and current_name:
+                                    parsed_items.append({'name': current_name, 'quantity': int(m_nextline.group(1)), 'unit_price': int(m_nextline.group(2))})
+                                    current_name = None
+                            else:
+                                m_inline = re.search(r'^(.+?)\s*\[.*?수량:\s*(\d+).*?단가:\s*(\d+)', clean_line)
+                                if m_inline:
+                                    parsed_items.append({'name': m_inline.group(1).strip(), 'quantity': int(m_inline.group(2)), 'unit_price': int(m_inline.group(3))})
+                                    current_name = None
+                                else:
+                                    m_simple = re.search(r'^(.+?)\s*\(.*?수량:\s*(\d+).*?단가:\s*(\d+)', clean_line)
+                                    if m_simple:
+                                        parsed_items.append({'name': m_simple.group(1).strip(), 'quantity': int(m_simple.group(2)), 'unit_price': int(m_simple.group(3))})
+                                        current_name = None
+                                    else:
+                                        current_name = clean_line
                                 
                         if not parsed_items:
                             await add_draft_row(page)

@@ -1,0 +1,6 @@
+playwright
+youtube-transcript-api
+schedule
+requests
+python-dotenv
+yt-dlp

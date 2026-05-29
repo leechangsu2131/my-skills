@@ -202,8 +202,38 @@
     /* ── 품목 카드 ── */
     .items-card { display: flex; flex-direction: column; }
 
+    .excel-import {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      margin-bottom: 12px;
+      align-items: center;
+    }
+    .excel-import input[type="file"] {
+      width: 100%;
+      padding: 8px;
+      border: 1.5px solid var(--border);
+      border-radius: 7px;
+      background: #fafbfc;
+      font-size: 12px;
+      font-family: inherit;
+    }
+    .btn-import {
+      padding: 9px 12px;
+      background: var(--navy);
+      color: #fff;
+      border: none;
+      border-radius: 7px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      white-space: nowrap;
+    }
+    .btn-import:hover { background: #153f62; }
+
     .table-wrap { overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; min-width: 380px; }
+    table { width: 100%; border-collapse: collapse; min-width: 640px; }
     thead tr { background: var(--navy); }
     th {
       color: #fff;
@@ -214,6 +244,8 @@
       white-space: nowrap;
     }
     th:first-child { border-radius: 7px 0 0 0; width: 40px; text-align: center; }
+    th:nth-child(2) { width: 150px; }
+    th:nth-child(4) { width: 76px; text-align: center; }
     th:last-child  { border-radius: 0 7px 0 0; width: 58px; text-align: center; }
 
     td {
@@ -226,7 +258,8 @@
 
     .row-num { text-align: center; color: var(--muted); font-size: 12px; }
 
-    td input[type="text"] {
+    td input[type="text"],
+    td input[type="number"] {
       width: 100%;
       padding: 6px 8px;
       border: 1.5px solid transparent;
@@ -236,11 +269,18 @@
       background: transparent;
       transition: border-color .15s, background .15s;
     }
-    td input[type="text"]:focus {
+    td input[type="text"]:focus,
+    td input[type="number"]:focus {
       border-color: var(--blue);
       background: #fff;
       outline: none;
     }
+    .item-code {
+      font-family: 'D2Coding', 'Consolas', monospace;
+      font-size: 12px;
+      color: #465668;
+    }
+    .item-qty { text-align: center; }
 
     .btn-del {
       padding: 4px 10px;
@@ -539,6 +579,41 @@
       display: flex; align-items: center; justify-content: center;
       color: #ccc; font-size: 11px;
     }
+
+    @media (max-width: 760px) {
+      header {
+        height: auto;
+        min-height: 58px;
+        padding: 10px 16px;
+      }
+      header h1 { font-size: 15px; }
+      header p { font-size: 11px; }
+      .layout {
+        grid-template-columns: 1fr;
+        margin: 14px auto;
+        padding: 0 12px;
+        gap: 14px;
+      }
+      .auth-card,
+      .results-card,
+      .log-card {
+        grid-column: auto;
+        grid-row: auto;
+      }
+      .card {
+        border-radius: 8px;
+        padding: 16px;
+      }
+      .excel-import {
+        grid-template-columns: 1fr;
+      }
+      .btn-import {
+        width: 100%;
+      }
+      #log {
+        height: 220px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -599,12 +674,18 @@
   <!-- ── 오른쪽: 품목 검색어 입력 ── -->
   <div class="card items-card">
     <div class="card-title">📋 검색할 품목 목록</div>
+    <div class="excel-import">
+      <input type="file" id="excelFile" accept=".xlsx,.xlsm">
+      <button class="btn-import" onclick="importExcel()">엑셀 불러오기</button>
+    </div>
     <div class="table-wrap">
       <table>
         <thead>
           <tr>
             <th>#</th>
+            <th>S2B번호</th>
             <th>검색어 (품목명)</th>
+            <th>수량</th>
             <th>삭제</th>
           </tr>
         </thead>
@@ -658,20 +739,40 @@
     })
     .catch(() => {});
 
+  function escapeAttr(value) {
+    return String(value ?? '')
+      .replace(/&/g, '&amp;')
+      .replace(/"/g, '&quot;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+  }
+
+  function extractS2bId(code) {
+    const runs = String(code || '').match(/\d{9,}/g) || [];
+    const longRuns = runs.filter(v => v.length >= 12);
+    return (longRuns.length ? longRuns : runs).at(-1) || '';
+  }
+
   /* ── 검색어 행 관리 ─────────────────────────────────── */
-  function addRow() {
+  function addRow(item = {}, focus = true) {
     const tbody = document.getElementById('itemBody');
     const tr = document.createElement('tr');
     tr.dataset.seq = ++rowSeq;
+    const rawCode = item.s2b_id || item.raw_code || '';
+    const qty = item.quantity || 1;
     tr.innerHTML = `
       <td class="row-num">-</td>
+      <td><input type="text" class="item-code" value="${escapeAttr(rawCode)}" placeholder="예: 201611085168882"></td>
       <td><input type="text" class="item-name" placeholder="예: 초시계, A4 복사용지 등"></td>
+      <td><input type="number" class="item-qty" value="${escapeAttr(qty)}" min="1"></td>
       <td style="text-align:center">
         <button class="btn-del" onclick="delRow(this)">삭제</button>
       </td>`;
+    tr.querySelector('.item-name').value = item.name || '';
+    tr.dataset.sourceRow = item.source_row || '';
     tbody.appendChild(tr);
     renumber();
-    tr.querySelector('.item-name').focus();
+    if (focus) tr.querySelector('.item-name').focus();
   }
 
   function delRow(btn) {
@@ -683,6 +784,11 @@
     document.querySelectorAll('#itemBody tr').forEach((tr, i) => {
       tr.querySelector('.row-num').textContent = i + 1;
     });
+  }
+
+  function clearRows() {
+    document.getElementById('itemBody').innerHTML = '';
+    rowSeq = 0;
   }
 
   document.getElementById('itemBody').addEventListener('keydown', e => {
@@ -700,10 +806,54 @@
   function getItems() {
     const items = [];
     document.querySelectorAll('#itemBody tr').forEach(tr => {
+      const rawCode = tr.querySelector('.item-code').value.trim();
       const name = tr.querySelector('.item-name').value.trim();
-      if (name) items.push({ name, quantity: 1 });
+      const quantity = parseInt(tr.querySelector('.item-qty').value, 10) || 1;
+      const s2b_id = extractS2bId(rawCode);
+      if (name || s2b_id) {
+        items.push({
+          name: name || s2b_id,
+          quantity,
+          raw_code: rawCode,
+          s2b_id,
+          source_row: tr.dataset.sourceRow || '',
+        });
+      }
     });
     return items;
+  }
+
+  async function importExcel() {
+    const input = document.getElementById('excelFile');
+    const file = input.files && input.files[0];
+    if (!file) { alert('엑셀 파일을 선택해주세요.'); return; }
+
+    const form = new FormData();
+    form.append('file', file);
+
+    clearLog();
+    hideResults();
+    document.getElementById('btnCart').disabled = true;
+
+    let resp;
+    try {
+      resp = await fetch('/api/parse-excel', { method: 'POST', body: form });
+    } catch (e) {
+      alert('엑셀 업로드 실패: ' + e.message);
+      return;
+    }
+
+    const data = await resp.json();
+    if (!resp.ok) {
+      alert(data.error || '엑셀을 읽지 못했습니다.');
+      return;
+    }
+
+    clearRows();
+    data.items.forEach(item => addRow(item, false));
+    if (!data.items.length) addRow({}, false);
+    renumber();
+    appendLog(`📋 엑셀에서 ${data.count}개 품목을 불러왔습니다.`);
   }
 
   /* ── 로그 출력 ───────────────────────────────────────── */
@@ -888,7 +1038,7 @@
       const hdr = document.createElement('div');
       hdr.className = 'result-section-header';
       hdr.innerHTML = `
-        <span class="result-query">🔍 "${query}"</span>
+        <span class="result-query">🔍 "${escapeAttr(query)}"</span>
         <span class="result-count">${items.length}개</span>
         <label class="section-select-all">
           <input type="checkbox" checked onchange="toggleSectionSelect(this)">
@@ -911,23 +1061,31 @@
           card.dataset.image = item.image || '';
           card.dataset.price = item.price || '';
           card.dataset.link = item.link || '';
+          card.dataset.requestName = item.request_name || item.title || '';
+          card.dataset.sourceRow = item.source_row || '';
+          card.dataset.sourceCode = item.source_code || '';
+          const qty = parseInt(item.quantity, 10) || 1;
+          const title = item.title || '제목 없음';
+          const img = item.image || PLACEHOLDER_IMG;
+          const link = item.link || '#';
+          const price = item.price || '가격 미정';
 
           card.innerHTML = `
             <input type="checkbox" class="item-check" checked onchange="onItemCheckChange(this)">
             <div class="item-img">
-              <img src="${item.image || PLACEHOLDER_IMG}" alt=""
+              <img src="${escapeAttr(img)}" alt=""
                    onerror="this.src='${PLACEHOLDER_IMG}'">
             </div>
             <div class="item-info">
-              <a class="item-title" href="${item.link || '#'}" target="_blank" title="${(item.title||'').replace(/"/g,'&quot;')}">${item.title || '제목 없음'}</a>
+              <a class="item-title" href="${escapeAttr(link)}" target="_blank" title="${escapeAttr(title)}">${escapeAttr(title)}</a>
               <div class="item-meta">
-                <span class="item-price">💰 ${item.price || '가격 미정'}</span>
-                <span class="item-id">📋 ${item.id || ''}</span>
+                <span class="item-price">💰 ${escapeAttr(price)}</span>
+                <span class="item-id">📋 ${escapeAttr(item.id || '')}</span>
               </div>
             </div>
             <div class="item-qty-wrap">
               <label>수량</label>
-              <input type="number" class="item-cart-qty" value="1" min="1">
+              <input type="number" class="item-cart-qty" value="${qty}" min="1">
             </div>
           `;
           section.appendChild(card);
@@ -1001,6 +1159,9 @@
         image:    card.dataset.image,
         price:    card.dataset.price,
         link:     card.dataset.link,
+        request_name: card.dataset.requestName,
+        source_row: card.dataset.sourceRow,
+        source_code: card.dataset.sourceCode,
         quantity: parseInt(card.querySelector('.item-cart-qty')?.value) || 1,
       });
     });

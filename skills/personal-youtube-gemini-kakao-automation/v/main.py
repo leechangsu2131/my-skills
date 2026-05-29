@@ -16,6 +16,15 @@ from playwright.async_api import TimeoutError as PlaywrightTimeoutError
 from playwright.async_api import async_playwright
 from youtube_transcript_api import YouTubeTranscriptApi
 
+from gemini_session import (
+    launch_gemini_context,
+    open_gem_conversation,
+    resolve_data_path,
+    save_storage_state,
+)
+
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+
 
 @dataclass
 class Settings:
@@ -33,6 +42,8 @@ class Settings:
     processed_file: str
     run_time: str
     profile_dir: str
+    gemini_storage_state_file: str
+    auto_login_wait_sec: int
     headless: bool
     language_priority: list[str]
     response_timeout_ms: int
@@ -44,6 +55,10 @@ class Settings:
     yt_no_check_certificates: bool
     disable_ssl_verify: bool
     gemini_debug_hold_ms: int
+    gemini_force_pro: bool
+    gemini_use_gem_prompt: bool
+    gemini_gem_expected_name: str
+    discord_max_message_length: int
 
 
 def bool_env(name: str, default: bool) -> bool:
@@ -58,7 +73,7 @@ def load_settings() -> Settings:
 
     channel_url = os.getenv("CHANNEL_URL", "").strip()
     title_prefix = os.getenv("TITLE_PREFIX", "[체슬리모닝브리프]").strip()
-    gemini_gem_url = os.getenv("GEMINI_GEM_URL", "").strip()
+    gemini_gem_url = os.getenv("GEMINI_GEM_URL", "").strip().split("?")[0]
     send_target = os.getenv("SEND_TARGET", "discord").strip().lower()
     discord_webhook = os.getenv("DISCORD_WEBHOOK", "").strip()
     discord_bot_token = os.getenv("DISCORD_BOT_TOKEN", "").strip()
@@ -67,9 +82,16 @@ def load_settings() -> Settings:
     kakao_rest_api_key = os.getenv("KAKAO_REST_API_KEY", "").strip()
     kakao_redirect_uri = os.getenv("KAKAO_REDIRECT_URI", "https://example.com").strip()
     kakao_token_file = os.getenv("KAKAO_TOKEN_FILE", "./kakao_token.json").strip()
-    processed_file = os.getenv("PROCESSED_FILE", "./processed.json").strip()
+    processed_file = resolve_data_path(os.getenv("PROCESSED_FILE", "./processed.json").strip(), SCRIPT_DIR)
     run_time = os.getenv("RUN_TIME", "16:00").strip()
-    profile_dir = os.getenv("PLAYWRIGHT_PROFILE_DIR", "./chrome_profile").strip()
+    profile_dir = resolve_data_path(
+        os.getenv("PLAYWRIGHT_PROFILE_DIR", "./chrome_profile").strip(),
+        SCRIPT_DIR,
+    )
+    gemini_storage_state_file = resolve_data_path(
+        os.getenv("GEMINI_STORAGE_STATE_FILE", "./gemini_storage_state.json").strip(),
+        SCRIPT_DIR,
+    )
 
     if not channel_url:
         raise ValueError("CHANNEL_URL is required")
@@ -97,6 +119,8 @@ def load_settings() -> Settings:
         processed_file=processed_file,
         run_time=run_time,
         profile_dir=profile_dir,
+        gemini_storage_state_file=gemini_storage_state_file,
+        auto_login_wait_sec=int(os.getenv("AUTO_LOGIN_WAIT_SEC", "300")),
         headless=bool_env("HEADLESS", False),
         language_priority=[s.strip() for s in os.getenv("TRANSCRIPT_LANGS", "ko,en").split(",") if s.strip()],
         response_timeout_ms=int(os.getenv("RESPONSE_TIMEOUT_MS", "120000")),
@@ -108,7 +132,42 @@ def load_settings() -> Settings:
         yt_no_check_certificates=bool_env("YT_NO_CHECK_CERTIFICATES", True),
         disable_ssl_verify=bool_env("DISABLE_SSL_VERIFY", True),
         gemini_debug_hold_ms=int(os.getenv("GEMINI_DEBUG_HOLD_MS", "0")),
+        gemini_force_pro=bool_env("GEMINI_FORCE_PRO", True),
+        gemini_use_gem_prompt=bool_env("GEMINI_USE_GEM_PROMPT", True),
+        gemini_gem_expected_name=os.getenv("GEMINI_GEM_EXPECTED_NAME", "스크립트 정리 도우미").strip(),
+        discord_max_message_length=int(os.getenv("DISCORD_MAX_MESSAGE_LENGTH", "1900")),
     )
+
+
+def split_message_chunks(message: str, max_len: int) -> list[str]:
+    """Split long text for Discord (2000 char limit per message)."""
+    text = message.strip()
+    if not text:
+        return [""]
+    if len(text) <= max_len:
+        return [text]
+
+    chunks: list[str] = []
+    remaining = text
+    while remaining:
+        if len(remaining) <= max_len:
+            chunks.append(remaining)
+            break
+        window = remaining[:max_len]
+        split_at = window.rfind("\n\n")
+        if split_at < max_len // 3:
+            split_at = window.rfind("\n")
+        if split_at < max_len // 3:
+            split_at = window.rfind(" ")
+        if split_at < max_len // 3:
+            split_at = max_len
+        chunk = remaining[:split_at].rstrip()
+        if not chunk:
+            chunk = remaining[:max_len]
+            split_at = max_len
+        chunks.append(chunk)
+        remaining = remaining[split_at:].lstrip()
+    return chunks
 
 
 def is_weekday() -> bool:
@@ -133,7 +192,7 @@ def save_processed_ids(path: str, ids: set[str]) -> None:
         json.dump(sorted(ids), f, ensure_ascii=False, indent=2)
 
 
-def find_todays_live_video_id(settings: Settings) -> Optional[str]:
+def find_todays_live_video(settings: Settings) -> Optional[tuple[str, str]]:
     today = datetime.date.today()
     today_yy_mm_dd = today.strftime("%y/%m/%d")
     today_yyyy_mm_dd = today.strftime("%Y/%m/%d")
@@ -169,9 +228,14 @@ def find_todays_live_video_id(settings: Settings) -> Optional[str]:
         if has_prefix and has_today_token:
             video_id = video.get("id")
             print(f"Found today's live VOD: {title} / {video_id}")
-            return video_id
+            return video_id, title
 
     return None
+
+
+def find_todays_live_video_id(settings: Settings) -> Optional[str]:
+    found = find_todays_live_video(settings)
+    return found[0] if found else None
 
 
 async def get_youtube_transcript(video_id: str, languages: list[str]) -> str:
@@ -219,24 +283,94 @@ async def wait_for_gemini_response(page, previous_count: int, timeout_ms: int) -
     if latest_count <= previous_count:
         raise RuntimeError("No new Gemini response detected after sending prompt.")
 
-    # Additional settling wait: some Gemini UIs keep streaming for a while.
-    settle_deadline = time.time() + min(45, timeout_ms / 1000)
+    last = responses.nth(latest_count - 1)
+    await last.wait_for(state="visible", timeout=timeout_ms)
+
+    # Wait until streaming finishes and text length stabilizes.
+    settle_deadline = time.time() + min(180, timeout_ms / 1000)
+    prev_len = 0
+    stable_rounds = 0
+    text = ""
     while time.time() < settle_deadline:
         stop_button = page.locator(
             "button[aria-label*='중지'], button[aria-label*='Stop'], "
             "[data-is-loading='true'], .loading"
         )
-        if await stop_button.count() == 0:
-            break
-        await page.wait_for_timeout(1000)
+        still_generating = await stop_button.count() > 0
+        text = (await last.inner_text()).strip()
+        if not still_generating and len(text) == prev_len and len(text) > 0:
+            stable_rounds += 1
+            if stable_rounds >= 3:
+                break
+        else:
+            stable_rounds = 0
+            prev_len = len(text)
+        await page.wait_for_timeout(1500)
 
-    last = responses.nth(latest_count - 1)
-    await last.wait_for(state="visible", timeout=timeout_ms)
-    await page.wait_for_timeout(1500)
-    text = (await last.inner_text()).strip()
     if not text:
         raise RuntimeError("Gemini response was empty.")
+    print(f"Gemini response length: {len(text)} chars")
     return text
+
+
+def build_gem_prompt(transcript: str, video_title: str, use_gem_prompt: bool) -> str:
+    body = transcript
+    if not use_gem_prompt:
+        return body
+    return (
+        "[긴급 지시사항: 절대 짧게 요약하지 마세요. Gem에 설정된 '스크립트 정리 도우미' 지침을 "
+        "100% 우선하여 적용하세요.]\n\n"
+        f'다음은 유튜브 영상 "{video_title}"의 전체 스크립트입니다:\n\n'
+        f"{body}"
+    )
+
+
+async def _select_gemini_pro(page) -> None:
+    model_btn_selectors = [
+        'button:has-text("빠른")',
+        'button:has-text("Flash")',
+        'button:has-text("Pro")',
+        ".model-selector button",
+        '[data-test-id="model-selector"]',
+    ]
+    opened = False
+    for sel in model_btn_selectors:
+        btn = page.locator(sel).first
+        if await btn.count() == 0:
+            continue
+        try:
+            if await btn.is_visible():
+                await btn.click(timeout=3000)
+                await page.wait_for_timeout(1000)
+                opened = True
+                break
+        except Exception:
+            continue
+
+    if not opened:
+        print("Model selector not found; continuing with current model.")
+        return
+
+    pro_selectors = [
+        'li:has-text("Pro")',
+        '[role="menuitem"]:has-text("Pro")',
+        'button:has-text("3.1 Pro")',
+        'div:has-text("3.1 Pro")',
+        '[role="option"]:has-text("Pro")',
+    ]
+    for sel in pro_selectors:
+        opt = page.locator(sel).first
+        if await opt.count() == 0:
+            continue
+        try:
+            if await opt.is_visible():
+                await opt.click(timeout=3000)
+                await page.wait_for_timeout(800)
+                print("Gemini Pro model selected.")
+                return
+        except Exception:
+            continue
+    print("Pro option not found in model menu.")
 
 
 async def _find_input_box(page):
@@ -253,18 +387,32 @@ async def _find_input_box(page):
     raise RuntimeError("Gemini input box not found.")
 
 
-async def ask_gemini_gem(settings: Settings, text: str) -> str:
+async def ask_gemini_gem(settings: Settings, text: str, video_title: str = "") -> str:
     async with async_playwright() as p:
-        context = await p.chromium.launch_persistent_context(
-            user_data_dir=settings.profile_dir,
-            headless=settings.headless,
-            channel="chrome",
-            args=["--disable-blink-features=AutomationControlled"],
+
+        def notify_login_required() -> None:
+            send_notification(
+                settings,
+                "⚠️ Gemini 세션이 만료되었습니다. 브라우저 창에서 Google 로그인을 완료해 주세요. "
+                "완료되면 자동으로 요약을 계속합니다.",
+            )
+
+        context, page = await launch_gemini_context(
+            p,
+            settings,
+            on_login_required=notify_login_required,
         )
-        page = await context.new_page()
 
         try:
-            await page.goto(settings.gemini_gem_url, wait_until="domcontentloaded")
+            await open_gem_conversation(
+                page,
+                settings.gemini_gem_url,
+                expected_gem_name=settings.gemini_gem_expected_name,
+            )
+
+            if settings.gemini_force_pro:
+                await _select_gemini_pro(page)
+
             await page.wait_for_selector(
                 "rich-textarea, div[contenteditable='true'], textarea",
                 timeout=30000,
@@ -274,20 +422,22 @@ async def ask_gemini_gem(settings: Settings, text: str) -> str:
 
             input_box = await _find_input_box(page)
             await input_box.click()
-            prompt_text = text[: settings.gemini_input_max_chars]
+            prompt_text = build_gem_prompt(
+                text[: settings.gemini_input_max_chars],
+                video_title or "체슬리모닝브리프",
+                settings.gemini_use_gem_prompt,
+            )
 
-            # Prefer direct fill; fall back to clipboard paste for long text robustness.
-            try:
-                await input_box.fill("")
-                await input_box.fill(prompt_text)
-            except Exception:
-                await page.evaluate(
-                    "(value) => navigator.clipboard.writeText(value)",
-                    prompt_text,
-                )
-                await page.keyboard.press("Control+a")
-                await page.keyboard.press("Delete")
-                await page.keyboard.press("Control+v")
+            # Clipboard paste is more reliable for long Korean transcripts.
+            await page.evaluate(
+                "(value) => navigator.clipboard.writeText(value)",
+                prompt_text,
+            )
+            await page.keyboard.press("Control+a")
+            await page.keyboard.press("Delete")
+            await page.wait_for_timeout(200)
+            await page.keyboard.press("Control+v")
+            await page.wait_for_timeout(800)
 
             await page.keyboard.press("Enter")
             await page.wait_for_timeout(700)
@@ -302,11 +452,13 @@ async def ask_gemini_gem(settings: Settings, text: str) -> str:
                 except Exception:
                     pass
 
-            return await wait_for_gemini_response(
+            result = await wait_for_gemini_response(
                 page,
                 previous_count=previous_count,
                 timeout_ms=settings.response_timeout_ms,
             )
+            await save_storage_state(context, settings.gemini_storage_state_file)
+            return result
         except PlaywrightTimeoutError as exc:
             raise RuntimeError("Timed out while waiting for Gemini UI or response.") from exc
         finally:
@@ -412,14 +564,33 @@ def send_kakao_message_with_refresh(settings: Settings, message: str) -> request
     return response
 
 
-def send_discord_message(settings: Settings, message: str) -> requests.Response:
-    payload = {"content": message[:1900]}
+def _discord_post_content(settings: Settings, content: str) -> requests.Response:
+    body = json.dumps({"content": content}, ensure_ascii=False).encode("utf-8")
     return requests.post(
         settings.discord_webhook,
-        json=payload,
+        data=body,
+        headers={"Content-Type": "application/json; charset=utf-8"},
         timeout=20,
         verify=_request_verify_ssl(settings),
     )
+
+
+def send_discord_message(settings: Settings, message: str) -> requests.Response:
+    chunks = split_message_chunks(message, settings.discord_max_message_length)
+    total = len(chunks)
+    last_response: Optional[requests.Response] = None
+    for index, chunk in enumerate(chunks, start=1):
+        prefix = f"**[{index}/{total}]**\n" if total > 1 else ""
+        # Reserve space for part header (Discord hard limit: 2000).
+        content = prefix + chunk
+        if len(content) > 2000:
+            content = chunk[:2000]
+        last_response = _discord_post_content(settings, content)
+        if last_response.status_code not in (200, 204):
+            return last_response
+        if index < total:
+            time.sleep(0.6)
+    return last_response  # type: ignore[return-value]
 
 
 def send_discord_bot_message(settings: Settings, message: str) -> requests.Response:
@@ -428,34 +599,55 @@ def send_discord_bot_message(settings: Settings, message: str) -> requests.Respo
         "Authorization": f"Bot {settings.discord_bot_token}",
         "Content-Type": "application/json",
     }
-    payload = {"content": message[:1900]}
-    return requests.post(
-        endpoint,
-        headers=headers,
-        json=payload,
-        timeout=20,
-        verify=_request_verify_ssl(settings),
-    )
+    chunks = split_message_chunks(message, settings.discord_max_message_length)
+    total = len(chunks)
+    last_response: Optional[requests.Response] = None
+    for index, chunk in enumerate(chunks, start=1):
+        prefix = f"**[{index}/{total}]**\n" if total > 1 else ""
+        content = prefix + chunk
+        if len(content) > 2000:
+            content = chunk[:2000]
+        last_response = requests.post(
+            endpoint,
+            headers=headers,
+            json={"content": content},
+            timeout=20,
+            verify=_request_verify_ssl(settings),
+        )
+        if last_response.status_code not in (200, 201, 204):
+            return last_response
+        if index < total:
+            time.sleep(0.6)
+    return last_response  # type: ignore[return-value]
 
 
 def send_notification(settings: Settings, message: str) -> requests.Response:
     if settings.send_target == "discord":
+        chunks = split_message_chunks(message, settings.discord_max_message_length)
+        if len(chunks) > 1:
+            print(f"Discord: sending {len(chunks)} messages ({len(message)} chars total)")
         return send_discord_message(settings, message)
     if settings.send_target == "discord_bot":
+        chunks = split_message_chunks(message, settings.discord_max_message_length)
+        if len(chunks) > 1:
+            print(f"Discord bot: sending {len(chunks)} messages ({len(message)} chars total)")
         return send_discord_bot_message(settings, message)
     return send_kakao_message_with_refresh(settings, message)
 
 
 async def run_once(settings: Settings) -> None:
     print("Starting automation run...")
+    print(f"Gemini profile: {settings.profile_dir}")
+    print(f"Session backup: {settings.gemini_storage_state_file}")
     if settings.only_weekdays and not is_weekday():
         print("Weekend detected; skipping run.")
         return
 
-    video_id = find_todays_live_video_id(settings)
-    if not video_id:
+    found = find_todays_live_video(settings)
+    if not found:
         send_notification(settings, "⚠️ 오늘 라이브 영상을 찾지 못했습니다.")
         return
+    video_id, video_title = found
     processed_ids = load_processed_ids(settings.processed_file)
     if video_id in processed_ids:
         print(f"Already processed video: {video_id}. Skipping.")
@@ -466,12 +658,13 @@ async def run_once(settings: Settings) -> None:
         send_notification(settings, "⚠️ 자막 수집에 실패했습니다.")
         return
 
-    answer = await ask_gemini_gem(settings, transcript)
+    answer = await ask_gemini_gem(settings, transcript, video_title=video_title)
     print(f"Gemini response preview: {answer[:120]}...")
+    print(f"Gemini response total: {len(answer)} chars")
 
     response = send_notification(settings, answer)
     print(f"{settings.send_target} response status: {response.status_code}")
-    if response.status_code != 200:
+    if response.status_code not in (200, 201, 204):
         print(f"{settings.send_target} error body: {response.text}")
         return
     processed_ids.add(video_id)
@@ -486,18 +679,22 @@ def scheduled_job(settings: Settings) -> None:
         print(f"Run failed: {exc}")
 
 
-def setup_login(profile_dir: str, headless: bool = False) -> None:
+def setup_login(settings: Settings) -> None:
+    """One-time (or rare) login: browser opens, auto-detects completion, saves session backup."""
+
     async def _login() -> None:
         async with async_playwright() as p:
-            context = await p.chromium.launch_persistent_context(
-                user_data_dir=profile_dir,
-                headless=headless,
-                channel="chrome",
+            context, page = await launch_gemini_context(p, settings)
+            await open_gem_conversation(
+                page,
+                settings.gemini_gem_url,
+                expected_gem_name=settings.gemini_gem_expected_name,
             )
-            page = await context.new_page()
-            await page.goto("https://gemini.google.com", wait_until="domcontentloaded")
-            print("Please complete Google/Gemini login in the opened browser.")
-            input("After login completes, press Enter here to close browser...")
+            await save_storage_state(context, settings.gemini_storage_state_file)
+            print(f"세션 저장 완료. 프로필: {settings.profile_dir}")
+            print(f"백업: {settings.gemini_storage_state_file}")
+            if settings.gemini_debug_hold_ms > 0:
+                await page.wait_for_timeout(settings.gemini_debug_hold_ms)
             await context.close()
 
     asyncio.run(_login())
@@ -507,11 +704,18 @@ def main() -> None:
     settings = load_settings()
 
     if os.getenv("SETUP_LOGIN_ONLY", "").strip() == "1":
-        setup_login(profile_dir=settings.profile_dir, headless=False)
+        setup_login(settings)
+        return
+
+    if os.getenv("RUN_ONCE", "").strip() == "1":
+        print(f"RUN_ONCE mode at {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+        scheduled_job(settings)
         return
 
     schedule.every().day.at(settings.run_time).do(lambda: scheduled_job(settings))
-    print(f"Waiting for scheduled run at {settings.run_time} every day...")
+    weekday_note = " (weekdays only in job logic)" if settings.only_weekdays else ""
+    print(f"Scheduler running. Daily trigger at {settings.run_time}{weekday_note}")
+    print("Press Ctrl+C to stop. For background scheduling, use register_scheduled_task.ps1")
 
     while True:
         schedule.run_pending()

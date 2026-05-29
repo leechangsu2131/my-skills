@@ -3,6 +3,7 @@ S2B 학교장터 자동 구매 시스템 통합 스크립트
 
 사용법:
     python s2b_buyer.py items.csv
+    python s2b_buyer.py "list/자투리공간 체육물품 구입내역(화천초).xlsx"
     python s2b_buyer.py items.csv --dry-run
     python s2b_buyer.py items.csv --headless
     python s2b_buyer.py items.csv --report 결과.xlsx   ← 리포트 파일명 직접 지정
@@ -11,7 +12,6 @@ S2B 학교장터 자동 구매 시스템 통합 스크립트
 import asyncio
 import os
 import sys
-import csv
 import argparse
 from datetime import datetime
 from dotenv import load_dotenv
@@ -21,6 +21,7 @@ from s2b_login import login as s2b_login
 from s2b_search import search_items
 from s2b_cart import add_to_cart
 from s2b_report import save_report   # ← 추가
+from s2b_excel import load_purchase_items
 
 import io
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace') if hasattr(sys, 'stdout') and hasattr(sys.stdout, 'buffer') else sys.stdout
@@ -29,34 +30,34 @@ sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='repla
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
-async def process_items(csv_path, dry_run=False, headless=False, report_path=None):
+def _detail_link(item_id):
+    return f"https://www.s2b.kr/S2BNCustomer/rema100.do?forwardName=detail&f_re_estimate_code={item_id}"
+
+
+async def process_items(input_path, dry_run=False, headless=False, report_path=None):
     """
-    CSV 파일을 읽어 각 물품을 S2B에서 검색하고 견적서에 담습니다.
+    CSV/XLSX 파일을 읽어 각 물품을 S2B 견적서에 담습니다.
+    S2B번호가 있으면 직접 담고, 없으면 품목명으로 검색한 첫 결과를 사용합니다.
     완료 후 Excel 결과 리포트를 저장합니다.
     """
-    if not os.path.exists(csv_path):
-        print(f"❌ 파일을 찾을 수 없습니다: {csv_path}")
+    if not os.path.exists(input_path):
+        print(f"❌ 파일을 찾을 수 없습니다: {input_path}")
         return False
 
-    items_to_buy = []
     try:
-        with open(csv_path, 'r', encoding='utf-8-sig') as f:
-            reader = csv.DictReader(f)
-            for row in reader:
-                if row.get('품목명') and row.get('수량'):
-                    items_to_buy.append({
-                        'name': row['품목명'].strip(),
-                        'quantity': int(row['수량'].strip())
-                    })
+        items_to_buy = load_purchase_items(input_path)
     except Exception as e:
-        print(f"❌ CSV 파일 읽기 실패: {e}")
+        print(f"❌ 구매 목록 읽기 실패: {e}")
         return False
 
     if not items_to_buy:
         print("⚠ 구매할 물품 목록이 비어있습니다.")
         return False
 
+    direct_count = sum(1 for item in items_to_buy if item.get('s2b_id'))
+    search_count = len(items_to_buy) - direct_count
     print(f"📋 총 {len(items_to_buy)}개의 품목을 장바구니(견적서)에 담습니다.")
+    print(f"   S2B번호 직접 담기: {direct_count}건 / 품목명 검색: {search_count}건")
 
     load_dotenv(os.path.join(SCRIPT_DIR, '.env'))
     uid = os.getenv('S2B_USER_ID')
@@ -105,25 +106,49 @@ async def process_items(csv_path, dry_run=False, headless=False, report_path=Non
                 'quantity': item['quantity'],
                 'selected_title': '',
                 'selected_id': '',
+                'image': '',
+                'price': item.get('unit_price', ''),
+                'link': '',
+                'source_row': item.get('source_row', ''),
+                'source_code': item.get('raw_code', ''),
                 'success': False,
                 'fail_reason': '',
                 'processed_at': datetime.now(),
             }
 
-            # 검색
-            search_results = await search_items(page, item['name'])
-            if not search_results:
-                msg = f"'{item['name']}' 검색 결과 없음"
-                print(f"  ⚠ {msg}. 건너뜁니다.")
-                result_entry['fail_reason'] = msg
+            # 엑셀에 S2B번호가 있으면 검색 없이 상세 URL로 바로 담습니다.
+            if item.get('s2b_id'):
+                target_item = {
+                    'id': item['s2b_id'],
+                    'title': item['name'],
+                    'price': item.get('unit_price', ''),
+                    'image': '',
+                    'link': _detail_link(item['s2b_id']),
+                }
+                print(f"  👉 엑셀 S2B번호 사용: [{target_item['id']}]")
+            else:
+                search_results = await search_items(page, item['name'])
+                if not search_results:
+                    msg = f"'{item['name']}' 검색 결과 없음"
+                    print(f"  ⚠ {msg}. 건너뜁니다.")
+                    result_entry['fail_reason'] = msg
+                    purchase_results.append(result_entry)
+                    continue
+
+                # 첫 번째 결과 선택
+                target_item = search_results[0]
+                print(f"  👉 검색 첫 결과 선택: [{target_item['id']}] {target_item['title']}")
+
+            result_entry['selected_title'] = target_item.get('title', '')
+            result_entry['selected_id'] = target_item.get('id', '')
+            result_entry['image'] = target_item.get('image', '')
+            result_entry['price'] = target_item.get('price', '') or item.get('unit_price', '')
+            result_entry['link'] = target_item.get('link', '') or _detail_link(target_item.get('id', ''))
+
+            if not result_entry['selected_id']:
+                result_entry['fail_reason'] = "물품번호 없음"
                 purchase_results.append(result_entry)
                 continue
-
-            # 첫 번째 결과 선택
-            target_item = search_results[0]
-            result_entry['selected_title'] = target_item.get('title', '')
-            result_entry['selected_id']    = target_item.get('id', '')
-            print(f"  👉 선택된 물품: [{target_item['id']}] {target_item['title']}")
 
             # 장바구니 담기
             added = await add_to_cart(
@@ -171,8 +196,8 @@ async def process_items(csv_path, dry_run=False, headless=False, report_path=Non
 
 def main():
     parser = argparse.ArgumentParser(description='S2B 학교장터 자동 구매/장바구니 담기 봇')
-    parser.add_argument('csv_file',
-                        help='구매할 품목 목록 CSV 파일 경로')
+    parser.add_argument('input_file',
+                        help='구매할 품목 목록 CSV/XLSX 파일 경로')
     parser.add_argument('--dry-run', action='store_true',
                         help='실제 장바구니에 담지 않고 시뮬레이션만 수행')
     parser.add_argument('--headless', action='store_true',
@@ -183,7 +208,7 @@ def main():
     args = parser.parse_args()
 
     asyncio.run(process_items(
-        args.csv_file,
+        args.input_file,
         dry_run=args.dry_run,
         headless=args.headless,
         report_path=args.report,

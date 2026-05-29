@@ -36,6 +36,31 @@ _session = {
 }
 
 
+def _detail_link(item_id):
+    return f"https://www.s2b.kr/S2BNCustomer/rema100.do?forwardName=detail&f_re_estimate_code={item_id}"
+
+
+def _section_key(item, index):
+    name = item.get('name') or item.get('request_name') or item.get('s2b_id') or f"품목 {index}"
+    row = item.get('source_row')
+    return f"{name} (엑셀 {row}행)" if row else name
+
+
+def _exact_result_from_item(item):
+    item_id = item.get('s2b_id') or item.get('id') or ''
+    return {
+        'id': item_id,
+        'title': item.get('name', ''),
+        'price': item.get('unit_price', ''),
+        'image': '',
+        'link': _detail_link(item_id) if item_id else '',
+        'quantity': item.get('quantity', 1),
+        'request_name': item.get('name', ''),
+        'source_row': item.get('source_row', ''),
+        'source_code': item.get('raw_code', ''),
+    }
+
+
 # ── 이벤트 루프 관리 ─────────────────────────────────────
 def _start_event_loop():
     """백그라운드에서 영구적으로 돌아가는 asyncio 이벤트 루프"""
@@ -127,14 +152,31 @@ async def _do_search(items, uid, pwd):
     page = _session['page']
     all_results = {}
 
-    print(f"🔍 총 {len(items)}개 검색어에 대해 물품을 검색합니다.")
+    direct_count = sum(1 for item in items if item.get('s2b_id'))
+    print(f"🔍 총 {len(items)}개 품목을 준비합니다.")
+    if direct_count:
+        print(f"   S2B번호 직접 사용: {direct_count}건 / 검색 필요: {len(items) - direct_count}건")
     print("=" * 50)
 
     for i, item in enumerate(items):
-        name = item['name']
+        name = item.get('name', '').strip()
+        qty = item.get('quantity', 1)
+        key = _section_key(item, i + 1)
+
+        if item.get('s2b_id'):
+            print(f"\n── [{i+1}/{len(items)}] '{name}' S2B번호 확인")
+            print(f"  👉 엑셀 S2B번호: {item['s2b_id']} / 수량 {qty}")
+            all_results[key] = [_exact_result_from_item(item)]
+            continue
+
         print(f"\n── [{i+1}/{len(items)}] '{name}' 검색 중...")
         found = await search_items(page, name)
-        all_results[name] = found or []
+        for result in found or []:
+            result['quantity'] = qty
+            result['request_name'] = name
+            result['source_row'] = item.get('source_row', '')
+            result['source_code'] = item.get('raw_code', '')
+        all_results[key] = found or []
         count = len(found or [])
         if count > 0:
             print(f"  ✅ {count}개 결과 발견")
@@ -171,21 +213,29 @@ async def _do_add_to_cart(selected_items, dry_run):
         item_id = item['id']
         qty = item.get('quantity', 1)
         title = item.get('title', '')
+        request_name = item.get('request_name') or title
         print(f"\n── [{i+1}/{len(selected_items)}] {title[:45]}")
         print(f"   물품번호: {item_id}  |  수량: {qty}")
 
         entry = {
-            'request_name': title,
+            'request_name': request_name,
             'quantity': qty,
             'selected_title': title,
             'selected_id': item_id,
             'image': item.get('image', ''),
             'price': item.get('price', ''),
             'link': item.get('link', ''),
+            'source_row': item.get('source_row', ''),
+            'source_code': item.get('source_code', ''),
             'success': False,
             'fail_reason': '',
             'processed_at': datetime.now(),
         }
+
+        if not item_id:
+            entry['fail_reason'] = '물품번호 없음'
+            results.append(entry)
+            continue
 
         ok = await add_to_cart(page, item_id, quantity=qty, dry_run=dry_run)
         entry['success'] = ok
@@ -243,6 +293,30 @@ def env_status():
     return jsonify({
         'has_uid': bool(S2B_USER_ID),
         'has_pwd': bool(S2B_USER_PW),
+    })
+
+
+@app.route('/api/parse-excel', methods=['POST'])
+def parse_excel_route():
+    """업로드된 견적서 엑셀 파일을 품목 목록으로 변환"""
+    file = request.files.get('file')
+    if not file:
+        return jsonify({'error': '엑셀 파일을 선택해주세요.'}), 400
+
+    filename = file.filename or ''
+    if not filename.lower().endswith(('.xlsx', '.xlsm')):
+        return jsonify({'error': 'xlsx 또는 xlsm 파일만 지원합니다.'}), 400
+
+    try:
+        from s2b_excel import parse_quote_workbook
+        file.stream.seek(0)
+        items = parse_quote_workbook(file.stream)
+    except Exception as e:
+        return jsonify({'error': f'엑셀 읽기 실패: {e}'}), 400
+
+    return jsonify({
+        'count': len(items),
+        'items': items,
     })
 
 

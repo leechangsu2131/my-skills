@@ -1,0 +1,551 @@
+Navigating to URL...
+Waiting for PE RATIO to appear. If a login screen appears, please log in manually within 90 seconds.
+To provide you with an optimal experience on this website, we use cookies. If you continue to use this website, you agree to accept our use of cookies. Learn More / Privacy
+Accept
+FinanceCharts
+Screeners
+Account
+Guest
+Login / Register
+SCREENERS
+All Screeners
+Custom Screener
+S&P 500
+Top Gainers
+Growth Stocks
+Undervalued
+MY ACCOUNT
+Login / Register
+Following - Stocks
+Following - ETFs
+Saved Screeners
+	Adobe (ADBE) All Metrics
+Stocks / ADBE Stock / All Metrics
+ Compare
+Follow
+Overview
+Bulls/Bears
+Charts
+Performance
+News
+Dividends
+Financials
+Metrics
+DCF
+popular: market cap | pe ratio | revenue | profit | price history | total return
+ADBE Valuation Metrics
+PE RATIO
+15.10
+PE RATIO (FWD)
+10.53
+PS RATIO
+4.25
+PB RATIO
+9.20
+PFCF RATIO
+10.33
+PEG RATIO
+1.15
+DEBT/EQUITY RATIO
+0.54
+EV/EBIT RATIO
+11.44
+EV/EBITDA RATIO
+10.53
+EV/ASSETS RATIO
+3.45
+EV/SALES RATIO
+4.19
+CURRENT RATIO
+0.91
+QUICK RATIO
+0.91
+ROA
+24.94
+ROE
+63.05
+ROIC
+34.48%
+FCF YIELD
+9.92%
+EARNINGS YIELD
+6.93%
+ADBE Stock Price Metrics
+LAST CLOSE PRICE
+$259.21
+1-DAY CHANGE
++7.36%
+MARKET CAP (USD)
+$104.033B
+7D RETURN
+5.90%
+30D RETURN
+6.42%
+YTD RETURN
+-25.94%
+52-WEEK HIGH
+$421.48
+52-WEEK HIGH DATE
+06/05/2025
+CURRENT VS HIGH
+-38.50%
+52-WEEK LOW
+$224.13
+52-WEEK LOW DATE
+04/10/2026
+CURRENT VS LOW
++15.65%
+AVG VOLUME 1M
+4.614M
+FAIR VALUE PRICE
+$1,490.34
+MARGIN OF SAFETY
+82.61%
+ADBE Growth Rate Metrics
+PRICE CAGR TTM
+-31.08%
+PRICE CAGR 3Y
+-11.17%
+PRICE CAGR 5Y
+-12.19%
+TOTAL RETURN CAGR TTM
+-31.14%
+TOTAL RETURN CAGR 3Y
+-11.18%
+TOTAL RETURN CAGR 5Y
+-12.20%
+REVENUE CAGR TTM
+11%
+REVENUE CAGR 3Y
+10.79%
+REVENUE CAGR 5Y
+12.35%
+NET INCOME CAGR TTM
+6.79%
+NET INCOME CAGR 3Y
+15.06%
+NET INCOME CAGR 5Y
+5.32%
+EPS CAGR TTM
+11.19%
+EPS CAGR 3Y
+19.26%
+EPS CAGR 5Y
+12.01%
+FCF CAGR TTM
+12.28%
+FCF CAGR 3Y
+12.16%
+FCF CAGR 5Y
+12.28%
+DIVIDENDS CAGR TTM
+0%
+DIVIDENDS CAGR 3Y
+0%
+DIVIDENDS CAGR 5Y
+0%
+ADBE Discounted Cash Flow Metrics
+FAIR VALUE PRICE
+$1,490.34
+FAIR VALUE PRICE (FCF)
+$1,490.34
+FAIR VALUE PRICE (EPS)
+$1,318.41
+MARGIN OF SAFETY
+82.61%
+MARGIN OF SAFETY (FCF)
+82.61%
+MARGIN OF SAFETY (EPS)
+80.34%
+ADBE Returns By Period
+7D RETURN
+5.90%
+30D RETURN
+6.42%
+YTD RETURN
+-25.94%
+TTM RETURN
+-37.29%
+3Y RETURN
+-37.87%
+5Y RETURN
+-47.73%
+10Y RETURN
+160.59%
+15Y RETURN
+648.51%
+20Y RETURN
+814.32%
+ADBE Yearly Returns
+2026
+-25.94%
+2025
+-21.29%
+2024
+-25.46%
+2023
+77.28%
+2022
+-40.65%
+2021
+13.39%
+2020
+51.64%
+2019
+45.78%
+2018
+29.10%
+2017
+70.22%
+ADBE Average Annual Returns By Period (CAGR)
+CAGR TTM
+-31.14%
+CAGR 3Y
+-11.18%
+CAGR 5Y
+-12.20%
+CAGR 10Y
+10.35%
+CAGR 15Y
+14.45%
+CAGR 20Y
+11.69%
+ADBE Revenue Metrics
+REVENUE TTM
+$24.453B
+REVENUE CAGR 3Y
+10.79%
+REVENUE CAGR 5Y
+12.35%
+NET INCOME TTM
+$7.208B
+NET INCOME CAGR 3Y
+15.06%
+NET INCOME CAGR 5Y
+5.32%
+FREE CASH FLOW TTM
+$10.317B
+FCF CAGR 3Y
+12.16%
+FCF CAGR 5Y
+12.28%
+ADBE PE Ratio Metrics
+PE RATIO
+15.10
+PE RATIO AVG TTM
+19.03
+PE RATIO AVG 3Y
+29.95
+CURRENT VS TTM AVG
+-20.69%
+CURRENT VS 3Y AVG
+-49.59%
+CURRENT VS 5Y AVG
+-53.22%
+ADBE PS Ratio Metrics
+PS RATIO
+4.25
+PS RATIO AVG TTM
+5.52
+PS RATIO AVG 3Y
+8.08
+CURRENT VS TTM AVG
+-22.93%
+CURRENT VS 3Y AVG
+-47.37%
+CURRENT VS 5Y AVG
+-53.19%
+ADBE PB Ratio Metrics
+PB RATIO
+9.20
+PB RATIO AVG TTM
+10.33
+PB RATIO AVG 3Y
+11.84
+CURRENT VS TTM AVG
+-10.93%
+CURRENT VS 3Y AVG
+-22.24%
+CURRENT VS 5Y AVG
+-26.50%
+ADBE Price to Free Cash Flow Ratio Metrics
+PFCF RATIO
+10.33
+PFCF RATIO AVG TTM
+12.12
+PFCF RATIO AVG 3Y
+18
+CURRENT VS TTM AVG
+-14.83%
+CURRENT VS 3Y AVG
+-42.64%
+CURRENT VS 5Y AVG
+-50.72%
+ADBE Debt to Equity Ratio Metrics
+DEBT/EQUITY RATIO
+0.54
+DEBT/EQUITY RATIO AVG TTM
+0.52
+DEBT/EQUITY RATIO AVG 3Y
+0.38
+CURRENT VS TTM AVG
++4.18%
+CURRENT VS 3Y AVG
++42.63%
+CURRENT VS 5Y AVG
++56.57%
+ADBE PEG Ratio Metrics
+PEG RATIO
+1.15
+PEG RATIO AVG TTM
+0.86
+PEG RATIO AVG 3Y
+5.28
+CURRENT VS TTM AVG
++33.15%
+CURRENT VS 3Y AVG
+-78.30%
+CURRENT VS 5Y AVG
+-85.26%
+ADBE FCF Yield
+FCF YIELD
+9.92%
+FCF YIELD AVG TTM
+7.95%
+FCF YIELD AVG 3Y
+5.90%
+CURRENT VS TTM AVG
++24.77%
+CURRENT VS 3Y AVG
++68.09%
+CURRENT VS 5Y AVG
++82.31%
+ADBE Earnings Yield
+EARNINGS YIELD
+6.93%
+EARNINGS YIELD AVG TTM
+5.68%
+EARNINGS YIELD AVG 3Y
+4.24%
+CURRENT VS TTM AVG
++22%
+CURRENT VS 3Y AVG
++63.47%
+CURRENT VS 5Y AVG
++77.30%
+ADBE EV/EBIT Ratio Metrics
+EV/EBIT RATIO
+11.44
+EV/EBIT RATIO AVG TTM
+13.66
+EV/EBIT RATIO AVG 3Y
+19.21
+CURRENT VS TTM AVG
+-16.23%
+CURRENT VS 3Y AVG
+-40.44%
+CURRENT VS 5Y AVG
+-50.67%
+ADBE EV/EBITDA Ratio Metrics
+EV/EBITDA RATIO
+10.53
+EV/EBITDA RATIO AVG TTM
+12.49
+EV/EBITDA RATIO AVG 3Y
+17.31
+CURRENT VS TTM AVG
+-15.67%
+CURRENT VS 3Y AVG
+-39.17%
+CURRENT VS 5Y AVG
+-49.05%
+ADBE EV/Assets Ratio Metrics
+EV/ASSETS RATIO
+3.45
+EV/ASSETS RATIO AVG TTM
+4.04
+EV/ASSETS RATIO AVG 3Y
+5.13
+CURRENT VS TTM AVG
+-14.64%
+CURRENT VS 3Y AVG
+-32.66%
+CURRENT VS 5Y AVG
+-39.89%
+ADBE EV/Sales Ratio Metrics
+EV/SALES RATIO
+4.19
+EV/SALES RATIO AVG TTM
+4.99
+EV/SALES RATIO AVG 3Y
+6.86
+CURRENT VS TTM AVG
+-15.97%
+CURRENT VS 3Y AVG
+-38.92%
+CURRENT VS 5Y AVG
+-49.16%
+ADBE Current Ratio Metrics
+CURRENT RATIO
+0.91
+CURRENT RATIO AVG TTM
+1.02
+CURRENT RATIO AVG 3Y
+1.11
+CURRENT VS TTM AVG
+-10.69%
+CURRENT VS 3Y AVG
+-17.49%
+CURRENT VS 5Y AVG
+-20.06%
+ADBE Quick Ratio Metrics
+QUICK RATIO
+0.91
+QUICK RATIO AVG TTM
+1.02
+QUICK RATIO AVG 3Y
+1.11
+CURRENT VS TTM AVG
+-10.69%
+CURRENT VS 3Y AVG
+-17.49%
+CURRENT VS 5Y AVG
+-20.06%
+ADBE ROIC Metrics
+ROIC
+34.48%
+ROIC AVG 3Y
+30.04%
+ROIC AVG 5Y
+28.70%
+CURRENT VS 3Y AVG
++14.80%
+CURRENT VS 5Y AVG
++20.15%
+CURRENT VS 10Y AVG
++39.15%
+ADBE Return on Assets Metrics
+ROA
+24.94
+ROA AVG TTM
+23.75
+ROA AVG 3Y
+20.22
+CURRENT VS TTM AVG
++5%
+CURRENT VS 3Y AVG
++23.34%
+CURRENT VS 5Y AVG
++23.30%
+ADBE Return on Equity Metrics
+ROE
+63.05
+ROE AVG TTM
+59.01
+ROE AVG 3Y
+43.69
+CURRENT VS TTM AVG
++6.84%
+CURRENT VS 3Y AVG
++44.30%
+CURRENT VS 5Y AVG
++53.99%
+ADBE Net Profit Margin Metrics
+NET PROFIT MARGIN
+30.10%
+NET PROFIT MARGIN AVG TTM
+30.10%
+NET PROFIT MARGIN AVG 3Y
+27.59%
+CURRENT VS TTM AVG
+-2.08%
+CURRENT VS 3Y AVG
++6.85%
+CURRENT VS 5Y AVG
+-0.40%
+ADBE Gross Profit Margin Metrics
+GROSS PROFIT MARGIN
+89.24%
+GROSS PFT MARGIN AVG TTM
+89.24%
+GROSS PFT MARGIN AVG 3Y
+88.57%
+CURRENT VS TTM AVG
++0.17%
+CURRENT VS 3Y AVG
++0.93%
+CURRENT VS 5Y AVG
++1.23%
+ADBE Tax Rate Metrics
+TAX RATE
+19.68%
+TAX RATE AVG 3Y
+19.96%
+TAX RATE AVG 5Y
+16.64%
+CURRENT VS 3Y AVG
+-1.39%
+CURRENT VS 5Y AVG
++18.28%
+CURRENT VS 10Y AVG
++42.26%
+Last Updated: Friday, May 29 2026
+
+
+
+
+ADBE Company Profile
+Adobe, Inc. is a global technology company, which engages in the provision of digital marketing and media solutions. The company is headquartered in...
+[Read More]
+
+
+Latest ADBE News
+These 3 Software Stocks Are Buying Back Shares Hand Over Fist
+05/30/2026 - MARKETBEAT
+Adobe's Own AI Tool Is Destroying Its Own Stock Photo Business. Management Just Admitted It
+05/29/2026 - 24/7 WALL STREET
+Adobe Systems (ADBE) Beats Stock Market Upswing: What Investors Need to Know
+05/28/2026 - ZACKS INVESTMENT RESEARCH
+AI/R WEBJUMP Achieves Adobe Analytics Specialization and Expands Enterprise Project Capabilities
+05/27/2026 - GLOBENEWSWIRE
+Adobe vs. Autodesk: Which Creative Software Stock Is the Better Buy?
+05/27/2026 - ZACKS INVESTMENT RESEARCH
+More ADBE News >>
+
+
+Latest Market News
+Investing in the Dow or S&P 500 doesn't matter — here's what actually does
+05/30/2026 - MARKET WATCH
+6 Numbers That Should Give Prudent Investors Pause
+05/30/2026 - SEEKING ALPHA
+The U.S.-China rivalry is killing global supply chains. Your portfolio needs a ‘home court advantage.
+05/30/2026 - MARKET WATCH
+Legacy Tech Company Stocks Surge on AI Pivot
+05/30/2026 - BLOOMBERG MARKETS AND FINANCE
+Wall Street's red-hot momentum trade is still winning, as strategy delivers best 2-month gain on record
+05/30/2026 - MARKET WATCH
+More Market News >>
+
+
+
+
+
+
+FinanceCharts.com
+
+Your trusted source for comprehensive financial data, stock research, and market analysis. We're 100% FREE.
+
+QUICK LINKS
+Login
+Stock Screeners
+Definitions
+COMPANY
+About Us
+Contact
+Help Center
+© 2026 FinanceCharts.com. All rights reserved.
+Terms of Service
+Privacy Policy
+Do Not Sell My Personal Information
+IMPORTANT DISCLAIMERS
+FinanceCharts.com is not operated by a broker, a dealer, or a registered investment adviser. Under no circumstances does any information posted on FinanceCharts.com represent a recommendation to buy or sell a security. The information on this site is not intended to be, nor does it constitute, investment advice or recommendations. In no event shall FinanceCharts.com be liable to anyone using this site for any damages of any kind arising out of the use of any content or other material published or available on FinanceCharts.com, or relating to the use of, or inability to use, FinanceCharts.com or any content, including, without limitation, any investment losses, lost profits, lost opportunity, special, incidental, indirect, consequential or punitive damages. Past performance is a poor indicator of future performance. The information on this site is in no way guaranteed for completeness, accuracy, timeliness or in any other way. Company logos are owned by their respective copyright holders and are displayed for editorial purposes only. Prices are not displayed in real time.

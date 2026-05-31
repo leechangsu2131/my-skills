@@ -1,0 +1,41 @@
+{
+  "export_timestamp": "2026-05-30T19:32:34.318247",
+  "market_data": {
+    "ticker": "035420",
+    "company_name": "NAVER",
+    "valuation_date": "2026-05-30",
+    "market_data_as_of": "2026-05-29",
+    "price": 234000,
+    "shares_outstanding": 156873776,
+    "market_cap": 36708463584000,
+    "historical_average_per": 15.0,
+    "peer_average_per": 15.0,
+    "current_tam": 40000000000000,
+    "projected_tam_5yr": 60000000000000,
+    "currency": "KRW",
+    "note": "Auto-fetched via pykrx"
+  },
+  "financial_inputs": {
+    "revenue": 10737719264647,
+    "operating_income": 1979263438827,
+    "net_income": 1931976372953,
+    "eps": 12702,
+    "ebit": 1979263438827,
+    "tax_rate": 0.22,
+    "op_cashflow": 2589874337746,
+    "capex": 553997155009,
+    "fcf": 2035877182737,
+    "total_equity": 27000911848337,
+    "cash": 4195524637851,
+    "short_debt": 200000000000,
+    "long_debt": 200000000000,
+    "net_debt": -3795524637851,
+    "enterprise_value": 32912938946149.0,
+    "nopat": 1543825482285.06,
+    "invested_capital": 23205387210486,
+    "roic": 0.06652875335721352,
+    "price": 234000.0,
+    "shares_outstanding": 156873776.0,
+    "market_cap": 36708463584000
+  }
+}

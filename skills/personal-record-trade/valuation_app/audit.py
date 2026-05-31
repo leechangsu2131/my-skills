@@ -12,7 +12,29 @@ from valuation_app.models import AuditCheck, MetricObservation, ValuationInputSe
 
 
 def _observation_map(observations: list[MetricObservation]) -> dict[str, MetricObservation]:
-    return {obs.metric_key: obs for obs in observations}
+    grouped: dict[str, list[MetricObservation]] = {}
+    for obs in observations:
+        grouped.setdefault(obs.metric_key, []).append(obs)
+        
+    result: dict[str, MetricObservation] = {}
+    for key, obs_list in grouped.items():
+        annual_obs = []
+        for obs in obs_list:
+            if obs.period and obs.period.endswith("A"):
+                try:
+                    year = int(obs.period[:-1])
+                    annual_obs.append((year, obs))
+                except ValueError:
+                    continue
+        
+        if annual_obs:
+            annual_obs.sort(key=lambda x: x[0], reverse=True)
+            result[key] = annual_obs[0][1]
+        else:
+            result[key] = obs_list[-1]
+            
+    return result
+
 
 
 def _value(metrics: dict[str, MetricObservation], key: str) -> float | int | None:
@@ -168,6 +190,138 @@ def run_audit(
 
     roic = None if nopat is None or invested_capital is None else calc_roic(nopat, invested_capital)
     derived.append(_calculated_observation("roic", "ROIC", roic, "2025A", "ROIC = NOPAT / 투하자본"))
+
+    # 1. 영업마진 일관성 검증 (Operating Margin Consistency)
+    revenue = _value(metrics, "revenue")
+    op_margin_status = "fail"
+    op_margin_val = None
+    if revenue is not None and operating_income is not None and revenue != 0:
+        op_margin_val = operating_income / revenue
+        if abs(operating_income) > revenue:
+            op_margin_status = "fail"
+        elif operating_income < 0:
+            op_margin_status = "warning"  # 영업적자 상태 경고
+        else:
+            op_margin_status = "pass"
+    checks.append(
+        AuditCheck(
+            check_key="operating_margin_consistency",
+            label="영업마진 일관성",
+            formula="영업마진 = 영업이익 / 매출액 (절대값 <= 1.0 및 영업적자 여부 검증)",
+            expected_value=op_margin_val,
+            actual_value=op_margin_val,
+            tolerance=0.0,
+            status=op_margin_status,
+            inputs=["operating_income", "revenue"],
+            explanation="영업이익률이 100%를 초과할 수 없으며, 영업이익이 마이너스이면 경고가 발생합니다.",
+        )
+    )
+
+    # 2. FCF vs 영업현금흐름 검증 (FCF vs Operating Cash Flow)
+    fcf_vs_op_status = "fail"
+    if op_cashflow is not None and capex is not None and reported_fcf is not None:
+        if capex < 0 or reported_fcf > op_cashflow:
+            fcf_vs_op_status = "fail"
+        else:
+            fcf_vs_op_status = "pass"
+    checks.append(
+        AuditCheck(
+            check_key="fcf_vs_op_cashflow",
+            label="FCF 영업현금흐름 비교",
+            formula="FCF <= 영업현금흐름 (CAPEX >= 0 가정)",
+            expected_value=op_cashflow - capex if op_cashflow is not None and capex is not None else None,
+            actual_value=reported_fcf,
+            tolerance=1.0,
+            status=fcf_vs_op_status,
+            inputs=["fcf", "op_cashflow", "capex"],
+            explanation="CAPEX는 양수 지출이어야 하므로 FCF는 항상 영업현금흐름보다 작거나 같아야 합니다.",
+        )
+    )
+
+    # 3. 매출액 vs 영업이익 절대값 비교 검증 (Revenue vs Operating Income)
+    rev_vs_op_status = "fail"
+    if revenue is not None and operating_income is not None:
+        if revenue < abs(operating_income):
+            rev_vs_op_status = "fail"
+        else:
+            rev_vs_op_status = "pass"
+    checks.append(
+        AuditCheck(
+            check_key="revenue_vs_operating_income",
+            label="매출액 영업이익 비교",
+            formula="매출액 >= |영업이익|",
+            expected_value=revenue,
+            actual_value=abs(operating_income) if operating_income is not None else None,
+            tolerance=0.0,
+            status=rev_vs_op_status,
+            inputs=["revenue", "operating_income"],
+            explanation="영업이익의 절대값이 매출액보다 큰 경우 데이터 매핑에 치명적인 오류가 있음을 뜻합니다.",
+        )
+    )
+
+    # 4. 통화 단위 정합성 검증 (Currency Unit Consistency)
+    currency_val = market.get("currency", "원")
+    is_usd_stock = currency_val in ["USD", "달러"]
+    unit_status = "pass"
+    mismatched_metrics = []
+    
+    for obs in observations:
+        if obs.metric_key in ["revenue", "operating_income", "net_income", "cash", "total_equity"]:
+            obs_unit = obs.unit or ""
+            if is_usd_stock and obs_unit != "USD":
+                unit_status = "fail"
+                mismatched_metrics.append(f"{obs.metric_key}({obs_unit})")
+            elif not is_usd_stock and obs_unit != "KRW" and obs_unit != "원":
+                unit_status = "fail"
+                mismatched_metrics.append(f"{obs.metric_key}({obs_unit})")
+                
+    explanation_unit = "시장 데이터의 통화 단위와 재무 데이터의 화폐 단위가 일치합니다."
+    if unit_status == "fail":
+        explanation_unit = f"통화 단위 불일치 검출: {', '.join(mismatched_metrics)}. 달러 주식은 USD, 한국 주식은 KRW 단위여야 합니다."
+        
+    checks.append(
+        AuditCheck(
+            check_key="currency_unit_consistency",
+            label="통화 단위 정합성",
+            formula="주식 통화 == 재무제표 단위",
+            expected_value=None,
+            actual_value=None,
+            tolerance=0.0,
+            status=unit_status,
+            inputs=["currency"],
+            explanation=explanation_unit,
+        )
+    )
+
+    # 5. 현재 PER 이상치 검증 (Current PER Anomaly)
+    current_price = market.get("price")
+    eps_val = _value(metrics, "eps")
+    per_status = "pass"
+    per_calc = None
+    explanation_per = "현재 PER이 정상 범위(0 ~ 300배) 내에 있습니다."
+    
+    if current_price is not None and eps_val is not None and eps_val != 0:
+        per_calc = float(current_price) / float(eps_val)
+        if per_calc < 0:
+            per_status = "warning"
+            explanation_per = f"현재 계산된 PER이 음수({per_calc:.2f}배)입니다. 기업이 현재 적자 상태인지 확인이 필요합니다."
+        elif per_calc > 300:
+            per_status = "warning"
+            explanation_per = f"현재 계산된 PER이 초고배율({per_calc:.2f}배)입니다. 초성장주이거나 EPS의 통화 단위 매핑 오류(원화/달러 혼용)인지 확인하십시오."
+            
+    checks.append(
+        AuditCheck(
+            check_key="current_per_anomaly",
+            label="현재 PER 이상치 검증",
+            formula="PER = 현재가 / 최신 EPS",
+            expected_value=per_calc,
+            actual_value=per_calc,
+            tolerance=0.0,
+            status=per_status,
+            inputs=["price", "eps"],
+            explanation=explanation_per,
+        )
+    )
 
     input_set = build_input_set(observations + derived, market)
     return input_set, checks, derived

@@ -1,0 +1,36 @@
+{
+  "export_timestamp": "2026-05-31T06:43:19.963882",
+  "market_data": {
+    "ticker": "ADBE",
+    "company_name": "Adobe Inc.",
+    "currency": "USD",
+    "price": 259.21,
+    "shares_outstanding": 404200000,
+    "market_cap": 104772681728,
+    "valuation_date": "2026-05-30",
+    "market_data_as_of": "2026-05-30"
+  },
+  "financial_inputs": {
+    "revenue": 19409000000.0,
+    "operating_income": 6650000000.0,
+    "net_income": 5428000000.0,
+    "eps": 11.87,
+    "ebit": 6912000000.0,
+    "tax_rate": 0.21,
+    "op_cashflow": 7302000000.0,
+    "capex": 360000000.0,
+    "fcf": 6942000000.0,
+    "total_equity": 16518000000.0,
+    "cash": 7141000000.0,
+    "short_debt": 0,
+    "long_debt": 3634000000.0,
+    "net_debt": -3507000000.0,
+    "enterprise_value": 101265681728.0,
+    "nopat": 5253500000.0,
+    "invested_capital": 13011000000.0,
+    "roic": 0.4037737299208362,
+    "price": 259.21,
+    "shares_outstanding": 404200000.0,
+    "market_cap": 104772681728
+  }
+}

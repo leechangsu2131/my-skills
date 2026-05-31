@@ -1,0 +1,43 @@
+{
+  "export_timestamp": "2026-05-30T19:32:28.251677",
+  "market_data": {
+    "ticker": "009150",
+    "company_name": "삼성전기",
+    "valuation_date": "2026-05-30",
+    "market_data_as_of": "2026-05-29",
+    "price": 2127000,
+    "shares_outstanding": 74693696,
+    "market_cap": 158873491392000,
+    "historical_average_per": 15.0,
+    "peer_average_per": 15.0,
+    "current_tam": 40000000000000,
+    "projected_tam_5yr": 60000000000000,
+    "currency": "KRW",
+    "note": "Auto-fetched via pykrx"
+  },
+  "financial_inputs": {
+    "revenue": 10294102976435,
+    "operating_income": 735005856995,
+    "net_income": 703215637082,
+    "eps": 9038,
+    "ebit": 735005856995,
+    "tax_rate": 0.22,
+    "op_cashflow": 0,
+    "capex": 775986403809,
+    "fcf": 0,
+    "total_equity": 9015854031770,
+    "cash": 2013326031516,
+    "short_debt": 244127399380,
+    "long_debt": 244127399380,
+    "net_debt": -1525071232756,
+    "latest_quarter_revenue": 3209100000000,
+    "latest_quarter_operating_income": 280600000000,
+    "enterprise_value": 157348420159244.0,
+    "nopat": 573304568456.1,
+    "invested_capital": 7490782799014,
+    "roic": 0.0765346671821219,
+    "price": 2127000.0,
+    "shares_outstanding": 74693696.0,
+    "market_cap": 158873491392000
+  }
+}

@@ -1,0 +1,996 @@
+
+
+=== https://www.financecharts.com/stocks/NVDA/dcf-calculator ===
+
+To provide you with an optimal experience on this website, we use cookies. If you continue to use this website, you agree to accept our use of cookies. Learn More / Privacy
+Accept
+FinanceCharts
+Screeners
+Account
+Guest
+Login / Register
+SCREENERS
+All Screeners
+Custom Screener
+S&P 500
+Top Gainers
+Growth Stocks
+Undervalued
+MY ACCOUNT
+Login / Register
+Following - Stocks
+Following - ETFs
+Saved Screeners
+	NVIDIA (NVDA) Discounted Cash Flow (DCF) Calculator
+Stocks / NVDA Stock / Discounted Cash Flow (DCF) Calculator
+ Compare
+Follow
+Overview
+Bulls/Bears
+Charts
+Performance
+News
+Dividends
+Financials
+Metrics
+DCF
+popular: market cap | pe ratio | revenue | profit | price history | total return
+Use the dcf calculators below to estimate the fair price of NVDA. There are calculators for free cash flow and EPS. You can adjust the values to match your estimates. Discounted cash flow is used to roughly estimate the present value of the expected future cash flows of a company in order to come up with a fair price.
+NVDA Fair Value Price
+FAIR VALUE PRICE (FCF)
+$308.36
+LAST CLOSE PRICE
+$211.14
+MARGIN OF SAFETY
+31.53%
+FCF/SHARE 3Y AVG
+- +
+$3.13
+GROWTH RATE
+- +
+20%
+GROWTH YEARS
+10
+DISCOUNT RATE
+- +
+7%
+EXIT MULTIPLE
+- +
+25x
+EXIT MULTIPLE TYPE
+EV/EBITDA Avg
+NVDA Fair Value Price w/EPS
+FAIR VALUE PRICE (EPS)
+$372.38
+LAST CLOSE PRICE
+$211.14
+MARGIN OF SAFETY
+43.30%
+EPS 3Y AVG
+- +
+$3.78
+GROWTH RATE
+- +
+20%
+GROWTH YEARS
+10
+DISCOUNT RATE
+- +
+7%
+EXIT MULTIPLE
+- +
+25x
+EXIT MULTIPLE TYPE
+EV/EBITDA Avg
+NVDA Intrinsic Value Range (FCF)
+FAIR VALUE PRICE
+$168.24 - $308.36
+LAST CLOSE PRICE
+$211.14
+MGN OF SAFETY
+-25.50% - 31.53%
+FCF/SHARE 3Y AVG
+$3.13
+GROWTH RATE EST.
+15% - 20%
+GROWTH YEARS
+10
+DISCOUNT RATE
+7%
+EXIT MULTIPLE
+18.75x - 25x
+EXIT MULTIPLE TYPE
+EV/EBITDA Avg
+NVDA Intrinsic Value Range w/EPS
+FAIR VALUE PRICE
+$203.17 - $372.38
+LAST CLOSE PRICE
+$211.14
+MGN OF SAFETY
+-3.92% - 43.30%
+EPS 3Y AVG
+$3.78
+GROWTH RATE EST.
+15% - 20%
+GROWTH YEARS
+10
+DISCOUNT RATE
+7%
+EXIT MULTIPLE
+18.75x - 25x
+EXIT MULTIPLE TYPE
+EV/EBITDA Avg
+NVDA FCF/Share TTM Chart
+ Metric
+NVIDIA
+ (NVDA)
+$4.88
++2,283%
+3Y
+Zoom
+View 1 month
+View 3 months
+View 6 months
+View year to date
+View 1 year
+View 3 years
+View 5 years
+View 10 years
+View 15 years
+View 20 years
+May 2023
+Sep 2023
+Jan 2024
+May 2024
+Sep 2024
+Jan 2025
+May 2025
+Sep 2025
+Jan 2026
+2000
+2005
+2010
+2015
+2020
+2025
+$0
+$2
+$4
+$6
+Zoom
+1M
+3M
+6M
+YTD
+1Y
+3Y
+5Y
+10Y
+15Y
+20Y
+Apr 26, 2023
+→
+Apr 26, 2026
+NVDA FCF/Share TTM CAGR Chart
+NVIDIA
+ (NVDA)
+3Y
+5Y
+10Y
+15Y
+20Y
+0%
+50%
+100%
+150%
+200%
+NVDA EPS Diluted TTM Chart
+NVIDIA
+ (NVDA)
+$6.53
++3,165%
+3Y
+Zoom
+View 1 month
+View 3 months
+View 6 months
+View year to date
+View 1 year
+View 3 years
+View 5 years
+View 10 years
+View 15 years
+View 20 years
+May 2023
+Sep 2023
+Jan 2024
+May 2024
+Sep 2024
+Jan 2025
+May 2025
+Sep 2025
+Jan 2026
+2000
+2005
+2010
+2015
+2020
+2025
+$0
+$2
+$4
+$6
+$8
+Zoom
+1M
+3M
+6M
+YTD
+1Y
+3Y
+5Y
+10Y
+15Y
+20Y
+Apr 26, 2023
+→
+Apr 26, 2026
+NVDA EPS Diluted TTM CAGR Chart
+NVIDIA
+ (NVDA)
+3Y
+5Y
+10Y
+15Y
+20Y
+0%
+50%
+100%
+150%
+200%
+250%
+NVDA EV to EBITDA Ratio Chart
+NVIDIA
+ (NVDA)
+30.85
+-80.55%
+3Y
+Zoom
+View 1 month
+View 3 months
+View 6 months
+View year to date
+View 1 year
+View 3 years
+View 5 years
+View 10 years
+View 15 years
+View 20 years
+Sep 2023
+Jan 2024
+May 2024
+Sep 2024
+Jan 2025
+May 2025
+Sep 2025
+Jan 2026
+May 2026
+2010
+2015
+2020
+2025
+0
+50
+100
+150
+200
+Zoom
+1M
+3M
+6M
+YTD
+1Y
+3Y
+5Y
+10Y
+15Y
+20Y
+May 29, 2023
+→
+May 29, 2026
+NVDA Average EV to EBITDA Ratio Chart
+NVIDIA
+ (NVDA)
+Today
+TTM
+3Y
+5Y
+10Y
+15Y
+20Y
+20
+30
+40
+50
+60
+NVDA Competitors' Margin of Safety
+ 	NAME	MARKET CAP	CLOSE PRICE	FAIR PRICE (FCF)	MARG SAFETY (FCF)	FAIR PRICE (EPS)	MARG SAFETY (EPS)
+	
+	NVIDIA (NVDA)
+	$5.179T	$211.14	$308.36	31.53%	$372.38	43.30%
+	
+	Broadcom (AVGO)
+	$2.084T	$446.77	$303.74	-47.09%	$322.22	-38.65%
+	
+	Taiwan Semiconduct.. (TSM)
+	$1.897T	$418.45	$219.09	-90.99%	$514.58	18.68%
+	
+	Micron Technology (MU)
+	$1.077T	$971.00	$103.77	-835.75%	$356.24	-172.57%
+	
+	Advanced Micro Dev.. (AMD)
+	$829.275B	$516.10	$249.72	-106.68%	$164.18	-214.35%
+	
+	Intel (INTC)
+	$568.944B	$114.68	$0.00	0%	$4.56	-2,417.43%
+	
+	Arm Holdings (ARM)
+	$375.901B	$353.29	$28.83	-1,125.49%	$15.73	-2,145.76%
+	
+	Qualcomm (QCOM)
+	$273.21B	$251.02	$348.77	28.03%	$175.02	-43.42%
+	
+	Texas Instruments (TXN)
+	$271.364B	$305.68	$49.95	-511.97%	$137.62	-122.12%
+	
+	Analog Devices (ADI)
+	$201.296B	$413.85	$233.20	-77.47%	$172.02	-140.58%
+Last Updated: Friday, May 29 2026
+
+
+
+
+NVDA Company Profile
+NVIDIA Corp. engages in the design and manufacture of computer graphics processors, chipsets, and related multimedia software. The company is...
+[Read More]
+
+
+Latest NVDA News
+Jensen Huang's $40 Trillion Robot Call Echoes the 1913 Moving Assembly Line. The Pattern Says Buy the Picks and Shovels
+05/30/2026 - 24/7 WALL STREET
+Nvidia: Data Centers Made It Great, Physical AI Could Make It Generational
+05/30/2026 - SEEKING ALPHA
+This Fund Manager Has a Brilliant Strategy for Investing in AI Stocks
+05/30/2026 - THE MOTLEY FOOL
+3 Stocks Rallying on Micron's Price Boost: Substance or Hype?
+05/29/2026 - MARKETBEAT
+Nvidia Stock Investors Cheer as its Market Share Increases
+05/29/2026 - THE MOTLEY FOOL
+More NVDA News >>
+
+
+Latest Market News
+Investing in the Dow or S&P 500 doesn't matter — here's what actually does
+05/30/2026 - MARKET WATCH
+6 Numbers That Should Give Prudent Investors Pause
+05/30/2026 - SEEKING ALPHA
+The U.S.-China rivalry is killing global supply chains. Your portfolio needs a ‘home court advantage.
+05/30/2026 - MARKET WATCH
+Legacy Tech Company Stocks Surge on AI Pivot
+05/30/2026 - BLOOMBERG MARKETS AND FINANCE
+Wall Street's red-hot momentum trade is still winning, as strategy delivers best 2-month gain on record
+05/30/2026 - MARKET WATCH
+More Market News >>
+
+
+
+
+
+
+FinanceCharts.com
+
+Your trusted source for comprehensive financial data, stock research, and market analysis. We're 100% FREE.
+
+QUICK LINKS
+Login
+Stock Screeners
+Definitions
+COMPANY
+About Us
+Contact
+Help Center
+© 2026 FinanceCharts.com. All rights reserved.
+Terms of Service
+Privacy Policy
+Do Not Sell My Personal Information
+IMPORTANT DISCLAIMERS
+FinanceCharts.com is not operated by a broker, a dealer, or a registered investment adviser. Under no circumstances does any information posted on FinanceCharts.com represent a recommendation to buy or sell a security. The information on this site is not intended to be, nor does it constitute, investment advice or recommendations. In no event shall FinanceCharts.com be liable to anyone using this site for any damages of any kind arising out of the use of any content or other material published or available on FinanceCharts.com, or relating to the use of, or inability to use, FinanceCharts.com or any content, including, without limitation, any investment losses, lost profits, lost opportunity, special, incidental, indirect, consequential or punitive damages. Past performance is a poor indicator of future performance. The information on this site is in no way guaranteed for completeness, accuracy, timeliness or in any other way. Company logos are owned by their respective copyright holders and are displayed for editorial purposes only. Prices are not displayed in real time.
+
+=== https://www.financecharts.com/stocks/NVDA/all-metrics ===
+
+To provide you with an optimal experience on this website, we use cookies. If you continue to use this website, you agree to accept our use of cookies. Learn More / Privacy
+Accept
+FinanceCharts
+Screeners
+Account
+Guest
+Login / Register
+SCREENERS
+All Screeners
+Custom Screener
+S&P 500
+Top Gainers
+Growth Stocks
+Undervalued
+MY ACCOUNT
+Login / Register
+Following - Stocks
+Following - ETFs
+Saved Screeners
+	NVIDIA (NVDA) All Metrics
+Stocks / NVDA Stock / All Metrics
+ Compare
+Follow
+Overview
+Bulls/Bears
+Charts
+Performance
+News
+Dividends
+Financials
+Metrics
+DCF
+popular: market cap | pe ratio | revenue | profit | price history | total return
+NVDA Valuation Metrics
+PE RATIO
+32.33
+PE RATIO (FWD)
+24.51
+PS RATIO
+20.43
+PB RATIO
+26.16
+PFCF RATIO
+43.25
+PEG RATIO
+0.29
+DEBT/EQUITY RATIO
+0.04
+EV/EBIT RATIO
+31.46
+EV/EBITDA RATIO
+30.85
+EV/ASSETS RATIO
+19.68
+EV/SALES RATIO
+20.14
+CURRENT RATIO
+3.44
+QUICK RATIO
+2.85
+ROA
+79.76
+ROE
+81.65
+ROIC
+91.10%
+FCF YIELD
+2.30%
+EARNINGS YIELD
+3.08%
+NVDA Stock Price Metrics
+LAST CLOSE PRICE
+$211.14
+1-DAY CHANGE
+-1.45%
+MARKET CAP (USD)
+$5.179T
+7D RETURN
+-1.95%
+30D RETURN
+0.90%
+YTD RETURN
+13.22%
+52-WEEK HIGH
+$236.54
+52-WEEK HIGH DATE
+05/14/2026
+CURRENT VS HIGH
+-10.74%
+52-WEEK LOW
+$132.92
+52-WEEK LOW DATE
+05/30/2025
+CURRENT VS LOW
++58.85%
+AVG VOLUME 1M
+166.623M
+FAIR VALUE PRICE
+$308.36
+MARGIN OF SAFETY
+31.53%
+NVDA Dividend Metrics
+DIVIDEND YIELD
+0.02%
+AVG YIELD TTM
+0.02%
+AVG YIELD 3Y
+0.03%
+CAGR TTM
+0%
+CAGR 3Y
+35.53%
+CAGR 5Y
+20.08%
+PAYOUT RATIO
+0.61%
+PAYOUT AVG 3Y
+1.96%
+PAYOUT AVG 5Y
+3.46%
+FCF PAYOUT RATIO
+0.81%
+FCF PAYOUT AVG 3Y
+2.08%
+FCF PAYOUT AVG 5Y
+3.89%
+FORWARD YOC 3Y
+0.03%
+FORWARD YOC 5Y
+0.03%
+FORWARD YOC 10Y
+0.05%
+EX-DATE
+03/11/2026
+PAYMENT DATE
+04/01/2026
+CONSEC. YEARLY INCREASES
+2
+NVDA Growth Rate Metrics
+PRICE CAGR TTM
+74.21%
+PRICE CAGR 3Y
+87.74%
+PRICE CAGR 5Y
+68.03%
+TOTAL RETURN CAGR TTM
+74.46%
+TOTAL RETURN CAGR 3Y
+87.89%
+TOTAL RETURN CAGR 5Y
+68.15%
+REVENUE CAGR TTM
+70.94%
+REVENUE CAGR 3Y
+114.41%
+REVENUE CAGR 5Y
+67.69%
+NET INCOME CAGR TTM
+108.32%
+NET INCOME CAGR 3Y
+222.76%
+NET INCOME CAGR 5Y
+97.76%
+EPS CAGR TTM
+214.42%
+EPS CAGR 3Y
+208.69%
+EPS CAGR 5Y
+99.90%
+FCF CAGR TTM
+65.47%
+FCF CAGR 3Y
+186.62%
+FCF CAGR 5Y
+85.17%
+DIVIDENDS CAGR TTM
+0%
+DIVIDENDS CAGR 3Y
+35.53%
+DIVIDENDS CAGR 5Y
+20.08%
+NVDA Discounted Cash Flow Metrics
+FAIR VALUE PRICE
+$308.36
+FAIR VALUE PRICE (FCF)
+$308.36
+FAIR VALUE PRICE (EPS)
+$372.38
+MARGIN OF SAFETY
+31.53%
+MARGIN OF SAFETY (FCF)
+31.53%
+MARGIN OF SAFETY (EPS)
+43.30%
+NVDA Returns By Period
+7D RETURN
+-1.95%
+30D RETURN
+0.90%
+YTD RETURN
+13.22%
+TTM RETURN
+51.73%
+3Y RETURN
+426.85%
+5Y RETURN
+1,201.33%
+10Y RETURN
+18,260%
+15Y RETURN
+45,502.59%
+20Y RETURN
+59,376.06%
+NVDA Yearly Returns
+2026
+13.22%
+2025
+38.92%
+2024
+171.25%
+2023
+239.01%
+2022
+-50.26%
+2021
+125.48%
+2020
+122.25%
+2019
+76.90%
+2018
+-30.83%
+2017
+82.08%
+NVDA Average Annual Returns By Period (CAGR)
+CAGR TTM
+74.46%
+CAGR 3Y
+87.89%
+CAGR 5Y
+68.15%
+CAGR 10Y
+69.13%
+CAGR 15Y
+51.18%
+CAGR 20Y
+37.61%
+NVDA Revenue Metrics
+REVENUE TTM
+$253.491B
+REVENUE CAGR 3Y
+114.41%
+REVENUE CAGR 5Y
+67.69%
+NET INCOME TTM
+$159.613B
+NET INCOME CAGR 3Y
+222.76%
+NET INCOME CAGR 5Y
+97.76%
+FREE CASH FLOW TTM
+$119.076B
+FCF CAGR 3Y
+186.62%
+FCF CAGR 5Y
+85.17%
+NVDA PE Ratio Metrics
+PE RATIO
+32.33
+PE RATIO AVG TTM
+43.25
+PE RATIO AVG 3Y
+61.94
+CURRENT VS TTM AVG
+-25.24%
+CURRENT VS 3Y AVG
+-47.80%
+CURRENT VS 5Y AVG
+-52.38%
+NVDA PS Ratio Metrics
+PS RATIO
+20.43
+PS RATIO AVG TTM
+23.24
+PS RATIO AVG 3Y
+26.74
+CURRENT VS TTM AVG
+-12.11%
+CURRENT VS 3Y AVG
+-23.60%
+CURRENT VS 5Y AVG
+-21.39%
+NVDA PB Ratio Metrics
+PB RATIO
+26.16
+PB RATIO AVG TTM
+32.28
+PB RATIO AVG 3Y
+36.58
+CURRENT VS TTM AVG
+-18.95%
+CURRENT VS 3Y AVG
+-28.48%
+CURRENT VS 5Y AVG
+-23.71%
+NVDA Price to Free Cash Flow Ratio Metrics
+PFCF RATIO
+43.25
+PFCF RATIO AVG TTM
+49.39
+PFCF RATIO AVG 3Y
+62.69
+CURRENT VS TTM AVG
+-12.44%
+CURRENT VS 3Y AVG
+-31.01%
+CURRENT VS 5Y AVG
+-40.24%
+NVDA Debt to Equity Ratio Metrics
+DEBT/EQUITY RATIO
+0.04
+DEBT/EQUITY RATIO AVG TTM
+0.07
+DEBT/EQUITY RATIO AVG 3Y
+0.17
+CURRENT VS TTM AVG
+-38.78%
+CURRENT VS 3Y AVG
+-74.96%
+CURRENT VS 5Y AVG
+-84.68%
+NVDA PEG Ratio Metrics
+PEG RATIO
+0.29
+PEG RATIO AVG TTM
+0.55
+PEG RATIO AVG 3Y
+0.18
+CURRENT VS TTM AVG
+-46.43%
+CURRENT VS 3Y AVG
++62.70%
+CURRENT VS 5Y AVG
++661.07%
+NVDA FCF Yield
+FCF YIELD
+2.30%
+FCF YIELD AVG TTM
+1.94%
+FCF YIELD AVG 3Y
+1.71%
+CURRENT VS TTM AVG
++18.31%
+CURRENT VS 3Y AVG
++34.78%
+CURRENT VS 5Y AVG
++43.35%
+NVDA Earnings Yield
+EARNINGS YIELD
+3.08%
+EARNINGS YIELD AVG TTM
+2.41%
+EARNINGS YIELD AVG 3Y
+2.02%
+CURRENT VS TTM AVG
++28.09%
+CURRENT VS 3Y AVG
++52.38%
+CURRENT VS 5Y AVG
++63.44%
+NVDA EV/EBIT Ratio Metrics
+EV/EBIT RATIO
+31.46
+EV/EBIT RATIO AVG TTM
+35.98
+EV/EBIT RATIO AVG 3Y
+52.16
+CURRENT VS TTM AVG
+-12.55%
+CURRENT VS 3Y AVG
+-39.69%
+CURRENT VS 5Y AVG
+-50.15%
+NVDA EV/EBITDA Ratio Metrics
+EV/EBITDA RATIO
+30.85
+EV/EBITDA RATIO AVG TTM
+35.20
+EV/EBITDA RATIO AVG 3Y
+47.25
+CURRENT VS TTM AVG
+-12.36%
+CURRENT VS 3Y AVG
+-34.71%
+CURRENT VS 5Y AVG
+-43.36%
+NVDA EV/Assets Ratio Metrics
+EV/ASSETS RATIO
+19.68
+EV/ASSETS RATIO AVG TTM
+23.46
+EV/ASSETS RATIO AVG 3Y
+25.27
+CURRENT VS TTM AVG
+-16.13%
+CURRENT VS 3Y AVG
+-22.15%
+CURRENT VS 5Y AVG
+-14.38%
+NVDA EV/Sales Ratio Metrics
+EV/SALES RATIO
+20.14
+EV/SALES RATIO AVG TTM
+21.75
+EV/SALES RATIO AVG 3Y
+24.67
+CURRENT VS TTM AVG
+-7.41%
+CURRENT VS 3Y AVG
+-18.34%
+CURRENT VS 5Y AVG
+-17.78%
+NVDA Current Ratio Metrics
+CURRENT RATIO
+3.44
+CURRENT RATIO AVG TTM
+3.88
+CURRENT RATIO AVG 3Y
+3.83
+CURRENT VS TTM AVG
+-11.39%
+CURRENT VS 3Y AVG
+-10.06%
+CURRENT VS 5Y AVG
+-19.44%
+NVDA Quick Ratio Metrics
+QUICK RATIO
+2.85
+QUICK RATIO AVG TTM
+3.27
+QUICK RATIO AVG 3Y
+3.29
+CURRENT VS TTM AVG
+-12.81%
+CURRENT VS 3Y AVG
+-13.17%
+CURRENT VS 5Y AVG
+-23.16%
+NVDA ROIC Metrics
+ROIC
+91.10%
+ROIC AVG 3Y
+98.61%
+ROIC AVG 5Y
+76.60%
+CURRENT VS 3Y AVG
+-7.62%
+CURRENT VS 5Y AVG
++18.92%
+CURRENT VS 10Y AVG
++30.74%
+NVDA Return on Assets Metrics
+ROA
+79.76
+ROA AVG TTM
+74.19
+ROA AVG 3Y
+61.31
+CURRENT VS TTM AVG
++7.52%
+CURRENT VS 3Y AVG
++30.11%
+CURRENT VS 5Y AVG
++75.87%
+NVDA Return on Equity Metrics
+ROE
+81.65
+ROE AVG TTM
+83.89
+ROE AVG 3Y
+74.46
+CURRENT VS TTM AVG
+-2.67%
+CURRENT VS 3Y AVG
++9.66%
+CURRENT VS 5Y AVG
++40.89%
+NVDA Net Profit Margin Metrics
+NET PROFIT MARGIN
+55.14%
+NET PROFIT MARGIN AVG TTM
+55.14%
+NET PROFIT MARGIN AVG 3Y
+48.98%
+CURRENT VS TTM AVG
++14.20%
+CURRENT VS 3Y AVG
++28.56%
+CURRENT VS 5Y AVG
++53.42%
+NVDA Gross Profit Margin Metrics
+GROSS PROFIT MARGIN
+71.04%
+GROSS PFT MARGIN AVG TTM
+71.04%
+GROSS PFT MARGIN AVG 3Y
+70.83%
+CURRENT VS TTM AVG
++4.37%
+CURRENT VS 3Y AVG
++4.68%
+CURRENT VS 5Y AVG
++9.90%
+NVDA Tax Rate Metrics
+TAX RATE
+15.75%
+TAX RATE AVG 3Y
+11.91%
+TAX RATE AVG 5Y
+8.04%
+CURRENT VS 3Y AVG
++32.25%
+CURRENT VS 5Y AVG
++95.95%
+CURRENT VS 10Y AVG
++104.25%
+Last Updated: Friday, May 29 2026
+
+
+
+
+NVDA Company Profile
+NVIDIA Corp. engages in the design and manufacture of computer graphics processors, chipsets, and related multimedia software. The company is...
+[Read More]
+
+
+Latest NVDA News
+Jensen Huang's $40 Trillion Robot Call Echoes the 1913 Moving Assembly Line. The Pattern Says Buy the Picks and Shovels
+05/30/2026 - 24/7 WALL STREET
+Nvidia: Data Centers Made It Great, Physical AI Could Make It Generational
+05/30/2026 - SEEKING ALPHA
+This Fund Manager Has a Brilliant Strategy for Investing in AI Stocks
+05/30/2026 - THE MOTLEY FOOL
+3 Stocks Rallying on Micron's Price Boost: Substance or Hype?
+05/29/2026 - MARKETBEAT
+Nvidia Stock Investors Cheer as its Market Share Increases
+05/29/2026 - THE MOTLEY FOOL
+More NVDA News >>
+
+
+Latest Market News
+Investing in the Dow or S&P 500 doesn't matter — here's what actually does
+05/30/2026 - MARKET WATCH
+6 Numbers That Should Give Prudent Investors Pause
+05/30/2026 - SEEKING ALPHA
+The U.S.-China rivalry is killing global supply chains. Your portfolio needs a ‘home court advantage.
+05/30/2026 - MARKET WATCH
+Legacy Tech Company Stocks Surge on AI Pivot
+05/30/2026 - BLOOMBERG MARKETS AND FINANCE
+Wall Street's red-hot momentum trade is still winning, as strategy delivers best 2-month gain on record
+05/30/2026 - MARKET WATCH
+More Market News >>
+
+
+
+
+
+
+FinanceCharts.com
+
+Your trusted source for comprehensive financial data, stock research, and market analysis. We're 100% FREE.
+
+QUICK LINKS
+Login
+Stock Screeners
+Definitions
+COMPANY
+About Us
+Contact
+Help Center
+© 2026 FinanceCharts.com. All rights reserved.
+Terms of Service
+Privacy Policy
+Do Not Sell My Personal Information
+IMPORTANT DISCLAIMERS
+FinanceCharts.com is not operated by a broker, a dealer, or a registered investment adviser. Under no circumstances does any information posted on FinanceCharts.com represent a recommendation to buy or sell a security. The information on this site is not intended to be, nor does it constitute, investment advice or recommendations. In no event shall FinanceCharts.com be liable to anyone using this site for any damages of any kind arising out of the use of any content or other material published or available on FinanceCharts.com, or relating to the use of, or inability to use, FinanceCharts.com or any content, including, without limitation, any investment losses, lost profits, lost opportunity, special, incidental, indirect, consequential or punitive damages. Past performance is a poor indicator of future performance. The information on this site is in no way guaranteed for completeness, accuracy, timeliness or in any other way. Company logos are owned by their respective copyright holders and are displayed for editorial purposes only. Prices are not displayed in real time.

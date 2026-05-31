@@ -1,0 +1,93 @@
+{
+  "pe_ratio": {
+    "name": "Price-to-Earnings Ratio",
+    "unification_rule": "unified",
+    "sources": {
+      "yahoo": "trailingPE",
+      "financecharts": "PE RATIO",
+      "gurufocus": "PE Ratio"
+    }
+  },
+  "fwd_pe_ntm": {
+    "name": "Forward PE Next Twelve Months",
+    "unification_rule": "split",
+    "sources": {
+      "yahoo": "forwardPE"
+    }
+  },
+  "fwd_pe_fy": {
+    "name": "Forward PE Fiscal Year",
+    "unification_rule": "split",
+    "sources": {
+      "financecharts": "PE RATIO (FWD)",
+      "gurufocus": "Forward PE Ratio"
+    }
+  },
+  "ps_ratio": {
+    "name": "Price-to-Sales Ratio",
+    "unification_rule": "unified",
+    "sources": {
+      "yahoo": "priceToSalesTrailing12Months",
+      "financecharts": "PS RATIO",
+      "gurufocus": "PS Ratio"
+    }
+  },
+  "pb_ratio": {
+    "name": "Price-to-Book Ratio",
+    "unification_rule": "unified",
+    "sources": {
+      "yahoo": "priceToBook",
+      "financecharts": "PB RATIO",
+      "gurufocus": "PB Ratio"
+    }
+  },
+  "ev_ebitda": {
+    "name": "EV to EBITDA Ratio",
+    "unification_rule": "unified",
+    "sources": {
+      "yahoo": "enterpriseToEbitda",
+      "financecharts": "EV/EBITDA RATIO",
+      "gurufocus": "EV-to-EBITDA"
+    }
+  },
+  "fair_value": {
+    "name": "Fair Value Price",
+    "unification_rule": "unified",
+    "sources": {
+      "yahoo": "targetMeanPrice",
+      "financecharts": "FAIR VALUE PRICE (FCF)",
+      "gurufocus": "gf_value"
+    }
+  },
+  "mos": {
+    "name": "Margin of Safety",
+    "unification_rule": "unified",
+    "sources": {
+      "financecharts": "margin_of_safety_fcf",
+      "gurufocus": "mos"
+    }
+  },
+  "roic": {
+    "name": "Return on Invested Capital",
+    "unification_rule": "unified",
+    "sources": {
+      "financecharts": "roic",
+      "gurufocus": "roic_pct"
+    }
+  },
+  "op_margin": {
+    "name": "Operating Margin",
+    "unification_rule": "unified",
+    "sources": {
+      "yahoo": "operatingMargins",
+      "gurufocus": "op_margin_match"
+    }
+  },
+  "fcf_margin": {
+    "name": "Free Cash Flow Margin",
+    "unification_rule": "unified",
+    "sources": {
+      "gurufocus": "fcf_margin_pct"
+    }
+  }
+}

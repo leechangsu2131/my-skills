@@ -1,0 +1,13 @@
+{
+  "ticker": "NVDA",
+  "company_name": "NVIDIA Corporation",
+  "historical_average_per": 20.0,
+  "peer_average_per": 20.0,
+  "forward_pe": 16.681019,
+  "currency": "USD",
+  "price": 211.14,
+  "shares_outstanding": 24221000000,
+  "market_cap": 5114022068224,
+  "valuation_date": "2026-05-31",
+  "market_data_as_of": "2026-05-31"
+}

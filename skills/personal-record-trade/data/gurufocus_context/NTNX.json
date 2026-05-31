@@ -1,0 +1,16 @@
+{
+    "gf_value": 66.12,
+    "financial_strength": 5,
+    "profitability_rank": 3,
+    "piotroski_f_score": 8,
+    "altman_z_score": 1.38,
+    "roic_pct": 11.51,
+    "fcf_margin_pct": 28.94,
+    "op_margin_pct": 7.94,
+    "ev_to_fcf": 17.62,
+    "roiic_3y_pct": 495.66,
+    "pe_ratio": 56.6,
+    "fwd_pe_fy": 23.94,
+    "ps_ratio": 5.73,
+    "ev_ebitda": 38.31
+}

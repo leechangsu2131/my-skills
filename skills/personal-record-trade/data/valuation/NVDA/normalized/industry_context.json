@@ -1,0 +1,10 @@
+{
+    "tam_current": 60.0,
+    "tam_cagr": 20.1,
+    "tam_5yr": 150.0,
+    "peer_per": 45.0,
+    "normal_per": 30.0,
+    "wacc": 9.5,
+    "market_share_current": 80.0,
+    "competitive_note": "AI 인프라 필수재인 GPU 가속기 독점(점유율 80% 이상). CUDA 소프트웨어 플랫폼 생태계를 통한 철벽 같은 진입장벽 구축. 단기 거품 논란 및 빅테크 자체 ASIC 설계 리스크."
+}

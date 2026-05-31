@@ -1,0 +1,13 @@
+{
+  "ticker": "HOOD",
+  "company_name": "Robinhood Markets, Inc.",
+  "historical_average_per": 20.0,
+  "peer_average_per": 20.0,
+  "forward_pe": 34.565674,
+  "currency": "USD",
+  "price": 94.3,
+  "shares_outstanding": 791184698,
+  "market_cap": 84917633024,
+  "valuation_date": "2026-05-31",
+  "market_data_as_of": "2026-05-31"
+}

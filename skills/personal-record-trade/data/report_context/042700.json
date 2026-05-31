@@ -1,0 +1,19 @@
+{
+  "ticker": "042700",
+  "company_name": "한미반도체",
+  "brokerage": "상상인증권",
+  "date": "2026-05-21",
+  "investment_opinion": "Buy",
+  "target_price": 380000,
+  "metrics": {
+    "24M_fwd_eps": 5430,
+    "peer_target_per": 69.8,
+    "upside_potential_percent": 14.3
+  },
+  "summary": "1분기는 비수기 및 투자 공백으로 부진했으나, 2분기부터 북미 고객사향 TC 본더 출하가 본격화되며 V자 반등이 예상됨. 하반기부터 2.5D 패키징용 신규 장비 및 HBF 모멘텀 개화 기대.",
+  "key_factors": [
+    "주요 고객사의 HBM4 투자는 2분기 이후로 이연됨",
+    "글로벌 Peer BESI의 2026년 예상 PER 69.8배를 밸류에이션에 적용",
+    "26년 연간 매출액 7,850억원, 영업이익 3,694억원으로 사상 최대 실적 기대"
+  ]
+}

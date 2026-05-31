@@ -1,5 +1,13 @@
 import sys
 import argparse
+
+# Windows cp949 인코딩 오류 방지
+if hasattr(sys.stdout, 'reconfigure'):
+    if sys.stdout.encoding != 'utf-8':
+        sys.stdout.reconfigure(encoding='utf-8')
+    if sys.stderr.encoding != 'utf-8':
+        sys.stderr.reconfigure(encoding='utf-8')
+
 from pipeline.dart_fetcher import get_dart_data
 from pipeline.market_fetcher import get_market_data
 from pipeline.llm_mapper import map_dart_to_metrics
@@ -45,6 +53,9 @@ def run_pipeline(ticker: str, year: int, quarter: str = "A"):
     print("\n🎉 모든 파이프라인 작업이 완료되었습니다! 대시보드(dashboard.py)를 실행해보세요.")
 
 if __name__ == "__main__":
+    from dotenv import load_dotenv
+    load_dotenv()
+    
     parser = argparse.ArgumentParser(description="Valuation Data Pipeline CLI")
     parser.add_argument("ticker", type=str, help="종목코드 (예: 009150)")
     parser.add_argument("year", type=int, help="수집할 사업연도 (예: 2024)")

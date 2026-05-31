@@ -1,0 +1,932 @@
+🚀 Enjoy a 7-Day Free Trial Thru Jun 07, 2026! ✨
+Sign Up
+Login
+Home 
+Screeners 
+Gurus 
+Insiders 
+Market 
+News 
+Tools 
+Pricing
+Reviews
+Data Licensing 
+Support
+Education 
+Subscribe
+0
+Site Overview
+ 7-Day Free Trial
+/
+NVDA
+▼0.74%
+GURUFOCUS.COM 
+STOCK LIST 
+Technology 
+Semiconductors 
+NVIDIA Corp (NAS:NVDA)
+ 
+Tutorials 
+NVIDIA Corp
+ 185  20
+2
+NEW
+NAS:NVDA (USA)   Ordinary Shares
+$ 211.14  -1.58 (-0.74%) 10:08 PM EST
+P/E:
+32.33
+P/B:
+26.16
+Market Cap:
+$ 5.11T
+Enterprise V:
+$ 5.05T
+Volume:
+280.78M
+Avg Vol (2M):
+159.48M
+Warning! GuruFocus detected 2 Severe warning signs with NVDA. Try a 7-Day Free Trial to check it out.
+Trade In: 
+GF Score™: 96 /100   
+Year:
+ 
+5D
+1M
+3M
+YTD
+1Y
+3Y
+5Y
+10Y
+All
+10Y:
+-%
+Above Low:
++NaN%
+Below High:
+NaN%
+  
+What is a stock summary page? Click here for an overview.
+Powered by GuruAPI
+Website
+SEC Filings
+ Stock PDF
+Dataset
+Financial Download
+ Manual of Stocks™
+AVGO ▲ 4.7%MU ▲ 4.77%AMD ▼ 0.47% 
+ Compare
+Summary
+30-Y Financials
+Valuation
+Forecast
+DCF
+Dividend
+Bonds
+Guru Trades
+Insider
+Interactive Chart
+Filings
+Transcripts
+News
+Compare
+Stock PDF
+Ownership
+More
+Warning SignsFinancialsPeter Lynch ChartGuru TradesPerformanceBusiness DescriptionExecutivesBack to Top
+Business Description
+GURUFOCUS.COM 
+STOCK LIST 
+USA 
+NAS 
+NVIDIA Corp (NAS:NVDA)
+NVIDIA Corp
+NAICS : 334413 SIC : 3674
+ISIN : US67066G1040
+https://www.nvidia.com
+2788 San Tomas Expressway, Santa Clara, CA, USA, 95051
+
+Share Class Description:
+
+NVDA: Ordinary Shares
+
+Total Employee Number:
+
+42,000
+Compare
+ Compare
+AVGOMUAMDINTCTXNQCOMADIMRVLNXPIMPWRTPE:2330XKRX:000660TSE:285ATPE:2454SHSE:688256XKRX:402340XTER:IFXHKSE:00981TPE:3711CBRS
+Traded in other countries / regions
+NVDA.USANVDC34.Brazil0R1I.UKNVDA.CanadaNVDA80.ThailandNVDA.ArgentinaNVD.Germany1NVDA.ItalyNVDA.MexicoNVDA.PeruNVDA_KZ.KazakhstanNVDA.AustriaNVDA.PolandNVDACL.ChileNVDA.SwitzerlandNVD.BulgariaNVDA.Ukraine
+Index Membership
+Dow 30S&P 500NASDAQ 100Russell 1000Russell 3000MSCI World Index
+IPO Date
+1999-01-22
+Description
+Nvidia is a leading developer of graphics processing units. Traditionally, GPUs were used to enhance the experience on computing platforms, most notably in gaming applications on PCs. GPU use cases have since emerged as important semiconductors used in artificial intelligence to run large language models. Nvidia not only offers AI GPUs, but also a software platform, Cuda, used for AI model development and training. Nvidia is also expanding its data center networking solutions, helping to tie GPUs together to handle complex workloads.
+Financial Strength
+9/10
+	Name	Current	Vs Industry		Vs History	
+	
+Cash-To-Debt
+	
+6.53
+	
+		
+	
+	
+Equity-to-Asset
+	
+0.75
+	
+		
+	
+	
+Debt-to-Equity
+	
+0.06
+	
+		
+	
+	
+Debt-to-EBITDA
+	
+0.06
+	
+		
+	
+	
+Interest Coverage
+	
+542.76
+	
+		
+	
+	
+Piotroski F-Score
+	
+8/9
+	
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+	
+	
+Altman Z-Score
+	
+52.83
+	
+Distress
+Grey
+Safe
+	
+	
+Beneish M-Score
+	
+-1.22
+	
+Manipulator
+Not Manipulator
+	
+	
+WACC vs ROIC
+	
+	
+WACC
+ROIC
+	
+Growth Rank
+10/10
+	Name	Current	Vs Industry		Vs History	
+	
+3-Year Revenue Growth Rate
+	
+101.5
+	
+		
+	
+	
+3-Year EBITDA Growth Rate
+	
+191.1
+	
+		
+	
+	
+3-Year EPS without NRI Growth Rate
+	
+142.6
+	
+		
+	
+	
+3-Year FCF Growth Rate
+	
+196
+	
+		
+	
+	
+3-Year Book Growth Rate
+	
+93.3
+	
+		
+	
+	
+Future 3-5Y EPS without NRI Growth Rate Estimate Industry Rank
+	
+48.06
+	
+		
+	
+	
+Future 3-5Y Total Revenue Growth Rate Estimate
+	
+45.51
+	
+		
+	
+Momentum Rank
+10/10
+	Name	Current	Vs Industry		Vs History	
+	
+5-Day RSI
+	
+30.94
+	
+		
+	
+	
+9-Day RSI
+	
+43.08
+	
+		
+	
+	
+14-Day RSI
+	
+49.41
+	
+		
+	
+	
+3-1 Month Momentum %
+	
+18.09
+	
+		
+	
+	
+6-1 Month Momentum %
+	
+18.22
+	
+		
+	
+	
+12-1 Month Momentum %
+	
+50.33
+	
+		
+	
+Liquidity Ratio
+	Name	Current	Vs Industry		Vs History	
+	
+Current Ratio
+	
+3.44
+	
+		
+	
+	
+Quick Ratio
+	
+2.85
+	
+		
+	
+	
+Cash Ratio
+	
+1.84
+	
+		
+	
+	
+Days Inventory
+	
+103.9
+	
+		
+	
+	
+Days Sales Outstanding
+	
+46.8
+	
+		
+	
+	
+Days Payable
+	
+53.38
+	
+		
+	
+Dividend & Buy Back
+	Name	Current	Vs Industry		Vs History	
+	
+Dividend Yield %
+	
+0.02
+	
+		
+	
+	
+Dividend Payout Ratio
+	
+0.01
+	
+		
+	
+	
+3-Year Dividend Growth Rate
+	
+35.7
+	
+		
+	
+	
+Forward Dividend Yield %
+	
+0.47
+	
+		
+	
+	
+5-Year Yield-on-Cost %
+	
+0.05
+	
+		
+	
+	
+3-Year Average Share Buyback Ratio
+	
+0.5
+	
+		
+	
+	
+Shareholder Yield %
+	
+0.89
+	
+		
+	
+Profitability Rank
+10/10
+	Name	Current	Vs Industry		Vs History	
+	
+Gross Margin %
+	
+74.15
+	
+		
+	
+	
+Operating Margin %
+	
+64.02
+	
+		
+	
+	
+Net Margin %
+	
+62.97
+	
+		
+	
+	
+EBITDA Margin %
+	
+76.13
+	
+		
+	
+	
+FCF Margin %
+	
+46.98
+	
+		
+	
+	
+OCF Margin %
+	
+49.57
+	
+		
+	
+	
+ROE %
+	
+121.72
+	
+		
+	
+	
+ROA %
+	
+89.33
+	
+		
+	
+	
+ROIC %
+	
+153.38
+	
+		
+	
+	
+3-Year ROIIC %
+	
+117.03
+	
+		
+	
+	
+ROC (Joel Greenblatt) %
+	
+505.57
+	
+		
+	
+	
+ROCE %
+	
+128.12
+	
+		
+	
+	
+Years of Profitability over Past 10-Year
+	
+10
+	
+		
+	
+	
+Moat Score
+	
+9
+	
+		
+	
+	
+Tariff Resilience Score
+	
+3
+	
+		
+	
+GF Value Rank
+4/10
+	Name	Current	Vs Industry		Vs History	
+	
+PE Ratio
+	
+32.33
+	
+		
+	
+	
+Forward PE Ratio
+	
+23.84
+	
+		
+	
+	
+PE Ratio without NRI
+	
+36.15
+	
+		
+	
+	
+Shiller PE Ratio
+	
+158.6
+	
+		
+	
+	
+Price-to-Owner-Earnings
+	
+36.25
+	
+		
+	
+	
+PEG Ratio
+	
+0.36
+	
+		
+	
+	
+PS Ratio
+	
+20.36
+	
+		
+	
+	
+PB Ratio
+	
+26.16
+	
+		
+	
+	
+Price-to-Tangible-Book
+	
+29.83
+	
+		
+	
+	
+Price-to-Free-Cash-Flow
+	
+43.33
+	
+		
+	
+	
+Price-to-Operating-Cash-Flow
+	
+41.07
+	
+		
+	
+	
+EV-to-EBIT
+	
+26.59
+	
+		
+	
+	
+EV-to-Forward-EBIT
+	
+19.57
+	
+		
+	
+	
+EV-to-EBITDA
+	
+26.15
+	
+		
+	
+	
+EV-to-Forward-EBITDA
+	
+19.25
+	
+		
+	
+	
+EV-to-Revenue
+	
+19.91
+	
+		
+	
+	
+EV-to-Forward-Revenue
+	
+13
+	
+		
+	
+	
+EV-to-FCF
+	
+42.37
+	
+		
+	
+	
+Price-to-GF-Value
+	
+0.63
+	
+		
+	
+	
+Price-to-Projected-FCF
+	
+6.87
+	
+		
+	
+	
+Price-to-DCF (Earnings Based)
+	
+1.16
+	
+		
+	
+	
+Price-to-DCF (FCF Based)
+	
+1.39
+	
+		
+	
+	
+Price-to-Median-PS-Value
+	
+1.02
+	
+		
+	
+	
+Price-to-Peter-Lynch-Fair-Value
+	
+1.45
+	
+		
+	
+	
+Price-to-Graham-Number
+	
+6.92
+	
+		
+	
+	Price-to-Net-Current-Asset-Value	
+58.81
+	
+		
+	
+	Price-to-Net-Cash	
+310.5
+	
+		
+	
+	
+Earnings Yield (Greenblatt) %
+	
+3.76
+	
+		
+	
+	
+FCF Yield %
+	
+2.33
+	
+		
+	
+	
+Forward Rate of Return (Yacktman) %
+	
+20.9
+	
+		
+	
+GF Value™: $334.95 
+NVDA
+Possible Value Trap, Think Twice
+  
+Warning Signs
+Warning! GuruFocus detected 2 Severe warning signs with NVDA. Try a 7-Day Free Trial to check it out.
+NVIDIA Corp Filings
+10-K
+10-Q
+Form 4
+Others
+	Filing Date	Document Date	Form	
+	2026-05-20	2026-04-26	10-Q	
+	2026-02-25	2026-01-25	10-K	
+	2025-11-19	2025-10-26	10-Q	
+	2025-08-27	2025-07-27	10-Q	
+	2025-05-28	2025-04-27	10-Q	
+	2025-02-26	2025-01-26	10-K	
+	2024-11-20	2024-10-27	10-Q	
+	2024-08-28	2024-07-28	10-Q	
+	2024-05-29	2024-04-28	10-Q	
+	2024-02-21	2024-01-28	10-K	
+Show
+Entries
+12
+NVIDIA Corp Stock Events
+Financials Calendars  
+	Event	Date	Price ($)	
+	Third quarter earnings conference call for 2027	2026-11-19 14:00	In 173 days	
+
+	Third quarter earnings results for 2027	2026-11-19 13:20	In 173 days	
+
+	Second quarter earnings conference call for 2027	2026-08-27 14:00	In 89 days	
+
+	Second quarter earnings results for 2027	2026-08-27	In 88 days	
+
+	General meeting for 2026	2026-06-24 09:00	In 24 days	
+
+	BofA Global Technology Conference	2026-06-04 08:40	In 4 days	
+
+	USD 0.250000 Cash Dividend	2026-06-04	In 4 days	
+
+	TD Cowen 54th Annual Technology, Media, & Telecom Conference	2026-05-28 07:15	212.60 (-0.71%)	
+	First quarter earnings conference call for 2027	2026-05-20 17:00	220.61 (+0.45%)	
+	First quarter earnings results for 2027	2026-05-20	220.61 (+0.45%)	
+Show
+Entries
+123456
+Guru Commentaries on NAS:NVDA
+No articles.
+Press Release
+	Subject	Date	
+No Press Release
+Headlines
+See More 
+1234569
+May 30, 2026
+Microsoft to unveil first Windows PCs powered by Nvidia chips next week: Axios
+Seeking Alpha • 9:39am
+May 29, 2026
+The S&P Hit A Record While 8 Of 11 Sectors Fell
+Benzinga • 4:40pm
+Cerebras continues to plunge; shares now down 24% from opening day close
+Seeking Alpha • 2:46pm
+SA Asks: Micron's stock has soared in May; is it now overvalued?
+Seeking Alpha • 11:30am
+ByteDance working on AI chip similar to Groq offerings: report
+Seeking Alpha • 11:22am
+May 28, 2026
+What's Going On With AMD Stock Friday?
+Benzinga • 7:50am
+Analysts Double Down On Marvell After AI Outlook Stuns Wall Street
+Benzinga • 7:25am
+Taiwan Semiconductor Targets 30% Power Savings To Fight the AI Energy Crisis: Report
+Benzinga • 5:49am
+Samsung takes lead in AI memory race, begins shipping advanced HBM4E samples
+Seeking Alpha • 1:38am
+Cadence, Samsung partner to deliver signoff-ready platform for AI infrastructure
+Seeking Alpha • 2:46pm
+Cboe bags SEC approval to offer extended trading hours for select multi-listed equity options
+Seeking Alpha • 2:26pm
+Trump Says He 'Saved' Crypto, But Did Bitcoin, Ethereum, XRP Actually Benefit?
+Benzinga • 12:04pm
+Coinbase Is Bringing Perp-Style Index Futures To Allow Traders To Speculate On AI, China And US Defense Industry
+Benzinga • 11:46am
+Groq pursues $650M fundraise following Nvidia's $20B licensing deal: report
+Seeking Alpha • 10:33am
+May 27, 2026
+Trump Ally Laura Loomer Questions Nvidia CEO Jensen Huang's Chinese University Ties, Writes To Pentagon, Says It's A 'Massive Scandal'
+Benzinga • 8:18am
+What's Going On With Intel Stock Thursday?
+Benzinga • 5:49am
+What's Going On With AMD Stock Thursday?
+Benzinga • 5:24am
+AI Chip Stocks Are Driving Nearly All Of The S&P 500's Gains And Some Analysts See Echoes Of The Dot-Com Bubble
+Benzinga • 4:01am
+Nvidia's Jensen Huang to join board of China's Tsinghua University: report
+Seeking Alpha • 3:51am
+AMD Stock Is On A Once-In-50-Year Run — And It Looks Like Unfinished Business
+Benzinga • 11:55am
+Nvidia's Huang plans to strengthen 'AI semiconductor triangle alliance': report
+Seeking Alpha • 10:42am
+Nvidia, Micron set to power a third of S&P 500 earnings growth in 2026 - Goldman
+Seeking Alpha • 10:07am
+May 26, 2026
+DigitalOcean, NVIDIA power Hippocratic AI to reach 10M patient calls with 99.9% safety
+Seeking Alpha • 8:35am
+After Micron, Nvidia-Supplier SK Hynix Joins $1 Trillion Club As AI Chip Frenzy Reaches New Heights— Analyst Says Memory Boom Is Far From Over
+Benzinga • 5:18am
+Google And Amazon Emerge As AI 'Winners' As Magnificent 7 Breaks Apart: Cash Flow Becomes The Ultimate Test, Says Strategist
+Benzinga • 5:13am
+IREN Secures Blackwell Firepower To Feed Booming AI Cloud Demand
+Benzinga • 4:29am
+Jensen Huang Says Nvidia Will Pour $150 Billion A Year Into 'Booming' AI Hub Taiwan
+Benzinga • 4:00am
+Nvidia plans to invest $150B a year in Taiwan
+Seeking Alpha • 3:51am
+SK Hynix hits $1T valuation
+Seeking Alpha • 2:34am
+Taiwan cracks down on smuggling of Nvidia AI chips to China via Japan: report
+Seeking Alpha • 11:22pm
+NVDA Down Almost 10% In 2 Weeks Despite Record Revenue: What Is Going On?
+Benzinga • 1:13pm
+Uber's $10 Billion Robotaxi Bet Is Turning Lucid Into A Dilution Machine
+Benzinga • 12:38pm
+What Is Going On With CoreWeave Stock On Tuesday?
+Benzinga • 12:02pm
+Dell Shares Hit New 52-Week High As AI Push And Analyst Upgrades Fuel Rally
+Benzinga • 12:02pm
+Ouster Stock Hits 52-Week High - Here's Why
+Benzinga • 9:16am
+Huawei's New Chip Architecture Rewrites Sanctions Playbook
+Benzinga • 9:10am
+May 25, 2026
+The Next Threat To Nvidia Isn't A Chipmaker — It's An IPO
+Benzinga • 8:58am
+What's Going On With IREN Stock Tuesday?
+Benzinga • 8:17am
+Classover partners with 1Legion on planned $50M AI GPU infrastructure venture
+Seeking Alpha • 7:46am
+NVIDIA's Jensen Huang Declares China A 'Very Important' Market
+Benzinga • 5:03am
+Investigating NVIDIA's Standing In Semiconductors &amp; Semiconductor Equipment Industry Compared To Competitors
+Benzinga • 4:58am
+Five Things Moving Markets: Records, Record Lows, And $100 Oil All In One Week
+Benzinga • 3:08pm
+Huawei Says It Has A Chipmaking Breakthrough. Did US Sanctions Backfire?
+Benzinga • 12:16pm
+May 24, 2026
+Mohamed El-Erian Warns Investors Can No Longer Count On Central Banks To Rescue Markets During Selloffs
+Benzinga • 6:58am
+Tom Lee Says Mag-7 Bear Market Is Over, But Trouble Is Brewing For Rest Of Wall Street: 'Day Of Reckoning'
+Benzinga • 5:07am
+Huawei unveils advanced chip design breakthrough amid US curbs
+Seeking Alpha • 3:53am
+Anthropic To Become More Valuable Than Today's AMD, Sk Hynix And Micron? Crypto Prediction Market Is Fully Convinced
+Benzinga • 3:06am
+Coinbase CEO flags these 8 gaps in finance as SEC delays tokenized plans
+Seeking Alpha • 1:48am
+Huawei proposes new architectural path for advanced chips to defy US controls
+Seeking Alpha • 11:23pm
+May 23, 2026
+SA Asks: What's the best memory chip stock right now?
+Seeking Alpha • 10:00am
+1234569
+Research Tools
+All-In-One Screener
+Stock Ideas
+Stock List
+Guru List
+Guru Real-Time Picks
+Insider List
+Insider Trades
+Economic Indicators
+Sector & Industry Performance
+DCF Calculator
+Discussion Board
+Product
+Pricing Plans
+Excel Add-In
+Google Sheets Add-on
+Data API
+Stock Comparison Table
+Manual of Stocks
+Instant Alerts
+Mobile App
+Newsletters Signup
+中文
+Education
+Financial Glossary
+Tutorials
+FAQ
+Buffett Indicator
+Shiller P/E
+Yield Curve Today
+U.S. Inflation Rate
+Global Market Valuation
+Fed Net Liquidity
+Buffett Assets Allocation
+Company
+About GuruFocus
+Career
+Contact Us
+Advertise
+Term of Use
+Privacy Policy
+Referral Program
+Partner Program
+Survey
+
+We'd love to learn more about your experiences on GuruFocus.com and how we can improve!
+
+ Take Survey
+Follow Us
+ 
+   
+Disclaimers
+GuruFocus.com is not operated by a broker or a dealer. Under no circumstances does any information posted on GuruFocus.com represent a recommendation to buy or sell a security. The information on this site, and in its related newsletters, is not intended to be, nor does it constitute investment advice or recommendations. The individuals or entities selected as "gurus" may buy and sell securities before and after any particular article and report and information herein is published, with respect to the securities discussed in any article and report posted herein. Gurus may be added or dropped from the GuruFocus site at any time. In no event shall GuruFocus.com be liable to any member, guest or third party for any damages of any kind arising out of the use of any content or other material published or available on GuruFocus.com, or relating to the use of, or inability to use, GuruFocus.com or any content, including, without limitation, any investment losses, lost profits, lost opportunity, special, incidental, indirect, consequential or punitive damages. Past performance is a poor indicator of future performance. The information on this site, and in its related newsletters, is not intended to be, nor does it constitute investment advice or recommendations. The information on this site is in no way guaranteed for completeness, accuracy or in any other way. The gurus listed in this website are not affiliated with GuruFocus.com, LLC. Stock quotes are provided by QuoteMedia, Inc. (CSI). Company fundamental data is provided by Morningstar. Analyst estimates data is sourced from both Refinitiv and Morningstar, with priority given to Refinitiv data. Data is updated daily.
+© 2004-2026 GuruFocus.com, LLC. All Rights Reserved.

@@ -27,6 +27,7 @@
 | `4_apps_script.js` | **병합** | 6가지 자동화 (알림+스냅샷+복원+섹터+주간복기) |
 | `5_add_googlefinance.py` | v2 | GOOGLEFINANCE 실시간현황+상관관계 시트 추가 |
 | `6_offline_analysis.py` | **Claude 신규** | yfinance 기반 28종목 오프라인 분석 (KRX 포함) |
+| `pipeline/ingest_report.py` | **신규** | PDF 리포트 텍스트 추출 및 목표가/투자의견 JSON 파싱 |
 | `README.md` | **병합** | 이 파일 |
 
 ---
@@ -137,6 +138,12 @@ Google Sheets 📊
     ├── 📅 특정일잔고        ← SUMIF 날짜 복원
     ├── 👋 청산종목
     └── 🧠 전략·전망
+
+    │ (애널리스트 리포트 기반 심층 분석)
+    ▼
+pipeline/ingest_report.py
+    ├── PDF 텍스트 추출 및 LLM 정형화
+    └── data/report_context/ 에 JSON 저장 → 시트 W,X,Y열, R/T열 자동 반영
 
     │ (오프라인 / KRX 포함 심화 분석)
     ▼

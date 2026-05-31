@@ -1,0 +1,15 @@
+{
+  "ticker": "042700",
+  "company_name": "한미반도체",
+  "valuation_date": "2026-05-31",
+  "market_data_as_of": "2026-05-29",
+  "price": 282000,
+  "shares_outstanding": 95312200,
+  "market_cap": 26878040400000,
+  "historical_average_per": 15.0,
+  "peer_average_per": 15.0,
+  "current_tam": 40000000000000,
+  "projected_tam_5yr": 60000000000000,
+  "currency": "KRW",
+  "note": "Auto-fetched via pykrx"
+}

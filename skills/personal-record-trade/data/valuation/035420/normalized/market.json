@@ -1,0 +1,16 @@
+{
+  "ticker": "035420",
+  "company_name": "NAVER",
+  "valuation_date": "2026-05-31",
+  "market_data_as_of": "2026-05-29",
+  "price": 234000,
+  "shares_outstanding": 156873776,
+  "market_cap": 36708463584000,
+  "historical_average_per": 15.0,
+  "peer_average_per": 15.0,
+  "forward_pe": 15.601757,
+  "current_tam": 40000000000000,
+  "projected_tam_5yr": 60000000000000,
+  "currency": "KRW",
+  "note": "Auto-fetched via pykrx"
+}

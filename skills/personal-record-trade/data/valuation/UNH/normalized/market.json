@@ -1,0 +1,13 @@
+{
+  "ticker": "UNH",
+  "company_name": "UnitedHealth Group Incorporated",
+  "historical_average_per": 20.0,
+  "peer_average_per": 20.0,
+  "forward_pe": 18.222345,
+  "currency": "USD",
+  "price": 380.31,
+  "shares_outstanding": 908144404,
+  "market_cap": 345376391168,
+  "valuation_date": "2026-05-31",
+  "market_data_as_of": "2026-05-31"
+}

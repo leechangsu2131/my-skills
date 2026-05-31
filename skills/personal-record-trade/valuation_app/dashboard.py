@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 import json
+import time
 
 import sys
 import os
@@ -10,6 +11,79 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 import pandas as pd
 import streamlit as st
+
+def _get_attr_or_key(obj, name, default=None):
+    """Pydantic 객체나 dict 타입 모두에서 안전하게 필드 또는 키 값을 추출합니다."""
+    if obj is None:
+        return default
+    # 1. 속성으로 접근 시도
+    try:
+        val = getattr(obj, name, None)
+        if val is not None:
+            return val
+    except Exception:
+        pass
+    # 2. 딕셔너리 키로 접근 시도
+    try:
+        if isinstance(obj, dict):
+            return obj.get(name, default)
+        elif hasattr(obj, '__getitem__'):
+            return obj[name]
+    except Exception:
+        pass
+    return default
+
+def generate_history_dataframe(all_observations, currency):
+    """all_observations 리스트에서 5개년 재무 추이 피벗 데이터프레임과 정렬된 기간 리스트를 생성합니다."""
+    hist_data = []
+    for obs in all_observations:
+        m_key = _get_attr_or_key(obs, 'metric_key')
+        period = _get_attr_or_key(obs, 'period')
+        val = _get_attr_or_key(obs, 'value')
+        label = _get_attr_or_key(obs, 'label') or m_key
+        
+        if m_key and period and val is not None:
+            hist_data.append({
+                "metric_key": m_key,
+                "label": label,
+                "period": period,
+                "value": val
+            })
+            
+    if not hist_data:
+        return None, [], False, 1
+        
+    df_hist = pd.DataFrame(hist_data)
+    target_keys = ["revenue", "operating_income", "net_income", "fcf", "eps", "total_equity", "net_debt"]
+    df_filtered = df_hist[df_hist["metric_key"].isin(target_keys)]
+    
+    if df_filtered.empty:
+        return None, [], False, 1
+        
+    periods_order = sorted(list(df_filtered["period"].unique()), key=lambda x: (x[-2:], x[:-2]) if x.endswith(("A", "Q1", "H1", "Q3")) else x)
+    
+    pivot_df = df_filtered.pivot_table(
+        index=["label"],
+        columns="period",
+        values="value",
+        aggfunc="first"
+    )
+    
+    existing_cols = [c for c in periods_order if c in pivot_df.columns]
+    pivot_df = pivot_df[existing_cols]
+    
+    is_usd = currency in ["USD", "달러"] if currency else False
+    divider = 1_000_000 if is_usd else 100_000_000
+    
+    # Cast to object to prevent pandas FutureWarning
+    formatted_df = pivot_df.astype(object).copy()
+    for idx in formatted_df.index:
+        if "EPS" in idx or "Tax Rate" in idx or "ROIC" in idx:
+            formatted_df.loc[idx] = formatted_df.loc[idx].apply(lambda v: f"{v:,.1f}" if pd.notnull(v) else "-")
+        else:
+            formatted_df.loc[idx] = formatted_df.loc[idx].apply(lambda v: f"{v/divider:,.1f}" if pd.notnull(v) else "-")
+            
+    return formatted_df, existing_cols, is_usd, divider
 
 from valuation_app.audit import run_audit
 from valuation_app.calculations import calc_required_fcf
@@ -1307,50 +1381,67 @@ def render_peg_tab(input_set: ValuationInputSet, market: dict) -> None:
             st.warning("WACC는 영구성장률(g)보다 커야 합니다.")
 
 
-def render_tam_tab(input_set: ValuationInputSet, market: dict) -> None:
+def render_tam_tab(input_set: ValuationInputSet, market: dict, ctx: dict = None) -> None:
+    ctx = ctx or {}
     st.markdown("### TAM 기반 시장 점유율 역산 (Implied Market Share)")
     st.caption("Reverse DCF가 요구하는 먼 미래의 필수 매출액을 달성하려면, 타겟 시장(TAM)에서 몇 %의 점유율을 차지해야 하는지 파악하여 현실성/버블 여부를 진단합니다.")
     
+    # 통화에 따른 스케일링 설정
+    currency_val = market.get("currency", "원")
+    is_usd = currency_val in ["USD", "달러"]
+    unit_label = "10억 달러 (B USD)" if is_usd else "조 원"
+    scale_divider = 1_000_000_000 if is_usd else 1_000_000_000_000
+    
     # 1. 기초 데이터 및 파이프라인 앵커링
     current_rev = input_set.inputs.get("revenue", 0)
-    current_tam = market.get("current_tam", 40000000000000)  # default 40T
-    projected_tam = market.get("projected_tam_5yr", 60000000000000)  # default 60T
+    
+    # Layer 2 Context에서 TAM 값 가져오기, 없으면 market 기본값
+    default_tam = ctx.get("tam_current", 0) or 0
+    default_tam = float(default_tam) * scale_divider if default_tam > 0 else market.get("current_tam", 40_000_000_000 if is_usd else 40_000_000_000_000)
+    
+    default_5yr_tam = ctx.get("tam_5yr", 0) or 0
+    default_5yr_tam = float(default_5yr_tam) * scale_divider if default_5yr_tam > 0 else market.get("projected_tam_5yr", 60_000_000_000 if is_usd else 60_000_000_000_000)
+    
+    current_tam = default_tam
+    projected_tam = default_5yr_tam
     
     current_share = (current_rev / current_tam) * 100 if current_tam > 0 else 0
     
     st.info(
         f"💡 **파이프라인 자동 추출 기준점 (Anchor)**  \n"
-        f"- **현재 매출액**: {current_rev/1_000_000_000_000:.1f}조 원  \n"
-        f"- **현재 글로벌 TAM**: {current_tam/1_000_000_000_000:.1f}조 원 👉 **(현재 시장 점유율: {current_share:.1f}%)**  \n"
-        f"- **향후 예측 TAM**: {projected_tam/1_000_000_000_000:.1f}조 원"
+        f"- **현재 매출액**: {current_rev/scale_divider:.1f} {unit_label}  \n"
+        f"- **현재 글로벌 TAM**: {current_tam/scale_divider:.1f} {unit_label} 👉 **(현재 시장 점유율: {current_share:.1f}%)**  \n"
+        f"- **향후 예측 TAM**: {projected_tam/scale_divider:.1f} {unit_label}"
     )
     
     st.markdown("#### 1. 요구 매출 및 TAM 시뮬레이션")
     
-    target_rev_default = (current_rev / 1_000_000_000_000) * 1.5 if current_rev > 0 else 15.0
+    target_rev_default = (current_rev / scale_divider) * 1.5 if current_rev > 0 else (15.0 if not is_usd else 15.0)
+    min_rev_val = min(0.01, float(target_rev_default))
+    min_tam_val = min(0.1, float(projected_tam/scale_divider))
         
     col1, col2 = st.columns(2)
     req_rev = col1.number_input(
-        "요구되는 타겟 매출 (조원, 예: 5년 뒤)", 
-        min_value=1.0, max_value=1000.0, value=float(target_rev_default), step=1.0,
+        f"요구되는 타겟 매출 ({unit_label}, 예: 5년 뒤)", 
+        min_value=min_rev_val, max_value=50000.0, value=float(target_rev_default), step=1.0,
         help="Reverse DCF나 PEG 역산을 통해 도출된 미래 필수 달성 매출액을 입력합니다."
     )
     est_tam = col2.number_input(
-        "해당 시점 글로벌 전체 TAM 예측치 (조원)", 
-        min_value=10.0, max_value=5000.0, value=float(projected_tam/1_000_000_000_000), step=5.0
+        f"해당 시점 글로벌 전체 TAM 예측치 ({unit_label})", 
+        min_value=min_tam_val, max_value=500000.0, value=float(projected_tam/scale_divider), step=5.0
     )
     
     implied_share = calc_implied_market_share(req_rev, est_tam)
     if implied_share is not None:
         st.success(
-            f"요구되는 타겟 매출 **{req_rev:.1f}조 원**을 달성하기 위해서는, "
-            f"해당 시점 글로벌 시장(TAM {est_tam:.1f}조)에서 **{implied_share*100:.1f}%의 점유율**을 차지해야만 합니다."
+            f"요구되는 타겟 매출 **{req_rev:.1f} {unit_label}**을 달성하기 위해서는, "
+            f"해당 시점 글로벌 시장(TAM {est_tam:.1f} {unit_label})에서 **{implied_share*100:.1f}%의 점유율**을 차지해야만 합니다."
         )
         
         st.markdown(
             f"""
             **[수식의 투명한 이해]**
-            * `미래 요구 점유율(%) = 역산된 요구 매출({req_rev:.1f}조) ÷ 미래 예상 TAM({est_tam:.1f}조) = {implied_share*100:.1f}%`
+            * `미래 요구 점유율(%) = 역산된 요구 매출({req_rev:.1f} {unit_label}) ÷ 미래 예상 TAM({est_tam:.1f} {unit_label}) = {implied_share*100:.1f}%`
             * 현재 시장 점유율 **{current_share:.1f}%** 대비 **{abs(implied_share*100 - current_share):.1f}%p**의 점유율 변동이 필요합니다.
             """
         )
@@ -1359,10 +1450,10 @@ def render_tam_tab(input_set: ValuationInputSet, market: dict) -> None:
         st.markdown(f"#### 💡 이 {implied_share*100:.1f}%라는 점유율이 현실 가능한가?")
         st.markdown(
             f"단순히 시장이 커진다고 내 매출이 저절로 오르는 것은 아닙니다. 현재 주가에 내포된 저 점유율을 달성하려면 다음의 질문들을 통과해야 합니다.\n\n"
-            "- **TAM의 환상**: 우리가 설정한 미래 TAM({est_tam:.1f}조) 자체가 증권사나 업계의 과도한 장밋빛 전망(뻥튀기)은 아닌가?\n"
-            "- **경쟁 강도**: 현재 1, 2위를 다투는 글로벌 경쟁자들이 순순히 저 점유율({implied_share*100:.1f}%)을 내어줄 것인가?\n"
+            f"- **TAM의 환상**: 우리가 설정한 미래 TAM({est_tam:.1f} {unit_label}) 자체가 증권사나 업계의 과도한 장밋빛 전망(뻥튀기)은 아닌가?\n"
+            f"- **경쟁 강도**: 현재 1, 2위를 다투는 글로벌 경쟁자들이 순순히 저 점유율({implied_share*100:.1f}%)을 내어줄 것인가?\n"
             "- **기술적 해자(Moat)**: 경쟁사의 파이를 빼앗아올 만큼 압도적인 기술 격차나 가격 경쟁력을 새롭게 확보했는가?\n"
-            "- **수익성 훼손**: 무리하게 점유율을 끌어올리기 위해 판관비를 쏟아붓거나 단가 인하를 단행하여, 결국 영업이익률(OPM)이 망가지는 '상처뿐인 영광'은 아닌가?\n\n"
+            f"- **수익성 훼손**: 무리하게 점유율을 끌어올리기 위해 판관비를 쏟아붓거나 단가 인하를 단행하여, 결국 영업이익률(OPM)이 망가지는 '상처뿐인 영광'은 아닌가?\n\n"
             "> *TAM 역산은 요구 점유율을 계산하는 것으로 끝나는 것이 아니라, 비즈니스 모델의 한계를 묻는 **출발점**입니다.*"
         )
 
@@ -1461,6 +1552,16 @@ def main() -> None:
 
     observations = load_metric_observations(metrics_path)
     market = load_market_data(market_path)
+    
+    # 산업 맥락 컨텍스트 로드
+    from valuation_app.industry_researcher import IndustryResearcher
+    researcher = IndustryResearcher()
+    ctx = researcher.load_context(selected_ticker)
+    
+    currency_val = market.get("currency", "원")
+    is_usd = currency_val in ["USD", "달러"]
+    scale_divider = 1_000_000_000 if is_usd else 1_000_000_000_000
+    
     input_set, checks, derived = run_audit(observations, market)
     all_observations = observations + derived
 
@@ -1487,8 +1588,10 @@ def main() -> None:
     q2.metric("2026 Q1 영업이익", format_krw(input_set.inputs.get("latest_quarter_operating_income")))
 
     (
+        tab_history,
         tab_audit,
         tab_inputs,
+        tab_industry,
         tab_reverse_dcf,
         tab_value_attribution,
         tab_margin_scenario,
@@ -1504,8 +1607,10 @@ def main() -> None:
         tab_source,
     ) = st.tabs(
         [
+            "0. 과거 재무 추이 (5개년)",
             "1. 검산",
             "2. 입력값",
+            "1.5 산업 맥락",
             "3. Reverse DCF",
             "4. Value Attribution",
             "5. 매출·마진",
@@ -1521,6 +1626,47 @@ def main() -> None:
             "15. 출처 상세",
         ]
     )
+
+    with tab_history:
+        st.subheader("📈 과거 5개년 재무 데이터 추이 (History)")
+        st.caption("수집된 5개년 연간 재무제표 및 최근 분기 데이터를 통합 시각화합니다.")
+        
+        df_history, existing_cols, is_usd_hist, divider = generate_history_dataframe(all_observations, currency_val)
+        
+        if df_history is not None and not df_history.empty:
+            unit_label = "백만 달러 (M USD)" if is_usd_hist else "억 원"
+            st.markdown(f"**주요 재무제표 요약 ({unit_label})**")
+            st.dataframe(df_history, use_container_width=True)
+            
+            # Line chart for Revenue and Operating Income trend
+            st.markdown("**매출액 및 영업이익 성장 트렌드**")
+            
+            target_keys = ["revenue", "operating_income"]
+            chart_data = []
+            for obs in all_observations:
+                m_key = _get_attr_or_key(obs, 'metric_key')
+                period = _get_attr_or_key(obs, 'period')
+                val = _get_attr_or_key(obs, 'value')
+                label = _get_attr_or_key(obs, 'label') or m_key
+                
+                if m_key in target_keys and period in existing_cols and val is not None:
+                    chart_data.append({
+                        "Metric": label,
+                        "Period": period,
+                        "Value": val / divider
+                    })
+            if chart_data:
+                df_chart = pd.DataFrame(chart_data)
+                df_chart_pivot = df_chart.pivot_table(
+                    index="Period",
+                    columns="Metric",
+                    values="Value",
+                    aggfunc="first"
+                )
+                df_chart_pivot = df_chart_pivot.reindex(existing_cols)
+                st.line_chart(df_chart_pivot)
+        else:
+            st.info("시각화할 과거 5개년 재무 데이터가 없습니다.")
 
     with tab_audit:
         st.markdown("검산이 통과하지 않은 값은 다음 가치평가 렌즈로 넘기기 전에 확인합니다.")
@@ -1538,6 +1684,121 @@ def main() -> None:
         
         filtered_observations = [obs for obs in all_observations if obs.period in selected_periods]
         st.dataframe(_observation_rows(filtered_observations), use_container_width=True, hide_index=True)
+
+    with tab_industry:
+        st.subheader("🏢 산업 맥락 및 요구 가정 입력 (Industry Context)")
+        st.markdown("여기서 저장된 가정들은 TAM 역산 탭 등 대시보드 계산식에서 사용되며, 종목별로 JSON 파일로 저장됩니다.")
+        
+        # --- JSON 파일 연동 (가져오기/내보내기) ---
+        st.markdown("### 📥📤 JSON 설정 파일 주고받기")
+        c_up, c_down = st.columns(2)
+        
+        # 업로드 세션 상태 초기화
+        if 'last_uploaded_file' not in st.session_state:
+            st.session_state.last_uploaded_file = None
+            
+        uploaded_file = c_up.file_uploader("📥 industry_context.json 파일 업로드", type=["json"], key="context_uploader")
+        if uploaded_file is not None and uploaded_file != st.session_state.last_uploaded_file:
+            try:
+                uploaded_data = json.load(uploaded_file)
+                required_keys = {"tam_current", "tam_5yr", "tam_cagr", "market_share_current", "peer_per", "normal_per", "wacc", "competitive_note"}
+                if len(required_keys.intersection(uploaded_data.keys())) >= 3:
+                    researcher.save_context(selected_ticker, uploaded_data)
+                    st.session_state.last_uploaded_file = uploaded_file
+                    c_up.success("JSON 파일로부터 성공적으로 산업 맥락을 가져왔습니다!")
+                    time.sleep(0.5)
+                    st.rerun()
+                else:
+                    c_up.error("올바른 산업 맥락 JSON 파일이 아닙니다. (필수 필드 부족)")
+            except Exception as e:
+                c_up.error(f"파일 파싱 중 오류 발생: {e}")
+                
+        try:
+            ctx_json_str = json.dumps(ctx, ensure_ascii=False, indent=4)
+            c_down.markdown("<br>", unsafe_allow_html=True)
+            c_down.download_button(
+                label="📤 현재 산업 맥락 JSON 파일로 내보내기",
+                data=ctx_json_str,
+                file_name=f"{selected_ticker}_industry_context.json",
+                mime="application/json",
+                key="context_downloader"
+            )
+            
+            # 빈 양식 템플릿 다운로드 버튼 추가
+            template_ctx = {
+                "tam_current": None,
+                "tam_5yr": None,
+                "tam_cagr": None,
+                "market_share_current": None,
+                "peer_per": None,
+                "normal_per": None,
+                "wacc": None,
+                "competitive_note": ""
+            }
+            template_json_str = json.dumps(template_ctx, ensure_ascii=False, indent=4)
+            c_down.download_button(
+                label="📄 빈 양식 템플릿 JSON 다운로드",
+                data=template_json_str,
+                file_name="industry_context_template.json",
+                mime="application/json",
+                key="context_template_downloader"
+            )
+        except Exception as e:
+            c_down.error(f"다운로드 파일 생성 실패: {e}")
+            
+        st.markdown("---")
+        
+        with st.form("industry_context_form"):
+            col1, col2 = st.columns(2)
+            unit_label = "10억 달러 (B USD)" if is_usd else "조 원"
+            
+            default_market_tam = market.get("current_tam") or (40_000_000_000 if is_usd else 40_000_000_000_000)
+            default_market_5yr_tam = market.get("projected_tam_5yr") or (60_000_000_000 if is_usd else 60_000_000_000_000)
+            
+            tam_current_val = ctx.get("tam_current") or (default_market_tam / scale_divider)
+            tam_5yr_val = ctx.get("tam_5yr") or (default_market_5yr_tam / scale_divider)
+            
+            tam_current_input = col1.number_input(f"현재 글로벌 TAM ({unit_label})", value=float(tam_current_val), step=1.0)
+            tam_5yr_input = col2.number_input(f"5년 뒤 글로벌 TAM ({unit_label})", value=float(tam_5yr_val), step=1.0)
+            
+            col3, col4 = st.columns(2)
+            tam_cagr_val = ctx.get("tam_cagr") or 10.0
+            tam_cagr_input = col3.number_input("TAM 연평균 성장률 (CAGR, %)", value=float(tam_cagr_val), step=0.5)
+            
+            market_share_current_val = ctx.get("market_share_current") or 0.0
+            market_share_current_input = col4.number_input("현재 시장 점유율 (%)", value=float(market_share_current_val), step=0.1)
+            
+            col5, col6, col7 = st.columns(3)
+            peer_per_val = ctx.get("peer_per") or 15.0
+            peer_per_input = col5.number_input("글로벌 Peer 평균 PER (배)", value=float(peer_per_val), step=0.5)
+            
+            normal_per_val = ctx.get("normal_per") or 15.0
+            normal_per_input = col6.number_input("역사적 평균 PER (배)", value=float(normal_per_val), step=0.5)
+            
+            wacc_val = ctx.get("wacc") or 10.0
+            wacc_input = col7.number_input("할인율 (WACC, %)", value=float(wacc_val), step=0.5)
+            
+            competitive_note_val = ctx.get("competitive_note") or ""
+            competitive_note_input = st.text_area("경쟁 우위 및 메모 (Moat, 리스크 등)", value=competitive_note_val)
+            
+            submitted = st.form_submit_button("💾 산업 맥락 저장")
+            if submitted:
+                new_ctx = {
+                    "tam_current": tam_current_input,
+                    "tam_5yr": tam_5yr_input,
+                    "tam_cagr": tam_cagr_input,
+                    "market_share_current": market_share_current_input,
+                    "peer_per": peer_per_input,
+                    "normal_per": normal_per_input,
+                    "wacc": wacc_input,
+                    "competitive_note": competitive_note_input
+                }
+                success = researcher.save_context(selected_ticker, new_ctx)
+                if success:
+                    st.success("산업 맥락이 성공적으로 저장되었습니다! 페이지를 새로고침하면 반영됩니다.")
+                    st.rerun()
+                else:
+                    st.error("산업 맥락 저장 중 오류가 발생했습니다.")
 
     with tab_reverse_dcf:
         render_reverse_dcf_tab(input_set)
@@ -1570,7 +1831,7 @@ def main() -> None:
         render_peg_tab(input_set, market)
 
     with tab_tam:
-        render_tam_tab(input_set, market)
+        render_tam_tab(input_set, market, ctx)
 
     with tab_formula:
         st.markdown(
@@ -1600,7 +1861,7 @@ def main() -> None:
 
     with tab_source:
         st.markdown("데이터 출처 및 투명성")
-        st.dataframe(pd.DataFrame([obs.dict() for obs in all_observations]))
+        st.dataframe(pd.DataFrame([obs.model_dump() if hasattr(obs, 'model_dump') else (obs.dict() if hasattr(obs, 'dict') else obs) for obs in all_observations]))
 
     # === LLM Export & Save Sidebar ===
     st.sidebar.markdown("---")
@@ -1630,6 +1891,27 @@ def main() -> None:
         mime="text/markdown",
         help="원본 데이터는 물론 역산 분석 결과까지 담겨있어 다른 LLM에게 질문하기 가장 좋은 포맷입니다.",
     )
+
+    # === 전체 포트폴리오 통합 JSON 다운로드 ===
+    st.sidebar.markdown("---")
+    st.sidebar.header("📦 전체 포트폴리오")
+    st.sidebar.caption("수집된 모든 종목의 재무/시장 데이터를 단일 JSON 파일로 내려받습니다.")
+    combined_path = DATA_ROOT / "combined_portfolio_valuation.json"
+    if combined_path.exists():
+        try:
+            with combined_path.open("r", encoding="utf-8") as f:
+                combined_json_str = f.read()
+            st.sidebar.download_button(
+                label="📥 통합 JSON 다운로드",
+                data=combined_json_str,
+                file_name="combined_portfolio_valuation.json",
+                mime="application/json",
+                help="모든 종목의 metrics와 market 데이터를 포함하고 있습니다."
+            )
+        except Exception as e:
+            st.sidebar.warning(f"통합 JSON 읽기 실패: {e}")
+    else:
+        st.sidebar.warning("통합 JSON 파일이 존재하지 않습니다. 배치 파이프라인을 다시 실행해주세요.")
 
     # === 서버 측 자동 저장 ===
     st.sidebar.markdown("---")

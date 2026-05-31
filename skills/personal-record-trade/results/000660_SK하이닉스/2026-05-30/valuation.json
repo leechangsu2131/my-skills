@@ -1,0 +1,41 @@
+{
+  "export_timestamp": "2026-05-30T19:32:20.821547",
+  "market_data": {
+    "ticker": "000660",
+    "company_name": "SK하이닉스",
+    "valuation_date": "2026-05-30",
+    "market_data_as_of": "2026-05-29",
+    "price": 2333000,
+    "shares_outstanding": 712702365,
+    "market_cap": 1662734617545000,
+    "historical_average_per": 15.0,
+    "peer_average_per": 15.0,
+    "current_tam": 40000000000000,
+    "projected_tam_5yr": 60000000000000,
+    "currency": "KRW",
+    "note": "Auto-fetched via pykrx"
+  },
+  "financial_inputs": {
+    "revenue": 32765719000000,
+    "operating_income": -7730313000000,
+    "net_income": -9137547000000,
+    "eps": -13244,
+    "ebit": -7730313000000,
+    "tax_rate": 0.22,
+    "op_cashflow": 4278191000000,
+    "capex": 8325138000000,
+    "fcf": -4046947000000,
+    "total_equity": 53503752000000,
+    "cash": 7587329000000,
+    "short_debt": 0,
+    "long_debt": 0,
+    "net_debt": -7587329000000,
+    "enterprise_value": 1655147288545000.0,
+    "nopat": -6029644140000.0,
+    "invested_capital": 45916423000000,
+    "roic": -0.13131781062300954,
+    "price": 2333000.0,
+    "shares_outstanding": 712702365.0,
+    "market_cap": 1662734617545000
+  }
+}

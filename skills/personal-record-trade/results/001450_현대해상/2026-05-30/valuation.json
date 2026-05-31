@@ -1,0 +1,41 @@
+{
+  "export_timestamp": "2026-05-30T19:32:24.505526",
+  "market_data": {
+    "ticker": "001450",
+    "company_name": "현대해상",
+    "valuation_date": "2026-05-30",
+    "market_data_as_of": "2026-05-29",
+    "price": 34550,
+    "shares_outstanding": 85248250,
+    "market_cap": 2945327037500,
+    "historical_average_per": 15.0,
+    "peer_average_per": 15.0,
+    "current_tam": 40000000000000,
+    "projected_tam_5yr": 60000000000000,
+    "currency": "KRW",
+    "note": "Auto-fetched via pykrx"
+  },
+  "financial_inputs": {
+    "revenue": 3094623140135,
+    "operating_income": -437998695525,
+    "net_income": 850533055882,
+    "eps": 10847,
+    "ebit": -437998695525,
+    "tax_rate": 0.22,
+    "op_cashflow": 0,
+    "capex": 75180456376,
+    "fcf": 0,
+    "total_equity": 4743378657629,
+    "cash": 1447967064247,
+    "short_debt": 0,
+    "long_debt": 2546753477916,
+    "net_debt": 1098786413669,
+    "enterprise_value": 4044113451169.0,
+    "nopat": -341638982509.5,
+    "invested_capital": 5842165071298,
+    "roic": -0.0584781460879871,
+    "price": 34550.0,
+    "shares_outstanding": 85248250.0,
+    "market_cap": 2945327037500
+  }
+}

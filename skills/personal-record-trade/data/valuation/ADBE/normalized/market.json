@@ -1,0 +1,13 @@
+{
+  "ticker": "ADBE",
+  "company_name": "Adobe Inc.",
+  "historical_average_per": 20.0,
+  "peer_average_per": 20.0,
+  "forward_pe": 9.823744,
+  "currency": "USD",
+  "price": 259.21,
+  "shares_outstanding": 404200000,
+  "market_cap": 104772681728,
+  "valuation_date": "2026-05-31",
+  "market_data_as_of": "2026-05-31"
+}

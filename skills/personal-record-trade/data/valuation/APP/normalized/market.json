@@ -1,0 +1,13 @@
+{
+  "ticker": "APP",
+  "company_name": "Applovin Corporation",
+  "historical_average_per": 20.0,
+  "peer_average_per": 20.0,
+  "forward_pe": 27.961348,
+  "currency": "USD",
+  "price": 613.09,
+  "shares_outstanding": 305732000,
+  "market_cap": 205961166848,
+  "valuation_date": "2026-05-31",
+  "market_data_as_of": "2026-05-31"
+}

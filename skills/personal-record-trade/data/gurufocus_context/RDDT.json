@@ -1,0 +1,16 @@
+{
+    "financial_strength": 9,
+    "profitability_rank": 4,
+    "piotroski_f_score": 8,
+    "altman_z_score": 69.02,
+    "roic_pct": 120.63,
+    "fcf_margin_pct": 35.12,
+    "op_margin_pct": 25.11,
+    "ev_to_fcf": 35.84,
+    "roiic_3y_pct": 187.22,
+    "pe_ratio": 50.29,
+    "fwd_pe_fy": 35.97,
+    "ps_ratio": 14.17,
+    "pb_ratio": 10.65,
+    "ev_ebitda": 48.86
+}

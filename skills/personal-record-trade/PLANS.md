@@ -74,3 +74,15 @@
 - 테스트가 있다.
 - 브라우저에서 Traceback 없이 표시된다.
 
+## [Architecture Upgrade 2026-05-31]
+목적:
+- 구글 시트의 `raw data` 탭과 `기업분석` 탭의 역할을 명확히 Data Lake와 Data Mart로 물리적 분리합니다.
+- FinanceCharts 등 차단/오류가 발생하는 출처를 우회하기 위해 `개념 지도(Fallback 우선순위)` 방식을 도입합니다.
+
+세부 변경 내용:
+- `metric_config.json` 신규 작성: 각 지표별 1순위, 2순위 출처 정의 (예: 영업마진은 야후 우선, ROIC는 구루포커스 우선).
+- `pipeline/unified_metrics.py` 신규 작성: 여러 출처의 데이터를 통합하여 Fallback 로직을 적용하는 인터페이스.
+- `sheet_updater.py` 리팩토링: 개별 출처 문맥(fc_ctx, gurufocus_ctx 등)을 하드코딩으로 읽어오던 방식을 폐기하고, `get_unified_metrics(ticker)` 하나만 호출하여 시트에 맵핑하도록 수정.
+- `layer1_store.py`: `raw data` 탭에는 모든 원천 데이터(점수, 적정가 등 포함)를 저장.
+- 시트 물리적 다이어트: `기업분석` 탭의 W~AK열(잡다한 점수 및 파생 데이터)을 과감히 삭제하고 오직 16개 핵심 열(기본정보, 핵심지표 5개, 인간 판단 4개, 업데이트일)만 남겨 직관성을 극대화.
+

@@ -1,5 +1,11 @@
 import os
 import json
+import sys
+
+# Windows cp949 인코딩 오류 방지
+if hasattr(sys.stdout, 'reconfigure'):
+    if sys.stdout.encoding != 'utf-8':
+        sys.stdout.reconfigure(encoding='utf-8')
 
 def save_valuation_data(ticker: str, market_data: dict, metrics_data: list):
     """

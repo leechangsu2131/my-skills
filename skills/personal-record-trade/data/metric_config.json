@@ -1,0 +1,31 @@
+{
+  "valuation": {
+    "pe_ratio": ["gurufocus", "yahoo"],
+    "ps_ratio": ["gurufocus", "yahoo"],
+    "pb_ratio": ["gurufocus", "yahoo"],
+    "ev_ebitda": ["gurufocus", "yahoo"],
+    "fair_value": ["gurufocus", "yahoo"]
+  },
+  "forward_valuation": {
+    "fwd_pe_ntm": ["yahoo"],
+    "fwd_pe_fy": ["gurufocus"]
+  },
+  "quality_and_profitability": {
+    "roic": ["gurufocus", "yahoo"],
+    "op_margin": ["yahoo", "gurufocus"],
+    "fcf_margin": ["gurufocus", "yahoo"],
+    "gross_margin": ["gurufocus", "yahoo"],
+    "net_margin": ["gurufocus", "yahoo"]
+  },
+  "financial_health": {
+    "fin_strength": ["gurufocus"],
+    "profit_rank": ["gurufocus"],
+    "piotroski": ["gurufocus"],
+    "altman_z": ["gurufocus"]
+  },
+  "historical_growth": {
+    "pe_avg_3y": ["gurufocus"],
+    "pe_vs_3y": ["gurufocus"],
+    "roiic_3y": ["gurufocus"]
+  }
+}

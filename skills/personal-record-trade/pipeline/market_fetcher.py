@@ -1,5 +1,9 @@
 import sys
 from datetime import datetime
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT))
 
 try:
     from pykrx import stock
@@ -34,6 +38,22 @@ def get_market_data(ticker: str):
         # ticker에 따른 회사 이름
         company_name = stock.get_market_ticker_name(ticker)
         
+        # Forward PE는 yfinance에서 보조적으로 수집
+        forward_pe = ""
+        try:
+            import yfinance as yf
+            yf_info = yf.Ticker(f"{ticker}.KS").info
+            fwd_pe_val = yf_info.get("forwardPE")
+            if fwd_pe_val:
+                forward_pe = fwd_pe_val
+                try:
+                    from pipeline.layer1_store import save_row
+                    save_row(ticker, "yahoo", {"fwd_pe_ntm": round(fwd_pe_val, 4)})
+                except Exception as e:
+                    print(f"Layer 1 저장 실패: {e}")
+        except Exception:
+            pass
+        
         market_info = {
             "ticker": ticker,
             "company_name": company_name,
@@ -45,6 +65,7 @@ def get_market_data(ticker: str):
             # TODO: 과거 PER이나 Peer PER은 추가 로직 필요 (임시 고정값)
             "historical_average_per": 15.0,
             "peer_average_per": 15.0,
+            "forward_pe": forward_pe,
             "current_tam": 40000000000000,
             "projected_tam_5yr": 60000000000000,
             "currency": "KRW",
@@ -65,6 +86,15 @@ def get_market_data(ticker: str):
             price = info.get("currentPrice") or info.get("regularMarketPrice") or info.get("previousClose")
             market_cap = info.get("marketCap")
             shares = info.get("sharesOutstanding")
+            fwd_pe_val = info.get("forwardPE")
+            forward_pe = fwd_pe_val or ""
+            
+            if fwd_pe_val:
+                try:
+                    from pipeline.layer1_store import save_row
+                    save_row(ticker, "yahoo", {"fwd_pe_ntm": round(fwd_pe_val, 4)})
+                except Exception as e:
+                    print(f"Layer 1 저장 실패: {e}")
             
             if not price:
                 raise ValueError("yfinance에서 가격 정보를 가져오지 못했습니다.")
@@ -80,6 +110,7 @@ def get_market_data(ticker: str):
                 "market_cap": int(market_cap) if market_cap else int(price * (shares or 728000000)),
                 "historical_average_per": 15.0,
                 "peer_average_per": 15.0,
+                "forward_pe": forward_pe,
                 "current_tam": 40000000000000,
                 "projected_tam_5yr": 60000000000000,
                 "currency": "KRW",

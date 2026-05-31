@@ -236,3 +236,24 @@ python -m pytest tests/test_risk_downside.py -v
 python -m pytest tests/test_synthesis.py tests/test_advanced_reverse.py -v
 ```
 
+## `pipeline/ingest_report.py` 실행 시 "PDF 읽기 오류"가 발생하는 경우
+
+원인:
+
+- `pypdf` 라이브러리가 설치되어 있지 않거나, PDF 파일이 손상되었거나 암호화되어 있을 수 있습니다.
+
+해결:
+
+- 먼저 `pip install pypdf` 명령으로 라이브러리가 설치되어 있는지 확인합니다.
+- 추출이 불가능한 이미지 형태의 PDF인 경우, 해당 스크립트는 OCR을 자체 지원하지 않으므로 텍스트 추출이 빈 문자열로 반환됩니다.
+
+## 시트의 '애널목표가', '투자의견' 열이 업데이트되지 않는 경우
+
+원인:
+
+- `data/report_context/{ticker}.json` 파일이 없거나 JSON 포맷이 잘못되었기 때문입니다.
+
+해결:
+
+- `pipeline/ingest_report.py`를 실행하여 해당 티커의 리포트 JSON 파일이 먼저 생성되었는지 확인하세요.
+- `sheet_updater.py`는 `report_context` 디렉토리에 유효한 JSON이 있을 때만 해당 열(W, X, Y)과 K열(섹터PER대비%)을 동적으로 덮어씁니다.

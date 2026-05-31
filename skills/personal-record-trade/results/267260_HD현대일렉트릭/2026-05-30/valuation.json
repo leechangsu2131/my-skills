@@ -1,0 +1,41 @@
+{
+  "export_timestamp": "2026-05-30T19:33:05.351119",
+  "market_data": {
+    "ticker": "267260",
+    "company_name": "HD현대일렉트릭",
+    "valuation_date": "2026-05-30",
+    "market_data_as_of": "2026-05-29",
+    "price": 1053000,
+    "shares_outstanding": 36047135,
+    "market_cap": 37957633155000,
+    "historical_average_per": 15.0,
+    "peer_average_per": 15.0,
+    "current_tam": 40000000000000,
+    "projected_tam_5yr": 60000000000000,
+    "currency": "KRW",
+    "note": "Auto-fetched via pykrx"
+  },
+  "financial_inputs": {
+    "revenue": 3322349007529,
+    "operating_income": 668970713547,
+    "net_income": 498409535389,
+    "eps": 13935,
+    "ebit": 668970713547,
+    "tax_rate": 0.22,
+    "op_cashflow": 1033722426199,
+    "capex": 121640871886,
+    "fcf": 912081554313,
+    "total_equity": 1507517124598,
+    "cash": 569771637520,
+    "short_debt": 0,
+    "long_debt": 0,
+    "net_debt": -569771637520,
+    "enterprise_value": 37387861517480.0,
+    "nopat": 521797156566.66003,
+    "invested_capital": 937745487078,
+    "roic": 0.5564379287951272,
+    "price": 1053000.0,
+    "shares_outstanding": 36047135.0,
+    "market_cap": 37957633155000
+  }
+}

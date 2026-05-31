@@ -1,0 +1,36 @@
+{
+  "export_timestamp": "2026-05-31T06:43:47.682935",
+  "market_data": {
+    "ticker": "APP",
+    "company_name": "Applovin Corporation",
+    "currency": "USD",
+    "price": 613.09,
+    "shares_outstanding": 305732000,
+    "market_cap": 205961166848,
+    "valuation_date": "2026-05-30",
+    "market_data_as_of": "2026-05-30"
+  },
+  "financial_inputs": {
+    "revenue": 1841762000.0,
+    "operating_income": 772411000.0,
+    "net_income": 357211000.0,
+    "eps": 1.01,
+    "ebit": 775110000.0,
+    "tax_rate": 0.21,
+    "op_cashflow": 1061510000.0,
+    "capex": 63899000.0,
+    "fcf": 997611000.0,
+    "total_equity": 1256329000.0,
+    "cash": 502152000.0,
+    "short_debt": 215000000.0,
+    "long_debt": 2905906000.0,
+    "net_debt": 2618754000.0,
+    "enterprise_value": 208579920848.0,
+    "nopat": 610204690.0,
+    "invested_capital": 3875083000.0,
+    "roic": 0.15746880518430187,
+    "price": 613.09,
+    "shares_outstanding": 305732000.0,
+    "market_cap": 205961166848
+  }
+}

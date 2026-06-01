@@ -324,7 +324,7 @@ powershell -ExecutionPolicy Bypass -File .\register_scheduled_task.ps1
 | 항목 | 값 |
 |------|-----|
 | 작업 이름 | `ChesleyMorningBrief` |
-| 스케줄 | 월~금 `RUN_TIME` (현재 `.env`: **12:20**) |
+| 스케줄 | 월~금 `RUN_TIME` (`.env` 기준, 예: **16:00**) |
 | 실행 스크립트 | `run_once.ps1` → `RUN_ONCE=1` + `main.py` |
 | 로그 | `run.log` |
 
@@ -345,6 +345,40 @@ Start-ScheduledTask -TaskName ChesleyMorningBrief
 
 1. `.env`에서 `RUN_TIME` 수정
 2. `register_scheduled_task.ps1` 다시 실행
+
+---
+
+### 화면보호기 / 잠금 / 절전 (2026-06-01 정리)
+
+스케줄 실행 시 PC 상태에 따른 동작 요약입니다.  
+Playwright는 `.env`의 `HEADLESS` 설정에 따라 Chrome을 띄웁니다 (`false`면 창 표시 모드).
+
+| PC 상태 | 스케줄러 실행 | Gemini(Chrome) 자동화 | 비고 |
+|---------|---------------|------------------------|------|
+| **화면보호기만** (로그인 유지) | 보통 됨 | 보통 됨 | 화면만 꺼진 것. 로그아웃 아님 |
+| **Win+L 잠금** | 보통 됨 | **실패·멈춤 가능** | `HEADLESS=false`일 때 특히 민감 |
+| **절전 / 최대 절전** | 안 됨 | 안 됨 | PC가 거의 꺼진 상태 |
+| **로그아웃 / 재부팅 후 미로그인** | 안 됨 | 안 됨 | Windows 로그인 필요 |
+| **노트북 덮개 닫힘** | 설정에 따라 | 설정에 따라 | “덮개 닫을 때 절전”이면 실패 |
+
+**한 줄 요약:** 화면보호기만으로는 **대체로 문제 없음**. **잠금·절전·로그아웃**이면 **실패할 수 있음**.
+
+**`RUN_TIME` 전후 권장 설정**
+
+1. 해당 시각 **전후 30~40분**은 절전·최대 절전 끄기 (또는 “절전 안 함”)
+2. 가능하면 **Win+L 잠금은 피하기** (화면보호기만은 괜찮은 편)
+3. 노트북: **덮개를 닫아도 절전되지 않게** 전원 옵션 확인
+4. (선택) 잠금 상태에서도 안정적으로 돌리려면 `.env`에서 `HEADLESS=true` — Gemini 세션이 `chrome_profile`에 저장돼 있을 때 유효
+
+**실행 후 확인**
+
+```powershell
+Get-ScheduledTaskInfo -TaskName ChesleyMorningBrief | Format-List LastRunTime, LastTaskResult, NextRunTime
+Get-Content .\run.log -Tail 25
+```
+
+- `LastTaskResult: 0` + `Run completed` + `Gemini response length:` **400자 이상** → 정상
+- `Gemini response too short` 또는 `Run failed` → `run.log` 전문 확인
 
 ---
 
@@ -452,6 +486,7 @@ Start-ScheduledTask -TaskName ChesleyMorningBrief
 | 2026-05-28 | 프로젝트 `v` 생성, yt-dlp 탐지, 카카오→Discord 전환 |
 | 2026-05-28 | Gem 입력/응답 추출 보강, chesley-morning-brief 참고 반영 |
 | 2026-05-29 | Windows 작업 스케줄러 (12:20), UTF-8 Discord 수정 |
+| 2026-06-01 | 화면보호기/잠금/절전 가이드, Gemini 짧은 응답(50자) 방지, Gem URL 세션 검증 |
 
 ---
 

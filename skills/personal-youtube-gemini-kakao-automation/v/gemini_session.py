@@ -14,6 +14,10 @@ if TYPE_CHECKING:
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
+class GeminiLoginRequired(Exception):
+    """Raised when Google/Gemini login is required or the session cannot access Gems."""
+
+
 def resolve_data_path(path: str, base_dir: Optional[str] = None) -> str:
     base = base_dir or SCRIPT_DIR
     if os.path.isabs(path):
@@ -55,7 +59,24 @@ async def has_gemini_chat_input(page: Page, timeout_ms: int = 8000) -> bool:
     return False
 
 
-async def is_gemini_session_valid(page: Page) -> bool:
+def looks_like_login_wall_text(text: str) -> bool:
+    stripped = text.strip()
+    if not stripped:
+        return True
+    lower = stripped.lower()
+    markers = (
+        "sign in",
+        "log in",
+        "accounts.google.com",
+        "로그인",
+        "계정에 로그인",
+        "google 계정",
+        "로그인하여 계속",
+    )
+    return any(marker in lower for marker in markers)
+
+
+async def is_gemini_session_valid(page: Page, gem_url: Optional[str] = None) -> bool:
     try:
         await page.goto("https://gemini.google.com/app", wait_until="domcontentloaded", timeout=60000)
         await page.wait_for_timeout(2500)
@@ -66,7 +87,21 @@ async def is_gemini_session_valid(page: Page) -> bool:
         return False
     if "gemini.google.com" not in page.url:
         return False
-    return await has_gemini_chat_input(page, timeout_ms=10000)
+    if not await has_gemini_chat_input(page, timeout_ms=10000):
+        return False
+
+    if gem_url and "/gem/" in gem_url:
+        try:
+            await page.goto(gem_url, wait_until="domcontentloaded", timeout=60000)
+            await page.wait_for_timeout(2500)
+        except Exception:
+            return False
+        if is_google_login_url(page.url):
+            return False
+        if not await has_gemini_chat_input(page, timeout_ms=10000):
+            return False
+
+    return True
 
 
 async def save_storage_state(context: BrowserContext, path: str) -> None:
@@ -105,6 +140,7 @@ async def try_context_with_storage_backup(
     playwright: Any,
     settings: Settings,
     headless: bool,
+    gem_url: Optional[str] = None,
 ) -> Optional[tuple[BrowserContext, Page]]:
     backup = settings.gemini_storage_state_file
     if not os.path.exists(backup):
@@ -118,7 +154,7 @@ async def try_context_with_storage_backup(
     )
     context = await browser.new_context(storage_state=backup)
     page = await context.new_page()
-    if await is_gemini_session_valid(page):
+    if await is_gemini_session_valid(page, gem_url=gem_url):
         print("백업 storage state로 세션 복원 성공.")
         return context, page
 
@@ -127,15 +163,54 @@ async def try_context_with_storage_backup(
     return None
 
 
+async def _wait_for_interactive_login_flow(
+    open_persistent: Callable[[bool], Any],
+    settings: Settings,
+    on_login_required: Optional[Callable[[], None]],
+    gem_url: Optional[str],
+) -> tuple[BrowserContext, Page]:
+    if on_login_required:
+        try:
+            on_login_required()
+        except Exception as exc:
+            print(f"Login notification failed: {exc}")
+
+    print("로그인 필요 — 브라우저를 표시하고 로그인 완료를 기다립니다.")
+    context, page = await open_persistent(False)
+    start_url = gem_url if gem_url and "/gem/" in gem_url else "https://gemini.google.com/app"
+    await page.goto(start_url, wait_until="domcontentloaded", timeout=60000)
+
+    if not await wait_for_interactive_login(page, settings.auto_login_wait_sec):
+        await context.close()
+        raise RuntimeError(
+            "Gemini 로그인 실패. 브라우저에서 Google 계정 로그인(2단계 인증 포함)을 완료한 뒤 "
+            "SETUP_LOGIN_ONLY=1 로 다시 시도하세요."
+        )
+
+    if gem_url and "/gem/" in gem_url:
+        if not await is_gemini_session_valid(page, gem_url=gem_url):
+            await context.close()
+            raise RuntimeError(
+                "Gemini 로그인 후에도 Gem 페이지 접근이 되지 않습니다. "
+                "SETUP_LOGIN_ONLY=1 로 Gem URL까지 열리는지 확인하세요."
+            )
+
+    await save_storage_state(context, settings.gemini_storage_state_file)
+    return context, page
+
+
 async def launch_gemini_context(
     playwright: Any,
     settings: Settings,
     on_login_required: Optional[Callable[[], None]] = None,
+    gem_url: Optional[str] = None,
+    force_interactive_login: bool = False,
 ) -> tuple[BrowserContext, Page]:
     """Launch browser with durable profile; recover login via backup or headed auto-wait."""
     profile = settings.profile_dir
     os.makedirs(profile, exist_ok=True)
     launch_args = ["--disable-blink-features=AutomationControlled"]
+    validate_url = gem_url or getattr(settings, "gemini_gem_url", None)
 
     async def open_persistent(headless: bool) -> tuple[BrowserContext, Page]:
         context = await playwright.chromium.launch_persistent_context(
@@ -147,37 +222,34 @@ async def launch_gemini_context(
         page = await context.new_page()
         return context, page
 
+    if force_interactive_login:
+        return await _wait_for_interactive_login_flow(
+            open_persistent,
+            settings,
+            on_login_required,
+            validate_url,
+        )
+
     context, page = await open_persistent(settings.headless)
-    if await is_gemini_session_valid(page):
+    if await is_gemini_session_valid(page, gem_url=validate_url):
         return context, page
 
     await context.close()
 
-    restored = await try_context_with_storage_backup(playwright, settings, settings.headless)
+    restored = await try_context_with_storage_backup(
+        playwright, settings, settings.headless, gem_url=validate_url
+    )
     if restored:
         context, page = restored
         await save_storage_state(context, settings.gemini_storage_state_file)
         return context, page
 
-    if on_login_required:
-        try:
-            on_login_required()
-        except Exception as exc:
-            print(f"Login notification failed: {exc}")
-
-    print("로그인 필요 — 브라우저를 표시하고 로그인 완료를 기다립니다.")
-    context, page = await open_persistent(headless=False)
-    await page.goto("https://gemini.google.com/app", wait_until="domcontentloaded", timeout=60000)
-
-    if not await wait_for_interactive_login(page, settings.auto_login_wait_sec):
-        await context.close()
-        raise RuntimeError(
-            "Gemini 로그인 실패. 브라우저에서 Google 계정 로그인(2단계 인증 포함)을 완료한 뒤 "
-            "SETUP_LOGIN_ONLY=1 로 다시 시도하세요."
-        )
-
-    await save_storage_state(context, settings.gemini_storage_state_file)
-    return context, page
+    return await _wait_for_interactive_login_flow(
+        open_persistent,
+        settings,
+        on_login_required,
+        validate_url,
+    )
 
 
 async def verify_gem_identity(page: Page, gem_url: str, expected_name: str = "") -> None:
@@ -223,7 +295,7 @@ async def open_gem_conversation(
         await page.goto(target, wait_until="load", timeout=60000)
         await page.wait_for_timeout(3000)
         if is_google_login_url(page.url):
-            raise RuntimeError("Gemini login required during Gem open.")
+            raise GeminiLoginRequired("Gemini login required during Gem open.")
         if await has_gemini_chat_input(page, timeout_ms=15000):
             print(f"Gem UI ready at {page.url}")
             await verify_gem_identity(page, gem_url, expected_gem_name)

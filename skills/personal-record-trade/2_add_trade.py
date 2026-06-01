@@ -41,20 +41,18 @@ def parse_trade(raw: dict) -> list:
     today = datetime.date.today().isoformat()
     return [
         raw.get("date", today),
+        raw.get("position_id", ""),  # 새롭게 추가된 컬럼 (B)
         raw.get("ticker", ""),
         raw.get("name", ""),
         raw.get("type", ""),
         raw.get("qty", ""),
-        raw.get("price", ""),
-        raw.get("amount", ""),
+        raw.get("amount", ""),       # 단가(price)가 시트에서 빠졌으므로 바로 금액
         raw.get("reason", ""),
-        raw.get("timing", ""),
         raw.get("score", ""),
-        raw.get("analysis", ""),   # 사후분석
-        raw.get("condition", ""),  # 컨디션
-        raw.get("bias", ""),       # 인지오류
-        raw.get("fix", ""),        # 해결전략
-        raw.get("memo", ""),
+        raw.get("condition", ""),
+        raw.get("analysis", ""),
+        raw.get("bias", ""),
+        raw.get("fix", ""),
     ]
 
 def add_trade(trade_data: dict):

@@ -17,7 +17,9 @@ from playwright.async_api import async_playwright
 from youtube_transcript_api import YouTubeTranscriptApi
 
 from gemini_session import (
+    GeminiLoginRequired,
     launch_gemini_context,
+    looks_like_login_wall_text,
     open_gem_conversation,
     resolve_data_path,
     save_storage_state,
@@ -58,6 +60,7 @@ class Settings:
     gemini_force_pro: bool
     gemini_use_gem_prompt: bool
     gemini_gem_expected_name: str
+    gemini_min_response_chars: int
     discord_max_message_length: int
 
 
@@ -135,6 +138,7 @@ def load_settings() -> Settings:
         gemini_force_pro=bool_env("GEMINI_FORCE_PRO", True),
         gemini_use_gem_prompt=bool_env("GEMINI_USE_GEM_PROMPT", True),
         gemini_gem_expected_name=os.getenv("GEMINI_GEM_EXPECTED_NAME", "스크립트 정리 도우미").strip(),
+        gemini_min_response_chars=int(os.getenv("GEMINI_MIN_RESPONSE_CHARS", "400")),
         discord_max_message_length=int(os.getenv("DISCORD_MAX_MESSAGE_LENGTH", "1900")),
     )
 
@@ -313,6 +317,18 @@ async def wait_for_gemini_response(page, previous_count: int, timeout_ms: int) -
     return text
 
 
+def validate_gemini_response(text: str, min_chars: int) -> None:
+    if looks_like_login_wall_text(text):
+        raise GeminiLoginRequired(
+            f"Gemini response looks like a login/consent wall ({len(text)} chars)."
+        )
+    if len(text) < min_chars:
+        raise RuntimeError(
+            f"Gemini response too short ({len(text)} chars, minimum {min_chars}). "
+            "로그인·모델 선택·전송 실패 여부를 확인하세요."
+        )
+
+
 def build_gem_prompt(transcript: str, video_title: str, use_gem_prompt: bool) -> str:
     body = transcript
     if not use_gem_prompt:
@@ -387,6 +403,58 @@ async def _find_input_box(page):
     raise RuntimeError("Gemini input box not found.")
 
 
+async def _run_gemini_prompt(page, settings: Settings, text: str, video_title: str) -> str:
+    if settings.gemini_force_pro:
+        await _select_gemini_pro(page)
+
+    await page.wait_for_selector(
+        "rich-textarea, div[contenteditable='true'], textarea",
+        timeout=30000,
+    )
+    response_nodes = page.locator("message-content, model-response")
+    previous_count = await response_nodes.count()
+
+    input_box = await _find_input_box(page)
+    await input_box.click()
+    prompt_text = build_gem_prompt(
+        text[: settings.gemini_input_max_chars],
+        video_title or "체슬리모닝브리프",
+        settings.gemini_use_gem_prompt,
+    )
+
+    # Clipboard paste is more reliable for long Korean transcripts.
+    await page.evaluate(
+        "(value) => navigator.clipboard.writeText(value)",
+        prompt_text,
+    )
+    await page.keyboard.press("Control+a")
+    await page.keyboard.press("Delete")
+    await page.wait_for_timeout(200)
+    await page.keyboard.press("Control+v")
+    await page.wait_for_timeout(800)
+
+    await page.keyboard.press("Enter")
+    await page.wait_for_timeout(700)
+    # Fallback send button click when Enter does not submit.
+    send_btn = page.locator(
+        "button[aria-label*='전송'], button[aria-label*='Send'], "
+        "[data-test-id='send-button']"
+    ).first
+    if await send_btn.count() > 0:
+        try:
+            await send_btn.click(timeout=1200)
+        except Exception:
+            pass
+
+    result = await wait_for_gemini_response(
+        page,
+        previous_count=previous_count,
+        timeout_ms=settings.response_timeout_ms,
+    )
+    validate_gemini_response(result, settings.gemini_min_response_chars)
+    return result
+
+
 async def ask_gemini_gem(settings: Settings, text: str, video_title: str = "") -> str:
     async with async_playwright() as p:
 
@@ -397,75 +465,48 @@ async def ask_gemini_gem(settings: Settings, text: str, video_title: str = "") -
                 "완료되면 자동으로 요약을 계속합니다.",
             )
 
-        context, page = await launch_gemini_context(
-            p,
-            settings,
-            on_login_required=notify_login_required,
-        )
-
+        context = None
+        page = None
         try:
-            await open_gem_conversation(
-                page,
-                settings.gemini_gem_url,
-                expected_gem_name=settings.gemini_gem_expected_name,
-            )
-
-            if settings.gemini_force_pro:
-                await _select_gemini_pro(page)
-
-            await page.wait_for_selector(
-                "rich-textarea, div[contenteditable='true'], textarea",
-                timeout=30000,
-            )
-            response_nodes = page.locator("message-content, model-response")
-            previous_count = await response_nodes.count()
-
-            input_box = await _find_input_box(page)
-            await input_box.click()
-            prompt_text = build_gem_prompt(
-                text[: settings.gemini_input_max_chars],
-                video_title or "체슬리모닝브리프",
-                settings.gemini_use_gem_prompt,
-            )
-
-            # Clipboard paste is more reliable for long Korean transcripts.
-            await page.evaluate(
-                "(value) => navigator.clipboard.writeText(value)",
-                prompt_text,
-            )
-            await page.keyboard.press("Control+a")
-            await page.keyboard.press("Delete")
-            await page.wait_for_timeout(200)
-            await page.keyboard.press("Control+v")
-            await page.wait_for_timeout(800)
-
-            await page.keyboard.press("Enter")
-            await page.wait_for_timeout(700)
-            # Fallback send button click when Enter does not submit.
-            send_btn = page.locator(
-                "button[aria-label*='전송'], button[aria-label*='Send'], "
-                "[data-test-id='send-button']"
-            ).first
-            if await send_btn.count() > 0:
+            for attempt in range(2):
+                force_login = attempt > 0
+                if force_login:
+                    print("Gemini 재로그인 시도 중...")
+                context, page = await launch_gemini_context(
+                    p,
+                    settings,
+                    on_login_required=notify_login_required,
+                    gem_url=settings.gemini_gem_url,
+                    force_interactive_login=force_login,
+                )
                 try:
-                    await send_btn.click(timeout=1200)
-                except Exception:
-                    pass
-
-            result = await wait_for_gemini_response(
-                page,
-                previous_count=previous_count,
-                timeout_ms=settings.response_timeout_ms,
-            )
-            await save_storage_state(context, settings.gemini_storage_state_file)
-            return result
+                    await open_gem_conversation(
+                        page,
+                        settings.gemini_gem_url,
+                        expected_gem_name=settings.gemini_gem_expected_name,
+                    )
+                    result = await _run_gemini_prompt(page, settings, text, video_title)
+                    await save_storage_state(context, settings.gemini_storage_state_file)
+                    return result
+                except GeminiLoginRequired as exc:
+                    print(f"Gemini login recovery needed: {exc}")
+                    await context.close()
+                    context = None
+                    page = None
+                    if attempt == 0:
+                        continue
+                    raise RuntimeError(
+                        "Gemini 로그인 복구 실패. SETUP_LOGIN_ONLY=1 로 세션을 다시 저장하세요."
+                    ) from exc
+            raise RuntimeError("Gemini session could not be established.")
         except PlaywrightTimeoutError as exc:
             raise RuntimeError("Timed out while waiting for Gemini UI or response.") from exc
         finally:
-            if settings.gemini_debug_hold_ms > 0:
+            if page and settings.gemini_debug_hold_ms > 0:
                 print(f"Holding browser for debug: {settings.gemini_debug_hold_ms}ms")
                 await page.wait_for_timeout(settings.gemini_debug_hold_ms)
-            await context.close()
+            if context:
+                await context.close()
 
 
 def _request_verify_ssl(settings: Settings) -> bool:
@@ -684,7 +725,11 @@ def setup_login(settings: Settings) -> None:
 
     async def _login() -> None:
         async with async_playwright() as p:
-            context, page = await launch_gemini_context(p, settings)
+            context, page = await launch_gemini_context(
+                p,
+                settings,
+                gem_url=settings.gemini_gem_url,
+            )
             await open_gem_conversation(
                 page,
                 settings.gemini_gem_url,

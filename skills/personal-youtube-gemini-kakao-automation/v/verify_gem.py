@@ -64,6 +64,7 @@ async def main() -> None:
 
     class _Settings:
         profile_dir = profile
+        gemini_gem_url = gem_url
         gemini_storage_state_file = resolve_data_path(
             os.getenv("GEMINI_STORAGE_STATE_FILE", "./gemini_storage_state.json"),
             SCRIPT_DIR,
@@ -74,7 +75,7 @@ async def main() -> None:
     settings = _Settings()
 
     async with async_playwright() as p:
-        context, page = await launch_gemini_context(p, settings)
+        context, page = await launch_gemini_context(p, settings, gem_url=gem_url)
         try:
             await open_gem_conversation(page, gem_url)
             await page.wait_for_timeout(2000)

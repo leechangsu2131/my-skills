@@ -510,6 +510,31 @@ def pull():
     return _action_success(result)
 
 
+@app.route("/api/catch-up", methods=["POST"])
+def catch_up():
+    data = request.json or {}
+    subject = data.get("subject", "")
+    bridge_row = data.get("bridge_row")
+    record_key = data.get("record_key")
+
+    try:
+        ws = schedule.connect()
+        records = schedule.load_all(ws)
+        result = schedule.catch_up_to_lesson(
+            ws,
+            records,
+            subject,
+            bridge_row_number=bridge_row,
+            record_key=record_key,
+        )
+    except ValueError as exc:
+        return _action_error(str(exc))
+
+    log_action("catch_up_to_lesson", subject, f"bridge_row={bridge_row}, record_key={record_key or ''}")
+    _clear_dashboard_cache()
+    return _action_success(result)
+
+
 @app.route("/api/move", methods=["POST"])
 def move():
     data = request.json or {}

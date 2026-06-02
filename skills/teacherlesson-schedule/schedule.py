@@ -770,6 +770,7 @@ def _load_bridge_support(progress_ws):
 
     return {
         "module": bridge_sheet,
+        "spreadsheet": spreadsheet,
         "worksheet": bridge_ws,
         "rows": bridge_sheet.load_bridge_rows(bridge_ws),
     }
@@ -1720,6 +1721,141 @@ def _mark_done_via_bridge(
     }
 
 
+def catch_up_to_lesson(
+    ws,
+    records,
+    subject,
+    bridge_row_number=None,
+    record_key=None,
+    bridge_support=None,
+    current_date=None,
+):
+    subject = _clean_text(subject)
+    if bridge_support is None:
+        bridge_support = _load_bridge_support(ws)
+    if bridge_support is None:
+        message = "Bridge sheet is required for catch-up adjustments."
+        return {"updated": 0, "rows": [], "bridge_rows": [], "message": message}
+
+    sorted_bridge_rows = sorted(bridge_support["rows"], key=_bridge_row_sort_key)
+    records_by_lesson_id = _records_by_lesson_id(records)
+
+    target_row = None
+    if bridge_row_number not in (None, ""):
+        bridge_row_number = _coerce_bridge_row_number(bridge_row_number)
+        target_row = next(
+            (row for row in sorted_bridge_rows if row.get("_row") == bridge_row_number),
+            None,
+        )
+    elif record_key:
+        target_record = find_record_by_key(records, record_key)
+        target_lesson_id = _lesson_id_of(target_record) if target_record else ""
+        target_row = next(
+            (
+                row
+                for row in sorted_bridge_rows
+                if _clean_text(row.get(COLUMN_LESSON_ID)) == target_lesson_id
+                and _is_bridge_planned(row)
+            ),
+            None,
+        )
+
+    if target_row is None:
+        message = "No bridge slot found for catch-up target."
+        return {"updated": 0, "rows": [], "bridge_rows": [], "message": message}
+
+    target_subject = _bridge_row_subject(target_row, records_by_lesson_id)
+    if subject and target_subject and subject != target_subject:
+        message = f"Bridge row {target_row.get('_row')} is not a [{subject}] lesson."
+        return {"updated": 0, "rows": [], "bridge_rows": [], "message": message}
+    subject = subject or target_subject
+
+    subject_rows = [
+        row
+        for row in sorted_bridge_rows
+        if _bridge_row_subject(row, records_by_lesson_id) == subject
+    ]
+    target_index = next(
+        (index for index, row in enumerate(subject_rows) if row is target_row),
+        None,
+    )
+    if target_index is None:
+        message = f"No [{subject}] flow found for catch-up target."
+        return {"updated": 0, "rows": [], "bridge_rows": [], "message": message}
+
+    current_date = _coerce_date(current_date, field_name="湲곗? ?좎쭨") or date.today()
+
+    completed_rows = []
+    for bridge_row in subject_rows[:target_index]:
+        if not _is_bridge_planned(bridge_row):
+            continue
+        bridge_row["status"] = "done"
+        completed_rows.append(bridge_row)
+
+    reflow_rows = subject_rows[target_index:]
+    slot_templates = _subject_slots_from_timetable(
+        bridge_support.get("spreadsheet"),
+        bridge_support["module"],
+        subject,
+        current_date,
+        len(reflow_rows),
+    )
+    for bridge_row, slot_template in zip(reflow_rows, slot_templates):
+        bridge_row["slot_date"] = slot_template["slot_date"]
+        bridge_row["slot_period"] = slot_template["slot_period"]
+        bridge_row["slot_order"] = slot_template["slot_order"]
+        bridge_row["status"] = "planned"
+        bridge_row["source"] = "manual_catch_up"
+
+    affected_rows = completed_rows + reflow_rows
+    lesson_ids = _bridge_lesson_ids(affected_rows)
+    result_bridge_rows = [row.get("_row") for row in completed_rows if row.get("_row")]
+
+    done_by_lesson_id = {}
+    for lesson_id in lesson_ids:
+        has_remaining_planned = any(
+            _clean_text(row.get(COLUMN_LESSON_ID)) == lesson_id and _is_bridge_planned(row)
+            for row in bridge_support["rows"]
+        )
+        done_by_lesson_id[lesson_id] = not has_remaining_planned
+
+    done_column = get_header_map(ws)[COLUMN_DONE]
+    worksheet_name = _worksheet_title(ws)
+    progress_updates = [
+        _make_cell_update(
+            done_column,
+            record["_row"],
+            done_by_lesson_id[_lesson_id_of(record)],
+            worksheet_name=worksheet_name,
+        )
+        for record in records
+        if _lesson_id_of(record) in done_by_lesson_id
+        and _is_done(record) != done_by_lesson_id[_lesson_id_of(record)]
+    ]
+
+    _rewrite_bridge_sheet(
+        ws,
+        records,
+        bridge_support,
+        affected_lesson_ids=lesson_ids,
+    )
+    _batch_update_cells_with_option(ws, progress_updates, value_input_option="USER_ENTERED")
+
+    return {
+        "updated": len(affected_rows),
+        "completed": len(completed_rows),
+        "rescheduled": len(reflow_rows),
+        "rows": [record["_row"] for record in records if _lesson_id_of(record) in lesson_ids],
+        "bridge_rows": result_bridge_rows,
+        "message": (
+            f"Caught up {len(completed_rows)} earlier [{subject}] lesson(s) "
+            f"and rescheduled {len(reflow_rows)} lesson(s)."
+        ),
+        "slot_date": target_row.get("slot_date"),
+        "slot_period": target_row.get("slot_period"),
+    }
+
+
 def _push_schedule_via_bridge(ws, records, subject, days, from_date=None, bridge_support=None):
     subject = _clean_text(subject)
     days = _coerce_days(days)
@@ -1807,6 +1943,55 @@ def _bridge_lesson_ids(rows):
         for row in rows
         if _clean_text(row.get(COLUMN_LESSON_ID))
     }
+
+
+def _subjects_match_for_bridge(bridge_module, left, right):
+    left = _clean_text(left)
+    right = _clean_text(right)
+    normalizer = getattr(bridge_module, "_normalize_subject_key", None)
+    if callable(normalizer):
+        return normalizer(left) == normalizer(right)
+    return left == right
+
+
+def _subject_slots_from_timetable(spreadsheet, bridge_module, subject, start_date, count):
+    if count <= 0:
+        return []
+    if spreadsheet is None:
+        raise ValueError("Timetable sheet is required for catch-up reflow.")
+
+    import auto_planner
+
+    timetable = auto_planner.fetch_timetable(spreadsheet)
+    try:
+        holidays = auto_planner.fetch_holidays(spreadsheet)
+    except Exception:
+        holidays = set()
+
+    slots = []
+    current_day = start_date
+    end_date = start_date + timedelta(days=730)
+    while current_day <= end_date and len(slots) < count:
+        if current_day.weekday() < 5 and current_day not in holidays:
+            slot_order = 0
+            for period_index, scheduled_subject in enumerate(timetable.get(current_day.weekday(), []), start=1):
+                if not _subjects_match_for_bridge(bridge_module, scheduled_subject, subject):
+                    continue
+                slot_order += 1
+                slots.append(
+                    {
+                        "slot_date": _format_date(current_day),
+                        "slot_period": period_index,
+                        "slot_order": slot_order,
+                    }
+                )
+                if len(slots) >= count:
+                    break
+        current_day += timedelta(days=1)
+
+    if len(slots) < count:
+        raise ValueError(f"Not enough future [{subject}] timetable slots were found.")
+    return slots
 
 
 def move_bridge_slot(ws, records, bridge_row_number, direction, bridge_support=None):
@@ -1929,7 +2114,7 @@ def pull_bridge_slot(ws, records, bridge_row_number, bridge_support=None):
     next_planned_row["slot_date"] = target_slot_key[0]
     next_planned_row["slot_period"] = target_slot_key[1]
     next_planned_row["slot_order"] = _next_bridge_slot_order(target_group_rows)
-    for row, slot_template in zip(shift_rows, shift_templates):
+    for row, slot_template in zip(shift_rows, shift_templates[:-1]):
         _apply_bridge_slot_payload(row, slot_template)
 
     affected_rows = target_group_rows + [next_planned_row] + shift_rows

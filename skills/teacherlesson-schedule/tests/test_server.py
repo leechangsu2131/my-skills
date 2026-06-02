@@ -240,6 +240,35 @@ class ServerDashboardCacheTests(unittest.TestCase):
         self.assertEqual(second["generation"], 2)
         self.assertEqual(calls, ["default", "default"])
 
+    def test_catch_up_endpoint_calls_schedule_action(self):
+        ws = object()
+        result = {
+            "updated": 2,
+            "bridge_rows": [2, 3],
+            "message": "ok",
+        }
+
+        with (
+            patch.object(server.schedule, "connect", return_value=ws),
+            patch.object(server.schedule, "load_all", return_value=[]),
+            patch.object(server.schedule, "catch_up_to_lesson", return_value=result) as catch_up,
+            patch.object(server, "log_action"),
+        ):
+            response = self.client.post(
+                "/api/catch-up",
+                json={"subject": "Math", "bridge_row": 4, "record_key": "lesson-0003"},
+            )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.get_json()["result"], result)
+        catch_up.assert_called_once_with(
+            ws,
+            [],
+            "Math",
+            bridge_row_number=4,
+            record_key="lesson-0003",
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

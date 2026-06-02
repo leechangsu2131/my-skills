@@ -91,11 +91,55 @@ function TimelineRow({ item }) {
     );
 }
 
-function SubjectCard({ subject, payload, markDone, pullLessonForward, extendSchedule, copyPdfPath, marking }) {
+function FullTimelineRow({ item, catchUpToLesson, marking }) {
+    const subject = getSubject(item);
+    const style = getSubjectStyle(subject);
+    const done = isDoneItem(item);
+    const bridgeRow = getBridgeRow(item);
+    const recordKey = getRecordKey(item);
+    const catchUpKey = `catchup-${bridgeRow || recordKey}`;
+
+    return (
+        <div className="grid gap-3 rounded-2xl border border-slate-100 bg-white px-4 py-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
+            <div className="min-w-0">
+                <div className="flex flex-wrap items-center gap-2">
+                    <span className={`rounded-full px-2.5 py-1 text-[11px] font-bold ${style.bg} ${done ? "text-slate-500" : style.accent}`}>
+                        {done ? "완료" : "예정"}
+                    </span>
+                    <span className="text-xs font-bold text-slate-400">{formatPlacement(item)}</span>
+                    <span className="text-xs font-bold text-slate-400">{getLesson(item) || "-"}차시</span>
+                </div>
+                <div className="mt-2 truncate text-sm font-bold text-slate-900">{getTitle(item)}</div>
+                {getUnit(item) && <div className="mt-1 truncate text-xs font-semibold text-slate-500">{getUnit(item)}</div>}
+            </div>
+            {bridgeRow && !done ? (
+                <button
+                    className={`inline-flex items-center justify-center rounded-2xl border px-4 py-2 text-sm font-bold transition ${
+                        marking === catchUpKey
+                            ? "cursor-not-allowed border-slate-200 bg-slate-100 text-slate-400"
+                            : "border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
+                    }`}
+                    onClick={() => catchUpToLesson(item)}
+                    disabled={marking === catchUpKey}
+                    type="button"
+                >
+                    {marking === catchUpKey ? "맞추는 중..." : "지금 수업으로 맞추기"}
+                </button>
+            ) : (
+                <span className="inline-flex items-center justify-center rounded-2xl bg-slate-50 px-4 py-2 text-sm font-bold text-slate-400">
+                    {done ? "완료됨" : "배치 없음"}
+                </span>
+            )}
+        </div>
+    );
+}
+
+function SubjectCard({ subject, payload, markDone, catchUpToLesson, pullLessonForward, extendSchedule, copyPdfPath, marking }) {
     const style = getSubjectStyle(subject);
     const nextItem = payload?.next || null;
     const upcoming = payload?.upcoming || [];
     const recent = payload?.recent || [];
+    const allItems = payload?.items || [];
     const completedCount = payload?.completed_count || 0;
     const totalCount = payload?.total_count || 0;
     const bridgeRow = getBridgeRow(nextItem);
@@ -103,6 +147,7 @@ function SubjectCard({ subject, payload, markDone, pullLessonForward, extendSche
     const rowNumber = nextItem?.row_number ?? nextItem?._row ?? null;
     const pdfPath = getPdfPath(nextItem);
     const doneKey = `done-${bridgeRow || recordKey}`;
+    const catchUpKey = `catchup-${bridgeRow || recordKey}`;
     const pullKey = `pull-${bridgeRow}`;
     const extendKey = `extend-${subject}-${bridgeRow || rowNumber || "next"}`;
 
@@ -180,6 +225,20 @@ function SubjectCard({ subject, payload, markDone, pullLessonForward, extendSche
                             {bridgeRow && (
                                 <button
                                     className={`inline-flex items-center justify-center rounded-2xl border px-4 py-2 text-sm font-bold transition ${
+                                        marking === catchUpKey
+                                            ? "cursor-not-allowed border-slate-200 bg-slate-100 text-slate-400"
+                                            : "border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
+                                    }`}
+                                    onClick={() => catchUpToLesson(nextItem)}
+                                    disabled={marking === catchUpKey}
+                                    type="button"
+                                >
+                                    {marking === catchUpKey ? "맞추는 중..." : "지금 수업으로 맞추기"}
+                                </button>
+                            )}
+                            {bridgeRow && (
+                                <button
+                                    className={`inline-flex items-center justify-center rounded-2xl border px-4 py-2 text-sm font-bold transition ${
                                         marking === pullKey
                                             ? "cursor-not-allowed border-slate-200 bg-slate-100 text-slate-400"
                                             : "border-slate-200 bg-slate-50 text-slate-700 hover:bg-white"
@@ -211,6 +270,34 @@ function SubjectCard({ subject, payload, markDone, pullLessonForward, extendSche
                     </div>
                 )}
             </div>
+
+            <section className="mt-5 rounded-[24px] border border-slate-100 bg-slate-50/70 p-4">
+                <div className="flex items-center justify-between gap-3">
+                    <div>
+                        <div className="text-[11px] font-black uppercase tracking-[0.24em] text-slate-400">ALL LESSONS</div>
+                        <h4 className="mt-1 text-base font-black text-slate-900">전체 차시</h4>
+                    </div>
+                    <span className="rounded-full bg-white px-3 py-1 text-xs font-bold text-slate-500 shadow-sm">
+                        {allItems.length}개
+                    </span>
+                </div>
+                <div className="mt-4 max-h-[520px] space-y-3 overflow-y-auto pr-1">
+                    {allItems.length === 0 ? (
+                        <div className="rounded-2xl border border-dashed border-slate-200 bg-white px-4 py-6 text-center text-sm font-semibold text-slate-400">
+                            전체 차시 데이터가 없습니다.
+                        </div>
+                    ) : (
+                        allItems.map((item) => (
+                            <FullTimelineRow
+                                key={`${getActionKey(item)}-${item.planned_date}-${item.status}`}
+                                item={item}
+                                catchUpToLesson={catchUpToLesson}
+                                marking={marking}
+                            />
+                        ))
+                    )}
+                </div>
+            </section>
 
             <div className="mt-5 grid gap-4 xl:grid-cols-2">
                 <section>
@@ -249,6 +336,7 @@ function SubjectCard({ subject, payload, markDone, pullLessonForward, extendSche
 export function DashboardView({
     views,
     markDone,
+    catchUpToLesson,
     pullLessonForward,
     extendSchedule,
     copyPdfPath,
@@ -318,6 +406,7 @@ export function DashboardView({
                             subject={subject}
                             payload={timelineData[subject]}
                             markDone={markDone}
+                            catchUpToLesson={catchUpToLesson}
                             pullLessonForward={pullLessonForward}
                             extendSchedule={extendSchedule}
                             copyPdfPath={copyPdfPath}

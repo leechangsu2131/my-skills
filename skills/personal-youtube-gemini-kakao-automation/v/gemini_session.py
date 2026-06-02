@@ -298,8 +298,13 @@ async def open_gem_conversation(
             raise GeminiLoginRequired("Gemini login required during Gem open.")
         if await has_gemini_chat_input(page, timeout_ms=15000):
             print(f"Gem UI ready at {page.url}")
-            await verify_gem_identity(page, gem_url, expected_gem_name)
-            return
+            try:
+                await verify_gem_identity(page, gem_url, expected_gem_name)
+                return
+            except RuntimeError as exc:
+                # Gemini occasionally lands on /app despite a valid gem URL.
+                # Retry once via Gems library before failing the whole run.
+                print(f"Gem verification failed on {page.url}, retry via Gems library: {exc}")
 
     await _open_gem_via_gems_library(page, gem_id)
     if await has_gemini_chat_input(page, timeout_ms=15000):

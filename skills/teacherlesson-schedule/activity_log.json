@@ -1,5 +1,35 @@
 [
   {
+    "timestamp": "2026-06-02T10:31:42.577662",
+    "action": "catch_up_to_lesson",
+    "subject": "도덕",
+    "details": "bridge_row=165, record_key=lesson-0103"
+  },
+  {
+    "timestamp": "2026-06-02T10:31:14.307019",
+    "action": "catch_up_to_lesson",
+    "subject": "사회",
+    "details": "bridge_row=162, record_key=lesson-0212"
+  },
+  {
+    "timestamp": "2026-06-02T10:30:10.775065",
+    "action": "catch_up_to_lesson",
+    "subject": "수학",
+    "details": "bridge_row=175, record_key=lesson-0165"
+  },
+  {
+    "timestamp": "2026-06-02T10:29:05.023741",
+    "action": "catch_up_to_lesson",
+    "subject": "국어",
+    "details": "bridge_row=167, record_key=lesson-0051"
+  },
+  {
+    "timestamp": "2026-06-02T10:19:11.791520",
+    "action": "catch_up_to_lesson",
+    "subject": "국어",
+    "details": "bridge_row=167, record_key=lesson-0051"
+  },
+  {
     "timestamp": "2026-04-17T14:32:08.200866",
     "action": "pull_subject_flow",
     "subject": "사회",

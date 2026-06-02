@@ -130,6 +130,30 @@ export function useScheduleData() {
         [runAction],
     );
 
+    const catchUpToLesson = useCallback(
+        async (item) => {
+            const recordKey = getRecordKey(item);
+            const bridgeRow = getBridgeRow(item);
+            const subject = getSubject(item);
+            const title = getTitle(item);
+            if (!bridgeRow) {
+                throw new Error("진도를 맞출 수 있는 배치 행을 찾지 못했습니다.");
+            }
+
+            return runAction(
+                `catchup-${bridgeRow || recordKey}`,
+                "/catch-up",
+                {
+                    subject,
+                    bridge_row: bridgeRow ?? null,
+                    record_key: recordKey || null,
+                },
+                `"${title}" 기준으로 이전 수업을 완료 처리했습니다.`,
+            );
+        },
+        [runAction],
+    );
+
     const pushSchedule = useCallback(
         async (subject, days, fromDate = null) =>
             runAction(
@@ -244,6 +268,7 @@ export function useScheduleData() {
         setBoardDate,
         loadData,
         markDone,
+        catchUpToLesson,
         pushSchedule,
         extendSchedule,
         moveLesson,

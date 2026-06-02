@@ -29,10 +29,27 @@ except ImportError:
 
 BASE_DIR = Path(__file__).parent
 BACKUP_DIR = BASE_DIR / "registry_backups"
-HPRINT_KEYS = [
-    r"Software\HNC\Hwp\13.0\Parameters\00000215",
-    r"Software\HNC\Hwp\10.2\Parameters\00000215",
-]
+
+def get_hprint_keys():
+    keys = []
+    root = r"Software\HNC\Hwp"
+    try:
+        hnc_key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, root)
+        index = 0
+        while True:
+            try:
+                version = winreg.EnumKey(hnc_key, index)
+                keys.append(rf"{root}\{version}\Parameters\00000215")
+                keys.append(rf"{root}\{version}\Print")
+                index += 1
+            except OSError:
+                break
+        winreg.CloseKey(hnc_key)
+    except FileNotFoundError:
+        pass
+    return keys
+
+HPRINT_KEYS = get_hprint_keys()
 
 
 load_dotenv(BASE_DIR / ".env")
@@ -91,7 +108,17 @@ def _reset_printer_tray() -> tuple[int, int] | None:
         return None
 
     printer = PRINTER_NAME or win32print.GetDefaultPrinter()
-    hprinter = win32print.OpenPrinter(printer)
+    try:
+        hprinter = win32print.OpenPrinter(printer)
+    except Exception as e:
+        print(f"지정된 프린터 '{printer}'를 열 수 없습니다: {e}")
+        try:
+            printer = win32print.GetDefaultPrinter()
+            print(f"기본 프린터 '{printer}'로 재시도합니다.")
+            hprinter = win32print.OpenPrinter(printer)
+        except Exception as e2:
+            print(f"기본 프린터 열기도 실패했습니다: {e2}")
+            return None
     try:
         info = win32print.GetPrinter(hprinter, 9)
         dm = info.get("pDevMode")

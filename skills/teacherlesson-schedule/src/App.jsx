@@ -121,6 +121,7 @@ export default function App() {
         setBoardDate,
         loadData,
         markDone,
+        catchUpToLesson,
         pushSchedule,
         extendSchedule,
         pullLessonForward,
@@ -270,6 +271,7 @@ export default function App() {
                 <DashboardView
                     views={views}
                     markDone={markDone}
+                    catchUpToLesson={catchUpToLesson}
                     pullLessonForward={pullLessonForward}
                     extendSchedule={extendSchedule}
                     copyPdfPath={copyPdfPath}
@@ -298,6 +300,7 @@ export default function App() {
             <LessonListView
                 views={views}
                 markDone={markDone}
+                catchUpToLesson={catchUpToLesson}
                 pullLessonForward={pullLessonForward}
                 extendSchedule={extendSchedule}
                 copyPdfPath={copyPdfPath}

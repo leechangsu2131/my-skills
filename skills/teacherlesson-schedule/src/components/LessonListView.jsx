@@ -41,7 +41,7 @@ function StatusBadge({ item }) {
     );
 }
 
-function ActionButtons({ item, markDone, pullLessonForward, extendSchedule, copyPdfPath, marking }) {
+function ActionButtons({ item, markDone, catchUpToLesson, pullLessonForward, extendSchedule, copyPdfPath, marking }) {
     const recordKey = getRecordKey(item);
     const bridgeRow = getBridgeRow(item);
     const subject = getSubject(item);
@@ -49,6 +49,7 @@ function ActionButtons({ item, markDone, pullLessonForward, extendSchedule, copy
     const pdfPath = getPdfPath(item);
     const done = isDoneItem(item);
     const doneKey = `done-${bridgeRow || recordKey}`;
+    const catchUpKey = `catchup-${bridgeRow || recordKey}`;
     const pullKey = `pull-${bridgeRow}`;
     const extendKey = `extend-${subject}-${bridgeRow || rowNumber || "next"}`;
 
@@ -85,6 +86,20 @@ function ActionButtons({ item, markDone, pullLessonForward, extendSchedule, copy
             >
                 {done ? "완료됨" : marking === doneKey ? "처리 중..." : "완료 처리"}
             </button>
+            {bridgeRow && !done && (
+                <button
+                    className={`inline-flex items-center justify-center rounded-2xl border px-4 py-2 text-sm font-bold transition ${
+                        marking === catchUpKey
+                            ? "cursor-not-allowed border-slate-200 bg-slate-100 text-slate-400"
+                            : "border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
+                    }`}
+                    onClick={() => catchUpToLesson(item)}
+                    disabled={marking === catchUpKey}
+                    type="button"
+                >
+                    {marking === catchUpKey ? "맞추는 중..." : "지금 수업으로 맞추기"}
+                </button>
+            )}
             {bridgeRow && (
                 <button
                     className={`inline-flex items-center justify-center rounded-2xl border px-4 py-2 text-sm font-bold transition ${
@@ -117,7 +132,7 @@ function ActionButtons({ item, markDone, pullLessonForward, extendSchedule, copy
     );
 }
 
-function PlacementCard({ item, markDone, pullLessonForward, extendSchedule, copyPdfPath, marking }) {
+function PlacementCard({ item, markDone, catchUpToLesson, pullLessonForward, extendSchedule, copyPdfPath, marking }) {
     const subject = getSubject(item);
     const style = getSubjectStyle(subject);
 
@@ -147,6 +162,7 @@ function PlacementCard({ item, markDone, pullLessonForward, extendSchedule, copy
             <ActionButtons
                 item={item}
                 markDone={markDone}
+                catchUpToLesson={catchUpToLesson}
                 pullLessonForward={pullLessonForward}
                 extendSchedule={extendSchedule}
                 copyPdfPath={copyPdfPath}
@@ -164,7 +180,7 @@ function EmptyState({ text }) {
     );
 }
 
-function WeeklyColumn({ day, items, markDone, pullLessonForward, extendSchedule, copyPdfPath, marking }) {
+function WeeklyColumn({ day, items, markDone, catchUpToLesson, pullLessonForward, extendSchedule, copyPdfPath, marking }) {
     return (
         <section className="rounded-[26px] border border-slate-200 bg-white/90 p-4 shadow-sm">
             <div className="flex items-center justify-between gap-3">
@@ -191,6 +207,7 @@ function WeeklyColumn({ day, items, markDone, pullLessonForward, extendSchedule,
                             key={`${getActionKey(item)}-${getPlannedDate(item)}`}
                             item={item}
                             markDone={markDone}
+                            catchUpToLesson={catchUpToLesson}
                             pullLessonForward={pullLessonForward}
                             extendSchedule={extendSchedule}
                             copyPdfPath={copyPdfPath}
@@ -248,6 +265,7 @@ function MonthCell({ cell, items, todayIso }) {
 export function LessonListView({
     views,
     markDone,
+    catchUpToLesson,
     pullLessonForward,
     extendSchedule,
     copyPdfPath,
@@ -349,6 +367,7 @@ export function LessonListView({
                                     key={`${getActionKey(item)}-${getPlannedDate(item)}`}
                                     item={item}
                                     markDone={markDone}
+                                    catchUpToLesson={catchUpToLesson}
                                     pullLessonForward={pullLessonForward}
                                     extendSchedule={extendSchedule}
                                     copyPdfPath={copyPdfPath}
@@ -380,6 +399,7 @@ export function LessonListView({
                                     key={`${getActionKey(item)}-${getPlannedDate(item)}`}
                                     item={item}
                                     markDone={markDone}
+                                    catchUpToLesson={catchUpToLesson}
                                     pullLessonForward={pullLessonForward}
                                     extendSchedule={extendSchedule}
                                     copyPdfPath={copyPdfPath}
@@ -437,6 +457,7 @@ export function LessonListView({
                             day={day}
                             items={weekGroups[toIsoDate(day)] || []}
                             markDone={markDone}
+                            catchUpToLesson={catchUpToLesson}
                             pullLessonForward={pullLessonForward}
                             extendSchedule={extendSchedule}
                             copyPdfPath={copyPdfPath}

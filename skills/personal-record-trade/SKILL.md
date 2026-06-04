@@ -17,9 +17,11 @@ Use `$personal-analyze-trade` instead when the task is to inspect or analyze the
 - `이 체결 스크린샷을 매매일지에 추가해줘.`
 - `방금 산 NVDA 10주를 투자 매매일지에 기록해줘.`
 
-## Setup
+## Setup & Secrets (Don't Forget!)
 
-- `.env` must contain the Google credentials expected by `gsheet_auth.py`, including `GOOGLE_SA_*` values and `GOOGLE_SHEET_ID`.
+- **`.env` File Path:** `C:\Users\lee21\.gemini\antigravity\scratch\my-skills\skills\personal-record-trade\.env`
+- This file contains all critical secrets: `GOOGLE_SA_*` credentials, `GOOGLE_SHEET_ID`, `DART_API_KEY`, and `KRX` login info.
+- **CRITICAL REMINDER:** When writing custom python scripts or checking environment variables, ALWAYS use `from dotenv import load_dotenv; load_dotenv(r'C:\Users\lee21\.gemini\antigravity\scratch\my-skills\skills\personal-record-trade\.env')` so you don't falsely assume keys are missing!
 - Keep the existing scripts and resources in this folder. Do not recreate the portfolio spreadsheet unless the user explicitly asks for setup or migration work.
 
 ## Trade Entry Workflow
@@ -63,3 +65,30 @@ python 2_add_trade.py --json '{"date":"2026-05-22","ticker":"NVDA","name":"NVIDI
 - Do not use this skill for read-only portfolio review. Use `$personal-analyze-trade`.
 - Do not perform broad Google Sheets analysis here. This skill may confirm the append result, but deeper review belongs to `$personal-analyze-trade`.
 - Do not change formulas, dashboard ranges, or portfolio structure unless the user explicitly requests maintenance work.
+
+## Core Directories & Data Flow
+
+This skill contains several sub-modules for data ingestion and deep investment analysis:
+
+- **`pipeline/`**: The data ingestion and mapping engine. 
+  - Fetches DART (Korean financial statements), YFinance, and GuruFocus data.
+  - **Rule:** DART is the core truth for KR stocks. Do NOT use external APIs (Naver, yfinance) to search for KR stock tickers; use `corpCode.xml` or existing DART modules.
+- **`valuation_app/`**: The Streamlit-based valuation dashboard and modeling toolkit.
+  - Generates insights using `dashboard.py`. Use `test_dashboard_robust.py` or `run_audit()` to test UI metrics (ROIC, EV) safely without triggering Streamlit `AppTest` selectbox errors.
+- **`data/valuation/{ticker}/normalized/`**: The core data storage.
+  - `market.json`: Contains price, market cap, shares outstanding.
+  - `metrics.json`: Contains structured historical and forward financial metrics.
+  - **Rule:** If historical ROIC/NOPAT is missing, you MUST run a script to calculate and append them (NOPAT = OP*(1-tax), IC = Equity+NetDebt, ROIC = NOPAT/IC) after fetching raw DART data.
+
+## Strict Verification Checklist (MUST READ)
+
+To prevent breaking the pipeline or Google Sheet, rigidly follow these steps:
+
+1. **Environment Initialization:** ALWAYS run `from dotenv import load_dotenv; load_dotenv(r'C:\Users\lee21\.gemini\antigravity\scratch\my-skills\skills\personal-record-trade\.env')` in EVERY script. Never assume an API key is missing just because the environment is empty.
+2. **Local Data First:** Do not rely on external web APIs for basic lookups (like ticker codes) when DART API and `.env` are already established as the project standard.
+3. **Google Sheets Safeties:**
+   - **Emoji Ban:** Never use emojis (like ✅) in `print()` statements when running Python in the Windows console (cp949 encoding errors will crash the script mid-execution).
+   - **No Blind Appends:** When adding a company to the "기업분석" (Company Analysis) tab, always read existing rows first to prevent duplicate lines.
+   - **Position ID & Status:** For initial research/analysis, set the Position ID (Column A) to `""` (blank) and Status (Column D) to `"관심종목"`. Do NOT auto-generate a Position ID until an actual trade occurs.
+   - **Ticker Preservation:** To prevent Google Sheets from stripping leading zeros (e.g. `009540` -> `9540`), always prepend an apostrophe (`'009540`) or use `value_input_option='RAW'`.
+4. **Final Verification:** After any Google Sheet update or Data Pipeline run, ALWAYS fetch the last updated rows or read the generated JSON to prove to the user that the data was inserted cleanly and correctly.

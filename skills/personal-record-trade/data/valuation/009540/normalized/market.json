@@ -1,0 +1,16 @@
+{
+  "ticker": "009540",
+  "company_name": "HD한국조선해양",
+  "valuation_date": "2026-06-03",
+  "market_data_as_of": "2026-06-02",
+  "price": 383500,
+  "shares_outstanding": 70773116,
+  "market_cap": 27141489986000,
+  "historical_average_per": 15.0,
+  "peer_average_per": 15.0,
+  "forward_pe": 6.7406745,
+  "current_tam": 40000000000000,
+  "projected_tam_5yr": 60000000000000,
+  "currency": "KRW",
+  "note": "Auto-fetched via pykrx"
+}

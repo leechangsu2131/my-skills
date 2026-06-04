@@ -7,6 +7,8 @@ description: "Use this skill when Codex needs to analyze or inspect the user's i
 
 ## Core Rules
 
+- **Weight Adjustment Strategy**: Always read and follow docs/PORTFOLIO_WEIGHT_STRATEGY.md before analyzing portfolio weights, adjusting Conviction (확신도), or dealing with the 🎯 비중조절신호 tab. This document is the ultimate source of truth for the Top-down + Bottom-up allocation logic.
+
 - Use this skill for analysis, review, and Google Sheets range selection. Use `$personal-record-trade` when the primary task is adding a new trade from natural language or a brokerage screenshot.
 - Prefer `sheets_values_get` with a precise A1 range. Avoid full-sheet reads.
 - Use `sheets_get` only when the sheet structure itself is unknown and metadata is truly needed.

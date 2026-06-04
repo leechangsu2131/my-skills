@@ -44,11 +44,17 @@ def get_market_data(ticker: str):
             import yfinance as yf
             yf_info = yf.Ticker(f"{ticker}.KS").info
             fwd_pe_val = yf_info.get("forwardPE")
+            yahoo_data = {}
             if fwd_pe_val:
                 forward_pe = fwd_pe_val
+                yahoo_data["fwd_pe_ntm"] = round(fwd_pe_val, 4)
+            fifty_two_week_low = yf_info.get("fiftyTwoWeekLow")
+            if fifty_two_week_low:
+                yahoo_data["52w_low"] = round(fifty_two_week_low, 4)
+            if yahoo_data:
                 try:
                     from pipeline.layer1_store import save_row
-                    save_row(ticker, "yahoo", {"fwd_pe_ntm": round(fwd_pe_val, 4)})
+                    save_row(ticker, "yahoo", yahoo_data)
                 except Exception as e:
                     print(f"Layer 1 저장 실패: {e}")
         except Exception:
@@ -88,11 +94,18 @@ def get_market_data(ticker: str):
             shares = info.get("sharesOutstanding")
             fwd_pe_val = info.get("forwardPE")
             forward_pe = fwd_pe_val or ""
+            fifty_two_week_low = info.get("fiftyTwoWeekLow")
             
+            yahoo_data = {}
             if fwd_pe_val:
+                yahoo_data["fwd_pe_ntm"] = round(fwd_pe_val, 4)
+            if fifty_two_week_low:
+                yahoo_data["52w_low"] = round(fifty_two_week_low, 4)
+                
+            if yahoo_data:
                 try:
                     from pipeline.layer1_store import save_row
-                    save_row(ticker, "yahoo", {"fwd_pe_ntm": round(fwd_pe_val, 4)})
+                    save_row(ticker, "yahoo", yahoo_data)
                 except Exception as e:
                     print(f"Layer 1 저장 실패: {e}")
             

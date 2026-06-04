@@ -30,6 +30,8 @@ HEADERS = [
     # 퀄리티 지표
     "fin_strength", "profit_rank", "piotroski", "altman_z",
     "roic", "fcf_margin", "op_margin", "ev_fcf", "roiic_3y",
+    "rev_cagr_1y", "rev_cagr_2y", "rev_cagr_3y",
+    "52w_low",
 ]
 
 

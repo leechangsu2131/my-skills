@@ -1,0 +1,42 @@
+{
+  "export_timestamp": "2026-06-03T17:24:17.499750",
+  "market_data": {
+    "ticker": "329180",
+    "company_name": "HD현대중공업",
+    "valuation_date": "2026-06-03",
+    "market_data_as_of": "2026-06-02",
+    "price": 673000,
+    "shares_outstanding": 104961225,
+    "market_cap": 70638904425000,
+    "historical_average_per": 15.0,
+    "peer_average_per": 15.0,
+    "forward_pe": 20.00443,
+    "current_tam": 40000000000000,
+    "projected_tam_5yr": 60000000000000,
+    "currency": "KRW",
+    "note": "Auto-fetched via pykrx"
+  },
+  "financial_inputs": {
+    "enterprise_value": 68768986730000.0,
+    "fcf": 0,
+    "nopat": 1589257880340.0,
+    "roic": 0.2127035840857218,
+    "revenue": 17580633257000,
+    "operating_income": 2037510103000,
+    "net_income": 1415484565000,
+    "invested_capital": 7471702403000,
+    "eps": 15702,
+    "ebit": 2037510103000,
+    "tax_rate": 0.22,
+    "op_cashflow": 0,
+    "capex": 511943688000,
+    "total_equity": 9341620098000,
+    "cash": 1869917695000,
+    "short_debt": 0,
+    "long_debt": 0,
+    "net_debt": -1869917695000,
+    "price": 673000.0,
+    "shares_outstanding": 104961225.0,
+    "market_cap": 70638904425000
+  }
+}

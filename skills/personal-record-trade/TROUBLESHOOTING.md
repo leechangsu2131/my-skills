@@ -269,3 +269,51 @@ python -m pytest tests/test_synthesis.py tests/test_advanced_reverse.py -v
 
 - `2_add_trade.py`의 `parse_trade()` 함수가 반환하는 리스트가 실제 구글 시트 `📒 매매일지`의 열 순서와 완벽히 일치하는지 확인해야 합니다.
 - **포지션 ID 개념**: 특정 기업에 대한 매수/매도를 너무 잘게 나누지 않고, 하나의 전략적 진입/청산 흐름(특정 기간에 걸친 기록들)을 '하나의 포지션'으로 묶어서 관리하기 위해 만든 식별자입니다. 한 기업당 무조건 1개의 ID가 고정되는 것이 아니며, 투자 시기나 전략 단위에 따라 같은 기업이라도 여러 포지션으로 나뉘거나 묶일 수 있습니다. 매매일지 기록 시 이 맥락을 고려하여 B열에 기록해야 합니다.
+
+## DART 파이프라인에서 과거 5년치 데이터가 누락되는 경우
+
+증상:
+- 대쉬보드의 "과거 재무 추이 (5개년)" 탭에서 과거 연도(2021A~2025A 등) 데이터가 텅 비어있거나, `pipeline/cli.py` 실행 시 DART_API_KEY가 없다는 경고가 발생하며 최신 데이터만 생성됩니다.
+
+원인:
+- 파이프라인 스크립트 실행 시 `.env` 파일을 자동으로 로드(`load_dotenv`)하지 않아 환경변수에서 DART API 키를 찾지 못하고 조용히 실패(Silent Failure)한 것입니다.
+
+해결:
+- 파이프라인(또는 수집 스크립트) 최상단에 `from dotenv import load_dotenv` 및 `load_dotenv(...)`를 추가하여 `.env` 내의 자격 증명을 확실하게 물려주고 파이프라인을 재가동합니다.
+
+## 과거 연도(History) 재무 추이 테이블에서 ROIC가 비어있는 경우
+
+증상:
+- "과거 재무 추이 (5개년)" 탭에 매출, 영업이익 등은 잘 나오는데 ROIC, NOPAT, 투하자본이 표시되지 않고 텅텅 비어있거나 `-`로 나옵니다.
+- `dashboard.py` 실행 시 ROIC 관련 에러가 발생한다고 오해할 수 있습니다.
+
+원인:
+- DART Raw 데이터를 표준 `metrics.json`으로 매핑하는 로직(`pipeline`)에서 기초 데이터만 넣고 ROIC와 NOPAT, 투하자본 등 계산식 기반 지표를 생성해주지 않았기 때문입니다.
+
+해결:
+- `metrics.json`에 저장된 과거 연도("A" 단위) 데이터들을 순회하면서 NOPAT(영업이익 * (1-세율)), 투하자본(자본총계+순부채), ROIC(NOPAT/투하자본)을 직접 수학적으로 역산하여 `metrics.json`에 Append(추가)하는 스크립트를 별도로 돌려주어야 합니다.
+
+## 기업분석 시트에 종목을 붙여넣을 때 생기는 오류들
+
+증상 1: 구글 시트 업데이트 스크립트(`populate_dashboard_and_sheet.py` 등)가 `UnicodeEncodeError: 'cp949' codec can't encode character '\u2705'` 등 이모지 인코딩 에러로 뻗으면서 데이터 일부만 들어갑니다.
+해결 1: 파이썬 `print()` 문에서 윈도우 환경(cp949)이 소화할 수 없는 이모지를 제거하거나 `sys.stdout.reconfigure(encoding='utf-8')`를 상단에 추가해야 합니다.
+
+증상 2: "기업분석" 탭에 종목이 중복으로 여러 행 생성됩니다.
+해결 2: `sheet.update()`를 무작정 Append 모드로 날리지 말고, `sheet.get_all_values()`로 기존 시트 데이터를 읽어온 뒤 `ticker` 열에 이미 해당 종목이 있는지 판별하고 덮어쓰기(Update)할지 신규 생성(Append)할지 분기 처리해야 합니다.
+
+증상 3: 종목 Ticker(예: 009540)를 넣었는데 시트에는 "9540"으로 맨 앞 0이 짤려서 들어갑니다.
+해결 3: 구글 시트 API의 `value_input_option`을 `USER_ENTERED`로 두면 숫자로 인식하여 앞자리 0을 자릅니다. 티커를 무조건 `RAW`로 넣거나 문자열 처리용 어포스트로피(`'009540`)를 붙여야 합니다.
+
+증상 4: 아직 매수하지 않은 "관심종목"인데 포지션 ID(A열)에 "P_009540" 같은 쓰레기 값이 들어갑니다.
+해결 4: 포지션 ID는 실제로 매매일지에 기록된 '전략적 진입/청산 단위'입니다. 단순 리서치/분석 단계인 "기업분석" 탭에 추가할 때는 포지션 ID 열을 반드시 `""`(공란)으로 두고 상태 열(D열)을 "신규"가 아닌 "관심종목"으로 지정해야 합니다.
+
+## 특정 종목(예: SOOP) 추가 시 발생할 수 있는 소소한 에러와 우회(Workaround) 방법
+
+증상 1: 종목 코드를 찾을 때 불필요하게 Naver API 등을 찌르다가 401 Unauthorized를 만나는 경우.
+해결 1: 이 프로젝트는 이미 DART API 키를 가지고 운영되는 시스템입니다. 외부 포털 API를 기웃거릴 필요 없이, DART API가 제공하는 기업 고유번호(corpCode.xml)나 자체 DART 파이프라인을 활용하여 종목 코드를 검색하는 것이 가장 확실하고 정석적인 방법입니다. 외부 의존성을 만들지 마세요.
+
+증상 2: 파이프라인 가동 시 `get_market_cap_by_date: "None of [Index(['TRD_DD', 'MKTCAP' ...]] are in the [columns]"` 경고 발생.
+해결 2: pykrx 라이브러리가 장이 열리지 않는 주말/공휴일이나 특정 종목의 데이터를 가져올 때 DataFrame 컬럼 포맷이 달라 생기는 경고입니다. 파이프라인이 뻗지 않고 yfinance 데이터를 통해 보완(Fallback) 수집을 진행하므로 무시해도 안전합니다.
+
+증상 3: `test_dashboard_robust.py` 등 Streamlit AppTest 실행 시 `TypeError: list indices must be integers or slices, not str` 에러 발생.
+해결 3: Streamlit `AppTest` 모듈은 셀렉트박스(selectbox) 값을 설정할 때 문자열 텍스트 대신 `옵션 인덱스(정수)`를 요구합니다. UI 테스트가 막힐 경우, `run_audit` 모듈을 직접 호출하여 백엔드 파이썬 레벨에서 `roic`와 `enterprise_value` 값이 에러 없이 산출되는지 테스트하는 것이 훨씬 빠르고 정확합니다.

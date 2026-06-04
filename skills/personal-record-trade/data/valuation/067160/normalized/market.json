@@ -1,0 +1,16 @@
+{
+  "ticker": "067160",
+  "company_name": "SOOP",
+  "valuation_date": "2026-06-03",
+  "market_data_as_of": "2026-06-02",
+  "price": 49750,
+  "shares_outstanding": 11494767,
+  "market_cap": 571864658250,
+  "historical_average_per": 15.0,
+  "peer_average_per": 15.0,
+  "forward_pe": "",
+  "current_tam": 40000000000000,
+  "projected_tam_5yr": 60000000000000,
+  "currency": "KRW",
+  "note": "Auto-fetched via pykrx"
+}

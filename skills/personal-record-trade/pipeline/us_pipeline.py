@@ -75,6 +75,9 @@ def fetch_us_market_data(ticker_str: str) -> dict | None:
             op_margin_val = info.get("operatingMargins")
             if op_margin_val is not None:
                 yahoo_data["op_margin"] = round(op_margin_val * 100.0, 4)
+            fifty_two_week_low = info.get("fiftyTwoWeekLow")
+            if fifty_two_week_low:
+                yahoo_data["52w_low"] = round(fifty_two_week_low, 4)
 
             if yahoo_data:
                 save_row(ticker_str, "yahoo", yahoo_data)

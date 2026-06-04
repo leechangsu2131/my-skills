@@ -1,0 +1,34 @@
+{
+  "keywords": [
+    "레고 스파이크",
+    "마이크로비트",
+    "3D프린터",
+    "스파이크 프라임"
+  ],
+
+  "appium": {
+    "host": "127.0.0.1",
+    "port": 4723,
+    "platform": "Android",
+    "device_name": "Auto",
+    "app_package": "com.towneers.www",
+    "app_activity": "com.towneers.www.MainActivity",
+    "no_reset": true,
+    "auto_grant_permissions": true
+  },
+
+  "collection": {
+    "max_scroll_count": 5,
+    "scroll_pause_sec": 2.0,
+    "between_keyword_delay_sec": 10,
+    "action_delay_sec": 1.5,
+    "exclude_sold": true,
+    "exclude_keywords": ["구합니다", "삽니다", "구매"]
+  },
+
+  "output": {
+    "json_dir": "data",
+    "sqlite_path": "data/daangn.db",
+    "upload_to_gsheet": true
+  }
+}

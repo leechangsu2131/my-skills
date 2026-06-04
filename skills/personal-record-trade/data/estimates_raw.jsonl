@@ -56,3 +56,66 @@
 {"ticker": "035420", "source": "yahoo", "as_of": "2026-05-31", "fwd_pe_ntm": 15.6018}
 {"ticker": "267260", "source": "yahoo", "as_of": "2026-05-31", "fwd_pe_ntm": 30.7108}
 {"ticker": "267260", "source": "yahoo", "as_of": "2026-05-31", "fwd_pe_ntm": 30.7108}
+{"ticker": "PLTR", "source": "yahoo", "as_of": "2026-06-02", "fwd_pe_ntm": 73.4887, "fair_value": 183.7289, "pe_ratio": 173.2228, "ps_ratio": 69.9511, "pb_ratio": 43.2443, "ev_ebitda": 187.003, "op_margin": 46.184, "52w_low": 118.93}
+{"ticker": "GOOG", "source": "yahoo", "as_of": "2026-06-02", "fwd_pe_ntm": 25.1373, "fair_value": 409.0029, "pe_ratio": 27.7933, "ps_ratio": 10.4489, "pb_ratio": 9.2213, "ev_ebitda": 27.792, "op_margin": 36.121, "52w_low": 163.33}
+{"ticker": "GOOG", "source": "yahoo", "as_of": "2026-06-02", "fwd_pe_ntm": 25.1415, "fair_value": 409.0029, "pe_ratio": 27.7979, "ps_ratio": 10.4503, "pb_ratio": 9.2228, "ev_ebitda": 27.792, "op_margin": 36.121, "52w_low": 163.33}
+{"ticker": "NVDA", "source": "yahoo", "as_of": "2026-06-02", "fwd_pe_ntm": 18.1248, "fair_value": 296.8103, "pe_ratio": 35.1325, "ps_ratio": 21.9205, "pb_ratio": 35.4473, "ev_ebitda": 32.56, "op_margin": 65.596, "52w_low": 137.95}
+{"ticker": "NVDA", "source": "yahoo", "as_of": "2026-06-02", "fwd_pe_ntm": 18.1298, "fair_value": 296.8103, "pe_ratio": 35.1421, "ps_ratio": 21.9232, "pb_ratio": 35.4571, "ev_ebitda": 32.56, "op_margin": 65.596, "52w_low": 137.95}
+{"ticker": "META", "source": "yahoo", "as_of": "2026-06-02", "fwd_pe_ntm": 16.6668, "fair_value": 826.7471, "pe_ratio": 21.9165, "ps_ratio": 7.1171, "pb_ratio": 6.2773, "ev_ebitda": 13.996, "op_margin": 40.617, "52w_low": 520.26}
+{"ticker": "000660", "source": "yahoo", "as_of": "2026-06-02", "fwd_pe_ntm": 6.1732, "52w_low": 216500.0}
+{"ticker": "META", "source": "yahoo", "as_of": "2026-06-02", "fwd_pe_ntm": 16.6683, "fair_value": 826.7471, "pe_ratio": 21.9186, "ps_ratio": 7.1178, "pb_ratio": 6.2779, "ev_ebitda": 13.996, "op_margin": 40.617, "52w_low": 520.26}
+{"ticker": "PLTR", "source": "yahoo", "as_of": "2026-06-02", "fwd_pe_ntm": 73.6786, "fair_value": 183.7289, "pe_ratio": 173.6705, "ps_ratio": 70.1319, "pb_ratio": 43.356, "ev_ebitda": 187.003, "op_margin": 46.184, "52w_low": 118.93}
+{"ticker": "000660", "source": "yahoo", "as_of": "2026-06-02", "fwd_pe_ntm": 6.1732, "52w_low": 216500.0}
+{"ticker": "PLTR", "source": "yahoo", "as_of": "2026-06-02", "fwd_pe_ntm": 73.6993, "fair_value": 183.7289, "pe_ratio": 173.7194, "ps_ratio": 70.1517, "pb_ratio": 43.3683, "ev_ebitda": 187.003, "op_margin": 46.184, "52w_low": 118.93}
+{"ticker": "001450", "source": "yahoo", "as_of": "2026-06-02", "fwd_pe_ntm": 3.1766, "52w_low": 24050.0}
+{"ticker": "NFLX", "source": "yahoo", "as_of": "2026-06-02", "fwd_pe_ntm": 21.8222, "fair_value": 114.555, "pe_ratio": 27.0516, "ps_ratio": 7.5308, "pb_ratio": 11.3493, "ev_ebitda": 25.624, "op_margin": 32.303, "52w_low": 75.01}
+{"ticker": "001450", "source": "yahoo", "as_of": "2026-06-02", "fwd_pe_ntm": 3.1766, "52w_low": 24050.0}
+{"ticker": "NFLX", "source": "yahoo", "as_of": "2026-06-02", "fwd_pe_ntm": 21.8378, "fair_value": 114.555, "pe_ratio": 27.071, "ps_ratio": 7.5362, "pb_ratio": 11.3574, "ev_ebitda": 25.624, "op_margin": 32.303, "52w_low": 75.01}
+{"ticker": "035420", "source": "yahoo", "as_of": "2026-06-02", "fwd_pe_ntm": 18.7021, "52w_low": 185500.0}
+{"ticker": "ADBE", "source": "yahoo", "as_of": "2026-06-02", "fwd_pe_ntm": 10.0136, "fair_value": 327.2847, "pe_ratio": 15.4064, "ps_ratio": 4.3675, "pb_ratio": 9.3828, "ev_ebitda": 11.616, "op_margin": 38.762, "52w_low": 224.13}
+{"ticker": "ADBE", "source": "yahoo", "as_of": "2026-06-02", "fwd_pe_ntm": 10.0091, "fair_value": 327.2847, "pe_ratio": 15.3994, "ps_ratio": 4.3655, "pb_ratio": 9.3786, "ev_ebitda": 11.616, "op_margin": 38.762, "52w_low": 224.13}
+{"ticker": "035420", "source": "yahoo", "as_of": "2026-06-02", "fwd_pe_ntm": 18.7021, "52w_low": 185500.0}
+{"ticker": "UNH", "source": "yahoo", "as_of": "2026-06-02", "fwd_pe_ntm": 18.1114, "fair_value": 401.4615, "pe_ratio": 28.4207, "ps_ratio": 0.7633, "pb_ratio": 3.5065, "ev_ebitda": 18.594, "op_margin": 8.047, "52w_low": 234.6}
+{"ticker": "042700", "source": "yahoo", "as_of": "2026-06-02", "fwd_pe_ntm": 49.9523, "52w_low": 81300.0}
+{"ticker": "UNH", "source": "yahoo", "as_of": "2026-06-02", "fwd_pe_ntm": 18.1114, "fair_value": 401.4615, "pe_ratio": 28.4207, "ps_ratio": 0.7633, "pb_ratio": 3.5065, "ev_ebitda": 18.594, "op_margin": 8.047, "52w_low": 234.6}
+{"ticker": "ORCL", "source": "yahoo", "as_of": "2026-06-02", "fwd_pe_ntm": 30.6228, "fair_value": 244.0251, "pe_ratio": 44.241, "ps_ratio": 11.0385, "pb_ratio": 21.0852, "ev_ebitda": 30.693, "op_margin": 32.676, "52w_low": 134.57}
+{"ticker": "042700", "source": "yahoo", "as_of": "2026-06-02", "fwd_pe_ntm": 49.9523, "52w_low": 81300.0}
+{"ticker": "ORCL", "source": "yahoo", "as_of": "2026-06-02", "fwd_pe_ntm": 30.5917, "fair_value": 244.0251, "pe_ratio": 44.1961, "ps_ratio": 11.026, "pb_ratio": 21.0638, "ev_ebitda": 30.693, "op_margin": 32.676, "52w_low": 134.57}
+{"ticker": "267260", "source": "yahoo", "as_of": "2026-06-02", "fwd_pe_ntm": 29.0192, "52w_low": 380000.0}
+{"ticker": "RDDT", "source": "yahoo", "as_of": "2026-06-02", "fwd_pe_ntm": 19.5314, "fair_value": 224.9194, "pe_ratio": 49.2829, "ps_ratio": 13.4244, "pb_ratio": 10.4375, "ev_ebitda": 49.418, "op_margin": 27.571, "52w_low": 109.92}
+{"ticker": "267260", "source": "yahoo", "as_of": "2026-06-02", "fwd_pe_ntm": 29.0192, "52w_low": 380000.0}
+{"ticker": "RDDT", "source": "yahoo", "as_of": "2026-06-02", "fwd_pe_ntm": 19.5314, "fair_value": 224.9194, "pe_ratio": 49.2829, "ps_ratio": 13.4244, "pb_ratio": 10.4375, "ev_ebitda": 49.418, "op_margin": 27.571, "52w_low": 109.92}
+{"ticker": "APP", "source": "yahoo", "as_of": "2026-06-02", "fwd_pe_ntm": 27.2658, "fair_value": 648.1, "pe_ratio": 52.0767, "ps_ratio": 32.5814, "pb_ratio": 85.0655, "ev_ebitda": 42.54, "op_margin": 78.151, "52w_low": 320.0}
+{"ticker": "APP", "source": "yahoo", "as_of": "2026-06-02", "fwd_pe_ntm": 27.2563, "fair_value": 648.1, "pe_ratio": 52.0584, "ps_ratio": 32.57, "pb_ratio": 85.0356, "ev_ebitda": 42.54, "op_margin": 78.151, "52w_low": 320.0}
+{"ticker": "HOOD", "source": "yahoo", "as_of": "2026-06-02", "fwd_pe_ntm": 31.8551, "fair_value": 98.7712, "pe_ratio": 42.4223, "ps_ratio": 17.0594, "pb_ratio": 8.4516, "op_margin": 38.519, "52w_low": 63.515}
+{"ticker": "HOOD", "source": "yahoo", "as_of": "2026-06-02", "fwd_pe_ntm": 31.866, "fair_value": 98.7712, "pe_ratio": 42.4369, "ps_ratio": 17.0672, "pb_ratio": 8.4545, "op_margin": 38.519, "52w_low": 63.515}
+{"ticker": "NOW", "source": "yahoo", "as_of": "2026-06-02", "fwd_pe_ntm": 25.1398, "fair_value": 141.863, "pe_ratio": 75.2202, "ps_ratio": 9.3357, "pb_ratio": 11.1124, "ev_ebitda": 47.563, "op_margin": 13.342, "52w_low": 81.24}
+{"ticker": "NOW", "source": "yahoo", "as_of": "2026-06-02", "fwd_pe_ntm": 25.1716, "fair_value": 141.863, "pe_ratio": 75.3155, "ps_ratio": 9.3475, "pb_ratio": 11.1265, "ev_ebitda": 47.563, "op_margin": 13.342, "52w_low": 81.24}
+{"ticker": "CRM", "source": "yahoo", "as_of": "2026-06-02", "fwd_pe_ntm": 12.7422, "fair_value": 255.2721, "pe_ratio": 22.9196, "ps_ratio": 3.7867, "pb_ratio": 4.7373, "ev_ebitda": 15.694, "op_margin": 21.8, "52w_low": 163.52}
+{"ticker": "CRM", "source": "yahoo", "as_of": "2026-06-02", "fwd_pe_ntm": 12.7393, "fair_value": 255.2721, "pe_ratio": 22.9143, "ps_ratio": 3.7859, "pb_ratio": 4.7363, "ev_ebitda": 15.694, "op_margin": 21.8, "52w_low": 163.52}
+{"ticker": "WDAY", "source": "yahoo", "as_of": "2026-06-02", "fwd_pe_ntm": 11.6675, "fair_value": 171.135, "pe_ratio": 45.9439, "ps_ratio": 3.6963, "pb_ratio": 4.8964, "ev_ebitda": 25.323, "op_margin": 13.297, "52w_low": 110.36}
+{"ticker": "042700", "source": "yahoo", "as_of": "2026-06-02", "fwd_pe_ntm": 49.9523, "52w_low": 81300.0}
+{"ticker": "WDAY", "source": "yahoo", "as_of": "2026-06-02", "fwd_pe_ntm": 11.6683, "fair_value": 171.135, "pe_ratio": 45.947, "ps_ratio": 3.6966, "pb_ratio": 4.8967, "ev_ebitda": 25.323, "op_margin": 13.297, "52w_low": 110.36}
+{"ticker": "267260", "source": "yahoo", "as_of": "2026-06-02", "fwd_pe_ntm": 29.0192, "52w_low": 380000.0}
+{"ticker": "NTNX", "source": "yahoo", "as_of": "2026-06-02", "fwd_pe_ntm": 24.8627, "fair_value": 57.0113, "pe_ratio": 57.3158, "ps_ratio": 5.3529, "pb_ratio": -17.3962, "ev_ebitda": 46.25, "op_margin": 10.029, "52w_low": 34.01}
+{"ticker": "NTNX", "source": "yahoo", "as_of": "2026-06-02", "fwd_pe_ntm": 24.8627, "fair_value": 57.0113, "pe_ratio": 57.3158, "ps_ratio": 5.3529, "pb_ratio": -17.3962, "ev_ebitda": 46.25, "op_margin": 10.029, "52w_low": 34.01}
+{"ticker": "042700", "source": "yahoo", "as_of": "2026-06-02", "fwd_pe_ntm": 49.9523, "52w_low": 81300.0}
+{"ticker": "267260", "source": "yahoo", "as_of": "2026-06-02", "fwd_pe_ntm": 29.0192, "52w_low": 380000.0}
+{"ticker": "009540", "source": "yahoo", "as_of": "2026-06-03", "fwd_pe_ntm": 6.7407, "52w_low": 304500.0}
+{"ticker": "009540", "source": "yahoo", "as_of": "2026-06-03", "fwd_pe_ntm": 6.7407, "52w_low": 304500.0}
+{"ticker": "009540", "source": "yahoo", "as_of": "2026-06-03", "fwd_pe_ntm": 6.7407, "52w_low": 304500.0}
+{"ticker": "009540", "source": "yahoo", "as_of": "2026-06-03", "fwd_pe_ntm": 6.7407, "52w_low": 304500.0}
+{"ticker": "009540", "source": "yahoo", "as_of": "2026-06-03", "fwd_pe_ntm": 6.7407, "52w_low": 304500.0}
+{"ticker": "329180", "source": "yahoo", "as_of": "2026-06-03", "fwd_pe_ntm": 20.0044, "52w_low": 370000.0}
+{"ticker": "329180", "source": "yahoo", "as_of": "2026-06-03", "fwd_pe_ntm": 20.0044, "52w_low": 370000.0}
+{"ticker": "329180", "source": "yahoo", "as_of": "2026-06-03", "fwd_pe_ntm": 20.0044, "52w_low": 370000.0}
+{"ticker": "329180", "source": "yahoo", "as_of": "2026-06-03", "fwd_pe_ntm": 20.0044, "52w_low": 370000.0}
+{"ticker": "329180", "source": "yahoo", "as_of": "2026-06-03", "fwd_pe_ntm": 20.0044, "52w_low": 370000.0}
+{"ticker": "009540", "source": "yahoo", "as_of": "2026-06-03", "fwd_pe_ntm": 6.7407, "52w_low": 304500.0}
+{"ticker": "329180", "source": "yahoo", "as_of": "2026-06-03", "fwd_pe_ntm": 20.0044, "52w_low": 370000.0}
+{"ticker": "067160", "source": "yahoo", "as_of": "2026-06-03", "52w_low": 64100.0}
+{"ticker": "067160", "source": "yahoo", "as_of": "2026-06-03", "52w_low": 64100.0}
+{"ticker": "067160", "source": "yahoo", "as_of": "2026-06-03", "52w_low": 64100.0}
+{"ticker": "067160", "source": "yahoo", "as_of": "2026-06-03", "52w_low": 64100.0}
+{"ticker": "067160", "source": "yahoo", "as_of": "2026-06-03", "52w_low": 64100.0}
+{"ticker": "067160", "source": "yahoo", "as_of": "2026-06-03", "52w_low": 64100.0}

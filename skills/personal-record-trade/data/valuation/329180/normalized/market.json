@@ -1,0 +1,16 @@
+{
+  "ticker": "329180",
+  "company_name": "HD현대중공업",
+  "valuation_date": "2026-06-03",
+  "market_data_as_of": "2026-06-02",
+  "price": 673000,
+  "shares_outstanding": 104961225,
+  "market_cap": 70638904425000,
+  "historical_average_per": 15.0,
+  "peer_average_per": 15.0,
+  "forward_pe": 20.00443,
+  "current_tam": 40000000000000,
+  "projected_tam_5yr": 60000000000000,
+  "currency": "KRW",
+  "note": "Auto-fetched via pykrx"
+}

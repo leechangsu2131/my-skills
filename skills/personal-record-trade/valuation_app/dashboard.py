@@ -60,7 +60,8 @@ def generate_history_dataframe(all_observations, currency):
     if df_filtered.empty:
         return None, [], False, 1
         
-    periods_order = sorted(list(df_filtered["period"].unique()), key=lambda x: (x[-2:], x[:-2]) if x.endswith(("A", "Q1", "H1", "Q3")) else x)
+    # period를 단순히 문자열 기준으로 정렬 (예: 2024A, 2025E 등 모두 호환)
+    periods_order = sorted(list(df_filtered["period"].unique()), key=str)
     
     pivot_df = df_filtered.pivot_table(
         index=["label"],
@@ -1467,7 +1468,8 @@ def render_tam_tab(input_set: ValuationInputSet, market: dict, ctx: dict = None)
     tax_rate = input_set.inputs.get("tax_rate", 0.22)
     current_mcap = market.get("market_cap", 0)
     hist_per = market.get("historical_average_per", 15.0)
-    
+    if not hist_per or hist_per <= 0:
+        hist_per = 15.0    
     col_a, col_b, col_c = st.columns(3)
     sim_n_years = col_a.slider("투자기간 (n년 뒤)", min_value=1, max_value=15, value=5, step=1)
     sim_tam_cagr = col_b.slider("글로벌 TAM 연평균 성장률 (%)", min_value=-10.0, max_value=50.0, value=10.0, step=1.0) / 100.0

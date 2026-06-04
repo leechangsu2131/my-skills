@@ -1,0 +1,12 @@
+# Appium
+Appium-Python-Client>=4.0
+
+# Google Sheets
+gspread>=6.0
+google-auth>=2.0
+
+# Data processing
+pandas>=2.0
+
+# Environment
+python-dotenv>=1.0

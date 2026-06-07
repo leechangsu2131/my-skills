@@ -1,0 +1,13 @@
+{
+  "ticker": "033500",
+  "investment_opinion": "Buy",
+  "target_price": 35500,
+  "consensus_metrics": {
+    "op": 10.55,
+    "eps": 2638,
+    "roe": 27.1,
+    "f_per": 8.2,
+    "roic": 37.6,
+    "revenue": ""
+  }
+}

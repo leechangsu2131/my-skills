@@ -1,0 +1,14 @@
+{
+  "ticker": "067160",
+  "investment_opinion": "Hold",
+  "target_price": 76000,
+  "consensus_metrics": {
+    "revenue": 4794.0,
+    "op": 1179.0,
+    "roe": 19.5,
+    "eps": 8029.0,
+    "f_per": 8.8,
+    "target_year": "2026E",
+    "source": "Meritz Securities PDF"
+  }
+}

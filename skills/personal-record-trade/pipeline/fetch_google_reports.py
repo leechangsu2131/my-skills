@@ -54,13 +54,14 @@ def fetch_google_reports_serpapi(ticker: str, company_name: str):
         return
         
     # 소연님 제안대로 검색 쿼리를 단순화 (최대한 많이 긁어오고 파이썬으로 필터링)
-    query = f'{company_name} 리서치 filetype:pdf'
+    query = f'{company_name} 리포트 filetype:pdf'
     print(f"🔍 SerpApi 검색 시작: {query} (API 호출 1건 차감 예상)")
     
     params = {
         "engine": "google",
         "q": query,
-        "tbs": "qdr:m6", # 최근 6개월
+        "tbs": "qdr:y", # 최근 1년으로 확장
+        "num": 20, # 결과 개수 증가
         "api_key": api_key
     }
     
@@ -83,7 +84,11 @@ def fetch_google_reports_serpapi(ticker: str, company_name: str):
     
     # 기존 캐시 초기화
     for f in report_dir.glob("*.pdf"):
-        f.unlink()
+        try:
+            f.unlink()
+        except PermissionError:
+            print(f"⚠️ 파일 삭제 실패 (사용 중): {f.name}")
+            pass
         
     count = 0
     for i, (url, title) in enumerate(unique_links.items()):

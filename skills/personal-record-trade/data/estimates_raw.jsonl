@@ -119,3 +119,10 @@
 {"ticker": "067160", "source": "yahoo", "as_of": "2026-06-03", "52w_low": 64100.0}
 {"ticker": "067160", "source": "yahoo", "as_of": "2026-06-03", "52w_low": 64100.0}
 {"ticker": "067160", "source": "yahoo", "as_of": "2026-06-03", "52w_low": 64100.0}
+{"ticker": "033500", "source": "analyst", "as_of": "2026-06-07", "op_margin": 11.3, "roic": 44.4, "fwd_pe_fy": 8.2, "fwd_pe_ntm": 8.2}
+{"ticker": "033500", "source": "analyst_신한투자증권", "as_of": "2026-06-07", "op_margin": 11.3, "roic": 44.4, "fwd_pe_fy": 8.2, "fwd_pe_ntm": 8.2, "fair_value": 33000}
+{"ticker": "033500", "source": "analyst_미래에셋증권", "as_of": "2026-06-07", "op_margin": 10.0, "roic": 44.4, "fwd_pe_fy": 8.2, "fwd_pe_ntm": 8.2}
+{"ticker": "033500", "source": "analyst_DS투자증권", "as_of": "2026-06-07", "fair_value": 38000, "op_margin": 10.65, "roic": 44.4, "fwd_pe_fy": 8.2, "fwd_pe_ntm": 8.2}
+{"ticker": "033500", "source": "analyst_신한투자증권", "as_of": "2026-06-07", "roic": 44.4, "op_margin": 11.3, "fwd_pe_fy": 8.2, "fair_value": 33000}
+{"ticker": "033500", "source": "analyst_미래에셋증권", "as_of": "2026-06-07", "roic": 30.8, "op_margin": 9.8}
+{"ticker": "033500", "source": "analyst_DS투자증권", "as_of": "2026-06-07", "fair_value": 38000}

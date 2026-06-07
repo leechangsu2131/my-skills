@@ -80,6 +80,19 @@ This skill contains several sub-modules for data ingestion and deep investment a
   - `metrics.json`: Contains structured historical and forward financial metrics.
   - **Rule:** If historical ROIC/NOPAT is missing, you MUST run a script to calculate and append them (NOPAT = OP*(1-tax), IC = Equity+NetDebt, ROIC = NOPAT/IC) after fetching raw DART data.
 
+## ⚠️ 실수 방지 규칙집 (반드시 먼저 읽을 것)
+
+**작업 시작 전에 반드시 아래 파일을 읽고 시작한다:**
+- [`docs/pipeline_rules.md`](file:///C:/Users/lee21/.gemini/antigravity/scratch/my-skills/skills/personal-record-trade/docs/pipeline_rules.md)
+
+이 파일에는 이전 대화에서 발생한 모든 실수를 9개 카테고리로 분류하여 기록해 두었다.
+핵심 원칙:
+1. **작업 후 반드시 검증** — 코드 실행, 시트 값 확인, 대시보드 실행까지 완료해야 "됐다"고 말할 수 있다
+2. **데이터 복붙/추정 금지** — 각 소스마다 직접 읽은 실제 값만 넣는다
+3. **이전 합의사항 존중** — 기존 로직을 임의로 변경하지 않는다
+4. **리서치 검색은 투트랙** — 검색 → 선별 → 다운로드 (filetype:pdf 직접 검색 금지)
+5. **raw data는 소스별 개별 행, 기업분석은 종합 1행**
+
 ## Strict Verification Checklist (MUST READ)
 
 To prevent breaking the pipeline or Google Sheet, rigidly follow these steps:

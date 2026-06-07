@@ -1,0 +1,14 @@
+{
+  "ticker": "067160",
+  "investment_opinion": "Buy",
+  "target_price": 80000,
+  "consensus_metrics": {
+    "revenue": 4910.0,
+    "op": 1270.0,
+    "roe": 20.9,
+    "eps": 9110.0,
+    "f_per": 6.5,
+    "target_year": "2026E",
+    "source": "Samsung Securities PDF"
+  }
+}

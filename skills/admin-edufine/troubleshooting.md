@@ -126,3 +126,22 @@ The user wanted a strict prompt template for item purchases (품의서) when wri
 - Modified pp.py prompt templates in the /api/generate route.
 - If an item_list is provided (either from S2B fetching or from uploaded ODT + S2B), the prompt enforces the specific template structure and provides explicit instructions to format the draft body accordingly.
 - Also, added importlib.reload statements in pp.py to ensure that dynamic changes to playwright_edufine.py and s2b_cart_scraper.py are loaded instantly on API calls without needing to restart the Flask server.
+
+
+### Issue 15: S2B Scraper Headless Subprocess Fix & Password Change Bypass
+**Problem:**
+1. The S2B Scraper (s2b_cart_scraper.py) would fail to login if the pwd_changeinfo.jsp (Change Password) page appeared, which is a common occurrence on enterprise sites when the password hasn't been changed in a while.
+2. Even after fixing the login script, running the scraper from within the Flask server API (/api/fetch-s2b) failed because syncio.new_event_loop() was blocking or conflicting with Flask's synchronous thread, and calling GUI processes (Playwright headless=False) from within Flask running in the background caused silent failures.
+
+**Solution:**
+- **Password Bypass:** Modified s2b_login.py to detect if pwd_changeinfo.jsp is in the URL after login, and forcefully navigate to S2B_MAIN_URL to bypass the change password prompt.
+- **Subprocess Isolation:** Rewrote the /api/fetch-s2b route in pp.py to execute s2b_cart_scraper.py as an isolated subprocess using subprocess.run(). This completely bypasses the event loop thread issues.
+- **Headless Mode:** Changed Playwright initialization in s2b_cart_scraper.py to headless=True to ensure it can run seamlessly in the background without requiring user desktop interaction.
+
+### Issue 16: Background Windows Hidden Issue
+**Problem:**
+When the AI assistant runs 
+un_dev.bat via terminal commands, the Windows processes (Flask server, Chrome browser) spawn in a background service session (Session 0) that is completely invisible to the actual user desktop, leaving the user confused why the windows didn't open.
+**Solution:**
+- We learned that GUI applications (Chrome) and interactive terminal windows should NEVER be launched by the AI's background shell. The user must manually double-click 
+un_dev.bat from their desktop for the windows to be visible on their active session.

@@ -43,13 +43,16 @@
 
 - `yt-dlp --flat-playlist` 결과에 `upload_date`, `was_live`가 없는 경우가 많음
 - 채널 `/videos`만 보면 라이브 VOD가 `/streams`에만 있는 경우 있음
+- **(2026-06-09)** flat 목록 제목이 **영어**(`[Cheslie Morning Brief] ...`)로만 나오고, 한국어 제목·`26/06/09` 날짜가 빠져 매칭 실패
 
 **해결**
 
-- 채널 URL → `{CHANNEL_URL}/streams` 탐색
+- 채널 URL → `{CHANNEL_URL}/streams` 탐색 (없으면 `/videos`도 확인)
 - 제목 조건:
   - `TITLE_PREFIX`로 시작 (기본: `[체슬리모닝브리프]`)
-  - 제목에 오늘 날짜 포함 (`26/05/28` 또는 `2026/05/28`)
+  - 영어 제목 alias도 허용: `[Cheslie Morning Brief]`, `[Chesley Morning Brief]`, `[Chesly Morning Brief]`
+  - 제목에 오늘 날짜 포함 (`26/06/09`, `2026/06/09`, `06/09/26` 등)
+- flat 제목만으로 안 맞으면 **최근 10개에 대해 `upload_date` 메타데이터**로 오늘 업로드 + 브리프 prefix 재확인
 
 **검증 예시 (2026-05-28)**
 

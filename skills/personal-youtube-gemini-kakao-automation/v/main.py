@@ -196,43 +196,118 @@ def save_processed_ids(path: str, ids: set[str]) -> None:
         json.dump(sorted(ids), f, ensure_ascii=False, indent=2)
 
 
-def find_todays_live_video(settings: Settings) -> Optional[tuple[str, str]]:
-    today = datetime.date.today()
-    today_yy_mm_dd = today.strftime("%y/%m/%d")
-    today_yyyy_mm_dd = today.strftime("%Y/%m/%d")
-    command = [
-        sys.executable,
-        "-m",
-        "yt_dlp",
+BRIEF_TITLE_PREFIX_ALIASES = (
+    "[체슬리모닝브리프]",
+    "[Cheslie Morning Brief]",
+    "[Chesley Morning Brief]",
+    "[Chesly Morning Brief]",
+)
+
+
+def _brief_title_prefixes(settings: Settings) -> list[str]:
+    prefixes: list[str] = []
+    if settings.title_prefix:
+        prefixes.append(settings.title_prefix)
+    for alt in BRIEF_TITLE_PREFIX_ALIASES:
+        if alt not in prefixes:
+            prefixes.append(alt)
+    return prefixes
+
+
+def _title_has_brief_prefix(title: str, prefixes: list[str]) -> bool:
+    return any(title.startswith(prefix) for prefix in prefixes)
+
+
+def _title_has_today_date(title: str, today: datetime.date) -> bool:
+    patterns = (
+        today.strftime("%y/%m/%d"),
+        today.strftime("%Y/%m/%d"),
+        today.strftime("%m/%d/%y"),
+        today.strftime("%m/%d/%Y"),
+        today.strftime("%y-%m-%d"),
+        today.strftime("%Y-%m-%d"),
+    )
+    return any(pattern in title for pattern in patterns)
+
+
+def _yt_dlp_command(settings: Settings, *args: str) -> list[str]:
+    command = [sys.executable, "-m", "yt_dlp"]
+    if settings.yt_no_check_certificates:
+        command.append("--no-check-certificates")
+    command.extend(args)
+    return command
+
+
+def _fetch_flat_playlist(settings: Settings, playlist_suffix: str, limit: int = 20) -> list[dict]:
+    command = _yt_dlp_command(
+        settings,
         "--flat-playlist",
         "--dump-json",
         "--playlist-end",
-        "20",
-        settings.channel_url.rstrip("/") + "/streams",
-    ]
-    if settings.yt_no_check_certificates:
-        command.insert(3, "--no-check-certificates")
+        str(limit),
+        settings.channel_url.rstrip("/") + playlist_suffix,
+    )
     result = subprocess.run(command, capture_output=True, text=True, encoding="utf-8", errors="ignore")
-
     if result.returncode != 0:
-        print(f"yt-dlp failed: {result.stderr.strip()}")
-        return None
+        print(f"yt-dlp failed for {playlist_suffix}: {result.stderr.strip()}")
+        return []
 
+    entries: list[dict] = []
     for line in result.stdout.splitlines():
         if not line.strip():
             continue
         try:
-            video = json.loads(line)
+            entries.append(json.loads(line))
         except json.JSONDecodeError:
             continue
+    return entries
 
-        title = str(video.get("title", ""))
-        has_prefix = title.startswith(settings.title_prefix) if settings.title_prefix else True
-        has_today_token = (today_yy_mm_dd in title) or (today_yyyy_mm_dd in title)
-        if has_prefix and has_today_token:
-            video_id = video.get("id")
-            print(f"Found today's live VOD: {title} / {video_id}")
-            return video_id, title
+
+def _fetch_video_metadata(settings: Settings, video_id: str) -> Optional[dict]:
+    command = _yt_dlp_command(
+        settings,
+        "--dump-json",
+        "--skip-download",
+        f"https://www.youtube.com/watch?v={video_id}",
+    )
+    result = subprocess.run(command, capture_output=True, text=True, encoding="utf-8", errors="ignore")
+    if result.returncode != 0:
+        return None
+    try:
+        return json.loads(result.stdout)
+    except json.JSONDecodeError:
+        return None
+
+
+def find_todays_live_video(settings: Settings) -> Optional[tuple[str, str]]:
+    today = datetime.date.today()
+    today_yyyymmdd = today.strftime("%Y%m%d")
+    prefixes = _brief_title_prefixes(settings)
+
+    for playlist_suffix in ("/streams", "/videos"):
+        entries = _fetch_flat_playlist(settings, playlist_suffix)
+        for video in entries:
+            title = str(video.get("title", ""))
+            video_id = str(video.get("id", "")).strip()
+            if not video_id:
+                continue
+            if _title_has_brief_prefix(title, prefixes) and _title_has_today_date(title, today):
+                print(f"Found today's live VOD: {title} / {video_id}")
+                return video_id, title
+
+        # Flat playlist titles are often English and may omit the date token.
+        for video in entries[:10]:
+            video_id = str(video.get("id", "")).strip()
+            if not video_id:
+                continue
+            meta = _fetch_video_metadata(settings, video_id)
+            if not meta:
+                continue
+            upload_date = str(meta.get("upload_date", ""))
+            title = str(meta.get("title", ""))
+            if upload_date == today_yyyymmdd and _title_has_brief_prefix(title, prefixes):
+                print(f"Found today's live VOD (metadata): {title} / {video_id}")
+                return video_id, title
 
     return None
 

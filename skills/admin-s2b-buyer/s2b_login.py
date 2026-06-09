@@ -140,6 +140,12 @@ async def login(page, user_id=None, user_pw=None):
         print(f"   로그인 후 제목: {page_title}")
 
         # 로그인 성공 판별 (여러 조건)
+        if 'pwd_changeinfo.jsp' in current_url:
+            print("   [INFO] 비밀번호 변경 안내 페이지 감지. 메인 페이지로 강제 이동 시도...")
+            await page.goto(S2B_MAIN_URL, wait_until='domcontentloaded')
+            await page.wait_for_timeout(2000)
+            current_url = page.url
+
         # 실패: 로그인 페이지에 여전히 있는 경우
         if 'Login.do' in current_url or 'login' in current_url.lower():
             # 에러 메시지 확인

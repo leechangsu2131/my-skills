@@ -125,21 +125,46 @@ def index():
 
 @app.route('/api/fetch-s2b', methods=['GET'])
 def fetch_s2b():
-    import s2b_cart_scraper
-    import importlib
-    importlib.reload(s2b_cart_scraper)
+    import subprocess
+    import json
     try:
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-        items = loop.run_until_complete(s2b_cart_scraper.get_s2b_cart_items())
-        loop.close()
+        result = subprocess.run(
+            [sys.executable, '-c', '''
+import asyncio, sys, io, json
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
+sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
+import importlib
+import s2b_cart_scraper
+importlib.reload(s2b_cart_scraper)
+items = asyncio.run(s2b_cart_scraper.get_s2b_cart_items())
+print(json.dumps(items, ensure_ascii=False))
+'''],
+            capture_output=True, text=True, encoding='utf-8', errors='replace',
+            cwd=os.path.dirname(os.path.abspath(__file__)),
+            timeout=120
+        )
+        
+        # stdout의 마지막 줄이 JSON 배열
+        output_lines = result.stdout.strip().split('\n')
+        json_line = output_lines[-1] if output_lines else '[]'
+        
+        try:
+            items = json.loads(json_line)
+        except json.JSONDecodeError:
+            print(f"[fetch-s2b] JSON 파싱 실패. stdout: {result.stdout[-500:]}")
+            print(f"[fetch-s2b] stderr: {result.stderr[-500:]}")
+            return jsonify({'error': '장바구니 데이터 파싱에 실패했습니다.'})
         
         if not items:
             return jsonify({'error': '장바구니에 물품이 없거나 로그인에 실패했습니다.'})
             
         item_list = "".join([f"{item['name']}\t\t{item['quantity']}\t\t{item['unit_price']}\n" for item in items])
         return jsonify({'item_list': item_list})
+    except subprocess.TimeoutExpired:
+        return jsonify({'error': 'S2B 장바구니 조회 시간이 초과되었습니다 (2분).'})
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         return jsonify({'error': str(e)})
 
 @app.route('/api/generate-prompt', methods=['POST'])

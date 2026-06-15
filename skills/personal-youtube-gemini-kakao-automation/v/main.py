@@ -347,36 +347,118 @@ def get_transcript_with_retry(settings: Settings, video_id: str) -> Optional[str
     return None
 
 
-async def wait_for_gemini_response(page, previous_count: int, timeout_ms: int) -> str:
-    selector = "message-content, model-response"
+RESPONSE_SELECTORS = (
+    "message-content",
+    "model-response",
+    '[data-message-author-role="model"]',
+    ".model-response-text",
+    '[data-test-id="message-content"]',
+)
+
+
+async def _latest_response_locator(page):
+    for selector in RESPONSE_SELECTORS:
+        responses = page.locator(selector)
+        count = await responses.count()
+        if count > 0:
+            return responses.nth(count - 1)
+    return None
+
+
+async def _latest_response_text(page) -> str:
+    last = await _latest_response_locator(page)
+    if not last:
+        return ""
+    try:
+        return (await last.inner_text()).strip()
+    except Exception:
+        return ""
+
+
+async def _best_response_text(page, previous_last_text: str = "") -> str:
+    best = ""
+    for selector in RESPONSE_SELECTORS:
+        responses = page.locator(selector)
+        count = await responses.count()
+        for index in range(count):
+            try:
+                node = responses.nth(index)
+                text = (await node.inner_text()).strip()
+                if not text or text == previous_last_text:
+                    continue
+                if len(text) > len(best):
+                    best = text
+            except Exception:
+                continue
+    return best
+
+
+async def _extract_response_fallback(page, prompt_text: str) -> str:
+    try:
+        body = await page.locator("main, .chat-history, body").first.inner_text(timeout=10000)
+    except Exception:
+        return ""
+
+    marker = "전체 스크립트입니다:"
+    if marker not in body:
+        return ""
+
+    tail = body.split(marker)[-1].strip()
+    prompt_tail = prompt_text[-800:].strip()
+    if prompt_tail and prompt_tail in tail:
+        tail = tail.split(prompt_tail, 1)[-1].strip()
+    elif len(tail) > len(prompt_text):
+        tail = tail[len(prompt_text) :].strip()
+    return tail
+
+
+async def _generation_in_progress(page) -> bool:
+    stop_button = page.locator(
+        "button[aria-label*='중지'], button[aria-label*='Stop'], "
+        "[data-is-loading='true'], .loading"
+    )
+    return await stop_button.count() > 0
+
+
+async def wait_for_gemini_response(
+    page,
+    previous_count: int,
+    timeout_ms: int,
+    previous_last_text: str = "",
+    prompt_text: str = "",
+) -> str:
     start = time.time()
-    responses = page.locator(selector)
-    latest_count = previous_count
+    generation_started = False
+    responses = page.locator(", ".join(RESPONSE_SELECTORS))
 
     while (time.time() - start) * 1000 < timeout_ms:
         latest_count = await responses.count()
+        latest_text = await _latest_response_text(page)
         if latest_count > previous_count:
+            generation_started = True
+            break
+        if latest_text and latest_text != previous_last_text:
+            if len(latest_text) > len(previous_last_text) + 20:
+                generation_started = True
+                break
+        if await _generation_in_progress(page):
+            generation_started = True
             break
         await page.wait_for_timeout(800)
 
-    if latest_count <= previous_count:
+    if not generation_started:
         raise RuntimeError("No new Gemini response detected after sending prompt.")
 
-    last = responses.nth(latest_count - 1)
-    await last.wait_for(state="visible", timeout=timeout_ms)
-
-    # Wait until streaming finishes and text length stabilizes.
     settle_deadline = time.time() + min(180, timeout_ms / 1000)
     prev_len = 0
     stable_rounds = 0
     text = ""
     while time.time() < settle_deadline:
-        stop_button = page.locator(
-            "button[aria-label*='중지'], button[aria-label*='Stop'], "
-            "[data-is-loading='true'], .loading"
-        )
-        still_generating = await stop_button.count() > 0
-        text = (await last.inner_text()).strip()
+        still_generating = await _generation_in_progress(page)
+        text = await _best_response_text(page, previous_last_text=previous_last_text)
+        if not text:
+            await page.wait_for_timeout(1000)
+            continue
         if not still_generating and len(text) == prev_len and len(text) > 0:
             stable_rounds += 1
             if stable_rounds >= 3:
@@ -386,7 +468,14 @@ async def wait_for_gemini_response(page, previous_count: int, timeout_ms: int) -
             prev_len = len(text)
         await page.wait_for_timeout(1500)
 
-    if not text:
+    if (not text or text == previous_last_text) and prompt_text:
+        fallback = await _extract_response_fallback(page, prompt_text)
+        if len(fallback) >= 400 and len(fallback) > len(text):
+            print(f"Using chat body fallback for Gemini response ({len(fallback)} chars).")
+            text = fallback
+
+    if not text or text == previous_last_text:
+        await page.screenshot(path=os.path.join(SCRIPT_DIR, "debug_empty_response.png"), full_page=True)
         raise RuntimeError("Gemini response was empty.")
     print(f"Gemini response length: {len(text)} chars")
     return text
@@ -466,6 +555,8 @@ async def _select_gemini_pro(page) -> None:
 
 async def _find_input_box(page):
     selectors = [
+        "rich-textarea .ql-editor",
+        "rich-textarea div[contenteditable='true']",
         "rich-textarea[aria-label*='메시지']",
         "rich-textarea[aria-label*='message']",
         "div[contenteditable='true']:visible:not(.ql-clipboard)",
@@ -478,7 +569,140 @@ async def _find_input_box(page):
     raise RuntimeError("Gemini input box not found.")
 
 
-async def _run_gemini_prompt(page, settings: Settings, text: str, video_title: str) -> str:
+async def _input_box_text(input_box) -> str:
+    try:
+        return (await input_box.inner_text()).strip()
+    except Exception:
+        return ""
+
+
+async def _clear_input_box(page, input_box) -> None:
+    await input_box.click()
+    await page.keyboard.press("Control+a")
+    await page.keyboard.press("Delete")
+    await page.wait_for_timeout(200)
+
+
+async def _start_new_gem_chat(page, gem_url: str) -> None:
+    selectors = [
+        'button[aria-label*="New chat"]',
+        'button[aria-label*="새 채팅"]',
+        'button:has-text("새 채팅")',
+    ]
+    for sel in selectors:
+        btn = page.locator(sel).first
+        if await btn.count() == 0:
+            continue
+        try:
+            await btn.click(timeout=2000)
+            await page.wait_for_timeout(1500)
+            print("Started a new Gemini chat.")
+            return
+        except Exception:
+            continue
+    await page.goto(gem_url, wait_until="load", timeout=60000)
+    await page.wait_for_timeout(2500)
+    print("Reloaded Gem URL for a fresh chat.")
+
+
+async def _fill_prompt_text(page, input_box, prompt_text: str) -> None:
+    await input_box.click()
+    await _clear_input_box(page, input_box)
+
+    filled_len = await page.evaluate(
+        """(value) => {
+            const editor = document.querySelector('rich-textarea .ql-editor')
+                || document.querySelector('rich-textarea [contenteditable="true"]')
+                || document.querySelector('div[contenteditable="true"]:not(.ql-clipboard)');
+            if (!editor) return 0;
+            editor.focus();
+            editor.textContent = value;
+            editor.dispatchEvent(new InputEvent('input', { bubbles: true }));
+            editor.dispatchEvent(new Event('change', { bubbles: true }));
+            return (editor.innerText || editor.textContent || '').length;
+        }""",
+        prompt_text,
+    )
+    await page.wait_for_timeout(1000)
+    print(f"JS editor fill reported: {filled_len} chars")
+
+    if max(filled_len, len(await _input_box_text(input_box))) < 50:
+        print("JS fill looks empty; trying insert_text.")
+        await _clear_input_box(page, input_box)
+        await page.keyboard.insert_text(prompt_text)
+        await page.wait_for_timeout(1000)
+
+    if len(await _input_box_text(input_box)) < 50:
+        print("insert_text looks empty; trying clipboard paste.")
+        await _clear_input_box(page, input_box)
+        try:
+            await page.context.grant_permissions(["clipboard-read", "clipboard-write"])
+            await page.evaluate("(value) => navigator.clipboard.writeText(value)", prompt_text)
+            await page.keyboard.press("Control+v")
+            await page.wait_for_timeout(800)
+            await page.keyboard.press("Space")
+            await page.wait_for_timeout(300)
+        except Exception as exc:
+            print(f"Clipboard paste failed: {exc}")
+
+
+async def _submit_prompt(page) -> None:
+    send_selectors = [
+        "button[aria-label*='전송']",
+        "button[aria-label*='Send']",
+        "[data-test-id='send-button']",
+        "button[mattooltip*='전송']",
+        "button[mattooltip*='Send']",
+    ]
+    for sel in send_selectors:
+        send_btn = page.locator(sel).first
+        if await send_btn.count() == 0:
+            continue
+        try:
+            if await send_btn.is_enabled():
+                await send_btn.click(timeout=2000)
+                await page.wait_for_timeout(700)
+                return
+        except Exception:
+            continue
+
+    await page.keyboard.press("Enter")
+    await page.wait_for_timeout(700)
+    for sel in send_selectors:
+        send_btn = page.locator(sel).first
+        if await send_btn.count() == 0:
+            continue
+        try:
+            await send_btn.click(timeout=1500, force=True)
+        except Exception:
+            pass
+
+
+async def _wait_for_generation_start(page, timeout_ms: int) -> bool:
+    deadline = time.time() + timeout_ms / 1000
+    responses = page.locator(", ".join(RESPONSE_SELECTORS))
+    initial_count = await responses.count()
+    initial_text = await _best_response_text(page)
+
+    while time.time() < deadline:
+        if await _generation_in_progress(page):
+            return True
+        if await responses.count() > initial_count:
+            return True
+        latest_text = await _best_response_text(page)
+        if latest_text and latest_text != initial_text and len(latest_text) > len(initial_text) + 20:
+            return True
+        await page.wait_for_timeout(1000)
+    return False
+
+
+async def _run_gemini_prompt(
+    page,
+    settings: Settings,
+    text: str,
+    video_title: str,
+    gem_url: str = "",
+) -> str:
     if settings.gemini_force_pro:
         await _select_gemini_pro(page)
 
@@ -486,48 +710,65 @@ async def _run_gemini_prompt(page, settings: Settings, text: str, video_title: s
         "rich-textarea, div[contenteditable='true'], textarea",
         timeout=30000,
     )
-    response_nodes = page.locator("message-content, model-response")
-    previous_count = await response_nodes.count()
-
-    input_box = await _find_input_box(page)
-    await input_box.click()
     prompt_text = build_gem_prompt(
         text[: settings.gemini_input_max_chars],
         video_title or "체슬리모닝브리프",
         settings.gemini_use_gem_prompt,
     )
+    input_box = await _find_input_box(page)
 
-    # Clipboard paste is more reliable for long Korean transcripts.
-    await page.evaluate(
-        "(value) => navigator.clipboard.writeText(value)",
-        prompt_text,
-    )
-    await page.keyboard.press("Control+a")
-    await page.keyboard.press("Delete")
-    await page.wait_for_timeout(200)
-    await page.keyboard.press("Control+v")
-    await page.wait_for_timeout(800)
+    last_error: Optional[Exception] = None
+    for send_attempt in range(2):
+        if send_attempt > 0:
+            print("Gemini send retry: re-filling prompt and submitting again.")
+            if gem_url:
+                await _start_new_gem_chat(page, gem_url)
+                if settings.gemini_force_pro:
+                    await _select_gemini_pro(page)
+                input_box = await _find_input_box(page)
 
-    await page.keyboard.press("Enter")
-    await page.wait_for_timeout(700)
-    # Fallback send button click when Enter does not submit.
-    send_btn = page.locator(
-        "button[aria-label*='전송'], button[aria-label*='Send'], "
-        "[data-test-id='send-button']"
-    ).first
-    if await send_btn.count() > 0:
+        response_nodes = page.locator(", ".join(RESPONSE_SELECTORS))
+        previous_count = await response_nodes.count()
+        previous_last_text = await _latest_response_text(page)
+
+        await _fill_prompt_text(page, input_box, prompt_text)
+        filled_len = len(await _input_box_text(input_box))
+        print(f"Prompt filled in input box: {filled_len} chars")
+        if filled_len < 50:
+            raise RuntimeError("Gemini prompt was not inserted into the input box.")
+
+        await _submit_prompt(page)
+        if not await _wait_for_generation_start(page, timeout_ms=90000):
+            print("Gemini generation did not start after submit.")
+            await page.screenshot(path=os.path.join(SCRIPT_DIR, f"debug_not_started_{send_attempt}.png"), full_page=True)
+            last_error = RuntimeError("No new Gemini response detected after sending prompt.")
+            if send_attempt == 0:
+                continue
+            raise last_error
+
         try:
-            await send_btn.click(timeout=1200)
-        except Exception:
-            pass
+            result = await wait_for_gemini_response(
+                page,
+                previous_count=previous_count,
+                timeout_ms=settings.response_timeout_ms,
+                previous_last_text=previous_last_text,
+                prompt_text=prompt_text,
+            )
+            validate_gemini_response(result, settings.gemini_min_response_chars)
+            return result
+        except RuntimeError as exc:
+            last_error = exc
+            retryable = (
+                "No new Gemini response detected" in str(exc)
+                or "Gemini response was empty" in str(exc)
+            )
+            if retryable and send_attempt == 0:
+                continue
+            raise
 
-    result = await wait_for_gemini_response(
-        page,
-        previous_count=previous_count,
-        timeout_ms=settings.response_timeout_ms,
-    )
-    validate_gemini_response(result, settings.gemini_min_response_chars)
-    return result
+    if last_error:
+        raise last_error
+    raise RuntimeError("Gemini prompt submission failed.")
 
 
 async def ask_gemini_gem(settings: Settings, text: str, video_title: str = "") -> str:
@@ -560,7 +801,13 @@ async def ask_gemini_gem(settings: Settings, text: str, video_title: str = "") -
                         settings.gemini_gem_url,
                         expected_gem_name=settings.gemini_gem_expected_name,
                     )
-                    result = await _run_gemini_prompt(page, settings, text, video_title)
+                    result = await _run_gemini_prompt(
+                        page,
+                        settings,
+                        text,
+                        video_title,
+                        gem_url=settings.gemini_gem_url,
+                    )
                     await save_storage_state(context, settings.gemini_storage_state_file)
                     return result
                 except GeminiLoginRequired as exc:

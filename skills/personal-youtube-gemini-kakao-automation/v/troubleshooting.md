@@ -174,6 +174,152 @@ python main.py
 
 ---
 
+### 증상: `Run completed`인데 Discord 요약이 50자뿐 (2026-06-01)
+
+**로그 예**
+
+```
+Gemini response length: 50 chars
+discord response status: 204
+Run completed
+```
+
+**원인**
+
+- Gemini가 짧은 안내/오류 문구만 반환했는데 **성공으로 처리**됨
+- 로그인 만료가 아니라 **응답 품질 검증 부재**
+
+**해결 (2026-06-01 반영)**
+
+- `GEMINI_MIN_RESPONSE_CHARS` (기본 400): 이보다 짧으면 실패
+- `looks_like_login_wall_text()`: 로그인 안내 문구면 실패
+- Discord에 짧은 메시지가 가지 않도록 `validate_gemini_response()` 추가
+
+---
+
+### 증상: Gem URL이 `/app`으로 리다이렉트 → Gem 이름 검증 실패 (2026-06-02)
+
+**로그 예**
+
+```
+Gem UI ready at https://gemini.google.com/app
+Run failed: Expected Gem '스크립트 정리 도우미' not found on page.
+```
+
+**원인**
+
+- `/gem/...` 접속 후 일반 앱 화면(`/app`)으로 튕김
+- 채팅 입력창은 보이지만 Gem 이름이 없어 즉시 실패
+
+**해결 (2026-06-02 반영)**
+
+- Gem 이름 검증 실패 시 **Gems 라이브러리 경로로 1회 재시도** (`gemini_session.py`)
+- `open_gem_conversation()`에서 verification 실패 → `_open_gem_via_gems_library()` 재진입
+
+---
+
+### 증상: `No new Gemini response detected after sending prompt` (2026-06-10)
+
+**로그 예**
+
+```
+Prompt filled in input box: 8157 chars
+Run failed: No new Gemini response detected after sending prompt.
+```
+
+**원인**
+
+- 영상·자막·Gem 열기까지는 성공
+- **기존 Gem 대화 스레드**에 이어 붙이면서 `model-response` 노드 개수가 늘지 않음
+- 스케줄러(백그라운드) 환경에서 클립보드 붙여넣기만으로는 전송이 안 된 경우도 있음
+
+**해결 (2026-06-10 반영)**
+
+| 항목 | 내용 |
+|------|------|
+| 새 채팅 | 전송 전 `_start_new_gem_chat()` — Gem URL 새로고침 또는 "새 채팅" 클릭 |
+| 입력 보강 | 클립보드 실패 시 `insert_text` 대체, 붙여넣기 후 `Space` |
+| 클립보드 권한 | Playwright `permissions=["clipboard-read", "clipboard-write"]` |
+| 응답 감지 | 노드 개수 증가 + **중지 버튼** + 마지막 텍스트 변화량 감지 |
+| 재시도 | 전송·응답 실패 시 1회 재시도 (`_run_gemini_prompt`) |
+
+**수동 재실행**
+
+```powershell
+$env:RUN_ONCE="1"
+powershell -ExecutionPolicy Bypass -File .\run_once.ps1
+```
+
+`processed.json`에 해당 `video_id`가 있으면 제거 후 실행.
+
+---
+
+### 증상: `Gemini response was empty` (2026-06-11, 스케줄러)
+
+**로그 예**
+
+```
+Reloaded Gem URL for a fresh chat.
+Prompt filled in input box: 8127 chars
+Run failed: Gemini response was empty.
+```
+
+**원인**
+
+- 프롬프트는 입력됐지만 스케줄러(16:00, 화면 잠금/백그라운드) 환경에서 창 표시 모드(`HEADLESS=false`)로 실행될 때 DOM 렌더링 지연 또는 추출 실패가 발생함.
+- 수동 재실행은 성공, 자동 실행만 실패하는 패턴 확인 (환경/headless 영향).
+
+**해결 (2026-06-12 반영)**
+
+- `.env`에서 `HEADLESS=true`로 변경하여 백그라운드 환경에서도 안정적으로 렌더링/추출되도록 수정.
+- 디버깅을 위해 실패 시 `debug_empty_response.png` 및 `debug_not_started.png` 스크린샷 캡처 기능 추가.
+
+---
+
+### 증상: Gem 이름 검증 실패 (인코딩 깨짐) (2026-06-12)
+
+**로그 예**
+
+```text
+Gem verification failed on https://gemini.google.com/app, retry via Gems library: Expected Gem '체슬리모닝브리프 요약' (deduced from garbled text '? }11uô  ?  %  ? ˜?') not found on page.
+```
+
+**원인**
+
+- `main.py`에 설정된 기본 이름("스크립트 정리 도우미")이 Windows 환경에서 실행 시 인코딩 문제로 깨져서 페이지 본문과 매칭되지 않음.
+
+**해결 (2026-06-12 반영)**
+
+- `.env`에 `GEMINI_GEM_EXPECTED_NAME=스크립트 정리 도우미` 항목을 명시적으로 추가하여 UTF-8 인코딩으로 올바르게 환경 변수를 읽어오도록 수정.
+
+**확인**
+
+```powershell
+Get-Content .\run.log -Tail 30
+Get-ScheduledTaskInfo -TaskName ChesleyMorningBrief | Format-List LastRunTime,LastTaskResult
+```
+
+---
+
+### 증상: 로그인은 됐는데 자동 실행만 실패 (2026-06-01~11 공통)
+
+**패턴**
+
+| 날짜 | 증상 | 원인 |
+|------|------|------|
+| 6/01 | 50자만 Discord 전송 | 응답 품질 미검증 |
+| 6/02 | Gem `/app` 리다이렉트 | Gem 검증 실패 |
+| 6/09 | 영상 없음 | flat 영어 제목 |
+| 6/10 | 응답 감지 실패 | 이전 대화 스레드 |
+| 6/11 | 응답 empty | 스케줄러 환경 DOM 추출 |
+
+**공통**
+
+- `LastTaskResult: 0`이어도 `run.log`에 `Run failed`가 있을 수 있음 → **Discord만 보면 안 됨**
+- 수동 `run_once.ps1`은 성공하는데 16:00 자동만 실패 → **Win+L 잠금·절전** 여부 확인 ([화면보호기 / 잠금 / 절전](#화면보호기--잠금--절전-2026-06-01-정리))
+
+---
+
 ### 증상: 응답 대기 중 `networkidle` 타임아웃
 
 **해결**
@@ -436,6 +582,8 @@ Get-Content .\run.log -Tail 25
 | `RUN_ONCE` | `1`이면 1회 실행 후 종료 |
 | `SETUP_LOGIN_ONLY` | `1`이면 로그인만 |
 | `GEMINI_DEBUG_HOLD_MS` | 응답 후 브라우저 유지(ms) |
+| `GEMINI_MIN_RESPONSE_CHARS` | 최소 응답 길이 (기본 400, 미만이면 실패) |
+| `AUTO_LOGIN_WAIT_SEC` | 로그인 대기(초, 기본 300) |
 
 ---
 
@@ -452,17 +600,21 @@ Get-Content .\run.log -Tail 25
 
 ### 실행 실패 시
 
-- [ ] `run.log` 확인
-- [ ] 오늘 영상 제목에 `[체슬리모닝브리프]` + 날짜 있는지
-- [ ] `chrome_profile` 로그인 유효한지
-- [ ] 학교망: SSL 관련 env `true`인지
-- [ ] Discord: 깨진 한글이면 `send_test_message.py` 경로로 테스트
+- [ ] `run.log` 확인 (`Run completed` ≠ 성공, `Run failed` 줄 확인)
+- [ ] `Get-ScheduledTaskInfo -TaskName ChesleyMorningBrief` → `LastTaskResult`
+- [ ] 오늘 영상: `[체슬리모닝브리프]` 또는 `[Cheslie Morning Brief]` + 날짜
+- [ ] `chrome_profile` 로그인 유효한지 (`SETUP_LOGIN_ONLY=1`)
+- [ ] 학교망: `YT_NO_CHECK_CERTIFICATES=true`, `DISABLE_SSL_VERIFY=true`
+- [ ] 16:00 전후 PC 절전·잠금(Win+L) 아닌지
+- [ ] Discord: 깨진 한글이면 `send_test_message.ps1`로 테스트
 
 ### Gem 응답이 이상할 때
 
 - [ ] `HEADLESS=false`로 직접 화면 확인
 - [ ] `GEMINI_DEBUG_HOLD_MS=180000`
-- [ ] 이전 대화 영향 → 새 스레드/Gem URL 재진입 검토
+- [ ] `Gemini response length:` 400자 이상인지
+- [ ] `No new Gemini response` / `response was empty` → 수동 재실행 후 `processed.json`에서 video_id 제거
+- [ ] 이전 대화 영향 → 코드가 자동으로 새 채팅/Gem URL 재로드 (2026-06-10~)
 
 ---
 
@@ -490,6 +642,11 @@ Get-Content .\run.log -Tail 25
 | 2026-05-28 | Gem 입력/응답 추출 보강, chesley-morning-brief 참고 반영 |
 | 2026-05-29 | Windows 작업 스케줄러 (12:20), UTF-8 Discord 수정 |
 | 2026-06-01 | 화면보호기/잠금/절전 가이드, Gemini 짧은 응답(50자) 방지, Gem URL 세션 검증 |
+| 2026-06-02 | Gem `/app` 리다이렉트 시 Gems 라이브러리 재시도 |
+| 2026-06-09 | 영상 탐지: 영어 flat 제목 + `upload_date` 메타데이터 fallback |
+| 2026-06-10 | Gemini 전송/응답 보강: 새 채팅, 클립보드·insert_text, 응답 감지 다중 조건, 전송 재시도 |
+| 2026-06-11 | `Gemini response was empty` (스케줄러) 기록 — DOM fallback·알림 추가 검토 예정 |
+| 2026-06-12 | 인코딩 깨짐으로 인한 검증 오류 우회(`.env` 수정), 백그라운드 DOM 추출 오류 방지(`HEADLESS=true`), 스크린샷 디버깅 기능 추가 |
 
 ---
 

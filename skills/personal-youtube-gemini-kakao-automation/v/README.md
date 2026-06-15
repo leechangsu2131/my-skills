@@ -128,6 +128,10 @@ Get-Content .\run.log -Tail 40
 
 `RUN_ONCE start` / `Run completed` 등이 보이면 실행된 것입니다.
 
+> **주의:** `Run completed`만으로는 성공이 아닙니다. 같은 로그에 `Run failed:`가 있으면 중간 단계에서 실패한 것입니다.  
+> `Gemini response length:`가 400자 이상인지, Discord에 요약이 왔는지 함께 확인하세요.  
+> 장애·수정 이력: [troubleshooting.md](./troubleshooting.md) (6/1~6/11 반영)
+
 **3) Discord**
 
 설정한 채널(체슬리요약 등)에 요약 메시지가 오는지 확인.

@@ -218,6 +218,7 @@ async def launch_gemini_context(
             headless=headless,
             channel="chrome",
             args=launch_args,
+            permissions=["clipboard-read", "clipboard-write"],
         )
         page = await context.new_page()
         return context, page

@@ -1,0 +1,1281 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Supabase 학생 관찰 데이터 기반 i-scream 과목별 평가 자동 입력 도구">
+    <title>i-scream 과목별 평가 자동 입력 시스템</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --surface-color: rgba(22, 28, 45, 0.7);
+            --surface-border: rgba(255, 255, 255, 0.08);
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            
+            --primary: #6366f1;
+            --primary-glow: rgba(99, 102, 241, 0.15);
+            --accent-teal: #14b8a6;
+            --accent-amber: #f59e0b;
+            --accent-rose: #f43f5e;
+            
+            --pos-color: #10b981;
+            --neu-color: #64748b;
+            --neg-color: #f43f5e;
+            
+            --font-outfit: 'Outfit', 'Inter', sans-serif;
+            --font-inter: 'Inter', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.05) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(20, 184, 166, 0.05) 0px, transparent 50%);
+            color: var(--text-primary);
+            font-family: var(--font-inter);
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        header {
+            background: rgba(11, 15, 25, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--surface-border);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo-icon {
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(135deg, var(--primary), var(--accent-teal));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-family: var(--font-outfit);
+            font-size: 1.25rem;
+            color: white;
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.4);
+        }
+
+        h1 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            font-family: var(--font-outfit);
+            letter-spacing: -0.02em;
+            background: linear-gradient(to right, #ffffff, #cbd5e1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .status-container {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .badge {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--surface-border);
+            border-radius: 20px;
+            padding: 0.35rem 0.75rem;
+            font-size: 0.8rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .badge-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .badge-success .badge-dot { background-color: var(--pos-color); box-shadow: 0 0 8px var(--pos-color); }
+        .badge-warning .badge-dot { background-color: var(--accent-amber); box-shadow: 0 0 8px var(--accent-amber); }
+        .badge-danger .badge-dot { background-color: var(--accent-rose); box-shadow: 0 0 8px var(--accent-rose); }
+
+        .main-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            flex-grow: 1;
+            height: calc(100vh - 71px);
+        }
+
+        /* Left Panel - Student List */
+        .sidebar {
+            background: rgba(15, 20, 35, 0.4);
+            border-right: 1px solid var(--surface-border);
+            display: flex;
+            flex-direction: column;
+            overflow-y: hidden;
+        }
+
+        .sidebar-header {
+            padding: 1.25rem;
+            border-bottom: 1px solid var(--surface-border);
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .search-wrapper {
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--surface-border);
+            border-radius: 8px;
+            padding: 0.5rem 0.75rem;
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .search-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 8px var(--primary-glow);
+        }
+
+        .selection-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .student-list-container {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 0.5rem;
+        }
+
+        .student-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 0.25rem;
+            border: 1px solid transparent;
+        }
+
+        .student-item:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .student-item.selected {
+            background: rgba(99, 102, 241, 0.08);
+            border-color: rgba(99, 102, 241, 0.2);
+        }
+
+        .student-name-box {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            flex-grow: 1;
+        }
+
+        .record-badge {
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            padding: 0.15rem 0.4rem;
+            border-radius: 12px;
+            font-weight: 500;
+        }
+
+        /* Right Panel - Core Content */
+        .content-area {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            overflow-y: hidden;
+        }
+
+        /* Control Panel */
+        .control-bar {
+            background: rgba(18, 24, 41, 0.6);
+            border-bottom: 1px solid var(--surface-border);
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .settings-group {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .setting-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .input-number {
+            width: 70px;
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid var(--surface-border);
+            border-radius: 6px;
+            padding: 0.35rem 0.5rem;
+            color: var(--text-primary);
+            outline: none;
+            text-align: center;
+        }
+
+        /* Switch Toggle */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 20px;
+        }
+
+        .switch input { 
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.1);
+            transition: .3s;
+            border-radius: 20px;
+            border: 1px solid var(--surface-border);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 12px;
+            width: 12px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(20px);
+        }
+
+        /* Action Buttons */
+        .btn-group {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .btn {
+            font-family: var(--font-outfit);
+            font-weight: 500;
+            font-size: 0.875rem;
+            padding: 0.5rem 1.25rem;
+            border-radius: 8px;
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            outline: none;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: #4f46e5;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--surface-border);
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-danger {
+            background: var(--accent-rose);
+            color: white;
+            box-shadow: 0 4px 12px rgba(244, 63, 94, 0.25);
+        }
+
+        .btn-danger:hover:not(:disabled) {
+            background: #e11d48;
+            box-shadow: 0 4px 15px rgba(244, 63, 94, 0.4);
+            transform: translateY(-1px);
+        }
+
+        .btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        /* Cards Workspace Area */
+        .workspace {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .empty-state {
+            margin: auto;
+            text-align: center;
+            color: var(--text-secondary);
+            max-width: 400px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .empty-icon {
+            font-size: 3rem;
+            color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Evaluation Card */
+        .eval-card {
+            background: var(--surface-color);
+            border: 1px solid var(--surface-border);
+            border-radius: 12px;
+            padding: 1.25rem;
+            backdrop-filter: blur(8px);
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            animation: fadeIn 0.3s ease-out;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 0.75rem;
+        }
+
+        .student-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .student-badge {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(20, 184, 166, 0.15));
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            font-family: var(--font-outfit);
+            font-weight: 600;
+            padding: 0.25rem 0.75rem;
+            border-radius: 6px;
+            color: var(--text-primary);
+        }
+
+        .subject-badge {
+            background: rgba(20, 184, 166, 0.12);
+            border: 1px solid rgba(20, 184, 166, 0.3);
+            color: var(--accent-teal);
+            font-weight: 500;
+            padding: 0.25rem 0.5rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+        }
+
+        .card-meta {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            display: flex;
+            gap: 1rem;
+        }
+
+        .sentiment-bar {
+            height: 6px;
+            border-radius: 3px;
+            overflow: hidden;
+            display: flex;
+            background: rgba(255, 255, 255, 0.05);
+            width: 150px;
+        }
+
+        .sentiment-segment {
+            height: 100%;
+        }
+
+        .seg-pos { background-color: var(--pos-color); }
+        .seg-neu { background-color: var(--neu-color); }
+        .seg-neg { background-color: var(--neg-color); }
+
+        .sentiment-text {
+            font-size: 0.75rem;
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .editor-container {
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 1.25rem;
+        }
+
+        .textarea-wrapper {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .eval-textarea {
+            width: 100%;
+            min-height: 130px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--surface-border);
+            border-radius: 8px;
+            padding: 0.75rem;
+            color: var(--text-primary);
+            font-family: var(--font-inter);
+            font-size: 0.9rem;
+            line-height: 1.5;
+            outline: none;
+            resize: vertical;
+            transition: all 0.3s;
+        }
+
+        .eval-textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 10px rgba(99, 102, 241, 0.15);
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        .char-counter {
+            align-self: flex-end;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        /* Raw Records Dropdown */
+        .raw-records-box {
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            background: rgba(0, 0, 0, 0.15);
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .raw-header {
+            padding: 0.5rem 0.75rem;
+            background: rgba(255, 255, 255, 0.02);
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .raw-list {
+            padding: 0.5rem;
+            overflow-y: auto;
+            max-height: 125px;
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        .raw-item {
+            font-size: 0.75rem;
+            padding: 0.4rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 4px;
+            border-left: 3px solid #64748b;
+        }
+
+        .raw-item.pos { border-left-color: var(--pos-color); }
+        .raw-item.neu { border-left-color: var(--neu-color); }
+        .raw-item.neg { border-left-color: var(--neg-color); }
+
+        .raw-meta {
+            display: flex;
+            justify-content: space-between;
+            color: var(--text-secondary);
+            margin-bottom: 0.2rem;
+            font-size: 0.7rem;
+        }
+
+        /* Log Panel at Bottom */
+        .log-panel {
+            height: 200px;
+            background: #060810;
+            border-top: 1px solid var(--surface-border);
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            flex-shrink: 0;
+        }
+
+        .log-terminal {
+            padding: 1rem;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 0.8rem;
+            line-height: 1.4;
+            color: #38bdf8;
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            background: #020408;
+        }
+
+        .log-row {
+            word-break: break-all;
+            white-space: pre-wrap;
+        }
+
+        .log-row.err { color: var(--accent-rose); }
+        .log-row.sys { color: #a78bfa; }
+        .log-row.success { color: var(--pos-color); }
+        .log-row.warn { color: var(--accent-amber); }
+
+        .stats-panel {
+            padding: 1.25rem;
+            border-left: 1px solid var(--surface-border);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            background: rgba(10, 15, 30, 0.3);
+        }
+
+        .stats-title {
+            font-family: var(--font-outfit);
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 0.5rem;
+            text-align: center;
+        }
+
+        .stat-val {
+            font-family: var(--font-outfit);
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-top: 0.15rem;
+        }
+
+        .stat-card.success .stat-val { color: var(--pos-color); }
+        .stat-card.fail .stat-val { color: var(--accent-rose); }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 0.75rem;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(to right, var(--primary), var(--accent-teal));
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <div class="logo-icon">iS</div>
+            <h1>i-scream 과목별 평가 자동 입력</h1>
+        </div>
+        <div class="status-container">
+            <div id="status-supabase" class="badge badge-danger">
+                <span class="badge-dot"></span>
+                <span>Supabase 연결 대기</span>
+            </div>
+            <div id="status-cdp" class="badge badge-warning">
+                <span class="badge-dot"></span>
+                <span>CDP 연결 대기</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="main-layout">
+        <!-- Sidebar - Student list -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="search-wrapper">
+                    <input type="text" id="search-student" class="search-input" placeholder="학생 이름 검색...">
+                </div>
+                <div class="selection-actions">
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="select-all-students">
+                        <span>전체 선택</span>
+                    </label>
+                    <span id="selected-count">0명 선택됨</span>
+                </div>
+            </div>
+            <div id="student-list" class="student-list-container">
+                <!-- Loaded dynamically -->
+                <div style="padding: 1.5rem; text-align: center; color: var(--text-secondary); font-size: 0.875rem;">
+                    학생 정보를 불러오는 중...
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="content-area">
+            <!-- Control bar -->
+            <div class="control-bar">
+                <div class="settings-group">
+                    <div class="setting-item">
+                        <label for="cdp-port">CDP 포트:</label>
+                        <input type="number" id="cdp-port" class="input-number" value="9222">
+                    </div>
+                    <div class="setting-item">
+                        <span>Dry Run (테스트):</span>
+                        <label class="switch">
+                            <input type="checkbox" id="toggle-dryrun" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+                <div class="btn-group">
+                    <button id="btn-preview" class="btn btn-secondary" disabled>
+                        <span>📝 평가문 생성</span>
+                    </button>
+                    <button id="btn-start" class="btn btn-primary" disabled>
+                        <span>🚀 자동 입력 시작</span>
+                    </button>
+                    <button id="btn-stop" class="btn btn-danger" disabled>
+                        <span>🛑 긴급 정지</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Workspace containing generated evals -->
+            <div id="workspace" class="workspace">
+                <div class="empty-state">
+                    <div class="empty-icon">📂</div>
+                    <p style="font-weight: 500;">작업할 학생을 선택해 주세요</p>
+                    <p style="font-size: 0.8rem;">왼쪽 목록에서 학생을 체크한 후 [평가문 생성] 버튼을 누르면 입력용 텍스트 초안이 생성됩니다.</p>
+                </div>
+            </div>
+
+            <!-- Log / Stats Panel -->
+            <div class="log-panel">
+                <div id="log-terminal" class="log-terminal">
+                    <div class="log-row sys">💡 시스템 준비 완료. launch_chrome_iscream.bat으로 CDP 크롬을 켜고, i-scream 로그인 후 학생 평가 페이지를 켜 두세요.</div>
+                </div>
+                <div class="stats-panel">
+                    <div>
+                        <div class="stats-title">진행 상황</div>
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div style="font-size: 0.75rem; color: var(--text-secondary);">총 대상</div>
+                                <div id="stat-total" class="stat-val">0</div>
+                            </div>
+                            <div class="stat-card success">
+                                <div style="font-size: 0.75rem; color: var(--text-secondary);">성공</div>
+                                <div id="stat-success" class="stat-val">0</div>
+                            </div>
+                            <div class="stat-card fail">
+                                <div style="font-size: 0.75rem; color: var(--text-secondary);">실패</div>
+                                <div id="stat-fail" class="stat-val">0</div>
+                            </div>
+                            <div class="stat-card">
+                                <div style="font-size: 0.75rem; color: var(--text-secondary);">건너뜀</div>
+                                <div id="stat-skip" class="stat-val">0</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="progress-bar-container">
+                            <div id="progress-bar" class="progress-bar"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 전역 상태
+        let studentsData = [];
+        let selectedStudentNames = new Set();
+        let evaluationDrafts = [];
+        let eventSource = null;
+        let isRunning = false;
+
+        // DOM Elements
+        const studentListEl = document.getElementById('student-list');
+        const workspaceEl = document.getElementById('workspace');
+        const logTerminalEl = document.getElementById('log-terminal');
+        const searchInput = document.getElementById('search-student');
+        const selectAllCheckbox = document.getElementById('select-all-students');
+        const selectedCountEl = document.getElementById('selected-count');
+        
+        const btnPreview = document.getElementById('btn-preview');
+        const btnStart = document.getElementById('btn-start');
+        const btnStop = document.getElementById('btn-stop');
+        
+        const statusSupabase = document.getElementById('status-supabase');
+        const statusCdp = document.getElementById('status-cdp');
+        const cdpPortInput = document.getElementById('cdp-port');
+        const dryRunInput = document.getElementById('toggle-dryrun');
+
+        const statTotal = document.getElementById('stat-total');
+        const statSuccess = document.getElementById('stat-success');
+        const statFail = document.getElementById('stat-fail');
+        const statSkip = document.getElementById('stat-skip');
+        const progressBar = document.getElementById('progress-bar');
+
+        // 초기화
+        window.addEventListener('DOMContentLoaded', () => {
+            checkEnvStatus();
+            loadStudents();
+            setupSSE();
+
+            // Event Listeners
+            searchInput.addEventListener('input', filterStudentsList);
+            selectAllCheckbox.addEventListener('change', toggleSelectAll);
+            btnPreview.addEventListener('click', generateEvaluationPreviews);
+            btnStart.addEventListener('click', startAutomation);
+            btnStop.addEventListener('click', stopAutomation);
+        });
+
+        // 시스템 환경변수 상태 확인
+        async function checkEnvStatus() {
+            try {
+                const res = await fetch('/api/env-status');
+                const data = await res.json();
+                
+                // Supabase 설정 상태
+                if (data.supabase_configured) {
+                    statusSupabase.className = 'badge badge-success';
+                    statusSupabase.querySelector('span:last-child').textContent = 'Supabase 연결 완료';
+                } else {
+                    statusSupabase.className = 'badge badge-danger';
+                    statusSupabase.querySelector('span:last-child').textContent = 'Supabase 설정 필요 (.env)';
+                }
+
+                if (data.cdp_port) {
+                    cdpPortInput.value = data.cdp_port;
+                }
+
+                isRunning = data.running;
+                updateButtonStates();
+            } catch (err) {
+                appendLog('시스템 환경 진단 오류: ' + err.message, 'err');
+            }
+        }
+
+        // 학생 목록 로드
+        async function loadStudents() {
+            try {
+                const res = await fetch('/api/students');
+                const data = await res.json();
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+                studentsData = data.students || [];
+                renderStudentList();
+            } catch (err) {
+                studentListEl.innerHTML = `<div style="padding:1.5rem; text-align:center; color:var(--accent-rose); font-size:0.875rem;">오류: ${err.message}</div>`;
+                appendLog('학생 데이터 로드 실패: ' + err.message, 'err');
+            }
+        }
+
+        // 학생 목록 그리기
+        function renderStudentList() {
+            if (studentsData.length === 0) {
+                studentListEl.innerHTML = '<div style="padding:1.5rem; text-align:center; color:var(--text-secondary); font-size:0.875rem;">데이터가 없습니다.</div>';
+                return;
+            }
+
+            const query = searchInput.value.toLowerCase().trim();
+            studentListEl.innerHTML = '';
+
+            studentsData.forEach(student => {
+                if (query && !student.name.toLowerCase().includes(query)) return;
+
+                const isChecked = selectedStudentNames.has(student.name);
+                
+                const item = document.createElement('div');
+                item.className = `student-item ${isChecked ? 'selected' : ''}`;
+                item.dataset.name = student.name;
+                
+                item.innerHTML = `
+                    <div class="student-name-box">
+                        <input type="checkbox" class="student-checkbox" ${isChecked ? 'checked' : ''} value="${student.name}">
+                        <span style="font-weight: 500;">${student.name}</span>
+                    </div>
+                    <span class="record-badge">${student.record_count}건</span>
+                `;
+
+                // 클릭 이벤트 핸들러
+                item.addEventListener('click', (e) => {
+                    if (e.target.type === 'checkbox') return;
+                    const cb = item.querySelector('.student-checkbox');
+                    cb.checked = !cb.checked;
+                    handleStudentCheck(cb);
+                });
+
+                item.querySelector('.student-checkbox').addEventListener('change', (e) => {
+                    handleStudentCheck(e.target);
+                });
+
+                studentListEl.appendChild(item);
+            });
+        }
+
+        function filterStudentsList() {
+            renderStudentList();
+        }
+
+        function handleStudentCheck(checkbox) {
+            const name = checkbox.value;
+            const item = studentListEl.querySelector(`.student-item[data-name="${name}"]`);
+            
+            if (checkbox.checked) {
+                selectedStudentNames.add(name);
+                if (item) item.classList.add('selected');
+            } else {
+                selectedStudentNames.delete(name);
+                if (item) item.classList.remove('selected');
+            }
+            
+            updateSelectionCount();
+        }
+
+        function toggleSelectAll(e) {
+            const checked = e.target.checked;
+            const checkboxes = studentListEl.querySelectorAll('.student-checkbox');
+            
+            checkboxes.forEach(cb => {
+                cb.checked = checked;
+                const name = cb.value;
+                if (checked) {
+                    selectedStudentNames.add(name);
+                    cb.closest('.student-item').classList.add('selected');
+                } else {
+                    selectedStudentNames.delete(name);
+                    cb.closest('.student-item').classList.remove('selected');
+                }
+            });
+            updateSelectionCount();
+        }
+
+        function updateSelectionCount() {
+            const count = selectedStudentNames.size;
+            selectedCountEl.textContent = `${count}명 선택됨`;
+            
+            // 전체 선택 체크박스 상태 갱신
+            const visibleCheckboxes = studentListEl.querySelectorAll('.student-checkbox');
+            if (visibleCheckboxes.length > 0) {
+                const allVisibleChecked = Array.from(visibleCheckboxes).every(cb => cb.checked);
+                selectAllCheckbox.checked = allVisibleChecked && count > 0;
+            }
+
+            btnPreview.disabled = count === 0 || isRunning;
+        }
+
+        // 평가 미리보기 생성 요청
+        async function generateEvaluationPreviews() {
+            if (selectedStudentNames.size === 0) return;
+            
+            workspaceEl.innerHTML = '<div style="margin:auto; text-align:center;"><p>평가 데이터 생성 및 분석 중...</p></div>';
+            btnPreview.disabled = true;
+
+            try {
+                const res = await fetch('/api/preview', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ students: Array.from(selectedStudentNames) })
+                });
+                const data = await res.json();
+                
+                if (data.error) throw new Error(data.error);
+                
+                evaluationDrafts = data.preview || [];
+                renderWorkspace();
+            } catch (err) {
+                workspaceEl.innerHTML = `<div style="margin:auto; text-align:center; color:var(--accent-rose)">초안 생성 실패: ${err.message}</div>`;
+                appendLog('평가문 초안 생성 실패: ' + err.message, 'err');
+                btnPreview.disabled = false;
+            }
+        }
+
+        // 메인 작업 공간 렌더링
+        function renderWorkspace() {
+            if (evaluationDrafts.length === 0) {
+                workspaceEl.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📭</div>
+                        <p style="font-weight: 500;">생성된 평가 데이터가 없습니다</p>
+                        <p style="font-size:0.8rem;">선택된 학생들의 과목별 누적 관찰 데이터가 존재하는지 확인하세요.</p>
+                    </div>`;
+                btnStart.disabled = true;
+                return;
+            }
+
+            workspaceEl.innerHTML = '';
+            
+            evaluationDrafts.forEach((draft, idx) => {
+                const card = document.createElement('div');
+                card.className = 'eval-card';
+                card.dataset.index = idx;
+
+                const pos = draft.sentiment.pos;
+                const neu = draft.sentiment.neu;
+                const neg = draft.sentiment.neg;
+
+                // raw record list 렌더링
+                let rawListHtml = '';
+                draft.key_records.forEach(rec => {
+                    let sCls = 'neu';
+                    if (rec.sentiment.includes('긍정')) sCls = 'pos';
+                    else if (rec.sentiment.includes('관찰')) sCls = 'neg';
+                    
+                    rawListHtml += `
+                        <div class="raw-item ${sCls}">
+                            <div class="raw-meta">
+                                <span>📅 ${rec.date}</span>
+                                <span>${rec.sentiment}</span>
+                            </div>
+                            <div style="font-weight:500; margin-bottom:0.15rem;">${rec.title}</div>
+                            <div style="color:var(--text-secondary);">${rec.content}</div>
+                        </div>
+                    `;
+                });
+
+                card.innerHTML = `
+                    <div class="card-header">
+                        <div class="student-info">
+                            <span class="student-badge">${draft.student}</span>
+                            <span class="subject-badge">${draft.subject}</span>
+                            <span style="font-size:0.8rem; color:var(--text-secondary);">총 ${draft.record_count}건의 기록 (${draft.start_date} ~ ${draft.end_date})</span>
+                        </div>
+                        <div class="sentiment-text">
+                            <span>긍정도 분석:</span>
+                            <div class="sentiment-bar">
+                                <div class="sentiment-segment seg-pos" style="width: ${pos}%" title="긍정 ${pos}%"></div>
+                                <div class="sentiment-segment seg-neu" style="width: ${neu}%" title="중립 ${neu}%"></div>
+                                <div class="sentiment-segment seg-neg" style="width: ${neg}%" title="부정 ${neg}%"></div>
+                            </div>
+                            <span style="font-weight:500; color:var(--pos-color); font-size:0.75rem;">✅ ${pos}%</span>
+                        </div>
+                    </div>
+                    <div class="editor-container">
+                        <div class="textarea-wrapper">
+                            <textarea class="eval-textarea" id="textarea-${idx}">${draft.eval_text}</textarea>
+                            <div class="char-counter"><span id="char-count-${idx}">${draft.eval_text.length}</span> 자</div>
+                        </div>
+                        <div class="raw-records-box">
+                            <div class="raw-header">
+                                <span>📋 관찰기록 원문 (최신 5건)</span>
+                            </div>
+                            <div class="raw-list">
+                                ${rawListHtml || '<div style="padding:1rem; text-align:center; color:var(--text-secondary);">관찰 내역이 없습니다.</div>'}
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                // 텍스트 카운터 실시간 업데이트 & 데이터 동기화
+                const textarea = card.querySelector('.eval-textarea');
+                const charCounter = card.querySelector(`#char-count-${idx}`);
+                
+                textarea.addEventListener('input', (e) => {
+                    const val = e.target.value;
+                    charCounter.textContent = val.length;
+                    evaluationDrafts[idx].eval_text = val;
+                });
+
+                workspaceEl.appendChild(card);
+            });
+
+            btnStart.disabled = false;
+            btnPreview.disabled = false;
+        }
+
+        // SSE 이벤트 수신 설정
+        function setupSSE() {
+            if (eventSource) {
+                eventSource.close();
+            }
+
+            eventSource = new EventSource('/api/stream');
+
+            eventSource.onmessage = function(event) {
+                if (event.data === 'ping') return;
+                
+                try {
+                    const data = JSON.parse(event.data);
+                    
+                    if (data.type === 'log') {
+                        appendLog(data.text);
+                        // 특정 동작(과목 시작, 학생 처리 성공 등) 감지 시 UI 뱃지 및 스탯 갱신
+                        parseLogForStats(data.text);
+                    } else if (data.type === 'done') {
+                        isRunning = false;
+                        updateButtonStates();
+                        appendLog('🏁 자동화 프로세스가 완료되었습니다.', 'sys');
+                        
+                        // 결과 상세 로깅
+                        if (data.results) {
+                            appendLog('=== 처리 요약 ===', 'sys');
+                            let succ = 0, fail = 0, skip = 0;
+                            data.results.forEach(r => {
+                                const stIcon = r.status === '성공' || r.status === '시뮬레이션 완료' ? '✅' : '❌';
+                                appendLog(`  ${stIcon} ${r.student} [${r.subject}]: ${r.status} ${r.fail_reason ? '(' + r.fail_reason + ')' : ''}`, r.status === '실패' ? 'err' : 'success');
+                                
+                                if (r.status === '성공' || r.status === '시뮬레이션 완료') succ++;
+                                else if (r.status === '건너뜀') skip++;
+                                else fail++;
+                            });
+                        }
+                    }
+                } catch (e) {
+                    console.error('SSE 파싱 에러:', e);
+                }
+            };
+
+            eventSource.onerror = function() {
+                // 연결이 유실되었을 때 브라우저가 자동 재접속하므로, 로깅만 수행
+                console.log('SSE 연결 유실됨. 재연결 시도 중...');
+            };
+        }
+
+        // 로그 기록 화면에 덧붙이기
+        function appendLog(text, type = '') {
+            const row = document.createElement('div');
+            row.className = `log-row ${type}`;
+            row.textContent = text;
+            logTerminalEl.appendChild(row);
+            
+            // 자동 스크롤
+            logTerminalEl.scrollTop = logTerminalEl.scrollHeight;
+        }
+
+        // 로그 파싱하여 실시간 스탯 카운팅
+        function parseLogForStats(logText) {
+            // Chrome 디버그 연결 확인
+            if (logText.includes('[연결] Chrome 브라우저에 성공적으로 연결되었습니다.')) {
+                statusCdp.className = 'badge badge-success';
+                statusCdp.querySelector('span:last-child').textContent = 'CDP 연결 완료 (9222)';
+            }
+            if (logText.includes('[오류] Chrome 연결 실패')) {
+                statusCdp.className = 'badge badge-danger';
+                statusCdp.querySelector('span:last-child').textContent = 'Chrome 미감지 (포트확인)';
+            }
+
+            // 진행 카운터 갱신 정규식 매칭 (예: [진행률] 2/15 (성공: 1, 실패: 0, 건너뜀: 0))
+            const progressMatch = logText.match(/\[진행률\]\s+(\d+)\/(\d+)\s+\(성공:\s+(\d+),\s+실패:\s+(\d+),\s+건너뜀:\s+(\d+)\)/);
+            if (progressMatch) {
+                const current = parseInt(progressMatch[1]);
+                const total = parseInt(progressMatch[2]);
+                const success = parseInt(progressMatch[3]);
+                const fail = parseInt(progressMatch[4]);
+                const skip = parseInt(progressMatch[5]);
+
+                statTotal.textContent = total;
+                statSuccess.textContent = success;
+                statFail.textContent = fail;
+                statSkip.textContent = skip;
+
+                const pct = total > 0 ? (current / total) * 100 : 0;
+                progressBar.style.width = `${pct}%`;
+            }
+        }
+
+        // 버튼 활성화/비활성화 제어
+        function updateButtonStates() {
+            if (isRunning) {
+                btnStart.disabled = true;
+                btnPreview.disabled = true;
+                btnStop.disabled = false;
+                searchInput.disabled = true;
+                selectAllCheckbox.disabled = true;
+                document.querySelectorAll('.student-checkbox').forEach(cb => cb.disabled = true);
+                document.querySelectorAll('.eval-textarea').forEach(ta => ta.disabled = true);
+            } else {
+                btnStart.disabled = evaluationDrafts.length === 0;
+                btnPreview.disabled = selectedStudentNames.size === 0;
+                btnStop.disabled = true;
+                searchInput.disabled = false;
+                selectAllCheckbox.disabled = false;
+                document.querySelectorAll('.student-checkbox').forEach(cb => cb.disabled = false);
+                document.querySelectorAll('.eval-textarea').forEach(ta => ta.disabled = false);
+            }
+        }
+
+        // 자동화 작업 시작 요청
+        async function startAutomation() {
+            if (isRunning || evaluationDrafts.length === 0) return;
+
+            const cdpPort = parseInt(cdpPortInput.value) || 9222;
+            const dryRun = dryRunInput.checked;
+
+            // 스탯 초기화
+            statTotal.textContent = evaluationDrafts.length;
+            statSuccess.textContent = '0';
+            statFail.textContent = '0';
+            statSkip.textContent = '0';
+            progressBar.style.width = '0%';
+
+            isRunning = true;
+            updateButtonStates();
+
+            logTerminalEl.innerHTML = ''; // 터미널 클리어
+            appendLog('🚦 i-scream 자동 기록 자동화를 시작합니다...', 'sys');
+
+            try {
+                const res = await fetch('/api/run', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        eval_data: evaluationDrafts,
+                        port: cdpPort,
+                        dry_run: dryRun
+                    })
+                });
+                
+                const data = await res.json();
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+                appendLog('⏳ 백그라운드 태스크가 성공적으로 실행되었습니다. 로그를 수신합니다.', 'sys');
+            } catch (err) {
+                isRunning = false;
+                updateButtonStates();
+                appendLog('자동화 기동 실패: ' + err.message, 'err');
+            }
+        }
+
+        // 자동화 긴급 중지 요청
+        async function stopAutomation() {
+            appendLog('⚠️ 사용자에 의해 작업 중단이 요청되었습니다. 정지 절차에 진입합니다...', 'warn');
+            btnStop.disabled = true;
+            try {
+                await fetch('/api/stop', { method: 'POST' });
+            } catch (err) {
+                appendLog('중단 명령 발송 중 오류: ' + err.message, 'err');
+            }
+        }
+    </script>
+</body>
+</html>

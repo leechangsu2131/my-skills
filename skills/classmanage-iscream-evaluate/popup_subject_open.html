@@ -1,0 +1,74 @@
+
+	<div class="layer-header">
+		<h5>학생별 평어 확인</h5>
+		<div class="tbl-caption">1번 강시우</div>
+		<button type="button" class="btn-close" onclick="$('.layer-evaluation, .dimmed').hide()"><span>레이어 닫기</span></button>
+	</div>
+	
+	<div class="tbl-evaluation exam" style="display: block;">
+		<small>예시문 선택형</small>
+		<div class="scroll-thead">
+			<table>
+				<caption>학생별 평어 확인</caption>
+				<colgroup>
+					<col style="width:230px">
+					<col style="width:630px">
+					<col style="width:auto">
+				</colgroup>
+				<thead>
+					<tr>
+						<th scope="col">단원</th>
+						<th scope="col">교과학습발달상황</th>
+						<th scope="col">수준</th>
+					</tr>
+				</thead>
+			</table>
+		</div>
+		<div class="scroll-tbody">
+			<table>
+				<caption>학생별 평어 확인</caption>
+				<colgroup>
+					<col style="width:230px">
+					<col style="width:630px">
+					<col style="width:auto">
+				</colgroup>
+				<tbody class="studentEvaluationTbody exam"></tbody>
+			</table>
+		</div>
+	</div>
+	
+	<div class="tbl-evaluation ai" style="display: none;">
+		<small>AI생성형</small>
+		<div class="scroll-thead">
+			<table>
+				<colgroup>
+					<col style="width:610px">
+					<col style="width:auto">
+				</colgroup>
+				<thead>
+					<tr>
+						<th scope="col">단원</th>
+						<th scope="col">수준</th>
+					</tr>
+				</thead>
+			</table>
+		</div>
+		<div class="scroll-tbody">
+			<table>
+				<colgroup>
+					<col style="width:610px">
+					<col style="width:auto">
+				</colgroup>
+				<tbody class="studentEvaluationTbody ai">
+					<!-- 동적 생성 -->
+				</tbody>
+			</table>
+		</div>
+	</div>
+	
+	<div class="tool-area">
+		<div class="btns">
+			<button type="button" id="prevStudentLayer" class="bbsbtn-a3 division-reset-trigger-btn prevStudentLayer" onclick="layerEvaluationShow()"><i class="arr-prev"></i>이전학생</button>
+			<button type="button" id="nextStudentLayer" class="bbsbtn-a3 division-reset-trigger-btn nextStudentLayer" onclick="layerEvaluationShow()">다음학생<i class="arr-next"></i></button>
+		</div>
+	</div>

@@ -1,0 +1,7592 @@
+{
+  "frame_name": "(이름 없음)",
+  "frame_url": "https://www.i-scream.co.kr/user/subjectevaluation/SubjectEvaluation.do",
+  "selects": [],
+  "inputs": [
+    {
+      "tag": "input",
+      "type": "hidden",
+      "id": "common_code",
+      "name": "common_code",
+      "class": "",
+      "placeholder": "",
+      "value": ""
+    },
+    {
+      "tag": "input",
+      "type": "hidden",
+      "id": "common_seq",
+      "name": "common_seq",
+      "class": "",
+      "placeholder": "",
+      "value": ""
+    },
+    {
+      "tag": "input",
+      "type": "hidden",
+      "id": "common_realfile",
+      "name": "common_realfile",
+      "class": "",
+      "placeholder": "",
+      "value": ""
+    },
+    {
+      "tag": "input",
+      "type": "hidden",
+      "id": "common_savefile",
+      "name": "common_savefile",
+      "class": "",
+      "placeholder": "",
+      "value": ""
+    },
+    {
+      "tag": "input",
+      "type": "hidden",
+      "id": "common_filepath",
+      "name": "common_filepath",
+      "class": "",
+      "placeholder": "",
+      "value": ""
+    },
+    {
+      "tag": "input",
+      "type": "hidden",
+      "id": "currentLocation",
+      "name": "currentLocation",
+      "class": "",
+      "placeholder": "",
+      "value": ""
+    },
+    {
+      "tag": "input",
+      "type": "hidden",
+      "id": "",
+      "name": "m_id",
+      "class": "",
+      "placeholder": "",
+      "value": "lee2131"
+    },
+    {
+      "tag": "input",
+      "type": "hidden",
+      "id": "",
+      "name": "grade",
+      "class": "",
+      "placeholder": "",
+      "value": "3"
+    },
+    {
+      "tag": "input",
+      "type": "hidden",
+      "id": "",
+      "name": "icongrade",
+      "class": "",
+      "placeholder": "",
+      "value": "1"
+    },
+    {
+      "tag": "input",
+      "type": "hidden",
+      "id": "",
+      "name": "level",
+      "class": "",
+      "placeholder": "",
+      "value": "1"
+    },
+    {
+      "tag": "input",
+      "type": "hidden",
+      "id": "",
+      "name": "f_target_sys",
+      "class": "",
+      "placeholder": "",
+      "value": "_____SlIIllSTIIllIT_____"
+    },
+    {
+      "tag": "input",
+      "type": "hidden",
+      "id": "designation_listNm",
+      "name": "designation_listNm",
+      "class": "",
+      "placeholder": "",
+      "value": ""
+    },
+    {
+      "tag": "input",
+      "type": "hidden",
+      "id": "designation_no",
+      "name": "designation_no",
+      "class": "",
+      "placeholder": "",
+      "value": ""
+    },
+    {
+      "tag": "input",
+      "type": "hidden",
+      "id": "",
+      "name": "memberId",
+      "class": "",
+      "placeholder": "",
+      "value": "lee2131"
+    },
+    {
+      "tag": "input",
+      "type": "hidden",
+      "id": "m_id",
+      "name": "m_id",
+      "class": "",
+      "placeholder": "",
+      "value": "lee2131"
+    },
+    {
+      "tag": "input",
+      "type": "hidden",
+      "id": "move_page",
+      "name": "move_page",
+      "class": "",
+      "placeholder": "",
+      "value": ""
+    },
+    {
+      "tag": "input",
+      "type": "hidden",
+      "id": "",
+      "name": "m_id",
+      "class": "",
+      "placeholder": "",
+      "value": "jamie1park"
+    },
+    {
+      "tag": "input",
+      "type": "hidden",
+      "id": "",
+      "name": "certKey",
+      "class": "",
+      "placeholder": "",
+      "value": "JN"
+    },
+    {
+      "tag": "input",
+      "type": "hidden",
+      "id": "",
+      "name": "moveLocation",
+      "class": "",
+      "placeholder": "",
+      "value": "TB"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "quickSwitch",
+      "name": "",
+      "class": "showHideSwitch",
+      "placeholder": "",
+      "value": ""
+    },
+    {
+      "tag": "input",
+      "type": "radio",
+      "id": "",
+      "name": "radio",
+      "class": "",
+      "placeholder": "",
+      "value": "0"
+    },
+    {
+      "tag": "input",
+      "type": "radio",
+      "id": "",
+      "name": "radio",
+      "class": "",
+      "placeholder": "",
+      "value": "1"
+    },
+    {
+      "tag": "input",
+      "type": "radio",
+      "id": "",
+      "name": "radio",
+      "class": "",
+      "placeholder": "",
+      "value": "2"
+    },
+    {
+      "tag": "input",
+      "type": "radio",
+      "id": "",
+      "name": "radio",
+      "class": "",
+      "placeholder": "",
+      "value": "3"
+    },
+    {
+      "tag": "input",
+      "type": "search",
+      "id": "searchQuery",
+      "name": "searchQuery",
+      "class": "placeholder",
+      "placeholder": "검색어를 입력하세요.",
+      "value": ""
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "showAllNav",
+      "name": "",
+      "class": "showHideSwitch",
+      "placeholder": "",
+      "value": ""
+    },
+    {
+      "tag": "input",
+      "type": "hidden",
+      "id": "division",
+      "name": "division",
+      "class": "",
+      "placeholder": "",
+      "value": ""
+    },
+    {
+      "tag": "input",
+      "type": "hidden",
+      "id": "deleteStudentSeq",
+      "name": "",
+      "class": "",
+      "placeholder": "",
+      "value": ""
+    },
+    {
+      "tag": "input",
+      "type": "radio",
+      "id": "searchGrade1",
+      "name": "searchGrade",
+      "class": "",
+      "placeholder": "",
+      "value": "1"
+    },
+    {
+      "tag": "input",
+      "type": "radio",
+      "id": "searchGrade2",
+      "name": "searchGrade",
+      "class": "",
+      "placeholder": "",
+      "value": "2"
+    },
+    {
+      "tag": "input",
+      "type": "radio",
+      "id": "searchGrade3",
+      "name": "searchGrade",
+      "class": "",
+      "placeholder": "",
+      "value": "3"
+    },
+    {
+      "tag": "input",
+      "type": "radio",
+      "id": "searchGrade4",
+      "name": "searchGrade",
+      "class": "",
+      "placeholder": "",
+      "value": "4"
+    },
+    {
+      "tag": "input",
+      "type": "radio",
+      "id": "searchGrade5",
+      "name": "searchGrade",
+      "class": "",
+      "placeholder": "",
+      "value": "5"
+    },
+    {
+      "tag": "input",
+      "type": "radio",
+      "id": "searchGrade6",
+      "name": "searchGrade",
+      "class": "",
+      "placeholder": "",
+      "value": "6"
+    },
+    {
+      "tag": "input",
+      "type": "radio",
+      "id": "searchTerm1",
+      "name": "searchTerm",
+      "class": "",
+      "placeholder": "",
+      "value": "1"
+    },
+    {
+      "tag": "input",
+      "type": "radio",
+      "id": "searchTerm2",
+      "name": "searchTerm",
+      "class": "",
+      "placeholder": "",
+      "value": "2"
+    },
+    {
+      "tag": "input",
+      "type": "radio",
+      "id": "searchSubject11",
+      "name": "searchSubject",
+      "class": "",
+      "placeholder": "",
+      "value": "국어"
+    },
+    {
+      "tag": "input",
+      "type": "radio",
+      "id": "searchSubject12",
+      "name": "searchSubject",
+      "class": "",
+      "placeholder": "",
+      "value": "도덕"
+    },
+    {
+      "tag": "input",
+      "type": "radio",
+      "id": "searchSubject13",
+      "name": "searchSubject",
+      "class": "",
+      "placeholder": "",
+      "value": "사회"
+    },
+    {
+      "tag": "input",
+      "type": "radio",
+      "id": "searchSubject14",
+      "name": "searchSubject",
+      "class": "",
+      "placeholder": "",
+      "value": "수학"
+    },
+    {
+      "tag": "input",
+      "type": "radio",
+      "id": "searchSubject15",
+      "name": "searchSubject",
+      "class": "",
+      "placeholder": "",
+      "value": "과학"
+    },
+    {
+      "tag": "input",
+      "type": "radio",
+      "id": "searchSubject16",
+      "name": "searchSubject",
+      "class": "",
+      "placeholder": "",
+      "value": "체육"
+    },
+    {
+      "tag": "input",
+      "type": "radio",
+      "id": "searchSubject17",
+      "name": "searchSubject",
+      "class": "",
+      "placeholder": "",
+      "value": "음악"
+    },
+    {
+      "tag": "input",
+      "type": "radio",
+      "id": "searchSubject18",
+      "name": "searchSubject",
+      "class": "",
+      "placeholder": "",
+      "value": "미술"
+    },
+    {
+      "tag": "input",
+      "type": "radio",
+      "id": "searchSubject19",
+      "name": "searchSubject",
+      "class": "",
+      "placeholder": "",
+      "value": "영어"
+    },
+    {
+      "tag": "input",
+      "type": "radio",
+      "id": "c11",
+      "name": "chang1",
+      "class": "",
+      "placeholder": "",
+      "value": "자율활동"
+    },
+    {
+      "tag": "input",
+      "type": "radio",
+      "id": "c12",
+      "name": "chang1",
+      "class": "",
+      "placeholder": "",
+      "value": "동아리활동"
+    },
+    {
+      "tag": "input",
+      "type": "radio",
+      "id": "c13",
+      "name": "chang1",
+      "class": "",
+      "placeholder": "",
+      "value": "진로활동"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "c20",
+      "name": "chang2",
+      "class": "cb-all",
+      "placeholder": "",
+      "value": "0"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "c21",
+      "name": "chang2",
+      "class": "",
+      "placeholder": "",
+      "value": "자치활동"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "c22",
+      "name": "chang2",
+      "class": "",
+      "placeholder": "",
+      "value": "행사활동"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "c23",
+      "name": "chang2",
+      "class": "",
+      "placeholder": "",
+      "value": "안전교육"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "c24",
+      "name": "chang2",
+      "class": "",
+      "placeholder": "",
+      "value": "인권인성교육"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "c25",
+      "name": "chang2",
+      "class": "",
+      "placeholder": "",
+      "value": "계기교육"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "a10",
+      "name": "act1",
+      "class": "cb-all",
+      "placeholder": "",
+      "value": "0"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "a11",
+      "name": "act1",
+      "class": "",
+      "placeholder": "",
+      "value": "생활"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "a12",
+      "name": "act1",
+      "class": "",
+      "placeholder": "",
+      "value": "인성"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "a13",
+      "name": "act1",
+      "class": "",
+      "placeholder": "",
+      "value": "학습"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "a20",
+      "name": "act2",
+      "class": "cb-all",
+      "placeholder": "",
+      "value": "0"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "a21",
+      "name": "act2",
+      "class": "",
+      "placeholder": "",
+      "value": "공동체 활동"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "a22",
+      "name": "act2",
+      "class": "",
+      "placeholder": "",
+      "value": "규범과 갈등해소"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "a23",
+      "name": "act2",
+      "class": "",
+      "placeholder": "",
+      "value": "나눔과 봉사"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "a24",
+      "name": "act2",
+      "class": "",
+      "placeholder": "",
+      "value": "긍정성"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "a25",
+      "name": "act2",
+      "class": "",
+      "placeholder": "",
+      "value": "자기관리"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "a26",
+      "name": "act2",
+      "class": "",
+      "placeholder": "",
+      "value": "적극성"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "a27",
+      "name": "act2",
+      "class": "",
+      "placeholder": "",
+      "value": "친화력"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "a28",
+      "name": "act2",
+      "class": "",
+      "placeholder": "",
+      "value": "교과활동"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "a29",
+      "name": "act2",
+      "class": "",
+      "placeholder": "",
+      "value": "독서와 논리"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "a210",
+      "name": "act2",
+      "class": "",
+      "placeholder": "",
+      "value": "문제해결 능력"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "a211",
+      "name": "act2",
+      "class": "",
+      "placeholder": "",
+      "value": "수업태도"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "a212",
+      "name": "act2",
+      "class": "",
+      "placeholder": "",
+      "value": "학업흥미 및 성취"
+    },
+    {
+      "tag": "input",
+      "type": "hidden",
+      "id": "studentInfo",
+      "name": "studentInfo",
+      "class": "",
+      "placeholder": "",
+      "value": "false"
+    },
+    {
+      "tag": "input",
+      "type": "hidden",
+      "id": "addedStudentInfo",
+      "name": "addedStudentInfo",
+      "class": "",
+      "placeholder": "",
+      "value": "false"
+    },
+    {
+      "tag": "input",
+      "type": "hidden",
+      "id": "deletedStudentInfo",
+      "name": "deletedStudentInfo",
+      "class": "",
+      "placeholder": "",
+      "value": "false"
+    },
+    {
+      "tag": "input",
+      "type": "radio",
+      "id": "exam-student4903748",
+      "name": "student",
+      "class": "division-reset-trigger-changetype",
+      "placeholder": "",
+      "value": "4903748"
+    },
+    {
+      "tag": "input",
+      "type": "radio",
+      "id": "exam-student4903749",
+      "name": "student",
+      "class": "division-reset-trigger-changetype",
+      "placeholder": "",
+      "value": "4903749"
+    },
+    {
+      "tag": "input",
+      "type": "radio",
+      "id": "exam-student4903750",
+      "name": "student",
+      "class": "division-reset-trigger-changetype",
+      "placeholder": "",
+      "value": "4903750"
+    },
+    {
+      "tag": "input",
+      "type": "radio",
+      "id": "exam-student4903751",
+      "name": "student",
+      "class": "division-reset-trigger-changetype",
+      "placeholder": "",
+      "value": "4903751"
+    },
+    {
+      "tag": "input",
+      "type": "radio",
+      "id": "exam-student4903752",
+      "name": "student",
+      "class": "division-reset-trigger-changetype",
+      "placeholder": "",
+      "value": "4903752"
+    },
+    {
+      "tag": "input",
+      "type": "radio",
+      "id": "exam-student4903753",
+      "name": "student",
+      "class": "division-reset-trigger-changetype",
+      "placeholder": "",
+      "value": "4903753"
+    },
+    {
+      "tag": "input",
+      "type": "radio",
+      "id": "exam-student4903754",
+      "name": "student",
+      "class": "division-reset-trigger-changetype",
+      "placeholder": "",
+      "value": "4903754"
+    },
+    {
+      "tag": "input",
+      "type": "radio",
+      "id": "exam-student4903755",
+      "name": "student",
+      "class": "division-reset-trigger-changetype",
+      "placeholder": "",
+      "value": "4903755"
+    },
+    {
+      "tag": "input",
+      "type": "radio",
+      "id": "exam-student4903756",
+      "name": "student",
+      "class": "division-reset-trigger-changetype",
+      "placeholder": "",
+      "value": "4903756"
+    },
+    {
+      "tag": "input",
+      "type": "radio",
+      "id": "exam-student4903757",
+      "name": "student",
+      "class": "division-reset-trigger-changetype",
+      "placeholder": "",
+      "value": "4903757"
+    },
+    {
+      "tag": "input",
+      "type": "radio",
+      "id": "exam-student4903758",
+      "name": "student",
+      "class": "division-reset-trigger-changetype",
+      "placeholder": "",
+      "value": "4903758"
+    },
+    {
+      "tag": "input",
+      "type": "radio",
+      "id": "exam-student4903759",
+      "name": "student",
+      "class": "division-reset-trigger-changetype",
+      "placeholder": "",
+      "value": "4903759"
+    },
+    {
+      "tag": "input",
+      "type": "radio",
+      "id": "exam-student4903760",
+      "name": "student",
+      "class": "division-reset-trigger-changetype",
+      "placeholder": "",
+      "value": "4903760"
+    },
+    {
+      "tag": "input",
+      "type": "radio",
+      "id": "exam-student4903761",
+      "name": "student",
+      "class": "division-reset-trigger-changetype",
+      "placeholder": "",
+      "value": "4903761"
+    },
+    {
+      "tag": "input",
+      "type": "radio",
+      "id": "exam-student4903762",
+      "name": "student",
+      "class": "division-reset-trigger-changetype",
+      "placeholder": "",
+      "value": "4903762"
+    },
+    {
+      "tag": "input",
+      "type": "radio",
+      "id": "exam-student4903763",
+      "name": "student",
+      "class": "division-reset-trigger-changetype",
+      "placeholder": "",
+      "value": "4903763"
+    },
+    {
+      "tag": "input",
+      "type": "radio",
+      "id": "exam-student4903764",
+      "name": "student",
+      "class": "division-reset-trigger-changetype",
+      "placeholder": "",
+      "value": "4903764"
+    },
+    {
+      "tag": "input",
+      "type": "radio",
+      "id": "exam-student4903765",
+      "name": "student",
+      "class": "division-reset-trigger-changetype",
+      "placeholder": "",
+      "value": "4903765"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "student001",
+      "name": "student",
+      "class": "",
+      "placeholder": "",
+      "value": ""
+    },
+    {
+      "tag": "input",
+      "type": "hidden",
+      "id": "",
+      "name": "classStudentSeq",
+      "class": "ipt-num",
+      "placeholder": "",
+      "value": "4903748"
+    },
+    {
+      "tag": "input",
+      "type": "text",
+      "id": "",
+      "name": "studentNumber",
+      "class": "ipt-num",
+      "placeholder": "",
+      "value": "1"
+    },
+    {
+      "tag": "input",
+      "type": "text",
+      "id": "",
+      "name": "studentName",
+      "class": "ipt-nm",
+      "placeholder": "",
+      "value": "강시우"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "student001",
+      "name": "student",
+      "class": "",
+      "placeholder": "",
+      "value": ""
+    },
+    {
+      "tag": "input",
+      "type": "hidden",
+      "id": "",
+      "name": "classStudentSeq",
+      "class": "ipt-num",
+      "placeholder": "",
+      "value": "4903749"
+    },
+    {
+      "tag": "input",
+      "type": "text",
+      "id": "",
+      "name": "studentNumber",
+      "class": "ipt-num",
+      "placeholder": "",
+      "value": "2"
+    },
+    {
+      "tag": "input",
+      "type": "text",
+      "id": "",
+      "name": "studentName",
+      "class": "ipt-nm",
+      "placeholder": "",
+      "value": "김가을"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "student001",
+      "name": "student",
+      "class": "",
+      "placeholder": "",
+      "value": ""
+    },
+    {
+      "tag": "input",
+      "type": "hidden",
+      "id": "",
+      "name": "classStudentSeq",
+      "class": "ipt-num",
+      "placeholder": "",
+      "value": "4903750"
+    },
+    {
+      "tag": "input",
+      "type": "text",
+      "id": "",
+      "name": "studentNumber",
+      "class": "ipt-num",
+      "placeholder": "",
+      "value": "3"
+    },
+    {
+      "tag": "input",
+      "type": "text",
+      "id": "",
+      "name": "studentName",
+      "class": "ipt-nm",
+      "placeholder": "",
+      "value": "김동규"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "student001",
+      "name": "student",
+      "class": "",
+      "placeholder": "",
+      "value": ""
+    },
+    {
+      "tag": "input",
+      "type": "hidden",
+      "id": "",
+      "name": "classStudentSeq",
+      "class": "ipt-num",
+      "placeholder": "",
+      "value": "4903751"
+    },
+    {
+      "tag": "input",
+      "type": "text",
+      "id": "",
+      "name": "studentNumber",
+      "class": "ipt-num",
+      "placeholder": "",
+      "value": "4"
+    },
+    {
+      "tag": "input",
+      "type": "text",
+      "id": "",
+      "name": "studentName",
+      "class": "ipt-nm",
+      "placeholder": "",
+      "value": "김주안"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "student001",
+      "name": "student",
+      "class": "",
+      "placeholder": "",
+      "value": ""
+    },
+    {
+      "tag": "input",
+      "type": "hidden",
+      "id": "",
+      "name": "classStudentSeq",
+      "class": "ipt-num",
+      "placeholder": "",
+      "value": "4903752"
+    },
+    {
+      "tag": "input",
+      "type": "text",
+      "id": "",
+      "name": "studentNumber",
+      "class": "ipt-num",
+      "placeholder": "",
+      "value": "5"
+    },
+    {
+      "tag": "input",
+      "type": "text",
+      "id": "",
+      "name": "studentName",
+      "class": "ipt-nm",
+      "placeholder": "",
+      "value": "박민서"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "student001",
+      "name": "student",
+      "class": "",
+      "placeholder": "",
+      "value": ""
+    },
+    {
+      "tag": "input",
+      "type": "hidden",
+      "id": "",
+      "name": "classStudentSeq",
+      "class": "ipt-num",
+      "placeholder": "",
+      "value": "4903753"
+    },
+    {
+      "tag": "input",
+      "type": "text",
+      "id": "",
+      "name": "studentNumber",
+      "class": "ipt-num",
+      "placeholder": "",
+      "value": "6"
+    },
+    {
+      "tag": "input",
+      "type": "text",
+      "id": "",
+      "name": "studentName",
+      "class": "ipt-nm",
+      "placeholder": "",
+      "value": "박서우"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "student001",
+      "name": "student",
+      "class": "",
+      "placeholder": "",
+      "value": ""
+    },
+    {
+      "tag": "input",
+      "type": "hidden",
+      "id": "",
+      "name": "classStudentSeq",
+      "class": "ipt-num",
+      "placeholder": "",
+      "value": "4903754"
+    },
+    {
+      "tag": "input",
+      "type": "text",
+      "id": "",
+      "name": "studentNumber",
+      "class": "ipt-num",
+      "placeholder": "",
+      "value": "7"
+    },
+    {
+      "tag": "input",
+      "type": "text",
+      "id": "",
+      "name": "studentName",
+      "class": "ipt-nm",
+      "placeholder": "",
+      "value": "박현규"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "student001",
+      "name": "student",
+      "class": "",
+      "placeholder": "",
+      "value": ""
+    },
+    {
+      "tag": "input",
+      "type": "hidden",
+      "id": "",
+      "name": "classStudentSeq",
+      "class": "ipt-num",
+      "placeholder": "",
+      "value": "4903755"
+    },
+    {
+      "tag": "input",
+      "type": "text",
+      "id": "",
+      "name": "studentNumber",
+      "class": "ipt-num",
+      "placeholder": "",
+      "value": "8"
+    },
+    {
+      "tag": "input",
+      "type": "text",
+      "id": "",
+      "name": "studentName",
+      "class": "ipt-nm",
+      "placeholder": "",
+      "value": "백다온"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "student001",
+      "name": "student",
+      "class": "",
+      "placeholder": "",
+      "value": ""
+    },
+    {
+      "tag": "input",
+      "type": "hidden",
+      "id": "",
+      "name": "classStudentSeq",
+      "class": "ipt-num",
+      "placeholder": "",
+      "value": "4903756"
+    },
+    {
+      "tag": "input",
+      "type": "text",
+      "id": "",
+      "name": "studentNumber",
+      "class": "ipt-num",
+      "placeholder": "",
+      "value": "9"
+    },
+    {
+      "tag": "input",
+      "type": "text",
+      "id": "",
+      "name": "studentName",
+      "class": "ipt-nm",
+      "placeholder": "",
+      "value": "오지윤"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "student001",
+      "name": "student",
+      "class": "",
+      "placeholder": "",
+      "value": ""
+    },
+    {
+      "tag": "input",
+      "type": "hidden",
+      "id": "",
+      "name": "classStudentSeq",
+      "class": "ipt-num",
+      "placeholder": "",
+      "value": "4903757"
+    },
+    {
+      "tag": "input",
+      "type": "text",
+      "id": "",
+      "name": "studentNumber",
+      "class": "ipt-num",
+      "placeholder": "",
+      "value": "10"
+    },
+    {
+      "tag": "input",
+      "type": "text",
+      "id": "",
+      "name": "studentName",
+      "class": "ipt-nm",
+      "placeholder": "",
+      "value": "이서우"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "student001",
+      "name": "student",
+      "class": "",
+      "placeholder": "",
+      "value": ""
+    },
+    {
+      "tag": "input",
+      "type": "hidden",
+      "id": "",
+      "name": "classStudentSeq",
+      "class": "ipt-num",
+      "placeholder": "",
+      "value": "4903758"
+    },
+    {
+      "tag": "input",
+      "type": "text",
+      "id": "",
+      "name": "studentNumber",
+      "class": "ipt-num",
+      "placeholder": "",
+      "value": "11"
+    },
+    {
+      "tag": "input",
+      "type": "text",
+      "id": "",
+      "name": "studentName",
+      "class": "ipt-nm",
+      "placeholder": "",
+      "value": "이예나"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "student001",
+      "name": "student",
+      "class": "",
+      "placeholder": "",
+      "value": ""
+    },
+    {
+      "tag": "input",
+      "type": "hidden",
+      "id": "",
+      "name": "classStudentSeq",
+      "class": "ipt-num",
+      "placeholder": "",
+      "value": "4903759"
+    },
+    {
+      "tag": "input",
+      "type": "text",
+      "id": "",
+      "name": "studentNumber",
+      "class": "ipt-num",
+      "placeholder": "",
+      "value": "12"
+    },
+    {
+      "tag": "input",
+      "type": "text",
+      "id": "",
+      "name": "studentName",
+      "class": "ipt-nm",
+      "placeholder": "",
+      "value": "이윤슬"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "student001",
+      "name": "student",
+      "class": "",
+      "placeholder": "",
+      "value": ""
+    },
+    {
+      "tag": "input",
+      "type": "hidden",
+      "id": "",
+      "name": "classStudentSeq",
+      "class": "ipt-num",
+      "placeholder": "",
+      "value": "4903760"
+    },
+    {
+      "tag": "input",
+      "type": "text",
+      "id": "",
+      "name": "studentNumber",
+      "class": "ipt-num",
+      "placeholder": "",
+      "value": "13"
+    },
+    {
+      "tag": "input",
+      "type": "text",
+      "id": "",
+      "name": "studentName",
+      "class": "ipt-nm",
+      "placeholder": "",
+      "value": "정두영"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "student001",
+      "name": "student",
+      "class": "",
+      "placeholder": "",
+      "value": ""
+    },
+    {
+      "tag": "input",
+      "type": "hidden",
+      "id": "",
+      "name": "classStudentSeq",
+      "class": "ipt-num",
+      "placeholder": "",
+      "value": "4903761"
+    },
+    {
+      "tag": "input",
+      "type": "text",
+      "id": "",
+      "name": "studentNumber",
+      "class": "ipt-num",
+      "placeholder": "",
+      "value": "14"
+    },
+    {
+      "tag": "input",
+      "type": "text",
+      "id": "",
+      "name": "studentName",
+      "class": "ipt-nm",
+      "placeholder": "",
+      "value": "조주아"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "student001",
+      "name": "student",
+      "class": "",
+      "placeholder": "",
+      "value": ""
+    },
+    {
+      "tag": "input",
+      "type": "hidden",
+      "id": "",
+      "name": "classStudentSeq",
+      "class": "ipt-num",
+      "placeholder": "",
+      "value": "4903762"
+    },
+    {
+      "tag": "input",
+      "type": "text",
+      "id": "",
+      "name": "studentNumber",
+      "class": "ipt-num",
+      "placeholder": "",
+      "value": "15"
+    },
+    {
+      "tag": "input",
+      "type": "text",
+      "id": "",
+      "name": "studentName",
+      "class": "ipt-nm",
+      "placeholder": "",
+      "value": "천선율"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "student001",
+      "name": "student",
+      "class": "",
+      "placeholder": "",
+      "value": ""
+    },
+    {
+      "tag": "input",
+      "type": "hidden",
+      "id": "",
+      "name": "classStudentSeq",
+      "class": "ipt-num",
+      "placeholder": "",
+      "value": "4903763"
+    },
+    {
+      "tag": "input",
+      "type": "text",
+      "id": "",
+      "name": "studentNumber",
+      "class": "ipt-num",
+      "placeholder": "",
+      "value": "16"
+    },
+    {
+      "tag": "input",
+      "type": "text",
+      "id": "",
+      "name": "studentName",
+      "class": "ipt-nm",
+      "placeholder": "",
+      "value": "한예기"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "student001",
+      "name": "student",
+      "class": "",
+      "placeholder": "",
+      "value": ""
+    },
+    {
+      "tag": "input",
+      "type": "hidden",
+      "id": "",
+      "name": "classStudentSeq",
+      "class": "ipt-num",
+      "placeholder": "",
+      "value": "4903764"
+    },
+    {
+      "tag": "input",
+      "type": "text",
+      "id": "",
+      "name": "studentNumber",
+      "class": "ipt-num",
+      "placeholder": "",
+      "value": "17"
+    },
+    {
+      "tag": "input",
+      "type": "text",
+      "id": "",
+      "name": "studentName",
+      "class": "ipt-nm",
+      "placeholder": "",
+      "value": "황보검"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "student001",
+      "name": "student",
+      "class": "",
+      "placeholder": "",
+      "value": ""
+    },
+    {
+      "tag": "input",
+      "type": "hidden",
+      "id": "",
+      "name": "classStudentSeq",
+      "class": "ipt-num",
+      "placeholder": "",
+      "value": "4903765"
+    },
+    {
+      "tag": "input",
+      "type": "text",
+      "id": "",
+      "name": "studentNumber",
+      "class": "ipt-num",
+      "placeholder": "",
+      "value": "18"
+    },
+    {
+      "tag": "input",
+      "type": "text",
+      "id": "",
+      "name": "studentName",
+      "class": "ipt-nm",
+      "placeholder": "",
+      "value": "최윤채"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "studentInformationYn",
+      "name": "studentInformationYn",
+      "class": "",
+      "placeholder": "",
+      "value": ""
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "studentAllCheck",
+      "name": "studentAllCheck",
+      "class": "",
+      "placeholder": "",
+      "value": ""
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "ai-student1",
+      "name": "student",
+      "class": "",
+      "placeholder": "",
+      "value": "4903748"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "ai-student2",
+      "name": "student",
+      "class": "",
+      "placeholder": "",
+      "value": "4903749"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "ai-student3",
+      "name": "student",
+      "class": "",
+      "placeholder": "",
+      "value": "4903750"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "ai-student4",
+      "name": "student",
+      "class": "",
+      "placeholder": "",
+      "value": "4903751"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "ai-student5",
+      "name": "student",
+      "class": "",
+      "placeholder": "",
+      "value": "4903752"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "ai-student6",
+      "name": "student",
+      "class": "",
+      "placeholder": "",
+      "value": "4903753"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "ai-student7",
+      "name": "student",
+      "class": "",
+      "placeholder": "",
+      "value": "4903754"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "ai-student8",
+      "name": "student",
+      "class": "",
+      "placeholder": "",
+      "value": "4903755"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "ai-student9",
+      "name": "student",
+      "class": "",
+      "placeholder": "",
+      "value": "4903756"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "ai-student10",
+      "name": "student",
+      "class": "",
+      "placeholder": "",
+      "value": "4903757"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "ai-student11",
+      "name": "student",
+      "class": "",
+      "placeholder": "",
+      "value": "4903758"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "ai-student12",
+      "name": "student",
+      "class": "",
+      "placeholder": "",
+      "value": "4903759"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "ai-student13",
+      "name": "student",
+      "class": "",
+      "placeholder": "",
+      "value": "4903760"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "ai-student14",
+      "name": "student",
+      "class": "",
+      "placeholder": "",
+      "value": "4903761"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "ai-student15",
+      "name": "student",
+      "class": "",
+      "placeholder": "",
+      "value": "4903762"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "ai-student16",
+      "name": "student",
+      "class": "",
+      "placeholder": "",
+      "value": "4903763"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "ai-student17",
+      "name": "student",
+      "class": "",
+      "placeholder": "",
+      "value": "4903764"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "ai-student18",
+      "name": "student",
+      "class": "",
+      "placeholder": "",
+      "value": "4903765"
+    },
+    {
+      "tag": "input",
+      "type": "radio",
+      "id": "rb-type-exam",
+      "name": "rb-type",
+      "class": "division-reset-trigger-changetype",
+      "placeholder": "",
+      "value": "type-exam"
+    },
+    {
+      "tag": "input",
+      "type": "radio",
+      "id": "rb-type-ai",
+      "name": "rb-type",
+      "class": "division-reset-trigger-changetype",
+      "placeholder": "",
+      "value": "type-ai"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "theme1",
+      "name": "theme",
+      "class": "",
+      "placeholder": "",
+      "value": "기본생활"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "theme2",
+      "name": "theme",
+      "class": "",
+      "placeholder": "",
+      "value": "역할분담"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "theme3",
+      "name": "theme",
+      "class": "",
+      "placeholder": "",
+      "value": "임원선거"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "theme4",
+      "name": "theme",
+      "class": "",
+      "placeholder": "",
+      "value": "임원활동"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "theme5",
+      "name": "theme",
+      "class": "",
+      "placeholder": "",
+      "value": "협의활동"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "theme6",
+      "name": "theme",
+      "class": "",
+      "placeholder": "",
+      "value": "공통"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "theme7",
+      "name": "theme",
+      "class": "",
+      "placeholder": "",
+      "value": "개학식"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "theme8",
+      "name": "theme",
+      "class": "",
+      "placeholder": "",
+      "value": "방학식"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "theme9",
+      "name": "theme",
+      "class": "",
+      "placeholder": "",
+      "value": "체육대회"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "theme10",
+      "name": "theme",
+      "class": "",
+      "placeholder": "",
+      "value": "체험학습"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "theme11",
+      "name": "theme",
+      "class": "",
+      "placeholder": "",
+      "value": "생활안전"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "theme12",
+      "name": "theme",
+      "class": "",
+      "placeholder": "",
+      "value": "교통안전"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "theme13",
+      "name": "theme",
+      "class": "",
+      "placeholder": "",
+      "value": "학교폭력"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "theme14",
+      "name": "theme",
+      "class": "",
+      "placeholder": "",
+      "value": "성폭력예방"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "theme15",
+      "name": "theme",
+      "class": "",
+      "placeholder": "",
+      "value": "아동학대"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "theme16",
+      "name": "theme",
+      "class": "",
+      "placeholder": "",
+      "value": "가정폭력"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "theme17",
+      "name": "theme",
+      "class": "",
+      "placeholder": "",
+      "value": "유괴미아예방"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "theme18",
+      "name": "theme",
+      "class": "",
+      "placeholder": "",
+      "value": "약물사이버중독예방"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "theme19",
+      "name": "theme",
+      "class": "",
+      "placeholder": "",
+      "value": "생존수영"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "theme20",
+      "name": "theme",
+      "class": "",
+      "placeholder": "",
+      "value": "응급처치"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "theme21",
+      "name": "theme",
+      "class": "",
+      "placeholder": "",
+      "value": "자연재난"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "theme22",
+      "name": "theme",
+      "class": "",
+      "placeholder": "",
+      "value": "화재안전"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "theme23",
+      "name": "theme",
+      "class": "",
+      "placeholder": "",
+      "value": "독서"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "theme24",
+      "name": "theme",
+      "class": "",
+      "placeholder": "",
+      "value": "생명존중 자살예방"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "theme25",
+      "name": "theme",
+      "class": "",
+      "placeholder": "",
+      "value": "양성평등"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "theme26",
+      "name": "theme",
+      "class": "",
+      "placeholder": "",
+      "value": "인권"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "theme27",
+      "name": "theme",
+      "class": "",
+      "placeholder": "",
+      "value": "인성"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "theme28",
+      "name": "theme",
+      "class": "",
+      "placeholder": "",
+      "value": "장애인식개선"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "theme29",
+      "name": "theme",
+      "class": "",
+      "placeholder": "",
+      "value": "경제금융"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "theme30",
+      "name": "theme",
+      "class": "",
+      "placeholder": "",
+      "value": "다문화"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "theme31",
+      "name": "theme",
+      "class": "",
+      "placeholder": "",
+      "value": "독도"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "theme32",
+      "name": "theme",
+      "class": "",
+      "placeholder": "",
+      "value": "보건교육"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "theme33",
+      "name": "theme",
+      "class": "",
+      "placeholder": "",
+      "value": "식생활"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "theme34",
+      "name": "theme",
+      "class": "",
+      "placeholder": "",
+      "value": "통일"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "theme35",
+      "name": "theme",
+      "class": "",
+      "placeholder": "",
+      "value": "환경"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "theme36",
+      "name": "theme",
+      "class": "",
+      "placeholder": "",
+      "value": "단소부"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "theme37",
+      "name": "theme",
+      "class": "",
+      "placeholder": "",
+      "value": "리코더부"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "theme38",
+      "name": "theme",
+      "class": "",
+      "placeholder": "",
+      "value": "칼림바부"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "theme39",
+      "name": "theme",
+      "class": "",
+      "placeholder": "",
+      "value": "악기부"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "theme40",
+      "name": "theme",
+      "class": "",
+      "placeholder": "",
+      "value": "만화부"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "theme41",
+      "name": "theme",
+      "class": "",
+      "placeholder": "",
+      "value": "미술부"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "theme42",
+      "name": "theme",
+      "class": "",
+      "placeholder": "",
+      "value": "종이접기부"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "theme43",
+      "name": "theme",
+      "class": "",
+      "placeholder": "",
+      "value": "영화감상부"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "theme44",
+      "name": "theme",
+      "class": "",
+      "placeholder": "",
+      "value": "영화음악감상부"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "theme45",
+      "name": "theme",
+      "class": "",
+      "placeholder": "",
+      "value": "교실놀이부"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "theme46",
+      "name": "theme",
+      "class": "",
+      "placeholder": "",
+      "value": "댄스부"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "theme47",
+      "name": "theme",
+      "class": "",
+      "placeholder": "",
+      "value": "보드게임부"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "theme48",
+      "name": "theme",
+      "class": "",
+      "placeholder": "",
+      "value": "줄넘기부"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "theme49",
+      "name": "theme",
+      "class": "",
+      "placeholder": "",
+      "value": "축구부"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "theme50",
+      "name": "theme",
+      "class": "",
+      "placeholder": "",
+      "value": "피구부"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "theme51",
+      "name": "theme",
+      "class": "",
+      "placeholder": "",
+      "value": "글쓰기부"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "theme52",
+      "name": "theme",
+      "class": "",
+      "placeholder": "",
+      "value": "독서부"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "theme53",
+      "name": "theme",
+      "class": "",
+      "placeholder": "",
+      "value": "한자부"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "theme54",
+      "name": "theme",
+      "class": "",
+      "placeholder": "",
+      "value": "공통"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "theme55",
+      "name": "theme",
+      "class": "",
+      "placeholder": "",
+      "value": "발표회"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "theme56",
+      "name": "theme",
+      "class": "",
+      "placeholder": "",
+      "value": "자기이해"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "theme57",
+      "name": "theme",
+      "class": "",
+      "placeholder": "",
+      "value": "진로계획"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "theme58",
+      "name": "theme",
+      "class": "",
+      "placeholder": "",
+      "value": "진로체험"
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "id": "theme59",
+      "name": "theme",
+      "class": "",
+      "placeholder": "",
+      "value": "직업탐색"
+    },
+    {
+      "tag": "input",
+      "type": "text",
+      "id": "findText",
+      "name": "findText",
+      "class": "",
+      "placeholder": "",
+      "value": ""
+    },
+    {
+      "tag": "input",
+      "type": "hidden",
+      "id": "encClassSeq",
+      "name": "",
+      "class": "",
+      "placeholder": "",
+      "value": "7E47903DAACFC0C4BD2F8D935EF86DB1"
+    },
+    {
+      "tag": "input",
+      "type": "hidden",
+      "id": "quizIdx",
+      "name": "quizIdx",
+      "class": "",
+      "placeholder": "",
+      "value": ""
+    },
+    {
+      "tag": "input",
+      "type": "hidden",
+      "id": "teacherId",
+      "name": "teacherId",
+      "class": "",
+      "placeholder": "",
+      "value": "lee2131"
+    }
+  ],
+  "textareas": [
+    {
+      "tag": "textarea",
+      "id": "",
+      "name": "",
+      "class": "",
+      "placeholder": "",
+      "value": "다른 사람 앞에서 소리 내어 읽는 것에 소극적이며 다른 친구와 함께 읽거나 친구가 읽은 것을 들으면서 활동에 참여함. 글쓰기 계획을 세우는 것은 더욱 효과적이고 완성도 높은 글을 "
+    },
+    {
+      "tag": "textarea",
+      "id": "",
+      "name": "",
+      "class": "",
+      "placeholder": "",
+      "value": ""
+    },
+    {
+      "tag": "textarea",
+      "id": "",
+      "name": "",
+      "class": "",
+      "placeholder": "",
+      "value": ""
+    },
+    {
+      "tag": "textarea",
+      "id": "",
+      "name": "",
+      "class": "",
+      "placeholder": "",
+      "value": ""
+    },
+    {
+      "tag": "textarea",
+      "id": "",
+      "name": "",
+      "class": "",
+      "placeholder": "",
+      "value": ""
+    },
+    {
+      "tag": "textarea",
+      "id": "",
+      "name": "",
+      "class": "",
+      "placeholder": "",
+      "value": ""
+    },
+    {
+      "tag": "textarea",
+      "id": "",
+      "name": "",
+      "class": "",
+      "placeholder": "",
+      "value": ""
+    },
+    {
+      "tag": "textarea",
+      "id": "",
+      "name": "",
+      "class": "",
+      "placeholder": "",
+      "value": ""
+    },
+    {
+      "tag": "textarea",
+      "id": "",
+      "name": "",
+      "class": "",
+      "placeholder": "",
+      "value": ""
+    },
+    {
+      "tag": "textarea",
+      "id": "",
+      "name": "",
+      "class": "",
+      "placeholder": "",
+      "value": ""
+    },
+    {
+      "tag": "textarea",
+      "id": "",
+      "name": "",
+      "class": "",
+      "placeholder": "",
+      "value": ""
+    },
+    {
+      "tag": "textarea",
+      "id": "",
+      "name": "",
+      "class": "",
+      "placeholder": "",
+      "value": ""
+    },
+    {
+      "tag": "textarea",
+      "id": "",
+      "name": "",
+      "class": "",
+      "placeholder": "",
+      "value": ""
+    },
+    {
+      "tag": "textarea",
+      "id": "",
+      "name": "",
+      "class": "",
+      "placeholder": "",
+      "value": ""
+    },
+    {
+      "tag": "textarea",
+      "id": "",
+      "name": "",
+      "class": "",
+      "placeholder": "",
+      "value": ""
+    },
+    {
+      "tag": "textarea",
+      "id": "",
+      "name": "",
+      "class": "",
+      "placeholder": "",
+      "value": ""
+    },
+    {
+      "tag": "textarea",
+      "id": "",
+      "name": "",
+      "class": "",
+      "placeholder": "",
+      "value": ""
+    },
+    {
+      "tag": "textarea",
+      "id": "",
+      "name": "",
+      "class": "",
+      "placeholder": "",
+      "value": ""
+    }
+  ],
+  "buttons": [
+    {
+      "tag": "button",
+      "type": "",
+      "id": "brush",
+      "class": "tool",
+      "text": "Brush",
+      "onclick": ""
+    },
+    {
+      "tag": "button",
+      "type": "",
+      "id": "clear",
+      "class": "hidden",
+      "text": "Clear",
+      "onclick": ""
+    },
+    {
+      "tag": "button",
+      "type": "",
+      "id": "init",
+      "class": "",
+      "text": "init",
+      "onclick": ""
+    },
+    {
+      "tag": "button",
+      "type": "",
+      "id": "clearCanvas",
+      "class": "",
+      "text": "Clear",
+      "onclick": "return fnCanvasDelete();"
+    },
+    {
+      "tag": "button",
+      "type": "",
+      "id": "undo",
+      "class": "",
+      "text": "Undo",
+      "onclick": ""
+    },
+    {
+      "tag": "button",
+      "type": "",
+      "id": "redo",
+      "class": "",
+      "text": "Redo",
+      "onclick": ""
+    },
+    {
+      "tag": "button",
+      "type": "",
+      "id": "",
+      "class": "sidebar-size",
+      "text": "최소화",
+      "onclick": ""
+    },
+    {
+      "tag": "button",
+      "type": "",
+      "id": "close",
+      "class": "",
+      "text": "close",
+      "onclick": "return fnPaintClose();"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "",
+      "text": "취소",
+      "onclick": "return fnPaintAlertCancle();"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "",
+      "text": "삭제",
+      "onclick": "return fnPaintAlertDelete();"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "",
+      "text": "취소",
+      "onclick": "return fnPaintAlertCancle();"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "",
+      "text": "확인",
+      "onclick": "return fnPaintAlertClose();"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "btn-setting",
+      "text": "수정",
+      "onclick": "fnAccountModify('schQuickPad');"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "",
+      "text": "로그아웃",
+      "onclick": "location.href='https://oauth2client.i-screammedia.com/user/logout?callback_uri=https://www.i-scream.co.kr/user/sign/Logout.do';"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "layer-close",
+      "text": "닫기",
+      "onclick": "$('.layer-noti').hide();"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "",
+      "text": "검색",
+      "onclick": "fnSearchGo();"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "closePop",
+      "text": "레이어 팝업 닫기",
+      "onclick": "chatPopClose(this);"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "cbtn_rtyp1",
+      "text": "네, 동의합니다",
+      "onclick": "agreementStudentInfo(this);"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "cbtn_rtyp2",
+      "text": "취소",
+      "onclick": "chatPopClose(this);"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "closePop",
+      "text": "레이어 팝업 닫기",
+      "onclick": "chatPopClose(this);"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "closePop",
+      "text": "레이어 팝업 닫기",
+      "onclick": "chatPopClose(this);"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "cbtn_rtyp1",
+      "text": "삭제",
+      "onclick": "deleteStudentDo();"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "cbtn_rtyp2",
+      "text": "취소",
+      "onclick": "chatPopClose(this);"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "btn btn-ok",
+      "text": "확인",
+      "onclick": "fnSchFieldConfirm()"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "btn btn-exit",
+      "text": "취소",
+      "onclick": ""
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "btn-reset show-balloon",
+      "text": "",
+      "onclick": "fnSearchClassMember('classReload')"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "classlist-selected",
+      "text": "이창수 선생님의 클래스(2)",
+      "onclick": "classListOpen(this)"
+    },
+    {
+      "tag": "button",
+      "type": "",
+      "id": "",
+      "class": "bbsbtn-a3",
+      "text": "클래스 관리로 이동하기",
+      "onclick": "iscreamClassManagement();"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "classStudentEditBtn",
+      "class": "",
+      "text": "편집",
+      "onclick": "classEdit();"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "classStudentSaveBtn",
+      "class": "show-balloon",
+      "text": "저장",
+      "onclick": "classEditSave();"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "classStudentCancelBtn",
+      "class": "",
+      "text": "취소",
+      "onclick": "classEditCancel('Y');"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "btn-del-sm",
+      "text": "",
+      "onclick": "deleteStudent(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "btn-del-sm",
+      "text": "",
+      "onclick": "deleteStudent(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "btn-del-sm",
+      "text": "",
+      "onclick": "deleteStudent(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "btn-del-sm",
+      "text": "",
+      "onclick": "deleteStudent(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "btn-del-sm",
+      "text": "",
+      "onclick": "deleteStudent(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "btn-del-sm",
+      "text": "",
+      "onclick": "deleteStudent(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "btn-del-sm",
+      "text": "",
+      "onclick": "deleteStudent(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "btn-del-sm",
+      "text": "",
+      "onclick": "deleteStudent(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "btn-del-sm",
+      "text": "",
+      "onclick": "deleteStudent(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "btn-del-sm",
+      "text": "",
+      "onclick": "deleteStudent(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "btn-del-sm",
+      "text": "",
+      "onclick": "deleteStudent(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "btn-del-sm",
+      "text": "",
+      "onclick": "deleteStudent(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "btn-del-sm",
+      "text": "",
+      "onclick": "deleteStudent(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "btn-del-sm",
+      "text": "",
+      "onclick": "deleteStudent(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "btn-del-sm",
+      "text": "",
+      "onclick": "deleteStudent(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "btn-del-sm",
+      "text": "",
+      "onclick": "deleteStudent(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "btn-del-sm",
+      "text": "",
+      "onclick": "deleteStudent(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "btn-del-sm",
+      "text": "",
+      "onclick": "deleteStudent(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "bbsbtn-a6",
+      "text": "학생 추가하기 \n\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t?\n\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\n",
+      "onclick": "addStudent();"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "btn-text",
+      "text": "자세히 보기",
+      "onclick": "chatPopOpen('#classPop3')"
+    },
+    {
+      "tag": "button",
+      "type": "",
+      "id": "",
+      "class": "",
+      "text": "단원▼",
+      "onclick": ""
+    },
+    {
+      "tag": "button",
+      "type": "",
+      "id": "",
+      "class": "",
+      "text": "수준▼",
+      "onclick": ""
+    },
+    {
+      "tag": "button",
+      "type": "",
+      "id": "",
+      "class": "",
+      "text": "교과학습발달상황V(기본순)",
+      "onclick": "fnOrder(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "btn-reset",
+      "text": "선택 초기화",
+      "onclick": "fnResetSelected()"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "시적 상황에 맞는 목소리의 크기, 읽는 속도 등을 정하면서 시 낭송 계획을 구체적으로 수립",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "주변 사람들의 말하기 방식을 유심히 관찰하여 역할극 활동에서 자신이 맡은 인물의 성격과 상",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "한 줄씩 번갈아 가며 읽기, 노랫말을 몸짓으로 표현하며 읽기 등 다양한 시 낭송 방법 중 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "보고 듣고 맛보고 남새 맡고 손으로 만지면서 하는 다양한 경험이 감각적 표현으로 이어진다는",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "역할극 연습을 하며 친구와 서로의 몸짓을 주의 깊게 관찰하고 역할극을 마친 후 사용한 말투",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "다양한 말하기 활동에서 상황과 대상에 따라 말의 느낌이 달라질 수 있음을 정확하게 인식하고",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "상황에 알맞은 표정과 몸짓, 목소리나 말투를 사용해 대화 장면을 실감 나게 표현하는 것의 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "시를 읽고 감각적 표현을 생각하며 상상한 장면에 대한 느낌을 나눔으로써 상상을 더욱 생생하",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "인물이 처한 구체적인 상황을 먼저 떠올리고 그에 어울리는 말의 빠르기와 억양 손짓과 표정까",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "자신이 맡은 인물의 구체적인 상황을 세심하게 파악하고 상황이 바뀜으로 인해 반응이 어떻게 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "경험을 표현한 방법에 어떤 것이 있는지 살펴봄으로써 대상의 움직임이나 모습, 소리를 생생하",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "대화에서 예절 있는 태도가 중요하다는 점을 알고 말할 때에는 상대방의 입장을 고려한 말투와",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "어떤 장면을 감각적으로 표현했을 때와 그렇지 않았을 때의 느낌을 비교해 보면서 감각적 표현",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "구체적인 상황을 설정함으로써 자신이 역할놀이로 표현해야 할 장면이 무엇인지, 역할놀이의 목",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "재미있었던 장면이나 인상 깊은 표현을 중심으로 자신의 감상을 또래 친구와 나누며 작품의 의",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "내용이 정확하게 전달되기 위해서는 듣는 사람의 상황을 고려해 말의 빠르기와 크기를 조절해야",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "상황에 알맞은 목소리나 말투로 말하면 좋은 점을 재확인함으로써 학교 안팎에서 대화할 때 상",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "감각적 표현은 표현 주체가 특정한 의도를 가지고 감각 경험을 초점화해 언어로 표현한 결과임",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "같은 말이라도 목소리나 말투에 따라 뜻이 달라진다는 것을 알고 언어 사용 상황에 알맞은 목",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "감각적인 표현이 사용된 작품을 읽으며 장면의 분위기나 느낌을 상상하고 작품의 흐름과 연결해",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "시를 감상할 때 장면이나 정서가 드러나는 부분에 집중하여 화자의 마음을 상상하고 그 느낌을",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "문학 작품에서 감각적 표현을 찾아보고 그 느낌을 시화에 생생하게 담으려면 어떻게 해야 하는",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "발표나 대화 중 다른 친구가 실수하거나 표현이 어색할 때 웃거나 방해하지 않아야 함을 알고",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "시 낭송 활동에서 목소리나 속도를 조절해 보며 감정을 전달하려는 태도를 보이고 자신만의 낭",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "말하는 도중 친구가 말할 차례를 기다리는 상황에서 불필요한 말이나 끼어들기를 하지 않으며 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "다양한 상황에 알맞은 표정과 몸짓, 목소리나 말투를 활용해 친구와 역할놀이로 발표하고 예의",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "역할극을 감상하는 활동에서 다른 친구가 실수했을 때 웃거나 놀리는 반응 없이 기다려주는 태",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "문학 활동 중 친구와 감상 내용을 나누는 활동에 참여하고 공감의 표현을 보이며 자신의 감상",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "감각적 표현을 생각하며 상상한 장면에 대한 느낌을 친구와 나누는 활동을 함으로써 상상한 장",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "말의 높낮이나 빠르기를 조절하면서 어떤 비언어적 표현이 나타내려는 상황에 더 잘 어울리는지",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "문학 작품을 읽으며 이야기 흐름을 파악하고 장면을 떠올리는 활동에 꾸준히 참여하며 문학 감",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "감각적인 표현이 담긴 시를 읽으며 장면의 분위기나 느낌을 상상해 보려는 태도가 나타나며 감",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "말차례를 지키고 말할 때 친구가 잘 들을 수 있도록 목소리 크기와 속도를 조절하며 듣는 이",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "상황에 어울리는 목소리나 말투를 선으로 이어 보며 짝과 함께 주어진 상황에 알맞은 목소리나",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "다양한 상황에 알맞은 표정과 몸짓, 목소리나 말투를 활용해 친구와 역할놀이로 발표하고 일상",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "말투가 지나치게 빠르거나 크고 듣는 사람을 고려하지 않아 상황에 어울리지 않는 표현을 사용",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "문학 작품을 읽으며 마음에 남는 장면을 중심으로 감상하려고 하며 기억에 남는 부분을 짧게 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "감각적 표현을 사용한 시를 읽고 시의 전체적인 분위기나 상황에 적절하게 시의 장면을 상상해",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "말의 빠르기나 목소리 크기를 조절하지 않고 말하여 상황에 맞는 느낌이 잘 전달되지 않고 표",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "시를 감상할 때 내용을 이해하고 여운이 남는 표현에 반응을 보이며 감상 습관을 함양하기 위",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "자신의 발표가 청중에게 잘 전달되기 위해 어떤 준비가 필요한지 고민하며 발표 내용의 구성과",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "기억에 남는 발표의 특징을 상세하게 분석하고 자신의 발표와 비교해보는 활동에 적극적으로 참",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "교과서에 제시된 이야기를 읽고 이야기에 등장하는 인물에 대한 생각을 친구들과 공유하는 일이",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "글에서 제시한 발표 예절을 잘 지키고 잇는지 스스로 생각해 보며 자신의 생각을 말하는 발표",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "발표를 들을 때 중요한 내용을 쓰면서 듣기, 발표하는 사람을 배려하며 듣기 등 바람직한 자",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "모둠 친구들과 함께 실감 나게 읽고 싶은 이야기를 고르는 일에 협조적이며 해당 이야기가 실",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "이야기를 실감 나게 읽는 발표를 듣고 친구가 이야기를 어떻게 읽었는지 구체적으로 칭찬하며 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "목적어가 있는 문장이나 꾸며 주는 말이 포함된 문장을 보고 문장의 짜임을 찾아 정확하게 이",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "교과서에 제시된 문장들을 살펴보며 어찌하다와 어떠하다를 나타내는 낱말을 바르게 찾고 찾은 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "여러 가지 낱말 카드를 활용해 짜임에 맞게 문장을 만드는 활동에 재미 있게 참여하며 평소 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "띄어쓰기 표기를 어느 곳에 표시하는지에 따라 문장이 뜻이 달라질 수 있다는 점을 알고 문장",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "이야기에서 읽고 싶은 장면을 정해 실감 나게 읽기 연습하는 과정에서 연습 장면을 친구들과 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "자신이 쓴 글을 확인할 때 어찌하다, 어떠하다, 무엇이다에 해당하는 말을 적절하게 사용하였",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "발표 내용이 청중에게 잘 전달되었는지를 발표 중간에도 계속 고려하며 비언어적 표현과 언어적",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "교사가 제시하는 여러 문장 가운데 문장의 짜임에 맞게 쓴 문장과 그렇지 않은 문장을 구분하",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "이야기에서 문장 부호가 있는 부분, 꾸며주는 말이 나오는 부분은 각각 어떻게 일어야 할지 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "문장에서 띄어쓰기 표기가 있는 부분을 인위적으로 띄어 읽지 않도록 주의하며 글의 내용을 놓",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "발표할 때 목소리의 크기나 말하는 속도를 청중의 반응에 맞춰 조절하며 말의 흐름을 자연스럽",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "문장의 짜임을 생각하며 단순한 문장 읽기에서 시작해 점차 복잡한 문장을 소리 내어 읽는 활",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "교과서에 제시된 글 발표 예절을 어떻게 읽었는지 보고 글을 유창하게 소리 내어 읽는 방법을",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "친구의 발표를 들으면서 중요한 내용을 메모하는 습관을 형성하고 있으며 발표자 입장을 고려하",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "발표 예절에 관한 글을 읽으면서 발표를 잘하려면 어떤 태도로 말해야 하는지를 짐작하여 자신",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "누가, 무엇이와 어찌하다, 어떠하다, 무엇이다가 명확히 드러나는 문장 예시를 접하면서 여러",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "발표자와 청중 모두가 지켜야 할 예절의 중요성을 인식하고 자신의 발표에서는 또박또박 말하기",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "글의 내용을 잘 이해하고 전달하려면 전달하려는 내용을 또박또박 읽어야 한다는 점을 알고 이",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "전통 문화와 관련 있는 그림 다섯 개와 각 그림의 제목을 살펴보면서 그림 속 인물들이 무엇",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "설명할 물건을 한 가지 고르고 물건에 대한 내용을 어찌하다, 어떠하다, 무엇이다로 나누어 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "발표 후 피드백을 받아들여 자신의 발표 내용을 되짚고 다음 발표에서 더욱 나은 전달이 되도",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "한 가지 그림을 선택하여 그림을 묘사하는 문장을 만들 때 어찌하다, 어떠하다, 무엇이다를 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "발표를 듣는 입장에서 발표자가 말할 때에는 집중하는 태도를 유지하고 시선이나 고개 끄덕임으",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "이야기에서 실감 나게 읽고 싶은 부분을 찾고 그 부분을 어떤 목소리나 말투로 읽을지 계획하",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "이야기를 소리 내어 읽고 이야기를 실감 나게 읽는 방법을 탐구한 후 이야기의 장면을 실감 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "발표 상황에서 지켜야 할 기본 예절을 이해하고 말할 때에는 또박또박 말하며 발표에 진지하게",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "문장의 짜임을 나누는 기계적인 활동에서 나아가 문장을 소리 내어 읽으면서 문장의 짜임이나 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "여러 가지 문장의 짜임을 생각하며 문장을 바르게 읽고 써야 한다는 점을 알고 일상에서 실천",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "이야기에서 감명 깊은 장면, 재미있었던 장면, 인상 깊었던 장면 등을 생각하며 읽고 싶은 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "다른 사람 앞에서 소리 내어 읽는 것에 소극적이며 다른 친구와 함께 읽거나 친구가 읽은 것",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "비언어적 표현의 필요성은 대략 인식하고 있으나 손짓이나 표정이 발표 내용과 어울리지 않아 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "친구의 발표를 듣고 난 뒤에도 질문이나 감상 표현을 거의 하지 않으며 듣는 태도에서도 주도",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "문장의 짜임을 생각하며 글을 소리 내어 읽지만 문장의 짜임에 맞게 문장을 쓰는 일에 자신감",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "대상을 소개하는 글을 쓴 후 친구와 쓴 글을 바꾸어 읽는 활동에 적극적으로 참여하며 문단을",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "문학 작품으로부터 느낀 재미나 감동을 다른 사람과 나누고 다양하게 표현하는 경험을 하며 문",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "시를 읽고 내용을 확인하며 시에서 그리고 있는 장면을 상상하는 활동을 즐기며 시를 다시 읽",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "학교를 소개하는 글을 쓰기 위해서 학교의 특징이 잘 드러나는 장소나 인물, 학교에서 열리는",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "문단에서 말하고 싶은 내용이 잘 드러나게 중심 문장을 써야 한다는 점을 명확히 알고 이에 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "작품에서 재미나 감동을 느낀 부분과 그 까닭을 정확하게 구분하고 재미나 감동을 느낀 부분은",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "이야기를 읽고 시간의 흐름에 따라 사건이 일어난 차례를 능숙하게 정리하며 이야기를 읽은 후",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "제재 글에서 중심 문장과 뒷받침 문장을 구분하는 교사의 시범을 주의 깊게 살펴 중심 문장과",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "작품을 읽기 전 작품의 제목을 보고 이야기를 상상하는 활동에 자신 있게 참여하며 유추했던 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "중심 문장과 뒷받침 문장의 특징을 파악해 글을 쓰는 능력을 바르게 함양하고 다른 사람들에게",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "교과서에 제시된 만화 속 주인공들의 대화를 참고해 짜임새가 좋지 않은 글의 특징을 파악하여",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "이야기 속 등장인물인 은솔이와 한솔이에게 일어난 일을 생각하며 수상한 선글라스를 읽고 비슷",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "작품을 다시 읽었을 때 처음과 달리 작품에서 또 다른 재미나 감동을 발견할 수 있다는 점을",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "자신의 경험을 떠올려 작품을 읽고 재미나 감동을 느낀 부분을 찾는 방법을 두 가지 이상 이",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "문단을 구성하는 문장을 중심 문장과 뒷받침 문장으로 구분한 방법을 친구들과 이야기 나누는 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "글을 읽다가 모르는 낱말이 나왔을 때 앞 문장이나 뒤 문장을 읽고 능숙하게 뜻을 예상하며 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "다양한 예시 글을 읽고 중심 문장이 항상 문단 첫머리에 나오는 것은 아니라는 점을 이해하고",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "이야기를 읽고 재미나 감동을 느낀 부분을 표현하는 수단으로 편지글을 떠올리고 자신이 편지를",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "뒷받침 문장은 중심 문장을 잘 나타내려고 덧붙여 설명하거나 예를 드는 문장이라는 점을 이해",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "자신의 생각이 잘 드러난 글은 중심 생각, 중심 문장과 뒷받침 문장의 연결이 자연스러워야 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "한 문단으로 작성된 글을 읽고 글에서 중심 문장을 찾으며 중심 문장에 어울리지 않는 뒷받침",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "시를 읽고 떠오르는 장면, 내용과 비슷한 자신의 경험, 낭송할 때 느끼는 즐거움을 학습하며",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "이야기나 시를 읽은 후 자신의 생각을 표현하고 다른 사람의 생각을 이해하는 활동에 참여하면",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "짜임새 있는 문단 쓰기 방법을 익혀 글을 쓸 때 중심 문장과 뒷받침 문장을 갖춘 짜임새 있",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "문단이 무엇인지 알고 중심 문장과 뒷받침 문장을 갖추어 문단의 짜임에 맞게 글을 쓰는 과정",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "같은 작품을 읽더라도 사람마다 재미나 감동을 느낀 부분이 다를 수 있다는 점을 알고 재미나",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "중심 문장과 뒷받침 문장을 알맞게 구성해 문단을 쓸 수 있는지 확인하는 활동에 참여하면서 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "역할극, 네 컷 만화나 그림, 편지글 등 재미나 감동을 표현하는 방법이 다양함을 알고 여러",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "작품에서 찾은 재미나 감동을 표현하는 글을 쓰고 글을 고쳐 쓰기 위한 기준을 마련하여 글을",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "친구들이 만든 작품을 소개하는 자료를 보면서 친구가 작품에서 어떤 재미나 감동을 느꼈는지 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "시를 깊이 음미하는 충분한 시간을 가지면서 시를 읽고 시를 이해한 후 시를 읽고 재미나 감",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "글쓴이의 생각을 잘 전달하려면 어떻게 글을 써야 할지 생각함으로써 단원에서 배울 내용을 짐",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "뒷받침 문장으로 들어갈 내용을 떠올리기 위해서 소개하려는 장소에 관한 생각그물을 그려서 글",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "문단의 특징과 중심 문장 및 뒷받침 문장에 관해 학습한 내용을 바탕으로 궁금한 점을 친구들",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "이야기, 시 등 교과서에서 제시하는 작품을 읽고 느낀 재미나 감동을 다양한 방법으로 표현하",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "작품에서 느낀 재미나 감동을 표현할 방법을 떠올리기 어려워하며 교사나 친구의 도움을 받아 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "글에서 짜임새가 중요한 까닭을 생각해 보고 짜임새 있는 문단으로 글을 써야 할 필요성을 대",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "중심 문장과 뒷받침 문장을 갖추어 간단한 문단을 쓰며 도움을 받아 문장 및 문단 수준에서 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "이야기를 읽고 모둠 친구들과 함께 작품에서 느낀 재미나 감동을 표현하는 활동에 부분적으로 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "안내된 절차에 따라 소개하고 싶은 작품을 골라 작품에서 느낀 재미나 감동을 간단하게 정리함",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "교과서에 제시된 글뿐만 아니라 일상에서 다양한 글을 읽을 때 자신의 경험이나 주변 사례를 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "설명을 듣고 중요한 내용을 파악하기 위해서 듣는 목적이나 강조하는 내용이 무엇인지 생각해야",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "다양한 설명 자료를 찾아 중요한 내용을 간추려 친구들 앞에서 자신 있게 발표하며 다른 친구",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "주어진 이야기와 밀접하게 관련 있는 시를 읽으며 시에 담긴 장면이나 감정을 상상하고 시인의",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "친숙한 화제가 담긴 듣기 자료나 영상 자료를 활용한 수업에 흥미를 갖고 학습 활동에 집중하",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "설명하는 글이나 이야기 글을 읽다가 모르는 낱말이 나왔을 때 당황하지 않고 사전이나 문맥을",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "들은 내용을 효과적으로 정리하기 위해서 더 효과적인 기호 표현, 더 좋은 숫자 표현을 적극",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "이야기를 읽고 이야기에서 일어난 일을 파악하는 방법을 자신의 언어로 조리 있게 말하며 배운",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "이야기를 읽기 위해 미리 이야기의 내용과 유관한 글을 찾아 읽는 습관을 지녀 풍부한 배경지",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "중요한 내용 파악하기 전략이 필요함을 구체적으로 말하며 들은 내용을 오랫동안 내용을 기억하",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "메모했던 다양한 경험을 떠올려 짝과 이야기를 나누어 보면서 메모뿐만 아니라 중요한 내용을 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "각각의 문단에서 중요한 낱말과 이를 포함하고 있는 문장인 중심 문장의 개념을 이해하고 중심",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "교과서에서 제시한 듣기 자료를 듣고 정리한 예시를 살펴 봄으로써 틀린 내용을 쓰거나 낱말로",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "과학책, 동화책, 정보글 등 다양한 장르의 글을 읽을 때 중심 내용을 놓치지 않도록 스스로",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "정리하기는 내용에 따라 다양한 형식으로 표현할 수 있다는 점을 알고 친구들이 직접 정리한 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "중요한 내용을 간단히 정리한다는 것은 단순히 메모하는 것만을 의미하지 않으며 일상생활에서 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "듣기 자료의 내용을 확인하는 질문에 대답하면서 어떻게 정확하게 대답할 수 있는지를 확인하고",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "글을 읽고 중심 문장과 중요한 낱말을 정확하게 찾아 밑줄을 그으며 중심 문장을 자연스럽게 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "글 전체의 내용을 이해한 후 중요한 내용과 중요하지 않은 내용을 구분하며 간추리는 글을 쓸",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "이야기 글을 읽고 이야기 속 인물들은 자연에 대해 어떤 마음을 가지고 있는지 생각하면서 이",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "이야기를 읽고 이야기의 등장인물에게 일어난 일고 그때의 마음을 차례대로 정리하는 과정에 참",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "읽기 자료의 내용을 파악한 후 중요한 내용을 찾는 방법을 중심 문장과 뒷받침 문장의 구분을",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "내용을 듣고 생각그물, 그림 등 여러 가지 방법으로 나름대로 간추린 후 친구와 비교하여 창",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "글을 읽으며 중심 문장과 뒷받침 문장, 핵심 낱말을 스스로 찾고 어려운 낱말이 나올 때 그",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "설명하는 글, 이야기 등 다양한 제재가 포함될 글을 읽고 각각의 글에서 중요한 내용을 찾는",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "설명하는 글을 읽고 중심 문장과 뒷받침 문장을 구분하여 찾은 중심 문장을 이어가는 방식으로",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "메모를 함으로써 내용을 좀 더 효과적으로 기억할 수 있다는 장점을 알고 일상 생활에서 중요",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "그림 속 대화를 읽고 중요한 내용 파악하기 활동을 하며 친구가 다양하게 쓴 내용을 보고 효",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "글의 제목이나 그림을 먼저 살펴보며 내용을 예측하고 실제 읽기 후 예측과 비교하여 어떤 점",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "중요한 내용을 잊었던 경험을 떠올려 중요한 내용을 오래 기억하려면 어떻게 듣거나 보아야 할",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "영상을 보고 중요한 내용을 파악하는 방법을 습득하는 활동을 거쳐 실제로 영상에서 중요한 내",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "이야기글을 읽으며 인물의 감정에 공감하려고 노력하고 읽은 뒤 자신의 느낌을 짧게 정리하여 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "각 문단의 중요한 낱말이나 중심 문장을 찾는 방법을 확인하고 이를 바탕으로 글에서 중요한 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "이야기에서 등장인물의 마음이 어떻게 변하는지를 살펴보며 내용을 파악할 수 있음을 알고 이야",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "토의나 짝 활동에서 읽은 글의 핵심 내용을 간단히 말하거나 친구의 말에 반응하며 읽기 이해",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "글을 읽은 후 간단한 느낌이나 인상 깊었던 내용을 말하거나 적으며 읽은 내용을 정리하려는 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "짧은 영상을 보고 영상의 내용을 기억나는대로 말하는 다시 이야기 전략을 활용하여 영상의 내",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "자신이 쓴 글을 반복해서 읽고 문장이 자연스럽게 연결되지 못하는 부분을 찾아 어떻게 고칠지",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "그림이나 표, 만화, 생각그물 등 조금 더 자신 있는 형식을 활용해서 영상의 내용을 간단히",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "영상을 보고 중요한 내용을 간단히 정리하지만 중요한 내용을 잘 정리했는지 깊이 있게 성찰하",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "글을 읽고 인물의 성격을 나타내는 말을 찾거나 인물의 말이나 행동을 살펴 인물의 성격을 파",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "일상에서 웃어른에게 마음을 전달한 경험을 떠올리고 어떤 상황에서 어떤 마음을 전하고 싶은지",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "받는 사람의 이름, 상황, 전하고 싶은 마음 등을 구체적으로 언급하며 마음을 전하는 글을 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "영상 매체 자료나 읽기 자료에 등장하는 인물의 성격을 파악하는 단서를 잘 찾고 단서를 바탕",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "인물의 마음과 성격의 개념을 명확히 구분하여 일어난 여러 가지 사건에 대처하는 인물의 말과",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "마음을 전하는 글 쓰기의 첫 번째 단계는 글 쓸 상황을 떠올리는 일이라는 점을 정확히 인식",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "마음을 전달하는 글의 끝맺음에서 사용하는 어미 역시 높임 표현이라는 점을 인식하여 글을 쓰",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "작품을 읽고 인물과 사건의 관계를 중심으로 내용을 정확하게 파악한 후 모둠원과 함께 인물의",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "글쓰기 계획을 세운 뒤에는 계획한 대로 잘 실천했는지 점검하고 수정하는 일이 뒤따라야 한다",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "있었던 일을 모호하게 쓰지 않고 구체적으로 쓸 수 있도록 꾸준히 연습하며 글을 받는 사람의",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "쓴 글을 친구들과 바꾸어 읽고 자신의 생각이나 느낌을 나누어 보며 글의 상황과 글에서 전하",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "글쓰기에서 표현의 선택이 단순한 언어 문제가 아니라 사회적 관계와 관련된 것임을 이해하고 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "중요한 핵심 낱말의 뜻을 짐작하여 이야기의 내용을 파악하고 사건의 흐름에 따라 인물에게 일",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "마음을 전하는 글에 들어가는 내용을 학습하여 생활 속에서 마음을 전하는 글을 읽거나 쓸 때",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "작품 속 인물의 성격을 파악하는 활동을 통해 인물에 대한 이해를 높이고 인물에 공감하는 경",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "자신이 아는 다양한 이야기 속 인물을 떠올려 보고 이야기에 등장하는 사건과 인물의 성격을 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "성격을 파악할 때에는 인물의 행동이나 말을 근거로 살펴봐야 함을 알고 타인의 성격을 파악할",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "이야기를 읽고 인물의 성격이 잘 드러나는 장면을 찾으며 각 장면에서 인물이 어떤 말을 할지",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "대상에 따라 높임 표현이 달라진다는 점을 인식하고 쓰고자 하는 마음을 전달하는 글에 자연스",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "웃어른께 마음을 전하고 싶은 상황 떠올리기 놀이를 하면서 짝과 번갈아가면서 교사가 제시하는",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "생활 속에서 마음을 전하는 글을 읽거나 쓸 때 받는 사람에 따라 적절한 높임 표현을 썼는지",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "마음을 전하는 글을 쓸 때 일반적인 높임 표현 이외에 올림처럼 특징적인 표현이 사용된다는 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "글의 내용을 파악할 때 같은 문제 상황을 마주했을 때 두 인물이 각각 어떤 선택을 했는지 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "인물의 성격에 대한 사전 지식을 상기하고 인물에게 궁금한 점을 떠올려 보면서 이야기의 인물",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "글로 마음을 전하면 말로는 하기 힘든 마음을 전할 수 있으며 직접 만나거나 함께 있지 않아",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "그림책의 특성을 고려해 글과 그림에 나타나는 인물의 말과 행동을 총체적으로 살펴봄으로써 인",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "이야기를 구성하는 전후 사건의 흐름과 함께 인물의 말이나 행동, 성격에 초점을 두고 내용을",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "마음을 전하는 글을 쓸 계획을 세우고 계획한 내용을 바탕으로 글을 쓰는 일련의 과정을 경험",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "마음을 전하는 글을 쓸 때 읽는 이의 특성을 어느 정도 고려하여 높임 표현을 사용하려고 하",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "교과서 활동을 통해 마음을 전달하는 글, 편지글에 들어갈 내용과 높임 표현을 익히고 이를 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "평소 그림책을 읽을 때 인물의 성격에 관심을 가지고 인물의 말이나 행동을 보며 성격을 스스",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "자신이 세운 계획을 바탕으로 마음을 전하는 글을 쓴 후 쓴 글을 친구와 바꾸어 읽고 확인할",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "마음을 전하는 글을 쓰고 마음을 잘 나타낼 수 있는 표현을 사용했는지 점검하며 읽을 사람의",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "배운 높임 표현을 마음을 전하는 실제 글쓰기에 적극적으로 활용하며 틀린 부분은 스스로 찾아",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "마음을 전달하는 편지의 내용과 맺음말을 종합적으로 살펴보고 받는 사람의 위치에 맞게 표현을",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "교과서에 제시된 낱말을 넣어 마음을 전하는 글을 쓰는 방법을 간단히 정리하고 마음을 전하는",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "교사나 친구의 도움을 받아 인물이나 인물의 행동을 수식하는 말을 살펴본 후 인물의 성격을 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "인물의 성격과 본받을 점을 생각해 보고 인물에게 주고 싶은 상장을 만들어 보는 활동에 소극",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "높임 표현의 용처나 용법을 완전히 이해하지 못했으나 안내된 예시를 중심으로 문장을 쓰고자 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "글을 읽는 사람의 처지를 공감하고 배려하며 자신의 마음을 전하는 글을 쓰는 일에 소극적임.",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "사실과 의견이 담긴 글을 읽기 전 글의 주제에 대해 자신이 알고 있는 정보나 생각을 풍부하",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "대화, 일기 등 구체적인 국어 사용 사례와 자료를 검토하는 일에 적극적으로 참여함으로써 국",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "마음을 전하는 글을 쓸 때 읽는 사람이 진심을 느낄 수 있어야 한다는 점 등 주의할 점을 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "우리 학급이나 동네에서 해결하고 싶은 문제점을 찾아 사실을 나타내는 문장으로 적절히 표현하",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "글에 드러난 사실과 의견을 정확하게 구분하며 다양한 상황이나 자료, 담화, 글을 주체적인 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "학교 안뿐만 아니라 학교 밖에서 쓰기 활동이 필요한 상황을 구체적으로 이해하며 글을 자신 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "글 속에는 사실과 의견이 함께 들어 있다는 이해를 바탕으로 사실 문장과 의견 문장을 명확히",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "글을 쓸 때 누구를 대상으로 글을 쓸지 생각하여 이에 따라 쓰기 계획을 구체화하는 태도를 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "자료를 토대로 사실과 의견이라는 개념을 탐구해 나가는 과정을 즐기며 구체적인 국어 자료 속",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "글에 드러난 글쓴이의 의견을 자신의 의견과 비교하며 글을 깊이 있게 이해하며 글을 비판적으",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "사실과 의견을 구분할 때 사실과 달리 의견은 생각을 담고 있으므로 이를 나타내는 탄말이나 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "우리 반에 대한 사실과 의견을 나타내는 문장을 만들고 친구와 비교하는 활동을 통해 의견에는",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "친구와 협동하여 여러 문장을 비교하는 활동을 통해 사실은 현재 있는 일이나 과거에 있었던 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "마음을 전하는 글을 쓴 경험을 떠올리며 이야기 속 문제 상황과 비슷한 일을 겪었거나 앞으로",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "같은 일을 겪더라도 사람마다 다르게 생각하고 느낄 수 있다는 점을 이해하여 하나의 사실에 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "사실 문장이 실제로 진실인 경우에만 사실 문장이라고 생각하는 오개념을 극복하고 사실 문장과",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "글쓴이가 처한 글쓰기 상황과 목적이 다양함을 느끼고 같은 목적의 글이라도 읽는 사람에 따라",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "글에서 지식이나 정보를 말하는 설명과 생각이 드러나는 말을 찾아 구분하며 사진을 보고 각각",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "주어진 낱말을 활용해 만든 사실 문장과 의견 문장의 일부를 바꾸어 의견 문장을 사실 문장으",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "쓰기 계획에는 누가 보거나 읽을 것인지와 무엇을 표현할지에 대한 계획이 포함되어야 한다는 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "공부한 내용을 바탕으로 사실과 의견의 뜻과 특성을 정확하게 설명하며 사실과 의견을 나타내는",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "다양한 언어 자료를 비교하고 탐구함으로써 친구들과 함께 사실과 의견의 개념을 찾으며 평소 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "설명 대상과 주제가 명시적인 글을 읽고 사실과 의견을 구분해 필자의 의견을 비판적으로 판단",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "기사문을 읽고 의견과 관련해 기자의 생각이 드러난 부분과 기자가 이 기사문을 쓴 까닭을 생",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "쓰기 계획을 세우고 직접 글을 쓰며 자신의 쓰기 과정을 되돌아보는 여러 가지 활동에 적극적",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "사실은 글의 정확성을 판단할 수 있는 근거가 되며 글쓴이의 의견을 뒷받침 할 수 있다는 점",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "같은 책을 읽어도 읽는 사람마다 떠올린 생각과 표현 방법이 다양하고 다를 수 있음을 알고 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "사실과 의견에 대해 알고 사실과 의견을 구분하여 글을 읽으며 글에 드러난 사실과 의견에 대",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "책을 읽은 독자가 각기 다른 목표에 따라 그리기와 글쓰기 활동으로 생각을 표현하는 과정을 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "글 내용에 대한 전반적인 이해를 소홀히 하지 않는 선에서 글을 구성하는 문장이 사실인지 의",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "독자에게 마음을 전달하는 글을 쓰기 위해 지난 쓰기 과정을 점검하며 쓰기를 계획하는 절차와",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "학교 안팎의 실생활에서 쓰기로 해결해야 할 여러 가지 문제 상황이 있음을 인식하고 능동적으",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "같은 상황을 바탕으로 사실을 나타낸 문장과 의견을 표현한 문장을 비교하면서 사실과 의견의 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "글쓰기의 계획 과정에서 하는 생각이 전체 글쓰기 과정에 어떠한 영향을 미치고 왜 중요한지를",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "목적과 주제를 고려하여 글을 쓰는 과정을 객관적으로 점검하고 성찰함으로써 비판적 창의적 사",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "교사나 친구의 도움을 받아 쓰기 과정을 되돌아보고 소감을 말하며 글쓰기 계획을 세우는 데 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "기사문은 기본적으로 정보를 전달하는 기능을 하는 글이라는 점을 알고 기사문에서 사실과 의견",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "짧은 글을 읽고 글에 나타난 사실과 의견을 구분하며 글쓴이의 의견을 정리하여 자신의 의견을",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "글쓰기 계획을 세우는 것은 더욱 효과적이고 완성도 높은 글을 쓰기 위한 바람직한 글쓰기 태",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "안내된 절차에 따라 글쓰기 계획을 세우고 그에 따라 짧은 글을 쓰는 일련의 쓰기 과정을 이",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "",
+      "text": "전체",
+      "onclick": "fnCheckAbilityAllForExam(0)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "",
+      "text": "최상",
+      "onclick": "fnCheckAbilityAllForExam(1)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "",
+      "text": "상",
+      "onclick": "fnCheckAbilityAllForExam(2)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "",
+      "text": "중",
+      "onclick": "fnCheckAbilityAllForExam(3)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "",
+      "text": "하",
+      "onclick": "fnCheckAbilityAllForExam(4)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "highlight",
+      "text": "V",
+      "onclick": "fnCheckAbilityForExam(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "",
+      "text": "O",
+      "onclick": "fnCheckAbilityForExam(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "",
+      "text": "O",
+      "onclick": "fnCheckAbilityForExam(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "",
+      "text": "O",
+      "onclick": "fnCheckAbilityForExam(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "",
+      "text": "O",
+      "onclick": "fnCheckAbilityForExam(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "highlight",
+      "text": "V",
+      "onclick": "fnCheckAbilityForExam(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "",
+      "text": "O",
+      "onclick": "fnCheckAbilityForExam(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "",
+      "text": "O",
+      "onclick": "fnCheckAbilityForExam(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "",
+      "text": "O",
+      "onclick": "fnCheckAbilityForExam(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "",
+      "text": "O",
+      "onclick": "fnCheckAbilityForExam(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "highlight",
+      "text": "V",
+      "onclick": "fnCheckAbilityForExam(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "",
+      "text": "O",
+      "onclick": "fnCheckAbilityForExam(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "",
+      "text": "O",
+      "onclick": "fnCheckAbilityForExam(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "",
+      "text": "O",
+      "onclick": "fnCheckAbilityForExam(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "",
+      "text": "O",
+      "onclick": "fnCheckAbilityForExam(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "highlight",
+      "text": "V",
+      "onclick": "fnCheckAbilityForExam(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "",
+      "text": "O",
+      "onclick": "fnCheckAbilityForExam(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "",
+      "text": "O",
+      "onclick": "fnCheckAbilityForExam(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "",
+      "text": "O",
+      "onclick": "fnCheckAbilityForExam(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "",
+      "text": "O",
+      "onclick": "fnCheckAbilityForExam(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "highlight",
+      "text": "V",
+      "onclick": "fnCheckAbilityForExam(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "",
+      "text": "O",
+      "onclick": "fnCheckAbilityForExam(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "",
+      "text": "O",
+      "onclick": "fnCheckAbilityForExam(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "",
+      "text": "O",
+      "onclick": "fnCheckAbilityForExam(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "",
+      "text": "O",
+      "onclick": "fnCheckAbilityForExam(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "highlight",
+      "text": "V",
+      "onclick": "fnCheckAbilityForExam(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "",
+      "text": "O",
+      "onclick": "fnCheckAbilityForExam(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "",
+      "text": "O",
+      "onclick": "fnCheckAbilityForExam(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "",
+      "text": "O",
+      "onclick": "fnCheckAbilityForExam(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "",
+      "text": "O",
+      "onclick": "fnCheckAbilityForExam(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "btn btn-ok",
+      "text": "확인",
+      "onclick": "fnSubjectUnitFilter()"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "btn btn-exit",
+      "text": "취소",
+      "onclick": "fnSubjectUnitFilterClose()"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "btn-reset",
+      "text": "선택 초기화",
+      "onclick": "fnResetSelected()"
+    },
+    {
+      "tag": "button",
+      "type": "",
+      "id": "",
+      "class": "",
+      "text": "주제▼",
+      "onclick": ""
+    },
+    {
+      "tag": "button",
+      "type": "",
+      "id": "",
+      "class": "",
+      "text": "특기사항V(기본순)",
+      "onclick": "fnOrder(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "btn-reset",
+      "text": "선택 초기화",
+      "onclick": "fnResetSelectedCreativeexp()"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "시적 상황에 맞는 목소리의 크기, 읽는 속도 등을 정하면서 시 낭송 계획을 구체적으로 수립",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "주변 사람들의 말하기 방식을 유심히 관찰하여 역할극 활동에서 자신이 맡은 인물의 성격과 상",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "한 줄씩 번갈아 가며 읽기, 노랫말을 몸짓으로 표현하며 읽기 등 다양한 시 낭송 방법 중 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "보고 듣고 맛보고 남새 맡고 손으로 만지면서 하는 다양한 경험이 감각적 표현으로 이어진다는",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "역할극 연습을 하며 친구와 서로의 몸짓을 주의 깊게 관찰하고 역할극을 마친 후 사용한 말투",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "다양한 말하기 활동에서 상황과 대상에 따라 말의 느낌이 달라질 수 있음을 정확하게 인식하고",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "상황에 알맞은 표정과 몸짓, 목소리나 말투를 사용해 대화 장면을 실감 나게 표현하는 것의 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "시를 읽고 감각적 표현을 생각하며 상상한 장면에 대한 느낌을 나눔으로써 상상을 더욱 생생하",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "인물이 처한 구체적인 상황을 먼저 떠올리고 그에 어울리는 말의 빠르기와 억양 손짓과 표정까",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "자신이 맡은 인물의 구체적인 상황을 세심하게 파악하고 상황이 바뀜으로 인해 반응이 어떻게 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "경험을 표현한 방법에 어떤 것이 있는지 살펴봄으로써 대상의 움직임이나 모습, 소리를 생생하",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "대화에서 예절 있는 태도가 중요하다는 점을 알고 말할 때에는 상대방의 입장을 고려한 말투와",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "어떤 장면을 감각적으로 표현했을 때와 그렇지 않았을 때의 느낌을 비교해 보면서 감각적 표현",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "구체적인 상황을 설정함으로써 자신이 역할놀이로 표현해야 할 장면이 무엇인지, 역할놀이의 목",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "재미있었던 장면이나 인상 깊은 표현을 중심으로 자신의 감상을 또래 친구와 나누며 작품의 의",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "내용이 정확하게 전달되기 위해서는 듣는 사람의 상황을 고려해 말의 빠르기와 크기를 조절해야",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "상황에 알맞은 목소리나 말투로 말하면 좋은 점을 재확인함으로써 학교 안팎에서 대화할 때 상",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "감각적 표현은 표현 주체가 특정한 의도를 가지고 감각 경험을 초점화해 언어로 표현한 결과임",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "같은 말이라도 목소리나 말투에 따라 뜻이 달라진다는 것을 알고 언어 사용 상황에 알맞은 목",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "감각적인 표현이 사용된 작품을 읽으며 장면의 분위기나 느낌을 상상하고 작품의 흐름과 연결해",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "시를 감상할 때 장면이나 정서가 드러나는 부분에 집중하여 화자의 마음을 상상하고 그 느낌을",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "문학 작품에서 감각적 표현을 찾아보고 그 느낌을 시화에 생생하게 담으려면 어떻게 해야 하는",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "발표나 대화 중 다른 친구가 실수하거나 표현이 어색할 때 웃거나 방해하지 않아야 함을 알고",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "시 낭송 활동에서 목소리나 속도를 조절해 보며 감정을 전달하려는 태도를 보이고 자신만의 낭",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "말하는 도중 친구가 말할 차례를 기다리는 상황에서 불필요한 말이나 끼어들기를 하지 않으며 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "다양한 상황에 알맞은 표정과 몸짓, 목소리나 말투를 활용해 친구와 역할놀이로 발표하고 예의",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "역할극을 감상하는 활동에서 다른 친구가 실수했을 때 웃거나 놀리는 반응 없이 기다려주는 태",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "문학 활동 중 친구와 감상 내용을 나누는 활동에 참여하고 공감의 표현을 보이며 자신의 감상",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "감각적 표현을 생각하며 상상한 장면에 대한 느낌을 친구와 나누는 활동을 함으로써 상상한 장",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "말의 높낮이나 빠르기를 조절하면서 어떤 비언어적 표현이 나타내려는 상황에 더 잘 어울리는지",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "문학 작품을 읽으며 이야기 흐름을 파악하고 장면을 떠올리는 활동에 꾸준히 참여하며 문학 감",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "감각적인 표현이 담긴 시를 읽으며 장면의 분위기나 느낌을 상상해 보려는 태도가 나타나며 감",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "말차례를 지키고 말할 때 친구가 잘 들을 수 있도록 목소리 크기와 속도를 조절하며 듣는 이",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "상황에 어울리는 목소리나 말투를 선으로 이어 보며 짝과 함께 주어진 상황에 알맞은 목소리나",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "다양한 상황에 알맞은 표정과 몸짓, 목소리나 말투를 활용해 친구와 역할놀이로 발표하고 일상",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "말투가 지나치게 빠르거나 크고 듣는 사람을 고려하지 않아 상황에 어울리지 않는 표현을 사용",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "문학 작품을 읽으며 마음에 남는 장면을 중심으로 감상하려고 하며 기억에 남는 부분을 짧게 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "감각적 표현을 사용한 시를 읽고 시의 전체적인 분위기나 상황에 적절하게 시의 장면을 상상해",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "말의 빠르기나 목소리 크기를 조절하지 않고 말하여 상황에 맞는 느낌이 잘 전달되지 않고 표",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "시를 감상할 때 내용을 이해하고 여운이 남는 표현에 반응을 보이며 감상 습관을 함양하기 위",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "자신의 발표가 청중에게 잘 전달되기 위해 어떤 준비가 필요한지 고민하며 발표 내용의 구성과",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "기억에 남는 발표의 특징을 상세하게 분석하고 자신의 발표와 비교해보는 활동에 적극적으로 참",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "교과서에 제시된 이야기를 읽고 이야기에 등장하는 인물에 대한 생각을 친구들과 공유하는 일이",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "글에서 제시한 발표 예절을 잘 지키고 잇는지 스스로 생각해 보며 자신의 생각을 말하는 발표",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "발표를 들을 때 중요한 내용을 쓰면서 듣기, 발표하는 사람을 배려하며 듣기 등 바람직한 자",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "모둠 친구들과 함께 실감 나게 읽고 싶은 이야기를 고르는 일에 협조적이며 해당 이야기가 실",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "이야기를 실감 나게 읽는 발표를 듣고 친구가 이야기를 어떻게 읽었는지 구체적으로 칭찬하며 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "목적어가 있는 문장이나 꾸며 주는 말이 포함된 문장을 보고 문장의 짜임을 찾아 정확하게 이",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "교과서에 제시된 문장들을 살펴보며 어찌하다와 어떠하다를 나타내는 낱말을 바르게 찾고 찾은 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "여러 가지 낱말 카드를 활용해 짜임에 맞게 문장을 만드는 활동에 재미 있게 참여하며 평소 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "띄어쓰기 표기를 어느 곳에 표시하는지에 따라 문장이 뜻이 달라질 수 있다는 점을 알고 문장",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "이야기에서 읽고 싶은 장면을 정해 실감 나게 읽기 연습하는 과정에서 연습 장면을 친구들과 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "자신이 쓴 글을 확인할 때 어찌하다, 어떠하다, 무엇이다에 해당하는 말을 적절하게 사용하였",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "발표 내용이 청중에게 잘 전달되었는지를 발표 중간에도 계속 고려하며 비언어적 표현과 언어적",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "교사가 제시하는 여러 문장 가운데 문장의 짜임에 맞게 쓴 문장과 그렇지 않은 문장을 구분하",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "이야기에서 문장 부호가 있는 부분, 꾸며주는 말이 나오는 부분은 각각 어떻게 일어야 할지 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "문장에서 띄어쓰기 표기가 있는 부분을 인위적으로 띄어 읽지 않도록 주의하며 글의 내용을 놓",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "발표할 때 목소리의 크기나 말하는 속도를 청중의 반응에 맞춰 조절하며 말의 흐름을 자연스럽",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "문장의 짜임을 생각하며 단순한 문장 읽기에서 시작해 점차 복잡한 문장을 소리 내어 읽는 활",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "교과서에 제시된 글 발표 예절을 어떻게 읽었는지 보고 글을 유창하게 소리 내어 읽는 방법을",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "친구의 발표를 들으면서 중요한 내용을 메모하는 습관을 형성하고 있으며 발표자 입장을 고려하",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "발표 예절에 관한 글을 읽으면서 발표를 잘하려면 어떤 태도로 말해야 하는지를 짐작하여 자신",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "누가, 무엇이와 어찌하다, 어떠하다, 무엇이다가 명확히 드러나는 문장 예시를 접하면서 여러",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "발표자와 청중 모두가 지켜야 할 예절의 중요성을 인식하고 자신의 발표에서는 또박또박 말하기",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "글의 내용을 잘 이해하고 전달하려면 전달하려는 내용을 또박또박 읽어야 한다는 점을 알고 이",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "전통 문화와 관련 있는 그림 다섯 개와 각 그림의 제목을 살펴보면서 그림 속 인물들이 무엇",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "설명할 물건을 한 가지 고르고 물건에 대한 내용을 어찌하다, 어떠하다, 무엇이다로 나누어 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "발표 후 피드백을 받아들여 자신의 발표 내용을 되짚고 다음 발표에서 더욱 나은 전달이 되도",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "한 가지 그림을 선택하여 그림을 묘사하는 문장을 만들 때 어찌하다, 어떠하다, 무엇이다를 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "발표를 듣는 입장에서 발표자가 말할 때에는 집중하는 태도를 유지하고 시선이나 고개 끄덕임으",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "이야기에서 실감 나게 읽고 싶은 부분을 찾고 그 부분을 어떤 목소리나 말투로 읽을지 계획하",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "이야기를 소리 내어 읽고 이야기를 실감 나게 읽는 방법을 탐구한 후 이야기의 장면을 실감 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "발표 상황에서 지켜야 할 기본 예절을 이해하고 말할 때에는 또박또박 말하며 발표에 진지하게",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "문장의 짜임을 나누는 기계적인 활동에서 나아가 문장을 소리 내어 읽으면서 문장의 짜임이나 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "여러 가지 문장의 짜임을 생각하며 문장을 바르게 읽고 써야 한다는 점을 알고 일상에서 실천",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "이야기에서 감명 깊은 장면, 재미있었던 장면, 인상 깊었던 장면 등을 생각하며 읽고 싶은 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "다른 사람 앞에서 소리 내어 읽는 것에 소극적이며 다른 친구와 함께 읽거나 친구가 읽은 것",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "비언어적 표현의 필요성은 대략 인식하고 있으나 손짓이나 표정이 발표 내용과 어울리지 않아 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "친구의 발표를 듣고 난 뒤에도 질문이나 감상 표현을 거의 하지 않으며 듣는 태도에서도 주도",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "문장의 짜임을 생각하며 글을 소리 내어 읽지만 문장의 짜임에 맞게 문장을 쓰는 일에 자신감",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "대상을 소개하는 글을 쓴 후 친구와 쓴 글을 바꾸어 읽는 활동에 적극적으로 참여하며 문단을",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "문학 작품으로부터 느낀 재미나 감동을 다른 사람과 나누고 다양하게 표현하는 경험을 하며 문",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "시를 읽고 내용을 확인하며 시에서 그리고 있는 장면을 상상하는 활동을 즐기며 시를 다시 읽",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "학교를 소개하는 글을 쓰기 위해서 학교의 특징이 잘 드러나는 장소나 인물, 학교에서 열리는",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "문단에서 말하고 싶은 내용이 잘 드러나게 중심 문장을 써야 한다는 점을 명확히 알고 이에 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "작품에서 재미나 감동을 느낀 부분과 그 까닭을 정확하게 구분하고 재미나 감동을 느낀 부분은",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "이야기를 읽고 시간의 흐름에 따라 사건이 일어난 차례를 능숙하게 정리하며 이야기를 읽은 후",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "제재 글에서 중심 문장과 뒷받침 문장을 구분하는 교사의 시범을 주의 깊게 살펴 중심 문장과",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "작품을 읽기 전 작품의 제목을 보고 이야기를 상상하는 활동에 자신 있게 참여하며 유추했던 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "중심 문장과 뒷받침 문장의 특징을 파악해 글을 쓰는 능력을 바르게 함양하고 다른 사람들에게",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "교과서에 제시된 만화 속 주인공들의 대화를 참고해 짜임새가 좋지 않은 글의 특징을 파악하여",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "이야기 속 등장인물인 은솔이와 한솔이에게 일어난 일을 생각하며 수상한 선글라스를 읽고 비슷",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "작품을 다시 읽었을 때 처음과 달리 작품에서 또 다른 재미나 감동을 발견할 수 있다는 점을",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "자신의 경험을 떠올려 작품을 읽고 재미나 감동을 느낀 부분을 찾는 방법을 두 가지 이상 이",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "문단을 구성하는 문장을 중심 문장과 뒷받침 문장으로 구분한 방법을 친구들과 이야기 나누는 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "글을 읽다가 모르는 낱말이 나왔을 때 앞 문장이나 뒤 문장을 읽고 능숙하게 뜻을 예상하며 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "다양한 예시 글을 읽고 중심 문장이 항상 문단 첫머리에 나오는 것은 아니라는 점을 이해하고",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "이야기를 읽고 재미나 감동을 느낀 부분을 표현하는 수단으로 편지글을 떠올리고 자신이 편지를",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "뒷받침 문장은 중심 문장을 잘 나타내려고 덧붙여 설명하거나 예를 드는 문장이라는 점을 이해",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "자신의 생각이 잘 드러난 글은 중심 생각, 중심 문장과 뒷받침 문장의 연결이 자연스러워야 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "한 문단으로 작성된 글을 읽고 글에서 중심 문장을 찾으며 중심 문장에 어울리지 않는 뒷받침",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "시를 읽고 떠오르는 장면, 내용과 비슷한 자신의 경험, 낭송할 때 느끼는 즐거움을 학습하며",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "이야기나 시를 읽은 후 자신의 생각을 표현하고 다른 사람의 생각을 이해하는 활동에 참여하면",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "짜임새 있는 문단 쓰기 방법을 익혀 글을 쓸 때 중심 문장과 뒷받침 문장을 갖춘 짜임새 있",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "문단이 무엇인지 알고 중심 문장과 뒷받침 문장을 갖추어 문단의 짜임에 맞게 글을 쓰는 과정",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "같은 작품을 읽더라도 사람마다 재미나 감동을 느낀 부분이 다를 수 있다는 점을 알고 재미나",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "중심 문장과 뒷받침 문장을 알맞게 구성해 문단을 쓸 수 있는지 확인하는 활동에 참여하면서 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "역할극, 네 컷 만화나 그림, 편지글 등 재미나 감동을 표현하는 방법이 다양함을 알고 여러",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "작품에서 찾은 재미나 감동을 표현하는 글을 쓰고 글을 고쳐 쓰기 위한 기준을 마련하여 글을",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "친구들이 만든 작품을 소개하는 자료를 보면서 친구가 작품에서 어떤 재미나 감동을 느꼈는지 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "시를 깊이 음미하는 충분한 시간을 가지면서 시를 읽고 시를 이해한 후 시를 읽고 재미나 감",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "글쓴이의 생각을 잘 전달하려면 어떻게 글을 써야 할지 생각함으로써 단원에서 배울 내용을 짐",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "뒷받침 문장으로 들어갈 내용을 떠올리기 위해서 소개하려는 장소에 관한 생각그물을 그려서 글",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "문단의 특징과 중심 문장 및 뒷받침 문장에 관해 학습한 내용을 바탕으로 궁금한 점을 친구들",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "이야기, 시 등 교과서에서 제시하는 작품을 읽고 느낀 재미나 감동을 다양한 방법으로 표현하",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "작품에서 느낀 재미나 감동을 표현할 방법을 떠올리기 어려워하며 교사나 친구의 도움을 받아 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "글에서 짜임새가 중요한 까닭을 생각해 보고 짜임새 있는 문단으로 글을 써야 할 필요성을 대",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "중심 문장과 뒷받침 문장을 갖추어 간단한 문단을 쓰며 도움을 받아 문장 및 문단 수준에서 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "이야기를 읽고 모둠 친구들과 함께 작품에서 느낀 재미나 감동을 표현하는 활동에 부분적으로 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "안내된 절차에 따라 소개하고 싶은 작품을 골라 작품에서 느낀 재미나 감동을 간단하게 정리함",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "교과서에 제시된 글뿐만 아니라 일상에서 다양한 글을 읽을 때 자신의 경험이나 주변 사례를 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "설명을 듣고 중요한 내용을 파악하기 위해서 듣는 목적이나 강조하는 내용이 무엇인지 생각해야",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "다양한 설명 자료를 찾아 중요한 내용을 간추려 친구들 앞에서 자신 있게 발표하며 다른 친구",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "주어진 이야기와 밀접하게 관련 있는 시를 읽으며 시에 담긴 장면이나 감정을 상상하고 시인의",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "친숙한 화제가 담긴 듣기 자료나 영상 자료를 활용한 수업에 흥미를 갖고 학습 활동에 집중하",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "설명하는 글이나 이야기 글을 읽다가 모르는 낱말이 나왔을 때 당황하지 않고 사전이나 문맥을",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "들은 내용을 효과적으로 정리하기 위해서 더 효과적인 기호 표현, 더 좋은 숫자 표현을 적극",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "이야기를 읽고 이야기에서 일어난 일을 파악하는 방법을 자신의 언어로 조리 있게 말하며 배운",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "이야기를 읽기 위해 미리 이야기의 내용과 유관한 글을 찾아 읽는 습관을 지녀 풍부한 배경지",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "중요한 내용 파악하기 전략이 필요함을 구체적으로 말하며 들은 내용을 오랫동안 내용을 기억하",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "메모했던 다양한 경험을 떠올려 짝과 이야기를 나누어 보면서 메모뿐만 아니라 중요한 내용을 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "각각의 문단에서 중요한 낱말과 이를 포함하고 있는 문장인 중심 문장의 개념을 이해하고 중심",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "교과서에서 제시한 듣기 자료를 듣고 정리한 예시를 살펴 봄으로써 틀린 내용을 쓰거나 낱말로",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "과학책, 동화책, 정보글 등 다양한 장르의 글을 읽을 때 중심 내용을 놓치지 않도록 스스로",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "정리하기는 내용에 따라 다양한 형식으로 표현할 수 있다는 점을 알고 친구들이 직접 정리한 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "중요한 내용을 간단히 정리한다는 것은 단순히 메모하는 것만을 의미하지 않으며 일상생활에서 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "듣기 자료의 내용을 확인하는 질문에 대답하면서 어떻게 정확하게 대답할 수 있는지를 확인하고",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "글을 읽고 중심 문장과 중요한 낱말을 정확하게 찾아 밑줄을 그으며 중심 문장을 자연스럽게 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "글 전체의 내용을 이해한 후 중요한 내용과 중요하지 않은 내용을 구분하며 간추리는 글을 쓸",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "이야기 글을 읽고 이야기 속 인물들은 자연에 대해 어떤 마음을 가지고 있는지 생각하면서 이",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "이야기를 읽고 이야기의 등장인물에게 일어난 일고 그때의 마음을 차례대로 정리하는 과정에 참",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "읽기 자료의 내용을 파악한 후 중요한 내용을 찾는 방법을 중심 문장과 뒷받침 문장의 구분을",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "내용을 듣고 생각그물, 그림 등 여러 가지 방법으로 나름대로 간추린 후 친구와 비교하여 창",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "글을 읽으며 중심 문장과 뒷받침 문장, 핵심 낱말을 스스로 찾고 어려운 낱말이 나올 때 그",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "설명하는 글, 이야기 등 다양한 제재가 포함될 글을 읽고 각각의 글에서 중요한 내용을 찾는",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "설명하는 글을 읽고 중심 문장과 뒷받침 문장을 구분하여 찾은 중심 문장을 이어가는 방식으로",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "메모를 함으로써 내용을 좀 더 효과적으로 기억할 수 있다는 장점을 알고 일상 생활에서 중요",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "그림 속 대화를 읽고 중요한 내용 파악하기 활동을 하며 친구가 다양하게 쓴 내용을 보고 효",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "글의 제목이나 그림을 먼저 살펴보며 내용을 예측하고 실제 읽기 후 예측과 비교하여 어떤 점",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "중요한 내용을 잊었던 경험을 떠올려 중요한 내용을 오래 기억하려면 어떻게 듣거나 보아야 할",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "영상을 보고 중요한 내용을 파악하는 방법을 습득하는 활동을 거쳐 실제로 영상에서 중요한 내",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "이야기글을 읽으며 인물의 감정에 공감하려고 노력하고 읽은 뒤 자신의 느낌을 짧게 정리하여 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "각 문단의 중요한 낱말이나 중심 문장을 찾는 방법을 확인하고 이를 바탕으로 글에서 중요한 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "이야기에서 등장인물의 마음이 어떻게 변하는지를 살펴보며 내용을 파악할 수 있음을 알고 이야",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "토의나 짝 활동에서 읽은 글의 핵심 내용을 간단히 말하거나 친구의 말에 반응하며 읽기 이해",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "글을 읽은 후 간단한 느낌이나 인상 깊었던 내용을 말하거나 적으며 읽은 내용을 정리하려는 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "짧은 영상을 보고 영상의 내용을 기억나는대로 말하는 다시 이야기 전략을 활용하여 영상의 내",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "자신이 쓴 글을 반복해서 읽고 문장이 자연스럽게 연결되지 못하는 부분을 찾아 어떻게 고칠지",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "그림이나 표, 만화, 생각그물 등 조금 더 자신 있는 형식을 활용해서 영상의 내용을 간단히",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "영상을 보고 중요한 내용을 간단히 정리하지만 중요한 내용을 잘 정리했는지 깊이 있게 성찰하",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "글을 읽고 인물의 성격을 나타내는 말을 찾거나 인물의 말이나 행동을 살펴 인물의 성격을 파",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "일상에서 웃어른에게 마음을 전달한 경험을 떠올리고 어떤 상황에서 어떤 마음을 전하고 싶은지",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "받는 사람의 이름, 상황, 전하고 싶은 마음 등을 구체적으로 언급하며 마음을 전하는 글을 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "영상 매체 자료나 읽기 자료에 등장하는 인물의 성격을 파악하는 단서를 잘 찾고 단서를 바탕",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "인물의 마음과 성격의 개념을 명확히 구분하여 일어난 여러 가지 사건에 대처하는 인물의 말과",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "마음을 전하는 글 쓰기의 첫 번째 단계는 글 쓸 상황을 떠올리는 일이라는 점을 정확히 인식",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "마음을 전달하는 글의 끝맺음에서 사용하는 어미 역시 높임 표현이라는 점을 인식하여 글을 쓰",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "작품을 읽고 인물과 사건의 관계를 중심으로 내용을 정확하게 파악한 후 모둠원과 함께 인물의",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "글쓰기 계획을 세운 뒤에는 계획한 대로 잘 실천했는지 점검하고 수정하는 일이 뒤따라야 한다",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "있었던 일을 모호하게 쓰지 않고 구체적으로 쓸 수 있도록 꾸준히 연습하며 글을 받는 사람의",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "쓴 글을 친구들과 바꾸어 읽고 자신의 생각이나 느낌을 나누어 보며 글의 상황과 글에서 전하",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "글쓰기에서 표현의 선택이 단순한 언어 문제가 아니라 사회적 관계와 관련된 것임을 이해하고 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "중요한 핵심 낱말의 뜻을 짐작하여 이야기의 내용을 파악하고 사건의 흐름에 따라 인물에게 일",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "마음을 전하는 글에 들어가는 내용을 학습하여 생활 속에서 마음을 전하는 글을 읽거나 쓸 때",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "작품 속 인물의 성격을 파악하는 활동을 통해 인물에 대한 이해를 높이고 인물에 공감하는 경",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "자신이 아는 다양한 이야기 속 인물을 떠올려 보고 이야기에 등장하는 사건과 인물의 성격을 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "성격을 파악할 때에는 인물의 행동이나 말을 근거로 살펴봐야 함을 알고 타인의 성격을 파악할",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "이야기를 읽고 인물의 성격이 잘 드러나는 장면을 찾으며 각 장면에서 인물이 어떤 말을 할지",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "대상에 따라 높임 표현이 달라진다는 점을 인식하고 쓰고자 하는 마음을 전달하는 글에 자연스",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "웃어른께 마음을 전하고 싶은 상황 떠올리기 놀이를 하면서 짝과 번갈아가면서 교사가 제시하는",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "생활 속에서 마음을 전하는 글을 읽거나 쓸 때 받는 사람에 따라 적절한 높임 표현을 썼는지",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "마음을 전하는 글을 쓸 때 일반적인 높임 표현 이외에 올림처럼 특징적인 표현이 사용된다는 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "글의 내용을 파악할 때 같은 문제 상황을 마주했을 때 두 인물이 각각 어떤 선택을 했는지 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "인물의 성격에 대한 사전 지식을 상기하고 인물에게 궁금한 점을 떠올려 보면서 이야기의 인물",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "글로 마음을 전하면 말로는 하기 힘든 마음을 전할 수 있으며 직접 만나거나 함께 있지 않아",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "그림책의 특성을 고려해 글과 그림에 나타나는 인물의 말과 행동을 총체적으로 살펴봄으로써 인",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "이야기를 구성하는 전후 사건의 흐름과 함께 인물의 말이나 행동, 성격에 초점을 두고 내용을",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "마음을 전하는 글을 쓸 계획을 세우고 계획한 내용을 바탕으로 글을 쓰는 일련의 과정을 경험",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "마음을 전하는 글을 쓸 때 읽는 이의 특성을 어느 정도 고려하여 높임 표현을 사용하려고 하",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "교과서 활동을 통해 마음을 전달하는 글, 편지글에 들어갈 내용과 높임 표현을 익히고 이를 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "평소 그림책을 읽을 때 인물의 성격에 관심을 가지고 인물의 말이나 행동을 보며 성격을 스스",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "자신이 세운 계획을 바탕으로 마음을 전하는 글을 쓴 후 쓴 글을 친구와 바꾸어 읽고 확인할",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "마음을 전하는 글을 쓰고 마음을 잘 나타낼 수 있는 표현을 사용했는지 점검하며 읽을 사람의",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "배운 높임 표현을 마음을 전하는 실제 글쓰기에 적극적으로 활용하며 틀린 부분은 스스로 찾아",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "마음을 전달하는 편지의 내용과 맺음말을 종합적으로 살펴보고 받는 사람의 위치에 맞게 표현을",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "교과서에 제시된 낱말을 넣어 마음을 전하는 글을 쓰는 방법을 간단히 정리하고 마음을 전하는",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "교사나 친구의 도움을 받아 인물이나 인물의 행동을 수식하는 말을 살펴본 후 인물의 성격을 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "인물의 성격과 본받을 점을 생각해 보고 인물에게 주고 싶은 상장을 만들어 보는 활동에 소극",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "높임 표현의 용처나 용법을 완전히 이해하지 못했으나 안내된 예시를 중심으로 문장을 쓰고자 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "글을 읽는 사람의 처지를 공감하고 배려하며 자신의 마음을 전하는 글을 쓰는 일에 소극적임.",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "사실과 의견이 담긴 글을 읽기 전 글의 주제에 대해 자신이 알고 있는 정보나 생각을 풍부하",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "대화, 일기 등 구체적인 국어 사용 사례와 자료를 검토하는 일에 적극적으로 참여함으로써 국",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "마음을 전하는 글을 쓸 때 읽는 사람이 진심을 느낄 수 있어야 한다는 점 등 주의할 점을 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "우리 학급이나 동네에서 해결하고 싶은 문제점을 찾아 사실을 나타내는 문장으로 적절히 표현하",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "글에 드러난 사실과 의견을 정확하게 구분하며 다양한 상황이나 자료, 담화, 글을 주체적인 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "학교 안뿐만 아니라 학교 밖에서 쓰기 활동이 필요한 상황을 구체적으로 이해하며 글을 자신 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "글 속에는 사실과 의견이 함께 들어 있다는 이해를 바탕으로 사실 문장과 의견 문장을 명확히",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "글을 쓸 때 누구를 대상으로 글을 쓸지 생각하여 이에 따라 쓰기 계획을 구체화하는 태도를 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "자료를 토대로 사실과 의견이라는 개념을 탐구해 나가는 과정을 즐기며 구체적인 국어 자료 속",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "글에 드러난 글쓴이의 의견을 자신의 의견과 비교하며 글을 깊이 있게 이해하며 글을 비판적으",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "사실과 의견을 구분할 때 사실과 달리 의견은 생각을 담고 있으므로 이를 나타내는 탄말이나 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "우리 반에 대한 사실과 의견을 나타내는 문장을 만들고 친구와 비교하는 활동을 통해 의견에는",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "친구와 협동하여 여러 문장을 비교하는 활동을 통해 사실은 현재 있는 일이나 과거에 있었던 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "마음을 전하는 글을 쓴 경험을 떠올리며 이야기 속 문제 상황과 비슷한 일을 겪었거나 앞으로",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "같은 일을 겪더라도 사람마다 다르게 생각하고 느낄 수 있다는 점을 이해하여 하나의 사실에 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "사실 문장이 실제로 진실인 경우에만 사실 문장이라고 생각하는 오개념을 극복하고 사실 문장과",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "글쓴이가 처한 글쓰기 상황과 목적이 다양함을 느끼고 같은 목적의 글이라도 읽는 사람에 따라",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "글에서 지식이나 정보를 말하는 설명과 생각이 드러나는 말을 찾아 구분하며 사진을 보고 각각",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "주어진 낱말을 활용해 만든 사실 문장과 의견 문장의 일부를 바꾸어 의견 문장을 사실 문장으",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "쓰기 계획에는 누가 보거나 읽을 것인지와 무엇을 표현할지에 대한 계획이 포함되어야 한다는 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "공부한 내용을 바탕으로 사실과 의견의 뜻과 특성을 정확하게 설명하며 사실과 의견을 나타내는",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "다양한 언어 자료를 비교하고 탐구함으로써 친구들과 함께 사실과 의견의 개념을 찾으며 평소 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "설명 대상과 주제가 명시적인 글을 읽고 사실과 의견을 구분해 필자의 의견을 비판적으로 판단",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "기사문을 읽고 의견과 관련해 기자의 생각이 드러난 부분과 기자가 이 기사문을 쓴 까닭을 생",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "쓰기 계획을 세우고 직접 글을 쓰며 자신의 쓰기 과정을 되돌아보는 여러 가지 활동에 적극적",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "사실은 글의 정확성을 판단할 수 있는 근거가 되며 글쓴이의 의견을 뒷받침 할 수 있다는 점",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "같은 책을 읽어도 읽는 사람마다 떠올린 생각과 표현 방법이 다양하고 다를 수 있음을 알고 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "사실과 의견에 대해 알고 사실과 의견을 구분하여 글을 읽으며 글에 드러난 사실과 의견에 대",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "책을 읽은 독자가 각기 다른 목표에 따라 그리기와 글쓰기 활동으로 생각을 표현하는 과정을 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "글 내용에 대한 전반적인 이해를 소홀히 하지 않는 선에서 글을 구성하는 문장이 사실인지 의",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "독자에게 마음을 전달하는 글을 쓰기 위해 지난 쓰기 과정을 점검하며 쓰기를 계획하는 절차와",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "학교 안팎의 실생활에서 쓰기로 해결해야 할 여러 가지 문제 상황이 있음을 인식하고 능동적으",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "같은 상황을 바탕으로 사실을 나타낸 문장과 의견을 표현한 문장을 비교하면서 사실과 의견의 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "글쓰기의 계획 과정에서 하는 생각이 전체 글쓰기 과정에 어떠한 영향을 미치고 왜 중요한지를",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "목적과 주제를 고려하여 글을 쓰는 과정을 객관적으로 점검하고 성찰함으로써 비판적 창의적 사",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "교사나 친구의 도움을 받아 쓰기 과정을 되돌아보고 소감을 말하며 글쓰기 계획을 세우는 데 ",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "기사문은 기본적으로 정보를 전달하는 기능을 하는 글이라는 점을 알고 기사문에서 사실과 의견",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "짧은 글을 읽고 글에 나타난 사실과 의견을 구분하며 글쓴이의 의견을 정리하여 자신의 의견을",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "글쓰기 계획을 세우는 것은 더욱 효과적이고 완성도 높은 글을 쓰기 위한 바람직한 글쓰기 태",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al",
+      "text": "안내된 절차에 따라 글쓰기 계획을 세우고 그에 따라 짧은 글을 쓰는 일련의 쓰기 과정을 이",
+      "onclick": "fnSelectExamSentence(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "btn btn-ok",
+      "text": "확인",
+      "onclick": "fnSubtitleFilter()"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "btn btn-exit",
+      "text": "취소",
+      "onclick": "fnSubtitleFilterClose()"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "btn-reset",
+      "text": "선택 초기화",
+      "onclick": "fnResetSelectedCreativeexp()"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "btn-reset",
+      "text": "선택 초기화",
+      "onclick": "fnResetSelectedBehavioral()"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "bbsbtn-a3 division-reset-trigger-btn",
+      "text": "이전학생",
+      "onclick": "fnPrev()"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "bbsbtn-a3 division-reset-trigger-btn",
+      "text": "다음학생",
+      "onclick": "fnNext()"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "resetText",
+      "class": "btn-reset show-balloon",
+      "text": "",
+      "onclick": "fnResetKeyword()"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "",
+      "text": "검색",
+      "onclick": "fnSearchKeyword()"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "btn-reset",
+      "text": "전체 삭제",
+      "onclick": "fnDelAllResult()"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al contentsBtn",
+      "text": "다른 사람 앞에서 소리 내어 읽는 것에 소극적이며 다른 친구와 함께 읽거나 친구가 읽은 것",
+      "onclick": "fnTextCopy(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "btn-del-sm show-balloon",
+      "text": "",
+      "onclick": "fnDelResult(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al contentsBtn",
+      "text": "",
+      "onclick": "fnTextCopy(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "btn-del-sm show-balloon",
+      "text": "",
+      "onclick": "fnDelResult(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al contentsBtn",
+      "text": "",
+      "onclick": "fnTextCopy(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "btn-del-sm show-balloon",
+      "text": "",
+      "onclick": "fnDelResult(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al contentsBtn",
+      "text": "",
+      "onclick": "fnTextCopy(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "btn-del-sm show-balloon",
+      "text": "",
+      "onclick": "fnDelResult(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al contentsBtn",
+      "text": "",
+      "onclick": "fnTextCopy(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "btn-del-sm show-balloon",
+      "text": "",
+      "onclick": "fnDelResult(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al contentsBtn",
+      "text": "",
+      "onclick": "fnTextCopy(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "btn-del-sm show-balloon",
+      "text": "",
+      "onclick": "fnDelResult(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al contentsBtn",
+      "text": "",
+      "onclick": "fnTextCopy(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "btn-del-sm show-balloon",
+      "text": "",
+      "onclick": "fnDelResult(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al contentsBtn",
+      "text": "",
+      "onclick": "fnTextCopy(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "btn-del-sm show-balloon",
+      "text": "",
+      "onclick": "fnDelResult(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al contentsBtn",
+      "text": "",
+      "onclick": "fnTextCopy(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "btn-del-sm show-balloon",
+      "text": "",
+      "onclick": "fnDelResult(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al contentsBtn",
+      "text": "",
+      "onclick": "fnTextCopy(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "btn-del-sm show-balloon",
+      "text": "",
+      "onclick": "fnDelResult(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al contentsBtn",
+      "text": "",
+      "onclick": "fnTextCopy(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "btn-del-sm show-balloon",
+      "text": "",
+      "onclick": "fnDelResult(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al contentsBtn",
+      "text": "",
+      "onclick": "fnTextCopy(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "btn-del-sm show-balloon",
+      "text": "",
+      "onclick": "fnDelResult(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al contentsBtn",
+      "text": "",
+      "onclick": "fnTextCopy(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "btn-del-sm show-balloon",
+      "text": "",
+      "onclick": "fnDelResult(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al contentsBtn",
+      "text": "",
+      "onclick": "fnTextCopy(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "btn-del-sm show-balloon",
+      "text": "",
+      "onclick": "fnDelResult(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al contentsBtn",
+      "text": "",
+      "onclick": "fnTextCopy(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "btn-del-sm show-balloon",
+      "text": "",
+      "onclick": "fnDelResult(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al contentsBtn",
+      "text": "",
+      "onclick": "fnTextCopy(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "btn-del-sm show-balloon",
+      "text": "",
+      "onclick": "fnDelResult(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al contentsBtn",
+      "text": "",
+      "onclick": "fnTextCopy(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "btn-del-sm show-balloon",
+      "text": "",
+      "onclick": "fnDelResult(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "al contentsBtn",
+      "text": "",
+      "onclick": "fnTextCopy(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "btn-del-sm show-balloon",
+      "text": "",
+      "onclick": "fnDelResult(this)"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "btn-result-edit",
+      "class": "bbsbtn-a5",
+      "text": "텍스트 편집",
+      "onclick": "fnTextEdit()"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "btn-result-edit-done",
+      "class": "bbsbtn-a5",
+      "text": "텍스트 편집 완료",
+      "onclick": "fnTextEdit('done')"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "btn-result-edit-save",
+      "class": "bbsbtn-a5",
+      "text": "저장",
+      "onclick": "fnfooterSave()"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "btn-result-edit-save",
+      "class": "bbsbtn-a5",
+      "text": "나이스 자동 입력",
+      "onclick": "fnStudentRecordEditor()"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "bbsbtn-a3",
+      "text": "MY평어",
+      "onclick": "fnMySubjectEvaluation()"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "btn-close",
+      "text": "레이어 닫기",
+      "onclick": "$('.layer-evaluation, .dimmed').hide()"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "prevStudentLayer",
+      "class": "bbsbtn-a3 division-reset-trigger-btn prevStudentLayer",
+      "text": "이전학생",
+      "onclick": ""
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "nextStudentLayer",
+      "class": "bbsbtn-a3 division-reset-trigger-btn nextStudentLayer",
+      "text": "다음학생",
+      "onclick": ""
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "btn-close",
+      "text": "레이어 닫기",
+      "onclick": "$('.layer-evaluation, .dimmed').hide()"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "prevStudentLayer",
+      "class": "bbsbtn-a3 division-reset-trigger-btn prevStudentLayer",
+      "text": "이전학생",
+      "onclick": ""
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "nextStudentLayer",
+      "class": "bbsbtn-a3 division-reset-trigger-btn nextStudentLayer",
+      "text": "다음학생",
+      "onclick": ""
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "btn-close",
+      "text": "레이어 닫기",
+      "onclick": "$('.layer-evaluation, .dimmed').hide()"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "prevStudentLayer",
+      "class": "bbsbtn-a3 division-reset-trigger-btn prevStudentLayer",
+      "text": "이전학생",
+      "onclick": ""
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "nextStudentLayer",
+      "class": "bbsbtn-a3 division-reset-trigger-btn nextStudentLayer",
+      "text": "다음학생",
+      "onclick": ""
+    },
+    {
+      "tag": "button",
+      "type": "",
+      "id": "fullscreenBtn",
+      "class": "fullbtn",
+      "text": "",
+      "onclick": ""
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "day-close",
+      "text": "오늘 하루 보지 않기",
+      "onclick": "mainLayer20250918Close()"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "close",
+      "text": "닫기",
+      "onclick": "document.getElementById('layerPop20250918').close()"
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "id": "",
+      "class": "layer-close",
+      "text": "",
+      "onclick": "$('#videoDim, #vdoLayer').hide();$('#videoLayer').get(0).pause();"
+    }
+  ],
+  "iframes": [],
+  "forms": [
+    {
+      "tag": "form",
+      "id": "fileForm",
+      "name": "fileForm",
+      "action": "",
+      "method": "post",
+      "class": ""
+    },
+    {
+      "tag": "form",
+      "id": "ebwiz",
+      "name": "",
+      "action": "https://ebwiz.i-scream.co.kr/wizard/exam/selectExamCondition.do",
+      "method": "post",
+      "class": ""
+    },
+    {
+      "tag": "form",
+      "id": "designationForm",
+      "name": "designationForm",
+      "action": "",
+      "method": "post",
+      "class": ""
+    },
+    {
+      "tag": "form",
+      "id": "smsForm",
+      "name": "",
+      "action": "",
+      "method": "post",
+      "class": ""
+    },
+    {
+      "tag": "form",
+      "id": "diyForm",
+      "name": "",
+      "action": "https://i-screamdiy.co.kr/_sync/set_login_api_icecream.php",
+      "method": "post",
+      "class": ""
+    },
+    {
+      "tag": "form",
+      "id": "apiForm",
+      "name": "apiForm",
+      "action": "",
+      "method": "post",
+      "class": ""
+    },
+    {
+      "tag": "form",
+      "id": "accountForm",
+      "name": "accountForm",
+      "action": "",
+      "method": "post",
+      "class": ""
+    },
+    {
+      "tag": "form",
+      "id": "mainSearchForm",
+      "name": "mainSearchForm",
+      "action": "",
+      "method": "post",
+      "class": ""
+    },
+    {
+      "tag": "form",
+      "id": "listForm",
+      "name": "",
+      "action": "/user/research/myclass/MySubjectEvaluationCheck.do",
+      "method": "post",
+      "class": ""
+    },
+    {
+      "tag": "form",
+      "id": "quizPlayForm",
+      "name": "quizPlayForm",
+      "action": "",
+      "method": "post",
+      "class": ""
+    }
+  ],
+  "child_frames": []
+}

@@ -1,0 +1,815 @@
+=== Textareas ===
+id=None, class=None, name=None, placeholder=None
+id=None, class=None, name=None, placeholder=None
+id=None, class=None, name=None, placeholder=None
+id=None, class=None, name=None, placeholder=None
+id=None, class=None, name=None, placeholder=None
+id=None, class=None, name=None, placeholder=None
+id=None, class=None, name=None, placeholder=None
+id=None, class=None, name=None, placeholder=None
+id=None, class=None, name=None, placeholder=None
+id=None, class=None, name=None, placeholder=None
+id=None, class=None, name=None, placeholder=None
+id=None, class=None, name=None, placeholder=None
+id=None, class=None, name=None, placeholder=None
+id=None, class=None, name=None, placeholder=None
+id=None, class=None, name=None, placeholder=None
+id=None, class=None, name=None, placeholder=None
+id=None, class=None, name=None, placeholder=None
+id=None, class=None, name=None, placeholder=None
+
+=== Inputs (text, hidden, password) ===
+type=hidden, id=common_code, class=None, name=common_code, value=None
+type=hidden, id=common_seq, class=None, name=common_seq, value=None
+type=hidden, id=common_realfile, class=None, name=common_realfile, value=None
+type=hidden, id=common_savefile, class=None, name=common_savefile, value=None
+type=hidden, id=common_filepath, class=None, name=common_filepath, value=None
+type=hidden, id=currentLocation, class=None, name=currentLocation, value=None
+type=hidden, id=None, class=None, name=m_id, value=lee2131
+type=hidden, id=None, class=None, name=grade, value=3
+type=hidden, id=None, class=None, name=icongrade, value=1
+type=hidden, id=None, class=None, name=level, value=1
+type=hidden, id=None, class=None, name=f_target_sys, value=_____SlIIllSTIIllIT_____
+type=hidden, id=designation_listNm, class=None, name=designation_listNm, value=None
+type=hidden, id=designation_no, class=None, name=designation_no, value=None
+type=hidden, id=None, class=None, name=memberId, value=lee2131
+type=hidden, id=m_id, class=None, name=m_id, value=lee2131
+type=hidden, id=move_page, class=None, name=move_page, value=None
+type=hidden, id=None, class=None, name=m_id, value=jamie1park
+type=hidden, id=None, class=None, name=certKey, value=JN
+type=hidden, id=None, class=None, name=moveLocation, value=TB
+type=checkbox, id=quickSwitch, class=['showHideSwitch'], name=None, value=None
+type=radio, id=None, class=None, name=radio, value=0
+type=radio, id=None, class=None, name=radio, value=1
+type=radio, id=None, class=None, name=radio, value=2
+type=radio, id=None, class=None, name=radio, value=3
+type=search, id=searchQuery, class=['placeholder'], name=searchQuery, value=
+type=checkbox, id=showAllNav, class=['showHideSwitch'], name=None, value=None
+type=hidden, id=division, class=None, name=division, value=
+type=hidden, id=deleteStudentSeq, class=None, name=None, value=None
+type=radio, id=searchGrade1, class=None, name=searchGrade, value=1
+type=radio, id=searchGrade2, class=None, name=searchGrade, value=2
+type=radio, id=searchGrade3, class=None, name=searchGrade, value=3
+type=radio, id=searchGrade4, class=None, name=searchGrade, value=4
+type=radio, id=searchGrade5, class=None, name=searchGrade, value=5
+type=radio, id=searchGrade6, class=None, name=searchGrade, value=6
+type=radio, id=searchTerm1, class=None, name=searchTerm, value=1
+type=radio, id=searchTerm2, class=None, name=searchTerm, value=2
+type=radio, id=searchSubject11, class=None, name=searchSubject, value=국어
+type=radio, id=searchSubject12, class=None, name=searchSubject, value=도덕
+type=radio, id=searchSubject13, class=None, name=searchSubject, value=사회
+type=radio, id=searchSubject14, class=None, name=searchSubject, value=수학
+type=radio, id=searchSubject15, class=None, name=searchSubject, value=과학
+type=radio, id=searchSubject16, class=None, name=searchSubject, value=체육
+type=radio, id=searchSubject17, class=None, name=searchSubject, value=음악
+type=radio, id=searchSubject18, class=None, name=searchSubject, value=미술
+type=radio, id=searchSubject19, class=None, name=searchSubject, value=영어
+type=radio, id=c11, class=None, name=chang1, value=자율활동
+type=radio, id=c12, class=None, name=chang1, value=동아리활동
+type=radio, id=c13, class=None, name=chang1, value=진로활동
+type=checkbox, id=c20, class=['cb-all'], name=chang2, value=0
+type=checkbox, id=c21, class=None, name=chang2, value=자치활동
+type=checkbox, id=c22, class=None, name=chang2, value=행사활동
+type=checkbox, id=c23, class=None, name=chang2, value=안전교육
+type=checkbox, id=c24, class=None, name=chang2, value=인권인성교육
+type=checkbox, id=c25, class=None, name=chang2, value=계기교육
+type=checkbox, id=a10, class=['cb-all'], name=act1, value=0
+type=checkbox, id=a11, class=None, name=act1, value=생활
+type=checkbox, id=a12, class=None, name=act1, value=인성
+type=checkbox, id=a13, class=None, name=act1, value=학습
+type=checkbox, id=a20, class=['cb-all'], name=act2, value=0
+type=checkbox, id=a21, class=None, name=act2, value=공동체 활동
+type=checkbox, id=a22, class=None, name=act2, value=규범과 갈등해소
+type=checkbox, id=a23, class=None, name=act2, value=나눔과 봉사
+type=checkbox, id=a24, class=None, name=act2, value=긍정성
+type=checkbox, id=a25, class=None, name=act2, value=자기관리
+type=checkbox, id=a26, class=None, name=act2, value=적극성
+type=checkbox, id=a27, class=None, name=act2, value=친화력
+type=checkbox, id=a28, class=None, name=act2, value=교과활동
+type=checkbox, id=a29, class=None, name=act2, value=독서와 논리
+type=checkbox, id=a210, class=None, name=act2, value=문제해결 능력
+type=checkbox, id=a211, class=None, name=act2, value=수업태도
+type=checkbox, id=a212, class=None, name=act2, value=학업흥미 및 성취
+type=hidden, id=studentInfo, class=None, name=studentInfo, value=false
+type=hidden, id=addedStudentInfo, class=None, name=addedStudentInfo, value=false
+type=hidden, id=deletedStudentInfo, class=None, name=deletedStudentInfo, value=false
+type=radio, id=exam-student4903748, class=['division-reset-trigger-changetype'], name=student, value=4903748
+type=radio, id=exam-student4903749, class=['division-reset-trigger-changetype'], name=student, value=4903749
+type=radio, id=exam-student4903750, class=['division-reset-trigger-changetype'], name=student, value=4903750
+type=radio, id=exam-student4903751, class=['division-reset-trigger-changetype'], name=student, value=4903751
+type=radio, id=exam-student4903752, class=['division-reset-trigger-changetype'], name=student, value=4903752
+type=radio, id=exam-student4903753, class=['division-reset-trigger-changetype'], name=student, value=4903753
+type=radio, id=exam-student4903754, class=['division-reset-trigger-changetype'], name=student, value=4903754
+type=radio, id=exam-student4903755, class=['division-reset-trigger-changetype'], name=student, value=4903755
+type=radio, id=exam-student4903756, class=['division-reset-trigger-changetype'], name=student, value=4903756
+type=radio, id=exam-student4903757, class=['division-reset-trigger-changetype'], name=student, value=4903757
+type=radio, id=exam-student4903758, class=['division-reset-trigger-changetype'], name=student, value=4903758
+type=radio, id=exam-student4903759, class=['division-reset-trigger-changetype'], name=student, value=4903759
+type=radio, id=exam-student4903760, class=['division-reset-trigger-changetype'], name=student, value=4903760
+type=radio, id=exam-student4903761, class=['division-reset-trigger-changetype'], name=student, value=4903761
+type=radio, id=exam-student4903762, class=['division-reset-trigger-changetype'], name=student, value=4903762
+type=radio, id=exam-student4903763, class=['division-reset-trigger-changetype'], name=student, value=4903763
+type=radio, id=exam-student4903764, class=['division-reset-trigger-changetype'], name=student, value=4903764
+type=radio, id=exam-student4903765, class=['division-reset-trigger-changetype'], name=student, value=4903765
+type=checkbox, id=student001, class=None, name=student, value=None
+type=hidden, id=None, class=['ipt-num'], name=classStudentSeq, value=4903748
+type=text, id=None, class=['ipt-num'], name=studentNumber, value=1
+type=text, id=None, class=['ipt-nm'], name=studentName, value=강시우
+type=checkbox, id=student001, class=None, name=student, value=None
+type=hidden, id=None, class=['ipt-num'], name=classStudentSeq, value=4903749
+type=text, id=None, class=['ipt-num'], name=studentNumber, value=2
+type=text, id=None, class=['ipt-nm'], name=studentName, value=김가을
+type=checkbox, id=student001, class=None, name=student, value=None
+type=hidden, id=None, class=['ipt-num'], name=classStudentSeq, value=4903750
+type=text, id=None, class=['ipt-num'], name=studentNumber, value=3
+type=text, id=None, class=['ipt-nm'], name=studentName, value=김동규
+type=checkbox, id=student001, class=None, name=student, value=None
+type=hidden, id=None, class=['ipt-num'], name=classStudentSeq, value=4903751
+type=text, id=None, class=['ipt-num'], name=studentNumber, value=4
+type=text, id=None, class=['ipt-nm'], name=studentName, value=김주안
+type=checkbox, id=student001, class=None, name=student, value=None
+type=hidden, id=None, class=['ipt-num'], name=classStudentSeq, value=4903752
+type=text, id=None, class=['ipt-num'], name=studentNumber, value=5
+type=text, id=None, class=['ipt-nm'], name=studentName, value=박민서
+type=checkbox, id=student001, class=None, name=student, value=None
+type=hidden, id=None, class=['ipt-num'], name=classStudentSeq, value=4903753
+type=text, id=None, class=['ipt-num'], name=studentNumber, value=6
+type=text, id=None, class=['ipt-nm'], name=studentName, value=박서우
+type=checkbox, id=student001, class=None, name=student, value=None
+type=hidden, id=None, class=['ipt-num'], name=classStudentSeq, value=4903754
+type=text, id=None, class=['ipt-num'], name=studentNumber, value=7
+type=text, id=None, class=['ipt-nm'], name=studentName, value=박현규
+type=checkbox, id=student001, class=None, name=student, value=None
+type=hidden, id=None, class=['ipt-num'], name=classStudentSeq, value=4903755
+type=text, id=None, class=['ipt-num'], name=studentNumber, value=8
+type=text, id=None, class=['ipt-nm'], name=studentName, value=백다온
+type=checkbox, id=student001, class=None, name=student, value=None
+type=hidden, id=None, class=['ipt-num'], name=classStudentSeq, value=4903756
+type=text, id=None, class=['ipt-num'], name=studentNumber, value=9
+type=text, id=None, class=['ipt-nm'], name=studentName, value=오지윤
+type=checkbox, id=student001, class=None, name=student, value=None
+type=hidden, id=None, class=['ipt-num'], name=classStudentSeq, value=4903757
+type=text, id=None, class=['ipt-num'], name=studentNumber, value=10
+type=text, id=None, class=['ipt-nm'], name=studentName, value=이서우
+type=checkbox, id=student001, class=None, name=student, value=None
+type=hidden, id=None, class=['ipt-num'], name=classStudentSeq, value=4903758
+type=text, id=None, class=['ipt-num'], name=studentNumber, value=11
+type=text, id=None, class=['ipt-nm'], name=studentName, value=이예나
+type=checkbox, id=student001, class=None, name=student, value=None
+type=hidden, id=None, class=['ipt-num'], name=classStudentSeq, value=4903759
+type=text, id=None, class=['ipt-num'], name=studentNumber, value=12
+type=text, id=None, class=['ipt-nm'], name=studentName, value=이윤슬
+type=checkbox, id=student001, class=None, name=student, value=None
+type=hidden, id=None, class=['ipt-num'], name=classStudentSeq, value=4903760
+type=text, id=None, class=['ipt-num'], name=studentNumber, value=13
+type=text, id=None, class=['ipt-nm'], name=studentName, value=정두영
+type=checkbox, id=student001, class=None, name=student, value=None
+type=hidden, id=None, class=['ipt-num'], name=classStudentSeq, value=4903761
+type=text, id=None, class=['ipt-num'], name=studentNumber, value=14
+type=text, id=None, class=['ipt-nm'], name=studentName, value=조주아
+type=checkbox, id=student001, class=None, name=student, value=None
+type=hidden, id=None, class=['ipt-num'], name=classStudentSeq, value=4903762
+type=text, id=None, class=['ipt-num'], name=studentNumber, value=15
+type=text, id=None, class=['ipt-nm'], name=studentName, value=천선율
+type=checkbox, id=student001, class=None, name=student, value=None
+type=hidden, id=None, class=['ipt-num'], name=classStudentSeq, value=4903763
+type=text, id=None, class=['ipt-num'], name=studentNumber, value=16
+type=text, id=None, class=['ipt-nm'], name=studentName, value=한예기
+type=checkbox, id=student001, class=None, name=student, value=None
+type=hidden, id=None, class=['ipt-num'], name=classStudentSeq, value=4903764
+type=text, id=None, class=['ipt-num'], name=studentNumber, value=17
+type=text, id=None, class=['ipt-nm'], name=studentName, value=황보검
+type=checkbox, id=student001, class=None, name=student, value=None
+type=hidden, id=None, class=['ipt-num'], name=classStudentSeq, value=4903765
+type=text, id=None, class=['ipt-num'], name=studentNumber, value=18
+type=text, id=None, class=['ipt-nm'], name=studentName, value=최윤채
+type=checkbox, id=studentInformationYn, class=None, name=studentInformationYn, value=None
+type=checkbox, id=studentAllCheck, class=None, name=studentAllCheck, value=None
+type=checkbox, id=ai-student1, class=[], name=student, value=4903748
+type=checkbox, id=ai-student2, class=[], name=student, value=4903749
+type=checkbox, id=ai-student3, class=[], name=student, value=4903750
+type=checkbox, id=ai-student4, class=[], name=student, value=4903751
+type=checkbox, id=ai-student5, class=[], name=student, value=4903752
+type=checkbox, id=ai-student6, class=[], name=student, value=4903753
+type=checkbox, id=ai-student7, class=[], name=student, value=4903754
+type=checkbox, id=ai-student8, class=[], name=student, value=4903755
+type=checkbox, id=ai-student9, class=[], name=student, value=4903756
+type=checkbox, id=ai-student10, class=[], name=student, value=4903757
+type=checkbox, id=ai-student11, class=[], name=student, value=4903758
+type=checkbox, id=ai-student12, class=[], name=student, value=4903759
+type=checkbox, id=ai-student13, class=[], name=student, value=4903760
+type=checkbox, id=ai-student14, class=[], name=student, value=4903761
+type=checkbox, id=ai-student15, class=[], name=student, value=4903762
+type=checkbox, id=ai-student16, class=[], name=student, value=4903763
+type=checkbox, id=ai-student17, class=[], name=student, value=4903764
+type=checkbox, id=ai-student18, class=[], name=student, value=4903765
+type=radio, id=rb-type-exam, class=['division-reset-trigger-changetype'], name=rb-type, value=type-exam
+type=radio, id=rb-type-ai, class=['division-reset-trigger-changetype'], name=rb-type, value=type-ai
+type=checkbox, id=theme1, class=None, name=theme, value=기본생활
+type=checkbox, id=theme2, class=None, name=theme, value=역할분담
+type=checkbox, id=theme3, class=None, name=theme, value=임원선거
+type=checkbox, id=theme4, class=None, name=theme, value=임원활동
+type=checkbox, id=theme5, class=None, name=theme, value=협의활동
+type=checkbox, id=theme6, class=None, name=theme, value=공통
+type=checkbox, id=theme7, class=None, name=theme, value=개학식
+type=checkbox, id=theme8, class=None, name=theme, value=방학식
+type=checkbox, id=theme9, class=None, name=theme, value=체육대회
+type=checkbox, id=theme10, class=None, name=theme, value=체험학습
+type=checkbox, id=theme11, class=None, name=theme, value=생활안전
+type=checkbox, id=theme12, class=None, name=theme, value=교통안전
+type=checkbox, id=theme13, class=None, name=theme, value=학교폭력
+type=checkbox, id=theme14, class=None, name=theme, value=성폭력예방
+type=checkbox, id=theme15, class=None, name=theme, value=아동학대
+type=checkbox, id=theme16, class=None, name=theme, value=가정폭력
+type=checkbox, id=theme17, class=None, name=theme, value=유괴미아예방
+type=checkbox, id=theme18, class=None, name=theme, value=약물사이버중독예방
+type=checkbox, id=theme19, class=None, name=theme, value=생존수영
+type=checkbox, id=theme20, class=None, name=theme, value=응급처치
+type=checkbox, id=theme21, class=None, name=theme, value=자연재난
+type=checkbox, id=theme22, class=None, name=theme, value=화재안전
+type=checkbox, id=theme23, class=None, name=theme, value=독서
+type=checkbox, id=theme24, class=None, name=theme, value=생명존중 자살예방
+type=checkbox, id=theme25, class=None, name=theme, value=양성평등
+type=checkbox, id=theme26, class=None, name=theme, value=인권
+type=checkbox, id=theme27, class=None, name=theme, value=인성
+type=checkbox, id=theme28, class=None, name=theme, value=장애인식개선
+type=checkbox, id=theme29, class=None, name=theme, value=경제금융
+type=checkbox, id=theme30, class=None, name=theme, value=다문화
+type=checkbox, id=theme31, class=None, name=theme, value=독도
+type=checkbox, id=theme32, class=None, name=theme, value=보건교육
+type=checkbox, id=theme33, class=None, name=theme, value=식생활
+type=checkbox, id=theme34, class=None, name=theme, value=통일
+type=checkbox, id=theme35, class=None, name=theme, value=환경
+type=checkbox, id=theme36, class=None, name=theme, value=단소부
+type=checkbox, id=theme37, class=None, name=theme, value=리코더부
+type=checkbox, id=theme38, class=None, name=theme, value=칼림바부
+type=checkbox, id=theme39, class=None, name=theme, value=악기부
+type=checkbox, id=theme40, class=None, name=theme, value=만화부
+type=checkbox, id=theme41, class=None, name=theme, value=미술부
+type=checkbox, id=theme42, class=None, name=theme, value=종이접기부
+type=checkbox, id=theme43, class=None, name=theme, value=영화감상부
+type=checkbox, id=theme44, class=None, name=theme, value=영화음악감상부
+type=checkbox, id=theme45, class=None, name=theme, value=교실놀이부
+type=checkbox, id=theme46, class=None, name=theme, value=댄스부
+type=checkbox, id=theme47, class=None, name=theme, value=보드게임부
+type=checkbox, id=theme48, class=None, name=theme, value=줄넘기부
+type=checkbox, id=theme49, class=None, name=theme, value=축구부
+type=checkbox, id=theme50, class=None, name=theme, value=피구부
+type=checkbox, id=theme51, class=None, name=theme, value=글쓰기부
+type=checkbox, id=theme52, class=None, name=theme, value=독서부
+type=checkbox, id=theme53, class=None, name=theme, value=한자부
+type=checkbox, id=theme54, class=None, name=theme, value=공통
+type=checkbox, id=theme55, class=None, name=theme, value=발표회
+type=checkbox, id=theme56, class=None, name=theme, value=자기이해
+type=checkbox, id=theme57, class=None, name=theme, value=진로계획
+type=checkbox, id=theme58, class=None, name=theme, value=진로체험
+type=checkbox, id=theme59, class=None, name=theme, value=직업탐색
+type=text, id=findText, class=None, name=findText, value=
+type=hidden, id=encClassSeq, class=None, name=None, value=7E47903DAACFC0C4BD2F8D935EF86DB1
+type=hidden, id=quizIdx, class=None, name=quizIdx, value=None
+type=hidden, id=teacherId, class=None, name=teacherId, value=lee2131
+
+=== Radio/Checkbox inputs ===
+id=quickSwitch, name=, value=None
+id=, name=radio, value=0
+id=, name=radio, value=1
+id=, name=radio, value=2
+id=, name=radio, value=3
+id=showAllNav, name=, value=None
+id=searchGrade1, name=searchGrade, value=1
+id=searchGrade2, name=searchGrade, value=2
+id=searchGrade3, name=searchGrade, value=3
+id=searchGrade4, name=searchGrade, value=4
+id=searchGrade5, name=searchGrade, value=5
+id=searchGrade6, name=searchGrade, value=6
+id=searchTerm1, name=searchTerm, value=1
+id=searchTerm2, name=searchTerm, value=2
+id=searchSubject11, name=searchSubject, value=국어
+id=searchSubject12, name=searchSubject, value=도덕
+id=searchSubject13, name=searchSubject, value=사회
+id=searchSubject14, name=searchSubject, value=수학
+id=searchSubject15, name=searchSubject, value=과학
+id=searchSubject16, name=searchSubject, value=체육
+id=searchSubject17, name=searchSubject, value=음악
+id=searchSubject18, name=searchSubject, value=미술
+id=searchSubject19, name=searchSubject, value=영어
+id=c11, name=chang1, value=자율활동
+id=c12, name=chang1, value=동아리활동
+id=c13, name=chang1, value=진로활동
+id=c20, name=chang2, value=0
+id=c21, name=chang2, value=자치활동
+id=c22, name=chang2, value=행사활동
+id=c23, name=chang2, value=안전교육
+id=c24, name=chang2, value=인권인성교육
+id=c25, name=chang2, value=계기교육
+id=a10, name=act1, value=0
+id=a11, name=act1, value=생활
+id=a12, name=act1, value=인성
+id=a13, name=act1, value=학습
+id=a20, name=act2, value=0
+id=a21, name=act2, value=공동체 활동
+id=a22, name=act2, value=규범과 갈등해소
+id=a23, name=act2, value=나눔과 봉사
+id=a24, name=act2, value=긍정성
+id=a25, name=act2, value=자기관리
+id=a26, name=act2, value=적극성
+id=a27, name=act2, value=친화력
+id=a28, name=act2, value=교과활동
+id=a29, name=act2, value=독서와 논리
+id=a210, name=act2, value=문제해결 능력
+id=a211, name=act2, value=수업태도
+id=a212, name=act2, value=학업흥미 및 성취
+id=exam-student4903748, name=student, value=4903748
+id=exam-student4903749, name=student, value=4903749
+id=exam-student4903750, name=student, value=4903750
+id=exam-student4903751, name=student, value=4903751
+id=exam-student4903752, name=student, value=4903752
+id=exam-student4903753, name=student, value=4903753
+id=exam-student4903754, name=student, value=4903754
+id=exam-student4903755, name=student, value=4903755
+id=exam-student4903756, name=student, value=4903756
+id=exam-student4903757, name=student, value=4903757
+id=exam-student4903758, name=student, value=4903758
+id=exam-student4903759, name=student, value=4903759
+id=exam-student4903760, name=student, value=4903760
+id=exam-student4903761, name=student, value=4903761
+id=exam-student4903762, name=student, value=4903762
+id=exam-student4903763, name=student, value=4903763
+id=exam-student4903764, name=student, value=4903764
+id=exam-student4903765, name=student, value=4903765
+id=student001, name=student, value=None
+id=student001, name=student, value=None
+id=student001, name=student, value=None
+id=student001, name=student, value=None
+id=student001, name=student, value=None
+id=student001, name=student, value=None
+id=student001, name=student, value=None
+id=student001, name=student, value=None
+id=student001, name=student, value=None
+id=student001, name=student, value=None
+id=student001, name=student, value=None
+id=student001, name=student, value=None
+id=student001, name=student, value=None
+id=student001, name=student, value=None
+id=student001, name=student, value=None
+id=student001, name=student, value=None
+id=student001, name=student, value=None
+id=student001, name=student, value=None
+id=studentInformationYn, name=studentInformationYn, value=None
+id=studentAllCheck, name=studentAllCheck, value=None
+id=ai-student1, name=student, value=4903748
+id=ai-student2, name=student, value=4903749
+id=ai-student3, name=student, value=4903750
+id=ai-student4, name=student, value=4903751
+id=ai-student5, name=student, value=4903752
+id=ai-student6, name=student, value=4903753
+id=ai-student7, name=student, value=4903754
+id=ai-student8, name=student, value=4903755
+id=ai-student9, name=student, value=4903756
+id=ai-student10, name=student, value=4903757
+id=ai-student11, name=student, value=4903758
+id=ai-student12, name=student, value=4903759
+id=ai-student13, name=student, value=4903760
+id=ai-student14, name=student, value=4903761
+id=ai-student15, name=student, value=4903762
+id=ai-student16, name=student, value=4903763
+id=ai-student17, name=student, value=4903764
+id=ai-student18, name=student, value=4903765
+id=rb-type-exam, name=rb-type, value=type-exam
+id=rb-type-ai, name=rb-type, value=type-ai
+id=theme1, name=theme, value=기본생활
+id=theme2, name=theme, value=역할분담
+id=theme3, name=theme, value=임원선거
+id=theme4, name=theme, value=임원활동
+id=theme5, name=theme, value=협의활동
+id=theme6, name=theme, value=공통
+id=theme7, name=theme, value=개학식
+id=theme8, name=theme, value=방학식
+id=theme9, name=theme, value=체육대회
+id=theme10, name=theme, value=체험학습
+id=theme11, name=theme, value=생활안전
+id=theme12, name=theme, value=교통안전
+id=theme13, name=theme, value=학교폭력
+id=theme14, name=theme, value=성폭력예방
+id=theme15, name=theme, value=아동학대
+id=theme16, name=theme, value=가정폭력
+id=theme17, name=theme, value=유괴미아예방
+id=theme18, name=theme, value=약물사이버중독예방
+id=theme19, name=theme, value=생존수영
+id=theme20, name=theme, value=응급처치
+id=theme21, name=theme, value=자연재난
+id=theme22, name=theme, value=화재안전
+id=theme23, name=theme, value=독서
+id=theme24, name=theme, value=생명존중 자살예방
+id=theme25, name=theme, value=양성평등
+id=theme26, name=theme, value=인권
+id=theme27, name=theme, value=인성
+id=theme28, name=theme, value=장애인식개선
+id=theme29, name=theme, value=경제금융
+id=theme30, name=theme, value=다문화
+id=theme31, name=theme, value=독도
+id=theme32, name=theme, value=보건교육
+id=theme33, name=theme, value=식생활
+id=theme34, name=theme, value=통일
+id=theme35, name=theme, value=환경
+id=theme36, name=theme, value=단소부
+id=theme37, name=theme, value=리코더부
+id=theme38, name=theme, value=칼림바부
+id=theme39, name=theme, value=악기부
+id=theme40, name=theme, value=만화부
+id=theme41, name=theme, value=미술부
+id=theme42, name=theme, value=종이접기부
+id=theme43, name=theme, value=영화감상부
+id=theme44, name=theme, value=영화음악감상부
+id=theme45, name=theme, value=교실놀이부
+id=theme46, name=theme, value=댄스부
+id=theme47, name=theme, value=보드게임부
+id=theme48, name=theme, value=줄넘기부
+id=theme49, name=theme, value=축구부
+id=theme50, name=theme, value=피구부
+id=theme51, name=theme, value=글쓰기부
+id=theme52, name=theme, value=독서부
+id=theme53, name=theme, value=한자부
+id=theme54, name=theme, value=공통
+id=theme55, name=theme, value=발표회
+id=theme56, name=theme, value=자기이해
+id=theme57, name=theme, value=진로계획
+id=theme58, name=theme, value=진로체험
+id=theme59, name=theme, value=직업탐색
+
+=== Buttons containing '저장' or '등록' ===
+tag=input, id=common_savefile, class=, text=, onclick=
+tag=a, id=, class=bbsbtn-a4 autosave-on, text=자동 저장 ON, onclick=fnAutoSaveClick('off')
+tag=a, id=, class=bbsbtn-a3 show-balloon autosave-off, text=자동 저장 OFF, onclick=fnAutoSaveClick('on')
+tag=button, id=classStudentSaveBtn, class=show-balloon, text=저장, onclick=classEditSave();
+tag=button, id=btn-result-edit-save, class=bbsbtn-a5, text=저장, onclick=fnfooterSave()
+tag=button, id=btn-result-edit-save, class=bbsbtn-a5, text=나이스 자동 입력, onclick=fnStudentRecordEditor()
+
+=== Links/buttons containing subject names (국어, 수학, 등) ===
+tag=li, id=, name=, text=수학 게임, onclick=
+tag=a, id=, name=, text=수학 게임, onclick=
+tag=li, id=, name=, text=음악 감상실, onclick=
+tag=a, id=, name=, text=음악 감상실, onclick=
+tag=li, id=, name=, text=음악 시간, onclick=
+tag=a, id=, name=, text=음악 시간, onclick=
+tag=li, id=, name=, text=미술 시간, onclick=
+tag=a, id=, name=, text=미술 시간, onclick=
+tag=li, id=, name=, text=과학 시간, onclick=
+tag=a, id=, name=, text=과학 시간, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=li, id=, name=, text=국어, onclick=
+tag=li, id=, name=, text=도덕, onclick=
+tag=li, id=, name=, text=사회, onclick=
+tag=li, id=, name=, text=수학, onclick=
+tag=li, id=, name=, text=과학, onclick=
+tag=li, id=, name=, text=체육, onclick=
+tag=li, id=, name=, text=음악, onclick=
+tag=li, id=, name=, text=미술, onclick=
+tag=li, id=, name=, text=영어, onclick=
+tag=button, id=, name=, text=교과학습발달상황V(기본순), onclick=fnOrder(this)
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=span, id=, name=, text=국어, onclick=
+tag=li, id=, name=, text=체육대회, onclick=
+tag=li, id=, name=, text=미술부, onclick=
+tag=li, id=, name=, text=영화음악감상부, onclick=
+
+=== Elements containing student names ===
+tag=input, id=deleteStudentSeq, class=, text=
+tag=div, id=, class=student-edit, text=18
+명
+편집
+저장
+
+
+
+										이름을 입력한 학생만 저장됩니다.
+									
+
+취소
+tag=button, id=classStudentEditBtn, class=, text=편집
+tag=button, id=classStudentSaveBtn, class=show-balloon, text=저장
+tag=button, id=classStudentCancelBtn, class=, text=취소
+tag=input, id=studentInfo, class=, text=
+tag=input, id=addedStudentInfo, class=, text=
+tag=input, id=deletedStudentInfo, class=, text=
+tag=input, id=exam-student4903748, class=division-reset-trigger-changetype, text=
+tag=input, id=exam-student4903749, class=division-reset-trigger-changetype, text=
+tag=input, id=exam-student4903750, class=division-reset-trigger-changetype, text=
+tag=input, id=exam-student4903751, class=division-reset-trigger-changetype, text=
+tag=input, id=exam-student4903752, class=division-reset-trigger-changetype, text=
+tag=input, id=exam-student4903753, class=division-reset-trigger-changetype, text=
+tag=input, id=exam-student4903754, class=division-reset-trigger-changetype, text=
+tag=input, id=exam-student4903755, class=division-reset-trigger-changetype, text=
+tag=input, id=exam-student4903756, class=division-reset-trigger-changetype, text=
+tag=input, id=exam-student4903757, class=division-reset-trigger-changetype, text=
+tag=input, id=exam-student4903758, class=division-reset-trigger-changetype, text=
+tag=input, id=exam-student4903759, class=division-reset-trigger-changetype, text=
+tag=input, id=exam-student4903760, class=division-reset-trigger-changetype, text=
+tag=input, id=exam-student4903761, class=division-reset-trigger-changetype, text=
+tag=input, id=exam-student4903762, class=division-reset-trigger-changetype, text=
+tag=input, id=exam-student4903763, class=division-reset-trigger-changetype, text=
+tag=input, id=exam-student4903764, class=division-reset-trigger-changetype, text=
+tag=input, id=exam-student4903765, class=division-reset-trigger-changetype, text=
+tag=input, id=student001, class=, text=
+tag=input, id=student001, class=, text=
+tag=input, id=student001, class=, text=
+tag=input, id=student001, class=, text=
+tag=input, id=student001, class=, text=
+tag=input, id=student001, class=, text=
+tag=input, id=student001, class=, text=
+tag=input, id=student001, class=, text=
+tag=input, id=student001, class=, text=
+tag=input, id=student001, class=, text=
+tag=input, id=student001, class=, text=
+tag=input, id=student001, class=, text=
+tag=input, id=student001, class=, text=
+tag=input, id=student001, class=, text=
+tag=input, id=student001, class=, text=
+tag=input, id=student001, class=, text=
+tag=input, id=student001, class=, text=
+tag=input, id=student001, class=, text=
+tag=div, id=addStudentBtn, class=btn-area, text=학생 추가하기 
+								
+?
+
+
+
+											이름 등 입력칸을 클릭하고Enter키를 눌러보세요.
+										
+
+
+
+
+ 학생 정보 제공 동의
+
+
+자세히 보기
+tag=input, id=studentInformationYn, class=, text=
+tag=input, id=studentAllCheck, class=, text=
+tag=input, id=ai-student1, class=, text=
+tag=input, id=ai-student2, class=, text=
+tag=input, id=ai-student3, class=, text=
+tag=input, id=ai-student4, class=, text=
+tag=input, id=ai-student5, class=, text=
+tag=input, id=ai-student6, class=, text=
+tag=input, id=ai-student7, class=, text=
+tag=input, id=ai-student8, class=, text=
+tag=input, id=ai-student9, class=, text=
+tag=input, id=ai-student10, class=, text=
+tag=input, id=ai-student11, class=, text=
+tag=input, id=ai-student12, class=, text=
+tag=input, id=ai-student13, class=, text=
+tag=input, id=ai-student14, class=, text=
+tag=input, id=ai-student15, class=, text=
+tag=input, id=ai-student16, class=, text=
+tag=input, id=ai-student17, class=, text=
+tag=input, id=ai-student18, class=, text=
+tag=tbody, id=, class=studentEvaluationTbody exam, text=
+tag=tbody, id=, class=studentEvaluationTbody ai, text=
+tag=button, id=prevStudentLayer, class=bbsbtn-a3 division-reset-trigger-btn prevStudentLayer, text=이전학생
+tag=button, id=nextStudentLayer, class=bbsbtn-a3 division-reset-trigger-btn nextStudentLayer, text=다음학생
+tag=tbody, id=, class=studentEvaluationTbody exam, text=
+tag=tbody, id=, class=studentEvaluationTbody ai, text=
+tag=button, id=prevStudentLayer, class=bbsbtn-a3 division-reset-trigger-btn prevStudentLayer, text=이전학생
+tag=button, id=nextStudentLayer, class=bbsbtn-a3 division-reset-trigger-btn nextStudentLayer, text=다음학생
+tag=tbody, id=, class=studentEvaluationTbody ai, text=
+tag=button, id=prevStudentLayer, class=bbsbtn-a3 division-reset-trigger-btn prevStudentLayer, text=이전학생
+tag=button, id=nextStudentLayer, class=bbsbtn-a3 division-reset-trigger-btn nextStudentLayer, text=다음학생

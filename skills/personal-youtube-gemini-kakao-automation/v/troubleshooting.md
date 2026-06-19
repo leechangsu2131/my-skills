@@ -395,6 +395,20 @@ python main.py
 
 ---
 
+### 증상: 긴 자막 스크립트가 잘려서 앞부분만 복사/요약됨 (2026-06-17)
+
+**원인**
+
+- 수집된 자막 텍스트는 40,000자 이상으로 길었으나, `main.py`에서 `text[: settings.gemini_input_max_chars]`로 프롬프트에 들어갈 자막 길이를 제한함.
+- `.env`에 설정된 `GEMINI_INPUT_MAX_CHARS`의 기본값이 `8000`으로 작게 세팅되어 있어, 스크립트 앞부분(약 8000자)만 복사되고 뒷부분은 누락됨.
+
+**해결**
+
+- `.env` 파일의 `GEMINI_INPUT_MAX_CHARS` 값을 `150000`(15만 자)으로 크게 늘려, 긴 영상의 자막도 잘림 없이 전체 스크립트가 Gemini에 정상적으로 입력되도록 수정함.
+- Playwright의 JS 에디터 직접 입력 기능(`_fill_prompt_text` 내 `editor.textContent = value`)이 10만 자 이상의 대량 텍스트도 버벅임 없이 즉시 붙여넣도록 이미 구현되어 있어, 입력 한도를 늘리는 것만으로 즉시 해결됨.
+
+---
+
 ## 전송 채널 (Discord / Kakao)
 
 ### Kakao: `401 this access token does not exist`
@@ -574,7 +588,7 @@ Get-Content .\run.log -Tail 25
 | `HEADLESS` | `false`(디버그) / `true`(스케줄) |
 | `TRANSCRIPT_MAX_TRIES` | 자막 재시도 (기본 10) |
 | `TRANSCRIPT_RETRY_INTERVAL_SEC` | 180 (3분) |
-| `GEMINI_INPUT_MAX_CHARS` | 8000 |
+| `GEMINI_INPUT_MAX_CHARS` | 150000 (기본 8000에서 상향) |
 | `RESPONSE_TIMEOUT_MS` | 120000 |
 | `YT_NO_CHECK_CERTIFICATES` | yt-dlp SSL 우회 |
 | `DISABLE_SSL_VERIFY` | requests SSL 우회 |
@@ -647,6 +661,7 @@ Get-Content .\run.log -Tail 25
 | 2026-06-10 | Gemini 전송/응답 보강: 새 채팅, 클립보드·insert_text, 응답 감지 다중 조건, 전송 재시도 |
 | 2026-06-11 | `Gemini response was empty` (스케줄러) 기록 — DOM fallback·알림 추가 검토 예정 |
 | 2026-06-12 | 인코딩 깨짐으로 인한 검증 오류 우회(`.env` 수정), 백그라운드 DOM 추출 오류 방지(`HEADLESS=true`), 스크린샷 디버깅 기능 추가 |
+| 2026-06-17 | 긴 자막 스크립트가 잘려 일부만 요약되는 문제 수정 (`GEMINI_INPUT_MAX_CHARS=150000` 상향) |
 
 ---
 

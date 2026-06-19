@@ -621,7 +621,8 @@ def extract_unit_number(unit_text: str) -> Optional[int]:
     """
     if not unit_text:
         return None
-    match = re.match(r'^([1-6])\b', unit_text)
+    text = unit_text.strip()
+    match = re.match(r'^([1-9])(?:\D|$)', text)
     if match:
         return int(match.group(1))
     return None
@@ -695,6 +696,202 @@ def determine_target_units(student_name: str, subject: str, records: list[dict])
     return target_units
 
 
+def _level_fallback_order(level: str) -> list[str]:
+    """i-scream 수준을 기준으로 같은 수준 우선, 인접 수준 순서로 탐색합니다."""
+    if level == "최상":
+        return ["최상", "상", "중", "하"]
+    if level == "상":
+        return ["상", "최상", "중", "하"]
+    if level == "하":
+        return ["하", "중", "상", "최상"]
+    return ["중", "상", "하", "최상"]
+
+
+def _is_free_count(text: str) -> bool:
+    """평가기준 사용 인원이 0명인 행만 자동 선택 대상으로 봅니다."""
+    normalized = (text or "").replace(" ", "")
+    return normalized in ("0명", "0")
+
+
+def _get_grade_targets(
+    grade_data: dict | None,
+    student_name: str,
+    subject: str,
+) -> list[dict]:
+    """
+    data/*.md 단계배정표에서 학생-과목별 단원 수준을 가져옵니다.
+    최대 2개 단원을 선택하며, 미응시 등 i-scream 수준이 없는 항목은 제외합니다.
+    """
+    if not grade_data:
+        return []
+    try:
+        import grade_data_parser
+
+        units = grade_data_parser.get_student_grade_for_subject(
+            grade_data, student_name, subject
+        )
+    except Exception as e:
+        print(f"   -> [경고] 단계배정표 조회 실패: {e}")
+        return []
+
+    targets = []
+    seen_units = set()
+    for unit in units:
+        unit_num = unit.get("unit_num")
+        level = unit.get("iscream_level")
+        if unit_num is None or not level:
+            continue
+        if unit_num in seen_units:
+            continue
+        seen_units.add(unit_num)
+        targets.append({
+            "unit_num": unit_num,
+            "unit_label": unit.get("unit_label") or f"{unit_num}단원",
+            "level": level,
+            "raw_level": unit.get("raw_level") or "",
+        })
+        if len(targets) >= 2:
+            break
+    return targets
+
+
+async def _ensure_ai_generation_mode(page: Page) -> bool:
+    """생성 유형을 AI생성형으로 전환합니다. 예시문 선택형 자체는 건드리지 않습니다."""
+    for frame in [page] + page.frames:
+        try:
+            radio = frame.locator("input#rb-type-ai").first
+            if await radio.count() == 0:
+                continue
+            if await radio.is_checked():
+                try:
+                    await frame.evaluate(
+                        "() => { if (typeof fnSearchAiSubjectList === 'function') fnSearchAiSubjectList(); }"
+                    )
+                    await page.wait_for_timeout(1000)
+                    print("   -> AI생성형 단원표를 현재 과목 기준으로 새로고침했습니다.")
+                except Exception:
+                    pass
+                return True
+            print("   -> 생성 유형을 AI생성형으로 전환합니다.")
+            await radio.evaluate("el => el.click()")
+            await radio.evaluate(
+                "el => el.dispatchEvent(new Event('change', { bubbles: true }))"
+            )
+            try:
+                await frame.evaluate(
+                    "() => { if (typeof fnSearchAiSubjectList === 'function') fnSearchAiSubjectList(); }"
+                )
+            except Exception:
+                pass
+            await page.wait_for_timeout(1000)
+            return True
+        except Exception:
+            continue
+    print("   -> [경고] AI생성형 라디오(#rb-type-ai)를 찾지 못했습니다.")
+    return False
+
+
+def _iscream_level_to_ai_lv(level: str) -> str | None:
+    """i-scream 수준명을 AI생성형 단원표 버튼 data-lv 값으로 바꿉니다."""
+    return {
+        "최상": "1",
+        "상": "2",
+        "중": "3",
+        "하": "4",
+    }.get(level)
+
+
+async def _select_ai_unit_levels(page: Page, grade_targets: list[dict]) -> int:
+    """
+    AI생성형 단원표에서 단계배정표 기준으로 최대 2개 단원의 성취수준을 클릭합니다.
+    표 구조: tr#ai-tr* > 단원명 td + data-lv 1(최상), 2(상), 3(중), 4(하) 버튼.
+    """
+    if not grade_targets:
+        return 0
+
+    target_frame = None
+    for frame in [page] + page.frames:
+        try:
+            if await frame.locator("tr[id^='ai-tr'] button[data-lv]").count() > 0:
+                target_frame = frame
+                break
+        except Exception:
+            continue
+
+    if target_frame is None:
+        print("   -> [경고] AI생성형 단원표(tr#ai-tr*)를 찾지 못했습니다.")
+        return 0
+
+    clicked = 0
+    for target in grade_targets[:2]:
+        unit_num = target.get("unit_num")
+        level = target.get("level")
+        data_lv = _iscream_level_to_ai_lv(level)
+        if unit_num is None or not data_lv:
+            continue
+
+        rows = await target_frame.locator("tr[id^='ai-tr']").all()
+        matched = False
+        for row in rows:
+            unit_text = await row.locator("td").first.inner_text()
+            if extract_unit_number(unit_text) != unit_num:
+                continue
+
+            btn = row.locator(f'button[data-lv="{data_lv}"]').first
+            if await btn.count() == 0:
+                break
+
+            print(
+                f"   -> [AI생성형] {target.get('unit_label')} "
+                f"{target.get('raw_level')}({level}) 성취수준 클릭"
+            )
+            await btn.evaluate("el => el.click()")
+            await btn.evaluate(
+                "el => el.dispatchEvent(new Event('change', { bubbles: true }))"
+            )
+            await page.wait_for_timeout(500)
+            clicked += 1
+            matched = True
+            break
+
+        if not matched:
+            print(
+                f"   -> [경고] AI생성형 단원표에서 {target.get('unit_label')} "
+                f"{target.get('raw_level')}({level}) 버튼을 찾지 못했습니다."
+            )
+
+    return clicked
+
+
+async def _click_ai_generate_button(page: Page) -> bool:
+    """AI생성형 선택 후 AI평어 생성 버튼을 누릅니다."""
+    selectors = [
+        "span#aiCreateBtn",
+        ".btns-right.type-ai a",
+        "a:has-text('AI평어 생성')",
+        "button:has-text('AI평어 생성')",
+    ]
+    for frame in [page] + page.frames:
+        for selector in selectors:
+            try:
+                loc = frame.locator(selector).first
+                if await loc.count() == 0:
+                    continue
+                if not await loc.is_visible():
+                    continue
+                print("   -> AI평어 생성 버튼을 클릭합니다.")
+                if selector == "span#aiCreateBtn":
+                    await loc.evaluate("el => el.closest('a,button')?.click()")
+                else:
+                    await loc.evaluate("el => el.click()")
+                await page.wait_for_timeout(3000)
+                return True
+            except Exception:
+                continue
+    print("   -> [경고] AI평어 생성 버튼을 찾지 못했습니다.")
+    return False
+
+
 def is_raw_log_text(text: str) -> bool:
     """
     입력된 텍스트가 Supabase 날짜별 원본 기록(글머리기호 포함) 형태인지 검증합니다.
@@ -709,12 +906,22 @@ def is_raw_log_text(text: str) -> bool:
     return False
 
 
-async def fill_evaluation(page: Page, student_name: str, subject: str, eval_text: str = "") -> bool:
+async def fill_evaluation(page: Page, student_name: str, subject: str, eval_text: str = "", grade_data: dict = None) -> bool:
     """
     해당 학생의 체크박스를 단독 선택하고, 학생 수준에 맞춰 free(0명) 상태인 평가기준 2개를 선택한 후,
     필요시 커스텀 평가문을 입력하여 저장 가능한 상태로 편집합니다.
     """
     print(f"   [평가 입력] 학생: {student_name} | 과목: {subject} | 원문 글자수: {len(eval_text)}자")
+
+    # target_frame 감지 (성취기준 테이블이 있는 프레임)
+    target_frame = page
+    for frame in [page] + page.frames:
+        try:
+            if await frame.locator("tr[class^='exam-tr']").count() > 0:
+                target_frame = frame
+                break
+        except Exception:
+            continue
 
     try:
         # 1) 편집 모드 활성화 확인
@@ -760,7 +967,7 @@ async def fill_evaluation(page: Page, student_name: str, subject: str, eval_text
         # 내부 Lodash 탐색 중 TypeError 크래시가 발생하는 사이트 자체 버그가 있습니다.
         # 따라서 현재 화면에 표시된 하이라이트(선택)된 성취기준들을 수동 클릭하여 안전하게 토글 해제합니다.
         print("   -> 기존에 선택된 항목이 있는지 검사하고 해제(토글)합니다...")
-        all_exam_rows = await page.locator("tr[class^='exam-tr']").all()
+        all_exam_rows = await target_frame.locator("tr[class^='exam-tr']").all()
         visible_rows = [r for r in all_exam_rows if await r.is_visible()]
         highlighted_rows = [r for r in visible_rows if "highlight" in (await r.get_attribute("class") or "")]
         
@@ -784,28 +991,39 @@ async def fill_evaluation(page: Page, student_name: str, subject: str, eval_text
         await page.wait_for_timeout(300)
 
         # 5) 학생 수준 계산 및 성취평가기준 자동 선택
-        import supabase_fetch
-        records = supabase_fetch.fetch_all_records()
-        
-        level = calculate_student_level(student_name, subject, records)
-        print(f"   -> 계산된 학생 수준: {level}")
-        
-        target_units = determine_target_units(student_name, subject, records)
-        print(f"   -> 추출된 관련 단원 우선순위: {target_units}")
-        
-        # 수준별 탐색 및 대체 우선순위 정의
-        if level == "최상":
-            fallback_levels = ["최상", "상", "중", "하"]
-        elif level == "상":
-            fallback_levels = ["상", "최상", "중", "하"]
-        elif level == "하":
-            fallback_levels = ["하", "중", "상", "최상"]
-        else: # "중"
-            fallback_levels = ["중", "상", "하", "최상"]
+        grade_targets = _get_grade_targets(grade_data, student_name, subject)
+        if grade_targets:
+            target_units = [t["unit_num"] for t in grade_targets]
+            print(
+                "   -> 단계배정표 기반 자동 선택 대상: "
+                + ", ".join(
+                    f"{t['unit_label']}={t['raw_level']}({t['level']})"
+                    for t in grade_targets
+                )
+            )
+        else:
+            import supabase_fetch
+            records = supabase_fetch.fetch_all_records()
+            level = calculate_student_level(student_name, subject, records)
+            target_units = determine_target_units(student_name, subject, records)
+            grade_targets = [
+                {"unit_num": unit_num, "unit_label": f"{unit_num}단원", "level": level, "raw_level": level}
+                for unit_num in target_units[:2]
+            ]
+            print(f"   -> 계산된 학생 수준: {level}")
+            print(f"   -> 추출된 관련 단원 우선순위: {target_units}")
+
+        if grade_targets and await _ensure_ai_generation_mode(page):
+            ai_clicked = await _select_ai_unit_levels(page, grade_targets)
+            if ai_clicked > 0:
+                print(f"   -> AI생성형 성취수준 자동 클릭 완료: {ai_clicked}/2개")
+                await _click_ai_generate_button(page)
+                return True
+            print("   -> AI생성형 단원표 클릭이 되지 않아 기존 예시문 선택 방식으로 폴백합니다.")
 
         # 우측 평가기준 테이블 행(tr) 탐색 (현재 화면에 보이는 행만 필터링)
         # :visible 가상 클래스를 사용하여 화면에 보이는 행만 빠르게 가져옵니다.
-        exam_rows = await page.locator("tr[class^='exam-tr']:visible").all()
+        exam_rows = await target_frame.locator("tr[class^='exam-tr']:visible").all()
         
         # 이미 이 학생에게 선택된(highlight) 개수 체크 및 단원 추적
         selected_units = set()
@@ -829,106 +1047,107 @@ async def fill_evaluation(page: Page, student_name: str, subject: str, eval_text
         clicked_count = highlighted_count
         print(f"   -> 현재 기선택된 평가기준 개수(화면 표시): {clicked_count}개, 단원: {selected_units}")
 
-        # 성취기준 클릭 진행 (1단계: 관련 단원 우선 매칭 -> 2단계: 전체 단원 폴백 매칭)
-        for cur_level in fallback_levels:
+        async def _read_exam_row(row):
+            return await row.evaluate("""el => {
+                const tds = el.querySelectorAll('td');
+                return {
+                    len: tds.length,
+                    unit: tds.length >= 4 ? tds[0].innerText.trim() : '',
+                    level: tds.length >= 4 ? tds[1].innerText.trim() : '',
+                    count: tds.length >= 4 ? tds[3].innerText.trim() : '',
+                    className: el.className
+                };
+            }""")
+
+        async def _click_exam_row(row, row_data, match_kind):
+            nonlocal clicked_count
+            row_unit = row_data["unit"]
+            row_level = row_data["level"]
+            unit_key = get_unit_key(row_unit)
+
+            if unit_key in selected_units:
+                print(f"      -> [{match_kind} 건너뜀] 이미 단원 '{row_unit}'에서 선택되었습니다.")
+                return False
+
+            btn = row.locator("button.al").first
+            if await btn.count() == 0:
+                return False
+
+            btn_text = await btn.inner_text()
+            print(
+                f"   -> [{match_kind}] 평가기준 자동 클릭 ({clicked_count + 1}/2) "
+                f"| 단원: {row_unit} | 수준: [{row_level}] | 내용: '{btn_text[:40]}...'"
+            )
+            await btn.evaluate("el => el.click()")
+            await btn.evaluate("el => { el.dispatchEvent(new Event('change', { bubbles: true })); }")
+            await page.wait_for_timeout(1000)
+            clicked_count += 1
+            if unit_key:
+                selected_units.add(unit_key)
+            return True
+
+        # 1단계: data/*.md 배정표에 있는 단원 번호와 수준을 우선 정확히 매칭합니다.
+        print("   -> [1단계] 단계배정표의 단원별 수준을 기준으로 평가기준을 찾습니다.")
+        for target in grade_targets:
             if clicked_count >= 2:
                 break
-                
-            print(f"   -> 수준 '{cur_level}'의 '0명' 평가기준 탐색 중...")
-            
-            # --- [1단계: 관련 단원 매칭] ---
-            if target_units:
-                print(f"      -> [1단계] 관련 단원({target_units}) 내에서 우선 탐색...")
-                for target_u in target_units:
-                    if clicked_count >= 2:
-                        break
-                    for row in exam_rows:
-                        if clicked_count >= 2:
-                            break
-                            
-                        # inner_text를 한 번의 JS 평가로 가져와서 속도를 최적화
-                        row_data = await row.evaluate("""el => {
-                            const tds = el.querySelectorAll('td');
-                            return {
-                                len: tds.length,
-                                unit: tds.length >= 4 ? tds[0].innerText.trim() : '',
-                                level: tds.length >= 4 ? tds[1].innerText.trim() : '',
-                                count: tds.length >= 4 ? tds[3].innerText.trim() : '',
-                                className: el.className
-                            };
-                        }""")
-                        
-                        if row_data['len'] >= 4:
-                            row_unit = row_data['unit']
-                            row_level = row_data['level']
-                            row_count = row_data['count']
-                            tr_class = row_data['className']
-                            
-                            row_u_num = extract_unit_number(row_unit)
-                            unit_key = get_unit_key(row_unit)
-                            
-                            # 관련 단원이고 수준/0명 조건이 맞는 경우
-                            if row_u_num == target_u and row_level == cur_level and row_count == "0명" and "highlight" not in tr_class:
-                                # 서로 다른 단원 체크
-                                if unit_key in selected_units:
-                                    print(f"      -> [단원매칭 건너뜀] 이미 단원 '{row_unit}'에서 선택되었습니다.")
-                                    continue
-                                    
-                                btn = row.locator("button.al").first
-                                if await btn.count() > 0:
-                                    btn_text = await btn.inner_text()
-                                    print(f"   -> [단원매칭] 평가기준 자동 클릭 ({clicked_count+1}/2) | 단원: {row_unit} | 수준: [{row_level}] | 내용: '{btn_text[:40]}...'")
-                                    await btn.evaluate("el => el.click()")
-                                    await btn.evaluate("el => { el.dispatchEvent(new Event('change', { bubbles: true })); }")
-                                    await page.wait_for_timeout(1000)
-                                    clicked_count += 1
-                                    if unit_key:
-                                        selected_units.add(unit_key)
 
-            # --- [2단계: 전체 단원 폴백 매칭] ---
-            if clicked_count < 2:
-                print("      -> [2단계] 관련 단원 외의 전체 영역에서 폴백 탐색...")
+            target_unit = target["unit_num"]
+            print(
+                f"      -> 대상 단원: {target['unit_label']} | "
+                f"배정 수준: {target['raw_level']}({target['level']})"
+            )
+            for cur_level in _level_fallback_order(target["level"]):
+                if clicked_count >= 2:
+                    break
                 for row in exam_rows:
                     if clicked_count >= 2:
                         break
-                        
-                    row_data = await row.evaluate("""el => {
-                        const tds = el.querySelectorAll('td');
-                        return {
-                            len: tds.length,
-                            unit: tds.length >= 4 ? tds[0].innerText.trim() : '',
-                            level: tds.length >= 4 ? tds[1].innerText.trim() : '',
-                            count: tds.length >= 4 ? tds[3].innerText.trim() : '',
-                            className: el.className
-                        };
-                    }""")
-                    
-                    if row_data['len'] >= 4:
-                        row_unit = row_data['unit']
-                        row_level = row_data['level']
-                        row_count = row_data['count']
-                        tr_class = row_data['className']
-                        
-                        unit_key = get_unit_key(row_unit)
-                        
-                        # 수준/0명 조건이 맞는 경우 (단원 무관)
-                        if row_level == cur_level and row_count == "0명" and "highlight" not in tr_class:
-                            # 서로 다른 단원 체크
-                            if unit_key in selected_units:
-                                print(f"      -> [폴백매칭 건너뜀] 이미 단원 '{row_unit}'에서 선택되었습니다.")
-                                continue
-                                
-                            btn = row.locator("button.al").first
-                            if await btn.count() > 0:
-                                btn_text = await btn.inner_text()
-                                print(f"   -> [폴백매칭] 평가기준 자동 클릭 ({clicked_count+1}/2) | 단원: {row_unit} | 수준: [{row_level}] | 내용: '{btn_text[:40]}...'")
-                                await btn.evaluate("el => el.click()")
-                                await btn.evaluate("el => { el.dispatchEvent(new Event('change', { bubbles: true })); }")
-                                await page.wait_for_timeout(1000)
-                                clicked_count += 1
-                                if unit_key:
-                                    selected_units.add(unit_key)
-                                
+
+                    row_data = await _read_exam_row(row)
+                    if row_data["len"] < 4:
+                        continue
+
+                    row_unit_num = extract_unit_number(row_data["unit"])
+                    if (
+                        row_unit_num == target_unit
+                        and row_data["level"] == cur_level
+                        and _is_free_count(row_data["count"])
+                        and "highlight" not in row_data["className"]
+                    ):
+                        if await _click_exam_row(row, row_data, "배정표매칭"):
+                            break
+
+        # 2단계: 지정 단원에서 못 찾은 경우, 같은 수준 계열로 다른 단원까지 보완합니다.
+        if clicked_count < 2:
+            fallback_levels = []
+            for target in grade_targets:
+                for level_name in _level_fallback_order(target["level"]):
+                    if level_name not in fallback_levels:
+                        fallback_levels.append(level_name)
+            if not fallback_levels:
+                fallback_levels = ["상", "최상", "중", "하"]
+
+            print("   -> [2단계] 부족한 선택 개수를 전체 단원에서 보완 탐색합니다.")
+            for cur_level in fallback_levels:
+                if clicked_count >= 2:
+                    break
+                print(f"      -> 수준 '{cur_level}'의 0명 평가기준 탐색 중...")
+                for row in exam_rows:
+                    if clicked_count >= 2:
+                        break
+
+                    row_data = await _read_exam_row(row)
+                    if row_data["len"] < 4:
+                        continue
+
+                    if (
+                        row_data["level"] == cur_level
+                        and _is_free_count(row_data["count"])
+                        and "highlight" not in row_data["className"]
+                    ):
+                        await _click_exam_row(row, row_data, "보완매칭")
+
         print(f"   -> 평가기준 선택 동작 완료 (총 선택된 개수: {clicked_count}/2)")
 
         # 6) 커스텀 평가문 입력 처리
@@ -1017,6 +1236,7 @@ async def process_single(
     subject: str,
     eval_text: str,
     dry_run: bool = False,
+    grade_data: dict = None,
 ) -> dict:
     """
     한 명의 학생 + 한 과목에 대한 전체 평가 입력 흐름을 실행합니다.
@@ -1031,6 +1251,7 @@ async def process_single(
         subject: 과목명
         eval_text: 평가 내용 텍스트
         dry_run: True이면 저장 생략
+        grade_data: 단계배정표 데이터 딕셔너리
 
     Returns:
         결과 딕셔너리 {'student', 'subject', 'status', 'fail_reason', 'processed_at'}
@@ -1064,7 +1285,7 @@ async def process_single(
             return result
 
         # 3단계: 평가 내용 입력
-        if not await fill_evaluation(page, student_name, subject, eval_text):
+        if not await fill_evaluation(page, student_name, subject, eval_text, grade_data=grade_data):
             result['status'] = '실패'
             result['fail_reason'] = '평가 내용 입력 실패'
             return result
@@ -1094,6 +1315,7 @@ async def process_batch(
     port: int = 9222,
     dry_run: bool = False,
     preview: bool = False,
+    grade_data: dict = None,
 ) -> list[dict]:
     """
     평가 데이터 목록을 일괄 처리하는 메인 엔트리 포인트입니다.
@@ -1241,7 +1463,7 @@ async def process_batch(
                     continue
 
                 result = await process_single(
-                    page, student, subject_name, eval_text, dry_run=dry_run
+                    page, student, subject_name, eval_text, dry_run=dry_run, grade_data=grade_data
                 )
                 results.append(result)
 

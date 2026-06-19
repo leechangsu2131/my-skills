@@ -1,0 +1,28 @@
+{
+  "school_year": 2026,
+  "grade": 3,
+  "class_no": 2,
+  "teacher": "이창수",
+  "receipts": [
+    {
+      "date": "2026-06-18",
+      "vendor": "신경주역 파리바게뜨",
+      "activity": "학급 자율 운영",
+      "usage": "학생 간식 구입(케이크 2종)",
+      "amount": 46900,
+      "evidence_type": "전산자료",
+      "items": [
+        {
+          "name": "저당발효버터롤케익",
+          "quantity": 1,
+          "amount": 14900
+        },
+        {
+          "name": "진한크림치즈가득클래식치즈케이크",
+          "quantity": 1,
+          "amount": 32000
+        }
+      ]
+    }
+  ]
+}

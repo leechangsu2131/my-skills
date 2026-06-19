@@ -23,6 +23,7 @@ from flask import Flask, render_template, request, jsonify, Response
 import supabase_fetch
 import eval_builder
 import iscream_evaluate
+import grade_data_parser
 
 app = Flask(__name__)
 
@@ -106,9 +107,10 @@ def _run_in_background(coro_func, *args):
 
 
 # ── 비동기 작업: i-scream 일괄 평가 기록 ───────────────────────
-async def _do_evaluate_batch(eval_data_list, port, dry_run):
+async def _do_evaluate_batch(eval_data_list, port, dry_run, grade_data=None):
     """실제 자동 기록 모듈을 호출하여 브라우저 제어를 실행합니다."""
-    print(f"🚀 자동 입력 시작 — 총 {len(eval_data_list)}건의 평가 기록")
+    mode_str = '배정표 기반' if grade_data else 'Supabase 분석'
+    print(f"🚀 자동 입력 시작 — 총 {len(eval_data_list)}건의 평가 기록 ({mode_str})")
     print(f"   [디버깅 포트: {port} | Dry Run: {'활성화 (저장 안 함)' if dry_run else '비활성화 (실제 저장)'}]")
     print("=" * 65)
 
@@ -116,7 +118,8 @@ async def _do_evaluate_batch(eval_data_list, port, dry_run):
         eval_data_list=eval_data_list,
         port=port,
         dry_run=dry_run,
-        preview=False  # 웹 UI를 통해 미리 검토하므로 CLI 대기 비활성화
+        preview=False,  # 웹 UI를 통해 미리 검토하므로 CLI 대기 비활성화
+        grade_data=grade_data
     )
     return results
 
@@ -278,9 +281,120 @@ def run_automation():
     _state['results'] = None
     iscream_evaluate.stop_requested = False
 
+    try:
+        grade_data = grade_data_parser.load_grade_data()
+    except Exception as e:
+        return jsonify({'error': f'단계배정표 로드 실패: {e}'}), 500
+
     # 백그라운드 스레드에서 자동화 기동
-    _run_in_background(_do_evaluate_batch, eval_data_list, port, dry_run)
+    _run_in_background(_do_evaluate_batch, eval_data_list, port, dry_run, grade_data)
     return jsonify({'status': 'started'})
+
+
+@app.route('/api/grade-data')
+def get_grade_data():
+    """성취기준별 단계배정표 데이터를 파싱하여 반환합니다."""
+    try:
+        all_data = grade_data_parser.load_all_data()
+        grade_data = all_data['grades']
+        behavior_data = all_data['behavior']
+
+        # 학생 목록
+        students = grade_data_parser.get_all_students()
+
+        # 과목 목록
+        subjects = list(grade_data.keys())
+
+        # 학생별 과목별 단원 단계 요약
+        students_data = []
+        for student in students:
+            subj_info = {}
+            for subj in subjects:
+                units = grade_data_parser.get_student_grade_for_subject(
+                    grade_data, student, subj
+                )
+                subj_info[subj] = [{
+                    'unit': u['unit_label'],
+                    'level': u['raw_level'],
+                    'iscream_level': u['iscream_level'],
+                } for u in units]
+            students_data.append({
+                'name': student,
+                'subjects': subj_info,
+                'behavior': behavior_data.get('행동특성', {}).get(student, ''),
+                'changche_auto': behavior_data.get('창체_자율자치_동아리', {}).get(student, ''),
+                'changche_career': behavior_data.get('창체_진로', {}).get(student, ''),
+            })
+
+        return jsonify({
+            'students': students_data,
+            'subjects': subjects,
+        })
+    except FileNotFoundError as e:
+        return jsonify({'error': str(e)}), 404
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/run-with-grades', methods=['POST'])
+def run_with_grades():
+    """배정표 기반으로 자동 입력을 시작합니다."""
+    if _state['running']:
+        return jsonify({'error': '이미 자동화 작업이 진행 중입니다.'}), 409
+
+    data = request.get_json() or {}
+    student_names = data.get('students', [])  # ["강시우", "김가을", ...]
+    subjects = data.get('subjects', [])       # ["국어", "수학", ...]
+    dry_run = bool(data.get('dry_run', False))
+    port = int(data.get('port', 9222))
+
+    if not student_names or not subjects:
+        return jsonify({'error': '학생과 과목을 선택해주세요.'}), 400
+
+    try:
+        grade_data = grade_data_parser.load_grade_data()
+    except Exception as e:
+        return jsonify({'error': f'배정표 로드 실패: {e}'}), 500
+
+    # 평가 데이터 구성 (각 학생 x 각 과목)
+    eval_data_list = []
+    for student in student_names:
+        for subject in subjects:
+            units = grade_data_parser.get_student_grade_for_subject(
+                grade_data, student, subject
+            )
+            if units:  # 유효한 단원 데이터가 있는 경우만
+                level_summary = ', '.join(
+                    f"{u['unit_label']}={u['raw_level']}" for u in units
+                )
+                eval_data_list.append({
+                    'student': student,
+                    'subject': subject,
+                    'eval_text': f'[배정표 기반] {level_summary}',
+                })
+
+    if not eval_data_list:
+        return jsonify({'error': '입력할 평가 데이터가 없습니다.'}), 400
+
+    # 큐 비우기
+    while not _log_queue.empty():
+        try:
+            _log_queue.get_nowait()
+        except queue.Empty:
+            break
+
+    _state['running'] = True
+    _state['results'] = None
+    iscream_evaluate.stop_requested = False
+
+    # 백그라운드 스레드에서 자동화 기동
+    _run_in_background(_do_evaluate_batch, eval_data_list, port, dry_run, grade_data)
+    return jsonify({
+        'status': 'started',
+        'total': len(eval_data_list),
+        'students': student_names,
+        'subjects': subjects,
+    })
 
 
 @app.route('/api/stop', methods=['POST'])

@@ -1002,16 +1002,24 @@ async def run_once(settings: Settings) -> None:
     print("Starting automation run...")
     print(f"Gemini profile: {settings.profile_dir}")
     print(f"Session backup: {settings.gemini_storage_state_file}")
-    if settings.only_weekdays and not is_weekday():
+    if settings.only_weekdays and not is_weekday() and not os.getenv("FORCE_VIDEO_ID"):
         print("Weekend detected; skipping run.")
         return
 
-    found = find_todays_live_video(settings)
-    if not found:
-        send_notification(settings, "⚠️ 오늘 라이브 영상을 찾지 못했습니다.")
-        return
-    video_id, video_title = found
-    processed_ids = load_processed_ids(settings.processed_file)
+    force_video_id = os.getenv("FORCE_VIDEO_ID", "").strip()
+    if force_video_id:
+        print(f"Using forced video ID: {force_video_id}")
+        video_id = force_video_id
+        video_title = "체슬리모닝브리프 (Forced Test)"
+        processed_ids = set()
+    else:
+        found = find_todays_live_video(settings)
+        if not found:
+            send_notification(settings, "⚠️ 오늘 라이브 영상을 찾지 못했습니다.")
+            return
+        video_id, video_title = found
+        processed_ids = load_processed_ids(settings.processed_file)
+
     if video_id in processed_ids:
         print(f"Already processed video: {video_id}. Skipping.")
         return
@@ -1030,8 +1038,10 @@ async def run_once(settings: Settings) -> None:
     if response.status_code not in (200, 201, 204):
         print(f"{settings.send_target} error body: {response.text}")
         return
-    processed_ids.add(video_id)
-    save_processed_ids(settings.processed_file, processed_ids)
+    
+    if not force_video_id:
+        processed_ids.add(video_id)
+        save_processed_ids(settings.processed_file, processed_ids)
 
 
 def scheduled_job(settings: Settings) -> None:

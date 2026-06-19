@@ -1,0 +1,4 @@
+interface:
+  display_name: "학급운영비 개산급 정산"
+  short_description: "학급운영비 개산급 등록과 증빙자료 작성 보조"
+  default_prompt: "Use $admin-class-buy to prepare K-에듀파인 개산급 정산 rows and create 증빙자료 pages."

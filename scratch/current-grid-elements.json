@@ -1,0 +1,2352 @@
+[
+  {
+    "attrs": {
+      "class": "cl-control cl-combobox",
+      "data-ndid": "uuid-1qu",
+      "style": "height: 100%; overflow: hidden; width: 100%;"
+    },
+    "h": 30,
+    "html": "<div class=\"cl-control cl-combobox\" data-ndid=\"uuid-1qu\" style=\"height: 100%; overflow: hidden; width: 100%;\"><div style=\"display: grid; grid-template-columns: 1fr auto; grid-template-rows: 1fr; height: 100%; overflow: hidden; width: 100%;\"><div class=\"cl-text cl-preventinput cl-unselectable\" data-ndid=\"1vg\" role=\"combobox\" aria-expanded=\"false\" aria-haspopup=\"listbox\" tabindex=\"0\" aria-label=\"일괄적용 평가기준 선택, --성취기준별 평가 선택적용--\" style=\"display: grid; grid-area: 1 / 1 / span 1 / span 1; grid-templat",
+    "i": 21,
+    "left": 315,
+    "tag": "div",
+    "text": "--성취기준별 평가 선택적용--",
+    "top": 520,
+    "w": 220
+  },
+  {
+    "attrs": {
+      "aria-label": "일괄적용 평가기준 선택, --성취기준별 평가 선택적용--",
+      "class": "cl-text cl-preventinput cl-unselectable",
+      "data-ndid": "1vg",
+      "role": "combobox",
+      "style": "display: grid; grid-area: 1 / 1 / span 1 / span 1; grid-template-columns: 1fr; grid-template-rows: 1fr; height: 100%;",
+      "tabindex": "0"
+    },
+    "h": 28,
+    "html": "<div class=\"cl-text cl-preventinput cl-unselectable\" data-ndid=\"1vg\" role=\"combobox\" aria-expanded=\"false\" aria-haspopup=\"listbox\" tabindex=\"0\" aria-label=\"일괄적용 평가기준 선택, --성취기준별 평가 선택적용--\" style=\"display: grid; grid-area: 1 / 1 / span 1 / span 1; grid-template-columns: 1fr; grid-template-rows: 1fr; height: 100%;\"><div aria-hidden=\"true\" style=\"align-self: center; grid-area: 1 / 1 / span 1 / span 1;\">--성취기준별 평가 선택적용--</div></div>",
+    "i": 22,
+    "left": 316,
+    "tag": "div",
+    "text": "--성취기준별 평가 선택적용--",
+    "top": 521,
+    "w": 202
+  },
+  {
+    "attrs": {
+      "class": "cl-combobox-button",
+      "data-ndid": "1vh",
+      "style": "grid-area: 1 / 2 / span 1 / span 1; outline: none;"
+    },
+    "h": 28,
+    "html": "<div class=\"cl-combobox-button\" data-ndid=\"1vh\" aria-hidden=\"true\" style=\"grid-area: 1 / 2 / span 1 / span 1; outline: none;\"></div>",
+    "i": 23,
+    "left": 518,
+    "tag": "div",
+    "text": "",
+    "top": 521,
+    "w": 16
+  },
+  {
+    "attrs": {
+      "class": "cl-control cl-grid cl-first-column cl-last-column cl-last-row cl-odd-column cl-odd-row",
+      "data-ndid": "uuid-1qv",
+      "id": "uuid-1qv",
+      "role": "grid",
+      "style": "grid-area: 8 / 2 / span 1 / span 1; overflow: hidden; position: relative; z-index: 1;",
+      "tabindex": "-1"
+    },
+    "h": 299,
+    "html": "<div class=\"cl-control cl-grid cl-first-column cl-last-column cl-last-row cl-odd-column cl-odd-row\" data-ndid=\"uuid-1qv\" role=\"grid\" tabindex=\"-1\" aria-colcount=\"5\" aria-rowcount=\"19\" id=\"uuid-1qv\" style=\"grid-area: 8 / 2 / span 1 / span 1; overflow: hidden; position: relative; z-index: 1;\"><div data-ndid=\"1vv\" style=\"box-sizing: border-box; display: block; height: 100%; min-height: 297px; overflow: hidden; position: relative; width: 1588px;\"><div style=\"left: 0px; overflow: hidden; position: ab",
+    "i": 24,
+    "left": 305,
+    "tag": "div",
+    "text": "반/번호 성명 단계 평가결과 1 강시우(전입학) 2 김가을(전입학) 3 김동규(전입학) 4 김주안(전입학) 5 박민서(전입학) 6 박서우(전입학) 7 박현규(전입학) 8 백다온(전입학)",
+    "top": 560,
+    "w": 1590
+  },
+  {
+    "attrs": {
+      "class": "cl-grid-centersplit",
+      "data-region": "center",
+      "role": "group",
+      "style": "inset: 0px; box-sizing: border-box; position: absolute;"
+    },
+    "h": 297,
+    "html": "<div class=\"cl-grid-centersplit\" role=\"group\" data-region=\"center\" style=\"inset: 0px; box-sizing: border-box; position: absolute;\"><div class=\"cl-grid-header cl-grid-header-band\" data-ndid=\"1vq\" style=\"display: block; height: 36px; left: 0px; position: absolute; right: 0px; top: 0px;\"><div data-ndid=\"1vp\" data-role=\"rowgroup\" data-loc=\"header\" style=\"display: block; height: 100%; position: relative; width: 100%;\"><div data-ndid=\"1w9\" data-role=\"scroll-container\" style=\"inset: 0px 16px 0px 0px; o",
+    "i": 25,
+    "left": 306,
+    "tag": "div",
+    "text": "반/번호 성명 단계 평가결과 1 강시우(전입학) 2 김가을(전입학) 3 김동규(전입학) 4 김주안(전입학) 5 박민서(전입학) 6 박서우(전입학) 7 박현규(전입학) 8 백다온(전입학)",
+    "top": 561,
+    "w": 1588
+  },
+  {
+    "attrs": {
+      "class": "cl-grid-header cl-grid-header-band",
+      "data-ndid": "1vq",
+      "style": "display: block; height: 36px; left: 0px; position: absolute; right: 0px; top: 0px;"
+    },
+    "h": 36,
+    "html": "<div class=\"cl-grid-header cl-grid-header-band\" data-ndid=\"1vq\" style=\"display: block; height: 36px; left: 0px; position: absolute; right: 0px; top: 0px;\"><div data-ndid=\"1vp\" data-role=\"rowgroup\" data-loc=\"header\" style=\"display: block; height: 100%; position: relative; width: 100%;\"><div data-ndid=\"1w9\" data-role=\"scroll-container\" style=\"inset: 0px 16px 0px 0px; overflow: hidden; position: absolute; transform: translate3d(0px, 0px, 0px);\"><div data-ndid=\"1w8\" style=\"display: inline-block; min",
+    "i": 26,
+    "left": 306,
+    "tag": "div",
+    "text": "반/번호 성명 단계 평가결과",
+    "top": 561,
+    "w": 1588
+  },
+  {
+    "attrs": {
+      "class": "cl-grid-cell-inherit",
+      "style": "border: 0px; height: 36px; position: relative; width: 1572px;"
+    },
+    "h": 36,
+    "html": "<div class=\"cl-grid-cell-inherit\" style=\"border: 0px; height: 36px; position: relative; width: 1572px;\"><div class=\"cl-grid-row\" role=\"row\" aria-rowindex=\"1\" style=\"height: 36px; overflow: visible; width: 100%;\"><div class=\"cl-grid-cell cl-grid-cell-inherit cl-first-column\" role=\"columnheader\" data-role=\"columnheader\" data-cellindex=\"0\" tabindex=\"-1\" aria-sort=\"none\" aria-label=\"전체 체크박스 \" title=\"전체 체크박스\" style=\"box-sizing: border-box; display: inline-block; height: 36px; left: 0px; overflow: hid",
+    "i": 27,
+    "left": 306,
+    "tag": "div",
+    "text": "반/번호 성명 단계 평가결과",
+    "top": 561,
+    "w": 1572
+  },
+  {
+    "attrs": {
+      "class": "cl-grid-row",
+      "role": "row",
+      "style": "height: 36px; overflow: visible; width: 100%;"
+    },
+    "h": 36,
+    "html": "<div class=\"cl-grid-row\" role=\"row\" aria-rowindex=\"1\" style=\"height: 36px; overflow: visible; width: 100%;\"><div class=\"cl-grid-cell cl-grid-cell-inherit cl-first-column\" role=\"columnheader\" data-role=\"columnheader\" data-cellindex=\"0\" tabindex=\"-1\" aria-sort=\"none\" aria-label=\"전체 체크박스 \" title=\"전체 체크박스\" style=\"box-sizing: border-box; display: inline-block; height: 36px; left: 0px; overflow: hidden; position: absolute; top: 0px; width: 50px;\"><div class=\"cl-grid-cell-inherit\" style=\"height: 35px; ",
+    "i": 28,
+    "left": 306,
+    "tag": "div",
+    "text": "반/번호 성명 단계 평가결과",
+    "top": 561,
+    "w": 1572
+  },
+  {
+    "attrs": {
+      "aria-label": "전체 체크박스 ",
+      "class": "cl-grid-cell cl-grid-cell-inherit cl-first-column",
+      "data-cellindex": "0",
+      "data-role": "columnheader",
+      "role": "columnheader",
+      "style": "box-sizing: border-box; display: inline-block; height: 36px; left: 0px; overflow: hidden; position: absolute; top: 0px; width: 50px;",
+      "tabindex": "-1",
+      "title": "전체 체크박스"
+    },
+    "h": 36,
+    "html": "<div class=\"cl-grid-cell cl-grid-cell-inherit cl-first-column\" role=\"columnheader\" data-role=\"columnheader\" data-cellindex=\"0\" tabindex=\"-1\" aria-sort=\"none\" aria-label=\"전체 체크박스 \" title=\"전체 체크박스\" style=\"box-sizing: border-box; display: inline-block; height: 36px; left: 0px; overflow: hidden; position: absolute; top: 0px; width: 50px;\"><div class=\"cl-grid-cell-inherit\" style=\"height: 35px; overflow: hidden;\"><div class=\"cl-grid-cell-inherit\" style=\"height: 35px; overflow: hidden; position: relati",
+    "i": 29,
+    "left": 306,
+    "tag": "div",
+    "text": "",
+    "top": 561,
+    "w": 50
+  },
+  {
+    "attrs": {
+      "class": "cl-grid-cell-inherit",
+      "style": "height: 35px; overflow: hidden;"
+    },
+    "h": 35,
+    "html": "<div class=\"cl-grid-cell-inherit\" style=\"height: 35px; overflow: hidden;\"><div class=\"cl-grid-cell-inherit\" style=\"height: 35px; overflow: hidden; position: relative;\"><div class=\"cl-control cl-checkbox cl-builtin cl-grid-ctrl-inherit\" data-ndid=\"1w7\" style=\"height: 100%; width: 100%;\"><div style=\"display: inline-table; height: 100%; text-align: inherit; vertical-align: inherit;\"><div class=\"cl-icon-wrapper\" style=\"display: table-cell; text-align: inherit; vertical-align: inherit;\"><span class=\"",
+    "i": 30,
+    "left": 306,
+    "tag": "div",
+    "text": "",
+    "top": 561,
+    "w": 49
+  },
+  {
+    "attrs": {
+      "class": "cl-grid-cell-inherit",
+      "style": "height: 35px; overflow: hidden; position: relative;"
+    },
+    "h": 35,
+    "html": "<div class=\"cl-grid-cell-inherit\" style=\"height: 35px; overflow: hidden; position: relative;\"><div class=\"cl-control cl-checkbox cl-builtin cl-grid-ctrl-inherit\" data-ndid=\"1w7\" style=\"height: 100%; width: 100%;\"><div style=\"display: inline-table; height: 100%; text-align: inherit; vertical-align: inherit;\"><div class=\"cl-icon-wrapper\" style=\"display: table-cell; text-align: inherit; vertical-align: inherit;\"><span class=\"cl-checkbox-icon\" tabindex=\"0\" role=\"checkbox\" data-role=\"checkbox\" aria-c",
+    "i": 31,
+    "left": 306,
+    "tag": "div",
+    "text": "",
+    "top": 561,
+    "w": 49
+  },
+  {
+    "attrs": {
+      "class": "cl-control cl-checkbox cl-builtin cl-grid-ctrl-inherit",
+      "data-ndid": "1w7",
+      "style": "height: 100%; width: 100%;"
+    },
+    "h": 35,
+    "html": "<div class=\"cl-control cl-checkbox cl-builtin cl-grid-ctrl-inherit\" data-ndid=\"1w7\" style=\"height: 100%; width: 100%;\"><div style=\"display: inline-table; height: 100%; text-align: inherit; vertical-align: inherit;\"><div class=\"cl-icon-wrapper\" style=\"display: table-cell; text-align: inherit; vertical-align: inherit;\"><span class=\"cl-checkbox-icon\" tabindex=\"0\" role=\"checkbox\" data-role=\"checkbox\" aria-checked=\"false\" aria-label=\"행 전체선택\" style=\"cursor: pointer; display: block; vertical-align: inh",
+    "i": 32,
+    "left": 306,
+    "tag": "div",
+    "text": "",
+    "top": 561,
+    "w": 49
+  },
+  {
+    "attrs": {
+      "aria-label": "반/번호 반/번호",
+      "class": "cl-grid-cell cl-grid-cell-inherit",
+      "data-cellindex": "1",
+      "data-role": "columnheader",
+      "data-target": "clsNo",
+      "role": "columnheader",
+      "style": "box-sizing: border-box; display: inline-block; height: 36px; left: 50px; overflow: hidden; position: absolute; top: 0px; width: 112.242px;",
+      "tabindex": "-1",
+      "title": "반/번호"
+    },
+    "h": 36,
+    "html": "<div class=\"cl-grid-cell cl-grid-cell-inherit\" role=\"columnheader\" data-role=\"columnheader\" data-cellindex=\"1\" tabindex=\"-1\" aria-sort=\"none\" aria-label=\"반/번호 반/번호\" title=\"반/번호\" data-target=\"clsNo\" style=\"box-sizing: border-box; display: inline-block; height: 36px; left: 50px; overflow: hidden; position: absolute; top: 0px; width: 112.242px;\"><div class=\"cl-grid-cell-inherit\" style=\"height: 35px; overflow: hidden;\"><div class=\"cl-grid-cell-inherit\" style=\"height: 35px; overflow: hidden; position",
+    "i": 33,
+    "left": 356,
+    "tag": "div",
+    "text": "반/번호",
+    "top": 561,
+    "w": 112
+  },
+  {
+    "attrs": {
+      "class": "cl-grid-cell-inherit",
+      "style": "height: 35px; overflow: hidden;"
+    },
+    "h": 35,
+    "html": "<div class=\"cl-grid-cell-inherit\" style=\"height: 35px; overflow: hidden;\"><div class=\"cl-grid-cell-inherit\" style=\"height: 35px; overflow: hidden; position: relative;\"><div class=\"cl-control cl-default-cell cl-grid-cell-inherit\" style=\"height: 35px;\"><div class=\"cl-grid-cell-inherit\" style=\"display: table; height: 100%; width: 100%;\"><div class=\"cl-text cl-grid-cell-inherit\" style=\"display: table-cell;\">반/번호</div></div></div></div></div>",
+    "i": 34,
+    "left": 356,
+    "tag": "div",
+    "text": "반/번호",
+    "top": 561,
+    "w": 111
+  },
+  {
+    "attrs": {
+      "class": "cl-grid-cell-inherit",
+      "style": "height: 35px; overflow: hidden; position: relative;"
+    },
+    "h": 35,
+    "html": "<div class=\"cl-grid-cell-inherit\" style=\"height: 35px; overflow: hidden; position: relative;\"><div class=\"cl-control cl-default-cell cl-grid-cell-inherit\" style=\"height: 35px;\"><div class=\"cl-grid-cell-inherit\" style=\"display: table; height: 100%; width: 100%;\"><div class=\"cl-text cl-grid-cell-inherit\" style=\"display: table-cell;\">반/번호</div></div></div></div>",
+    "i": 35,
+    "left": 356,
+    "tag": "div",
+    "text": "반/번호",
+    "top": 561,
+    "w": 111
+  },
+  {
+    "attrs": {
+      "class": "cl-control cl-default-cell cl-grid-cell-inherit",
+      "style": "height: 35px;"
+    },
+    "h": 35,
+    "html": "<div class=\"cl-control cl-default-cell cl-grid-cell-inherit\" style=\"height: 35px;\"><div class=\"cl-grid-cell-inherit\" style=\"display: table; height: 100%; width: 100%;\"><div class=\"cl-text cl-grid-cell-inherit\" style=\"display: table-cell;\">반/번호</div></div></div>",
+    "i": 36,
+    "left": 356,
+    "tag": "div",
+    "text": "반/번호",
+    "top": 561,
+    "w": 111
+  },
+  {
+    "attrs": {
+      "class": "cl-grid-cell-inherit",
+      "style": "display: table; height: 100%; width: 100%;"
+    },
+    "h": 35,
+    "html": "<div class=\"cl-grid-cell-inherit\" style=\"display: table; height: 100%; width: 100%;\"><div class=\"cl-text cl-grid-cell-inherit\" style=\"display: table-cell;\">반/번호</div></div>",
+    "i": 37,
+    "left": 356,
+    "tag": "div",
+    "text": "반/번호",
+    "top": 561,
+    "w": 111
+  },
+  {
+    "attrs": {
+      "class": "cl-text cl-grid-cell-inherit",
+      "style": "display: table-cell;"
+    },
+    "h": 35,
+    "html": "<div class=\"cl-text cl-grid-cell-inherit\" style=\"display: table-cell;\">반/번호</div>",
+    "i": 38,
+    "left": 356,
+    "tag": "div",
+    "text": "반/번호",
+    "top": 561,
+    "w": 111
+  },
+  {
+    "attrs": {
+      "aria-label": "성명 성명",
+      "class": "cl-grid-cell cl-grid-cell-inherit",
+      "data-cellindex": "2",
+      "data-role": "columnheader",
+      "data-target": "stuFlnm",
+      "role": "columnheader",
+      "style": "box-sizing: border-box; display: inline-block; height: 36px; left: 162.242px; overflow: hidden; position: absolute; top: 0px; width: 269.381px;",
+      "tabindex": "-1",
+      "title": "성명"
+    },
+    "h": 36,
+    "html": "<div class=\"cl-grid-cell cl-grid-cell-inherit\" role=\"columnheader\" data-role=\"columnheader\" data-cellindex=\"2\" tabindex=\"-1\" aria-sort=\"none\" aria-label=\"성명 성명\" title=\"성명\" data-target=\"stuFlnm\" style=\"box-sizing: border-box; display: inline-block; height: 36px; left: 162.242px; overflow: hidden; position: absolute; top: 0px; width: 269.381px;\"><div class=\"cl-grid-cell-inherit\" style=\"height: 35px; overflow: hidden;\"><div class=\"cl-grid-cell-inherit\" style=\"height: 35px; overflow: hidden; positio",
+    "i": 39,
+    "left": 468,
+    "tag": "div",
+    "text": "성명",
+    "top": 561,
+    "w": 269
+  },
+  {
+    "attrs": {
+      "class": "cl-grid-cell-inherit",
+      "style": "height: 35px; overflow: hidden;"
+    },
+    "h": 35,
+    "html": "<div class=\"cl-grid-cell-inherit\" style=\"height: 35px; overflow: hidden;\"><div class=\"cl-grid-cell-inherit\" style=\"height: 35px; overflow: hidden; position: relative;\"><div class=\"cl-control cl-default-cell cl-grid-cell-inherit\" style=\"height: 35px;\"><div class=\"cl-grid-cell-inherit\" style=\"display: table; height: 100%; width: 100%;\"><div class=\"cl-text cl-grid-cell-inherit\" style=\"display: table-cell;\">성명</div></div></div></div></div>",
+    "i": 40,
+    "left": 468,
+    "tag": "div",
+    "text": "성명",
+    "top": 561,
+    "w": 268
+  },
+  {
+    "attrs": {
+      "class": "cl-grid-cell-inherit",
+      "style": "height: 35px; overflow: hidden; position: relative;"
+    },
+    "h": 35,
+    "html": "<div class=\"cl-grid-cell-inherit\" style=\"height: 35px; overflow: hidden; position: relative;\"><div class=\"cl-control cl-default-cell cl-grid-cell-inherit\" style=\"height: 35px;\"><div class=\"cl-grid-cell-inherit\" style=\"display: table; height: 100%; width: 100%;\"><div class=\"cl-text cl-grid-cell-inherit\" style=\"display: table-cell;\">성명</div></div></div></div>",
+    "i": 41,
+    "left": 468,
+    "tag": "div",
+    "text": "성명",
+    "top": 561,
+    "w": 268
+  },
+  {
+    "attrs": {
+      "class": "cl-control cl-default-cell cl-grid-cell-inherit",
+      "style": "height: 35px;"
+    },
+    "h": 35,
+    "html": "<div class=\"cl-control cl-default-cell cl-grid-cell-inherit\" style=\"height: 35px;\"><div class=\"cl-grid-cell-inherit\" style=\"display: table; height: 100%; width: 100%;\"><div class=\"cl-text cl-grid-cell-inherit\" style=\"display: table-cell;\">성명</div></div></div>",
+    "i": 42,
+    "left": 468,
+    "tag": "div",
+    "text": "성명",
+    "top": 561,
+    "w": 268
+  },
+  {
+    "attrs": {
+      "class": "cl-grid-cell-inherit",
+      "style": "display: table; height: 100%; width: 100%;"
+    },
+    "h": 35,
+    "html": "<div class=\"cl-grid-cell-inherit\" style=\"display: table; height: 100%; width: 100%;\"><div class=\"cl-text cl-grid-cell-inherit\" style=\"display: table-cell;\">성명</div></div>",
+    "i": 43,
+    "left": 468,
+    "tag": "div",
+    "text": "성명",
+    "top": 561,
+    "w": 268
+  },
+  {
+    "attrs": {
+      "class": "cl-text cl-grid-cell-inherit",
+      "style": "display: table-cell;"
+    },
+    "h": 35,
+    "html": "<div class=\"cl-text cl-grid-cell-inherit\" style=\"display: table-cell;\">성명</div>",
+    "i": 44,
+    "left": 468,
+    "tag": "div",
+    "text": "성명",
+    "top": 561,
+    "w": 268
+  },
+  {
+    "attrs": {
+      "aria-label": "단계 단계",
+      "class": "cl-grid-cell cl-grid-cell-inherit",
+      "data-cellindex": "3",
+      "data-role": "columnheader",
+      "data-target": "evlCtrCd",
+      "role": "columnheader",
+      "style": "box-sizing: border-box; display: inline-block; height: 36px; left: 431.622px; overflow: hidden; position: absolute; top: 0px; width: 242.442px;",
+      "tabindex": "-1",
+      "title": "단계"
+    },
+    "h": 36,
+    "html": "<div class=\"cl-grid-cell cl-grid-cell-inherit\" role=\"columnheader\" data-role=\"columnheader\" data-cellindex=\"3\" tabindex=\"-1\" aria-sort=\"none\" aria-label=\"단계 단계\" title=\"단계\" data-target=\"evlCtrCd\" style=\"box-sizing: border-box; display: inline-block; height: 36px; left: 431.622px; overflow: hidden; position: absolute; top: 0px; width: 242.442px;\"><div class=\"cl-grid-cell-inherit\" style=\"height: 35px; overflow: hidden;\"><div class=\"cl-grid-cell-inherit\" style=\"height: 35px; overflow: hidden; positi",
+    "i": 45,
+    "left": 738,
+    "tag": "div",
+    "text": "단계",
+    "top": 561,
+    "w": 242
+  },
+  {
+    "attrs": {
+      "class": "cl-grid-cell-inherit",
+      "style": "height: 35px; overflow: hidden;"
+    },
+    "h": 35,
+    "html": "<div class=\"cl-grid-cell-inherit\" style=\"height: 35px; overflow: hidden;\"><div class=\"cl-grid-cell-inherit\" style=\"height: 35px; overflow: hidden; position: relative;\"><div class=\"cl-control cl-default-cell cl-grid-cell-inherit\" style=\"height: 35px;\"><div class=\"cl-grid-cell-inherit\" style=\"display: table; height: 100%; width: 100%;\"><div class=\"cl-text cl-grid-cell-inherit\" style=\"display: table-cell;\">단계</div></div></div></div></div>",
+    "i": 46,
+    "left": 738,
+    "tag": "div",
+    "text": "단계",
+    "top": 561,
+    "w": 241
+  },
+  {
+    "attrs": {
+      "class": "cl-grid-cell-inherit",
+      "style": "height: 35px; overflow: hidden; position: relative;"
+    },
+    "h": 35,
+    "html": "<div class=\"cl-grid-cell-inherit\" style=\"height: 35px; overflow: hidden; position: relative;\"><div class=\"cl-control cl-default-cell cl-grid-cell-inherit\" style=\"height: 35px;\"><div class=\"cl-grid-cell-inherit\" style=\"display: table; height: 100%; width: 100%;\"><div class=\"cl-text cl-grid-cell-inherit\" style=\"display: table-cell;\">단계</div></div></div></div>",
+    "i": 47,
+    "left": 738,
+    "tag": "div",
+    "text": "단계",
+    "top": 561,
+    "w": 241
+  },
+  {
+    "attrs": {
+      "class": "cl-control cl-default-cell cl-grid-cell-inherit",
+      "style": "height: 35px;"
+    },
+    "h": 35,
+    "html": "<div class=\"cl-control cl-default-cell cl-grid-cell-inherit\" style=\"height: 35px;\"><div class=\"cl-grid-cell-inherit\" style=\"display: table; height: 100%; width: 100%;\"><div class=\"cl-text cl-grid-cell-inherit\" style=\"display: table-cell;\">단계</div></div></div>",
+    "i": 48,
+    "left": 738,
+    "tag": "div",
+    "text": "단계",
+    "top": 561,
+    "w": 241
+  },
+  {
+    "attrs": {
+      "class": "cl-grid-cell-inherit",
+      "style": "display: table; height: 100%; width: 100%;"
+    },
+    "h": 35,
+    "html": "<div class=\"cl-grid-cell-inherit\" style=\"display: table; height: 100%; width: 100%;\"><div class=\"cl-text cl-grid-cell-inherit\" style=\"display: table-cell;\">단계</div></div>",
+    "i": 49,
+    "left": 738,
+    "tag": "div",
+    "text": "단계",
+    "top": 561,
+    "w": 241
+  },
+  {
+    "attrs": {
+      "class": "cl-text cl-grid-cell-inherit",
+      "style": "display: table-cell;"
+    },
+    "h": 35,
+    "html": "<div class=\"cl-text cl-grid-cell-inherit\" style=\"display: table-cell;\">단계</div>",
+    "i": 50,
+    "left": 738,
+    "tag": "div",
+    "text": "단계",
+    "top": 561,
+    "w": 241
+  },
+  {
+    "attrs": {
+      "aria-label": "평가결과 평가결과",
+      "class": "cl-grid-cell cl-grid-cell-inherit cl-last-column",
+      "data-cellindex": "4",
+      "data-role": "columnheader",
+      "data-target": "evlCtrCn",
+      "role": "columnheader",
+      "style": "box-sizing: border-box; display: inline-block; height: 36px; left: 674.065px; overflow: hidden; position: absolute; top: 0px; width: 897.935px;",
+      "tabindex": "-1",
+      "title": "평가결과"
+    },
+    "h": 36,
+    "html": "<div class=\"cl-grid-cell cl-grid-cell-inherit cl-last-column\" role=\"columnheader\" data-role=\"columnheader\" data-cellindex=\"4\" tabindex=\"-1\" aria-sort=\"none\" aria-label=\"평가결과 평가결과\" title=\"평가결과\" data-target=\"evlCtrCn\" style=\"box-sizing: border-box; display: inline-block; height: 36px; left: 674.065px; overflow: hidden; position: absolute; top: 0px; width: 897.935px;\"><div class=\"cl-grid-cell-inherit\" style=\"height: 35px; overflow: hidden;\"><div class=\"cl-grid-cell-inherit\" style=\"height: 35px; ove",
+    "i": 51,
+    "left": 980,
+    "tag": "div",
+    "text": "평가결과",
+    "top": 561,
+    "w": 898
+  },
+  {
+    "attrs": {
+      "class": "cl-grid-cell-inherit",
+      "style": "height: 35px; overflow: hidden;"
+    },
+    "h": 35,
+    "html": "<div class=\"cl-grid-cell-inherit\" style=\"height: 35px; overflow: hidden;\"><div class=\"cl-grid-cell-inherit\" style=\"height: 35px; overflow: hidden; position: relative;\"><div class=\"cl-control cl-default-cell cl-grid-cell-inherit\" style=\"height: 35px;\"><div class=\"cl-grid-cell-inherit\" style=\"display: table; height: 100%; width: 100%;\"><div class=\"cl-text cl-grid-cell-inherit\" style=\"display: table-cell;\">평가결과</div></div></div></div></div>",
+    "i": 52,
+    "left": 980,
+    "tag": "div",
+    "text": "평가결과",
+    "top": 561,
+    "w": 898
+  },
+  {
+    "attrs": {
+      "class": "cl-grid-cell-inherit",
+      "style": "height: 35px; overflow: hidden; position: relative;"
+    },
+    "h": 35,
+    "html": "<div class=\"cl-grid-cell-inherit\" style=\"height: 35px; overflow: hidden; position: relative;\"><div class=\"cl-control cl-default-cell cl-grid-cell-inherit\" style=\"height: 35px;\"><div class=\"cl-grid-cell-inherit\" style=\"display: table; height: 100%; width: 100%;\"><div class=\"cl-text cl-grid-cell-inherit\" style=\"display: table-cell;\">평가결과</div></div></div></div>",
+    "i": 53,
+    "left": 980,
+    "tag": "div",
+    "text": "평가결과",
+    "top": 561,
+    "w": 898
+  },
+  {
+    "attrs": {
+      "class": "cl-control cl-default-cell cl-grid-cell-inherit",
+      "style": "height: 35px;"
+    },
+    "h": 35,
+    "html": "<div class=\"cl-control cl-default-cell cl-grid-cell-inherit\" style=\"height: 35px;\"><div class=\"cl-grid-cell-inherit\" style=\"display: table; height: 100%; width: 100%;\"><div class=\"cl-text cl-grid-cell-inherit\" style=\"display: table-cell;\">평가결과</div></div></div>",
+    "i": 54,
+    "left": 980,
+    "tag": "div",
+    "text": "평가결과",
+    "top": 561,
+    "w": 898
+  },
+  {
+    "attrs": {
+      "class": "cl-grid-cell-inherit",
+      "style": "display: table; height: 100%; width: 100%;"
+    },
+    "h": 35,
+    "html": "<div class=\"cl-grid-cell-inherit\" style=\"display: table; height: 100%; width: 100%;\"><div class=\"cl-text cl-grid-cell-inherit\" style=\"display: table-cell;\">평가결과</div></div>",
+    "i": 55,
+    "left": 980,
+    "tag": "div",
+    "text": "평가결과",
+    "top": 561,
+    "w": 898
+  },
+  {
+    "attrs": {
+      "class": "cl-text cl-grid-cell-inherit",
+      "style": "display: table-cell;"
+    },
+    "h": 35,
+    "html": "<div class=\"cl-text cl-grid-cell-inherit\" style=\"display: table-cell;\">평가결과</div>",
+    "i": 56,
+    "left": 980,
+    "tag": "div",
+    "text": "평가결과",
+    "top": 561,
+    "w": 898
+  },
+  {
+    "attrs": {
+      "class": "cl-grid-detail cl-grid-detail-band",
+      "data-ndid": "1vs",
+      "style": "inset: 36px 0px 0px; display: block; position: absolute;"
+    },
+    "h": 261,
+    "html": "<div class=\"cl-grid-detail cl-grid-detail-band\" data-ndid=\"1vs\" style=\"inset: 36px 0px 0px; display: block; position: absolute;\"><div data-ndid=\"1vr\" data-role=\"rowgroup\" data-loc=\"middle\" style=\"display: block; height: 100%; position: relative; width: 100%;\"><div data-ndid=\"1wb\" data-role=\"scroll-container\" style=\"inset: 0px 16px 0px 0px; overflow: hidden; position: absolute; transform: translate3d(0px, 0px, 0px);\"><div data-ndid=\"1wa\" style=\"min-width: 100%; position: relative; transform: tran",
+    "i": 57,
+    "left": 306,
+    "tag": "div",
+    "text": "1 강시우(전입학) 2 김가을(전입학) 3 김동규(전입학) 4 김주안(전입학) 5 박민서(전입학) 6 박서우(전입학) 7 박현규(전입학) 8 백다온(전입학)",
+    "top": 597,
+    "w": 1588
+  },
+  {
+    "attrs": {
+      "class": "cl-grid-cell-inherit",
+      "style": "border: 0px; height: 287px; position: relative; width: 1572px;"
+    },
+    "h": 287,
+    "html": "<div class=\"cl-grid-cell-inherit\" style=\"border: 0px; height: 287px; position: relative; width: 1572px;\"><div class=\"cl-grid-row cl-odd-row cl-viewing\" data-ndid=\"22b\" role=\"row\" data-rowindex=\"0\" data-vrowindex=\"0\" aria-rowindex=\"2\" style=\"height: 36px; left: 0px; position: absolute; top: 0px; width: 100%;\"><div class=\"cl-grid-cell cl-grid-cell-inherit cl-first-column\" role=\"gridcell\" data-role=\"gridcell\" data-cellindex=\"0\" tabindex=\"-1\" title=\"체크박스\" style=\"box-sizing: border-box; display: inli",
+    "i": 58,
+    "left": 306,
+    "tag": "div",
+    "text": "1 강시우(전입학) 2 김가을(전입학) 3 김동규(전입학) 4 김주안(전입학) 5 박민서(전입학) 6 박서우(전입학) 7 박현규(전입학) 8 백다온(전입학)",
+    "top": 597,
+    "w": 1572
+  },
+  {
+    "attrs": {
+      "class": "cl-grid-row cl-odd-row cl-viewing",
+      "data-ndid": "22b",
+      "data-rowindex": "0",
+      "data-vrowindex": "0",
+      "role": "row",
+      "style": "height: 36px; left: 0px; position: absolute; top: 0px; width: 100%;"
+    },
+    "h": 36,
+    "html": "<div class=\"cl-grid-row cl-odd-row cl-viewing\" data-ndid=\"22b\" role=\"row\" data-rowindex=\"0\" data-vrowindex=\"0\" aria-rowindex=\"2\" style=\"height: 36px; left: 0px; position: absolute; top: 0px; width: 100%;\"><div class=\"cl-grid-cell cl-grid-cell-inherit cl-first-column\" role=\"gridcell\" data-role=\"gridcell\" data-cellindex=\"0\" tabindex=\"-1\" title=\"체크박스\" style=\"box-sizing: border-box; display: inline-block; height: 36px; left: 0px; overflow: hidden; position: absolute; top: 0px; width: 50px;\"><div cla",
+    "i": 59,
+    "left": 306,
+    "tag": "div",
+    "text": "1 강시우(전입학)",
+    "top": 597,
+    "w": 1572
+  },
+  {
+    "attrs": {
+      "class": "cl-grid-cell cl-grid-cell-inherit cl-first-column",
+      "data-cellindex": "0",
+      "data-role": "gridcell",
+      "role": "gridcell",
+      "style": "box-sizing: border-box; display: inline-block; height: 36px; left: 0px; overflow: hidden; position: absolute; top: 0px; width: 50px;",
+      "tabindex": "-1",
+      "title": "체크박스"
+    },
+    "h": 36,
+    "html": "<div class=\"cl-grid-cell cl-grid-cell-inherit cl-first-column\" role=\"gridcell\" data-role=\"gridcell\" data-cellindex=\"0\" tabindex=\"-1\" title=\"체크박스\" style=\"box-sizing: border-box; display: inline-block; height: 36px; left: 0px; overflow: hidden; position: absolute; top: 0px; width: 50px;\"><div class=\"cl-control cl-checkbox cl-builtin cl-grid-ctrl-inherit\" data-ndid=\"229\" style=\"height: 100%; max-height: 35px; width: 100%;\"><div style=\"display: inline-table; height: 100%; text-align: inherit; vertic",
+    "i": 60,
+    "left": 306,
+    "tag": "div",
+    "text": "",
+    "top": 597,
+    "w": 50
+  },
+  {
+    "attrs": {
+      "class": "cl-control cl-checkbox cl-builtin cl-grid-ctrl-inherit",
+      "data-ndid": "229",
+      "style": "height: 100%; max-height: 35px; width: 100%;"
+    },
+    "h": 35,
+    "html": "<div class=\"cl-control cl-checkbox cl-builtin cl-grid-ctrl-inherit\" data-ndid=\"229\" style=\"height: 100%; max-height: 35px; width: 100%;\"><div style=\"display: inline-table; height: 100%; text-align: inherit; vertical-align: inherit;\"><div class=\"cl-icon-wrapper\" style=\"display: table-cell; text-align: inherit; vertical-align: inherit;\"><span class=\"cl-checkbox-icon\" tabindex=\"0\" role=\"checkbox\" data-role=\"checkbox\" aria-label=\"1행 전체 체크박스 행선택 체크박스\" aria-checked=\"false\" style=\"cursor: pointer; disp",
+    "i": 61,
+    "left": 306,
+    "tag": "div",
+    "text": "",
+    "top": 597,
+    "w": 49
+  },
+  {
+    "attrs": {
+      "aria-label": "1행 반/번호 1",
+      "class": "cl-grid-cell cl-grid-cell-inherit",
+      "data-cellindex": "1",
+      "data-role": "gridcell",
+      "role": "gridcell",
+      "style": "box-sizing: border-box; display: inline-block; height: 36px; left: 50px; overflow: hidden; position: absolute; top: 0px; width: 112.242px;",
+      "tabindex": "-1",
+      "title": "번호"
+    },
+    "h": 36,
+    "html": "<div class=\"cl-grid-cell cl-grid-cell-inherit\" role=\"gridcell\" data-role=\"gridcell\" data-cellindex=\"1\" tabindex=\"-1\" aria-label=\"1행 반/번호 1\" title=\"번호\" style=\"box-sizing: border-box; display: inline-block; height: 36px; left: 50px; overflow: hidden; position: absolute; top: 0px; width: 112.242px;\"><div class=\"cl-control cl-default-cell\" style=\"display: table; height: 100%; max-height: 35px; table-layout: fixed; width: 100%;\"><div class=\"cl-text\" style=\"display: table-cell; height: 100%; max-heigh",
+    "i": 62,
+    "left": 356,
+    "tag": "div",
+    "text": "1",
+    "top": 597,
+    "w": 112
+  },
+  {
+    "attrs": {
+      "class": "cl-control cl-default-cell",
+      "style": "display: table; height: 100%; max-height: 35px; table-layout: fixed; width: 100%;"
+    },
+    "h": 35,
+    "html": "<div class=\"cl-control cl-default-cell\" style=\"display: table; height: 100%; max-height: 35px; table-layout: fixed; width: 100%;\"><div class=\"cl-text\" style=\"display: table-cell; height: 100%; max-height: 35px; width: 100%;\">1</div></div>",
+    "i": 63,
+    "left": 356,
+    "tag": "div",
+    "text": "1",
+    "top": 597,
+    "w": 111
+  },
+  {
+    "attrs": {
+      "aria-label": "1행 성명 강시우(전입학) link",
+      "class": "cl-grid-cell cl-grid-cell-inherit",
+      "data-cellindex": "2",
+      "data-role": "gridcell",
+      "role": "gridcell",
+      "style": "box-sizing: border-box; display: inline-block; height: 36px; left: 162.242px; overflow: hidden; position: absolute; top: 0px; width: 269.381px;",
+      "tabindex": "-1",
+      "title": "성명"
+    },
+    "h": 36,
+    "html": "<div class=\"cl-grid-cell cl-grid-cell-inherit\" role=\"gridcell\" data-role=\"gridcell\" data-cellindex=\"2\" tabindex=\"-1\" aria-label=\"1행 성명 강시우(전입학) link\" title=\"성명\" style=\"box-sizing: border-box; display: inline-block; height: 36px; left: 162.242px; overflow: hidden; position: absolute; top: 0px; width: 269.381px;\"><div class=\"cl-control cl-output cl-writingmode-horizontal-tb cl-unselectable text-left text-underline cl-grid-ctrl-inherit cl-border-none\" role=\"link\" aria-disabled=\"false\" aria-label=\"1",
+    "i": 64,
+    "left": 468,
+    "tag": "div",
+    "text": "강시우(전입학)",
+    "top": 597,
+    "w": 269
+  },
+  {
+    "attrs": {
+      "aria-label": "1행 성명 강시우(전입학) link",
+      "class": "cl-control cl-output cl-writingmode-horizontal-tb cl-unselectable text-left text-underline cl-grid-ctrl-inherit cl-border-none",
+      "role": "link",
+      "style": "height: 36px; max-height: 35px; position: relative; text-align: center; width: 100%;",
+      "title": " "
+    },
+    "h": 35,
+    "html": "<div class=\"cl-control cl-output cl-writingmode-horizontal-tb cl-unselectable text-left text-underline cl-grid-ctrl-inherit cl-border-none\" role=\"link\" aria-disabled=\"false\" aria-label=\"1행 성명 강시우(전입학) link\" title=\" \" style=\"height: 36px; max-height: 35px; position: relative; text-align: center; width: 100%;\"><div style=\"display: table; height: 100%; table-layout: fixed; vertical-align: inherit; width: 100%;\"><div class=\"cl-text\" style=\"display: table-cell; height: 100%; max-height: 36px; width: ",
+    "i": 65,
+    "left": 468,
+    "tag": "div",
+    "text": "강시우(전입학)",
+    "top": 597,
+    "w": 268
+  },
+  {
+    "attrs": {
+      "aria-label": "1행 단계  콤보상자",
+      "class": "cl-grid-cell cl-grid-cell-inherit",
+      "data-cellindex": "3",
+      "data-role": "gridcell",
+      "role": "gridcell",
+      "style": "box-sizing: border-box; display: inline-block; height: 36px; left: 431.622px; overflow: hidden; position: absolute; top: 0px; width: 242.442px;",
+      "tabindex": "-1"
+    },
+    "h": 36,
+    "html": "<div class=\"cl-grid-cell cl-grid-cell-inherit\" role=\"gridcell\" data-role=\"gridcell\" data-cellindex=\"3\" tabindex=\"-1\" aria-label=\"1행 단계  콤보상자\" style=\"box-sizing: border-box; display: inline-block; height: 36px; left: 431.622px; overflow: hidden; position: absolute; top: 0px; width: 242.442px;\"><div class=\"cl-control cl-combobox cl-grid-ctrl-inherit\" style=\"height: calc(100% - 8px); left: 4px; max-height: 35px; position: absolute; top: 4px; width: calc(100% - 8px);\"><div style=\"display: grid; grid",
+    "i": 66,
+    "left": 738,
+    "tag": "div",
+    "text": "",
+    "top": 597,
+    "w": 242
+  },
+  {
+    "attrs": {
+      "class": "cl-control cl-combobox cl-grid-ctrl-inherit",
+      "style": "height: calc(100% - 8px); left: 4px; max-height: 35px; position: absolute; top: 4px; width: calc(100% - 8px);"
+    },
+    "h": 27,
+    "html": "<div class=\"cl-control cl-combobox cl-grid-ctrl-inherit\" style=\"height: calc(100% - 8px); left: 4px; max-height: 35px; position: absolute; top: 4px; width: calc(100% - 8px);\"><div style=\"display: grid; grid-template-columns: 1fr auto; grid-template-rows: 1fr; height: 100%; overflow: hidden; text-align: inherit; vertical-align: inherit; width: 100%;\"><div aria-expanded=\"false\" style=\"align-self: center; display: table; grid-area: 1 / 1 / span 1 / span 1; height: 100%; overflow: hidden; table-layo",
+    "i": 67,
+    "left": 742,
+    "tag": "div",
+    "text": "",
+    "top": 601,
+    "w": 233
+  },
+  {
+    "attrs": {
+      "class": "cl-text",
+      "role": "combobox",
+      "style": "display: table-cell;",
+      "tabindex": "0"
+    },
+    "h": 25,
+    "html": "<div class=\"cl-text\" role=\"combobox\" tabindex=\"0\" style=\"display: table-cell;\">&nbsp;</div>",
+    "i": 68,
+    "left": 743,
+    "tag": "div",
+    "text": "",
+    "top": 602,
+    "w": 215
+  },
+  {
+    "attrs": {
+      "class": "cl-combobox-button",
+      "data-ndid": "22a",
+      "style": "grid-area: 1 / 2 / span 1 / span 1; outline: none;"
+    },
+    "h": 25,
+    "html": "<div class=\"cl-combobox-button\" data-ndid=\"22a\" style=\"grid-area: 1 / 2 / span 1 / span 1; outline: none;\"></div>",
+    "i": 69,
+    "left": 958,
+    "tag": "div",
+    "text": "",
+    "top": 602,
+    "w": 16
+  },
+  {
+    "attrs": {
+      "aria-label": "1행 마지막 열 평가결과  편집창 ",
+      "class": "cl-grid-cell cl-grid-cell-inherit cl-last-column",
+      "data-cellindex": "4",
+      "data-role": "gridcell",
+      "role": "gridcell",
+      "style": "box-sizing: border-box; display: inline-block; height: 36px; left: 674.065px; overflow: hidden; position: absolute; top: 0px; width: 897.935px;",
+      "tabindex": "-1"
+    },
+    "h": 36,
+    "html": "<div class=\"cl-grid-cell cl-grid-cell-inherit cl-last-column\" role=\"gridcell\" data-role=\"gridcell\" data-cellindex=\"4\" tabindex=\"-1\" aria-label=\"1행 마지막 열 평가결과  편집창 \" aria-readonly=\"true\" style=\"box-sizing: border-box; display: inline-block; height: 36px; left: 674.065px; overflow: hidden; position: absolute; top: 0px; width: 897.935px;\"><div class=\"cl-control cl-textarea cl-grid-ctrl-inherit cl-readonly\" title=\"평가결과\" style=\"height: calc(100% - 8px); left: 4px; max-height: 35px; overflow: hidden; ",
+    "i": 70,
+    "left": 980,
+    "tag": "div",
+    "text": "",
+    "top": 597,
+    "w": 898
+  },
+  {
+    "attrs": {
+      "class": "cl-control cl-textarea cl-grid-ctrl-inherit cl-readonly",
+      "style": "height: calc(100% - 8px); left: 4px; max-height: 35px; overflow: hidden; position: absolute; top: 4px; width: calc(100% - 8px);",
+      "title": "평가결과"
+    },
+    "h": 27,
+    "html": "<div class=\"cl-control cl-textarea cl-grid-ctrl-inherit cl-readonly\" title=\"평가결과\" style=\"height: calc(100% - 8px); left: 4px; max-height: 35px; overflow: hidden; position: absolute; top: 4px; width: calc(100% - 8px);\"><div class=\"cl-text\" style=\"background: transparent; margin: 0px; resize: none;\"></div></div>",
+    "i": 71,
+    "left": 984,
+    "tag": "div",
+    "text": "",
+    "top": 601,
+    "w": 890
+  },
+  {
+    "attrs": {
+      "class": "cl-even-row cl-grid-row cl-viewing",
+      "data-ndid": "22e",
+      "data-rowindex": "1",
+      "data-vrowindex": "1",
+      "role": "row",
+      "style": "height: 36px; left: 0px; position: absolute; top: 36px; width: 100%;"
+    },
+    "h": 36,
+    "html": "<div class=\"cl-even-row cl-grid-row cl-viewing\" data-ndid=\"22e\" role=\"row\" data-rowindex=\"1\" data-vrowindex=\"1\" aria-rowindex=\"3\" style=\"height: 36px; left: 0px; position: absolute; top: 36px; width: 100%;\"><div class=\"cl-grid-cell cl-grid-cell-inherit cl-first-column\" role=\"gridcell\" data-role=\"gridcell\" data-cellindex=\"0\" tabindex=\"-1\" title=\"체크박스\" style=\"box-sizing: border-box; display: inline-block; height: 36px; left: 0px; overflow: hidden; position: absolute; top: 0px; width: 50px;\"><div c",
+    "i": 72,
+    "left": 306,
+    "tag": "div",
+    "text": "2 김가을(전입학)",
+    "top": 633,
+    "w": 1572
+  },
+  {
+    "attrs": {
+      "class": "cl-grid-cell cl-grid-cell-inherit cl-first-column",
+      "data-cellindex": "0",
+      "data-role": "gridcell",
+      "role": "gridcell",
+      "style": "box-sizing: border-box; display: inline-block; height: 36px; left: 0px; overflow: hidden; position: absolute; top: 0px; width: 50px;",
+      "tabindex": "-1",
+      "title": "체크박스"
+    },
+    "h": 36,
+    "html": "<div class=\"cl-grid-cell cl-grid-cell-inherit cl-first-column\" role=\"gridcell\" data-role=\"gridcell\" data-cellindex=\"0\" tabindex=\"-1\" title=\"체크박스\" style=\"box-sizing: border-box; display: inline-block; height: 36px; left: 0px; overflow: hidden; position: absolute; top: 0px; width: 50px;\"><div class=\"cl-control cl-checkbox cl-builtin cl-grid-ctrl-inherit\" data-ndid=\"22c\" style=\"height: 100%; max-height: 35px; width: 100%;\"><div style=\"display: inline-table; height: 100%; text-align: inherit; vertic",
+    "i": 73,
+    "left": 306,
+    "tag": "div",
+    "text": "",
+    "top": 633,
+    "w": 50
+  },
+  {
+    "attrs": {
+      "class": "cl-control cl-checkbox cl-builtin cl-grid-ctrl-inherit",
+      "data-ndid": "22c",
+      "style": "height: 100%; max-height: 35px; width: 100%;"
+    },
+    "h": 35,
+    "html": "<div class=\"cl-control cl-checkbox cl-builtin cl-grid-ctrl-inherit\" data-ndid=\"22c\" style=\"height: 100%; max-height: 35px; width: 100%;\"><div style=\"display: inline-table; height: 100%; text-align: inherit; vertical-align: inherit;\"><div class=\"cl-icon-wrapper\" style=\"display: table-cell; text-align: inherit; vertical-align: inherit;\"><span class=\"cl-checkbox-icon\" tabindex=\"0\" role=\"checkbox\" data-role=\"checkbox\" aria-label=\"2행 전체 체크박스 행선택 체크박스\" aria-checked=\"false\" style=\"cursor: pointer; disp",
+    "i": 74,
+    "left": 306,
+    "tag": "div",
+    "text": "",
+    "top": 633,
+    "w": 49
+  },
+  {
+    "attrs": {
+      "aria-label": "2행 반/번호 2",
+      "class": "cl-grid-cell cl-grid-cell-inherit",
+      "data-cellindex": "1",
+      "data-role": "gridcell",
+      "role": "gridcell",
+      "style": "box-sizing: border-box; display: inline-block; height: 36px; left: 50px; overflow: hidden; position: absolute; top: 0px; width: 112.242px;",
+      "tabindex": "-1",
+      "title": "번호"
+    },
+    "h": 36,
+    "html": "<div class=\"cl-grid-cell cl-grid-cell-inherit\" role=\"gridcell\" data-role=\"gridcell\" data-cellindex=\"1\" tabindex=\"-1\" aria-label=\"2행 반/번호 2\" title=\"번호\" style=\"box-sizing: border-box; display: inline-block; height: 36px; left: 50px; overflow: hidden; position: absolute; top: 0px; width: 112.242px;\"><div class=\"cl-control cl-default-cell\" style=\"display: table; height: 100%; max-height: 35px; table-layout: fixed; width: 100%;\"><div class=\"cl-text\" style=\"display: table-cell; height: 100%; max-heigh",
+    "i": 75,
+    "left": 356,
+    "tag": "div",
+    "text": "2",
+    "top": 633,
+    "w": 112
+  },
+  {
+    "attrs": {
+      "class": "cl-control cl-default-cell",
+      "style": "display: table; height: 100%; max-height: 35px; table-layout: fixed; width: 100%;"
+    },
+    "h": 35,
+    "html": "<div class=\"cl-control cl-default-cell\" style=\"display: table; height: 100%; max-height: 35px; table-layout: fixed; width: 100%;\"><div class=\"cl-text\" style=\"display: table-cell; height: 100%; max-height: 35px; width: 100%;\">2</div></div>",
+    "i": 76,
+    "left": 356,
+    "tag": "div",
+    "text": "2",
+    "top": 633,
+    "w": 111
+  },
+  {
+    "attrs": {
+      "aria-label": "2행 성명 김가을(전입학) link",
+      "class": "cl-grid-cell cl-grid-cell-inherit",
+      "data-cellindex": "2",
+      "data-role": "gridcell",
+      "role": "gridcell",
+      "style": "box-sizing: border-box; display: inline-block; height: 36px; left: 162.242px; overflow: hidden; position: absolute; top: 0px; width: 269.381px;",
+      "tabindex": "-1",
+      "title": "성명"
+    },
+    "h": 36,
+    "html": "<div class=\"cl-grid-cell cl-grid-cell-inherit\" role=\"gridcell\" data-role=\"gridcell\" data-cellindex=\"2\" tabindex=\"-1\" aria-label=\"2행 성명 김가을(전입학) link\" title=\"성명\" style=\"box-sizing: border-box; display: inline-block; height: 36px; left: 162.242px; overflow: hidden; position: absolute; top: 0px; width: 269.381px;\"><div class=\"cl-control cl-output cl-writingmode-horizontal-tb cl-unselectable text-left text-underline cl-grid-ctrl-inherit cl-border-none\" role=\"link\" aria-disabled=\"false\" aria-label=\"2",
+    "i": 77,
+    "left": 468,
+    "tag": "div",
+    "text": "김가을(전입학)",
+    "top": 633,
+    "w": 269
+  },
+  {
+    "attrs": {
+      "aria-label": "2행 성명 김가을(전입학) link",
+      "class": "cl-control cl-output cl-writingmode-horizontal-tb cl-unselectable text-left text-underline cl-grid-ctrl-inherit cl-border-none",
+      "role": "link",
+      "style": "height: 36px; max-height: 35px; position: relative; text-align: center; width: 100%;",
+      "title": " "
+    },
+    "h": 35,
+    "html": "<div class=\"cl-control cl-output cl-writingmode-horizontal-tb cl-unselectable text-left text-underline cl-grid-ctrl-inherit cl-border-none\" role=\"link\" aria-disabled=\"false\" aria-label=\"2행 성명 김가을(전입학) link\" title=\" \" style=\"height: 36px; max-height: 35px; position: relative; text-align: center; width: 100%;\"><div style=\"display: table; height: 100%; table-layout: fixed; vertical-align: inherit; width: 100%;\"><div class=\"cl-text\" style=\"display: table-cell; height: 100%; max-height: 36px; width: ",
+    "i": 78,
+    "left": 468,
+    "tag": "div",
+    "text": "김가을(전입학)",
+    "top": 633,
+    "w": 268
+  },
+  {
+    "attrs": {
+      "aria-label": "2행 단계  콤보상자",
+      "class": "cl-grid-cell cl-grid-cell-inherit",
+      "data-cellindex": "3",
+      "data-role": "gridcell",
+      "role": "gridcell",
+      "style": "box-sizing: border-box; display: inline-block; height: 36px; left: 431.622px; overflow: hidden; position: absolute; top: 0px; width: 242.442px;",
+      "tabindex": "-1"
+    },
+    "h": 36,
+    "html": "<div class=\"cl-grid-cell cl-grid-cell-inherit\" role=\"gridcell\" data-role=\"gridcell\" data-cellindex=\"3\" tabindex=\"-1\" aria-label=\"2행 단계  콤보상자\" style=\"box-sizing: border-box; display: inline-block; height: 36px; left: 431.622px; overflow: hidden; position: absolute; top: 0px; width: 242.442px;\"><div class=\"cl-control cl-combobox cl-grid-ctrl-inherit\" style=\"height: calc(100% - 8px); left: 4px; max-height: 35px; position: absolute; top: 4px; width: calc(100% - 8px);\"><div style=\"display: grid; grid",
+    "i": 79,
+    "left": 738,
+    "tag": "div",
+    "text": "",
+    "top": 633,
+    "w": 242
+  },
+  {
+    "attrs": {
+      "class": "cl-control cl-combobox cl-grid-ctrl-inherit",
+      "style": "height: calc(100% - 8px); left: 4px; max-height: 35px; position: absolute; top: 4px; width: calc(100% - 8px);"
+    },
+    "h": 27,
+    "html": "<div class=\"cl-control cl-combobox cl-grid-ctrl-inherit\" style=\"height: calc(100% - 8px); left: 4px; max-height: 35px; position: absolute; top: 4px; width: calc(100% - 8px);\"><div style=\"display: grid; grid-template-columns: 1fr auto; grid-template-rows: 1fr; height: 100%; overflow: hidden; text-align: inherit; vertical-align: inherit; width: 100%;\"><div aria-expanded=\"false\" style=\"align-self: center; display: table; grid-area: 1 / 1 / span 1 / span 1; height: 100%; overflow: hidden; table-layo",
+    "i": 80,
+    "left": 742,
+    "tag": "div",
+    "text": "",
+    "top": 637,
+    "w": 233
+  },
+  {
+    "attrs": {
+      "class": "cl-text",
+      "role": "combobox",
+      "style": "display: table-cell;",
+      "tabindex": "0"
+    },
+    "h": 25,
+    "html": "<div class=\"cl-text\" role=\"combobox\" tabindex=\"0\" style=\"display: table-cell;\">&nbsp;</div>",
+    "i": 81,
+    "left": 743,
+    "tag": "div",
+    "text": "",
+    "top": 638,
+    "w": 215
+  },
+  {
+    "attrs": {
+      "class": "cl-combobox-button",
+      "data-ndid": "22d",
+      "style": "grid-area: 1 / 2 / span 1 / span 1; outline: none;"
+    },
+    "h": 25,
+    "html": "<div class=\"cl-combobox-button\" data-ndid=\"22d\" style=\"grid-area: 1 / 2 / span 1 / span 1; outline: none;\"></div>",
+    "i": 82,
+    "left": 958,
+    "tag": "div",
+    "text": "",
+    "top": 638,
+    "w": 16
+  },
+  {
+    "attrs": {
+      "aria-label": "2행 마지막 열 평가결과  편집창 ",
+      "class": "cl-grid-cell cl-grid-cell-inherit cl-last-column",
+      "data-cellindex": "4",
+      "data-role": "gridcell",
+      "role": "gridcell",
+      "style": "box-sizing: border-box; display: inline-block; height: 36px; left: 674.065px; overflow: hidden; position: absolute; top: 0px; width: 897.935px;",
+      "tabindex": "-1"
+    },
+    "h": 36,
+    "html": "<div class=\"cl-grid-cell cl-grid-cell-inherit cl-last-column\" role=\"gridcell\" data-role=\"gridcell\" data-cellindex=\"4\" tabindex=\"-1\" aria-label=\"2행 마지막 열 평가결과  편집창 \" aria-readonly=\"true\" style=\"box-sizing: border-box; display: inline-block; height: 36px; left: 674.065px; overflow: hidden; position: absolute; top: 0px; width: 897.935px;\"><div class=\"cl-control cl-textarea cl-grid-ctrl-inherit cl-readonly\" title=\"평가결과\" style=\"height: calc(100% - 8px); left: 4px; max-height: 35px; overflow: hidden; ",
+    "i": 83,
+    "left": 980,
+    "tag": "div",
+    "text": "",
+    "top": 633,
+    "w": 898
+  },
+  {
+    "attrs": {
+      "class": "cl-control cl-textarea cl-grid-ctrl-inherit cl-readonly",
+      "style": "height: calc(100% - 8px); left: 4px; max-height: 35px; overflow: hidden; position: absolute; top: 4px; width: calc(100% - 8px);",
+      "title": "평가결과"
+    },
+    "h": 27,
+    "html": "<div class=\"cl-control cl-textarea cl-grid-ctrl-inherit cl-readonly\" title=\"평가결과\" style=\"height: calc(100% - 8px); left: 4px; max-height: 35px; overflow: hidden; position: absolute; top: 4px; width: calc(100% - 8px);\"><div class=\"cl-text\" style=\"background: transparent; margin: 0px; resize: none;\"></div></div>",
+    "i": 84,
+    "left": 984,
+    "tag": "div",
+    "text": "",
+    "top": 637,
+    "w": 890
+  },
+  {
+    "attrs": {
+      "class": "cl-grid-row cl-odd-row cl-viewing",
+      "data-ndid": "22h",
+      "data-rowindex": "2",
+      "data-vrowindex": "2",
+      "role": "row",
+      "style": "height: 36px; left: 0px; position: absolute; top: 72px; width: 100%;"
+    },
+    "h": 36,
+    "html": "<div class=\"cl-grid-row cl-odd-row cl-viewing\" data-ndid=\"22h\" role=\"row\" data-rowindex=\"2\" data-vrowindex=\"2\" aria-rowindex=\"4\" style=\"height: 36px; left: 0px; position: absolute; top: 72px; width: 100%;\"><div class=\"cl-grid-cell cl-grid-cell-inherit cl-first-column\" role=\"gridcell\" data-role=\"gridcell\" data-cellindex=\"0\" tabindex=\"-1\" title=\"체크박스\" style=\"box-sizing: border-box; display: inline-block; height: 36px; left: 0px; overflow: hidden; position: absolute; top: 0px; width: 50px;\"><div cl",
+    "i": 85,
+    "left": 306,
+    "tag": "div",
+    "text": "3 김동규(전입학)",
+    "top": 669,
+    "w": 1572
+  },
+  {
+    "attrs": {
+      "class": "cl-grid-cell cl-grid-cell-inherit cl-first-column",
+      "data-cellindex": "0",
+      "data-role": "gridcell",
+      "role": "gridcell",
+      "style": "box-sizing: border-box; display: inline-block; height: 36px; left: 0px; overflow: hidden; position: absolute; top: 0px; width: 50px;",
+      "tabindex": "-1",
+      "title": "체크박스"
+    },
+    "h": 36,
+    "html": "<div class=\"cl-grid-cell cl-grid-cell-inherit cl-first-column\" role=\"gridcell\" data-role=\"gridcell\" data-cellindex=\"0\" tabindex=\"-1\" title=\"체크박스\" style=\"box-sizing: border-box; display: inline-block; height: 36px; left: 0px; overflow: hidden; position: absolute; top: 0px; width: 50px;\"><div class=\"cl-control cl-checkbox cl-builtin cl-grid-ctrl-inherit\" data-ndid=\"22f\" style=\"height: 100%; max-height: 35px; width: 100%;\"><div style=\"display: inline-table; height: 100%; text-align: inherit; vertic",
+    "i": 86,
+    "left": 306,
+    "tag": "div",
+    "text": "",
+    "top": 669,
+    "w": 50
+  },
+  {
+    "attrs": {
+      "class": "cl-control cl-checkbox cl-builtin cl-grid-ctrl-inherit",
+      "data-ndid": "22f",
+      "style": "height: 100%; max-height: 35px; width: 100%;"
+    },
+    "h": 35,
+    "html": "<div class=\"cl-control cl-checkbox cl-builtin cl-grid-ctrl-inherit\" data-ndid=\"22f\" style=\"height: 100%; max-height: 35px; width: 100%;\"><div style=\"display: inline-table; height: 100%; text-align: inherit; vertical-align: inherit;\"><div class=\"cl-icon-wrapper\" style=\"display: table-cell; text-align: inherit; vertical-align: inherit;\"><span class=\"cl-checkbox-icon\" tabindex=\"0\" role=\"checkbox\" data-role=\"checkbox\" aria-label=\"3행 전체 체크박스 행선택 체크박스\" aria-checked=\"false\" style=\"cursor: pointer; disp",
+    "i": 87,
+    "left": 306,
+    "tag": "div",
+    "text": "",
+    "top": 669,
+    "w": 49
+  },
+  {
+    "attrs": {
+      "aria-label": "3행 반/번호 3",
+      "class": "cl-grid-cell cl-grid-cell-inherit",
+      "data-cellindex": "1",
+      "data-role": "gridcell",
+      "role": "gridcell",
+      "style": "box-sizing: border-box; display: inline-block; height: 36px; left: 50px; overflow: hidden; position: absolute; top: 0px; width: 112.242px;",
+      "tabindex": "-1",
+      "title": "번호"
+    },
+    "h": 36,
+    "html": "<div class=\"cl-grid-cell cl-grid-cell-inherit\" role=\"gridcell\" data-role=\"gridcell\" data-cellindex=\"1\" tabindex=\"-1\" aria-label=\"3행 반/번호 3\" title=\"번호\" style=\"box-sizing: border-box; display: inline-block; height: 36px; left: 50px; overflow: hidden; position: absolute; top: 0px; width: 112.242px;\"><div class=\"cl-control cl-default-cell\" style=\"display: table; height: 100%; max-height: 35px; table-layout: fixed; width: 100%;\"><div class=\"cl-text\" style=\"display: table-cell; height: 100%; max-heigh",
+    "i": 88,
+    "left": 356,
+    "tag": "div",
+    "text": "3",
+    "top": 669,
+    "w": 112
+  },
+  {
+    "attrs": {
+      "class": "cl-control cl-default-cell",
+      "style": "display: table; height: 100%; max-height: 35px; table-layout: fixed; width: 100%;"
+    },
+    "h": 35,
+    "html": "<div class=\"cl-control cl-default-cell\" style=\"display: table; height: 100%; max-height: 35px; table-layout: fixed; width: 100%;\"><div class=\"cl-text\" style=\"display: table-cell; height: 100%; max-height: 35px; width: 100%;\">3</div></div>",
+    "i": 89,
+    "left": 356,
+    "tag": "div",
+    "text": "3",
+    "top": 669,
+    "w": 111
+  },
+  {
+    "attrs": {
+      "aria-label": "3행 성명 김동규(전입학) link",
+      "class": "cl-grid-cell cl-grid-cell-inherit",
+      "data-cellindex": "2",
+      "data-role": "gridcell",
+      "role": "gridcell",
+      "style": "box-sizing: border-box; display: inline-block; height: 36px; left: 162.242px; overflow: hidden; position: absolute; top: 0px; width: 269.381px;",
+      "tabindex": "-1",
+      "title": "성명"
+    },
+    "h": 36,
+    "html": "<div class=\"cl-grid-cell cl-grid-cell-inherit\" role=\"gridcell\" data-role=\"gridcell\" data-cellindex=\"2\" tabindex=\"-1\" aria-label=\"3행 성명 김동규(전입학) link\" title=\"성명\" style=\"box-sizing: border-box; display: inline-block; height: 36px; left: 162.242px; overflow: hidden; position: absolute; top: 0px; width: 269.381px;\"><div class=\"cl-control cl-output cl-writingmode-horizontal-tb cl-unselectable text-left text-underline cl-grid-ctrl-inherit cl-border-none\" role=\"link\" aria-disabled=\"false\" aria-label=\"3",
+    "i": 90,
+    "left": 468,
+    "tag": "div",
+    "text": "김동규(전입학)",
+    "top": 669,
+    "w": 269
+  },
+  {
+    "attrs": {
+      "aria-label": "3행 성명 김동규(전입학) link",
+      "class": "cl-control cl-output cl-writingmode-horizontal-tb cl-unselectable text-left text-underline cl-grid-ctrl-inherit cl-border-none",
+      "role": "link",
+      "style": "height: 36px; max-height: 35px; position: relative; text-align: center; width: 100%;",
+      "title": " "
+    },
+    "h": 35,
+    "html": "<div class=\"cl-control cl-output cl-writingmode-horizontal-tb cl-unselectable text-left text-underline cl-grid-ctrl-inherit cl-border-none\" role=\"link\" aria-disabled=\"false\" aria-label=\"3행 성명 김동규(전입학) link\" title=\" \" style=\"height: 36px; max-height: 35px; position: relative; text-align: center; width: 100%;\"><div style=\"display: table; height: 100%; table-layout: fixed; vertical-align: inherit; width: 100%;\"><div class=\"cl-text\" style=\"display: table-cell; height: 100%; max-height: 36px; width: ",
+    "i": 91,
+    "left": 468,
+    "tag": "div",
+    "text": "김동규(전입학)",
+    "top": 669,
+    "w": 268
+  },
+  {
+    "attrs": {
+      "aria-label": "3행 단계  콤보상자",
+      "class": "cl-grid-cell cl-grid-cell-inherit",
+      "data-cellindex": "3",
+      "data-role": "gridcell",
+      "role": "gridcell",
+      "style": "box-sizing: border-box; display: inline-block; height: 36px; left: 431.622px; overflow: hidden; position: absolute; top: 0px; width: 242.442px;",
+      "tabindex": "-1"
+    },
+    "h": 36,
+    "html": "<div class=\"cl-grid-cell cl-grid-cell-inherit\" role=\"gridcell\" data-role=\"gridcell\" data-cellindex=\"3\" tabindex=\"-1\" aria-label=\"3행 단계  콤보상자\" style=\"box-sizing: border-box; display: inline-block; height: 36px; left: 431.622px; overflow: hidden; position: absolute; top: 0px; width: 242.442px;\"><div class=\"cl-control cl-combobox cl-grid-ctrl-inherit\" style=\"height: calc(100% - 8px); left: 4px; max-height: 35px; position: absolute; top: 4px; width: calc(100% - 8px);\"><div style=\"display: grid; grid",
+    "i": 92,
+    "left": 738,
+    "tag": "div",
+    "text": "",
+    "top": 669,
+    "w": 242
+  },
+  {
+    "attrs": {
+      "class": "cl-control cl-combobox cl-grid-ctrl-inherit",
+      "style": "height: calc(100% - 8px); left: 4px; max-height: 35px; position: absolute; top: 4px; width: calc(100% - 8px);"
+    },
+    "h": 27,
+    "html": "<div class=\"cl-control cl-combobox cl-grid-ctrl-inherit\" style=\"height: calc(100% - 8px); left: 4px; max-height: 35px; position: absolute; top: 4px; width: calc(100% - 8px);\"><div style=\"display: grid; grid-template-columns: 1fr auto; grid-template-rows: 1fr; height: 100%; overflow: hidden; text-align: inherit; vertical-align: inherit; width: 100%;\"><div aria-expanded=\"false\" style=\"align-self: center; display: table; grid-area: 1 / 1 / span 1 / span 1; height: 100%; overflow: hidden; table-layo",
+    "i": 93,
+    "left": 742,
+    "tag": "div",
+    "text": "",
+    "top": 673,
+    "w": 233
+  },
+  {
+    "attrs": {
+      "class": "cl-text",
+      "role": "combobox",
+      "style": "display: table-cell;",
+      "tabindex": "0"
+    },
+    "h": 25,
+    "html": "<div class=\"cl-text\" role=\"combobox\" tabindex=\"0\" style=\"display: table-cell;\">&nbsp;</div>",
+    "i": 94,
+    "left": 743,
+    "tag": "div",
+    "text": "",
+    "top": 674,
+    "w": 215
+  },
+  {
+    "attrs": {
+      "class": "cl-combobox-button",
+      "data-ndid": "22g",
+      "style": "grid-area: 1 / 2 / span 1 / span 1; outline: none;"
+    },
+    "h": 25,
+    "html": "<div class=\"cl-combobox-button\" data-ndid=\"22g\" style=\"grid-area: 1 / 2 / span 1 / span 1; outline: none;\"></div>",
+    "i": 95,
+    "left": 958,
+    "tag": "div",
+    "text": "",
+    "top": 674,
+    "w": 16
+  },
+  {
+    "attrs": {
+      "aria-label": "3행 마지막 열 평가결과  편집창 ",
+      "class": "cl-grid-cell cl-grid-cell-inherit cl-last-column",
+      "data-cellindex": "4",
+      "data-role": "gridcell",
+      "role": "gridcell",
+      "style": "box-sizing: border-box; display: inline-block; height: 36px; left: 674.065px; overflow: hidden; position: absolute; top: 0px; width: 897.935px;",
+      "tabindex": "-1"
+    },
+    "h": 36,
+    "html": "<div class=\"cl-grid-cell cl-grid-cell-inherit cl-last-column\" role=\"gridcell\" data-role=\"gridcell\" data-cellindex=\"4\" tabindex=\"-1\" aria-label=\"3행 마지막 열 평가결과  편집창 \" aria-readonly=\"true\" style=\"box-sizing: border-box; display: inline-block; height: 36px; left: 674.065px; overflow: hidden; position: absolute; top: 0px; width: 897.935px;\"><div class=\"cl-control cl-textarea cl-grid-ctrl-inherit cl-readonly\" title=\"평가결과\" style=\"height: calc(100% - 8px); left: 4px; max-height: 35px; overflow: hidden; ",
+    "i": 96,
+    "left": 980,
+    "tag": "div",
+    "text": "",
+    "top": 669,
+    "w": 898
+  },
+  {
+    "attrs": {
+      "class": "cl-control cl-textarea cl-grid-ctrl-inherit cl-readonly",
+      "style": "height: calc(100% - 8px); left: 4px; max-height: 35px; overflow: hidden; position: absolute; top: 4px; width: calc(100% - 8px);",
+      "title": "평가결과"
+    },
+    "h": 27,
+    "html": "<div class=\"cl-control cl-textarea cl-grid-ctrl-inherit cl-readonly\" title=\"평가결과\" style=\"height: calc(100% - 8px); left: 4px; max-height: 35px; overflow: hidden; position: absolute; top: 4px; width: calc(100% - 8px);\"><div class=\"cl-text\" style=\"background: transparent; margin: 0px; resize: none;\"></div></div>",
+    "i": 97,
+    "left": 984,
+    "tag": "div",
+    "text": "",
+    "top": 673,
+    "w": 890
+  },
+  {
+    "attrs": {
+      "class": "cl-even-row cl-grid-row cl-viewing",
+      "data-ndid": "22k",
+      "data-rowindex": "3",
+      "data-vrowindex": "3",
+      "role": "row",
+      "style": "height: 36px; left: 0px; position: absolute; top: 108px; width: 100%;"
+    },
+    "h": 36,
+    "html": "<div class=\"cl-even-row cl-grid-row cl-viewing\" data-ndid=\"22k\" role=\"row\" data-rowindex=\"3\" data-vrowindex=\"3\" aria-rowindex=\"5\" style=\"height: 36px; left: 0px; position: absolute; top: 108px; width: 100%;\"><div class=\"cl-grid-cell cl-grid-cell-inherit cl-first-column\" role=\"gridcell\" data-role=\"gridcell\" data-cellindex=\"0\" tabindex=\"-1\" title=\"체크박스\" style=\"box-sizing: border-box; display: inline-block; height: 36px; left: 0px; overflow: hidden; position: absolute; top: 0px; width: 50px;\"><div ",
+    "i": 98,
+    "left": 306,
+    "tag": "div",
+    "text": "4 김주안(전입학)",
+    "top": 705,
+    "w": 1572
+  },
+  {
+    "attrs": {
+      "class": "cl-grid-cell cl-grid-cell-inherit cl-first-column",
+      "data-cellindex": "0",
+      "data-role": "gridcell",
+      "role": "gridcell",
+      "style": "box-sizing: border-box; display: inline-block; height: 36px; left: 0px; overflow: hidden; position: absolute; top: 0px; width: 50px;",
+      "tabindex": "-1",
+      "title": "체크박스"
+    },
+    "h": 36,
+    "html": "<div class=\"cl-grid-cell cl-grid-cell-inherit cl-first-column\" role=\"gridcell\" data-role=\"gridcell\" data-cellindex=\"0\" tabindex=\"-1\" title=\"체크박스\" style=\"box-sizing: border-box; display: inline-block; height: 36px; left: 0px; overflow: hidden; position: absolute; top: 0px; width: 50px;\"><div class=\"cl-control cl-checkbox cl-builtin cl-grid-ctrl-inherit\" data-ndid=\"22i\" style=\"height: 100%; max-height: 35px; width: 100%;\"><div style=\"display: inline-table; height: 100%; text-align: inherit; vertic",
+    "i": 99,
+    "left": 306,
+    "tag": "div",
+    "text": "",
+    "top": 705,
+    "w": 50
+  },
+  {
+    "attrs": {
+      "class": "cl-control cl-checkbox cl-builtin cl-grid-ctrl-inherit",
+      "data-ndid": "22i",
+      "style": "height: 100%; max-height: 35px; width: 100%;"
+    },
+    "h": 35,
+    "html": "<div class=\"cl-control cl-checkbox cl-builtin cl-grid-ctrl-inherit\" data-ndid=\"22i\" style=\"height: 100%; max-height: 35px; width: 100%;\"><div style=\"display: inline-table; height: 100%; text-align: inherit; vertical-align: inherit;\"><div class=\"cl-icon-wrapper\" style=\"display: table-cell; text-align: inherit; vertical-align: inherit;\"><span class=\"cl-checkbox-icon\" tabindex=\"0\" role=\"checkbox\" data-role=\"checkbox\" aria-label=\"4행 전체 체크박스 행선택 체크박스\" aria-checked=\"false\" style=\"cursor: pointer; disp",
+    "i": 100,
+    "left": 306,
+    "tag": "div",
+    "text": "",
+    "top": 705,
+    "w": 49
+  },
+  {
+    "attrs": {
+      "aria-label": "4행 반/번호 4",
+      "class": "cl-grid-cell cl-grid-cell-inherit",
+      "data-cellindex": "1",
+      "data-role": "gridcell",
+      "role": "gridcell",
+      "style": "box-sizing: border-box; display: inline-block; height: 36px; left: 50px; overflow: hidden; position: absolute; top: 0px; width: 112.242px;",
+      "tabindex": "-1",
+      "title": "번호"
+    },
+    "h": 36,
+    "html": "<div class=\"cl-grid-cell cl-grid-cell-inherit\" role=\"gridcell\" data-role=\"gridcell\" data-cellindex=\"1\" tabindex=\"-1\" aria-label=\"4행 반/번호 4\" title=\"번호\" style=\"box-sizing: border-box; display: inline-block; height: 36px; left: 50px; overflow: hidden; position: absolute; top: 0px; width: 112.242px;\"><div class=\"cl-control cl-default-cell\" style=\"display: table; height: 100%; max-height: 35px; table-layout: fixed; width: 100%;\"><div class=\"cl-text\" style=\"display: table-cell; height: 100%; max-heigh",
+    "i": 101,
+    "left": 356,
+    "tag": "div",
+    "text": "4",
+    "top": 705,
+    "w": 112
+  },
+  {
+    "attrs": {
+      "class": "cl-control cl-default-cell",
+      "style": "display: table; height: 100%; max-height: 35px; table-layout: fixed; width: 100%;"
+    },
+    "h": 35,
+    "html": "<div class=\"cl-control cl-default-cell\" style=\"display: table; height: 100%; max-height: 35px; table-layout: fixed; width: 100%;\"><div class=\"cl-text\" style=\"display: table-cell; height: 100%; max-height: 35px; width: 100%;\">4</div></div>",
+    "i": 102,
+    "left": 356,
+    "tag": "div",
+    "text": "4",
+    "top": 705,
+    "w": 111
+  },
+  {
+    "attrs": {
+      "aria-label": "4행 성명 김주안(전입학) link",
+      "class": "cl-grid-cell cl-grid-cell-inherit",
+      "data-cellindex": "2",
+      "data-role": "gridcell",
+      "role": "gridcell",
+      "style": "box-sizing: border-box; display: inline-block; height: 36px; left: 162.242px; overflow: hidden; position: absolute; top: 0px; width: 269.381px;",
+      "tabindex": "-1",
+      "title": "성명"
+    },
+    "h": 36,
+    "html": "<div class=\"cl-grid-cell cl-grid-cell-inherit\" role=\"gridcell\" data-role=\"gridcell\" data-cellindex=\"2\" tabindex=\"-1\" aria-label=\"4행 성명 김주안(전입학) link\" title=\"성명\" style=\"box-sizing: border-box; display: inline-block; height: 36px; left: 162.242px; overflow: hidden; position: absolute; top: 0px; width: 269.381px;\"><div class=\"cl-control cl-output cl-writingmode-horizontal-tb cl-unselectable text-left text-underline cl-grid-ctrl-inherit cl-border-none\" role=\"link\" aria-disabled=\"false\" aria-label=\"4",
+    "i": 103,
+    "left": 468,
+    "tag": "div",
+    "text": "김주안(전입학)",
+    "top": 705,
+    "w": 269
+  },
+  {
+    "attrs": {
+      "aria-label": "4행 성명 김주안(전입학) link",
+      "class": "cl-control cl-output cl-writingmode-horizontal-tb cl-unselectable text-left text-underline cl-grid-ctrl-inherit cl-border-none",
+      "role": "link",
+      "style": "height: 36px; max-height: 35px; position: relative; text-align: center; width: 100%;",
+      "title": " "
+    },
+    "h": 35,
+    "html": "<div class=\"cl-control cl-output cl-writingmode-horizontal-tb cl-unselectable text-left text-underline cl-grid-ctrl-inherit cl-border-none\" role=\"link\" aria-disabled=\"false\" aria-label=\"4행 성명 김주안(전입학) link\" title=\" \" style=\"height: 36px; max-height: 35px; position: relative; text-align: center; width: 100%;\"><div style=\"display: table; height: 100%; table-layout: fixed; vertical-align: inherit; width: 100%;\"><div class=\"cl-text\" style=\"display: table-cell; height: 100%; max-height: 36px; width: ",
+    "i": 104,
+    "left": 468,
+    "tag": "div",
+    "text": "김주안(전입학)",
+    "top": 705,
+    "w": 268
+  },
+  {
+    "attrs": {
+      "aria-label": "4행 단계  콤보상자",
+      "class": "cl-grid-cell cl-grid-cell-inherit",
+      "data-cellindex": "3",
+      "data-role": "gridcell",
+      "role": "gridcell",
+      "style": "box-sizing: border-box; display: inline-block; height: 36px; left: 431.622px; overflow: hidden; position: absolute; top: 0px; width: 242.442px;",
+      "tabindex": "-1"
+    },
+    "h": 36,
+    "html": "<div class=\"cl-grid-cell cl-grid-cell-inherit\" role=\"gridcell\" data-role=\"gridcell\" data-cellindex=\"3\" tabindex=\"-1\" aria-label=\"4행 단계  콤보상자\" style=\"box-sizing: border-box; display: inline-block; height: 36px; left: 431.622px; overflow: hidden; position: absolute; top: 0px; width: 242.442px;\"><div class=\"cl-control cl-combobox cl-grid-ctrl-inherit\" style=\"height: calc(100% - 8px); left: 4px; max-height: 35px; position: absolute; top: 4px; width: calc(100% - 8px);\"><div style=\"display: grid; grid",
+    "i": 105,
+    "left": 738,
+    "tag": "div",
+    "text": "",
+    "top": 705,
+    "w": 242
+  },
+  {
+    "attrs": {
+      "class": "cl-control cl-combobox cl-grid-ctrl-inherit",
+      "style": "height: calc(100% - 8px); left: 4px; max-height: 35px; position: absolute; top: 4px; width: calc(100% - 8px);"
+    },
+    "h": 27,
+    "html": "<div class=\"cl-control cl-combobox cl-grid-ctrl-inherit\" style=\"height: calc(100% - 8px); left: 4px; max-height: 35px; position: absolute; top: 4px; width: calc(100% - 8px);\"><div style=\"display: grid; grid-template-columns: 1fr auto; grid-template-rows: 1fr; height: 100%; overflow: hidden; text-align: inherit; vertical-align: inherit; width: 100%;\"><div aria-expanded=\"false\" style=\"align-self: center; display: table; grid-area: 1 / 1 / span 1 / span 1; height: 100%; overflow: hidden; table-layo",
+    "i": 106,
+    "left": 742,
+    "tag": "div",
+    "text": "",
+    "top": 709,
+    "w": 233
+  },
+  {
+    "attrs": {
+      "class": "cl-text",
+      "role": "combobox",
+      "style": "display: table-cell;",
+      "tabindex": "0"
+    },
+    "h": 25,
+    "html": "<div class=\"cl-text\" role=\"combobox\" tabindex=\"0\" style=\"display: table-cell;\">&nbsp;</div>",
+    "i": 107,
+    "left": 743,
+    "tag": "div",
+    "text": "",
+    "top": 710,
+    "w": 215
+  },
+  {
+    "attrs": {
+      "class": "cl-combobox-button",
+      "data-ndid": "22j",
+      "style": "grid-area: 1 / 2 / span 1 / span 1; outline: none;"
+    },
+    "h": 25,
+    "html": "<div class=\"cl-combobox-button\" data-ndid=\"22j\" style=\"grid-area: 1 / 2 / span 1 / span 1; outline: none;\"></div>",
+    "i": 108,
+    "left": 958,
+    "tag": "div",
+    "text": "",
+    "top": 710,
+    "w": 16
+  },
+  {
+    "attrs": {
+      "aria-label": "4행 마지막 열 평가결과  편집창 ",
+      "class": "cl-grid-cell cl-grid-cell-inherit cl-last-column",
+      "data-cellindex": "4",
+      "data-role": "gridcell",
+      "role": "gridcell",
+      "style": "box-sizing: border-box; display: inline-block; height: 36px; left: 674.065px; overflow: hidden; position: absolute; top: 0px; width: 897.935px;",
+      "tabindex": "-1"
+    },
+    "h": 36,
+    "html": "<div class=\"cl-grid-cell cl-grid-cell-inherit cl-last-column\" role=\"gridcell\" data-role=\"gridcell\" data-cellindex=\"4\" tabindex=\"-1\" aria-label=\"4행 마지막 열 평가결과  편집창 \" aria-readonly=\"true\" style=\"box-sizing: border-box; display: inline-block; height: 36px; left: 674.065px; overflow: hidden; position: absolute; top: 0px; width: 897.935px;\"><div class=\"cl-control cl-textarea cl-grid-ctrl-inherit cl-readonly\" title=\"평가결과\" style=\"height: calc(100% - 8px); left: 4px; max-height: 35px; overflow: hidden; ",
+    "i": 109,
+    "left": 980,
+    "tag": "div",
+    "text": "",
+    "top": 705,
+    "w": 898
+  },
+  {
+    "attrs": {
+      "class": "cl-control cl-textarea cl-grid-ctrl-inherit cl-readonly",
+      "style": "height: calc(100% - 8px); left: 4px; max-height: 35px; overflow: hidden; position: absolute; top: 4px; width: calc(100% - 8px);",
+      "title": "평가결과"
+    },
+    "h": 27,
+    "html": "<div class=\"cl-control cl-textarea cl-grid-ctrl-inherit cl-readonly\" title=\"평가결과\" style=\"height: calc(100% - 8px); left: 4px; max-height: 35px; overflow: hidden; position: absolute; top: 4px; width: calc(100% - 8px);\"><div class=\"cl-text\" style=\"background: transparent; margin: 0px; resize: none;\"></div></div>",
+    "i": 110,
+    "left": 984,
+    "tag": "div",
+    "text": "",
+    "top": 709,
+    "w": 890
+  },
+  {
+    "attrs": {
+      "class": "cl-grid-row cl-odd-row cl-viewing",
+      "data-ndid": "22n",
+      "data-rowindex": "4",
+      "data-vrowindex": "4",
+      "role": "row",
+      "style": "height: 36px; left: 0px; position: absolute; top: 144px; width: 100%;"
+    },
+    "h": 36,
+    "html": "<div class=\"cl-grid-row cl-odd-row cl-viewing\" data-ndid=\"22n\" role=\"row\" data-rowindex=\"4\" data-vrowindex=\"4\" aria-rowindex=\"6\" style=\"height: 36px; left: 0px; position: absolute; top: 144px; width: 100%;\"><div class=\"cl-grid-cell cl-grid-cell-inherit cl-first-column\" role=\"gridcell\" data-role=\"gridcell\" data-cellindex=\"0\" tabindex=\"-1\" title=\"체크박스\" style=\"box-sizing: border-box; display: inline-block; height: 36px; left: 0px; overflow: hidden; position: absolute; top: 0px; width: 50px;\"><div c",
+    "i": 111,
+    "left": 306,
+    "tag": "div",
+    "text": "5 박민서(전입학)",
+    "top": 741,
+    "w": 1572
+  },
+  {
+    "attrs": {
+      "class": "cl-grid-cell cl-grid-cell-inherit cl-first-column",
+      "data-cellindex": "0",
+      "data-role": "gridcell",
+      "role": "gridcell",
+      "style": "box-sizing: border-box; display: inline-block; height: 36px; left: 0px; overflow: hidden; position: absolute; top: 0px; width: 50px;",
+      "tabindex": "-1",
+      "title": "체크박스"
+    },
+    "h": 36,
+    "html": "<div class=\"cl-grid-cell cl-grid-cell-inherit cl-first-column\" role=\"gridcell\" data-role=\"gridcell\" data-cellindex=\"0\" tabindex=\"-1\" title=\"체크박스\" style=\"box-sizing: border-box; display: inline-block; height: 36px; left: 0px; overflow: hidden; position: absolute; top: 0px; width: 50px;\"><div class=\"cl-control cl-checkbox cl-builtin cl-grid-ctrl-inherit\" data-ndid=\"22l\" style=\"height: 100%; max-height: 35px; width: 100%;\"><div style=\"display: inline-table; height: 100%; text-align: inherit; vertic",
+    "i": 112,
+    "left": 306,
+    "tag": "div",
+    "text": "",
+    "top": 741,
+    "w": 50
+  },
+  {
+    "attrs": {
+      "class": "cl-control cl-checkbox cl-builtin cl-grid-ctrl-inherit",
+      "data-ndid": "22l",
+      "style": "height: 100%; max-height: 35px; width: 100%;"
+    },
+    "h": 35,
+    "html": "<div class=\"cl-control cl-checkbox cl-builtin cl-grid-ctrl-inherit\" data-ndid=\"22l\" style=\"height: 100%; max-height: 35px; width: 100%;\"><div style=\"display: inline-table; height: 100%; text-align: inherit; vertical-align: inherit;\"><div class=\"cl-icon-wrapper\" style=\"display: table-cell; text-align: inherit; vertical-align: inherit;\"><span class=\"cl-checkbox-icon\" tabindex=\"0\" role=\"checkbox\" data-role=\"checkbox\" aria-label=\"5행 전체 체크박스 행선택 체크박스\" aria-checked=\"false\" style=\"cursor: pointer; disp",
+    "i": 113,
+    "left": 306,
+    "tag": "div",
+    "text": "",
+    "top": 741,
+    "w": 49
+  },
+  {
+    "attrs": {
+      "aria-label": "5행 반/번호 5",
+      "class": "cl-grid-cell cl-grid-cell-inherit",
+      "data-cellindex": "1",
+      "data-role": "gridcell",
+      "role": "gridcell",
+      "style": "box-sizing: border-box; display: inline-block; height: 36px; left: 50px; overflow: hidden; position: absolute; top: 0px; width: 112.242px;",
+      "tabindex": "-1",
+      "title": "번호"
+    },
+    "h": 36,
+    "html": "<div class=\"cl-grid-cell cl-grid-cell-inherit\" role=\"gridcell\" data-role=\"gridcell\" data-cellindex=\"1\" tabindex=\"-1\" aria-label=\"5행 반/번호 5\" title=\"번호\" style=\"box-sizing: border-box; display: inline-block; height: 36px; left: 50px; overflow: hidden; position: absolute; top: 0px; width: 112.242px;\"><div class=\"cl-control cl-default-cell\" style=\"display: table; height: 100%; max-height: 35px; table-layout: fixed; width: 100%;\"><div class=\"cl-text\" style=\"display: table-cell; height: 100%; max-heigh",
+    "i": 114,
+    "left": 356,
+    "tag": "div",
+    "text": "5",
+    "top": 741,
+    "w": 112
+  },
+  {
+    "attrs": {
+      "class": "cl-control cl-default-cell",
+      "style": "display: table; height: 100%; max-height: 35px; table-layout: fixed; width: 100%;"
+    },
+    "h": 35,
+    "html": "<div class=\"cl-control cl-default-cell\" style=\"display: table; height: 100%; max-height: 35px; table-layout: fixed; width: 100%;\"><div class=\"cl-text\" style=\"display: table-cell; height: 100%; max-height: 35px; width: 100%;\">5</div></div>",
+    "i": 115,
+    "left": 356,
+    "tag": "div",
+    "text": "5",
+    "top": 741,
+    "w": 111
+  },
+  {
+    "attrs": {
+      "aria-label": "5행 성명 박민서(전입학) link",
+      "class": "cl-grid-cell cl-grid-cell-inherit",
+      "data-cellindex": "2",
+      "data-role": "gridcell",
+      "role": "gridcell",
+      "style": "box-sizing: border-box; display: inline-block; height: 36px; left: 162.242px; overflow: hidden; position: absolute; top: 0px; width: 269.381px;",
+      "tabindex": "-1",
+      "title": "성명"
+    },
+    "h": 36,
+    "html": "<div class=\"cl-grid-cell cl-grid-cell-inherit\" role=\"gridcell\" data-role=\"gridcell\" data-cellindex=\"2\" tabindex=\"-1\" aria-label=\"5행 성명 박민서(전입학) link\" title=\"성명\" style=\"box-sizing: border-box; display: inline-block; height: 36px; left: 162.242px; overflow: hidden; position: absolute; top: 0px; width: 269.381px;\"><div class=\"cl-control cl-output cl-writingmode-horizontal-tb cl-unselectable text-left text-underline cl-grid-ctrl-inherit cl-border-none\" role=\"link\" aria-disabled=\"false\" aria-label=\"5",
+    "i": 116,
+    "left": 468,
+    "tag": "div",
+    "text": "박민서(전입학)",
+    "top": 741,
+    "w": 269
+  },
+  {
+    "attrs": {
+      "aria-label": "5행 성명 박민서(전입학) link",
+      "class": "cl-control cl-output cl-writingmode-horizontal-tb cl-unselectable text-left text-underline cl-grid-ctrl-inherit cl-border-none",
+      "role": "link",
+      "style": "height: 36px; max-height: 35px; position: relative; text-align: center; width: 100%;",
+      "title": " "
+    },
+    "h": 35,
+    "html": "<div class=\"cl-control cl-output cl-writingmode-horizontal-tb cl-unselectable text-left text-underline cl-grid-ctrl-inherit cl-border-none\" role=\"link\" aria-disabled=\"false\" aria-label=\"5행 성명 박민서(전입학) link\" title=\" \" style=\"height: 36px; max-height: 35px; position: relative; text-align: center; width: 100%;\"><div style=\"display: table; height: 100%; table-layout: fixed; vertical-align: inherit; width: 100%;\"><div class=\"cl-text\" style=\"display: table-cell; height: 100%; max-height: 36px; width: ",
+    "i": 117,
+    "left": 468,
+    "tag": "div",
+    "text": "박민서(전입학)",
+    "top": 741,
+    "w": 268
+  },
+  {
+    "attrs": {
+      "aria-label": "5행 단계  콤보상자",
+      "class": "cl-grid-cell cl-grid-cell-inherit",
+      "data-cellindex": "3",
+      "data-role": "gridcell",
+      "role": "gridcell",
+      "style": "box-sizing: border-box; display: inline-block; height: 36px; left: 431.622px; overflow: hidden; position: absolute; top: 0px; width: 242.442px;",
+      "tabindex": "-1"
+    },
+    "h": 36,
+    "html": "<div class=\"cl-grid-cell cl-grid-cell-inherit\" role=\"gridcell\" data-role=\"gridcell\" data-cellindex=\"3\" tabindex=\"-1\" aria-label=\"5행 단계  콤보상자\" style=\"box-sizing: border-box; display: inline-block; height: 36px; left: 431.622px; overflow: hidden; position: absolute; top: 0px; width: 242.442px;\"><div class=\"cl-control cl-combobox cl-grid-ctrl-inherit\" style=\"height: calc(100% - 8px); left: 4px; max-height: 35px; position: absolute; top: 4px; width: calc(100% - 8px);\"><div style=\"display: grid; grid",
+    "i": 118,
+    "left": 738,
+    "tag": "div",
+    "text": "",
+    "top": 741,
+    "w": 242
+  },
+  {
+    "attrs": {
+      "class": "cl-control cl-combobox cl-grid-ctrl-inherit",
+      "style": "height: calc(100% - 8px); left: 4px; max-height: 35px; position: absolute; top: 4px; width: calc(100% - 8px);"
+    },
+    "h": 27,
+    "html": "<div class=\"cl-control cl-combobox cl-grid-ctrl-inherit\" style=\"height: calc(100% - 8px); left: 4px; max-height: 35px; position: absolute; top: 4px; width: calc(100% - 8px);\"><div style=\"display: grid; grid-template-columns: 1fr auto; grid-template-rows: 1fr; height: 100%; overflow: hidden; text-align: inherit; vertical-align: inherit; width: 100%;\"><div aria-expanded=\"false\" style=\"align-self: center; display: table; grid-area: 1 / 1 / span 1 / span 1; height: 100%; overflow: hidden; table-layo",
+    "i": 119,
+    "left": 742,
+    "tag": "div",
+    "text": "",
+    "top": 745,
+    "w": 233
+  },
+  {
+    "attrs": {
+      "class": "cl-text",
+      "role": "combobox",
+      "style": "display: table-cell;",
+      "tabindex": "0"
+    },
+    "h": 25,
+    "html": "<div class=\"cl-text\" role=\"combobox\" tabindex=\"0\" style=\"display: table-cell;\">&nbsp;</div>",
+    "i": 120,
+    "left": 743,
+    "tag": "div",
+    "text": "",
+    "top": 746,
+    "w": 215
+  },
+  {
+    "attrs": {
+      "class": "cl-combobox-button",
+      "data-ndid": "22m",
+      "style": "grid-area: 1 / 2 / span 1 / span 1; outline: none;"
+    },
+    "h": 25,
+    "html": "<div class=\"cl-combobox-button\" data-ndid=\"22m\" style=\"grid-area: 1 / 2 / span 1 / span 1; outline: none;\"></div>",
+    "i": 121,
+    "left": 958,
+    "tag": "div",
+    "text": "",
+    "top": 746,
+    "w": 16
+  },
+  {
+    "attrs": {
+      "aria-label": "5행 마지막 열 평가결과  편집창 ",
+      "class": "cl-grid-cell cl-grid-cell-inherit cl-last-column",
+      "data-cellindex": "4",
+      "data-role": "gridcell",
+      "role": "gridcell",
+      "style": "box-sizing: border-box; display: inline-block; height: 36px; left: 674.065px; overflow: hidden; position: absolute; top: 0px; width: 897.935px;",
+      "tabindex": "-1"
+    },
+    "h": 36,
+    "html": "<div class=\"cl-grid-cell cl-grid-cell-inherit cl-last-column\" role=\"gridcell\" data-role=\"gridcell\" data-cellindex=\"4\" tabindex=\"-1\" aria-label=\"5행 마지막 열 평가결과  편집창 \" aria-readonly=\"true\" style=\"box-sizing: border-box; display: inline-block; height: 36px; left: 674.065px; overflow: hidden; position: absolute; top: 0px; width: 897.935px;\"><div class=\"cl-control cl-textarea cl-grid-ctrl-inherit cl-readonly\" title=\"평가결과\" style=\"height: calc(100% - 8px); left: 4px; max-height: 35px; overflow: hidden; ",
+    "i": 122,
+    "left": 980,
+    "tag": "div",
+    "text": "",
+    "top": 741,
+    "w": 898
+  },
+  {
+    "attrs": {
+      "class": "cl-control cl-textarea cl-grid-ctrl-inherit cl-readonly",
+      "style": "height: calc(100% - 8px); left: 4px; max-height: 35px; overflow: hidden; position: absolute; top: 4px; width: calc(100% - 8px);",
+      "title": "평가결과"
+    },
+    "h": 27,
+    "html": "<div class=\"cl-control cl-textarea cl-grid-ctrl-inherit cl-readonly\" title=\"평가결과\" style=\"height: calc(100% - 8px); left: 4px; max-height: 35px; overflow: hidden; position: absolute; top: 4px; width: calc(100% - 8px);\"><div class=\"cl-text\" style=\"background: transparent; margin: 0px; resize: none;\"></div></div>",
+    "i": 123,
+    "left": 984,
+    "tag": "div",
+    "text": "",
+    "top": 745,
+    "w": 890
+  },
+  {
+    "attrs": {
+      "class": "cl-even-row cl-grid-row cl-viewing",
+      "data-ndid": "22q",
+      "data-rowindex": "5",
+      "data-vrowindex": "5",
+      "role": "row",
+      "style": "height: 36px; left: 0px; position: absolute; top: 180px; width: 100%;"
+    },
+    "h": 36,
+    "html": "<div class=\"cl-even-row cl-grid-row cl-viewing\" data-ndid=\"22q\" role=\"row\" data-rowindex=\"5\" data-vrowindex=\"5\" aria-rowindex=\"7\" style=\"height: 36px; left: 0px; position: absolute; top: 180px; width: 100%;\"><div class=\"cl-grid-cell cl-grid-cell-inherit cl-first-column\" role=\"gridcell\" data-role=\"gridcell\" data-cellindex=\"0\" tabindex=\"-1\" title=\"체크박스\" style=\"box-sizing: border-box; display: inline-block; height: 36px; left: 0px; overflow: hidden; position: absolute; top: 0px; width: 50px;\"><div ",
+    "i": 124,
+    "left": 306,
+    "tag": "div",
+    "text": "6 박서우(전입학)",
+    "top": 777,
+    "w": 1572
+  },
+  {
+    "attrs": {
+      "class": "cl-grid-cell cl-grid-cell-inherit cl-first-column",
+      "data-cellindex": "0",
+      "data-role": "gridcell",
+      "role": "gridcell",
+      "style": "box-sizing: border-box; display: inline-block; height: 36px; left: 0px; overflow: hidden; position: absolute; top: 0px; width: 50px;",
+      "tabindex": "-1",
+      "title": "체크박스"
+    },
+    "h": 36,
+    "html": "<div class=\"cl-grid-cell cl-grid-cell-inherit cl-first-column\" role=\"gridcell\" data-role=\"gridcell\" data-cellindex=\"0\" tabindex=\"-1\" title=\"체크박스\" style=\"box-sizing: border-box; display: inline-block; height: 36px; left: 0px; overflow: hidden; position: absolute; top: 0px; width: 50px;\"><div class=\"cl-control cl-checkbox cl-builtin cl-grid-ctrl-inherit\" data-ndid=\"22o\" style=\"height: 100%; max-height: 35px; width: 100%;\"><div style=\"display: inline-table; height: 100%; text-align: inherit; vertic",
+    "i": 125,
+    "left": 306,
+    "tag": "div",
+    "text": "",
+    "top": 777,
+    "w": 50
+  },
+  {
+    "attrs": {
+      "class": "cl-control cl-checkbox cl-builtin cl-grid-ctrl-inherit",
+      "data-ndid": "22o",
+      "style": "height: 100%; max-height: 35px; width: 100%;"
+    },
+    "h": 35,
+    "html": "<div class=\"cl-control cl-checkbox cl-builtin cl-grid-ctrl-inherit\" data-ndid=\"22o\" style=\"height: 100%; max-height: 35px; width: 100%;\"><div style=\"display: inline-table; height: 100%; text-align: inherit; vertical-align: inherit;\"><div class=\"cl-icon-wrapper\" style=\"display: table-cell; text-align: inherit; vertical-align: inherit;\"><span class=\"cl-checkbox-icon\" tabindex=\"0\" role=\"checkbox\" data-role=\"checkbox\" aria-label=\"6행 전체 체크박스 행선택 체크박스\" aria-checked=\"false\" style=\"cursor: pointer; disp",
+    "i": 126,
+    "left": 306,
+    "tag": "div",
+    "text": "",
+    "top": 777,
+    "w": 49
+  },
+  {
+    "attrs": {
+      "aria-label": "6행 반/번호 6",
+      "class": "cl-grid-cell cl-grid-cell-inherit",
+      "data-cellindex": "1",
+      "data-role": "gridcell",
+      "role": "gridcell",
+      "style": "box-sizing: border-box; display: inline-block; height: 36px; left: 50px; overflow: hidden; position: absolute; top: 0px; width: 112.242px;",
+      "tabindex": "-1",
+      "title": "번호"
+    },
+    "h": 36,
+    "html": "<div class=\"cl-grid-cell cl-grid-cell-inherit\" role=\"gridcell\" data-role=\"gridcell\" data-cellindex=\"1\" tabindex=\"-1\" aria-label=\"6행 반/번호 6\" title=\"번호\" style=\"box-sizing: border-box; display: inline-block; height: 36px; left: 50px; overflow: hidden; position: absolute; top: 0px; width: 112.242px;\"><div class=\"cl-control cl-default-cell\" style=\"display: table; height: 100%; max-height: 35px; table-layout: fixed; width: 100%;\"><div class=\"cl-text\" style=\"display: table-cell; height: 100%; max-heigh",
+    "i": 127,
+    "left": 356,
+    "tag": "div",
+    "text": "6",
+    "top": 777,
+    "w": 112
+  },
+  {
+    "attrs": {
+      "class": "cl-control cl-default-cell",
+      "style": "display: table; height: 100%; max-height: 35px; table-layout: fixed; width: 100%;"
+    },
+    "h": 35,
+    "html": "<div class=\"cl-control cl-default-cell\" style=\"display: table; height: 100%; max-height: 35px; table-layout: fixed; width: 100%;\"><div class=\"cl-text\" style=\"display: table-cell; height: 100%; max-height: 35px; width: 100%;\">6</div></div>",
+    "i": 128,
+    "left": 356,
+    "tag": "div",
+    "text": "6",
+    "top": 777,
+    "w": 111
+  },
+  {
+    "attrs": {
+      "aria-label": "6행 성명 박서우(전입학) link",
+      "class": "cl-grid-cell cl-grid-cell-inherit",
+      "data-cellindex": "2",
+      "data-role": "gridcell",
+      "role": "gridcell",
+      "style": "box-sizing: border-box; display: inline-block; height: 36px; left: 162.242px; overflow: hidden; position: absolute; top: 0px; width: 269.381px;",
+      "tabindex": "-1",
+      "title": "성명"
+    },
+    "h": 36,
+    "html": "<div class=\"cl-grid-cell cl-grid-cell-inherit\" role=\"gridcell\" data-role=\"gridcell\" data-cellindex=\"2\" tabindex=\"-1\" aria-label=\"6행 성명 박서우(전입학) link\" title=\"성명\" style=\"box-sizing: border-box; display: inline-block; height: 36px; left: 162.242px; overflow: hidden; position: absolute; top: 0px; width: 269.381px;\"><div class=\"cl-control cl-output cl-writingmode-horizontal-tb cl-unselectable text-left text-underline cl-grid-ctrl-inherit cl-border-none\" role=\"link\" aria-disabled=\"false\" aria-label=\"6",
+    "i": 129,
+    "left": 468,
+    "tag": "div",
+    "text": "박서우(전입학)",
+    "top": 777,
+    "w": 269
+  },
+  {
+    "attrs": {
+      "aria-label": "6행 성명 박서우(전입학) link",
+      "class": "cl-control cl-output cl-writingmode-horizontal-tb cl-unselectable text-left text-underline cl-grid-ctrl-inherit cl-border-none",
+      "role": "link",
+      "style": "height: 36px; max-height: 35px; position: relative; text-align: center; width: 100%;",
+      "title": " "
+    },
+    "h": 35,
+    "html": "<div class=\"cl-control cl-output cl-writingmode-horizontal-tb cl-unselectable text-left text-underline cl-grid-ctrl-inherit cl-border-none\" role=\"link\" aria-disabled=\"false\" aria-label=\"6행 성명 박서우(전입학) link\" title=\" \" style=\"height: 36px; max-height: 35px; position: relative; text-align: center; width: 100%;\"><div style=\"display: table; height: 100%; table-layout: fixed; vertical-align: inherit; width: 100%;\"><div class=\"cl-text\" style=\"display: table-cell; height: 100%; max-height: 36px; width: ",
+    "i": 130,
+    "left": 468,
+    "tag": "div",
+    "text": "박서우(전입학)",
+    "top": 777,
+    "w": 268
+  },
+  {
+    "attrs": {
+      "aria-label": "6행 단계  콤보상자",
+      "class": "cl-grid-cell cl-grid-cell-inherit",
+      "data-cellindex": "3",
+      "data-role": "gridcell",
+      "role": "gridcell",
+      "style": "box-sizing: border-box; display: inline-block; height: 36px; left: 431.622px; overflow: hidden; position: absolute; top: 0px; width: 242.442px;",
+      "tabindex": "-1"
+    },
+    "h": 36,
+    "html": "<div class=\"cl-grid-cell cl-grid-cell-inherit\" role=\"gridcell\" data-role=\"gridcell\" data-cellindex=\"3\" tabindex=\"-1\" aria-label=\"6행 단계  콤보상자\" style=\"box-sizing: border-box; display: inline-block; height: 36px; left: 431.622px; overflow: hidden; position: absolute; top: 0px; width: 242.442px;\"><div class=\"cl-control cl-combobox cl-grid-ctrl-inherit\" style=\"height: calc(100% - 8px); left: 4px; max-height: 35px; position: absolute; top: 4px; width: calc(100% - 8px);\"><div style=\"display: grid; grid",
+    "i": 131,
+    "left": 738,
+    "tag": "div",
+    "text": "",
+    "top": 777,
+    "w": 242
+  },
+  {
+    "attrs": {
+      "class": "cl-control cl-combobox cl-grid-ctrl-inherit",
+      "style": "height: calc(100% - 8px); left: 4px; max-height: 35px; position: absolute; top: 4px; width: calc(100% - 8px);"
+    },
+    "h": 27,
+    "html": "<div class=\"cl-control cl-combobox cl-grid-ctrl-inherit\" style=\"height: calc(100% - 8px); left: 4px; max-height: 35px; position: absolute; top: 4px; width: calc(100% - 8px);\"><div style=\"display: grid; grid-template-columns: 1fr auto; grid-template-rows: 1fr; height: 100%; overflow: hidden; text-align: inherit; vertical-align: inherit; width: 100%;\"><div aria-expanded=\"false\" style=\"align-self: center; display: table; grid-area: 1 / 1 / span 1 / span 1; height: 100%; overflow: hidden; table-layo",
+    "i": 132,
+    "left": 742,
+    "tag": "div",
+    "text": "",
+    "top": 781,
+    "w": 233
+  },
+  {
+    "attrs": {
+      "class": "cl-text",
+      "role": "combobox",
+      "style": "display: table-cell;",
+      "tabindex": "0"
+    },
+    "h": 25,
+    "html": "<div class=\"cl-text\" role=\"combobox\" tabindex=\"0\" style=\"display: table-cell;\">&nbsp;</div>",
+    "i": 133,
+    "left": 743,
+    "tag": "div",
+    "text": "",
+    "top": 782,
+    "w": 215
+  },
+  {
+    "attrs": {
+      "class": "cl-combobox-button",
+      "data-ndid": "22p",
+      "style": "grid-area: 1 / 2 / span 1 / span 1; outline: none;"
+    },
+    "h": 25,
+    "html": "<div class=\"cl-combobox-button\" data-ndid=\"22p\" style=\"grid-area: 1 / 2 / span 1 / span 1; outline: none;\"></div>",
+    "i": 134,
+    "left": 958,
+    "tag": "div",
+    "text": "",
+    "top": 782,
+    "w": 16
+  },
+  {
+    "attrs": {
+      "aria-label": "6행 마지막 열 평가결과  편집창 ",
+      "class": "cl-grid-cell cl-grid-cell-inherit cl-last-column",
+      "data-cellindex": "4",
+      "data-role": "gridcell",
+      "role": "gridcell",
+      "style": "box-sizing: border-box; display: inline-block; height: 36px; left: 674.065px; overflow: hidden; position: absolute; top: 0px; width: 897.935px;",
+      "tabindex": "-1"
+    },
+    "h": 36,
+    "html": "<div class=\"cl-grid-cell cl-grid-cell-inherit cl-last-column\" role=\"gridcell\" data-role=\"gridcell\" data-cellindex=\"4\" tabindex=\"-1\" aria-label=\"6행 마지막 열 평가결과  편집창 \" aria-readonly=\"true\" style=\"box-sizing: border-box; display: inline-block; height: 36px; left: 674.065px; overflow: hidden; position: absolute; top: 0px; width: 897.935px;\"><div class=\"cl-control cl-textarea cl-grid-ctrl-inherit cl-readonly\" title=\"평가결과\" style=\"height: calc(100% - 8px); left: 4px; max-height: 35px; overflow: hidden; ",
+    "i": 135,
+    "left": 980,
+    "tag": "div",
+    "text": "",
+    "top": 777,
+    "w": 898
+  },
+  {
+    "attrs": {
+      "class": "cl-control cl-textarea cl-grid-ctrl-inherit cl-readonly",
+      "style": "height: calc(100% - 8px); left: 4px; max-height: 35px; overflow: hidden; position: absolute; top: 4px; width: calc(100% - 8px);",
+      "title": "평가결과"
+    },
+    "h": 27,
+    "html": "<div class=\"cl-control cl-textarea cl-grid-ctrl-inherit cl-readonly\" title=\"평가결과\" style=\"height: calc(100% - 8px); left: 4px; max-height: 35px; overflow: hidden; position: absolute; top: 4px; width: calc(100% - 8px);\"><div class=\"cl-text\" style=\"background: transparent; margin: 0px; resize: none;\"></div></div>",
+    "i": 136,
+    "left": 984,
+    "tag": "div",
+    "text": "",
+    "top": 781,
+    "w": 890
+  },
+  {
+    "attrs": {
+      "class": "cl-grid-row cl-odd-row cl-viewing",
+      "data-ndid": "22t",
+      "data-rowindex": "6",
+      "data-vrowindex": "6",
+      "role": "row",
+      "style": "height: 36px; left: 0px; position: absolute; top: 216px; width: 100%;"
+    },
+    "h": 36,
+    "html": "<div class=\"cl-grid-row cl-odd-row cl-viewing\" data-ndid=\"22t\" role=\"row\" data-rowindex=\"6\" data-vrowindex=\"6\" aria-rowindex=\"8\" style=\"height: 36px; left: 0px; position: absolute; top: 216px; width: 100%;\"><div class=\"cl-grid-cell cl-grid-cell-inherit cl-first-column\" role=\"gridcell\" data-role=\"gridcell\" data-cellindex=\"0\" tabindex=\"-1\" title=\"체크박스\" style=\"box-sizing: border-box; display: inline-block; height: 36px; left: 0px; overflow: hidden; position: absolute; top: 0px; width: 50px;\"><div c",
+    "i": 137,
+    "left": 306,
+    "tag": "div",
+    "text": "7 박현규(전입학)",
+    "top": 813,
+    "w": 1572
+  },
+  {
+    "attrs": {
+      "class": "cl-grid-cell cl-grid-cell-inherit cl-first-column",
+      "data-cellindex": "0",
+      "data-role": "gridcell",
+      "role": "gridcell",
+      "style": "box-sizing: border-box; display: inline-block; height: 36px; left: 0px; overflow: hidden; position: absolute; top: 0px; width: 50px;",
+      "tabindex": "-1",
+      "title": "체크박스"
+    },
+    "h": 36,
+    "html": "<div class=\"cl-grid-cell cl-grid-cell-inherit cl-first-column\" role=\"gridcell\" data-role=\"gridcell\" data-cellindex=\"0\" tabindex=\"-1\" title=\"체크박스\" style=\"box-sizing: border-box; display: inline-block; height: 36px; left: 0px; overflow: hidden; position: absolute; top: 0px; width: 50px;\"><div class=\"cl-control cl-checkbox cl-builtin cl-grid-ctrl-inherit\" data-ndid=\"22r\" style=\"height: 100%; max-height: 35px; width: 100%;\"><div style=\"display: inline-table; height: 100%; text-align: inherit; vertic",
+    "i": 138,
+    "left": 306,
+    "tag": "div",
+    "text": "",
+    "top": 813,
+    "w": 50
+  },
+  {
+    "attrs": {
+      "class": "cl-control cl-checkbox cl-builtin cl-grid-ctrl-inherit",
+      "data-ndid": "22r",
+      "style": "height: 100%; max-height: 35px; width: 100%;"
+    },
+    "h": 35,
+    "html": "<div class=\"cl-control cl-checkbox cl-builtin cl-grid-ctrl-inherit\" data-ndid=\"22r\" style=\"height: 100%; max-height: 35px; width: 100%;\"><div style=\"display: inline-table; height: 100%; text-align: inherit; vertical-align: inherit;\"><div class=\"cl-icon-wrapper\" style=\"display: table-cell; text-align: inherit; vertical-align: inherit;\"><span class=\"cl-checkbox-icon\" tabindex=\"0\" role=\"checkbox\" data-role=\"checkbox\" aria-label=\"7행 전체 체크박스 행선택 체크박스\" aria-checked=\"false\" style=\"cursor: pointer; disp",
+    "i": 139,
+    "left": 306,
+    "tag": "div",
+    "text": "",
+    "top": 813,
+    "w": 49
+  },
+  {
+    "attrs": {
+      "aria-label": "7행 반/번호 7",
+      "class": "cl-grid-cell cl-grid-cell-inherit",
+      "data-cellindex": "1",
+      "data-role": "gridcell",
+      "role": "gridcell",
+      "style": "box-sizing: border-box; display: inline-block; height: 36px; left: 50px; overflow: hidden; position: absolute; top: 0px; width: 112.242px;",
+      "tabindex": "-1",
+      "title": "번호"
+    },
+    "h": 36,
+    "html": "<div class=\"cl-grid-cell cl-grid-cell-inherit\" role=\"gridcell\" data-role=\"gridcell\" data-cellindex=\"1\" tabindex=\"-1\" aria-label=\"7행 반/번호 7\" title=\"번호\" style=\"box-sizing: border-box; display: inline-block; height: 36px; left: 50px; overflow: hidden; position: absolute; top: 0px; width: 112.242px;\"><div class=\"cl-control cl-default-cell\" style=\"display: table; height: 100%; max-height: 35px; table-layout: fixed; width: 100%;\"><div class=\"cl-text\" style=\"display: table-cell; height: 100%; max-heigh",
+    "i": 140,
+    "left": 356,
+    "tag": "div",
+    "text": "7",
+    "top": 813,
+    "w": 112
+  },
+  {
+    "attrs": {
+      "class": "cl-control cl-default-cell",
+      "style": "display: table; height: 100%; max-height: 35px; table-layout: fixed; width: 100%;"
+    },
+    "h": 35,
+    "html": "<div class=\"cl-control cl-default-cell\" style=\"display: table; height: 100%; max-height: 35px; table-layout: fixed; width: 100%;\"><div class=\"cl-text\" style=\"display: table-cell; height: 100%; max-height: 35px; width: 100%;\">7</div></div>",
+    "i": 141,
+    "left": 356,
+    "tag": "div",
+    "text": "7",
+    "top": 813,
+    "w": 111
+  },
+  {
+    "attrs": {
+      "aria-label": "7행 성명 박현규(전입학) link",
+      "class": "cl-grid-cell cl-grid-cell-inherit",
+      "data-cellindex": "2",
+      "data-role": "gridcell",
+      "role": "gridcell",
+      "style": "box-sizing: border-box; display: inline-block; height: 36px; left: 162.242px; overflow: hidden; position: absolute; top: 0px; width: 269.381px;",
+      "tabindex": "-1",
+      "title": "성명"
+    },
+    "h": 36,
+    "html": "<div class=\"cl-grid-cell cl-grid-cell-inherit\" role=\"gridcell\" data-role=\"gridcell\" data-cellindex=\"2\" tabindex=\"-1\" aria-label=\"7행 성명 박현규(전입학) link\" title=\"성명\" style=\"box-sizing: border-box; display: inline-block; height: 36px; left: 162.242px; overflow: hidden; position: absolute; top: 0px; width: 269.381px;\"><div class=\"cl-control cl-output cl-writingmode-horizontal-tb cl-unselectable text-left text-underline cl-grid-ctrl-inherit cl-border-none\" role=\"link\" aria-disabled=\"false\" aria-label=\"7",
+    "i": 142,
+    "left": 468,
+    "tag": "div",
+    "text": "박현규(전입학)",
+    "top": 813,
+    "w": 269
+  },
+  {
+    "attrs": {
+      "aria-label": "7행 성명 박현규(전입학) link",
+      "class": "cl-control cl-output cl-writingmode-horizontal-tb cl-unselectable text-left text-underline cl-grid-ctrl-inherit cl-border-none",
+      "role": "link",
+      "style": "height: 36px; max-height: 35px; position: relative; text-align: center; width: 100%;",
+      "title": " "
+    },
+    "h": 35,
+    "html": "<div class=\"cl-control cl-output cl-writingmode-horizontal-tb cl-unselectable text-left text-underline cl-grid-ctrl-inherit cl-border-none\" role=\"link\" aria-disabled=\"false\" aria-label=\"7행 성명 박현규(전입학) link\" title=\" \" style=\"height: 36px; max-height: 35px; position: relative; text-align: center; width: 100%;\"><div style=\"display: table; height: 100%; table-layout: fixed; vertical-align: inherit; width: 100%;\"><div class=\"cl-text\" style=\"display: table-cell; height: 100%; max-height: 36px; width: ",
+    "i": 143,
+    "left": 468,
+    "tag": "div",
+    "text": "박현규(전입학)",
+    "top": 813,
+    "w": 268
+  },
+  {
+    "attrs": {
+      "aria-label": "7행 단계  콤보상자",
+      "class": "cl-grid-cell cl-grid-cell-inherit",
+      "data-cellindex": "3",
+      "data-role": "gridcell",
+      "role": "gridcell",
+      "style": "box-sizing: border-box; display: inline-block; height: 36px; left: 431.622px; overflow: hidden; position: absolute; top: 0px; width: 242.442px;",
+      "tabindex": "-1"
+    },
+    "h": 36,
+    "html": "<div class=\"cl-grid-cell cl-grid-cell-inherit\" role=\"gridcell\" data-role=\"gridcell\" data-cellindex=\"3\" tabindex=\"-1\" aria-label=\"7행 단계  콤보상자\" style=\"box-sizing: border-box; display: inline-block; height: 36px; left: 431.622px; overflow: hidden; position: absolute; top: 0px; width: 242.442px;\"><div class=\"cl-control cl-combobox cl-grid-ctrl-inherit\" style=\"height: calc(100% - 8px); left: 4px; max-height: 35px; position: absolute; top: 4px; width: calc(100% - 8px);\"><div style=\"display: grid; grid",
+    "i": 144,
+    "left": 738,
+    "tag": "div",
+    "text": "",
+    "top": 813,
+    "w": 242
+  },
+  {
+    "attrs": {
+      "class": "cl-control cl-combobox cl-grid-ctrl-inherit",
+      "style": "height: calc(100% - 8px); left: 4px; max-height: 35px; position: absolute; top: 4px; width: calc(100% - 8px);"
+    },
+    "h": 27,
+    "html": "<div class=\"cl-control cl-combobox cl-grid-ctrl-inherit\" style=\"height: calc(100% - 8px); left: 4px; max-height: 35px; position: absolute; top: 4px; width: calc(100% - 8px);\"><div style=\"display: grid; grid-template-columns: 1fr auto; grid-template-rows: 1fr; height: 100%; overflow: hidden; text-align: inherit; vertical-align: inherit; width: 100%;\"><div aria-expanded=\"false\" style=\"align-self: center; display: table; grid-area: 1 / 1 / span 1 / span 1; height: 100%; overflow: hidden; table-layo",
+    "i": 145,
+    "left": 742,
+    "tag": "div",
+    "text": "",
+    "top": 817,
+    "w": 233
+  },
+  {
+    "attrs": {
+      "class": "cl-text",
+      "role": "combobox",
+      "style": "display: table-cell;",
+      "tabindex": "0"
+    },
+    "h": 25,
+    "html": "<div class=\"cl-text\" role=\"combobox\" tabindex=\"0\" style=\"display: table-cell;\">&nbsp;</div>",
+    "i": 146,
+    "left": 743,
+    "tag": "div",
+    "text": "",
+    "top": 818,
+    "w": 215
+  },
+  {
+    "attrs": {
+      "class": "cl-combobox-button",
+      "data-ndid": "22s",
+      "style": "grid-area: 1 / 2 / span 1 / span 1; outline: none;"
+    },
+    "h": 25,
+    "html": "<div class=\"cl-combobox-button\" data-ndid=\"22s\" style=\"grid-area: 1 / 2 / span 1 / span 1; outline: none;\"></div>",
+    "i": 147,
+    "left": 958,
+    "tag": "div",
+    "text": "",
+    "top": 818,
+    "w": 16
+  },
+  {
+    "attrs": {
+      "aria-label": "7행 마지막 열 평가결과  편집창 ",
+      "class": "cl-grid-cell cl-grid-cell-inherit cl-last-column",
+      "data-cellindex": "4",
+      "data-role": "gridcell",
+      "role": "gridcell",
+      "style": "box-sizing: border-box; display: inline-block; height: 36px; left: 674.065px; overflow: hidden; position: absolute; top: 0px; width: 897.935px;",
+      "tabindex": "-1"
+    },
+    "h": 36,
+    "html": "<div class=\"cl-grid-cell cl-grid-cell-inherit cl-last-column\" role=\"gridcell\" data-role=\"gridcell\" data-cellindex=\"4\" tabindex=\"-1\" aria-label=\"7행 마지막 열 평가결과  편집창 \" aria-readonly=\"true\" style=\"box-sizing: border-box; display: inline-block; height: 36px; left: 674.065px; overflow: hidden; position: absolute; top: 0px; width: 897.935px;\"><div class=\"cl-control cl-textarea cl-grid-ctrl-inherit cl-readonly\" title=\"평가결과\" style=\"height: calc(100% - 8px); left: 4px; max-height: 35px; overflow: hidden; ",
+    "i": 148,
+    "left": 980,
+    "tag": "div",
+    "text": "",
+    "top": 813,
+    "w": 898
+  },
+  {
+    "attrs": {
+      "class": "cl-control cl-textarea cl-grid-ctrl-inherit cl-readonly",
+      "style": "height: calc(100% - 8px); left: 4px; max-height: 35px; overflow: hidden; position: absolute; top: 4px; width: calc(100% - 8px);",
+      "title": "평가결과"
+    },
+    "h": 27,
+    "html": "<div class=\"cl-control cl-textarea cl-grid-ctrl-inherit cl-readonly\" title=\"평가결과\" style=\"height: calc(100% - 8px); left: 4px; max-height: 35px; overflow: hidden; position: absolute; top: 4px; width: calc(100% - 8px);\"><div class=\"cl-text\" style=\"background: transparent; margin: 0px; resize: none;\"></div></div>",
+    "i": 149,
+    "left": 984,
+    "tag": "div",
+    "text": "",
+    "top": 817,
+    "w": 890
+  },
+  {
+    "attrs": {
+      "class": "cl-even-row cl-grid-row cl-viewing",
+      "data-ndid": "22w",
+      "data-rowindex": "7",
+      "data-vrowindex": "7",
+      "role": "row",
+      "style": "height: 36px; left: 0px; position: absolute; top: 252px; width: 100%;"
+    },
+    "h": 36,
+    "html": "<div class=\"cl-even-row cl-grid-row cl-viewing\" data-ndid=\"22w\" role=\"row\" data-rowindex=\"7\" data-vrowindex=\"7\" aria-rowindex=\"9\" style=\"height: 36px; left: 0px; position: absolute; top: 252px; width: 100%;\"><div class=\"cl-grid-cell cl-grid-cell-inherit cl-first-column\" role=\"gridcell\" data-role=\"gridcell\" data-cellindex=\"0\" tabindex=\"-1\" title=\"체크박스\" style=\"box-sizing: border-box; display: inline-block; height: 36px; left: 0px; overflow: hidden; position: absolute; top: 0px; width: 50px;\"><div ",
+    "i": 150,
+    "left": 306,
+    "tag": "div",
+    "text": "8 백다온(전입학)",
+    "top": 849,
+    "w": 1572
+  },
+  {
+    "attrs": {
+      "class": "cl-grid-cell cl-grid-cell-inherit cl-first-column",
+      "data-cellindex": "0",
+      "data-role": "gridcell",
+      "role": "gridcell",
+      "style": "box-sizing: border-box; display: inline-block; height: 36px; left: 0px; overflow: hidden; position: absolute; top: 0px; width: 50px;",
+      "tabindex": "-1",
+      "title": "체크박스"
+    },
+    "h": 36,
+    "html": "<div class=\"cl-grid-cell cl-grid-cell-inherit cl-first-column\" role=\"gridcell\" data-role=\"gridcell\" data-cellindex=\"0\" tabindex=\"-1\" title=\"체크박스\" style=\"box-sizing: border-box; display: inline-block; height: 36px; left: 0px; overflow: hidden; position: absolute; top: 0px; width: 50px;\"><div class=\"cl-control cl-checkbox cl-builtin cl-grid-ctrl-inherit\" data-ndid=\"22u\" style=\"height: 100%; max-height: 35px; width: 100%;\"><div style=\"display: inline-table; height: 100%; text-align: inherit; vertic",
+    "i": 151,
+    "left": 306,
+    "tag": "div",
+    "text": "",
+    "top": 849,
+    "w": 50
+  },
+  {
+    "attrs": {
+      "class": "cl-control cl-checkbox cl-builtin cl-grid-ctrl-inherit",
+      "data-ndid": "22u",
+      "style": "height: 100%; max-height: 35px; width: 100%;"
+    },
+    "h": 35,
+    "html": "<div class=\"cl-control cl-checkbox cl-builtin cl-grid-ctrl-inherit\" data-ndid=\"22u\" style=\"height: 100%; max-height: 35px; width: 100%;\"><div style=\"display: inline-table; height: 100%; text-align: inherit; vertical-align: inherit;\"><div class=\"cl-icon-wrapper\" style=\"display: table-cell; text-align: inherit; vertical-align: inherit;\"><span class=\"cl-checkbox-icon\" tabindex=\"0\" role=\"checkbox\" data-role=\"checkbox\" aria-label=\"8행 전체 체크박스 행선택 체크박스\" aria-checked=\"false\" style=\"cursor: pointer; disp",
+    "i": 152,
+    "left": 306,
+    "tag": "div",
+    "text": "",
+    "top": 849,
+    "w": 49
+  },
+  {
+    "attrs": {
+      "aria-label": "8행 반/번호 8",
+      "class": "cl-grid-cell cl-grid-cell-inherit",
+      "data-cellindex": "1",
+      "data-role": "gridcell",
+      "role": "gridcell",
+      "style": "box-sizing: border-box; display: inline-block; height: 36px; left: 50px; overflow: hidden; position: absolute; top: 0px; width: 112.242px;",
+      "tabindex": "-1",
+      "title": "번호"
+    },
+    "h": 36,
+    "html": "<div class=\"cl-grid-cell cl-grid-cell-inherit\" role=\"gridcell\" data-role=\"gridcell\" data-cellindex=\"1\" tabindex=\"-1\" aria-label=\"8행 반/번호 8\" title=\"번호\" style=\"box-sizing: border-box; display: inline-block; height: 36px; left: 50px; overflow: hidden; position: absolute; top: 0px; width: 112.242px;\"><div class=\"cl-control cl-default-cell\" style=\"display: table; height: 100%; max-height: 35px; table-layout: fixed; width: 100%;\"><div class=\"cl-text\" style=\"display: table-cell; height: 100%; max-heigh",
+    "i": 153,
+    "left": 356,
+    "tag": "div",
+    "text": "8",
+    "top": 849,
+    "w": 112
+  },
+  {
+    "attrs": {
+      "class": "cl-control cl-default-cell",
+      "style": "display: table; height: 100%; max-height: 35px; table-layout: fixed; width: 100%;"
+    },
+    "h": 35,
+    "html": "<div class=\"cl-control cl-default-cell\" style=\"display: table; height: 100%; max-height: 35px; table-layout: fixed; width: 100%;\"><div class=\"cl-text\" style=\"display: table-cell; height: 100%; max-height: 35px; width: 100%;\">8</div></div>",
+    "i": 154,
+    "left": 356,
+    "tag": "div",
+    "text": "8",
+    "top": 849,
+    "w": 111
+  },
+  {
+    "attrs": {
+      "aria-label": "8행 성명 백다온(전입학) link",
+      "class": "cl-grid-cell cl-grid-cell-inherit",
+      "data-cellindex": "2",
+      "data-role": "gridcell",
+      "role": "gridcell",
+      "style": "box-sizing: border-box; display: inline-block; height: 36px; left: 162.242px; overflow: hidden; position: absolute; top: 0px; width: 269.381px;",
+      "tabindex": "-1",
+      "title": "성명"
+    },
+    "h": 36,
+    "html": "<div class=\"cl-grid-cell cl-grid-cell-inherit\" role=\"gridcell\" data-role=\"gridcell\" data-cellindex=\"2\" tabindex=\"-1\" aria-label=\"8행 성명 백다온(전입학) link\" title=\"성명\" style=\"box-sizing: border-box; display: inline-block; height: 36px; left: 162.242px; overflow: hidden; position: absolute; top: 0px; width: 269.381px;\"><div class=\"cl-control cl-output cl-writingmode-horizontal-tb cl-unselectable text-left text-underline cl-grid-ctrl-inherit cl-border-none\" role=\"link\" aria-disabled=\"false\" aria-label=\"8",
+    "i": 155,
+    "left": 468,
+    "tag": "div",
+    "text": "백다온(전입학)",
+    "top": 849,
+    "w": 269
+  },
+  {
+    "attrs": {
+      "aria-label": "8행 성명 백다온(전입학) link",
+      "class": "cl-control cl-output cl-writingmode-horizontal-tb cl-unselectable text-left text-underline cl-grid-ctrl-inherit cl-border-none",
+      "role": "link",
+      "style": "height: 36px; max-height: 35px; position: relative; text-align: center; width: 100%;",
+      "title": " "
+    },
+    "h": 35,
+    "html": "<div class=\"cl-control cl-output cl-writingmode-horizontal-tb cl-unselectable text-left text-underline cl-grid-ctrl-inherit cl-border-none\" role=\"link\" aria-disabled=\"false\" aria-label=\"8행 성명 백다온(전입학) link\" title=\" \" style=\"height: 36px; max-height: 35px; position: relative; text-align: center; width: 100%;\"><div style=\"display: table; height: 100%; table-layout: fixed; vertical-align: inherit; width: 100%;\"><div class=\"cl-text\" style=\"display: table-cell; height: 100%; max-height: 36px; width: ",
+    "i": 156,
+    "left": 468,
+    "tag": "div",
+    "text": "백다온(전입학)",
+    "top": 849,
+    "w": 268
+  },
+  {
+    "attrs": {
+      "aria-label": "8행 단계  콤보상자",
+      "class": "cl-grid-cell cl-grid-cell-inherit",
+      "data-cellindex": "3",
+      "data-role": "gridcell",
+      "role": "gridcell",
+      "style": "box-sizing: border-box; display: inline-block; height: 36px; left: 431.622px; overflow: hidden; position: absolute; top: 0px; width: 242.442px;",
+      "tabindex": "-1"
+    },
+    "h": 36,
+    "html": "<div class=\"cl-grid-cell cl-grid-cell-inherit\" role=\"gridcell\" data-role=\"gridcell\" data-cellindex=\"3\" tabindex=\"-1\" aria-label=\"8행 단계  콤보상자\" style=\"box-sizing: border-box; display: inline-block; height: 36px; left: 431.622px; overflow: hidden; position: absolute; top: 0px; width: 242.442px;\"><div class=\"cl-control cl-combobox cl-grid-ctrl-inherit\" style=\"height: calc(100% - 8px); left: 4px; max-height: 35px; position: absolute; top: 4px; width: calc(100% - 8px);\"><div style=\"display: grid; grid",
+    "i": 157,
+    "left": 738,
+    "tag": "div",
+    "text": "",
+    "top": 849,
+    "w": 242
+  },
+  {
+    "attrs": {
+      "class": "cl-control cl-combobox cl-grid-ctrl-inherit",
+      "style": "height: calc(100% - 8px); left: 4px; max-height: 35px; position: absolute; top: 4px; width: calc(100% - 8px);"
+    },
+    "h": 27,
+    "html": "<div class=\"cl-control cl-combobox cl-grid-ctrl-inherit\" style=\"height: calc(100% - 8px); left: 4px; max-height: 35px; position: absolute; top: 4px; width: calc(100% - 8px);\"><div style=\"display: grid; grid-template-columns: 1fr auto; grid-template-rows: 1fr; height: 100%; overflow: hidden; text-align: inherit; vertical-align: inherit; width: 100%;\"><div aria-expanded=\"false\" style=\"align-self: center; display: table; grid-area: 1 / 1 / span 1 / span 1; height: 100%; overflow: hidden; table-layo",
+    "i": 158,
+    "left": 742,
+    "tag": "div",
+    "text": "",
+    "top": 853,
+    "w": 233
+  },
+  {
+    "attrs": {
+      "class": "cl-text",
+      "role": "combobox",
+      "style": "display: table-cell;",
+      "tabindex": "0"
+    },
+    "h": 25,
+    "html": "<div class=\"cl-text\" role=\"combobox\" tabindex=\"0\" style=\"display: table-cell;\">&nbsp;</div>",
+    "i": 159,
+    "left": 743,
+    "tag": "div",
+    "text": "",
+    "top": 854,
+    "w": 215
+  },
+  {
+    "attrs": {
+      "class": "cl-combobox-button",
+      "data-ndid": "22v",
+      "style": "grid-area: 1 / 2 / span 1 / span 1; outline: none;"
+    },
+    "h": 25,
+    "html": "<div class=\"cl-combobox-button\" data-ndid=\"22v\" style=\"grid-area: 1 / 2 / span 1 / span 1; outline: none;\"></div>",
+    "i": 160,
+    "left": 958,
+    "tag": "div",
+    "text": "",
+    "top": 854,
+    "w": 16
+  },
+  {
+    "attrs": {
+      "aria-label": "8행 마지막 열 평가결과  편집창 ",
+      "class": "cl-grid-cell cl-grid-cell-inherit cl-last-column",
+      "data-cellindex": "4",
+      "data-role": "gridcell",
+      "role": "gridcell",
+      "style": "box-sizing: border-box; display: inline-block; height: 36px; left: 674.065px; overflow: hidden; position: absolute; top: 0px; width: 897.935px;",
+      "tabindex": "-1"
+    },
+    "h": 36,
+    "html": "<div class=\"cl-grid-cell cl-grid-cell-inherit cl-last-column\" role=\"gridcell\" data-role=\"gridcell\" data-cellindex=\"4\" tabindex=\"-1\" aria-label=\"8행 마지막 열 평가결과  편집창 \" aria-readonly=\"true\" style=\"box-sizing: border-box; display: inline-block; height: 36px; left: 674.065px; overflow: hidden; position: absolute; top: 0px; width: 897.935px;\"><div class=\"cl-control cl-textarea cl-grid-ctrl-inherit cl-readonly\" title=\"평가결과\" style=\"height: calc(100% - 8px); left: 4px; max-height: 35px; overflow: hidden; ",
+    "i": 161,
+    "left": 980,
+    "tag": "div",
+    "text": "",
+    "top": 849,
+    "w": 898
+  },
+  {
+    "attrs": {
+      "class": "cl-control cl-textarea cl-grid-ctrl-inherit cl-readonly",
+      "style": "height: calc(100% - 8px); left: 4px; max-height: 35px; overflow: hidden; position: absolute; top: 4px; width: calc(100% - 8px);",
+      "title": "평가결과"
+    },
+    "h": 27,
+    "html": "<div class=\"cl-control cl-textarea cl-grid-ctrl-inherit cl-readonly\" title=\"평가결과\" style=\"height: calc(100% - 8px); left: 4px; max-height: 35px; overflow: hidden; position: absolute; top: 4px; width: calc(100% - 8px);\"><div class=\"cl-text\" style=\"background: transparent; margin: 0px; resize: none;\"></div></div>",
+    "i": 162,
+    "left": 984,
+    "tag": "div",
+    "text": "",
+    "top": 853,
+    "w": 890
+  }
+]

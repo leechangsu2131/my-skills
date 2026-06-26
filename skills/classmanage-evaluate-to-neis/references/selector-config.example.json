@@ -1,0 +1,38 @@
+{
+  "description": "Copy this file to scratch/neis-selector-config.json and replace selectors after running --diagnose on the live NEIS screen.",
+  "limit": 0,
+  "level_values": {
+    "매우잘함": "매우잘함",
+    "잘함": "잘함",
+    "노력요함": "노력요함",
+    "미응시": "미응시"
+  },
+  "fields": {
+    "student": {
+      "selector": "#studentName",
+      "mode": "input",
+      "frame": "main"
+    },
+    "subject": {
+      "selector": "#subjectSelect",
+      "mode": "select_text",
+      "frame": "main"
+    },
+    "standard_code": {
+      "selector": "#achievementCode",
+      "mode": "input",
+      "frame": "main"
+    },
+    "level": {
+      "selector": "#achievementLevel",
+      "mode": "select_text",
+      "frame": "main"
+    },
+    "save_button": {
+      "selector": "button.save",
+      "mode": "click",
+      "frame": "main",
+      "pause": 0.5
+    }
+  }
+}

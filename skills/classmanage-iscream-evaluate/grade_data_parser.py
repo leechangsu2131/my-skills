@@ -180,6 +180,14 @@ def _extract_unit_number_from_header(header_text: str) -> Optional[int]:
         num = int(m.group(1))
         if 1 <= num <= 9:
             return num
+
+    # 성취기준 코드 형태인 경우 (예: "[4사01-01] 장소 소개")
+    m = re.search(r'\[4\w+(\d{2})-\d{2}', text)
+    if m:
+        num = int(m.group(1))
+        if 1 <= num <= 9:
+            return num
+
     return None
 
 

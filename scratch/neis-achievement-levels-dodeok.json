@@ -1,0 +1,326 @@
+[
+  {
+    "subject": "도덕",
+    "student": "강시우",
+    "standard_code": "4도01-03",
+    "assessment": "2단원: 성실",
+    "level": "노력요함",
+    "inferred": true,
+    "raw_level": "노력요함(추정)"
+  },
+  {
+    "subject": "도덕",
+    "student": "강시우",
+    "standard_code": "4도02-01",
+    "assessment": "3단원: 효",
+    "level": "노력요함",
+    "inferred": true,
+    "raw_level": "노력요함(추정)"
+  },
+  {
+    "subject": "도덕",
+    "student": "김가을",
+    "standard_code": "4도01-03",
+    "assessment": "2단원: 성실",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "도덕",
+    "student": "김가을",
+    "standard_code": "4도02-01",
+    "assessment": "3단원: 효",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "도덕",
+    "student": "김동규",
+    "standard_code": "4도01-03",
+    "assessment": "2단원: 성실",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "도덕",
+    "student": "김동규",
+    "standard_code": "4도02-01",
+    "assessment": "3단원: 효",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "도덕",
+    "student": "김주안",
+    "standard_code": "4도01-03",
+    "assessment": "2단원: 성실",
+    "level": "노력요함",
+    "inferred": true,
+    "raw_level": "노력요함(추정)"
+  },
+  {
+    "subject": "도덕",
+    "student": "김주안",
+    "standard_code": "4도02-01",
+    "assessment": "3단원: 효",
+    "level": "노력요함",
+    "inferred": true,
+    "raw_level": "노력요함(추정)"
+  },
+  {
+    "subject": "도덕",
+    "student": "박민서",
+    "standard_code": "4도01-03",
+    "assessment": "2단원: 성실",
+    "level": "매우잘함",
+    "inferred": true,
+    "raw_level": "매우잘함(추정)"
+  },
+  {
+    "subject": "도덕",
+    "student": "박민서",
+    "standard_code": "4도02-01",
+    "assessment": "3단원: 효",
+    "level": "매우잘함",
+    "inferred": true,
+    "raw_level": "매우잘함(추정)"
+  },
+  {
+    "subject": "도덕",
+    "student": "박서우",
+    "standard_code": "4도01-03",
+    "assessment": "2단원: 성실",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "도덕",
+    "student": "박서우",
+    "standard_code": "4도02-01",
+    "assessment": "3단원: 효",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "도덕",
+    "student": "박현규",
+    "standard_code": "4도01-03",
+    "assessment": "2단원: 성실",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "도덕",
+    "student": "박현규",
+    "standard_code": "4도02-01",
+    "assessment": "3단원: 효",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "도덕",
+    "student": "백다온",
+    "standard_code": "4도01-03",
+    "assessment": "2단원: 성실",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "도덕",
+    "student": "백다온",
+    "standard_code": "4도02-01",
+    "assessment": "3단원: 효",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "도덕",
+    "student": "오지윤",
+    "standard_code": "4도01-03",
+    "assessment": "2단원: 성실",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "도덕",
+    "student": "오지윤",
+    "standard_code": "4도02-01",
+    "assessment": "3단원: 효",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "도덕",
+    "student": "이서우",
+    "standard_code": "4도01-03",
+    "assessment": "2단원: 성실",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "도덕",
+    "student": "이서우",
+    "standard_code": "4도02-01",
+    "assessment": "3단원: 효",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "도덕",
+    "student": "이예나",
+    "standard_code": "4도01-03",
+    "assessment": "2단원: 성실",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "도덕",
+    "student": "이예나",
+    "standard_code": "4도02-01",
+    "assessment": "3단원: 효",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "도덕",
+    "student": "이윤슬",
+    "standard_code": "4도01-03",
+    "assessment": "2단원: 성실",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "도덕",
+    "student": "이윤슬",
+    "standard_code": "4도02-01",
+    "assessment": "3단원: 효",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "도덕",
+    "student": "정두영",
+    "standard_code": "4도01-03",
+    "assessment": "2단원: 성실",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "도덕",
+    "student": "정두영",
+    "standard_code": "4도02-01",
+    "assessment": "3단원: 효",
+    "level": "노력요함",
+    "inferred": true,
+    "raw_level": "노력요함(추정)"
+  },
+  {
+    "subject": "도덕",
+    "student": "조주아",
+    "standard_code": "4도01-03",
+    "assessment": "2단원: 성실",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "도덕",
+    "student": "조주아",
+    "standard_code": "4도02-01",
+    "assessment": "3단원: 효",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "도덕",
+    "student": "천선율",
+    "standard_code": "4도01-03",
+    "assessment": "2단원: 성실",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "도덕",
+    "student": "천선율",
+    "standard_code": "4도02-01",
+    "assessment": "3단원: 효",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "도덕",
+    "student": "한예기",
+    "standard_code": "4도01-03",
+    "assessment": "2단원: 성실",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "도덕",
+    "student": "한예기",
+    "standard_code": "4도02-01",
+    "assessment": "3단원: 효",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "도덕",
+    "student": "황보검",
+    "standard_code": "4도01-03",
+    "assessment": "2단원: 성실",
+    "level": "매우잘함",
+    "inferred": true,
+    "raw_level": "매우잘함(추정)"
+  },
+  {
+    "subject": "도덕",
+    "student": "황보검",
+    "standard_code": "4도02-01",
+    "assessment": "3단원: 효",
+    "level": "매우잘함",
+    "inferred": true,
+    "raw_level": "매우잘함(추정)"
+  },
+  {
+    "subject": "도덕",
+    "student": "최윤채",
+    "standard_code": "4도01-03",
+    "assessment": "2단원: 성실",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "도덕",
+    "student": "최윤채",
+    "standard_code": "4도02-01",
+    "assessment": "3단원: 효",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  }
+]

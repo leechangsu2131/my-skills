@@ -440,6 +440,22 @@ async def select_subject(page: Page, subject_name: str) -> bool:
     subject_name = subject_name.strip()
     mapped_name = SUBJECT_MAP.get(subject_name, subject_name)
 
+    # 0. 중복 선택 방지
+    for frame in [page] + page.frames:
+        try:
+            is_already_selected = await frame.evaluate(f"""(mappedName) => {{
+                if (typeof $ !== 'undefined') {{
+                    var radio = $("input[name='searchSubject'][value='" + mappedName + "']");
+                    return radio.prop('checked') === true && $('.field-tit li[data-division="subject"]').hasClass('act');
+                }}
+                return false;
+            }}""", mapped_name)
+            if is_already_selected:
+                print(f"   -> '{subject_name}' 과목이 이미 활성화되어 있어 과목 전환을 생략합니다.")
+                return True
+        except Exception:
+            continue
+
     # dialog 핸들러 설정 (과목 전환 시 미저장 경고창 발생 대응)
     async def handle_subject_dialog(dialog):
         print(f"   -> [과목 선택 다이얼로그] 감지: '{dialog.message}'. 자동 수락(Accept)합니다.")
@@ -461,6 +477,8 @@ async def select_subject(page: Page, subject_name: str) -> bool:
                         if (typeof $ !== 'undefined') {{
                             var radio = $("input[name='searchSubject'][value='" + mappedName + "']");
                             if (radio.length > 0) {{
+                                // division 검색을 활성화하기 위해 탭에 act 클래스 설정
+                                $('.field-tit li[data-division="subject"]').addClass('act');
                                 radio.prop('checked', true).trigger('change');
                                 if (typeof fnSchFieldConfirm !== 'undefined') {{
                                     fnSchFieldConfirm();
@@ -496,6 +514,9 @@ async def select_subject(page: Page, subject_name: str) -> bool:
                     
                 if await frame.locator(radio_selector).count() > 0:
                     print(f"   -> 프레임 내 '{mapped_name}' 과목 라디오 버튼 감지 완료. JS 클릭 시도...")
+                    
+                    # division 검색을 활성화하기 위해 탭에 act 클래스 설정
+                    await frame.evaluate('''() => { $(".field-tit li[data-division='subject']").addClass("act"); }''')
                     
                     # 이미 선택된 것처럼 보일 때 change 이벤트가 씹히지 않도록 강제 초기화 후 클릭
                     await radio.evaluate("el => { el.checked = false; }")
@@ -537,6 +558,9 @@ async def select_subject(page: Page, subject_name: str) -> bool:
                     pass
                     
                 if await frame.locator(label_selector).count() > 0:
+                    # division 검색을 활성화하기 위해 탭에 act 클래스 설정
+                    await frame.evaluate('''() => { $(".field-tit li[data-division='subject']").addClass("act"); }''')
+                    
                     # JS click fallback
                     await label.evaluate("el => el.click()")
                     print(f"   -> 프레임 내 라벨 JS 클릭으로 '{mapped_name}' 과목 선택 완료")
@@ -756,34 +780,29 @@ def _get_grade_targets(
 
 
 async def _ensure_ai_generation_mode(page: Page) -> bool:
-    """생성 유형을 AI생성형으로 전환합니다. 예시문 선택형 자체는 건드리지 않습니다."""
+    """생성 유형을 AI생성형으로 전환합니다. 매번 fnSearchAiSubjectList()를 호출하여 AI 테이블 상태를 새로고침합니다."""
     for frame in [page] + page.frames:
         try:
             radio = frame.locator("input#rb-type-ai").first
             if await radio.count() == 0:
                 continue
-            if await radio.is_checked():
-                try:
-                    await frame.evaluate(
-                        "() => { if (typeof fnSearchAiSubjectList === 'function') fnSearchAiSubjectList(); }"
-                    )
-                    await page.wait_for_timeout(1000)
-                    print("   -> AI생성형 단원표를 현재 과목 기준으로 새로고침했습니다.")
-                except Exception:
-                    pass
-                return True
-            print("   -> 생성 유형을 AI생성형으로 전환합니다.")
-            await radio.evaluate("el => el.click()")
-            await radio.evaluate(
-                "el => el.dispatchEvent(new Event('change', { bubbles: true }))"
-            )
+            if not await radio.is_checked():
+                print("   -> 생성 유형을 AI생성형으로 전환합니다.")
+                await radio.evaluate("el => el.click()")
+                await radio.evaluate(
+                    "el => el.dispatchEvent(new Event('change', { bubbles: true }))"
+                )
+            else:
+                print("   -> 이미 AI 생성형 모드입니다. AI 테이블을 새로고침합니다.")
+            # 항상 fnSearchAiSubjectList() 호출하여 AI 테이블 상태 초기화
+            # (학생 간 전환 시 이전 학생의 선택/결과가 남아있는 문제 방지)
             try:
                 await frame.evaluate(
                     "() => { if (typeof fnSearchAiSubjectList === 'function') fnSearchAiSubjectList(); }"
                 )
             except Exception:
                 pass
-            await page.wait_for_timeout(1000)
+            await page.wait_for_timeout(2000)
             return True
         except Exception:
             continue
@@ -812,7 +831,7 @@ async def _select_ai_unit_levels(page: Page, grade_targets: list[dict]) -> int:
     target_frame = None
     for frame in [page] + page.frames:
         try:
-            if await frame.locator("tr[id^='ai-tr'] button[data-lv]").count() > 0:
+            if await frame.locator(".evaluation-example.type-ai tr[id^='ai-tr'] button[data-lv]").count() > 0:
                 target_frame = frame
                 break
         except Exception:
@@ -822,6 +841,31 @@ async def _select_ai_unit_levels(page: Page, grade_targets: list[dict]) -> int:
         print("   -> [경고] AI생성형 단원표(tr#ai-tr*)를 찾지 못했습니다.")
         return 0
 
+    # target_frame 식별 완료 후: 이전 학생의 선택 하이라이트 초기화
+    # NOTE: i-scream은 .unit-wrap.highlight + button.highlight 두 가지 모두 사용
+    # fnCreativeAiEvaluation은 '.evaluation-example.type-ai .unit-wrap.highlight'를 읽음
+    try:
+        hl_count = await target_frame.evaluate("""() => {
+            var count = 0;
+            // button highlight 제거
+            document.querySelectorAll(".evaluation-example.type-ai tr[id^='ai-tr'] button.highlight[data-lv]").forEach(function(btn) {
+                btn.classList.remove('highlight');
+                btn.innerText = 'O';
+                count++;
+            });
+            // unit-wrap highlight 제거 (fnCreativeAiEvaluation이 실제로 읽는 셀렉터)
+            document.querySelectorAll(".evaluation-example.type-ai .unit-wrap.highlight").forEach(function(el) {
+                el.classList.remove('highlight');
+                count++;
+            });
+            return count;
+        }""")
+        if hl_count > 0:
+            print(f"   -> [AI생성형] 이전 선택된 성취수준 {hl_count}개 초기화 완료 (JS)")
+            await page.wait_for_timeout(300)
+    except Exception as e:
+        print(f"   -> [참고] AI 테이블 하이라이트 초기화 중 예외 (무시): {e}")
+
     clicked = 0
     for target in grade_targets[:2]:
         unit_num = target.get("unit_num")
@@ -830,7 +874,7 @@ async def _select_ai_unit_levels(page: Page, grade_targets: list[dict]) -> int:
         if unit_num is None or not data_lv:
             continue
 
-        rows = await target_frame.locator("tr[id^='ai-tr']").all()
+        rows = await target_frame.locator(".evaluation-example.type-ai tr[id^='ai-tr']").all()
         matched = False
         for row in rows:
             unit_text = await row.locator("td").first.inner_text()
@@ -845,10 +889,15 @@ async def _select_ai_unit_levels(page: Page, grade_targets: list[dict]) -> int:
                 f"   -> [AI생성형] {target.get('unit_label')} "
                 f"{target.get('raw_level')}({level}) 성취수준 클릭"
             )
+            # Click and trigger events
             await btn.evaluate("el => el.click()")
             await btn.evaluate(
                 "el => el.dispatchEvent(new Event('change', { bubbles: true }))"
             )
+            # Force highlight classes and text content for robustness across all unit variants
+            await btn.evaluate("el => { el.classList.add('highlight'); el.innerText = 'V'; }")
+            await row.locator(".unit-wrap").evaluate("el => el.classList.add('highlight')")
+            
             await page.wait_for_timeout(500)
             clicked += 1
             matched = True
@@ -934,38 +983,171 @@ async def fill_evaluation(page: Page, student_name: str, subject: str, eval_text
         # 2) 학생 이름 행 tr 및 textarea 찾기
         row_xpath = f'//tr[td[contains(@class, "wordwrap") and normalize-space(text())="{student_name}"]]'
         textarea_selector = f'{row_xpath}//textarea'
-        textarea = page.locator(textarea_selector)
+        textarea = target_frame.locator(textarea_selector)
 
         if await textarea.count() == 0:
             print(f"   [오류] '{student_name}' 학생의 입력란(textarea)을 찾을 수 없습니다.")
             return False
 
-        # 3) 학생 체크박스 제어
-        # 다른 모든 학생의 체크박스를 해제하고 대상 학생의 체크박스만 선택합니다.
-        print(f"   -> '{student_name}' 학생 선택 및 체크박스 제어 중...")
+        # 3) 학생 수준 계산 및 성취평가기준 자동 선택 (모드 변경 및 학생 선택을 위해 상단 이동)
+        grade_targets = _get_grade_targets(grade_data, student_name, subject)
+        if grade_targets:
+            target_units = [t["unit_num"] for t in grade_targets]
+            print(
+                "   -> 단계배정표 기반 자동 선택 대상: "
+                + ", ".join(
+                    f"{t['unit_label']}={t['raw_level']}({t['level']})"
+                    for t in grade_targets
+                )
+            )
+        else:
+            import supabase_fetch
+            records = supabase_fetch.fetch_all_records()
+            level = calculate_student_level(student_name, subject, records)
+            target_units = determine_target_units(student_name, subject, records)
+            grade_targets = [
+                {"unit_num": unit_num, "unit_label": f"{unit_num}단원", "level": level, "raw_level": level}
+                for unit_num in target_units[:2]
+            ]
+            print(f"   -> 계산된 학생 수준: {level}")
+            print(f"   -> 추출된 관련 단원 우선순위: {target_units}")
+
+        # AI 생성형 모드 시도
+        if grade_targets and await _ensure_ai_generation_mode(page):
+            # AI 모드로 전환한 후 학생을 선택해야 체크 상태가 유지됩니다.
+            print(f"   -> '{student_name}' 학생 선택 및 체크박스 제어 중 (AI 생성형)...")
+            success_click = False
+            for frame in [page] + page.frames:
+                try:
+                    res = await frame.evaluate("""(studentName) => {
+                        if (typeof $ !== 'undefined') {
+                            // click 방식으로 기존 체크 해제 (prop 방식은 내부 이벤트 미발생)
+                            $('.student-list.type-ai li input[type="checkbox"]:checked').each(function() {
+                                this.click();
+                            });
+                            var li = $(".student-list.type-ai li:has(span.nm[title='" + studentName + "'])");
+                            if (li.length > 0) {
+                                var cb = li.find('input[type="checkbox"]')[0];
+                                if (cb) {
+                                    cb.click();
+                                    return true;
+                                }
+                            }
+                            var li2 = $(".student-list.type-ai li:has(span.nm:contains('" + studentName + "'))");
+                            if (li2.length > 0) {
+                                var cb2 = li2.find('input[type="checkbox"]')[0];
+                                if (cb2) {
+                                    cb2.click();
+                                    return true;
+                                }
+                            }
+                        }
+                        return false;
+                    }""", student_name)
+                    if res:
+                        success_click = True
+                        break
+                except Exception:
+                    continue
+            
+            if success_click:
+                print(f"   -> '{student_name}' 학생 체크박스 활성화 완료 (JQuery)")
+            else:
+                print(f"   -> [경고] '{student_name}' 학생 체크박스를 찾을 수 없습니다. JQuery 폴백 없이 계속 진행합니다.")
+            await page.wait_for_timeout(1500)
+
+            ai_clicked = await _select_ai_unit_levels(page, grade_targets)
+            if ai_clicked > 0:
+                print(f"   -> AI생성형 성취수준 자동 클릭 완료: {ai_clicked}/2개")
+                await page.wait_for_timeout(1000)
+
+                # AI 평어 생성 시도 (최대 2회 재시도)
+                max_attempts = 2
+                for attempt in range(1, max_attempts + 1):
+                    if attempt > 1:
+                        print(f"   -> AI 평어 생성 재시도 ({attempt}/{max_attempts})...")
+                        await page.wait_for_timeout(1000)
+
+                    if await _click_ai_generate_button(page):
+                        # fnCreativeAiEvaluation 내부에 setTimeout 3000 있음 → 최소 4초 대기
+                        print(f"   -> AI 평어 생성 대기 중 (내부 3초 지연 + AJAX)... (시도 {attempt}/{max_attempts})")
+                        await page.wait_for_timeout(4000)
+
+                        # AI 생성 후 textarea가 새로 생성되므로 DOM에서 직접 조회 (locator 사용 불가)
+                        text_generated = False
+                        for poll_i in range(20):
+                            try:
+                                txt_val = await target_frame.evaluate(f"""() => {{
+                                    var row = document.evaluate(
+                                        "//tr[td[contains(@class, 'wordwrap') and normalize-space(text())='{student_name}']]",
+                                        document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null
+                                    ).singleNodeValue;
+                                    if (!row) return '';
+                                    var ta = row.querySelector('textarea');
+                                    return ta ? ta.value : '';
+                                }}""")
+                            except Exception:
+                                txt_val = ""
+
+                            if txt_val and len(txt_val.strip()) > 10:
+                                print(f"   -> AI 평어 생성 완료 감지 ({len(txt_val.strip())}자). 이벤트 디스패치 중...")
+                                # JQuery 및 UI 동기화 (새로 생성된 textarea에 대해)
+                                try:
+                                    await target_frame.evaluate(f"""() => {{
+                                        var row = document.evaluate(
+                                            "//tr[td[contains(@class, 'wordwrap') and normalize-space(text())='{student_name}']]",
+                                            document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null
+                                        ).singleNodeValue;
+                                        if (row) {{
+                                            var ta = row.querySelector('textarea');
+                                            if (ta) {{
+                                                ta.dispatchEvent(new Event('input', {{ bubbles: true }}));
+                                                ta.dispatchEvent(new Event('change', {{ bubbles: true }}));
+                                                ta.dispatchEvent(new Event('blur', {{ bubbles: true }}));
+                                            }}
+                                        }}
+                                    }}""")
+                                except Exception:
+                                    pass
+                                text_generated = True
+                                break
+                            await page.wait_for_timeout(500)
+
+                        if text_generated:
+                            return True
+                        else:
+                            print(f"   -> [경고] AI 평어가 시간 내에 생성되지 않았습니다. (시도 {attempt}/{max_attempts})")
+                    else:
+                        print(f"   -> AI평어 생성 버튼 클릭 실패 (시도 {attempt}/{max_attempts})")
+
+                # 모든 재시도 실패
+                print("   -> [오류] AI 평어 생성이 모든 시도에서 실패했습니다. 입력을 중단합니다.")
+                return False
+            print("   -> AI생성형 단원표 클릭이 되지 않아 기존 예시문 선택 방식으로 폴백합니다.")
+        # 폴백: 기존 예시문 선택 모드
+        # 학생 체크박스 제어
+        print(f"   -> '{student_name}' 학생 선택 및 체크박스 제어 중 (예시문)...")
         all_cbs = await page.locator("input[name='student'][id^='ai-student']").all()
+        all_cbs += await page.locator("input[name='student'][id^='exam-student']").all()
         for cb in all_cbs:
             if await cb.is_checked():
                 await cb.evaluate("el => el.click()")
                 await cb.evaluate("el => el.dispatchEvent(new Event('change', { bubbles: true }))")
         
         # 대상 학생 체크박스 찾아서 클릭
-        target_cb = page.locator(f'li:has(span.nm[title="{student_name}"]) input[name="student"]').first
+        target_cb = page.locator(f'.student-list.type-exam li:has(span.nm[title="{student_name}"]) input[name="student"]').first
         if await target_cb.count() == 0:
-            target_cb = page.locator(f'li:has(span.nm:text-is("{student_name}")) input[name="student"]').first
+            target_cb = page.locator(f'.student-list.type-exam li:has(span.nm:text-is("{student_name}")) input[name="student"]').first
             
         if await target_cb.count() > 0:
             await target_cb.evaluate("el => el.click()")
             await target_cb.evaluate("el => el.dispatchEvent(new Event('change', { bubbles: true }))")
-            print(f"   -> '{student_name}' 학생 체크박스 활성화 완료")
+            print(f"   -> '{student_name}' 학생 체크박스 활성화 완료 (폴백)")
             await page.wait_for_timeout(1000)
         else:
             print(f"   -> [경고] '{student_name}' 학생 체크박스를 찾을 수 없습니다. 계속 진행합니다.")
 
-        # 4) 기존 선택 항목 해제 (마우스 토글 방식)
-        # 웹사이트의 '선택 초기화' 버튼(fnResetSelected)은 다른 과목 탭의 잔여 데이터로 인해
-        # 내부 Lodash 탐색 중 TypeError 크래시가 발생하는 사이트 자체 버그가 있습니다.
-        # 따라서 현재 화면에 표시된 하이라이트(선택)된 성취기준들을 수동 클릭하여 안전하게 토글 해제합니다.
+        # 기존 선택 항목 해제 (마우스 토글 방식)
         print("   -> 기존에 선택된 항목이 있는지 검사하고 해제(토글)합니다...")
         all_exam_rows = await target_frame.locator("tr[class^='exam-tr']").all()
         visible_rows = [r for r in all_exam_rows if await r.is_visible()]
@@ -989,37 +1171,6 @@ async def fill_evaluation(page: Page, student_name: str, subject: str, eval_text
         await textarea.first.evaluate("el => el.value = ''")
         await textarea.first.evaluate("el => { el.dispatchEvent(new Event('input')); el.dispatchEvent(new Event('change')); el.dispatchEvent(new Event('blur')); }")
         await page.wait_for_timeout(300)
-
-        # 5) 학생 수준 계산 및 성취평가기준 자동 선택
-        grade_targets = _get_grade_targets(grade_data, student_name, subject)
-        if grade_targets:
-            target_units = [t["unit_num"] for t in grade_targets]
-            print(
-                "   -> 단계배정표 기반 자동 선택 대상: "
-                + ", ".join(
-                    f"{t['unit_label']}={t['raw_level']}({t['level']})"
-                    for t in grade_targets
-                )
-            )
-        else:
-            import supabase_fetch
-            records = supabase_fetch.fetch_all_records()
-            level = calculate_student_level(student_name, subject, records)
-            target_units = determine_target_units(student_name, subject, records)
-            grade_targets = [
-                {"unit_num": unit_num, "unit_label": f"{unit_num}단원", "level": level, "raw_level": level}
-                for unit_num in target_units[:2]
-            ]
-            print(f"   -> 계산된 학생 수준: {level}")
-            print(f"   -> 추출된 관련 단원 우선순위: {target_units}")
-
-        if grade_targets and await _ensure_ai_generation_mode(page):
-            ai_clicked = await _select_ai_unit_levels(page, grade_targets)
-            if ai_clicked > 0:
-                print(f"   -> AI생성형 성취수준 자동 클릭 완료: {ai_clicked}/2개")
-                await _click_ai_generate_button(page)
-                return True
-            print("   -> AI생성형 단원표 클릭이 되지 않아 기존 예시문 선택 방식으로 폴백합니다.")
 
         # 우측 평가기준 테이블 행(tr) 탐색 (현재 화면에 보이는 행만 필터링)
         # :visible 가상 클래스를 사용하여 화면에 보이는 행만 빠르게 가져옵니다.
@@ -1213,6 +1364,9 @@ async def save_evaluation(page: Page) -> bool:
 
         # dialog 핸들러 제거
         page.remove_listener("dialog", handle_dialog)
+
+        # 저장 후 페이지 상태 안정화 대기 (다음 학생 처리 전 AI 테이블 등이 리셋되도록)
+        await page.wait_for_timeout(1500)
 
         print("   [저장 완료] 평가가 성공적으로 저장되었습니다.")
         return True

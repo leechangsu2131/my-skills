@@ -350,3 +350,37 @@ grid.redraw();
    - `python-docx` 라이브러리를 이용하여 단일 문단 내에서 개행(`\n`)으로 구분되어 있는 `번호. 이름` 과 `의견 내용`을 분리해 내는 파싱 코드를 `neis_behavioral_opinion_writer.py`에 이식함.
    - `python neis_behavioral_opinion_writer.py --input "skills/classmanage-evaluate-to-neis/data/2026학년도 3학년 1학기 행동특성 및 종합의견(수정본).docx" --apply` 명령을 실행하여 18명 전원의 종합의견 수정본을 재입력 및 저장 완료함.
    - 저장 후 다시 한번 `revert()` 및 `Search` 이후 dry-run 검증 결과 `Modifications: 0`으로 나이스 서버에 완벽하게 최종 저장되었음을 교차 확인 완료함.
+
+## 2026-06-28: 행동특성 및 종합의견 수정본 반영 및 EVPN 가정 접속 이슈 해결
+
+### 목표
+- `data/2026_1학기_행동특성_수정본.md` 내용을 파싱하여 나이스 행동특성및종합의견 화면(`edu/sw/els/sdl/bg/els_sdlbg00_m00`)에 수정 적용하고, 가정 내 접속 환경(EVPN) 제약을 해소한다.
+
+### 진행 결과 및 이슈 해결
+1. **EVPN 외부 인터넷 차단 및 셀레늄 드라이버 다운로드 오류 해결**:
+   - **문제**: 가정 내 EVPN 연결 시 외부 인터넷 통신이 차단되기 때문에, 로컬 크롬이 149 버전으로 자동 업데이트된 상태에서 셀레늄이 대응하는 ChromeDriver(149 버전)를 다운로드하지 못해 `SessionNotCreatedException`이 발생함.
+   - **해결**: `launch_chrome.bat`를 수정하여 구글 로그인 및 EVPN 로그인 전(일반 인터넷 상태)에 `--dry-run`을 최초 1회 실행하여 149 버전 드라이버를 캐시에 선점 다운로드하도록 조치함. 이후 EVPN에 연결하더라도 `localhost:9222` 루프백 포트를 이용한 셀레늄의 크롬 제어 통신은 차단되지 않으므로 안정적인 작동 성공.
+2. **저장 상태 미인지로 인한 Apply 스킵 방지 개량**:
+   - **문제**: Dry-run 실행으로 브라우저 메모리 그리드가 이미 수정 완료된 상태인 경우, 실제 반영(`--apply`) 실행 시 변경 건수가 0건으로 탐지되어 저장 단계를 그냥 스킵해 버리는 로직 상의 문제가 있었음.
+   - **해결**: `dsScrgRec.isModified()` 검사를 추가해 스크립트 실행 시작 시점에 이미 그리드에 미저장 변경 사항이 존재한다면, 데이터 수정 여부에 관계없이 최종 저장 단계(`click_save`)를 트리거하도록 복구함.
+3. **수정본 최종 반영 및 저장**:
+   - `python neis_behavioral_opinion_writer.py --apply` 명령으로 18명 전원의 수정본 반영 후 저장 완료 및 재차 dry-run으로 `Modifications: 0` 교차 검증 완료.
+
+## 2026-06-29: 창의적 체험활동 및 진로활동 자동 입력 완료
+
+### 목표
+- `data/2026_1학기_행동특성_창체v2.md` 내에 기재된 `### 가. 자율·자치활동 및 동아리활동` 및 `### 나. 진로활동` 의견을 나이스 학생부자료기록/창의적체험활동 화면(`edu/sw/els/sdl/ce/els_sdlce06_m00`)에 자동 입력 및 저장 완료한다.
+
+### 진행 결과 및 이슈 해결
+1. **화면 및 데이터셋 구조 파악**:
+   - 대상 화면: `edu/sw/els/sdl/ce/els_sdlce06_m00` (학생부자료기록 목록)
+   - 데이터셋 및 그리드: `dsScrgRec`, `grdMain`
+   - 한 학생당 여러 영역의 데이터가 단일 그리드 내 행 목록으로 렌더링되며, 자율·동아리활동은 `actScCd === "20"`, 진로활동은 `actScCd === "14"` 임을 파악함. 입력 타겟 컬럼은 `speclActSpablMteCn` (특기사항 내용)으로 동일함.
+2. **자동화 스크립트 신규 작성**:
+   - `scratch/neis_creative_activity_writer.py`를 작성하여 마크다운 문서 내 자율·동아리 문단과 진로 문단을 개별 파싱 및 결합함.
+   - `dsScrgRec`를 순회하면서 `actScCd`에 매칭되는 영역(20번 혹은 14번)에 맞춤형 의견 텍스트를 대입하도록 구현.
+3. **Dry-run 및 최종 실반영**:
+   - `python scratch/neis_creative_activity_writer.py --dry-run`으로 18명 * 2개 영역 = 총 36개 셀의 데이터 업데이트 정상 탐지 확인.
+   - `python scratch/neis_creative_activity_writer.py --apply` 명령을 실행하여 36개 영역 셀의 자동 입력 후 `btnSave` 클릭 및 확인/경고 팝업 모달 다이얼로그 병렬 닫기를 통해 서버 저장을 완수함.
+   - 최종 검증 dry-run 결과 `Modifications: 0`으로 나이스 서버 반영 완료를 확인함.
+

@@ -134,6 +134,29 @@ python skills/classmanage-evaluate-to-neis/scripts/neis_achievement_entry.py `
    - 저장 시 `btnSave.click()`을 호출하고, eXbuilder6의 확인 모달(`app/cmn/confirm`, `app/cmn/alert`)을 자동 탐색하여 닫습니다.
    - 저장 후 7초 이상 대기하며 트랜잭션을 처리하고, `dsScrgRec.isModified() === false` 상태를 검증합니다.
 
+## 창의적 체험활동 및 진로활동 입력 Workflow
+
+창체 초안 파일(`2026_1학기_행동특성_창체v2.md` 등)을 분석하여 NEIS 학생부자료기록/창의적체험활동 입력 화면에 자동 입력하는 절차와 핵심 로직입니다.
+
+### 1. 화면 및 데이터셋 구조
+- **대상 화면**: `edu/sw/els/sdl/ce/els_sdlce06_m00` (학생부자료기록 목록)
+- **그리드 구조**: `grdMain`, 바인딩 데이터셋 `dsScrgRec` (한 학생당 자율·동아리활동, 진로활동, 청소년단체 등 복수의 행이 생성되어 목록 형태로 노출됨)
+  - 컬럼: `stuFlnm` (성명), `actScCd` (활동영역 코드), `speclActSpablMteCn` (특기사항 내용)
+- **주요 영역 구분 코드 (actScCd)**:
+  - `20`: 자율·자치활동 및 동아리활동 (통합 입력)
+  - `14`: 진로활동 (개별 입력)
+- **기타 컨트롤**: 조회(`btnSearch`), 저장(`btnSave`), 특기사항 텍스트 영역(`txaSpeclActSpablMteCn`)
+
+### 2. 표준 입력 로직 및 팁
+1. **조회 및 목록 로드**:
+   - 학년, 반 등의 검색 조건을 확인하고 `btnSearch`를 클릭하여 학생별 영역 목록을 로드합니다.
+2. **동일 그리드 내 복수 영역 매핑 처리**:
+   - `dsScrgRec` 데이터셋은 학생당 여러 개의 행을 가지므로, 단순 성명 매칭 외에도 `actScCd` 값을 분석해 알맞은 텍스트를 대입해야 합니다.
+   - 데이터셋을 루프 돌며 `actScCd === "20"`인 행에는 자율·동아리 의견을, `actScCd === "14"`인 행에는 진로활동 의견을 매칭하여 `speclActSpablMteCn` 컬럼에 대입합니다.
+3. **저장 및 확인 모달 닫기**:
+   - `btnSave.click()`을 호출하고, eXbuilder6의 확인 모달(`app/cmn/confirm`, `app/cmn/alert`)을 자동 탐색하여 순차적으로 승인 및 닫기 처리합니다.
+   - 저장 후 7초 이상 대기하며 서버 트랜잭션을 끝내고 `dsScrgRec.isModified() === false` 상태를 확인합니다.
+
 ## Safety Rules
 
 - Default to `--dry-run` or `--diagnose`; never use `--apply` without the user's explicit approval for the current run.
@@ -141,6 +164,16 @@ python skills/classmanage-evaluate-to-neis/scripts/neis_achievement_entry.py `
 - Do not click final 저장/제출/반영 buttons unless the selector config intentionally names that button and the run uses `--apply --confirm APPLY_NEIS`.
 - If the NEIS screen structure has changed, stop after `--diagnose` and update selectors rather than guessing.
 - Preserve `(추정)` in the parsed records as `inferred: true`; show inferred counts in previews so the teacher can review them before entry.
+
+## EVPN 환경(가정 접속) 주의사항
+
+- **인터넷 차단 제약**: EVPN 접속 후에는 외부 인터넷이 완전히 차단되고 오직 나이스 접속만 가능해집니다. 이로 인해 셀레늄(Selenium)이 드라이버 정보를 체크하거나 ChromeDriver를 새로 다운로드해야 하는 경우 네트워크 오류가 발생합니다.
+- **사전 조치 필수**: EVPN 연결을 완료하기 전에 다음 작업을 먼저 수행하여 인터넷 통신이 필요한 준비 단계를 끝내야 합니다:
+  1. 원격 디버깅용 크롬 실행(`launch_chrome.bat`) 및 필요시 구글 계정 로그인.
+  2. 일반 인터넷 상태에서 자동화 스크립트의 `--dry-run` 명령을 최소 1회 수행하여 크롬 버전에 매칭되는 **ChromeDriver의 자동 다운로드 및 로컬 캐싱** 완료하기.
+  3. 드라이버 다운로드가 정상 완료(또는 나이스 화면이 없어 `els_sdlbg00_m00 not found` 등이 발생하는 단계 진입)된 것을 확인한 후 EVPN 로그인/접속 진행하기.
+- **로컬 포트 통신**: EVPN 연결 후 외부 인터넷이 차단되더라도 `localhost:9222`를 통한 파이썬-크롬 간의 로컬 제어 통신은 루프백 주소이므로 영향받지 않고 정상 작동합니다.
+
 
 ## Data Shape
 

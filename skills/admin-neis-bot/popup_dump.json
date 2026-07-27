@@ -1,0 +1,4191 @@
+[
+  {
+    "idx": 0,
+    "appId": "app/com/main/Index",
+    "ctrls": [
+      {
+        "id": "grpHd",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "grpLogo",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "outLogoTop",
+        "type": "output",
+        "text": "나이스로고",
+        "items": []
+      },
+      {
+        "id": "outSol",
+        "type": "output",
+        "text": "알트키와 컨트롤키와 H를 동시에 누르면 단축키의 내용을 확인할수 있습니다.",
+        "items": []
+      },
+      {
+        "id": "grpTpbr",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "grpUserInfo",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "optUserAuth",
+        "type": "output",
+        "text": "화천초등학교",
+        "items": []
+      },
+      {
+        "id": "optUserNm",
+        "type": "output",
+        "text": "이창수(lee2131)",
+        "items": []
+      },
+      {
+        "id": "optUserAuthSub",
+        "type": "output",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "htmlUserWrk",
+        "type": "htmlsnippet",
+        "text": "<div style=\"display:flex; min-width:max-content; height: 25px; align-items: stre",
+        "items": []
+      },
+      {
+        "id": "optUserInfo",
+        "type": "output",
+        "text": "이창수(lee2131)",
+        "items": []
+      },
+      {
+        "id": "btnAssign",
+        "type": "button",
+        "text": "자체개발",
+        "items": []
+      },
+      {
+        "id": "grpOptTime",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "btnClock",
+        "type": "button",
+        "text": "세션시간",
+        "items": []
+      },
+      {
+        "id": "optTime",
+        "type": "output",
+        "text": "59분 58초",
+        "items": []
+      },
+      {
+        "id": "optTime2",
+        "type": "output",
+        "text": "(2차인증:130분 00초)",
+        "items": []
+      },
+      {
+        "id": "grpTpbrUtl",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "btnLogout",
+        "type": "button",
+        "text": "로그아웃",
+        "items": []
+      },
+      {
+        "id": "cmbMyWrk",
+        "type": "combobox",
+        "text": "나의업무",
+        "items": [
+          {
+            "label": "=== 나의업무 선택 ===",
+            "value": "나의업무"
+          },
+          {
+            "label": null,
+            "value": ""
+          }
+        ]
+      },
+      {
+        "id": "cmbShlYear",
+        "type": "combobox",
+        "text": "ːːː학년도ːːː",
+        "items": [
+          {
+            "label": "ːːː학년도ːːː",
+            "value": ""
+          },
+          {
+            "label": "2026학년도",
+            "value": "2026"
+          },
+          {
+            "label": "2025학년도",
+            "value": "2025"
+          }
+        ]
+      },
+      {
+        "id": "btnTutorial",
+        "type": "button",
+        "text": "튜토리얼",
+        "items": []
+      },
+      {
+        "id": "btnChatBot",
+        "type": "button",
+        "text": "챗봇",
+        "items": []
+      },
+      {
+        "id": "btnSupport",
+        "type": "button",
+        "text": "사용자지원",
+        "items": []
+      },
+      {
+        "id": "cmbTheme",
+        "type": "combobox",
+        "text": "",
+        "items": [
+          {
+            "label": "Light",
+            "value": ""
+          },
+          {
+            "label": "Dark",
+            "value": "dark"
+          }
+        ]
+      },
+      {
+        "id": "grp9",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "btnZmIn2",
+        "type": "button",
+        "text": "+",
+        "items": []
+      },
+      {
+        "id": "btnZmOut2",
+        "type": "button",
+        "text": "-",
+        "items": []
+      },
+      {
+        "id": "grpViewZm",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "btnZmIn",
+        "type": "button",
+        "text": "화면 확대",
+        "items": []
+      },
+      {
+        "id": "btnZmOut",
+        "type": "button",
+        "text": "화면 축소",
+        "items": []
+      },
+      {
+        "id": "grpNavbr",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "btn_allMenu",
+        "type": "button",
+        "text": "▤",
+        "items": []
+      },
+      {
+        "id": "navMn",
+        "type": "navigationbar",
+        "text": "메뉴",
+        "items": [
+          {
+            "label": "학급담임",
+            "value": "002001"
+          },
+          {
+            "label": "경영지원",
+            "value": "002001_AMELS20001"
+          },
+          {
+            "label": "경영지원",
+            "value": "002001_AMELS30001"
+          },
+          {
+            "label": "교육과정",
+            "value": "002001_AMELS20003"
+          },
+          {
+            "label": "교과편제관리",
+            "value": "002001_AMELS30004"
+          },
+          {
+            "label": "시간표관리",
+            "value": "002001_AMELS30008"
+          },
+          {
+            "label": "진도표관리",
+            "value": "002001_AMELS30009"
+          },
+          {
+            "label": "주간학습안내관리",
+            "value": "002001_AMELS30010"
+          },
+          {
+            "label": "결보강관리",
+            "value": "002001_AMELS30011"
+          },
+          {
+            "label": "학교일지관리",
+            "value": "002001_AMELS30012"
+          },
+          {
+            "label": "학적",
+            "value": "002001_AMELS20004"
+          },
+          {
+            "label": "기본학적관리",
+            "value": "002001_AMELS30014"
+          },
+          {
+            "label": "진급자 반편성관리",
+            "value": "002001_AMELS30018"
+          },
+          {
+            "label": "출결관리",
+            "value": "002001_AMELS30019"
+          },
+          {
+            "label": "명예졸업관리",
+            "value": "002001_AMELS30022"
+          },
+          {
+            "label": "미인정결석학생관리",
+            "value": "002001_AMELS30026"
+          },
+          {
+            "label": "학생생활",
+            "value": "002001_AMELS20005"
+          },
+          {
+            "label": "창의적체험활동",
+            "value": "002001_AMELS30027"
+          },
+          {
+            "label": "수상경력",
+            "value": "002001_AMELS30028"
+          },
+          {
+            "label": "행동특성및종합의견",
+            "value": "002001_AMELS30030"
+          }
+        ]
+      },
+      {
+        "id": "grpAsd",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "grpTlbrSrch",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "메뉴검색",
+        "items": []
+      },
+      {
+        "id": "grpTlbrSrchItems",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "siFindMenu",
+        "type": "searchinput",
+        "text": "메뉴검색",
+        "items": []
+      },
+      {
+        "id": "grpTlbrSrchItemsBody",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "grpCmplnt",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "grpCmplntTop",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "민원현황 알림",
+        "items": []
+      },
+      {
+        "id": "btnRefreshCmplnt",
+        "type": "button",
+        "text": "민원현황 새로고침",
+        "items": []
+      },
+      {
+        "id": "grpCmplntSub",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "snavCmplnt",
+        "type": "sidenavigation",
+        "text": "",
+        "items": [
+          {
+            "label": "미접수",
+            "value": "MENU_ID1"
+          },
+          {
+            "label": "처리요청",
+            "value": "MENU_ID2"
+          },
+          {
+            "label": "기한임박",
+            "value": "MENU_ID3"
+          },
+          {
+            "label": "처리지연",
+            "value": "MENU_ID4"
+          },
+          {
+            "label": "미확인",
+            "value": "MENU_ID5"
+          }
+        ]
+      },
+      {
+        "id": "grpTlbrFav",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "grpFavTop",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "즐겨찾기",
+        "items": []
+      },
+      {
+        "id": "btnRefreshFav",
+        "type": "button",
+        "text": "즐겨찾기 새로고침",
+        "items": []
+      },
+      {
+        "id": "grpTlbrFavContants",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "grp2",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "button",
+        "text": "권한신청",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "button",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "grpPersonal",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "grpPersonalTop",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "개인설정",
+        "items": []
+      },
+      {
+        "id": "btnRefresh2",
+        "type": "button",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "snavPersonal",
+        "type": "sidenavigation",
+        "text": "",
+        "items": [
+          {
+            "label": "테마설정",
+            "value": "personal01"
+          },
+          {
+            "label": "업무승인자관리",
+            "value": "personal02"
+          },
+          {
+            "label": "개인결재선관리",
+            "value": "personal21"
+          },
+          {
+            "label": "대리결재자지정",
+            "value": "personal22"
+          },
+          {
+            "label": "전결자지정",
+            "value": "personal23"
+          },
+          {
+            "label": "대리결재현황조회",
+            "value": "personal24"
+          },
+          {
+            "label": "개인정보접속현황",
+            "value": "personal03"
+          },
+          {
+            "label": "2차인증",
+            "value": "personal05"
+          },
+          {
+            "label": "2차인증관리",
+            "value": "personal51"
+          }
+        ]
+      },
+      {
+        "id": "grpMyMn",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "grpAppvlTop",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "승인사항",
+        "items": []
+      },
+      {
+        "id": "btnRefresh",
+        "type": "button",
+        "text": "승인사항 새로고침",
+        "items": []
+      },
+      {
+        "id": "snavAppvl",
+        "type": "sidenavigation",
+        "text": "",
+        "items": [
+          {
+            "label": "상신함",
+            "value": "AMWAM40011"
+          },
+          {
+            "label": "미결/협조함",
+            "value": "AMWAM40012"
+          },
+          {
+            "label": "공람함",
+            "value": "AMWAM40013"
+          },
+          {
+            "label": "예결함",
+            "value": "AMWAM40014"
+          },
+          {
+            "label": "기결함",
+            "value": "AMWAM40015"
+          },
+          {
+            "label": "반려함",
+            "value": "AMWAM40016"
+          },
+          {
+            "label": "메시지함",
+            "value": "AMWAM40017"
+          }
+        ]
+      },
+      {
+        "id": "grp1",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "기본 메뉴",
+        "items": []
+      },
+      {
+        "id": "btnSetting",
+        "type": "button",
+        "text": "기본메뉴 설정",
+        "items": []
+      },
+      {
+        "id": "snavMyMn",
+        "type": "sidenavigation",
+        "text": "AMCMC40043",
+        "items": [
+          {
+            "label": "권한관리",
+            "value": "AMCMC30008"
+          },
+          {
+            "label": "교무자료권한승인관리",
+            "value": "AMCMC40105"
+          },
+          {
+            "label": "복무",
+            "value": "AMCMC30015"
+          },
+          {
+            "label": "개인근무상황관리",
+            "value": "AMCMC40043"
+          },
+          {
+            "label": "일일근무상황조회",
+            "value": "AMCMC40044"
+          },
+          {
+            "label": "개인초과근무관리",
+            "value": "AMCMC40045"
+          },
+          {
+            "label": "개인출장관리",
+            "value": "AMCMC40046"
+          },
+          {
+            "label": "연가일수관리",
+            "value": "AMCMC40047"
+          },
+          {
+            "label": "개인유연근무관리",
+            "value": "AMCMC40048"
+          },
+          {
+            "label": "개인당직관리",
+            "value": "AMCMC40049"
+          },
+          {
+            "label": "개인항공마일리지관리",
+            "value": "AMCMC40050"
+          },
+          {
+            "label": "육아시간신청조회",
+            "value": "AMCMC40051"
+          },
+          {
+            "label": "육아시간실적조회",
+            "value": "AMCMC40052"
+          },
+          {
+            "label": "개인연가저축신청",
+            "value": "AMCMC40053"
+          },
+          {
+            "label": "재택근무보고",
+            "value": "AMCMC40054"
+          },
+          {
+            "label": "공무원증발급신청",
+            "value": "AMCMC40055"
+          },
+          {
+            "label": "인사",
+            "value": "AMCMC30045"
+          },
+          {
+            "label": "인사기록",
+            "value": "AMCMC40198"
+          },
+          {
+            "label": "기본사항",
+            "value": "AMCMC50043"
+          },
+          {
+            "label": "개인정보변경신청",
+            "value": "AMCMC50044"
+          }
+        ]
+      },
+      {
+        "id": "grpMn",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "snavMn",
+        "type": "sidenavigation",
+        "text": "",
+        "items": [
+          {
+            "label": "경영지원",
+            "value": "002001_AMELS30001"
+          },
+          {
+            "label": "학부모서비스승인관리",
+            "value": "002001_AMELS40004"
+          },
+          {
+            "label": "교과편제관리",
+            "value": "002001_AMELS30004"
+          },
+          {
+            "label": "교과별학습내용등록",
+            "value": "002001_AMELS40015"
+          },
+          {
+            "label": "시간표관리",
+            "value": "002001_AMELS30008"
+          },
+          {
+            "label": "학급시간표관리",
+            "value": "002001_AMELS40022"
+          },
+          {
+            "label": "학급별시간표조회",
+            "value": "002001_AMELS40023"
+          },
+          {
+            "label": "전체시간표조회",
+            "value": "002001_AMELS40024"
+          },
+          {
+            "label": "진도표관리",
+            "value": "002001_AMELS30009"
+          },
+          {
+            "label": "교과진도표관리",
+            "value": "002001_AMELS40027"
+          },
+          {
+            "label": "교육과정재구성",
+            "value": "002001_AMELS40029"
+          },
+          {
+            "label": "진도표조회",
+            "value": "002001_AMELS40030"
+          },
+          {
+            "label": "주간학습안내관리",
+            "value": "002001_AMELS30010"
+          },
+          {
+            "label": "주간학습안내작성",
+            "value": "002001_AMELS40031"
+          },
+          {
+            "label": "주간학습안내조회",
+            "value": "002001_AMELS40032"
+          },
+          {
+            "label": "결보강관리",
+            "value": "002001_AMELS30011"
+          },
+          {
+            "label": "결보강처리",
+            "value": "002001_AMELS40033"
+          },
+          {
+            "label": "학교일지관리",
+            "value": "002001_AMELS30012"
+          },
+          {
+            "label": "학교일지관리",
+            "value": "002001_AMELS40034"
+          },
+          {
+            "label": "기본학적관리",
+            "value": "002001_AMELS30014"
+          }
+        ]
+      },
+      {
+        "id": "grpTlbrNt",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "grpTlbrNtTitle",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "나의 할일",
+        "items": []
+      },
+      {
+        "id": "btnRefreshTlbrNt",
+        "type": "button",
+        "text": "나의 할일 새로고침",
+        "items": []
+      },
+      {
+        "id": "btnTodoMore",
+        "type": "button",
+        "text": "나의 할일 모두보기",
+        "items": []
+      },
+      {
+        "id": "grp6",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "미확인건수",
+        "items": []
+      },
+      {
+        "id": "newCnt",
+        "type": "output",
+        "text": "2",
+        "items": []
+      },
+      {
+        "id": "grpTlbrNtContants",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "button",
+        "text": "(link) 결석신고서(3학년 2반 김주안)",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "미확인 표시 이미지",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": " 26.07.21",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "button",
+        "text": "(link) 교외체험학습보고서(3학년 2반 김주안)",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "미확인 표시 이미지",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": " 26.07.21",
+        "items": []
+      },
+      {
+        "id": "btnTlbrMyMn",
+        "type": "button",
+        "text": "기본메뉴 및 승인사항",
+        "items": []
+      },
+      {
+        "id": "btnTlbrMn",
+        "type": "button",
+        "text": "화면 메뉴",
+        "items": []
+      },
+      {
+        "id": "btnTlbrNt",
+        "type": "button",
+        "text": "미확인 나의 할일",
+        "items": []
+      },
+      {
+        "id": "btnTlbrSrch",
+        "type": "button",
+        "text": "메뉴 검색",
+        "items": []
+      },
+      {
+        "id": "btnTlbrFav",
+        "type": "button",
+        "text": "즐겨찾기",
+        "items": []
+      },
+      {
+        "id": "btnTlbrPersonal",
+        "type": "button",
+        "text": "개인설정",
+        "items": []
+      },
+      {
+        "id": "btnTlbrCmplnt",
+        "type": "button",
+        "text": "민원 현황 알림",
+        "items": []
+      },
+      {
+        "id": "btnTlbrWrk",
+        "type": "button",
+        "text": "나의업무",
+        "items": []
+      },
+      {
+        "id": "btnChgLay",
+        "type": "button",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "btnTlbrApprvl",
+        "type": "button",
+        "text": "승인업무",
+        "items": []
+      },
+      {
+        "id": "mdiCn",
+        "type": "mdifolder",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "ea1",
+        "type": "embeddedapp",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "grpMdiTabUtils",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "btnTabClose",
+        "type": "button",
+        "text": "탭 아이템 전체 닫기",
+        "items": []
+      },
+      {
+        "id": "btnTabClose2",
+        "type": "button",
+        "text": "활성 및 고정 탭 아이템 이외 전체 닫기",
+        "items": []
+      },
+      {
+        "id": "btnShowTabList",
+        "type": "button",
+        "text": "1",
+        "items": []
+      },
+      {
+        "id": "btnExpandContent",
+        "type": "button",
+        "text": "⇱",
+        "items": []
+      },
+      {
+        "id": "btnMdiHdPause",
+        "type": "button",
+        "text": "⇵",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "embeddedapp",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "cbxLnbTg",
+        "type": "checkbox",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "btnToggle",
+        "type": "button",
+        "text": "메뉴 접기",
+        "items": []
+      },
+      {
+        "id": "grpMessageMain098",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "로딩 중입니다",
+        "items": []
+      }
+    ]
+  },
+  {
+    "idx": 1,
+    "appId": "app/com/main/Dashboard3",
+    "ctrls": [
+      {
+        "id": "grpMainTit",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "월간일정",
+        "items": []
+      },
+      {
+        "id": "comment",
+        "type": "output",
+        "text": "※ 전체 유치원 일정으로, 학급구분별 세부사항은 학사일정관리에서 확인하시기 바랍니다.",
+        "items": []
+      },
+      {
+        "id": "grdMainDash3",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "grp29",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "grp8",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "btn3",
+        "type": "button",
+        "text": "지난달",
+        "items": []
+      },
+      {
+        "id": "outNowYYYYmm",
+        "type": "output",
+        "text": "202607",
+        "items": []
+      },
+      {
+        "id": "btn2",
+        "type": "button",
+        "text": "다음달",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "- 학사일정",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "· 기타일정",
+        "items": []
+      },
+      {
+        "id": "udccal011",
+        "type": "udc.com.udcCal02",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "grp1",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "grp2",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "grp3",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "dlivTitle",
+        "type": "output",
+        "text": "학교일지/전달사항",
+        "items": []
+      },
+      {
+        "id": "grp4",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "grp5",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "ipb1",
+        "type": "inputbox",
+        "text": "제목",
+        "items": []
+      },
+      {
+        "id": "btnSearch",
+        "type": "button",
+        "text": "조회",
+        "items": []
+      },
+      {
+        "id": "cmbYear",
+        "type": "combobox",
+        "text": "2026",
+        "items": [
+          {
+            "label": "2026년",
+            "value": "2026"
+          },
+          {
+            "label": "2025년",
+            "value": "2025"
+          },
+          {
+            "label": "2024년",
+            "value": "2024"
+          },
+          {
+            "label": "2023년",
+            "value": "2023"
+          },
+          {
+            "label": "2022년",
+            "value": "2022"
+          },
+          {
+            "label": "2021년",
+            "value": "2021"
+          },
+          {
+            "label": "2020년",
+            "value": "2020"
+          },
+          {
+            "label": "2019년",
+            "value": "2019"
+          },
+          {
+            "label": "2018년",
+            "value": "2018"
+          },
+          {
+            "label": "2017년",
+            "value": "2017"
+          }
+        ]
+      },
+      {
+        "id": "grdDelivery",
+        "type": "grid",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "0행 제목  ",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "0행 마지막 열 날짜  ",
+        "items": []
+      },
+      {
+        "id": "grp6",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "grp7",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "업무요청내역",
+        "items": []
+      },
+      {
+        "id": "grdOrder",
+        "type": "grid",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "0행 요청내용  ",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "0행 마지막 열 날짜  ",
+        "items": []
+      }
+    ]
+  },
+  {
+    "idx": 2,
+    "appId": "udc/com/udcCal02",
+    "ctrls": [
+      {
+        "id": "grpHeader",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "btnRv",
+        "type": "button",
+        "text": "<",
+        "items": []
+      },
+      {
+        "id": "outNowDateMonth",
+        "type": "output",
+        "text": "202607",
+        "items": []
+      },
+      {
+        "id": "btnNv",
+        "type": "button",
+        "text": ">",
+        "items": []
+      },
+      {
+        "id": "grpCalBody",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "grp203",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "28 ",
+        "items": []
+      },
+      {
+        "id": "grp205",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "29 월 ",
+        "items": []
+      },
+      {
+        "id": "grp201",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "30 화 ",
+        "items": []
+      },
+      {
+        "id": "grp204",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "1 수 ",
+        "items": []
+      },
+      {
+        "id": "grp207",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "2 목 ",
+        "items": []
+      },
+      {
+        "id": "grp209",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "3 금 ",
+        "items": []
+      },
+      {
+        "id": "grp211",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "4 토 ",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "· 토요휴업일",
+        "items": []
+      },
+      {
+        "id": "grp219",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "5 일 ",
+        "items": []
+      },
+      {
+        "id": "grp223",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "6 월 ",
+        "items": []
+      },
+      {
+        "id": "grp225",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "7 화 ",
+        "items": []
+      },
+      {
+        "id": "grp227",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "8 수 ",
+        "items": []
+      },
+      {
+        "id": "grp229",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "9 목 ",
+        "items": []
+      },
+      {
+        "id": "grp231",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "10 금 ",
+        "items": []
+      },
+      {
+        "id": "grp212",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "11 토 ",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "· 토요휴업일",
+        "items": []
+      },
+      {
+        "id": "grp220",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "12 일 ",
+        "items": []
+      },
+      {
+        "id": "grp233",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "13 월 ",
+        "items": []
+      },
+      {
+        "id": "grp235",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "14 화 ",
+        "items": []
+      },
+      {
+        "id": "grp237",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "15 수 ",
+        "items": []
+      },
+      {
+        "id": "grp239",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "16 목 ",
+        "items": []
+      },
+      {
+        "id": "grp241",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "17 금 ",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "· 제헌절",
+        "items": []
+      },
+      {
+        "id": "grp213",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "18 토 ",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "· 토요휴업일",
+        "items": []
+      },
+      {
+        "id": "grp221",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "19 일 ",
+        "items": []
+      },
+      {
+        "id": "grp243",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "20 월 ",
+        "items": []
+      },
+      {
+        "id": "grp245",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "21 화 ",
+        "items": []
+      },
+      {
+        "id": "grp247",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "22 수 ",
+        "items": []
+      },
+      {
+        "id": "grp249",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "23 목 ",
+        "items": []
+      },
+      {
+        "id": "grp251",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "24 금 ",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "· 여름방학식",
+        "items": []
+      },
+      {
+        "id": "grp214",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "25 토 ",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "· 토요휴업일",
+        "items": []
+      },
+      {
+        "id": "grp222",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "26 일 ",
+        "items": []
+      },
+      {
+        "id": "grp253",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "27 월 ",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "· 여름방학",
+        "items": []
+      },
+      {
+        "id": "grp255",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "28 화 ",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "· 여름방학",
+        "items": []
+      },
+      {
+        "id": "grp257",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "29 수 ",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "· 여름방학",
+        "items": []
+      },
+      {
+        "id": "grp259",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "30 목 ",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "· 여름방학",
+        "items": []
+      },
+      {
+        "id": "grp260",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "31 금 ",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "· 여름방학",
+        "items": []
+      },
+      {
+        "id": "grp215",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "1 토 ",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "· 토요휴업일",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "· 여름방학",
+        "items": []
+      },
+      {
+        "id": "grp264",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "  ",
+        "items": []
+      },
+      {
+        "id": "grp263",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "  ",
+        "items": []
+      },
+      {
+        "id": "grp262",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "  ",
+        "items": []
+      },
+      {
+        "id": "grp261",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "  ",
+        "items": []
+      },
+      {
+        "id": "grp218",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "  ",
+        "items": []
+      },
+      {
+        "id": "grp217",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "  ",
+        "items": []
+      },
+      {
+        "id": "grp216",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "  ",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "일요일",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "월요일",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "화요일",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "수요일",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "목요일",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "금요일",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "토요일",
+        "items": []
+      },
+      {
+        "id": "btn3",
+        "type": "button",
+        "text": "Button",
+        "items": []
+      },
+      {
+        "id": "dti1",
+        "type": "dateinput",
+        "text": "202607",
+        "items": []
+      }
+    ]
+  },
+  {
+    "idx": 3,
+    "appId": "edu/ga/srv/mym/mm/srv_mymmm00_m00",
+    "ctrls": [
+      {
+        "id": "",
+        "type": "udc.com.appHeader",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "grpSearch",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "기간",
+        "items": []
+      },
+      {
+        "id": "grp2",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "dtiWorkYmdFrom",
+        "type": "dateinput",
+        "text": "20260701",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "~",
+        "items": []
+      },
+      {
+        "id": "dtiWorkYmdTo",
+        "type": "dateinput",
+        "text": "20260731",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "근무상황",
+        "items": []
+      },
+      {
+        "id": "grp1",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "cmbWorkSittnLclfCd",
+        "type": "combobox",
+        "text": "전체",
+        "items": [
+          {
+            "label": "전체",
+            "value": ""
+          },
+          {
+            "label": "연가",
+            "value": "W01"
+          },
+          {
+            "label": "병가",
+            "value": "W02"
+          },
+          {
+            "label": "공가",
+            "value": "W03"
+          },
+          {
+            "label": "특별휴가",
+            "value": "W04"
+          },
+          {
+            "label": "대체휴무",
+            "value": "W05"
+          },
+          {
+            "label": "결근",
+            "value": "W06"
+          },
+          {
+            "label": "연수",
+            "value": "W08"
+          },
+          {
+            "label": "연차",
+            "value": "W11"
+          },
+          {
+            "label": "교육",
+            "value": "W18"
+          },
+          {
+            "label": "기타",
+            "value": "W99"
+          }
+        ]
+      },
+      {
+        "id": "cmbWorkSittnSclfCd",
+        "type": "combobox",
+        "text": "전체",
+        "items": [
+          {
+            "label": "전체",
+            "value": ""
+          }
+        ]
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "결재상태",
+        "items": []
+      },
+      {
+        "id": "cmbAtrzStsCd",
+        "type": "combobox",
+        "text": "전체",
+        "items": [
+          {
+            "label": "전체",
+            "value": ""
+          },
+          {
+            "label": "임시저장",
+            "value": "9"
+          },
+          {
+            "label": "상신(기결취소진행)",
+            "value": "8"
+          },
+          {
+            "label": "상신(진행)",
+            "value": "1"
+          },
+          {
+            "label": "상신취소",
+            "value": "2"
+          },
+          {
+            "label": "반려",
+            "value": "3"
+          },
+          {
+            "label": "완결",
+            "value": "4"
+          },
+          {
+            "label": "완결(기결취소)",
+            "value": "5"
+          }
+        ]
+      },
+      {
+        "id": "cbx1",
+        "type": "checkbox",
+        "text": "대리신청 조회",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "btnSearch",
+        "type": "button",
+        "text": "조회",
+        "items": []
+      },
+      {
+        "id": "eaInvlInfo",
+        "type": "embeddedapp",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "grp3",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "grp4",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "udc.com.comTitle",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "grp5",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "grp7",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "btnExcelDwld",
+        "type": "button",
+        "text": "엑셀내려받기",
+        "items": []
+      },
+      {
+        "id": "btnHltVca",
+        "type": "button",
+        "text": "여성보건휴가",
+        "items": []
+      },
+      {
+        "id": "btnCopy",
+        "type": "button",
+        "text": "복사",
+        "items": []
+      },
+      {
+        "id": "btnGwork",
+        "type": "button",
+        "text": "출퇴근관리",
+        "items": []
+      },
+      {
+        "id": "btnDtlSearch",
+        "type": "button",
+        "text": "상세조회",
+        "items": []
+      },
+      {
+        "id": "btnProxyAply",
+        "type": "button",
+        "text": "대리신청",
+        "items": []
+      },
+      {
+        "id": "btnAply",
+        "type": "button",
+        "text": "신청",
+        "items": []
+      },
+      {
+        "id": "btnChgAply",
+        "type": "button",
+        "text": "변경신청",
+        "items": []
+      },
+      {
+        "id": "btnOtpt",
+        "type": "button",
+        "text": "출력",
+        "items": []
+      },
+      {
+        "id": "grp6",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "btnRtrvl",
+        "type": "button",
+        "text": "회수",
+        "items": []
+      },
+      {
+        "id": "btnAtrzRtrcn",
+        "type": "button",
+        "text": "기결취소",
+        "items": []
+      },
+      {
+        "id": "btnDelete",
+        "type": "button",
+        "text": "삭제",
+        "items": []
+      },
+      {
+        "id": "grdMain",
+        "type": "grid",
+        "text": "근무상황목록",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "0행 신청당시 부서명 ",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "0행 성명 ",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "0행 근무상황 ",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "0행 기간 ",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "0행 일수/기간 ",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "0행 사유 또는 용무 ",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "0행 목적지 ",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "0행 연가신청구분 ",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "0행 신청자 ",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "0행 결재상태 ",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "0행 삭제여부 ",
+        "items": []
+      },
+      {
+        "id": "btnReg",
+        "type": "button",
+        "text": "확인",
+        "items": []
+      }
+    ]
+  },
+  {
+    "idx": 4,
+    "appId": "udc/com/appHeader",
+    "ctrls": [
+      {
+        "id": "appHeader",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "optTit",
+        "type": "output",
+        "text": "개인근무상황관리",
+        "items": []
+      },
+      {
+        "id": "grpMenuPath",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "image",
+        "text": "집 모양 아이콘",
+        "items": []
+      },
+      {
+        "id": "btnAuthCss",
+        "type": "button",
+        "text": "A",
+        "items": []
+      },
+      {
+        "id": "btnAuth",
+        "type": "button",
+        "text": "A",
+        "items": []
+      },
+      {
+        "id": "grpButtons",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "btnHelp",
+        "type": "button",
+        "text": "도움말",
+        "items": []
+      },
+      {
+        "id": "btnQnA",
+        "type": "button",
+        "text": "질의응답",
+        "items": []
+      },
+      {
+        "id": "btnFAQ",
+        "type": "button",
+        "text": "FAQ",
+        "items": []
+      },
+      {
+        "id": "btnTel",
+        "type": "button",
+        "text": "연락처",
+        "items": []
+      },
+      {
+        "id": "btnOnlineCon",
+        "type": "button",
+        "text": "온라인컨텐츠",
+        "items": []
+      },
+      {
+        "id": "btnFav",
+        "type": "button",
+        "text": "즐겨찾기",
+        "items": []
+      },
+      {
+        "id": "btnFold",
+        "type": "button",
+        "text": "축소",
+        "items": []
+      },
+      {
+        "id": "grpViewZm",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "btnPopZmIn",
+        "type": "button",
+        "text": "화면 확대",
+        "items": []
+      },
+      {
+        "id": "btnPopZmOut",
+        "type": "button",
+        "text": "화면 축소",
+        "items": []
+      }
+    ]
+  },
+  {
+    "idx": 5,
+    "appId": "udc/com/comTitle",
+    "ctrls": [
+      {
+        "id": "grp1",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "optTit",
+        "type": "output",
+        "text": "근무상황목록",
+        "items": []
+      },
+      {
+        "id": "optRowCount",
+        "type": "output",
+        "text": "1",
+        "items": []
+      },
+      {
+        "id": "btnTools",
+        "type": "button",
+        "text": "근무상황목록  필터 등",
+        "items": []
+      }
+    ]
+  },
+  {
+    "idx": 6,
+    "appId": "edu/ga/srv/cmm/cm/srv_cmmcm00_s00",
+    "ctrls": [
+      {
+        "id": "grpInfo",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "opb01",
+        "type": "output",
+        "text": "이름/소속",
+        "items": []
+      },
+      {
+        "id": "opb02",
+        "type": "output",
+        "text": "이창수/경상북도경주교육지원청 화천초등학교",
+        "items": []
+      },
+      {
+        "id": "opb03",
+        "type": "output",
+        "text": "직위/호봉",
+        "items": []
+      },
+      {
+        "id": "opb04",
+        "type": "output",
+        "text": "교사(초등)/27호봉",
+        "items": []
+      },
+      {
+        "id": "opb05",
+        "type": "output",
+        "text": "재직상태",
+        "items": []
+      },
+      {
+        "id": "opb06",
+        "type": "output",
+        "text": "재직",
+        "items": []
+      },
+      {
+        "id": "opb07",
+        "type": "output",
+        "text": "교원구분",
+        "items": []
+      },
+      {
+        "id": "opb08",
+        "type": "output",
+        "text": "교사(초등학급담임)",
+        "items": []
+      },
+      {
+        "id": "opb09",
+        "type": "output",
+        "text": "직급",
+        "items": []
+      },
+      {
+        "id": "opb10",
+        "type": "output",
+        "text": "초등학교교사",
+        "items": []
+      },
+      {
+        "id": "opb11",
+        "type": "output",
+        "text": "보직구분",
+        "items": []
+      },
+      {
+        "id": "opb12",
+        "type": "output",
+        "text": "담임교사",
+        "items": []
+      },
+      {
+        "id": "opb13",
+        "type": "output",
+        "text": "담당과목",
+        "items": []
+      },
+      {
+        "id": "opb14",
+        "type": "output",
+        "text": "담당과목",
+        "items": []
+      },
+      {
+        "id": "opb15",
+        "type": "output",
+        "text": "최초임용일",
+        "items": []
+      },
+      {
+        "id": "opb16",
+        "type": "output",
+        "text": "20090301",
+        "items": []
+      },
+      {
+        "id": "opb17",
+        "type": "output",
+        "text": "현소속교육청\r\n임용일",
+        "items": []
+      },
+      {
+        "id": "opb18",
+        "type": "output",
+        "text": "20260301",
+        "items": []
+      },
+      {
+        "id": "opb19",
+        "type": "output",
+        "text": "현기관임용일",
+        "items": []
+      },
+      {
+        "id": "opb20",
+        "type": "output",
+        "text": "20260301",
+        "items": []
+      },
+      {
+        "id": "opb21",
+        "type": "output",
+        "text": "현직위임용일",
+        "items": []
+      },
+      {
+        "id": "opb22",
+        "type": "output",
+        "text": "현직위임용일",
+        "items": []
+      }
+    ]
+  },
+  {
+    "idx": 7,
+    "appId": "edu/ga/srv/mym/mm/srv_mymmm00_p00",
+    "ctrls": [
+      {
+        "id": "title",
+        "type": "udc.com.appHeader",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "grp9",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "grpInfo",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "※ 사립학교법 제55조의3에 따른 사립교원의 연수기관 및 근무장소 이외에서의 연수는 \"교육공무원법제41조연수\"로 신청하시기 바랍니다.\r\n※ 가용",
+        "items": []
+      },
+      {
+        "id": "optAvCnvrs",
+        "type": "output",
+        "text": "※ 연가전환 사용이 불가능한 경우 기관(부서)별 복무담당자에게[복무 > 연가관리 > 연가저축기준관리] 설정 요청바랍니다.",
+        "items": []
+      },
+      {
+        "id": "cbxToogle",
+        "type": "checkbox",
+        "text": "지시문 닫기 닫기",
+        "items": []
+      },
+      {
+        "id": "cbxToogleTempButton",
+        "type": "button",
+        "text": "지시문 닫기",
+        "items": []
+      },
+      {
+        "id": "grpInput2",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "udc.com.comTitle",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "grpInput1",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "btnRowAdd",
+        "type": "button",
+        "text": "행추가",
+        "items": []
+      },
+      {
+        "id": "btnRowDel",
+        "type": "button",
+        "text": "행삭제",
+        "items": []
+      },
+      {
+        "id": "grdMain",
+        "type": "grid",
+        "text": "근무상황신청목록",
+        "items": []
+      },
+      {
+        "id": "cmb1",
+        "type": "combobox",
+        "text": "0행 근무상황  콤보상자 ",
+        "items": [
+          {
+            "label": "연가",
+            "value": "W0101"
+          },
+          {
+            "label": "연차",
+            "value": "W1101"
+          },
+          {
+            "label": "반일연가",
+            "value": "W0102"
+          },
+          {
+            "label": "반일연차",
+            "value": "W1102"
+          },
+          {
+            "label": "지각",
+            "value": "W0103"
+          },
+          {
+            "label": "연차(지각)",
+            "value": "W1103"
+          },
+          {
+            "label": "조퇴",
+            "value": "W0104"
+          },
+          {
+            "label": "연차(조퇴)",
+            "value": "W1104"
+          },
+          {
+            "label": "외출",
+            "value": "W0105"
+          },
+          {
+            "label": "연차(외출)",
+            "value": "W1105"
+          },
+          {
+            "label": "병가",
+            "value": "W0201"
+          },
+          {
+            "label": "공무상병가",
+            "value": "W0202"
+          },
+          {
+            "label": "반일병가",
+            "value": "W0203"
+          },
+          {
+            "label": "병지각",
+            "value": "W0204"
+          },
+          {
+            "label": "병조퇴",
+            "value": "W0205"
+          },
+          {
+            "label": "병외출",
+            "value": "W0206"
+          },
+          {
+            "label": "공무상병지각",
+            "value": "W0207"
+          },
+          {
+            "label": "공무상병조퇴",
+            "value": "W0208"
+          },
+          {
+            "label": "공무상병외출",
+            "value": "W0209"
+          },
+          {
+            "label": "공무상반일병가",
+            "value": "W0210"
+          }
+        ]
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "0행 시작일시 ",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "0행 시작일시 ",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "0행 시작일시 ",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "0행 종료일시 ",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "0행 종료일시 ",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "0행 종료일시 ",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "0행 신청시간  반복 ",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "0행 신청시간  일 ",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "0행 신청시간  시간 ",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "0행 마지막 열 신청시간  분 ",
+        "items": []
+      },
+      {
+        "id": "grpInput3",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "udc.com.comTitle",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "opbWorkSittnInfo",
+        "type": "output",
+        "text": "재직기간기준일자 : 2026-12-30",
+        "items": []
+      },
+      {
+        "id": "eaWorkSittnInfo",
+        "type": "embeddedapp",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "grpInput4",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "udc.com.comTitle",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "근무상황",
+        "items": []
+      },
+      {
+        "id": "grp1",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "cmbWorkSittnLclfCd",
+        "type": "combobox",
+        "text": "W01",
+        "items": [
+          {
+            "label": "연가",
+            "value": "W01"
+          },
+          {
+            "label": "병가",
+            "value": "W02"
+          },
+          {
+            "label": "공가",
+            "value": "W03"
+          },
+          {
+            "label": "특별휴가",
+            "value": "W04"
+          },
+          {
+            "label": "대체휴무",
+            "value": "W05"
+          },
+          {
+            "label": "결근",
+            "value": "W06"
+          },
+          {
+            "label": "연수",
+            "value": "W08"
+          },
+          {
+            "label": "기타",
+            "value": "W99"
+          }
+        ]
+      },
+      {
+        "id": "cmbWorkSittnSclfCd",
+        "type": "combobox",
+        "text": "W0101",
+        "items": [
+          {
+            "label": "연가",
+            "value": "W0101"
+          },
+          {
+            "label": "반일연가",
+            "value": "W0102"
+          },
+          {
+            "label": "지각",
+            "value": "W0103"
+          },
+          {
+            "label": "조퇴",
+            "value": "W0104"
+          },
+          {
+            "label": "외출",
+            "value": "W0105"
+          }
+        ]
+      },
+      {
+        "id": "cmbWorkSittnDtlCd",
+        "type": "combobox",
+        "text": "00000",
+        "items": [
+          {
+            "label": "없음",
+            "value": "00000"
+          }
+        ]
+      },
+      {
+        "id": "opbAvAplyScCd",
+        "type": "output",
+        "text": "연가종류",
+        "items": []
+      },
+      {
+        "id": "cmbAvAplyScCd",
+        "type": "combobox",
+        "text": "1",
+        "items": [
+          {
+            "label": "선택",
+            "value": ""
+          },
+          {
+            "label": "금년도연가",
+            "value": "1"
+          },
+          {
+            "label": "저축연가",
+            "value": "2"
+          },
+          {
+            "label": "연가당겨쓰기",
+            "value": "3"
+          }
+        ]
+      },
+      {
+        "id": "cbxChldDltpYn",
+        "type": "checkbox",
+        "text": "N",
+        "items": []
+      },
+      {
+        "id": "cbxSptHmecYn",
+        "type": "checkbox",
+        "text": "N",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "기간",
+        "items": []
+      },
+      {
+        "id": "grp2",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "dtiWorkYmdFrom",
+        "type": "dateinput",
+        "text": "20260721",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "일",
+        "items": []
+      },
+      {
+        "id": "cmbBgngH",
+        "type": "combobox",
+        "text": "08",
+        "items": [
+          {
+            "label": "00",
+            "value": "00"
+          },
+          {
+            "label": "01",
+            "value": "01"
+          },
+          {
+            "label": "02",
+            "value": "02"
+          },
+          {
+            "label": "03",
+            "value": "03"
+          },
+          {
+            "label": "04",
+            "value": "04"
+          },
+          {
+            "label": "05",
+            "value": "05"
+          },
+          {
+            "label": "06",
+            "value": "06"
+          },
+          {
+            "label": "07",
+            "value": "07"
+          },
+          {
+            "label": "08",
+            "value": "08"
+          },
+          {
+            "label": "09",
+            "value": "09"
+          },
+          {
+            "label": "10",
+            "value": "10"
+          },
+          {
+            "label": "11",
+            "value": "11"
+          },
+          {
+            "label": "12",
+            "value": "12"
+          },
+          {
+            "label": "13",
+            "value": "13"
+          },
+          {
+            "label": "14",
+            "value": "14"
+          },
+          {
+            "label": "15",
+            "value": "15"
+          },
+          {
+            "label": "16",
+            "value": "16"
+          },
+          {
+            "label": "17",
+            "value": "17"
+          },
+          {
+            "label": "18",
+            "value": "18"
+          },
+          {
+            "label": "19",
+            "value": "19"
+          }
+        ]
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "시",
+        "items": []
+      },
+      {
+        "id": "cmbBgngM",
+        "type": "combobox",
+        "text": "40",
+        "items": [
+          {
+            "label": "00",
+            "value": "00"
+          },
+          {
+            "label": "05",
+            "value": "05"
+          },
+          {
+            "label": "10",
+            "value": "10"
+          },
+          {
+            "label": "15",
+            "value": "15"
+          },
+          {
+            "label": "20",
+            "value": "20"
+          },
+          {
+            "label": "25",
+            "value": "25"
+          },
+          {
+            "label": "30",
+            "value": "30"
+          },
+          {
+            "label": "35",
+            "value": "35"
+          },
+          {
+            "label": "40",
+            "value": "40"
+          },
+          {
+            "label": "45",
+            "value": "45"
+          },
+          {
+            "label": "50",
+            "value": "50"
+          },
+          {
+            "label": "55",
+            "value": "55"
+          }
+        ]
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "분 부터",
+        "items": []
+      },
+      {
+        "id": "grp5",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "dtiWorkYmdTo",
+        "type": "dateinput",
+        "text": "20260721",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "일",
+        "items": []
+      },
+      {
+        "id": "cmbEndH",
+        "type": "combobox",
+        "text": "16",
+        "items": [
+          {
+            "label": "01",
+            "value": "01"
+          },
+          {
+            "label": "02",
+            "value": "02"
+          },
+          {
+            "label": "03",
+            "value": "03"
+          },
+          {
+            "label": "04",
+            "value": "04"
+          },
+          {
+            "label": "05",
+            "value": "05"
+          },
+          {
+            "label": "06",
+            "value": "06"
+          },
+          {
+            "label": "07",
+            "value": "07"
+          },
+          {
+            "label": "08",
+            "value": "08"
+          },
+          {
+            "label": "09",
+            "value": "09"
+          },
+          {
+            "label": "10",
+            "value": "10"
+          },
+          {
+            "label": "11",
+            "value": "11"
+          },
+          {
+            "label": "12",
+            "value": "12"
+          },
+          {
+            "label": "13",
+            "value": "13"
+          },
+          {
+            "label": "14",
+            "value": "14"
+          },
+          {
+            "label": "15",
+            "value": "15"
+          },
+          {
+            "label": "16",
+            "value": "16"
+          },
+          {
+            "label": "17",
+            "value": "17"
+          },
+          {
+            "label": "18",
+            "value": "18"
+          },
+          {
+            "label": "19",
+            "value": "19"
+          },
+          {
+            "label": "20",
+            "value": "20"
+          }
+        ]
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "시",
+        "items": []
+      },
+      {
+        "id": "cmbEndM",
+        "type": "combobox",
+        "text": "40",
+        "items": [
+          {
+            "label": "00",
+            "value": "00"
+          },
+          {
+            "label": "05",
+            "value": "05"
+          },
+          {
+            "label": "10",
+            "value": "10"
+          },
+          {
+            "label": "15",
+            "value": "15"
+          },
+          {
+            "label": "20",
+            "value": "20"
+          },
+          {
+            "label": "25",
+            "value": "25"
+          },
+          {
+            "label": "30",
+            "value": "30"
+          },
+          {
+            "label": "35",
+            "value": "35"
+          },
+          {
+            "label": "40",
+            "value": "40"
+          },
+          {
+            "label": "45",
+            "value": "45"
+          },
+          {
+            "label": "50",
+            "value": "50"
+          },
+          {
+            "label": "55",
+            "value": "55"
+          }
+        ]
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "분 까지",
+        "items": []
+      },
+      {
+        "id": "grp6",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "cbxDdRpatYn",
+        "type": "checkbox",
+        "text": "N",
+        "items": []
+      },
+      {
+        "id": "cbxDfkRpatYn",
+        "type": "checkbox",
+        "text": "N",
+        "items": []
+      },
+      {
+        "id": "cbxItrtItcDmndYn",
+        "type": "checkbox",
+        "text": "수업교체요청",
+        "items": []
+      },
+      {
+        "id": "grpWorkSittn",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "nbeWorkSittnDdTtl",
+        "type": "numbereditor",
+        "text": "1",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "일",
+        "items": []
+      },
+      {
+        "id": "opbDdRpat",
+        "type": "output",
+        "text": "매",
+        "items": []
+      },
+      {
+        "id": "nbeWorkSittnHrTtl",
+        "type": "numbereditor",
+        "text": "0",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "시간",
+        "items": []
+      },
+      {
+        "id": "nbeWorkSittnMTtl",
+        "type": "numbereditor",
+        "text": "0",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "분",
+        "items": []
+      },
+      {
+        "id": "grpDfk",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "grpDfkRpat",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "cbxDfkMon",
+        "type": "checkbox",
+        "text": "N",
+        "items": []
+      },
+      {
+        "id": "cbxDfkTue",
+        "type": "checkbox",
+        "text": "N",
+        "items": []
+      },
+      {
+        "id": "cbxDfkWed",
+        "type": "checkbox",
+        "text": "N",
+        "items": []
+      },
+      {
+        "id": "cbxDfkThu",
+        "type": "checkbox",
+        "text": "N",
+        "items": []
+      },
+      {
+        "id": "cbxDfkFri",
+        "type": "checkbox",
+        "text": "N",
+        "items": []
+      },
+      {
+        "id": "cbxDfkSat",
+        "type": "checkbox",
+        "text": "N",
+        "items": []
+      },
+      {
+        "id": "cbxDfkSun",
+        "type": "checkbox",
+        "text": "N",
+        "items": []
+      },
+      {
+        "id": "opbDfkRpat",
+        "type": "output",
+        "text": "매",
+        "items": []
+      },
+      {
+        "id": "nbeWorkSittnDfkHrTtl",
+        "type": "numbereditor",
+        "text": "0",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "시간",
+        "items": []
+      },
+      {
+        "id": "nbeWorkSittnDfkMTtl",
+        "type": "numbereditor",
+        "text": "0",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "분",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "연락처",
+        "items": []
+      },
+      {
+        "id": "grp4",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "mse1",
+        "type": "maskeditor",
+        "text": "(___)____-____",
+        "items": []
+      },
+      {
+        "id": "opbBfrSicle",
+        "type": "output",
+        "text": "기준병가상황",
+        "items": []
+      },
+      {
+        "id": "cmbBfrSicle",
+        "type": "combobox",
+        "text": "-1",
+        "items": [
+          {
+            "label": "선택",
+            "value": ""
+          },
+          {
+            "label": "해당신청건",
+            "value": "0"
+          }
+        ]
+      },
+      {
+        "id": "opbWorkSittnRsnCn",
+        "type": "output",
+        "text": "사유",
+        "items": []
+      },
+      {
+        "id": "cmbAvRsnCd",
+        "type": "combobox",
+        "text": "선택",
+        "items": [
+          {
+            "label": "선택",
+            "value": ""
+          },
+          {
+            "label": "휴업일",
+            "value": "00"
+          },
+          {
+            "label": "1호 : 본인 및 배우자 직계존속의 생일",
+            "value": "01"
+          },
+          {
+            "label": "2호 : 배우자, 본인 및 배우자 직계존속의 기일",
+            "value": "02"
+          },
+          {
+            "label": "3호 : 배우자, 본인 및 배우자 직계존비속 또는 형제‧자매의 질병, 부상 등으로 일시적인 간호 또는 위로가 필요하다고 인정되는 경우",
+            "value": "03"
+          },
+          {
+            "label": "4호 : 병가를 모두 사용한 후에도 직무를 수행할 수 없거나 계속 요양을 할 필요가 있는 경우",
+            "value": "04"
+          },
+          {
+            "label": "5호 : 한국방송통신대학교 출석 수업 및 일반대학원 시험에 참석하는 경우",
+            "value": "05"
+          },
+          {
+            "label": "6호 : 본인 및 배우자 부모의 형제‧자매 장례식",
+            "value": "06"
+          },
+          {
+            "label": "7호 : 본인 및 배우자 형제‧자매의 배우자 장례식",
+            "value": "07"
+          },
+          {
+            "label": "8호 : 본인 자녀의 입영일",
+            "value": "08"
+          },
+          {
+            "label": "9호 : 기타 상당한 이유가 있다고 소속 학교의 장이 인정하는 경우",
+            "value": "09"
+          }
+        ]
+      },
+      {
+        "id": "ipbWorkSittnRsnCn",
+        "type": "inputbox",
+        "text": "사유 또는 용무",
+        "items": []
+      },
+      {
+        "id": "opbDestiNm",
+        "type": "output",
+        "text": "목적지",
+        "items": []
+      },
+      {
+        "id": "ipbDestiNm",
+        "type": "inputbox",
+        "text": "목적지",
+        "items": []
+      },
+      {
+        "id": "opbChld",
+        "type": "output",
+        "text": "자녀명",
+        "items": []
+      },
+      {
+        "id": "grp7",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "cmbChld",
+        "type": "combobox",
+        "text": "선택",
+        "items": [
+          {
+            "label": "선택",
+            "value": ""
+          },
+          {
+            "label": "이재희",
+            "value": "3"
+          },
+          {
+            "label": "이예나",
+            "value": "4"
+          }
+        ]
+      },
+      {
+        "id": "cbxEshChldGrd2Yn",
+        "type": "checkbox",
+        "text": "N",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "겸임기관 신청여부",
+        "items": []
+      },
+      {
+        "id": "grp3",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "cbxAdpYn",
+        "type": "checkbox",
+        "text": "겸임기관 신청여부",
+        "items": []
+      },
+      {
+        "id": "cmbAdpDpt",
+        "type": "combobox",
+        "text": "선택",
+        "items": [
+          {
+            "label": "선택",
+            "value": ""
+          }
+        ]
+      },
+      {
+        "id": "opbLtmHffVca",
+        "type": "output",
+        "text": "장기재직휴가",
+        "items": []
+      },
+      {
+        "id": "cmbLtmHffVca",
+        "type": "combobox",
+        "text": "선택",
+        "items": [
+          {
+            "label": "선택",
+            "value": ""
+          },
+          {
+            "label": "재직기간 5년 0월 이상 10년 0월 미만",
+            "value": "7"
+          },
+          {
+            "label": "재직기간 10년 0월 이상 20년 0월 미만",
+            "value": "5"
+          },
+          {
+            "label": "재직기간 20년 0월 이상 ",
+            "value": "6"
+          }
+        ]
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "비공개여부",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "cbxPrdYn",
+        "type": "checkbox",
+        "text": "기간",
+        "items": []
+      },
+      {
+        "id": "cbxDestiYn",
+        "type": "checkbox",
+        "text": "N",
+        "items": []
+      },
+      {
+        "id": "cbxWorkSittnRsnCnYn",
+        "type": "checkbox",
+        "text": "사유",
+        "items": []
+      },
+      {
+        "id": "cbxWorkSittnYn",
+        "type": "checkbox",
+        "text": "N",
+        "items": []
+      },
+      {
+        "id": "opbClsdr",
+        "type": "output",
+        "text": "※기간, 사유 옆에 체크를 한 경우에는 일일근무상황에 공개되지 않습니다.",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "btnAprvDmnd",
+        "type": "button",
+        "text": "승인요청",
+        "items": []
+      },
+      {
+        "id": "btnCancel",
+        "type": "button",
+        "text": "닫기",
+        "items": []
+      }
+    ]
+  },
+  {
+    "idx": 8,
+    "appId": "udc/com/appHeader",
+    "ctrls": [
+      {
+        "id": "appHeader",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "optTit",
+        "type": "output",
+        "text": "근무상황신청",
+        "items": []
+      },
+      {
+        "id": "grpMenuPath",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "image",
+        "text": "집 모양 아이콘",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "근무상황신청",
+        "items": []
+      },
+      {
+        "id": "btnAuthCss",
+        "type": "button",
+        "text": "A",
+        "items": []
+      },
+      {
+        "id": "btnAuth",
+        "type": "button",
+        "text": "A",
+        "items": []
+      },
+      {
+        "id": "grpButtons",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "btnHelp",
+        "type": "button",
+        "text": "도움말",
+        "items": []
+      },
+      {
+        "id": "btnQnA",
+        "type": "button",
+        "text": "질의응답",
+        "items": []
+      },
+      {
+        "id": "btnFAQ",
+        "type": "button",
+        "text": "FAQ",
+        "items": []
+      },
+      {
+        "id": "btnTel",
+        "type": "button",
+        "text": "연락처",
+        "items": []
+      },
+      {
+        "id": "btnOnlineCon",
+        "type": "button",
+        "text": "온라인컨텐츠",
+        "items": []
+      },
+      {
+        "id": "btnFav",
+        "type": "button",
+        "text": "즐겨찾기",
+        "items": []
+      },
+      {
+        "id": "btnFold",
+        "type": "button",
+        "text": "축소",
+        "items": []
+      },
+      {
+        "id": "grpViewZm",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "btnPopZmIn",
+        "type": "button",
+        "text": "화면 확대",
+        "items": []
+      },
+      {
+        "id": "btnPopZmOut",
+        "type": "button",
+        "text": "화면 축소",
+        "items": []
+      }
+    ]
+  },
+  {
+    "idx": 9,
+    "appId": "udc/com/comTitle",
+    "ctrls": [
+      {
+        "id": "grp1",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "optTit",
+        "type": "output",
+        "text": "근무상황신청목록",
+        "items": []
+      },
+      {
+        "id": "optRowCount",
+        "type": "output",
+        "text": "1",
+        "items": []
+      },
+      {
+        "id": "btnTools",
+        "type": "button",
+        "text": "근무상황신청목록  필터 등",
+        "items": []
+      }
+    ]
+  },
+  {
+    "idx": 10,
+    "appId": "udc/com/comTitle",
+    "ctrls": [
+      {
+        "id": "grp1",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "optTit",
+        "type": "output",
+        "text": "근무상황사용현황",
+        "items": []
+      },
+      {
+        "id": "optRowCount",
+        "type": "output",
+        "text": "0",
+        "items": []
+      },
+      {
+        "id": "btnTools",
+        "type": "button",
+        "text": "",
+        "items": []
+      }
+    ]
+  },
+  {
+    "idx": 11,
+    "appId": "udc/com/comTitle",
+    "ctrls": [
+      {
+        "id": "grp1",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "optTit",
+        "type": "output",
+        "text": "근무상황신청입력",
+        "items": []
+      },
+      {
+        "id": "optRowCount",
+        "type": "output",
+        "text": "0",
+        "items": []
+      },
+      {
+        "id": "btnTools",
+        "type": "button",
+        "text": "",
+        "items": []
+      }
+    ]
+  },
+  {
+    "idx": 12,
+    "appId": "edu/ga/srv/mym/mm/srv_mymmm00_s00",
+    "ctrls": [
+      {
+        "id": "grpAvInfo",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "opbCom",
+        "type": "output",
+        "text": "개인연가사용현황\n(2026)",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "가용연가일수",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "연가사용\r\n일수",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "연가잔여\r\n일수",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "저축연가\r\n사용가능일수",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "저축연가\r\n사용일수",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "연가\r\n당겨쓰기\r\n가능일수",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "연가당겨쓰기\r\n일수",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "00일 06시 40분",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "21일 01시 20분",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "00일 00시 00분",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "10일",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "00일 00시 00분",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "22일 0시 0분",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "0일 0시 0분",
+        "items": []
+      },
+      {
+        "id": "grpAv2",
+        "type": "container",
+        "text": "",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "연가일수",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "반일연가일수",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "지각",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "조퇴",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "외출",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "0",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "0",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "0.6",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "0",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "0",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "연가전환\r\n가용일수",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "연가전환\r\n사용일수",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "00일 00시 00분",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "00일 00시 00분",
+        "items": []
+      },
+      {
+        "id": "",
+        "type": "output",
+        "text": "※ 저축연가 사용가능일수 : 전년도까지(*) 총 저축일수 - 전년도까지(*) 총 사용일수\r\n   (*) 당해에 저축한 연가는 다음해부터 사용 가",
+        "items": []
+      }
+    ]
+  }
+]

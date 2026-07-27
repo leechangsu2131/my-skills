@@ -1,0 +1,317 @@
+[
+  {
+    "app": "app/com/main/Index",
+    "appInst": "app/com/main/Index$1",
+    "fieldLabel": "나의업무",
+    "id": "cmbMyWrk",
+    "itemCount": 2,
+    "items": [
+      {
+        "label": "=== 나의업무 선택 ===",
+        "value": "나의업무"
+      },
+      {
+        "label": "",
+        "value": ""
+      }
+    ],
+    "text": "",
+    "uuid": "f4",
+    "value": null
+  },
+  {
+    "app": "app/com/main/Index",
+    "appInst": "app/com/main/Index$1",
+    "fieldLabel": "학년도",
+    "id": "cmbShlYear",
+    "itemCount": 3,
+    "items": [
+      {
+        "label": "ːːː학년도ːːː",
+        "value": ""
+      },
+      {
+        "label": "2026학년도",
+        "value": "2026"
+      },
+      {
+        "label": "2025학년도",
+        "value": "2025"
+      }
+    ],
+    "text": "ːːː학년도ːːː",
+    "uuid": "f5",
+    "value": ""
+  },
+  {
+    "app": "app/com/main/Index",
+    "appInst": "app/com/main/Index$1",
+    "fieldLabel": "",
+    "id": "cmbTheme",
+    "itemCount": 2,
+    "items": [
+      {
+        "label": "Light",
+        "value": ""
+      },
+      {
+        "label": "Dark",
+        "value": "dark"
+      }
+    ],
+    "text": "",
+    "uuid": "f9",
+    "value": null
+  },
+  {
+    "app": "app/com/main/Dashboard3",
+    "appInst": "app/com/main/Dashboard3$1",
+    "fieldLabel": "년도",
+    "id": "cmbYear",
+    "itemCount": 10,
+    "items": [
+      {
+        "label": "2026년",
+        "value": "2026"
+      },
+      {
+        "label": "2025년",
+        "value": "2025"
+      },
+      {
+        "label": "2024년",
+        "value": "2024"
+      },
+      {
+        "label": "2023년",
+        "value": "2023"
+      },
+      {
+        "label": "2022년",
+        "value": "2022"
+      },
+      {
+        "label": "2021년",
+        "value": "2021"
+      },
+      {
+        "label": "2020년",
+        "value": "2020"
+      },
+      {
+        "label": "2019년",
+        "value": "2019"
+      },
+      {
+        "label": "2018년",
+        "value": "2018"
+      },
+      {
+        "label": "2017년",
+        "value": "2017"
+      }
+    ],
+    "text": "2026년",
+    "uuid": "vd",
+    "value": "2026"
+  },
+  {
+    "app": "edu/sw/els/scr/es/els_scres00_m00",
+    "appInst": "edu/sw/els/scr/es/els_scres00_m00$1",
+    "fieldLabel": "영역",
+    "id": "cmbRelm01",
+    "itemCount": 3,
+    "items": [
+      {
+        "label": "듣기·말하기",
+        "value": "1"
+      },
+      {
+        "label": "읽기",
+        "value": "2"
+      },
+      {
+        "label": "문학",
+        "value": "5"
+      }
+    ],
+    "text": "듣기·말하기",
+    "uuid": "1pu",
+    "value": "1"
+  },
+  {
+    "app": "edu/sw/els/scr/es/els_scres00_m00",
+    "appInst": "edu/sw/els/scr/es/els_scres00_m00$1",
+    "fieldLabel": "성취기준",
+    "id": "cmbSccesCtr",
+    "itemCount": 1,
+    "items": [
+      {
+        "label": "[4국01-01] 중요한...",
+        "value": "12임000000000000000000352403 `01`1"
+      }
+    ],
+    "text": "[4국01-01] 중요한...",
+    "uuid": "1px",
+    "value": "12임000000000000000000352403 `01`1"
+  },
+  {
+    "app": "edu/sw/els/scr/es/els_scres00_m00",
+    "appInst": "edu/sw/els/scr/es/els_scres00_m00$1",
+    "fieldLabel": "일괄적용 평가기준 선택",
+    "id": "cmbEvlCn",
+    "itemCount": 5,
+    "items": [
+      {
+        "label": "--성취기준별 평가 선택적용--",
+        "value": ""
+      },
+      {
+        "label": "매우 잘함",
+        "value": "1 "
+      },
+      {
+        "label": "잘함",
+        "value": "2 "
+      },
+      {
+        "label": "노력 요함",
+        "value": "3 "
+      },
+      {
+        "label": "임의입력",
+        "value": "99"
+      }
+    ],
+    "text": "--성취기준별 평가 선택적용--",
+    "uuid": "1qu",
+    "value": ""
+  },
+  {
+    "app": "edu/sw/els/scr/es/els_scres00_m00",
+    "appInst": "edu/sw/els/scr/es/els_scres00_m00$1",
+    "fieldLabel": "0행 단계  콤보상자",
+    "id": "cmbLvl",
+    "itemCount": 0,
+    "items": [],
+    "text": "",
+    "uuid": "1qz",
+    "value": null
+  },
+  {
+    "app": "udc/sw/swc/udcSwcAuth",
+    "appInst": "udc/sw/swc/udcSwcAuth$1",
+    "fieldLabel": "학년",
+    "id": "cmbUdcAuth",
+    "itemCount": 1,
+    "items": [
+      {
+        "label": "2026",
+        "value": "2026"
+      }
+    ],
+    "text": "2026",
+    "uuid": "1or",
+    "value": "2026"
+  },
+  {
+    "app": "udc/sw/swc/udcSwcAuth",
+    "appInst": "udc/sw/swc/udcSwcAuth$2",
+    "fieldLabel": "학기",
+    "id": "cmbUdcAuth",
+    "itemCount": 2,
+    "items": [
+      {
+        "label": "1",
+        "value": "1"
+      },
+      {
+        "label": "2",
+        "value": "2"
+      }
+    ],
+    "text": "1",
+    "uuid": "1p0",
+    "value": "1"
+  },
+  {
+    "app": "udc/sw/swc/udcSwcAuth",
+    "appInst": "udc/sw/swc/udcSwcAuth$3",
+    "fieldLabel": "학년",
+    "id": "cmbUdcAuth",
+    "itemCount": 1,
+    "items": [
+      {
+        "label": "3",
+        "value": "3"
+      }
+    ],
+    "text": "3",
+    "uuid": "1p9",
+    "value": "3"
+  },
+  {
+    "app": "udc/sw/swc/udcSwcAuth",
+    "appInst": "udc/sw/swc/udcSwcAuth$4",
+    "fieldLabel": "반",
+    "id": "cmbUdcAuth",
+    "itemCount": 1,
+    "items": [
+      {
+        "label": "2",
+        "value": "02"
+      }
+    ],
+    "text": "2",
+    "uuid": "1pi",
+    "value": "02"
+  },
+  {
+    "app": "udc/sw/swc/udcSwcAuth",
+    "appInst": "udc/sw/swc/udcSwcAuth$5",
+    "fieldLabel": "교과",
+    "id": "cmbUdcAuth",
+    "itemCount": 9,
+    "items": [
+      {
+        "label": "국어",
+        "value": "0121621010101:0001000001:10042"
+      },
+      {
+        "label": "사회",
+        "value": "0121621010102:0001000006:10045"
+      },
+      {
+        "label": "도덕",
+        "value": "0121621010102:0001000007:10048"
+      },
+      {
+        "label": "수학",
+        "value": "0121621010103:0001000002:10051"
+      },
+      {
+        "label": "과학",
+        "value": "0121621010104:0001000008:10054"
+      },
+      {
+        "label": "체육",
+        "value": "0121621010105:0001000010:10057"
+      },
+      {
+        "label": "음악",
+        "value": "0121621010106:0001000011:10060"
+      },
+      {
+        "label": "미술",
+        "value": "0121621010106:0001000012:10063"
+      },
+      {
+        "label": "영어",
+        "value": "0121621010107:0001000013:10066"
+      }
+    ],
+    "text": "국어",
+    "uuid": "1pr",
+    "value": "0121621010101:0001000001:10042"
+  }
+]

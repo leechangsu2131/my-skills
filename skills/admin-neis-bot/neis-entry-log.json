@@ -1,0 +1,93 @@
+[
+  {
+    "subject": "도덕",
+    "realm": "자신과의 관계",
+    "standard": "[4도01-03] 성실한...",
+    "status": "already_filled",
+    "count": 18
+  },
+  {
+    "subject": "도덕",
+    "realm": "타인과의 관계",
+    "standard": "[4도02-01] 효, ...",
+    "status": "already_filled",
+    "count": 18
+  },
+  {
+    "subject": "사회",
+    "realm": "지리",
+    "standard": "[4사01-01] 주변 ...",
+    "status": "already_filled",
+    "count": 18
+  },
+  {
+    "subject": "사회",
+    "realm": "지리",
+    "standard": "[4사01-02] 주변의...",
+    "status": "already_filled",
+    "count": 18
+  },
+  {
+    "subject": "사회",
+    "realm": "역사",
+    "standard": "[4사02-02] 오래된...",
+    "status": "already_filled",
+    "count": 18
+  },
+  {
+    "subject": "수학",
+    "realm": "수와 연산",
+    "standard": "[4수01-03] 세 자...",
+    "status": "already_filled",
+    "count": 18
+  },
+  {
+    "subject": "수학",
+    "realm": "수와 연산",
+    "standard": "[4수01-04] 곱하는...",
+    "status": "already_filled",
+    "count": 18
+  },
+  {
+    "subject": "수학",
+    "realm": "도형과 측정",
+    "standard": "[4수03-10] 여러 ...",
+    "status": "already_filled",
+    "count": 18
+  },
+  {
+    "subject": "수학",
+    "realm": "도형과 측정",
+    "standard": "[4수03-14] 실생활...",
+    "status": "already_filled",
+    "count": 18
+  },
+  {
+    "subject": "음악",
+    "realm": "연주",
+    "standard": "[4음01-01] 바른 ...",
+    "status": "already_filled",
+    "count": 18
+  },
+  {
+    "subject": "음악",
+    "realm": "감상",
+    "standard": "[4음02-01] 음악을...",
+    "status": "already_filled",
+    "count": 18
+  },
+  {
+    "subject": "미술",
+    "realm": "미적 체험",
+    "standard": "[4미01-01] 자연물...",
+    "status": "already_filled",
+    "count": 18
+  },
+  {
+    "subject": "미술",
+    "realm": "표현",
+    "standard": "[4수02-03] 조형 ...",
+    "status": "saved",
+    "filled": 18
+  }
+]

@@ -1,0 +1,3080 @@
+[
+  {
+    "subject": "도덕",
+    "student": "강시우",
+    "standard_code": "4도01-03",
+    "assessment": "2단원: 성실",
+    "level": "노력요함",
+    "inferred": true,
+    "raw_level": "노력요함(추정)"
+  },
+  {
+    "subject": "도덕",
+    "student": "강시우",
+    "standard_code": "4도02-01",
+    "assessment": "3단원: 효",
+    "level": "노력요함",
+    "inferred": true,
+    "raw_level": "노력요함(추정)"
+  },
+  {
+    "subject": "도덕",
+    "student": "김가을",
+    "standard_code": "4도01-03",
+    "assessment": "2단원: 성실",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "도덕",
+    "student": "김가을",
+    "standard_code": "4도02-01",
+    "assessment": "3단원: 효",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "도덕",
+    "student": "김동규",
+    "standard_code": "4도01-03",
+    "assessment": "2단원: 성실",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "도덕",
+    "student": "김동규",
+    "standard_code": "4도02-01",
+    "assessment": "3단원: 효",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "도덕",
+    "student": "김주안",
+    "standard_code": "4도01-03",
+    "assessment": "2단원: 성실",
+    "level": "노력요함",
+    "inferred": true,
+    "raw_level": "노력요함(추정)"
+  },
+  {
+    "subject": "도덕",
+    "student": "김주안",
+    "standard_code": "4도02-01",
+    "assessment": "3단원: 효",
+    "level": "노력요함",
+    "inferred": true,
+    "raw_level": "노력요함(추정)"
+  },
+  {
+    "subject": "도덕",
+    "student": "박민서",
+    "standard_code": "4도01-03",
+    "assessment": "2단원: 성실",
+    "level": "매우잘함",
+    "inferred": true,
+    "raw_level": "매우잘함(추정)"
+  },
+  {
+    "subject": "도덕",
+    "student": "박민서",
+    "standard_code": "4도02-01",
+    "assessment": "3단원: 효",
+    "level": "매우잘함",
+    "inferred": true,
+    "raw_level": "매우잘함(추정)"
+  },
+  {
+    "subject": "도덕",
+    "student": "박서우",
+    "standard_code": "4도01-03",
+    "assessment": "2단원: 성실",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "도덕",
+    "student": "박서우",
+    "standard_code": "4도02-01",
+    "assessment": "3단원: 효",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "도덕",
+    "student": "박현규",
+    "standard_code": "4도01-03",
+    "assessment": "2단원: 성실",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "도덕",
+    "student": "박현규",
+    "standard_code": "4도02-01",
+    "assessment": "3단원: 효",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "도덕",
+    "student": "백다온",
+    "standard_code": "4도01-03",
+    "assessment": "2단원: 성실",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "도덕",
+    "student": "백다온",
+    "standard_code": "4도02-01",
+    "assessment": "3단원: 효",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "도덕",
+    "student": "오지윤",
+    "standard_code": "4도01-03",
+    "assessment": "2단원: 성실",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "도덕",
+    "student": "오지윤",
+    "standard_code": "4도02-01",
+    "assessment": "3단원: 효",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "도덕",
+    "student": "이서우",
+    "standard_code": "4도01-03",
+    "assessment": "2단원: 성실",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "도덕",
+    "student": "이서우",
+    "standard_code": "4도02-01",
+    "assessment": "3단원: 효",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "도덕",
+    "student": "이예나",
+    "standard_code": "4도01-03",
+    "assessment": "2단원: 성실",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "도덕",
+    "student": "이예나",
+    "standard_code": "4도02-01",
+    "assessment": "3단원: 효",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "도덕",
+    "student": "이윤슬",
+    "standard_code": "4도01-03",
+    "assessment": "2단원: 성실",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "도덕",
+    "student": "이윤슬",
+    "standard_code": "4도02-01",
+    "assessment": "3단원: 효",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "도덕",
+    "student": "정두영",
+    "standard_code": "4도01-03",
+    "assessment": "2단원: 성실",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "도덕",
+    "student": "정두영",
+    "standard_code": "4도02-01",
+    "assessment": "3단원: 효",
+    "level": "노력요함",
+    "inferred": true,
+    "raw_level": "노력요함(추정)"
+  },
+  {
+    "subject": "도덕",
+    "student": "조주아",
+    "standard_code": "4도01-03",
+    "assessment": "2단원: 성실",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "도덕",
+    "student": "조주아",
+    "standard_code": "4도02-01",
+    "assessment": "3단원: 효",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "도덕",
+    "student": "천선율",
+    "standard_code": "4도01-03",
+    "assessment": "2단원: 성실",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "도덕",
+    "student": "천선율",
+    "standard_code": "4도02-01",
+    "assessment": "3단원: 효",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "도덕",
+    "student": "한예기",
+    "standard_code": "4도01-03",
+    "assessment": "2단원: 성실",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "도덕",
+    "student": "한예기",
+    "standard_code": "4도02-01",
+    "assessment": "3단원: 효",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "도덕",
+    "student": "황보검",
+    "standard_code": "4도01-03",
+    "assessment": "2단원: 성실",
+    "level": "매우잘함",
+    "inferred": true,
+    "raw_level": "매우잘함(추정)"
+  },
+  {
+    "subject": "도덕",
+    "student": "황보검",
+    "standard_code": "4도02-01",
+    "assessment": "3단원: 효",
+    "level": "매우잘함",
+    "inferred": true,
+    "raw_level": "매우잘함(추정)"
+  },
+  {
+    "subject": "도덕",
+    "student": "최윤채",
+    "standard_code": "4도01-03",
+    "assessment": "2단원: 성실",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "도덕",
+    "student": "최윤채",
+    "standard_code": "4도02-01",
+    "assessment": "3단원: 효",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "국어",
+    "student": "강시우",
+    "standard_code": "4국05-04/05",
+    "assessment": "1단원: 시 낭송",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "국어",
+    "student": "강시우",
+    "standard_code": "4국01-01",
+    "assessment": "4단원: 영상 내용 정리",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "국어",
+    "student": "김가을",
+    "standard_code": "4국05-04/05",
+    "assessment": "1단원: 시 낭송",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "국어",
+    "student": "김가을",
+    "standard_code": "4국01-01",
+    "assessment": "4단원: 영상 내용 정리",
+    "level": "노력요함",
+    "inferred": false,
+    "raw_level": "노력요함"
+  },
+  {
+    "subject": "국어",
+    "student": "김동규",
+    "standard_code": "4국05-04/05",
+    "assessment": "1단원: 시 낭송",
+    "level": "매우잘함",
+    "inferred": false,
+    "raw_level": "매우잘함"
+  },
+  {
+    "subject": "국어",
+    "student": "김동규",
+    "standard_code": "4국01-01",
+    "assessment": "4단원: 영상 내용 정리",
+    "level": "노력요함",
+    "inferred": false,
+    "raw_level": "노력요함"
+  },
+  {
+    "subject": "국어",
+    "student": "김주안",
+    "standard_code": "4국05-04/05",
+    "assessment": "1단원: 시 낭송",
+    "level": "노력요함",
+    "inferred": false,
+    "raw_level": "노력요함"
+  },
+  {
+    "subject": "국어",
+    "student": "김주안",
+    "standard_code": "4국01-01",
+    "assessment": "4단원: 영상 내용 정리",
+    "level": "노력요함",
+    "inferred": false,
+    "raw_level": "노력요함"
+  },
+  {
+    "subject": "국어",
+    "student": "박민서",
+    "standard_code": "4국05-04/05",
+    "assessment": "1단원: 시 낭송",
+    "level": "매우잘함",
+    "inferred": false,
+    "raw_level": "매우잘함"
+  },
+  {
+    "subject": "국어",
+    "student": "박민서",
+    "standard_code": "4국01-01",
+    "assessment": "4단원: 영상 내용 정리",
+    "level": "매우잘함",
+    "inferred": false,
+    "raw_level": "매우잘함"
+  },
+  {
+    "subject": "국어",
+    "student": "박서우",
+    "standard_code": "4국05-04/05",
+    "assessment": "1단원: 시 낭송",
+    "level": "미응시",
+    "inferred": false,
+    "raw_level": "미응시"
+  },
+  {
+    "subject": "국어",
+    "student": "박서우",
+    "standard_code": "4국01-01",
+    "assessment": "4단원: 영상 내용 정리",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "국어",
+    "student": "박현규",
+    "standard_code": "4국05-04/05",
+    "assessment": "1단원: 시 낭송",
+    "level": "노력요함",
+    "inferred": false,
+    "raw_level": "노력요함"
+  },
+  {
+    "subject": "국어",
+    "student": "박현규",
+    "standard_code": "4국01-01",
+    "assessment": "4단원: 영상 내용 정리",
+    "level": "매우잘함",
+    "inferred": false,
+    "raw_level": "매우잘함"
+  },
+  {
+    "subject": "국어",
+    "student": "백다온",
+    "standard_code": "4국05-04/05",
+    "assessment": "1단원: 시 낭송",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "국어",
+    "student": "백다온",
+    "standard_code": "4국01-01",
+    "assessment": "4단원: 영상 내용 정리",
+    "level": "매우잘함",
+    "inferred": false,
+    "raw_level": "매우잘함"
+  },
+  {
+    "subject": "국어",
+    "student": "오지윤",
+    "standard_code": "4국05-04/05",
+    "assessment": "1단원: 시 낭송",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "국어",
+    "student": "오지윤",
+    "standard_code": "4국01-01",
+    "assessment": "4단원: 영상 내용 정리",
+    "level": "노력요함",
+    "inferred": false,
+    "raw_level": "노력요함"
+  },
+  {
+    "subject": "국어",
+    "student": "이서우",
+    "standard_code": "4국05-04/05",
+    "assessment": "1단원: 시 낭송",
+    "level": "노력요함",
+    "inferred": false,
+    "raw_level": "노력요함"
+  },
+  {
+    "subject": "국어",
+    "student": "이서우",
+    "standard_code": "4국01-01",
+    "assessment": "4단원: 영상 내용 정리",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "국어",
+    "student": "이예나",
+    "standard_code": "4국05-04/05",
+    "assessment": "1단원: 시 낭송",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "국어",
+    "student": "이예나",
+    "standard_code": "4국01-01",
+    "assessment": "4단원: 영상 내용 정리",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "국어",
+    "student": "이윤슬",
+    "standard_code": "4국05-04/05",
+    "assessment": "1단원: 시 낭송",
+    "level": "매우잘함",
+    "inferred": false,
+    "raw_level": "매우잘함"
+  },
+  {
+    "subject": "국어",
+    "student": "이윤슬",
+    "standard_code": "4국01-01",
+    "assessment": "4단원: 영상 내용 정리",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "국어",
+    "student": "정두영",
+    "standard_code": "4국05-04/05",
+    "assessment": "1단원: 시 낭송",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "국어",
+    "student": "정두영",
+    "standard_code": "4국01-01",
+    "assessment": "4단원: 영상 내용 정리",
+    "level": "노력요함",
+    "inferred": false,
+    "raw_level": "노력요함"
+  },
+  {
+    "subject": "국어",
+    "student": "조주아",
+    "standard_code": "4국05-04/05",
+    "assessment": "1단원: 시 낭송",
+    "level": "노력요함",
+    "inferred": false,
+    "raw_level": "노력요함"
+  },
+  {
+    "subject": "국어",
+    "student": "조주아",
+    "standard_code": "4국01-01",
+    "assessment": "4단원: 영상 내용 정리",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "국어",
+    "student": "천선율",
+    "standard_code": "4국05-04/05",
+    "assessment": "1단원: 시 낭송",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "국어",
+    "student": "천선율",
+    "standard_code": "4국01-01",
+    "assessment": "4단원: 영상 내용 정리",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "국어",
+    "student": "한예기",
+    "standard_code": "4국05-04/05",
+    "assessment": "1단원: 시 낭송",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "국어",
+    "student": "한예기",
+    "standard_code": "4국01-01",
+    "assessment": "4단원: 영상 내용 정리",
+    "level": "매우잘함",
+    "inferred": false,
+    "raw_level": "매우잘함"
+  },
+  {
+    "subject": "국어",
+    "student": "황보검",
+    "standard_code": "4국05-04/05",
+    "assessment": "1단원: 시 낭송",
+    "level": "매우잘함",
+    "inferred": false,
+    "raw_level": "매우잘함"
+  },
+  {
+    "subject": "국어",
+    "student": "황보검",
+    "standard_code": "4국01-01",
+    "assessment": "4단원: 영상 내용 정리",
+    "level": "매우잘함",
+    "inferred": false,
+    "raw_level": "매우잘함"
+  },
+  {
+    "subject": "국어",
+    "student": "최윤채",
+    "standard_code": "4국05-04/05",
+    "assessment": "1단원: 시 낭송",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "국어",
+    "student": "최윤채",
+    "standard_code": "4국01-01",
+    "assessment": "4단원: 영상 내용 정리",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "수학",
+    "student": "강시우",
+    "standard_code": "",
+    "assessment": "1단원: 덧셈·뺄셈",
+    "level": "노력요함",
+    "inferred": false,
+    "raw_level": "노력요함"
+  },
+  {
+    "subject": "수학",
+    "student": "강시우",
+    "standard_code": "",
+    "assessment": "2단원: 평면도형",
+    "level": "노력요함",
+    "inferred": false,
+    "raw_level": "노력요함"
+  },
+  {
+    "subject": "수학",
+    "student": "강시우",
+    "standard_code": "",
+    "assessment": "3단원: 나눗셈",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "수학",
+    "student": "강시우",
+    "standard_code": "",
+    "assessment": "4단원: 곱셈",
+    "level": "노력요함",
+    "inferred": false,
+    "raw_level": "노력요함"
+  },
+  {
+    "subject": "수학",
+    "student": "강시우",
+    "standard_code": "",
+    "assessment": "5단원: 길이와 시간",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "수학",
+    "student": "김가을",
+    "standard_code": "",
+    "assessment": "1단원: 덧셈·뺄셈",
+    "level": "매우잘함",
+    "inferred": false,
+    "raw_level": "매우잘함"
+  },
+  {
+    "subject": "수학",
+    "student": "김가을",
+    "standard_code": "",
+    "assessment": "2단원: 평면도형",
+    "level": "노력요함",
+    "inferred": false,
+    "raw_level": "노력요함"
+  },
+  {
+    "subject": "수학",
+    "student": "김가을",
+    "standard_code": "",
+    "assessment": "3단원: 나눗셈",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "수학",
+    "student": "김가을",
+    "standard_code": "",
+    "assessment": "4단원: 곱셈",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "수학",
+    "student": "김가을",
+    "standard_code": "",
+    "assessment": "5단원: 길이와 시간",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "수학",
+    "student": "김동규",
+    "standard_code": "",
+    "assessment": "1단원: 덧셈·뺄셈",
+    "level": "노력요함",
+    "inferred": false,
+    "raw_level": "노력요함"
+  },
+  {
+    "subject": "수학",
+    "student": "김동규",
+    "standard_code": "",
+    "assessment": "2단원: 평면도형",
+    "level": "노력요함",
+    "inferred": false,
+    "raw_level": "노력요함"
+  },
+  {
+    "subject": "수학",
+    "student": "김동규",
+    "standard_code": "",
+    "assessment": "3단원: 나눗셈",
+    "level": "노력요함",
+    "inferred": false,
+    "raw_level": "노력요함"
+  },
+  {
+    "subject": "수학",
+    "student": "김동규",
+    "standard_code": "",
+    "assessment": "4단원: 곱셈",
+    "level": "노력요함",
+    "inferred": false,
+    "raw_level": "노력요함"
+  },
+  {
+    "subject": "수학",
+    "student": "김동규",
+    "standard_code": "",
+    "assessment": "5단원: 길이와 시간",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "수학",
+    "student": "김주안",
+    "standard_code": "",
+    "assessment": "1단원: 덧셈·뺄셈",
+    "level": "노력요함",
+    "inferred": true,
+    "raw_level": "노력요함(추정)"
+  },
+  {
+    "subject": "수학",
+    "student": "김주안",
+    "standard_code": "",
+    "assessment": "2단원: 평면도형",
+    "level": "노력요함",
+    "inferred": true,
+    "raw_level": "노력요함(추정)"
+  },
+  {
+    "subject": "수학",
+    "student": "김주안",
+    "standard_code": "",
+    "assessment": "3단원: 나눗셈",
+    "level": "노력요함",
+    "inferred": true,
+    "raw_level": "노력요함(추정)"
+  },
+  {
+    "subject": "수학",
+    "student": "김주안",
+    "standard_code": "",
+    "assessment": "4단원: 곱셈",
+    "level": "노력요함",
+    "inferred": true,
+    "raw_level": "노력요함(추정)"
+  },
+  {
+    "subject": "수학",
+    "student": "김주안",
+    "standard_code": "",
+    "assessment": "5단원: 길이와 시간",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "수학",
+    "student": "박민서",
+    "standard_code": "",
+    "assessment": "1단원: 덧셈·뺄셈",
+    "level": "매우잘함",
+    "inferred": false,
+    "raw_level": "매우잘함"
+  },
+  {
+    "subject": "수학",
+    "student": "박민서",
+    "standard_code": "",
+    "assessment": "2단원: 평면도형",
+    "level": "매우잘함",
+    "inferred": false,
+    "raw_level": "매우잘함"
+  },
+  {
+    "subject": "수학",
+    "student": "박민서",
+    "standard_code": "",
+    "assessment": "3단원: 나눗셈",
+    "level": "매우잘함",
+    "inferred": false,
+    "raw_level": "매우잘함"
+  },
+  {
+    "subject": "수학",
+    "student": "박민서",
+    "standard_code": "",
+    "assessment": "4단원: 곱셈",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "수학",
+    "student": "박민서",
+    "standard_code": "",
+    "assessment": "5단원: 길이와 시간",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "수학",
+    "student": "박서우",
+    "standard_code": "",
+    "assessment": "1단원: 덧셈·뺄셈",
+    "level": "노력요함",
+    "inferred": false,
+    "raw_level": "노력요함"
+  },
+  {
+    "subject": "수학",
+    "student": "박서우",
+    "standard_code": "",
+    "assessment": "2단원: 평면도형",
+    "level": "노력요함",
+    "inferred": false,
+    "raw_level": "노력요함"
+  },
+  {
+    "subject": "수학",
+    "student": "박서우",
+    "standard_code": "",
+    "assessment": "3단원: 나눗셈",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "수학",
+    "student": "박서우",
+    "standard_code": "",
+    "assessment": "4단원: 곱셈",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "수학",
+    "student": "박서우",
+    "standard_code": "",
+    "assessment": "5단원: 길이와 시간",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "수학",
+    "student": "박현규",
+    "standard_code": "",
+    "assessment": "1단원: 덧셈·뺄셈",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "수학",
+    "student": "박현규",
+    "standard_code": "",
+    "assessment": "2단원: 평면도형",
+    "level": "노력요함",
+    "inferred": false,
+    "raw_level": "노력요함"
+  },
+  {
+    "subject": "수학",
+    "student": "박현규",
+    "standard_code": "",
+    "assessment": "3단원: 나눗셈",
+    "level": "매우잘함",
+    "inferred": false,
+    "raw_level": "매우잘함"
+  },
+  {
+    "subject": "수학",
+    "student": "박현규",
+    "standard_code": "",
+    "assessment": "4단원: 곱셈",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "수학",
+    "student": "박현규",
+    "standard_code": "",
+    "assessment": "5단원: 길이와 시간",
+    "level": "매우잘함",
+    "inferred": false,
+    "raw_level": "매우잘함"
+  },
+  {
+    "subject": "수학",
+    "student": "백다온",
+    "standard_code": "",
+    "assessment": "1단원: 덧셈·뺄셈",
+    "level": "노력요함",
+    "inferred": false,
+    "raw_level": "노력요함"
+  },
+  {
+    "subject": "수학",
+    "student": "백다온",
+    "standard_code": "",
+    "assessment": "2단원: 평면도형",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "수학",
+    "student": "백다온",
+    "standard_code": "",
+    "assessment": "3단원: 나눗셈",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "수학",
+    "student": "백다온",
+    "standard_code": "",
+    "assessment": "4단원: 곱셈",
+    "level": "노력요함",
+    "inferred": false,
+    "raw_level": "노력요함"
+  },
+  {
+    "subject": "수학",
+    "student": "백다온",
+    "standard_code": "",
+    "assessment": "5단원: 길이와 시간",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "수학",
+    "student": "오지윤",
+    "standard_code": "",
+    "assessment": "1단원: 덧셈·뺄셈",
+    "level": "노력요함",
+    "inferred": false,
+    "raw_level": "노력요함"
+  },
+  {
+    "subject": "수학",
+    "student": "오지윤",
+    "standard_code": "",
+    "assessment": "2단원: 평면도형",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "수학",
+    "student": "오지윤",
+    "standard_code": "",
+    "assessment": "3단원: 나눗셈",
+    "level": "매우잘함",
+    "inferred": false,
+    "raw_level": "매우잘함"
+  },
+  {
+    "subject": "수학",
+    "student": "오지윤",
+    "standard_code": "",
+    "assessment": "4단원: 곱셈",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "수학",
+    "student": "오지윤",
+    "standard_code": "",
+    "assessment": "5단원: 길이와 시간",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "수학",
+    "student": "이서우",
+    "standard_code": "",
+    "assessment": "1단원: 덧셈·뺄셈",
+    "level": "노력요함",
+    "inferred": false,
+    "raw_level": "노력요함"
+  },
+  {
+    "subject": "수학",
+    "student": "이서우",
+    "standard_code": "",
+    "assessment": "2단원: 평면도형",
+    "level": "노력요함",
+    "inferred": false,
+    "raw_level": "노력요함"
+  },
+  {
+    "subject": "수학",
+    "student": "이서우",
+    "standard_code": "",
+    "assessment": "3단원: 나눗셈",
+    "level": "노력요함",
+    "inferred": false,
+    "raw_level": "노력요함"
+  },
+  {
+    "subject": "수학",
+    "student": "이서우",
+    "standard_code": "",
+    "assessment": "4단원: 곱셈",
+    "level": "노력요함",
+    "inferred": false,
+    "raw_level": "노력요함"
+  },
+  {
+    "subject": "수학",
+    "student": "이서우",
+    "standard_code": "",
+    "assessment": "5단원: 길이와 시간",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "수학",
+    "student": "이예나",
+    "standard_code": "",
+    "assessment": "1단원: 덧셈·뺄셈",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "수학",
+    "student": "이예나",
+    "standard_code": "",
+    "assessment": "2단원: 평면도형",
+    "level": "노력요함",
+    "inferred": false,
+    "raw_level": "노력요함"
+  },
+  {
+    "subject": "수학",
+    "student": "이예나",
+    "standard_code": "",
+    "assessment": "3단원: 나눗셈",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "수학",
+    "student": "이예나",
+    "standard_code": "",
+    "assessment": "4단원: 곱셈",
+    "level": "노력요함",
+    "inferred": false,
+    "raw_level": "노력요함"
+  },
+  {
+    "subject": "수학",
+    "student": "이예나",
+    "standard_code": "",
+    "assessment": "5단원: 길이와 시간",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "수학",
+    "student": "이윤슬",
+    "standard_code": "",
+    "assessment": "1단원: 덧셈·뺄셈",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "수학",
+    "student": "이윤슬",
+    "standard_code": "",
+    "assessment": "2단원: 평면도형",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "수학",
+    "student": "이윤슬",
+    "standard_code": "",
+    "assessment": "3단원: 나눗셈",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "수학",
+    "student": "이윤슬",
+    "standard_code": "",
+    "assessment": "4단원: 곱셈",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "수학",
+    "student": "이윤슬",
+    "standard_code": "",
+    "assessment": "5단원: 길이와 시간",
+    "level": "매우잘함",
+    "inferred": false,
+    "raw_level": "매우잘함"
+  },
+  {
+    "subject": "수학",
+    "student": "정두영",
+    "standard_code": "",
+    "assessment": "1단원: 덧셈·뺄셈",
+    "level": "노력요함",
+    "inferred": false,
+    "raw_level": "노력요함"
+  },
+  {
+    "subject": "수학",
+    "student": "정두영",
+    "standard_code": "",
+    "assessment": "2단원: 평면도형",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "수학",
+    "student": "정두영",
+    "standard_code": "",
+    "assessment": "3단원: 나눗셈",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "수학",
+    "student": "정두영",
+    "standard_code": "",
+    "assessment": "4단원: 곱셈",
+    "level": "노력요함",
+    "inferred": false,
+    "raw_level": "노력요함"
+  },
+  {
+    "subject": "수학",
+    "student": "정두영",
+    "standard_code": "",
+    "assessment": "5단원: 길이와 시간",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "수학",
+    "student": "조주아",
+    "standard_code": "",
+    "assessment": "1단원: 덧셈·뺄셈",
+    "level": "매우잘함",
+    "inferred": false,
+    "raw_level": "매우잘함"
+  },
+  {
+    "subject": "수학",
+    "student": "조주아",
+    "standard_code": "",
+    "assessment": "2단원: 평면도형",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "수학",
+    "student": "조주아",
+    "standard_code": "",
+    "assessment": "3단원: 나눗셈",
+    "level": "매우잘함",
+    "inferred": false,
+    "raw_level": "매우잘함"
+  },
+  {
+    "subject": "수학",
+    "student": "조주아",
+    "standard_code": "",
+    "assessment": "4단원: 곱셈",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "수학",
+    "student": "조주아",
+    "standard_code": "",
+    "assessment": "5단원: 길이와 시간",
+    "level": "매우잘함",
+    "inferred": false,
+    "raw_level": "매우잘함"
+  },
+  {
+    "subject": "수학",
+    "student": "천선율",
+    "standard_code": "",
+    "assessment": "1단원: 덧셈·뺄셈",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "수학",
+    "student": "천선율",
+    "standard_code": "",
+    "assessment": "2단원: 평면도형",
+    "level": "노력요함",
+    "inferred": false,
+    "raw_level": "노력요함"
+  },
+  {
+    "subject": "수학",
+    "student": "천선율",
+    "standard_code": "",
+    "assessment": "3단원: 나눗셈",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "수학",
+    "student": "천선율",
+    "standard_code": "",
+    "assessment": "4단원: 곱셈",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "수학",
+    "student": "천선율",
+    "standard_code": "",
+    "assessment": "5단원: 길이와 시간",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "수학",
+    "student": "한예기",
+    "standard_code": "",
+    "assessment": "1단원: 덧셈·뺄셈",
+    "level": "매우잘함",
+    "inferred": false,
+    "raw_level": "매우잘함"
+  },
+  {
+    "subject": "수학",
+    "student": "한예기",
+    "standard_code": "",
+    "assessment": "2단원: 평면도형",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "수학",
+    "student": "한예기",
+    "standard_code": "",
+    "assessment": "3단원: 나눗셈",
+    "level": "노력요함",
+    "inferred": false,
+    "raw_level": "노력요함"
+  },
+  {
+    "subject": "수학",
+    "student": "한예기",
+    "standard_code": "",
+    "assessment": "4단원: 곱셈",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "수학",
+    "student": "한예기",
+    "standard_code": "",
+    "assessment": "5단원: 길이와 시간",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "수학",
+    "student": "황보검",
+    "standard_code": "",
+    "assessment": "1단원: 덧셈·뺄셈",
+    "level": "매우잘함",
+    "inferred": false,
+    "raw_level": "매우잘함"
+  },
+  {
+    "subject": "수학",
+    "student": "황보검",
+    "standard_code": "",
+    "assessment": "2단원: 평면도형",
+    "level": "매우잘함",
+    "inferred": false,
+    "raw_level": "매우잘함"
+  },
+  {
+    "subject": "수학",
+    "student": "황보검",
+    "standard_code": "",
+    "assessment": "3단원: 나눗셈",
+    "level": "매우잘함",
+    "inferred": false,
+    "raw_level": "매우잘함"
+  },
+  {
+    "subject": "수학",
+    "student": "황보검",
+    "standard_code": "",
+    "assessment": "4단원: 곱셈",
+    "level": "매우잘함",
+    "inferred": false,
+    "raw_level": "매우잘함"
+  },
+  {
+    "subject": "수학",
+    "student": "황보검",
+    "standard_code": "",
+    "assessment": "5단원: 길이와 시간",
+    "level": "매우잘함",
+    "inferred": false,
+    "raw_level": "매우잘함"
+  },
+  {
+    "subject": "수학",
+    "student": "최윤채",
+    "standard_code": "",
+    "assessment": "1단원: 덧셈·뺄셈",
+    "level": "매우잘함",
+    "inferred": true,
+    "raw_level": "매우잘함(추정)"
+  },
+  {
+    "subject": "수학",
+    "student": "최윤채",
+    "standard_code": "",
+    "assessment": "2단원: 평면도형",
+    "level": "매우잘함",
+    "inferred": true,
+    "raw_level": "매우잘함(추정)"
+  },
+  {
+    "subject": "수학",
+    "student": "최윤채",
+    "standard_code": "",
+    "assessment": "3단원: 나눗셈",
+    "level": "매우잘함",
+    "inferred": true,
+    "raw_level": "매우잘함(추정)"
+  },
+  {
+    "subject": "수학",
+    "student": "최윤채",
+    "standard_code": "",
+    "assessment": "4단원: 곱셈",
+    "level": "매우잘함",
+    "inferred": false,
+    "raw_level": "매우잘함"
+  },
+  {
+    "subject": "수학",
+    "student": "최윤채",
+    "standard_code": "",
+    "assessment": "5단원: 길이와 시간",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "사회",
+    "student": "강시우",
+    "standard_code": "4사01-01",
+    "assessment": "장소 소개",
+    "level": "노력요함",
+    "inferred": false,
+    "raw_level": "노력요함"
+  },
+  {
+    "subject": "사회",
+    "student": "강시우",
+    "standard_code": "4사01-02",
+    "assessment": "살기 좋은 곳 토의",
+    "level": "노력요함",
+    "inferred": false,
+    "raw_level": "노력요함"
+  },
+  {
+    "subject": "사회",
+    "student": "강시우",
+    "standard_code": "4사02-02",
+    "assessment": "과거 살펴보기",
+    "level": "노력요함",
+    "inferred": true,
+    "raw_level": "노력요함(추정)"
+  },
+  {
+    "subject": "사회",
+    "student": "김가을",
+    "standard_code": "4사01-01",
+    "assessment": "장소 소개",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "사회",
+    "student": "김가을",
+    "standard_code": "4사01-02",
+    "assessment": "살기 좋은 곳 토의",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "사회",
+    "student": "김가을",
+    "standard_code": "4사02-02",
+    "assessment": "과거 살펴보기",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "사회",
+    "student": "김동규",
+    "standard_code": "4사01-01",
+    "assessment": "장소 소개",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "사회",
+    "student": "김동규",
+    "standard_code": "4사01-02",
+    "assessment": "살기 좋은 곳 토의",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "사회",
+    "student": "김동규",
+    "standard_code": "4사02-02",
+    "assessment": "과거 살펴보기",
+    "level": "노력요함",
+    "inferred": false,
+    "raw_level": "노력요함"
+  },
+  {
+    "subject": "사회",
+    "student": "김주안",
+    "standard_code": "4사01-01",
+    "assessment": "장소 소개",
+    "level": "노력요함",
+    "inferred": false,
+    "raw_level": "노력요함"
+  },
+  {
+    "subject": "사회",
+    "student": "김주안",
+    "standard_code": "4사01-02",
+    "assessment": "살기 좋은 곳 토의",
+    "level": "노력요함",
+    "inferred": false,
+    "raw_level": "노력요함"
+  },
+  {
+    "subject": "사회",
+    "student": "김주안",
+    "standard_code": "4사02-02",
+    "assessment": "과거 살펴보기",
+    "level": "노력요함",
+    "inferred": true,
+    "raw_level": "노력요함(추정)"
+  },
+  {
+    "subject": "사회",
+    "student": "박민서",
+    "standard_code": "4사01-01",
+    "assessment": "장소 소개",
+    "level": "매우잘함",
+    "inferred": false,
+    "raw_level": "매우잘함"
+  },
+  {
+    "subject": "사회",
+    "student": "박민서",
+    "standard_code": "4사01-02",
+    "assessment": "살기 좋은 곳 토의",
+    "level": "매우잘함",
+    "inferred": false,
+    "raw_level": "매우잘함"
+  },
+  {
+    "subject": "사회",
+    "student": "박민서",
+    "standard_code": "4사02-02",
+    "assessment": "과거 살펴보기",
+    "level": "매우잘함",
+    "inferred": true,
+    "raw_level": "매우잘함(추정)"
+  },
+  {
+    "subject": "사회",
+    "student": "박서우",
+    "standard_code": "4사01-01",
+    "assessment": "장소 소개",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "사회",
+    "student": "박서우",
+    "standard_code": "4사01-02",
+    "assessment": "살기 좋은 곳 토의",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "사회",
+    "student": "박서우",
+    "standard_code": "4사02-02",
+    "assessment": "과거 살펴보기",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "사회",
+    "student": "박현규",
+    "standard_code": "4사01-01",
+    "assessment": "장소 소개",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "사회",
+    "student": "박현규",
+    "standard_code": "4사01-02",
+    "assessment": "살기 좋은 곳 토의",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "사회",
+    "student": "박현규",
+    "standard_code": "4사02-02",
+    "assessment": "과거 살펴보기",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "사회",
+    "student": "백다온",
+    "standard_code": "4사01-01",
+    "assessment": "장소 소개",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "사회",
+    "student": "백다온",
+    "standard_code": "4사01-02",
+    "assessment": "살기 좋은 곳 토의",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "사회",
+    "student": "백다온",
+    "standard_code": "4사02-02",
+    "assessment": "과거 살펴보기",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "사회",
+    "student": "오지윤",
+    "standard_code": "4사01-01",
+    "assessment": "장소 소개",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "사회",
+    "student": "오지윤",
+    "standard_code": "4사01-02",
+    "assessment": "살기 좋은 곳 토의",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "사회",
+    "student": "오지윤",
+    "standard_code": "4사02-02",
+    "assessment": "과거 살펴보기",
+    "level": "노력요함",
+    "inferred": false,
+    "raw_level": "노력요함"
+  },
+  {
+    "subject": "사회",
+    "student": "이서우",
+    "standard_code": "4사01-01",
+    "assessment": "장소 소개",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "사회",
+    "student": "이서우",
+    "standard_code": "4사01-02",
+    "assessment": "살기 좋은 곳 토의",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "사회",
+    "student": "이서우",
+    "standard_code": "4사02-02",
+    "assessment": "과거 살펴보기",
+    "level": "노력요함",
+    "inferred": false,
+    "raw_level": "노력요함"
+  },
+  {
+    "subject": "사회",
+    "student": "이예나",
+    "standard_code": "4사01-01",
+    "assessment": "장소 소개",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "사회",
+    "student": "이예나",
+    "standard_code": "4사01-02",
+    "assessment": "살기 좋은 곳 토의",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "사회",
+    "student": "이예나",
+    "standard_code": "4사02-02",
+    "assessment": "과거 살펴보기",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "사회",
+    "student": "이윤슬",
+    "standard_code": "4사01-01",
+    "assessment": "장소 소개",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "사회",
+    "student": "이윤슬",
+    "standard_code": "4사01-02",
+    "assessment": "살기 좋은 곳 토의",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "사회",
+    "student": "이윤슬",
+    "standard_code": "4사02-02",
+    "assessment": "과거 살펴보기",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "사회",
+    "student": "정두영",
+    "standard_code": "4사01-01",
+    "assessment": "장소 소개",
+    "level": "노력요함",
+    "inferred": false,
+    "raw_level": "노력요함"
+  },
+  {
+    "subject": "사회",
+    "student": "정두영",
+    "standard_code": "4사01-02",
+    "assessment": "살기 좋은 곳 토의",
+    "level": "노력요함",
+    "inferred": false,
+    "raw_level": "노력요함"
+  },
+  {
+    "subject": "사회",
+    "student": "정두영",
+    "standard_code": "4사02-02",
+    "assessment": "과거 살펴보기",
+    "level": "노력요함",
+    "inferred": false,
+    "raw_level": "노력요함"
+  },
+  {
+    "subject": "사회",
+    "student": "조주아",
+    "standard_code": "4사01-01",
+    "assessment": "장소 소개",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "사회",
+    "student": "조주아",
+    "standard_code": "4사01-02",
+    "assessment": "살기 좋은 곳 토의",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "사회",
+    "student": "조주아",
+    "standard_code": "4사02-02",
+    "assessment": "과거 살펴보기",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "사회",
+    "student": "천선율",
+    "standard_code": "4사01-01",
+    "assessment": "장소 소개",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "사회",
+    "student": "천선율",
+    "standard_code": "4사01-02",
+    "assessment": "살기 좋은 곳 토의",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "사회",
+    "student": "천선율",
+    "standard_code": "4사02-02",
+    "assessment": "과거 살펴보기",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "사회",
+    "student": "한예기",
+    "standard_code": "4사01-01",
+    "assessment": "장소 소개",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "사회",
+    "student": "한예기",
+    "standard_code": "4사01-02",
+    "assessment": "살기 좋은 곳 토의",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "사회",
+    "student": "한예기",
+    "standard_code": "4사02-02",
+    "assessment": "과거 살펴보기",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "사회",
+    "student": "황보검",
+    "standard_code": "4사01-01",
+    "assessment": "장소 소개",
+    "level": "매우잘함",
+    "inferred": false,
+    "raw_level": "매우잘함"
+  },
+  {
+    "subject": "사회",
+    "student": "황보검",
+    "standard_code": "4사01-02",
+    "assessment": "살기 좋은 곳 토의",
+    "level": "매우잘함",
+    "inferred": false,
+    "raw_level": "매우잘함"
+  },
+  {
+    "subject": "사회",
+    "student": "황보검",
+    "standard_code": "4사02-02",
+    "assessment": "과거 살펴보기",
+    "level": "매우잘함",
+    "inferred": true,
+    "raw_level": "매우잘함(추정)"
+  },
+  {
+    "subject": "사회",
+    "student": "최윤채",
+    "standard_code": "4사01-01",
+    "assessment": "장소 소개",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "사회",
+    "student": "최윤채",
+    "standard_code": "4사01-02",
+    "assessment": "살기 좋은 곳 토의",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "사회",
+    "student": "최윤채",
+    "standard_code": "4사02-02",
+    "assessment": "과거 살펴보기",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "음악",
+    "student": "강시우",
+    "standard_code": "4음01-01",
+    "assessment": "1단원: 노래·연주",
+    "level": "노력요함",
+    "inferred": false,
+    "raw_level": "노력요함"
+  },
+  {
+    "subject": "음악",
+    "student": "강시우",
+    "standard_code": "4음02-01",
+    "assessment": "2단원: 신체 표현",
+    "level": "노력요함",
+    "inferred": false,
+    "raw_level": "노력요함"
+  },
+  {
+    "subject": "음악",
+    "student": "김가을",
+    "standard_code": "4음01-01",
+    "assessment": "1단원: 노래·연주",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "음악",
+    "student": "김가을",
+    "standard_code": "4음02-01",
+    "assessment": "2단원: 신체 표현",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "음악",
+    "student": "김동규",
+    "standard_code": "4음01-01",
+    "assessment": "1단원: 노래·연주",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "음악",
+    "student": "김동규",
+    "standard_code": "4음02-01",
+    "assessment": "2단원: 신체 표현",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "음악",
+    "student": "김주안",
+    "standard_code": "4음01-01",
+    "assessment": "1단원: 노래·연주",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "음악",
+    "student": "김주안",
+    "standard_code": "4음02-01",
+    "assessment": "2단원: 신체 표현",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "음악",
+    "student": "박민서",
+    "standard_code": "4음01-01",
+    "assessment": "1단원: 노래·연주",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "음악",
+    "student": "박민서",
+    "standard_code": "4음02-01",
+    "assessment": "2단원: 신체 표현",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "음악",
+    "student": "박서우",
+    "standard_code": "4음01-01",
+    "assessment": "1단원: 노래·연주",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "음악",
+    "student": "박서우",
+    "standard_code": "4음02-01",
+    "assessment": "2단원: 신체 표현",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "음악",
+    "student": "박현규",
+    "standard_code": "4음01-01",
+    "assessment": "1단원: 노래·연주",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "음악",
+    "student": "박현규",
+    "standard_code": "4음02-01",
+    "assessment": "2단원: 신체 표현",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "음악",
+    "student": "백다온",
+    "standard_code": "4음01-01",
+    "assessment": "1단원: 노래·연주",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "음악",
+    "student": "백다온",
+    "standard_code": "4음02-01",
+    "assessment": "2단원: 신체 표현",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "음악",
+    "student": "오지윤",
+    "standard_code": "4음01-01",
+    "assessment": "1단원: 노래·연주",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "음악",
+    "student": "오지윤",
+    "standard_code": "4음02-01",
+    "assessment": "2단원: 신체 표현",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "음악",
+    "student": "이서우",
+    "standard_code": "4음01-01",
+    "assessment": "1단원: 노래·연주",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "음악",
+    "student": "이서우",
+    "standard_code": "4음02-01",
+    "assessment": "2단원: 신체 표현",
+    "level": "노력요함",
+    "inferred": false,
+    "raw_level": "노력요함"
+  },
+  {
+    "subject": "음악",
+    "student": "이예나",
+    "standard_code": "4음01-01",
+    "assessment": "1단원: 노래·연주",
+    "level": "매우잘함",
+    "inferred": false,
+    "raw_level": "매우잘함"
+  },
+  {
+    "subject": "음악",
+    "student": "이예나",
+    "standard_code": "4음02-01",
+    "assessment": "2단원: 신체 표현",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "음악",
+    "student": "이윤슬",
+    "standard_code": "4음01-01",
+    "assessment": "1단원: 노래·연주",
+    "level": "매우잘함",
+    "inferred": false,
+    "raw_level": "매우잘함"
+  },
+  {
+    "subject": "음악",
+    "student": "이윤슬",
+    "standard_code": "4음02-01",
+    "assessment": "2단원: 신체 표현",
+    "level": "매우잘함",
+    "inferred": false,
+    "raw_level": "매우잘함"
+  },
+  {
+    "subject": "음악",
+    "student": "정두영",
+    "standard_code": "4음01-01",
+    "assessment": "1단원: 노래·연주",
+    "level": "노력요함",
+    "inferred": false,
+    "raw_level": "노력요함"
+  },
+  {
+    "subject": "음악",
+    "student": "정두영",
+    "standard_code": "4음02-01",
+    "assessment": "2단원: 신체 표현",
+    "level": "노력요함",
+    "inferred": false,
+    "raw_level": "노력요함"
+  },
+  {
+    "subject": "음악",
+    "student": "조주아",
+    "standard_code": "4음01-01",
+    "assessment": "1단원: 노래·연주",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "음악",
+    "student": "조주아",
+    "standard_code": "4음02-01",
+    "assessment": "2단원: 신체 표현",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "음악",
+    "student": "천선율",
+    "standard_code": "4음01-01",
+    "assessment": "1단원: 노래·연주",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "음악",
+    "student": "천선율",
+    "standard_code": "4음02-01",
+    "assessment": "2단원: 신체 표현",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "음악",
+    "student": "한예기",
+    "standard_code": "4음01-01",
+    "assessment": "1단원: 노래·연주",
+    "level": "매우잘함",
+    "inferred": false,
+    "raw_level": "매우잘함"
+  },
+  {
+    "subject": "음악",
+    "student": "한예기",
+    "standard_code": "4음02-01",
+    "assessment": "2단원: 신체 표현",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "음악",
+    "student": "황보검",
+    "standard_code": "4음01-01",
+    "assessment": "1단원: 노래·연주",
+    "level": "매우잘함",
+    "inferred": false,
+    "raw_level": "매우잘함"
+  },
+  {
+    "subject": "음악",
+    "student": "황보검",
+    "standard_code": "4음02-01",
+    "assessment": "2단원: 신체 표현",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "음악",
+    "student": "최윤채",
+    "standard_code": "4음01-01",
+    "assessment": "1단원: 노래·연주",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "음악",
+    "student": "최윤채",
+    "standard_code": "4음02-01",
+    "assessment": "2단원: 신체 표현",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "미술",
+    "student": "강시우",
+    "standard_code": "4미02-03",
+    "assessment": "2단원: 색·선·형 표현",
+    "level": "노력요함",
+    "inferred": false,
+    "raw_level": "노력요함"
+  },
+  {
+    "subject": "미술",
+    "student": "강시우",
+    "standard_code": "4미01-01",
+    "assessment": "4단원: 감각 도구",
+    "level": "노력요함",
+    "inferred": true,
+    "raw_level": "노력요함(추정)"
+  },
+  {
+    "subject": "미술",
+    "student": "김가을",
+    "standard_code": "4미02-03",
+    "assessment": "2단원: 색·선·형 표현",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "미술",
+    "student": "김가을",
+    "standard_code": "4미01-01",
+    "assessment": "4단원: 감각 도구",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "미술",
+    "student": "김동규",
+    "standard_code": "4미02-03",
+    "assessment": "2단원: 색·선·형 표현",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "미술",
+    "student": "김동규",
+    "standard_code": "4미01-01",
+    "assessment": "4단원: 감각 도구",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "미술",
+    "student": "김주안",
+    "standard_code": "4미02-03",
+    "assessment": "2단원: 색·선·형 표현",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "미술",
+    "student": "김주안",
+    "standard_code": "4미01-01",
+    "assessment": "4단원: 감각 도구",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "미술",
+    "student": "박민서",
+    "standard_code": "4미02-03",
+    "assessment": "2단원: 색·선·형 표현",
+    "level": "매우잘함",
+    "inferred": false,
+    "raw_level": "매우잘함"
+  },
+  {
+    "subject": "미술",
+    "student": "박민서",
+    "standard_code": "4미01-01",
+    "assessment": "4단원: 감각 도구",
+    "level": "매우잘함",
+    "inferred": true,
+    "raw_level": "매우잘함(추정)"
+  },
+  {
+    "subject": "미술",
+    "student": "박서우",
+    "standard_code": "4미02-03",
+    "assessment": "2단원: 색·선·형 표현",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "미술",
+    "student": "박서우",
+    "standard_code": "4미01-01",
+    "assessment": "4단원: 감각 도구",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "미술",
+    "student": "박현규",
+    "standard_code": "4미02-03",
+    "assessment": "2단원: 색·선·형 표현",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "미술",
+    "student": "박현규",
+    "standard_code": "4미01-01",
+    "assessment": "4단원: 감각 도구",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "미술",
+    "student": "백다온",
+    "standard_code": "4미02-03",
+    "assessment": "2단원: 색·선·형 표현",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "미술",
+    "student": "백다온",
+    "standard_code": "4미01-01",
+    "assessment": "4단원: 감각 도구",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "미술",
+    "student": "오지윤",
+    "standard_code": "4미02-03",
+    "assessment": "2단원: 색·선·형 표현",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "미술",
+    "student": "오지윤",
+    "standard_code": "4미01-01",
+    "assessment": "4단원: 감각 도구",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "미술",
+    "student": "이서우",
+    "standard_code": "4미02-03",
+    "assessment": "2단원: 색·선·형 표현",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "미술",
+    "student": "이서우",
+    "standard_code": "4미01-01",
+    "assessment": "4단원: 감각 도구",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "미술",
+    "student": "이예나",
+    "standard_code": "4미02-03",
+    "assessment": "2단원: 색·선·형 표현",
+    "level": "매우잘함",
+    "inferred": false,
+    "raw_level": "매우잘함"
+  },
+  {
+    "subject": "미술",
+    "student": "이예나",
+    "standard_code": "4미01-01",
+    "assessment": "4단원: 감각 도구",
+    "level": "매우잘함",
+    "inferred": true,
+    "raw_level": "매우잘함(추정)"
+  },
+  {
+    "subject": "미술",
+    "student": "이윤슬",
+    "standard_code": "4미02-03",
+    "assessment": "2단원: 색·선·형 표현",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "미술",
+    "student": "이윤슬",
+    "standard_code": "4미01-01",
+    "assessment": "4단원: 감각 도구",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "미술",
+    "student": "정두영",
+    "standard_code": "4미02-03",
+    "assessment": "2단원: 색·선·형 표현",
+    "level": "노력요함",
+    "inferred": false,
+    "raw_level": "노력요함"
+  },
+  {
+    "subject": "미술",
+    "student": "정두영",
+    "standard_code": "4미01-01",
+    "assessment": "4단원: 감각 도구",
+    "level": "노력요함",
+    "inferred": true,
+    "raw_level": "노력요함(추정)"
+  },
+  {
+    "subject": "미술",
+    "student": "조주아",
+    "standard_code": "4미02-03",
+    "assessment": "2단원: 색·선·형 표현",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "미술",
+    "student": "조주아",
+    "standard_code": "4미01-01",
+    "assessment": "4단원: 감각 도구",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "미술",
+    "student": "천선율",
+    "standard_code": "4미02-03",
+    "assessment": "2단원: 색·선·형 표현",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "미술",
+    "student": "천선율",
+    "standard_code": "4미01-01",
+    "assessment": "4단원: 감각 도구",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "미술",
+    "student": "한예기",
+    "standard_code": "4미02-03",
+    "assessment": "2단원: 색·선·형 표현",
+    "level": "잘함",
+    "inferred": false,
+    "raw_level": "잘함"
+  },
+  {
+    "subject": "미술",
+    "student": "한예기",
+    "standard_code": "4미01-01",
+    "assessment": "4단원: 감각 도구",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "미술",
+    "student": "황보검",
+    "standard_code": "4미02-03",
+    "assessment": "2단원: 색·선·형 표현",
+    "level": "매우잘함",
+    "inferred": false,
+    "raw_level": "매우잘함"
+  },
+  {
+    "subject": "미술",
+    "student": "황보검",
+    "standard_code": "4미01-01",
+    "assessment": "4단원: 감각 도구",
+    "level": "매우잘함",
+    "inferred": true,
+    "raw_level": "매우잘함(추정)"
+  },
+  {
+    "subject": "미술",
+    "student": "최윤채",
+    "standard_code": "4미02-03",
+    "assessment": "2단원: 색·선·형 표현",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "미술",
+    "student": "최윤채",
+    "standard_code": "4미01-01",
+    "assessment": "4단원: 감각 도구",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "창체",
+    "student": "강시우",
+    "standard_code": "",
+    "assessment": "자율: 학교폭력예방교육",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "창체",
+    "student": "강시우",
+    "standard_code": "",
+    "assessment": "동아리: 독서동아리",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "창체",
+    "student": "강시우",
+    "standard_code": "",
+    "assessment": "진로: 자기이해",
+    "level": "노력요함",
+    "inferred": true,
+    "raw_level": "노력요함(추정)"
+  },
+  {
+    "subject": "창체",
+    "student": "김가을",
+    "standard_code": "",
+    "assessment": "자율: 학교폭력예방교육",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "창체",
+    "student": "김가을",
+    "standard_code": "",
+    "assessment": "동아리: 독서동아리",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "창체",
+    "student": "김가을",
+    "standard_code": "",
+    "assessment": "진로: 자기이해",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "창체",
+    "student": "김동규",
+    "standard_code": "",
+    "assessment": "자율: 학교폭력예방교육",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "창체",
+    "student": "김동규",
+    "standard_code": "",
+    "assessment": "동아리: 독서동아리",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "창체",
+    "student": "김동규",
+    "standard_code": "",
+    "assessment": "진로: 자기이해",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "창체",
+    "student": "김주안",
+    "standard_code": "",
+    "assessment": "자율: 학교폭력예방교육",
+    "level": "노력요함",
+    "inferred": true,
+    "raw_level": "노력요함(추정)"
+  },
+  {
+    "subject": "창체",
+    "student": "김주안",
+    "standard_code": "",
+    "assessment": "동아리: 독서동아리",
+    "level": "노력요함",
+    "inferred": true,
+    "raw_level": "노력요함(추정)"
+  },
+  {
+    "subject": "창체",
+    "student": "김주안",
+    "standard_code": "",
+    "assessment": "진로: 자기이해",
+    "level": "노력요함",
+    "inferred": true,
+    "raw_level": "노력요함(추정)"
+  },
+  {
+    "subject": "창체",
+    "student": "박민서",
+    "standard_code": "",
+    "assessment": "자율: 학교폭력예방교육",
+    "level": "매우잘함",
+    "inferred": true,
+    "raw_level": "매우잘함(추정)"
+  },
+  {
+    "subject": "창체",
+    "student": "박민서",
+    "standard_code": "",
+    "assessment": "동아리: 독서동아리",
+    "level": "매우잘함",
+    "inferred": true,
+    "raw_level": "매우잘함(추정)"
+  },
+  {
+    "subject": "창체",
+    "student": "박민서",
+    "standard_code": "",
+    "assessment": "진로: 자기이해",
+    "level": "매우잘함",
+    "inferred": true,
+    "raw_level": "매우잘함(추정)"
+  },
+  {
+    "subject": "창체",
+    "student": "박서우",
+    "standard_code": "",
+    "assessment": "자율: 학교폭력예방교육",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "창체",
+    "student": "박서우",
+    "standard_code": "",
+    "assessment": "동아리: 독서동아리",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "창체",
+    "student": "박서우",
+    "standard_code": "",
+    "assessment": "진로: 자기이해",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "창체",
+    "student": "박현규",
+    "standard_code": "",
+    "assessment": "자율: 학교폭력예방교육",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "창체",
+    "student": "박현규",
+    "standard_code": "",
+    "assessment": "동아리: 독서동아리",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "창체",
+    "student": "박현규",
+    "standard_code": "",
+    "assessment": "진로: 자기이해",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "창체",
+    "student": "백다온",
+    "standard_code": "",
+    "assessment": "자율: 학교폭력예방교육",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "창체",
+    "student": "백다온",
+    "standard_code": "",
+    "assessment": "동아리: 독서동아리",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "창체",
+    "student": "백다온",
+    "standard_code": "",
+    "assessment": "진로: 자기이해",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "창체",
+    "student": "오지윤",
+    "standard_code": "",
+    "assessment": "자율: 학교폭력예방교육",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "창체",
+    "student": "오지윤",
+    "standard_code": "",
+    "assessment": "동아리: 독서동아리",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "창체",
+    "student": "오지윤",
+    "standard_code": "",
+    "assessment": "진로: 자기이해",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "창체",
+    "student": "이서우",
+    "standard_code": "",
+    "assessment": "자율: 학교폭력예방교육",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "창체",
+    "student": "이서우",
+    "standard_code": "",
+    "assessment": "동아리: 독서동아리",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "창체",
+    "student": "이서우",
+    "standard_code": "",
+    "assessment": "진로: 자기이해",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "창체",
+    "student": "이예나",
+    "standard_code": "",
+    "assessment": "자율: 학교폭력예방교육",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "창체",
+    "student": "이예나",
+    "standard_code": "",
+    "assessment": "동아리: 독서동아리",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "창체",
+    "student": "이예나",
+    "standard_code": "",
+    "assessment": "진로: 자기이해",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "창체",
+    "student": "이윤슬",
+    "standard_code": "",
+    "assessment": "자율: 학교폭력예방교육",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "창체",
+    "student": "이윤슬",
+    "standard_code": "",
+    "assessment": "동아리: 독서동아리",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "창체",
+    "student": "이윤슬",
+    "standard_code": "",
+    "assessment": "진로: 자기이해",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "창체",
+    "student": "정두영",
+    "standard_code": "",
+    "assessment": "자율: 학교폭력예방교육",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "창체",
+    "student": "정두영",
+    "standard_code": "",
+    "assessment": "동아리: 독서동아리",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "창체",
+    "student": "정두영",
+    "standard_code": "",
+    "assessment": "진로: 자기이해",
+    "level": "노력요함",
+    "inferred": true,
+    "raw_level": "노력요함(추정)"
+  },
+  {
+    "subject": "창체",
+    "student": "조주아",
+    "standard_code": "",
+    "assessment": "자율: 학교폭력예방교육",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "창체",
+    "student": "조주아",
+    "standard_code": "",
+    "assessment": "동아리: 독서동아리",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "창체",
+    "student": "조주아",
+    "standard_code": "",
+    "assessment": "진로: 자기이해",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "창체",
+    "student": "천선율",
+    "standard_code": "",
+    "assessment": "자율: 학교폭력예방교육",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "창체",
+    "student": "천선율",
+    "standard_code": "",
+    "assessment": "동아리: 독서동아리",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "창체",
+    "student": "천선율",
+    "standard_code": "",
+    "assessment": "진로: 자기이해",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "창체",
+    "student": "한예기",
+    "standard_code": "",
+    "assessment": "자율: 학교폭력예방교육",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "창체",
+    "student": "한예기",
+    "standard_code": "",
+    "assessment": "동아리: 독서동아리",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "창체",
+    "student": "한예기",
+    "standard_code": "",
+    "assessment": "진로: 자기이해",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "창체",
+    "student": "황보검",
+    "standard_code": "",
+    "assessment": "자율: 학교폭력예방교육",
+    "level": "매우잘함",
+    "inferred": true,
+    "raw_level": "매우잘함(추정)"
+  },
+  {
+    "subject": "창체",
+    "student": "황보검",
+    "standard_code": "",
+    "assessment": "동아리: 독서동아리",
+    "level": "매우잘함",
+    "inferred": true,
+    "raw_level": "매우잘함(추정)"
+  },
+  {
+    "subject": "창체",
+    "student": "황보검",
+    "standard_code": "",
+    "assessment": "진로: 자기이해",
+    "level": "매우잘함",
+    "inferred": true,
+    "raw_level": "매우잘함(추정)"
+  },
+  {
+    "subject": "창체",
+    "student": "최윤채",
+    "standard_code": "",
+    "assessment": "자율: 학교폭력예방교육",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "창체",
+    "student": "최윤채",
+    "standard_code": "",
+    "assessment": "동아리: 독서동아리",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  },
+  {
+    "subject": "창체",
+    "student": "최윤채",
+    "standard_code": "",
+    "assessment": "진로: 자기이해",
+    "level": "잘함",
+    "inferred": true,
+    "raw_level": "잘함(추정)"
+  }
+]

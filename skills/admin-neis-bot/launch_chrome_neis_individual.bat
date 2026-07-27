@@ -1,0 +1,3 @@
+@echo off
+echo Launching independent NEIS debug Chrome on port 9225...
+start "" "C:\Program Files\Google\Chrome\Application\chrome.exe" --remote-debugging-port=9225 --user-data-dir="%TEMP%\neis_individual_profile" "https://evpn.gbe.kr/custom/index.html" "https://gbe.neis.go.kr/jsp/main.jsp"

@@ -1,0 +1,567 @@
+[
+  {
+    "attrs": {
+      "aria-label": "로그아웃",
+      "class": "btn-i btn-resize cl-control cl-button cl-icon-align-left cl-unselectable logout",
+      "data-ndid": "uuid-f3",
+      "role": "button",
+      "style": "height:100%;line-height:100%;width:100%;",
+      "tabindex": "0",
+      "title": "로그아웃"
+    },
+    "h": 25,
+    "html": "<div class=\"btn-i btn-resize cl-control cl-button cl-icon-align-left cl-unselectable logout\" style=\"height:100%;line-height:100%;width:100%;\" data-ndid=\"uuid-f3\" tabindex=\"0\" title=\"로그아웃\" aria-label=\"로그아웃\" role=\"button\"><a class=\"cl-text-wrapper\" style=\"align-items:center;background:transparent;border:none;color:inherit;cursor:inherit;display:inline-flex;font:inherit;height:100%;justify-content:center;outline:none;padding:0px;text-align:inherit;text-decoration:inherit;text-shadow:inherit;width:a",
+    "i": 48,
+    "left": 1543,
+    "tag": "div",
+    "text": "로그아웃",
+    "top": 6,
+    "w": 92
+  },
+  {
+    "attrs": {
+      "aria-label": "화면 확대",
+      "class": "btn-transparent btn-zm-in cl-control cl-button cl-first-column cl-first-row cl-last-row cl-odd-column cl-odd-row cl-unselectable",
+      "data-ndid": "uuid-fe",
+      "id": "uuid-fe",
+      "role": "button",
+      "style": "grid-column:2 / span 1;grid-row:2 / span 1;line-height:100%;position:relative;z-index:1;",
+      "tabindex": "0",
+      "title": "화면 확대 (100% > 110%)\n현재 브라우저 비율 : [99%]"
+    },
+    "h": 25,
+    "html": "<div class=\"btn-transparent btn-zm-in cl-control cl-button cl-first-column cl-first-row cl-last-row cl-odd-column cl-odd-row cl-unselectable\" style=\"grid-column:2 / span 1;grid-row:2 / span 1;line-height:100%;position:relative;z-index:1;\" data-ndid=\"uuid-fe\" tabindex=\"0\" title=\"화면 확대 (100% &gt; 110%)\n현재 브라우저 비율 : [99%]\" id=\"uuid-fe\" aria-label=\"화면 확대\" role=\"button\"><a class=\"cl-text-wrapper\" style=\"align-items:center;background:transparent;border:none;color:inherit;cursor:inherit;display:inline-",
+    "i": 65,
+    "left": 1850,
+    "tag": "div",
+    "text": "",
+    "top": 6,
+    "w": 30
+  },
+  {
+    "attrs": {
+      "aria-label": "화면 축소",
+      "class": "btn-transparent btn-zm-out cl-control cl-button cl-even-column cl-first-row cl-last-column cl-last-row cl-odd-row cl-unselectable",
+      "data-ndid": "uuid-ff",
+      "id": "uuid-ff",
+      "role": "button",
+      "style": "grid-column:5 / span 1;grid-row:2 / span 1;line-height:100%;position:relative;z-index:1;",
+      "tabindex": "0",
+      "title": "화면 축소 (100% > 90%)\n현재 브라우저 비율 : [99%]"
+    },
+    "h": 25,
+    "html": "<div class=\"btn-transparent btn-zm-out cl-control cl-button cl-even-column cl-first-row cl-last-column cl-last-row cl-odd-row cl-unselectable\" style=\"grid-column:5 / span 1;grid-row:2 / span 1;line-height:100%;position:relative;z-index:1;\" data-ndid=\"uuid-ff\" tabindex=\"0\" title=\"화면 축소 (100% &gt; 90%)\n현재 브라우저 비율 : [99%]\" id=\"uuid-ff\" aria-label=\"화면 축소\" role=\"button\"><a class=\"cl-text-wrapper\" style=\"align-items:center;background:transparent;border:none;color:inherit;cursor:inherit;display:inline-",
+    "i": 67,
+    "left": 1880,
+    "tag": "div",
+    "text": "",
+    "top": 6,
+    "w": 30
+  },
+  {
+    "attrs": {
+      "aria-label": "기본메뉴 및 승인사항",
+      "class": "btn-asd cl-control cl-button cl-unselectable mymenu",
+      "data-ndid": "uuid-h9",
+      "data-usr-grpmenu": "grpMyMn",
+      "id": "uuid-h9",
+      "role": "button",
+      "style": "height:46px;left:8px;line-height:100%;position:absolute;top:8px;width:52px;",
+      "tabindex": "0",
+      "title": "기본메뉴 및 승인사항"
+    },
+    "h": 40,
+    "html": "<div class=\"btn-asd cl-control cl-button cl-unselectable mymenu\" style=\"height:46px;left:8px;line-height:100%;position:absolute;top:8px;width:52px;\" data-ndid=\"uuid-h9\" tabindex=\"0\" title=\"기본메뉴 및 승인사항\" data-usr-grpmenu=\"grpMyMn\" id=\"uuid-h9\" aria-label=\"기본메뉴 및 승인사항\" role=\"button\"><a class=\"cl-text-wrapper\" style=\"align-items:center;background:transparent;border:none;color:inherit;cursor:inherit;display:inline-flex;font:inherit;height:100%;justify-content:center;outline:none;padding:0px;text-alig",
+    "i": 142,
+    "left": 5,
+    "tag": "div",
+    "text": "",
+    "top": 88,
+    "w": 40
+  },
+  {
+    "attrs": {
+      "aria-label": "화면 메뉴",
+      "class": "btn-asd cl-control cl-button cl-unselectable menu selected",
+      "data-ndid": "uuid-ha",
+      "data-usr-grpmenu": "grpMn",
+      "id": "uuid-ha",
+      "role": "button",
+      "style": "height:46px;left:8px;line-height:100%;position:absolute;top:59px;width:52px;",
+      "tabindex": "0",
+      "title": "화면 메뉴"
+    },
+    "h": 40,
+    "html": "<div class=\"btn-asd cl-control cl-button cl-unselectable menu selected\" style=\"height:46px;left:8px;line-height:100%;position:absolute;top:59px;width:52px;\" data-ndid=\"uuid-ha\" tabindex=\"0\" title=\"화면 메뉴\" data-usr-grpmenu=\"grpMn\" id=\"uuid-ha\" aria-label=\"화면 메뉴\" role=\"button\"><a class=\"cl-text-wrapper\" style=\"align-items:center;background:transparent;border:none;color:inherit;cursor:inherit;display:inline-flex;font:inherit;height:100%;justify-content:center;outline:none;padding:0px;text-align:inhe",
+    "i": 144,
+    "left": 5,
+    "tag": "div",
+    "text": "",
+    "top": 136,
+    "w": 45
+  },
+  {
+    "attrs": {
+      "aria-label": "개인설정",
+      "class": "btn-asd cl-control cl-button cl-unselectable personal",
+      "data-ndid": "uuid-he",
+      "data-usr-grpmenu": "grpPersonal",
+      "id": "uuid-he",
+      "role": "button",
+      "style": "height:46px;left:8px;line-height:100%;position:absolute;top:263px;width:52px;",
+      "tabindex": "0",
+      "title": "개인설정"
+    },
+    "h": 40,
+    "html": "<div class=\"btn-asd cl-control cl-button cl-unselectable personal\" style=\"height:46px;left:8px;line-height:100%;position:absolute;top:263px;width:52px;\" data-ndid=\"uuid-he\" tabindex=\"0\" title=\"개인설정\" data-usr-grpmenu=\"grpPersonal\" id=\"uuid-he\" aria-label=\"개인설정\" role=\"button\"><a class=\"cl-text-wrapper\" style=\"align-items:center;background:transparent;border:none;color:inherit;cursor:inherit;display:inline-flex;font:inherit;height:100%;justify-content:center;outline:none;padding:0px;text-align:inhe",
+    "i": 152,
+    "left": 5,
+    "tag": "div",
+    "text": "",
+    "top": 328,
+    "w": 40
+  },
+  {
+    "attrs": {
+      "class": "btn-body-mode cl-control cl-button cl-unselectable on-min",
+      "data-ndid": "uuid-hh",
+      "data-usr-dspval": "",
+      "id": "uuid-hh",
+      "role": "button",
+      "style": "background-color: rgb(255, 255, 255); border-color: rgb(218, 218, 218); border-style: solid; border-width: 1px; border-radius: 5px; height: 30px; left: 5px; line-height: 100%; position: absolute; top: 370px; width: 41px;",
+      "tabindex": "0"
+    },
+    "h": 30,
+    "html": "<div class=\"btn-body-mode cl-control cl-button cl-unselectable on-min\" style=\"background-color: rgb(255, 255, 255); border-color: rgb(218, 218, 218); border-style: solid; border-width: 1px; border-radius: 5px; height: 30px; left: 5px; line-height: 100%; position: absolute; top: 370px; width: 41px;\" data-ndid=\"uuid-hh\" tabindex=\"0\" data-usr-dspval=\"\" id=\"uuid-hh\" role=\"button\"><a class=\"cl-text-wrapper\" style=\"align-items:center;background:transparent;border:none;color:inherit;cursor:inherit;disp",
+    "i": 154,
+    "left": 5,
+    "tag": "div",
+    "text": "",
+    "top": 876,
+    "w": 41
+  },
+  {
+    "attrs": {
+      "aria-label": "도움말",
+      "class": "btn-transparent btn-ut-question cl-control cl-button cl-first-column cl-first-row cl-icon-align-left cl-last-row cl-odd-column cl-odd-row cl-unselectable",
+      "data-ndid": "uuid-1o5",
+      "id": "uuid-1o5",
+      "role": "button",
+      "style": "grid-area: 2 / 2 / span 1 / span 1; line-height: 100%; position: relative; z-index: 1;",
+      "tabindex": "0",
+      "title": "도움말"
+    },
+    "h": 28,
+    "html": "<div class=\"btn-transparent btn-ut-question cl-control cl-button cl-first-column cl-first-row cl-icon-align-left cl-last-row cl-odd-column cl-odd-row cl-unselectable\" data-ndid=\"uuid-1o5\" tabindex=\"0\" title=\"도움말\" id=\"uuid-1o5\" aria-label=\"도움말\" role=\"button\" style=\"grid-area: 2 / 2 / span 1 / span 1; line-height: 100%; position: relative; z-index: 1;\"><a class=\"cl-text-wrapper\" data-ndid=\"1rx\" style=\"align-items: center; background: transparent; border-width: medium; border-style: none; border-co",
+    "i": 188,
+    "left": 1623,
+    "tag": "div",
+    "text": "",
+    "top": 96,
+    "w": 36
+  },
+  {
+    "attrs": {
+      "aria-label": "질의응답",
+      "class": "btn-transparent btn-ut-chat cl-control cl-button cl-even-column cl-first-row cl-icon-align-left cl-last-row cl-odd-row cl-unselectable",
+      "data-ndid": "uuid-1o6",
+      "id": "uuid-1o6",
+      "role": "button",
+      "style": "grid-area: 2 / 5 / span 1 / span 1; line-height: 100%; position: relative; z-index: 1;",
+      "tabindex": "0",
+      "title": "질의응답"
+    },
+    "h": 28,
+    "html": "<div class=\"btn-transparent btn-ut-chat cl-control cl-button cl-even-column cl-first-row cl-icon-align-left cl-last-row cl-odd-row cl-unselectable\" data-ndid=\"uuid-1o6\" tabindex=\"0\" title=\"질의응답\" id=\"uuid-1o6\" aria-label=\"질의응답\" role=\"button\" style=\"grid-area: 2 / 5 / span 1 / span 1; line-height: 100%; position: relative; z-index: 1;\"><a class=\"cl-text-wrapper\" data-ndid=\"1rz\" style=\"align-items: center; background: transparent; border-width: medium; border-style: none; border-color: currentcolor",
+    "i": 191,
+    "left": 1659,
+    "tag": "div",
+    "text": "",
+    "top": 96,
+    "w": 36
+  },
+  {
+    "attrs": {
+      "aria-label": "FAQ",
+      "class": "btn-transparent btn-ut-faq cl-control cl-button cl-first-row cl-icon-align-left cl-last-row cl-odd-column cl-odd-row cl-unselectable",
+      "data-ndid": "uuid-1o7",
+      "id": "uuid-1o7",
+      "role": "button",
+      "style": "grid-area: 2 / 8 / span 1 / span 1; line-height: 100%; position: relative; z-index: 1;",
+      "tabindex": "0",
+      "title": "FAQ"
+    },
+    "h": 28,
+    "html": "<div class=\"btn-transparent btn-ut-faq cl-control cl-button cl-first-row cl-icon-align-left cl-last-row cl-odd-column cl-odd-row cl-unselectable\" data-ndid=\"uuid-1o7\" tabindex=\"0\" title=\"FAQ\" id=\"uuid-1o7\" aria-label=\"FAQ\" role=\"button\" style=\"grid-area: 2 / 8 / span 1 / span 1; line-height: 100%; position: relative; z-index: 1;\"><a class=\"cl-text-wrapper\" data-ndid=\"1s1\" style=\"align-items: center; background: transparent; border-width: medium; border-style: none; border-color: currentcolor; bo",
+    "i": 194,
+    "left": 1695,
+    "tag": "div",
+    "text": "",
+    "top": 96,
+    "w": 36
+  },
+  {
+    "attrs": {
+      "aria-label": "연락처",
+      "class": "btn-transparent btn-ut-call cl-control cl-button cl-even-column cl-first-row cl-icon-align-left cl-last-row cl-odd-row cl-unselectable",
+      "data-ndid": "uuid-1o8",
+      "id": "uuid-1o8",
+      "role": "button",
+      "style": "grid-area: 2 / 11 / span 1 / span 1; line-height: 100%; position: relative; z-index: 1;",
+      "tabindex": "0",
+      "title": "연락처"
+    },
+    "h": 28,
+    "html": "<div class=\"btn-transparent btn-ut-call cl-control cl-button cl-even-column cl-first-row cl-icon-align-left cl-last-row cl-odd-row cl-unselectable\" data-ndid=\"uuid-1o8\" tabindex=\"0\" title=\"연락처\" id=\"uuid-1o8\" aria-label=\"연락처\" role=\"button\" style=\"grid-area: 2 / 11 / span 1 / span 1; line-height: 100%; position: relative; z-index: 1;\"><a class=\"cl-text-wrapper\" data-ndid=\"1s3\" style=\"align-items: center; background: transparent; border-width: medium; border-style: none; border-color: currentcolor;",
+    "i": 197,
+    "left": 1731,
+    "tag": "div",
+    "text": "",
+    "top": 96,
+    "w": 36
+  },
+  {
+    "attrs": {
+      "aria-label": "온라인컨텐츠",
+      "class": "btn-transparent btn-ut-video cl-control cl-button cl-first-row cl-icon-align-left cl-last-row cl-odd-column cl-odd-row cl-unselectable",
+      "data-ndid": "uuid-1o9",
+      "id": "uuid-1o9",
+      "role": "button",
+      "style": "grid-area: 2 / 14 / span 1 / span 1; line-height: 100%; position: relative; z-index: 1;",
+      "tabindex": "0",
+      "title": "온라인컨텐츠"
+    },
+    "h": 28,
+    "html": "<div class=\"btn-transparent btn-ut-video cl-control cl-button cl-first-row cl-icon-align-left cl-last-row cl-odd-column cl-odd-row cl-unselectable\" data-ndid=\"uuid-1o9\" tabindex=\"0\" title=\"온라인컨텐츠\" id=\"uuid-1o9\" aria-label=\"온라인컨텐츠\" role=\"button\" style=\"grid-area: 2 / 14 / span 1 / span 1; line-height: 100%; position: relative; z-index: 1;\"><a class=\"cl-text-wrapper\" data-ndid=\"1s5\" style=\"align-items: center; background: transparent; border-width: medium; border-style: none; border-color: current",
+    "i": 200,
+    "left": 1767,
+    "tag": "div",
+    "text": "",
+    "top": 96,
+    "w": 36
+  },
+  {
+    "attrs": {
+      "aria-label": "즐겨찾기",
+      "class": "btn-transparent btn-ut-fav-off cl-control cl-button cl-even-column cl-first-row cl-icon-align-left cl-last-column cl-last-row cl-odd-row cl-unselectable",
+      "data-ndid": "uuid-1oa",
+      "id": "uuid-1oa",
+      "role": "button",
+      "style": "grid-area: 2 / 17 / span 1 / span 1; line-height: 100%; position: relative; z-index: 1;",
+      "tabindex": "0",
+      "title": "즐겨찾기"
+    },
+    "h": 28,
+    "html": "<div class=\"btn-transparent btn-ut-fav-off cl-control cl-button cl-even-column cl-first-row cl-icon-align-left cl-last-column cl-last-row cl-odd-row cl-unselectable\" data-ndid=\"uuid-1oa\" tabindex=\"0\" title=\"즐겨찾기\" id=\"uuid-1oa\" aria-label=\"즐겨찾기\" role=\"button\" style=\"grid-area: 2 / 17 / span 1 / span 1; line-height: 100%; position: relative; z-index: 1;\"><a class=\"cl-text-wrapper\" data-ndid=\"1s7\" style=\"align-items: center; background: transparent; border-width: medium; border-style: none; border-",
+    "i": 203,
+    "left": 1803,
+    "tag": "div",
+    "text": "",
+    "top": 96,
+    "w": 36
+  },
+  {
+    "attrs": {
+      "class": "app-hd-fold cl-control cl-button cl-even-column cl-first-row cl-last-column cl-last-row cl-odd-row cl-unselectable",
+      "data-ndid": "uuid-1ob",
+      "id": "uuid-1ob",
+      "role": "button",
+      "style": "grid-area: 2 / 11 / span 1 / span 1; line-height: 100%; position: relative; z-index: 1;",
+      "tabindex": "0",
+      "title": "스탭퍼, 조회조건, 지시문 영역 축소"
+    },
+    "h": 30,
+    "html": "<div class=\"app-hd-fold cl-control cl-button cl-even-column cl-first-row cl-last-column cl-last-row cl-odd-row cl-unselectable\" data-ndid=\"uuid-1ob\" tabindex=\"0\" title=\"스탭퍼, 조회조건, 지시문 영역 축소\" id=\"uuid-1ob\" role=\"button\" style=\"grid-area: 2 / 11 / span 1 / span 1; line-height: 100%; position: relative; z-index: 1;\"><a class=\"cl-text-wrapper\" data-ndid=\"1sa\" style=\"align-items: center; background: transparent; border-width: medium; border-style: none; border-color: currentcolor; border-image: initi",
+    "i": 218,
+    "left": 1850,
+    "tag": "div",
+    "text": "축소",
+    "top": 95,
+    "w": 45
+  },
+  {
+    "attrs": {
+      "aria-label": "조회",
+      "class": "btn-i btn-i-search btn-primary cl-control cl-button cl-first-column cl-first-row cl-icon-align-left cl-last-column cl-last-row cl-odd-column cl-odd-row cl-unselectable",
+      "data-ndid": "uuid-1q0",
+      "id": "uuid-1q0",
+      "role": "button",
+      "style": "grid-area: 2 / 2 / span 1 / span 1; line-height: 100%; position: relative; z-index: 1;",
+      "tabindex": "0",
+      "title": "조회"
+    },
+    "h": 30,
+    "html": "<div class=\"btn-i btn-i-search btn-primary cl-control cl-button cl-first-column cl-first-row cl-icon-align-left cl-last-column cl-last-row cl-odd-column cl-odd-row cl-unselectable\" data-ndid=\"uuid-1q0\" tabindex=\"0\" title=\"조회\" id=\"uuid-1q0\" aria-label=\"조회\" role=\"button\" style=\"grid-area: 2 / 2 / span 1 / span 1; line-height: 100%; position: relative; z-index: 1;\"><a class=\"cl-text-wrapper\" data-ndid=\"1ul\" style=\"align-items: center; background: transparent; border-width: medium; border-style: non",
+    "i": 435,
+    "left": 1801,
+    "tag": "div",
+    "text": "조회",
+    "top": 245,
+    "w": 74
+  },
+  {
+    "attrs": {
+      "class": "btn-i-setting btn-transparent cl-control cl-button cl-icon-align-left cl-unselectable",
+      "data-ndid": "uuid-1qi",
+      "role": "button",
+      "style": "height: 100%; line-height: 100%; width: 100%;",
+      "tabindex": "0",
+      "title": "필터/찾기 등"
+    },
+    "h": 20,
+    "html": "<div class=\"btn-i-setting btn-transparent cl-control cl-button cl-icon-align-left cl-unselectable\" data-ndid=\"uuid-1qi\" tabindex=\"0\" title=\"필터/찾기 등\" role=\"button\" style=\"height: 100%; line-height: 100%; width: 100%;\"><a class=\"cl-text-wrapper\" data-ndid=\"1ux\" style=\"align-items: center; background: transparent; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; color: inherit; cursor: inherit; display: inline-flex; font: inherit; height: 100%; justify-co",
+    "i": 500,
+    "left": 379,
+    "tag": "div",
+    "text": "",
+    "top": 485,
+    "w": 20
+  },
+  {
+    "attrs": {
+      "aria-label": "학생/학부모서비스 일괄반영",
+      "class": "btn-primary cl-control cl-button cl-unselectable",
+      "data-ndid": "uuid-1qn",
+      "role": "button",
+      "style": "height: 100%; line-height: 100%; width: 100%;",
+      "tabindex": "0",
+      "title": "학생/학부모서비스 일괄반영"
+    },
+    "h": 30,
+    "html": "<div class=\"btn-primary cl-control cl-button cl-unselectable\" data-ndid=\"uuid-1qn\" tabindex=\"0\" title=\"학생/학부모서비스 일괄반영\" aria-label=\"학생/학부모서비스 일괄반영\" role=\"button\" style=\"height: 100%; line-height: 100%; width: 100%;\"><a class=\"cl-text-wrapper\" data-ndid=\"1v4\" style=\"align-items: center; background: transparent; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; color: inherit; cursor: inherit; display: inline-flex; font: inherit; height: 100%; justify-cont",
+    "i": 513,
+    "left": 1431,
+    "tag": "div",
+    "text": "학생/학부모서비스 일괄반영",
+    "top": 465,
+    "w": 168
+  },
+  {
+    "attrs": {
+      "aria-label": "학생/학부모서비스 반영",
+      "class": "btn-primary cl-control cl-button cl-unselectable",
+      "data-ndid": "uuid-1qo",
+      "role": "button",
+      "style": "height: 100%; line-height: 100%; width: 100%;",
+      "tabindex": "0",
+      "title": "학생/학부모서비스 반영"
+    },
+    "h": 30,
+    "html": "<div class=\"btn-primary cl-control cl-button cl-unselectable\" data-ndid=\"uuid-1qo\" tabindex=\"0\" title=\"학생/학부모서비스 반영\" aria-label=\"학생/학부모서비스 반영\" role=\"button\" style=\"height: 100%; line-height: 100%; width: 100%;\"><a class=\"cl-text-wrapper\" data-ndid=\"1v5\" style=\"align-items: center; background: transparent; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; color: inherit; cursor: inherit; display: inline-flex; font: inherit; height: 100%; justify-content:",
+    "i": 517,
+    "left": 1607,
+    "tag": "div",
+    "text": "학생/학부모서비스 반영",
+    "top": 465,
+    "w": 144
+  },
+  {
+    "attrs": {
+      "aria-label": "저장",
+      "class": "btn-primary cl-control cl-button cl-unselectable",
+      "data-ndid": "uuid-1qq",
+      "role": "button",
+      "style": "height: 100%; line-height: 100%; width: 100%;",
+      "tabindex": "0",
+      "title": "저장"
+    },
+    "h": 30,
+    "html": "<div class=\"btn-primary cl-control cl-button cl-unselectable\" data-ndid=\"uuid-1qq\" title=\"저장\" aria-label=\"저장\" role=\"button\" style=\"height: 100%; line-height: 100%; width: 100%;\" tabindex=\"0\"><a class=\"cl-text-wrapper\" data-ndid=\"1v7\" style=\"align-items: center; background: transparent; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; color: inherit; cursor: inherit; display: inline-flex; font: inherit; height: 100%; justify-content: center; outline: no",
+    "i": 521,
+    "left": 1759,
+    "tag": "div",
+    "text": "저장",
+    "top": 465,
+    "w": 40
+  },
+  {
+    "attrs": {
+      "aria-label": "삭제",
+      "class": "btn-secondary cl-control cl-button cl-unselectable",
+      "data-ndid": "uuid-1qs",
+      "role": "button",
+      "style": "height: 100%; line-height: 100%; width: 100%;",
+      "tabindex": "0",
+      "title": "삭제"
+    },
+    "h": 30,
+    "html": "<div class=\"btn-secondary cl-control cl-button cl-unselectable\" data-ndid=\"uuid-1qs\" title=\"삭제\" aria-label=\"삭제\" role=\"button\" style=\"height: 100%; line-height: 100%; width: 100%;\" tabindex=\"0\"><a class=\"cl-text-wrapper\" data-ndid=\"1v9\" style=\"align-items: center; background: transparent; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; color: inherit; cursor: inherit; display: inline-flex; font: inherit; height: 100%; justify-content: center; outline: ",
+    "i": 529,
+    "left": 1855,
+    "tag": "div",
+    "text": "삭제",
+    "top": 465,
+    "w": 40
+  },
+  {
+    "attrs": {
+      "aria-label": "닫기",
+      "class": "cl-tabfolder-button",
+      "data-ndid": "1mk",
+      "role": "button",
+      "style": "align-self: center; display: block; grid-area: 1 / 3 / span 1 / span 1;",
+      "tabindex": "0",
+      "title": "교과평가"
+    },
+    "h": 18,
+    "html": "<div class=\"cl-tabfolder-button\" data-ndid=\"1mk\" role=\"button\" title=\"교과평가\" aria-label=\"닫기\" tabindex=\"0\" style=\"align-self: center; display: block; grid-area: 1 / 3 / span 1 / span 1;\"></div>",
+    "i": 783,
+    "left": 460,
+    "tag": "div",
+    "text": "",
+    "top": 881,
+    "w": 18
+  },
+  {
+    "attrs": {
+      "aria-label": "탭 아이템 전체 닫기",
+      "class": "btn-close-mdi btn-transparent cl-control cl-button cl-icon-align-left cl-unselectable close-all",
+      "data-ndid": "uuid-hl",
+      "id": "uuid-hl",
+      "role": "button",
+      "style": "border-radius: 0px; bottom: 0px; height: 30px; left: -1px; line-height: 100%; position: absolute; top: calc(50% - 15px); width: 31px;",
+      "tabindex": "0",
+      "title": "탭 아이템 전체 닫기"
+    },
+    "h": 25,
+    "html": "<div class=\"btn-close-mdi btn-transparent cl-control cl-button cl-icon-align-left cl-unselectable close-all\" data-ndid=\"uuid-hl\" tabindex=\"0\" title=\"탭 아이템 전체 닫기\" id=\"uuid-hl\" aria-label=\"탭 아이템 전체 닫기\" role=\"button\" style=\"border-radius: 0px; bottom: 0px; height: 30px; left: -1px; line-height: 100%; position: absolute; top: calc(50% - 15px); width: 31px;\"><a class=\"cl-text-wrapper\" data-ndid=\"mi\" style=\"align-items: center; background: transparent; border-width: medium; border-style: none; border-",
+    "i": 790,
+    "left": 1691,
+    "tag": "div",
+    "text": "",
+    "top": 880,
+    "w": 25
+  },
+  {
+    "attrs": {
+      "aria-label": "활성 및 고정 탭 아이템 이외 전체 닫기",
+      "class": "btn-close-mdi btn-transparent cl-control cl-button cl-icon-align-left cl-unselectable close-one-all",
+      "data-ndid": "uuid-hm",
+      "id": "uuid-hm",
+      "role": "button",
+      "style": "border-radius: 0px 4px 4px 0px; bottom: 0px; height: 30px; left: 28px; line-height: 100%; position: absolute; top: calc(50% - 15px); width: 31px;",
+      "tabindex": "0",
+      "title": "활성 및 고정 탭 아이템 이외 전체 닫기"
+    },
+    "h": 25,
+    "html": "<div class=\"btn-close-mdi btn-transparent cl-control cl-button cl-icon-align-left cl-unselectable close-one-all\" data-ndid=\"uuid-hm\" tabindex=\"0\" title=\"활성 및 고정 탭 아이템 이외 전체 닫기\" id=\"uuid-hm\" aria-label=\"활성 및 고정 탭 아이템 이외 전체 닫기\" role=\"button\" style=\"border-radius: 0px 4px 4px 0px; bottom: 0px; height: 30px; left: 28px; line-height: 100%; position: absolute; top: calc(50% - 15px); width: 31px;\"><a class=\"cl-text-wrapper\" data-ndid=\"mk\" style=\"align-items: center; background: transparent; border-widt",
+    "i": 793,
+    "left": 1715,
+    "tag": "div",
+    "text": "",
+    "top": 880,
+    "w": 25
+  },
+  {
+    "attrs": {
+      "aria-label": "탭 아이템 목록 보기 [1]",
+      "class": "btn-resize btn-transparent cl-control cl-button cl-unselectable mdi-tab-list on-cont",
+      "data-ndid": "uuid-hn",
+      "id": "uuid-hn",
+      "role": "button",
+      "style": "background-color: rgb(255, 255, 255); border-radius: 4px; display: none; height: 25px; left: 53px; line-height: 100%; position: absolute; top: calc(50% - 12px); width: 25px;",
+      "tabindex": "0",
+      "title": "탭 아이템 목록 보기 [1]"
+    },
+    "h": 25,
+    "html": "<div class=\"btn-resize btn-transparent cl-control cl-button cl-unselectable mdi-tab-list on-cont\" data-ndid=\"uuid-hn\" tabindex=\"0\" title=\"탭 아이템 목록 보기 [1]\" id=\"uuid-hn\" aria-label=\"탭 아이템 목록 보기 [1]\" role=\"button\" style=\"background-color: rgb(255, 255, 255); border-radius: 4px; display: none; height: 25px; left: 53px; line-height: 100%; position: absolute; top: calc(50% - 12px); width: 25px;\"><a class=\"cl-text-wrapper\" data-ndid=\"ml\" style=\"align-items: center; background: transparent; border-width",
+    "i": 796,
+    "left": 1745,
+    "tag": "div",
+    "text": "1",
+    "top": 880,
+    "w": 80
+  },
+  {
+    "attrs": {
+      "aria-label": "전체 화면",
+      "class": "btn-resize btn-transparent cl-control cl-button cl-unselectable mdi-tab-full",
+      "data-ndid": "uuid-ho",
+      "id": "uuid-ho",
+      "role": "button",
+      "style": "background-color: rgb(255, 255, 255); border-radius: 4px; display: none; height: 25px; left: 83px; line-height: 100%; position: absolute; top: calc(50% - 12px); width: 25px;",
+      "tabindex": "0",
+      "title": "전체 화면"
+    },
+    "h": 25,
+    "html": "<div class=\"btn-resize btn-transparent cl-control cl-button cl-unselectable mdi-tab-full\" data-ndid=\"uuid-ho\" tabindex=\"0\" title=\"전체 화면\" id=\"uuid-ho\" role=\"button\" aria-label=\"전체 화면\" style=\"background-color: rgb(255, 255, 255); border-radius: 4px; display: none; height: 25px; left: 83px; line-height: 100%; position: absolute; top: calc(50% - 12px); width: 25px;\"><a class=\"cl-text-wrapper\" data-ndid=\"mm\" style=\"align-items: center; background: transparent; border-width: medium; border-style: none",
+    "i": 799,
+    "left": 1830,
+    "tag": "div",
+    "text": "⇱",
+    "top": 880,
+    "w": 80
+  },
+  {
+    "attrs": {
+      "aria-label": "메뉴 접기",
+      "class": "cl-control cl-button cl-unselectable lnb-toggle",
+      "data-ndid": "uuid-hs",
+      "id": "uuid-hs",
+      "role": "button",
+      "style": "height: 48px; left: 280px; line-height: 100%; position: absolute; top: calc(50% - 24px); width: 23px;",
+      "tabindex": "0",
+      "title": "메뉴 접기"
+    },
+    "h": 48,
+    "html": "<div class=\"cl-control cl-button cl-unselectable lnb-toggle\" style=\"height: 48px; left: 280px; line-height: 100%; position: absolute; top: calc(50% - 24px); width: 23px;\" data-ndid=\"uuid-hs\" tabindex=\"0\" title=\"메뉴 접기\" id=\"uuid-hs\" aria-expanded=\"true\" role=\"button\" aria-label=\"메뉴 접기\"><a class=\"cl-text-wrapper\" style=\"align-items:center;background:transparent;border:none;color:inherit;cursor:inherit;display:inline-flex;font:inherit;height:100%;justify-content:center;outline:none;padding:0px;text-",
+    "i": 802,
+    "left": 280,
+    "tag": "div",
+    "text": "",
+    "top": 432,
+    "w": 15
+  },
+  {
+    "attrs": {
+      "aria-label": "확인",
+      "class": "cl-control cl-dialog cl-resizable modal-msg",
+      "data-ndid": "28b",
+      "role": "dialog",
+      "style": "height: 218px; left: calc(50% - 190px); min-height: 218px; min-width: 380px; position: absolute; top: calc(50% - 109px); width: 380px;",
+      "tabindex": "-1"
+    },
+    "h": 218,
+    "html": "<div class=\"cl-control cl-dialog cl-resizable modal-msg\" style=\"height: 218px; left: calc(50% - 190px); min-height: 218px; min-width: 380px; position: absolute; top: calc(50% - 109px); width: 380px;\" data-ndid=\"28b\" tabindex=\"-1\" role=\"dialog\" aria-modal=\"true\" aria-label=\"확인\"><div class=\"cl-dialog-wrapper\" style=\"display:grid;grid-template-columns:100%;grid-template-rows:min-content minmax(min-content,1fr);height:100%;overflow:hidden;width:100%;\" data-ndid=\"28a\"><div class=\"cl-dialog-header cl-",
+    "i": 811,
+    "left": 770,
+    "tag": "div",
+    "text": "확인 저장하시겠습니까? 확인 취소",
+    "top": 347,
+    "w": 380
+  },
+  {
+    "attrs": {
+      "class": "btn-secondary cl-control cl-button cl-unselectable",
+      "data-ndid": "uuid-284",
+      "role": "button",
+      "style": "height: 100%; line-height: 100%; width: 100%;",
+      "tabindex": "0"
+    },
+    "h": 30,
+    "html": "<div class=\"btn-secondary cl-control cl-button cl-unselectable\" data-ndid=\"uuid-284\" tabindex=\"0\" role=\"button\" style=\"height: 100%; line-height: 100%; width: 100%;\"><a class=\"cl-text-wrapper\" data-ndid=\"28h\" style=\"align-items: center; background: transparent; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; color: inherit; cursor: inherit; display: inline-flex; font: inherit; height: 100%; justify-content: center; outline: none; padding: 0px; text-al",
+    "i": 839,
+    "left": 916,
+    "tag": "div",
+    "text": "확인",
+    "top": 523,
+    "w": 40
+  },
+  {
+    "attrs": {
+      "class": "btn-outline-secondary cl-control cl-button cl-unselectable",
+      "data-ndid": "uuid-285",
+      "role": "button",
+      "style": "height: 100%; line-height: 100%; width: 100%;",
+      "tabindex": "0"
+    },
+    "h": 30,
+    "html": "<div class=\"btn-outline-secondary cl-control cl-button cl-unselectable\" data-ndid=\"uuid-285\" tabindex=\"0\" role=\"button\" style=\"height: 100%; line-height: 100%; width: 100%;\"><a class=\"cl-text-wrapper\" data-ndid=\"28i\" style=\"align-items: center; background: transparent; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; color: inherit; cursor: inherit; display: inline-flex; font: inherit; height: 100%; justify-content: center; outline: none; padding: 0px;",
+    "i": 843,
+    "left": 964,
+    "tag": "div",
+    "text": "취소",
+    "top": 523,
+    "w": 40
+  }
+]

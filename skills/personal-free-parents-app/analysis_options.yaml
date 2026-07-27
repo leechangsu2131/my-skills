@@ -1,10 +1,13 @@
 include: package:flutter_lints/flutter.yaml
 
 analyzer:
+  exclude:
+    - snapshot_to_ai/**
   errors:
     invalid_annotation_target: ignore  # freezed @JsonKey on constructor params
     dead_code: ignore  # placeholder data has intentional dead branches
     deprecated_member_use: ignore # naver map initialization transition warning
+    unused_element: ignore # upgrade-in-progress private screen variants
 
 linter:
   rules:

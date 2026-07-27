@@ -140,8 +140,18 @@ The user wanted a strict prompt template for item purchases (품의서) when wri
 
 ### Issue 16: Background Windows Hidden Issue
 **Problem:**
-When the AI assistant runs 
-un_dev.bat via terminal commands, the Windows processes (Flask server, Chrome browser) spawn in a background service session (Session 0) that is completely invisible to the actual user desktop, leaving the user confused why the windows didn't open.
+When the AI assistant runs run_dev.bat via terminal commands, the Windows processes (Flask server, Chrome browser) spawn in a background service session (Session 0) that is completely invisible to the actual user desktop, leaving the user confused why the windows didn't open.
 **Solution:**
-- We learned that GUI applications (Chrome) and interactive terminal windows should NEVER be launched by the AI's background shell. The user must manually double-click 
-un_dev.bat from their desktop for the windows to be visible on their active session.
+- We learned that GUI applications (Chrome) and interactive terminal windows should NEVER be launched by the AI's background shell. The user must manually double-click run_dev.bat from their desktop for the windows to be visible on their active session.
+
+### Issue 17: Chrome Debugging Profile Redirect (install.html) & Windows CMD Encoding Crashes
+**Problem:**
+1. **Security Module Detection Failure:** When launching Chrome with a fresh debug profile (`--user-data-dir="%TEMP%\edufine_chrome_profile"`), K-Edufine repeatedly redirected to `install.html` (requesting VeraPort/security software installation) because the default security policies in the new profile blocked local network requests (localhost API communication) between the browser and local security daemons.
+2. **Batch File Encoding Crash:** While attempting to fix this with a new script and Korean echo logs/comments, the Command Prompt (CMD) running under Korean Windows' default code page (CP949/EUC-KR) crashed, interpreting the UTF-8 Korean characters as invalid syntax and variables (e.g. throwing error: `'?⑸땲??'은(는) 내부 또는 외부 명령...`, `'APPDATA'은(는) 내부 또는 외부 명령...`).
+
+**Solution:**
+- **Debugging Profile Fix:**
+  - **Method A (chrome://flags):** Documented instructions to disable `Block insecure private network requests` or `Local Network Access Checks` inside `chrome://flags` on the debug browser.
+  - **Method B (Everyday Profile Debugging):** Developed [launch_chrome_default.bat](file:///C:/Users/lee21/.gemini/antigravity/scratch/my-skills/skills/admin-edufine/launch_chrome_default.bat) to launch Chrome using the user's default Chrome profile directory (`--user-data-dir="%LOCALAPPDATA%\Google\Chrome\User Data"`). This profile already contains all verified certifications, configurations, and security plugin registrations. Note: The user must close all existing Chrome windows before launching this.
+- **CMD Syntax/Encoding Fix:** Rewrote all batch files ([launch_chrome.bat](file:///C:/Users/lee21/.gemini/antigravity/scratch/my-skills/skills/admin-edufine/launch_chrome.bat) and `launch_chrome_default.bat`) in **pure English/ASCII** text. This completely avoids encoding conflicts between UTF-8 files and the Windows CMD CP949 environment.
+

@@ -1,0 +1,7975 @@
+[
+  {
+    "appId": "app/com/main/Index",
+    "controls": [
+      {
+        "id": "grpHd",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "grpLogo",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "outLogoTop",
+        "type": "output",
+        "val": "나이스로고"
+      },
+      {
+        "id": "outSol",
+        "type": "output",
+        "val": "알트키와 컨트롤키와 H를 동시에 누르면 단축키의 내용을 확인할수 있습니다."
+      },
+      {
+        "id": "grpTpbr",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "grpUserInfo",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "optUserAuth",
+        "type": "output",
+        "val": "화천초등학교"
+      },
+      {
+        "id": "optUserNm",
+        "type": "output",
+        "val": "이창수(lee2131)"
+      },
+      {
+        "id": "optUserAuthSub",
+        "type": "output",
+        "val": ""
+      },
+      {
+        "id": "htmlUserWrk",
+        "type": "htmlsnippet",
+        "val": "<div style=\"display:flex; min-width:max-content; height: 25px; align-items: stre"
+      },
+      {
+        "id": "optUserInfo",
+        "type": "output",
+        "val": "이창수(lee2131)"
+      },
+      {
+        "id": "btnAssign",
+        "type": "button",
+        "val": "자체개발"
+      },
+      {
+        "id": "grpOptTime",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "btnClock",
+        "type": "button",
+        "val": "세션시간"
+      },
+      {
+        "id": "optTime",
+        "type": "output",
+        "val": "59분 03초"
+      },
+      {
+        "id": "optTime2",
+        "type": "output",
+        "val": "(2차인증:130분 00초)"
+      },
+      {
+        "id": "grpTpbrUtl",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "btnLogout",
+        "type": "button",
+        "val": "로그아웃"
+      },
+      {
+        "id": "cmbMyWrk",
+        "type": "combobox",
+        "val": "나의업무"
+      },
+      {
+        "id": "cmbShlYear",
+        "type": "combobox",
+        "val": "ːːː학년도ːːː"
+      },
+      {
+        "id": "btnTutorial",
+        "type": "button",
+        "val": "튜토리얼"
+      },
+      {
+        "id": "btnChatBot",
+        "type": "button",
+        "val": "챗봇"
+      },
+      {
+        "id": "btnSupport",
+        "type": "button",
+        "val": "사용자지원"
+      },
+      {
+        "id": "cmbTheme",
+        "type": "combobox",
+        "val": ""
+      },
+      {
+        "id": "grp9",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "btnZmIn2",
+        "type": "button",
+        "val": "+"
+      },
+      {
+        "id": "btnZmOut2",
+        "type": "button",
+        "val": "-"
+      },
+      {
+        "id": "grpViewZm",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "btnZmIn",
+        "type": "button",
+        "val": "화면 확대"
+      },
+      {
+        "id": "btnZmOut",
+        "type": "button",
+        "val": "화면 축소"
+      },
+      {
+        "id": "grpNavbr",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "btn_allMenu",
+        "type": "button",
+        "val": "▤"
+      },
+      {
+        "id": "navMn",
+        "type": "navigationbar",
+        "val": "002001_AMEDS20501"
+      },
+      {
+        "id": "grpAsd",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "grpTlbrSrch",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "메뉴검색"
+      },
+      {
+        "id": "grpTlbrSrchItems",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "siFindMenu",
+        "type": "searchinput",
+        "val": "결석신고서관리"
+      },
+      {
+        "id": "grpTlbrSrchItemsBody",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "button",
+        "val": "결석신고서관리 "
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "학급담임 > 교육활동신청관리 > 출결관리 > 결석신고서관리 "
+      },
+      {
+        "id": "grpCmplnt",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "grpCmplntTop",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "민원현황 알림"
+      },
+      {
+        "id": "btnRefreshCmplnt",
+        "type": "button",
+        "val": "민원현황 새로고침"
+      },
+      {
+        "id": "grpCmplntSub",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "snavCmplnt",
+        "type": "sidenavigation",
+        "val": ""
+      },
+      {
+        "id": "grpTlbrFav",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "grpFavTop",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "즐겨찾기"
+      },
+      {
+        "id": "btnRefreshFav",
+        "type": "button",
+        "val": "즐겨찾기 새로고침"
+      },
+      {
+        "id": "grpTlbrFavContants",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "grp2",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "button",
+        "val": "권한신청"
+      },
+      {
+        "id": "",
+        "type": "button",
+        "val": ""
+      },
+      {
+        "id": "grpPersonal",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "grpPersonalTop",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "개인설정"
+      },
+      {
+        "id": "btnRefresh2",
+        "type": "button",
+        "val": ""
+      },
+      {
+        "id": "snavPersonal",
+        "type": "sidenavigation",
+        "val": ""
+      },
+      {
+        "id": "grpMyMn",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "grpAppvlTop",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "승인사항"
+      },
+      {
+        "id": "btnRefresh",
+        "type": "button",
+        "val": "승인사항 새로고침"
+      },
+      {
+        "id": "snavAppvl",
+        "type": "sidenavigation",
+        "val": "AMWAM40011"
+      },
+      {
+        "id": "grp1",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "기본 메뉴"
+      },
+      {
+        "id": "btnSetting",
+        "type": "button",
+        "val": "기본메뉴 설정"
+      },
+      {
+        "id": "snavMyMn",
+        "type": "sidenavigation",
+        "val": ""
+      },
+      {
+        "id": "grpMn",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "snavMn",
+        "type": "sidenavigation",
+        "val": "002001_AMEDS40531"
+      },
+      {
+        "id": "grpTlbrNt",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "grpTlbrNtTitle",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "나의 할일"
+      },
+      {
+        "id": "btnRefreshTlbrNt",
+        "type": "button",
+        "val": "나의 할일 새로고침"
+      },
+      {
+        "id": "btnTodoMore",
+        "type": "button",
+        "val": "나의 할일 모두보기"
+      },
+      {
+        "id": "grp6",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "미확인건수"
+      },
+      {
+        "id": "newCnt",
+        "type": "output",
+        "val": "0"
+      },
+      {
+        "id": "grpTlbrNtContants",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "등록된 데이터가 없습니다."
+      },
+      {
+        "id": "btnTlbrMyMn",
+        "type": "button",
+        "val": "기본메뉴 및 승인사항"
+      },
+      {
+        "id": "btnTlbrMn",
+        "type": "button",
+        "val": "화면 메뉴"
+      },
+      {
+        "id": "btnTlbrNt",
+        "type": "button",
+        "val": "나의 할일"
+      },
+      {
+        "id": "btnTlbrSrch",
+        "type": "button",
+        "val": "메뉴 검색"
+      },
+      {
+        "id": "btnTlbrFav",
+        "type": "button",
+        "val": "즐겨찾기"
+      },
+      {
+        "id": "btnTlbrPersonal",
+        "type": "button",
+        "val": "개인설정"
+      },
+      {
+        "id": "btnTlbrCmplnt",
+        "type": "button",
+        "val": "민원 현황 알림"
+      },
+      {
+        "id": "btnTlbrWrk",
+        "type": "button",
+        "val": "나의업무"
+      },
+      {
+        "id": "btnChgLay",
+        "type": "button",
+        "val": ""
+      },
+      {
+        "id": "btnTlbrApprvl",
+        "type": "button",
+        "val": "승인업무"
+      },
+      {
+        "id": "mdiCn",
+        "type": "mdifolder",
+        "val": ""
+      },
+      {
+        "id": "ea1",
+        "type": "embeddedapp",
+        "val": ""
+      },
+      {
+        "id": "grpMdiTabUtils",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "btnTabClose",
+        "type": "button",
+        "val": "탭 아이템 전체 닫기"
+      },
+      {
+        "id": "btnTabClose2",
+        "type": "button",
+        "val": "활성 및 고정 탭 아이템 이외 전체 닫기"
+      },
+      {
+        "id": "btnShowTabList",
+        "type": "button",
+        "val": "6"
+      },
+      {
+        "id": "btnExpandContent",
+        "type": "button",
+        "val": "⇱"
+      },
+      {
+        "id": "btnMdiHdPause",
+        "type": "button",
+        "val": "⇵"
+      },
+      {
+        "id": "",
+        "type": "embeddedapp",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "embeddedapp",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "embeddedapp",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "embeddedapp",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "embeddedapp",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "embeddedapp",
+        "val": ""
+      },
+      {
+        "id": "cbxLnbTg",
+        "type": "checkbox",
+        "val": ""
+      },
+      {
+        "id": "btnToggle",
+        "type": "button",
+        "val": "메뉴 접기"
+      },
+      {
+        "id": "grpMessageMain098",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "결석신고서관리  화면 선택"
+      }
+    ],
+    "datasets": [
+      {
+        "cols": [
+          "MENU_ID",
+          "MENU_NM",
+          "UP_MENU_ID",
+          "TOP_MENU_ID",
+          "CALL_PAGE",
+          "PGM_ID",
+          "ICON",
+          "MENU_KEY",
+          "MOBILE_YN",
+          "DESC",
+          "CLASS",
+          "MENU_DESC",
+          "MENU_LOWERCASE",
+          "DESC_LOWERCASE",
+          "CALL_PAGE_POP",
+          "AUTH_PGM",
+          "SHOW_YN",
+          "ayr",
+          "dataAuthScCd",
+          "inqAccesAuthYn",
+          "menuId",
+          "menuLvl",
+          "menuNm",
+          "menuNmDepth",
+          "menuSeqNo",
+          "menuUseYn",
+          "menuYn",
+          "mngAccesAuthYn",
+          "pgeClfId",
+          "pgeId",
+          "pgePathNm",
+          "qrCdUseYn",
+          "shlDptCd",
+          "shlDptWrkCd",
+          "sort",
+          "swMenuYn",
+          "unitWrkCd",
+          "upMenuId",
+          "wrkRelmCd",
+          "prmtrScValue",
+          "vMenuId",
+          "vUpMenuId",
+          "V_MENU_ID",
+          "V_UP_MENU_ID",
+          "rptdYn",
+          "invlInfoInclsYn",
+          "dataAuthAplcnYn"
+        ],
+        "id": "dsAllMenu",
+        "rowCount": 322
+      },
+      {
+        "cols": [
+          "ayr",
+          "dataAuthScCd",
+          "inqAccesAuthYn",
+          "menuId",
+          "menuLvl",
+          "menuNm",
+          "menuNmDepth",
+          "menuSeqNo",
+          "menuUseYn",
+          "menuYn",
+          "mngAccesAuthYn",
+          "pgeClfId",
+          "pgeId",
+          "pgePathNm",
+          "qrCdUseYn",
+          "shlDptCd",
+          "shlDptWrkCd",
+          "sort",
+          "swMenuYn",
+          "unitWrkCd",
+          "upMenuId",
+          "wrkRelmCd",
+          "MENU_NM",
+          "UP_MENU_ID",
+          "TOP_MENU_ID",
+          "CALL_PAGE",
+          "PGM_ID",
+          "ICON",
+          "MENU_KEY",
+          "MOBILE_YN",
+          "DESC",
+          "CLASS",
+          "MENU_DESC",
+          "MENU_LOWERCASE",
+          "DESC_LOWERCASE",
+          "CALL_PAGE_POP",
+          "SHOW_YN",
+          "MENU_ID",
+          "prmtrScValue",
+          "vMenuId",
+          "vUpMenuId",
+          "V_MENU_ID",
+          "V_UP_MENU_ID",
+          "rptdYn",
+          "invlInfoInclsYn",
+          "dataAuthAplcnYn"
+        ],
+        "id": "dvAllMenuNew",
+        "rowCount": 322
+      },
+      {
+        "cols": [
+          "ayr",
+          "dataAuthScCd",
+          "inqAccesAuthYn",
+          "menuId",
+          "menuLvl",
+          "menuNm",
+          "menuNmDepth",
+          "menuSeqNo",
+          "menuUseYn",
+          "menuYn",
+          "mngAccesAuthYn",
+          "pgeClfId",
+          "pgeId",
+          "pgePathNm",
+          "qrCdUseYn",
+          "shlDptCd",
+          "shlDptWrkCd",
+          "sort",
+          "swMenuYn",
+          "unitWrkCd",
+          "upMenuId",
+          "wrkRelmCd",
+          "MENU_NM",
+          "UP_MENU_ID",
+          "TOP_MENU_ID",
+          "CALL_PAGE",
+          "PGM_ID",
+          "ICON",
+          "MENU_KEY",
+          "MOBILE_YN",
+          "DESC",
+          "CLASS",
+          "MENU_DESC",
+          "MENU_LOWERCASE",
+          "DESC_LOWERCASE",
+          "CALL_PAGE_POP",
+          "SHOW_YN",
+          "MENU_ID",
+          "prmtrScValue",
+          "vMenuId",
+          "vUpMenuId",
+          "V_MENU_ID",
+          "V_UP_MENU_ID",
+          "rptdYn",
+          "invlInfoInclsYn",
+          "dataAuthAplcnYn"
+        ],
+        "id": "dsAllMenuNew",
+        "rowCount": 323
+      },
+      {
+        "cols": [
+          "ayr",
+          "dataAuthScCd",
+          "inqAccesAuthYn",
+          "menuId",
+          "menuLvl",
+          "menuNm",
+          "menuNmDepth",
+          "menuSeqNo",
+          "menuUseYn",
+          "menuYn",
+          "mngAccesAuthYn",
+          "pgeClfId",
+          "pgeId",
+          "pgePathNm",
+          "qrCdUseYn",
+          "shlDptCd",
+          "shlDptWrkCd",
+          "sort",
+          "swMenuYn",
+          "unitWrkCd",
+          "upMenuId",
+          "wrkRelmCd",
+          "MENU_NM",
+          "UP_MENU_ID",
+          "TOP_MENU_ID",
+          "CALL_PAGE",
+          "PGM_ID",
+          "ICON",
+          "MENU_KEY",
+          "MOBILE_YN",
+          "DESC",
+          "CLASS",
+          "MENU_DESC",
+          "MENU_LOWERCASE",
+          "DESC_LOWERCASE",
+          "CALL_PAGE_POP",
+          "SHOW_YN",
+          "MENU_ID",
+          "prmtrScValue",
+          "vMenuId",
+          "vUpMenuId",
+          "V_MENU_ID",
+          "V_UP_MENU_ID",
+          "rptdYn",
+          "invlInfoInclsYn",
+          "dataAuthAplcnYn"
+        ],
+        "id": "dvAllMenuNew2",
+        "rowCount": 0
+      },
+      {
+        "cols": [
+          "ayr",
+          "dataAuthScCd",
+          "inqAccesAuthYn",
+          "menuId",
+          "menuLvl",
+          "menuNm",
+          "menuNmDepth",
+          "menuSeqNo",
+          "menuUseYn",
+          "menuYn",
+          "mngAccesAuthYn",
+          "pgeClfId",
+          "pgeId",
+          "pgePathNm",
+          "qrCdUseYn",
+          "shlDptCd",
+          "shlDptWrkCd",
+          "sort",
+          "swMenuYn",
+          "unitWrkCd",
+          "upMenuId",
+          "wrkRelmCd",
+          "MENU_NM",
+          "UP_MENU_ID",
+          "TOP_MENU_ID",
+          "CALL_PAGE",
+          "PGM_ID",
+          "ICON",
+          "MENU_KEY",
+          "MOBILE_YN",
+          "DESC",
+          "CLASS",
+          "MENU_DESC",
+          "MENU_LOWERCASE",
+          "DESC_LOWERCASE",
+          "CALL_PAGE_POP",
+          "SHOW_YN",
+          "MENU_ID",
+          "prmtrScValue",
+          "vMenuId",
+          "vUpMenuId",
+          "V_MENU_ID",
+          "V_UP_MENU_ID",
+          "rptdYn",
+          "invlInfoInclsYn",
+          "dataAuthAplcnYn"
+        ],
+        "id": "dsAllMenuNew2",
+        "rowCount": 0
+      },
+      {
+        "cols": [
+          "MENU_ID",
+          "MENU_NM",
+          "UP_MENU_ID",
+          "TOP_MENU_ID",
+          "CALL_PAGE",
+          "PGM_ID",
+          "ICON",
+          "MENU_KEY",
+          "MOBILE_YN",
+          "DESC",
+          "CLASS",
+          "MENU_DESC",
+          "MENU_LOWERCASE",
+          "DESC_LOWERCASE",
+          "CALL_PAGE_POP",
+          "AUTH_PGM",
+          "SHOW_YN",
+          "dataAuthScCd",
+          "inqAccesAuthYn",
+          "mngAccesAuthYn",
+          "prmtrScValue",
+          "menuLvl",
+          "menuYn",
+          "vMenuId",
+          "vUpMenuId",
+          "V_MENU_ID",
+          "V_UP_MENU_ID",
+          "rptdYn",
+          "invlInfoInclsYn",
+          "dataAuthAplcnYn"
+        ],
+        "id": "dsAllMenuLocal",
+        "rowCount": 30
+      },
+      {
+        "cols": [
+          "orgNm",
+          "orgCd",
+          "orgScCd",
+          "shlCrseScCd",
+          "myOrgNm",
+          "myOrgCd",
+          "myScaSysScCd",
+          "myWrkSort"
+        ],
+        "id": "dsMyWrk",
+        "rowCount": 1
+      },
+      {
+        "cols": [
+          "menuNm",
+          "menuId",
+          "pgeId",
+          "callPage",
+          "apvlCnt"
+        ],
+        "id": "dsApproval",
+        "rowCount": 7
+      },
+      {
+        "cols": [
+          "MENU_ID",
+          "MENU_NM",
+          "UP_MENU_ID",
+          "TOP_MENU_ID",
+          "CALL_PAGE",
+          "PGM_ID",
+          "menuId",
+          "menuNm",
+          "menuNmDepth",
+          "menuLvl",
+          "menuSeqNo",
+          "upMenuId",
+          "wrkRelmCd",
+          "unitWrkCd",
+          "pgeId",
+          "pgeClfId",
+          "pgePathNm",
+          "sort",
+          "rptdYn"
+        ],
+        "id": "dsBaseMenu",
+        "rowCount": 72
+      },
+      {
+        "cols": [
+          "prgeTdNo",
+          "prgeTdNm",
+          "prgeTdIapYn",
+          "userDtcNo",
+          "orgCd",
+          "menuId",
+          "pgeId",
+          "pgePath",
+          "prmtrScValue",
+          "dmndYmd",
+          "userInfo",
+          "idntyYn"
+        ],
+        "id": "dsTodo",
+        "rowCount": 0
+      },
+      {
+        "cols": [
+          "menuId",
+          "menuNm",
+          "upMenuId",
+          "pgeId",
+          "pgeNm",
+          "pgePathNm"
+        ],
+        "id": "dsFavorites",
+        "rowCount": 2
+      },
+      {
+        "cols": [
+          "MENU_NM",
+          "MENU_ID",
+          "UP_MENU_ID",
+          "MENU_CALSS",
+          "CMPL_CNT",
+          "iapSc",
+          "iapCnt"
+        ],
+        "id": "dsComplaint",
+        "rowCount": 5
+      },
+      {
+        "cols": [
+          "dlivCd",
+          "dlivSn",
+          "dlivTitl",
+          "dlivCn",
+          "dlivPopYn",
+          "dlivFile"
+        ],
+        "id": "dsNotice",
+        "rowCount": 0
+      },
+      {
+        "cols": [
+          "pgeId",
+          "wrkRelmCd",
+          "unitWrkCd",
+          "detaWrkCd"
+        ],
+        "id": "ds2ndCertify",
+        "rowCount": 3
+      },
+      {
+        "cols": [
+          "menuNm",
+          "menuId",
+          "callPage",
+          "upMenuId"
+        ],
+        "id": "dsPersonal",
+        "rowCount": 9
+      },
+      {
+        "cols": [
+          "urlAddr",
+          "styleClass",
+          "GoName",
+          "urlAddrAre",
+          "etc1"
+        ],
+        "id": "dsMainLogo",
+        "rowCount": 19
+      },
+      {
+        "cols": [
+          "shlYear",
+          "shlYearNm"
+        ],
+        "id": "dsShlYear",
+        "rowCount": 2
+      },
+      {
+        "cols": [
+          "cvlcptOfcrkNm",
+          "userId",
+          "userNm"
+        ],
+        "id": "dsCVAAuthChg",
+        "rowCount": 0
+      },
+      {
+        "cols": [
+          "userId",
+          "userNm",
+          "connectNo",
+          "userDtcNo",
+          "invlNo",
+          "orgdpOrgCd",
+          "corpCd",
+          "corpNm",
+          "ogdpOrgNm",
+          "Ayr",
+          "frtunAuthCd",
+          "instCd",
+          "instNm",
+          "cntnCtpvScCd",
+          "cntnCddcCd",
+          "orgScCd",
+          "orgCd",
+          "orgNm",
+          "instClfCd",
+          "cddcCd",
+          "cddcNm",
+          "cteOrgCd",
+          "cteOrgNm",
+          "cteOrgInstClfCd",
+          "ogdpInstCd",
+          "mwmnEngngScCd",
+          "hsGnrlBusnsScCode",
+          "HshScCd",
+          "shlKndScCd",
+          "shlFndnScCd",
+          "shlCrseScCd",
+          "subSysCd",
+          "userScCd",
+          "usePslYn",
+          "useBgngYmd",
+          "useEndYmd",
+          "initInstClfCd",
+          "initInstCd",
+          "initInstNm",
+          "coaAyr",
+          "rcritScCd",
+          "rcritNm",
+          "rcritScAcctoBeginYmd",
+          "rcritAcctoEndYmd",
+          "itrtAyr",
+          "userRrno",
+          "ayr",
+          "hshGenBusnsScCd",
+          "hshScCd",
+          "unitWrkCd",
+          "initCteOrgInstClfCd",
+          "initCteOrgCd",
+          "initCteOrgNm",
+          "initShlFndnScCd",
+          "initShlKndScCd",
+          "initShlCrseScCd",
+          "pgeId",
+          "spyPurHshOrdCd",
+          "scaSem",
+          "shlKndgrScCd",
+          "cntnCddcOrgCd",
+          "aprvReqrDtcNo",
+          "userIpAddr",
+          "scaSysScCd",
+          "jbpsCd",
+          "cmPrepValue00",
+          "cmPrepValue01",
+          "unyApprYn"
+        ],
+        "id": "dmUserInfo",
+        "rowCount": null
+      },
+      {
+        "cols": [
+          "mdiWindowMaxCount",
+          "defaultLocale",
+          "useSearchBoxClear",
+          "userViewPartPopOut",
+          "default_theme",
+          "divideMdiUseYn",
+          "useLayerdPop"
+        ],
+        "id": "dmGlobalConfig",
+        "rowCount": null
+      },
+      {
+        "cols": [
+          "strMenuParamVal"
+        ],
+        "id": "dmMenuParam",
+        "rowCount": null
+      },
+      {
+        "cols": [
+          "findTxt"
+        ],
+        "id": "dmMenuFind",
+        "rowCount": null
+      },
+      {
+        "cols": [
+          "prgeTdNo",
+          "userDtcNo",
+          "orgCd",
+          "idntyYn"
+        ],
+        "id": "dmTodo",
+        "rowCount": null
+      },
+      {
+        "cols": [
+          "menuId",
+          "gubun",
+          "stat"
+        ],
+        "id": "dmFavorites",
+        "rowCount": null
+      },
+      {
+        "cols": [
+          "tutorial",
+          "complaint",
+          "logSesnTime",
+          "cerSesnTime",
+          "userColor",
+          "userFontSize",
+          "duplcLoginYn",
+          "duplcLoginMin",
+          "assignYn",
+          "sknThmNm"
+        ],
+        "id": "dmUserInfoSub",
+        "rowCount": null
+      },
+      {
+        "cols": [],
+        "id": "dmLinkUrl",
+        "rowCount": null
+      },
+      {
+        "cols": [
+          "reOrgNm",
+          "reOrgCd",
+          "reOrgScCd",
+          "reShlCrseScCd",
+          "reScaSysScCd"
+        ],
+        "id": "dmReLogin",
+        "rowCount": null
+      },
+      {
+        "cols": [
+          "shlYear"
+        ],
+        "id": "dmShlYear",
+        "rowCount": null
+      },
+      {
+        "cols": [
+          "menuId",
+          "MENU_ID",
+          "pgeId",
+          "pgePathNm",
+          "ayr",
+          "shlDptCd",
+          "shlDptWrkCd",
+          "rptdYn",
+          "dataAuthScCd",
+          "orgCd",
+          "orgScCd",
+          "dataAuthAplcnYn",
+          "V_MENU_ID"
+        ],
+        "id": "AUTHDATA",
+        "rowCount": null
+      },
+      {
+        "cols": [
+          "ogdpInstCd",
+          "cvlcptInstClfCd"
+        ],
+        "id": "dmCVASearch",
+        "rowCount": null
+      },
+      {
+        "cols": [
+          "userColor",
+          "userFontSize",
+          "userGridWheelRowCount",
+          "userContrastGrid",
+          "userPullBtn",
+          "userPullAlign",
+          "userAsideClosedInit",
+          "userUtilBtnMin",
+          "userInfoCardCloseInit",
+          "userPageZoom",
+          "userExpendFullScreen",
+          "userMinMenuPath",
+          "userPageZoomRatio",
+          "userExpandOnOpenPage",
+          "userHideMdiHeader"
+        ],
+        "id": "dmUserConfInfo",
+        "rowCount": null
+      },
+      {
+        "cols": [
+          "lnkNm"
+        ],
+        "id": "dmCtpvNeisLnkNm",
+        "rowCount": null
+      },
+      {
+        "cols": [],
+        "id": "subOnLoad",
+        "rowCount": null
+      },
+      {
+        "cols": [],
+        "id": "subLogout",
+        "rowCount": null
+      },
+      {
+        "cols": [],
+        "id": "subOnLoad_json",
+        "rowCount": null
+      },
+      {
+        "cols": [],
+        "id": "subMenuToFile",
+        "rowCount": null
+      },
+      {
+        "cols": [],
+        "id": "subMenu",
+        "rowCount": null
+      },
+      {
+        "cols": [],
+        "id": "subReLogin",
+        "rowCount": null
+      },
+      {
+        "cols": [],
+        "id": "subMyInfo",
+        "rowCount": null
+      },
+      {
+        "cols": [],
+        "id": "subApproval",
+        "rowCount": null
+      },
+      {
+        "cols": [],
+        "id": "subBaseMenu",
+        "rowCount": null
+      },
+      {
+        "cols": [],
+        "id": "subTodo",
+        "rowCount": null
+      },
+      {
+        "cols": [],
+        "id": "subTodoUpt",
+        "rowCount": null
+      },
+      {
+        "cols": [],
+        "id": "subFavorites",
+        "rowCount": null
+      },
+      {
+        "cols": [],
+        "id": "subFavoritesDel",
+        "rowCount": null
+      },
+      {
+        "cols": [],
+        "id": "subComplaint",
+        "rowCount": null
+      },
+      {
+        "cols": [],
+        "id": "sub2ndCertify",
+        "rowCount": null
+      },
+      {
+        "cols": [],
+        "id": "subNotice",
+        "rowCount": null
+      },
+      {
+        "cols": [],
+        "id": "subUserSession",
+        "rowCount": null
+      },
+      {
+        "cols": [],
+        "id": "subShlYear",
+        "rowCount": null
+      },
+      {
+        "cols": [],
+        "id": "subAuth",
+        "rowCount": null
+      }
+    ],
+    "idx": 0,
+    "title": ""
+  },
+  {
+    "appId": "app/com/main/Dashboard3",
+    "controls": [
+      {
+        "id": "grpMainTit",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "월간일정"
+      },
+      {
+        "id": "comment",
+        "type": "output",
+        "val": "※ 전체 유치원 일정으로, 학급구분별 세부사항은 학사일정관리에서 확인하시기 바랍니다."
+      },
+      {
+        "id": "grdMainDash3",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "grp29",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "grp8",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "btn3",
+        "type": "button",
+        "val": "지난달"
+      },
+      {
+        "id": "outNowYYYYmm",
+        "type": "output",
+        "val": "202607"
+      },
+      {
+        "id": "btn2",
+        "type": "button",
+        "val": "다음달"
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "- 학사일정"
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "· 기타일정"
+      },
+      {
+        "id": "udccal011",
+        "type": "udc.com.udcCal02",
+        "val": ""
+      },
+      {
+        "id": "grp1",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "grp2",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "grp3",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "dlivTitle",
+        "type": "output",
+        "val": "학교일지/전달사항"
+      },
+      {
+        "id": "grp4",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "grp5",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "ipb1",
+        "type": "inputbox",
+        "val": "제목"
+      },
+      {
+        "id": "btnSearch",
+        "type": "button",
+        "val": "조회"
+      },
+      {
+        "id": "cmbYear",
+        "type": "combobox",
+        "val": "2026"
+      },
+      {
+        "id": "grdDelivery",
+        "type": "grid",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "0행 제목  "
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "0행 마지막 열 날짜  "
+      },
+      {
+        "id": "grp6",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "grp7",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "업무요청내역"
+      },
+      {
+        "id": "grdOrder",
+        "type": "grid",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "0행 요청내용  "
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "0행 마지막 열 날짜  "
+      }
+    ],
+    "datasets": [
+      {
+        "cols": [
+          "dateDay",
+          "display",
+          "colIndex",
+          "rowIndex",
+          "weekDayNo",
+          "weekDayNm",
+          "holydayYn",
+          "weekEndDivCd",
+          "inMonthYn",
+          "holyNm"
+        ],
+        "id": "dsBaseDate",
+        "rowCount": 0
+      },
+      {
+        "cols": [
+          "holyDate",
+          "holyNm",
+          "holyDivCd"
+        ],
+        "id": "dsHolyday",
+        "rowCount": 0
+      },
+      {
+        "cols": [
+          "itemDate",
+          "itemNm",
+          "itemDivCd",
+          "itemBgClass",
+          "itemCd",
+          "eventDtl",
+          "nathoYn"
+        ],
+        "id": "dsItem",
+        "rowCount": 86
+      },
+      {
+        "cols": [
+          "dlivKind",
+          "dlivCd",
+          "dlivSn",
+          "dlivTitl",
+          "dlivCn",
+          "dlivDate",
+          "dlivFile"
+        ],
+        "id": "dsDelivery",
+        "rowCount": 62
+      },
+      {
+        "cols": [
+          "mvmnSc",
+          "mvmnMsg",
+          "mdfcnDt"
+        ],
+        "id": "dsOrder",
+        "rowCount": 0
+      },
+      {
+        "cols": [
+          "itemDate",
+          "itemNm",
+          "itemDivCd",
+          "itemBgClass",
+          "itemCd",
+          "eventDtl",
+          "nathoYn"
+        ],
+        "id": "dsItemPopup",
+        "rowCount": 0
+      },
+      {
+        "cols": [
+          "strDate"
+        ],
+        "id": "dmBase",
+        "rowCount": null
+      },
+      {
+        "cols": [
+          "title",
+          "year"
+        ],
+        "id": "dmSearch",
+        "rowCount": null
+      },
+      {
+        "cols": [],
+        "id": "subMain",
+        "rowCount": null
+      },
+      {
+        "cols": [],
+        "id": "subDelivery",
+        "rowCount": null
+      },
+      {
+        "cols": [],
+        "id": "subSchedule",
+        "rowCount": null
+      }
+    ],
+    "idx": 1,
+    "title": ""
+  },
+  {
+    "appId": "udc/com/udcCal02",
+    "controls": [
+      {
+        "id": "grpHeader",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "btnRv",
+        "type": "button",
+        "val": "<"
+      },
+      {
+        "id": "outNowDateMonth",
+        "type": "output",
+        "val": "202607"
+      },
+      {
+        "id": "btnNv",
+        "type": "button",
+        "val": ">"
+      },
+      {
+        "id": "grpCalBody",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "grp203",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "28 "
+      },
+      {
+        "id": "grp205",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "29 월 "
+      },
+      {
+        "id": "grp201",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "30 화 "
+      },
+      {
+        "id": "grp204",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "1 수 "
+      },
+      {
+        "id": "grp207",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "2 목 "
+      },
+      {
+        "id": "grp209",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "3 금 "
+      },
+      {
+        "id": "grp211",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "4 토 "
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "· 토요휴업일"
+      },
+      {
+        "id": "grp219",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "5 일 "
+      },
+      {
+        "id": "grp223",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "6 월 "
+      },
+      {
+        "id": "grp225",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "7 화 "
+      },
+      {
+        "id": "grp227",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "8 수 "
+      },
+      {
+        "id": "grp229",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "9 목 "
+      },
+      {
+        "id": "grp231",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "10 금 "
+      },
+      {
+        "id": "grp212",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "11 토 "
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "· 토요휴업일"
+      },
+      {
+        "id": "grp220",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "12 일 "
+      },
+      {
+        "id": "grp233",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "13 월 "
+      },
+      {
+        "id": "grp235",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "14 화 "
+      },
+      {
+        "id": "grp237",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "15 수 "
+      },
+      {
+        "id": "grp239",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "16 목 "
+      },
+      {
+        "id": "grp241",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "17 금 "
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "· 제헌절"
+      },
+      {
+        "id": "grp213",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "18 토 "
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "· 토요휴업일"
+      },
+      {
+        "id": "grp221",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "19 일 "
+      },
+      {
+        "id": "grp243",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "20 월 "
+      },
+      {
+        "id": "grp245",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "21 화 "
+      },
+      {
+        "id": "grp247",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "22 수 "
+      },
+      {
+        "id": "grp249",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "23 목 "
+      },
+      {
+        "id": "grp251",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "24 금 "
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "· 여름방학식"
+      },
+      {
+        "id": "grp214",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "25 토 "
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "· 토요휴업일"
+      },
+      {
+        "id": "grp222",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "26 일 "
+      },
+      {
+        "id": "grp253",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "27 월 "
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "· 여름방학"
+      },
+      {
+        "id": "grp255",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "28 화 "
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "· 여름방학"
+      },
+      {
+        "id": "grp257",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "29 수 "
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "· 여름방학"
+      },
+      {
+        "id": "grp259",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "30 목 "
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "· 여름방학"
+      },
+      {
+        "id": "grp260",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "31 금 "
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "· 여름방학"
+      },
+      {
+        "id": "grp215",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "1 토 "
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "· 토요휴업일"
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "· 여름방학"
+      },
+      {
+        "id": "grp264",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "  "
+      },
+      {
+        "id": "grp263",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "  "
+      },
+      {
+        "id": "grp262",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "  "
+      },
+      {
+        "id": "grp261",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "  "
+      },
+      {
+        "id": "grp218",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "  "
+      },
+      {
+        "id": "grp217",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "  "
+      },
+      {
+        "id": "grp216",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "  "
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "일요일"
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "월요일"
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "화요일"
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "수요일"
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "목요일"
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "금요일"
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "토요일"
+      },
+      {
+        "id": "btn3",
+        "type": "button",
+        "val": "Button"
+      },
+      {
+        "id": "dti1",
+        "type": "dateinput",
+        "val": "202607"
+      }
+    ],
+    "datasets": [
+      {
+        "cols": [
+          "dateDay",
+          "display",
+          "colIndex",
+          "rowIndex",
+          "weekDayNo",
+          "weekDayNm",
+          "holydayYn",
+          "weekEndDivCd",
+          "inMonthYn",
+          "holyNm"
+        ],
+        "id": "dsBaseDate",
+        "rowCount": 35
+      },
+      {
+        "cols": [
+          "itemDate",
+          "itemNm",
+          "itemDivCd",
+          "itemBgClass",
+          "itemCd"
+        ],
+        "id": "dsItem",
+        "rowCount": 0
+      },
+      {
+        "cols": [
+          "holyDate",
+          "holyNm",
+          "holyDivCd"
+        ],
+        "id": "dsHolyday",
+        "rowCount": 1
+      },
+      {
+        "cols": [
+          "date",
+          "strDate"
+        ],
+        "id": "dmBase",
+        "rowCount": null
+      }
+    ],
+    "idx": 2,
+    "title": ""
+  },
+  {
+    "appId": "edu/sa/eds/eaa/ae/eds_eaaae01_m01",
+    "controls": [
+      {
+        "id": "",
+        "type": "udc.com.appHeader",
+        "val": ""
+      },
+      {
+        "id": "grp1",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "grp2",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "udc.com.comTitle",
+        "val": ""
+      },
+      {
+        "id": "grp3",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "grp4",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "btnInsert",
+        "type": "button",
+        "val": "등록"
+      },
+      {
+        "id": "btnUpdateCancel3",
+        "type": "button",
+        "val": "승인요청"
+      },
+      {
+        "id": "grdMain",
+        "type": "grid",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "0행 번호 "
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "0행 성명  link"
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "기준관리\n미적용"
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "0행 신청일수 "
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "0행 누적일수 "
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "0행 잔여일수 "
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "0행 참고사항 "
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "0행 마지막 열 보고서 제출여부 "
+      },
+      {
+        "id": "grpSearch",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "grp5",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "grp6",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "학년도"
+      },
+      {
+        "id": "cmbAyr",
+        "type": "udc.sw.swc.udcSwcAuth",
+        "val": "학년도"
+      },
+      {
+        "id": "grp8",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "학년"
+      },
+      {
+        "id": "cmbOrgGrd",
+        "type": "udc.sw.swc.udcSwcAuth",
+        "val": "학년"
+      },
+      {
+        "id": "grp9",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "반"
+      },
+      {
+        "id": "cmbClsCd",
+        "type": "udc.sw.swc.udcSwcAuth",
+        "val": "반"
+      },
+      {
+        "id": "grp10",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "번호"
+      },
+      {
+        "id": "ipbClsNo",
+        "type": "inputbox",
+        "val": "번호"
+      },
+      {
+        "id": "grp11",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "성명"
+      },
+      {
+        "id": "ipbStuFlnm",
+        "type": "inputbox",
+        "val": "학생명"
+      },
+      {
+        "id": "grp14",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "접수상태"
+      },
+      {
+        "id": "cmbStatus",
+        "type": "combobox",
+        "val": "전체"
+      },
+      {
+        "id": "grp15",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "결재상태"
+      },
+      {
+        "id": "cmbAtrzSts",
+        "type": "combobox",
+        "val": "전체"
+      },
+      {
+        "id": "grp12",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "grp13",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "btnSearch",
+        "type": "button",
+        "val": "조회"
+      },
+      {
+        "id": "grp16",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "grpSearchInfo",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "※ 교외체험학습 누적일수는 교외체험학습 기준관리 완결 시점 이후부터 제출된 신청서에 대해 적용됩니다."
+      }
+    ],
+    "datasets": [
+      {
+        "cols": [
+          "messageId",
+          "messageDiv"
+        ],
+        "id": "dsExMessage",
+        "rowCount": 4
+      },
+      {
+        "cols": [
+          "chk",
+          "shlCd",
+          "ayr",
+          "stuInvlNo",
+          "ousExperLrnAplyId",
+          "ousExperLrnRltId",
+          "shlKndScCd",
+          "shlCrseScCd",
+          "stuDtcNo",
+          "schpaDtcNo",
+          "dghtCrseScCd",
+          "dghtCrseScCdNm",
+          "ordScCd",
+          "ordScCdNm",
+          "grd",
+          "dddepCd",
+          "dddepCdNm",
+          "clsCd",
+          "clsNm",
+          "clsNo",
+          "stuFlnm",
+          "eduActPrcsStsCd",
+          "eduActPrcsStsNm",
+          "experLrnScCd",
+          "experLrnScNm",
+          "tgidNm",
+          "tgidRelNm",
+          "tgidTelno",
+          "ptorNm",
+          "stuPtorRelCd",
+          "stuPtorRelNm",
+          "ptorTelno",
+          "experLrnBgngDt",
+          "experLrnEndDt",
+          "experLrnPeriod",
+          "experLrnPlaceNm",
+          "experLrnCn",
+          "etcCn",
+          "ptorSignCn",
+          "fileRefrnId",
+          "atrzStsCd",
+          "atrzStsNm",
+          "artzSn",
+          "rgtrId",
+          "regDt",
+          "regDt2",
+          "mdfrId",
+          "mdfcnDt",
+          "is_transported",
+          "permDdCnt",
+          "ousExperLrnAplyDdCnt",
+          "referMteCn",
+          "ousExperLrnReqsScCd",
+          "ousExperLrnAplyTtlDdCnt",
+          "halfPermYn",
+          "ousExperLrnRltYn"
+        ],
+        "id": "dsStdntListForAply",
+        "rowCount": 4
+      },
+      {
+        "cols": [
+          "chk",
+          "shlCd",
+          "ayr",
+          "stuInvlNo",
+          "ousExperLrnAplyId",
+          "ousExperLrnRltId",
+          "shlKndScCd",
+          "shlCrseScCd",
+          "stuDtcNo",
+          "schpaDtcNo",
+          "dghtCrseScCd",
+          "dghtCrseScCdNm",
+          "ordScCd",
+          "ordScCdNm",
+          "grd",
+          "dddepCd",
+          "dddepCdNm",
+          "clsCd",
+          "clsNm",
+          "clsNo",
+          "stuFlnm",
+          "eduActPrcsStsCd",
+          "eduActPrcsStsNm",
+          "experLrnScCd",
+          "experLrnScNm",
+          "tgidNm",
+          "tgidRelNm",
+          "tgidTelno",
+          "ptorNm",
+          "stuPtorRelCd",
+          "stuPtorRelNm",
+          "ptorTelno",
+          "experLrnBgngDt",
+          "experLrnEndDt",
+          "experLrnPeriod",
+          "experLrnPlaceNm",
+          "experLrnCn",
+          "etcCn",
+          "ptorSignCn",
+          "fileRefrnId",
+          "atrzStsCd",
+          "atrzStsNm",
+          "artzSn",
+          "rgtrId",
+          "regDt",
+          "regDt2",
+          "mdfrId",
+          "mdfcnDt",
+          "is_transported"
+        ],
+        "id": "dsStdntListForAply2",
+        "rowCount": 2
+      },
+      {
+        "cols": [
+          "cd",
+          "nm",
+          "sorSeqSn",
+          "clsCd",
+          "clsCdNm"
+        ],
+        "id": "dsClsCd",
+        "rowCount": 1
+      },
+      {
+        "cols": [
+          "userId",
+          "userNm",
+          "connectNo",
+          "userDtcNo",
+          "userPrn",
+          "invlNo",
+          "OrgdpOrgCd",
+          "corpCd",
+          "corpNm",
+          "ogdpOrgNm",
+          "Ayr",
+          "frtunAuthCd",
+          "instCd",
+          "instNm",
+          "cntnCtpvScCd",
+          "cntnCddcCd",
+          "orgScCd",
+          "orgCd",
+          "orgNm",
+          "instClfCd",
+          "cddcCd",
+          "cddcNm",
+          "cteOrgCd",
+          "cteOrgNm",
+          "cteOrgInstClfCd",
+          "ogdpInstCd",
+          "mwmnEngngScCd",
+          "hsGnrlBusnsScCode",
+          "HshScCd",
+          "shlKndScCd",
+          "shlFndnScCd",
+          "shlCrseScCd",
+          "subSysCd",
+          "userScCd",
+          "usePslYn",
+          "useBgngYmd",
+          "useEndYmd",
+          "initInstClfCd",
+          "initInstCd",
+          "initInstNm",
+          "coaAyr",
+          "rcritScCd",
+          "rcritNm",
+          "rcritScAcctoBeginYmd",
+          "rcritAcctoEndYmd",
+          "itrtAyr"
+        ],
+        "id": "dmUserInfo",
+        "rowCount": null
+      },
+      {
+        "cols": [
+          "ayr",
+          "ordScCd",
+          "grd",
+          "dddepCd",
+          "ordGrdDddepCd",
+          "clsCd",
+          "stuInvlNo",
+          "actScCd",
+          "shlCd",
+          "atteYmd",
+          "enrScCd",
+          "shlKndScCd",
+          "stuFlnm",
+          "clsNm",
+          "clsNo",
+          "eduActPrcsStsCd",
+          "shlCrseScCd",
+          "dghtCrseScCd",
+          "atrzStsCd",
+          "ayrAuthType"
+        ],
+        "id": "dmSearch",
+        "rowCount": null
+      },
+      {
+        "cols": [],
+        "id": "subStdntList",
+        "rowCount": null
+      },
+      {
+        "cols": [],
+        "id": "subStsChg",
+        "rowCount": null
+      },
+      {
+        "cols": [],
+        "id": "subAssistSubmit",
+        "rowCount": null
+      },
+      {
+        "cols": [
+          "pgeId",
+          "clfCdValue",
+          "filterExpr",
+          "unyCdGrpId",
+          "bfrClfCdValue",
+          "userDfnCd1Value",
+          "userDfnCd2Value",
+          "userDfnCd3Value",
+          "userDfnCd4Value",
+          "userDfnCd5Value"
+        ],
+        "id": "dsAssistDatasetRequest",
+        "rowCount": 1
+      },
+      {
+        "cols": [
+          "pgeId",
+          "clfCdValue",
+          "clfCdValueNm",
+          "clfCdUseYn",
+          "unyCdValue",
+          "unyCdValueNm",
+          "userDfnCd1Value",
+          "userDfnCd2Value",
+          "userDfnCd3Value",
+          "userDfnCd4Value",
+          "userDfnCd5Value",
+          "upClfCdValue",
+          "upUnyCdValue",
+          "rownum",
+          "unyCdValueEngNm",
+          "unyCdValueAbrvNm",
+          "unyCdValueSn",
+          "unyCdEtcCn",
+          "unyCdUseYn",
+          "unyCdScCd",
+          "bfrUnyCdValue",
+          "bfrUnyCdValueNm"
+        ],
+        "id": "dsAssistCntrDatasetResponse",
+        "rowCount": 5
+      },
+      {
+        "cols": [
+          "pgeId",
+          "clfCdValue",
+          "clfCdValueNm",
+          "clfCdUseYn",
+          "unyCdValue",
+          "unyCdValueNm",
+          "userDfnCd1Value",
+          "userDfnCd2Value",
+          "userDfnCd3Value",
+          "userDfnCd4Value",
+          "userDfnCd5Value",
+          "upClfCdValue",
+          "upUnyCdValue",
+          "rownum",
+          "unyCdValueEngNm",
+          "unyCdValueAbrvNm",
+          "unyCdValueSn",
+          "unyCdEtcCn",
+          "unyCdUseYn",
+          "unyCdScCd",
+          "bfrUnyCdValue",
+          "bfrUnyCdValueNm"
+        ],
+        "id": "dvATRZ_STS_CDcmbAtrzSts",
+        "rowCount": 5
+      },
+      {
+        "cols": [
+          "cd",
+          "nm",
+          "ayrNm",
+          "ayr",
+          "ayrAuthType"
+        ],
+        "id": "dsSwcOrgAyr",
+        "rowCount": 5
+      },
+      {
+        "cols": [
+          "cd",
+          "nm",
+          "grd",
+          "grdNm"
+        ],
+        "id": "dsSwcOrgGrd",
+        "rowCount": 1
+      },
+      {
+        "cols": [
+          "cd",
+          "nm",
+          "sorSeqSn",
+          "grd",
+          "clsCd",
+          "clsCdNm"
+        ],
+        "id": "dsSwcOrgClsCd",
+        "rowCount": 1
+      },
+      {
+        "cols": [
+          "authType",
+          "shlCd",
+          "ayr",
+          "dghtIndctYn",
+          "ordIndctYn",
+          "dddepIndctYn",
+          "ordDddepIndctYn",
+          "dghtOrdDddepIndctYn"
+        ],
+        "id": "dmSwcIndctInfo",
+        "rowCount": null
+      },
+      {
+        "cols": [],
+        "id": "subSwcAuth",
+        "rowCount": null
+      }
+    ],
+    "idx": 3,
+    "title": ""
+  },
+  {
+    "appId": "udc/com/appHeader",
+    "controls": [
+      {
+        "id": "appHeader",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "optTit",
+        "type": "output",
+        "val": "교외체험학습신청서관리"
+      },
+      {
+        "id": "grpMenuPath",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "image",
+        "val": "집 모양 아이콘"
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "학급담임"
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "교육활동신청관리"
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "교외체험학습관리"
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "교외체험학습신청서관리"
+      },
+      {
+        "id": "btnAuthCss",
+        "type": "button",
+        "val": "A"
+      },
+      {
+        "id": "btnAuth",
+        "type": "button",
+        "val": "A"
+      },
+      {
+        "id": "grpButtons",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "btnHelp",
+        "type": "button",
+        "val": "도움말"
+      },
+      {
+        "id": "btnQnA",
+        "type": "button",
+        "val": "질의응답"
+      },
+      {
+        "id": "btnFAQ",
+        "type": "button",
+        "val": "FAQ"
+      },
+      {
+        "id": "btnTel",
+        "type": "button",
+        "val": "연락처"
+      },
+      {
+        "id": "btnOnlineCon",
+        "type": "button",
+        "val": "온라인컨텐츠"
+      },
+      {
+        "id": "btnFav",
+        "type": "button",
+        "val": "즐겨찾기"
+      },
+      {
+        "id": "btnFold",
+        "type": "button",
+        "val": "축소"
+      },
+      {
+        "id": "grpViewZm",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "btnPopZmIn",
+        "type": "button",
+        "val": "화면 확대"
+      },
+      {
+        "id": "btnPopZmOut",
+        "type": "button",
+        "val": "화면 축소"
+      },
+      {
+        "id": "buttonHideSearch",
+        "type": "button",
+        "val": "조회숨김"
+      }
+    ],
+    "datasets": [
+      {
+        "cols": [
+          "code",
+          "name",
+          "info"
+        ],
+        "id": "dsHelpdesk",
+        "rowCount": 19
+      },
+      {
+        "cols": [
+          "pgeId",
+          "hlpSn",
+          "hlpTitlNm",
+          "hlpCn",
+          "prcssGudnYn",
+          "useYn",
+          "regDt",
+          "hlpFileRefrnId"
+        ],
+        "id": "dsHlp",
+        "rowCount": 0
+      },
+      {
+        "cols": [
+          "authGrpId",
+          "redngUseYn",
+          "wgUseYn",
+          "userDtcNo",
+          "userId"
+        ],
+        "id": "dsSrs",
+        "rowCount": 0
+      },
+      {
+        "cols": [
+          "id",
+          "uuid",
+          "label",
+          "area",
+          "embid",
+          "visible",
+          "type"
+        ],
+        "id": "dsFoldArea",
+        "rowCount": 0
+      },
+      {
+        "cols": [
+          "menuId",
+          "menuNm",
+          "gubun",
+          "stat"
+        ],
+        "id": "dmFavorites",
+        "rowCount": null
+      },
+      {
+        "cols": [
+          "pgeId",
+          "pgeNm",
+          "prcsScCd"
+        ],
+        "id": "dmHlp",
+        "rowCount": null
+      },
+      {
+        "cols": [
+          "userId",
+          "userDtcNo",
+          "menuId"
+        ],
+        "id": "dmSrs",
+        "rowCount": null
+      },
+      {
+        "cols": [],
+        "id": "subFavorites",
+        "rowCount": null
+      },
+      {
+        "cols": [],
+        "id": "subHlp",
+        "rowCount": null
+      },
+      {
+        "cols": [],
+        "id": "subSrs",
+        "rowCount": null
+      }
+    ],
+    "idx": 4,
+    "title": ""
+  },
+  {
+    "appId": "udc/com/comTitle",
+    "controls": [
+      {
+        "id": "grp1",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "optTit",
+        "type": "output",
+        "val": ""
+      },
+      {
+        "id": "optRowCount",
+        "type": "output",
+        "val": "4"
+      },
+      {
+        "id": "btnTools",
+        "type": "button",
+        "val": ""
+      }
+    ],
+    "datasets": [],
+    "idx": 5,
+    "title": ""
+  },
+  {
+    "appId": "udc/sw/swc/udcSwcAuth",
+    "controls": [
+      {
+        "id": "grpCont",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "cmbUdcAuth",
+        "type": "combobox",
+        "val": "2026"
+      }
+    ],
+    "datasets": [
+      {
+        "cols": [
+          "cd",
+          "nm",
+          "ayrNm",
+          "ayr",
+          "ayrAuthType"
+        ],
+        "id": "dsAuth",
+        "rowCount": 5
+      }
+    ],
+    "idx": 6,
+    "title": ""
+  },
+  {
+    "appId": "udc/sw/swc/udcSwcAuth",
+    "controls": [
+      {
+        "id": "grpCont",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "cmbUdcAuth",
+        "type": "combobox",
+        "val": "3"
+      }
+    ],
+    "datasets": [
+      {
+        "cols": [
+          "cd",
+          "nm",
+          "grd",
+          "grdNm"
+        ],
+        "id": "dsAuth",
+        "rowCount": 1
+      }
+    ],
+    "idx": 7,
+    "title": ""
+  },
+  {
+    "appId": "udc/sw/swc/udcSwcAuth",
+    "controls": [
+      {
+        "id": "grpCont",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "cmbUdcAuth",
+        "type": "combobox",
+        "val": "00"
+      }
+    ],
+    "datasets": [
+      {
+        "cols": [
+          "cd",
+          "nm",
+          "sorSeqSn",
+          "grd",
+          "clsCd",
+          "clsCdNm"
+        ],
+        "id": "dsAuth",
+        "rowCount": 1
+      }
+    ],
+    "idx": 8,
+    "title": ""
+  },
+  {
+    "appId": "edu/sa/eds/eaa/ae/eds_eaaae02_m01",
+    "controls": [
+      {
+        "id": "",
+        "type": "udc.com.appHeader",
+        "val": ""
+      },
+      {
+        "id": "grp1",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "grp2",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "udc.com.comTitle",
+        "val": ""
+      },
+      {
+        "id": "grp3",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "grp4",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "btnUpdateCancel3",
+        "type": "button",
+        "val": "승인요청"
+      },
+      {
+        "id": "grdMain",
+        "type": "grid",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "0행 진행상태  "
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "0행 신청일자  "
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "0행 학년  "
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "0행 반  "
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "0행 번호  "
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "0행 성명   link"
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "기준관리\n미적용"
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "0행 신청일수  "
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "0행 누적일수  "
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "0행 잔여일수  "
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "0행 마지막 열 참고사항  "
+      },
+      {
+        "id": "grpSearch",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "grp5",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "grp6",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "학년도"
+      },
+      {
+        "id": "cmbAyr",
+        "type": "udc.sw.swc.udcSwcAuth",
+        "val": "학년도"
+      },
+      {
+        "id": "grp8",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "학년"
+      },
+      {
+        "id": "cmbOrgGrd",
+        "type": "udc.sw.swc.udcSwcAuth",
+        "val": "학년"
+      },
+      {
+        "id": "grp9",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "반"
+      },
+      {
+        "id": "cmbClsCd",
+        "type": "udc.sw.swc.udcSwcAuth",
+        "val": "반"
+      },
+      {
+        "id": "grp10",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "번호"
+      },
+      {
+        "id": "ipbClsNo",
+        "type": "inputbox",
+        "val": "번호"
+      },
+      {
+        "id": "grp11",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "성명"
+      },
+      {
+        "id": "ipbStuFlnm",
+        "type": "inputbox",
+        "val": "학생명"
+      },
+      {
+        "id": "grp14",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "접수상태"
+      },
+      {
+        "id": "cmbStatus",
+        "type": "combobox",
+        "val": "전체"
+      },
+      {
+        "id": "grp15",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "결재상태"
+      },
+      {
+        "id": "cmbAtrzSts",
+        "type": "combobox",
+        "val": "전체"
+      },
+      {
+        "id": "grp12",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "grp13",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "btnSearch",
+        "type": "button",
+        "val": "조회"
+      },
+      {
+        "id": "grp16",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "grp17",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "※ 교외체험학습 누적일수는 교외체험학습 기준관리 완결 시점 이후부터 제출된 신청서에 대해 적용됩니다."
+      }
+    ],
+    "datasets": [
+      {
+        "cols": [
+          "messageId",
+          "messageDiv"
+        ],
+        "id": "dsExMessage",
+        "rowCount": 4
+      },
+      {
+        "cols": [
+          "chk",
+          "shlCd",
+          "ayr",
+          "stuInvlNo",
+          "ousExperLrnAplyId",
+          "ousExperLrnRltId",
+          "shlKndScCd",
+          "shlCrseScCd",
+          "stuDtcNo",
+          "schpaDtcNo",
+          "dghtCrseScCd",
+          "dghtCrseScCdNm",
+          "ordScCd",
+          "ordScCdNm",
+          "grd",
+          "dddepCd",
+          "dddepCdNm",
+          "clsCd",
+          "clsNm",
+          "clsNo",
+          "stuFlnm",
+          "eduActPrcsStsCd",
+          "eduActPrcsStsNm",
+          "experLrnScCd",
+          "experLrnScNm",
+          "tgidNm",
+          "tgidRelNm",
+          "tgidTelno",
+          "ptorNm",
+          "stuPtorRelCd",
+          "stuPtorRelNm",
+          "ptorTelno",
+          "experLrnBgngDt",
+          "experLrnEndDt",
+          "experLrnPeriod",
+          "experLrnPlaceNm",
+          "experLrnCn",
+          "etcCn",
+          "ptorSignCn",
+          "fileRefrnId",
+          "atrzStsCd",
+          "atrzStsNm",
+          "artzSn",
+          "rgtrId",
+          "regDt",
+          "regDt2",
+          "mdfrId",
+          "mdfcnDt",
+          "is_transported",
+          "permDdCnt",
+          "ousExperLrnAplyDdCnt",
+          "referMteCn",
+          "ousExperLrnReqsScCd",
+          "ousExperLrnAplyTtlDdCnt",
+          "halfPermYn"
+        ],
+        "id": "dsStdntListForRlt",
+        "rowCount": 2
+      },
+      {
+        "cols": [
+          "chk",
+          "shlCd",
+          "ayr",
+          "stuInvlNo",
+          "ousExperLrnAplyId",
+          "ousExperLrnRltId",
+          "shlKndScCd",
+          "shlCrseScCd",
+          "stuDtcNo",
+          "schpaDtcNo",
+          "dghtCrseScCd",
+          "dghtCrseScCdNm",
+          "ordScCd",
+          "ordScCdNm",
+          "grd",
+          "dddepCd",
+          "dddepCdNm",
+          "clsCd",
+          "clsNm",
+          "clsNo",
+          "stuFlnm",
+          "eduActPrcsStsCd",
+          "eduActPrcsStsNm",
+          "experLrnScCd",
+          "experLrnScNm",
+          "tgidNm",
+          "tgidRelNm",
+          "tgidTelno",
+          "ptorNm",
+          "stuPtorRelCd",
+          "stuPtorRelNm",
+          "ptorTelno",
+          "experLrnBgngDt",
+          "experLrnEndDt",
+          "experLrnPeriod",
+          "experLrnPlaceNm",
+          "experLrnCn",
+          "etcCn",
+          "ptorSignCn",
+          "fileRefrnId",
+          "atrzStsCd",
+          "atrzStsNm",
+          "artzSn",
+          "rgtrId",
+          "regDt",
+          "regDt2",
+          "mdfrId",
+          "mdfcnDt",
+          "is_transported"
+        ],
+        "id": "dsStdntListForRlt2",
+        "rowCount": 0
+      },
+      {
+        "cols": [
+          "cd",
+          "nm",
+          "sorSeqSn",
+          "clsCd",
+          "clsCdNm"
+        ],
+        "id": "dsClsCd",
+        "rowCount": 1
+      },
+      {
+        "cols": [
+          "userId",
+          "userNm",
+          "connectNo",
+          "userDtcNo",
+          "userPrn",
+          "invlNo",
+          "OrgdpOrgCd",
+          "corpCd",
+          "corpNm",
+          "ogdpOrgNm",
+          "Ayr",
+          "frtunAuthCd",
+          "instCd",
+          "instNm",
+          "cntnCtpvScCd",
+          "cntnCddcCd",
+          "orgScCd",
+          "orgCd",
+          "orgNm",
+          "instClfCd",
+          "cddcCd",
+          "cddcNm",
+          "cteOrgCd",
+          "cteOrgNm",
+          "cteOrgInstClfCd",
+          "ogdpInstCd",
+          "mwmnEngngScCd",
+          "hsGnrlBusnsScCode",
+          "HshScCd",
+          "shlKndScCd",
+          "shlFndnScCd",
+          "shlCrseScCd",
+          "subSysCd",
+          "userScCd",
+          "usePslYn",
+          "useBgngYmd",
+          "useEndYmd",
+          "initInstClfCd",
+          "initInstCd",
+          "initInstNm",
+          "coaAyr",
+          "rcritScCd",
+          "rcritNm",
+          "rcritScAcctoBeginYmd",
+          "rcritAcctoEndYmd",
+          "itrtAyr"
+        ],
+        "id": "dmUserInfo",
+        "rowCount": null
+      },
+      {
+        "cols": [
+          "ayr",
+          "ordScCd",
+          "grd",
+          "dddepCd",
+          "ordGrdDddepCd",
+          "clsCd",
+          "stuInvlNo",
+          "actScCd",
+          "shlCd",
+          "atteYmd",
+          "enrScCd",
+          "shlKndScCd",
+          "stuFlnm",
+          "clsNm",
+          "clsNo",
+          "eduActPrcsStsCd",
+          "shlCrseScCd",
+          "dghtCrseScCd",
+          "atrzStsCd",
+          "ayrAuthType"
+        ],
+        "id": "dmSearch",
+        "rowCount": null
+      },
+      {
+        "cols": [],
+        "id": "subStdntList",
+        "rowCount": null
+      },
+      {
+        "cols": [],
+        "id": "subStsChg",
+        "rowCount": null
+      },
+      {
+        "cols": [],
+        "id": "subAssistSubmit",
+        "rowCount": null
+      },
+      {
+        "cols": [
+          "pgeId",
+          "clfCdValue",
+          "filterExpr",
+          "unyCdGrpId",
+          "bfrClfCdValue",
+          "userDfnCd1Value",
+          "userDfnCd2Value",
+          "userDfnCd3Value",
+          "userDfnCd4Value",
+          "userDfnCd5Value"
+        ],
+        "id": "dsAssistDatasetRequest",
+        "rowCount": 1
+      },
+      {
+        "cols": [
+          "pgeId",
+          "clfCdValue",
+          "clfCdValueNm",
+          "clfCdUseYn",
+          "unyCdValue",
+          "unyCdValueNm",
+          "userDfnCd1Value",
+          "userDfnCd2Value",
+          "userDfnCd3Value",
+          "userDfnCd4Value",
+          "userDfnCd5Value",
+          "upClfCdValue",
+          "upUnyCdValue",
+          "rownum",
+          "unyCdValueEngNm",
+          "unyCdValueAbrvNm",
+          "unyCdValueSn",
+          "unyCdEtcCn",
+          "unyCdUseYn",
+          "unyCdScCd",
+          "bfrUnyCdValue",
+          "bfrUnyCdValueNm"
+        ],
+        "id": "dsAssistCntrDatasetResponse",
+        "rowCount": 5
+      },
+      {
+        "cols": [
+          "pgeId",
+          "clfCdValue",
+          "clfCdValueNm",
+          "clfCdUseYn",
+          "unyCdValue",
+          "unyCdValueNm",
+          "userDfnCd1Value",
+          "userDfnCd2Value",
+          "userDfnCd3Value",
+          "userDfnCd4Value",
+          "userDfnCd5Value",
+          "upClfCdValue",
+          "upUnyCdValue",
+          "rownum",
+          "unyCdValueEngNm",
+          "unyCdValueAbrvNm",
+          "unyCdValueSn",
+          "unyCdEtcCn",
+          "unyCdUseYn",
+          "unyCdScCd",
+          "bfrUnyCdValue",
+          "bfrUnyCdValueNm"
+        ],
+        "id": "dvATRZ_STS_CDcmbAtrzSts",
+        "rowCount": 5
+      },
+      {
+        "cols": [
+          "cd",
+          "nm",
+          "ayrNm",
+          "ayr",
+          "ayrAuthType"
+        ],
+        "id": "dsSwcOrgAyr",
+        "rowCount": 5
+      },
+      {
+        "cols": [
+          "cd",
+          "nm",
+          "grd",
+          "grdNm"
+        ],
+        "id": "dsSwcOrgGrd",
+        "rowCount": 1
+      },
+      {
+        "cols": [
+          "cd",
+          "nm",
+          "sorSeqSn",
+          "grd",
+          "clsCd",
+          "clsCdNm"
+        ],
+        "id": "dsSwcOrgClsCd",
+        "rowCount": 1
+      },
+      {
+        "cols": [
+          "authType",
+          "shlCd",
+          "ayr",
+          "dghtIndctYn",
+          "ordIndctYn",
+          "dddepIndctYn",
+          "ordDddepIndctYn",
+          "dghtOrdDddepIndctYn"
+        ],
+        "id": "dmSwcIndctInfo",
+        "rowCount": null
+      },
+      {
+        "cols": [],
+        "id": "subSwcAuth",
+        "rowCount": null
+      }
+    ],
+    "idx": 9,
+    "title": ""
+  },
+  {
+    "appId": "udc/com/appHeader",
+    "controls": [
+      {
+        "id": "appHeader",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "optTit",
+        "type": "output",
+        "val": "교외체험학습보고서관리"
+      },
+      {
+        "id": "grpMenuPath",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "image",
+        "val": "집 모양 아이콘"
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "학급담임"
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "교육활동신청관리"
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "교외체험학습관리"
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "교외체험학습보고서관리"
+      },
+      {
+        "id": "btnAuthCss",
+        "type": "button",
+        "val": "A"
+      },
+      {
+        "id": "btnAuth",
+        "type": "button",
+        "val": "A"
+      },
+      {
+        "id": "grpButtons",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "btnHelp",
+        "type": "button",
+        "val": "도움말"
+      },
+      {
+        "id": "btnQnA",
+        "type": "button",
+        "val": "질의응답"
+      },
+      {
+        "id": "btnFAQ",
+        "type": "button",
+        "val": "FAQ"
+      },
+      {
+        "id": "btnTel",
+        "type": "button",
+        "val": "연락처"
+      },
+      {
+        "id": "btnOnlineCon",
+        "type": "button",
+        "val": "온라인컨텐츠"
+      },
+      {
+        "id": "btnFav",
+        "type": "button",
+        "val": "즐겨찾기"
+      },
+      {
+        "id": "btnFold",
+        "type": "button",
+        "val": "축소"
+      },
+      {
+        "id": "grpViewZm",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "btnPopZmIn",
+        "type": "button",
+        "val": "화면 확대"
+      },
+      {
+        "id": "btnPopZmOut",
+        "type": "button",
+        "val": "화면 축소"
+      },
+      {
+        "id": "buttonHideSearch",
+        "type": "button",
+        "val": "조회숨김"
+      }
+    ],
+    "datasets": [
+      {
+        "cols": [
+          "code",
+          "name",
+          "info"
+        ],
+        "id": "dsHelpdesk",
+        "rowCount": 19
+      },
+      {
+        "cols": [
+          "pgeId",
+          "hlpSn",
+          "hlpTitlNm",
+          "hlpCn",
+          "prcssGudnYn",
+          "useYn",
+          "regDt",
+          "hlpFileRefrnId"
+        ],
+        "id": "dsHlp",
+        "rowCount": 0
+      },
+      {
+        "cols": [
+          "authGrpId",
+          "redngUseYn",
+          "wgUseYn",
+          "userDtcNo",
+          "userId"
+        ],
+        "id": "dsSrs",
+        "rowCount": 0
+      },
+      {
+        "cols": [
+          "id",
+          "uuid",
+          "label",
+          "area",
+          "embid",
+          "visible",
+          "type"
+        ],
+        "id": "dsFoldArea",
+        "rowCount": 0
+      },
+      {
+        "cols": [
+          "menuId",
+          "menuNm",
+          "gubun",
+          "stat"
+        ],
+        "id": "dmFavorites",
+        "rowCount": null
+      },
+      {
+        "cols": [
+          "pgeId",
+          "pgeNm",
+          "prcsScCd"
+        ],
+        "id": "dmHlp",
+        "rowCount": null
+      },
+      {
+        "cols": [
+          "userId",
+          "userDtcNo",
+          "menuId"
+        ],
+        "id": "dmSrs",
+        "rowCount": null
+      },
+      {
+        "cols": [],
+        "id": "subFavorites",
+        "rowCount": null
+      },
+      {
+        "cols": [],
+        "id": "subHlp",
+        "rowCount": null
+      },
+      {
+        "cols": [],
+        "id": "subSrs",
+        "rowCount": null
+      }
+    ],
+    "idx": 10,
+    "title": ""
+  },
+  {
+    "appId": "udc/com/comTitle",
+    "controls": [
+      {
+        "id": "grp1",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "optTit",
+        "type": "output",
+        "val": ""
+      },
+      {
+        "id": "optRowCount",
+        "type": "output",
+        "val": "2"
+      },
+      {
+        "id": "btnTools",
+        "type": "button",
+        "val": ""
+      }
+    ],
+    "datasets": [],
+    "idx": 11,
+    "title": ""
+  },
+  {
+    "appId": "udc/sw/swc/udcSwcAuth",
+    "controls": [
+      {
+        "id": "grpCont",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "cmbUdcAuth",
+        "type": "combobox",
+        "val": "2026"
+      }
+    ],
+    "datasets": [
+      {
+        "cols": [
+          "cd",
+          "nm",
+          "ayrNm",
+          "ayr",
+          "ayrAuthType"
+        ],
+        "id": "dsAuth",
+        "rowCount": 5
+      }
+    ],
+    "idx": 12,
+    "title": ""
+  },
+  {
+    "appId": "udc/sw/swc/udcSwcAuth",
+    "controls": [
+      {
+        "id": "grpCont",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "cmbUdcAuth",
+        "type": "combobox",
+        "val": "3"
+      }
+    ],
+    "datasets": [
+      {
+        "cols": [
+          "cd",
+          "nm",
+          "grd",
+          "grdNm"
+        ],
+        "id": "dsAuth",
+        "rowCount": 1
+      }
+    ],
+    "idx": 13,
+    "title": ""
+  },
+  {
+    "appId": "udc/sw/swc/udcSwcAuth",
+    "controls": [
+      {
+        "id": "grpCont",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "cmbUdcAuth",
+        "type": "combobox",
+        "val": "00"
+      }
+    ],
+    "datasets": [
+      {
+        "cols": [
+          "cd",
+          "nm",
+          "sorSeqSn",
+          "grd",
+          "clsCd",
+          "clsCdNm"
+        ],
+        "id": "dsAuth",
+        "rowCount": 1
+      }
+    ],
+    "idx": 14,
+    "title": ""
+  },
+  {
+    "appId": "edu/sa/eds/eaa/ae/eds_eaaae04_m01",
+    "controls": [
+      {
+        "id": "",
+        "type": "udc.com.appHeader",
+        "val": ""
+      },
+      {
+        "id": "grpSearch",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "grp5",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "grp9",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "grp10",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "학년도"
+      },
+      {
+        "id": "cmbAyr",
+        "type": "udc.sw.swc.udcSwcAuth",
+        "val": "학년도"
+      },
+      {
+        "id": "grp12",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "학년"
+      },
+      {
+        "id": "cmbOrgGrd",
+        "type": "udc.sw.swc.udcSwcAuth",
+        "val": "계열/학년/학과"
+      },
+      {
+        "id": "grp13",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "반"
+      },
+      {
+        "id": "cmbClsCd",
+        "type": "udc.sw.swc.udcSwcAuth",
+        "val": "반"
+      },
+      {
+        "id": "grp14",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "번호"
+      },
+      {
+        "id": "ipbClsNo",
+        "type": "inputbox",
+        "val": "번호"
+      },
+      {
+        "id": "grp15",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "성명"
+      },
+      {
+        "id": "ipbStuFlnm",
+        "type": "inputbox",
+        "val": "학생명"
+      },
+      {
+        "id": "grp8",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "신청서 체험기간"
+      },
+      {
+        "id": "dtAplyStrYmd",
+        "type": "dateinput",
+        "val": "20260701"
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "~"
+      },
+      {
+        "id": "dtAplyEndYmd",
+        "type": "dateinput",
+        "val": "20260710"
+      },
+      {
+        "id": "optEmpty1",
+        "type": "output",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "신청서 진행상태"
+      },
+      {
+        "id": "cmbStatus",
+        "type": "combobox",
+        "val": "전체"
+      },
+      {
+        "id": "optEmpty3",
+        "type": "output",
+        "val": ""
+      },
+      {
+        "id": "chk1",
+        "type": "checkbox",
+        "val": "N"
+      },
+      {
+        "id": "grp6",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "grp7",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "btnSearch",
+        "type": "button",
+        "val": "조회"
+      },
+      {
+        "id": "grp1",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "grp2",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "udc.com.comTitle",
+        "val": ""
+      },
+      {
+        "id": "grp3",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "grp4",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "btnDownExcel",
+        "type": "button",
+        "val": "자료내려받기"
+      },
+      {
+        "id": "grdMain",
+        "type": "grid",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "0행 신청서 체험기간  link"
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "0행 보고서 체험기간  link"
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "0"
+      },
+      {
+        "id": "udcraonkmultiupload1",
+        "type": "udc.cmn.udcRaonkMultiUpload",
+        "val": "첨부파일"
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "※ 결과보고서 첨부파일이 등록된 경우에만 표출됩니다. "
+      }
+    ],
+    "datasets": [
+      {
+        "cols": [
+          "messageId",
+          "messageDiv"
+        ],
+        "id": "dsExMessage",
+        "rowCount": 4
+      },
+      {
+        "cols": [
+          "code",
+          "name"
+        ],
+        "id": "dsAyr",
+        "rowCount": 0
+      },
+      {
+        "cols": [
+          "shlCd",
+          "ayr",
+          "stuInvlNo",
+          "ousExperLrnAplyId",
+          "ousExperLrnRltId",
+          "shlKndScCd",
+          "shlCrseScCd",
+          "stuDtcNo",
+          "schpaDtcNo",
+          "grd",
+          "clsCd",
+          "clsNm",
+          "clsNo",
+          "stuFlnm",
+          "eduActPrcsStsCd1",
+          "eduActPrcsStsNm1",
+          "eduActPrcsStsCd2",
+          "eduActPrcsStsNm2",
+          "experLrnScCd",
+          "experLrnScNm",
+          "tgidNm",
+          "tgidRelNm",
+          "tgidTelno",
+          "ptorNm",
+          "stuPtorRelCd",
+          "stuPtorRelNm",
+          "ptorTelno",
+          "experLrnAplyBgngDt",
+          "experLrnAplyEndDt",
+          "experLrnAplyPeriod",
+          "experLrnRltBgngDt",
+          "experLrnRltEndDt",
+          "experLrnRltPeriod",
+          "experLrnPlaceNm",
+          "experLrnCn",
+          "etcCn",
+          "ptorSignCn",
+          "fileRefrnCnt",
+          "rgtrId",
+          "regDt1",
+          "regDt2",
+          "mdfrId",
+          "mdfcnDt",
+          "is_transported",
+          "atrzStsCd1",
+          "atrzStsNm1",
+          "atrzStsCd2",
+          "atrzStsNm2",
+          "referMteCn",
+          "ousExperLrnReqsScCd",
+          "referMteCn001",
+          "ousExperLrnReqsScCd001",
+          "referMteCn002",
+          "ousExperLrnReqsScCd002"
+        ],
+        "id": "dsStdntList",
+        "rowCount": 0
+      },
+      {
+        "cols": [
+          "chk",
+          "shlCd",
+          "ayr",
+          "stuInvlNo",
+          "ousExperLrnAplyId",
+          "shlKndScCd",
+          "shlCrseScCd",
+          "stuDtcNo",
+          "schpaDtcNo",
+          "dghtCrseScCd",
+          "dghtCrseScCdNm",
+          "ordScCd",
+          "ordScCdNm",
+          "grd",
+          "dddepCd",
+          "dddepCdNm",
+          "clsCd",
+          "clsNm",
+          "clsNo",
+          "stuFlnm",
+          "eduActPrcsStsCd",
+          "eduActPrcsStsNm",
+          "experLrnScCd",
+          "experLrnScNm",
+          "tgidNm",
+          "tgidRelNm",
+          "tgidTelno",
+          "ptorNm",
+          "stuPtorRelCd",
+          "stuPtorRelNm",
+          "ptorTelno",
+          "experLrnBgngDt",
+          "experLrnEndDt",
+          "experLrnPeriod",
+          "experLrnPlaceNm",
+          "experLrnCn",
+          "etcCn",
+          "ptorSignCn",
+          "fileRefrnId",
+          "atrzStsCd",
+          "atrzStsNm",
+          "artzSn",
+          "rgtrId",
+          "regDt",
+          "mdfrId",
+          "mdfcnDt",
+          "is_transported"
+        ],
+        "id": "dsStdntListForAply",
+        "rowCount": 0
+      },
+      {
+        "cols": [
+          "chk",
+          "shlCd",
+          "ayr",
+          "stuInvlNo",
+          "ousExperLrnAplyId",
+          "ousExperLrnRltId",
+          "shlKndScCd",
+          "shlCrseScCd",
+          "stuDtcNo",
+          "schpaDtcNo",
+          "dghtCrseScCd",
+          "dghtCrseScCdNm",
+          "ordScCd",
+          "ordScCdNm",
+          "grd",
+          "dddepCd",
+          "dddepCdNm",
+          "clsCd",
+          "clsNm",
+          "clsNo",
+          "stuFlnm",
+          "eduActPrcsStsCd",
+          "eduActPrcsStsNm",
+          "experLrnScCd",
+          "experLrnScNm",
+          "tgidNm",
+          "tgidRelNm",
+          "tgidTelno",
+          "ptorNm",
+          "stuPtorRelCd",
+          "stuPtorRelNm",
+          "ptorTelno",
+          "experLrnBgngDt",
+          "experLrnEndDt",
+          "experLrnPeriod",
+          "experLrnPlaceNm",
+          "experLrnCn",
+          "etcCn",
+          "ptorSignCn",
+          "fileRefrnId",
+          "atrzStsCd",
+          "atrzStsNm",
+          "artzSn",
+          "rgtrId",
+          "regDt",
+          "mdfrId",
+          "mdfcnDt",
+          "is_transported"
+        ],
+        "id": "dsStdntListForRlt",
+        "rowCount": 0
+      },
+      {
+        "cols": [
+          "code",
+          "name"
+        ],
+        "id": "dsGrdList",
+        "rowCount": 6
+      },
+      {
+        "cols": [
+          "shkCd",
+          "ayr",
+          "grd",
+          "clsCd",
+          "clsNm"
+        ],
+        "id": "dsClsInfoList",
+        "rowCount": 0
+      },
+      {
+        "cols": [
+          "fileGubunCd",
+          "fileRefrnId",
+          "fileId",
+          "suc",
+          "atchFileNm",
+          "atchFileGuid",
+          "atchFileMg",
+          "fileExtsnNm",
+          "minTypeNm",
+          "fileCoursNm",
+          "fileObjKey",
+          "dofdcCd",
+          "shlCd",
+          "ayr",
+          "isuNo",
+          "doctNo"
+        ],
+        "id": "dsMultiFileList",
+        "rowCount": 0
+      },
+      {
+        "cols": [
+          "cd",
+          "nm",
+          "sorSeqSn",
+          "clsCd",
+          "clsCdNm"
+        ],
+        "id": "dsClsCd",
+        "rowCount": 1
+      },
+      {
+        "cols": [
+          "userId",
+          "userNm",
+          "connectNo",
+          "userDtcNo",
+          "userPrn",
+          "invlNo",
+          "OrgdpOrgCd",
+          "corpCd",
+          "corpNm",
+          "ogdpOrgNm",
+          "Ayr",
+          "frtunAuthCd",
+          "instCd",
+          "instNm",
+          "cntnCtpvScCd",
+          "cntnCddcCd",
+          "orgScCd",
+          "orgCd",
+          "orgNm",
+          "instClfCd",
+          "cddcCd",
+          "cddcNm",
+          "cteOrgCd",
+          "cteOrgNm",
+          "cteOrgInstClfCd",
+          "ogdpInstCd",
+          "mwmnEngngScCd",
+          "hsGnrlBusnsScCode",
+          "HshScCd",
+          "shlKndScCd",
+          "shlFndnScCd",
+          "shlCrseScCd",
+          "subSysCd",
+          "userScCd",
+          "usePslYn",
+          "useBgngYmd",
+          "useEndYmd",
+          "initInstClfCd",
+          "initInstCd",
+          "initInstNm",
+          "coaAyr",
+          "rcritScCd",
+          "rcritNm",
+          "rcritScAcctoBeginYmd",
+          "rcritAcctoEndYmd",
+          "itrtAyr"
+        ],
+        "id": "dmUserInfo",
+        "rowCount": null
+      },
+      {
+        "cols": [
+          "shlCd",
+          "shlKndScCd",
+          "ayr",
+          "grd",
+          "ousExperLrnAplyId",
+          "ousExperLrnRltId",
+          "stuFlnm",
+          "clsNm",
+          "clsNo",
+          "eduActPrcsStsCd",
+          "searchGb",
+          "aplyStrYmd",
+          "aplyEndYmd",
+          "rltStrYmd",
+          "rltEndYmd",
+          "dghtCrseScCd",
+          "ordScCd",
+          "dddepCd",
+          "ordGrdDddepCd",
+          "clsCd",
+          "stuInvlNo",
+          "actScCd",
+          "atteYmd",
+          "enrScCd",
+          "shlCrseScCd",
+          "ayrAuthType"
+        ],
+        "id": "dmSearch",
+        "rowCount": null
+      },
+      {
+        "cols": [],
+        "id": "subStdntList",
+        "rowCount": null
+      },
+      {
+        "cols": [],
+        "id": "subSearchFileList",
+        "rowCount": null
+      },
+      {
+        "cols": [
+          "cd",
+          "nm",
+          "ayrNm",
+          "ayr",
+          "ayrAuthType"
+        ],
+        "id": "dsSwcOrgAyr",
+        "rowCount": 5
+      },
+      {
+        "cols": [
+          "cd",
+          "nm",
+          "grd",
+          "grdNm"
+        ],
+        "id": "dsSwcOrgGrd",
+        "rowCount": 1
+      },
+      {
+        "cols": [
+          "cd",
+          "nm",
+          "sorSeqSn",
+          "grd",
+          "clsCd",
+          "clsCdNm"
+        ],
+        "id": "dsSwcOrgClsCd",
+        "rowCount": 1
+      },
+      {
+        "cols": [
+          "authType",
+          "shlCd",
+          "ayr",
+          "dghtIndctYn",
+          "ordIndctYn",
+          "dddepIndctYn",
+          "ordDddepIndctYn",
+          "dghtOrdDddepIndctYn"
+        ],
+        "id": "dmSwcIndctInfo",
+        "rowCount": null
+      },
+      {
+        "cols": [],
+        "id": "subSwcAuth",
+        "rowCount": null
+      }
+    ],
+    "idx": 15,
+    "title": ""
+  },
+  {
+    "appId": "udc/com/appHeader",
+    "controls": [
+      {
+        "id": "appHeader",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "optTit",
+        "type": "output",
+        "val": "교외체험학습현황관리"
+      },
+      {
+        "id": "grpMenuPath",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "image",
+        "val": "집 모양 아이콘"
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "학급담임"
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "교육활동신청관리"
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "교외체험학습관리"
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "교외체험학습현황관리"
+      },
+      {
+        "id": "btnAuthCss",
+        "type": "button",
+        "val": "A"
+      },
+      {
+        "id": "btnAuth",
+        "type": "button",
+        "val": "A"
+      },
+      {
+        "id": "grpButtons",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "btnHelp",
+        "type": "button",
+        "val": "도움말"
+      },
+      {
+        "id": "btnQnA",
+        "type": "button",
+        "val": "질의응답"
+      },
+      {
+        "id": "btnFAQ",
+        "type": "button",
+        "val": "FAQ"
+      },
+      {
+        "id": "btnTel",
+        "type": "button",
+        "val": "연락처"
+      },
+      {
+        "id": "btnOnlineCon",
+        "type": "button",
+        "val": "온라인컨텐츠"
+      },
+      {
+        "id": "btnFav",
+        "type": "button",
+        "val": "즐겨찾기"
+      },
+      {
+        "id": "btnFold",
+        "type": "button",
+        "val": "축소"
+      },
+      {
+        "id": "grpViewZm",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "btnPopZmIn",
+        "type": "button",
+        "val": "화면 확대"
+      },
+      {
+        "id": "btnPopZmOut",
+        "type": "button",
+        "val": "화면 축소"
+      },
+      {
+        "id": "buttonHideSearch",
+        "type": "button",
+        "val": "조회숨김"
+      }
+    ],
+    "datasets": [
+      {
+        "cols": [
+          "code",
+          "name",
+          "info"
+        ],
+        "id": "dsHelpdesk",
+        "rowCount": 19
+      },
+      {
+        "cols": [
+          "pgeId",
+          "hlpSn",
+          "hlpTitlNm",
+          "hlpCn",
+          "prcssGudnYn",
+          "useYn",
+          "regDt",
+          "hlpFileRefrnId"
+        ],
+        "id": "dsHlp",
+        "rowCount": 0
+      },
+      {
+        "cols": [
+          "authGrpId",
+          "redngUseYn",
+          "wgUseYn",
+          "userDtcNo",
+          "userId"
+        ],
+        "id": "dsSrs",
+        "rowCount": 0
+      },
+      {
+        "cols": [
+          "id",
+          "uuid",
+          "label",
+          "area",
+          "embid",
+          "visible",
+          "type"
+        ],
+        "id": "dsFoldArea",
+        "rowCount": 0
+      },
+      {
+        "cols": [
+          "menuId",
+          "menuNm",
+          "gubun",
+          "stat"
+        ],
+        "id": "dmFavorites",
+        "rowCount": null
+      },
+      {
+        "cols": [
+          "pgeId",
+          "pgeNm",
+          "prcsScCd"
+        ],
+        "id": "dmHlp",
+        "rowCount": null
+      },
+      {
+        "cols": [
+          "userId",
+          "userDtcNo",
+          "menuId"
+        ],
+        "id": "dmSrs",
+        "rowCount": null
+      },
+      {
+        "cols": [],
+        "id": "subFavorites",
+        "rowCount": null
+      },
+      {
+        "cols": [],
+        "id": "subHlp",
+        "rowCount": null
+      },
+      {
+        "cols": [],
+        "id": "subSrs",
+        "rowCount": null
+      }
+    ],
+    "idx": 16,
+    "title": ""
+  },
+  {
+    "appId": "udc/sw/swc/udcSwcAuth",
+    "controls": [
+      {
+        "id": "grpCont",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "cmbUdcAuth",
+        "type": "combobox",
+        "val": "2026"
+      }
+    ],
+    "datasets": [
+      {
+        "cols": [
+          "cd",
+          "nm",
+          "ayrNm",
+          "ayr",
+          "ayrAuthType"
+        ],
+        "id": "dsAuth",
+        "rowCount": 5
+      }
+    ],
+    "idx": 17,
+    "title": ""
+  },
+  {
+    "appId": "udc/sw/swc/udcSwcAuth",
+    "controls": [
+      {
+        "id": "grpCont",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "cmbUdcAuth",
+        "type": "combobox",
+        "val": "3"
+      }
+    ],
+    "datasets": [
+      {
+        "cols": [
+          "cd",
+          "nm",
+          "grd",
+          "grdNm"
+        ],
+        "id": "dsAuth",
+        "rowCount": 1
+      }
+    ],
+    "idx": 18,
+    "title": ""
+  },
+  {
+    "appId": "udc/sw/swc/udcSwcAuth",
+    "controls": [
+      {
+        "id": "grpCont",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "cmbUdcAuth",
+        "type": "combobox",
+        "val": "00"
+      }
+    ],
+    "datasets": [
+      {
+        "cols": [
+          "cd",
+          "nm",
+          "sorSeqSn",
+          "grd",
+          "clsCd",
+          "clsCdNm"
+        ],
+        "id": "dsAuth",
+        "rowCount": 1
+      }
+    ],
+    "idx": 19,
+    "title": ""
+  },
+  {
+    "appId": "udc/com/comTitle",
+    "controls": [
+      {
+        "id": "grp1",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "optTit",
+        "type": "output",
+        "val": ""
+      },
+      {
+        "id": "optRowCount",
+        "type": "output",
+        "val": "0"
+      },
+      {
+        "id": "btnTools",
+        "type": "button",
+        "val": ""
+      }
+    ],
+    "datasets": [],
+    "idx": 20,
+    "title": ""
+  },
+  {
+    "appId": "udc/cmn/udcRaonkMultiUpload",
+    "controls": [
+      {
+        "id": "shl1",
+        "type": "uicontrolshell",
+        "val": ""
+      }
+    ],
+    "datasets": [
+      {
+        "cols": [
+          "fileRefrnId",
+          "fileId",
+          "suc",
+          "originalName",
+          "extension",
+          "mimeType",
+          "uploadPath",
+          "uploadName",
+          "size",
+          "fileEncryptYn",
+          "privInfoFiltYn",
+          "fileSaveStg",
+          "fileInfSaveYn",
+          "fileAuditYn"
+        ],
+        "id": "dsNewFile",
+        "rowCount": 0
+      },
+      {
+        "cols": [
+          "fileRefrnId",
+          "fileId",
+          "originalName",
+          "fileEncryptYn",
+          "privInfoFiltYn",
+          "fileSaveStg",
+          "fileInfSaveYn"
+        ],
+        "id": "dsDeleteFile",
+        "rowCount": 0
+      },
+      {
+        "cols": [
+          "fileRefrnId",
+          "fileId",
+          "suc",
+          "atchFileNm",
+          "atchFileGuid",
+          "atchFileMg",
+          "fileExtsnNm",
+          "minTypeNm",
+          "fileCoursNm",
+          "fileObjKey",
+          "fileEncryptYn",
+          "privInfoFiltYn",
+          "fileSaveStg",
+          "fileGubunCd"
+        ],
+        "id": "atchFileinfo",
+        "rowCount": 0
+      },
+      {
+        "cols": [
+          "fileRefrnId",
+          "fileId",
+          "suc",
+          "atchFileNm",
+          "atchFileGuid",
+          "atchFileMg",
+          "fileExtsnNm",
+          "minTypeNm",
+          "fileCoursNm",
+          "fileObjKey",
+          "fileEncryptYn",
+          "privInfoFiltYn",
+          "fileSaveStg",
+          "fileGubunCd"
+        ],
+        "id": "dsAtchFileinfo",
+        "rowCount": 0
+      },
+      {
+        "cols": [
+          "fileRefrnId",
+          "fileId",
+          "suc",
+          "atchFileNm",
+          "atchFileGuid",
+          "atchFileMg",
+          "fileExtsnNm",
+          "minTypeNm",
+          "fileCoursNm",
+          "fileObjKey",
+          "fileEncryptYn",
+          "privInfoFiltYn",
+          "fileSaveStg",
+          "raonkId",
+          "fileInfSaveYn",
+          "fileGubunCd"
+        ],
+        "id": "deleteFileinfo",
+        "rowCount": 0
+      },
+      {
+        "cols": [
+          "fileRefrnId",
+          "fileId",
+          "suc",
+          "atchFileNm",
+          "atchFileGuid",
+          "atchFileMg",
+          "fileExtsnNm",
+          "minTypeNm",
+          "fileCoursNm",
+          "fileObjKey",
+          "fileEncryptYn",
+          "privInfoFiltYn",
+          "fileSaveStg",
+          "raonkId",
+          "fileInfSaveYn",
+          "fileGubunCd"
+        ],
+        "id": "selectFileinfo",
+        "rowCount": 0
+      },
+      {
+        "cols": [],
+        "id": "subSave",
+        "rowCount": null
+      },
+      {
+        "cols": [],
+        "id": "subList",
+        "rowCount": null
+      }
+    ],
+    "idx": 21,
+    "title": ""
+  },
+  {
+    "appId": "edu/sa/eds/eaa/ae/eds_eaaae03_m01",
+    "controls": [
+      {
+        "id": "pageHeader",
+        "type": "udc.com.appHeader",
+        "val": ""
+      },
+      {
+        "id": "grpSearch",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "grp5",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "grp6",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "학년도"
+      },
+      {
+        "id": "cmbAyr",
+        "type": "udc.sw.swc.udcSwcAuth",
+        "val": "학년도"
+      },
+      {
+        "id": "grp8",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "학년"
+      },
+      {
+        "id": "cmbGrd",
+        "type": "udc.sw.swc.udcSwcAuth",
+        "val": "학년"
+      },
+      {
+        "id": "grp9",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "반"
+      },
+      {
+        "id": "cmbClsCd",
+        "type": "udc.sw.swc.udcSwcAuth",
+        "val": "반"
+      },
+      {
+        "id": "grp10",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "번호"
+      },
+      {
+        "id": "ipbClsNo",
+        "type": "inputbox",
+        "val": "번호"
+      },
+      {
+        "id": "grp11",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "성명"
+      },
+      {
+        "id": "ipbStuFlnm",
+        "type": "inputbox",
+        "val": "학생명"
+      },
+      {
+        "id": "grp14",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "접수상태"
+      },
+      {
+        "id": "cmbStatus",
+        "type": "combobox",
+        "val": "전체"
+      },
+      {
+        "id": "grp16",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "결재상태"
+      },
+      {
+        "id": "cmbAtrzSts",
+        "type": "combobox",
+        "val": "전체"
+      },
+      {
+        "id": "grp15",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "등록구분"
+      },
+      {
+        "id": "cmbOnlAplyYn",
+        "type": "combobox",
+        "val": "전체"
+      },
+      {
+        "id": "grp17",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "결석기간"
+      },
+      {
+        "id": "dtAbeBgngYmd",
+        "type": "dateinput",
+        "val": "20260601"
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "~"
+      },
+      {
+        "id": "dtAbeEndYmd",
+        "type": "dateinput",
+        "val": "20260731"
+      },
+      {
+        "id": "grp12",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "grp13",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "btnSearch",
+        "type": "button",
+        "val": "조회"
+      },
+      {
+        "id": "grp1",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "grp2",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "udc.com.comTitle",
+        "val": ""
+      },
+      {
+        "id": "grp3",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "grp4",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "btnInsert",
+        "type": "button",
+        "val": "등록"
+      },
+      {
+        "id": "btnUpdateCancel3",
+        "type": "button",
+        "val": "승인요청"
+      },
+      {
+        "id": "btnDwld",
+        "type": "button",
+        "val": "자료 내려받기"
+      },
+      {
+        "id": "grdMain",
+        "type": "grid",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "0행 진행상태  "
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "0행 진행상태  "
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "0행 신청일자  "
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "0행 학년  "
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "0행 반  "
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "0행 번호  "
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "0행 성명   link"
+      }
+    ],
+    "datasets": [
+      {
+        "cols": [
+          "messageId",
+          "messageDiv"
+        ],
+        "id": "dsExMessage",
+        "rowCount": 4
+      },
+      {
+        "cols": [
+          "code",
+          "name"
+        ],
+        "id": "dsAyr",
+        "rowCount": 0
+      },
+      {
+        "cols": [
+          "chk",
+          "shlCd",
+          "ayr",
+          "stuInvlNo",
+          "abeDclrId",
+          "shlKndScCd",
+          "shlCrseScCd",
+          "stuDtcNo",
+          "schpaDtcNo",
+          "dghtCrseScCd",
+          "dghtCrseScCdNm",
+          "ordScCd",
+          "ordScCdNm",
+          "grd",
+          "dddepCd",
+          "dddepCdNm",
+          "clsCd",
+          "clsNm",
+          "clsNo",
+          "stuFlnm",
+          "eduActPrcsStsCd",
+          "eduActPrcsStsNm",
+          "abeDclrScCd",
+          "abeDclrScNm",
+          "onlAplyYn",
+          "onlAplyYnNm",
+          "ptorNm",
+          "stuPtorRelCd",
+          "stuPtorRelNm",
+          "ptorTelno",
+          "abeBgngDt",
+          "abeEndDt",
+          "abePeriod",
+          "abeRsnCn",
+          "shlOpiCn",
+          "spmDmndCn",
+          "etcCn",
+          "ptorSignCn",
+          "fileRefrnId",
+          "atrzStsCd",
+          "atrzStsNm",
+          "artzSn",
+          "rgtrId",
+          "regDt",
+          "regDt2",
+          "mdfrId",
+          "mdfcnDt",
+          "is_transported"
+        ],
+        "id": "dsStdntListForAbe",
+        "rowCount": 4
+      },
+      {
+        "cols": [
+          "code",
+          "name"
+        ],
+        "id": "dsGrdList",
+        "rowCount": 6
+      },
+      {
+        "cols": [
+          "shkCd",
+          "ayr",
+          "grd",
+          "clsCd",
+          "clsNm"
+        ],
+        "id": "dsClsInfoList",
+        "rowCount": 0
+      },
+      {
+        "cols": [
+          "chk",
+          "shlCd",
+          "ayr",
+          "stuInvlNo",
+          "abeDclrId",
+          "shlKndScCd",
+          "shlCrseScCd",
+          "stuDtcNo",
+          "schpaDtcNo",
+          "dghtCrseScCd",
+          "dghtCrseScCdNm",
+          "ordScCd",
+          "ordScCdNm",
+          "grd",
+          "dddepCd",
+          "dddepCdNm",
+          "clsCd",
+          "clsNm",
+          "clsNo",
+          "stuFlnm",
+          "eduActPrcsStsCd",
+          "eduActPrcsStsNm",
+          "abeDclrScCd",
+          "abeDclrScNm",
+          "onlAplyYn",
+          "onlAplyYnNm",
+          "ptorNm",
+          "stuPtorRelCd",
+          "stuPtorRelNm",
+          "ptorTelno",
+          "abeBgngDt",
+          "abeEndDt",
+          "abePeriod",
+          "abeRsnCn",
+          "shlOpiCn",
+          "spmDmndCn",
+          "etcCn",
+          "ptorSignCn",
+          "fileRefrnId",
+          "atrzStsCd",
+          "atrzStsNm",
+          "artzSn",
+          "rgtrId",
+          "regDt",
+          "regDt2",
+          "mdfrId",
+          "mdfcnDt",
+          "is_transported"
+        ],
+        "id": "dsStdntListForAbe2",
+        "rowCount": 0
+      },
+      {
+        "cols": [
+          "cd",
+          "nm",
+          "sorSeqSn",
+          "clsCd",
+          "clsCdNm"
+        ],
+        "id": "dsClsCd",
+        "rowCount": 1
+      },
+      {
+        "cols": [
+          "userId",
+          "userNm",
+          "connectNo",
+          "userDtcNo",
+          "userPrn",
+          "invlNo",
+          "OrgdpOrgCd",
+          "corpCd",
+          "corpNm",
+          "ogdpOrgNm",
+          "Ayr",
+          "frtunAuthCd",
+          "instCd",
+          "instNm",
+          "cntnCtpvScCd",
+          "cntnCddcCd",
+          "orgScCd",
+          "orgCd",
+          "orgNm",
+          "instClfCd",
+          "cddcCd",
+          "cddcNm",
+          "cteOrgCd",
+          "cteOrgNm",
+          "cteOrgInstClfCd",
+          "ogdpInstCd",
+          "mwmnEngngScCd",
+          "hsGnrlBusnsScCode",
+          "HshScCd",
+          "shlKndScCd",
+          "shlFndnScCd",
+          "shlCrseScCd",
+          "subSysCd",
+          "userScCd",
+          "usePslYn",
+          "useBgngYmd",
+          "useEndYmd",
+          "initInstClfCd",
+          "initInstCd",
+          "initInstNm",
+          "coaAyr",
+          "rcritScCd",
+          "rcritNm",
+          "rcritScAcctoBeginYmd",
+          "rcritAcctoEndYmd",
+          "itrtAyr"
+        ],
+        "id": "dmUserInfo",
+        "rowCount": null
+      },
+      {
+        "cols": [
+          "ayr",
+          "ordScCd",
+          "grd",
+          "dddepCd",
+          "ordGrdDddepCd",
+          "clsCd",
+          "stuInvlNo",
+          "actScCd",
+          "shlCd",
+          "atteYmd",
+          "enrScCd",
+          "shlKndScCd",
+          "stuFlnm",
+          "clsNm",
+          "clsNo",
+          "eduActPrcsStsCd",
+          "shlCrseScCd",
+          "dghtCrseScCd",
+          "orgCd",
+          "onlAplyYn",
+          "atrzStsCd",
+          "abeBgngDt",
+          "abeEndDt",
+          "ayrAuthType"
+        ],
+        "id": "dmSearch",
+        "rowCount": null
+      },
+      {
+        "cols": [],
+        "id": "subClsList",
+        "rowCount": null
+      },
+      {
+        "cols": [],
+        "id": "subStdntList",
+        "rowCount": null
+      },
+      {
+        "cols": [],
+        "id": "subStsChg",
+        "rowCount": null
+      },
+      {
+        "cols": [],
+        "id": "subAssistSubmit",
+        "rowCount": null
+      },
+      {
+        "cols": [
+          "pgeId",
+          "clfCdValue",
+          "filterExpr",
+          "unyCdGrpId",
+          "bfrClfCdValue",
+          "userDfnCd1Value",
+          "userDfnCd2Value",
+          "userDfnCd3Value",
+          "userDfnCd4Value",
+          "userDfnCd5Value"
+        ],
+        "id": "dsAssistDatasetRequest",
+        "rowCount": 1
+      },
+      {
+        "cols": [
+          "pgeId",
+          "clfCdValue",
+          "clfCdValueNm",
+          "clfCdUseYn",
+          "unyCdValue",
+          "unyCdValueNm",
+          "userDfnCd1Value",
+          "userDfnCd2Value",
+          "userDfnCd3Value",
+          "userDfnCd4Value",
+          "userDfnCd5Value",
+          "upClfCdValue",
+          "upUnyCdValue",
+          "rownum",
+          "unyCdValueEngNm",
+          "unyCdValueAbrvNm",
+          "unyCdValueSn",
+          "unyCdEtcCn",
+          "unyCdUseYn",
+          "unyCdScCd",
+          "bfrUnyCdValue",
+          "bfrUnyCdValueNm"
+        ],
+        "id": "dsAssistCntrDatasetResponse",
+        "rowCount": 5
+      },
+      {
+        "cols": [
+          "pgeId",
+          "clfCdValue",
+          "clfCdValueNm",
+          "clfCdUseYn",
+          "unyCdValue",
+          "unyCdValueNm",
+          "userDfnCd1Value",
+          "userDfnCd2Value",
+          "userDfnCd3Value",
+          "userDfnCd4Value",
+          "userDfnCd5Value",
+          "upClfCdValue",
+          "upUnyCdValue",
+          "rownum",
+          "unyCdValueEngNm",
+          "unyCdValueAbrvNm",
+          "unyCdValueSn",
+          "unyCdEtcCn",
+          "unyCdUseYn",
+          "unyCdScCd",
+          "bfrUnyCdValue",
+          "bfrUnyCdValueNm"
+        ],
+        "id": "dvATRZ_STS_CDcmbAtrzSts",
+        "rowCount": 5
+      },
+      {
+        "cols": [
+          "cd",
+          "nm",
+          "ayrNm",
+          "ayr",
+          "ayrAuthType"
+        ],
+        "id": "dsSwcOrgAyr",
+        "rowCount": 5
+      },
+      {
+        "cols": [
+          "cd",
+          "nm",
+          "grd",
+          "grdNm"
+        ],
+        "id": "dsSwcOrgGrd",
+        "rowCount": 1
+      },
+      {
+        "cols": [
+          "cd",
+          "nm",
+          "sorSeqSn",
+          "grd",
+          "clsCd",
+          "clsCdNm"
+        ],
+        "id": "dsSwcOrgClsCd",
+        "rowCount": 1
+      },
+      {
+        "cols": [
+          "authType",
+          "shlCd",
+          "ayr",
+          "dghtIndctYn",
+          "ordIndctYn",
+          "dddepIndctYn",
+          "ordDddepIndctYn",
+          "dghtOrdDddepIndctYn"
+        ],
+        "id": "dmSwcIndctInfo",
+        "rowCount": null
+      },
+      {
+        "cols": [],
+        "id": "subSwcAuth",
+        "rowCount": null
+      }
+    ],
+    "idx": 22,
+    "title": ""
+  },
+  {
+    "appId": "udc/com/appHeader",
+    "controls": [
+      {
+        "id": "appHeader",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "optTit",
+        "type": "output",
+        "val": "결석신고서관리"
+      },
+      {
+        "id": "grpMenuPath",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "image",
+        "val": "집 모양 아이콘"
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "학급담임"
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "교육활동신청관리"
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "출결관리"
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "결석신고서관리 "
+      },
+      {
+        "id": "btnAuthCss",
+        "type": "button",
+        "val": "A"
+      },
+      {
+        "id": "btnAuth",
+        "type": "button",
+        "val": "A"
+      },
+      {
+        "id": "grpButtons",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "btnHelp",
+        "type": "button",
+        "val": "도움말"
+      },
+      {
+        "id": "btnQnA",
+        "type": "button",
+        "val": "질의응답"
+      },
+      {
+        "id": "btnFAQ",
+        "type": "button",
+        "val": "FAQ"
+      },
+      {
+        "id": "btnTel",
+        "type": "button",
+        "val": "연락처"
+      },
+      {
+        "id": "btnOnlineCon",
+        "type": "button",
+        "val": "온라인컨텐츠"
+      },
+      {
+        "id": "btnFav",
+        "type": "button",
+        "val": "즐겨찾기"
+      },
+      {
+        "id": "btnFold",
+        "type": "button",
+        "val": "축소"
+      },
+      {
+        "id": "grpViewZm",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "btnPopZmIn",
+        "type": "button",
+        "val": "화면 확대"
+      },
+      {
+        "id": "btnPopZmOut",
+        "type": "button",
+        "val": "화면 축소"
+      },
+      {
+        "id": "buttonHideSearch",
+        "type": "button",
+        "val": "조회숨김"
+      }
+    ],
+    "datasets": [
+      {
+        "cols": [
+          "code",
+          "name",
+          "info"
+        ],
+        "id": "dsHelpdesk",
+        "rowCount": 19
+      },
+      {
+        "cols": [
+          "pgeId",
+          "hlpSn",
+          "hlpTitlNm",
+          "hlpCn",
+          "prcssGudnYn",
+          "useYn",
+          "regDt",
+          "hlpFileRefrnId"
+        ],
+        "id": "dsHlp",
+        "rowCount": 0
+      },
+      {
+        "cols": [
+          "authGrpId",
+          "redngUseYn",
+          "wgUseYn",
+          "userDtcNo",
+          "userId"
+        ],
+        "id": "dsSrs",
+        "rowCount": 0
+      },
+      {
+        "cols": [
+          "id",
+          "uuid",
+          "label",
+          "area",
+          "embid",
+          "visible",
+          "type"
+        ],
+        "id": "dsFoldArea",
+        "rowCount": 0
+      },
+      {
+        "cols": [
+          "menuId",
+          "menuNm",
+          "gubun",
+          "stat"
+        ],
+        "id": "dmFavorites",
+        "rowCount": null
+      },
+      {
+        "cols": [
+          "pgeId",
+          "pgeNm",
+          "prcsScCd"
+        ],
+        "id": "dmHlp",
+        "rowCount": null
+      },
+      {
+        "cols": [
+          "userId",
+          "userDtcNo",
+          "menuId"
+        ],
+        "id": "dmSrs",
+        "rowCount": null
+      },
+      {
+        "cols": [],
+        "id": "subFavorites",
+        "rowCount": null
+      },
+      {
+        "cols": [],
+        "id": "subHlp",
+        "rowCount": null
+      },
+      {
+        "cols": [],
+        "id": "subSrs",
+        "rowCount": null
+      }
+    ],
+    "idx": 23,
+    "title": ""
+  },
+  {
+    "appId": "udc/sw/swc/udcSwcAuth",
+    "controls": [
+      {
+        "id": "grpCont",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "cmbUdcAuth",
+        "type": "combobox",
+        "val": "2026"
+      }
+    ],
+    "datasets": [
+      {
+        "cols": [
+          "cd",
+          "nm",
+          "ayrNm",
+          "ayr",
+          "ayrAuthType"
+        ],
+        "id": "dsAuth",
+        "rowCount": 5
+      }
+    ],
+    "idx": 24,
+    "title": ""
+  },
+  {
+    "appId": "udc/sw/swc/udcSwcAuth",
+    "controls": [
+      {
+        "id": "grpCont",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "cmbUdcAuth",
+        "type": "combobox",
+        "val": "3"
+      }
+    ],
+    "datasets": [
+      {
+        "cols": [
+          "cd",
+          "nm",
+          "grd",
+          "grdNm"
+        ],
+        "id": "dsAuth",
+        "rowCount": 1
+      }
+    ],
+    "idx": 25,
+    "title": ""
+  },
+  {
+    "appId": "udc/sw/swc/udcSwcAuth",
+    "controls": [
+      {
+        "id": "grpCont",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "cmbUdcAuth",
+        "type": "combobox",
+        "val": "00"
+      }
+    ],
+    "datasets": [
+      {
+        "cols": [
+          "cd",
+          "nm",
+          "sorSeqSn",
+          "grd",
+          "clsCd",
+          "clsCdNm"
+        ],
+        "id": "dsAuth",
+        "rowCount": 1
+      }
+    ],
+    "idx": 26,
+    "title": ""
+  },
+  {
+    "appId": "udc/com/comTitle",
+    "controls": [
+      {
+        "id": "grp1",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "optTit",
+        "type": "output",
+        "val": ""
+      },
+      {
+        "id": "optRowCount",
+        "type": "output",
+        "val": "4"
+      },
+      {
+        "id": "btnTools",
+        "type": "button",
+        "val": ""
+      }
+    ],
+    "datasets": [],
+    "idx": 27,
+    "title": ""
+  },
+  {
+    "appId": "edu/sa/eds/eaa/ae/eds_eaaae06_m01",
+    "controls": [
+      {
+        "id": "pageHeader",
+        "type": "udc.com.appHeader",
+        "val": ""
+      },
+      {
+        "id": "grpSearch",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "grpSearchItem",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "grpSchAyr",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "학년도"
+      },
+      {
+        "id": "cmbAyr",
+        "type": "udc.sw.swc.udcSwcAuth",
+        "val": "학년도"
+      },
+      {
+        "id": "grpSchGrd",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "학년"
+      },
+      {
+        "id": "cmbGrd",
+        "type": "udc.sw.swc.udcSwcAuth",
+        "val": "학년"
+      },
+      {
+        "id": "grpSchClsCd",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "반"
+      },
+      {
+        "id": "cmbClsCd",
+        "type": "udc.sw.swc.udcSwcAuth",
+        "val": "반"
+      },
+      {
+        "id": "grpSchClsNo",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "번호"
+      },
+      {
+        "id": "ipbClsNo",
+        "type": "inputbox",
+        "val": "번호"
+      },
+      {
+        "id": "grpSchStuFlnm",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "성명"
+      },
+      {
+        "id": "ipbStuFlnm",
+        "type": "inputbox",
+        "val": "학생명"
+      },
+      {
+        "id": "grpSchLatenLrlyScCd",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "신고종류"
+      },
+      {
+        "id": "cmbLatenLrlyScCd",
+        "type": "combobox",
+        "val": "전체"
+      },
+      {
+        "id": "grpSchStatus",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "접수상태"
+      },
+      {
+        "id": "cmbStatus",
+        "type": "combobox",
+        "val": "전체"
+      },
+      {
+        "id": "grpSchAtrzSts",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "결재상태"
+      },
+      {
+        "id": "cmbAtrzSts",
+        "type": "combobox",
+        "val": "전체"
+      },
+      {
+        "id": "grpSchOnlAplyYn",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "등록구분"
+      },
+      {
+        "id": "cmbOnlAplyYn",
+        "type": "combobox",
+        "val": "전체"
+      },
+      {
+        "id": "grpSchOcrnYmd",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "신고기간"
+      },
+      {
+        "id": "dtOcrnBgngYmd",
+        "type": "dateinput",
+        "val": "20260601"
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "~"
+      },
+      {
+        "id": "dtOcrnEndYmd",
+        "type": "dateinput",
+        "val": "20260731"
+      },
+      {
+        "id": "grpSearchBtn",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "grpSchBtn",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "btnSearch",
+        "type": "button",
+        "val": "조회"
+      },
+      {
+        "id": "grpList",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "grpListHeader",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "udc.com.comTitle",
+        "val": ""
+      },
+      {
+        "id": "grpListHeaderBtnWrapper",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "grpListHeaderBtn",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "btnInsert",
+        "type": "button",
+        "val": "등록"
+      },
+      {
+        "id": "btnAprvDmnd",
+        "type": "button",
+        "val": "승인요청"
+      },
+      {
+        "id": "btnDwld",
+        "type": "button",
+        "val": "자료 내려받기"
+      },
+      {
+        "id": "grdList",
+        "type": "grid",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "0행 진행상태  "
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "0행 진행상태  "
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "0행 신청일자  "
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "0행 학년  "
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "0행 반  "
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "0행 번호  "
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "0행 성명   link"
+      }
+    ],
+    "datasets": [
+      {
+        "cols": [
+          "messageId",
+          "messageDiv"
+        ],
+        "id": "dsExMessage",
+        "rowCount": 4
+      },
+      {
+        "cols": [
+          "chk",
+          "shlCd",
+          "ayr",
+          "stuInvlNo",
+          "latenLrlyDclrId",
+          "shlKndScCd",
+          "shlCrseScCd",
+          "stuDtcNo",
+          "schpaDtcNo",
+          "dghtCrseScCd",
+          "dghtCrseScCdNm",
+          "ordScCd",
+          "ordScCdNm",
+          "grd",
+          "dddepCd",
+          "dddepCdNm",
+          "clsCd",
+          "clsNm",
+          "clsNo",
+          "stuFlnm",
+          "eduActPrcsStsCd",
+          "eduActPrcsStsNm",
+          "latenLrlyScCd",
+          "latenLrlyScNm",
+          "latenLrlyDclrScCd",
+          "latenLrlyDclrScNm",
+          "onlAplyYn",
+          "onlAplyYnNm",
+          "ptorNm",
+          "stuPtorRelCd",
+          "stuPtorRelNm",
+          "ptorTelno",
+          "ocrnYmd",
+          "bgngHm",
+          "endHm",
+          "ocrnPeriod",
+          "rptOcrnPeriod",
+          "latenLrlyRsnCn",
+          "bgngPir",
+          "endPir",
+          "shlOpiCn",
+          "spmDmndCn",
+          "etcCn",
+          "ptorSignCn",
+          "fileRefrnId",
+          "atrzStsCd",
+          "atrzStsNm",
+          "artzSn",
+          "rgtrId",
+          "regDt",
+          "regDt2",
+          "mdfrId",
+          "mdfcnDt",
+          "is_transported",
+          "rptOcrnPeriod2",
+          "rptOcrnYmd",
+          "rptPeriod"
+        ],
+        "id": "dsStdntListForLrly",
+        "rowCount": 0
+      },
+      {
+        "cols": [
+          "chk",
+          "shlCd",
+          "ayr",
+          "stuInvlNo",
+          "latenLrlyDclrId",
+          "shlKndScCd",
+          "shlCrseScCd",
+          "stuDtcNo",
+          "schpaDtcNo",
+          "dghtCrseScCd",
+          "dghtCrseScCdNm",
+          "ordScCd",
+          "ordScCdNm",
+          "grd",
+          "dddepCd",
+          "dddepCdNm",
+          "clsCd",
+          "clsNm",
+          "clsNo",
+          "stuFlnm",
+          "eduActPrcsStsCd",
+          "eduActPrcsStsNm",
+          "latenLrlyScCd",
+          "latenLrlyScNm",
+          "latenLrlyDclrScCd",
+          "latenLrlyDclrScNm",
+          "onlAplyYn",
+          "onlAplyYnNm",
+          "ptorNm",
+          "stuPtorRelCd",
+          "stuPtorRelNm",
+          "ptorTelno",
+          "ocrnYmd",
+          "bgngHm",
+          "endHm",
+          "ocrnPeriod",
+          "rptOcrnPeriod",
+          "latenLrlyRsnCn",
+          "bgngPir",
+          "endPir",
+          "shlOpiCn",
+          "spmDmndCn",
+          "etcCn",
+          "ptorSignCn",
+          "fileRefrnId",
+          "atrzStsCd",
+          "atrzStsNm",
+          "artzSn",
+          "rgtrId",
+          "regDt",
+          "regDt2",
+          "mdfrId",
+          "mdfcnDt",
+          "is_transported"
+        ],
+        "id": "dsStdntListForLrly2",
+        "rowCount": 0
+      },
+      {
+        "cols": [
+          "cd",
+          "nm",
+          "sorSeqSn",
+          "clsCd",
+          "clsCdNm"
+        ],
+        "id": "dsClsCd",
+        "rowCount": 1
+      },
+      {
+        "cols": [
+          "userId",
+          "userNm",
+          "connectNo",
+          "userDtcNo",
+          "userPrn",
+          "invlNo",
+          "OrgdpOrgCd",
+          "corpCd",
+          "corpNm",
+          "ogdpOrgNm",
+          "Ayr",
+          "frtunAuthCd",
+          "instCd",
+          "instNm",
+          "cntnCtpvScCd",
+          "cntnCddcCd",
+          "orgScCd",
+          "orgCd",
+          "orgNm",
+          "instClfCd",
+          "cddcCd",
+          "cddcNm",
+          "cteOrgCd",
+          "cteOrgNm",
+          "cteOrgInstClfCd",
+          "ogdpInstCd",
+          "mwmnEngngScCd",
+          "hsGnrlBusnsScCode",
+          "HshScCd",
+          "shlKndScCd",
+          "shlFndnScCd",
+          "shlCrseScCd",
+          "subSysCd",
+          "userScCd",
+          "usePslYn",
+          "useBgngYmd",
+          "useEndYmd",
+          "initInstClfCd",
+          "initInstCd",
+          "initInstNm",
+          "coaAyr",
+          "rcritScCd",
+          "rcritNm",
+          "rcritScAcctoBeginYmd",
+          "rcritAcctoEndYmd",
+          "itrtAyr"
+        ],
+        "id": "dmUserInfo",
+        "rowCount": null
+      },
+      {
+        "cols": [
+          "ayr",
+          "ordScCd",
+          "grd",
+          "dddepCd",
+          "ordGrdDddepCd",
+          "clsCd",
+          "stuInvlNo",
+          "actScCd",
+          "shlCd",
+          "atteYmd",
+          "enrScCd",
+          "shlKndScCd",
+          "stuFlnm",
+          "clsNm",
+          "clsNo",
+          "latenLrlyScCd",
+          "eduActPrcsStsCd",
+          "shlCrseScCd",
+          "dghtCrseScCd",
+          "orgCd",
+          "onlAplyYn",
+          "atrzStsCd",
+          "ocrnBgngYmd",
+          "ocrnEndYmd",
+          "ayrAuthType"
+        ],
+        "id": "dmSearch",
+        "rowCount": null
+      },
+      {
+        "cols": [
+          "shlCd",
+          "ayr",
+          "stuInvlNo",
+          "latenLrlyDclrId",
+          "eduActPrcsStsCd",
+          "atrzStsCd",
+          "atrzStsNm",
+          "artzSn",
+          "result"
+        ],
+        "id": "dmResultCheckAprv",
+        "rowCount": null
+      },
+      {
+        "cols": [],
+        "id": "subStdntList",
+        "rowCount": null
+      },
+      {
+        "cols": [],
+        "id": "subCheckAprv",
+        "rowCount": null
+      },
+      {
+        "cols": [],
+        "id": "subAssistSubmit",
+        "rowCount": null
+      },
+      {
+        "cols": [
+          "pgeId",
+          "clfCdValue",
+          "filterExpr",
+          "unyCdGrpId",
+          "bfrClfCdValue",
+          "userDfnCd1Value",
+          "userDfnCd2Value",
+          "userDfnCd3Value",
+          "userDfnCd4Value",
+          "userDfnCd5Value"
+        ],
+        "id": "dsAssistDatasetRequest",
+        "rowCount": 2
+      },
+      {
+        "cols": [
+          "pgeId",
+          "clfCdValue",
+          "clfCdValueNm",
+          "clfCdUseYn",
+          "unyCdValue",
+          "unyCdValueNm",
+          "userDfnCd1Value",
+          "userDfnCd2Value",
+          "userDfnCd3Value",
+          "userDfnCd4Value",
+          "userDfnCd5Value",
+          "upClfCdValue",
+          "upUnyCdValue",
+          "rownum",
+          "unyCdValueEngNm",
+          "unyCdValueAbrvNm",
+          "unyCdValueSn",
+          "unyCdEtcCn",
+          "unyCdUseYn",
+          "unyCdScCd",
+          "bfrUnyCdValue",
+          "bfrUnyCdValueNm"
+        ],
+        "id": "dsAssistCntrDatasetResponse",
+        "rowCount": 8
+      },
+      {
+        "cols": [
+          "pgeId",
+          "clfCdValue",
+          "clfCdValueNm",
+          "clfCdUseYn",
+          "unyCdValue",
+          "unyCdValueNm",
+          "userDfnCd1Value",
+          "userDfnCd2Value",
+          "userDfnCd3Value",
+          "userDfnCd4Value",
+          "userDfnCd5Value",
+          "upClfCdValue",
+          "upUnyCdValue",
+          "rownum",
+          "unyCdValueEngNm",
+          "unyCdValueAbrvNm",
+          "unyCdValueSn",
+          "unyCdEtcCn",
+          "unyCdUseYn",
+          "unyCdScCd",
+          "bfrUnyCdValue",
+          "bfrUnyCdValueNm"
+        ],
+        "id": "dvLATEN_LRLY_SC_CDcmbLatenLrlyScCd",
+        "rowCount": 3
+      },
+      {
+        "cols": [
+          "pgeId",
+          "clfCdValue",
+          "clfCdValueNm",
+          "clfCdUseYn",
+          "unyCdValue",
+          "unyCdValueNm",
+          "userDfnCd1Value",
+          "userDfnCd2Value",
+          "userDfnCd3Value",
+          "userDfnCd4Value",
+          "userDfnCd5Value",
+          "upClfCdValue",
+          "upUnyCdValue",
+          "rownum",
+          "unyCdValueEngNm",
+          "unyCdValueAbrvNm",
+          "unyCdValueSn",
+          "unyCdEtcCn",
+          "unyCdUseYn",
+          "unyCdScCd",
+          "bfrUnyCdValue",
+          "bfrUnyCdValueNm"
+        ],
+        "id": "dvATRZ_STS_CDcmbAtrzSts",
+        "rowCount": 5
+      },
+      {
+        "cols": [
+          "cd",
+          "nm",
+          "ayrNm",
+          "ayr",
+          "ayrAuthType"
+        ],
+        "id": "dsSwcOrgAyr",
+        "rowCount": 5
+      },
+      {
+        "cols": [
+          "cd",
+          "nm",
+          "grd",
+          "grdNm"
+        ],
+        "id": "dsSwcOrgGrd",
+        "rowCount": 1
+      },
+      {
+        "cols": [
+          "cd",
+          "nm",
+          "sorSeqSn",
+          "grd",
+          "clsCd",
+          "clsCdNm"
+        ],
+        "id": "dsSwcOrgClsCd",
+        "rowCount": 1
+      },
+      {
+        "cols": [
+          "authType",
+          "shlCd",
+          "ayr",
+          "dghtIndctYn",
+          "ordIndctYn",
+          "dddepIndctYn",
+          "ordDddepIndctYn",
+          "dghtOrdDddepIndctYn"
+        ],
+        "id": "dmSwcIndctInfo",
+        "rowCount": null
+      },
+      {
+        "cols": [],
+        "id": "subSwcAuth",
+        "rowCount": null
+      }
+    ],
+    "idx": 28,
+    "title": ""
+  },
+  {
+    "appId": "udc/com/appHeader",
+    "controls": [
+      {
+        "id": "appHeader",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "optTit",
+        "type": "output",
+        "val": "지각·조퇴·결과신고서관리"
+      },
+      {
+        "id": "grpMenuPath",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "image",
+        "val": "집 모양 아이콘"
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "학급담임"
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "교육활동신청관리"
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "출결관리"
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "지각·조퇴·결과신고서관리"
+      },
+      {
+        "id": "btnAuthCss",
+        "type": "button",
+        "val": "A"
+      },
+      {
+        "id": "btnAuth",
+        "type": "button",
+        "val": "A"
+      },
+      {
+        "id": "grpButtons",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "btnHelp",
+        "type": "button",
+        "val": "도움말"
+      },
+      {
+        "id": "btnQnA",
+        "type": "button",
+        "val": "질의응답"
+      },
+      {
+        "id": "btnFAQ",
+        "type": "button",
+        "val": "FAQ"
+      },
+      {
+        "id": "btnTel",
+        "type": "button",
+        "val": "연락처"
+      },
+      {
+        "id": "btnOnlineCon",
+        "type": "button",
+        "val": "온라인컨텐츠"
+      },
+      {
+        "id": "btnFav",
+        "type": "button",
+        "val": "즐겨찾기"
+      },
+      {
+        "id": "btnFold",
+        "type": "button",
+        "val": "축소"
+      },
+      {
+        "id": "grpViewZm",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "btnPopZmIn",
+        "type": "button",
+        "val": "화면 확대"
+      },
+      {
+        "id": "btnPopZmOut",
+        "type": "button",
+        "val": "화면 축소"
+      },
+      {
+        "id": "buttonHideSearch",
+        "type": "button",
+        "val": "조회숨김"
+      }
+    ],
+    "datasets": [
+      {
+        "cols": [
+          "code",
+          "name",
+          "info"
+        ],
+        "id": "dsHelpdesk",
+        "rowCount": 19
+      },
+      {
+        "cols": [
+          "pgeId",
+          "hlpSn",
+          "hlpTitlNm",
+          "hlpCn",
+          "prcssGudnYn",
+          "useYn",
+          "regDt",
+          "hlpFileRefrnId"
+        ],
+        "id": "dsHlp",
+        "rowCount": 0
+      },
+      {
+        "cols": [
+          "authGrpId",
+          "redngUseYn",
+          "wgUseYn",
+          "userDtcNo",
+          "userId"
+        ],
+        "id": "dsSrs",
+        "rowCount": 0
+      },
+      {
+        "cols": [
+          "id",
+          "uuid",
+          "label",
+          "area",
+          "embid",
+          "visible",
+          "type"
+        ],
+        "id": "dsFoldArea",
+        "rowCount": 0
+      },
+      {
+        "cols": [
+          "menuId",
+          "menuNm",
+          "gubun",
+          "stat"
+        ],
+        "id": "dmFavorites",
+        "rowCount": null
+      },
+      {
+        "cols": [
+          "pgeId",
+          "pgeNm",
+          "prcsScCd"
+        ],
+        "id": "dmHlp",
+        "rowCount": null
+      },
+      {
+        "cols": [
+          "userId",
+          "userDtcNo",
+          "menuId"
+        ],
+        "id": "dmSrs",
+        "rowCount": null
+      },
+      {
+        "cols": [],
+        "id": "subFavorites",
+        "rowCount": null
+      },
+      {
+        "cols": [],
+        "id": "subHlp",
+        "rowCount": null
+      },
+      {
+        "cols": [],
+        "id": "subSrs",
+        "rowCount": null
+      }
+    ],
+    "idx": 29,
+    "title": ""
+  },
+  {
+    "appId": "udc/sw/swc/udcSwcAuth",
+    "controls": [
+      {
+        "id": "grpCont",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "cmbUdcAuth",
+        "type": "combobox",
+        "val": "2026"
+      }
+    ],
+    "datasets": [
+      {
+        "cols": [
+          "cd",
+          "nm",
+          "ayrNm",
+          "ayr",
+          "ayrAuthType"
+        ],
+        "id": "dsAuth",
+        "rowCount": 5
+      }
+    ],
+    "idx": 30,
+    "title": ""
+  },
+  {
+    "appId": "udc/sw/swc/udcSwcAuth",
+    "controls": [
+      {
+        "id": "grpCont",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "cmbUdcAuth",
+        "type": "combobox",
+        "val": "3"
+      }
+    ],
+    "datasets": [
+      {
+        "cols": [
+          "cd",
+          "nm",
+          "grd",
+          "grdNm"
+        ],
+        "id": "dsAuth",
+        "rowCount": 1
+      }
+    ],
+    "idx": 31,
+    "title": ""
+  },
+  {
+    "appId": "udc/sw/swc/udcSwcAuth",
+    "controls": [
+      {
+        "id": "grpCont",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "cmbUdcAuth",
+        "type": "combobox",
+        "val": "00"
+      }
+    ],
+    "datasets": [
+      {
+        "cols": [
+          "cd",
+          "nm",
+          "sorSeqSn",
+          "grd",
+          "clsCd",
+          "clsCdNm"
+        ],
+        "id": "dsAuth",
+        "rowCount": 1
+      }
+    ],
+    "idx": 32,
+    "title": ""
+  },
+  {
+    "appId": "udc/com/comTitle",
+    "controls": [
+      {
+        "id": "grp1",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "optTit",
+        "type": "output",
+        "val": ""
+      },
+      {
+        "id": "optRowCount",
+        "type": "output",
+        "val": "0"
+      },
+      {
+        "id": "btnTools",
+        "type": "button",
+        "val": ""
+      }
+    ],
+    "datasets": [],
+    "idx": 33,
+    "title": ""
+  },
+  {
+    "appId": "edu/cm/wam/woa/pm/wam_woapm01_m00",
+    "controls": [
+      {
+        "id": "",
+        "type": "udc.com.appHeader",
+        "val": ""
+      },
+      {
+        "id": "grpSearch",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "업무영역"
+      },
+      {
+        "id": "cmbWrkRelmCd",
+        "type": "combobox",
+        "val": "전체"
+      },
+      {
+        "id": "grpShlCrseScCd",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "학교과정구분"
+      },
+      {
+        "id": "cmbShlCrseScCd",
+        "type": "combobox",
+        "val": "2"
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "결재문서"
+      },
+      {
+        "id": "cmbAtrzDoct",
+        "type": "combobox",
+        "val": "전체"
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "결재문서명"
+      },
+      {
+        "id": "ipbDoctTitlNm",
+        "type": "inputbox",
+        "val": "결재문서명"
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "상신기간"
+      },
+      {
+        "id": "",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "dtiStartDt",
+        "type": "dateinput",
+        "val": "20260401"
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "~"
+      },
+      {
+        "id": "dtiEndDt",
+        "type": "dateinput",
+        "val": "20260710"
+      },
+      {
+        "id": "btnToday",
+        "type": "button",
+        "val": "오늘"
+      },
+      {
+        "id": "btnWeek",
+        "type": "button",
+        "val": "일주일"
+      },
+      {
+        "id": "btnOneMonth",
+        "type": "button",
+        "val": "1개월"
+      },
+      {
+        "id": "btnThreeMonth",
+        "type": "button",
+        "val": "3개월"
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "진행상태"
+      },
+      {
+        "id": "rdbAtrzSts",
+        "type": "radiobutton",
+        "val": "1"
+      },
+      {
+        "id": "",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "btnSearch",
+        "type": "button",
+        "val": "조회"
+      },
+      {
+        "id": "",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "udc.com.comTitle",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "btnInvlSnclnReg",
+        "type": "button",
+        "val": "개인결재선등록"
+      },
+      {
+        "id": "btnPadsDsgn",
+        "type": "button",
+        "val": "전결자지정"
+      },
+      {
+        "id": "btnProxySancrDsgn",
+        "type": "button",
+        "val": "대리결재자지정"
+      },
+      {
+        "id": "btnProxyAtrzPnstaInq",
+        "type": "button",
+        "val": "대리결재현황조회"
+      },
+      {
+        "id": "btnBfrAtrzDoctRtrcn",
+        "type": "button",
+        "val": "기결문서취소"
+      },
+      {
+        "id": "btnBndeRtrvl",
+        "type": "button",
+        "val": "회수"
+      },
+      {
+        "id": "btnDelete",
+        "type": "button",
+        "val": "삭제"
+      },
+      {
+        "id": "btnDevDelete",
+        "type": "button",
+        "val": "(개발용)이전결재상태로\r\n되돌리기"
+      },
+      {
+        "id": "btnDevFullyRtrcnDrft",
+        "type": "button",
+        "val": "(개발용)기결취소상신&완결"
+      },
+      {
+        "id": "grdMain",
+        "type": "grid",
+        "val": "상신함목록"
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "교외체험학습보고서(학교) - (3학년 2반 오지윤)"
+      },
+      {
+        "id": "btn1",
+        "type": "button",
+        "val": "결재상황조회"
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "lee2131"
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "이창수"
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "교사(초등)"
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "R100006630"
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "화천초등학교"
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "2026-04-10 08:37:12"
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "완결"
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "36행 사유 "
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "36행 인원 "
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "36행 신청기간 "
+      },
+      {
+        "id": "",
+        "type": "output",
+        "val": "36행 마지막 열 장소 "
+      },
+      {
+        "id": "udcGridPagingMain",
+        "type": "udc.cmn.GridPaging",
+        "val": ""
+      }
+    ],
+    "datasets": [
+      {
+        "cols": [
+          "messageId",
+          "messageDiv"
+        ],
+        "id": "dsExMessage",
+        "rowCount": 0
+      },
+      {
+        "cols": [
+          "orgCd",
+          "orgNm",
+          "wrkRelmCd",
+          "unitWrkCd",
+          "atrzDoctIdfId",
+          "atrzSn",
+          "doctKndCd",
+          "shlCrseScCd",
+          "aprvTmprNo",
+          "doctTitlNm",
+          "drftDt",
+          "draDtcNo",
+          "draId",
+          "draUserNm",
+          "draFlnm",
+          "draJbpsCd",
+          "draJbpsNm",
+          "drftCn",
+          "draEltsNm",
+          "curSancrCnt",
+          "totlSancrCnt",
+          "atrzKndCd",
+          "atrzStsCd",
+          "atrzStsNm",
+          "deferCnt",
+          "atrzCmptnYmd",
+          "sancrOgdpNm",
+          "delYn",
+          "atrzAprvRtrcnYn",
+          "aftfAplyYn",
+          "aftfAprvYn",
+          "wrkCnScValue",
+          "inqCondCn",
+          "addAtrzSvcId",
+          "cmptnAtrzDoctRtrcnPslYn",
+          "doctNm",
+          "atrzExptnInfo1",
+          "atrzExptnInfo2",
+          "atrzExptnInfo3",
+          "atrzExptnInfo4",
+          "curSancrExpr",
+          "curSancrSplitedInfo",
+          "lastSancrExpr",
+          "lastSancrSplitedInfo",
+          "bndeAtrzPslYn",
+          "bndeRjctPslYn",
+          "bndeDfePslYn",
+          "bndeRtrvlPslYn",
+          "bndeCmptnAtrzDoctRtrcnPslYn",
+          "secureSignatures"
+        ],
+        "id": "dsMain",
+        "rowCount": 39
+      },
+      {
+        "cols": [
+          "unyCdValue",
+          "unyCdValueNm"
+        ],
+        "id": "dsShlCrseScCd",
+        "rowCount": 5
+      },
+      {
+        "cols": [
+          "wrkRelmCd",
+          "unitWrkCd",
+          "doctKndCd",
+          "shlCrseScCd",
+          "doctNm",
+          "doctPrsrvYr",
+          "keyCnt",
+          "inqChrsNm",
+          "drftWrkScrinUrl",
+          "drftWrkPopupUrl",
+          "dbmsWrkRelmCd",
+          "atrzDoctUseYn"
+        ],
+        "id": "dsAtrzDoct",
+        "rowCount": 663
+      },
+      {
+        "cols": [
+          "unyCdValue",
+          "unyCdValueNm"
+        ],
+        "id": "dsAtrzStsCd",
+        "rowCount": 5
+      },
+      {
+        "cols": [
+          "orgCd",
+          "unitWrkCd",
+          "atrzDoctIdfId",
+          "atrzSn",
+          "doctKndCd",
+          "shlCrseScCd",
+          "aprvTmprNo"
+        ],
+        "id": "dsBndeRtrvl",
+        "rowCount": 0
+      },
+      {
+        "cols": [
+          "orgCd",
+          "unitWrkCd",
+          "atrzDoctIdfId",
+          "atrzSn",
+          "doctKndCd",
+          "shlCrseScCd",
+          "aprvTmprNo"
+        ],
+        "id": "dsRtrcnDrft",
+        "rowCount": 0
+      },
+      {
+        "cols": [
+          "orgCd",
+          "unitWrkCd",
+          "atrzDoctIdfId",
+          "atrzSn",
+          "doctKndCd",
+          "shlCrseScCd",
+          "aprvTmprNo"
+        ],
+        "id": "dsAtrzDoctDelete",
+        "rowCount": 0
+      },
+      {
+        "cols": [
+          "unitWrkCd",
+          "atrzDoctIdfId",
+          "atrzSn",
+          "doctKndCd",
+          "shlCrseScCd",
+          "doctSrc",
+          "atrzCddcScCd"
+        ],
+        "id": "dsSancr",
+        "rowCount": 0
+      },
+      {
+        "cols": [
+          "unitWrkCd",
+          "atrzDoctIdfId",
+          "atrzSn",
+          "doctKndCd",
+          "shlCrseScCd",
+          "doctSrc",
+          "atrzCddcScCd",
+          "doctTitlNm",
+          "draId",
+          "sancrOrgCd"
+        ],
+        "id": "dsSancrDetail",
+        "rowCount": 0
+      },
+      {
+        "cols": [
+          "wrkRelmCd",
+          "shlCrseScCd",
+          "doctKndCd",
+          "doctTitlNm",
+          "draFlnm",
+          "startDt",
+          "endDt",
+          "atrzSts",
+          "shlCd"
+        ],
+        "id": "dmSearch",
+        "rowCount": null
+      },
+      {
+        "cols": [
+          "unitWrkCd",
+          "doctKndCd",
+          "shlCrseScCd",
+          "atrzDoctIdfId",
+          "atrzSn",
+          "orgCd"
+        ],
+        "id": "dmParamOfSaveResetAtrzSts",
+        "rowCount": null
+      },
+      {
+        "cols": [
+          "unyApprYn",
+          "unyApprCddc"
+        ],
+        "id": "dmUnyAppr",
+        "rowCount": null
+      },
+      {
+        "cols": [],
+        "id": "subList",
+        "rowCount": null
+      },
+      {
+        "cols": [],
+        "id": "subAtrzDoctList",
+        "rowCount": null
+      },
+      {
+        "cols": [],
+        "id": "____subSaveResetAtrzSts",
+        "rowCount": null
+      },
+      {
+        "cols": [],
+        "id": "subBndeRtrvl",
+        "rowCount": null
+      },
+      {
+        "cols": [],
+        "id": "subRtrcnDrftList",
+        "rowCount": null
+      },
+      {
+        "cols": [],
+        "id": "subAtrzDoctDelete",
+        "rowCount": null
+      },
+      {
+        "cols": [],
+        "id": "subExecuteFullyRtrcnDrft",
+        "rowCount": null
+      },
+      {
+        "cols": [],
+        "id": "subSancrList",
+        "rowCount": null
+      },
+      {
+        "cols": [],
+        "id": "subWrkCodeList",
+        "rowCount": null
+      },
+      {
+        "cols": [
+          "unyCdValue",
+          "unyCdValueNm"
+        ],
+        "id": "dsWrkRelmCd",
+        "rowCount": 5
+      },
+      {
+        "cols": [
+          "unyCdValue",
+          "unyCdValueNm",
+          "upUnyCdValue"
+        ],
+        "id": "dsUnitWrkCd",
+        "rowCount": 0
+      },
+      {
+        "cols": [
+          "unyCdValue",
+          "unyCdValueNm",
+          "upUnyCdValue"
+        ],
+        "id": "dsDetaWrkCd",
+        "rowCount": 0
+      },
+      {
+        "cols": [],
+        "id": "subAssistSubmit",
+        "rowCount": null
+      },
+      {
+        "cols": [
+          "pgeId",
+          "clfCdValue",
+          "filterExpr",
+          "unyCdGrpId",
+          "bfrClfCdValue",
+          "userDfnCd1Value",
+          "userDfnCd2Value",
+          "userDfnCd3Value",
+          "userDfnCd4Value",
+          "userDfnCd5Value"
+        ],
+        "id": "dsAssistDatasetRequest",
+        "rowCount": 2
+      },
+      {
+        "cols": [
+          "pgeId",
+          "clfCdValue",
+          "clfCdValueNm",
+          "clfCdUseYn",
+          "unyCdValue",
+          "unyCdValueNm",
+          "userDfnCd1Value",
+          "userDfnCd2Value",
+          "userDfnCd3Value",
+          "userDfnCd4Value",
+          "userDfnCd5Value",
+          "upClfCdValue",
+          "upUnyCdValue",
+          "rownum",
+          "unyCdValueEngNm",
+          "unyCdValueAbrvNm",
+          "unyCdValueSn",
+          "unyCdEtcCn",
+          "unyCdUseYn",
+          "unyCdScCd",
+          "bfrUnyCdValue",
+          "bfrUnyCdValueNm"
+        ],
+        "id": "dsAssistCntrDatasetResponse",
+        "rowCount": 10
+      }
+    ],
+    "idx": 34,
+    "title": ""
+  },
+  {
+    "appId": "udc/com/appHeader",
+    "controls": [
+      {
+        "id": "appHeader",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "optTit",
+        "type": "output",
+        "val": "상신함"
+      },
+      {
+        "id": "grpMenuPath",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "",
+        "type": "image",
+        "val": "집 모양 아이콘"
+      },
+      {
+        "id": "btnAuthCss",
+        "type": "button",
+        "val": "A"
+      },
+      {
+        "id": "btnAuth",
+        "type": "button",
+        "val": "A"
+      },
+      {
+        "id": "grpButtons",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "btnHelp",
+        "type": "button",
+        "val": "도움말"
+      },
+      {
+        "id": "btnQnA",
+        "type": "button",
+        "val": "질의응답"
+      },
+      {
+        "id": "btnFAQ",
+        "type": "button",
+        "val": "FAQ"
+      },
+      {
+        "id": "btnTel",
+        "type": "button",
+        "val": "연락처"
+      },
+      {
+        "id": "btnOnlineCon",
+        "type": "button",
+        "val": "온라인컨텐츠"
+      },
+      {
+        "id": "btnFav",
+        "type": "button",
+        "val": "즐겨찾기"
+      },
+      {
+        "id": "btnFold",
+        "type": "button",
+        "val": "축소"
+      },
+      {
+        "id": "grpViewZm",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "btnPopZmIn",
+        "type": "button",
+        "val": "화면 확대"
+      },
+      {
+        "id": "btnPopZmOut",
+        "type": "button",
+        "val": "화면 축소"
+      }
+    ],
+    "datasets": [
+      {
+        "cols": [
+          "code",
+          "name",
+          "info"
+        ],
+        "id": "dsHelpdesk",
+        "rowCount": 19
+      },
+      {
+        "cols": [
+          "pgeId",
+          "hlpSn",
+          "hlpTitlNm",
+          "hlpCn",
+          "prcssGudnYn",
+          "useYn",
+          "regDt",
+          "hlpFileRefrnId"
+        ],
+        "id": "dsHlp",
+        "rowCount": 0
+      },
+      {
+        "cols": [
+          "authGrpId",
+          "redngUseYn",
+          "wgUseYn",
+          "userDtcNo",
+          "userId"
+        ],
+        "id": "dsSrs",
+        "rowCount": 0
+      },
+      {
+        "cols": [
+          "id",
+          "uuid",
+          "label",
+          "area",
+          "embid",
+          "visible",
+          "type"
+        ],
+        "id": "dsFoldArea",
+        "rowCount": 1
+      },
+      {
+        "cols": [
+          "menuId",
+          "menuNm",
+          "gubun",
+          "stat"
+        ],
+        "id": "dmFavorites",
+        "rowCount": null
+      },
+      {
+        "cols": [
+          "pgeId",
+          "pgeNm",
+          "prcsScCd"
+        ],
+        "id": "dmHlp",
+        "rowCount": null
+      },
+      {
+        "cols": [
+          "userId",
+          "userDtcNo",
+          "menuId"
+        ],
+        "id": "dmSrs",
+        "rowCount": null
+      },
+      {
+        "cols": [],
+        "id": "subFavorites",
+        "rowCount": null
+      },
+      {
+        "cols": [],
+        "id": "subHlp",
+        "rowCount": null
+      },
+      {
+        "cols": [],
+        "id": "subSrs",
+        "rowCount": null
+      }
+    ],
+    "idx": 35,
+    "title": ""
+  },
+  {
+    "appId": "udc/com/comTitle",
+    "controls": [
+      {
+        "id": "grp1",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "optTit",
+        "type": "output",
+        "val": ""
+      },
+      {
+        "id": "optRowCount",
+        "type": "output",
+        "val": "39"
+      },
+      {
+        "id": "btnTools",
+        "type": "button",
+        "val": "상신함목록  필터 등"
+      }
+    ],
+    "datasets": [],
+    "idx": 36,
+    "title": ""
+  },
+  {
+    "appId": "udc/cmn/GridPaging",
+    "controls": [
+      {
+        "id": "totalArea",
+        "type": "container",
+        "val": ""
+      },
+      {
+        "id": "optRwCnt",
+        "type": "output",
+        "val": "39"
+      },
+      {
+        "id": "cmbRw",
+        "type": "combobox",
+        "val": "50"
+      },
+      {
+        "id": "btnAply",
+        "type": "button",
+        "val": "확인"
+      },
+      {
+        "id": "pgidx",
+        "type": "pageindexer",
+        "val": ""
+      }
+    ],
+    "datasets": [
+      {
+        "cols": [
+          "pageIndex",
+          "pageSize",
+          "totalCount",
+          "rowIndex"
+        ],
+        "id": "dmPageInfo",
+        "rowCount": null
+      }
+    ],
+    "idx": 37,
+    "title": ""
+  }
+]

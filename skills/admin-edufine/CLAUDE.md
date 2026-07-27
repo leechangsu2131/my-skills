@@ -184,9 +184,36 @@ playwright install chromium
 ## 커밋 컨벤션
 
 ```
-feat: 새 기능
+Feat: 새 기능
 fix: 버그 수정
 refactor: 리팩토링
 test: 테스트 추가
 docs: 문서 수정
 ```
+
+---
+
+## 추가 구현 완료 (Phase 5 — 결재대기 자동화 봇)
+
+K-에듀파인 결재대기 및 공람대기 문서를 일괄 수집하고, 결재를 위한 새 창을 열어주는 자동화 기능이 추가되었습니다.
+
+### `edufine_auto_approve.py`
+업무포털 `gbe.eduptl.kr` 내의 K-에듀파인 위젯과 연동하여 결재 목록을 파싱하고 저장하는 모듈.
+
+**실행 방법**:
+```bash
+# 1. 목록 조회 및 텍스트 파일 저장 (Dry-run)
+python edufine_auto_approve.py --tab sanctnWait
+
+# 2. 목록 조회 + K-에듀파인 결재 페이지 열기 (실행 모드)
+python edufine_auto_approve.py --apply --tab sanctnWait
+```
+
+**동작 방식**:
+1. `launch_chrome.bat`으로 실행 중인 Chrome(포트 9222)에 CDP 연결
+2. 업무포털 메인 화면에서 `결재대기`(또는 `공람대기`) 탭 자동 클릭
+3. `kedufine` iframe 내부의 결재대기 목록 DOM(TR)을 파싱하여 제목, 기안자, 날짜 정보 추출
+4. 추출된 목록을 `result/edufine_{tab_key}_{timestamp}.txt` 파일로 저장
+5. `--apply` 옵션 활성화 시 포털 위젯 내의 바로가기 링크를 클릭하여 K-에듀파인 결재 진행용 새 창을 띄움
+6. K-에듀파인 본체는 Nexacro 보안 체크가 있으므로, 기안 확인 및 최종 결재 승인 처리는 사용자가 수동으로 진행 (안전 정책 준수)
+

@@ -1,0 +1,2494 @@
+[
+  {
+    "attrs": {
+      "style": "display:flex; min-width:max-content; height: 25px; align-items: stretch;"
+    },
+    "h": 25,
+    "html": "<div style=\"display:flex; min-width:max-content; height: 25px; align-items: stretch;\"><div style=\"font-size: 15px !important; font-weight: bold; color: #FFFFFF; border:1px solid #FFFFFF; min-width: max-content; border-radius: 5px;  padding: 1px 5px 2px 5px;\">화천초등학교</div></div>",
+    "i": 27,
+    "left": 210,
+    "tag": "div",
+    "text": "화천초등학교",
+    "top": 6,
+    "w": 95
+  },
+  {
+    "attrs": {
+      "class": "cl-text-wrapper",
+      "data-ndid": "ic",
+      "style": "align-items:center;background:transparent;border:none;color:inherit;cursor:inherit;display:inline-flex;font:inherit;height:100%;justify-content:center;outline:none;padding:0px;text-align:inherit;text-decoration:inherit;text-shadow:inherit;width:auto;"
+    },
+    "h": 25,
+    "html": "<a class=\"cl-text-wrapper\" style=\"align-items:center;background:transparent;border:none;color:inherit;cursor:inherit;display:inline-flex;font:inherit;height:100%;justify-content:center;outline:none;padding:0px;text-align:inherit;text-decoration:inherit;text-shadow:inherit;width:auto;\" data-ndid=\"ic\"><div class=\"cl-icon\" style=\"background-image:url('theme/neis/images/com/btn-clock.png');\" data-ndid=\"ib\"></div><div class=\"cl-text\" style=\"background",
+    "i": 38,
+    "left": 1442,
+    "tag": "a",
+    "text": "",
+    "top": 6,
+    "w": 16
+  },
+  {
+    "attrs": {
+      "class": "cl-text-wrapper",
+      "data-ndid": "ig",
+      "style": "align-items:center;background:transparent;border:none;color:inherit;cursor:inherit;display:inline-flex;font:inherit;height:100%;justify-content:center;outline:none;padding:0px;text-align:inherit;text-decoration:inherit;text-shadow:inherit;width:auto;"
+    },
+    "h": 23,
+    "html": "<a class=\"cl-text-wrapper\" style=\"align-items:center;background:transparent;border:none;color:inherit;cursor:inherit;display:inline-flex;font:inherit;height:100%;justify-content:center;outline:none;padding:0px;text-align:inherit;text-decoration:inherit;text-shadow:inherit;width:auto;\" data-ndid=\"ig\"><div class=\"cl-icon\" style=\"background-image:url('theme/neis/images/com/btn-top-logout.png');\" data-ndid=\"if\"></div><div class=\"cl-text\" style=\"backg",
+    "i": 49,
+    "left": 1553,
+    "tag": "a",
+    "text": "로그아웃",
+    "top": 7,
+    "w": 72
+  },
+  {
+    "attrs": {
+      "class": "cl-text-wrapper",
+      "data-ndid": "im",
+      "style": "align-items:center;background:transparent;border:none;color:inherit;cursor:inherit;display:inline-flex;font:inherit;height:100%;justify-content:center;outline:none;padding:0px;text-align:inherit;text-decoration:inherit;text-shadow:inherit;width:auto;"
+    },
+    "h": 23,
+    "html": "<a class=\"cl-text-wrapper\" style=\"align-items:center;background:transparent;border:none;color:inherit;cursor:inherit;display:inline-flex;font:inherit;height:100%;justify-content:center;outline:none;padding:0px;text-align:inherit;text-decoration:inherit;text-shadow:inherit;width:auto;\" data-ndid=\"im\"><div class=\"cl-icon\" style=\"background-image:url('theme/neis/images/com/btn-top-manual.png');\" data-ndid=\"il\"></div><div class=\"cl-text\" style=\"backg",
+    "i": 54,
+    "left": 1649,
+    "tag": "a",
+    "text": "튜토리얼",
+    "top": 7,
+    "w": 72
+  },
+  {
+    "attrs": {
+      "class": "cl-text-wrapper",
+      "data-ndid": "iq",
+      "style": "align-items:center;background:transparent;border:none;color:inherit;cursor:inherit;display:inline-flex;font:inherit;height:100%;justify-content:center;outline:none;padding:0px;text-align:inherit;text-decoration:inherit;text-shadow:inherit;width:auto;"
+    },
+    "h": 23,
+    "html": "<a class=\"cl-text-wrapper\" style=\"align-items:center;background:transparent;border:none;color:inherit;cursor:inherit;display:inline-flex;font:inherit;height:100%;justify-content:center;outline:none;padding:0px;text-align:inherit;text-decoration:inherit;text-shadow:inherit;width:auto;\" data-ndid=\"iq\"><div class=\"cl-icon\" style=\"background-image:url('theme/neis/black/images/controls/output/icon_group_disabled.png');\" data-ndid=\"ip\"></div><div class",
+    "i": 59,
+    "left": 1746,
+    "tag": "a",
+    "text": "사용자지원",
+    "top": 7,
+    "w": 84
+  },
+  {
+    "attrs": {
+      "class": "cl-text-wrapper",
+      "data-ndid": "iy",
+      "style": "align-items:center;background:transparent;border:none;color:inherit;cursor:inherit;display:inline-flex;font:inherit;height:100%;justify-content:center;outline:none;padding:0px;text-align:inherit;text-decoration:inherit;text-shadow:inherit;width:100%;"
+    },
+    "h": 23,
+    "html": "<a class=\"cl-text-wrapper\" style=\"align-items:center;background:transparent;border:none;color:inherit;cursor:inherit;display:inline-flex;font:inherit;height:100%;justify-content:center;outline:none;padding:0px;text-align:inherit;text-decoration:inherit;text-shadow:inherit;width:100%;\" data-ndid=\"iy\"><div class=\"cl-text\" style=\"background:transparent;border:none;color:inherit;cursor:inherit;font:inherit;height:auto;padding:0px;text-align:inherit;t",
+    "i": 66,
+    "left": 1851,
+    "tag": "a",
+    "text": "",
+    "top": 7,
+    "w": 28
+  },
+  {
+    "attrs": {
+      "class": "cl-text-wrapper",
+      "data-ndid": "iz",
+      "style": "align-items:center;background:transparent;border:none;color:inherit;cursor:inherit;display:inline-flex;font:inherit;height:100%;justify-content:center;outline:none;padding:0px;text-align:inherit;text-decoration:inherit;text-shadow:inherit;width:100%;"
+    },
+    "h": 23,
+    "html": "<a class=\"cl-text-wrapper\" style=\"align-items:center;background:transparent;border:none;color:inherit;cursor:inherit;display:inline-flex;font:inherit;height:100%;justify-content:center;outline:none;padding:0px;text-align:inherit;text-decoration:inherit;text-shadow:inherit;width:100%;\" data-ndid=\"iz\"><div class=\"cl-text\" style=\"background:transparent;border:none;color:inherit;cursor:inherit;font:inherit;height:auto;padding:0px;text-align:inherit;t",
+    "i": 68,
+    "left": 1880,
+    "tag": "a",
+    "text": "",
+    "top": 7,
+    "w": 29
+  },
+  {
+    "attrs": {
+      "class": "cl-hover cl-navigationbar-item cl-selected",
+      "data-itemid": "002001",
+      "data-itemidx": "0",
+      "data-ndid": "vt",
+      "data-role": "menuitem",
+      "id": "pt-fi/002001",
+      "style": "display: table-cell; overflow: visible; vertical-align: middle;"
+    },
+    "h": 43,
+    "html": "<li class=\"cl-hover cl-navigationbar-item cl-selected\" data-ndid=\"vt\" data-role=\"menuitem\" data-itemid=\"002001\" data-itemidx=\"0\" id=\"pt-fi/002001\" style=\"display: table-cell; overflow: visible; vertical-align: middle;\"><a class=\"cl-navigationbar-content\" tabindex=\"-1\" role=\"link\" aria-expanded=\"false\" style=\"display: inline-flex;\"><div class=\"cl-navigationbar-text cl-text\" style=\"align-self: baseline; flex: 1 1 auto;\">학급담임<span class=\"text-transp",
+    "i": 84,
+    "left": 200,
+    "tag": "li",
+    "text": "학급담임 0단계 메뉴항목",
+    "top": 36,
+    "w": 95
+  },
+  {
+    "attrs": {
+      "class": "cl-navigationbar-item",
+      "data-itemid": "105008",
+      "data-itemidx": "1",
+      "data-ndid": "vu",
+      "data-role": "menuitem",
+      "id": "pt-fi/105008",
+      "style": "display: table-cell; overflow: visible; vertical-align: middle;"
+    },
+    "h": 43,
+    "html": "<li class=\"cl-navigationbar-item\" data-ndid=\"vu\" data-role=\"menuitem\" data-itemid=\"105008\" data-itemidx=\"1\" id=\"pt-fi/105008\" style=\"display: table-cell; overflow: visible; vertical-align: middle;\"><a class=\"cl-navigationbar-content\" tabindex=\"-1\" role=\"link\" aria-expanded=\"false\" style=\"display: inline-flex;\"><div class=\"cl-navigationbar-text cl-text\" style=\"align-self: baseline; flex: 1 1 auto;\">체육<span class=\"text-transparent fs-zero\"> 0단계 메뉴항",
+    "i": 87,
+    "left": 295,
+    "tag": "li",
+    "text": "체육 0단계 메뉴항목",
+    "top": 36,
+    "w": 63
+  },
+  {
+    "attrs": {
+      "class": "cl-navigationbar-item",
+      "data-itemid": "105014",
+      "data-itemidx": "2",
+      "data-ndid": "vv",
+      "data-role": "menuitem",
+      "id": "pt-fi/105014",
+      "style": "display: table-cell; overflow: visible; vertical-align: middle;"
+    },
+    "h": 43,
+    "html": "<li class=\"cl-navigationbar-item\" data-ndid=\"vv\" data-role=\"menuitem\" data-itemid=\"105014\" data-itemidx=\"2\" id=\"pt-fi/105014\" style=\"display: table-cell; overflow: visible; vertical-align: middle;\"><a class=\"cl-navigationbar-content\" tabindex=\"-1\" role=\"link\" aria-expanded=\"false\" style=\"display: inline-flex;\"><div class=\"cl-navigationbar-text cl-text\" style=\"align-self: baseline; flex: 1 1 auto;\">스포츠클럽<span class=\"text-transparent fs-zero\"> 0단계 ",
+    "i": 90,
+    "left": 358,
+    "tag": "li",
+    "text": "스포츠클럽 0단계 메뉴항목",
+    "top": 36,
+    "w": 110
+  },
+  {
+    "attrs": {
+      "class": "cl-navigationbar-item",
+      "data-itemid": "105015",
+      "data-itemidx": "3",
+      "data-ndid": "vw",
+      "data-role": "menuitem",
+      "id": "pt-fi/105015",
+      "style": "display: table-cell; overflow: visible; vertical-align: middle;"
+    },
+    "h": 43,
+    "html": "<li class=\"cl-navigationbar-item\" data-ndid=\"vw\" data-role=\"menuitem\" data-itemid=\"105015\" data-itemidx=\"3\" id=\"pt-fi/105015\" style=\"display: table-cell; overflow: visible; vertical-align: middle;\"><a class=\"cl-navigationbar-content\" tabindex=\"-1\" role=\"link\" aria-expanded=\"false\" style=\"display: inline-flex;\"><div class=\"cl-navigationbar-text cl-text\" style=\"align-self: baseline; flex: 1 1 auto;\">PAPS<span class=\"text-transparent fs-zero\"> 0단계 메",
+    "i": 93,
+    "left": 468,
+    "tag": "li",
+    "text": "PAPS 0단계 메뉴항목",
+    "top": 36,
+    "w": 74
+  },
+  {
+    "attrs": {
+      "class": "cl-list cl-level-1",
+      "role": "list",
+      "style": "display:block;"
+    },
+    "h": 257,
+    "html": "<div class=\"cl-list cl-level-1\" style=\"display:block;\" role=\"list\"><div role=\"listitem\"><a class=\"cl-collapsed cl-first cl-folder cl-level-1 cl-sidenavigation-item\" data-ndid=\"vz\" data-itemid=\"002001_AMELS30032\" data-role=\"menuitem\" title=\"평가계획\" tabindex=\"0\" aria-expanded=\"false\" role=\"menuitem\" style=\"display: grid; grid-template-columns: auto 1fr min-content auto; grid-template-rows: 1fr; overflow: hidden; position: relative;\"><div class=\"cl-ic",
+    "i": 112,
+    "left": 51,
+    "tag": "div",
+    "text": "평가계획 2단계 메뉴항목 학생평가 2단계 메뉴항목 교과평가 3단계 학기말종합의견 3단계 교과학습발달상황 3단계 학교자율시간관리(전입생용) 3단계 성적조회 2단계 메뉴항목 관찰기록관리 2단계 메뉴항목",
+    "top": 80,
+    "w": 228
+  },
+  {
+    "attrs": {
+      "role": "listitem"
+    },
+    "h": 32,
+    "html": "<div role=\"listitem\"><a class=\"cl-collapsed cl-first cl-folder cl-level-1 cl-sidenavigation-item\" data-ndid=\"vz\" data-itemid=\"002001_AMELS30032\" data-role=\"menuitem\" title=\"평가계획\" tabindex=\"0\" aria-expanded=\"false\" role=\"menuitem\" style=\"display: grid; grid-template-columns: auto 1fr min-content auto; grid-template-rows: 1fr; overflow: hidden; position: relative;\"><div class=\"cl-icon\" data-name=\"icon\" style=\"align-self: center; grid-area: 1 / 1 / ",
+    "i": 113,
+    "left": 51,
+    "tag": "div",
+    "text": "평가계획 2단계 메뉴항목",
+    "top": 80,
+    "w": 228
+  },
+  {
+    "attrs": {
+      "class": "cl-collapsed cl-first cl-folder cl-level-1 cl-sidenavigation-item",
+      "data-itemid": "002001_AMELS30032",
+      "data-ndid": "vz",
+      "data-role": "menuitem",
+      "role": "menuitem",
+      "style": "display: grid; grid-template-columns: auto 1fr min-content auto; grid-template-rows: 1fr; overflow: hidden; position: relative;",
+      "tabindex": "0",
+      "title": "평가계획"
+    },
+    "h": 32,
+    "html": "<a class=\"cl-collapsed cl-first cl-folder cl-level-1 cl-sidenavigation-item\" data-ndid=\"vz\" data-itemid=\"002001_AMELS30032\" data-role=\"menuitem\" title=\"평가계획\" tabindex=\"0\" aria-expanded=\"false\" role=\"menuitem\" style=\"display: grid; grid-template-columns: auto 1fr min-content auto; grid-template-rows: 1fr; overflow: hidden; position: relative;\"><div class=\"cl-icon\" data-name=\"icon\" style=\"align-self: center; grid-area: 1 / 1 / span 1 / span 1;\"></d",
+    "i": 114,
+    "left": 51,
+    "tag": "a",
+    "text": "평가계획 2단계 메뉴항목",
+    "top": 80,
+    "w": 228
+  },
+  {
+    "attrs": {
+      "role": "listitem"
+    },
+    "h": 161,
+    "html": "<div role=\"listitem\"><a class=\"cl-expanded cl-folder cl-level-1 cl-selected cl-sidenavigation-item\" data-ndid=\"w5\" data-itemid=\"002001_AMELS30033\" data-role=\"menuitem\" title=\"학생평가\" tabindex=\"0\" aria-expanded=\"true\" role=\"menuitem\" style=\"display: grid; grid-template-columns: auto 1fr min-content auto; grid-template-rows: 1fr; overflow: hidden; position: relative;\"><div class=\"cl-icon\" data-name=\"icon\" style=\"align-self: center; grid-area: 1 / 1 /",
+    "i": 117,
+    "left": 51,
+    "tag": "div",
+    "text": "학생평가 2단계 메뉴항목 교과평가 3단계 학기말종합의견 3단계 교과학습발달상황 3단계 학교자율시간관리(전입생용) 3단계",
+    "top": 112,
+    "w": 228
+  },
+  {
+    "attrs": {
+      "class": "cl-expanded cl-folder cl-level-1 cl-selected cl-sidenavigation-item",
+      "data-itemid": "002001_AMELS30033",
+      "data-ndid": "w5",
+      "data-role": "menuitem",
+      "role": "menuitem",
+      "style": "display: grid; grid-template-columns: auto 1fr min-content auto; grid-template-rows: 1fr; overflow: hidden; position: relative;",
+      "tabindex": "0",
+      "title": "학생평가"
+    },
+    "h": 32,
+    "html": "<a class=\"cl-expanded cl-folder cl-level-1 cl-selected cl-sidenavigation-item\" data-ndid=\"w5\" data-itemid=\"002001_AMELS30033\" data-role=\"menuitem\" title=\"학생평가\" tabindex=\"0\" aria-expanded=\"true\" role=\"menuitem\" style=\"display: grid; grid-template-columns: auto 1fr min-content auto; grid-template-rows: 1fr; overflow: hidden; position: relative;\"><div class=\"cl-icon\" data-name=\"icon\" style=\"align-self: center; grid-area: 1 / 1 / span 1 / span 1;\"></",
+    "i": 118,
+    "left": 51,
+    "tag": "a",
+    "text": "학생평가 2단계 메뉴항목",
+    "top": 112,
+    "w": 228
+  },
+  {
+    "attrs": {
+      "class": "cl-list cl-level-2",
+      "data-ndid": "y9",
+      "role": "list",
+      "style": "display: block;"
+    },
+    "h": 129,
+    "html": "<div class=\"cl-list cl-level-2\" data-ndid=\"y9\" role=\"list\" style=\"display: block;\"><div role=\"listitem\"><a class=\"cl-first cl-leaf cl-level-2 cl-selected cl-sidenavigation-item\" data-ndid=\"w6\" data-itemid=\"002001_AMELS40108\" data-role=\"menuitem\" title=\"교과평가\" tabindex=\"0\" style=\"display: grid; grid-template-columns: 6px auto 1fr min-content; grid-template-rows: 1fr; overflow: hidden; position: relative;\"><div class=\"cl-icon\" data-name=\"icon\" style",
+    "i": 121,
+    "left": 51,
+    "tag": "div",
+    "text": "교과평가 3단계 학기말종합의견 3단계 교과학습발달상황 3단계 학교자율시간관리(전입생용) 3단계",
+    "top": 144,
+    "w": 228
+  },
+  {
+    "attrs": {
+      "role": "listitem"
+    },
+    "h": 29,
+    "html": "<div role=\"listitem\"><a class=\"cl-first cl-leaf cl-level-2 cl-selected cl-sidenavigation-item\" data-ndid=\"w6\" data-itemid=\"002001_AMELS40108\" data-role=\"menuitem\" title=\"교과평가\" tabindex=\"0\" style=\"display: grid; grid-template-columns: 6px auto 1fr min-content; grid-template-rows: 1fr; overflow: hidden; position: relative;\"><div class=\"cl-icon\" data-name=\"icon\" style=\"align-self: center; grid-area: 1 / 2 / span 1 / span 1;\"></div><div class=\"cl-tex",
+    "i": 122,
+    "left": 51,
+    "tag": "div",
+    "text": "교과평가 3단계",
+    "top": 150,
+    "w": 228
+  },
+  {
+    "attrs": {
+      "class": "cl-first cl-leaf cl-level-2 cl-selected cl-sidenavigation-item",
+      "data-itemid": "002001_AMELS40108",
+      "data-ndid": "w6",
+      "data-role": "menuitem",
+      "style": "display: grid; grid-template-columns: 6px auto 1fr min-content; grid-template-rows: 1fr; overflow: hidden; position: relative;",
+      "tabindex": "0",
+      "title": "교과평가"
+    },
+    "h": 29,
+    "html": "<a class=\"cl-first cl-leaf cl-level-2 cl-selected cl-sidenavigation-item\" data-ndid=\"w6\" data-itemid=\"002001_AMELS40108\" data-role=\"menuitem\" title=\"교과평가\" tabindex=\"0\" style=\"display: grid; grid-template-columns: 6px auto 1fr min-content; grid-template-rows: 1fr; overflow: hidden; position: relative;\"><div class=\"cl-icon\" data-name=\"icon\" style=\"align-self: center; grid-area: 1 / 2 / span 1 / span 1;\"></div><div class=\"cl-text\" data-name=\"text\" s",
+    "i": 123,
+    "left": 51,
+    "tag": "a",
+    "text": "교과평가 3단계",
+    "top": 150,
+    "w": 228
+  },
+  {
+    "attrs": {
+      "role": "listitem"
+    },
+    "h": 29,
+    "html": "<div role=\"listitem\"><a class=\"cl-leaf cl-level-2 cl-sidenavigation-item\" data-ndid=\"w7\" data-itemid=\"002001_AMELS40109\" data-role=\"menuitem\" title=\"학기말종합의견\" tabindex=\"0\" style=\"display: grid; grid-template-columns: 6px auto 1fr min-content; grid-template-rows: 1fr; overflow: hidden; position: relative;\"><div class=\"cl-icon\" data-name=\"icon\" style=\"align-self: center; grid-area: 1 / 2 / span 1 / span 1;\"></div><div class=\"cl-text\" data-name=\"text",
+    "i": 125,
+    "left": 51,
+    "tag": "div",
+    "text": "학기말종합의견 3단계",
+    "top": 179,
+    "w": 228
+  },
+  {
+    "attrs": {
+      "class": "cl-leaf cl-level-2 cl-sidenavigation-item",
+      "data-itemid": "002001_AMELS40109",
+      "data-ndid": "w7",
+      "data-role": "menuitem",
+      "style": "display: grid; grid-template-columns: 6px auto 1fr min-content; grid-template-rows: 1fr; overflow: hidden; position: relative;",
+      "tabindex": "0",
+      "title": "학기말종합의견"
+    },
+    "h": 29,
+    "html": "<a class=\"cl-leaf cl-level-2 cl-sidenavigation-item\" data-ndid=\"w7\" data-itemid=\"002001_AMELS40109\" data-role=\"menuitem\" title=\"학기말종합의견\" tabindex=\"0\" style=\"display: grid; grid-template-columns: 6px auto 1fr min-content; grid-template-rows: 1fr; overflow: hidden; position: relative;\"><div class=\"cl-icon\" data-name=\"icon\" style=\"align-self: center; grid-area: 1 / 2 / span 1 / span 1;\"></div><div class=\"cl-text\" data-name=\"text\" style=\"align-self: ",
+    "i": 126,
+    "left": 51,
+    "tag": "a",
+    "text": "학기말종합의견 3단계",
+    "top": 179,
+    "w": 228
+  },
+  {
+    "attrs": {
+      "role": "listitem"
+    },
+    "h": 29,
+    "html": "<div role=\"listitem\"><a class=\"cl-leaf cl-level-2 cl-sidenavigation-item\" data-ndid=\"w8\" data-itemid=\"002001_AMELS40110\" data-role=\"menuitem\" title=\"교과학습발달상황\" tabindex=\"0\" style=\"display: grid; grid-template-columns: 6px auto 1fr min-content; grid-template-rows: 1fr; overflow: hidden; position: relative;\"><div class=\"cl-icon\" data-name=\"icon\" style=\"align-self: center; grid-area: 1 / 2 / span 1 / span 1;\"></div><div class=\"cl-text\" data-name=\"tex",
+    "i": 128,
+    "left": 51,
+    "tag": "div",
+    "text": "교과학습발달상황 3단계",
+    "top": 208,
+    "w": 228
+  },
+  {
+    "attrs": {
+      "class": "cl-leaf cl-level-2 cl-sidenavigation-item",
+      "data-itemid": "002001_AMELS40110",
+      "data-ndid": "w8",
+      "data-role": "menuitem",
+      "style": "display: grid; grid-template-columns: 6px auto 1fr min-content; grid-template-rows: 1fr; overflow: hidden; position: relative;",
+      "tabindex": "0",
+      "title": "교과학습발달상황"
+    },
+    "h": 29,
+    "html": "<a class=\"cl-leaf cl-level-2 cl-sidenavigation-item\" data-ndid=\"w8\" data-itemid=\"002001_AMELS40110\" data-role=\"menuitem\" title=\"교과학습발달상황\" tabindex=\"0\" style=\"display: grid; grid-template-columns: 6px auto 1fr min-content; grid-template-rows: 1fr; overflow: hidden; position: relative;\"><div class=\"cl-icon\" data-name=\"icon\" style=\"align-self: center; grid-area: 1 / 2 / span 1 / span 1;\"></div><div class=\"cl-text\" data-name=\"text\" style=\"align-self:",
+    "i": 129,
+    "left": 51,
+    "tag": "a",
+    "text": "교과학습발달상황 3단계",
+    "top": 208,
+    "w": 228
+  },
+  {
+    "attrs": {
+      "role": "listitem"
+    },
+    "h": 29,
+    "html": "<div role=\"listitem\"><a class=\"cl-last cl-leaf cl-level-2 cl-sidenavigation-item\" data-ndid=\"wa\" data-itemid=\"002001_AMELS40243\" data-role=\"menuitem\" title=\"학교자율시간관리(전입생용)\" tabindex=\"0\" style=\"display: grid; grid-template-columns: 6px auto 1fr min-content; grid-template-rows: 1fr; overflow: hidden; position: relative;\"><div class=\"cl-icon\" data-name=\"icon\" style=\"align-self: center; grid-area: 1 / 2 / span 1 / span 1;\"></div><div class=\"cl-text\" ",
+    "i": 131,
+    "left": 51,
+    "tag": "div",
+    "text": "학교자율시간관리(전입생용) 3단계",
+    "top": 237,
+    "w": 228
+  },
+  {
+    "attrs": {
+      "class": "cl-last cl-leaf cl-level-2 cl-sidenavigation-item",
+      "data-itemid": "002001_AMELS40243",
+      "data-ndid": "wa",
+      "data-role": "menuitem",
+      "style": "display: grid; grid-template-columns: 6px auto 1fr min-content; grid-template-rows: 1fr; overflow: hidden; position: relative;",
+      "tabindex": "0",
+      "title": "학교자율시간관리(전입생용)"
+    },
+    "h": 29,
+    "html": "<a class=\"cl-last cl-leaf cl-level-2 cl-sidenavigation-item\" data-ndid=\"wa\" data-itemid=\"002001_AMELS40243\" data-role=\"menuitem\" title=\"학교자율시간관리(전입생용)\" tabindex=\"0\" style=\"display: grid; grid-template-columns: 6px auto 1fr min-content; grid-template-rows: 1fr; overflow: hidden; position: relative;\"><div class=\"cl-icon\" data-name=\"icon\" style=\"align-self: center; grid-area: 1 / 2 / span 1 / span 1;\"></div><div class=\"cl-text\" data-name=\"text\" styl",
+    "i": 132,
+    "left": 51,
+    "tag": "a",
+    "text": "학교자율시간관리(전입생용) 3단계",
+    "top": 237,
+    "w": 228
+  },
+  {
+    "attrs": {
+      "role": "listitem"
+    },
+    "h": 32,
+    "html": "<div role=\"listitem\"><a class=\"cl-collapsed cl-folder cl-level-1 cl-sidenavigation-item\" data-ndid=\"wb\" data-itemid=\"002001_AMELS30034\" data-role=\"menuitem\" title=\"성적조회\" tabindex=\"0\" aria-expanded=\"false\" role=\"menuitem\" style=\"display: grid; grid-template-columns: auto 1fr min-content auto; grid-template-rows: 1fr; overflow: hidden; position: relative;\"><div class=\"cl-icon\" data-name=\"icon\" style=\"align-self: center; grid-area: 1 / 1 / span 1 / ",
+    "i": 134,
+    "left": 51,
+    "tag": "div",
+    "text": "성적조회 2단계 메뉴항목",
+    "top": 273,
+    "w": 228
+  },
+  {
+    "attrs": {
+      "class": "cl-collapsed cl-folder cl-level-1 cl-sidenavigation-item",
+      "data-itemid": "002001_AMELS30034",
+      "data-ndid": "wb",
+      "data-role": "menuitem",
+      "role": "menuitem",
+      "style": "display: grid; grid-template-columns: auto 1fr min-content auto; grid-template-rows: 1fr; overflow: hidden; position: relative;",
+      "tabindex": "0",
+      "title": "성적조회"
+    },
+    "h": 32,
+    "html": "<a class=\"cl-collapsed cl-folder cl-level-1 cl-sidenavigation-item\" data-ndid=\"wb\" data-itemid=\"002001_AMELS30034\" data-role=\"menuitem\" title=\"성적조회\" tabindex=\"0\" aria-expanded=\"false\" role=\"menuitem\" style=\"display: grid; grid-template-columns: auto 1fr min-content auto; grid-template-rows: 1fr; overflow: hidden; position: relative;\"><div class=\"cl-icon\" data-name=\"icon\" style=\"align-self: center; grid-area: 1 / 1 / span 1 / span 1;\"></div><div c",
+    "i": 135,
+    "left": 51,
+    "tag": "a",
+    "text": "성적조회 2단계 메뉴항목",
+    "top": 273,
+    "w": 228
+  },
+  {
+    "attrs": {
+      "role": "listitem"
+    },
+    "h": 32,
+    "html": "<div role=\"listitem\"><a class=\"cl-collapsed cl-folder cl-last cl-level-1 cl-sidenavigation-item\" data-ndid=\"wh\" data-itemid=\"002001_AMELS30035\" data-role=\"menuitem\" title=\"관찰기록관리\" tabindex=\"0\" aria-expanded=\"false\" role=\"menuitem\" style=\"display: grid; grid-template-columns: auto 1fr min-content auto; grid-template-rows: 1fr; overflow: hidden; position: relative;\"><div class=\"cl-icon\" data-name=\"icon\" style=\"align-self: center; grid-area: 1 / 1 /",
+    "i": 138,
+    "left": 51,
+    "tag": "div",
+    "text": "관찰기록관리 2단계 메뉴항목",
+    "top": 305,
+    "w": 228
+  },
+  {
+    "attrs": {
+      "class": "cl-collapsed cl-folder cl-last cl-level-1 cl-sidenavigation-item",
+      "data-itemid": "002001_AMELS30035",
+      "data-ndid": "wh",
+      "data-role": "menuitem",
+      "role": "menuitem",
+      "style": "display: grid; grid-template-columns: auto 1fr min-content auto; grid-template-rows: 1fr; overflow: hidden; position: relative;",
+      "tabindex": "0",
+      "title": "관찰기록관리"
+    },
+    "h": 32,
+    "html": "<a class=\"cl-collapsed cl-folder cl-last cl-level-1 cl-sidenavigation-item\" data-ndid=\"wh\" data-itemid=\"002001_AMELS30035\" data-role=\"menuitem\" title=\"관찰기록관리\" tabindex=\"0\" aria-expanded=\"false\" role=\"menuitem\" style=\"display: grid; grid-template-columns: auto 1fr min-content auto; grid-template-rows: 1fr; overflow: hidden; position: relative;\"><div class=\"cl-icon\" data-name=\"icon\" style=\"align-self: center; grid-area: 1 / 1 / span 1 / span 1;\"></",
+    "i": 139,
+    "left": 51,
+    "tag": "a",
+    "text": "관찰기록관리 2단계 메뉴항목",
+    "top": 305,
+    "w": 228
+  },
+  {
+    "attrs": {
+      "class": "cl-text-wrapper",
+      "data-ndid": "lv",
+      "style": "align-items:center;background:transparent;border:none;color:inherit;cursor:inherit;display:inline-flex;font:inherit;height:100%;justify-content:center;outline:none;padding:0px;text-align:inherit;text-decoration:inherit;text-shadow:inherit;width:100%;"
+    },
+    "h": 39,
+    "html": "<a class=\"cl-text-wrapper\" style=\"align-items:center;background:transparent;border:none;color:inherit;cursor:inherit;display:inline-flex;font:inherit;height:100%;justify-content:center;outline:none;padding:0px;text-align:inherit;text-decoration:inherit;text-shadow:inherit;width:100%;\" data-ndid=\"lv\"><div class=\"cl-text\" style=\"background:transparent;border:none;color:inherit;cursor:inherit;font:inherit;height:auto;padding:0px;text-align:inherit;t",
+    "i": 143,
+    "left": 5,
+    "tag": "a",
+    "text": "",
+    "top": 88,
+    "w": 39
+  },
+  {
+    "attrs": {
+      "class": "cl-text-wrapper",
+      "data-ndid": "lw",
+      "style": "align-items:center;background:transparent;border:none;color:inherit;cursor:inherit;display:inline-flex;font:inherit;height:100%;justify-content:center;outline:none;padding:0px;text-align:inherit;text-decoration:inherit;text-shadow:inherit;width:100%;"
+    },
+    "h": 39,
+    "html": "<a class=\"cl-text-wrapper\" style=\"align-items:center;background:transparent;border:none;color:inherit;cursor:inherit;display:inline-flex;font:inherit;height:100%;justify-content:center;outline:none;padding:0px;text-align:inherit;text-decoration:inherit;text-shadow:inherit;width:100%;\" data-ndid=\"lw\"><div class=\"cl-text\" style=\"background:transparent;border:none;color:inherit;cursor:inherit;font:inherit;height:auto;padding:0px;text-align:inherit;t",
+    "i": 145,
+    "left": 5,
+    "tag": "a",
+    "text": "",
+    "top": 136,
+    "w": 44
+  },
+  {
+    "attrs": {
+      "class": "cl-text-wrapper",
+      "data-ndid": "lx",
+      "style": "align-items:center;background:transparent;border:none;color:inherit;cursor:inherit;display:inline-flex;font:inherit;height:100%;justify-content:center;outline:none;padding:0px;text-align:inherit;text-decoration:inherit;text-shadow:inherit;width:100%;"
+    },
+    "h": 39,
+    "html": "<a class=\"cl-text-wrapper\" style=\"align-items:center;background:transparent;border:none;color:inherit;cursor:inherit;display:inline-flex;font:inherit;height:100%;justify-content:center;outline:none;padding:0px;text-align:inherit;text-decoration:inherit;text-shadow:inherit;width:100%;\" data-ndid=\"lx\"><div class=\"cl-text\" style=\"background:transparent;border:none;color:inherit;cursor:inherit;font:inherit;height:auto;padding:0px;text-align:inherit;t",
+    "i": 147,
+    "left": 5,
+    "tag": "a",
+    "text": "",
+    "top": 184,
+    "w": 39
+  },
+  {
+    "attrs": {
+      "class": "cl-text-wrapper",
+      "data-ndid": "ly",
+      "style": "align-items:center;background:transparent;border:none;color:inherit;cursor:inherit;display:inline-flex;font:inherit;height:100%;justify-content:center;outline:none;padding:0px;text-align:inherit;text-decoration:inherit;text-shadow:inherit;width:100%;"
+    },
+    "h": 39,
+    "html": "<a class=\"cl-text-wrapper\" style=\"align-items:center;background:transparent;border:none;color:inherit;cursor:inherit;display:inline-flex;font:inherit;height:100%;justify-content:center;outline:none;padding:0px;text-align:inherit;text-decoration:inherit;text-shadow:inherit;width:100%;\" data-ndid=\"ly\"><div class=\"cl-text\" style=\"background:transparent;border:none;color:inherit;cursor:inherit;font:inherit;height:auto;padding:0px;text-align:inherit;t",
+    "i": 149,
+    "left": 5,
+    "tag": "a",
+    "text": "",
+    "top": 232,
+    "w": 39
+  },
+  {
+    "attrs": {
+      "class": "cl-text-wrapper",
+      "data-ndid": "lz",
+      "style": "align-items:center;background:transparent;border:none;color:inherit;cursor:inherit;display:inline-flex;font:inherit;height:100%;justify-content:center;outline:none;padding:0px;text-align:inherit;text-decoration:inherit;text-shadow:inherit;width:100%;"
+    },
+    "h": 39,
+    "html": "<a class=\"cl-text-wrapper\" style=\"align-items:center;background:transparent;border:none;color:inherit;cursor:inherit;display:inline-flex;font:inherit;height:100%;justify-content:center;outline:none;padding:0px;text-align:inherit;text-decoration:inherit;text-shadow:inherit;width:100%;\" data-ndid=\"lz\"><div class=\"cl-text\" style=\"background:transparent;border:none;color:inherit;cursor:inherit;font:inherit;height:auto;padding:0px;text-align:inherit;t",
+    "i": 151,
+    "left": 5,
+    "tag": "a",
+    "text": "",
+    "top": 280,
+    "w": 39
+  },
+  {
+    "attrs": {
+      "class": "cl-text-wrapper",
+      "data-ndid": "m0",
+      "style": "align-items:center;background:transparent;border:none;color:inherit;cursor:inherit;display:inline-flex;font:inherit;height:100%;justify-content:center;outline:none;padding:0px;text-align:inherit;text-decoration:inherit;text-shadow:inherit;width:100%;"
+    },
+    "h": 39,
+    "html": "<a class=\"cl-text-wrapper\" style=\"align-items:center;background:transparent;border:none;color:inherit;cursor:inherit;display:inline-flex;font:inherit;height:100%;justify-content:center;outline:none;padding:0px;text-align:inherit;text-decoration:inherit;text-shadow:inherit;width:100%;\" data-ndid=\"m0\"><div class=\"cl-text\" style=\"background:transparent;border:none;color:inherit;cursor:inherit;font:inherit;height:auto;padding:0px;text-align:inherit;t",
+    "i": 153,
+    "left": 5,
+    "tag": "a",
+    "text": "",
+    "top": 328,
+    "w": 39
+  },
+  {
+    "attrs": {
+      "class": "cl-text-wrapper",
+      "data-ndid": "m3",
+      "style": "align-items:center;background:transparent;border:none;color:inherit;cursor:inherit;display:inline-flex;font:inherit;height:100%;justify-content:center;outline:none;padding:0px;text-align:inherit;text-decoration:inherit;text-shadow:inherit;width:100%;"
+    },
+    "h": 28,
+    "html": "<a class=\"cl-text-wrapper\" style=\"align-items:center;background:transparent;border:none;color:inherit;cursor:inherit;display:inline-flex;font:inherit;height:100%;justify-content:center;outline:none;padding:0px;text-align:inherit;text-decoration:inherit;text-shadow:inherit;width:100%;\" data-ndid=\"m3\"><div class=\"cl-text\" style=\"background:transparent;border:none;color:inherit;cursor:inherit;font:inherit;height:auto;padding:0px;text-align:inherit;t",
+    "i": 155,
+    "left": 6,
+    "tag": "a",
+    "text": "",
+    "top": 877,
+    "w": 39
+  },
+  {
+    "attrs": {
+      "class": "breadcrumb-item item-page cl-control cl-output cl-unselectable cl-writingmode-horizontal-tb",
+      "data-ndid": "uuid-1rd",
+      "style": "height: 100%; overflow: hidden; width: 100%;",
+      "title": "학급담임 > 성적 > 학생평가 > 교과평가"
+    },
+    "h": 28,
+    "html": "<div class=\"breadcrumb-item item-page cl-control cl-output cl-unselectable cl-writingmode-horizontal-tb\" data-ndid=\"uuid-1rd\" title=\"학급담임 &gt; 성적 &gt; 학생평가 &gt; 교과평가\" style=\"height: 100%; overflow: hidden; width: 100%;\"><div style=\"display: table; height: 100%; table-layout: auto; vertical-align: inherit; width: 100%;\"><div class=\"cl-text\" style=\"display: table-cell; height: 100%; vertical-align: inherit;\">교과평가</div></div></div>",
+    "i": 182,
+    "left": 1539,
+    "tag": "div",
+    "text": "교과평가",
+    "top": 96,
+    "w": 67
+  },
+  {
+    "attrs": {
+      "class": "cl-text-wrapper",
+      "data-ndid": "1rx",
+      "style": "align-items: center; background: transparent; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; color: inherit; cursor: inherit; display: inline-flex; font: inherit; height: 100%; justify-content: center; outline: none; padding: 0px; text-align: inherit; text-decoration: inherit; text-shadow: inherit; width: auto;"
+    },
+    "h": 28,
+    "html": "<a class=\"cl-text-wrapper\" data-ndid=\"1rx\" style=\"align-items: center; background: transparent; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; color: inherit; cursor: inherit; display: inline-flex; font: inherit; height: 100%; justify-content: center; outline: none; padding: 0px; text-align: inherit; text-decoration: inherit; text-shadow: inherit; width: auto;\"><div class=\"cl-icon\" data-ndid=\"1rw\" sty",
+    "i": 189,
+    "left": 1633,
+    "tag": "a",
+    "text": "",
+    "top": 96,
+    "w": 16
+  },
+  {
+    "attrs": {
+      "class": "cl-text-wrapper",
+      "data-ndid": "1rz",
+      "style": "align-items: center; background: transparent; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; color: inherit; cursor: inherit; display: inline-flex; font: inherit; height: 100%; justify-content: center; outline: none; padding: 0px; text-align: inherit; text-decoration: inherit; text-shadow: inherit; width: auto;"
+    },
+    "h": 28,
+    "html": "<a class=\"cl-text-wrapper\" data-ndid=\"1rz\" style=\"align-items: center; background: transparent; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; color: inherit; cursor: inherit; display: inline-flex; font: inherit; height: 100%; justify-content: center; outline: none; padding: 0px; text-align: inherit; text-decoration: inherit; text-shadow: inherit; width: auto;\"><div class=\"cl-icon\" data-ndid=\"1ry\" sty",
+    "i": 192,
+    "left": 1669,
+    "tag": "a",
+    "text": "",
+    "top": 96,
+    "w": 16
+  },
+  {
+    "attrs": {
+      "class": "cl-text-wrapper",
+      "data-ndid": "1s1",
+      "style": "align-items: center; background: transparent; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; color: inherit; cursor: inherit; display: inline-flex; font: inherit; height: 100%; justify-content: center; outline: none; padding: 0px; text-align: inherit; text-decoration: inherit; text-shadow: inherit; width: auto;"
+    },
+    "h": 28,
+    "html": "<a class=\"cl-text-wrapper\" data-ndid=\"1s1\" style=\"align-items: center; background: transparent; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; color: inherit; cursor: inherit; display: inline-flex; font: inherit; height: 100%; justify-content: center; outline: none; padding: 0px; text-align: inherit; text-decoration: inherit; text-shadow: inherit; width: auto;\"><div class=\"cl-icon\" data-ndid=\"1s0\" sty",
+    "i": 195,
+    "left": 1705,
+    "tag": "a",
+    "text": "",
+    "top": 96,
+    "w": 16
+  },
+  {
+    "attrs": {
+      "class": "cl-text-wrapper",
+      "data-ndid": "1s3",
+      "style": "align-items: center; background: transparent; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; color: inherit; cursor: inherit; display: inline-flex; font: inherit; height: 100%; justify-content: center; outline: none; padding: 0px; text-align: inherit; text-decoration: inherit; text-shadow: inherit; width: auto;"
+    },
+    "h": 28,
+    "html": "<a class=\"cl-text-wrapper\" data-ndid=\"1s3\" style=\"align-items: center; background: transparent; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; color: inherit; cursor: inherit; display: inline-flex; font: inherit; height: 100%; justify-content: center; outline: none; padding: 0px; text-align: inherit; text-decoration: inherit; text-shadow: inherit; width: auto;\"><div class=\"cl-icon\" data-ndid=\"1s2\" sty",
+    "i": 198,
+    "left": 1741,
+    "tag": "a",
+    "text": "",
+    "top": 96,
+    "w": 16
+  },
+  {
+    "attrs": {
+      "class": "cl-text-wrapper",
+      "data-ndid": "1s5",
+      "style": "align-items: center; background: transparent; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; color: inherit; cursor: inherit; display: inline-flex; font: inherit; height: 100%; justify-content: center; outline: none; padding: 0px; text-align: inherit; text-decoration: inherit; text-shadow: inherit; width: auto;"
+    },
+    "h": 28,
+    "html": "<a class=\"cl-text-wrapper\" data-ndid=\"1s5\" style=\"align-items: center; background: transparent; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; color: inherit; cursor: inherit; display: inline-flex; font: inherit; height: 100%; justify-content: center; outline: none; padding: 0px; text-align: inherit; text-decoration: inherit; text-shadow: inherit; width: auto;\"><div class=\"cl-icon\" data-ndid=\"1s4\" sty",
+    "i": 201,
+    "left": 1777,
+    "tag": "a",
+    "text": "",
+    "top": 96,
+    "w": 16
+  },
+  {
+    "attrs": {
+      "class": "cl-text-wrapper",
+      "data-ndid": "1s7",
+      "style": "align-items: center; background: transparent; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; color: inherit; cursor: inherit; display: inline-flex; font: inherit; height: 100%; justify-content: center; outline: none; padding: 0px; text-align: inherit; text-decoration: inherit; text-shadow: inherit; width: auto;"
+    },
+    "h": 28,
+    "html": "<a class=\"cl-text-wrapper\" data-ndid=\"1s7\" style=\"align-items: center; background: transparent; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; color: inherit; cursor: inherit; display: inline-flex; font: inherit; height: 100%; justify-content: center; outline: none; padding: 0px; text-align: inherit; text-decoration: inherit; text-shadow: inherit; width: auto;\"><div class=\"cl-icon\" data-ndid=\"1s6\" sty",
+    "i": 204,
+    "left": 1813,
+    "tag": "a",
+    "text": "",
+    "top": 96,
+    "w": 16
+  },
+  {
+    "attrs": {
+      "class": "cl-text-wrapper",
+      "data-ndid": "1sa",
+      "style": "align-items: center; background: transparent; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; color: inherit; cursor: inherit; display: inline-flex; font: inherit; height: 100%; justify-content: center; outline: none; padding: 0px; text-align: inherit; text-decoration: inherit; text-shadow: inherit; width: 100%;"
+    },
+    "h": 28,
+    "html": "<a class=\"cl-text-wrapper\" data-ndid=\"1sa\" style=\"align-items: center; background: transparent; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; color: inherit; cursor: inherit; display: inline-flex; font: inherit; height: 100%; justify-content: center; outline: none; padding: 0px; text-align: inherit; text-decoration: inherit; text-shadow: inherit; width: 100%;\"><div class=\"cl-text\" style=\"background: ",
+    "i": 219,
+    "left": 1858,
+    "tag": "a",
+    "text": "축소",
+    "top": 96,
+    "w": 29
+  },
+  {
+    "attrs": {
+      "aria-label": "3개의 탭이 있습니다.",
+      "class": "cl-tabfolder-header-viewport",
+      "data-ndid": "1sr",
+      "role": "tablist",
+      "style": "box-sizing: border-box; display: grid; grid-template-columns: min-content 1px min-content 1px min-content 1fr; grid-template-rows: 1fr; height: 100%; min-height: min-content; min-width: min-content; width: 100%;"
+    },
+    "h": 35,
+    "html": "<div class=\"cl-tabfolder-header-viewport\" data-ndid=\"1sr\" role=\"tablist\" aria-label=\"3개의 탭이 있습니다.\" style=\"box-sizing: border-box; display: grid; grid-template-columns: min-content 1px min-content 1px min-content 1fr; grid-template-rows: 1fr; height: 100%; min-height: min-content; min-width: min-content; width: 100%;\"><div class=\"cl-first cl-selected cl-tabfolder-item cl-unselectable\" data-ndid=\"1so\" data-itemidx=\"1\" style=\"display: grid; grid-are",
+    "i": 230,
+    "left": 305,
+    "tag": "div",
+    "text": "성취기준별 평가 영역별 평가 교과별 평가",
+    "top": 151,
+    "w": 1590
+  },
+  {
+    "attrs": {
+      "class": "cl-first cl-selected cl-tabfolder-item cl-unselectable",
+      "data-itemidx": "1",
+      "data-ndid": "1so",
+      "style": "display: grid; grid-area: 1 / 1 / span 1 / span 2; grid-template-columns: min-content; grid-template-rows: 1fr; overflow: hidden;"
+    },
+    "h": 35,
+    "html": "<div class=\"cl-first cl-selected cl-tabfolder-item cl-unselectable\" data-ndid=\"1so\" data-itemidx=\"1\" style=\"display: grid; grid-area: 1 / 1 / span 1 / span 2; grid-template-columns: min-content; grid-template-rows: 1fr; overflow: hidden;\"><div style=\"display: grid; grid-area: 1 / 1 / span 1 / span 1; grid-template-columns: minmax(min-content, 1fr); grid-template-rows: minmax(min-content, 1fr); text-decoration: inherit;\"><div class=\"cl-text\" role=",
+    "i": 231,
+    "left": 305,
+    "tag": "div",
+    "text": "성취기준별 평가",
+    "top": 151,
+    "w": 113
+  },
+  {
+    "attrs": {
+      "class": "cl-tabfolder-item cl-unselectable",
+      "data-itemidx": "2",
+      "data-ndid": "1sp",
+      "style": "display: grid; grid-area: 1 / 2 / span 1 / span 3; grid-template-columns: min-content; grid-template-rows: 1fr; overflow: hidden;"
+    },
+    "h": 35,
+    "html": "<div class=\"cl-tabfolder-item cl-unselectable\" data-ndid=\"1sp\" data-itemidx=\"2\" style=\"display: grid; grid-area: 1 / 2 / span 1 / span 3; grid-template-columns: min-content; grid-template-rows: 1fr; overflow: hidden;\"><div style=\"display: grid; grid-area: 1 / 1 / span 1 / span 1; grid-template-columns: minmax(min-content, 1fr); grid-template-rows: minmax(min-content, 1fr); text-decoration: inherit;\"><div class=\"cl-text\" role=\"tab\" id=\"pt-1of/th-1",
+    "i": 234,
+    "left": 417,
+    "tag": "div",
+    "text": "영역별 평가",
+    "top": 151,
+    "w": 89
+  },
+  {
+    "attrs": {
+      "class": "cl-last cl-tabfolder-item cl-unselectable",
+      "data-itemidx": "3",
+      "data-ndid": "1sq",
+      "style": "display: grid; grid-area: 1 / 4 / span 1 / span 2; grid-template-columns: min-content; grid-template-rows: 1fr; overflow: hidden;"
+    },
+    "h": 35,
+    "html": "<div class=\"cl-last cl-tabfolder-item cl-unselectable\" data-ndid=\"1sq\" data-itemidx=\"3\" style=\"display: grid; grid-area: 1 / 4 / span 1 / span 2; grid-template-columns: min-content; grid-template-rows: 1fr; overflow: hidden;\"><div style=\"display: grid; grid-area: 1 / 1 / span 1 / span 1; grid-template-columns: minmax(min-content, 1fr); grid-template-rows: minmax(min-content, 1fr); text-decoration: inherit;\"><div class=\"cl-text\" role=\"tab\" id=\"pt-",
+    "i": 237,
+    "left": 506,
+    "tag": "div",
+    "text": "교과별 평가",
+    "top": 151,
+    "w": 89
+  },
+  {
+    "attrs": {
+      "class": "cl-control cl-combobox cl-first-column cl-first-row cl-last-column cl-last-row cl-odd-column cl-odd-row require",
+      "data-ndid": "uuid-1or",
+      "id": "uuid-1or",
+      "style": "grid-area: 2 / 2 / span 1 / span 1; overflow: hidden; position: relative; z-index: 1;"
+    },
+    "h": 30,
+    "html": "<div class=\"cl-control cl-combobox cl-first-column cl-first-row cl-last-column cl-last-row cl-odd-column cl-odd-row require\" data-ndid=\"uuid-1or\" id=\"uuid-1or\" style=\"grid-area: 2 / 2 / span 1 / span 1; overflow: hidden; position: relative; z-index: 1;\"><div style=\"display: grid; grid-template-columns: 1fr auto; grid-template-rows: 1fr; height: 100%; overflow: hidden; width: 100%;\"><div class=\"cl-text cl-preventinput cl-unselectable\" data-ndid=\"1",
+    "i": 266,
+    "left": 455,
+    "tag": "div",
+    "text": "2026",
+    "top": 197,
+    "w": 100
+  },
+  {
+    "attrs": {
+      "aria-label": "학년, 2026",
+      "class": "cl-text cl-preventinput cl-unselectable",
+      "data-ndid": "1sv",
+      "role": "combobox",
+      "style": "display: grid; grid-area: 1 / 1 / span 1 / span 1; grid-template-columns: 1fr; grid-template-rows: 1fr; height: 100%;",
+      "tabindex": "0"
+    },
+    "h": 28,
+    "html": "<div class=\"cl-text cl-preventinput cl-unselectable\" data-ndid=\"1sv\" role=\"combobox\" aria-expanded=\"false\" aria-haspopup=\"listbox\" tabindex=\"0\" aria-label=\"학년, 2026\" style=\"display: grid; grid-area: 1 / 1 / span 1 / span 1; grid-template-columns: 1fr; grid-template-rows: 1fr; height: 100%;\"><div aria-hidden=\"true\" style=\"align-self: center; grid-area: 1 / 1 / span 1 / span 1;\">2026</div></div>",
+    "i": 268,
+    "left": 456,
+    "tag": "div",
+    "text": "2026",
+    "top": 198,
+    "w": 82
+  },
+  {
+    "attrs": {
+      "class": "cl-combobox-button",
+      "data-ndid": "1sw",
+      "style": "grid-area: 1 / 2 / span 1 / span 1; outline: none;"
+    },
+    "h": 28,
+    "html": "<div class=\"cl-combobox-button\" data-ndid=\"1sw\" aria-hidden=\"true\" style=\"grid-area: 1 / 2 / span 1 / span 1; outline: none;\"></div>",
+    "i": 270,
+    "left": 538,
+    "tag": "div",
+    "text": "",
+    "top": 198,
+    "w": 16
+  },
+  {
+    "attrs": {
+      "class": "cl-control cl-combobox cl-first-column cl-first-row cl-last-column cl-last-row cl-odd-column cl-odd-row require",
+      "data-ndid": "uuid-1p0",
+      "id": "uuid-1p0",
+      "style": "grid-area: 2 / 2 / span 1 / span 1; overflow: hidden; position: relative; z-index: 1;"
+    },
+    "h": 30,
+    "html": "<div class=\"cl-control cl-combobox cl-first-column cl-first-row cl-last-column cl-last-row cl-odd-column cl-odd-row require\" data-ndid=\"uuid-1p0\" id=\"uuid-1p0\" style=\"grid-area: 2 / 2 / span 1 / span 1; overflow: hidden; position: relative; z-index: 1;\"><div style=\"display: grid; grid-template-columns: 1fr auto; grid-template-rows: 1fr; height: 100%; overflow: hidden; width: 100%;\"><div class=\"cl-text cl-preventinput cl-unselectable\" data-ndid=\"1",
+    "i": 293,
+    "left": 695,
+    "tag": "div",
+    "text": "1",
+    "top": 197,
+    "w": 100
+  },
+  {
+    "attrs": {
+      "aria-label": "학기, 1",
+      "class": "cl-text cl-preventinput cl-unselectable",
+      "data-ndid": "1t4",
+      "role": "combobox",
+      "style": "display: grid; grid-area: 1 / 1 / span 1 / span 1; grid-template-columns: 1fr; grid-template-rows: 1fr; height: 100%;",
+      "tabindex": "0"
+    },
+    "h": 28,
+    "html": "<div class=\"cl-text cl-preventinput cl-unselectable\" data-ndid=\"1t4\" role=\"combobox\" aria-expanded=\"false\" aria-haspopup=\"listbox\" tabindex=\"0\" aria-label=\"학기, 1\" style=\"display: grid; grid-area: 1 / 1 / span 1 / span 1; grid-template-columns: 1fr; grid-template-rows: 1fr; height: 100%;\"><div aria-hidden=\"true\" style=\"align-self: center; grid-area: 1 / 1 / span 1 / span 1;\">1</div></div>",
+    "i": 295,
+    "left": 696,
+    "tag": "div",
+    "text": "1",
+    "top": 198,
+    "w": 82
+  },
+  {
+    "attrs": {
+      "class": "cl-combobox-button",
+      "data-ndid": "1t5",
+      "style": "grid-area: 1 / 2 / span 1 / span 1; outline: none;"
+    },
+    "h": 28,
+    "html": "<div class=\"cl-combobox-button\" data-ndid=\"1t5\" aria-hidden=\"true\" style=\"grid-area: 1 / 2 / span 1 / span 1; outline: none;\"></div>",
+    "i": 297,
+    "left": 778,
+    "tag": "div",
+    "text": "",
+    "top": 198,
+    "w": 16
+  },
+  {
+    "attrs": {
+      "class": "cl-control cl-combobox cl-first-column cl-first-row cl-last-column cl-last-row cl-odd-column cl-odd-row require",
+      "data-ndid": "uuid-1p9",
+      "id": "uuid-1p9",
+      "style": "grid-area: 2 / 2 / span 1 / span 1; overflow: hidden; position: relative; z-index: 1;"
+    },
+    "h": 30,
+    "html": "<div class=\"cl-control cl-combobox cl-first-column cl-first-row cl-last-column cl-last-row cl-odd-column cl-odd-row require\" data-ndid=\"uuid-1p9\" id=\"uuid-1p9\" style=\"grid-area: 2 / 2 / span 1 / span 1; overflow: hidden; position: relative; z-index: 1;\"><div style=\"display: grid; grid-template-columns: 1fr auto; grid-template-rows: 1fr; height: 100%; overflow: hidden; width: 100%;\"><div class=\"cl-text cl-preventinput cl-unselectable\" data-ndid=\"1",
+    "i": 320,
+    "left": 935,
+    "tag": "div",
+    "text": "3",
+    "top": 197,
+    "w": 100
+  },
+  {
+    "attrs": {
+      "aria-label": "학년, 3",
+      "class": "cl-text cl-preventinput cl-unselectable",
+      "data-ndid": "1td",
+      "role": "combobox",
+      "style": "display: grid; grid-area: 1 / 1 / span 1 / span 1; grid-template-columns: 1fr; grid-template-rows: 1fr; height: 100%;",
+      "tabindex": "0"
+    },
+    "h": 28,
+    "html": "<div class=\"cl-text cl-preventinput cl-unselectable\" data-ndid=\"1td\" role=\"combobox\" aria-expanded=\"false\" aria-haspopup=\"listbox\" tabindex=\"0\" aria-label=\"학년, 3\" style=\"display: grid; grid-area: 1 / 1 / span 1 / span 1; grid-template-columns: 1fr; grid-template-rows: 1fr; height: 100%;\"><div aria-hidden=\"true\" style=\"align-self: center; grid-area: 1 / 1 / span 1 / span 1;\">3</div></div>",
+    "i": 322,
+    "left": 936,
+    "tag": "div",
+    "text": "3",
+    "top": 198,
+    "w": 82
+  },
+  {
+    "attrs": {
+      "class": "cl-combobox-button",
+      "data-ndid": "1te",
+      "style": "grid-area: 1 / 2 / span 1 / span 1; outline: none;"
+    },
+    "h": 28,
+    "html": "<div class=\"cl-combobox-button\" data-ndid=\"1te\" aria-hidden=\"true\" style=\"grid-area: 1 / 2 / span 1 / span 1; outline: none;\"></div>",
+    "i": 324,
+    "left": 1018,
+    "tag": "div",
+    "text": "",
+    "top": 198,
+    "w": 16
+  },
+  {
+    "attrs": {
+      "class": "cl-control cl-combobox cl-first-column cl-first-row cl-last-column cl-last-row cl-odd-column cl-odd-row require",
+      "data-ndid": "uuid-1pi",
+      "id": "uuid-1pi",
+      "style": "grid-area: 2 / 2 / span 1 / span 1; overflow: hidden; position: relative; z-index: 1;"
+    },
+    "h": 30,
+    "html": "<div class=\"cl-control cl-combobox cl-first-column cl-first-row cl-last-column cl-last-row cl-odd-column cl-odd-row require\" data-ndid=\"uuid-1pi\" id=\"uuid-1pi\" style=\"grid-area: 2 / 2 / span 1 / span 1; overflow: hidden; position: relative; z-index: 1;\"><div style=\"display: grid; grid-template-columns: 1fr auto; grid-template-rows: 1fr; height: 100%; overflow: hidden; width: 100%;\"><div class=\"cl-text cl-preventinput cl-unselectable\" data-ndid=\"1",
+    "i": 347,
+    "left": 1175,
+    "tag": "div",
+    "text": "2",
+    "top": 197,
+    "w": 100
+  },
+  {
+    "attrs": {
+      "aria-label": "반, 2",
+      "class": "cl-text cl-preventinput cl-unselectable",
+      "data-ndid": "1tm",
+      "role": "combobox",
+      "style": "display: grid; grid-area: 1 / 1 / span 1 / span 1; grid-template-columns: 1fr; grid-template-rows: 1fr; height: 100%;",
+      "tabindex": "0"
+    },
+    "h": 28,
+    "html": "<div class=\"cl-text cl-preventinput cl-unselectable\" data-ndid=\"1tm\" role=\"combobox\" aria-expanded=\"false\" aria-haspopup=\"listbox\" tabindex=\"0\" aria-label=\"반, 2\" style=\"display: grid; grid-area: 1 / 1 / span 1 / span 1; grid-template-columns: 1fr; grid-template-rows: 1fr; height: 100%;\"><div aria-hidden=\"true\" style=\"align-self: center; grid-area: 1 / 1 / span 1 / span 1;\">2</div></div>",
+    "i": 349,
+    "left": 1176,
+    "tag": "div",
+    "text": "2",
+    "top": 198,
+    "w": 82
+  },
+  {
+    "attrs": {
+      "class": "cl-combobox-button",
+      "data-ndid": "1tn",
+      "style": "grid-area: 1 / 2 / span 1 / span 1; outline: none;"
+    },
+    "h": 28,
+    "html": "<div class=\"cl-combobox-button\" data-ndid=\"1tn\" aria-hidden=\"true\" style=\"grid-area: 1 / 2 / span 1 / span 1; outline: none;\"></div>",
+    "i": 351,
+    "left": 1258,
+    "tag": "div",
+    "text": "",
+    "top": 198,
+    "w": 16
+  },
+  {
+    "attrs": {
+      "class": "cl-control cl-combobox cl-first-column cl-first-row cl-last-column cl-last-row cl-odd-column cl-odd-row require",
+      "data-ndid": "uuid-1pr",
+      "id": "uuid-1pr",
+      "style": "grid-area: 2 / 2 / span 1 / span 1; overflow: hidden; position: relative; z-index: 1;"
+    },
+    "h": 30,
+    "html": "<div class=\"cl-control cl-combobox cl-first-column cl-first-row cl-last-column cl-last-row cl-odd-column cl-odd-row require\" data-ndid=\"uuid-1pr\" id=\"uuid-1pr\" style=\"grid-area: 2 / 2 / span 1 / span 1; overflow: hidden; position: relative; z-index: 1;\"><div style=\"display: grid; grid-template-columns: 1fr auto; grid-template-rows: 1fr; height: 100%; overflow: hidden; width: 100%;\"><div class=\"cl-text cl-preventinput cl-unselectable\" data-ndid=\"1",
+    "i": 374,
+    "left": 1415,
+    "tag": "div",
+    "text": "국어",
+    "top": 197,
+    "w": 100
+  },
+  {
+    "attrs": {
+      "aria-label": "교과, 국어",
+      "class": "cl-text cl-preventinput cl-unselectable",
+      "data-ndid": "1tv",
+      "role": "combobox",
+      "style": "display: grid; grid-area: 1 / 1 / span 1 / span 1; grid-template-columns: 1fr; grid-template-rows: 1fr; height: 100%;",
+      "tabindex": "0"
+    },
+    "h": 28,
+    "html": "<div class=\"cl-text cl-preventinput cl-unselectable\" data-ndid=\"1tv\" role=\"combobox\" aria-expanded=\"false\" aria-haspopup=\"listbox\" tabindex=\"0\" aria-label=\"교과, 국어\" style=\"display: grid; grid-area: 1 / 1 / span 1 / span 1; grid-template-columns: 1fr; grid-template-rows: 1fr; height: 100%;\"><div aria-hidden=\"true\" style=\"align-self: center; grid-area: 1 / 1 / span 1 / span 1;\">국어</div></div>",
+    "i": 376,
+    "left": 1416,
+    "tag": "div",
+    "text": "국어",
+    "top": 198,
+    "w": 82
+  },
+  {
+    "attrs": {
+      "class": "cl-combobox-button",
+      "data-ndid": "1tw",
+      "style": "grid-area: 1 / 2 / span 1 / span 1; outline: none;"
+    },
+    "h": 28,
+    "html": "<div class=\"cl-combobox-button\" data-ndid=\"1tw\" aria-hidden=\"true\" style=\"grid-area: 1 / 2 / span 1 / span 1; outline: none;\"></div>",
+    "i": 378,
+    "left": 1498,
+    "tag": "div",
+    "text": "",
+    "top": 198,
+    "w": 16
+  },
+  {
+    "attrs": {
+      "class": "cl-control cl-combobox cl-even-column cl-first-row cl-last-column cl-last-row cl-odd-row require",
+      "data-ndid": "uuid-1pu",
+      "id": "uuid-1pu",
+      "style": "grid-area: 2 / 5 / span 1 / span 1; overflow: hidden; position: relative; z-index: 1;"
+    },
+    "h": 30,
+    "html": "<div class=\"cl-control cl-combobox cl-even-column cl-first-row cl-last-column cl-last-row cl-odd-row require\" data-ndid=\"uuid-1pu\" id=\"uuid-1pu\" style=\"grid-area: 2 / 5 / span 1 / span 1; overflow: hidden; position: relative; z-index: 1;\"><div style=\"display: grid; grid-template-columns: 1fr auto; grid-template-rows: 1fr; height: 100%; overflow: hidden; width: 100%;\"><div class=\"cl-text cl-preventinput cl-unselectable\" data-ndid=\"1u4\" role=\"combo",
+    "i": 394,
+    "left": 455,
+    "tag": "div",
+    "text": "듣기·말하기",
+    "top": 237,
+    "w": 160
+  },
+  {
+    "attrs": {
+      "aria-label": "영역, 듣기·말하기",
+      "class": "cl-text cl-preventinput cl-unselectable",
+      "data-ndid": "1u4",
+      "role": "combobox",
+      "style": "display: grid; grid-area: 1 / 1 / span 1 / span 1; grid-template-columns: 1fr; grid-template-rows: 1fr; height: 100%;",
+      "tabindex": "0"
+    },
+    "h": 28,
+    "html": "<div class=\"cl-text cl-preventinput cl-unselectable\" data-ndid=\"1u4\" role=\"combobox\" aria-expanded=\"false\" aria-haspopup=\"listbox\" tabindex=\"0\" aria-label=\"영역, 듣기·말하기\" style=\"display: grid; grid-area: 1 / 1 / span 1 / span 1; grid-template-columns: 1fr; grid-template-rows: 1fr; height: 100%;\"><div aria-hidden=\"true\" style=\"align-self: center; grid-area: 1 / 1 / span 1 / span 1;\">듣기·말하기</div></div>",
+    "i": 396,
+    "left": 456,
+    "tag": "div",
+    "text": "듣기·말하기",
+    "top": 238,
+    "w": 142
+  },
+  {
+    "attrs": {
+      "class": "cl-combobox-button",
+      "data-ndid": "1u5",
+      "style": "grid-area: 1 / 2 / span 1 / span 1; outline: none;"
+    },
+    "h": 28,
+    "html": "<div class=\"cl-combobox-button\" data-ndid=\"1u5\" aria-hidden=\"true\" style=\"grid-area: 1 / 2 / span 1 / span 1; outline: none;\"></div>",
+    "i": 398,
+    "left": 598,
+    "tag": "div",
+    "text": "",
+    "top": 238,
+    "w": 16
+  },
+  {
+    "attrs": {
+      "class": "cl-control cl-combobox cl-even-column cl-first-row cl-last-column cl-last-row cl-odd-row require",
+      "data-ndid": "uuid-1px",
+      "id": "uuid-1px",
+      "style": "grid-area: 2 / 5 / span 1 / span 1; overflow: hidden; position: relative; z-index: 1;"
+    },
+    "h": 30,
+    "html": "<div class=\"cl-control cl-combobox cl-even-column cl-first-row cl-last-column cl-last-row cl-odd-row require\" data-ndid=\"uuid-1px\" id=\"uuid-1px\" style=\"grid-area: 2 / 5 / span 1 / span 1; overflow: hidden; position: relative; z-index: 1;\"><div style=\"display: grid; grid-template-columns: 1fr auto; grid-template-rows: 1fr; height: 100%; overflow: hidden; width: 100%;\"><div class=\"cl-text cl-preventinput cl-unselectable\" data-ndid=\"1u8\" role=\"combo",
+    "i": 410,
+    "left": 755,
+    "tag": "div",
+    "text": "[4국01-01] 중요한...",
+    "top": 237,
+    "w": 160
+  },
+  {
+    "attrs": {
+      "aria-label": "성취기준, [4국01-01] 중요한...",
+      "class": "cl-text cl-preventinput cl-unselectable",
+      "data-ndid": "1u8",
+      "role": "combobox",
+      "style": "display: grid; grid-area: 1 / 1 / span 1 / span 1; grid-template-columns: 1fr; grid-template-rows: 1fr; height: 100%;",
+      "tabindex": "0"
+    },
+    "h": 28,
+    "html": "<div class=\"cl-text cl-preventinput cl-unselectable\" data-ndid=\"1u8\" role=\"combobox\" aria-expanded=\"false\" aria-haspopup=\"listbox\" tabindex=\"0\" aria-label=\"성취기준, [4국01-01] 중요한...\" style=\"display: grid; grid-area: 1 / 1 / span 1 / span 1; grid-template-columns: 1fr; grid-template-rows: 1fr; height: 100%;\"><div aria-hidden=\"true\" style=\"align-self: center; grid-area: 1 / 1 / span 1 / span 1;\">[4국01-01] 중요한...</div></div>",
+    "i": 412,
+    "left": 756,
+    "tag": "div",
+    "text": "[4국01-01] 중요한...",
+    "top": 238,
+    "w": 142
+  },
+  {
+    "attrs": {
+      "class": "cl-combobox-button",
+      "data-ndid": "1u9",
+      "style": "grid-area: 1 / 2 / span 1 / span 1; outline: none;"
+    },
+    "h": 28,
+    "html": "<div class=\"cl-combobox-button\" data-ndid=\"1u9\" aria-hidden=\"true\" style=\"grid-area: 1 / 2 / span 1 / span 1; outline: none;\"></div>",
+    "i": 414,
+    "left": 898,
+    "tag": "div",
+    "text": "",
+    "top": 238,
+    "w": 16
+  },
+  {
+    "attrs": {
+      "class": "cl-radiobutton-item cl-selected",
+      "data-ndid": "1ue",
+      "data-region": "colgroup",
+      "data-value": "1",
+      "style": "display: inline-block; margin-left: 17px; margin-top: 8px;"
+    },
+    "h": 20,
+    "html": "<div class=\"cl-radiobutton-item cl-selected\" data-ndid=\"1ue\" data-region=\"colgroup\" data-value=\"1\" style=\"display: inline-block; margin-left: 17px; margin-top: 8px;\"><div class=\"cl-radiobutton-field\" data-ndid=\"1ud\" data-region=\"field\" style=\"border-collapse: collapse; display: table; text-align: inherit; vertical-align: inherit;\"><div class=\"cl-icon-wrapper\" style=\"display: table-cell;\"><div class=\"cl-radiobutton-icon\" data-ndid=\"1uc\" tabindex=\"",
+    "i": 422,
+    "left": 925,
+    "tag": "div",
+    "text": "재학",
+    "top": 242,
+    "w": 50
+  },
+  {
+    "attrs": {
+      "class": "cl-radiobutton-item",
+      "data-ndid": "1uh",
+      "data-region": "colgroup",
+      "data-value": "%",
+      "style": "display: inline-block; margin-left: 17px; margin-top: 8px;"
+    },
+    "h": 20,
+    "html": "<div class=\"cl-radiobutton-item\" data-ndid=\"1uh\" data-region=\"colgroup\" data-value=\"%\" style=\"display: inline-block; margin-left: 17px; margin-top: 8px;\"><div class=\"cl-radiobutton-field\" data-ndid=\"1ug\" data-region=\"field\" style=\"border-collapse: collapse; display: table; text-align: inherit; vertical-align: inherit;\"><div class=\"cl-icon-wrapper\" style=\"display: table-cell;\"><div class=\"cl-radiobutton-icon\" data-ndid=\"1uf\" tabindex=\"0\" data-role",
+    "i": 427,
+    "left": 992,
+    "tag": "div",
+    "text": "전체",
+    "top": 242,
+    "w": 50
+  },
+  {
+    "attrs": {
+      "class": "cl-text-wrapper",
+      "data-ndid": "1ul",
+      "style": "align-items: center; background: transparent; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; color: inherit; cursor: inherit; display: inline-flex; font: inherit; height: 100%; justify-content: center; outline: none; padding: 0px; text-align: inherit; text-decoration: inherit; text-shadow: inherit; width: auto;"
+    },
+    "h": 28,
+    "html": "<a class=\"cl-text-wrapper\" data-ndid=\"1ul\" style=\"align-items: center; background: transparent; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; color: inherit; cursor: inherit; display: inline-flex; font: inherit; height: 100%; justify-content: center; outline: none; padding: 0px; text-align: inherit; text-decoration: inherit; text-shadow: inherit; width: auto;\"><div class=\"cl-icon\" data-ndid=\"1uk\" sty",
+    "i": 436,
+    "left": 1814,
+    "tag": "a",
+    "text": "조회",
+    "top": 246,
+    "w": 48
+  },
+  {
+    "attrs": {
+      "class": "cl-text-wrapper",
+      "data-ndid": "1ux",
+      "style": "align-items: center; background: transparent; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; color: inherit; cursor: inherit; display: inline-flex; font: inherit; height: 100%; justify-content: center; outline: none; padding: 0px; text-align: inherit; text-decoration: inherit; text-shadow: inherit; width: auto;"
+    },
+    "h": 20,
+    "html": "<a class=\"cl-text-wrapper\" data-ndid=\"1ux\" style=\"align-items: center; background: transparent; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; color: inherit; cursor: inherit; display: inline-flex; font: inherit; height: 100%; justify-content: center; outline: none; padding: 0px; text-align: inherit; text-decoration: inherit; text-shadow: inherit; width: auto;\"><div class=\"cl-icon\" data-ndid=\"1uw\" sty",
+    "i": 501,
+    "left": 381,
+    "tag": "a",
+    "text": "",
+    "top": 485,
+    "w": 16
+  },
+  {
+    "attrs": {
+      "class": "cl-text-wrapper",
+      "data-ndid": "1v4",
+      "style": "align-items: center; background: transparent; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; color: inherit; cursor: inherit; display: inline-flex; font: inherit; height: 100%; justify-content: center; outline: none; padding: 0px; text-align: inherit; text-decoration: inherit; text-shadow: inherit; width: 100%;"
+    },
+    "h": 28,
+    "html": "<a class=\"cl-text-wrapper\" data-ndid=\"1v4\" style=\"align-items: center; background: transparent; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; color: inherit; cursor: inherit; display: inline-flex; font: inherit; height: 100%; justify-content: center; outline: none; padding: 0px; text-align: inherit; text-decoration: inherit; text-shadow: inherit; width: 100%;\"><div class=\"cl-text\" style=\"background: ",
+    "i": 514,
+    "left": 1439,
+    "tag": "a",
+    "text": "학생/학부모서비스 일괄반영",
+    "top": 466,
+    "w": 152
+  },
+  {
+    "attrs": {
+      "class": "cl-text-wrapper",
+      "data-ndid": "1v5",
+      "style": "align-items: center; background: transparent; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; color: inherit; cursor: inherit; display: inline-flex; font: inherit; height: 100%; justify-content: center; outline: none; padding: 0px; text-align: inherit; text-decoration: inherit; text-shadow: inherit; width: 100%;"
+    },
+    "h": 28,
+    "html": "<a class=\"cl-text-wrapper\" data-ndid=\"1v5\" style=\"align-items: center; background: transparent; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; color: inherit; cursor: inherit; display: inline-flex; font: inherit; height: 100%; justify-content: center; outline: none; padding: 0px; text-align: inherit; text-decoration: inherit; text-shadow: inherit; width: 100%;\"><div class=\"cl-text\" style=\"background: ",
+    "i": 518,
+    "left": 1615,
+    "tag": "a",
+    "text": "학생/학부모서비스 반영",
+    "top": 466,
+    "w": 128
+  },
+  {
+    "attrs": {
+      "class": "cl-text-wrapper",
+      "data-ndid": "1v7",
+      "style": "align-items: center; background: transparent; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; color: inherit; cursor: inherit; display: inline-flex; font: inherit; height: 100%; justify-content: center; outline: none; padding: 0px; text-align: inherit; text-decoration: inherit; text-shadow: inherit; width: 100%;"
+    },
+    "h": 28,
+    "html": "<a class=\"cl-text-wrapper\" data-ndid=\"1v7\" style=\"align-items: center; background: transparent; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; color: inherit; cursor: inherit; display: inline-flex; font: inherit; height: 100%; justify-content: center; outline: none; padding: 0px; text-align: inherit; text-decoration: inherit; text-shadow: inherit; width: 100%;\"><div class=\"cl-text\" style=\"background: ",
+    "i": 522,
+    "left": 1767,
+    "tag": "a",
+    "text": "저장",
+    "top": 466,
+    "w": 24
+  },
+  {
+    "attrs": {
+      "class": "cl-text-wrapper",
+      "data-ndid": "1v8",
+      "style": "align-items: center; background: transparent; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; color: inherit; cursor: inherit; display: inline-flex; font: inherit; height: 100%; justify-content: center; outline: none; padding: 0px; text-align: inherit; text-decoration: inherit; text-shadow: inherit; width: 100%;"
+    },
+    "h": 28,
+    "html": "<a class=\"cl-text-wrapper\" data-ndid=\"1v8\" style=\"align-items: center; background: transparent; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; color: inherit; cursor: inherit; display: inline-flex; font: inherit; height: 100%; justify-content: center; outline: none; padding: 0px; text-align: inherit; text-decoration: inherit; text-shadow: inherit; width: 100%;\"><div class=\"cl-text\" style=\"background: ",
+    "i": 526,
+    "left": 1815,
+    "tag": "a",
+    "text": "출력",
+    "top": 466,
+    "w": 24
+  },
+  {
+    "attrs": {
+      "class": "cl-text-wrapper",
+      "data-ndid": "1v9",
+      "style": "align-items: center; background: transparent; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; color: inherit; cursor: inherit; display: inline-flex; font: inherit; height: 100%; justify-content: center; outline: none; padding: 0px; text-align: inherit; text-decoration: inherit; text-shadow: inherit; width: 100%;"
+    },
+    "h": 28,
+    "html": "<a class=\"cl-text-wrapper\" data-ndid=\"1v9\" style=\"align-items: center; background: transparent; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; color: inherit; cursor: inherit; display: inline-flex; font: inherit; height: 100%; justify-content: center; outline: none; padding: 0px; text-align: inherit; text-decoration: inherit; text-shadow: inherit; width: 100%;\"><div class=\"cl-text\" style=\"background: ",
+    "i": 530,
+    "left": 1863,
+    "tag": "a",
+    "text": "삭제",
+    "top": 466,
+    "w": 24
+  },
+  {
+    "attrs": {
+      "class": "cl-control cl-combobox",
+      "data-ndid": "uuid-1qu",
+      "style": "height: 100%; overflow: hidden; width: 100%;"
+    },
+    "h": 30,
+    "html": "<div class=\"cl-control cl-combobox\" data-ndid=\"uuid-1qu\" style=\"height: 100%; overflow: hidden; width: 100%;\"><div style=\"display: grid; grid-template-columns: 1fr auto; grid-template-rows: 1fr; height: 100%; overflow: hidden; width: 100%;\"><div class=\"cl-text cl-preventinput cl-unselectable\" data-ndid=\"1vg\" role=\"combobox\" aria-expanded=\"false\" aria-haspopup=\"listbox\" tabindex=\"0\" aria-label=\"일괄적용 평가기준 선택, --성취기준별 평가 선택적용--\" style=\"display: grid",
+    "i": 540,
+    "left": 315,
+    "tag": "div",
+    "text": "--성취기준별 평가 선택적용--",
+    "top": 520,
+    "w": 220
+  },
+  {
+    "attrs": {
+      "aria-label": "일괄적용 평가기준 선택, --성취기준별 평가 선택적용--",
+      "class": "cl-text cl-preventinput cl-unselectable",
+      "data-ndid": "1vg",
+      "role": "combobox",
+      "style": "display: grid; grid-area: 1 / 1 / span 1 / span 1; grid-template-columns: 1fr; grid-template-rows: 1fr; height: 100%;",
+      "tabindex": "0"
+    },
+    "h": 28,
+    "html": "<div class=\"cl-text cl-preventinput cl-unselectable\" data-ndid=\"1vg\" role=\"combobox\" aria-expanded=\"false\" aria-haspopup=\"listbox\" tabindex=\"0\" aria-label=\"일괄적용 평가기준 선택, --성취기준별 평가 선택적용--\" style=\"display: grid; grid-area: 1 / 1 / span 1 / span 1; grid-template-columns: 1fr; grid-template-rows: 1fr; height: 100%;\"><div aria-hidden=\"true\" style=\"align-self: center; grid-area: 1 / 1 / span 1 / span 1;\">--성취기준별 평가 선택적용--</div></div>",
+    "i": 542,
+    "left": 316,
+    "tag": "div",
+    "text": "--성취기준별 평가 선택적용--",
+    "top": 521,
+    "w": 202
+  },
+  {
+    "attrs": {
+      "class": "cl-combobox-button",
+      "data-ndid": "1vh",
+      "style": "grid-area: 1 / 2 / span 1 / span 1; outline: none;"
+    },
+    "h": 28,
+    "html": "<div class=\"cl-combobox-button\" data-ndid=\"1vh\" aria-hidden=\"true\" style=\"grid-area: 1 / 2 / span 1 / span 1; outline: none;\"></div>",
+    "i": 544,
+    "left": 518,
+    "tag": "div",
+    "text": "",
+    "top": 521,
+    "w": 16
+  },
+  {
+    "attrs": {
+      "aria-label": "1행 단계 ",
+      "class": "cl-grid-cell cl-grid-cell-inherit",
+      "data-cellindex": "3",
+      "data-role": "gridcell",
+      "role": "gridcell",
+      "style": "box-sizing: border-box; display: inline-block; height: 36px; left: 431.622px; overflow: hidden; position: absolute; top: 0px; width: 242.442px;",
+      "tabindex": "-1"
+    },
+    "h": 36,
+    "html": "<div class=\"cl-grid-cell cl-grid-cell-inherit\" role=\"gridcell\" data-role=\"gridcell\" data-cellindex=\"3\" tabindex=\"-1\" aria-label=\"1행 단계 \" style=\"box-sizing: border-box; display: inline-block; height: 36px; left: 431.622px; overflow: hidden; position: absolute; top: 0px; width: 242.442px;\"><div class=\"cl-control cl-combobox cl-focus cl-grid-ctrl-inherit cl-opened cl-opened-bottom\" data-ndid=\"uuid-1qz\" data-widget=\"true\" id=\"uuid-1qz\" style=\"height:",
+    "i": 610,
+    "left": 738,
+    "tag": "div",
+    "text": "",
+    "top": 597,
+    "w": 242
+  },
+  {
+    "attrs": {
+      "class": "cl-control cl-combobox cl-focus cl-grid-ctrl-inherit cl-opened cl-opened-bottom",
+      "data-ndid": "uuid-1qz",
+      "data-widget": "true",
+      "id": "uuid-1qz",
+      "style": "height: calc(100% - 8px); left: 4px; overflow: hidden; position: absolute; top: 4px; width: calc(100% - 8px);"
+    },
+    "h": 27,
+    "html": "<div class=\"cl-control cl-combobox cl-focus cl-grid-ctrl-inherit cl-opened cl-opened-bottom\" data-ndid=\"uuid-1qz\" data-widget=\"true\" id=\"uuid-1qz\" style=\"height: calc(100% - 8px); left: 4px; overflow: hidden; position: absolute; top: 4px; width: calc(100% - 8px);\"><div style=\"display: grid; grid-template-columns: 1fr auto; grid-template-rows: 1fr; height: 100%; overflow: hidden; width: 100%;\"><div class=\"cl-text cl-preventinput cl-unselectable\" d",
+    "i": 611,
+    "left": 742,
+    "tag": "div",
+    "text": "",
+    "top": 601,
+    "w": 233
+  },
+  {
+    "attrs": {
+      "style": "display: grid; grid-template-columns: 1fr auto; grid-template-rows: 1fr; height: 100%; overflow: hidden; width: 100%;"
+    },
+    "h": 25,
+    "html": "<div style=\"display: grid; grid-template-columns: 1fr auto; grid-template-rows: 1fr; height: 100%; overflow: hidden; width: 100%;\"><div class=\"cl-text cl-preventinput cl-unselectable\" data-ndid=\"261\" role=\"combobox\" aria-expanded=\"true\" aria-haspopup=\"listbox\" tabindex=\"0\" aria-label=\"1행 단계 \" aria-controls=\"pt-1qz/lb\" aria-activedescendant=\"pt-1qz/i0\" style=\"display: grid; grid-area: 1 / 1 / span 1 / span 1; grid-template-columns: 1fr; grid-templ",
+    "i": 612,
+    "left": 743,
+    "tag": "div",
+    "text": "",
+    "top": 602,
+    "w": 231
+  },
+  {
+    "attrs": {
+      "aria-label": "1행 단계 ",
+      "class": "cl-text cl-preventinput cl-unselectable",
+      "data-ndid": "261",
+      "role": "combobox",
+      "style": "display: grid; grid-area: 1 / 1 / span 1 / span 1; grid-template-columns: 1fr; grid-template-rows: 1fr; height: 100%;",
+      "tabindex": "0"
+    },
+    "h": 25,
+    "html": "<div class=\"cl-text cl-preventinput cl-unselectable\" data-ndid=\"261\" role=\"combobox\" aria-expanded=\"true\" aria-haspopup=\"listbox\" tabindex=\"0\" aria-label=\"1행 단계 \" aria-controls=\"pt-1qz/lb\" aria-activedescendant=\"pt-1qz/i0\" style=\"display: grid; grid-area: 1 / 1 / span 1 / span 1; grid-template-columns: 1fr; grid-template-rows: 1fr; height: 100%;\"><div aria-hidden=\"true\" style=\"align-self: center; grid-area: 1 / 1 / span 1 / span 1;\">&nbsp;</div><",
+    "i": 613,
+    "left": 743,
+    "tag": "div",
+    "text": "",
+    "top": 602,
+    "w": 215
+  },
+  {
+    "attrs": {
+      "style": "align-self: center; grid-area: 1 / 1 / span 1 / span 1;"
+    },
+    "h": 19,
+    "html": "<div aria-hidden=\"true\" style=\"align-self: center; grid-area: 1 / 1 / span 1 / span 1;\">&nbsp;</div>",
+    "i": 614,
+    "left": 749,
+    "tag": "div",
+    "text": "",
+    "top": 605,
+    "w": 203
+  },
+  {
+    "attrs": {
+      "class": "cl-combobox-button",
+      "data-ndid": "262",
+      "style": "grid-area: 1 / 2 / span 1 / span 1; outline: none;"
+    },
+    "h": 25,
+    "html": "<div class=\"cl-combobox-button\" data-ndid=\"262\" aria-hidden=\"true\" style=\"grid-area: 1 / 2 / span 1 / span 1; outline: none;\"></div>",
+    "i": 615,
+    "left": 958,
+    "tag": "div",
+    "text": "",
+    "top": 602,
+    "w": 16
+  },
+  {
+    "attrs": {
+      "aria-label": "1행 마지막 열 평가결과  읽기전용",
+      "class": "cl-grid-cell cl-grid-cell-inherit cl-last-column",
+      "data-cellindex": "4",
+      "data-role": "gridcell",
+      "role": "gridcell",
+      "style": "box-sizing: border-box; display: inline-block; height: 36px; left: 674.065px; overflow: hidden; position: absolute; top: 0px; width: 897.935px;",
+      "tabindex": "-1"
+    },
+    "h": 36,
+    "html": "<div class=\"cl-grid-cell cl-grid-cell-inherit cl-last-column\" role=\"gridcell\" data-role=\"gridcell\" data-cellindex=\"4\" tabindex=\"-1\" aria-label=\"1행 마지막 열 평가결과  읽기전용\" aria-readonly=\"true\" style=\"box-sizing: border-box; display: inline-block; height: 36px; left: 674.065px; overflow: hidden; position: absolute; top: 0px; width: 897.935px;\"><div class=\"cl-control cl-textarea cl-grid-ctrl-inherit cl-readonly\" data-ndid=\"uuid-1r0\" title=\"평가결과\" data-widg",
+    "i": 616,
+    "left": 980,
+    "tag": "div",
+    "text": "",
+    "top": 597,
+    "w": 898
+  },
+  {
+    "attrs": {
+      "class": "cl-control cl-textarea cl-grid-ctrl-inherit cl-readonly",
+      "data-ndid": "uuid-1r0",
+      "data-widget": "true",
+      "id": "uuid-1r0",
+      "style": "height: calc(100% - 8px); left: 4px; overflow: hidden; position: absolute; top: 4px; width: calc(100% - 8px);",
+      "title": "평가결과"
+    },
+    "h": 27,
+    "html": "<div class=\"cl-control cl-textarea cl-grid-ctrl-inherit cl-readonly\" data-ndid=\"uuid-1r0\" title=\"평가결과\" data-widget=\"true\" id=\"uuid-1r0\" style=\"height: calc(100% - 8px); left: 4px; overflow: hidden; position: absolute; top: 4px; width: calc(100% - 8px);\"><div class=\"cl-textarea-wrap\" style=\"height: 100%; position: relative;\"><textarea class=\"cl-text\" data-ndid=\"263\" aria-label=\"1행 마지막 열 평가결과  읽기전용\" title=\"평가결과\" spellcheck=\"true\" aria-readonly=\"tru",
+    "i": 617,
+    "left": 984,
+    "tag": "div",
+    "text": "",
+    "top": 601,
+    "w": 890
+  },
+  {
+    "attrs": {
+      "class": "cl-textarea-wrap",
+      "style": "height: 100%; position: relative;"
+    },
+    "h": 25,
+    "html": "<div class=\"cl-textarea-wrap\" style=\"height: 100%; position: relative;\"><textarea class=\"cl-text\" data-ndid=\"263\" aria-label=\"1행 마지막 열 평가결과  읽기전용\" title=\"평가결과\" spellcheck=\"true\" aria-readonly=\"true\" tabindex=\"0\" readonly=\"\" style=\"background: transparent; display: block; resize: none;\"></textarea></div>",
+    "i": 618,
+    "left": 985,
+    "tag": "div",
+    "text": "",
+    "top": 602,
+    "w": 888
+  },
+  {
+    "attrs": {
+      "aria-label": "1행 마지막 열 평가결과  읽기전용",
+      "class": "cl-text",
+      "data-ndid": "263",
+      "style": "background: transparent; display: block; resize: none;",
+      "tabindex": "0",
+      "title": "평가결과"
+    },
+    "h": 25,
+    "html": "<textarea class=\"cl-text\" data-ndid=\"263\" aria-label=\"1행 마지막 열 평가결과  읽기전용\" title=\"평가결과\" spellcheck=\"true\" aria-readonly=\"true\" tabindex=\"0\" readonly=\"\" style=\"background: transparent; display: block; resize: none;\"></textarea>",
+    "i": 619,
+    "left": 985,
+    "tag": "textarea",
+    "text": "",
+    "top": 602,
+    "w": 888
+  },
+  {
+    "attrs": {
+      "aria-label": "2행 단계 ",
+      "class": "cl-grid-cell cl-grid-cell-inherit",
+      "data-cellindex": "3",
+      "data-role": "gridcell",
+      "role": "gridcell",
+      "style": "box-sizing: border-box; display: inline-block; height: 36px; left: 431.622px; overflow: hidden; position: absolute; top: 0px; width: 242.442px;",
+      "tabindex": "-1"
+    },
+    "h": 36,
+    "html": "<div class=\"cl-grid-cell cl-grid-cell-inherit\" role=\"gridcell\" data-role=\"gridcell\" data-cellindex=\"3\" tabindex=\"-1\" aria-label=\"2행 단계 \" style=\"box-sizing: border-box; display: inline-block; height: 36px; left: 431.622px; overflow: hidden; position: absolute; top: 0px; width: 242.442px;\"><div class=\"cl-control cl-combobox cl-grid-ctrl-inherit\" style=\"height: calc(100% - 8px); left: 4px; max-height: 35px; position: absolute; top: 4px; width: calc(",
+    "i": 633,
+    "left": 738,
+    "tag": "div",
+    "text": "",
+    "top": 633,
+    "w": 242
+  },
+  {
+    "attrs": {
+      "class": "cl-control cl-combobox cl-grid-ctrl-inherit",
+      "style": "height: calc(100% - 8px); left: 4px; max-height: 35px; position: absolute; top: 4px; width: calc(100% - 8px);"
+    },
+    "h": 27,
+    "html": "<div class=\"cl-control cl-combobox cl-grid-ctrl-inherit\" style=\"height: calc(100% - 8px); left: 4px; max-height: 35px; position: absolute; top: 4px; width: calc(100% - 8px);\"><div style=\"display: grid; grid-template-columns: 1fr auto; grid-template-rows: 1fr; height: 100%; overflow: hidden; text-align: inherit; vertical-align: inherit; width: 100%;\"><div aria-expanded=\"false\" style=\"align-self: center; display: table; grid-area: 1 / 1 / span 1 / ",
+    "i": 634,
+    "left": 742,
+    "tag": "div",
+    "text": "",
+    "top": 637,
+    "w": 233
+  },
+  {
+    "attrs": {
+      "style": "display: grid; grid-template-columns: 1fr auto; grid-template-rows: 1fr; height: 100%; overflow: hidden; text-align: inherit; vertical-align: inherit; width: 100%;"
+    },
+    "h": 25,
+    "html": "<div style=\"display: grid; grid-template-columns: 1fr auto; grid-template-rows: 1fr; height: 100%; overflow: hidden; text-align: inherit; vertical-align: inherit; width: 100%;\"><div aria-expanded=\"false\" style=\"align-self: center; display: table; grid-area: 1 / 1 / span 1 / span 1; height: 100%; overflow: hidden; table-layout: fixed; text-align: inherit; vertical-align: inherit; width: 100%;\"><div class=\"cl-text\" role=\"combobox\" tabindex=\"0\" styl",
+    "i": 635,
+    "left": 743,
+    "tag": "div",
+    "text": "",
+    "top": 638,
+    "w": 231
+  },
+  {
+    "attrs": {
+      "style": "align-self: center; display: table; grid-area: 1 / 1 / span 1 / span 1; height: 100%; overflow: hidden; table-layout: fixed; text-align: inherit; vertical-align: inherit; width: 100%;"
+    },
+    "h": 25,
+    "html": "<div aria-expanded=\"false\" style=\"align-self: center; display: table; grid-area: 1 / 1 / span 1 / span 1; height: 100%; overflow: hidden; table-layout: fixed; text-align: inherit; vertical-align: inherit; width: 100%;\"><div class=\"cl-text\" role=\"combobox\" tabindex=\"0\" style=\"display: table-cell;\">&nbsp;</div></div>",
+    "i": 636,
+    "left": 743,
+    "tag": "div",
+    "text": "",
+    "top": 638,
+    "w": 215
+  },
+  {
+    "attrs": {
+      "class": "cl-text",
+      "role": "combobox",
+      "style": "display: table-cell;",
+      "tabindex": "0"
+    },
+    "h": 25,
+    "html": "<div class=\"cl-text\" role=\"combobox\" tabindex=\"0\" style=\"display: table-cell;\">&nbsp;</div>",
+    "i": 637,
+    "left": 743,
+    "tag": "div",
+    "text": "",
+    "top": 638,
+    "w": 215
+  },
+  {
+    "attrs": {
+      "class": "cl-combobox-button",
+      "data-ndid": "22a",
+      "style": "grid-area: 1 / 2 / span 1 / span 1; outline: none;"
+    },
+    "h": 25,
+    "html": "<div class=\"cl-combobox-button\" data-ndid=\"22a\" style=\"grid-area: 1 / 2 / span 1 / span 1; outline: none;\"></div>",
+    "i": 638,
+    "left": 958,
+    "tag": "div",
+    "text": "",
+    "top": 638,
+    "w": 16
+  },
+  {
+    "attrs": {
+      "aria-label": "2행 마지막 열 평가결과  읽기전용",
+      "class": "cl-grid-cell cl-grid-cell-inherit cl-last-column",
+      "data-cellindex": "4",
+      "data-role": "gridcell",
+      "role": "gridcell",
+      "style": "box-sizing: border-box; display: inline-block; height: 36px; left: 674.065px; overflow: hidden; position: absolute; top: 0px; width: 897.935px;",
+      "tabindex": "-1"
+    },
+    "h": 36,
+    "html": "<div class=\"cl-grid-cell cl-grid-cell-inherit cl-last-column\" role=\"gridcell\" data-role=\"gridcell\" data-cellindex=\"4\" tabindex=\"-1\" aria-label=\"2행 마지막 열 평가결과  읽기전용\" aria-readonly=\"true\" style=\"box-sizing: border-box; display: inline-block; height: 36px; left: 674.065px; overflow: hidden; position: absolute; top: 0px; width: 897.935px;\"><div class=\"cl-control cl-textarea cl-grid-ctrl-inherit cl-readonly\" title=\"평가결과\" style=\"height: calc(100% - 8px",
+    "i": 639,
+    "left": 980,
+    "tag": "div",
+    "text": "",
+    "top": 633,
+    "w": 898
+  },
+  {
+    "attrs": {
+      "class": "cl-control cl-textarea cl-grid-ctrl-inherit cl-readonly",
+      "style": "height: calc(100% - 8px); left: 4px; max-height: 35px; overflow: hidden; position: absolute; top: 4px; width: calc(100% - 8px);",
+      "title": "평가결과"
+    },
+    "h": 27,
+    "html": "<div class=\"cl-control cl-textarea cl-grid-ctrl-inherit cl-readonly\" title=\"평가결과\" style=\"height: calc(100% - 8px); left: 4px; max-height: 35px; overflow: hidden; position: absolute; top: 4px; width: calc(100% - 8px);\"><div class=\"cl-text\" style=\"background: transparent; margin: 0px; resize: none;\"></div></div>",
+    "i": 640,
+    "left": 984,
+    "tag": "div",
+    "text": "",
+    "top": 637,
+    "w": 890
+  },
+  {
+    "attrs": {
+      "class": "cl-text",
+      "style": "background: transparent; margin: 0px; resize: none;"
+    },
+    "h": 25,
+    "html": "<div class=\"cl-text\" style=\"background: transparent; margin: 0px; resize: none;\"></div>",
+    "i": 641,
+    "left": 985,
+    "tag": "div",
+    "text": "",
+    "top": 638,
+    "w": 888
+  },
+  {
+    "attrs": {
+      "aria-label": "3행 단계 ",
+      "class": "cl-grid-cell cl-grid-cell-inherit",
+      "data-cellindex": "3",
+      "data-role": "gridcell",
+      "role": "gridcell",
+      "style": "box-sizing: border-box; display: inline-block; height: 36px; left: 431.622px; overflow: hidden; position: absolute; top: 0px; width: 242.442px;",
+      "tabindex": "-1"
+    },
+    "h": 36,
+    "html": "<div class=\"cl-grid-cell cl-grid-cell-inherit\" role=\"gridcell\" data-role=\"gridcell\" data-cellindex=\"3\" tabindex=\"-1\" aria-label=\"3행 단계 \" style=\"box-sizing: border-box; display: inline-block; height: 36px; left: 431.622px; overflow: hidden; position: absolute; top: 0px; width: 242.442px;\"><div class=\"cl-control cl-combobox cl-grid-ctrl-inherit\" style=\"height: calc(100% - 8px); left: 4px; max-height: 35px; position: absolute; top: 4px; width: calc(",
+    "i": 655,
+    "left": 738,
+    "tag": "div",
+    "text": "",
+    "top": 669,
+    "w": 242
+  },
+  {
+    "attrs": {
+      "class": "cl-control cl-combobox cl-grid-ctrl-inherit",
+      "style": "height: calc(100% - 8px); left: 4px; max-height: 35px; position: absolute; top: 4px; width: calc(100% - 8px);"
+    },
+    "h": 27,
+    "html": "<div class=\"cl-control cl-combobox cl-grid-ctrl-inherit\" style=\"height: calc(100% - 8px); left: 4px; max-height: 35px; position: absolute; top: 4px; width: calc(100% - 8px);\"><div style=\"display: grid; grid-template-columns: 1fr auto; grid-template-rows: 1fr; height: 100%; overflow: hidden; text-align: inherit; vertical-align: inherit; width: 100%;\"><div aria-expanded=\"false\" style=\"align-self: center; display: table; grid-area: 1 / 1 / span 1 / ",
+    "i": 656,
+    "left": 742,
+    "tag": "div",
+    "text": "",
+    "top": 673,
+    "w": 233
+  },
+  {
+    "attrs": {
+      "style": "display: grid; grid-template-columns: 1fr auto; grid-template-rows: 1fr; height: 100%; overflow: hidden; text-align: inherit; vertical-align: inherit; width: 100%;"
+    },
+    "h": 25,
+    "html": "<div style=\"display: grid; grid-template-columns: 1fr auto; grid-template-rows: 1fr; height: 100%; overflow: hidden; text-align: inherit; vertical-align: inherit; width: 100%;\"><div aria-expanded=\"false\" style=\"align-self: center; display: table; grid-area: 1 / 1 / span 1 / span 1; height: 100%; overflow: hidden; table-layout: fixed; text-align: inherit; vertical-align: inherit; width: 100%;\"><div class=\"cl-text\" role=\"combobox\" tabindex=\"0\" styl",
+    "i": 657,
+    "left": 743,
+    "tag": "div",
+    "text": "",
+    "top": 674,
+    "w": 231
+  },
+  {
+    "attrs": {
+      "style": "align-self: center; display: table; grid-area: 1 / 1 / span 1 / span 1; height: 100%; overflow: hidden; table-layout: fixed; text-align: inherit; vertical-align: inherit; width: 100%;"
+    },
+    "h": 25,
+    "html": "<div aria-expanded=\"false\" style=\"align-self: center; display: table; grid-area: 1 / 1 / span 1 / span 1; height: 100%; overflow: hidden; table-layout: fixed; text-align: inherit; vertical-align: inherit; width: 100%;\"><div class=\"cl-text\" role=\"combobox\" tabindex=\"0\" style=\"display: table-cell;\">&nbsp;</div></div>",
+    "i": 658,
+    "left": 743,
+    "tag": "div",
+    "text": "",
+    "top": 674,
+    "w": 215
+  },
+  {
+    "attrs": {
+      "class": "cl-text",
+      "role": "combobox",
+      "style": "display: table-cell;",
+      "tabindex": "0"
+    },
+    "h": 25,
+    "html": "<div class=\"cl-text\" role=\"combobox\" tabindex=\"0\" style=\"display: table-cell;\">&nbsp;</div>",
+    "i": 659,
+    "left": 743,
+    "tag": "div",
+    "text": "",
+    "top": 674,
+    "w": 215
+  },
+  {
+    "attrs": {
+      "class": "cl-combobox-button",
+      "data-ndid": "22d",
+      "style": "grid-area: 1 / 2 / span 1 / span 1; outline: none;"
+    },
+    "h": 25,
+    "html": "<div class=\"cl-combobox-button\" data-ndid=\"22d\" style=\"grid-area: 1 / 2 / span 1 / span 1; outline: none;\"></div>",
+    "i": 660,
+    "left": 958,
+    "tag": "div",
+    "text": "",
+    "top": 674,
+    "w": 16
+  },
+  {
+    "attrs": {
+      "aria-label": "3행 마지막 열 평가결과  읽기전용",
+      "class": "cl-grid-cell cl-grid-cell-inherit cl-last-column",
+      "data-cellindex": "4",
+      "data-role": "gridcell",
+      "role": "gridcell",
+      "style": "box-sizing: border-box; display: inline-block; height: 36px; left: 674.065px; overflow: hidden; position: absolute; top: 0px; width: 897.935px;",
+      "tabindex": "-1"
+    },
+    "h": 36,
+    "html": "<div class=\"cl-grid-cell cl-grid-cell-inherit cl-last-column\" role=\"gridcell\" data-role=\"gridcell\" data-cellindex=\"4\" tabindex=\"-1\" aria-label=\"3행 마지막 열 평가결과  읽기전용\" aria-readonly=\"true\" style=\"box-sizing: border-box; display: inline-block; height: 36px; left: 674.065px; overflow: hidden; position: absolute; top: 0px; width: 897.935px;\"><div class=\"cl-control cl-textarea cl-grid-ctrl-inherit cl-readonly\" title=\"평가결과\" style=\"height: calc(100% - 8px",
+    "i": 661,
+    "left": 980,
+    "tag": "div",
+    "text": "",
+    "top": 669,
+    "w": 898
+  },
+  {
+    "attrs": {
+      "class": "cl-control cl-textarea cl-grid-ctrl-inherit cl-readonly",
+      "style": "height: calc(100% - 8px); left: 4px; max-height: 35px; overflow: hidden; position: absolute; top: 4px; width: calc(100% - 8px);",
+      "title": "평가결과"
+    },
+    "h": 27,
+    "html": "<div class=\"cl-control cl-textarea cl-grid-ctrl-inherit cl-readonly\" title=\"평가결과\" style=\"height: calc(100% - 8px); left: 4px; max-height: 35px; overflow: hidden; position: absolute; top: 4px; width: calc(100% - 8px);\"><div class=\"cl-text\" style=\"background: transparent; margin: 0px; resize: none;\"></div></div>",
+    "i": 662,
+    "left": 984,
+    "tag": "div",
+    "text": "",
+    "top": 673,
+    "w": 890
+  },
+  {
+    "attrs": {
+      "class": "cl-text",
+      "style": "background: transparent; margin: 0px; resize: none;"
+    },
+    "h": 25,
+    "html": "<div class=\"cl-text\" style=\"background: transparent; margin: 0px; resize: none;\"></div>",
+    "i": 663,
+    "left": 985,
+    "tag": "div",
+    "text": "",
+    "top": 674,
+    "w": 888
+  },
+  {
+    "attrs": {
+      "aria-label": "4행 단계 ",
+      "class": "cl-grid-cell cl-grid-cell-inherit",
+      "data-cellindex": "3",
+      "data-role": "gridcell",
+      "role": "gridcell",
+      "style": "box-sizing: border-box; display: inline-block; height: 36px; left: 431.622px; overflow: hidden; position: absolute; top: 0px; width: 242.442px;",
+      "tabindex": "-1"
+    },
+    "h": 36,
+    "html": "<div class=\"cl-grid-cell cl-grid-cell-inherit\" role=\"gridcell\" data-role=\"gridcell\" data-cellindex=\"3\" tabindex=\"-1\" aria-label=\"4행 단계 \" style=\"box-sizing: border-box; display: inline-block; height: 36px; left: 431.622px; overflow: hidden; position: absolute; top: 0px; width: 242.442px;\"><div class=\"cl-control cl-combobox cl-grid-ctrl-inherit\" style=\"height: calc(100% - 8px); left: 4px; max-height: 35px; position: absolute; top: 4px; width: calc(",
+    "i": 677,
+    "left": 738,
+    "tag": "div",
+    "text": "",
+    "top": 705,
+    "w": 242
+  },
+  {
+    "attrs": {
+      "class": "cl-control cl-combobox cl-grid-ctrl-inherit",
+      "style": "height: calc(100% - 8px); left: 4px; max-height: 35px; position: absolute; top: 4px; width: calc(100% - 8px);"
+    },
+    "h": 27,
+    "html": "<div class=\"cl-control cl-combobox cl-grid-ctrl-inherit\" style=\"height: calc(100% - 8px); left: 4px; max-height: 35px; position: absolute; top: 4px; width: calc(100% - 8px);\"><div style=\"display: grid; grid-template-columns: 1fr auto; grid-template-rows: 1fr; height: 100%; overflow: hidden; text-align: inherit; vertical-align: inherit; width: 100%;\"><div aria-expanded=\"false\" style=\"align-self: center; display: table; grid-area: 1 / 1 / span 1 / ",
+    "i": 678,
+    "left": 742,
+    "tag": "div",
+    "text": "",
+    "top": 709,
+    "w": 233
+  },
+  {
+    "attrs": {
+      "style": "display: grid; grid-template-columns: 1fr auto; grid-template-rows: 1fr; height: 100%; overflow: hidden; text-align: inherit; vertical-align: inherit; width: 100%;"
+    },
+    "h": 25,
+    "html": "<div style=\"display: grid; grid-template-columns: 1fr auto; grid-template-rows: 1fr; height: 100%; overflow: hidden; text-align: inherit; vertical-align: inherit; width: 100%;\"><div aria-expanded=\"false\" style=\"align-self: center; display: table; grid-area: 1 / 1 / span 1 / span 1; height: 100%; overflow: hidden; table-layout: fixed; text-align: inherit; vertical-align: inherit; width: 100%;\"><div class=\"cl-text\" role=\"combobox\" tabindex=\"0\" styl",
+    "i": 679,
+    "left": 743,
+    "tag": "div",
+    "text": "",
+    "top": 710,
+    "w": 231
+  },
+  {
+    "attrs": {
+      "style": "align-self: center; display: table; grid-area: 1 / 1 / span 1 / span 1; height: 100%; overflow: hidden; table-layout: fixed; text-align: inherit; vertical-align: inherit; width: 100%;"
+    },
+    "h": 25,
+    "html": "<div aria-expanded=\"false\" style=\"align-self: center; display: table; grid-area: 1 / 1 / span 1 / span 1; height: 100%; overflow: hidden; table-layout: fixed; text-align: inherit; vertical-align: inherit; width: 100%;\"><div class=\"cl-text\" role=\"combobox\" tabindex=\"0\" style=\"display: table-cell;\">&nbsp;</div></div>",
+    "i": 680,
+    "left": 743,
+    "tag": "div",
+    "text": "",
+    "top": 710,
+    "w": 215
+  },
+  {
+    "attrs": {
+      "class": "cl-text",
+      "role": "combobox",
+      "style": "display: table-cell;",
+      "tabindex": "0"
+    },
+    "h": 25,
+    "html": "<div class=\"cl-text\" role=\"combobox\" tabindex=\"0\" style=\"display: table-cell;\">&nbsp;</div>",
+    "i": 681,
+    "left": 743,
+    "tag": "div",
+    "text": "",
+    "top": 710,
+    "w": 215
+  },
+  {
+    "attrs": {
+      "class": "cl-combobox-button",
+      "data-ndid": "22g",
+      "style": "grid-area: 1 / 2 / span 1 / span 1; outline: none;"
+    },
+    "h": 25,
+    "html": "<div class=\"cl-combobox-button\" data-ndid=\"22g\" style=\"grid-area: 1 / 2 / span 1 / span 1; outline: none;\"></div>",
+    "i": 682,
+    "left": 958,
+    "tag": "div",
+    "text": "",
+    "top": 710,
+    "w": 16
+  },
+  {
+    "attrs": {
+      "aria-label": "4행 마지막 열 평가결과  읽기전용",
+      "class": "cl-grid-cell cl-grid-cell-inherit cl-last-column",
+      "data-cellindex": "4",
+      "data-role": "gridcell",
+      "role": "gridcell",
+      "style": "box-sizing: border-box; display: inline-block; height: 36px; left: 674.065px; overflow: hidden; position: absolute; top: 0px; width: 897.935px;",
+      "tabindex": "-1"
+    },
+    "h": 36,
+    "html": "<div class=\"cl-grid-cell cl-grid-cell-inherit cl-last-column\" role=\"gridcell\" data-role=\"gridcell\" data-cellindex=\"4\" tabindex=\"-1\" aria-label=\"4행 마지막 열 평가결과  읽기전용\" aria-readonly=\"true\" style=\"box-sizing: border-box; display: inline-block; height: 36px; left: 674.065px; overflow: hidden; position: absolute; top: 0px; width: 897.935px;\"><div class=\"cl-control cl-textarea cl-grid-ctrl-inherit cl-readonly\" title=\"평가결과\" style=\"height: calc(100% - 8px",
+    "i": 683,
+    "left": 980,
+    "tag": "div",
+    "text": "",
+    "top": 705,
+    "w": 898
+  },
+  {
+    "attrs": {
+      "class": "cl-control cl-textarea cl-grid-ctrl-inherit cl-readonly",
+      "style": "height: calc(100% - 8px); left: 4px; max-height: 35px; overflow: hidden; position: absolute; top: 4px; width: calc(100% - 8px);",
+      "title": "평가결과"
+    },
+    "h": 27,
+    "html": "<div class=\"cl-control cl-textarea cl-grid-ctrl-inherit cl-readonly\" title=\"평가결과\" style=\"height: calc(100% - 8px); left: 4px; max-height: 35px; overflow: hidden; position: absolute; top: 4px; width: calc(100% - 8px);\"><div class=\"cl-text\" style=\"background: transparent; margin: 0px; resize: none;\"></div></div>",
+    "i": 684,
+    "left": 984,
+    "tag": "div",
+    "text": "",
+    "top": 709,
+    "w": 890
+  },
+  {
+    "attrs": {
+      "class": "cl-text",
+      "style": "background: transparent; margin: 0px; resize: none;"
+    },
+    "h": 25,
+    "html": "<div class=\"cl-text\" style=\"background: transparent; margin: 0px; resize: none;\"></div>",
+    "i": 685,
+    "left": 985,
+    "tag": "div",
+    "text": "",
+    "top": 710,
+    "w": 888
+  },
+  {
+    "attrs": {
+      "aria-label": "5행 단계 ",
+      "class": "cl-grid-cell cl-grid-cell-inherit",
+      "data-cellindex": "3",
+      "data-role": "gridcell",
+      "role": "gridcell",
+      "style": "box-sizing: border-box; display: inline-block; height: 36px; left: 431.622px; overflow: hidden; position: absolute; top: 0px; width: 242.442px;",
+      "tabindex": "-1"
+    },
+    "h": 36,
+    "html": "<div class=\"cl-grid-cell cl-grid-cell-inherit\" role=\"gridcell\" data-role=\"gridcell\" data-cellindex=\"3\" tabindex=\"-1\" aria-label=\"5행 단계 \" style=\"box-sizing: border-box; display: inline-block; height: 36px; left: 431.622px; overflow: hidden; position: absolute; top: 0px; width: 242.442px;\"><div class=\"cl-control cl-combobox cl-grid-ctrl-inherit\" style=\"height: calc(100% - 8px); left: 4px; max-height: 35px; position: absolute; top: 4px; width: calc(",
+    "i": 699,
+    "left": 738,
+    "tag": "div",
+    "text": "",
+    "top": 741,
+    "w": 242
+  },
+  {
+    "attrs": {
+      "class": "cl-control cl-combobox cl-grid-ctrl-inherit",
+      "style": "height: calc(100% - 8px); left: 4px; max-height: 35px; position: absolute; top: 4px; width: calc(100% - 8px);"
+    },
+    "h": 27,
+    "html": "<div class=\"cl-control cl-combobox cl-grid-ctrl-inherit\" style=\"height: calc(100% - 8px); left: 4px; max-height: 35px; position: absolute; top: 4px; width: calc(100% - 8px);\"><div style=\"display: grid; grid-template-columns: 1fr auto; grid-template-rows: 1fr; height: 100%; overflow: hidden; text-align: inherit; vertical-align: inherit; width: 100%;\"><div aria-expanded=\"false\" style=\"align-self: center; display: table; grid-area: 1 / 1 / span 1 / ",
+    "i": 700,
+    "left": 742,
+    "tag": "div",
+    "text": "",
+    "top": 745,
+    "w": 233
+  },
+  {
+    "attrs": {
+      "style": "display: grid; grid-template-columns: 1fr auto; grid-template-rows: 1fr; height: 100%; overflow: hidden; text-align: inherit; vertical-align: inherit; width: 100%;"
+    },
+    "h": 25,
+    "html": "<div style=\"display: grid; grid-template-columns: 1fr auto; grid-template-rows: 1fr; height: 100%; overflow: hidden; text-align: inherit; vertical-align: inherit; width: 100%;\"><div aria-expanded=\"false\" style=\"align-self: center; display: table; grid-area: 1 / 1 / span 1 / span 1; height: 100%; overflow: hidden; table-layout: fixed; text-align: inherit; vertical-align: inherit; width: 100%;\"><div class=\"cl-text\" role=\"combobox\" tabindex=\"0\" styl",
+    "i": 701,
+    "left": 743,
+    "tag": "div",
+    "text": "",
+    "top": 746,
+    "w": 231
+  },
+  {
+    "attrs": {
+      "style": "align-self: center; display: table; grid-area: 1 / 1 / span 1 / span 1; height: 100%; overflow: hidden; table-layout: fixed; text-align: inherit; vertical-align: inherit; width: 100%;"
+    },
+    "h": 25,
+    "html": "<div aria-expanded=\"false\" style=\"align-self: center; display: table; grid-area: 1 / 1 / span 1 / span 1; height: 100%; overflow: hidden; table-layout: fixed; text-align: inherit; vertical-align: inherit; width: 100%;\"><div class=\"cl-text\" role=\"combobox\" tabindex=\"0\" style=\"display: table-cell;\">&nbsp;</div></div>",
+    "i": 702,
+    "left": 743,
+    "tag": "div",
+    "text": "",
+    "top": 746,
+    "w": 215
+  },
+  {
+    "attrs": {
+      "class": "cl-text",
+      "role": "combobox",
+      "style": "display: table-cell;",
+      "tabindex": "0"
+    },
+    "h": 25,
+    "html": "<div class=\"cl-text\" role=\"combobox\" tabindex=\"0\" style=\"display: table-cell;\">&nbsp;</div>",
+    "i": 703,
+    "left": 743,
+    "tag": "div",
+    "text": "",
+    "top": 746,
+    "w": 215
+  },
+  {
+    "attrs": {
+      "class": "cl-combobox-button",
+      "data-ndid": "22j",
+      "style": "grid-area: 1 / 2 / span 1 / span 1; outline: none;"
+    },
+    "h": 25,
+    "html": "<div class=\"cl-combobox-button\" data-ndid=\"22j\" style=\"grid-area: 1 / 2 / span 1 / span 1; outline: none;\"></div>",
+    "i": 704,
+    "left": 958,
+    "tag": "div",
+    "text": "",
+    "top": 746,
+    "w": 16
+  },
+  {
+    "attrs": {
+      "aria-label": "5행 마지막 열 평가결과  읽기전용",
+      "class": "cl-grid-cell cl-grid-cell-inherit cl-last-column",
+      "data-cellindex": "4",
+      "data-role": "gridcell",
+      "role": "gridcell",
+      "style": "box-sizing: border-box; display: inline-block; height: 36px; left: 674.065px; overflow: hidden; position: absolute; top: 0px; width: 897.935px;",
+      "tabindex": "-1"
+    },
+    "h": 36,
+    "html": "<div class=\"cl-grid-cell cl-grid-cell-inherit cl-last-column\" role=\"gridcell\" data-role=\"gridcell\" data-cellindex=\"4\" tabindex=\"-1\" aria-label=\"5행 마지막 열 평가결과  읽기전용\" aria-readonly=\"true\" style=\"box-sizing: border-box; display: inline-block; height: 36px; left: 674.065px; overflow: hidden; position: absolute; top: 0px; width: 897.935px;\"><div class=\"cl-control cl-textarea cl-grid-ctrl-inherit cl-readonly\" title=\"평가결과\" style=\"height: calc(100% - 8px",
+    "i": 705,
+    "left": 980,
+    "tag": "div",
+    "text": "",
+    "top": 741,
+    "w": 898
+  },
+  {
+    "attrs": {
+      "class": "cl-control cl-textarea cl-grid-ctrl-inherit cl-readonly",
+      "style": "height: calc(100% - 8px); left: 4px; max-height: 35px; overflow: hidden; position: absolute; top: 4px; width: calc(100% - 8px);",
+      "title": "평가결과"
+    },
+    "h": 27,
+    "html": "<div class=\"cl-control cl-textarea cl-grid-ctrl-inherit cl-readonly\" title=\"평가결과\" style=\"height: calc(100% - 8px); left: 4px; max-height: 35px; overflow: hidden; position: absolute; top: 4px; width: calc(100% - 8px);\"><div class=\"cl-text\" style=\"background: transparent; margin: 0px; resize: none;\"></div></div>",
+    "i": 706,
+    "left": 984,
+    "tag": "div",
+    "text": "",
+    "top": 745,
+    "w": 890
+  },
+  {
+    "attrs": {
+      "class": "cl-text",
+      "style": "background: transparent; margin: 0px; resize: none;"
+    },
+    "h": 25,
+    "html": "<div class=\"cl-text\" style=\"background: transparent; margin: 0px; resize: none;\"></div>",
+    "i": 707,
+    "left": 985,
+    "tag": "div",
+    "text": "",
+    "top": 746,
+    "w": 888
+  },
+  {
+    "attrs": {
+      "class": "cl-control cl-combobox cl-grid-ctrl-inherit",
+      "style": "height: calc(100% - 8px); left: 4px; max-height: 35px; position: absolute; top: 4px; width: calc(100% - 8px);"
+    },
+    "h": 27,
+    "html": "<div class=\"cl-control cl-combobox cl-grid-ctrl-inherit\" style=\"height: calc(100% - 8px); left: 4px; max-height: 35px; position: absolute; top: 4px; width: calc(100% - 8px);\"><div style=\"display: grid; grid-template-columns: 1fr auto; grid-template-rows: 1fr; height: 100%; overflow: hidden; text-align: inherit; vertical-align: inherit; width: 100%;\"><div aria-expanded=\"false\" style=\"align-self: center; display: table; grid-area: 1 / 1 / span 1 / ",
+    "i": 722,
+    "left": 742,
+    "tag": "div",
+    "text": "",
+    "top": 781,
+    "w": 233
+  },
+  {
+    "attrs": {
+      "class": "cl-text",
+      "role": "combobox",
+      "style": "display: table-cell;",
+      "tabindex": "0"
+    },
+    "h": 25,
+    "html": "<div class=\"cl-text\" role=\"combobox\" tabindex=\"0\" style=\"display: table-cell;\">&nbsp;</div>",
+    "i": 725,
+    "left": 743,
+    "tag": "div",
+    "text": "",
+    "top": 782,
+    "w": 215
+  },
+  {
+    "attrs": {
+      "class": "cl-combobox-button",
+      "data-ndid": "22m",
+      "style": "grid-area: 1 / 2 / span 1 / span 1; outline: none;"
+    },
+    "h": 25,
+    "html": "<div class=\"cl-combobox-button\" data-ndid=\"22m\" style=\"grid-area: 1 / 2 / span 1 / span 1; outline: none;\"></div>",
+    "i": 726,
+    "left": 958,
+    "tag": "div",
+    "text": "",
+    "top": 782,
+    "w": 16
+  },
+  {
+    "attrs": {
+      "class": "cl-control cl-combobox cl-grid-ctrl-inherit",
+      "style": "height: calc(100% - 8px); left: 4px; max-height: 35px; position: absolute; top: 4px; width: calc(100% - 8px);"
+    },
+    "h": 27,
+    "html": "<div class=\"cl-control cl-combobox cl-grid-ctrl-inherit\" style=\"height: calc(100% - 8px); left: 4px; max-height: 35px; position: absolute; top: 4px; width: calc(100% - 8px);\"><div style=\"display: grid; grid-template-columns: 1fr auto; grid-template-rows: 1fr; height: 100%; overflow: hidden; text-align: inherit; vertical-align: inherit; width: 100%;\"><div aria-expanded=\"false\" style=\"align-self: center; display: table; grid-area: 1 / 1 / span 1 / ",
+    "i": 744,
+    "left": 742,
+    "tag": "div",
+    "text": "",
+    "top": 817,
+    "w": 233
+  },
+  {
+    "attrs": {
+      "class": "cl-text",
+      "role": "combobox",
+      "style": "display: table-cell;",
+      "tabindex": "0"
+    },
+    "h": 25,
+    "html": "<div class=\"cl-text\" role=\"combobox\" tabindex=\"0\" style=\"display: table-cell;\">&nbsp;</div>",
+    "i": 747,
+    "left": 743,
+    "tag": "div",
+    "text": "",
+    "top": 818,
+    "w": 215
+  },
+  {
+    "attrs": {
+      "class": "cl-combobox-button",
+      "data-ndid": "22p",
+      "style": "grid-area: 1 / 2 / span 1 / span 1; outline: none;"
+    },
+    "h": 25,
+    "html": "<div class=\"cl-combobox-button\" data-ndid=\"22p\" style=\"grid-area: 1 / 2 / span 1 / span 1; outline: none;\"></div>",
+    "i": 748,
+    "left": 958,
+    "tag": "div",
+    "text": "",
+    "top": 818,
+    "w": 16
+  },
+  {
+    "attrs": {
+      "class": "cl-control cl-combobox cl-grid-ctrl-inherit",
+      "style": "height: calc(100% - 8px); left: 4px; max-height: 35px; position: absolute; top: 4px; width: calc(100% - 8px);"
+    },
+    "h": 27,
+    "html": "<div class=\"cl-control cl-combobox cl-grid-ctrl-inherit\" style=\"height: calc(100% - 8px); left: 4px; max-height: 35px; position: absolute; top: 4px; width: calc(100% - 8px);\"><div style=\"display: grid; grid-template-columns: 1fr auto; grid-template-rows: 1fr; height: 100%; overflow: hidden; text-align: inherit; vertical-align: inherit; width: 100%;\"><div aria-expanded=\"false\" style=\"align-self: center; display: table; grid-area: 1 / 1 / span 1 / ",
+    "i": 766,
+    "left": 742,
+    "tag": "div",
+    "text": "",
+    "top": 853,
+    "w": 233
+  },
+  {
+    "attrs": {
+      "class": "cl-text",
+      "role": "combobox",
+      "style": "display: table-cell;",
+      "tabindex": "0"
+    },
+    "h": 25,
+    "html": "<div class=\"cl-text\" role=\"combobox\" tabindex=\"0\" style=\"display: table-cell;\">&nbsp;</div>",
+    "i": 769,
+    "left": 743,
+    "tag": "div",
+    "text": "",
+    "top": 854,
+    "w": 215
+  },
+  {
+    "attrs": {
+      "class": "cl-combobox-button",
+      "data-ndid": "22s",
+      "style": "grid-area: 1 / 2 / span 1 / span 1; outline: none;"
+    },
+    "h": 25,
+    "html": "<div class=\"cl-combobox-button\" data-ndid=\"22s\" style=\"grid-area: 1 / 2 / span 1 / span 1; outline: none;\"></div>",
+    "i": 770,
+    "left": 958,
+    "tag": "div",
+    "text": "",
+    "top": 854,
+    "w": 16
+  },
+  {
+    "attrs": {
+      "class": "cl-tabfolder-header-viewport content",
+      "data-ndid": "md",
+      "role": "tablist",
+      "style": "box-sizing: border-box; display: grid; grid-template-columns: min-content 10px min-content 1fr; grid-template-rows: 1fr; height: 100%; min-height: min-content; min-width: min-content; width: 100%;"
+    },
+    "h": 30,
+    "html": "<div class=\"cl-tabfolder-header-viewport content\" style=\"box-sizing: border-box; display: grid; grid-template-columns: min-content 10px min-content 1fr; grid-template-rows: 1fr; height: 100%; min-height: min-content; min-width: min-content; width: 100%;\" data-ndid=\"md\" role=\"tablist\"><div class=\"cl-first cl-tabfolder-item cl-unselectable unable-to-close\" style=\"display:grid;grid-column:1 / span 1;grid-row:1 / span 1;grid-template-columns:min-cont",
+    "i": 795,
+    "left": 290,
+    "tag": "div",
+    "text": "초기화면 교과평가",
+    "top": 875,
+    "w": 1343
+  },
+  {
+    "attrs": {
+      "class": "cl-first cl-tabfolder-item cl-unselectable unable-to-close",
+      "data-itemidx": "1",
+      "data-ndid": "mc",
+      "style": "display:grid;grid-column:1 / span 1;grid-row:1 / span 1;grid-template-columns:min-content;grid-template-rows:1fr;overflow:hidden;",
+      "title": "초기화면"
+    },
+    "h": 30,
+    "html": "<div class=\"cl-first cl-tabfolder-item cl-unselectable unable-to-close\" style=\"display:grid;grid-column:1 / span 1;grid-row:1 / span 1;grid-template-columns:min-content;grid-template-rows:1fr;overflow:hidden;\" data-ndid=\"mc\" data-itemidx=\"1\" title=\"초기화면\"><div style=\"display:grid;grid-column:1 / span 1;grid-row:1 / span 1;grid-template-columns:min-content minmax(min-content, 1fr);grid-template-rows:minmax(min-content, 1fr);text-decoration:inherit;",
+    "i": 796,
+    "left": 290,
+    "tag": "div",
+    "text": "초기화면",
+    "top": 875,
+    "w": 78
+  },
+  {
+    "attrs": {
+      "class": "cl-last cl-selected cl-tabfolder-item cl-unselectable type-M",
+      "data-itemidx": "2",
+      "data-ndid": "1ml",
+      "style": "display: grid; grid-area: 1 / 3 / span 1 / span 1; grid-template-columns: min-content; grid-template-rows: 1fr; overflow: hidden;",
+      "title": "학급담임 > 성적 > 학생평가 > 교과평가"
+    },
+    "h": 30,
+    "html": "<div class=\"cl-last cl-selected cl-tabfolder-item cl-unselectable type-M\" data-ndid=\"1ml\" data-itemidx=\"2\" title=\"학급담임 &gt; 성적 &gt; 학생평가 &gt; 교과평가\" style=\"display: grid; grid-area: 1 / 3 / span 1 / span 1; grid-template-columns: min-content; grid-template-rows: 1fr; overflow: hidden;\"><div style=\"display: grid; grid-area: 1 / 1 / span 1 / span 1; grid-template-columns: min-content minmax(min-content, 1fr) min-content; grid-template-rows: minmax(m",
+    "i": 800,
+    "left": 378,
+    "tag": "div",
+    "text": "교과평가",
+    "top": 875,
+    "w": 106
+  },
+  {
+    "attrs": {
+      "class": "cl-text-wrapper",
+      "data-ndid": "mi",
+      "style": "align-items: center; background: transparent; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; color: inherit; cursor: inherit; display: inline-flex; font: inherit; height: 100%; justify-content: center; outline: none; padding: 0px; text-align: inherit; text-decoration: inherit; text-shadow: inherit; width: auto;"
+    },
+    "h": 23,
+    "html": "<a class=\"cl-text-wrapper\" data-ndid=\"mi\" style=\"align-items: center; background: transparent; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; color: inherit; cursor: inherit; display: inline-flex; font: inherit; height: 100%; justify-content: center; outline: none; padding: 0px; text-align: inherit; text-decoration: inherit; text-shadow: inherit; width: auto;\"><div class=\"cl-icon\" data-ndid=\"mh\" style",
+    "i": 814,
+    "left": 1692,
+    "tag": "a",
+    "text": "",
+    "top": 881,
+    "w": 25
+  },
+  {
+    "attrs": {
+      "class": "cl-text-wrapper",
+      "data-ndid": "mk",
+      "style": "align-items: center; background: transparent; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; color: inherit; cursor: inherit; display: inline-flex; font: inherit; height: 100%; justify-content: center; outline: none; padding: 0px; text-align: inherit; text-decoration: inherit; text-shadow: inherit; width: auto;"
+    },
+    "h": 23,
+    "html": "<a class=\"cl-text-wrapper\" data-ndid=\"mk\" style=\"align-items: center; background: transparent; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; color: inherit; cursor: inherit; display: inline-flex; font: inherit; height: 100%; justify-content: center; outline: none; padding: 0px; text-align: inherit; text-decoration: inherit; text-shadow: inherit; width: auto;\"><div class=\"cl-icon\" data-ndid=\"mj\" style",
+    "i": 817,
+    "left": 1716,
+    "tag": "a",
+    "text": "",
+    "top": 881,
+    "w": 25
+  },
+  {
+    "attrs": {
+      "aria-label": "탭 아이템 목록 보기 [1]",
+      "class": "btn-resize btn-transparent cl-control cl-button cl-unselectable mdi-tab-list on-cont",
+      "data-ndid": "uuid-hn",
+      "id": "uuid-hn",
+      "role": "button",
+      "style": "background-color: rgb(255, 255, 255); border-radius: 4px; display: none; height: 25px; left: 53px; line-height: 100%; position: absolute; top: calc(50% - 12px); width: 25px;",
+      "tabindex": "0",
+      "title": "탭 아이템 목록 보기 [1]"
+    },
+    "h": 25,
+    "html": "<div class=\"btn-resize btn-transparent cl-control cl-button cl-unselectable mdi-tab-list on-cont\" data-ndid=\"uuid-hn\" tabindex=\"0\" title=\"탭 아이템 목록 보기 [1]\" id=\"uuid-hn\" aria-label=\"탭 아이템 목록 보기 [1]\" role=\"button\" style=\"background-color: rgb(255, 255, 255); border-radius: 4px; display: none; height: 25px; left: 53px; line-height: 100%; position: absolute; top: calc(50% - 12px); width: 25px;\"><a class=\"cl-text-wrapper\" data-ndid=\"ml\" style=\"align-it",
+    "i": 819,
+    "left": 1745,
+    "tag": "div",
+    "text": "1",
+    "top": 880,
+    "w": 80
+  },
+  {
+    "attrs": {
+      "class": "cl-text-wrapper",
+      "data-ndid": "ml",
+      "style": "align-items: center; background: transparent; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; color: inherit; cursor: inherit; display: inline-flex; font: inherit; height: 100%; justify-content: center; outline: none; padding: 0px; text-align: inherit; text-decoration: inherit; text-shadow: inherit; width: 100%;"
+    },
+    "h": 23,
+    "html": "<a class=\"cl-text-wrapper\" data-ndid=\"ml\" style=\"align-items: center; background: transparent; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; color: inherit; cursor: inherit; display: inline-flex; font: inherit; height: 100%; justify-content: center; outline: none; padding: 0px; text-align: inherit; text-decoration: inherit; text-shadow: inherit; width: 100%;\"><div class=\"cl-text\" style=\"background: t",
+    "i": 820,
+    "left": 1746,
+    "tag": "a",
+    "text": "1",
+    "top": 881,
+    "w": 78
+  },
+  {
+    "attrs": {
+      "class": "cl-text-wrapper",
+      "data-ndid": "mm",
+      "style": "align-items: center; background: transparent; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; color: inherit; cursor: inherit; display: inline-flex; font: inherit; height: 100%; justify-content: center; outline: none; padding: 0px; text-align: inherit; text-decoration: inherit; text-shadow: inherit; width: 100%;"
+    },
+    "h": 23,
+    "html": "<a class=\"cl-text-wrapper\" data-ndid=\"mm\" style=\"align-items: center; background: transparent; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; color: inherit; cursor: inherit; display: inline-flex; font: inherit; height: 100%; justify-content: center; outline: none; padding: 0px; text-align: inherit; text-decoration: inherit; text-shadow: inherit; width: 100%;\"><div class=\"cl-text\" style=\"background: t",
+    "i": 823,
+    "left": 1831,
+    "tag": "a",
+    "text": "⇱",
+    "top": 881,
+    "w": 78
+  },
+  {
+    "attrs": {
+      "class": "cl-text-wrapper",
+      "data-ndid": "mt",
+      "style": "align-items:center;background:transparent;border:none;color:inherit;cursor:inherit;display:inline-flex;font:inherit;height:100%;justify-content:center;outline:none;padding:0px;text-align:inherit;text-decoration:inherit;text-shadow:inherit;width:100%;"
+    },
+    "h": 48,
+    "html": "<a class=\"cl-text-wrapper\" style=\"align-items:center;background:transparent;border:none;color:inherit;cursor:inherit;display:inline-flex;font:inherit;height:100%;justify-content:center;outline:none;padding:0px;text-align:inherit;text-decoration:inherit;text-shadow:inherit;width:100%;\" data-ndid=\"mt\"><div class=\"cl-text\" style=\"background:transparent;border:none;color:inherit;cursor:inherit;font:inherit;height:auto;padding:0px;text-align:inherit;t",
+    "i": 826,
+    "left": 280,
+    "tag": "a",
+    "text": "",
+    "top": 432,
+    "w": 15
+  },
+  {
+    "attrs": {
+      "class": "cl-bottom cl-combobox-list cl-control cl-popup",
+      "data-ndid": "26b",
+      "id": "glb-1qz",
+      "role": "listbox",
+      "style": "inset: 628px auto auto 741.609px; height: auto; position: absolute; vertical-align: top; width: 233.438px;",
+      "tabindex": "-1"
+    },
+    "h": 122,
+    "html": "<div class=\"cl-bottom cl-combobox-list cl-control cl-popup\" style=\"inset: 628px auto auto 741.609px; height: auto; position: absolute; vertical-align: top; width: 233.438px;\" data-ndid=\"26b\" role=\"listbox\" tabindex=\"-1\" id=\"glb-1qz\"><div class=\"cl-unselectable\" style=\"height:100%;position:relative;width:100%;\" data-ndid=\"26j\"><div class=\"cl-viewport\" style=\"max-height: 270px; overflow: hidden; position: relative; width: calc(100% + 0px);\" data-nd",
+    "i": 834,
+    "left": 742,
+    "tag": "div",
+    "text": "매우 잘함 잘함 노력 요함 임의입력",
+    "top": 627,
+    "w": 233
+  },
+  {
+    "attrs": {
+      "class": "cl-unselectable",
+      "data-ndid": "26j",
+      "style": "height:100%;position:relative;width:100%;"
+    },
+    "h": 120,
+    "html": "<div class=\"cl-unselectable\" style=\"height:100%;position:relative;width:100%;\" data-ndid=\"26j\"><div class=\"cl-viewport\" style=\"max-height: 270px; overflow: hidden; position: relative; width: calc(100% + 0px);\" data-ndid=\"267\"><div style=\"display: none; position: relative;\" data-ndid=\"265\" class=\"\"></div><div class=\"cl-unselectable\" style=\"position:relative;\" data-ndid=\"266\" id=\"pt-1qz/lb\" role=\"listbox\"><div class=\"cl-combobox-item cl-hover\" data",
+    "i": 835,
+    "left": 743,
+    "tag": "div",
+    "text": "매우 잘함 잘함 노력 요함 임의입력",
+    "top": 628,
+    "w": 231
+  },
+  {
+    "attrs": {
+      "class": "cl-viewport",
+      "data-ndid": "267",
+      "style": "max-height: 270px; overflow: hidden; position: relative; width: calc(100% + 0px);"
+    },
+    "h": 120,
+    "html": "<div class=\"cl-viewport\" style=\"max-height: 270px; overflow: hidden; position: relative; width: calc(100% + 0px);\" data-ndid=\"267\"><div style=\"display: none; position: relative;\" data-ndid=\"265\" class=\"\"></div><div class=\"cl-unselectable\" style=\"position:relative;\" data-ndid=\"266\" id=\"pt-1qz/lb\" role=\"listbox\"><div class=\"cl-combobox-item cl-hover\" data-ndid=\"26l\" data-role=\"option\" role=\"option\" data-id=\"1 \" data-itemidx=\"0\" aria-selected=\"false",
+    "i": 836,
+    "left": 743,
+    "tag": "div",
+    "text": "매우 잘함 잘함 노력 요함 임의입력",
+    "top": 628,
+    "w": 231
+  },
+  {
+    "attrs": {
+      "class": "cl-unselectable",
+      "data-ndid": "266",
+      "id": "pt-1qz/lb",
+      "role": "listbox",
+      "style": "position:relative;"
+    },
+    "h": 120,
+    "html": "<div class=\"cl-unselectable\" style=\"position:relative;\" data-ndid=\"266\" id=\"pt-1qz/lb\" role=\"listbox\"><div class=\"cl-combobox-item cl-hover\" data-ndid=\"26l\" data-role=\"option\" role=\"option\" data-id=\"1 \" data-itemidx=\"0\" aria-selected=\"false\" id=\"pt-1qz/i0\" style=\"display: grid; grid-template-columns: 1fr; grid-template-rows: 1fr;\"><div class=\"cl-text\" style=\"align-self: center; grid-area: 1 / 1 / span 1 / span 1; word-break: break-all;\">매우 잘함</di",
+    "i": 837,
+    "left": 743,
+    "tag": "div",
+    "text": "매우 잘함 잘함 노력 요함 임의입력",
+    "top": 628,
+    "w": 231
+  },
+  {
+    "attrs": {
+      "aria-selected": "false",
+      "class": "cl-combobox-item cl-hover",
+      "data-id": "1 ",
+      "data-itemidx": "0",
+      "data-ndid": "26l",
+      "data-role": "option",
+      "id": "pt-1qz/i0",
+      "role": "option",
+      "style": "display: grid; grid-template-columns: 1fr; grid-template-rows: 1fr;"
+    },
+    "h": 30,
+    "html": "<div class=\"cl-combobox-item cl-hover\" data-ndid=\"26l\" data-role=\"option\" role=\"option\" data-id=\"1 \" data-itemidx=\"0\" aria-selected=\"false\" id=\"pt-1qz/i0\" style=\"display: grid; grid-template-columns: 1fr; grid-template-rows: 1fr;\"><div class=\"cl-text\" style=\"align-self: center; grid-area: 1 / 1 / span 1 / span 1; word-break: break-all;\">매우 잘함</div></div>",
+    "i": 838,
+    "left": 743,
+    "tag": "div",
+    "text": "매우 잘함",
+    "top": 628,
+    "w": 231
+  },
+  {
+    "attrs": {
+      "class": "cl-text",
+      "style": "align-self: center; grid-area: 1 / 1 / span 1 / span 1; word-break: break-all;"
+    },
+    "h": 19,
+    "html": "<div class=\"cl-text\" style=\"align-self: center; grid-area: 1 / 1 / span 1 / span 1; word-break: break-all;\">매우 잘함</div>",
+    "i": 839,
+    "left": 753,
+    "tag": "div",
+    "text": "매우 잘함",
+    "top": 634,
+    "w": 211
+  },
+  {
+    "attrs": {
+      "aria-selected": "false",
+      "class": "cl-combobox-item",
+      "data-id": "2 ",
+      "data-itemidx": "1",
+      "data-ndid": "26m",
+      "data-role": "option",
+      "id": "pt-1qz/i1",
+      "role": "option",
+      "style": "display: grid; grid-template-columns: 1fr; grid-template-rows: 1fr;"
+    },
+    "h": 30,
+    "html": "<div class=\"cl-combobox-item\" data-ndid=\"26m\" data-role=\"option\" role=\"option\" data-id=\"2 \" data-itemidx=\"1\" aria-selected=\"false\" id=\"pt-1qz/i1\" style=\"display: grid; grid-template-columns: 1fr; grid-template-rows: 1fr;\"><div class=\"cl-text\" style=\"align-self: center; grid-area: 1 / 1 / span 1 / span 1; word-break: break-all;\">잘함</div></div>",
+    "i": 840,
+    "left": 743,
+    "tag": "div",
+    "text": "잘함",
+    "top": 658,
+    "w": 231
+  },
+  {
+    "attrs": {
+      "class": "cl-text",
+      "style": "align-self: center; grid-area: 1 / 1 / span 1 / span 1; word-break: break-all;"
+    },
+    "h": 19,
+    "html": "<div class=\"cl-text\" style=\"align-self: center; grid-area: 1 / 1 / span 1 / span 1; word-break: break-all;\">잘함</div>",
+    "i": 841,
+    "left": 753,
+    "tag": "div",
+    "text": "잘함",
+    "top": 664,
+    "w": 211
+  },
+  {
+    "attrs": {
+      "aria-selected": "false",
+      "class": "cl-combobox-item",
+      "data-id": "3 ",
+      "data-itemidx": "2",
+      "data-ndid": "26n",
+      "data-role": "option",
+      "id": "pt-1qz/i2",
+      "role": "option",
+      "style": "display: grid; grid-template-columns: 1fr; grid-template-rows: 1fr;"
+    },
+    "h": 30,
+    "html": "<div class=\"cl-combobox-item\" data-ndid=\"26n\" data-role=\"option\" role=\"option\" data-id=\"3 \" data-itemidx=\"2\" aria-selected=\"false\" id=\"pt-1qz/i2\" style=\"display: grid; grid-template-columns: 1fr; grid-template-rows: 1fr;\"><div class=\"cl-text\" style=\"align-self: center; grid-area: 1 / 1 / span 1 / span 1; word-break: break-all;\">노력 요함</div></div>",
+    "i": 842,
+    "left": 743,
+    "tag": "div",
+    "text": "노력 요함",
+    "top": 688,
+    "w": 231
+  },
+  {
+    "attrs": {
+      "class": "cl-text",
+      "style": "align-self: center; grid-area: 1 / 1 / span 1 / span 1; word-break: break-all;"
+    },
+    "h": 19,
+    "html": "<div class=\"cl-text\" style=\"align-self: center; grid-area: 1 / 1 / span 1 / span 1; word-break: break-all;\">노력 요함</div>",
+    "i": 843,
+    "left": 753,
+    "tag": "div",
+    "text": "노력 요함",
+    "top": 694,
+    "w": 211
+  },
+  {
+    "attrs": {
+      "aria-selected": "false",
+      "class": "cl-combobox-item",
+      "data-id": "99",
+      "data-itemidx": "3",
+      "data-ndid": "26o",
+      "data-role": "option",
+      "id": "pt-1qz/i3",
+      "role": "option",
+      "style": "display: grid; grid-template-columns: 1fr; grid-template-rows: 1fr;"
+    },
+    "h": 30,
+    "html": "<div class=\"cl-combobox-item\" data-ndid=\"26o\" data-role=\"option\" role=\"option\" data-id=\"99\" data-itemidx=\"3\" aria-selected=\"false\" id=\"pt-1qz/i3\" style=\"display: grid; grid-template-columns: 1fr; grid-template-rows: 1fr;\"><div class=\"cl-text\" style=\"align-self: center; grid-area: 1 / 1 / span 1 / span 1; word-break: break-all;\">임의입력</div></div>",
+    "i": 844,
+    "left": 743,
+    "tag": "div",
+    "text": "임의입력",
+    "top": 718,
+    "w": 231
+  },
+  {
+    "attrs": {
+      "class": "cl-text",
+      "style": "align-self: center; grid-area: 1 / 1 / span 1 / span 1; word-break: break-all;"
+    },
+    "h": 19,
+    "html": "<div class=\"cl-text\" style=\"align-self: center; grid-area: 1 / 1 / span 1 / span 1; word-break: break-all;\">임의입력</div>",
+    "i": 845,
+    "left": 753,
+    "tag": "div",
+    "text": "임의입력",
+    "top": 724,
+    "w": 211
+  }
+]

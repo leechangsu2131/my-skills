@@ -1,0 +1,1702 @@
+{
+  "apps": [
+    {
+      "appId": "app/com/main/Index",
+      "controls": 104,
+      "datasets": [
+        {
+          "cols": [
+            "MENU_ID",
+            "MENU_NM",
+            "UP_MENU_ID",
+            "TOP_MENU_ID",
+            "CALL_PAGE",
+            "PGM_ID",
+            "ICON",
+            "MENU_KEY",
+            "MOBILE_YN",
+            "DESC",
+            "CLASS",
+            "MENU_DESC",
+            "MENU_LOWERCASE",
+            "DESC_LOWERCASE",
+            "CALL_PAGE_POP",
+            "AUTH_PGM",
+            "SHOW_YN",
+            "ayr",
+            "dataAuthScCd",
+            "inqAccesAuthYn"
+          ],
+          "id": "dsAllMenu",
+          "rowCount": 322
+        },
+        {
+          "cols": [
+            "ayr",
+            "dataAuthScCd",
+            "inqAccesAuthYn",
+            "menuId",
+            "menuLvl",
+            "menuNm",
+            "menuNmDepth",
+            "menuSeqNo",
+            "menuUseYn",
+            "menuYn",
+            "mngAccesAuthYn",
+            "pgeClfId",
+            "pgeId",
+            "pgePathNm",
+            "qrCdUseYn",
+            "shlDptCd",
+            "shlDptWrkCd",
+            "sort",
+            "swMenuYn",
+            "unitWrkCd"
+          ],
+          "id": "dvAllMenuNew",
+          "rowCount": 322
+        },
+        {
+          "cols": [
+            "ayr",
+            "dataAuthScCd",
+            "inqAccesAuthYn",
+            "menuId",
+            "menuLvl",
+            "menuNm",
+            "menuNmDepth",
+            "menuSeqNo",
+            "menuUseYn",
+            "menuYn",
+            "mngAccesAuthYn",
+            "pgeClfId",
+            "pgeId",
+            "pgePathNm",
+            "qrCdUseYn",
+            "shlDptCd",
+            "shlDptWrkCd",
+            "sort",
+            "swMenuYn",
+            "unitWrkCd"
+          ],
+          "id": "dsAllMenuNew",
+          "rowCount": 323
+        },
+        {
+          "cols": [
+            "ayr",
+            "dataAuthScCd",
+            "inqAccesAuthYn",
+            "menuId",
+            "menuLvl",
+            "menuNm",
+            "menuNmDepth",
+            "menuSeqNo",
+            "menuUseYn",
+            "menuYn",
+            "mngAccesAuthYn",
+            "pgeClfId",
+            "pgeId",
+            "pgePathNm",
+            "qrCdUseYn",
+            "shlDptCd",
+            "shlDptWrkCd",
+            "sort",
+            "swMenuYn",
+            "unitWrkCd"
+          ],
+          "id": "dvAllMenuNew2",
+          "rowCount": 0
+        },
+        {
+          "cols": [
+            "ayr",
+            "dataAuthScCd",
+            "inqAccesAuthYn",
+            "menuId",
+            "menuLvl",
+            "menuNm",
+            "menuNmDepth",
+            "menuSeqNo",
+            "menuUseYn",
+            "menuYn",
+            "mngAccesAuthYn",
+            "pgeClfId",
+            "pgeId",
+            "pgePathNm",
+            "qrCdUseYn",
+            "shlDptCd",
+            "shlDptWrkCd",
+            "sort",
+            "swMenuYn",
+            "unitWrkCd"
+          ],
+          "id": "dsAllMenuNew2",
+          "rowCount": 0
+        },
+        {
+          "cols": [
+            "MENU_ID",
+            "MENU_NM",
+            "UP_MENU_ID",
+            "TOP_MENU_ID",
+            "CALL_PAGE",
+            "PGM_ID",
+            "ICON",
+            "MENU_KEY",
+            "MOBILE_YN",
+            "DESC",
+            "CLASS",
+            "MENU_DESC",
+            "MENU_LOWERCASE",
+            "DESC_LOWERCASE",
+            "CALL_PAGE_POP",
+            "AUTH_PGM",
+            "SHOW_YN",
+            "dataAuthScCd",
+            "inqAccesAuthYn",
+            "mngAccesAuthYn"
+          ],
+          "id": "dsAllMenuLocal",
+          "rowCount": 30
+        },
+        {
+          "cols": [
+            "orgNm",
+            "orgCd",
+            "orgScCd",
+            "shlCrseScCd",
+            "myOrgNm",
+            "myOrgCd",
+            "myScaSysScCd",
+            "myWrkSort"
+          ],
+          "id": "dsMyWrk",
+          "rowCount": 1
+        },
+        {
+          "cols": [
+            "menuNm",
+            "menuId",
+            "pgeId",
+            "callPage",
+            "apvlCnt"
+          ],
+          "id": "dsApproval",
+          "rowCount": 7
+        },
+        {
+          "cols": [
+            "MENU_ID",
+            "MENU_NM",
+            "UP_MENU_ID",
+            "TOP_MENU_ID",
+            "CALL_PAGE",
+            "PGM_ID",
+            "menuId",
+            "menuNm",
+            "menuNmDepth",
+            "menuLvl",
+            "menuSeqNo",
+            "upMenuId",
+            "wrkRelmCd",
+            "unitWrkCd",
+            "pgeId",
+            "pgeClfId",
+            "pgePathNm",
+            "sort",
+            "rptdYn"
+          ],
+          "id": "dsBaseMenu",
+          "rowCount": 72
+        },
+        {
+          "cols": [
+            "prgeTdNo",
+            "prgeTdNm",
+            "prgeTdIapYn",
+            "userDtcNo",
+            "orgCd",
+            "menuId",
+            "pgeId",
+            "pgePath",
+            "prmtrScValue",
+            "dmndYmd",
+            "userInfo",
+            "idntyYn"
+          ],
+          "id": "dsTodo",
+          "rowCount": 0
+        },
+        {
+          "cols": [
+            "menuId",
+            "menuNm",
+            "upMenuId",
+            "pgeId",
+            "pgeNm",
+            "pgePathNm"
+          ],
+          "id": "dsFavorites",
+          "rowCount": 2
+        },
+        {
+          "cols": [
+            "MENU_NM",
+            "MENU_ID",
+            "UP_MENU_ID",
+            "MENU_CALSS",
+            "CMPL_CNT",
+            "iapSc",
+            "iapCnt"
+          ],
+          "id": "dsComplaint",
+          "rowCount": 5
+        },
+        {
+          "cols": [
+            "dlivCd",
+            "dlivSn",
+            "dlivTitl",
+            "dlivCn",
+            "dlivPopYn",
+            "dlivFile"
+          ],
+          "id": "dsNotice",
+          "rowCount": 0
+        },
+        {
+          "cols": [
+            "pgeId",
+            "wrkRelmCd",
+            "unitWrkCd",
+            "detaWrkCd"
+          ],
+          "id": "ds2ndCertify",
+          "rowCount": 3
+        },
+        {
+          "cols": [
+            "menuNm",
+            "menuId",
+            "callPage",
+            "upMenuId"
+          ],
+          "id": "dsPersonal",
+          "rowCount": 9
+        },
+        {
+          "cols": [
+            "urlAddr",
+            "styleClass",
+            "GoName",
+            "urlAddrAre",
+            "etc1"
+          ],
+          "id": "dsMainLogo",
+          "rowCount": 19
+        },
+        {
+          "cols": [
+            "shlYear",
+            "shlYearNm"
+          ],
+          "id": "dsShlYear",
+          "rowCount": 2
+        },
+        {
+          "cols": [
+            "cvlcptOfcrkNm",
+            "userId",
+            "userNm"
+          ],
+          "id": "dsCVAAuthChg",
+          "rowCount": 0
+        },
+        {
+          "cols": [
+            "userId",
+            "userNm",
+            "connectNo",
+            "userDtcNo",
+            "invlNo",
+            "orgdpOrgCd",
+            "corpCd",
+            "corpNm",
+            "ogdpOrgNm",
+            "Ayr",
+            "frtunAuthCd",
+            "instCd",
+            "instNm",
+            "cntnCtpvScCd",
+            "cntnCddcCd",
+            "orgScCd",
+            "orgCd",
+            "orgNm",
+            "instClfCd",
+            "cddcCd"
+          ],
+          "id": "dmUserInfo",
+          "rowCount": null
+        },
+        {
+          "cols": [
+            "mdiWindowMaxCount",
+            "defaultLocale",
+            "useSearchBoxClear",
+            "userViewPartPopOut",
+            "default_theme",
+            "divideMdiUseYn",
+            "useLayerdPop"
+          ],
+          "id": "dmGlobalConfig",
+          "rowCount": null
+        },
+        {
+          "cols": [
+            "strMenuParamVal"
+          ],
+          "id": "dmMenuParam",
+          "rowCount": null
+        },
+        {
+          "cols": [
+            "findTxt"
+          ],
+          "id": "dmMenuFind",
+          "rowCount": null
+        },
+        {
+          "cols": [
+            "prgeTdNo",
+            "userDtcNo",
+            "orgCd",
+            "idntyYn"
+          ],
+          "id": "dmTodo",
+          "rowCount": null
+        },
+        {
+          "cols": [
+            "menuId",
+            "gubun",
+            "stat"
+          ],
+          "id": "dmFavorites",
+          "rowCount": null
+        },
+        {
+          "cols": [
+            "tutorial",
+            "complaint",
+            "logSesnTime",
+            "cerSesnTime",
+            "userColor",
+            "userFontSize",
+            "duplcLoginYn",
+            "duplcLoginMin",
+            "assignYn",
+            "sknThmNm"
+          ],
+          "id": "dmUserInfoSub",
+          "rowCount": null
+        },
+        {
+          "cols": [],
+          "id": "dmLinkUrl",
+          "rowCount": null
+        },
+        {
+          "cols": [
+            "reOrgNm",
+            "reOrgCd",
+            "reOrgScCd",
+            "reShlCrseScCd",
+            "reScaSysScCd"
+          ],
+          "id": "dmReLogin",
+          "rowCount": null
+        },
+        {
+          "cols": [
+            "shlYear"
+          ],
+          "id": "dmShlYear",
+          "rowCount": null
+        },
+        {
+          "cols": [
+            "menuId",
+            "MENU_ID",
+            "pgeId",
+            "pgePathNm",
+            "ayr",
+            "shlDptCd",
+            "shlDptWrkCd",
+            "rptdYn",
+            "dataAuthScCd",
+            "orgCd",
+            "orgScCd",
+            "dataAuthAplcnYn",
+            "V_MENU_ID"
+          ],
+          "id": "AUTHDATA",
+          "rowCount": null
+        },
+        {
+          "cols": [
+            "ogdpInstCd",
+            "cvlcptInstClfCd"
+          ],
+          "id": "dmCVASearch",
+          "rowCount": null
+        },
+        {
+          "cols": [
+            "userColor",
+            "userFontSize",
+            "userGridWheelRowCount",
+            "userContrastGrid",
+            "userPullBtn",
+            "userPullAlign",
+            "userAsideClosedInit",
+            "userUtilBtnMin",
+            "userInfoCardCloseInit",
+            "userPageZoom",
+            "userExpendFullScreen",
+            "userMinMenuPath",
+            "userPageZoomRatio",
+            "userExpandOnOpenPage",
+            "userHideMdiHeader"
+          ],
+          "id": "dmUserConfInfo",
+          "rowCount": null
+        },
+        {
+          "cols": [
+            "lnkNm"
+          ],
+          "id": "dmCtpvNeisLnkNm",
+          "rowCount": null
+        },
+        {
+          "cols": [],
+          "id": "subOnLoad",
+          "rowCount": null
+        },
+        {
+          "cols": [],
+          "id": "subLogout",
+          "rowCount": null
+        },
+        {
+          "cols": [],
+          "id": "subOnLoad_json",
+          "rowCount": null
+        },
+        {
+          "cols": [],
+          "id": "subMenuToFile",
+          "rowCount": null
+        },
+        {
+          "cols": [],
+          "id": "subMenu",
+          "rowCount": null
+        },
+        {
+          "cols": [],
+          "id": "subReLogin",
+          "rowCount": null
+        },
+        {
+          "cols": [],
+          "id": "subMyInfo",
+          "rowCount": null
+        },
+        {
+          "cols": [],
+          "id": "subApproval",
+          "rowCount": null
+        },
+        {
+          "cols": [],
+          "id": "subBaseMenu",
+          "rowCount": null
+        },
+        {
+          "cols": [],
+          "id": "subTodo",
+          "rowCount": null
+        },
+        {
+          "cols": [],
+          "id": "subTodoUpt",
+          "rowCount": null
+        },
+        {
+          "cols": [],
+          "id": "subFavorites",
+          "rowCount": null
+        },
+        {
+          "cols": [],
+          "id": "subFavoritesDel",
+          "rowCount": null
+        },
+        {
+          "cols": [],
+          "id": "subComplaint",
+          "rowCount": null
+        },
+        {
+          "cols": [],
+          "id": "sub2ndCertify",
+          "rowCount": null
+        },
+        {
+          "cols": [],
+          "id": "subNotice",
+          "rowCount": null
+        },
+        {
+          "cols": [],
+          "id": "subUserSession",
+          "rowCount": null
+        },
+        {
+          "cols": [],
+          "id": "subShlYear",
+          "rowCount": null
+        },
+        {
+          "cols": [],
+          "id": "subAuth",
+          "rowCount": null
+        }
+      ],
+      "idx": 0
+    },
+    {
+      "appId": "app/com/main/Dashboard3",
+      "controls": 30,
+      "datasets": [
+        {
+          "cols": [
+            "dateDay",
+            "display",
+            "colIndex",
+            "rowIndex",
+            "weekDayNo",
+            "weekDayNm",
+            "holydayYn",
+            "weekEndDivCd",
+            "inMonthYn",
+            "holyNm"
+          ],
+          "id": "dsBaseDate",
+          "rowCount": 0
+        },
+        {
+          "cols": [
+            "holyDate",
+            "holyNm",
+            "holyDivCd"
+          ],
+          "id": "dsHolyday",
+          "rowCount": 0
+        },
+        {
+          "cols": [
+            "itemDate",
+            "itemNm",
+            "itemDivCd",
+            "itemBgClass",
+            "itemCd",
+            "eventDtl",
+            "nathoYn"
+          ],
+          "id": "dsItem",
+          "rowCount": 86
+        },
+        {
+          "cols": [
+            "dlivKind",
+            "dlivCd",
+            "dlivSn",
+            "dlivTitl",
+            "dlivCn",
+            "dlivDate",
+            "dlivFile"
+          ],
+          "id": "dsDelivery",
+          "rowCount": 62
+        },
+        {
+          "cols": [
+            "mvmnSc",
+            "mvmnMsg",
+            "mdfcnDt"
+          ],
+          "id": "dsOrder",
+          "rowCount": 0
+        },
+        {
+          "cols": [
+            "itemDate",
+            "itemNm",
+            "itemDivCd",
+            "itemBgClass",
+            "itemCd",
+            "eventDtl",
+            "nathoYn"
+          ],
+          "id": "dsItemPopup",
+          "rowCount": 0
+        },
+        {
+          "cols": [
+            "strDate"
+          ],
+          "id": "dmBase",
+          "rowCount": null
+        },
+        {
+          "cols": [
+            "title",
+            "year"
+          ],
+          "id": "dmSearch",
+          "rowCount": null
+        },
+        {
+          "cols": [],
+          "id": "subMain",
+          "rowCount": null
+        },
+        {
+          "cols": [],
+          "id": "subDelivery",
+          "rowCount": null
+        },
+        {
+          "cols": [],
+          "id": "subSchedule",
+          "rowCount": null
+        }
+      ],
+      "idx": 1
+    },
+    {
+      "appId": "udc/com/udcCal02",
+      "controls": 111,
+      "datasets": [
+        {
+          "cols": [
+            "dateDay",
+            "display",
+            "colIndex",
+            "rowIndex",
+            "weekDayNo",
+            "weekDayNm",
+            "holydayYn",
+            "weekEndDivCd",
+            "inMonthYn",
+            "holyNm"
+          ],
+          "id": "dsBaseDate",
+          "rowCount": 35
+        },
+        {
+          "cols": [
+            "itemDate",
+            "itemNm",
+            "itemDivCd",
+            "itemBgClass",
+            "itemCd"
+          ],
+          "id": "dsItem",
+          "rowCount": 0
+        },
+        {
+          "cols": [
+            "holyDate",
+            "holyNm",
+            "holyDivCd"
+          ],
+          "id": "dsHolyday",
+          "rowCount": 1
+        },
+        {
+          "cols": [
+            "date",
+            "strDate"
+          ],
+          "id": "dmBase",
+          "rowCount": null
+        }
+      ],
+      "idx": 2
+    },
+    {
+      "appId": "edu/sa/eds/eaa/ae/eds_eaaae01_m01",
+      "controls": 46,
+      "datasets": [
+        {
+          "cols": [
+            "messageId",
+            "messageDiv"
+          ],
+          "id": "dsExMessage",
+          "rowCount": 4
+        },
+        {
+          "cols": [
+            "chk",
+            "shlCd",
+            "ayr",
+            "stuInvlNo",
+            "ousExperLrnAplyId",
+            "ousExperLrnRltId",
+            "shlKndScCd",
+            "shlCrseScCd",
+            "stuDtcNo",
+            "schpaDtcNo",
+            "dghtCrseScCd",
+            "dghtCrseScCdNm",
+            "ordScCd",
+            "ordScCdNm",
+            "grd",
+            "dddepCd",
+            "dddepCdNm",
+            "clsCd",
+            "clsNm",
+            "clsNo"
+          ],
+          "id": "dsStdntListForAply",
+          "rowCount": 4
+        },
+        {
+          "cols": [
+            "chk",
+            "shlCd",
+            "ayr",
+            "stuInvlNo",
+            "ousExperLrnAplyId",
+            "ousExperLrnRltId",
+            "shlKndScCd",
+            "shlCrseScCd",
+            "stuDtcNo",
+            "schpaDtcNo",
+            "dghtCrseScCd",
+            "dghtCrseScCdNm",
+            "ordScCd",
+            "ordScCdNm",
+            "grd",
+            "dddepCd",
+            "dddepCdNm",
+            "clsCd",
+            "clsNm",
+            "clsNo"
+          ],
+          "id": "dsStdntListForAply2",
+          "rowCount": 2
+        },
+        {
+          "cols": [
+            "cd",
+            "nm",
+            "sorSeqSn",
+            "clsCd",
+            "clsCdNm"
+          ],
+          "id": "dsClsCd",
+          "rowCount": 1
+        },
+        {
+          "cols": [
+            "userId",
+            "userNm",
+            "connectNo",
+            "userDtcNo",
+            "userPrn",
+            "invlNo",
+            "OrgdpOrgCd",
+            "corpCd",
+            "corpNm",
+            "ogdpOrgNm",
+            "Ayr",
+            "frtunAuthCd",
+            "instCd",
+            "instNm",
+            "cntnCtpvScCd",
+            "cntnCddcCd",
+            "orgScCd",
+            "orgCd",
+            "orgNm",
+            "instClfCd"
+          ],
+          "id": "dmUserInfo",
+          "rowCount": null
+        },
+        {
+          "cols": [
+            "ayr",
+            "ordScCd",
+            "grd",
+            "dddepCd",
+            "ordGrdDddepCd",
+            "clsCd",
+            "stuInvlNo",
+            "actScCd",
+            "shlCd",
+            "atteYmd",
+            "enrScCd",
+            "shlKndScCd",
+            "stuFlnm",
+            "clsNm",
+            "clsNo",
+            "eduActPrcsStsCd",
+            "shlCrseScCd",
+            "dghtCrseScCd",
+            "atrzStsCd",
+            "ayrAuthType"
+          ],
+          "id": "dmSearch",
+          "rowCount": null
+        },
+        {
+          "cols": [],
+          "id": "subStdntList",
+          "rowCount": null
+        },
+        {
+          "cols": [],
+          "id": "subStsChg",
+          "rowCount": null
+        },
+        {
+          "cols": [],
+          "id": "subAssistSubmit",
+          "rowCount": null
+        },
+        {
+          "cols": [
+            "pgeId",
+            "clfCdValue",
+            "filterExpr",
+            "unyCdGrpId",
+            "bfrClfCdValue",
+            "userDfnCd1Value",
+            "userDfnCd2Value",
+            "userDfnCd3Value",
+            "userDfnCd4Value",
+            "userDfnCd5Value"
+          ],
+          "id": "dsAssistDatasetRequest",
+          "rowCount": 1
+        },
+        {
+          "cols": [
+            "pgeId",
+            "clfCdValue",
+            "clfCdValueNm",
+            "clfCdUseYn",
+            "unyCdValue",
+            "unyCdValueNm",
+            "userDfnCd1Value",
+            "userDfnCd2Value",
+            "userDfnCd3Value",
+            "userDfnCd4Value",
+            "userDfnCd5Value",
+            "upClfCdValue",
+            "upUnyCdValue",
+            "rownum",
+            "unyCdValueEngNm",
+            "unyCdValueAbrvNm",
+            "unyCdValueSn",
+            "unyCdEtcCn",
+            "unyCdUseYn",
+            "unyCdScCd"
+          ],
+          "id": "dsAssistCntrDatasetResponse",
+          "rowCount": 5
+        },
+        {
+          "cols": [
+            "pgeId",
+            "clfCdValue",
+            "clfCdValueNm",
+            "clfCdUseYn",
+            "unyCdValue",
+            "unyCdValueNm",
+            "userDfnCd1Value",
+            "userDfnCd2Value",
+            "userDfnCd3Value",
+            "userDfnCd4Value",
+            "userDfnCd5Value",
+            "upClfCdValue",
+            "upUnyCdValue",
+            "rownum",
+            "unyCdValueEngNm",
+            "unyCdValueAbrvNm",
+            "unyCdValueSn",
+            "unyCdEtcCn",
+            "unyCdUseYn",
+            "unyCdScCd"
+          ],
+          "id": "dvATRZ_STS_CDcmbAtrzSts",
+          "rowCount": 5
+        },
+        {
+          "cols": [
+            "cd",
+            "nm",
+            "ayrNm",
+            "ayr",
+            "ayrAuthType"
+          ],
+          "id": "dsSwcOrgAyr",
+          "rowCount": 5
+        },
+        {
+          "cols": [
+            "cd",
+            "nm",
+            "grd",
+            "grdNm"
+          ],
+          "id": "dsSwcOrgGrd",
+          "rowCount": 1
+        },
+        {
+          "cols": [
+            "cd",
+            "nm",
+            "sorSeqSn",
+            "grd",
+            "clsCd",
+            "clsCdNm"
+          ],
+          "id": "dsSwcOrgClsCd",
+          "rowCount": 1
+        },
+        {
+          "cols": [
+            "authType",
+            "shlCd",
+            "ayr",
+            "dghtIndctYn",
+            "ordIndctYn",
+            "dddepIndctYn",
+            "ordDddepIndctYn",
+            "dghtOrdDddepIndctYn"
+          ],
+          "id": "dmSwcIndctInfo",
+          "rowCount": null
+        },
+        {
+          "cols": [],
+          "id": "subSwcAuth",
+          "rowCount": null
+        }
+      ],
+      "idx": 3
+    },
+    {
+      "appId": "udc/com/appHeader",
+      "controls": 22,
+      "datasets": [
+        {
+          "cols": [
+            "code",
+            "name",
+            "info"
+          ],
+          "id": "dsHelpdesk",
+          "rowCount": 19
+        },
+        {
+          "cols": [
+            "pgeId",
+            "hlpSn",
+            "hlpTitlNm",
+            "hlpCn",
+            "prcssGudnYn",
+            "useYn",
+            "regDt",
+            "hlpFileRefrnId"
+          ],
+          "id": "dsHlp",
+          "rowCount": 0
+        },
+        {
+          "cols": [
+            "authGrpId",
+            "redngUseYn",
+            "wgUseYn",
+            "userDtcNo",
+            "userId"
+          ],
+          "id": "dsSrs",
+          "rowCount": 0
+        },
+        {
+          "cols": [
+            "id",
+            "uuid",
+            "label",
+            "area",
+            "embid",
+            "visible",
+            "type"
+          ],
+          "id": "dsFoldArea",
+          "rowCount": 0
+        },
+        {
+          "cols": [
+            "menuId",
+            "menuNm",
+            "gubun",
+            "stat"
+          ],
+          "id": "dmFavorites",
+          "rowCount": null
+        },
+        {
+          "cols": [
+            "pgeId",
+            "pgeNm",
+            "prcsScCd"
+          ],
+          "id": "dmHlp",
+          "rowCount": null
+        },
+        {
+          "cols": [
+            "userId",
+            "userDtcNo",
+            "menuId"
+          ],
+          "id": "dmSrs",
+          "rowCount": null
+        },
+        {
+          "cols": [],
+          "id": "subFavorites",
+          "rowCount": null
+        },
+        {
+          "cols": [],
+          "id": "subHlp",
+          "rowCount": null
+        },
+        {
+          "cols": [],
+          "id": "subSrs",
+          "rowCount": null
+        }
+      ],
+      "idx": 4
+    },
+    {
+      "appId": "udc/com/comTitle",
+      "controls": 4,
+      "datasets": [],
+      "idx": 5
+    },
+    {
+      "appId": "udc/sw/swc/udcSwcAuth",
+      "controls": 2,
+      "datasets": [
+        {
+          "cols": [
+            "cd",
+            "nm",
+            "ayrNm",
+            "ayr",
+            "ayrAuthType"
+          ],
+          "id": "dsAuth",
+          "rowCount": 5
+        }
+      ],
+      "idx": 6
+    },
+    {
+      "appId": "udc/sw/swc/udcSwcAuth",
+      "controls": 2,
+      "datasets": [
+        {
+          "cols": [
+            "cd",
+            "nm",
+            "grd",
+            "grdNm"
+          ],
+          "id": "dsAuth",
+          "rowCount": 1
+        }
+      ],
+      "idx": 7
+    },
+    {
+      "appId": "udc/sw/swc/udcSwcAuth",
+      "controls": 2,
+      "datasets": [
+        {
+          "cols": [
+            "cd",
+            "nm",
+            "sorSeqSn",
+            "grd",
+            "clsCd",
+            "clsCdNm"
+          ],
+          "id": "dsAuth",
+          "rowCount": 1
+        }
+      ],
+      "idx": 8
+    },
+    {
+      "appId": "edu/cm/wam/woa/pm/wam_woapm07_p00",
+      "controls": 59,
+      "datasets": [
+        {
+          "cols": [
+            "messageId",
+            "messageDiv"
+          ],
+          "id": "dsExMessage",
+          "rowCount": 3
+        },
+        {
+          "cols": [
+            "column1",
+            "column2",
+            "column3",
+            "column4",
+            "column5",
+            "column6",
+            "column7",
+            "column8"
+          ],
+          "id": "dsSub",
+          "rowCount": 6
+        },
+        {
+          "cols": [
+            "userDtcNo",
+            "userId",
+            "userNm",
+            "orgCd",
+            "ogdpOrgCd",
+            "jbpsCd",
+            "jbpsNm",
+            "hffcStsCd",
+            "hffcStsNm",
+            "kornOrgNm",
+            "rdbCn",
+            "hasProxyYn",
+            "hasDcrbYn",
+            "atrzScCd",
+            "atrzScNm",
+            "atrzSeqSn",
+            "trstStsCd",
+            "trstStsNm",
+            "sancrOgdpNm",
+            "prextSancrDtcNo"
+          ],
+          "id": "dsSancr",
+          "rowCount": 1
+        },
+        {
+          "cols": [
+            "unitWrkCd",
+            "doctKndCd",
+            "shlCrseScCd",
+            "atrzDoctScCd",
+            "snclnKndCd",
+            "doctNm",
+            "doctPrsrvYr",
+            "keyCnt",
+            "inqChrsNm",
+            "drftWrkScrinUrl",
+            "drftWrkPopupUrl",
+            "svcId",
+            "addAtrzSvcId",
+            "libId",
+            "dbmsWrkRelmCd",
+            "inqCondCn",
+            "atrzAddCn",
+            "atrzDoctUseYn",
+            "eltrnAtrzYn",
+            "delPslYn"
+          ],
+          "id": "dsDoctMain",
+          "rowCount": 1
+        },
+        {
+          "cols": [
+            "unitWrkCd",
+            "doctKndCd",
+            "shlCrseScCd",
+            "itmNm",
+            "itmEngNm",
+            "keyNm",
+            "keyLen",
+            "keySeqSn",
+            "priorPstYn",
+            "indctYn",
+            "rgtrId",
+            "regDt",
+            "mdfrId",
+            "mdfcnDt"
+          ],
+          "id": "dsDoctSub",
+          "rowCount": 2
+        },
+        {
+          "cols": [
+            "unitWrkCd",
+            "doctKndCd",
+            "shlCrseScCd",
+            "shlCd",
+            "useYn",
+            "innerAprvUseYn",
+            "extrlAtrzUseYn",
+            "atrzPriorRnkCd"
+          ],
+          "id": "dsOrgDoctMain",
+          "rowCount": 0
+        },
+        {
+          "cols": [
+            "userDtcNo",
+            "userId",
+            "userNm",
+            "ogdpOrgCd",
+            "jbpsCd",
+            "jbpsNm",
+            "unyCdValueNm",
+            "kornOrgNm"
+          ],
+          "id": "dsDra",
+          "rowCount": 1
+        },
+        {
+          "cols": [
+            "orgCd",
+            "unitWrkCd",
+            "doctKndCd",
+            "shlCrseScCd",
+            "atrzDoctScCd",
+            "drftCn",
+            "doctTitlNm",
+            "hasUnyApprYn"
+          ],
+          "id": "dsDrftMain",
+          "rowCount": 0
+        },
+        {
+          "cols": [
+            "userDtcNo",
+            "sancrNm",
+            "atrzScCd",
+            "atrzScNm",
+            "atrzSeqSn",
+            "trstStsCd",
+            "trstStsNm",
+            "sancrOgdpNm",
+            "prextSancrDtcNo",
+            "prextSancrNm",
+            "hffcStsCd",
+            "hffcStsNm",
+            "jbpsCd",
+            "jbpsNm",
+            "workSittnExpr",
+            "unyApprYn",
+            "userId"
+          ],
+          "id": "dsDrftSancr",
+          "rowCount": 0
+        },
+        {
+          "cols": [
+            "unitWrkCd",
+            "doctKndCd",
+            "shlCrseScCd",
+            "doctTitlNm",
+            "aprvTmprNo",
+            "atrzDoctIdfId",
+            "inqCondCn",
+            "wrkCnScValue"
+          ],
+          "id": "dsDrftDoctCn",
+          "rowCount": 0
+        },
+        {
+          "cols": [
+            "unitWrkCd",
+            "doctKndCd",
+            "shlCrseScCd",
+            "orgCd",
+            "atrzDoctIdfId",
+            "atrzSn",
+            "aprvTmprNo",
+            "wrkCnScValue",
+            "doctTitlNm",
+            "drftDt",
+            "draDtcNo",
+            "draFlnm",
+            "draJbpsCd",
+            "draJbpsNm",
+            "drftCn",
+            "atrzDoctChcYn"
+          ],
+          "id": "dsPrevAtrzDoctBscForCancelDrft",
+          "rowCount": 6
+        },
+        {
+          "cols": [
+            "userDtcNo",
+            "userId",
+            "userNm",
+            "orgCd",
+            "ogdpOrgCd",
+            "jbpsCd",
+            "hffcStsNm",
+            "jbpsNm",
+            "kornOrgNm",
+            "rdbCn",
+            "hasProxyYn",
+            "hasDcrbYn",
+            "atrzScCd",
+            "atrzScNm",
+            "atrzSeqSn",
+            "trstStsCd",
+            "trstStsNm",
+            "sancrOgdpNm",
+            "prextSancrDtcNo",
+            "prextSancrNm"
+          ],
+          "id": "dsPrevAtrzDoctDtlForCancelDrft",
+          "rowCount": 6
+        },
+        {
+          "cols": [
+            "unitWrkCd",
+            "doctKndCd",
+            "shlCrseScCd",
+            "orgCd",
+            "atrzDoctIdfId",
+            "atrzSn",
+            "doctTitlNm"
+          ],
+          "id": "dsPrevAtrzDoct",
+          "rowCount": 0
+        },
+        {
+          "cols": [
+            "wrkAprvSancrDtcNo",
+            "userDtcNo",
+            "userId",
+            "userNm",
+            "orgCd",
+            "ogdpOrgCd",
+            "jbpsCd",
+            "kornOrgNm",
+            "hffcStsCd",
+            "hffcStsNm",
+            "jbpsNm",
+            "atrzScCd",
+            "atrzScNm",
+            "atrzSeqSn",
+            "trstStsCd",
+            "trstStsNm",
+            "sancrOgdpNm",
+            "workSittnExpr"
+          ],
+          "id": "dsSancrByAtrzLin",
+          "rowCount": 0
+        },
+        {
+          "cols": [
+            "orgCd",
+            "userDtcNo",
+            "userNm",
+            "userId",
+            "trstStsCd",
+            "trstStsNm",
+            "trstSancrDtcNo",
+            "trstAtrzAplcnBgngDt",
+            "trstAtrzAplcnEndDt",
+            "workSittnExpr"
+          ],
+          "id": "dsTrstAtrzSancr",
+          "rowCount": 0
+        },
+        {
+          "cols": [
+            "dummy"
+          ],
+          "id": "dsUnitWrkDrft",
+          "rowCount": 0
+        },
+        {
+          "cols": [
+            "atrzSn"
+          ],
+          "id": "dsResult",
+          "rowCount": 0
+        },
+        {
+          "cols": [
+            "unitWrkCd",
+            "doctKndCd",
+            "shlCrseScCd",
+            "orgCd",
+            "atrzDoctIdfId",
+            "atrzSn",
+            "atrzCddcScCd"
+          ],
+          "id": "dsAtrzDoctForLink",
+          "rowCount": 0
+        },
+        {
+          "cols": [
+            "wrkInfo1",
+            "wrkInfo2",
+            "wrkInfo3",
+            "fileRefrnId"
+          ],
+          "id": "dsWrkInfo",
+          "rowCount": 0
+        },
+        {
+          "cols": [
+            "unitWrkCd",
+            "doctKndCd",
+            "shlCrseScCd",
+            "orgCd"
+          ],
+          "id": "dmSearch",
+          "rowCount": null
+        },
+        {
+          "cols": [
+            "unitWrkCd",
+            "doctKndCd",
+            "shlCrseScCd",
+            "orgCd",
+            "atrzDoctIdfId",
+            "atrzSn"
+          ],
+          "id": "dmCancelDrft",
+          "rowCount": null
+        },
+        {
+          "cols": [
+            "unitWrkCd",
+            "doctKndCd",
+            "shlCrseScCd",
+            "orgCd"
+          ],
+          "id": "dmSearchForSubTrstSancr",
+          "rowCount": null
+        },
+        {
+          "cols": [],
+          "id": "subDoctInfo",
+          "rowCount": null
+        },
+        {
+          "cols": [],
+          "id": "subExecuteDrft",
+          "rowCount": null
+        },
+        {
+          "cols": [],
+          "id": "subDoctInfoForCancelDrft",
+          "rowCount": null
+        },
+        {
+          "cols": [],
+          "id": "subTrstSancr",
+          "rowCount": null
+        },
+        {
+          "cols": [],
+          "id": "subExecuteCancelDrft",
+          "rowCount": null
+        },
+        {
+          "cols": [],
+          "id": "subExecuteLink",
+          "rowCount": null
+        }
+      ],
+      "idx": 9
+    },
+    {
+      "appId": "udc/com/appHeader",
+      "controls": 18,
+      "datasets": [
+        {
+          "cols": [
+            "code",
+            "name",
+            "info"
+          ],
+          "id": "dsHelpdesk",
+          "rowCount": 19
+        },
+        {
+          "cols": [
+            "pgeId",
+            "hlpSn",
+            "hlpTitlNm",
+            "hlpCn",
+            "prcssGudnYn",
+            "useYn",
+            "regDt",
+            "hlpFileRefrnId"
+          ],
+          "id": "dsHlp",
+          "rowCount": 0
+        },
+        {
+          "cols": [
+            "authGrpId",
+            "redngUseYn",
+            "wgUseYn",
+            "userDtcNo",
+            "userId"
+          ],
+          "id": "dsSrs",
+          "rowCount": 0
+        },
+        {
+          "cols": [
+            "id",
+            "uuid",
+            "label",
+            "area",
+            "embid",
+            "visible",
+            "type"
+          ],
+          "id": "dsFoldArea",
+          "rowCount": 1
+        },
+        {
+          "cols": [
+            "menuId",
+            "menuNm",
+            "gubun",
+            "stat"
+          ],
+          "id": "dmFavorites",
+          "rowCount": null
+        },
+        {
+          "cols": [
+            "pgeId",
+            "pgeNm",
+            "prcsScCd"
+          ],
+          "id": "dmHlp",
+          "rowCount": null
+        },
+        {
+          "cols": [
+            "userId",
+            "userDtcNo",
+            "menuId"
+          ],
+          "id": "dmSrs",
+          "rowCount": null
+        },
+        {
+          "cols": [],
+          "id": "subFavorites",
+          "rowCount": null
+        },
+        {
+          "cols": [],
+          "id": "subHlp",
+          "rowCount": null
+        },
+        {
+          "cols": [],
+          "id": "subSrs",
+          "rowCount": null
+        }
+      ],
+      "idx": 10
+    },
+    {
+      "appId": "udc/com/comFormTitle",
+      "controls": 1,
+      "datasets": [],
+      "idx": 11
+    },
+    {
+      "appId": "udc/com/comFormTitle",
+      "controls": 1,
+      "datasets": [],
+      "idx": 12
+    },
+    {
+      "appId": "edu/sa/eds/eaa/ae/eds_eaaae01_b01",
+      "controls": 2,
+      "datasets": [
+        {
+          "cols": [
+            "chk",
+            "shlCd",
+            "ayr",
+            "stuInvlNo",
+            "ousExperLrnAplyId",
+            "shlKndScCd",
+            "shlCrseScCd",
+            "stuDtcNo",
+            "schpaDtcNo",
+            "grd",
+            "clsCd",
+            "clsNm",
+            "clsNo",
+            "stuFlnm",
+            "eduActPrcsStsCd",
+            "eduActPrcsStsNm",
+            "experLrnScCd",
+            "experLrnScNm",
+            "tgidNm",
+            "tgidRelNm"
+          ],
+          "id": "dsStdntListForAply2",
+          "rowCount": 2
+        },
+        {
+          "cols": [
+            "ayr",
+            "shlCd",
+            "stuInvlNo",
+            "ousExperLrnAplyId",
+            "atrzDoctIdfId"
+          ],
+          "id": "dmSearch",
+          "rowCount": null
+        },
+        {
+          "cols": [],
+          "id": "subSearch",
+          "rowCount": null
+        }
+      ],
+      "idx": 13
+    }
+  ]
+}

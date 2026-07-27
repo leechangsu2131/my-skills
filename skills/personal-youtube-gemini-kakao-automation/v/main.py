@@ -62,6 +62,7 @@ class Settings:
     gemini_gem_expected_name: str
     gemini_min_response_chars: int
     discord_max_message_length: int
+    summary_save_dir: str
 
 
 def bool_env(name: str, default: bool) -> bool:
@@ -72,7 +73,7 @@ def bool_env(name: str, default: bool) -> bool:
 
 
 def load_settings() -> Settings:
-    load_dotenv()
+    load_dotenv(encoding="utf-8")
 
     channel_url = os.getenv("CHANNEL_URL", "").strip()
     title_prefix = os.getenv("TITLE_PREFIX", "[체슬리모닝브리프]").strip()
@@ -100,7 +101,12 @@ def load_settings() -> Settings:
         raise ValueError("CHANNEL_URL is required")
     if not gemini_gem_url:
         raise ValueError("GEMINI_GEM_URL is required")
-    if send_target == "discord" and not discord_webhook:
+    summary_save_dir = resolve_data_path(
+        os.getenv("SUMMARY_SAVE_DIR", "./backlog_summaries").strip(),
+        SCRIPT_DIR,
+    )
+    save_only = bool_env("BACKLOG_SAVE_ONLY", False)
+    if send_target == "discord" and not discord_webhook and not save_only:
         raise ValueError("DISCORD_WEBHOOK is required when SEND_TARGET=discord")
     if send_target == "discord_bot" and (not discord_bot_token or not discord_channel_id):
         raise ValueError("DISCORD_BOT_TOKEN and DISCORD_CHANNEL_ID are required when SEND_TARGET=discord_bot")
@@ -140,6 +146,7 @@ def load_settings() -> Settings:
         gemini_gem_expected_name=os.getenv("GEMINI_GEM_EXPECTED_NAME", "스크립트 정리 도우미").strip(),
         gemini_min_response_chars=int(os.getenv("GEMINI_MIN_RESPONSE_CHARS", "400")),
         discord_max_message_length=int(os.getenv("DISCORD_MAX_MESSAGE_LENGTH", "1900")),
+        summary_save_dir=summary_save_dir,
     )
 
 
@@ -198,9 +205,32 @@ def save_processed_ids(path: str, ids: set[str]) -> None:
 
 BRIEF_TITLE_PREFIX_ALIASES = (
     "[체슬리모닝브리프]",
+    "[모닝브리프]",
     "[Cheslie Morning Brief]",
     "[Chesley Morning Brief]",
     "[Chesly Morning Brief]",
+    "[Cheslee Morning Brief]",
+    "[Morning Brief]",
+)
+
+# Newer flat-playlist titles put the marker mid/end, e.g.
+# "... | 박세익 전무 & 체슬리투자자문 [모닝브리프 / 26.07.16]"
+BRIEF_TITLE_MARKERS = (
+    "체슬리모닝브리프",
+    "모닝브리프",
+    "morning brief",
+    "chesley morning brief",
+    "cheslie morning brief",
+    "chesly morning brief",
+    "cheslee morning brief",
+    "매일 아침 펀드매니저",
+    "daily morning fund manager",
+)
+
+BRIEF_TITLE_EXCLUDE_MARKERS = (
+    "별'난",
+    "별난",
+    "학습부장",
 )
 
 
@@ -215,19 +245,78 @@ def _brief_title_prefixes(settings: Settings) -> list[str]:
 
 
 def _title_has_brief_prefix(title: str, prefixes: list[str]) -> bool:
-    return any(title.startswith(prefix) for prefix in prefixes)
+    if any(title.startswith(prefix) for prefix in prefixes):
+        return True
+    lower = title.lower()
+    if any(ex in title for ex in BRIEF_TITLE_EXCLUDE_MARKERS):
+        return False
+    return any(marker in lower for marker in BRIEF_TITLE_MARKERS)
 
 
-def _title_has_today_date(title: str, today: datetime.date) -> bool:
+def _parse_date_from_title(title: str) -> Optional[datetime.date]:
+    """Parse dates embedded in titles: 26/07/16, 26.07.16, 2026-07-16, etc."""
+    import re
+
     patterns = (
-        today.strftime("%y/%m/%d"),
-        today.strftime("%Y/%m/%d"),
-        today.strftime("%m/%d/%y"),
-        today.strftime("%m/%d/%Y"),
-        today.strftime("%y-%m-%d"),
-        today.strftime("%Y-%m-%d"),
+        (r"(20\d{2})[./-](\d{1,2})[./-](\d{1,2})", "ymd"),
+        (r"(\d{2})[./-](\d{1,2})[./-](\d{1,2})", "ymd_short"),
+        (r"(\d{1,2})[./-](\d{1,2})[./-](20\d{2})", "mdy"),
+        (r"(\d{1,2})[./-](\d{1,2})[./-](\d{2})", "mdy_short"),
+    )
+    for pattern, kind in patterns:
+        match = re.search(pattern, title)
+        if not match:
+            continue
+        a, b, c = match.groups()
+        try:
+            if kind == "ymd":
+                return datetime.date(int(a), int(b), int(c))
+            if kind == "ymd_short":
+                year = 2000 + int(a)
+                return datetime.date(year, int(b), int(c))
+            if kind == "mdy":
+                return datetime.date(int(c), int(a), int(b))
+            if kind == "mdy_short":
+                year = 2000 + int(c)
+                return datetime.date(year, int(a), int(b))
+        except ValueError:
+            continue
+    return None
+
+
+def _title_has_date(title: str, target: datetime.date) -> bool:
+    if _parse_date_from_title(title) == target:
+        return True
+    patterns = (
+        target.strftime("%y/%m/%d"),
+        target.strftime("%Y/%m/%d"),
+        target.strftime("%m/%d/%y"),
+        target.strftime("%m/%d/%Y"),
+        target.strftime("%y-%m-%d"),
+        target.strftime("%Y-%m-%d"),
+        target.strftime("%y.%m.%d"),
+        target.strftime("%Y.%m.%d"),
     )
     return any(pattern in title for pattern in patterns)
+
+
+def _parse_yyyymmdd(value: str) -> Optional[datetime.date]:
+    raw = value.strip()
+    if not raw:
+        return None
+    for fmt in ("%Y-%m-%d", "%Y%m%d"):
+        try:
+            return datetime.datetime.strptime(raw, fmt).date()
+        except ValueError:
+            continue
+    return None
+
+
+def _upload_date_from_meta(meta: dict) -> Optional[datetime.date]:
+    upload_date = str(meta.get("upload_date", "")).strip()
+    if len(upload_date) == 8 and upload_date.isdigit():
+        return _parse_yyyymmdd(upload_date)
+    return None
 
 
 def _yt_dlp_command(settings: Settings, *args: str) -> list[str]:
@@ -280,23 +369,25 @@ def _fetch_video_metadata(settings: Settings, video_id: str) -> Optional[dict]:
 
 
 def find_todays_live_video(settings: Settings) -> Optional[tuple[str, str]]:
-    today = datetime.date.today()
-    today_yyyymmdd = today.strftime("%Y%m%d")
+    return find_live_video_for_date(settings, datetime.date.today())
+
+
+def find_live_video_for_date(settings: Settings, target_date: datetime.date) -> Optional[tuple[str, str]]:
+    target_yyyymmdd = target_date.strftime("%Y%m%d")
     prefixes = _brief_title_prefixes(settings)
 
     for playlist_suffix in ("/streams", "/videos"):
-        entries = _fetch_flat_playlist(settings, playlist_suffix)
+        entries = _fetch_flat_playlist(settings, playlist_suffix, limit=50)
         for video in entries:
             title = str(video.get("title", ""))
             video_id = str(video.get("id", "")).strip()
             if not video_id:
                 continue
-            if _title_has_brief_prefix(title, prefixes) and _title_has_today_date(title, today):
-                print(f"Found today's live VOD: {title} / {video_id}")
+            if _title_has_brief_prefix(title, prefixes) and _title_has_date(title, target_date):
+                print(f"Found live VOD for {target_date}: {title} / {video_id}")
                 return video_id, title
 
-        # Flat playlist titles are often English and may omit the date token.
-        for video in entries[:10]:
+        for video in entries[:20]:
             video_id = str(video.get("id", "")).strip()
             if not video_id:
                 continue
@@ -305,8 +396,8 @@ def find_todays_live_video(settings: Settings) -> Optional[tuple[str, str]]:
                 continue
             upload_date = str(meta.get("upload_date", ""))
             title = str(meta.get("title", ""))
-            if upload_date == today_yyyymmdd and _title_has_brief_prefix(title, prefixes):
-                print(f"Found today's live VOD (metadata): {title} / {video_id}")
+            if upload_date == target_yyyymmdd and _title_has_brief_prefix(title, prefixes):
+                print(f"Found live VOD for {target_date} (metadata): {title} / {video_id}")
                 return video_id, title
 
     return None
@@ -317,14 +408,196 @@ def find_todays_live_video_id(settings: Settings) -> Optional[str]:
     return found[0] if found else None
 
 
+def collect_backlog_targets(
+    settings: Settings,
+    from_date: datetime.date,
+    to_date: datetime.date,
+    processed_ids: set[str],
+    include_weekends: bool = True,
+) -> list[tuple[datetime.date, str, str]]:
+    """Return [(upload_date, video_id, title), ...] oldest first.
+
+    Prefer date-in-title matching to avoid slow per-video metadata fetches.
+    For /streams flat English titles without markers, resolve metadata for recent items.
+    """
+    prefixes = _brief_title_prefixes(settings)
+    seen_ids: set[str] = set()
+    candidates: list[tuple[datetime.date, str, str]] = []
+    force = bool_env("BACKLOG_FORCE", False)
+    skip_existing = bool_env("BACKLOG_SKIP_EXISTING_SUMMARY", True)
+
+    def consider(video_id: str, title: str, upload: Optional[datetime.date]) -> None:
+        if not upload:
+            return
+        if upload < from_date or upload > to_date:
+            return
+        if not include_weekends and upload.weekday() >= 5:
+            return
+        if not force and video_id in processed_ids:
+            return
+        if skip_existing:
+            summary_path = os.path.join(
+                settings.summary_save_dir,
+                f"{upload.isoformat()}_{video_id}.md",
+            )
+            if os.path.exists(summary_path) and os.path.getsize(summary_path) > 400:
+                print(f"Skip existing summary: {summary_path}")
+                return
+        candidates.append((upload, video_id, title))
+
+    for playlist_suffix in ("/streams", "/videos"):
+        entries = _fetch_flat_playlist(settings, playlist_suffix, limit=100)
+        for index, video in enumerate(entries):
+            video_id = str(video.get("id", "")).strip()
+            if not video_id or video_id in seen_ids:
+                continue
+            title = str(video.get("title", ""))
+            matched = _title_has_brief_prefix(title, prefixes)
+            # Recent /streams items may be English flat titles without markers.
+            maybe_resolve = (
+                playlist_suffix == "/streams"
+                and not matched
+                and index < 35
+                and not any(ex in title for ex in BRIEF_TITLE_EXCLUDE_MARKERS)
+            )
+            if not matched and not maybe_resolve:
+                continue
+
+            upload = _parse_date_from_title(title)
+            resolved_title = title
+            if not matched or not upload:
+                meta = _fetch_video_metadata(settings, video_id) or {}
+                resolved_title = str(meta.get("title", title))
+                if not _title_has_brief_prefix(resolved_title, prefixes):
+                    continue
+                upload = upload or _upload_date_from_meta(meta) or _parse_date_from_title(resolved_title)
+
+            seen_ids.add(video_id)
+            consider(video_id, resolved_title, upload)
+
+    deduped: dict[str, tuple[datetime.date, str, str]] = {}
+    for item in candidates:
+        deduped[item[1]] = item
+    return sorted(deduped.values(), key=lambda row: row[0])
+
+
+def save_summary_file(settings: Settings, upload_date: datetime.date, video_id: str, title: str, summary: str) -> str:
+    os.makedirs(settings.summary_save_dir, exist_ok=True)
+    filename = f"{upload_date.isoformat()}_{video_id}.md"
+    path = os.path.join(settings.summary_save_dir, filename)
+    body = summary.strip()
+    for noise in ("Gemini said", "Gemini의 응답", "Gemini 응답"):
+        if body.startswith(noise):
+            body = body[len(noise):].lstrip("\n: ").strip()
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(f"# {title}\n\n")
+        f.write(f"- 날짜: {upload_date.isoformat()}\n")
+        f.write(f"- video_id: {video_id}\n")
+        f.write(f"- url: https://www.youtube.com/watch?v={video_id}\n\n")
+        f.write(body)
+        f.write("\n")
+    print(f"Saved summary: {path}")
+    return path
+
+
 async def get_youtube_transcript(video_id: str, languages: list[str]) -> str:
     api = YouTubeTranscriptApi()
     fetched = api.fetch(video_id, languages=languages)
     return " ".join(snippet.text.strip() for snippet in fetched if snippet.text)
 
 
+def _vtt_to_text(path: str) -> str:
+    """Convert VTT/SRT to plain text; strip cue tags and prefer clean cue text."""
+    import re
+
+    lines: list[str] = []
+    seen: set[str] = set()
+    tag_re = re.compile(r"<[^>]+>")
+    with open(path, "r", encoding="utf-8", errors="ignore") as f:
+        for raw in f:
+            line = raw.strip()
+            if (
+                not line
+                or line == "WEBVTT"
+                or "-->" in line
+                or line.isdigit()
+                or line.startswith("NOTE")
+                or line.startswith("Kind:")
+                or line.startswith("Language:")
+            ):
+                continue
+            # Drop inline timing/style tags: <00:00:13.000><c> ...
+            cleaned = tag_re.sub("", line).strip()
+            if not cleaned:
+                continue
+            if cleaned in seen:
+                continue
+            seen.add(cleaned)
+            lines.append(cleaned)
+    return " ".join(lines)
+
+
+def get_transcript_via_ytdlp(settings: Settings, video_id: str) -> Optional[str]:
+    tmp_dir = os.path.join(SCRIPT_DIR, ".transcript_cache")
+    os.makedirs(tmp_dir, exist_ok=True)
+    # Prefer Korean auto/manual subs first; en as fallback only.
+    # Fetch ko alone first to avoid 429 when requesting multiple langs.
+    for langs in ("ko", "en"):
+        output_tpl = os.path.join(tmp_dir, f"{video_id}.%(ext)s")
+        ko_path = os.path.join(tmp_dir, f"{video_id}.ko.vtt")
+        if langs == "en" and os.path.exists(ko_path) and os.path.getsize(ko_path) > 1000:
+            break
+        command = _yt_dlp_command(
+            settings,
+            "--write-auto-sub",
+            "--write-sub",
+            "--sub-lang",
+            langs,
+            "--skip-download",
+            "--no-overwrites",
+            "-o",
+            output_tpl,
+            f"https://www.youtube.com/watch?v={video_id}",
+        )
+        result = subprocess.run(command, capture_output=True, text=True, encoding="utf-8", errors="ignore")
+        if result.returncode != 0:
+            print(f"yt-dlp subtitle ({langs}) returned {result.returncode} for {video_id}; checking local files.")
+
+    # Prefer language order from settings (ko before en), not longest file.
+    ordered_paths: list[str] = []
+    for lang in settings.language_priority + ["ko", "en"]:
+        for suffix in (f".{lang}.vtt", f".{lang}.srt"):
+            path = os.path.join(tmp_dir, f"{video_id}{suffix}")
+            if os.path.exists(path) and path not in ordered_paths:
+                ordered_paths.append(path)
+
+    best = ""
+    best_path = ""
+    for path in ordered_paths:
+        text = _vtt_to_text(path)
+        # Prefer first language in priority that has enough text.
+        if len(text) >= 400:
+            print(f"Transcript collected via yt-dlp ({os.path.basename(path)}): {len(text)} chars")
+            return text
+        if len(text) > len(best):
+            best = text
+            best_path = path
+    if best:
+        print(f"Transcript collected via yt-dlp ({os.path.basename(best_path)}): {len(best)} chars")
+    return best or None
+
+
 def get_transcript_with_retry(settings: Settings, video_id: str) -> Optional[str]:
-    for attempt in range(settings.transcript_max_tries):
+    # Prefer yt-dlp first when TRANSCRIPT_PREFER_YTDLP=1 (API often blocked).
+    prefer_ytdlp = bool_env("TRANSCRIPT_PREFER_YTDLP", True)
+    if prefer_ytdlp:
+        fallback = get_transcript_via_ytdlp(settings, video_id)
+        if fallback:
+            return fallback
+
+    api_failures = 0
+    max_api_tries = min(settings.transcript_max_tries, 2)
+    for attempt in range(max_api_tries):
         try:
             session = requests.Session()
             if settings.disable_ssl_verify:
@@ -337,14 +610,16 @@ def get_transcript_with_retry(settings: Settings, video_id: str) -> Optional[str
                 print(f"Transcript collected: {len(joined)} chars")
                 return joined
         except Exception as exc:
-            remaining = settings.transcript_max_tries - attempt - 1
+            api_failures += 1
+            remaining = max_api_tries - attempt - 1
             print(
-                f"Transcript not ready ({attempt + 1}/{settings.transcript_max_tries}): {exc}. "
+                f"Transcript API not ready ({attempt + 1}/{max_api_tries}): {exc}. "
                 f"Remaining retries: {remaining}"
             )
-        if attempt < settings.transcript_max_tries - 1:
-            time.sleep(settings.transcript_retry_interval_sec)
-    return None
+        if attempt < max_api_tries - 1:
+            time.sleep(min(settings.transcript_retry_interval_sec, 5))
+
+    return get_transcript_via_ytdlp(settings, video_id)
 
 
 RESPONSE_SELECTORS = (
@@ -703,6 +978,10 @@ async def _run_gemini_prompt(
     video_title: str,
     gem_url: str = "",
 ) -> str:
+    # Always start a fresh chat so backlog items do not bleed into each other.
+    if gem_url:
+        await _start_new_gem_chat(page, gem_url)
+
     if settings.gemini_force_pro:
         await _select_gemini_pro(page)
 
@@ -984,8 +1263,11 @@ def send_discord_bot_message(settings: Settings, message: str) -> requests.Respo
     return last_response  # type: ignore[return-value]
 
 
-def send_notification(settings: Settings, message: str) -> requests.Response:
+def send_notification(settings: Settings, message: str):
     if settings.send_target == "discord":
+        if not settings.discord_webhook:
+            print("Discord webhook not set; skipping remote send.")
+            return type("Resp", (), {"status_code": 204, "text": ""})()
         chunks = split_message_chunks(message, settings.discord_max_message_length)
         if len(chunks) > 1:
             print(f"Discord: sending {len(chunks)} messages ({len(message)} chars total)")
@@ -996,6 +1278,59 @@ def send_notification(settings: Settings, message: str) -> requests.Response:
             print(f"Discord bot: sending {len(chunks)} messages ({len(message)} chars total)")
         return send_discord_bot_message(settings, message)
     return send_kakao_message_with_refresh(settings, message)
+
+
+async def process_video(
+    settings: Settings,
+    video_id: str,
+    video_title: str,
+    processed_ids: set[str],
+    upload_date: Optional[datetime.date] = None,
+    persist_processed: bool = True,
+) -> bool:
+    force = bool_env("BACKLOG_FORCE", False)
+    if video_id in processed_ids and not force:
+        print(f"Already processed video: {video_id}. Skipping.")
+        return False
+    if force and video_id in processed_ids:
+        print(f"BACKLOG_FORCE: reprocessing {video_id}")
+
+    transcript = get_transcript_with_retry(settings, video_id)
+    if not transcript:
+        send_notification(settings, f"⚠️ 자막 수집에 실패했습니다. ({video_title})")
+        return False
+
+    answer = await ask_gemini_gem(settings, transcript, video_title=video_title)
+    print(f"Gemini response preview: {answer[:120]}...")
+    print(f"Gemini response total: {len(answer)} chars")
+
+    header_bits = []
+    if upload_date:
+        header_bits.append(upload_date.isoformat())
+    if video_title:
+        header_bits.append(video_title)
+    header = " | ".join(header_bits)
+    payload = f"**{header}**\n\n{answer}" if header else answer
+
+    if upload_date:
+        save_summary_file(settings, upload_date, video_id, video_title, answer)
+
+    response = send_notification(settings, payload)
+    if settings.send_target == "discord" and settings.discord_webhook:
+        print(f"{settings.send_target} response status: {response.status_code}")
+        if response.status_code not in (200, 201, 204):
+            print(f"{settings.send_target} error body: {response.text}")
+            return False
+    elif settings.send_target not in ("discord",):
+        print(f"{settings.send_target} response status: {response.status_code}")
+        if response.status_code not in (200, 201, 204):
+            print(f"{settings.send_target} error body: {response.text}")
+            return False
+
+    if persist_processed:
+        processed_ids.add(video_id)
+        save_processed_ids(settings.processed_file, processed_ids)
+    return True
 
 
 async def run_once(settings: Settings) -> None:
@@ -1011,42 +1346,83 @@ async def run_once(settings: Settings) -> None:
         print(f"Using forced video ID: {force_video_id}")
         video_id = force_video_id
         video_title = "체슬리모닝브리프 (Forced Test)"
-        processed_ids = set()
-    else:
-        found = find_todays_live_video(settings)
-        if not found:
-            send_notification(settings, "⚠️ 오늘 라이브 영상을 찾지 못했습니다.")
-            return
-        video_id, video_title = found
-        processed_ids = load_processed_ids(settings.processed_file)
-
-    if video_id in processed_ids:
-        print(f"Already processed video: {video_id}. Skipping.")
+        processed_ids: set[str] = set()
+        await process_video(settings, video_id, video_title, processed_ids, persist_processed=False)
         return
 
-    transcript = get_transcript_with_retry(settings, video_id)
-    if not transcript:
-        send_notification(settings, "⚠️ 자막 수집에 실패했습니다.")
+    found = find_todays_live_video(settings)
+    if not found:
+        send_notification(settings, "⚠️ 오늘 라이브 영상을 찾지 못했습니다.")
+        return
+    video_id, video_title = found
+    processed_ids = load_processed_ids(settings.processed_file)
+    await process_video(
+        settings,
+        video_id,
+        video_title,
+        processed_ids,
+        upload_date=datetime.date.today(),
+    )
+
+
+async def run_backlog(settings: Settings) -> None:
+    today = datetime.date.today()
+    yesterday = today - datetime.timedelta(days=1)
+
+    from_date = _parse_yyyymmdd(os.getenv("BACKLOG_FROM", "")) or (today - datetime.timedelta(days=7))
+    to_date = _parse_yyyymmdd(os.getenv("BACKLOG_TO", "")) or yesterday
+    if from_date > to_date:
+        raise ValueError(f"BACKLOG_FROM ({from_date}) must be <= BACKLOG_TO ({to_date})")
+
+    include_weekends = bool_env("BACKLOG_INCLUDE_WEEKENDS", True)
+    processed_ids = load_processed_ids(settings.processed_file)
+    targets = collect_backlog_targets(
+        settings,
+        from_date,
+        to_date,
+        processed_ids,
+        include_weekends=include_weekends,
+    )
+
+    if not targets:
+        print(f"No backlog videos between {from_date} and {to_date}.")
         return
 
-    answer = await ask_gemini_gem(settings, transcript, video_title=video_title)
-    print(f"Gemini response preview: {answer[:120]}...")
-    print(f"Gemini response total: {len(answer)} chars")
+    limit_raw = os.getenv("BACKLOG_LIMIT", "").strip()
+    limit = int(limit_raw) if limit_raw.isdigit() and int(limit_raw) > 0 else 0
+    if limit:
+        targets = targets[:limit]
+        print(f"Backlog limited to first {limit} video(s)")
 
-    response = send_notification(settings, answer)
-    print(f"{settings.send_target} response status: {response.status_code}")
-    if response.status_code not in (200, 201, 204):
-        print(f"{settings.send_target} error body: {response.text}")
-        return
-    
-    if not force_video_id:
-        processed_ids.add(video_id)
-        save_processed_ids(settings.processed_file, processed_ids)
+    stop_on_error = bool_env("BACKLOG_STOP_ON_ERROR", True)
+    print(f"Backlog: {len(targets)} video(s) from {from_date} to {to_date} (stop_on_error={stop_on_error})")
+    for upload_date, video_id, title in targets:
+        print(f"\n=== Backlog {upload_date} / {video_id} ===")
+        print(f"Title: {title}")
+        try:
+            ok = await process_video(
+                settings,
+                video_id,
+                title,
+                processed_ids,
+                upload_date=upload_date,
+            )
+            if not ok:
+                print(f"Backlog item failed or skipped: {upload_date} / {video_id}")
+                if stop_on_error:
+                    raise RuntimeError(f"Backlog stopped after failure: {upload_date} / {video_id}")
+        except Exception as exc:
+            print(f"Backlog item error ({upload_date} / {video_id}): {exc}")
+            if stop_on_error:
+                raise
 
 
 def scheduled_job(settings: Settings) -> None:
     try:
-        asyncio.run(run_once(settings))
+        if os.getenv("RUN_BACKLOG", "").strip() == "1":
+            asyncio.run(run_backlog(settings))
+        else:
+            asyncio.run(run_once(settings))
         print("Run completed")
     except Exception as exc:  # pragma: no cover
         print(f"Run failed: {exc}")
@@ -1084,8 +1460,9 @@ def main() -> None:
         setup_login(settings)
         return
 
-    if os.getenv("RUN_ONCE", "").strip() == "1":
-        print(f"RUN_ONCE mode at {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    if os.getenv("RUN_ONCE", "").strip() == "1" or os.getenv("RUN_BACKLOG", "").strip() == "1":
+        mode = "BACKLOG" if os.getenv("RUN_BACKLOG", "").strip() == "1" else "RUN_ONCE"
+        print(f"{mode} mode at {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
         scheduled_job(settings)
         return
 

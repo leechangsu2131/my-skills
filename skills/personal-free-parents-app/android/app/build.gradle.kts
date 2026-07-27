@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.oneparentwatch.one_parent_watch"
+    namespace = "com.example.one_parent_watch"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 

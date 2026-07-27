@@ -1,0 +1,113 @@
+[
+  {
+    "fieldLabel": "영역",
+    "id": "cmbRelm01",
+    "itemCount": 3,
+    "items": [
+      {
+        "data": null,
+        "icon": "",
+        "label": "듣기·말하기",
+        "str": "[object Object]",
+        "text": null,
+        "value": "1"
+      },
+      {
+        "data": null,
+        "icon": "",
+        "label": "읽기",
+        "str": "[object Object]",
+        "text": null,
+        "value": "2"
+      },
+      {
+        "data": null,
+        "icon": "",
+        "label": "문학",
+        "str": "[object Object]",
+        "text": null,
+        "value": "5"
+      }
+    ],
+    "text": "듣기·말하기",
+    "uuid": "1pu",
+    "value": "1"
+  },
+  {
+    "fieldLabel": "성취기준",
+    "id": "cmbSccesCtr",
+    "itemCount": 1,
+    "items": [
+      {
+        "data": null,
+        "icon": "",
+        "label": "[4국01-01] 중요한...",
+        "str": "[object Object]",
+        "text": null,
+        "value": "12임000000000000000000352403 `01`1"
+      }
+    ],
+    "text": "[4국01-01] 중요한...",
+    "uuid": "1px",
+    "value": "12임000000000000000000352403 `01`1"
+  },
+  {
+    "fieldLabel": "일괄적용 평가기준 선택",
+    "id": "cmbEvlCn",
+    "itemCount": 5,
+    "items": [
+      {
+        "data": null,
+        "icon": "",
+        "label": "--성취기준별 평가 선택적용--",
+        "str": "[object Object]",
+        "text": null,
+        "value": ""
+      },
+      {
+        "data": null,
+        "icon": "",
+        "label": "매우 잘함",
+        "str": "[object Object]",
+        "text": null,
+        "value": "1 "
+      },
+      {
+        "data": null,
+        "icon": "",
+        "label": "잘함",
+        "str": "[object Object]",
+        "text": null,
+        "value": "2 "
+      },
+      {
+        "data": null,
+        "icon": "",
+        "label": "노력 요함",
+        "str": "[object Object]",
+        "text": null,
+        "value": "3 "
+      },
+      {
+        "data": null,
+        "icon": "",
+        "label": "임의입력",
+        "str": "[object Object]",
+        "text": null,
+        "value": "99"
+      }
+    ],
+    "text": "--성취기준별 평가 선택적용--",
+    "uuid": "1qu",
+    "value": ""
+  },
+  {
+    "fieldLabel": "0행 단계  콤보상자",
+    "id": "cmbLvl",
+    "itemCount": 0,
+    "items": [],
+    "text": "",
+    "uuid": "1qz",
+    "value": null
+  }
+]

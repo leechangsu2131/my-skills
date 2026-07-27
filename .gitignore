@@ -1,3 +1,13 @@
+# Chrome profile
+**/chrome_profile/
+
+# Cache
+**/Cache/
+**/Cache_Data/
+
+# Browser temporary files
+*.pma
+
 # Environments
 .env
 .env.local

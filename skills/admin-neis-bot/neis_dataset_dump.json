@@ -1,0 +1,198 @@
+{
+  "apps": [
+    {
+      "components": [
+        {
+          "id": "µsY",
+          "type": "container"
+        }
+      ],
+      "datasets": [],
+      "id": "app/com/main/Index"
+    },
+    {
+      "components": [
+        {
+          "id": "µtJ",
+          "type": "embeddedapp"
+        },
+        {
+          "id": "µsY",
+          "type": "container"
+        }
+      ],
+      "datasets": [],
+      "id": "app/com/main/Dashboard3"
+    },
+    {
+      "components": [
+        {
+          "id": "µtJ",
+          "type": "udc.com.udcCal02"
+        },
+        {
+          "id": "µsY",
+          "type": "container"
+        }
+      ],
+      "datasets": [],
+      "id": "udc/com/udcCal02"
+    },
+    {
+      "components": [
+        {
+          "id": "µtJ",
+          "type": "embeddedapp"
+        },
+        {
+          "id": "µsY",
+          "type": "container"
+        }
+      ],
+      "datasets": [],
+      "id": "edu/sw/els/scr/es/els_scres20_m00"
+    },
+    {
+      "components": [
+        {
+          "id": "µtJ",
+          "type": "udc.com.appHeader"
+        },
+        {
+          "id": "µsY",
+          "type": "container"
+        }
+      ],
+      "datasets": [],
+      "id": "udc/com/appHeader"
+    },
+    {
+      "components": [
+        {
+          "id": "µtJ",
+          "type": "udc.sw.swc.udcSwcAuth"
+        },
+        {
+          "id": "µsY",
+          "type": "container"
+        }
+      ],
+      "datasets": [],
+      "id": "udc/sw/swc/udcSwcAuth"
+    },
+    {
+      "components": [
+        {
+          "id": "µtJ",
+          "type": "udc.sw.swc.udcSwcAuth"
+        },
+        {
+          "id": "µsY",
+          "type": "container"
+        }
+      ],
+      "datasets": [],
+      "id": "udc/sw/swc/udcSwcAuth"
+    },
+    {
+      "components": [
+        {
+          "id": "µtJ",
+          "type": "udc.sw.swc.udcSwcAuth"
+        },
+        {
+          "id": "µsY",
+          "type": "container"
+        }
+      ],
+      "datasets": [],
+      "id": "udc/sw/swc/udcSwcAuth"
+    },
+    {
+      "components": [
+        {
+          "id": "µtJ",
+          "type": "udc.com.comTitle"
+        },
+        {
+          "id": "µsY",
+          "type": "container"
+        }
+      ],
+      "datasets": [],
+      "id": "udc/com/comTitle"
+    },
+    {
+      "components": [
+        {
+          "id": "µtJ",
+          "type": "udc.com.comTitle"
+        },
+        {
+          "id": "µsY",
+          "type": "container"
+        }
+      ],
+      "datasets": [],
+      "id": "udc/com/comTitle"
+    },
+    {
+      "components": [
+        {
+          "id": "µtJ",
+          "type": "udc.sw.scr.udcDataByteOutput"
+        },
+        {
+          "id": "µsY",
+          "type": "container"
+        }
+      ],
+      "datasets": [],
+      "id": "udc/sw/scr/udcDataByteOutput"
+    },
+    {
+      "components": [
+        {
+          "id": "µtJ",
+          "type": "udc.com.comTitle"
+        },
+        {
+          "id": "µsY",
+          "type": "container"
+        }
+      ],
+      "datasets": [],
+      "id": "udc/com/comTitle"
+    },
+    {
+      "components": [
+        {
+          "id": "µtJ",
+          "type": "embeddedapp"
+        },
+        {
+          "id": "µsY",
+          "type": "container"
+        }
+      ],
+      "datasets": [],
+      "id": "edu/sw/els/scr/es/els_scres20_m01"
+    },
+    {
+      "components": [
+        {
+          "id": "µtJ",
+          "type": "udc.com.comTitle"
+        },
+        {
+          "id": "µsY",
+          "type": "container"
+        }
+      ],
+      "datasets": [],
+      "id": "udc/com/comTitle"
+    }
+  ],
+  "global_datasets": [],
+  "global_err": "nexacro is not defined"
+}

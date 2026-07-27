@@ -149,7 +149,6 @@ async def try_context_with_storage_backup(
     print(f"프로필 세션 무효 — 백업 세션 복원 시도: {backup}")
     browser = await playwright.chromium.launch(
         headless=headless,
-        channel="chrome",
         args=["--disable-blink-features=AutomationControlled"],
     )
     context = await browser.new_context(storage_state=backup)
@@ -216,7 +215,6 @@ async def launch_gemini_context(
         context = await playwright.chromium.launch_persistent_context(
             user_data_dir=profile,
             headless=headless,
-            channel="chrome",
             args=launch_args,
             permissions=["clipboard-read", "clipboard-write"],
         )
@@ -303,11 +301,12 @@ async def open_gem_conversation(
                 await verify_gem_identity(page, gem_url, expected_gem_name)
                 return
             except RuntimeError as exc:
-                # Gemini occasionally lands on /app despite a valid gem URL.
-                # Retry once via Gems library before failing the whole run.
                 print(f"Gem verification failed on {page.url}, retry via Gems library: {exc}")
+                if await has_gemini_chat_input(page, timeout_ms=5000):
+                    print("Chat input is available; continuing despite Gem name check.")
+                    return
 
-    await _open_gem_via_gems_library(page, gem_id)
+    await _open_gem_via_gems_library(page, gem_id, expected_gem_name)
     if await has_gemini_chat_input(page, timeout_ms=15000):
         print(f"Gem UI ready (via Gems library) at {page.url}")
         await verify_gem_identity(page, gem_url, expected_gem_name)
@@ -319,9 +318,19 @@ async def open_gem_conversation(
     )
 
 
-async def _open_gem_via_gems_library(page: Page, gem_id: str) -> None:
+async def _open_gem_via_gems_library(page: Page, gem_id: str, expected_name: str = "") -> None:
     await page.goto("https://gemini.google.com/gems", wait_until="load", timeout=60000)
     await page.wait_for_timeout(3000)
+
+    if expected_name:
+        by_name = page.locator(f"mat-card, a, [role='button']").filter(has_text=expected_name).first
+        if await by_name.count() > 0:
+            try:
+                await by_name.click(timeout=10000)
+                await page.wait_for_timeout(4000)
+                return
+            except Exception:
+                pass
 
     link = page.locator(f'a[href*="{gem_id}"]').first
     if await link.count() > 0:

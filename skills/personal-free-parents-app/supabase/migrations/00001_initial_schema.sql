@@ -87,13 +87,28 @@ create table user_affiliations (
 comment on table user_affiliations is '사용자 ↔ 소속 기관 연결 (다대다)';
 
 -- -----------------------------------------------------------
+-- 3-0. playgrounds – 놀이터 마스터 테이블 (소속과 독립적)
+-- -----------------------------------------------------------
+create table playgrounds (
+  id              uuid primary key default uuid_generate_v4(),
+  name            text not null,           -- "해링턴 놀이터 (분수광장)" 처럼 랜드마크 포함
+  latitude        double precision not null,
+  longitude       double precision not null,
+  is_verified     boolean not null default false,
+  created_at      timestamptz not null default now(),
+  updated_at      timestamptz not null default now()
+);
+
+comment on table playgrounds is '놀이터 마스터 테이블 (특정 소속에 고정 연결되지 않음)';
+
+-- -----------------------------------------------------------
 -- 3-4. groups – 돌봄 그룹
 -- -----------------------------------------------------------
 create table groups (
   id              uuid primary key default uuid_generate_v4(),
   name            text not null,
   description     text,
-  affiliation_id  uuid references affiliations(id) on delete set null,
+  playground_id   uuid not null references playgrounds(id) on delete cascade,
   invite_code     text unique,
   max_members     int not null default 20,
   is_active       boolean not null default true,
@@ -102,7 +117,7 @@ create table groups (
   updated_at      timestamptz not null default now()
 );
 
-comment on table groups is '돌봄 그룹 (학부모 커뮤니티 단위)';
+comment on table groups is '돌봄 그룹 (놀이터 위치 기반)';
 
 -- -----------------------------------------------------------
 -- 3-5. group_members – 그룹 멤버십
@@ -274,7 +289,7 @@ create index idx_user_affiliations_user_id on user_affiliations(user_id);
 create index idx_user_affiliations_affiliation_id on user_affiliations(affiliation_id);
 
 -- groups
-create index idx_groups_affiliation_id on groups(affiliation_id);
+create index idx_groups_playground_id on groups(playground_id);
 create index idx_groups_created_by on groups(created_by);
 create index idx_groups_invite_code on groups(invite_code);
 
@@ -375,6 +390,64 @@ end;
 $$ language plpgsql;
 
 comment on function is_safety_flagged(uuid) is '해당 사용자에게 활성 안전 플래그가 있는지 확인';
+
+-- -----------------------------------------------------------
+-- 5-3. nearby_affiliations – 놀이터 기준 근처 소속 조회 (거리 기반)
+-- -----------------------------------------------------------
+create or replace function nearby_affiliations(
+  p_playground_id uuid,
+  radius_m int default 500
+) returns table(affiliation_id uuid, name text, distance_m double precision) as $$
+begin
+  return query
+  select a.id, a.name,
+    ( 6371000 * acos(
+        cos(radians(pg.latitude)) * cos(radians(a.latitude)) *
+        cos(radians(a.longitude) - radians(pg.longitude)) +
+        sin(radians(pg.latitude)) * sin(radians(a.latitude))
+      )
+    ) as distance_m
+  from playgrounds pg, affiliations a
+  where pg.id = p_playground_id
+    and ( 6371000 * acos(
+        cos(radians(pg.latitude)) * cos(radians(a.latitude)) *
+        cos(radians(a.longitude) - radians(pg.longitude)) +
+        sin(radians(pg.latitude)) * sin(radians(a.latitude))
+      ) ) <= radius_m
+  order by distance_m asc;
+end;
+$$ language plpgsql;
+
+comment on function nearby_affiliations(uuid, int) is '놀이터 기준 특정 반경 내에 인접한 소속 기관 목록 조회';
+
+-- -----------------------------------------------------------
+-- 5-4. nearby_playgrounds – 인접 놀이터 조회 (같은 단지 내 클러스터링용, 기본 30m 이내)
+-- -----------------------------------------------------------
+create or replace function nearby_playgrounds(
+  p_playground_id uuid,
+  radius_m int default 30
+) returns table(playground_id uuid, name text, distance_m double precision) as $$
+begin
+  return query
+  select p2.id, p2.name,
+    ( 6371000 * acos(
+        cos(radians(p1.latitude)) * cos(radians(p2.latitude)) *
+        cos(radians(p2.longitude) - radians(p1.longitude)) +
+        sin(radians(p1.latitude)) * sin(radians(p2.latitude))
+      )
+    ) as distance_m
+  from playgrounds p1, playgrounds p2
+  where p1.id = p_playground_id and p2.id != p_playground_id
+    and ( 6371000 * acos(
+        cos(radians(p1.latitude)) * cos(radians(p2.latitude)) *
+        cos(radians(p2.longitude) - radians(p1.longitude)) +
+        sin(radians(p1.latitude)) * sin(radians(p2.latitude))
+      ) ) <= radius_m
+  order by distance_m asc;
+end;
+$$ language plpgsql;
+
+comment on function nearby_playgrounds(uuid, int) is '놀이터 기준 특정 반경 내에 있는 인접 놀이터 목록 조회 (클러스터링용)';
 
 -- ============================================================
 -- 6. TRIGGERS

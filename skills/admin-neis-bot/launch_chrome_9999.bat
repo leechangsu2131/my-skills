@@ -1,0 +1,3 @@
+@echo off
+echo Launching custom port 9999 debugging Chrome...
+start "" "C:\Program Files\Google\Chrome\Application\chrome.exe" --remote-debugging-port=9999 --user-data-dir="%TEMP%\neis_chrome_profile_9999" "https://evpn.gbe.kr/custom/index.html" "https://gbe.neis.go.kr/jsp/main.jsp"

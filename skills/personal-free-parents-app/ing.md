@@ -3,6 +3,28 @@
 이 문서는 '한명만' (One Parent Watch) 앱 개발 도중 발생한 네이버 지도 SDK 연동 오류의 히스토리와 해결 과정, 그리고 정상 로딩을 위한 최종 해결책을 기록한 트러블슈팅 문서입니다.
 
 ---
+## 0. 최신 상태 (2026-07-20)
+
+### 완료한 작업
+
+- 지도 화면이 Supabase `playgrounds` 목록을 읽도록 연결했다. 실제 목록이 존재하면 해당 위치와 이름으로 마커를 그린다.
+- 실제 데이터를 읽지 못하거나 목록이 비어 있을 때, 릴리스 빌드에서는 가짜 놀이터·부모 현황을 표시하지 않는다. 실패 시 재시도, 빈 목록이면 빈 상태를 보여 준다. 데모 데이터는 디버그 빌드에서만 유지한다.
+- 비동기 마커 렌더에 토큰과 `mounted` 검사를 추가했다. 화면 전환 직후 발생하던 `unmounted context`와 이전 지도 채널의 `MissingPluginException`을 방지했다.
+- Android Gradle `namespace`와 `MainActivity` 패키지를 `com.example.one_parent_watch`로 정리했다. Naver Map NCP에 등록한 Android 패키지명과 실제 앱 ID는 그대로 유지한다.
+
+### 검증 결과
+
+- `flutter analyze`: 통과
+- `flutter test`: 통과
+- `flutter build apk --debug`: 성공
+- `Small_Phone` 에뮬레이터에 APK 설치 성공, 표준 Activity 경로 `com.example.one_parent_watch/.MainActivity` 확인
+- 실행 로그에서 Supabase와 Naver Map 초기화가 완료됐으며 `401 Unauthorized client`, `Unhandled Exception`, `MissingPluginException`은 관찰되지 않음
+
+### 모임 데이터 계약: 준비 완료, 원격 적용 대기
+
+- `00003_group_contract.sql`을 추가했다. 기존 `user_id` 기반 멤버십을 유지한 채, 일정·상태·아동 별칭·체크인 GPS·소속 메타데이터를 추가한다.
+- Flutter `GroupRepository`도 `parent_id` 대신 기존 DB의 `user_id`, `name` 대신 `display_name`을 사용하도록 정리했다. 생성자는 자동으로 owner 멤버십을 만든다.
+- 원격 적용 전에는 `00002_appeals_and_admin.sql`과 `00002_playgrounds.sql`의 번호 중복 및 실제 적용 이력을 먼저 확인해야 한다. 이 확인 없이 `supabase db push`로 전체 마이그레이션을 실행하지 않는다.
 
 ## 🚨 1. 주요 증상 (Symptom)
 * **증상**: 앱 로그인 후 지도 화면 진입 시, 연두색/하늘색 핀만 꽂힌 채 배경 지도가 회색/하얀색 격자 무늬(Fallback Grid)로 표시되고 실감 지도가 로딩되지 않음.
@@ -82,4 +104,3 @@
   * 사각 카드를 라운드 모서리(Radius 18)와 투명 보더 테두리(glassBorder) 구조로 변경하여 시각적으로 맑고 고급스러운 깊이감을 연출했습니다.
 * **실시간 감독 대시보드 (`supervision_dashboard_page.dart`) 리빌딩**:
   * 딥 슬레이트 블랙 미드나잇 밤하늘 배경에 **호흡하는 네온 게이지 원형 타이머(CircularProgressIndicator)**와 SOS 긴급 싸이렌의 플래시 애니메이션을 주입하여 세련된 관제 센터 스타일로 전면 리모델링 완료했습니다.
-

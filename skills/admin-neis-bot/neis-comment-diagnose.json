@@ -1,0 +1,1832 @@
+{
+  "apps": [
+    {
+      "appId": "app/com/main/Index",
+      "controls": [
+        {
+          "fieldLabel": "",
+          "id": "grpHd",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "container",
+          "value": null
+        },
+        {
+          "fieldLabel": "",
+          "id": "grpLogo",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "container",
+          "value": null
+        },
+        {
+          "fieldLabel": "나이스로고",
+          "id": "outLogoTop",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "output",
+          "value": ""
+        },
+        {
+          "fieldLabel": "",
+          "id": "outSol",
+          "itemCount": null,
+          "items": [],
+          "text": "알트키와 컨트롤키와 H를 동시에 누르면 단축키의 내용을 확인할수 있습니다.",
+          "type": "output",
+          "value": null
+        },
+        {
+          "fieldLabel": "",
+          "id": "grpTpbr",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "container",
+          "value": null
+        },
+        {
+          "fieldLabel": "",
+          "id": "grpUserInfo",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "container",
+          "value": null
+        },
+        {
+          "fieldLabel": "화천초등학교",
+          "id": "optUserAuth",
+          "itemCount": null,
+          "items": [],
+          "text": "화천초등학교",
+          "type": "output",
+          "value": "화천초등학교"
+        },
+        {
+          "fieldLabel": "이창수(lee2131)",
+          "id": "optUserNm",
+          "itemCount": null,
+          "items": [],
+          "text": "이창수(lee2131)",
+          "type": "output",
+          "value": "이창수(lee2131)"
+        },
+        {
+          "fieldLabel": "",
+          "id": "optUserAuthSub",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "output",
+          "value": null
+        },
+        {
+          "fieldLabel": "",
+          "id": "htmlUserWrk",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "htmlsnippet",
+          "value": "<div style=\"display:flex; min-width:max-content; height: 25px; align-items: stretch;\"><div style=\"font-size: 15px !important; font-weight: bold; color: #FFFFFF; border:1px solid #FFFFFF; min-width: max-content; border-radius: 5px;  padding: 1px 5px 2px 5px;\">화천초등학교</div></div>"
+        },
+        {
+          "fieldLabel": "이창수(lee2131)",
+          "id": "optUserInfo",
+          "itemCount": null,
+          "items": [],
+          "text": "이창수(lee2131)",
+          "type": "output",
+          "value": "이창수(lee2131)"
+        },
+        {
+          "fieldLabel": "자체개발",
+          "id": "btnAssign",
+          "itemCount": null,
+          "items": [],
+          "text": "자체개발",
+          "type": "button",
+          "value": "자체개발"
+        },
+        {
+          "fieldLabel": "",
+          "id": "grpOptTime",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "container",
+          "value": null
+        },
+        {
+          "fieldLabel": "세션시간",
+          "id": "btnClock",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "button",
+          "value": ""
+        },
+        {
+          "fieldLabel": "세션 종료 시간",
+          "id": "optTime",
+          "itemCount": null,
+          "items": [],
+          "text": "56분 49초",
+          "type": "output",
+          "value": "56분 49초"
+        },
+        {
+          "fieldLabel": "2차인증 세션 종료 시간",
+          "id": "optTime2",
+          "itemCount": null,
+          "items": [],
+          "text": "(2차인증:130분 00초)",
+          "type": "output",
+          "value": "(2차인증:130분 00초)"
+        },
+        {
+          "fieldLabel": "",
+          "id": "grpTpbrUtl",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "container",
+          "value": null
+        },
+        {
+          "fieldLabel": "로그아웃",
+          "id": "btnLogout",
+          "itemCount": null,
+          "items": [],
+          "text": "로그아웃",
+          "type": "button",
+          "value": "로그아웃"
+        },
+        {
+          "fieldLabel": "나의업무",
+          "id": "cmbMyWrk",
+          "itemCount": 2,
+          "items": [
+            {
+              "label": "=== 나의업무 선택 ===",
+              "value": "나의업무"
+            },
+            {
+              "label": "",
+              "value": ""
+            }
+          ],
+          "text": "",
+          "type": "combobox",
+          "value": null
+        },
+        {
+          "fieldLabel": "학년도",
+          "id": "cmbShlYear",
+          "itemCount": 3,
+          "items": [
+            {
+              "label": "ːːː학년도ːːː",
+              "value": ""
+            },
+            {
+              "label": "2026학년도",
+              "value": "2026"
+            },
+            {
+              "label": "2025학년도",
+              "value": "2025"
+            }
+          ],
+          "text": "ːːː학년도ːːː",
+          "type": "combobox",
+          "value": ""
+        },
+        {
+          "fieldLabel": "튜토리얼",
+          "id": "btnTutorial",
+          "itemCount": null,
+          "items": [],
+          "text": "튜토리얼",
+          "type": "button",
+          "value": "튜토리얼"
+        },
+        {
+          "fieldLabel": "챗봇",
+          "id": "btnChatBot",
+          "itemCount": null,
+          "items": [],
+          "text": "챗봇",
+          "type": "button",
+          "value": "챗봇"
+        },
+        {
+          "fieldLabel": "사용자지원",
+          "id": "btnSupport",
+          "itemCount": null,
+          "items": [],
+          "text": "사용자지원",
+          "type": "button",
+          "value": "사용자지원"
+        },
+        {
+          "fieldLabel": "",
+          "id": "cmbTheme",
+          "itemCount": 2,
+          "items": [
+            {
+              "label": "Light",
+              "value": ""
+            },
+            {
+              "label": "Dark",
+              "value": "dark"
+            }
+          ],
+          "text": "",
+          "type": "combobox",
+          "value": null
+        },
+        {
+          "fieldLabel": "",
+          "id": "grp9",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "container",
+          "value": null
+        },
+        {
+          "fieldLabel": "폰트 확대",
+          "id": "btnZmIn2",
+          "itemCount": null,
+          "items": [],
+          "text": "+",
+          "type": "button",
+          "value": "+"
+        },
+        {
+          "fieldLabel": "폰트 축소",
+          "id": "btnZmOut2",
+          "itemCount": null,
+          "items": [],
+          "text": "-",
+          "type": "button",
+          "value": "-"
+        },
+        {
+          "fieldLabel": "",
+          "id": "grpViewZm",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "container",
+          "value": null
+        },
+        {
+          "fieldLabel": "화면 확대",
+          "id": "btnZmIn",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "button",
+          "value": ""
+        },
+        {
+          "fieldLabel": "화면 축소",
+          "id": "btnZmOut",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "button",
+          "value": ""
+        },
+        {
+          "fieldLabel": "",
+          "id": "grpNavbr",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "container",
+          "value": null
+        },
+        {
+          "fieldLabel": "",
+          "id": "btn_allMenu",
+          "itemCount": null,
+          "items": [],
+          "text": "▤",
+          "type": "button",
+          "value": "▤"
+        },
+        {
+          "fieldLabel": "메뉴",
+          "id": "navMn",
+          "itemCount": 0,
+          "items": [],
+          "text": "",
+          "type": "navigationbar",
+          "value": null
+        },
+        {
+          "fieldLabel": "",
+          "id": "grpAsd",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "container",
+          "value": null
+        },
+        {
+          "fieldLabel": "",
+          "id": "grpTlbrSrch",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "container",
+          "value": null
+        },
+        {
+          "fieldLabel": "",
+          "id": "",
+          "itemCount": null,
+          "items": [],
+          "text": "메뉴검색",
+          "type": "output",
+          "value": "메뉴검색"
+        },
+        {
+          "fieldLabel": "",
+          "id": "grpTlbrSrchItems",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "container",
+          "value": null
+        },
+        {
+          "fieldLabel": "메뉴검색",
+          "id": "siFindMenu",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "searchinput",
+          "value": ""
+        },
+        {
+          "fieldLabel": "",
+          "id": "grpTlbrSrchItemsBody",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "container",
+          "value": null
+        },
+        {
+          "fieldLabel": "",
+          "id": "grpCmplnt",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "container",
+          "value": null
+        },
+        {
+          "fieldLabel": "",
+          "id": "grpCmplntTop",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "container",
+          "value": null
+        },
+        {
+          "fieldLabel": "",
+          "id": "",
+          "itemCount": null,
+          "items": [],
+          "text": "민원현황 알림",
+          "type": "output",
+          "value": "민원현황 알림"
+        },
+        {
+          "fieldLabel": "민원현황 새로고침",
+          "id": "btnRefreshCmplnt",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "button",
+          "value": ""
+        },
+        {
+          "fieldLabel": "",
+          "id": "grpCmplntSub",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "container",
+          "value": null
+        },
+        {
+          "fieldLabel": "",
+          "id": "snavCmplnt",
+          "itemCount": 5,
+          "items": [
+            {
+              "label": "미접수",
+              "value": "MENU_ID1"
+            },
+            {
+              "label": "처리요청",
+              "value": "MENU_ID2"
+            },
+            {
+              "label": "기한임박",
+              "value": "MENU_ID3"
+            },
+            {
+              "label": "처리지연",
+              "value": "MENU_ID4"
+            },
+            {
+              "label": "미확인",
+              "value": "MENU_ID5"
+            }
+          ],
+          "text": "",
+          "type": "sidenavigation",
+          "value": null
+        },
+        {
+          "fieldLabel": "",
+          "id": "grpTlbrFav",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "container",
+          "value": null
+        },
+        {
+          "fieldLabel": "",
+          "id": "grpFavTop",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "container",
+          "value": null
+        },
+        {
+          "fieldLabel": "",
+          "id": "",
+          "itemCount": null,
+          "items": [],
+          "text": "즐겨찾기",
+          "type": "output",
+          "value": "즐겨찾기"
+        },
+        {
+          "fieldLabel": "즐겨찾기 새로고침",
+          "id": "btnRefreshFav",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "button",
+          "value": ""
+        },
+        {
+          "fieldLabel": "",
+          "id": "grpTlbrFavContants",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "container",
+          "value": null
+        },
+        {
+          "fieldLabel": "",
+          "id": "grp2",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "container",
+          "value": null
+        },
+        {
+          "fieldLabel": "",
+          "id": "",
+          "itemCount": null,
+          "items": [],
+          "text": "권한신청",
+          "type": "button",
+          "value": "권한신청"
+        },
+        {
+          "fieldLabel": "",
+          "id": "",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "button",
+          "value": ""
+        },
+        {
+          "fieldLabel": "",
+          "id": "grpPersonal",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "container",
+          "value": null
+        },
+        {
+          "fieldLabel": "",
+          "id": "grpPersonalTop",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "container",
+          "value": null
+        },
+        {
+          "fieldLabel": "",
+          "id": "",
+          "itemCount": null,
+          "items": [],
+          "text": "개인설정",
+          "type": "output",
+          "value": "개인설정"
+        },
+        {
+          "fieldLabel": "",
+          "id": "btnRefresh2",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "button",
+          "value": ""
+        },
+        {
+          "fieldLabel": "",
+          "id": "snavPersonal",
+          "itemCount": 9,
+          "items": [
+            {
+              "label": "테마설정",
+              "value": "personal01"
+            },
+            {
+              "label": "업무승인자관리",
+              "value": "personal02"
+            },
+            {
+              "label": "개인결재선관리",
+              "value": "personal21"
+            },
+            {
+              "label": "대리결재자지정",
+              "value": "personal22"
+            },
+            {
+              "label": "전결자지정",
+              "value": "personal23"
+            },
+            {
+              "label": "대리결재현황조회",
+              "value": "personal24"
+            },
+            {
+              "label": "개인정보접속현황",
+              "value": "personal03"
+            },
+            {
+              "label": "2차인증",
+              "value": "personal05"
+            },
+            {
+              "label": "2차인증관리",
+              "value": "personal51"
+            }
+          ],
+          "text": "",
+          "type": "sidenavigation",
+          "value": null
+        },
+        {
+          "fieldLabel": "",
+          "id": "grpMyMn",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "container",
+          "value": null
+        },
+        {
+          "fieldLabel": "",
+          "id": "grpAppvlTop",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "container",
+          "value": null
+        },
+        {
+          "fieldLabel": "",
+          "id": "",
+          "itemCount": null,
+          "items": [],
+          "text": "승인사항",
+          "type": "output",
+          "value": "승인사항"
+        },
+        {
+          "fieldLabel": "승인사항 새로고침",
+          "id": "btnRefresh",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "button",
+          "value": ""
+        },
+        {
+          "fieldLabel": "",
+          "id": "snavAppvl",
+          "itemCount": 7,
+          "items": [
+            {
+              "label": "상신함",
+              "value": "AMWAM40011"
+            },
+            {
+              "label": "미결/협조함",
+              "value": "AMWAM40012"
+            },
+            {
+              "label": "공람함",
+              "value": "AMWAM40013"
+            },
+            {
+              "label": "예결함",
+              "value": "AMWAM40014"
+            },
+            {
+              "label": "기결함",
+              "value": "AMWAM40015"
+            },
+            {
+              "label": "반려함",
+              "value": "AMWAM40016"
+            },
+            {
+              "label": "메시지함",
+              "value": "AMWAM40017"
+            }
+          ],
+          "text": "",
+          "type": "sidenavigation",
+          "value": null
+        },
+        {
+          "fieldLabel": "",
+          "id": "grp1",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "container",
+          "value": null
+        },
+        {
+          "fieldLabel": "",
+          "id": "",
+          "itemCount": null,
+          "items": [],
+          "text": "기본 메뉴",
+          "type": "output",
+          "value": "기본 메뉴"
+        },
+        {
+          "fieldLabel": "기본메뉴 설정",
+          "id": "btnSetting",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "button",
+          "value": ""
+        },
+        {
+          "fieldLabel": "",
+          "id": "snavMyMn",
+          "itemCount": 72,
+          "items": [
+            {
+              "label": "권한관리",
+              "value": "AMCMC30008"
+            },
+            {
+              "label": "교무자료권한승인관리",
+              "value": "AMCMC40105"
+            },
+            {
+              "label": "복무",
+              "value": "AMCMC30015"
+            },
+            {
+              "label": "개인근무상황관리",
+              "value": "AMCMC40043"
+            },
+            {
+              "label": "일일근무상황조회",
+              "value": "AMCMC40044"
+            },
+            {
+              "label": "개인초과근무관리",
+              "value": "AMCMC40045"
+            },
+            {
+              "label": "개인출장관리",
+              "value": "AMCMC40046"
+            },
+            {
+              "label": "연가일수관리",
+              "value": "AMCMC40047"
+            },
+            {
+              "label": "개인유연근무관리",
+              "value": "AMCMC40048"
+            },
+            {
+              "label": "개인당직관리",
+              "value": "AMCMC40049"
+            },
+            {
+              "label": "개인항공마일리지관리",
+              "value": "AMCMC40050"
+            },
+            {
+              "label": "육아시간신청조회",
+              "value": "AMCMC40051"
+            }
+          ],
+          "text": "",
+          "type": "sidenavigation",
+          "value": null
+        },
+        {
+          "fieldLabel": "",
+          "id": "grpMn",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "container",
+          "value": null
+        },
+        {
+          "fieldLabel": "",
+          "id": "snavMn",
+          "itemCount": 0,
+          "items": [],
+          "text": "",
+          "type": "sidenavigation",
+          "value": null
+        },
+        {
+          "fieldLabel": "",
+          "id": "grpTlbrNt",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "container",
+          "value": null
+        },
+        {
+          "fieldLabel": "",
+          "id": "grpTlbrNtTitle",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "container",
+          "value": null
+        },
+        {
+          "fieldLabel": "",
+          "id": "",
+          "itemCount": null,
+          "items": [],
+          "text": "나의 할일",
+          "type": "output",
+          "value": "나의 할일"
+        },
+        {
+          "fieldLabel": "나의 할일 새로고침",
+          "id": "btnRefreshTlbrNt",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "button",
+          "value": null
+        },
+        {
+          "fieldLabel": "나의 할일 모두보기",
+          "id": "btnTodoMore",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "button",
+          "value": null
+        },
+        {
+          "fieldLabel": "",
+          "id": "grp6",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "container",
+          "value": null
+        },
+        {
+          "fieldLabel": "",
+          "id": "",
+          "itemCount": null,
+          "items": [],
+          "text": "미확인건수",
+          "type": "output",
+          "value": "미확인건수"
+        },
+        {
+          "fieldLabel": "",
+          "id": "newCnt",
+          "itemCount": null,
+          "items": [],
+          "text": "10",
+          "type": "output",
+          "value": "10"
+        },
+        {
+          "fieldLabel": "",
+          "id": "grpTlbrNtContants",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "container",
+          "value": null
+        },
+        {
+          "fieldLabel": "",
+          "id": "",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "container",
+          "value": null
+        },
+        {
+          "fieldLabel": "미확인(link) 결재요청하신 근무상황 신청이 완결되었습니다.",
+          "id": "",
+          "itemCount": null,
+          "items": [],
+          "text": "미확인(link) 결재요청하신 근무상황 신청이 완결되었습니다.",
+          "type": "button",
+          "value": "(link) 결재요청하신 근무상황 신청이 완결되었습니다."
+        },
+        {
+          "fieldLabel": "미확인 표시 이미지",
+          "id": "",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "output",
+          "value": null
+        },
+        {
+          "fieldLabel": "",
+          "id": "",
+          "itemCount": null,
+          "items": [],
+          "text": "김경영(화천초등학교) 26.06.24",
+          "type": "output",
+          "value": "김경영(화천초등학교) 26.06.24"
+        },
+        {
+          "fieldLabel": "",
+          "id": "",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "container",
+          "value": null
+        },
+        {
+          "fieldLabel": "미확인(link) 결재요청하신 근무상황 신청이 완결되었습니다.",
+          "id": "",
+          "itemCount": null,
+          "items": [],
+          "text": "미확인(link) 결재요청하신 근무상황 신청이 완결되었습니다.",
+          "type": "button",
+          "value": "(link) 결재요청하신 근무상황 신청이 완결되었습니다."
+        },
+        {
+          "fieldLabel": "미확인 표시 이미지",
+          "id": "",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "output",
+          "value": null
+        },
+        {
+          "fieldLabel": "",
+          "id": "",
+          "itemCount": null,
+          "items": [],
+          "text": "박순현(화천초등학교) 26.06.18",
+          "type": "output",
+          "value": "박순현(화천초등학교) 26.06.18"
+        },
+        {
+          "fieldLabel": "",
+          "id": "",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "container",
+          "value": null
+        },
+        {
+          "fieldLabel": "미확인(link) 결재요청하신 근무상황 신청이 완결되었습니다.",
+          "id": "",
+          "itemCount": null,
+          "items": [],
+          "text": "미확인(link) 결재요청하신 근무상황 신청이 완결되었습니다.",
+          "type": "button",
+          "value": "(link) 결재요청하신 근무상황 신청이 완결되었습니다."
+        },
+        {
+          "fieldLabel": "미확인 표시 이미지",
+          "id": "",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "output",
+          "value": null
+        },
+        {
+          "fieldLabel": "",
+          "id": "",
+          "itemCount": null,
+          "items": [],
+          "text": "김경영(화천초등학교) 26.06.18",
+          "type": "output",
+          "value": "김경영(화천초등학교) 26.06.18"
+        },
+        {
+          "fieldLabel": "",
+          "id": "",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "container",
+          "value": null
+        },
+        {
+          "fieldLabel": "미확인(link) 결재요청하신 근무상황 신청이 완결되었습니다.",
+          "id": "",
+          "itemCount": null,
+          "items": [],
+          "text": "미확인(link) 결재요청하신 근무상황 신청이 완결되었습니다.",
+          "type": "button",
+          "value": "(link) 결재요청하신 근무상황 신청이 완결되었습니다."
+        },
+        {
+          "fieldLabel": "미확인 표시 이미지",
+          "id": "",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "output",
+          "value": null
+        },
+        {
+          "fieldLabel": "",
+          "id": "",
+          "itemCount": null,
+          "items": [],
+          "text": "김경영(화천초등학교) 26.06.15",
+          "type": "output",
+          "value": "김경영(화천초등학교) 26.06.15"
+        },
+        {
+          "fieldLabel": "",
+          "id": "",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "container",
+          "value": null
+        },
+        {
+          "fieldLabel": "미확인(link) 결재요청하신 초과근무 신청이 완결되었습니다.",
+          "id": "",
+          "itemCount": null,
+          "items": [],
+          "text": "미확인(link) 결재요청하신 초과근무 신청이 완결되었습니다.",
+          "type": "button",
+          "value": "(link) 결재요청하신 초과근무 신청이 완결되었습니다."
+        },
+        {
+          "fieldLabel": "미확인 표시 이미지",
+          "id": "",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "output",
+          "value": null
+        },
+        {
+          "fieldLabel": "",
+          "id": "",
+          "itemCount": null,
+          "items": [],
+          "text": "박순현(화천초등학교) 26.04.27",
+          "type": "output",
+          "value": "박순현(화천초등학교) 26.04.27"
+        },
+        {
+          "fieldLabel": "",
+          "id": "",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "container",
+          "value": null
+        },
+        {
+          "fieldLabel": "미확인(link) 결재요청하신 출장 신청이 완결되었습니다.",
+          "id": "",
+          "itemCount": null,
+          "items": [],
+          "text": "미확인(link) 결재요청하신 출장 신청이 완결되었습니다.",
+          "type": "button",
+          "value": "(link) 결재요청하신 출장 신청이 완결되었습니다."
+        },
+        {
+          "fieldLabel": "미확인 표시 이미지",
+          "id": "",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "output",
+          "value": null
+        },
+        {
+          "fieldLabel": "",
+          "id": "",
+          "itemCount": null,
+          "items": [],
+          "text": "김경영(화천초등학교) 26.04.21",
+          "type": "output",
+          "value": "김경영(화천초등학교) 26.04.21"
+        },
+        {
+          "fieldLabel": "",
+          "id": "",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "container",
+          "value": null
+        },
+        {
+          "fieldLabel": "미확인(link) 결재요청하신 초과근무 신청이 완결되었습니다.",
+          "id": "",
+          "itemCount": null,
+          "items": [],
+          "text": "미확인(link) 결재요청하신 초과근무 신청이 완결되었습니다.",
+          "type": "button",
+          "value": "(link) 결재요청하신 초과근무 신청이 완결되었습니다."
+        },
+        {
+          "fieldLabel": "미확인 표시 이미지",
+          "id": "",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "output",
+          "value": null
+        },
+        {
+          "fieldLabel": "",
+          "id": "",
+          "itemCount": null,
+          "items": [],
+          "text": "박순현(화천초등학교) 26.04.17",
+          "type": "output",
+          "value": "박순현(화천초등학교) 26.04.17"
+        },
+        {
+          "fieldLabel": "",
+          "id": "",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "container",
+          "value": null
+        },
+        {
+          "fieldLabel": "미확인(link) 결재요청하신 초과근무 신청이 완결되었습니다.",
+          "id": "",
+          "itemCount": null,
+          "items": [],
+          "text": "미확인(link) 결재요청하신 초과근무 신청이 완결되었습니다.",
+          "type": "button",
+          "value": "(link) 결재요청하신 초과근무 신청이 완결되었습니다."
+        },
+        {
+          "fieldLabel": "미확인 표시 이미지",
+          "id": "",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "output",
+          "value": null
+        },
+        {
+          "fieldLabel": "",
+          "id": "",
+          "itemCount": null,
+          "items": [],
+          "text": "박순현(화천초등학교) 26.04.17",
+          "type": "output",
+          "value": "박순현(화천초등학교) 26.04.17"
+        },
+        {
+          "fieldLabel": "",
+          "id": "",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "container",
+          "value": null
+        },
+        {
+          "fieldLabel": "미확인(link) 결재요청하신 초과근무 신청이 완결되었습니다.",
+          "id": "",
+          "itemCount": null,
+          "items": [],
+          "text": "미확인(link) 결재요청하신 초과근무 신청이 완결되었습니다.",
+          "type": "button",
+          "value": "(link) 결재요청하신 초과근무 신청이 완결되었습니다."
+        },
+        {
+          "fieldLabel": "미확인 표시 이미지",
+          "id": "",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "output",
+          "value": null
+        },
+        {
+          "fieldLabel": "",
+          "id": "",
+          "itemCount": null,
+          "items": [],
+          "text": "김경영(화천초등학교) 26.04.03",
+          "type": "output",
+          "value": "김경영(화천초등학교) 26.04.03"
+        },
+        {
+          "fieldLabel": "",
+          "id": "",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "container",
+          "value": null
+        },
+        {
+          "fieldLabel": "미확인(link) 결재요청하신 출장 신청이 완결되었습니다.",
+          "id": "",
+          "itemCount": null,
+          "items": [],
+          "text": "미확인(link) 결재요청하신 출장 신청이 완결되었습니다.",
+          "type": "button",
+          "value": "(link) 결재요청하신 출장 신청이 완결되었습니다."
+        },
+        {
+          "fieldLabel": "미확인 표시 이미지",
+          "id": "",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "output",
+          "value": null
+        },
+        {
+          "fieldLabel": "",
+          "id": "",
+          "itemCount": null,
+          "items": [],
+          "text": "김경영(화천초등학교) 26.04.02",
+          "type": "output",
+          "value": "김경영(화천초등학교) 26.04.02"
+        },
+        {
+          "fieldLabel": "기본메뉴 및 승인사항",
+          "id": "btnTlbrMyMn",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "button",
+          "value": null
+        },
+        {
+          "fieldLabel": "화면 메뉴",
+          "id": "btnTlbrMn",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "button",
+          "value": null
+        },
+        {
+          "fieldLabel": "미확인 나의 할일",
+          "id": "btnTlbrNt",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "button",
+          "value": null
+        },
+        {
+          "fieldLabel": "메뉴 검색",
+          "id": "btnTlbrSrch",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "button",
+          "value": null
+        },
+        {
+          "fieldLabel": "즐겨찾기",
+          "id": "btnTlbrFav",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "button",
+          "value": null
+        },
+        {
+          "fieldLabel": "개인설정",
+          "id": "btnTlbrPersonal",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "button",
+          "value": null
+        },
+        {
+          "fieldLabel": "민원 현황 알림",
+          "id": "btnTlbrCmplnt",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "button",
+          "value": null
+        },
+        {
+          "fieldLabel": "나의업무",
+          "id": "btnTlbrWrk",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "button",
+          "value": null
+        },
+        {
+          "fieldLabel": "",
+          "id": "btnChgLay",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "button",
+          "value": null
+        },
+        {
+          "fieldLabel": "승인업무",
+          "id": "btnTlbrApprvl",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "button",
+          "value": null
+        },
+        {
+          "fieldLabel": "",
+          "id": "mdiCn",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "mdifolder",
+          "value": null
+        },
+        {
+          "fieldLabel": "",
+          "id": "grpMdiTabUtils",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "container",
+          "value": null
+        },
+        {
+          "fieldLabel": "탭 아이템 전체 닫기",
+          "id": "btnTabClose",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "button",
+          "value": ""
+        },
+        {
+          "fieldLabel": "활성 및 고정 탭 아이템 이외 전체 닫기",
+          "id": "btnTabClose2",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "button",
+          "value": ""
+        },
+        {
+          "fieldLabel": "탭 아이템 목록 보기",
+          "id": "btnShowTabList",
+          "itemCount": null,
+          "items": [],
+          "text": "▤",
+          "type": "button",
+          "value": "▤"
+        },
+        {
+          "fieldLabel": "전체 화면",
+          "id": "btnExpandContent",
+          "itemCount": null,
+          "items": [],
+          "text": "⇱",
+          "type": "button",
+          "value": "⇱"
+        },
+        {
+          "fieldLabel": "탭 표시줄 고정",
+          "id": "btnMdiHdPause",
+          "itemCount": null,
+          "items": [],
+          "text": "⇵",
+          "type": "button",
+          "value": "⇵"
+        },
+        {
+          "fieldLabel": "",
+          "id": "ea1",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "embeddedapp",
+          "value": null
+        },
+        {
+          "fieldLabel": "",
+          "id": "cbxLnbTg",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "checkbox",
+          "value": ""
+        },
+        {
+          "fieldLabel": "메뉴 접기",
+          "id": "btnToggle",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "button",
+          "value": null
+        }
+      ],
+      "datasets": [
+        {
+          "cols": [],
+          "id": "dsAllMenu",
+          "rowCount": 0,
+          "sample": {},
+          "type": "dataset"
+        },
+        {
+          "cols": [],
+          "id": "dvAllMenuNew",
+          "rowCount": 0,
+          "sample": {},
+          "type": "dataview"
+        },
+        {
+          "cols": [],
+          "id": "dsAllMenuNew",
+          "rowCount": 0,
+          "sample": {},
+          "type": "dataset"
+        },
+        {
+          "cols": [],
+          "id": "dvAllMenuNew2",
+          "rowCount": 0,
+          "sample": {},
+          "type": "dataview"
+        },
+        {
+          "cols": [],
+          "id": "dsAllMenuNew2",
+          "rowCount": 0,
+          "sample": {},
+          "type": "dataset"
+        },
+        {
+          "cols": [],
+          "id": "dsAllMenuLocal",
+          "rowCount": 30,
+          "sample": {},
+          "type": "dataset"
+        },
+        {
+          "cols": [],
+          "id": "dsMyWrk",
+          "rowCount": 1,
+          "sample": {},
+          "type": "dataset"
+        },
+        {
+          "cols": [],
+          "id": "dsApproval",
+          "rowCount": 7,
+          "sample": {},
+          "type": "dataset"
+        },
+        {
+          "cols": [],
+          "id": "dsBaseMenu",
+          "rowCount": 72,
+          "sample": {},
+          "type": "dataset"
+        },
+        {
+          "cols": [],
+          "id": "dsTodo",
+          "rowCount": 10,
+          "sample": {},
+          "type": "dataset"
+        },
+        {
+          "cols": [],
+          "id": "dsFavorites",
+          "rowCount": 2,
+          "sample": {},
+          "type": "dataset"
+        },
+        {
+          "cols": [],
+          "id": "dsComplaint",
+          "rowCount": 5,
+          "sample": {},
+          "type": "dataset"
+        },
+        {
+          "cols": [],
+          "id": "dsNotice",
+          "rowCount": 0,
+          "sample": {},
+          "type": "dataset"
+        },
+        {
+          "cols": [],
+          "id": "ds2ndCertify",
+          "rowCount": 3,
+          "sample": {},
+          "type": "dataset"
+        },
+        {
+          "cols": [],
+          "id": "dsPersonal",
+          "rowCount": 9,
+          "sample": {},
+          "type": "dataset"
+        },
+        {
+          "cols": [],
+          "id": "dsMainLogo",
+          "rowCount": 19,
+          "sample": {},
+          "type": "dataset"
+        },
+        {
+          "cols": [],
+          "id": "dsShlYear",
+          "rowCount": 2,
+          "sample": {},
+          "type": "dataset"
+        },
+        {
+          "cols": [],
+          "id": "dsCVAAuthChg",
+          "rowCount": 0,
+          "sample": {},
+          "type": "dataset"
+        },
+        {
+          "cols": [],
+          "id": "dmUserInfo",
+          "rowCount": null,
+          "sample": {},
+          "type": "datamap"
+        },
+        {
+          "cols": [],
+          "id": "dmGlobalConfig",
+          "rowCount": null,
+          "sample": {},
+          "type": "datamap"
+        },
+        {
+          "cols": [],
+          "id": "dmMenuParam",
+          "rowCount": null,
+          "sample": {},
+          "type": "datamap"
+        },
+        {
+          "cols": [],
+          "id": "dmMenuFind",
+          "rowCount": null,
+          "sample": {},
+          "type": "datamap"
+        },
+        {
+          "cols": [],
+          "id": "dmTodo",
+          "rowCount": null,
+          "sample": {},
+          "type": "datamap"
+        },
+        {
+          "cols": [],
+          "id": "dmFavorites",
+          "rowCount": null,
+          "sample": {},
+          "type": "datamap"
+        },
+        {
+          "cols": [],
+          "id": "dmUserInfoSub",
+          "rowCount": null,
+          "sample": {},
+          "type": "datamap"
+        },
+        {
+          "cols": [],
+          "id": "dmLinkUrl",
+          "rowCount": null,
+          "sample": {},
+          "type": "datamap"
+        },
+        {
+          "cols": [],
+          "id": "dmReLogin",
+          "rowCount": null,
+          "sample": {},
+          "type": "datamap"
+        },
+        {
+          "cols": [],
+          "id": "dmShlYear",
+          "rowCount": null,
+          "sample": {},
+          "type": "datamap"
+        },
+        {
+          "cols": [],
+          "id": "AUTHDATA",
+          "rowCount": null,
+          "sample": {},
+          "type": "datamap"
+        },
+        {
+          "cols": [],
+          "id": "dmCVASearch",
+          "rowCount": null,
+          "sample": {},
+          "type": "datamap"
+        },
+        {
+          "cols": [],
+          "id": "dmUserConfInfo",
+          "rowCount": null,
+          "sample": {},
+          "type": "datamap"
+        },
+        {
+          "cols": [],
+          "id": "dmCtpvNeisLnkNm",
+          "rowCount": null,
+          "sample": {},
+          "type": "datamap"
+        },
+        {
+          "cols": [],
+          "id": "subOnLoad",
+          "rowCount": null,
+          "sample": {},
+          "type": "submission"
+        },
+        {
+          "cols": [],
+          "id": "subLogout",
+          "rowCount": null,
+          "sample": {},
+          "type": "submission"
+        },
+        {
+          "cols": [],
+          "id": "subOnLoad_json",
+          "rowCount": null,
+          "sample": {},
+          "type": "submission"
+        },
+        {
+          "cols": [],
+          "id": "subMenuToFile",
+          "rowCount": null,
+          "sample": {},
+          "type": "submission"
+        },
+        {
+          "cols": [],
+          "id": "subMenu",
+          "rowCount": null,
+          "sample": {},
+          "type": "submission"
+        },
+        {
+          "cols": [],
+          "id": "subReLogin",
+          "rowCount": null,
+          "sample": {},
+          "type": "submission"
+        },
+        {
+          "cols": [],
+          "id": "subMyInfo",
+          "rowCount": null,
+          "sample": {},
+          "type": "submission"
+        },
+        {
+          "cols": [],
+          "id": "subApproval",
+          "rowCount": null,
+          "sample": {},
+          "type": "submission"
+        },
+        {
+          "cols": [],
+          "id": "subBaseMenu",
+          "rowCount": null,
+          "sample": {},
+          "type": "submission"
+        },
+        {
+          "cols": [],
+          "id": "subTodo",
+          "rowCount": null,
+          "sample": {},
+          "type": "submission"
+        },
+        {
+          "cols": [],
+          "id": "subTodoUpt",
+          "rowCount": null,
+          "sample": {},
+          "type": "submission"
+        },
+        {
+          "cols": [],
+          "id": "subFavorites",
+          "rowCount": null,
+          "sample": {},
+          "type": "submission"
+        },
+        {
+          "cols": [],
+          "id": "subFavoritesDel",
+          "rowCount": null,
+          "sample": {},
+          "type": "submission"
+        },
+        {
+          "cols": [],
+          "id": "subComplaint",
+          "rowCount": null,
+          "sample": {},
+          "type": "submission"
+        },
+        {
+          "cols": [],
+          "id": "sub2ndCertify",
+          "rowCount": null,
+          "sample": {},
+          "type": "submission"
+        },
+        {
+          "cols": [],
+          "id": "subNotice",
+          "rowCount": null,
+          "sample": {},
+          "type": "submission"
+        },
+        {
+          "cols": [],
+          "id": "subUserSession",
+          "rowCount": null,
+          "sample": {},
+          "type": "submission"
+        },
+        {
+          "cols": [],
+          "id": "subShlYear",
+          "rowCount": null,
+          "sample": {},
+          "type": "submission"
+        },
+        {
+          "cols": [],
+          "id": "subAuth",
+          "rowCount": null,
+          "sample": {},
+          "type": "submission"
+        }
+      ],
+      "idx": 0,
+      "title": ""
+    },
+    {
+      "appId": "udc/com/loadmask",
+      "controls": [
+        {
+          "fieldLabel": "",
+          "id": "grp1",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "container",
+          "value": null
+        },
+        {
+          "fieldLabel": "",
+          "id": "optRowCount",
+          "itemCount": null,
+          "items": [],
+          "text": "건수: 0",
+          "type": "output",
+          "value": "건수: 0"
+        },
+        {
+          "fieldLabel": "",
+          "id": "progressbar",
+          "itemCount": null,
+          "items": [],
+          "text": "0",
+          "type": "progress",
+          "value": "0"
+        },
+        {
+          "fieldLabel": "로딩 중입니다.",
+          "id": "imgLoading",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "output",
+          "value": ""
+        },
+        {
+          "fieldLabel": "",
+          "id": "htmlLoding",
+          "itemCount": null,
+          "items": [],
+          "text": "",
+          "type": "htmlsnippet",
+          "value": "<div class=\"lds-roller\"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div><div class=\"lds-text\">로딩 중입니다.<span id=\"lb_ldsTimeTxt\" class=\"lds-time\" style=\"display:none;\"></span></div>"
+        }
+      ],
+      "datasets": [],
+      "idx": 1,
+      "title": ""
+    }
+  ]
+}

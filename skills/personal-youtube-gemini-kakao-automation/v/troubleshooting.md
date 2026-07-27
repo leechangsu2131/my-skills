@@ -662,6 +662,94 @@ Get-Content .\run.log -Tail 25
 | 2026-06-11 | `Gemini response was empty` (스케줄러) 기록 — DOM fallback·알림 추가 검토 예정 |
 | 2026-06-12 | 인코딩 깨짐으로 인한 검증 오류 우회(`.env` 수정), 백그라운드 DOM 추출 오류 방지(`HEADLESS=true`), 스크린샷 디버깅 기능 추가 |
 | 2026-06-17 | 긴 자막 스크립트가 잘려 일부만 요약되는 문제 수정 (`GEMINI_INPUT_MAX_CHARS=150000` 상향) |
+| 2026-07-20 | 백로그 모드: `BACKLOG_LIMIT`/`STOP_ON_ERROR`/요약파일 스킵, 영상 1건씩 처리 |
+| 2026-07-20 | 제목 형식 변경 대응: `[모닝브리프 / 26.07.14]` mid-title + `yy.mm.dd` 파싱 |
+| 2026-07-20 | English flat `/streams` 제목은 메타데이터로 한국어 제목·날짜 재확인 |
+| 2026-07-20 | 자막: `TRANSCRIPT_PREFER_YTDLP` + VTT 태그 제거, ko 우선 |
+
+---
+
+## 백로그 / catch-up (2026-07-20)
+
+### 증상: 여러 날을 한꺼번에 요약하려다 Gemini 세션·탐지 실패
+
+**원인**
+
+- 날짜 범위를 넓게 잡고 한 번에 다 돌리면 실패 시 원인 추적이 어려움
+- 제목 prefix가 바뀌어 mid-title `[모닝브리프 / 26.07.xx]` 를 `startswith`로 못 잡음
+- `youtube-transcript-api` ParseError → 장시간 재시도
+
+**해결**
+
+1. `BACKLOG_LIMIT=1` → 성공 확인 → `2~3` → 나머지
+2. `BACKLOG_STOP_ON_ERROR=true` (기본)
+3. `BACKLOG_SKIP_EXISTING_SUMMARY=true` — 이미 md 있으면 스킵
+4. 제목 마커/날짜 파싱 확장 + streams 메타데이터 fallback
+5. yt-dlp 자막 우선 (`TRANSCRIPT_PREFER_YTDLP=true`)
+
+**검증**
+
+- 2026-07-10 1건: Discord 204 + `backlog_summaries/2026-07-10_b1mLaVoNwWg.md`
+- 이후 7/13~15 LIMIT=3 검증
+
+### 증상: Gem 이름 검증 실패 (인코딩 깨짐) 후에도 진행
+
+**로그**
+
+```
+Expected Gem '...깨짐...' not found on page.
+Chat input is available; continuing despite Gem name check.
+```
+
+**대응**
+
+- 채팅 입력이 보이면 계속 진행 (이미 반영)
+- `.env`에 `GEMINI_GEM_EXPECTED_NAME=스크립트 정리 도우미` UTF-8 유지
+
+### 파일
+
+| 파일 | 역할 |
+|------|------|
+| `run_backlog.ps1` | 백로그 실행 |
+| `list_backlog.py` | 대상 dry-run |
+| `backlog_summaries/` | 영상당 1요약 md |
+
+---
+
+### 증상: `Prompt filled in input box: 32000` (JS는 4만자+)
+
+**원인**
+
+- Playwright `inner_text()`가 contenteditable 표시 길이를 ~32k로 잘라 보고함
+- JS `textContent` 주입은 전체 길이를 보고함 (`JS editor fill reported`)
+
+**대응**
+
+- 실제 전송은 JS fill 기준. `filled_len < 50` 실패만 치명적
+- 응답이 유난히 짧으면(`< 400`이면 이미 실패) 해당 video_id를 `processed.json`에서 제거하고 `BACKLOG_FORCE=true`로 재실행
+
+---
+
+### 증상: 7/2~7/9 요약이 엉성하거나 여러 날이 섞인 시험본
+
+**원인**
+
+- 초기에 일괄 요약·저품질 결과물을 `backlog_summaries/`에 남겨 두고 스킵됨
+- `BACKLOG_FORCE`가 목록에만 적용되고 `process_video`의 `processed.json` 체크로 재실행이 막힘
+
+**해결 (2026-07-20)**
+
+1. 시험본을 `backlog_summaries/_trial_sparse/`로 이동
+2. `BACKLOG_FORCE`가 `process_video`까지 적용되도록 수정
+3. 매 영상 `_start_new_gem_chat()` 강제
+4. `GEMINI_MIN_RESPONSE_CHARS=1500`
+5. 일자별 `LIMIT=1` → 검증 → `LIMIT=2~4` 재생성
+
+**검증**
+
+- 2026-07-02 재생성: 한국어 종목명·수치 보존, ~17KB md + Discord 204
+- 2026-07-03 동일 패턴 성공 후 7/6~7/9 재생성
+- 7/9는 Gem 응답이 ~2.5~3k로 짧을 수 있음(일자별 단일 요약은 유지). 부족하면 `BACKLOG_FORCE=1`로 해당일만 재실행
 
 ---
 

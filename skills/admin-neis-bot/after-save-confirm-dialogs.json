@@ -1,0 +1,12 @@
+[
+  {
+    "cls": "cl-control cl-dialog cl-resizable modal-msg",
+    "h": 218,
+    "i": 26,
+    "left": 770,
+    "role": "dialog",
+    "text": "알림 자료의 저장이 완료되었습니다. 확인",
+    "top": 347,
+    "w": 380
+  }
+]

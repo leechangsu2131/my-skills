@@ -1,0 +1,179 @@
+{
+  "applyDraft": true,
+  "changes": [
+    {
+      "alreadyTarget": false,
+      "currentInfo": "01|20048|lee2131|4||",
+      "currentLabel": "도덕 / (이창수(lee2131))",
+      "day": "mon",
+      "period": "5",
+      "rowIndex": 4,
+      "targetInfo": "01|20057|sch9901|4||",
+      "targetLabel": "체육(홍성철(sch9901))",
+      "ymd": "20260921"
+    },
+    {
+      "alreadyTarget": false,
+      "currentInfo": "01|20063|lee2131|4||",
+      "currentLabel": "미술 / (이창수(lee2131))",
+      "day": "tue",
+      "period": "5",
+      "rowIndex": 4,
+      "targetInfo": "01|20057|sch9901|4||",
+      "targetLabel": "체육(홍성철(sch9901))",
+      "ymd": "20260922"
+    },
+    {
+      "alreadyTarget": false,
+      "currentInfo": "01|20060|lee2131|4||",
+      "currentLabel": "음악 / (이창수(lee2131))",
+      "day": "wed",
+      "period": "5",
+      "rowIndex": 4,
+      "targetInfo": "01|20057|sch9901|4||",
+      "targetLabel": "체육(홍성철(sch9901))",
+      "ymd": "20260923"
+    },
+    {
+      "alreadyTarget": false,
+      "currentInfo": "",
+      "currentLabel": "",
+      "day": "mon",
+      "period": "6",
+      "rowIndex": 5,
+      "targetInfo": "01|20057|sch9901|4||",
+      "targetLabel": "체육(홍성철(sch9901))",
+      "ymd": "20260921"
+    },
+    {
+      "alreadyTarget": false,
+      "currentInfo": "01|20063|lee2131|4||",
+      "currentLabel": "미술 / (이창수(lee2131))",
+      "day": "tue",
+      "period": "6",
+      "rowIndex": 5,
+      "targetInfo": "01|20057|sch9901|4||",
+      "targetLabel": "체육(홍성철(sch9901))",
+      "ymd": "20260922"
+    },
+    {
+      "alreadyTarget": false,
+      "currentInfo": "",
+      "currentLabel": "",
+      "day": "wed",
+      "period": "6",
+      "rowIndex": 5,
+      "targetInfo": "01|20057|sch9901|4||",
+      "targetLabel": "체육(홍성철(sch9901))",
+      "ymd": "20260923"
+    },
+    {
+      "alreadyTarget": false,
+      "currentInfo": "",
+      "currentLabel": "",
+      "day": "mon",
+      "period": "7",
+      "rowIndex": 6,
+      "targetInfo": "01|20057|sch9901|4||",
+      "targetLabel": "체육(홍성철(sch9901))",
+      "ymd": "20260921"
+    },
+    {
+      "alreadyTarget": false,
+      "currentInfo": "",
+      "currentLabel": "",
+      "day": "tue",
+      "period": "7",
+      "rowIndex": 6,
+      "targetInfo": "01|20057|sch9901|4||",
+      "targetLabel": "체육(홍성철(sch9901))",
+      "ymd": "20260922"
+    },
+    {
+      "alreadyTarget": false,
+      "currentInfo": "",
+      "currentLabel": "",
+      "day": "wed",
+      "period": "7",
+      "rowIndex": 6,
+      "targetInfo": "01|20057|sch9901|4||",
+      "targetLabel": "체육(홍성철(sch9901))",
+      "ymd": "20260923"
+    }
+  ],
+  "ok": true,
+  "selectedPe": {
+    "etbSbjtCd": "20057",
+    "etbSbjtNm": "체육",
+    "etbSbjtNmTcrNm": "체육(홍성철(sch9901))",
+    "rowIndex": 7,
+    "tcrIdfId": "sch9901",
+    "userNm": "홍성철"
+  },
+  "targetInfo": "01|20057|sch9901|4||",
+  "verification": [
+    {
+      "mon": {
+        "info": "01|20057|sch9901|4||",
+        "label": "체육 / (홍성철(sch9901))",
+        "ymd": "20260921"
+      },
+      "period": "5",
+      "tue": {
+        "info": "01|20057|sch9901|4||",
+        "label": "체육 / (홍성철(sch9901))",
+        "ymd": "20260922"
+      },
+      "wed": {
+        "info": "01|20057|sch9901|4||",
+        "label": "체육 / (홍성철(sch9901))",
+        "ymd": "20260923"
+      }
+    },
+    {
+      "mon": {
+        "info": "01|20057|sch9901|4||",
+        "label": "체육 / (홍성철(sch9901))",
+        "ymd": "20260921"
+      },
+      "period": "6",
+      "tue": {
+        "info": "01|20057|sch9901|4||",
+        "label": "체육 / (홍성철(sch9901))",
+        "ymd": "20260922"
+      },
+      "wed": {
+        "info": "01|20057|sch9901|4||",
+        "label": "체육 / (홍성철(sch9901))",
+        "ymd": "20260923"
+      }
+    },
+    {
+      "mon": {
+        "info": "01|20057|sch9901|4||",
+        "label": "체육 / (홍성철(sch9901))",
+        "ymd": "20260921"
+      },
+      "period": "7",
+      "tue": {
+        "info": "01|20057|sch9901|4||",
+        "label": "체육 / (홍성철(sch9901))",
+        "ymd": "20260922"
+      },
+      "wed": {
+        "info": "01|20057|sch9901|4||",
+        "label": "체육 / (홍성철(sch9901))",
+        "ymd": "20260923"
+      }
+    }
+  ],
+  "week": {
+    "__rowIndex": 4,
+    "event": "추석연휴(9/24), 추석(9/24), 추석(9/25), 추석(9/26), 토요휴업일(9/26)",
+    "sbjtNotCnt": "0",
+    "weekBgngYmd": "20260921",
+    "weekCnt": "5",
+    "weekCntNm": "5주차 (2026.09.21.~2026.09.27.)",
+    "weekEndYmd": "20260927"
+  }
+}

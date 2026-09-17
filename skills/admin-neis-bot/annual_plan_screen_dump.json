@@ -1,0 +1,48 @@
+{
+  "info": {
+    "appId": "edu/sw/els/edc/tm/els_edctm03_m00",
+    "buttons": [],
+    "combos": [],
+    "datasets": [],
+    "grids": [],
+    "others": [
+      {
+        "id": "tab1",
+        "type": "tabfolder"
+      },
+      {
+        "id": "grp1",
+        "type": "container"
+      },
+      {
+        "id": "emb1",
+        "type": "embeddedapp"
+      },
+      {
+        "id": "grp7",
+        "type": "container"
+      },
+      {
+        "id": "emb2",
+        "type": "embeddedapp"
+      },
+      {
+        "id": "grp13",
+        "type": "container"
+      },
+      {
+        "id": "emb3",
+        "type": "embeddedapp"
+      },
+      {
+        "id": "grp14",
+        "type": "container"
+      },
+      {
+        "id": "emb4",
+        "type": "embeddedapp"
+      }
+    ]
+  },
+  "ok": true
+}

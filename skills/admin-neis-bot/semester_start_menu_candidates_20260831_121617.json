@@ -1,0 +1,21 @@
+{
+  "keywords": [
+    "학급시간표"
+  ],
+  "matches": [
+    {
+      "callPage": "edu/sw/els/edc/tm/els_edctm00_m00",
+      "dataset": "dsAllMenu",
+      "hits": [
+        "학급시간표"
+      ],
+      "level": "4",
+      "menuId": "AMELS40022",
+      "menuName": "학급시간표관리",
+      "pageId": "els_edctm00_m00",
+      "path": "             ┕학급시간표관리",
+      "row": 8,
+      "upperMenuId": "AMELS30008"
+    }
+  ]
+}

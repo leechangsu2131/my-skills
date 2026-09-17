@@ -1,0 +1,525 @@
+{
+  "appId": "edu/sw/els/edc/tm/els_edctm00_m00",
+  "controls": {
+    "grdWeek": {
+      "fieldLabel": "주차별행사목록 시작",
+      "id": "grdWeek",
+      "type": "grid",
+      "value": ""
+    },
+    "grdWeekByClsByTi": {
+      "fieldLabel": "주별학급시간표시작",
+      "id": "grdWeekByClsByTi",
+      "type": "grid",
+      "value": ""
+    }
+  },
+  "ok": true,
+  "peSubjects": [
+    {
+      "etbSbjtCd": "20057",
+      "etbSbjtNm": "체육",
+      "etbSbjtNmTcrNm": "체육(이창수(lee2131))",
+      "rowIndex": 6,
+      "tcrIdfId": "lee2131",
+      "tcrNm": ""
+    },
+    {
+      "etbSbjtCd": "20057",
+      "etbSbjtNm": "체육",
+      "etbSbjtNmTcrNm": "체육(홍성철(sch9901))",
+      "rowIndex": 7,
+      "tcrIdfId": "sch9901",
+      "tcrNm": ""
+    }
+  ],
+  "proposedChanges": [
+    {
+      "alreadyTarget": false,
+      "current": "도덕",
+      "currentInfo": "01|20048|lee2131|4||",
+      "day": "월",
+      "dayKey": "mon",
+      "period": "5",
+      "rowIndex": 4,
+      "target": "체육(체육(홍성철(sch9901)))",
+      "targetInfo": "01|20057|sch9901|4||"
+    },
+    {
+      "alreadyTarget": false,
+      "current": "미술",
+      "currentInfo": "01|20063|lee2131|4||",
+      "day": "화",
+      "dayKey": "tue",
+      "period": "5",
+      "rowIndex": 4,
+      "target": "체육(체육(홍성철(sch9901)))",
+      "targetInfo": "01|20057|sch9901|4||"
+    },
+    {
+      "alreadyTarget": false,
+      "current": "음악",
+      "currentInfo": "01|20060|lee2131|4||",
+      "day": "수",
+      "dayKey": "wed",
+      "period": "5",
+      "rowIndex": 4,
+      "target": "체육(체육(홍성철(sch9901)))",
+      "targetInfo": "01|20057|sch9901|4||"
+    },
+    {
+      "alreadyTarget": false,
+      "current": "(보)자율·자치활동",
+      "currentInfo": "01|20069|sch9901|4||",
+      "day": "목",
+      "dayKey": "thu",
+      "period": "5",
+      "rowIndex": 4,
+      "target": "체육(체육(홍성철(sch9901)))",
+      "targetInfo": "01|20057|sch9901|4||"
+    },
+    {
+      "alreadyTarget": false,
+      "current": "음악",
+      "currentInfo": "01|20060|lee2131|4||",
+      "day": "금",
+      "dayKey": "fri",
+      "period": "5",
+      "rowIndex": 4,
+      "target": "체육(체육(홍성철(sch9901)))",
+      "targetInfo": "01|20057|sch9901|4||"
+    },
+    {
+      "alreadyTarget": false,
+      "current": "미술",
+      "currentInfo": "01|20063|lee2131|4||",
+      "day": "화",
+      "dayKey": "tue",
+      "period": "6",
+      "rowIndex": 5,
+      "target": "체육(체육(홍성철(sch9901)))",
+      "targetInfo": "01|20057|sch9901|4||"
+    }
+  ],
+  "scheduleRowCount": 8,
+  "scheduleRows": [
+    {
+      "fri": "국어 / (이창수(lee2131))",
+      "friInfo": "01|20042|lee2131|4||",
+      "mon": "자율·자치활동 / (이창수(lee2131))",
+      "monInfo": "01|20069|lee2131|4||",
+      "pir": "1",
+      "pirOtpt": "1교시",
+      "rowIndex": 0,
+      "sat": "토요휴업일",
+      "satInfo": "01|00000|0000000000|2|9011|",
+      "sun": "",
+      "sunInfo": "",
+      "thu": "(보)국어 / (이명숙(excel3010))",
+      "thuInfo": "01|20042|excel3010|4||",
+      "tue": "과학 / (안대규(choy2910))",
+      "tueInfo": "01|20054|choy2910|4||",
+      "wed": "국어 / (이창수(lee2131))",
+      "wedInfo": "01|20042|lee2131|4||"
+    },
+    {
+      "fri": "사회 / (이창수(lee2131))",
+      "friInfo": "01|20045|lee2131|4||",
+      "mon": "수학 / (이창수(lee2131))",
+      "monInfo": "01|20051|lee2131|4||",
+      "pir": "2",
+      "pirOtpt": "2교시",
+      "rowIndex": 1,
+      "sat": "토요휴업일",
+      "satInfo": "01|00000|0000000000|2|9011|",
+      "sun": "",
+      "sunInfo": "",
+      "thu": "(보)국어 / (신준현(jhs2038))",
+      "thuInfo": "01|20042|jhs2038|4||",
+      "tue": "과학 / (안대규(choy2910))",
+      "tueInfo": "01|20054|choy2910|4||",
+      "wed": "체육 / (홍성철(sch9901))",
+      "wedInfo": "01|20057|sch9901|4||"
+    },
+    {
+      "fri": "체육 / (홍성철(sch9901))",
+      "friInfo": "01|20057|sch9901|4||",
+      "mon": "영어 / (김정선(redfacexx))",
+      "monInfo": "01|20066|redfacexx|4||",
+      "pir": "3",
+      "pirOtpt": "3교시",
+      "rowIndex": 2,
+      "sat": "토요휴업일",
+      "satInfo": "01|00000|0000000000|2|9011|",
+      "sun": "",
+      "sunInfo": "",
+      "thu": "영어 / (김정선(redfacexx))",
+      "thuInfo": "01|20066|redfacexx|4||",
+      "tue": "국어 / (이창수(lee2131))",
+      "tueInfo": "01|20042|lee2131|4||",
+      "wed": "사회 / (이창수(lee2131))",
+      "wedInfo": "01|20045|lee2131|4||"
+    },
+    {
+      "fri": "수학 / (이창수(lee2131))",
+      "friInfo": "01|20051|lee2131|4||",
+      "mon": "과학 / (이창수(lee2131))",
+      "monInfo": "01|20054|lee2131|4||",
+      "pir": "4",
+      "pirOtpt": "4교시",
+      "rowIndex": 3,
+      "sat": "토요휴업일",
+      "satInfo": "01|00000|0000000000|2|9011|",
+      "sun": "",
+      "sunInfo": "",
+      "thu": "(보)수학 / (김유림(youlimstar))",
+      "thuInfo": "01|20051|youlimstar|4||",
+      "tue": "수학 / (이창수(lee2131))",
+      "tueInfo": "01|20051|lee2131|4||",
+      "wed": "사회 / (이창수(lee2131))",
+      "wedInfo": "01|20045|lee2131|4||"
+    },
+    {
+      "fri": "음악 / (이창수(lee2131))",
+      "friInfo": "01|20060|lee2131|4||",
+      "mon": "도덕 / (이창수(lee2131))",
+      "monInfo": "01|20048|lee2131|4||",
+      "pir": "5",
+      "pirOtpt": "5교시",
+      "rowIndex": 4,
+      "sat": "토요휴업일",
+      "satInfo": "01|00000|0000000000|2|9011|",
+      "sun": "",
+      "sunInfo": "",
+      "thu": "(보)자율·자치활동 / (홍성철(sch9901))",
+      "thuInfo": "01|20069|sch9901|4||",
+      "tue": "미술 / (이창수(lee2131))",
+      "tueInfo": "01|20063|lee2131|4||",
+      "wed": "음악 / (이창수(lee2131))",
+      "wedInfo": "01|20060|lee2131|4||"
+    },
+    {
+      "fri": "",
+      "friInfo": "",
+      "mon": "",
+      "monInfo": "",
+      "pir": "6",
+      "pirOtpt": "6교시",
+      "rowIndex": 5,
+      "sat": "토요휴업일",
+      "satInfo": "01|00000|0000000000|2|9011|",
+      "sun": "",
+      "sunInfo": "",
+      "thu": "",
+      "thuInfo": "",
+      "tue": "미술 / (이창수(lee2131))",
+      "tueInfo": "01|20063|lee2131|4||",
+      "wed": "",
+      "wedInfo": ""
+    },
+    {
+      "fri": "",
+      "friInfo": "",
+      "mon": "",
+      "monInfo": "",
+      "pir": "7",
+      "pirOtpt": "7교시",
+      "rowIndex": 6,
+      "sat": "토요휴업일",
+      "satInfo": "01|00000|0000000000|2|9011|",
+      "sun": "",
+      "sunInfo": "",
+      "thu": "",
+      "thuInfo": "",
+      "tue": "",
+      "tueInfo": "",
+      "wed": "",
+      "wedInfo": ""
+    },
+    {
+      "fri": "",
+      "friInfo": "",
+      "mon": "",
+      "monInfo": "",
+      "pir": "8",
+      "pirOtpt": "8교시",
+      "rowIndex": 7,
+      "sat": "토요휴업일",
+      "satInfo": "01|00000|0000000000|2|9011|",
+      "sun": "",
+      "sunInfo": "",
+      "thu": "",
+      "thuInfo": "",
+      "tue": "",
+      "tueInfo": "",
+      "wed": "",
+      "wedInfo": ""
+    }
+  ],
+  "selectedPe": {
+    "etbSbjtCd": "20057",
+    "etbSbjtNm": "체육",
+    "etbSbjtNmTcrNm": "체육(홍성철(sch9901))",
+    "rowIndex": 7,
+    "tcrIdfId": "sch9901",
+    "tcrNm": ""
+  },
+  "targetDate": "20260925",
+  "weekCount": 27,
+  "weekMatches": [
+    {
+      "__rowIndex": 4,
+      "event": "추석연휴(9/24), 추석(9/24), 추석(9/25), 추석(9/26), 토요휴업일(9/26)",
+      "sbjtNotCnt": "0",
+      "weekBgngYmd": "20260921",
+      "weekCnt": "5",
+      "weekCntNm": "5주차 (2026.09.21.~2026.09.27.)",
+      "weekEndYmd": "20260927"
+    }
+  ],
+  "weekRows": [
+    {
+      "__rowIndex": 0,
+      "event": "여름개학식(8/25), 토요휴업일(8/29)",
+      "sbjtNotCnt": "0",
+      "weekBgngYmd": "20260825",
+      "weekCnt": "1",
+      "weekCntNm": "1주차 (2026.08.25.~2026.08.30.)",
+      "weekEndYmd": "20260830"
+    },
+    {
+      "__rowIndex": 1,
+      "event": "토요휴업일(9/5)",
+      "sbjtNotCnt": "0",
+      "weekBgngYmd": "20260831",
+      "weekCnt": "2",
+      "weekCntNm": "2주차 (2026.08.31.~2026.09.06.)",
+      "weekEndYmd": "20260906"
+    },
+    {
+      "__rowIndex": 2,
+      "event": "토요휴업일(9/12)",
+      "sbjtNotCnt": "0",
+      "weekBgngYmd": "20260907",
+      "weekCnt": "3",
+      "weekCntNm": "3주차 (2026.09.07.~2026.09.13.)",
+      "weekEndYmd": "20260913"
+    },
+    {
+      "__rowIndex": 3,
+      "event": "토요휴업일(9/19)",
+      "sbjtNotCnt": "0",
+      "weekBgngYmd": "20260914",
+      "weekCnt": "4",
+      "weekCntNm": "4주차 (2026.09.14.~2026.09.20.)",
+      "weekEndYmd": "20260920"
+    },
+    {
+      "__rowIndex": 4,
+      "event": "추석연휴(9/24), 추석(9/24), 추석(9/25), 추석(9/26), 토요휴업일(9/26)",
+      "sbjtNotCnt": "0",
+      "weekBgngYmd": "20260921",
+      "weekCnt": "5",
+      "weekCntNm": "5주차 (2026.09.21.~2026.09.27.)",
+      "weekEndYmd": "20260927"
+    },
+    {
+      "__rowIndex": 5,
+      "event": "개천절(10/3)",
+      "sbjtNotCnt": "0",
+      "weekBgngYmd": "20260928",
+      "weekCnt": "6",
+      "weekCntNm": "6주차 (2026.09.28.~2026.10.04.)",
+      "weekEndYmd": "20261004"
+    },
+    {
+      "__rowIndex": 6,
+      "event": "대체공휴일(10/5), 한글날(10/9), 토요휴업일(10/10)",
+      "sbjtNotCnt": "0",
+      "weekBgngYmd": "20261005",
+      "weekCnt": "7",
+      "weekCntNm": "7주차 (2026.10.05.~2026.10.11.)",
+      "weekEndYmd": "20261011"
+    },
+    {
+      "__rowIndex": 7,
+      "event": "토요휴업일(10/17)",
+      "sbjtNotCnt": "0",
+      "weekBgngYmd": "20261012",
+      "weekCnt": "8",
+      "weekCntNm": "8주차 (2026.10.12.~2026.10.18.)",
+      "weekEndYmd": "20261018"
+    },
+    {
+      "__rowIndex": 8,
+      "event": "토요휴업일(10/24)",
+      "sbjtNotCnt": "0",
+      "weekBgngYmd": "20261019",
+      "weekCnt": "9",
+      "weekCntNm": "9주차 (2026.10.19.~2026.10.25.)",
+      "weekEndYmd": "20261025"
+    },
+    {
+      "__rowIndex": 9,
+      "event": "토요휴업일(10/31)",
+      "sbjtNotCnt": "0",
+      "weekBgngYmd": "20261026",
+      "weekCnt": "10",
+      "weekCntNm": "10주차 (2026.10.26.~2026.11.01.)",
+      "weekEndYmd": "20261101"
+    },
+    {
+      "__rowIndex": 10,
+      "event": "토요휴업일(11/7)",
+      "sbjtNotCnt": "0",
+      "weekBgngYmd": "20261102",
+      "weekCnt": "11",
+      "weekCntNm": "11주차 (2026.11.02.~2026.11.08.)",
+      "weekEndYmd": "20261108"
+    },
+    {
+      "__rowIndex": 11,
+      "event": "토요휴업일(11/14)",
+      "sbjtNotCnt": "0",
+      "weekBgngYmd": "20261109",
+      "weekCnt": "12",
+      "weekCntNm": "12주차 (2026.11.09.~2026.11.15.)",
+      "weekEndYmd": "20261115"
+    },
+    {
+      "__rowIndex": 12,
+      "event": "토요휴업일(11/21)",
+      "sbjtNotCnt": "0",
+      "weekBgngYmd": "20261116",
+      "weekCnt": "13",
+      "weekCntNm": "13주차 (2026.11.16.~2026.11.22.)",
+      "weekEndYmd": "20261122"
+    },
+    {
+      "__rowIndex": 13,
+      "event": "토요휴업일(11/28)",
+      "sbjtNotCnt": "0",
+      "weekBgngYmd": "20261123",
+      "weekCnt": "14",
+      "weekCntNm": "14주차 (2026.11.23.~2026.11.29.)",
+      "weekEndYmd": "20261129"
+    },
+    {
+      "__rowIndex": 14,
+      "event": "토요휴업일(12/5)",
+      "sbjtNotCnt": "0",
+      "weekBgngYmd": "20261130",
+      "weekCnt": "15",
+      "weekCntNm": "15주차 (2026.11.30.~2026.12.06.)",
+      "weekEndYmd": "20261206"
+    },
+    {
+      "__rowIndex": 15,
+      "event": "토요휴업일(12/12)",
+      "sbjtNotCnt": "0",
+      "weekBgngYmd": "20261207",
+      "weekCnt": "16",
+      "weekCntNm": "16주차 (2026.12.07.~2026.12.13.)",
+      "weekEndYmd": "20261213"
+    },
+    {
+      "__rowIndex": 16,
+      "event": "토요휴업일(12/19)",
+      "sbjtNotCnt": "0",
+      "weekBgngYmd": "20261214",
+      "weekCnt": "17",
+      "weekCntNm": "17주차 (2026.12.14.~2026.12.20.)",
+      "weekEndYmd": "20261220"
+    },
+    {
+      "__rowIndex": 17,
+      "event": "성탄절(12/25), 토요휴업일(12/26)",
+      "sbjtNotCnt": "0",
+      "weekBgngYmd": "20261221",
+      "weekCnt": "18",
+      "weekCntNm": "18주차 (2026.12.21.~2026.12.27.)",
+      "weekEndYmd": "20261227"
+    },
+    {
+      "__rowIndex": 18,
+      "event": "신정(1/1), 토요휴업일(1/2)",
+      "sbjtNotCnt": "0",
+      "weekBgngYmd": "20261228",
+      "weekCnt": "19",
+      "weekCntNm": "19주차 (2026.12.28.~2027.01.03.)",
+      "weekEndYmd": "20270103"
+    },
+    {
+      "__rowIndex": 19,
+      "event": "졸업식(1/8), 종업식(1/8), 토요휴업일(1/9)",
+      "sbjtNotCnt": "0",
+      "weekBgngYmd": "20270104",
+      "weekCnt": "20",
+      "weekCntNm": "20주차 (2027.01.04.~2027.01.10.)",
+      "weekEndYmd": "20270110"
+    },
+    {
+      "__rowIndex": 20,
+      "event": "겨울방학(1/11), 겨울방학(1/12), 겨울방학(1/13), 겨울방학(1/14), 겨울방학(1/15), 겨울방학(1/16), 토요휴업일(1/16), 겨울방학(1/17)",
+      "sbjtNotCnt": "0",
+      "weekBgngYmd": "20270111",
+      "weekCnt": "21",
+      "weekCntNm": "21주차 (2027.01.11.~2027.01.17.)",
+      "weekEndYmd": "20270117"
+    },
+    {
+      "__rowIndex": 21,
+      "event": "겨울방학(1/18), 겨울방학(1/19), 겨울방학(1/20), 겨울방학(1/21), 겨울방학(1/22), 겨울방학(1/23), 토요휴업일(1/23), 겨울방학(1/24)",
+      "sbjtNotCnt": "0",
+      "weekBgngYmd": "20270118",
+      "weekCnt": "22",
+      "weekCntNm": "22주차 (2027.01.18.~2027.01.24.)",
+      "weekEndYmd": "20270124"
+    },
+    {
+      "__rowIndex": 22,
+      "event": "겨울방학(1/25), 겨울방학(1/26), 겨울방학(1/27), 겨울방학(1/28), 겨울방학(1/29), 겨울방학(1/30), 토요휴업일(1/30), 겨울방학(1/31)",
+      "sbjtNotCnt": "0",
+      "weekBgngYmd": "20270125",
+      "weekCnt": "23",
+      "weekCntNm": "23주차 (2027.01.25.~2027.01.31.)",
+      "weekEndYmd": "20270131"
+    },
+    {
+      "__rowIndex": 23,
+      "event": "겨울방학(2/1), 겨울방학(2/2), 겨울방학(2/3), 겨울방학(2/4), 겨울방학(2/5), 겨울방학(2/6), 설날(2/6), 토요휴업일(2/6), 겨울방학(2/7), 설날(2/7)",
+      "sbjtNotCnt": "0",
+      "weekBgngYmd": "20270201",
+      "weekCnt": "24",
+      "weekCntNm": "24주차 (2027.02.01.~2027.02.07.)",
+      "weekEndYmd": "20270207"
+    },
+    {
+      "__rowIndex": 24,
+      "event": "겨울방학(2/8), 설날(2/8), 겨울방학(2/9), 대체공휴일(2/9), 겨울방학(2/10), 겨울방학(2/11), 겨울방학(2/12), 겨울방학(2/13), 토요휴업일(2/13), 겨울방학(2/14)",
+      "sbjtNotCnt": "0",
+      "weekBgngYmd": "20270208",
+      "weekCnt": "25",
+      "weekCntNm": "25주차 (2027.02.08.~2027.02.14.)",
+      "weekEndYmd": "20270214"
+    },
+    {
+      "__rowIndex": 25,
+      "event": "겨울방학(2/15), 겨울방학(2/16), 겨울방학(2/17), 겨울방학(2/18), 겨울방학(2/19), 겨울방학(2/20), 토요휴업일(2/20), 겨울방학(2/21)",
+      "sbjtNotCnt": "0",
+      "weekBgngYmd": "20270215",
+      "weekCnt": "26",
+      "weekCntNm": "26주차 (2027.02.15.~2027.02.21.)",
+      "weekEndYmd": "20270221"
+    },
+    {
+      "__rowIndex": 26,
+      "event": "겨울방학(2/22), 겨울방학(2/23), 겨울방학(2/24), 겨울방학(2/25), 겨울방학(2/26), 겨울방학(2/27), 토요휴업일(2/27), 겨울방학(2/28)",
+      "sbjtNotCnt": "0",
+      "weekBgngYmd": "20270222",
+      "weekCnt": "27",
+      "weekCntNm": "27주차 (2027.02.22.~2027.02.28.)",
+      "weekEndYmd": "20270228"
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "appId": "edu/sw/els/edc/tm/els_edctm00_m00",
+  "controls": {
+    "grdWeek": {
+      "fieldLabel": "주차별행사목록 시작",
+      "id": "grdWeek",
+      "type": "grid",
+      "value": ""
+    },
+    "grdWeekByClsByTi": {
+      "fieldLabel": "주별학급시간표시작",
+      "id": "grdWeekByClsByTi",
+      "type": "grid",
+      "value": ""
+    }
+  },
+  "ok": true,
+  "peSubjects": [],
+  "proposedChanges": [],
+  "scheduleRowCount": 0,
+  "scheduleRows": [],
+  "selectedPe": null,
+  "targetDate": "20260925",
+  "weekCount": 0,
+  "weekMatches": [],
+  "weekRows": []
+}

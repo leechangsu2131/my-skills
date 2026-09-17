@@ -1,0 +1,740 @@
+{
+  "keywords": [
+    "학급",
+    "담임",
+    "학년",
+    "반",
+    "출석",
+    "결석",
+    "시간표",
+    "교육과정",
+    "학생부",
+    "생활기록",
+    "전입",
+    "진급",
+    "기초",
+    "일괄"
+  ],
+  "matches": [
+    {
+      "callPage": "edu/sw/els/srg/cf/els_srgcf00_m00",
+      "dataset": "dsAllMenu",
+      "hits": [
+        "반",
+        "진급"
+      ],
+      "level": "4",
+      "menuId": "AMELS40055",
+      "menuName": "진급자 반편성관리",
+      "pageId": "els_srgcf00_m00",
+      "path": "             ┕진급자 반편성관리",
+      "row": 30,
+      "upperMenuId": "AMELS30018"
+    },
+    {
+      "callPage": "edu/sw/els/edc/tm/els_edctm08_m00",
+      "dataset": "dsAllMenu",
+      "hits": [
+        "학급",
+        "시간표"
+      ],
+      "level": "4",
+      "menuId": "AMELS40023",
+      "menuName": "학급별시간표조회",
+      "pageId": "els_edctm08_m00",
+      "path": "             ┕학급별시간표조회",
+      "row": 9,
+      "upperMenuId": "AMELS30008"
+    },
+    {
+      "callPage": "edu/sa/pap/els/mr/pap_elsmr04_m00",
+      "dataset": "dsAllMenu",
+      "hits": [
+        "학급",
+        "일괄"
+      ],
+      "level": "4",
+      "menuId": "AMPAP40007",
+      "menuName": "학급별일괄입력",
+      "pageId": "pap_elsmr04_m00",
+      "path": "             ┕학급별일괄입력",
+      "row": 159,
+      "upperMenuId": "AMPAP30002"
+    },
+    {
+      "callPage": "edu/sw/els/edc/tm/els_edctm00_m00",
+      "dataset": "dsAllMenu",
+      "hits": [
+        "학급",
+        "시간표"
+      ],
+      "level": "4",
+      "menuId": "AMELS40022",
+      "menuName": "학급시간표관리",
+      "pageId": "els_edctm00_m00",
+      "path": "             ┕학급시간표관리",
+      "row": 8,
+      "upperMenuId": "AMELS30008"
+    },
+    {
+      "callPage": "",
+      "dataset": "dsAllMenu",
+      "hits": [
+        "반",
+        "진급"
+      ],
+      "level": "3",
+      "menuId": "AMELS30018",
+      "menuName": "진급자 반편성관리",
+      "pageId": "",
+      "path": "         ┕진급자 반편성관리",
+      "row": 29,
+      "upperMenuId": "AMELS20004"
+    },
+    {
+      "callPage": "",
+      "dataset": "dsAllMenu",
+      "hits": [
+        "학급",
+        "담임"
+      ],
+      "level": "1",
+      "menuId": "002001",
+      "menuName": "학급담임",
+      "pageId": "",
+      "path": " ┕학급담임",
+      "row": 0,
+      "upperMenuId": "AMSWC00003"
+    },
+    {
+      "callPage": "edu/sw/els/srg/cf/els_srgcf00_m06",
+      "dataset": "dsAllMenu",
+      "hits": [
+        "반"
+      ],
+      "level": "4",
+      "menuId": "AMELS40184",
+      "menuName": "개별반편성",
+      "pageId": "els_srgcf00_m06",
+      "path": "             ┕개별반편성",
+      "row": 31,
+      "upperMenuId": "AMELS40055"
+    },
+    {
+      "callPage": "edu/sa/eds/eaa/ae/eds_eaaae03_m01",
+      "dataset": "dsAllMenu",
+      "hits": [
+        "결석"
+      ],
+      "level": "4",
+      "menuId": "AMEDS40531",
+      "menuName": "결석신고서관리 ",
+      "pageId": "eds_eaaae03_m01",
+      "path": "             ┕결석신고서관리 ",
+      "row": 152,
+      "upperMenuId": "AMEDS30511"
+    },
+    {
+      "callPage": "edu/sw/els/srg/aa/els_srgaa02_m06",
+      "dataset": "dsAllMenu",
+      "hits": [
+        "결석"
+      ],
+      "level": "4",
+      "menuId": "AMELS40197",
+      "menuName": "결석자및개인별출결현황",
+      "pageId": "els_srgaa02_m06",
+      "path": "             ┕결석자및개인별출결현황",
+      "row": 42,
+      "upperMenuId": "AMELS40058"
+    },
+    {
+      "callPage": "edu/sw/els/srg/aa/els_srgaa00_m00",
+      "dataset": "dsAllMenu",
+      "hits": [
+        "출석"
+      ],
+      "level": "4",
+      "menuId": "AMELS40056",
+      "menuName": "교과시간별출석부출력",
+      "pageId": "els_srgaa00_m00",
+      "path": "             ┕교과시간별출석부출력",
+      "row": 34,
+      "upperMenuId": "AMELS30019"
+    },
+    {
+      "callPage": "edu/sw/els/edc/tm/els_edctm05_m00",
+      "dataset": "dsAllMenu",
+      "hits": [
+        "교육과정"
+      ],
+      "level": "4",
+      "menuId": "AMELS40029",
+      "menuName": "교육과정재구성",
+      "pageId": "els_edctm05_m00",
+      "path": "             ┕교육과정재구성",
+      "row": 13,
+      "upperMenuId": "AMELS30009"
+    },
+    {
+      "callPage": "edu/sa/phe/phe/am/phe_pheam19_m00",
+      "dataset": "dsAllMenu",
+      "hits": [
+        "기초"
+      ],
+      "level": "4",
+      "menuId": "AMPHE40009",
+      "menuName": "기초학력보장프로그램이수",
+      "pageId": "phe_pheam19_m00",
+      "path": "             ┕기초학력보장프로그램이수#초등학교",
+      "row": 211,
+      "upperMenuId": "AMPHE30004"
+    },
+    {
+      "callPage": "edu/sw/els/sdl/ce/els_sdlce02_m00",
+      "dataset": "dsAllMenu",
+      "hits": [
+        "전입"
+      ],
+      "level": "4",
+      "menuId": "AMELS40088",
+      "menuName": "동아리활동관리(전입생용)",
+      "pageId": "els_sdlce02_m00",
+      "path": "             ┕동아리활동관리(전입생용)",
+      "row": 55,
+      "upperMenuId": "AMELS30027"
+    },
+    {
+      "callPage": "edu/sw/els/sdl/ce/els_sdlce08_m00",
+      "dataset": "dsAllMenu",
+      "hits": [
+        "반"
+      ],
+      "level": "4",
+      "menuId": "AMELS40087",
+      "menuName": "동아리활동반별조회",
+      "pageId": "els_sdlce08_m00",
+      "path": "             ┕동아리활동반별조회",
+      "row": 54,
+      "upperMenuId": "AMELS30027"
+    },
+    {
+      "callPage": "edu/sw/els/srg/sh/els_srgsh00_m00",
+      "dataset": "dsAllMenu",
+      "hits": [
+        "결석"
+      ],
+      "level": "4",
+      "menuId": "AMELS40084",
+      "menuName": "미인정결석학생관리",
+      "pageId": "els_srgsh00_m00",
+      "path": "             ┕미인정결석학생관리",
+      "row": 48,
+      "upperMenuId": "AMELS30026"
+    },
+    {
+      "callPage": "edu/sa/eds/ses/ir/eds_sesir01_m01",
+      "dataset": "dsAllMenu",
+      "hits": [
+        "반"
+      ],
+      "level": "4",
+      "menuId": "AMEDS40106",
+      "menuName": "반별검사결과관리",
+      "pageId": "eds_sesir01_m01",
+      "path": "             ┕반별검사결과관리",
+      "row": 143,
+      "upperMenuId": "AMEDS30032"
+    },
+    {
+      "callPage": "edu/sa/eds/ses/ir/eds_sesir03_m01",
+      "dataset": "dsAllMenu",
+      "hits": [
+        "반"
+      ],
+      "level": "4",
+      "menuId": "AMEDS40108",
+      "menuName": "반별검사결과",
+      "pageId": "eds_sesir03_m01",
+      "path": "             ┕반별검사결과",
+      "row": 144,
+      "upperMenuId": "AMEDS30032"
+    },
+    {
+      "callPage": "edu/sw/hth/hts/hr/hth_htshr01_m00",
+      "dataset": "dsAllMenu",
+      "hits": [
+        "반"
+      ],
+      "level": "4",
+      "menuId": "AMHTH41103",
+      "menuName": "반별등록",
+      "pageId": "hth_htshr01_m00",
+      "path": "             ┕반별등록",
+      "row": 121,
+      "upperMenuId": "AMHTH30323"
+    },
+    {
+      "callPage": "edu/sw/els/srg/aa/els_srgaa02_m04",
+      "dataset": "dsAllMenu",
+      "hits": [
+        "반"
+      ],
+      "level": "4",
+      "menuId": "AMELS40195",
+      "menuName": "반별연간출결통계",
+      "pageId": "els_srgaa02_m04",
+      "path": "             ┕반별연간출결통계",
+      "row": 41,
+      "upperMenuId": "AMELS40058"
+    },
+    {
+      "callPage": "edu/sw/hth/hts/hr/hth_htshr02_m01",
+      "dataset": "dsAllMenu",
+      "hits": [
+        "반"
+      ],
+      "level": "4",
+      "menuId": "AMHTH41128",
+      "menuName": "반별조회",
+      "pageId": "hth_htshr02_m01",
+      "path": "             ┕반별조회",
+      "row": 123,
+      "upperMenuId": "AMHTH30323"
+    },
+    {
+      "callPage": "edu/sa/eds/ses/ip/eds_sesip02_m01",
+      "dataset": "dsAllMenu",
+      "hits": [
+        "반"
+      ],
+      "level": "4",
+      "menuId": "AMEDS40104",
+      "menuName": "반별참여현황조회",
+      "pageId": "eds_sesip02_m01",
+      "path": "             ┕반별참여현황조회",
+      "row": 140,
+      "upperMenuId": "AMEDS30031"
+    },
+    {
+      "callPage": "edu/sw/hth/hts/hr/hth_htshr02_m00",
+      "dataset": "dsAllMenu",
+      "hits": [
+        "반"
+      ],
+      "level": "4",
+      "menuId": "AMHTH41104",
+      "menuName": "반별출력",
+      "pageId": "hth_htshr02_m00",
+      "path": "             ┕반별출력",
+      "row": 122,
+      "upperMenuId": "AMHTH30323"
+    },
+    {
+      "callPage": "edu/sw/els/srg/cf/els_srgcf00_m08",
+      "dataset": "dsAllMenu",
+      "hits": [
+        "반"
+      ],
+      "level": "4",
+      "menuId": "AMELS40186",
+      "menuName": "반편성결과조회",
+      "pageId": "els_srgcf00_m08",
+      "path": "             ┕반편성결과조회",
+      "row": 32,
+      "upperMenuId": "AMELS40055"
+    },
+    {
+      "callPage": "edu/sw/els/srg/bm/els_srgbm01_m00",
+      "dataset": "dsAllMenu",
+      "hits": [
+        "일괄"
+      ],
+      "level": "4",
+      "menuId": "AMELS40037",
+      "menuName": "사진일괄입력",
+      "pageId": "els_srgbm01_m00",
+      "path": "             ┕사진일괄입력",
+      "row": 25,
+      "upperMenuId": "AMELS30014"
+    },
+    {
+      "callPage": "edu/sw/els/iep/ss/els_iepss04_m00",
+      "dataset": "dsAllMenu",
+      "hits": [
+        "담임"
+      ],
+      "level": "4",
+      "menuId": "AMELS40129",
+      "menuName": "월별개별화교육계획/평가조회(담임)",
+      "pageId": "els_iepss04_m00",
+      "path": "             ┕월별개별화교육계획/평가조회(담임)",
+      "row": 112,
+      "upperMenuId": "AMELS30041"
+    },
+    {
+      "callPage": "edu/sa/pap/els/mr/pap_elsmr02_m00",
+      "dataset": "dsAllMenu",
+      "hits": [
+        "일괄"
+      ],
+      "level": "4",
+      "menuId": "AMPAP40005",
+      "menuName": "일괄입력",
+      "pageId": "pap_elsmr02_m00",
+      "path": "             ┕일괄입력",
+      "row": 235,
+      "upperMenuId": "AMPAP30002"
+    },
+    {
+      "callPage": "edu/sw/els/slr/cm/els_slrcm00_m02",
+      "dataset": "dsAllMenu",
+      "hits": [
+        "반"
+      ],
+      "level": "4",
+      "menuId": "AMELS40215",
+      "menuName": "자료반영",
+      "pageId": "els_slrcm00_m02",
+      "path": "             ┕자료반영",
+      "row": 92,
+      "upperMenuId": "AMELS40115"
+    },
+    {
+      "callPage": "edu/sa/pap/els/mr/pap_elsmr05_m00",
+      "dataset": "dsAllMenu",
+      "hits": [
+        "전입"
+      ],
+      "level": "4",
+      "menuId": "AMPAP40009",
+      "menuName": "전입생자료관리",
+      "pageId": "pap_elsmr05_m00",
+      "path": "             ┕전입생자료관리",
+      "row": 161,
+      "upperMenuId": "AMPAP30002"
+    },
+    {
+      "callPage": "edu/sw/els/edc/tm/els_edctm09_m00",
+      "dataset": "dsAllMenu",
+      "hits": [
+        "시간표"
+      ],
+      "level": "4",
+      "menuId": "AMELS40024",
+      "menuName": "전체시간표조회",
+      "pageId": "els_edctm09_m00",
+      "path": "             ┕전체시간표조회",
+      "row": 10,
+      "upperMenuId": "AMELS30008"
+    },
+    {
+      "callPage": "edu/sw/els/slr/ap/els_slrap00_m03",
+      "dataset": "dsAllMenu",
+      "hits": [
+        "반"
+      ],
+      "level": "4",
+      "menuId": "AMELS40222",
+      "menuName": "통지표자료반영및마감관리",
+      "pageId": "els_slrap00_m03",
+      "path": "             ┕통지표자료반영및마감관리",
+      "row": 103,
+      "upperMenuId": "AMELS40121"
+    },
+    {
+      "callPage": "edu/sw/els/scr/ep/els_screp05_m00",
+      "dataset": "dsAllMenu",
+      "hits": [
+        "반"
+      ],
+      "level": "4",
+      "menuId": "AMELS40105",
+      "menuName": "평가계획(안)관리(반별)",
+      "pageId": "els_screp05_m00",
+      "path": "             ┕평가계획(안)관리(반별)",
+      "row": 73,
+      "upperMenuId": "AMELS30032"
+    },
+    {
+      "callPage": "edu/sw/els/slr/cm/els_slrcm00_m00",
+      "dataset": "dsAllMenu",
+      "hits": [
+        "생활기록"
+      ],
+      "level": "4",
+      "menuId": "AMELS40115",
+      "menuName": "학교생활기록부",
+      "pageId": "els_slrcm00_m00",
+      "path": "             ┕학교생활기록부",
+      "row": 91,
+      "upperMenuId": "AMELS30036"
+    },
+    {
+      "callPage": "edu/sw/els/scr/es/els_scres30_m00",
+      "dataset": "dsAllMenu",
+      "hits": [
+        "전입"
+      ],
+      "level": "4",
+      "menuId": "AMELS40243",
+      "menuName": "학교자율시간관리(전입생용)",
+      "pageId": "els_scres30_m00",
+      "path": "             ┕학교자율시간관리(전입생용)",
+      "row": 81,
+      "upperMenuId": "AMELS30033"
+    },
+    {
+      "callPage": "edu/sw/els/scr/er/els_screr30_m00",
+      "dataset": "dsAllMenu",
+      "hits": [
+        "반"
+      ],
+      "level": "4",
+      "menuId": "AMELS40244",
+      "menuName": "학교자율시간반별조회",
+      "pageId": "els_screr30_m00",
+      "path": "             ┕학교자율시간반별조회",
+      "row": 85,
+      "upperMenuId": "AMELS30034"
+    },
+    {
+      "callPage": "edu/sa/pap/els/mr/pap_elsmr01_m00",
+      "dataset": "dsAllMenu",
+      "hits": [
+        "학급"
+      ],
+      "level": "4",
+      "menuId": "AMPAP40004",
+      "menuName": "학급별선택평가입력",
+      "pageId": "pap_elsmr01_m00",
+      "path": "             ┕학급별선택평가입력",
+      "row": 157,
+      "upperMenuId": "AMPAP30002"
+    },
+    {
+      "callPage": "edu/sw/els/sdl/aw/els_sdlaw01_m00",
+      "dataset": "dsAllMenu",
+      "hits": [
+        "학급"
+      ],
+      "level": "4",
+      "menuId": "AMELS40095",
+      "menuName": "학급별수상관리",
+      "pageId": "els_sdlaw01_m00",
+      "path": "             ┕학급별수상관리",
+      "row": 61,
+      "upperMenuId": "AMELS30028"
+    },
+    {
+      "callPage": "edu/sa/pap/els/er/pap_elser00_m00",
+      "dataset": "dsAllMenu",
+      "hits": [
+        "학급"
+      ],
+      "level": "4",
+      "menuId": "AMPAP40013",
+      "menuName": "학급별조회",
+      "pageId": "pap_elser00_m00",
+      "path": "             ┕학급별조회",
+      "row": 166,
+      "upperMenuId": "AMPAP30004"
+    },
+    {
+      "callPage": "edu/sw/els/srg/aa/els_srgaa02_m01",
+      "dataset": "dsAllMenu",
+      "hits": [
+        "학급"
+      ],
+      "level": "4",
+      "menuId": "AMELS40192",
+      "menuName": "학급별출결현황",
+      "pageId": "els_srgaa02_m01",
+      "path": "             ┕학급별출결현황",
+      "row": 40,
+      "upperMenuId": "AMELS40058"
+    },
+    {
+      "callPage": "edu/sa/pap/els/mr/pap_elsmr00_m00",
+      "dataset": "dsAllMenu",
+      "hits": [
+        "학급"
+      ],
+      "level": "4",
+      "menuId": "AMPAP40003",
+      "menuName": "학급별필수평가입력",
+      "pageId": "pap_elsmr00_m00",
+      "path": "             ┕학급별필수평가입력",
+      "row": 156,
+      "upperMenuId": "AMPAP30002"
+    },
+    {
+      "callPage": "edu/sw/els/iep/ss/els_iepss02_m00",
+      "dataset": "dsAllMenu",
+      "hits": [
+        "담임"
+      ],
+      "level": "4",
+      "menuId": "AMELS40127",
+      "menuName": "학기별개별화교육계획/평가조회(담임)",
+      "pageId": "els_iepss02_m00",
+      "path": "             ┕학기별개별화교육계획/평가조회(담임)",
+      "row": 110,
+      "upperMenuId": "AMELS30041"
+    },
+    {
+      "callPage": "edu/sw/els/sdl/ce/els_sdlce06_m00",
+      "dataset": "dsAllMenu",
+      "hits": [
+        "학생부"
+      ],
+      "level": "4",
+      "menuId": "AMELS40093",
+      "menuName": "학생부자료기록",
+      "pageId": "els_sdlce06_m00",
+      "path": "             ┕학생부자료기록",
+      "row": 58,
+      "upperMenuId": "AMELS30027"
+    },
+    {
+      "callPage": "edu/sw/els/slr/cm/els_slrcm00_m05",
+      "dataset": "dsAllMenu",
+      "hits": [
+        "학생부"
+      ],
+      "level": "4",
+      "menuId": "AMELS40218",
+      "menuName": "학생부조회및출력",
+      "pageId": "els_slrcm00_m05",
+      "path": "             ┕학생부조회및출력",
+      "row": 95,
+      "upperMenuId": "AMELS40115"
+    },
+    {
+      "callPage": "edu/sa/pap/els/er/pap_elser04_m00",
+      "dataset": "dsAllMenu",
+      "hits": [
+        "학년"
+      ],
+      "level": "4",
+      "menuId": "AMPAP40017",
+      "menuName": "PAPS지수조회 학년급",
+      "pageId": "pap_elser04_m00",
+      "path": "             ┕PAPS지수조회 학년급",
+      "row": 170,
+      "upperMenuId": "AMPAP30004"
+    },
+    {
+      "callPage": "",
+      "dataset": "dsAllMenu",
+      "hits": [
+        "기초"
+      ],
+      "level": "3",
+      "menuId": "AMPHE30005",
+      "menuName": "기초자료",
+      "pageId": "",
+      "path": "         ┕기초자료#학교",
+      "row": 212,
+      "upperMenuId": "AMPHE20001"
+    },
+    {
+      "callPage": "",
+      "dataset": "dsAllMenu",
+      "hits": [
+        "결석"
+      ],
+      "level": "3",
+      "menuId": "AMELS30026",
+      "menuName": "미인정결석학생관리",
+      "pageId": "",
+      "path": "         ┕미인정결석학생관리",
+      "row": 47,
+      "upperMenuId": "AMELS20004"
+    },
+    {
+      "callPage": "",
+      "dataset": "dsAllMenu",
+      "hits": [
+        "시간표"
+      ],
+      "level": "3",
+      "menuId": "AMELS30008",
+      "menuName": "시간표관리",
+      "pageId": "",
+      "path": "         ┕시간표관리",
+      "row": 7,
+      "upperMenuId": "AMELS20003"
+    },
+    {
+      "callPage": "",
+      "dataset": "dsAllMenu",
+      "hits": [
+        "생활기록"
+      ],
+      "level": "3",
+      "menuId": "AMELS30036",
+      "menuName": "학교생활기록부",
+      "pageId": "",
+      "path": "         ┕학교생활기록부",
+      "row": 90,
+      "upperMenuId": "AMELS20007"
+    },
+    {
+      "callPage": "",
+      "dataset": "dsAllMenu",
+      "hits": [
+        "교육과정"
+      ],
+      "level": "2",
+      "menuId": "AMELS20003",
+      "menuName": "교육과정",
+      "pageId": "",
+      "path": "     ┕교육과정",
+      "row": 4,
+      "upperMenuId": "002001"
+    },
+    {
+      "callPage": "",
+      "dataset": "dsAllMenu",
+      "hits": [
+        "학생부"
+      ],
+      "level": "2",
+      "menuId": "AMELS20007",
+      "menuName": "학생부",
+      "pageId": "",
+      "path": "     ┕학생부",
+      "row": 89,
+      "upperMenuId": "002001"
+    },
+    {
+      "callPage": "",
+      "dataset": "dsAllMenu",
+      "hits": [
+        "담임"
+      ],
+      "level": "1",
+      "menuId": "002003",
+      "menuName": "동아리담임",
+      "pageId": "",
+      "path": " ┕동아리담임",
+      "row": 192,
+      "upperMenuId": "AMSWC00003"
+    },
+    {
+      "callPage": "edu/dev1/dev2/dev3/dev4/sampleCwordScan",
+      "dataset": "dsAllMenuLocal",
+      "hits": [
+        "학생부"
+      ],
+      "level": "5",
+      "menuId": "LOCAL_DEV5-22",
+      "menuName": "학생부 기재유의어 예제",
+      "pageId": "sampleCwordScan",
+      "path": "[학생부 기재유의어 예제] ",
+      "row": 25,
+      "upperMenuId": "LOCAL_DEV4"
+    }
+  ]
+}

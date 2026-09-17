@@ -1,0 +1,320 @@
+{
+  "tab_info": {
+    "ok": true,
+    "result": {
+      "embeds": [
+        {
+          "embAppId": "edu/sw/els/edc/tm/els_edctm03_a00",
+          "id": "emb1"
+        },
+        {
+          "embAppId": "(없음)",
+          "id": "emb2"
+        },
+        {
+          "embAppId": "edu/sw/els/edc/tm/els_edctm03_a02",
+          "id": "emb3"
+        },
+        {
+          "embAppId": "(없음)",
+          "id": "emb4"
+        }
+      ],
+      "tabs": [
+        {
+          "index": 0,
+          "text": " 교과진도표관리 ",
+          "value": "",
+          "visible": true
+        },
+        {
+          "index": 1,
+          "text": " 교과진도표조회 ",
+          "value": "",
+          "visible": true
+        },
+        {
+          "index": 2,
+          "text": "교과연간지도계획 ",
+          "value": "",
+          "visible": true
+        },
+        {
+          "index": 3,
+          "text": "교과연간운영계획 ",
+          "value": "",
+          "visible": true
+        }
+      ]
+    }
+  },
+  "emb_dump": {
+    "ok": true,
+    "results": [
+      {
+        "buttons": [
+          {
+            "enabled": true,
+            "id": "btnSearch",
+            "value": "조회",
+            "visible": true
+          },
+          {
+            "enabled": true,
+            "id": "btn3",
+            "value": "",
+            "visible": true
+          },
+          {
+            "enabled": true,
+            "id": "btnExpa",
+            "value": "",
+            "visible": true
+          },
+          {
+            "enabled": false,
+            "id": "btnRowFix",
+            "value": "행고정",
+            "visible": true
+          },
+          {
+            "enabled": false,
+            "id": "btnRowUp",
+            "value": "한줄위로",
+            "visible": true
+          },
+          {
+            "enabled": false,
+            "id": "btnRowDown",
+            "value": "한줄아래",
+            "visible": true
+          },
+          {
+            "enabled": false,
+            "id": "btnAdd",
+            "value": "행추가",
+            "visible": true
+          },
+          {
+            "enabled": false,
+            "id": "btnRowUny",
+            "value": "행병합",
+            "visible": true
+          },
+          {
+            "enabled": false,
+            "id": "btnRowDvs",
+            "value": "행분할",
+            "visible": true
+          },
+          {
+            "enabled": true,
+            "id": "btnCurrCrt",
+            "value": "교과진도표생성",
+            "visible": true
+          },
+          {
+            "enabled": false,
+            "id": "btnTiSync",
+            "value": "시간표동기화",
+            "visible": true
+          },
+          {
+            "enabled": true,
+            "id": "btnTiSearch",
+            "value": "시간표조회",
+            "visible": true
+          },
+          {
+            "enabled": true,
+            "id": "btnEtcReg",
+            "value": "기타등록",
+            "visible": true
+          },
+          {
+            "enabled": false,
+            "id": "btnSave",
+            "value": "저장",
+            "visible": true
+          },
+          {
+            "enabled": false,
+            "id": "btnDelete",
+            "value": "삭제",
+            "visible": true
+          },
+          {
+            "enabled": true,
+            "id": "btnExcel",
+            "value": "엑셀내려받기",
+            "visible": true
+          }
+        ],
+        "combos": [
+          {
+            "currentText": "",
+            "currentValue": "",
+            "id": "cmbOrgaNm",
+            "items": [
+              {
+                "label": "선택",
+                "value": "0"
+              },
+              {
+                "label": "국어",
+                "value": "10042"
+              },
+              {
+                "label": "사회",
+                "value": "10045"
+              },
+              {
+                "label": "도덕",
+                "value": "10048"
+              },
+              {
+                "label": "수학",
+                "value": "10051"
+              },
+              {
+                "label": "과학",
+                "value": "10054"
+              },
+              {
+                "label": "체육",
+                "value": "10057"
+              },
+              {
+                "label": "음악",
+                "value": "10060"
+              },
+              {
+                "label": "미술",
+                "value": "10063"
+              },
+              {
+                "label": "영어",
+                "value": "10066"
+              },
+              {
+                "label": "자율·자치활동",
+                "value": "10069"
+              },
+              {
+                "label": "동아리활동",
+                "value": "10072"
+              },
+              {
+                "label": "진로활동",
+                "value": "10075"
+              }
+            ]
+          },
+          {
+            "currentText": "",
+            "currentValue": "",
+            "id": "cmbSemDtl",
+            "items": [
+              {
+                "label": "전체",
+                "value": "0"
+              },
+              {
+                "label": "1학기",
+                "value": "1"
+              },
+              {
+                "label": "2학기",
+                "value": "2"
+              }
+            ]
+          }
+        ],
+        "datasets": [],
+        "embAppId": "edu/sw/els/edc/tm/els_edctm03_a00",
+        "embId": "emb1",
+        "grids": [
+          {
+            "id": "grdMain",
+            "rowCount": 0
+          }
+        ]
+      },
+      {
+        "buttons": [
+          {
+            "enabled": true,
+            "id": "btnSearch",
+            "value": "조회",
+            "visible": true
+          }
+        ],
+        "combos": [
+          {
+            "currentText": "",
+            "currentValue": "",
+            "id": "cmbOrgaNm",
+            "items": [
+              {
+                "label": "전체",
+                "value": ""
+              },
+              {
+                "label": "국어",
+                "value": "20042"
+              },
+              {
+                "label": "사회",
+                "value": "20045"
+              },
+              {
+                "label": "도덕",
+                "value": "20048"
+              },
+              {
+                "label": "수학",
+                "value": "20051"
+              },
+              {
+                "label": "과학",
+                "value": "20054"
+              },
+              {
+                "label": "체육",
+                "value": "20057"
+              },
+              {
+                "label": "음악",
+                "value": "20060"
+              },
+              {
+                "label": "미술",
+                "value": "20063"
+              },
+              {
+                "label": "영어",
+                "value": "20066"
+              },
+              {
+                "label": "자율·자치활동",
+                "value": "20069"
+              },
+              {
+                "label": "동아리활동",
+                "value": "20072"
+              },
+              {
+                "label": "진로활동",
+                "value": "20075"
+              }
+            ]
+          }
+        ],
+        "datasets": [],
+        "embAppId": "edu/sw/els/edc/tm/els_edctm03_a02",
+        "embId": "emb3",
+        "grids": []
+      }
+    ]
+  }
+}

@@ -76,7 +76,13 @@ check_students.py
 # Allow tracking of specific env and agent files in skills
 !skills/**/scripts/.env.example
 !skills/**/scripts/agent*
-!skills/**/scripts/auth/*
+
+# Browser profiles and storage state (NEVER commit)
+**/playwright_profile/
+**/chrome_profile/
+*_storage_state.json
+gemini_storage_state.json
+kakao_token.json
 
 # music-class-helper local state
 skills/music-class-helper/lesson_manager_data.json

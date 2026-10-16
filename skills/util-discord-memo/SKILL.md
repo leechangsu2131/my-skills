@@ -21,7 +21,7 @@
 | 항목 | 값 | 역할 |
 |------|----|------|
 | **입력 (메모 채널)** | `1477078755951378432` | 사용자가 평소 메모를 남기는 곳 (읽기 대상) |
-| **출력 (웹훅 URL)** | `https://discordapp.com/api/webhooks/1477089851928084664/C7DYM4WEuNueIj5uDihcQt6Js2rm9FtiDE1G3t7YxBuxFJolVlZP0epsbUEPS58Hk_Bq` | 안티그래비티가 요약본을 쏴주는 공지 채널 |
+| **출력 (웹훅 URL)** | `https://discord.com/api/webhooks/YOUR_WEBHOOK_URL` | 안티그래비티가 요약본을 쏴주는 공지 채널 (.env 설정) |
 | **봇 접근 (Token)** | `DISCORD_BOT_TOKEN` | (환경변수/Python 스크립트 기반 조회 시 사용) |
 
 > ⚠️ 봇 권한 중 **Message Content Intent** 설정이 켜져 있어야 메시지 원문을 정상적으로 읽을 수 있습니다. (현재 활성화 완료 ✅)

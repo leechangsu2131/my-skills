@@ -68,13 +68,12 @@ stop_requested = False
 def _load_password() -> str:
     """
     .env 파일에서 i-scream 평가 비밀번호를 로드합니다.
-    없을 경우 기본값 'dlckdtn3'을 반환합니다.
     """
     own_env = Path(__file__).parent / ".env"
     if own_env.exists():
         from dotenv import load_dotenv
         load_dotenv(own_env, override=True)
-    return os.environ.get("ISCREAM_EVAL_PASSWORD", "dlckdtn3")
+    return os.environ.get("ISCREAM_EVAL_PASSWORD", "")
 
 
 async def hover_and_click(page: Page, selector: str, timeout: int = 3000) -> bool:

@@ -9,7 +9,7 @@ def _load_password() -> str:
     if own_env.exists():
         from dotenv import load_dotenv
         load_dotenv(own_env, override=True)
-    return os.environ.get("ISCREAM_EVAL_PASSWORD", "dlckdtn3")
+    return os.environ.get("ISCREAM_EVAL_PASSWORD", "")
 
 async def main():
     if sys.stdout.encoding != 'utf-8':

@@ -83,6 +83,15 @@ check_students.py
 *_storage_state.json
 gemini_storage_state.json
 kakao_token.json
+*_dom*.html
+*_dump*.html
+iscream_*.html
+popup_*.html
+
+# Student personal data & administrative result outputs
+student_records*.xlsx
+**/result/*.xlsx
+**/result/*.csv
 
 # music-class-helper local state
 skills/music-class-helper/lesson_manager_data.json

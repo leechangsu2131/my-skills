@@ -1,19 +1,14 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-나이스(NEIS) 교원연수 이수실적 등록 (이수등록) 자동화 스크립트 v2
+나이스(NEIS) 교원연수 이수실적 등록 (이수등록) 자동화 스크립트 v2.1
 ===================================================================
 Target App ID: `edu/ga/tps/hrd/mm/tps_hrdmm01_p14` (연수 변경신청 상세 팝업)
 
-특징:
-  - Chrome 원격 디버깅 포트(9222) 연결 (EVPN 미사용 학교 내부망 환경)
-  - 정확한 eXBuilder6 컨트롤 ID 및 dsMain 데이터셋 컬럼 매핑
-  - 안전 검증 워크플로우: --diagnose (진단), --dry-run (모의 실행), --apply (실반영)
-
 사용법:
-  python neis_training_completion.py --diagnose                              # 화면 및 eXBuilder6 컨트롤 진단
-  python neis_training_completion.py --dry-run --data data/training_completion_sample.json # 모의 실행
-  python neis_training_completion.py --apply --confirm APPLY_NEIS --data data/training_completion_sample.json # 실반영
+  python neis_training_completion.py --dry-run --data data/cpr_training_2026.json # 모의 실행
+  python neis_training_completion.py --fill-only --data data/cpr_training_2026.json # 폼 필드 채우기만 수행
+  python neis_training_completion.py --apply --confirm APPLY_NEIS --data data/cpr_training_2026.json # 실반영 및 저장
 """
 
 from __future__ import annotations
@@ -32,7 +27,7 @@ if sys.stdout.encoding and sys.stdout.encoding.lower() not in ("utf-8", "utf8"):
     sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8", errors="replace")
 
 REMOTE_PORT = 9222
-DEFAULT_SAMPLE_PATH = Path(__file__).parent / "data" / "training_completion_sample.json"
+DEFAULT_DATA_PATH = Path(__file__).parent / "data" / "cpr_training_2026.json"
 
 JS_FILL_TRAINING_FORM = r"""
 return (function(data) {
@@ -70,38 +65,45 @@ return (function(data) {
   // 3. 연수구분 (cmbTraiScCd) - 02: 직무연수
   setVal("cmbTraiScCd", data.category_code || "02");
 
-  // 4. 교육형태 (cmbEduStleCd) - C: 원격
-  setVal("cmbEduStleCd", data.format_code || "C");
+  // 4. 교육형태 (cmbEduStleCd) - B: 집합, C: 원격
+  setVal("cmbEduStleCd", data.format_code || "B");
 
   // 5. 연수내용 (cmbTraiCnClfCd) - 02: 생활교육
   setVal("cmbTraiCnClfCd", data.content_code || "02");
 
-  // 6. 직무관련성여부 (rdbDtyRlvncYn) - Y
+  // 6. 직무관련성여부 (rdbDtyRlvncYn) - Y: 직무관련
   setVal("rdbDtyRlvncYn", data.job_relevance ? "Y" : "N");
 
   // 7. 연수과정명 (ipbTraiCrseNm)
-  setVal("ipbTraiCrseNm", data.course_name || "양성평등과 성인지 감수성 이해");
+  setVal("ipbTraiCrseNm", data.course_name || "2026심폐소생술등응급처치교육");
 
   // 8. 연수기관 (cmbTchTraiEduInstCd / ipbTraiInstNm)
-  setVal("cmbTchTraiEduInstCd", data.institution_code || "0500000137");
-  setVal("ipbTraiInstNm", data.institution || "한국양성평등교육진흥원 원격교육연수원");
+  // 직접입력 버튼이 있는 경우 클릭 시도
+  var btnDirect = targetApp.lookup ? (targetApp.lookup("btnDirect") || targetApp.lookup("btnInstDirect") || targetApp.lookup("btnTraiInstNm")) : null;
+  if (btnDirect && typeof btnDirect.click === "function") {
+    try { btnDirect.click(); } catch(e){}
+  }
+  if (data.institution_code) {
+    setVal("cmbTchTraiEduInstCd", data.institution_code);
+  }
+  setVal("ipbTraiInstNm", data.institution || "동국대학교경주병원");
 
   // 9. 연수기간 시작/종료 (dtiTraiBgngYmd, dtiTraiEndYmd)
-  setVal("dtiTraiBgngYmd", (data.start_date || "2026-04-23").replace(/-/g, ""));
-  setVal("dtiTraiEndYmd", (data.end_date || "2026-04-24").replace(/-/g, ""));
+  setVal("dtiTraiBgngYmd", (data.start_date || "2026-09-30").replace(/-/g, ""));
+  setVal("dtiTraiEndYmd", (data.end_date || "2026-09-30").replace(/-/g, ""));
 
   // 10. 연수시간/분 (nbeTraiHh, nbeTraiMm)
-  setVal("nbeTraiHh", (data.hours !== undefined ? data.hours : 1).toString());
+  setVal("nbeTraiHh", (data.hours !== undefined ? data.hours : 4).toString());
   setVal("nbeTraiMm", (data.minutes !== undefined ? data.minutes : 0).toString());
 
   // 11. 법정의무교육여부 (rdbSttyOblgEduYn)
   setVal("rdbSttyOblgEduYn", data.statutory_mandatory ? "Y" : "N");
 
   // 12. 이수번호 (ipbTraiComptNo)
-  setVal("ipbTraiComptNo", data.completion_no || "공무원 성인지 사이버-2026-1007613");
+  setVal("ipbTraiComptNo", data.completion_no || "동국대경주병원-초-직무-2026-202");
 
   // 13. 법정의무교육 구분 (ipbSttyOblgEduNm)
-  setVal("ipbSttyOblgEduNm", data.statutory_category || "기타");
+  setVal("ipbSttyOblgEduNm", data.statutory_category || "심폐소생술 등 응급처치에 관한 교육");
 
   // 14. Dataset dsMain 직접 동기화
   var dsMain = targetApp.lookup ? targetApp.lookup("dsMain") : null;
@@ -109,19 +111,20 @@ return (function(data) {
     dsMain.setValue(0, "traiCrseYr", data.year || "2026");
     dsMain.setValue(0, "eduTypScCd", data.edu_type_code || "001");
     dsMain.setValue(0, "traiScCd", data.category_code || "02");
-    dsMain.setValue(0, "eduStleCd", data.format_code || "C");
+    dsMain.setValue(0, "eduStleCd", data.format_code || "B");
     dsMain.setValue(0, "traiCnClfCd", data.content_code || "02");
     dsMain.setValue(0, "dtyRlvncYn", data.job_relevance ? "Y" : "N");
-    dsMain.setValue(0, "traiCrseNm", data.course_name || "양성평등과 성인지 감수성 이해");
-    dsMain.setValue(0, "tchTraiEduInstCd", data.institution_code || "0500000137");
-    dsMain.setValue(0, "traiInstNm", data.institution || "한국양성평등교육진흥원 원격교육연수원");
-    dsMain.setValue(0, "traiBgngYmd", (data.start_date || "2026-04-23").replace(/-/g, ""));
-    dsMain.setValue(0, "traiEndYmd", (data.end_date || "2026-04-24").replace(/-/g, ""));
-    dsMain.setValue(0, "traiHh", (data.hours !== undefined ? data.hours : 1).toString());
+    dsMain.setValue(0, "traiCrseNm", data.course_name || "2026심폐소생술등응급처치교육");
+    if (data.institution_code) dsMain.setValue(0, "tchTraiEduInstCd", data.institution_code);
+    dsMain.setValue(0, "traiInstNm", data.institution || "동국대학교경주병원");
+    dsMain.setValue(0, "traiBgngYmd", (data.start_date || "2026-09-30").replace(/-/g, ""));
+    dsMain.setValue(0, "traiEndYmd", (data.end_date || "2026-09-30").replace(/-/g, ""));
+    dsMain.setValue(0, "traiHh", (data.hours !== undefined ? data.hours : 4).toString());
     dsMain.setValue(0, "traiMm", (data.minutes !== undefined ? data.minutes : 0).toString());
     dsMain.setValue(0, "sttyOblgEduYn", data.statutory_mandatory ? "Y" : "N");
-    dsMain.setValue(0, "traiComptNo", data.completion_no || "공무원 성인지 사이버-2026-1007613");
-    dsMain.setValue(0, "sttyOblgEduNm", data.statutory_category || "기타");
+    if (data.statutory_category_code) dsMain.setValue(0, "sttyOblgEduCd", data.statutory_category_code);
+    dsMain.setValue(0, "traiComptNo", data.completion_no || "동국대경주병원-초-직무-2026-202");
+    dsMain.setValue(0, "sttyOblgEduNm", data.statutory_category || "심폐소생술 등 응급처치에 관한 교육");
     updatedFields.push("dsMain 데이터셋 바인딩 동기화 완료");
   }
 
@@ -214,37 +217,70 @@ def attach_chrome(port: int = REMOTE_PORT):
     return driver
 
 
+def find_hrd_window(driver):
+    """연수 팝업 또는 나이스가 열려있는 윈도우 핸들로 전환합니다."""
+    js_check = """
+    var platform = window.cpr && cpr.core && cpr.core.Platform && cpr.core.Platform.INSTANCE;
+    if (!platform) return false;
+    var apps = platform.getAllRunningAppInstances();
+    return apps.some(function(a) {
+        return a.app && a.app.id && (a.app.id.indexOf("hrd") !== -1 || a.app.id.indexOf("Index") !== -1);
+    });
+    """
+    for h in driver.window_handles:
+        driver.switch_to.window(h)
+        try:
+            if driver.execute_script(js_check):
+                print(f"[window] 연수 관련 앱이 실행 중인 윈도우 발견: {driver.title} ({driver.current_url})")
+                return True
+        except Exception:
+            pass
+    return False
+
+
 def run_dry_run(data: dict):
     """모의 실행 요약을 출력합니다."""
-    print("=" * 60)
-    print("  [DRY-RUN] 연수 이수실적 등록 모의 실행 요약")
-    print("=" * 60)
+    print("=" * 65)
+    print("  [DRY-RUN] 교원연수 이수실적 등록 모의 실행 요약 (심폐소생술 교육)")
+    print("=" * 65)
     print(f"  • 과정년도        : {data['year']}")
-    print(f"  • 교육유형코드    : {data['edu_type_code']} (교육기관교육)")
-    print(f"  • 연수구분코드    : {data['category_code']} (직무연수)")
-    print(f"  • 교육형태코드    : {data['format_code']} (원격)")
-    print(f"  • 연수내용코드    : {data['content_code']} (생활교육)")
-    print(f"  • 직무관련성여부  : {'예 (Y)' if data['job_relevance'] else '아니오 (N)'}")
+    print(f"  • 교육유형        : {data.get('edu_type', '교육기관교육')} (코드: {data['edu_type_code']})")
+    print(f"  • 연수구분        : {data.get('category', '직무연수')} (코드: {data['category_code']})")
+    print(f"  • 교육형태        : {data.get('format', '집합')} (코드: {data['format_code']})")
+    print(f"  • 연수내용        : {data.get('content_category', '생활교육')} (코드: {data['content_code']})")
+    print(f"  • 직무관련성여부  : {'직무관련 (Y)' if data['job_relevance'] else '직무무관 (N)'}")
     print(f"  • 연수과정명      : {data['course_name']}")
-    print(f"  • 연수기관        : {data['institution']} (코드: {data['institution_code']})")
-    print(f"  • 연수기간        : {data['start_date']} ~ {data['end_date']}")
+    print(f"  • 연수기관        : {data['institution']} (코드: {data.get('institution_code', '직접입력')})")
+    print(f"  • 연수기간        : {data['start_date']} ~ {data['end_date']} (1일간)")
     print(f"  • 연수시간        : {data['hours']}시간 {data['minutes']}분")
     print(f"  • 이수번호        : {data['completion_no']}")
-    print(f"  • 법정의무교육여부: {'예 (Y)' if data['statutory_mandatory'] else '아니오 (N)'} ({data['statutory_category']})")
-    print(f"  • 증빙자료 파일   : {data['attachment_filename']}")
-    print("=" * 60)
+    print(f"  • 법정의무교육여부: {'예 (Y)' if data['statutory_mandatory'] else '아니오 (N)'}")
+    print(f"  • 법정의무교육명  : {data['statutory_category']}")
+    default_fp = 'C:/FBKR_SCAN/' + data.get('attachment_filename', '')
+    print(f"  • 증빙자료 파일명 : {data['attachment_filename']}")
+    print(f"  • 증빙자료 실경로 : {data.get('attachment_filepath', default_fp)}")
+    print("=" * 65)
 
 
 def run_apply(driver, data: dict, save: bool = True):
     """실제 나이스 연수 팝업 화면에 데이터를 주입합니다. save가 False이면 저장을 누르지 않습니다."""
+    if not find_hrd_window(driver):
+        print("[warn] 현재 원격 Chrome에 'tps_hrdmm01_p14' (연수 변경신청 상세) 팝업이 활성화되어 있지 않습니다.")
+        print("나이스 화면에서 [연수이수결과 등록신청] 팝업을 띄운 후 다시 실행해 주십시오.")
+        return False
+
     print("[apply] eXBuilder6 폼 필드 데이터 주입 중...")
     res_fill = driver.execute_script(JS_FILL_TRAINING_FORM, data)
     print(f"[apply] 필드 주입 결과: {json.dumps(res_fill, ensure_ascii=False, indent=2)}")
 
+    if not res_fill.get("success"):
+        print(f"[error] 주입 실패: {res_fill.get('error')}")
+        return False
+
     if not save:
         print("\n[OK] 폼 필드 채우기가 완료되었습니다! (저장은 누르지 않음)")
-        print("화면에서 증빙자료 파일(PDF)을 [찾기] 버튼으로 첨부하신 후 [저장]을 눌러 진행해 주세요.")
-        return
+        print(f"화면에서 증빙자료 파일({data.get('attachment_filename')})을 [찾기] 버튼으로 첨부하신 후 [저장]을 눌러주십시오.")
+        return True
 
     time.sleep(1)
 
@@ -255,43 +291,36 @@ def run_apply(driver, data: dict, save: bool = True):
     time.sleep(2)
     driver.execute_script(JS_SAVE_AND_DISMISS_MODALS)
     print("✅ [완료] 연수 이수실적 데이터 주입 및 저장이 완료되었습니다!")
+    return True
 
 
 def main():
     parser = argparse.ArgumentParser(description="나이스 연수 이수실적 등록 자동화 스크립트")
-    parser.add_argument("--data", type=str, default="", help="이수증 JSON 데이터 파일 경로")
-    parser.add_argument("--course-name", type=str, default="양성평등과 성인지 감수성 이해", help="연수과정명")
-    parser.add_argument("--completion-no", type=str, default="공무원 성인지 사이버-2026-1007613", help="이수번호")
-    parser.add_argument("--start-date", type=str, default="2026-04-23", help="연수 시작일 (YYYY-MM-DD)")
-    parser.add_argument("--end-date", type=str, default="2026-04-24", help="연수 종료일 (YYYY-MM-DD)")
-    parser.add_argument("--hours", type=int, default=1, help="연수 인정 시간")
+    parser.add_argument("--data", type=str, default=str(DEFAULT_DATA_PATH), help="이수증 JSON 데이터 파일 경로")
+    parser.add_argument("--course-name", type=str, default="2026심폐소생술등응급처치교육", help="연수과정명")
+    parser.add_argument("--completion-no", type=str, default="동국대경주병원-초-직무-2026-202", help="이수번호")
+    parser.add_argument("--start-date", type=str, default="2026-09-30", help="연수 시작일 (YYYY-MM-DD)")
+    parser.add_argument("--end-date", type=str, default="2026-09-30", help="연수 종료일 (YYYY-MM-DD)")
+    parser.add_argument("--hours", type=int, default=4, help="연수 인정 시간")
     parser.add_argument("--minutes", type=int, default=0, help="연수 인정 분")
-    parser.add_argument("--institution-code", type=str, default="0500000137", help="연수기관 코드")
-    parser.add_argument("--institution", type=str, default="한국양성평등교육진흥원 원격교육연수원", help="연수기관명")
+    parser.add_argument("--institution-code", type=str, default="0600000150", help="연수기관 코드")
+    parser.add_argument("--institution", type=str, default="동국대학교경주병원", help="연수기관명")
     parser.add_argument("--year", type=str, default="2026", help="과정년도")
     parser.add_argument("--edu-type-code", type=str, default="001", help="교육유형 코드 (001: 교육기관교육)")
     parser.add_argument("--category-code", type=str, default="02", help="연수구분 코드 (02: 직무연수)")
-    parser.add_argument("--format-code", type=str, default="C", help="교육형태 코드 (C: 원격)")
+    parser.add_argument("--format-code", type=str, default="B", help="교육형태 코드 (B: 집합)")
     parser.add_argument("--content-code", type=str, default="02", help="연수내용 코드 (02: 생활교육)")
     parser.add_argument("--job-relevance", type=str, default="Y", help="직무관련성 여부 (Y/N)")
     parser.add_argument("--statutory-mandatory", type=str, default="Y", help="법정의무교육 여부 (Y/N)")
-    parser.add_argument("--statutory-category", type=str, default="기타", help="법정의무교육 구분명")
-    parser.add_argument("--attachment", type=str, default="성인지이수증-권윤옥.pdf", help="증빙자료 파일명")
+    parser.add_argument("--statutory-category", type=str, default="심폐소생술 등 응급처치에 관한 교육", help="법정의무교육 구분명")
+    parser.add_argument("--attachment", type=str, default="2026심폐소생술등응급처치교육이수증(이창수).pdf", help="증빙자료 파일명")
 
-    parser.add_argument("--sample-json", action="store_true", help="샘플 JSON 파일 생성")
     parser.add_argument("--dry-run", action="store_true", help="모의 실행 (화면 변동 없음)")
     parser.add_argument("--fill-only", action="store_true", help="폼 필드 채우기만 수행하고 저장은 누르지 않음")
     parser.add_argument("--apply", action="store_true", help="실제 나이스 저장 처리")
     parser.add_argument("--confirm", type=str, default="", help="실반영 확인 문구 (APPLY_NEIS 필수)")
 
     args = parser.parse_args()
-
-    if args.sample_json:
-        data = load_training_data(args)
-        with open(DEFAULT_SAMPLE_PATH, "w", encoding="utf-8") as f:
-            json.dump(data, f, indent=2, ensure_ascii=False)
-        print(f"[sample] 샘플 JSON 파일이 생성되었습니다: {DEFAULT_SAMPLE_PATH}")
-        return
 
     data = load_training_data(args)
 

@@ -93,9 +93,19 @@ description: 나이스(NEIS) 교외체험학습 신청서/보고서 및 결석�
      ```
 
 8. **교원연수 이수실적 등록 (이수등록) 자동화** (`neis_training_completion.py`)
+   - **대상 화면**: `edu/ga/tps/hrd/mm/tps_hrdmm01_p14` (개인정보변경신청 > 연수 탭 > 연수 변경신청 상세 팝업)
+   - **기능**: 원격/집합 교육형태(`format_code`: B/C), 법정의무교육(`statutory_category`), 연수기관 직접입력(`btnEduInstCd`), 16개 폼 필드 및 `dsMain` 데이터셋 정밀 바인딩.
+   - **안전 모드 (`--fill-only`)**: 저장 버튼을 누르지 않고 필드 채우기만 수행하여 증빙자료 첨부 전 최종 검토 가능.
    - **실행**:
      ```bash
-     python skills/admin-neis-bot/neis_training_completion.py --apply --confirm APPLY_NEIS --data skills/admin-neis-bot/data/training_completion_sample.json
+     # 모의 실행 (드라이런)
+     python skills/admin-neis-bot/neis_training_completion.py --dry-run --data skills/admin-neis-bot/data/cpr_training_2026.json
+
+     # 폼 필드 자동 채우기만 수행 (검토 후 파일 직접 첨부 및 저장용)
+     python skills/admin-neis-bot/neis_training_completion.py --fill-only --data skills/admin-neis-bot/data/cpr_training_2026.json
+
+     # 실제 자동 주입 및 저장/연쇄 모달 확인 완결
+     python skills/admin-neis-bot/neis_training_completion.py --apply --confirm APPLY_NEIS --data skills/admin-neis-bot/data/cpr_training_2026.json
      ```
 
 9. **학기초 업무 메뉴 탐색 및 화면 구조 덤프** (`neis_semester_start_explorer.py`, `neis_click_control_dump.py`)

@@ -12,6 +12,8 @@ from flask import Flask, render_template, request, jsonify, Response
 import parse_gongmun
 from edufine_report import save_report
 import playwright_edufine
+import playwright_gongmun_draft
+import playwright_gongmun_search
 
 app = Flask(__name__)
 
@@ -59,10 +61,10 @@ async def run_automation(target_path, dry_run, draft_title="", draft_summary="")
         elif os.path.isfile(target_path):
             files_to_process.append(target_path)
         elif os.path.isdir(target_path):
-            search_pattern = os.path.join(target_path, "*.odt")
-            files_to_process = glob.glob(search_pattern)
+            for ext in ("*.odt", "*.hwpx", "*.txt"):
+                files_to_process.extend(glob.glob(os.path.join(target_path, ext)))
             if not files_to_process:
-                print(f"[안내] 디렉토리에 ODT 파일이 없습니다. 빈 기안 모드로 진행합니다.")
+                print(f"[안내] 디렉토리에 지원하는 문서(ODT/HWPX)가 없습니다. 빈 기안 모드로 진행합니다.")
                 is_empty_run = True
         else:
             print(f"[안내] 지정된 경로({target_path})를 찾을 수 없거나 파일이 없습니다. 빈 기안 모드로 진행합니다.")
@@ -73,7 +75,7 @@ async def run_automation(target_path, dry_run, draft_title="", draft_summary="")
             
         parsed_items = []
         if is_empty_run:
-            print("[안내] ODT 파일 없이 수동 기안 모드로 실행합니다.")
+            print("[안내] 파일 없이 수동 기안 모드로 실행합니다.")
             t = draft_title if draft_title else '빈 기안 (수동 작성)'
             s = draft_summary if draft_summary else '내용을 수동으로 입력하세요.'
             parsed_items.append({'_filepath': '수동 기안', 'data': {'제목': t, '내용': s}})
@@ -82,7 +84,7 @@ async def run_automation(target_path, dry_run, draft_title="", draft_summary="")
             for file_path in files_to_process:
                 print(f"[파싱 중] {os.path.basename(file_path)}")
                 try:
-                    data = parse_gongmun.parse_odt(file_path)
+                    data = parse_gongmun.parse_document(file_path)
                     parsed_items.append({'_filepath': file_path, 'data': data})
                 except Exception as e:
                     print(f"  [파싱 오류] {e}")
@@ -97,6 +99,17 @@ async def run_automation(target_path, dry_run, draft_title="", draft_summary="")
                 print(f"[리포트 완료] 처리 결과 리포트(Excel)가 저장되었습니다:\n -> {os.path.abspath(report_path)}")
             except Exception as e:
                 print(f"\n[오류] 리포트 저장 실패: {e}")
+    finally:
+        _state['running'] = False
+        _q.put(('done', None))
+
+
+async def run_gongmun_draft_automation(title: str, body: str):
+    """[트랙 2] 전자결재 공문 기안 봇 백그라운드 코루틴"""
+    try:
+        await playwright_gongmun_draft.execute_gongmun_draft(title, body)
+    except Exception as e:
+        print(f"[트랙2 봇 오류] {e}")
     finally:
         _state['running'] = False
         _q.put(('done', None))
@@ -167,6 +180,172 @@ print(json.dumps(items, ensure_ascii=False))
         traceback.print_exc()
         return jsonify({'error': str(e)})
 
+@app.route('/api/upload-and-parse', methods=['POST'])
+def upload_and_parse():
+    """파일 업로드(ODT, HWPX, TXT) 또는 직접 입력 텍스트를 파싱하여 기안 초안을 반환"""
+    try:
+        parsed_data = {}
+        saved_filepath = ""
+        filename = ""
+        
+        # 1. 파일이 첨부된 경우
+        if 'file' in request.files and request.files['file'].filename:
+            file = request.files['file']
+            filename = file.filename
+            upload_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads')
+            os.makedirs(upload_dir, exist_ok=True)
+            saved_filepath = os.path.join(upload_dir, filename)
+            file.save(saved_filepath)
+            
+            parsed_data = parse_gongmun.parse_document(saved_filepath)
+        # 2. 텍스트 직접 입력인 경우
+        elif request.is_json and request.json.get('text'):
+            raw_text = request.json.get('text', '')
+            parsed_data = parse_gongmun.parse_text_data(raw_text)
+        elif request.form.get('text'):
+            raw_text = request.form.get('text', '')
+            parsed_data = parse_gongmun.parse_text_data(raw_text)
+        else:
+            return jsonify({'error': '업로드할 파일이나 공문 텍스트를 제공해 주세요.'}), 400
+
+        # 추가 메모 및 물품 정보 추출
+        custom_memo = request.form.get('custom_memo') or (request.json.get('custom_memo') if request.is_json else '') or ''
+        item_list = request.form.get('items') or (request.json.get('items') if request.is_json else '') or ''
+        
+        # 기안문 초안 자동 생성
+        draft = parse_gongmun.generate_edufine_draft(parsed_data, custom_memo=custom_memo, item_list=item_list)
+        
+        return jsonify({
+            'success': True,
+            'filepath': saved_filepath,
+            'filename': filename,
+            'parsed': parsed_data,
+            'draft': draft
+        })
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': f"문서 파싱 실패: {str(e)}"}), 500
+
+
+@app.route('/api/fetch-edufine-current-doc', methods=['POST', 'GET'])
+def fetch_edufine_current_doc():
+    """디버깅 포트(9222)로 연결된 크롬에서 현재 열려있는 에듀파인 공문 텍스트를 자동 수집"""
+    async def _fetch():
+        from playwright.async_api import async_playwright
+        p = await async_playwright().start()
+        try:
+            try:
+                browser = await p.chromium.connect_over_cdp("http://127.0.0.1:9222")
+            except Exception as e:
+                return {
+                    'error': '현재 띄워진 일반 브라우저는 원격 제어 포트(9222)가 켜져 있지 않습니다.\n\n'
+                             '💡 해결 방법 (가장 쉬운 2가지):\n'
+                             '1. 에듀파인 공문 창에서 내용을 [Ctrl+C]로 복사 후 [📋 클립보드에서 즉시 분석]을 누르세요.\n'
+                             '2. 또는 아래 제공되는 [에듀파인 전송 북마크]를 클릭하시면 1초 만에 전송됩니다!'
+                }
+            
+            pages = []
+            for ctx in browser.contexts:
+                pages.extend(ctx.pages)
+            
+            if not pages:
+                return {'error': '브라우저(포트 9222)에 열려있는 탭이 없습니다.'}
+            
+            candidate_texts = []
+            
+            for page in pages:
+                try:
+                    title = await page.title()
+                except:
+                    title = ""
+                
+                # 프레임 순회
+                for frame in [page] + page.frames:
+                    try:
+                        body_text = await frame.evaluate("""() => {
+                            const el = document.querySelector('.doc_view, #docContent, #content, .content, table') || document.body;
+                            return el ? el.innerText : '';
+                        }""")
+                        if body_text and len(body_text.strip()) > 30:
+                            if any(k in body_text for k in ['시행', '접수', '수신', '제목', '관련']):
+                                candidate_texts.append({
+                                    'title': title,
+                                    'url': page.url,
+                                    'text': body_text
+                                })
+                    except:
+                        continue
+            
+            if not candidate_texts:
+                for page in reversed(pages):
+                    try:
+                        t = await page.evaluate("() => document.body.innerText")
+                        if t and len(t.strip()) > 20:
+                            candidate_texts.append({'title': await page.title(), 'url': page.url, 'text': t})
+                            break
+                    except:
+                        pass
+
+            if not candidate_texts:
+                return {'error': '열려있는 에듀파인 공문 텍스트를 찾지 못했습니다. 공문 뷰어 창에서 본문을 복사(Ctrl+C)한 후 [클립보드에서 즉시 가져오기]를 사용해보세요.'}
+
+            # 가장 공문 키워드가 많은 텍스트 선택
+            best = candidate_texts[0]
+            max_score = 0
+            for c in candidate_texts:
+                score = sum(1 for kw in ['시행', '접수', '교육', '학교', '관련', '목적', '계획'] if kw in c['text'])
+                if score > max_score:
+                    max_score = score
+                    best = c
+
+            return {'success': True, 'text': best['text'], 'source_title': best['title']}
+        finally:
+            await p.stop()
+
+    try:
+        import asyncio
+        loop = asyncio.new_event_loop()
+        res = loop.run_until_complete(_fetch())
+        loop.close()
+
+        if 'error' in res:
+            return jsonify(res), 400
+
+        raw_text = res.get('text', '')
+        parsed_data = parse_gongmun.parse_text_data(raw_text)
+        
+        # 기안문 초안 생성
+        draft = parse_gongmun.generate_edufine_draft(parsed_data)
+        
+        return jsonify({
+            'success': True,
+            'source_title': res.get('source_title', ''),
+            'parsed': parsed_data,
+            'draft': draft,
+            'raw_text': raw_text[:1000]
+        })
+    except Exception as e:
+        return jsonify({
+            'error': f"에듀파인 브라우저 연동 오류: {str(e)}"
+        }), 500
+
+
+@app.route('/api/generate-draft', methods=['POST'])
+def generate_draft():
+    """기존 파싱 데이터와 메모/물품정보를 바탕으로 기안문 제목/본문을 재작성"""
+    try:
+        data = request.get_json() or {}
+        parsed_data = data.get('parsed', {})
+        custom_memo = data.get('custom_memo', '')
+        item_list = data.get('items', '')
+        
+        draft = parse_gongmun.generate_edufine_draft(parsed_data, custom_memo=custom_memo, item_list=item_list)
+        return jsonify({'success': True, 'draft': draft})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
 @app.route('/api/generate-prompt', methods=['POST'])
 def generate_prompt():
     data = request.get_json() or {}
@@ -182,9 +361,9 @@ def generate_prompt():
     
     prompt = "당신은 대한민국 초등학교 행정실 담당자입니다.\n"
     
-    if target_path and os.path.isfile(target_path) and target_path.lower().endswith('.odt'):
+    if target_path and os.path.isfile(target_path):
         try:
-            parsed_data = parse_gongmun.parse_odt(target_path)
+            parsed_data = parse_gongmun.parse_document(target_path)
             
             sender = parsed_data.get('발신처', '')
             title = parsed_data.get('제목', '')
@@ -252,11 +431,11 @@ def generate_prompt():
                 prompt += "붙임 없음.  끝.\n"
             
         except Exception as e:
-            return jsonify({'error': f"ODT 파싱 오류: {str(e)}"})
+            return jsonify({'error': f"문서 파싱 오류: {str(e)}"})
     else:
         # 파일 없음 - S2B 물품만 있는 경우
         if not item_list:
-            return jsonify({'error': '공문 파일(ODT)을 지정하거나, S2B 물품 목록을 불러와주세요.'})
+            return jsonify({'error': '공문 문서(ODT/HWPX)를 지정하거나, S2B 물품 목록을 불러와주세요.'})
             
         prompt += "아래 학교장터(S2B) 물품 구매를 위한 에듀파인 기안문의 '제목'과 '본문'을 작성해주세요.\n\n"
         prompt += f"[물품 목록]\n{item_list}\n\n"
@@ -277,6 +456,27 @@ def generate_prompt():
         prompt += "붙임  지출(지급)품의서 1부.  끝.\n"
 
     return jsonify({'prompt': prompt})
+
+@app.route('/api/start-gongmun-draft', methods=['POST'])
+def start_gongmun_draft():
+    """[트랙 2] 전자결재 공문 기안 자동화 실행 엔드포인트"""
+    try:
+        if _state['running']:
+            return jsonify({'error': '이미 다른 자동화 작업이 진행 중입니다.'}), 409
+
+        data = request.get_json() or {}
+        title = data.get('title', '').strip()
+        body = data.get('body', '').strip()
+
+        if not title:
+            return jsonify({'error': '기안문 제목을 입력해주세요.'}), 400
+
+        _state['running'] = True
+        _run_in_bg(run_gongmun_draft_automation, title, body)
+        return jsonify({'status': 'started'})
+    except Exception as e:
+        _state['running'] = False
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/api/start', methods=['POST'])
 def start_automation():
@@ -384,6 +584,34 @@ def trigger_event():
         _q.put(('log', "[시스템] 중단 요청을 처리 중입니다..."))
         
     return jsonify({'status': 'ok'})
+
+@app.route('/api/search-gongmun', methods=['POST'])
+def api_search_gongmun():
+    """[트랙 3] 에듀파인 수신문서/문서등록대장 공문 검색"""
+    data = request.get_json() or {}
+    keyword = data.get('keyword', '').strip()
+    open_first = data.get('open_first', False)
+    
+    if not keyword:
+        return jsonify({'error': '검색어를 입력해 주세요.'}), 400
+        
+    try:
+        results = asyncio.run(playwright_gongmun_search.execute_gongmun_search(keyword, open_first=open_first))
+        return jsonify({'status': 'ok', 'count': len(results), 'results': results})
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)}), 500
+
+@app.route('/api/open-gongmun', methods=['POST'])
+def api_open_gongmun():
+    """[트랙 3] 검색된 목록 중 특정 순번 공문 WXSClient 새창 열람"""
+    data = request.get_json() or {}
+    row_index = data.get('row_index', 0)
+    
+    try:
+        res = asyncio.run(playwright_gongmun_search.open_specific_gongmun(row_index))
+        return jsonify({'status': 'ok' if res else 'fail'})
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)}), 500
 
 @app.route('/api/stream')
 def stream():

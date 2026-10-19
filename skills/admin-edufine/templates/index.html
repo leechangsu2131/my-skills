@@ -3,168 +3,339 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edufine Flow V3</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Edufine Flow V5 - 스마트 공문 기안 스튜디오</title>
+    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #0f172a;
-            --surface: rgba(30, 41, 59, 0.7);
-            --surface-border: rgba(255, 255, 255, 0.1);
+            --bg: #0b1120;
+            --surface: rgba(30, 41, 59, 0.75);
+            --surface-hover: rgba(51, 65, 85, 0.85);
+            --surface-border: rgba(255, 255, 255, 0.12);
             --primary: #3b82f6;
             --primary-hover: #2563eb;
+            --accent: #10b981;
+            --accent-hover: #059669;
+            --purple: #8b5cf6;
+            --purple-hover: #7c3aed;
+            --danger: #ef4444;
             --text: #f8fafc;
             --text-muted: #94a3b8;
-            --accent: #10b981;
-            --danger: #ef4444;
+            --border-radius: 16px;
         }
+
+        * {
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
             background-color: var(--bg);
             color: var(--text);
             margin: 0;
-            padding: 0;
+            padding: 30px 20px;
+            min-height: 100vh;
             display: flex;
             justify-content: center;
-            align-items: center;
-            min-height: 100vh;
             background-image: 
-                radial-gradient(circle at 15% 50%, rgba(59, 130, 246, 0.15), transparent 25%),
-                radial-gradient(circle at 85% 30%, rgba(16, 185, 129, 0.15), transparent 25%);
+                radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.18), transparent 30%),
+                radial-gradient(circle at 90% 80%, rgba(139, 92, 246, 0.18), transparent 30%);
             background-attachment: fixed;
         }
+
         .container {
-            width: 90%;
-            max-width: 850px;
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            width: 100%;
+            max-width: 960px;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             background: var(--surface);
             border: 1px solid var(--surface-border);
             border-radius: 24px;
-            padding: 40px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            transition: transform 0.3s ease;
+            padding: 36px;
+            box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.6);
         }
+
         .header {
             text-align: center;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
+            position: relative;
         }
+
+        .badge {
+            display: inline-block;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(16, 185, 129, 0.2));
+            color: #60a5fa;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
         h1 {
-            font-size: 2.5rem;
+            font-size: 2.3rem;
             font-weight: 700;
-            margin: 0 0 10px;
-            background: linear-gradient(135deg, #60a5fa, #34d399);
+            margin: 0 0 8px;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa, #34d399);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
         }
+
         p.subtitle {
             color: var(--text-muted);
-            font-size: 1.1rem;
+            font-size: 1.05rem;
             margin: 0;
         }
-        .form-group {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
+
+        /* ── 드롭존 (Drop Zone) ── */
+        .dropzone-container {
+            border: 2px dashed rgba(59, 130, 246, 0.4);
+            border-radius: var(--border-radius);
+            padding: 32px 20px;
+            text-align: center;
+            background: rgba(15, 23, 42, 0.5);
+            transition: all 0.25s ease;
+            cursor: pointer;
+            margin-bottom: 25px;
+            position: relative;
         }
-        input[type="text"] {
-            flex: 1;
-            padding: 16px 20px;
-            border-radius: 12px;
+
+        .dropzone-container:hover, .dropzone-container.dragover {
+            border-color: #60a5fa;
+            background: rgba(59, 130, 246, 0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.2);
+        }
+
+        .dropzone-icon {
+            font-size: 2.8rem;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .dropzone-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: #e2e8f0;
+        }
+
+        .dropzone-sub {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .dropzone-actions {
+            margin-top: 16px;
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        /* ── 카드 섹션 ── */
+        .card {
+            background: rgba(15, 23, 42, 0.55);
             border: 1px solid var(--surface-border);
-            background: rgba(15, 23, 42, 0.6);
+            border-radius: var(--border-radius);
+            padding: 22px;
+            margin-bottom: 22px;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+        }
+
+        .card-title {
+            font-size: 1.15rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #cbd5e1;
+            margin: 0;
+        }
+
+        /* ── 메타데이터 칩 ── */
+        .meta-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .meta-chip {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            padding: 10px 14px;
+        }
+
+        .meta-chip .label {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+            display: block;
+        }
+
+        .meta-chip .val {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #e2e8f0;
+            word-break: break-all;
+        }
+
+        /* ── 폼 & 인풋 ── */
+        .input-group {
+            margin-bottom: 14px;
+        }
+
+        .input-label {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #cbd5e1;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 14px 16px;
+            border-radius: 10px;
+            border: 1px solid var(--surface-border);
+            background: rgba(15, 23, 42, 0.7);
             color: var(--text);
-            font-size: 1rem;
+            font-family: inherit;
+            font-size: 0.98rem;
             outline: none;
             transition: all 0.2s;
         }
-        input[type="text"]:focus {
+
+        input[type="text"]:focus, textarea:focus {
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+            background: rgba(15, 23, 42, 0.9);
         }
+
+        textarea {
+            resize: vertical;
+            line-height: 1.6;
+        }
+
+        /* ── 버튼 ── */
         .btn {
-            padding: 16px 24px;
-            border-radius: 12px;
+            padding: 10px 18px;
+            border-radius: 10px;
             border: none;
             background: var(--primary);
             color: white;
-            font-size: 1rem;
+            font-size: 0.95rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s ease;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 6px;
         }
+
         .btn:hover {
             background: var(--primary-hover);
-            transform: translateY(-2px);
-            box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.4);
+            transform: translateY(-1px);
         }
+
         .btn:active {
             transform: translateY(0);
         }
-        .btn-accent {
-            background: var(--accent);
+
+        .btn-sm {
+            padding: 7px 12px;
+            font-size: 0.85rem;
         }
-        .btn-accent:hover {
-            background: #059669;
-            box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.4);
+
+        .btn-accent { background: var(--accent); }
+        .btn-accent:hover { background: var(--accent-hover); }
+        .btn-purple { background: var(--purple); }
+        .btn-purple:hover { background: var(--purple-hover); }
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.08);
+            color: #cbd5e1;
+            border: 1px solid rgba(255, 255, 255, 0.12);
         }
-        .btn-danger {
-            background: var(--danger);
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
         }
-        .btn-danger:hover {
-            background: #dc2626;
-            box-shadow: 0 10px 15px -3px rgba(239, 68, 68, 0.4);
-        }
-        .console {
-            background: #0f172a;
-            border-radius: 16px;
-            padding: 20px;
-            height: 350px;
-            overflow-y: auto;
-            font-family: 'Consolas', 'Monaco', monospace;
-            font-size: 0.95rem;
-            color: #a7f3d0;
-            border: 1px solid var(--surface-border);
-            margin-bottom: 30px;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
-            scroll-behavior: smooth;
-        }
-        .console p {
-            margin: 6px 0;
-            line-height: 1.5;
-            animation: fadeIn 0.3s ease-in-out;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(5px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .console p.system { color: #94a3b8; }
-        .console p.highlight { color: #fcd34d; font-weight: bold; }
-        .controls {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.3); }
-        .checkbox-wrapper {
+
+        /* ── 토스트 알림 ── */
+        #toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #10b981;
+            color: white;
+            padding: 14px 22px;
+            border-radius: 12px;
+            font-weight: 600;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: 1000;
             display: flex;
             align-items: center;
             gap: 8px;
-            margin-bottom: 30px;
-            color: var(--text-muted);
         }
-        .checkbox-wrapper input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
-            accent-color: var(--primary);
+        #toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* ── 콘솔 ── */
+        .console {
+            background: #090e17;
+            border-radius: 12px;
+            padding: 16px;
+            height: 180px;
+            overflow-y: auto;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.88rem;
+            color: #a7f3d0;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .console p { margin: 4px 0; }
+        .console p.system { color: #94a3b8; }
+        .console p.highlight { color: #fcd34d; font-weight: bold; }
+
+        .flex-between {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        .tab-btn {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid var(--surface-border);
+            color: var(--text-muted);
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
         }
     </style>
 </head>
@@ -172,110 +343,669 @@
 
 <div class="container">
     <div class="header">
-        <h1>Edufine Flow V4</h1>
-        <p class="subtitle">지능형 단일 공문 실기안 자동화 봇</p>
+        <span class="badge">K-에듀파인 기안 파트너</span>
+        <h1>Edufine Flow V5</h1>
+        <p class="subtitle">공문을 띄우거나 올려놓으면, 에듀파인 규격 기안문을 즉시 자동 완성합니다.</p>
     </div>
 
-    <div class="form-group" style="flex-direction: column; gap: 10px;">
-        <div style="display: flex; gap: 15px;">
-            <input type="text" id="filePath" placeholder="C:\path\to\document.odt (선택하지 않으면 빈 기안 또는 직접 입력한 내용으로 실행됩니다)" value="">
-            <button class="btn btn-accent" onclick="browseFile()" style="white-space: nowrap;">파일 찾기 📄</button>
-            <button class="btn" id="startBtn" onclick="startAutomation()">
-                기안 실행 ▶
+    <!-- 1. 문서 입력 (드래그 앤 드롭 존 / 텍스트 직접 입력 / 에듀파인 실시간 연동) -->
+    <div style="background: rgba(30, 41, 59, 0.6); border: 1px solid var(--surface-border); border-radius: 12px; padding: 12px 18px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <span style="font-size: 1.1rem;">⚡</span>
+            <div>
+                <strong style="color: #60a5fa; font-size: 0.95rem;">내가 띄운 에듀파인 창에서 바로 기안하기:</strong>
+                <span style="font-size: 0.85rem; color: var(--text-muted); display: block;">
+                    공문 창에서 본문 복사(<b>Ctrl+C</b>) 후 아래 버튼을 누르거나, 오른쪽 북마크를 브라우저에 등록해 두세요!
+                </span>
+            </div>
+        </div>
+        <div style="display: flex; gap: 8px; align-items: center;">
+            <label style="display: flex; align-items: center; gap: 6px; font-size: 0.85rem; color: #34d399; cursor: pointer; background: rgba(16, 185, 129, 0.15); padding: 6px 12px; border-radius: 8px; border: 1px solid rgba(16, 185, 129, 0.3);">
+                <input type="checkbox" id="autoClipboardWatch" onchange="toggleAutoWatch(this.checked)">
+                창 복귀 시 클립보드 자동 분석 (ON)
+            </label>
+            <!-- 북마크릿 드래그 앵커 -->
+            <a href="javascript:(function(){try{let t=window.getSelection().toString();if(!t||t.trim().length<20){function e(w){let r='';try{let el=w.document.querySelector('.doc_view,#docContent,#content,table')||w.document.body;r=el?el.innerText:'';if(w.frames){for(let i=0;i<w.frames.length;i++){try{r+='\n'+e(w.frames[i])}catch(x){}}}}catch(x){}return r;}t=e(window);}if(!t||t.trim().length<20){alert('공문 본문을 마우스로 드래그(선택) 후 다시 눌러주세요!');return;}fetch('http://localhost:5030/api/upload-and-parse',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text:t})}).then(r=>r.json()).then(d=>{alert('✓ 에듀파인 공문이 스튜디오로 전송되었습니다! 스튜디오 창에서 기안문을 확인하세요.');window.open('http://localhost:5030','_blank');}).catch(e=>alert('스튜디오 연결 실패: '+e));}catch(err){alert(err);}})();" 
+               class="btn btn-sm btn-purple" 
+               title="이 버튼을 마우스로 끌어 웹브라우저 상단의 [북마크(즐겨찾기) 바]에 놓으세요!" 
+               onclick="alert('이 버튼을 마우스로 [드래그]해서 크롬 상단의 [북마크(즐겨찾기) 모음 바]에 끌어다 놓으세요!\n\n그 다음 에듀파인 공문 창에서 그 북마크를 클릭하면 즉시 스튜디오로 전송됩니다!'); return false;">
+                ⭐ 에듀파인 기안 북마크 (북마크바로 드래그)
+            </a>
+        </div>
+    </div>
+
+    <div class="tabs" style="flex-wrap: wrap; align-items: center;">
+        <button class="tab-btn active" id="tabFileBtn" onclick="switchTab('file')">📄 공문 파일 올리기 (ODT / HWPX)</button>
+        <button class="tab-btn" id="tabTextBtn" onclick="switchTab('text')">✍️ 공문 텍스트 직접 붙여넣기</button>
+        <button class="tab-btn" id="tabSearchBtn" onclick="switchTab('search')">🔍 [트랙 3] 에듀파인 공문 검색 & 열람</button>
+        
+        <div style="margin-left: auto; display: flex; gap: 8px;">
+            <button class="btn btn-sm btn-accent" onclick="fetchFromClipboard()" title="에듀파인에서 Ctrl+C 복사한 텍스트를 바로 기안문으로 변환">
+                📋 클립보드에서 즉시 분석
+            </button>
+            <button class="btn btn-sm btn-secondary" onclick="fetchFromEdufineBrowser()" title="Chrome 9222 포트로 열려있는 에듀파인 공문 뷰어 감지">
+                🌐 디버깅 브라우저 창 감지
             </button>
         </div>
-        
-        <div style="background: rgba(15, 23, 42, 0.4); border: 1px solid var(--surface-border); border-radius: 12px; padding: 15px; margin-top: 10px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                <h3 style="margin: 0; font-size: 1.1rem; color: #a7f3d0;">🛒 구입 물품 목록 (S2B)</h3>
-                <button class="btn btn-accent" onclick="fetchS2B()" style="padding: 8px 16px; font-size: 0.9rem; background-color: #f59e0b; color: white;">S2B 장바구니 불러오기 🛒</button>
-            </div>
-            <textarea id="s2bItems" placeholder="[S2B 장바구니 불러오기] 버튼을 누르면 S2B에서 담은 물품 목록이 여기에 기록됩니다. (필요시 직접 수정 가능)" style="width: 100%; height: 80px; margin-bottom: 15px; padding: 10px; border-radius: 8px; background: rgba(15, 23, 42, 0.6); color: var(--text); border: 1px solid var(--surface-border); box-sizing: border-box; resize: vertical;"></textarea>
-            
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                <h3 style="margin: 0; font-size: 1.1rem; color: #a7f3d0;">🤖 LLM 기안 작성 도우미</h3>
-                <button class="btn btn-accent" onclick="generatePrompt()" style="padding: 8px 16px; font-size: 0.9rem; background-color: #8b5cf6;">프롬프트 만들기 💡</button>
-            </div>
-            <textarea id="llmPrompt" placeholder="[프롬프트 만들기] 버튼을 누르면 여기에 질문이 만들어집니다. 복사해서 ChatGPT에 붙여넣으세요!" style="width: 100%; height: 80px; margin-bottom: 15px; padding: 10px; border-radius: 8px; background: #0f172a; color: var(--text-muted); border: 1px solid var(--surface-border); box-sizing: border-box;" readonly></textarea>
-            
-            <div style="display: flex; flex-direction: column; gap: 10px;">
-                <input type="text" id="draftTitle" placeholder="ChatGPT가 작성해준 기안문 [제목]을 여기에 붙여넣으세요" style="padding: 12px; border-radius: 8px;">
-                <textarea id="draftSummary" placeholder="ChatGPT가 작성해준 기안문 [내용(개요)]을 여기에 붙여넣으세요" style="width: 100%; height: 100px; padding: 12px; border-radius: 8px; background: rgba(15, 23, 42, 0.6); color: var(--text); border: 1px solid var(--surface-border); box-sizing: border-box; resize: vertical; font-family: 'Inter', sans-serif;"></textarea>
+    </div>
+
+    <div id="fileSection">
+        <div class="dropzone-container" id="dropZone" onclick="triggerFileInput()">
+            <input type="file" id="fileInput" style="display: none;" accept=".odt,.hwpx,.txt" onchange="handleFileSelected(this.files[0])">
+            <span class="dropzone-icon">📥</span>
+            <div class="dropzone-title">수신 공문 파일(ODT, HWPX, TXT)을 여기에 끌어다 놓으세요</div>
+            <div class="dropzone-sub">또는 클릭하여 파일 탐색기에서 선택할 수 있습니다.</div>
+            <div class="dropzone-actions" onclick="event.stopPropagation();">
+                <button class="btn btn-secondary btn-sm" onclick="triggerFileInput()">내 PC에서 파일 찾기 📂</button>
+                <button class="btn btn-secondary btn-sm" onclick="browseServerFile()">서버 경로 탐색 🔍</button>
             </div>
         </div>
     </div>
-    
-    <div class="checkbox-wrapper">
-        <input type="checkbox" id="dryRun" name="dryRun">
-        <label for="dryRun">브라우저 폼 입력 없는 엑셀 리포트 테스트 모드 (Dry Run)</label>
+
+    <div id="textSection" style="display: none;" class="card">
+        <label class="input-label">수신한 공문 본문 전체를 복사하여 아래에 붙여넣으세요:</label>
+        <textarea id="rawTextInput" placeholder="예: [경상북도교육청] 2026학년도 학교 체육시설 개선 사업비 교부 안내..." rows="5"></textarea>
+        <div style="text-align: right; margin-top: 10px;">
+            <button class="btn btn-accent" onclick="parseRawText()">공문 분석 및 초안 생성 ⚡</button>
+        </div>
     </div>
 
+    <!-- [트랙 3] 에듀파인 수신공문 검색 섹션 -->
+    <div id="searchSection" style="display: none;" class="card" style="border-color: rgba(167, 139, 250, 0.4);">
+        <div class="card-header">
+            <h3 class="card-title" style="color: #a78bfa;">🔍 K-에듀파인 문서등록대장 공문 검색 & 뷰어 열람</h3>
+            <span style="font-size: 0.85rem; color: #94a3b8;">열려있는 에듀파인에서 공문을 자동 검색하고 WXSClient 새창으로 띄웁니다.</span>
+        </div>
+        <div style="display: flex; gap: 10px; margin-top: 12px;">
+            <input type="text" id="gongmunSearchKeyword" placeholder="검색할 공문 키워드 입력 (예: 스포츠, 현장체험, 정보화, 방과후 등)..." onkeydown="if(event.key==='Enter') searchEdufineGongmun();" style="flex: 1;">
+            <button class="btn btn-purple" onclick="searchEdufineGongmun()" id="searchGongmunBtn" style="padding: 10px 20px; font-weight: 600;">검색 🔍</button>
+            <button class="btn btn-accent" onclick="searchEdufineGongmun(true)" title="검색 후 가장 최신 공문을 즉시 새창으로 띄웁니다">검색 후 바로 열기 ⚡</button>
+        </div>
+
+        <div id="searchLoading" style="display: none; padding: 20px; text-align: center; color: #a78bfa;">
+            <span>⏳ 에듀파인 문서등록대장을 탐색 중입니다... (약 3~5초 소요)</span>
+        </div>
+
+        <div id="searchResultsArea" style="margin-top: 18px; display: none;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span style="font-weight: 600; color: #34d399;" id="searchResultCount">검색 결과 0건</span>
+            </div>
+            <div id="searchResultList" style="display: flex; flex-direction: column; gap: 8px; max-height: 280px; overflow-y: auto;">
+                <!-- 검색 결과 리스트 아이템이 동적으로 들어감 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 파일 경로 표시 -->
+    <div style="margin-bottom: 20px; display: flex; gap: 10px;">
+        <input type="text" id="filePath" placeholder="선택된 파일 경로..." readonly>
+        <button class="btn btn-secondary" onclick="reparseCurrent()">다시 분석 🔄</button>
+    </div>
+
+    <!-- 2. 문서 인식 결과 카드 -->
+    <div class="card" id="docMetaCard" style="display: none;">
+        <div class="card-header">
+            <h3 class="card-title">📋 수신 공문 자동 분석 결과</h3>
+            <span id="parsingStatus" style="font-size: 0.85rem; color: #34d399;">✓ 분석 완료</span>
+        </div>
+        <div class="meta-grid">
+            <div class="meta-chip">
+                <span class="label">발신처 (기관)</span>
+                <span class="val" id="metaSender">-</span>
+            </div>
+            <div class="meta-chip">
+                <span class="label">시행 공문번호 (일자)</span>
+                <span class="val" id="metaSihaeng">-</span>
+            </div>
+            <div class="meta-chip">
+                <span class="label">접수 공문번호</span>
+                <span class="val" id="metaJeopsu">-</span>
+            </div>
+            <div class="meta-chip">
+                <span class="label">제출 기한 / 마감일</span>
+                <span class="val" id="metaDeadline" style="color: #fcd34d;">-</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. 완성된 에듀파인 기안문 카드 -->
+    <div class="card" style="border-color: rgba(59, 130, 246, 0.4); background: rgba(15, 23, 42, 0.75);">
+        <div class="card-header">
+            <h3 class="card-title" style="color: #60a5fa;">💡 완성된 에듀파인 기안문 초안</h3>
+            <div style="display: flex; gap: 8px;">
+                <button class="btn btn-sm btn-secondary" onclick="copyFullDraft()">📋 전체 복사</button>
+                <button class="btn btn-sm btn-accent" onclick="regenerateDraft()">초안 재생성 🔄</button>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <div class="flex-between" style="margin-bottom: 6px;">
+                <label class="input-label" style="margin: 0;">📌 기안문 제목</label>
+                <button class="btn btn-sm btn-secondary" onclick="copyText('draftTitle', '제목')">제목 복사 📋</button>
+            </div>
+            <input type="text" id="draftTitle" placeholder="문서를 올리면 에듀파인 규격에 맞는 제목이 자동 생성됩니다.">
+        </div>
+
+        <div class="input-group">
+            <div class="flex-between" style="margin-bottom: 6px;">
+                <label class="input-label" style="margin: 0;">📝 기안문 본문 (규격 서식: 관련 - 내용 - 행정사항 - 붙임 - 끝)</label>
+                <button class="btn btn-sm btn-secondary" onclick="copyText('draftBody', '본문')">본문 복사 📋</button>
+            </div>
+            <textarea id="draftBody" rows="9" placeholder="문서를 올리면 관련 공문번호 및 본문 항목이 자동 조립됩니다."></textarea>
+        </div>
+
+        <!-- 부가 메모 & S2B 연동 (접이식) -->
+        <details style="margin-top: 15px; background: rgba(30, 41, 59, 0.4); border-radius: 10px; padding: 12px; border: 1px solid var(--surface-border);">
+            <summary style="cursor: pointer; font-size: 0.9rem; font-weight: 600; color: #94a3b8;">
+                ⚙️ 부가 설정 (추가 메모 / S2B 장바구니 품의 / AI 프롬프트)
+            </summary>
+            
+            <div style="margin-top: 14px;">
+                <label class="input-label">추가 반영할 세부 메모 (예: 5학년 대상, 참가희망자 4명, 예산과목 등):</label>
+                <input type="text" id="customMemo" placeholder="기안문에 포함할 특이사항을 적고 [초안 재생성]을 누르세요.">
+            </div>
+
+            <div style="margin-top: 14px;">
+                <div class="flex-between" style="margin-bottom: 6px;">
+                    <label class="input-label" style="margin: 0;">🛒 S2B 학교장터 물품 목록 (품의서 작성 시)</label>
+                    <button class="btn btn-sm btn-accent" onclick="fetchS2B()" style="background-color: #f59e0b;">S2B 장바구니 가져오기 🛒</button>
+                </div>
+                <textarea id="s2bItems" rows="3" placeholder="S2B 장바구니 데이터를 불러오면 품의 형식으로 기안문이 자동 변경됩니다."></textarea>
+            </div>
+
+            <div style="margin-top: 14px;">
+                <div class="flex-between" style="margin-bottom: 6px;">
+                    <label class="input-label" style="margin: 0;">🤖 외부 AI(ChatGPT/Gemini) 질의용 프롬프트</label>
+                    <button class="btn btn-sm btn-purple" onclick="generatePrompt()">프롬프트 복사 💡</button>
+                </div>
+                <textarea id="llmPrompt" rows="3" placeholder="[프롬프트 복사]를 누르면 외부 AI용 완벽한 프롬프트가 복사됩니다." readonly></textarea>
+            </div>
+        </details>
+
+        <!-- 실행 액션 버튼들 (트랙 1 품의 vs 트랙 2 전자결재 기안) -->
+        <div style="margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--surface-border); display: flex; gap: 12px; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+            <div style="display: flex; gap: 8px;">
+                <button class="btn btn-sm btn-accent" onclick="copyText('draftBody', '본문')" title="불안정할 때 바로 Ctrl+V할 수 있는 안전망">
+                    📋 본문 복사 (수동 붙여넣기 안전망)
+                </button>
+                <button class="btn btn-sm btn-secondary" onclick="copyFullDraft()">
+                    📋 제목+본문 전체 복사
+                </button>
+            </div>
+            
+            <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                <!-- 트랙 2: 전자결재 공문 기안 -->
+                <button class="btn btn-purple" id="startGongmunBtn" onclick="startGongmunDraftAutomation()" style="padding: 13px 22px; font-size: 1rem; font-weight: 700;">
+                    🚀 [트랙 2] 전자결재 기안 실행 ▶
+                </button>
+                
+                <!-- 트랙 1: 학교회계 품의등록 -->
+                <button class="btn btn-secondary" id="startBtn" onclick="startAutomation()" style="padding: 13px 18px; font-size: 0.92rem;">
+                    🛒 [트랙 1] 학교회계 품의 실행 ▶
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. 실시간 로그 콘솔 -->
     <div class="console" id="logConsole">
-        <p class="system">시스템이 준비되었습니다. ODT 파일을 선택하고 [기안 실행] 버튼을 클릭하세요.</p>
+        <p class="system">Edufine Flow V5 준비 완료. 공문 파일(ODT/HWPX)을 위 영역에 올려놓으세요.</p>
     </div>
 
-    <div id="interactiveControls" style="display: none; background: rgba(15, 23, 42, 0.4); border: 1px solid var(--surface-border); border-radius: 12px; padding: 15px; margin-top: 10px; text-align: center;">
-        <h3 style="margin-top: 0; color: #a7f3d0;">⏳ 봇 대기 중: 예산 선택 후 다음 작업을 선택하세요</h3>
+    <!-- 인터랙티브 컨트롤 (행추가 대기 등) -->
+    <div id="interactiveControls" style="display: none; background: rgba(15, 23, 42, 0.8); border: 1px solid var(--surface-border); border-radius: 12px; padding: 15px; margin-top: 14px; text-align: center;">
+        <h3 style="margin-top: 0; color: #a7f3d0; font-size: 1.05rem;">⏳ 봇 대기 중: 예산 선택 후 다음 작업을 선택하세요</h3>
         <button class="btn btn-secondary" onclick="triggerEvent('add_row')" style="margin-right: 10px; background: #f59e0b;">기록된 물품으로 행추가 하기 ➕</button>
         <button class="btn btn-primary" onclick="triggerEvent('next')">기안 완료 (다음 진행) ▶</button>
     </div>
 </div>
 
+<!-- 토스트 메시지 -->
+<div id="toast">
+    <span>✓</span>
+    <span id="toastMsg">클립보드에 복사되었습니다!</span>
+</div>
+
 <script>
-    const logConsole = document.getElementById('logConsole');
+    let currentParsedData = {};
     let evtSource = null;
 
-    function appendLog(msg, type = 'normal') {
-        const p = document.createElement('p');
-        p.textContent = msg;
-        if (type === 'system') {
-            p.className = 'system';
-        } else if (msg.includes("[공문 수동 작업 대기]")) {
-            p.className = 'highlight';
-        }
-        logConsole.appendChild(p);
-        logConsole.scrollTop = logConsole.scrollHeight;
-        
-        // 동적 버튼 표시 로직
-        if (msg.includes("[공문 수동 작업 대기]")) {
-            document.getElementById('interactiveControls').style.display = 'flex';
+    // ── 토스트 표시 함수 ──
+    function showToast(msg) {
+        const toast = document.getElementById('toast');
+        document.getElementById('toastMsg').textContent = msg;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2500);
+    }
+
+    // ── 탭 전환 ──
+    function switchTab(tab) {
+        document.getElementById('tabFileBtn').classList.toggle('active', tab === 'file');
+        document.getElementById('tabTextBtn').classList.toggle('active', tab === 'text');
+        const searchBtn = document.getElementById('tabSearchBtn');
+        if (searchBtn) searchBtn.classList.toggle('active', tab === 'search');
+
+        document.getElementById('fileSection').style.display = (tab === 'file') ? 'block' : 'none';
+        document.getElementById('textSection').style.display = (tab === 'text') ? 'block' : 'none';
+        const searchSec = document.getElementById('searchSection');
+        if (searchSec) searchSec.style.display = (tab === 'search') ? 'block' : 'none';
+
+        if (tab === 'search') {
+            document.getElementById('gongmunSearchKeyword').focus();
         }
     }
 
-    function triggerEvent(eventType) {
-        if(eventType === 'next') {
-            document.getElementById('interactiveControls').style.display = 'none';
+    // ── [트랙 3] 공문 검색 실행 ──
+    async function searchEdufineGongmun(openFirst = false) {
+        const keyword = document.getElementById('gongmunSearchKeyword').value.trim();
+        if (!keyword) {
+            alert('검색할 공문 키워드를 입력해 주세요.');
+            document.getElementById('gongmunSearchKeyword').focus();
+            return;
         }
-        
-        let logMsg = eventType === 'next' ? "[시스템] '기안 완료' 신호를 봇에게 전송했습니다..." : "[시스템] '행추가' 신호를 봇에게 전송했습니다...";
-        appendLog(logMsg, 'system');
-        
-        let itemsText = document.getElementById('s2bItems') ? document.getElementById('s2bItems').value : "";
-        
-        fetch('/api/trigger-event', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({event: eventType, items: itemsText})
-        });
+
+        const loading = document.getElementById('searchLoading');
+        const resultsArea = document.getElementById('searchResultsArea');
+        const resultList = document.getElementById('searchResultList');
+        const countSpan = document.getElementById('searchResultCount');
+        const searchBtn = document.getElementById('searchGongmunBtn');
+
+        loading.style.display = 'block';
+        resultsArea.style.display = 'none';
+        resultList.innerHTML = '';
+        searchBtn.disabled = true;
+
+        try {
+            const res = await fetch('/api/search-gongmun', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({keyword: keyword, open_first: openFirst})
+            });
+            const data = await res.json();
+
+            loading.style.display = 'none';
+            searchBtn.disabled = false;
+
+            if (data.status === 'ok') {
+                resultsArea.style.display = 'block';
+                countSpan.textContent = `검색 결과: 총 ${data.count}건 발견`;
+
+                if (data.results.length === 0) {
+                    resultList.innerHTML = '<div style="padding: 15px; color: #94a3b8; text-align: center;">검색된 공문이 없습니다.</div>';
+                    return;
+                }
+
+                data.results.forEach((item, idx) => {
+                    const rowDiv = document.createElement('div');
+                    rowDiv.style = "background: rgba(30, 41, 59, 0.7); border: 1px solid var(--surface-border); border-radius: 8px; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; gap: 10px;";
+                    rowDiv.innerHTML = `
+                        <div style="flex: 1; min-width: 0;">
+                            <div style="font-weight: 600; color: #f1f5f9; font-size: 0.95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                [${item.regDate}] ${item.title}
+                            </div>
+                            <div style="font-size: 0.8rem; color: #94a3b8; margin-top: 2px;">
+                                생산/접수번호: <b>${item.docNo || '-'}</b> | 담당/기안자: <b>${item.sender || '-'}</b>
+                            </div>
+                        </div>
+                        <button class="btn btn-sm btn-purple" onclick="openGongmunDoc(${item.idx}, '${encodeURIComponent(item.title)}')">
+                            새창 열람 📂
+                        </button>
+                    `;
+                    resultList.appendChild(rowDiv);
+                });
+
+                if (openFirst) {
+                    showToast(`가장 최신 공문 열람 창을 호출했습니다!`);
+                } else {
+                    showToast(`공문 ${data.count}건 검색 완료!`);
+                }
+            } else {
+                alert(`공문 검색 실패: ${data.message || '에듀파인 연결을 확인하세요'}`);
+            }
+        } catch (e) {
+            loading.style.display = 'none';
+            searchBtn.disabled = false;
+            alert(`서버 통신 오류: ${e}`);
+        }
     }
 
-    async function browseFile() {
+    // ── [트랙 3] 특정 공문 새창 열람 ──
+    async function openGongmunDoc(rowIdx, titleEncoded) {
+        const title = decodeURIComponent(titleEncoded || '');
+        showToast(`'${title.substring(0, 20)}...' 열람 호출 중...`);
+        try {
+            const res = await fetch('/api/open-gongmun', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({row_index: rowIdx})
+            });
+            const data = await res.json();
+            if (data.status === 'ok') {
+                showToast(`WXSClient(새창 뷰어)로 공문이 열렸습니다!`);
+            } else {
+                alert(`공문 열람 실패: ${data.message || '에듀파인 상태를 확인하세요'}`);
+            }
+        } catch (e) {
+            alert(`열람 통신 오류: ${e}`);
+        }
+    }
+
+    // ── 드래그 앤 드롭 이벤트 등록 ──
+    const dropZone = document.getElementById('dropZone');
+    ['dragenter', 'dragover'].forEach(eventName => {
+        dropZone.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            dropZone.classList.add('dragover');
+        }, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            dropZone.classList.remove('dragover');
+        }, false);
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        if (files.length > 0) {
+            handleFileSelected(files[0]);
+        }
+    });
+
+    function triggerFileInput() {
+        document.getElementById('fileInput').click();
+    }
+
+    // ── 파일 업로드 및 분석 ──
+    async function handleFileSelected(file) {
+        if (!file) return;
+        
+        appendLog(`[파일 수신] ${file.name} 분석을 시작합니다...`, 'system');
+        document.getElementById('filePath').value = file.name;
+
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('custom_memo', document.getElementById('customMemo').value);
+        formData.append('items', document.getElementById('s2bItems').value);
+
+        try {
+            const res = await fetch('/api/upload-and-parse', {
+                method: 'POST',
+                body: formData
+            });
+            const data = await res.json();
+            if (data.error) {
+                appendLog(`[파싱 에러] ${data.error}`, 'system');
+                alert(data.error);
+                return;
+            }
+
+            renderParsedResult(data);
+            showToast("공문 분석 및 기안문 초안 작성이 완료되었습니다!");
+        } catch (err) {
+            appendLog(`[통신 오류] ${err}`, 'system');
+            alert("서버 통신 중 오류가 발생했습니다.");
+        }
+    }
+
+    // ── 텍스트 직접 입력 분석 ──
+    async function parseRawText() {
+        const rawText = document.getElementById('rawTextInput').value.trim();
+        if (!rawText) {
+            alert("공문 텍스트를 입력해주세요.");
+            return;
+        }
+
+        appendLog("[텍스트 분석] 입력된 공문 텍스트 분석 시작...", 'system');
+        try {
+            const res = await fetch('/api/upload-and-parse', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    text: rawText,
+                    custom_memo: document.getElementById('customMemo').value,
+                    items: document.getElementById('s2bItems').value
+                })
+            });
+            const data = await res.json();
+            if (data.error) {
+                alert(data.error);
+                return;
+            }
+            renderParsedResult(data);
+            showToast("기안문 초안이 완성되었습니다!");
+        } catch (err) {
+            alert("분석 실패: " + err);
+        }
+    }
+
+    // ── 에듀파인 브라우저 화면에서 열린 공문 직접 스크래핑 ──
+    async function fetchFromEdufineBrowser() {
+        appendLog("[에듀파인 연동] Chrome(9222 포트)에서 열려있는 공문 창 탐색 중...", 'system');
+        try {
+            const res = await fetch('/api/fetch-edufine-current-doc');
+            const data = await res.json();
+            if (data.error) {
+                appendLog(`[연동 안내] ${data.error}`, 'system');
+                alert(data.error);
+                return;
+            }
+            renderParsedResult(data);
+            showToast("에듀파인 화면의 공문을 성공적으로 가져왔습니다!");
+            appendLog(`[성공] 에듀파인 공문 감지: ${data.source_title || '공문서'}`, 'highlight');
+        } catch (err) {
+            appendLog(`[통신 에러] ${err}`, 'system');
+            alert("에듀파인 브라우저 연동에 실패했습니다. (Chrome 디버깅 포트 확인 필요)");
+        }
+    }
+
+    // ── 클립보드 복사 내용으로 즉시 분석 ──
+    async function fetchFromClipboard() {
+        try {
+            const text = await navigator.clipboard.readText();
+            if (!text || text.trim().length < 10) {
+                alert("클립보드에 공문 텍스트가 없습니다.\n에듀파인 공문 창에서 본문 텍스트를 드래그하여 [Ctrl+C]로 복사한 후 이 버튼을 눌러주세요!");
+                return;
+            }
+            appendLog("[클립보드 수신] 복사된 텍스트로 즉시 기안문 분석을 시작합니다...", 'system');
+            document.getElementById('rawTextInput').value = text;
+            
+            const res = await fetch('/api/upload-and-parse', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    text: text,
+                    custom_memo: document.getElementById('customMemo').value,
+                    items: document.getElementById('s2bItems').value
+                })
+            });
+            const data = await res.json();
+            if (data.error) {
+                alert(data.error);
+                return;
+            }
+            renderParsedResult(data);
+            showToast("클립보드 공문 분석 및 기안문 완성이 완료되었습니다!");
+        } catch (err) {
+            alert("클립보드 접근 권한이 없거나 오류가 발생했습니다: " + err);
+        }
+    }
+
+    // ── 창 복귀 시 클립보드 자동 감지 (Auto Watcher) ──
+    let isAutoWatchEnabled = false;
+    let lastProcessedClipboard = '';
+
+    function toggleAutoWatch(enabled) {
+        isAutoWatchEnabled = enabled;
+        if (enabled) {
+            showToast("클립보드 자동 분석이 켜졌습니다. 공문 복사 후 이 창으로 오시면 자동 완성됩니다!");
+            checkClipboardAuto();
+        }
+    }
+
+    async function checkClipboardAuto() {
+        if (!isAutoWatchEnabled) return;
+        try {
+            const text = await navigator.clipboard.readText();
+            if (!text || text === lastProcessedClipboard || text.trim().length < 30) return;
+            
+            // 공문 관련 주요 키워드 있는지 확인
+            const hasGongmunKeywords = ['시행', '접수', '수신', '제목', '관련', '교육', '학교', '계획'].some(k => text.includes(k));
+            if (hasGongmunKeywords) {
+                lastProcessedClipboard = text;
+                appendLog("[자동 감지] 새 공문 텍스트가 복사되어 기안문을 자동 생성합니다!", 'highlight');
+                document.getElementById('rawTextInput').value = text;
+                
+                const res = await fetch('/api/upload-and-parse', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        text: text,
+                        custom_memo: document.getElementById('customMemo').value,
+                        items: document.getElementById('s2bItems').value
+                    })
+                });
+                const data = await res.json();
+                if (data.draft) {
+                    renderParsedResult(data);
+                    showToast("⚡ 새 공문이 자동 감지되어 기안문이 완성되었습니다!");
+                }
+            }
+        } catch(e) {
+            // 권한 미승인 등은 무시
+        }
+    }
+
+    window.addEventListener('focus', () => {
+        if (isAutoWatchEnabled) {
+            checkClipboardAuto();
+        }
+    });
+
+    // ── 분석 결과 화면 반영 ──
+    function renderParsedResult(data) {
+        currentParsedData = data.parsed || {};
+        if (data.filepath) {
+            document.getElementById('filePath').value = data.filepath;
+        }
+
+        // 메타 카드 표시
+        document.getElementById('docMetaCard').style.display = 'block';
+        document.getElementById('metaSender').textContent = currentParsedData.발신처 || '(확인 필요)';
+        
+        const sihaeng = currentParsedData.sihaeng_no 
+            ? `${currentParsedData.sihaeng_no} (${currentParsedData.sihaeng_date || ''})`
+            : '-';
+        document.getElementById('metaSihaeng').textContent = sihaeng;
+
+        const jeopsu = currentParsedData.jeopsu_no 
+            ? `${currentParsedData.jeopsu_no} (${currentParsedData.jeopsu_date || ''})`
+            : '-';
+        document.getElementById('metaJeopsu').textContent = jeopsu;
+        document.getElementById('metaDeadline').textContent = currentParsedData.마감일 || '별도 기한 없음';
+
+        // 기안문 내용 채우기
+        if (data.draft) {
+            document.getElementById('draftTitle').value = data.draft.title || '';
+            document.getElementById('draftBody').value = data.draft.body || '';
+        }
+
+        appendLog(`✓ 분석 완료: [${currentParsedData.제목 || '제목 미상'}]`, 'highlight');
+    }
+
+    // ── 초안 재생성 ──
+    async function regenerateDraft() {
+        const memo = document.getElementById('customMemo').value;
+        const items = document.getElementById('s2bItems').value;
+
+        try {
+            const res = await fetch('/api/generate-draft', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    parsed: currentParsedData,
+                    custom_memo: memo,
+                    items: items
+                })
+            });
+            const data = await res.json();
+            if (data.draft) {
+                document.getElementById('draftTitle').value = data.draft.title;
+                document.getElementById('draftBody').value = data.draft.body;
+                showToast("초안이 새롭게 갱신되었습니다!");
+            }
+        } catch(e) {
+            alert("초안 재생성 오류: " + e);
+        }
+    }
+
+    // ── 클립보드 복사 함수들 ──
+    async function copyText(elementId, label) {
+        const text = document.getElementById(elementId).value;
+        if (!text) {
+            alert(`${label} 내용이 비어있습니다.`);
+            return;
+        }
+        await navigator.clipboard.writeText(text);
+        showToast(`${label}이(가) 클립보드에 복사되었습니다! 에듀파인에 붙여넣으세요.`);
+    }
+
+    async function copyFullDraft() {
+        const title = document.getElementById('draftTitle').value;
+        const body = document.getElementById('draftBody').value;
+        if (!title && !body) {
+            alert("복사할 기안문 내용이 없습니다.");
+            return;
+        }
+        const full = `[제목]\n${title}\n\n[본문]\n${body}`;
+        await navigator.clipboard.writeText(full);
+        showToast("제목과 본문 전체가 복사되었습니다!");
+    }
+
+    // ── 서버 파일 탐색 ──
+    async function browseServerFile() {
         try {
             let res = await fetch('/api/browse-file');
             let data = await res.json();
             if(data.path) {
                 document.getElementById('filePath').value = data.path;
+                reparseCurrent();
             }
         } catch(e) {
-            console.error(e);
-            alert("파일 탐색기를 여는 중 오류가 발생했습니다.");
+            alert("파일 탐색 오류");
         }
     }
-    
+
+    async function reparseCurrent() {
+        const path = document.getElementById('filePath').value;
+        if (!path) return;
+        appendLog(`[재분석] ${path} 분석 중...`, 'system');
+        
+        try {
+            let res = await fetch('/api/upload-and-parse', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    text: '',
+                    custom_memo: document.getElementById('customMemo').value,
+                    items: document.getElementById('s2bItems').value
+                })
+            });
+            // 경로 기반 분석 재요청
+            generatePrompt();
+        } catch(e) {
+            console.error(e);
+        }
+    }
+
+    // ── S2B 및 외부 AI 프롬프트 ──
     async function fetchS2B() {
         const s2bArea = document.getElementById('s2bItems');
-        s2bArea.value = "S2B 장바구니 데이터를 읽어오는 중입니다. 브라우저 창이 열리면 잠시 대기해주세요...";
-        
+        s2bArea.value = "S2B 장바구니 데이터를 읽어오는 중입니다. 잠시 대기해주세요...";
         try {
             let res = await fetch('/api/fetch-s2b');
             let data = await res.json();
@@ -283,18 +1013,17 @@
                 s2bArea.value = "오류 발생: " + data.error;
             } else {
                 s2bArea.value = data.item_list;
+                showToast("S2B 장바구니를 불러왔습니다! [초안 재생성]을 눌러 품의문으로 변환하세요.");
             }
         } catch(e) {
-            s2bArea.value = "서버와 통신하는 중 오류가 발생했습니다.";
+            s2bArea.value = "통신 중 오류가 발생했습니다.";
         }
     }
-    
+
     async function generatePrompt() {
         const promptArea = document.getElementById('llmPrompt');
         let filePath = document.getElementById('filePath').value;
         let s2bItems = document.getElementById('s2bItems').value;
-        
-        promptArea.value = "프롬프트 데이터를 생성 중입니다. 잠시만 기다려주세요...";
         
         try {
             let res = await fetch('/api/generate-prompt', {
@@ -307,36 +1036,81 @@
                 promptArea.value = "오류 발생: " + data.error;
             } else {
                 promptArea.value = data.prompt;
-                // 클립보드에 자동 복사 시도
-                try {
-                    await navigator.clipboard.writeText(data.prompt);
-                    alert("프롬프트가 클립보드에 복사되었습니다!\nChatGPT 입력창에 [붙여넣기] 하세요.");
-                } catch(err) {
-                    // 클립보드 접근 거부 시 직접 복사 안내
-                    alert("프롬프트가 생성되었습니다. 텍스트 박스 안의 내용을 직접 복사해주세요.");
-                }
+                await navigator.clipboard.writeText(data.prompt);
+                showToast("외부 AI 질의용 프롬프트가 복사되었습니다!");
             }
         } catch(e) {
-            promptArea.value = "서버와 통신하는 중 오류가 발생했습니다.";
+            promptArea.value = "오류 발생";
         }
     }
 
+    // ── [트랙 2] 전자결재 공문 기안 자동화 실행 ──
+    async function startGongmunDraftAutomation() {
+        const draftTitle = document.getElementById('draftTitle').value.trim();
+        const draftBody = document.getElementById('draftBody').value.trim();
+
+        if (!draftTitle) {
+            alert("기안문 제목을 먼저 입력하거나 생성해주세요.");
+            return;
+        }
+
+        // 안전망: 만약 자동 주입이 실패하더라도 사용자가 언제든 붙여넣을 수 있도록 클립보드에 본문 복사
+        try {
+            await navigator.clipboard.writeText(draftBody);
+            showToast("안전망: 본문이 클립보드에 복사되었습니다. (실패 시 Ctrl+V 가능)");
+        } catch(e) {}
+
+        const btn = document.getElementById('startGongmunBtn');
+        btn.disabled = true;
+        btn.style.opacity = '0.5';
+
+        appendLog('🚀 [트랙 2] 전자결재 공문 기안 봇을 가동합니다...', 'system');
+
+        fetch('/api/start-gongmun-draft', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({title: draftTitle, body: draftBody})
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.error) {
+                appendLog(`[실행 에러] ${data.error}`, 'system');
+                alert(data.error);
+                btn.disabled = false;
+                btn.style.opacity = '1';
+                return;
+            }
+            if (!evtSource) setupSSE();
+        })
+        .catch(err => {
+            appendLog(`[통신 오류] ${err}`, 'system');
+            btn.disabled = false;
+            btn.style.opacity = '1';
+        });
+    }
+
+    // ── [트랙 1] 학교회계 품의 브라우저 자동 입력 ──
     function startAutomation() {
         let filePath = document.getElementById('filePath').value;
         const dryRun = document.getElementById('dryRun').checked;
         const draftTitle = document.getElementById('draftTitle').value;
-        const draftSummary = document.getElementById('draftSummary').value;
+        const draftBody = document.getElementById('draftBody').value;
+
+        if (!draftTitle && !draftBody && !filePath) {
+            alert("기안할 제목 또는 공문 파일을 지정해주세요.");
+            return;
+        }
 
         document.getElementById('startBtn').disabled = true;
         document.getElementById('startBtn').style.opacity = '0.5';
         document.getElementById('interactiveControls').style.display = 'none';
-        logConsole.innerHTML = '';
-        appendLog('파이프라인을 초기화하는 중...', 'system');
+        
+        appendLog('▶️ 에듀파인 기안 자동 입력 파이프라인을 시작합니다...', 'system');
 
         fetch('/api/start', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({path: filePath, dry_run: dryRun, title: draftTitle, summary: draftSummary})
+            body: JSON.stringify({path: filePath, dry_run: dryRun, title: draftTitle, summary: draftBody})
         })
         .then(res => res.json())
         .then(data => {
@@ -356,9 +1130,7 @@
     }
 
     function setupSSE() {
-        if(evtSource) {
-            evtSource.close();
-        }
+        if(evtSource) evtSource.close();
         evtSource = new EventSource('/api/stream');
         evtSource.onmessage = function(e) {
             if (e.data === 'ping') return;
@@ -366,20 +1138,53 @@
             if (data.type === 'log') {
                 appendLog(data.text);
             } else if (data.type === 'done') {
-                appendLog('▶️ 전체 파이프라인 처리가 종료되었습니다.', 'system');
-                document.getElementById('startBtn').disabled = false;
-                document.getElementById('startBtn').style.opacity = '1';
+                appendLog('▶️ 전체 파이프라인 처리가 완료되었습니다.', 'system');
+                restoreButtons();
                 evtSource.close();
                 evtSource = null;
             }
         };
         evtSource.onerror = function() {
-            appendLog('서버 연결이 종료되었습니다. (버튼이 다시 활성화됩니다)', 'system');
-            document.getElementById('startBtn').disabled = false;
-            document.getElementById('startBtn').style.opacity = '1';
-            evtSource.close();
-            evtSource = null;
+            appendLog('서버 연결이 종료되었습니다.', 'system');
+            restoreButtons();
+            if (evtSource) {
+                evtSource.close();
+                evtSource = null;
+            }
         };
+    }
+
+    function restoreButtons() {
+        const b1 = document.getElementById('startBtn');
+        if (b1) { b1.disabled = false; b1.style.opacity = '1'; }
+        const b2 = document.getElementById('startGongmunBtn');
+        if (b2) { b2.disabled = false; b2.style.opacity = '1'; }
+    }
+
+    function appendLog(msg, type = 'normal') {
+        const logConsole = document.getElementById('logConsole');
+        const p = document.createElement('p');
+        p.textContent = msg;
+        if (type === 'system') p.className = 'system';
+        else if (msg.includes("[공문 수동 작업 대기]")) p.className = 'highlight';
+        logConsole.appendChild(p);
+        logConsole.scrollTop = logConsole.scrollHeight;
+
+        if (msg.includes("[공문 수동 작업 대기]")) {
+            document.getElementById('interactiveControls').style.display = 'block';
+        }
+    }
+
+    function triggerEvent(eventType) {
+        if(eventType === 'next') {
+            document.getElementById('interactiveControls').style.display = 'none';
+        }
+        let itemsText = document.getElementById('s2bItems') ? document.getElementById('s2bItems').value : "";
+        fetch('/api/trigger-event', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({event: eventType, items: itemsText})
+        });
     }
 </script>
 

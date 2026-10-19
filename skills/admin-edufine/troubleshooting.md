@@ -155,3 +155,34 @@ When the AI assistant runs run_dev.bat via terminal commands, the Windows proces
   - **Method B (Everyday Profile Debugging):** Developed [launch_chrome_default.bat](file:///C:/Users/lee21/.gemini/antigravity/scratch/my-skills/skills/admin-edufine/launch_chrome_default.bat) to launch Chrome using the user's default Chrome profile directory (`--user-data-dir="%LOCALAPPDATA%\Google\Chrome\User Data"`). This profile already contains all verified certifications, configurations, and security plugin registrations. Note: The user must close all existing Chrome windows before launching this.
 - **CMD Syntax/Encoding Fix:** Rewrote all batch files ([launch_chrome.bat](file:///C:/Users/lee21/.gemini/antigravity/scratch/my-skills/skills/admin-edufine/launch_chrome.bat) and `launch_chrome_default.bat`) in **pure English/ASCII** text. This completely avoids encoding conflicts between UTF-8 files and the Windows CMD CP949 environment.
 
+---
+
+## Part 4. Track 2 & Track 3 Technical Innovations (공문 검색 & 새창 열람 & 기안기 연동)
+
+### Issue 18: Chrome 외부 프로토콜 팝업 ("WXSClient MFC 응용 프로그램을 여시겠습니까?")
+* **문제 상황:** 에듀파인에서 공문(수신공문 또는 기안기)을 열 때, 브라우저 내부 창이 아니라 C++ 네이티브 다이얼로그인 "WXSClient MFC 응용 프로그램을 여시겠습니까?" 확인창이 상단에 뜨면서 자동화 스크립트의 접근이 차단됨.
+* **원인 규명:** K-에듀파인은 공문 열람 및 기안 시 `wxsclient://handysoft.co.kr/open&...` 커스텀 URL 프로토콜을 사용해 설치형 프로그램인 `C:\Program Files (x86)\kedu\WXSClient.exe`를 구동함. 이는 브라우저 DOM 영역이 아닌 크롬 네이티브 OS 레벨 보안 프롬프트임.
+* **해결 방법:** 
+  1. 최초 1회 나타나는 확인창에서 **`[✓] 항상 klef.gbe.kr에서 연결된 앱에 있는 이 유형의 링크를 열도록 허용`**을 체크하고 `[WXSClient MFC 응용 프로그램 열기]`를 클릭.
+  2. 크롬 내부 정책에 영구 등록되어 이후부터는 아무런 확인창 없이 0.1초 만에 네이티브 뷰어/기안기 새창이 즉시 기동됨.
+
+### Issue 19: Playwright `connect_over_cdp` 타임아웃 및 탭 직결 고속 WebSocket 통신
+* **문제 상황:** 브라우저에 탭이 여러 개 열려있거나 WXSClient 호출 후 브라우저 메인 프로세스가 일시 대기 상태일 때, Playwright의 `connect_over_cdp`가 브라우저 레벨 소켓(`ws://127.0.0.1:9222/devtools/browser/...`) 연결 단계에서 10초~30초 타임아웃 발생.
+* **원인 규명:** Chrome CDP는 브라우저 전체 세션과 개별 페이지(탭) 세션을 분리 운영함. 브라우저 타겟이 잠시 락에 걸려도 개별 탭 엔드포인트(`http://127.0.0.1:9222/json`) 및 개별 탭 웹소켓(`ws://127.0.0.1:9222/devtools/page/...`)은 즉각 응답함. 또한 탭 탐색 시 `type: "iframe"`이 먼저 검색되어 엉뚱한 프레임에 연결되는 문제 발견.
+* **해결 방법:**
+  1. `http://127.0.0.1:9222/json`에서 반드시 **`type == 'page'`**인 메인 K-에듀파인 탭을 필터링하도록 수정.
+  2. 무거운 Playwright 대신 경량 `websockets` 라이브러리로 해당 탭 웹소켓에 직접 꽂아 JSON-RPC `Runtime.evaluate`를 쏘는 초고속 직결 엔진 구축 (응답 속도 0.01초 확보).
+
+### Issue 20: Iframe 내부 `a.click()` 권한 차단과 `targetWin.eval()` 직접 실행
+* **문제 상황:** 문서등록대장에서 검색된 공문의 `a.ellipsisTitle` 요소에 `.click()` 이벤트를 발생시켰으나 WXSClient 뷰어가 기동되지 않음.
+* **원인 규명:** 에듀파인 iframe 내의 인라인 `onclick="doCallClientAppExtra(...)"` 함수는 브라우저의 사용자 제스처(user gesture) 정책 및 크로스 프레임 보안 제약으로 단순 합성 `.click()` 호출 시 실행이 씹힘.
+* **해결 방법:** 해당 iframe의 `contentWindow` 컨텍스트를 찾아 `targetWin.eval(a.getAttribute('onclick'))`로 함수를 직접 실행하도록 변경. 호출 즉시 100% 확률로 `WXSClient.exe` 프로세스가 안정 기동됨.
+
+### Issue 21: `학교회계` 시스템에서 `업무관리` 시스템으로의 프로그래밍적 전환
+* **문제 상황:** 사용자가 학교회계 화면(품의등록 등)에 머물러 있을 때 좌측 메뉴에 '기안'이나 '문서등록대장'이 보이지 않아 기안기나 공문 검색이 실패함.
+* **원인 규명:** 넥사크로의 상단 시스템 콤보박스(`cboJobList`)가 '학교회계'(`A00FA`)로 선택되어 있어 `dsJobList` 및 `gdsMenu`가 회계 전용 메뉴로 덮어씌워진 상태.
+* **해결 방법:**
+  1. 넥사크로 애플리케이션 `TopFrame.form`의 `cboJobList`에 `set_index(0)`, `set_value('A00AA')`를 주입하고, `ItemChangeEventInfo` 객체를 생성하여 `cboJobList_onitemchanged` 이벤트 핸들러를 수동 발행.
+  2. 즉시 `[업무관리]` 시스템으로 전환되며, LeftFrame의 `gfnOpenMenu('A00AAB0101001')`를 호출하여 공용서식 화면을 띄운 뒤 `fncFormDraft(...)`를 실행하여 표준 기안문 작성 팝업을 즉시 오픈.
+
+

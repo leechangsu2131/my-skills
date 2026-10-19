@@ -91,83 +91,95 @@ async def execute_gongmun_search(keyword: str, open_first: bool = True, start_da
                 return data.get('result', {}).get('result', {}).get('value')
 
             # 1. 문서등록대장 화면 탐색 및 검색 실행
-            js_search = f"""(() => {{
-                // 1. 공지사항 팝업 닫기 시도
-                try {{
-                    let closeBtn = document.querySelector('[id*="noticePopup"][id*="btnClose"]');
-                    if (closeBtn) closeBtn.click();
-                }} catch(e) {{}}
+            js_search = """(() => {
+                // 1. 공지사항 팝업 파괴 및 닫기
+                try {
+                    let app = nexacro.getApplication();
+                    let mf = app.mainframe.MainVFrameSet.SubHFrameSet.MainFrame;
+                    if (mf && mf.noticePopup0) {
+                        mf.noticePopup0.destroy();
+                    }
+                    if (app && app.popupframes) {
+                        for (let k in app.popupframes) {
+                            try { app.popupframes[k].form.close(); } catch(e) {}
+                        }
+                    }
+                } catch(e) {}
 
                 // 2. 문서등록대장 iframe 탐색
                 let targetWin = null;
                 let iframes = document.querySelectorAll('iframe');
-                for (let f of iframes) {{
-                    try {{
+                for (let f of iframes) {
+                    try {
                         let url = f.contentWindow.location.href || '';
-                        if (url.includes('DocRegistRegstrList') || url.includes('retrieveDocRegistRegstrList')) {{
+                        if (url.includes('DocRegistRegstrList') || url.includes('retrieveDocRegistRegstrList')) {
                             targetWin = f.contentWindow;
                             break;
-                        }}
-                    }} catch(e) {{}}
-                }}
+                        }
+                    } catch(e) {}
+                }
 
-                if (!targetWin) {{
-                    return {{status: 'need_nav', message: '문서등록대장 화면을 열어야 합니다.'}};
-                }}
+                if (!targetWin) {
+                    return {status: 'need_nav', message: '문서등록대장 화면을 열어야 합니다.'};
+                }
 
                 let doc = targetWin.document;
 
                 // 3. 검색 시작일자 조정
                 let startDate = doc.getElementById('basicReportDe');
-                if (startDate && '{start_date}') {{
-                    startDate.value = '{start_date}';
-                    startDate.dispatchEvent(new Event('input', {{bubbles: true}}));
-                    startDate.dispatchEvent(new Event('change', {{bubbles: true}}));
-                }}
+                if (startDate && '__START_DATE__') {
+                    startDate.value = '__START_DATE__';
+                    startDate.dispatchEvent(new Event('input', {bubbles: true}));
+                    startDate.dispatchEvent(new Event('change', {bubbles: true}));
+                }
 
                 // 4. 제목 검색창에 키워드 주입
                 let inputSj = doc.getElementById('basicSj');
-                if (inputSj) {{
-                    inputSj.value = '{keyword}';
-                    inputSj.dispatchEvent(new Event('input', {{bubbles: true}}));
-                    inputSj.dispatchEvent(new Event('change', {{bubbles: true}}));
-                }}
+                if (inputSj) {
+                    inputSj.value = '__KEYWORD__';
+                    inputSj.dispatchEvent(new Event('input', {bubbles: true}));
+                    inputSj.dispatchEvent(new Event('change', {bubbles: true}));
+                }
 
                 // 5. 조회 버튼 클릭
                 let btn = doc.getElementById('searchDocBtn');
-                if (btn) {{
+                if (btn) {
                     btn.click();
-                }}
+                }
 
-                return {{status: 'ok', message: '조회 요청 완료'}};
-            }})()"""
+                return {status: 'ok', message: '조회 요청 완료'};
+            })()""".replace('__START_DATE__', start_date).replace('__KEYWORD__', keyword)
 
             search_res = await call_eval(js_search)
             
-            # 문서등록대장이 아직 안 열려 있는 경우 메뉴 클릭 유도
+            # 문서등록대장이 아직 안 열려 있는 경우 gfnOpenMenu 직접 호출
             if search_res and search_res.get('status') == 'need_nav':
-                print("   [안내] 문서등록대장 화면이 열려있지 않아 좌측 메뉴를 호출합니다...")
+                print("   [안내] 문서등록대장 메뉴를 Nexacro 직접 호출(A00AAB0107001)로 엽니다...")
                 js_nav = """(() => {
-                    // 좌측 메뉴에서 문서함 -> 문서등록대장 클릭
-                    let rows = document.querySelectorAll('[id*="gridMenu.body.gridrow_"]');
-                    for (let r of rows) {
-                        if (r.innerText.includes('문서함') && !r.innerText.includes('내문서함')) {
-                            r.click();
-                            break;
+                    try {
+                        let app = nexacro.getApplication();
+                        // 업무관리로 전환 (필요시)
+                        let top = app.mainframe.MainVFrameSet.TopFrame.form;
+                        let cbo = top.cboJobList;
+                        if (cbo && cbo.index !== 0) {
+                            let preIdx = cbo.index;
+                            let preVal = cbo.value;
+                            let preText = cbo.text;
+                            cbo.set_index(0);
+                            cbo.set_value('A00AA');
+                            let evt = new nexacro.ItemChangeEventInfo(cbo, 'onitemchanged', preIdx, preText, preVal, 0, '업무관리', 'A00AA');
+                            top.cboJobList_onitemchanged(cbo, evt);
                         }
+                        // LeftFrame gfnOpenMenu
+                        let lf = app.mainframe.MainVFrameSet.SubHFrameSet.LeftFrame.form;
+                        lf.gfnOpenMenu('A00AAB0107001');
+                        return true;
+                    } catch(e) {
+                        return false;
                     }
-                    setTimeout(() => {
-                        let subRows = document.querySelectorAll('[id*="gridMenu.body.gridrow_"]');
-                        for (let sr of subRows) {
-                            if (sr.innerText.includes('문서등록대장')) {
-                                sr.click();
-                                break;
-                            }
-                        }
-                    }, 500);
                 })()"""
                 await call_eval(js_nav)
-                await asyncio.sleep(3)
+                await asyncio.sleep(4)
                 # 재시도
                 search_res = await call_eval(js_search)
 

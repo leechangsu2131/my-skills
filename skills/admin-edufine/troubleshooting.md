@@ -185,4 +185,26 @@ When the AI assistant runs run_dev.bat via terminal commands, the Windows proces
   1. 넥사크로 애플리케이션 `TopFrame.form`의 `cboJobList`에 `set_index(0)`, `set_value('A00AA')`를 주입하고, `ItemChangeEventInfo` 객체를 생성하여 `cboJobList_onitemchanged` 이벤트 핸들러를 수동 발행.
   2. 즉시 `[업무관리]` 시스템으로 전환되며, LeftFrame의 `gfnOpenMenu('A00AAB0101001')`를 호출하여 공용서식 화면을 띄운 뒤 `fncFormDraft(...)`를 실행하여 표준 기안문 작성 팝업을 즉시 오픈.
 
+### Issue 22: 포털 메인에서 K-에듀파인 팝업 차단 우회 및 CDP Target.createTarget 직결 기동
+* **문제 상황:** 사용자가 업무포털(`https://gbe.eduptl.kr/bpm_man_mn00_001.do`) 메인에만 로그인해 두고 에듀파인을 아직 안 띄운 상태에서, 스크립트가 포털의 K-에듀파인 링크(`id="https://klef.gbe.kr/"`)를 클릭하면 브라우저의 팝업 차단 또는 폼 타겟 제약으로 에듀파인 메인 창이 열리지 않음.
+* **원인 규명:** 포털의 K-에듀파인 링크는 내부적으로 `openOuterTap` -> `document.frmNew.submit()`(새창)을 수행하는데, 비인터랙티브 스크립트 실행 환경에서는 브라우저 팝업 보안 정책에 걸릴 수 있음.
+* **해결 방법:** Chrome CDP의 브라우저 레벨 웹소켓에 `Target.createTarget(url: "https://klef.gbe.kr/")` 명령을 직접 전달. 브라우저 팝업 차단 정책을 완전히 우회하여 단 1초 만에 `https://klef.gbe.kr/keris_ui/main.do` 메인 탭을 안정적으로 생성 및 로드 성공.
+
+### Issue 23: DOM 트리 순회 클릭의 불안정성 극복 - Nexacro 내부 `gfnOpenMenu(menuId)` 직결 호출
+* **문제 상황:** 좌측 메뉴 트리(`gridMenu`)의 row 텍스트(`사업담당`, `품의/정산`, `품의등록`, `문서등록대장`)를 찾아 합성 마우스 클릭을 수행할 때, 메뉴 폴딩 상태, 애니메이션 지연, 공지사항 팝업 등에 의해 메뉴가 간헐적으로 안 열리는 현상 발생.
+* **원인 규명:** 에듀파인은 Nexacro 프레임워크 기반으로 메뉴 ID 체계가 정의되어 있으며, `LeftFrame.form.gfnOpenMenu(menuId)`라는 내장 함수가 메뉴 트리의 펼침 여부와 무관하게 해당 MDI 탭 및 워크프레임을 직접 생성함.
+* **해결 방법:** DOM 클릭 대신 `app.mainframe.MainVFrameSet.SubHFrameSet.LeftFrame.form.gfnOpenMenu(menuId)`를 직접 호출.
+  - **주요 메뉴 ID 매핑:**
+    - `A00AAB0107001` : **[업무관리] 문서관리 > 문서등록대장**
+    - `A00AAB0107012` : **[업무관리] 문서관리 > 문서등록대장(다년도검색)**
+    - `A00AAB0101001` : **[업무관리] 기안 > 공용서식**
+    - `A00FAA0104001001` : **[학교회계] 사업담당 > 품의/정산 > 품의등록**
+    - `A00FAA0104001002` : **[학교회계] 사업담당 > 품의/정산 > 품의목록**
+  - 결과: 어떤 화면 상태에서든 100% 즉시 해당 탭이 완벽하게 열림.
+
+### Issue 24: 전면 차단 공지사항 팝업 강제 소멸 (`noticePopup0.destroy()`)
+* **문제 상황:** 청렴교육 등의 공지사항 팝업(`noticePopup0`)이 전면을 가려 뒤쪽의 품의등록 폼이나 버튼과의 인터랙션이 방해받음. 단순 HTML 버튼 클릭(`btnClose.click()`)이 동작하지 않거나 늦게 반응하는 문제 발생.
+* **원인 규명:** Nexacro의 팝업 프레임은 `MainFrame.noticePopup0` 형태로 Nexacro 객체 트리에 존재하며, 웹 브라우저 iframe 내부에 렌더링되어 일반적인 DOM 이벤트 전파가 차단될 수 있음.
+* **해결 방법:** Nexacro 애플리케이션 레벨에서 `app.mainframe.MainVFrameSet.SubHFrameSet.MainFrame.noticePopup0.destroy()` 또는 `app.popupframes`를 순회하며 `.form.close()`를 실행하여 메모리 레벨에서 즉시 완전 제거. 화면에 품의등록 원본 폼만 깨끗하게 노출됨.
+
 

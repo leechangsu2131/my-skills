@@ -469,6 +469,69 @@ grdActYmd.dispatchEvent("selection-change", {row: dateIdx, rowIndex: dateIdx});
 - `neis_execute_save_final.py`: 5, 18, 19, 20주차 실제 DB 저장 및 모달 자동 처리 마스터 실행기.
 - `final_verification.py`: 나이스 서버 재조회 기반 `dsHcntList` 전 과목 편차 0 실시간 검증기.
 
+---
+
+## 2026-10-19: 교원연수 이수실적 등록 (심폐소생술등응급처치교육) 자동화 및 포털 SSO 연동 완결 🏆
+
+### 1. 업무 목표 및 개요
+- **대상**: 2026학년도 교원연수 이수실적 등록 (화천초등학교 교사 이창수)
+- **증빙 원본**: `C:\FBKR_SCAN\19102026160012.pdf` (스캔본, 동국대학교경주병원장 발행 교육연수이수증)
+- **화면 앱 ID**: 
+  - MDI 메인: `edu/ga/tps/hrd/mm/tps_hrdmm01_m00` (개인정보변경신청)
+  - 연수 탭: `edu/ga/tps/hrd/mm/tps_hrdmm01_t14`
+  - 상세 팝업: `edu/ga/tps/hrd/mm/tps_hrdmm01_p14` (연수 변경신청 상세)
+- **핵심 목표**: 사용자가 제공한 이전 등록 예시(권윤옥 선생님 레퍼런스 양식 스크린샷)와 100% 일치하도록 집합 직무연수, 동국대학교경주병원 직접입력, 심폐소생술 법정의무교육, 이수번호 매핑을 자동화하고 실시간 주입.
+
+---
+
+### 2. 기술적 문제 해결 및 구현 프로세스 (eXBuilder6 플랫폼)
+
+#### 1) 업무포털 SSO 토큰 추출 및 나이스 자동 진입
+- **문제**: Chrome 9222 포트에 경북교육업무포털(`gbe.eduptl.kr`)과 K-에듀파인은 로그인되어 있으나, 나이스 창이 열려있지 않아 세션 연동이 필요함.
+- **분석 및 해결**:
+  - 업무포털 메인 화면의 바로가기 요소 중 `a.menuBtn[id*="neis"]`의 `id` 속성에 1회성 SSO 토큰 파라미터(`https://gbe.neis.go.kr/cmc_fcm_lg01_000.do?data=...`)가 포함되어 있음을 발견.
+  - 공지 팝업 모달(`<div class="modal-bg main">`)로 인한 클릭 인터셉트를 우회하기 위해, Selenium 새 탭 생성 API(`switch_to.new_window('tab')`)로 해당 SSO URL에 직접 진입하여 인증서 재로그인 없이 4세대 나이스 세션(`app/com/main/Index`) 접속 완료.
+
+#### 2) MDI 메뉴 네비게이션 및 연쇄 팝업 자동 처리
+- **메뉴 호출**: `Index` 앱의 전역 MDI 오픈 함수 `window.openMdiMenu("AMCMC50044")`를 호출하여 **`개인정보변경신청`** (`tps_hrdmm01_m00`) 화면 자동 오픈.
+- **탭 선택**: MDI 내부의 TabFolder 컨트롤에서 4번째 인덱스인 **"연수"** 탭(`tps_hrdmm01_t14`)을 `setSelectedTabItem()`으로 즉시 활성화.
+- **신규신청 및 선행 안내 해제**: `t14` 앱의 `btnNewAply` (신규신청) 클릭 후 연쇄적으로 뜨는 '교원 연수 선진화방안 평정학점 안내' 모달(`app/cmn/alert`)의 `btnConfirm` (확인)을 즉시 클릭하여 **`연수 변경신청 상세`** (`tps_hrdmm01_p14`) 팝업창을 정상 오픈.
+
+#### 3) 폼 필드 정밀 주입 및 데이터셋 동기화
+- **교육형태(`cmbEduStleCd`)**: 기존 원격(`C`) 기본값 대신 **집합(`B`)** 반영.
+- **연수기관 직접입력(`btnEduInstCd` / `ipbTraiInstNm`)**:
+  - `btnEduInstCd` [직접입력] 버튼을 클릭하여 인풋박스를 활성화하고 `"동국대학교경주병원"`을 주입.
+  - `dsMain` 데이터셋의 `traiInstNm` 컬럼에도 동기화하여 UI와 데이터 레이어 정합성 확보.
+- **법정의무교육**: `rdbSttyOblgEduYn = 'Y'`, `ipbSttyOblgEduNm = '심폐소생술 등 응급처치에 관한 교육'` 매핑.
+- **이수번호**: 이수증 증서번호 원본인 `"동국대경주병원-초-직무-2026-202"` 주입.
+
+---
+
+### 3. 최종 반영 데이터 및 산출물 맵
+
+| 항목 | 입력 값 | 비고 |
+|---|---|---|
+| **과정년도** | `2026` | `dtiTraiCrseYr` |
+| **교육유형** | `교육기관교육` (`001`) | `cmbEduTypScCd` |
+| **연수구분** | `직무연수` (`02`) | `cmbTraiScCd` |
+| **교육형태** | `집합` (`B`) | `cmbEduStleCd` |
+| **연수내용** | `생활교육` (`02`) | `cmbTraiCnClfCd` |
+| **직무관련성여부** | `직무관련` (`Y`) | `rdbDtyRlvncYn` |
+| **연수과정명** | `2026심폐소생술등응급처치교육` | `ipbTraiCrseNm` |
+| **연수기관** | `동국대학교경주병원` | `ipbTraiInstNm` (직접입력) |
+| **연수기간** | `2026-09-30` ~ `2026-09-30` | `dtiTraiBgngYmd` / `dtiTraiEndYmd` |
+| **연수시간** | `4` 시간 `0` 분 | `nbeTraiHh` / `nbeTraiMm` |
+| **법정의무교육여부** | `예` (`Y`) | `rdbSttyOblgEduYn` |
+| **이수번호** | `동국대경주병원-초-직무-2026-202` | `ipbTraiComptNo` |
+| **법정의무교육명** | `심폐소생술 등 응급처치에 관한 교육` | `ipbSttyOblgEduNm` |
+| **기록자** | `이창수` | 자동 바인딩 |
+| **증빙자료 파일** | `C:\FBKR_SCAN\2026심폐소생술등응급처치교육이수증(이창수).pdf` | 스캔 원본 복사 패키징 완료 |
+
+- **관련 파일**:
+  - `skills/admin-neis-bot/data/cpr_training_2026.json`: 오늘 연수 등록 매핑 JSON.
+  - `skills/admin-neis-bot/neis_training_completion.py`: 집합 직무연수 및 직접입력 지원 v2.1 업그레이드.
+  - `skills/admin-neis-bot/ing.md`: 기술 트러블슈팅 및 프로세스 전산 기록 완료.
+
 
 
 

@@ -96,4 +96,11 @@
 5. **WXSClient 호출 원칙**: 공문 뷰어나 기안 팝업(`fncFormDraft`, `doCallClientAppExtra`)은 iframe 보안 제약으로 `.click()` 대신 반드시 **`targetWin.eval(onclickCode)`**를 통해 프레임 컨텍스트에서 직접 호출해야 100% 프로세스가 기동됨.
 6. **CDP 초고속 통신**: 브라우저 레벨 웹소켓 연결이 지연될 경우, `http://127.0.0.1:9222/json`에서 `type == 'page'`인 메인 탭 WebSocket URL을 찾아 `websockets` 라이브러리로 직접 JSON-RPC(`Runtime.evaluate`)를 쏘는 직결 방식을 사용 (지연시간 0.01초).
 7. **시스템 전환(`학교회계` $\leftrightarrow$ `업무관리`)**: `TopFrame.form.cboJobList`의 `set_index()`, `set_value()` 주입 후 `ItemChangeEventInfo` 객체로 `cboJobList_onitemchanged` 핸들러를 수동 발행하여 화면 리로드 없이 즉시 전환.
-8. **메뉴 직접 오픈**: LeftFrame의 `gfnOpenMenu(menuId)` (예: 공용서식 `A00AAB0101001`, 문서등록대장 `A00AAB0107001`)를 호출하면 복잡한 트리 메뉴 탐색 없이 화면 탭을 즉시 오픈 가능.
+8. **메뉴 직접 오픈 (`gfnOpenMenu`)**: LeftFrame의 `gfnOpenMenu(menuId)`를 호출하면 DOM 트리 순회나 펼침 지연 없이 화면 탭을 즉시 오픈 가능.
+   - `A00AAB0107001`: [업무관리] 문서관리 > 문서등록대장
+   - `A00AAB0107012`: [업무관리] 문서관리 > 문서등록대장(다년도검색)
+   - `A00AAB0101001`: [업무관리] 기안 > 공용서식
+   - `A00FAA0104001001`: [학교회계] 사업담당 > 품의/정산 > 품의등록
+   - `A00FAA0104001002`: [학교회계] 사업담당 > 품의/정산 > 품의목록
+9. **공지사항 팝업 강제 제거 (`destroy()`)**: 화면 전면을 가리는 모달 팝업(`noticePopup0` 등)은 단순 클릭 대신 `app.mainframe.MainVFrameSet.SubHFrameSet.MainFrame.noticePopup0.destroy()` 또는 `app.popupframes` 순회 `.close()`를 통해 메모리 레벨에서 즉시 소멸시킴.
+10. **포털 메인에서 에듀파인 직결 기동 (`Target.createTarget`)**: 사용자가 포털 메인에만 접속해 있을 때, CDP 브라우저 레벨 소켓으로 `Target.createTarget(url: "https://klef.gbe.kr/")`를 전송하면 팝업 차단을 완전 우회하여 에듀파인 메인 탭이 1초 만에 안정 기동됨.

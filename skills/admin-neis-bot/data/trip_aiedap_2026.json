@@ -1,0 +1,37 @@
+{
+  "trip_type": "10",
+  "trip_type_name": "국내출장(관내)",
+  "periods": [
+    {
+      "start_date": "2026-11-07",
+      "start_hour": "09",
+      "start_minute": "00",
+      "end_date": "2026-11-07",
+      "end_hour": "17",
+      "end_minute": "00",
+      "hours": 8,
+      "minutes": 0
+    },
+    {
+      "start_date": "2026-11-08",
+      "start_hour": "09",
+      "start_minute": "00",
+      "end_date": "2026-11-08",
+      "end_hour": "17",
+      "end_minute": "00",
+      "hours": 8,
+      "minutes": 0
+    }
+  ],
+  "destination": "경상북도 경주시 더케이호텔 경주",
+  "purpose": "2026 AIEDAP 마스터교원 신규연수(초등 1차) 참석 화천초등학교-9604(2026. 9. 17.) 「[참석] 교육부 「2026 AIEDAP 마스터교원 신규연수 초등 1차」 대상자 선정 결과 및 연수 일정 안내」",
+  "transportation": "자가용",
+  "contact": "010-4233-0844",
+  "include_lunch": true,
+  "official_vehicle": false,
+  "no_travel_expense": false,
+  "expense_institution": "화천초등학교",
+  "is_training": true,
+  "document_reference": "화천초등학교-9604(2026. 9. 17.) / 창의인재과-23536",
+  "document_title": "[참석] 교육부 「2026 AIEDAP 마스터교원 신규연수 초등 1차」 대상자 선정 결과 및 연수 일정 안내"
+}

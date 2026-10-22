@@ -1,0 +1,1673 @@
+[
+  {
+    "enabled": true,
+    "id": "title",
+    "text": null,
+    "type": "udc.com.appHeader",
+    "value": null,
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "grpPeriod",
+    "text": null,
+    "type": "container",
+    "value": null,
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "grp10",
+    "text": null,
+    "type": "container",
+    "value": null,
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": null,
+    "text": null,
+    "type": "udc.com.comTitle",
+    "value": null,
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "grp11",
+    "text": null,
+    "type": "container",
+    "value": null,
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "grpBtnPeriod",
+    "text": null,
+    "type": "container",
+    "value": null,
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "btnAddPeriod",
+    "text": "기간추가",
+    "type": "button",
+    "value": "기간추가",
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "btnDeletePeriod",
+    "text": "기간삭제",
+    "type": "button",
+    "value": "기간삭제",
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "grdMain",
+    "text": null,
+    "type": "grid",
+    "value": null,
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": null,
+    "text": "",
+    "type": "output",
+    "value": "",
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "dti1",
+    "text": "2026-10-20",
+    "type": "dateinput",
+    "value": "20261020",
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "cmb10",
+    "items": [
+      {
+        "label": "00",
+        "value": "00"
+      },
+      {
+        "label": "01",
+        "value": "01"
+      },
+      {
+        "label": "02",
+        "value": "02"
+      },
+      {
+        "label": "03",
+        "value": "03"
+      },
+      {
+        "label": "04",
+        "value": "04"
+      },
+      {
+        "label": "05",
+        "value": "05"
+      },
+      {
+        "label": "06",
+        "value": "06"
+      },
+      {
+        "label": "07",
+        "value": "07"
+      },
+      {
+        "label": "08",
+        "value": "08"
+      },
+      {
+        "label": "09",
+        "value": "09"
+      },
+      {
+        "label": "10",
+        "value": "10"
+      },
+      {
+        "label": "11",
+        "value": "11"
+      },
+      {
+        "label": "12",
+        "value": "12"
+      },
+      {
+        "label": "13",
+        "value": "13"
+      },
+      {
+        "label": "14",
+        "value": "14"
+      },
+      {
+        "label": "15",
+        "value": "15"
+      },
+      {
+        "label": "16",
+        "value": "16"
+      },
+      {
+        "label": "17",
+        "value": "17"
+      },
+      {
+        "label": "18",
+        "value": "18"
+      },
+      {
+        "label": "19",
+        "value": "19"
+      },
+      {
+        "label": "20",
+        "value": "20"
+      },
+      {
+        "label": "21",
+        "value": "21"
+      },
+      {
+        "label": "22",
+        "value": "22"
+      },
+      {
+        "label": "23",
+        "value": "23"
+      }
+    ],
+    "text": "08",
+    "type": "combobox",
+    "value": "08",
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "cmb2",
+    "items": [
+      {
+        "label": "00",
+        "value": "00"
+      },
+      {
+        "label": "05",
+        "value": "05"
+      },
+      {
+        "label": "10",
+        "value": "10"
+      },
+      {
+        "label": "15",
+        "value": "15"
+      },
+      {
+        "label": "20",
+        "value": "20"
+      },
+      {
+        "label": "25",
+        "value": "25"
+      },
+      {
+        "label": "30",
+        "value": "30"
+      },
+      {
+        "label": "35",
+        "value": "35"
+      },
+      {
+        "label": "40",
+        "value": "40"
+      },
+      {
+        "label": "45",
+        "value": "45"
+      },
+      {
+        "label": "50",
+        "value": "50"
+      },
+      {
+        "label": "55",
+        "value": "55"
+      }
+    ],
+    "text": "40",
+    "type": "combobox",
+    "value": "40",
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": null,
+    "text": "~",
+    "type": "output",
+    "value": "~",
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "dti2",
+    "text": "2026-10-20",
+    "type": "dateinput",
+    "value": "20261020",
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "cmb3",
+    "items": [
+      {
+        "label": "00",
+        "value": "00"
+      },
+      {
+        "label": "01",
+        "value": "01"
+      },
+      {
+        "label": "02",
+        "value": "02"
+      },
+      {
+        "label": "03",
+        "value": "03"
+      },
+      {
+        "label": "04",
+        "value": "04"
+      },
+      {
+        "label": "05",
+        "value": "05"
+      },
+      {
+        "label": "06",
+        "value": "06"
+      },
+      {
+        "label": "07",
+        "value": "07"
+      },
+      {
+        "label": "08",
+        "value": "08"
+      },
+      {
+        "label": "09",
+        "value": "09"
+      },
+      {
+        "label": "10",
+        "value": "10"
+      },
+      {
+        "label": "11",
+        "value": "11"
+      },
+      {
+        "label": "12",
+        "value": "12"
+      },
+      {
+        "label": "13",
+        "value": "13"
+      },
+      {
+        "label": "14",
+        "value": "14"
+      },
+      {
+        "label": "15",
+        "value": "15"
+      },
+      {
+        "label": "16",
+        "value": "16"
+      },
+      {
+        "label": "17",
+        "value": "17"
+      },
+      {
+        "label": "18",
+        "value": "18"
+      },
+      {
+        "label": "19",
+        "value": "19"
+      },
+      {
+        "label": "20",
+        "value": "20"
+      },
+      {
+        "label": "21",
+        "value": "21"
+      },
+      {
+        "label": "22",
+        "value": "22"
+      },
+      {
+        "label": "23",
+        "value": "23"
+      }
+    ],
+    "text": "16",
+    "type": "combobox",
+    "value": "16",
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "cmb4",
+    "items": [
+      {
+        "label": "00",
+        "value": "00"
+      },
+      {
+        "label": "05",
+        "value": "05"
+      },
+      {
+        "label": "10",
+        "value": "10"
+      },
+      {
+        "label": "15",
+        "value": "15"
+      },
+      {
+        "label": "20",
+        "value": "20"
+      },
+      {
+        "label": "25",
+        "value": "25"
+      },
+      {
+        "label": "30",
+        "value": "30"
+      },
+      {
+        "label": "35",
+        "value": "35"
+      },
+      {
+        "label": "40",
+        "value": "40"
+      },
+      {
+        "label": "45",
+        "value": "45"
+      },
+      {
+        "label": "50",
+        "value": "50"
+      },
+      {
+        "label": "55",
+        "value": "55"
+      }
+    ],
+    "text": "40",
+    "type": "combobox",
+    "value": "40",
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "nbe1",
+    "text": "1",
+    "type": "numbereditor",
+    "value": "1",
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "nbe2",
+    "text": "0",
+    "type": "numbereditor",
+    "value": "0",
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "nbe3",
+    "text": "0",
+    "type": "numbereditor",
+    "value": "0",
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "grp9",
+    "text": null,
+    "type": "container",
+    "value": null,
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "grpInfo",
+    "text": null,
+    "type": "container",
+    "value": null,
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": null,
+    "text": "※ 교원은 근무시간 내에 수업에 지장이 없는 한 학교장의 허가를 받고 야간제-계절제 대학원을 수강할 수 있으며, 이 때 \"출장(연수)\"로 신청하시기 바랍니다. (2016년 교육공무원 인사실무 참고)",
+    "type": "output",
+    "value": "※ 교원은 근무시간 내에 수업에 지장이 없는 한 학교장의 허가를 받고 야간제-계절제 대학원을 수강할 수 있으며, 이 때 \"출장(연수)\"로 신청하시기 바랍니다. (2016년 교육공무원 인사실무 참고)",
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": null,
+    "text": "※ 출장(연수)는 출장비가 지급되지 않으며, 예외적으로 출장비 지급시 근무지내 출장으로 신청하셔야 합니다.",
+    "type": "output",
+    "value": "※ 출장(연수)는 출장비가 지급되지 않으며, 예외적으로 출장비 지급시 근무지내 출장으로 신청하셔야 합니다.",
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": null,
+    "text": "※ 비공개여부 체크선택 시 일일근무상황에 공개되지 않습니다.",
+    "type": "output",
+    "value": "※ 비공개여부 체크선택 시 일일근무상황에 공개되지 않습니다.",
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": null,
+    "text": "※ 출장 대리신청할 경우 아래 출장자 목록에서 부서를 선택하여 성명을 검색하셔야 합니다.",
+    "type": "output",
+    "value": "※ 출장 대리신청할 경우 아래 출장자 목록에서 부서를 선택하여 성명을 검색하셔야 합니다.",
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "cbxToogle",
+    "text": "",
+    "type": "checkbox",
+    "value": "",
+    "visible": false
+  },
+  {
+    "enabled": true,
+    "id": "cbxToogleTempButton",
+    "text": "",
+    "type": "button",
+    "value": null,
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": null,
+    "text": null,
+    "type": "container",
+    "value": null,
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "grp3",
+    "text": null,
+    "type": "container",
+    "value": null,
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": null,
+    "text": null,
+    "type": "udc.com.comFormTitle",
+    "value": null,
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "grp4",
+    "text": null,
+    "type": "container",
+    "value": null,
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "grp2",
+    "text": null,
+    "type": "container",
+    "value": null,
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "grpBtnPeriod2",
+    "text": null,
+    "type": "container",
+    "value": null,
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "grpBsrp",
+    "text": null,
+    "type": "container",
+    "value": null,
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": null,
+    "text": "필수입력출장종류",
+    "type": "output",
+    "value": "출장종류",
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "cmbBsrpScCd",
+    "items": [
+      {
+        "label": "선택",
+        "value": ""
+      },
+      {
+        "label": "국내출장(관내)",
+        "value": "10"
+      },
+      {
+        "label": "국내출장(관외)",
+        "value": "20"
+      },
+      {
+        "label": "국외출장",
+        "value": "30"
+      },
+      {
+        "label": "출장(연수)",
+        "value": "40"
+      }
+    ],
+    "text": "선택",
+    "type": "combobox",
+    "value": "",
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "opbFrntnInvieYn",
+    "text": "외국시찰수학여부",
+    "type": "output",
+    "value": "외국시찰수학여부",
+    "visible": false
+  },
+  {
+    "enabled": true,
+    "id": "cbxFrntnInvieYn",
+    "text": "",
+    "type": "checkbox",
+    "value": "N",
+    "visible": false
+  },
+  {
+    "enabled": true,
+    "id": null,
+    "text": "공용차량 이용여부",
+    "type": "output",
+    "value": "공용차량 이용여부",
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "cbxOfflVhcUtilzYn",
+    "text": "",
+    "type": "checkbox",
+    "value": "N",
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "opbTngrAssBsrpYn",
+    "text": "청소년 단체 출장",
+    "type": "output",
+    "value": "청소년 단체 출장",
+    "visible": false
+  },
+  {
+    "enabled": true,
+    "id": "cbxTngrAssBsrpYn",
+    "text": "",
+    "type": "checkbox",
+    "value": "N",
+    "visible": false
+  },
+  {
+    "enabled": true,
+    "id": null,
+    "text": "여비지급하지않음",
+    "type": "output",
+    "value": "여비지급하지않음",
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "cbxTvctPyrfYn",
+    "text": "",
+    "type": "checkbox",
+    "value": "N",
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "opbInstCd",
+    "text": "여비지급기관",
+    "type": "output",
+    "value": "여비지급기관",
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "grp6",
+    "text": null,
+    "type": "container",
+    "value": null,
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "btnInstCdSearch",
+    "text": "찾기",
+    "type": "button",
+    "value": "찾기",
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "cmbInstCd",
+    "items": [
+      {
+        "label": "화천초등학교",
+        "value": "R100006630"
+      }
+    ],
+    "text": "화천초등학교",
+    "type": "combobox",
+    "value": "R100006630",
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": null,
+    "text": "겸임기관신청여부",
+    "type": "output",
+    "value": "겸임기관신청여부",
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "grp15",
+    "text": null,
+    "type": "container",
+    "value": null,
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "cbxAdpInstAplyYn",
+    "text": "",
+    "type": "checkbox",
+    "value": "N",
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "opbAdpDptCd",
+    "text": "겸임기관",
+    "type": "output",
+    "value": "겸임기관",
+    "visible": false
+  },
+  {
+    "enabled": true,
+    "id": "cmbAdpDptCd",
+    "items": [],
+    "text": "",
+    "type": "combobox",
+    "value": null,
+    "visible": false
+  },
+  {
+    "enabled": true,
+    "id": null,
+    "text": "비공개여부",
+    "type": "output",
+    "value": "비공개여부",
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "grp1",
+    "text": null,
+    "type": "container",
+    "value": null,
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "cbxPrdClsdrYn",
+    "text": "기간",
+    "type": "checkbox",
+    "value": "N",
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "cbxDobtClsdrYn",
+    "text": "출장지",
+    "type": "checkbox",
+    "value": "N",
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "cbxBsrpPurClsdrYn",
+    "text": "출장목적",
+    "type": "checkbox",
+    "value": "N",
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": null,
+    "text": "교육훈련여부",
+    "type": "output",
+    "value": "교육훈련여부",
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "cbxEduDisciYn",
+    "text": "",
+    "type": "checkbox",
+    "value": "N",
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "opbLunchHrWorkInclsYn",
+    "text": "점심시간포함여부",
+    "type": "output",
+    "value": "점심시간포함여부",
+    "visible": false
+  },
+  {
+    "enabled": true,
+    "id": "cbxLunchHrWorkInclsYn",
+    "text": "",
+    "type": "checkbox",
+    "value": "Y",
+    "visible": false
+  },
+  {
+    "enabled": true,
+    "id": null,
+    "text": "일 반복",
+    "type": "output",
+    "value": "일 반복",
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "grpDdRpat",
+    "text": null,
+    "type": "container",
+    "value": null,
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "cbxDdRpatYn",
+    "text": "일반복",
+    "type": "checkbox",
+    "value": "N",
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "ipbDdRpatDd",
+    "text": "",
+    "type": "inputbox",
+    "value": "",
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": null,
+    "text": "일",
+    "type": "output",
+    "value": "일",
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "opbDdRpat",
+    "text": "매",
+    "type": "output",
+    "value": "매",
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "ipbDdRpatHh",
+    "text": "",
+    "type": "inputbox",
+    "value": "",
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": null,
+    "text": "시간",
+    "type": "output",
+    "value": "시간",
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "ipbDdRpatMm",
+    "text": "",
+    "type": "inputbox",
+    "value": "",
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": null,
+    "text": "분",
+    "type": "output",
+    "value": "분",
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "grpDfkRpat",
+    "text": null,
+    "type": "container",
+    "value": null,
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "cbxDfkRpatMon",
+    "text": "월",
+    "type": "checkbox",
+    "value": "",
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "cbxDfkRpatTue",
+    "text": "화",
+    "type": "checkbox",
+    "value": "",
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "cbxDfkRpatWed",
+    "text": "수",
+    "type": "checkbox",
+    "value": "",
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "cbxDfkRpatThu",
+    "text": "목",
+    "type": "checkbox",
+    "value": "",
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "cbxDfkRpatFri",
+    "text": "금",
+    "type": "checkbox",
+    "value": "",
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "cbxDfkRpatSat",
+    "text": "토",
+    "type": "checkbox",
+    "value": "",
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "cbxDfkRpatSun",
+    "text": "일",
+    "type": "checkbox",
+    "value": "",
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "opbDfkRpat",
+    "text": "매",
+    "type": "output",
+    "value": "매",
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "ipbDfkRpatHr",
+    "text": "",
+    "type": "inputbox",
+    "value": "",
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": null,
+    "text": "시간",
+    "type": "output",
+    "value": "시간",
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "ipbDfkRpatMm",
+    "text": "",
+    "type": "inputbox",
+    "value": "",
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": null,
+    "text": "분",
+    "type": "output",
+    "value": "분",
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": null,
+    "text": "필수입력연락처",
+    "type": "output",
+    "value": "연락처",
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "grp13",
+    "text": null,
+    "type": "container",
+    "value": null,
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "mse1",
+    "text": "___-____-____",
+    "type": "maskeditor",
+    "value": "",
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": null,
+    "text": "필수입력출장지",
+    "type": "output",
+    "value": "출장지",
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": null,
+    "text": null,
+    "type": "container",
+    "value": null,
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "ipbDobtNm",
+    "text": "",
+    "type": "inputbox",
+    "value": "",
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "btnDobtSearch",
+    "text": "찾기",
+    "type": "button",
+    "value": "찾기",
+    "visible": false
+  },
+  {
+    "enabled": true,
+    "id": null,
+    "text": "필수입력출장목적",
+    "type": "output",
+    "value": "출장목적",
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "ipbBsrpCn",
+    "text": "",
+    "type": "inputbox",
+    "value": "",
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": null,
+    "text": "이동사항",
+    "type": "output",
+    "value": "이동사항",
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "ipbMvmnMteCn",
+    "text": "",
+    "type": "inputbox",
+    "value": "",
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": null,
+    "text": "정규직원 수",
+    "type": "output",
+    "value": "정규직원 수",
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "opbBsrpPouCnt",
+    "text": "1 명",
+    "type": "output",
+    "value": "1",
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": null,
+    "text": "비정규직원 수",
+    "type": "output",
+    "value": "비정규직원 수",
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "opbBsrpNpoCnt",
+    "text": "0 명",
+    "type": "output",
+    "value": "0",
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "grpTgpr",
+    "text": null,
+    "type": "container",
+    "value": null,
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "grp16",
+    "text": null,
+    "type": "container",
+    "value": null,
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "grp8",
+    "text": null,
+    "type": "container",
+    "value": null,
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "grpBtnUpDown",
+    "text": null,
+    "type": "container",
+    "value": null,
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "btnUp",
+    "text": "위로",
+    "type": "button",
+    "value": "위로",
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "btnDown",
+    "text": "아래로",
+    "type": "button",
+    "value": "아래로",
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "grpBtnTgpr",
+    "text": null,
+    "type": "container",
+    "value": null,
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "btnAddTgpr",
+    "text": "추가",
+    "type": "button",
+    "value": "추가",
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "btnDeleteTgpr",
+    "text": "삭제",
+    "type": "button",
+    "value": "삭제",
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "btnDdHr",
+    "text": "동일시간설정",
+    "type": "button",
+    "value": "동일시간설정",
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": null,
+    "text": null,
+    "type": "udc.com.comTitle",
+    "value": null,
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "grdTgpr",
+    "text": null,
+    "type": "grid",
+    "value": null,
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": null,
+    "text": "",
+    "type": "output",
+    "value": null,
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": null,
+    "text": "",
+    "type": "output",
+    "value": null,
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": null,
+    "text": "",
+    "type": "output",
+    "value": null,
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": null,
+    "text": "",
+    "type": "output",
+    "value": null,
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": null,
+    "text": "",
+    "type": "output",
+    "value": null,
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "cmb9",
+    "items": [
+      {
+        "label": "Y",
+        "value": "Y"
+      },
+      {
+        "label": "N",
+        "value": "N"
+      }
+    ],
+    "text": "",
+    "type": "combobox",
+    "value": null,
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "dti3",
+    "text": "",
+    "type": "dateinput",
+    "value": null,
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "cmb5",
+    "items": [
+      {
+        "label": "00",
+        "value": "00"
+      },
+      {
+        "label": "01",
+        "value": "01"
+      },
+      {
+        "label": "02",
+        "value": "02"
+      },
+      {
+        "label": "03",
+        "value": "03"
+      },
+      {
+        "label": "04",
+        "value": "04"
+      },
+      {
+        "label": "05",
+        "value": "05"
+      },
+      {
+        "label": "06",
+        "value": "06"
+      },
+      {
+        "label": "07",
+        "value": "07"
+      },
+      {
+        "label": "08",
+        "value": "08"
+      },
+      {
+        "label": "09",
+        "value": "09"
+      },
+      {
+        "label": "10",
+        "value": "10"
+      },
+      {
+        "label": "11",
+        "value": "11"
+      },
+      {
+        "label": "12",
+        "value": "12"
+      },
+      {
+        "label": "13",
+        "value": "13"
+      },
+      {
+        "label": "14",
+        "value": "14"
+      },
+      {
+        "label": "15",
+        "value": "15"
+      },
+      {
+        "label": "16",
+        "value": "16"
+      },
+      {
+        "label": "17",
+        "value": "17"
+      },
+      {
+        "label": "18",
+        "value": "18"
+      },
+      {
+        "label": "19",
+        "value": "19"
+      },
+      {
+        "label": "20",
+        "value": "20"
+      },
+      {
+        "label": "21",
+        "value": "21"
+      },
+      {
+        "label": "22",
+        "value": "22"
+      },
+      {
+        "label": "23",
+        "value": "23"
+      }
+    ],
+    "text": "",
+    "type": "combobox",
+    "value": null,
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "cmb6",
+    "items": [
+      {
+        "label": "00",
+        "value": "00"
+      },
+      {
+        "label": "05",
+        "value": "05"
+      },
+      {
+        "label": "10",
+        "value": "10"
+      },
+      {
+        "label": "15",
+        "value": "15"
+      },
+      {
+        "label": "20",
+        "value": "20"
+      },
+      {
+        "label": "25",
+        "value": "25"
+      },
+      {
+        "label": "30",
+        "value": "30"
+      },
+      {
+        "label": "35",
+        "value": "35"
+      },
+      {
+        "label": "40",
+        "value": "40"
+      },
+      {
+        "label": "45",
+        "value": "45"
+      },
+      {
+        "label": "50",
+        "value": "50"
+      },
+      {
+        "label": "55",
+        "value": "55"
+      }
+    ],
+    "text": "",
+    "type": "combobox",
+    "value": null,
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": null,
+    "text": "~",
+    "type": "output",
+    "value": "~",
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "dti4",
+    "text": "",
+    "type": "dateinput",
+    "value": null,
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "cmb7",
+    "items": [
+      {
+        "label": "00",
+        "value": "00"
+      },
+      {
+        "label": "01",
+        "value": "01"
+      },
+      {
+        "label": "02",
+        "value": "02"
+      },
+      {
+        "label": "03",
+        "value": "03"
+      },
+      {
+        "label": "04",
+        "value": "04"
+      },
+      {
+        "label": "05",
+        "value": "05"
+      },
+      {
+        "label": "06",
+        "value": "06"
+      },
+      {
+        "label": "07",
+        "value": "07"
+      },
+      {
+        "label": "08",
+        "value": "08"
+      },
+      {
+        "label": "09",
+        "value": "09"
+      },
+      {
+        "label": "10",
+        "value": "10"
+      },
+      {
+        "label": "11",
+        "value": "11"
+      },
+      {
+        "label": "12",
+        "value": "12"
+      },
+      {
+        "label": "13",
+        "value": "13"
+      },
+      {
+        "label": "14",
+        "value": "14"
+      },
+      {
+        "label": "15",
+        "value": "15"
+      },
+      {
+        "label": "16",
+        "value": "16"
+      },
+      {
+        "label": "17",
+        "value": "17"
+      },
+      {
+        "label": "18",
+        "value": "18"
+      },
+      {
+        "label": "19",
+        "value": "19"
+      },
+      {
+        "label": "20",
+        "value": "20"
+      },
+      {
+        "label": "21",
+        "value": "21"
+      },
+      {
+        "label": "22",
+        "value": "22"
+      },
+      {
+        "label": "23",
+        "value": "23"
+      }
+    ],
+    "text": "",
+    "type": "combobox",
+    "value": null,
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "cmb8",
+    "items": [
+      {
+        "label": "00",
+        "value": "00"
+      },
+      {
+        "label": "05",
+        "value": "05"
+      },
+      {
+        "label": "10",
+        "value": "10"
+      },
+      {
+        "label": "15",
+        "value": "15"
+      },
+      {
+        "label": "20",
+        "value": "20"
+      },
+      {
+        "label": "25",
+        "value": "25"
+      },
+      {
+        "label": "30",
+        "value": "30"
+      },
+      {
+        "label": "35",
+        "value": "35"
+      },
+      {
+        "label": "40",
+        "value": "40"
+      },
+      {
+        "label": "45",
+        "value": "45"
+      },
+      {
+        "label": "50",
+        "value": "50"
+      },
+      {
+        "label": "55",
+        "value": "55"
+      }
+    ],
+    "text": "",
+    "type": "combobox",
+    "value": null,
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "btnBsrpDetail",
+    "text": "출장현황",
+    "type": "button",
+    "value": "출장현황",
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": null,
+    "text": null,
+    "type": "container",
+    "value": null,
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "btnAply",
+    "text": "승인요청",
+    "type": "button",
+    "value": "승인요청",
+    "visible": true
+  },
+  {
+    "enabled": true,
+    "id": "btnCancel",
+    "text": "닫기",
+    "type": "button",
+    "value": "닫기",
+    "visible": true
+  }
+]

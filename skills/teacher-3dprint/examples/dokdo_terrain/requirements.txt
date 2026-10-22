@@ -1,0 +1,6 @@
+matplotlib==3.11.2
+networkx==3.7
+numpy==2.5.4
+pyproj==3.8.0
+rasterio==1.5.2
+trimesh==5.1.1

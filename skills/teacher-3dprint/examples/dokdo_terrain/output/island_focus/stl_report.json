@@ -1,0 +1,128 @@
+{
+  "sources": {
+    "bathymetry": {
+      "path": "C:\\Users\\lee21\\.gemini\\antigravity\\scratch\\my-skills\\skills\\teacher-3dprint\\examples\\dokdo_terrain\\data\\dokdo_gebco_2026_subset.tif",
+      "crs": "EPSG:4326",
+      "dimensions_rows_cols": [
+        17,
+        21
+      ],
+      "resolution_native_units": [
+        0.004166666666666667,
+        0.004166666666666667
+      ],
+      "nodata": null,
+      "min": -797.0,
+      "max": -23.0,
+      "band_tags": {},
+      "dataset": "GEBCO_2026",
+      "source_url": "https://www.gebco.net/data-products/gridded-bathymetry-data",
+      "native_resolution": "15 arc-seconds",
+      "vertical_reference": "GEBCO elevation grid; no datum transformation was applied in this project"
+    },
+    "gebco_type_identifier": {
+      "path": "C:\\Users\\lee21\\.gemini\\antigravity\\scratch\\my-skills\\skills\\teacher-3dprint\\examples\\dokdo_terrain\\data\\dokdo_gebco_2026_tid_subset.tif",
+      "crs": "EPSG:4326",
+      "dimensions_rows_cols": [
+        17,
+        21
+      ],
+      "resolution_native_units": [
+        0.004166666666666667,
+        0.004166666666666667
+      ],
+      "nodata": null,
+      "min": 40.0,
+      "max": 44.0,
+      "band_tags": {},
+      "resampled_value_counts": {
+        "40": 52062,
+        "44": 6019
+      },
+      "note": "Retained as provenance and quality context; the TID values do not alter elevations."
+    },
+    "land_surface": {
+      "path": "C:\\Users\\lee21\\.gemini\\antigravity\\scratch\\my-skills\\skills\\teacher-3dprint\\examples\\dokdo_terrain\\data\\Copernicus_DSM_COG_10_N37_00_E131_00_DEM.tif",
+      "crs": "EPSG:4326",
+      "dimensions_rows_cols": [
+        3600,
+        3600
+      ],
+      "resolution_native_units": [
+        0.0002777777777777778,
+        0.0002777777777777778
+      ],
+      "nodata": null,
+      "min": -2.469059705734253,
+      "max": 37.579383850097656,
+      "band_tags": {},
+      "dataset": "Copernicus DEM GLO-30",
+      "source_url": "https://dataspace.copernicus.eu/explore-data/data-collections/copernicus-contributing-missions/collections-description/COP-DEM",
+      "native_resolution": "1 arc-second / approximately 30 m",
+      "product_type": "DSM",
+      "vertical_reference": "Not explicitly identified in raster metadata; no datum transformation was applied"
+    },
+    "gebco_subset_coordinate_check": {
+      "latitude_range_north": [
+        37.21458333333334,
+        37.264583333333334
+      ],
+      "longitude_range_east": [
+        131.83541666666667,
+        131.90208333333334
+      ],
+      "note": "Subset was re-requested after detecting an earlier erroneous south-latitude index range; only this corrected north-latitude raster is used."
+    }
+  },
+  "processing": {
+    "target_crs": "EPSG:32652",
+    "center_lon_lat": [
+      131.869,
+      37.24
+    ],
+    "extent_m": 1200.0,
+    "grid_shape_rows_cols": [
+      241,
+      241
+    ],
+    "grid_spacing_m": 5.0,
+    "resampling": "bilinear for bathymetry, cubic interpolation for land elevations and zero-elevation shoreline; GEBCO for sea and positive samples from the selected land raster for land",
+    "land_classification": "cubic-interpolated samples above 1 m",
+    "land_threshold_m": 1.0,
+    "source_elevation_range_m": [
+      -137.70030212402344,
+      38.49303436279297
+    ],
+    "land_sample_count": 5531,
+    "land_sample_fraction": 0.09522907663435547
+  },
+  "model": {
+    "stl_path": "C:\\Users\\lee21\\.gemini\\antigravity\\scratch\\my-skills\\skills\\teacher-3dprint\\examples\\dokdo_terrain\\output\\island_focus\\dokdo_island_focus_copernicus_200mm_2x.stl",
+    "preview_path": "C:\\Users\\lee21\\.gemini\\antigravity\\scratch\\my-skills\\skills\\teacher-3dprint\\examples\\dokdo_terrain\\preview\\island_focus\\dokdo_island_focus_copernicus_200mm_2x_preview.png",
+    "footprint_mm": [
+      200,
+      200
+    ],
+    "base_thickness_mm": 3,
+    "vertical_exaggeration": 2.0,
+    "model_height_mm": 61.731109619140625,
+    "vertices": 116162,
+    "faces": 232320,
+    "watertight": true,
+    "winding_consistent": true,
+    "is_volume": true,
+    "volume_mm3": 1257257.9217922632,
+    "bounds_mm": [
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        200.0,
+        200.0,
+        61.731109619140625
+      ]
+    ]
+  }
+}

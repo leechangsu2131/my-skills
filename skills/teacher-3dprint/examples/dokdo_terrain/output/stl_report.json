@@ -60,7 +60,7 @@
       "source_url": "https://dataspace.copernicus.eu/explore-data/data-collections/copernicus-contributing-missions/collections-description/COP-DEM",
       "native_resolution": "1 arc-second / approximately 30 m",
       "product_type": "DSM",
-      "vertical_reference": "Not encoded in the downloaded COG tags; no datum transformation was applied in this project"
+      "vertical_reference": "Not explicitly identified in raster metadata; no datum transformation was applied"
     },
     "gebco_subset_coordinate_check": {
       "latitude_range_north": [
@@ -86,8 +86,8 @@
       201
     ],
     "grid_spacing_m": 30.0,
-    "resampling": "bilinear for elevation rasters; GEBCO for sea, positive Copernicus DSM for land",
-    "land_classification": "Copernicus DSM elevation > 0 m",
+    "resampling": "bilinear for elevation rasters; GEBCO for sea, positive samples from the selected land raster for land",
+    "land_classification": "land cells are samples with elevation > 0 m",
     "source_elevation_range_m": [
       -721.6377563476562,
       34.54460906982422
@@ -97,7 +97,7 @@
   },
   "model": {
     "stl_path": "C:\\Users\\lee21\\.gemini\\antigravity\\scratch\\my-skills\\skills\\teacher-3dprint\\examples\\dokdo_terrain\\output\\dokdo_gebco_copernicus_200mm.stl",
-    "preview_path": "C:\\Users\\lee21\\.gemini\\antigravity\\scratch\\my-skills\\skills\\teacher-3dprint\\examples\\dokdo_terrain\\preview\\dokdo_gebco_copernicus_preview.png",
+    "preview_path": "C:\\Users\\lee21\\.gemini\\antigravity\\scratch\\my-skills\\skills\\teacher-3dprint\\examples\\dokdo_terrain\\preview\\dokdo_gebco_copernicus_200mm_preview.png",
     "footprint_mm": [
       200,
       200

@@ -1,0 +1,129 @@
+{
+  "sources": {
+    "bathymetry": {
+      "path": "C:\\Users\\lee21\\.gemini\\antigravity\\scratch\\my-skills\\skills\\teacher-3dprint\\examples\\dokdo_terrain\\data\\dokdo_gebco_2026_subset.tif",
+      "crs": "EPSG:4326",
+      "dimensions_rows_cols": [
+        17,
+        21
+      ],
+      "resolution_native_units": [
+        0.004166666666666667,
+        0.004166666666666667
+      ],
+      "nodata": null,
+      "min": -797.0,
+      "max": -23.0,
+      "band_tags": {},
+      "dataset": "GEBCO_2026",
+      "source_url": "https://www.gebco.net/data-products/gridded-bathymetry-data",
+      "native_resolution": "15 arc-seconds",
+      "vertical_reference": "GEBCO elevation grid; no datum transformation was applied in this project"
+    },
+    "gebco_type_identifier": {
+      "path": "C:\\Users\\lee21\\.gemini\\antigravity\\scratch\\my-skills\\skills\\teacher-3dprint\\examples\\dokdo_terrain\\data\\dokdo_gebco_2026_tid_subset.tif",
+      "crs": "EPSG:4326",
+      "dimensions_rows_cols": [
+        17,
+        21
+      ],
+      "resolution_native_units": [
+        0.004166666666666667,
+        0.004166666666666667
+      ],
+      "nodata": null,
+      "min": 40.0,
+      "max": 44.0,
+      "band_tags": {},
+      "resampled_value_counts": {
+        "40": 39643,
+        "44": 758
+      },
+      "note": "Retained as provenance and quality context; the TID values do not alter elevations."
+    },
+    "land_surface": {
+      "path": "C:\\Users\\lee21\\.gemini\\antigravity\\scratch\\my-skills\\skills\\teacher-3dprint\\examples\\dokdo_terrain\\data\\ngii_2025_publicdem\\37116\\37116.img",
+      "crs": "EPSG:5179",
+      "dimensions_rows_cols": [
+        325,
+        267
+      ],
+      "resolution_native_units": [
+        90.0,
+        90.0
+      ],
+      "nodata": -9999.0,
+      "min": -4.9502668380737305,
+      "max": 111.22960662841797,
+      "band_tags": {
+        "LAYER_TYPE": "athematic"
+      },
+      "dataset": "NGII Public DEM 2025, sheet 37116",
+      "source_url": "https://map.ngii.go.kr/",
+      "native_resolution": "90 m",
+      "product_type": "Digital elevation model (DEM)",
+      "vertical_reference": "Not specified in raster metadata; no vertical datum conversion applied"
+    },
+    "gebco_subset_coordinate_check": {
+      "latitude_range_north": [
+        37.21458333333334,
+        37.264583333333334
+      ],
+      "longitude_range_east": [
+        131.83541666666667,
+        131.90208333333334
+      ],
+      "note": "Subset was re-requested after detecting an earlier erroneous south-latitude index range; only this corrected north-latitude raster is used."
+    }
+  },
+  "processing": {
+    "target_crs": "EPSG:32652",
+    "center_lon_lat": [
+      131.869,
+      37.24
+    ],
+    "extent_m": 6000,
+    "grid_shape_rows_cols": [
+      201,
+      201
+    ],
+    "grid_spacing_m": 30.0,
+    "resampling": "bilinear for elevation rasters; GEBCO for sea, positive samples from the selected land raster for land",
+    "land_classification": "valid positive raster samples treated as land",
+    "source_elevation_range_m": [
+      -721.6377563476562,
+      106.21775817871094
+    ],
+    "land_sample_count": 7055,
+    "land_sample_fraction": 0.17462439048538403
+  },
+  "model": {
+    "stl_path": "C:\\Users\\lee21\\.gemini\\antigravity\\scratch\\my-skills\\skills\\teacher-3dprint\\examples\\dokdo_terrain\\output\\ngii_2025\\dokdo_gebco_ngii_2025_200mm.stl",
+    "preview_path": "C:\\Users\\lee21\\.gemini\\antigravity\\scratch\\my-skills\\skills\\teacher-3dprint\\examples\\dokdo_terrain\\preview\\ngii_2025\\dokdo_gebco_ngii_2025_200mm_preview.png",
+    "footprint_mm": [
+      200,
+      200
+    ],
+    "base_thickness_mm": 3,
+    "vertical_exaggeration": 1.0,
+    "model_height_mm": 30.595186233520508,
+    "vertices": 80802,
+    "faces": 161600,
+    "watertight": true,
+    "winding_consistent": true,
+    "is_volume": true,
+    "volume_mm3": 879876.9052691857,
+    "bounds_mm": [
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        200.0,
+        200.0,
+        30.595186233520508
+      ]
+    ]
+  }
+}

@@ -21,6 +21,8 @@ Inspect raster metadata and a cropped preview. Confirm the area covers the reque
 
 If source resolution is coarse relative to the final model, state the approximate grid spacing on the print and what features it cannot resolve. Resampling can make a mesh denser but cannot add measured detail. If only partial or incompatible inputs are available, report that and ask whether to proceed with a clearly labeled partial/illustrative model when that changes the user's stated fidelity goal.
 
+For a small island or other compact subject, check both the geographic crop and the physical print size before meshing. Estimate how large one native raster cell will be on the print (`native cell size × print width ÷ real-world crop width`). If the resulting edge step is too visible, obtain a finer elevation grid or a suitable shoreline vector; denser mesh sampling alone will not improve it. Use a positive-elevation threshold only to address documented near-shore noise, and record the threshold because it changes the modeled coastline.
+
 ## 4. Build and verify the solid
 
 - Crop to the chosen extent, document its real-world bounds, and scale the horizontal footprint to the requested millimeters. Apply vertical exaggeration only as specified or clearly disclosed.

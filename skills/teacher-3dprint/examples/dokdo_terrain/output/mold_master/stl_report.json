@@ -1,0 +1,70 @@
+{
+  "purpose": "Positive printed master for casting a shallow negative silicone relief mold; the master is not for food contact.",
+  "source": {
+    "path": "C:\\Users\\lee21\\.gemini\\antigravity\\scratch\\my-skills\\skills\\teacher-3dprint\\examples\\dokdo_terrain\\data\\Copernicus_DSM_COG_10_N37_00_E131_00_DEM.tif",
+    "crs": "EPSG:4326",
+    "dimensions_rows_cols": [
+      3600,
+      3600
+    ],
+    "resolution_native_units": [
+      0.0002777777777777778,
+      0.0002777777777777778
+    ],
+    "nodata": null,
+    "min": -2.469059705734253,
+    "max": 37.579383850097656,
+    "band_tags": {},
+    "dataset": "Copernicus DEM GLO-30",
+    "native_resolution": "1 arc-second / approximately 30 m",
+    "source_url": "https://dataspace.copernicus.eu/explore-data/data-collections/copernicus-contributing-missions/collections-description/COP-DEM"
+  },
+  "processing": {
+    "target_crs": "EPSG:32652",
+    "extent_m": 900,
+    "center_offset_from_dokdo_center_m": [
+      -175,
+      112
+    ],
+    "grid_shape_rows_cols": [
+      301,
+      301
+    ],
+    "grid_spacing_m": 3.0,
+    "resampling": "cubic for elevation and interpolated shoreline",
+    "land_threshold_m": 1,
+    "land_sample_count": 15345,
+    "elevation_range_land_m": [
+      1.000150442123413,
+      38.46771240234375
+    ],
+    "vertical_exaggeration": 2
+  },
+  "model": {
+    "stl_path": "C:\\Users\\lee21\\.gemini\\antigravity\\scratch\\my-skills\\skills\\teacher-3dprint\\examples\\dokdo_terrain\\output\\mold_master\\dokdo_relief_mandu_master_80mm.stl",
+    "preview_path": "C:\\Users\\lee21\\.gemini\\antigravity\\scratch\\my-skills\\skills\\teacher-3dprint\\examples\\dokdo_terrain\\preview\\mold_master\\dokdo_relief_mandu_master_80mm_preview.png",
+    "footprint_mm": [
+      80,
+      80
+    ],
+    "base_thickness_mm": 3,
+    "relief_height_mm": 6.660926818847656,
+    "bounds_mm": [
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        80.0,
+        80.0,
+        9.660926818847656
+      ]
+    ],
+    "vertices": 181202,
+    "faces": 362400,
+    "watertight": true,
+    "winding_consistent": true,
+    "is_volume": true
+  }
+}

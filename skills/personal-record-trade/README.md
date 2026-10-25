@@ -207,6 +207,7 @@ python -m streamlit run valuation_app/dashboard.py --server.port 8501
 - Risk/Downside: WACC/g 민감도, 마진/WACC 민감도, 베어/베이스/불 시나리오, 가치 동인 순위
 - Narrative Consistency: 삼성전기 핵심 사업 스토리 6개와 재무 지표 연결
 - Synthesis: 모든 렌즈의 분석 결과를 종합한 수렴/발산 시그널 및 다음 분기 체크리스트
+- Synthesis는 PEG 내포 성장률·멀티플 수축과 TAM 내포 요구 점유율도 현재 PEG/TAM 탭 가정에 맞춰 요약
 - Advanced 역산: 기대수익률 분해, PEG 기반 이익성장률 역산, 목표 점유율(TAM) 역산
 
 이 화면에서 검산을 통과한 공통 입력값을 Reverse DCF, Value Attribution, 매출·마진 시나리오, ROIC, 상대가치, CAP, Risk/Downside, 내러티브 일관성, 종합 결론, Advanced 역산 렌즈가 사용합니다.

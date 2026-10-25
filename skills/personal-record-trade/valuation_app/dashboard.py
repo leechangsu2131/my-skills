@@ -1185,13 +1185,31 @@ def render_narrative_tab(ticker: str, company_name: str) -> None:
             st.divider()
 
 
-def render_synthesis_tab(input_set: ValuationInputSet) -> None:
+def render_synthesis_tab(input_set: ValuationInputSet, market: dict, ctx: dict) -> None:
     st.markdown(build_synthesis_explanation())
     
     st.markdown("### 📊 수렴과 발산 (Signal Summary)")
-    st.caption("여러 렌즈의 분석 결과를 모아 현재 주가에 내포된 시장의 기대치가 어떤 상태인지 종합합니다.")
+    st.caption(
+        "여러 렌즈의 분석 결과를 모아 현재 주가에 내포된 기대치를 종합합니다. "
+        "PEG/TAM 신호는 선택한 사용자 가정으로 계산하며, 상태 구간은 점검을 돕는 참고 기준입니다."
+    )
     
-    signals = evaluate_signals(input_set)
+    normal_per = ctx.get("normal_per") or market.get("historical_average_per") or 15.0
+    current_revenue = input_set.inputs.get("revenue") or 0
+    current_operating_income = input_set.inputs.get("operating_income") or 0
+    current_opm = current_operating_income / current_revenue if current_revenue > 0 else 0.10
+    assumptions = {
+        "target_peg": st.session_state.get("synthesis_target_peg", 1.5),
+        "peg_duration": st.session_state.get("synthesis_peg_duration", 5),
+        "peg_terminal_per": st.session_state.get("synthesis_peg_terminal_per", normal_per),
+        "peg_target_return": st.session_state.get("synthesis_peg_target_return", 10.0) / 100.0,
+        "tam_duration": st.session_state.get("synthesis_tam_duration", 5),
+        "tam_cagr": st.session_state.get("synthesis_tam_cagr_pct", ctx.get("tam_cagr") or 10.0) / 100.0,
+        "tam_target_return": st.session_state.get("synthesis_tam_target_return_pct", 0.0) / 100.0,
+        "tam_opm": st.session_state.get("synthesis_tam_opm_pct", current_opm * 100.0) / 100.0,
+        "tam_target_per": st.session_state.get("synthesis_tam_target_per", normal_per),
+    }
+    signals = evaluate_signals(input_set, market=market, context=ctx, assumptions=assumptions)
     if not signals:
         st.warning("입력값이 부족하여 종합 신호를 계산할 수 없습니다.")
     else:
@@ -1211,6 +1229,19 @@ def render_synthesis_tab(input_set: ValuationInputSet) -> None:
                 st.caption(f"산출된 지표 수치: {signal['핵심 수치']*100:.1f}%")
             else:
                 st.caption(f"산출된 지표 수치: {signal['핵심 수치']:.1f}배")
+            if signal.get("분야") == "PEG 내포 이익성장률" and signal.get("보조 수치") is not None:
+                implied_per = signal["핵심 수치"] * assumptions["target_peg"] * 100
+                st.caption(
+                    f"현재 PER {implied_per:.1f}배 · PEG {assumptions['target_peg']:.1f} · "
+                    f"정상 PER {assumptions['peg_terminal_per']:.1f}배 · "
+                    f"멀티플 수축을 견디기 위한 {int(assumptions['peg_duration'])}년 성장률 "
+                    f"{signal['보조 수치']*100:.1f}%/년"
+                )
+            if signal.get("분야") == "TAM 내포 요구 점유율" and signal.get("보조 수치") is not None:
+                st.caption(
+                    f"역산 기간 {int(signal['보조 수치'])}년 · TAM 성장률 {assumptions['tam_cagr']*100:.1f}%/년 · "
+                    f"목표 OPM {assumptions['tam_opm']*100:.1f}% · 타겟 PER {assumptions['tam_target_per']:.1f}배"
+                )
             st.write("---")
 
     st.markdown("### ✅ 다음 분기 관전 포인트 (Checklist)")
@@ -1222,7 +1253,8 @@ def render_synthesis_tab(input_set: ValuationInputSet) -> None:
             st.markdown(f"**판단 기준**: {item['판단 기준']}")
 
 
-def render_peg_tab(input_set: ValuationInputSet, market: dict) -> None:
+def render_peg_tab(input_set: ValuationInputSet, market: dict, ctx: dict | None = None) -> None:
+    ctx = ctx or {}
     st.markdown("### 멀티플 기반 단기 기대성장률 역산 (Implied Growth from PEG)")
     st.caption("현재 PER 수준과 산업/기업에 적정하다고 판단하는 PEG를 입력하면, 시장이 단기적으로 요구하는 이익 성장률을 역산합니다.")
     
@@ -1241,7 +1273,8 @@ def render_peg_tab(input_set: ValuationInputSet, market: dict) -> None:
     peg_val = col2.slider(
         "적정 기준 PEG 선택", 
         min_value=0.5, max_value=5.0, value=1.5, step=0.1,
-        help="성숙 제조업 0.5~1.0, 일반 IT 1~2, 고성장 SaaS 2~4 수준"
+        help="성숙 제조업 0.5~1.0, 일반 IT 1~2, 고성장 SaaS 2~4 수준",
+        key="synthesis_target_peg",
     )
     
     implied_growth = calc_implied_growth_from_peg(per_actual, peg_val)
@@ -1273,17 +1306,18 @@ def render_peg_tab(input_set: ValuationInputSet, market: dict) -> None:
         st.markdown("#### ⏳ 기간 및 멀티플 수축 기반 정밀 역산")
         st.caption("단순 PEG를 넘어, 'n년 뒤 평범한 주식(정상 PER)으로 돌아갈 때 내 기대수익률을 맞추려면 그동안 매년 몇 %씩 성장해야 하는가?'를 정밀하게 역산합니다.")
         
-        hist_per = market.get("historical_average_per", 15.0)
-        peer_per = market.get("peer_average_per", 15.0)
+        hist_per = ctx.get("normal_per") or market.get("historical_average_per") or 15.0
+        peer_per = ctx.get("peer_per") or market.get("peer_average_per") or hist_per
         st.info(f"💡 **파이프라인 자동 추출 기준점**: 과거 평균 PER **{hist_per:.1f}배** / 글로벌 Peer 평균 PER **{peer_per:.1f}배**")
         
         col_n, col_term, col_ret = st.columns(3)
-        duration_n = col_n.slider("고성장 지속 기간 (n년)", min_value=1, max_value=15, value=5, step=1)
-        terminal_per = col_term.slider("고성장 종료 후 정상 PER", min_value=5.0, max_value=50.0, value=float(hist_per), step=1.0)
+        duration_n = col_n.slider("고성장 지속 기간 (n년)", min_value=1, max_value=15, value=5, step=1, key="synthesis_peg_duration")
+        terminal_per = col_term.slider("고성장 종료 후 정상 PER", min_value=5.0, max_value=50.0, value=float(hist_per), step=1.0, key="synthesis_peg_terminal_per")
         target_return = col_ret.slider(
             "투자자 목표 수익률 (%)", 
             min_value=0.0, max_value=30.0, value=10.0, step=1.0,
-            help="투자자가 이 주식을 보유하는 동안 최소한 얻고자 하는 연평균 기대 수익률(예: 기회비용, 할인율 등). 0%로 두면 '본전'을 찾기 위한 성장률이 나옵니다."
+            help="투자자가 이 주식을 보유하는 동안 최소한 얻고자 하는 연평균 기대 수익률(예: 기회비용, 할인율 등). 0%로 두면 '본전'을 찾기 위한 성장률이 나옵니다.",
+            key="synthesis_peg_target_return",
         ) / 100.0
         
         if terminal_per > 0 and duration_n > 0:
@@ -1425,11 +1459,13 @@ def render_tam_tab(input_set: ValuationInputSet, market: dict, ctx: dict = None)
     req_rev = col1.number_input(
         f"요구되는 타겟 매출 ({unit_label}, 예: 5년 뒤)", 
         min_value=min_rev_val, max_value=50000.0, value=float(target_rev_default), step=1.0,
-        help="Reverse DCF나 PEG 역산을 통해 도출된 미래 필수 달성 매출액을 입력합니다."
+        help="Reverse DCF나 PEG 역산을 통해 도출된 미래 필수 달성 매출액을 입력합니다.",
+        key="tam_manual_required_revenue",
     )
     est_tam = col2.number_input(
         f"해당 시점 글로벌 전체 TAM 예측치 ({unit_label})", 
-        min_value=min_tam_val, max_value=500000.0, value=float(projected_tam/scale_divider), step=5.0
+        min_value=min_tam_val, max_value=500000.0, value=float(projected_tam/scale_divider), step=5.0,
+        key="tam_manual_estimated_tam",
     )
     
     implied_share = calc_implied_market_share(req_rev, est_tam)
@@ -1467,17 +1503,17 @@ def render_tam_tab(input_set: ValuationInputSet, market: dict, ctx: dict = None)
     current_opm = (current_op / current_rev) * 100 if current_rev > 0 else 10.0
     tax_rate = input_set.inputs.get("tax_rate", 0.22)
     current_mcap = market.get("market_cap", 0)
-    hist_per = market.get("historical_average_per", 15.0)
+    hist_per = ctx.get("normal_per") or market.get("historical_average_per") or 15.0
     if not hist_per or hist_per <= 0:
         hist_per = 15.0    
     col_a, col_b, col_c = st.columns(3)
-    sim_n_years = col_a.slider("투자기간 (n년 뒤)", min_value=1, max_value=15, value=5, step=1)
-    sim_tam_cagr = col_b.slider("글로벌 TAM 연평균 성장률 (%)", min_value=-10.0, max_value=50.0, value=10.0, step=1.0) / 100.0
-    sim_target_return = col_c.slider("투자자 목표 수익률 (%)", min_value=0.0, max_value=30.0, value=0.0, step=1.0, help="0%로 두면 현재 시총을 정당화(본전)하기 위한 요구 점유율이 나옵니다.") / 100.0
+    sim_n_years = col_a.slider("투자기간 (n년 뒤)", min_value=1, max_value=15, value=5, step=1, key="synthesis_tam_duration")
+    sim_tam_cagr = col_b.slider("글로벌 TAM 연평균 성장률 (%)", min_value=-10.0, max_value=50.0, value=float(ctx.get("tam_cagr") or 10.0), step=1.0, key="synthesis_tam_cagr_pct") / 100.0
+    sim_target_return = col_c.slider("투자자 목표 수익률 (%)", min_value=0.0, max_value=30.0, value=0.0, step=1.0, help="0%로 두면 현재 시총을 정당화(본전)하기 위한 요구 점유율이 나옵니다.", key="synthesis_tam_target_return_pct") / 100.0
     
     col_d, col_e, col_f = st.columns(3)
-    sim_opm = col_d.slider("미래 목표 영업이익률 (OPM, %)", min_value=1.0, max_value=50.0, value=float(current_opm), step=1.0) / 100.0
-    sim_per = col_e.slider("미래 타겟 PER (멀티플 수축 반영, 배)", min_value=5.0, max_value=50.0, value=float(hist_per), step=1.0)
+    sim_opm = col_d.slider("미래 목표 영업이익률 (OPM, %)", min_value=1.0, max_value=50.0, value=float(current_opm), step=1.0, key="synthesis_tam_opm_pct") / 100.0
+    sim_per = col_e.slider("미래 타겟 PER (멀티플 수축 반영, 배)", min_value=5.0, max_value=50.0, value=float(hist_per), step=1.0, key="synthesis_tam_target_per")
     
     if current_mcap > 0 and current_tam > 0:
         # 역방향 계산 로직 (Reverse Engineering)
@@ -1827,10 +1863,10 @@ def main() -> None:
         render_narrative_tab(selected_ticker, company_name)
 
     with tab_synthesis:
-        render_synthesis_tab(input_set)
+        render_synthesis_tab(input_set, market, ctx)
 
     with tab_peg:
-        render_peg_tab(input_set, market)
+        render_peg_tab(input_set, market, ctx)
 
     with tab_tam:
         render_tam_tab(input_set, market, ctx)

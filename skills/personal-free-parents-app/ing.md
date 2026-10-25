@@ -26,6 +26,15 @@
 - Flutter `GroupRepository`도 `parent_id` 대신 기존 DB의 `user_id`, `name` 대신 `display_name`을 사용하도록 정리했다. 생성자는 자동으로 owner 멤버십을 만든다.
 - 원격 적용 전에는 `00002_appeals_and_admin.sql`과 `00002_playgrounds.sql`의 번호 중복 및 실제 적용 이력을 먼저 확인해야 한다. 이 확인 없이 `supabase db push`로 전체 마이그레이션을 실행하지 않는다.
 
+## 1. 실제 모임 생성 흐름 (2026-10-26)
+
+- 지도에서 전달한 `playgroundId`를 생성 화면이 받아 등록된 놀이터로 미리 선택한다. 임의 지도 좌표를 놀이터 ID로 저장하지 않는다.
+- 생성 화면에서 모임 이름, 실제 놀이터, 내 소속, 시작·종료 시각을 선택하고 검증한다.
+- `00004_group_creation_rpc.sql`의 `create_group_with_owner`가 인증, 소속 연결, 놀이터 존재 여부, 시간 범위를 확인한 뒤 그룹과 owner 멤버십을 한 트랜잭션으로 기록한다.
+- 새 그룹은 `supervision_mode = 'full'`로 저장한다. 앱이 보호자에게 감독 순번을 배정하지 않는다.
+- Supabase 원격에는 `00003_group_contract.sql`, 다음 `00004_group_creation_rpc.sql` 순으로 적용해야 한다. 기존 `00002` 중복과 실제 migration history 확인이 선행이며, 이번 작업에서는 원격 DB에 쓰지 않았다.
+- 생성 성공 시 지도 화면으로 돌아가 안내한다. 그룹 상세 화면은 아직 실제 DB 내용으로 연결되지 않아 이번 흐름에서는 열지 않는다.
+
 ## 🚨 1. 주요 증상 (Symptom)
 * **증상**: 앱 로그인 후 지도 화면 진입 시, 연두색/하늘색 핀만 꽂힌 채 배경 지도가 회색/하얀색 격자 무늬(Fallback Grid)로 표시되고 실감 지도가 로딩되지 않음.
 * **디버그 콘솔 로그**:

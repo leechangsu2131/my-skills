@@ -46,9 +46,9 @@ python .\gbtalk_summary.py clipboard
 
 쪽지를 하나씩 열고 본문을 복사합니다. 복사한 내용을 **로컬에 저장만** 하려면 `archive`를 실행합니다.
 
-쪽지관리함의 수신함 목록에 포커스를 둔 뒤 `Home`을 누르면 최신 행이 선택되고, `↓` 한 번으로 바로 다음 오래된 행으로 이동하는 것을 실제 앱에서 확인했습니다. 본문 편집 컨트롤의 `Ctrl+A`, `Ctrl+C`도 전체 내용을 복사했습니다. 복사본의 줄바꿈 표기는 UIA 본문 값과 달랐지만 공백을 정규화했을 때 내용이 일치했습니다. 목록에서 `Ctrl+A`, `Ctrl+C`는 전체 쪽지 내보내기로 동작하지 않았습니다.
+왼쪽 탐색에서 **받은쪽지함**을 명시적으로 선택해야 합니다. 기본 **쪽지함** 목록은 보낸 쪽지를 섞어 보여 줄 수 있습니다. `UltariList` 아래의 현재 선택 행을 클릭하면 그 행에 포커스가 갑니다. 이때 포커스된 접근성 요소 번호가 목록의 선택 행 요소 번호와 일치하는지 확인한 뒤 `Home`/`↓`를 사용합니다. 본문 편집 컨트롤의 `Ctrl+A`, `Ctrl+C`도 전체 내용을 복사했습니다. 복사본의 줄바꿈 표기는 UIA 본문 값과 달랐지만 공백을 정규화했을 때 내용이 일치했습니다. 목록에서 `Ctrl+A`, `Ctrl+C`는 전체 쪽지 내보내기로 동작하지 않았습니다.
 
-매 이동 직후 첫 UIA 응답이 이전 행을 보여 준 적이 있으므로 행과 본문이 갱신되어 서로 맞을 때까지 다시 읽습니다. 수신 날짜와 발신자는 UIA 목록에서 신뢰할 수 있게 제공되지 않아 화면의 선택 행/헤더를 확인해야 합니다. 전달된 원문 시각은 수신 시각과 다를 수 있습니다. 따라서 인접 행의 키보드 이동은 확인했지만, 날짜·발신자까지 자동 대조하는 전체 순회와 2분 처리량은 아직 검증하지 않았습니다. 자동 입력 중에는 관리함이 전경으로 활성화됩니다.
+매 이동 직후 첫 UIA 응답이 이전 행을 보여 준 적이 있으므로 행과 본문 지문이 모두 바뀐 뒤 같은 쌍이 연속 확인될 때까지 다시 읽습니다. 한쪽만 갱신된 혼합 상태에서는 저장하지 않습니다. 선택 행이 정확히 `취소된 메시지입니다.`이면 미리보기 UIA 값에 직전 본문이 남을 수 있으므로 목록의 취소 표식을 placeholder 본문으로 사용합니다. 입력의 중심은 `Home`/`↓` 키보드 매크로이며, 본문은 UIA 값으로 읽습니다. 날짜는 접근성 트리에 수신 머리글 값이 있으면 먼저 사용하고, 없을 때만 같은 안정된 쪽지 화면의 머리글을 Windows OCR로 읽어 `received_date`(YYYY-MM-DD)를 기록합니다. 날짜 판독을 위해 행을 다시 열거나 이동하지 않습니다. 같은 날짜가 이어지면 날짜 값을 유지하고, 날짜가 바뀌면 체크포인트의 날짜 그룹 수를 갱신합니다. 화면에 연도가 나오지 않는 경우 기준 연도는 캡처 설정 또는 확인한 경계 연도에서 가져옵니다. 날짜 판독 실패, 행·본문 불일치, 날짜 역행이면 저장하지 않고 재개 위치를 남깁니다. 발신자는 UIA에서 신뢰할 수 있게 제공되지 않으므로 별도 검증이 필요합니다. 전달된 원문 시각은 수신 시각과 다를 수 있습니다. 날짜 OCR 한 건과 임시 목록 배치는 확인했지만, 날짜 경계가 바뀌는 실제 앱 순회와 2분 처리량은 아직 검증하지 않았습니다. 자동 입력 중에는 관리함이 전경으로 활성화됩니다.
 
 날짜를 한 건씩 입력하며 보관하는 연속 모드가 있습니다. 복사한 본문과 입력한 날짜를 월별 Markdown에 저장하며, 기준일보다 오래된 날짜를 만나면 완료 처리합니다. 실행마다 체크포인트를 `inbox\.sessions\YYYY-MM-DD-month.json`에 원자적으로 기록하므로, 중단 후 재실행하면 마지막 저장 날짜와 발신자를 보여 줍니다. 목록에서 그 항목 다음의 더 오래된 쪽지부터 재개하세요. 기존 보관 파일만 있고 체크포인트가 없으면 가장 오래된 기록을 재개 경계로 사용합니다.
 
@@ -60,13 +60,87 @@ python .\gbtalk_summary.py archive-session --before 2026-10-01 --period month
 
 목록이 최신순인지 확인하세요. 직전 저장 항목보다 더 최신인 날짜를 입력하면 순서 오류로 저장을 멈춥니다. 이미 보관한 본문과 같으면 선택을 되돌리거나 확인을 받습니다. `s`는 현재 항목이 이미 저장된 같은 쪽지일 때 추가 저장 없이 재개 지점만 갱신하고, `d`는 본문이 같은 별개의 쪽지임을 확인했을 때만 중복 저장합니다. 기준일보다 오래된 쪽지를 만나면 세션을 완료 처리하고, `q`를 입력하면 일시 중단합니다.
 
-체크포인트는 진행 위치와 복구 정보를 기록하지만 지비톡 목록을 직접 이동하지는 않습니다. 재개할 때 선택 행의 수신 날짜/발신자와 마지막 확정 기록을 대조하세요. `Home`으로 새 전체 순회를 시작하고, 각 행에서 본문을 확인한 후 `Shift+Tab` 두 번으로 목록에 돌아와 `↓` 한 번 이동하는 키보드 경로를 사용할 수 있습니다. 실제 이동 때마다 UIA 상태를 갱신하고, 목록 행과 본문이 일치하지 않으면 복사·저장하지 않습니다. `Tab`은 본문에서 스크롤바, 다시 `Tab`하면 `삭제` 버튼으로 이동했으므로 고정 횟수 Tab 매크로는 사용하지 마세요. Computer Use 키 입력은 관리함 창을 전경으로 활성화하므로 백그라운드 동시 작업도 보장되지 않습니다.
+체크포인트는 진행 위치와 복구 정보를 기록하지만 지비톡 목록을 직접 이동하지는 않습니다. 재개할 때 선택 행의 수신 날짜/발신자와 마지막 확정 기록을 대조하세요. 새 전체 순회는 받은쪽지함에서 `Home`으로 시작합니다. 본문을 읽은 뒤 목록으로 돌아갈 때는 현재 선택된 `UltariList` 행을 클릭하고, 그 행 번호가 실제 포커스와 일치하는지 확인한 다음에만 `↓`를 보냅니다. 본문에서 `Shift+Tab`을 보내는 경로는 매크로에서 목록 포커스가 아닌 본문 패널로 이동했는데도 일반 창 포커스를 목록으로 오인한 사례가 있어 사용하지 않습니다. `Tab`은 본문에서 스크롤바, 다시 `Tab`하면 `삭제` 버튼으로 이동했으므로 고정 횟수 Tab 매크로도 사용하지 마세요. Computer Use 키 입력은 관리함 창을 전경으로 활성화하므로 백그라운드 동시 작업도 보장되지 않습니다.
 
 ### 키보드 매크로로 원문 묶음 캡처
 
-`scripts/capture_macro.mjs`의 `captureRawBodies`는 Computer Use `sky`로 유일한 `쪽지관리함` 창을 지정해 실행합니다. 목록에 포커스를 확인한 뒤 `Home`으로 최신 행을 선택하고 `↓`로 한 행씩 이동하며 본문 UIA 값을 읽습니다. 한 번 실행은 최대 30건으로 제한합니다. 각 행을 JSONL에 동기화하고 체크포인트에 본문/행 해시를 기록하므로, 실행이 중간에 끝나면 확정된 행을 검증한 뒤 재개합니다. 미완성 마지막 JSONL 줄이 예상 기록의 일부와 일치할 때만 미확정 꼬리를 복구하고, 앞부분 해시나 예상 내용이 다르면 중단합니다. 날짜 경계가 확인되면 `stopBeforeRowSha256`에 경계 행 지문을 지정할 수 있으며, 해당 지문은 체크포인트에 보존되어 그 행부터 기록하지 않고 멈춥니다.
+`scripts/capture_macro.mjs`의 `captureRawBodies`는 Computer Use `sky`로 유일한 `쪽지관리함` 창을 지정해 실행합니다. 시작 전에 **받은쪽지함**을 선택합니다. 매크로는 필요할 때만 선택된 자식 행을 클릭해 목록 포커스를 잡고, 이동은 `Home`/`↓` 키보드로 수행하며 본문은 UIA 값으로 읽습니다. 한 번 실행은 최대 30건으로 제한합니다. 각 행을 JSONL에 동기화하고 체크포인트에 본문/행 해시를 기록하므로, 실행이 중간에 끝나면 확정된 행을 검증한 뒤 재개합니다. 재탐색 때 행 지문이 달라져도 본문 해시가 저장 구간에 한 번만 나타나면 일치로 인정하고, 중복 본문이면 중단합니다. 미완성 마지막 JSONL 줄이 예상 기록의 일부와 일치할 때만 미확정 꼬리를 복구하고, 앞부분 해시나 예상 내용이 다르면 중단합니다. 날짜 경계가 확인되면 `stopBeforeRowSha256`에 경계 행 지문을 지정할 수 있으며, 해당 값이 체크포인트에 보존되어 행 지문 또는 본문 지문이 맞는 행부터 기록하지 않고 멈춥니다.
 
-이 단계는 원문 백업용 임시 캡처입니다. 출력 폴더에는 `raw-bodies.jsonl`과 `capture-checkpoint.json`만 만들며, 화면 이미지와 사진·첨부 파일은 저장하지 않습니다. 수신 날짜/시각과 발신자/제목을 자동 검증하지 않으므로 결과를 `archive-batch`에 바로 넣지 마세요. 목록 화면에서 해당 메타데이터를 대조해 `received_at`, `title`, `body` JSONL을 별도로 만든 뒤 월별 Markdown에 보관해야 합니다. 각 30건 묶음 뒤에는 순번, 본문 해시, 체크포인트 앞부분 해시를 확인하고 다음 묶음을 시작합니다. 관리함 입력은 전경 창을 사용합니다.
+이 단계는 원문 백업용 임시 캡처입니다. 출력 폴더에는 `raw-bodies.jsonl`과 `capture-checkpoint.json`만 만들며, 화면 이미지와 사진·첨부 파일은 저장하지 않습니다. 새 레코드는 UIA 또는 화면에서 확인한 `received_date`만 가지며, 발신자/제목은 자동 검증하지 않습니다. 결과를 `archive-batch`에 바로 넣지 말고, 발신자/제목을 확인해 `sequence,title` CSV를 만든 뒤 아래 도구로 검증하세요. raw JSONL에 날짜가 없는 과거 행은 CSV에 `received_date` 또는 `received_at` 열을 추가해 날짜를 대조해야 합니다. 각 30건 묶음 뒤에는 순번, 본문 해시, 체크포인트 앞부분 해시를 확인하고 다음 묶음을 시작합니다. 관리함 입력은 전경 창을 사용합니다.
+
+취소 placeholder의 행/본문 지문이 기존 raw에 여러 번 있으면 자동으로 통과하지 않습니다. 모호한 후보는 저장 전 `paused-ambiguous-existing` 체크포인트에 지문과 기준 매치 순번을 기록합니다. `captureOlderThanKnown`의 `confirmedDistinctCandidate`는 화면에서 확인한 날짜/발신자, 기준 매치 순번 전체, 바로 앞에 저장된 순번 및 행/본문 지문이 일치할 때만 그 취소 쪽지를 별개 항목으로 저장합니다. 이 예외 레코드에만 확인한 수신시각/발신자가 함께 저장됩니다. 확인 정보는 다음 실행에서 다시 검증됩니다. 현재 행이나 직전 커서가 바뀌면 확인 객체를 전달하지 말고 화면에서 후보를 다시 대조하세요.
+
+앱 입력이 멈춘 동안에는 저장된 원문과 화면 자료로 발신자/제목을 정리할 수 있습니다. `sequence,title` CSV만 만들면 raw JSONL의 `received_date`를 사용합니다. 기존 raw에 날짜가 없는 행이라면 CSV에 `received_date`(날짜만) 또는 `received_at`(시각 포함)을 기록하세요. 다음 도구가 원문 순번, 본문 SHA-256, 월 범위, 최신순을 검증하고 별도 JSONL을 만듭니다.
+
+```powershell
+python .\scripts\build_archive_input.py .\out\capture-2026-10-received-run1\raw-bodies.jsonl .\out\capture-2026-10-received-run1\metadata-map.csv .\out\capture-2026-10-received-run1\verified-2026-10.jsonl --month 2026-10 --markdown-output .\inbox\2026-10-received.md --range-manifest .\out\capture-2026-10-received-run1\range-manifest.json
+```
+
+`--markdown-output`은 새 파일만 생성하며 이미 있는 파일은 덮어쓰지 않습니다. 기존 월별 파일이 다른 목록 범위에서 왔거나 같은 시각·발신자의 본문이 원문 캡처와 다르면 한 파일에 섞지 말고 `2026-10-received.md`처럼 받은쪽지 전용 파일을 만듭니다. `archive-batch`는 오래된 기록을 뒤에 추가하는 모드이므로 전체 최신순 입력을 기존 기록에 그대로 넣으면 안 됩니다. 원문 JSONL·메타데이터 CSV·검증 JSONL은 서로 연결해 보존하고, 9월 경계 행은 월별 결과에 포함하지 않습니다.
+
+`--range-manifest`는 검증한 보관 구간의 최신/최오래된 날짜, 발신자, 본문 미리보기, 행·본문 해시와 검증 JSONL 해시를 기록합니다. 이 파일은 이후 새 쪽지를 최신 경계에서 멈추거나, 저장 구간보다 오래된 쪽지를 과거 경계에서 이어 읽는 기준으로 씁니다. 이미 같은 내용의 매니페스트가 있으면 재사용할 수 있지만, 다른 내용으로 덮어쓰지는 않습니다.
+
+### 새로 온 쪽지만 증분 저장
+
+새 수신함 캡처는 기준 raw JSONL을 읽기 전용으로 사용하고, 매 회차마다 별도 출력 폴더를 지정합니다. 매크로는 `Home`에서 시작하고 한 번에 최대 30건을 저장합니다. 기존 캡처에서 **행 지문과 본문 지문이 모두 같은 항목**을 만나면 그 항목을 쓰지 않고 `paused-existing-boundary`로 멈춥니다. 이 일치는 경계 후보입니다. 같은 내용의 쪽지가 다시 올 수도 있으므로 화면에 선택된 행의 날짜/발신자를 기준 메타데이터와 대조하기 전에는 전체 증분 구간 완료로 표시하지 않습니다. 행 지문만 또는 본문 지문만 겹치면 기존 쪽지라고 단정하지 않고 `paused-ambiguous-existing`로 멈춰 확인을 요구합니다. 본문만 같은 다른 쪽지는 있을 수 있으므로 본문 해시 하나만으로 경계를 넘기지 않습니다.
+
+Computer Use에서 다음처럼 실행합니다. `baselineRawJsonl`은 검증된 받은쪽지함 raw 파일이어야 하며, `outputDir`은 그 기준 폴더와 다른 새 폴더여야 합니다.
+
+```javascript
+const result = await captureNewUntilKnown({
+  sky,
+  window: managerWindow,
+  baselineRawJsonl: "C:/.../capture-2026-10-received-run1/raw-bodies.jsonl",
+  baselineVerifiedJsonl: "C:/.../capture-2026-10-received-run1/verified-2026-10.jsonl",
+  baselineRangeManifest: "C:/.../capture-2026-10-received-run1/range-manifest.json",
+  outputDir: "C:/.../capture-2026-10-incremental-01",
+  maxItems: 30,
+  delayMs: 100,
+});
+```
+
+`paused-batch-complete`이면 같은 폴더로 다시 실행해 이어가되, 먼저 체크포인트의 기준 파일 SHA와 신규 행을 검증합니다. 재개할 때 `Home`부터 이미 저장한 새 행의 행/본문 지문이 조금이라도 달라지면 중단합니다. `paused-existing-boundary`에 도달한 뒤 후보 행의 날짜/발신자를 기준 메타데이터와 대조해야 증분 캡처가 끝난 것으로 봅니다. `paused-ambiguous-existing`, `paused-before-known-boundary`, 또는 행 지문 오류는 수동 대조가 끝날 때까지 보관 입력에 넣지 않습니다. 경계 확인 후 신규 raw의 수신 날짜/발신자를 CSV로 대조하고, 아래처럼 기존 **받은쪽지 전용** 월별 파일에 새 JSONL을 앞에 합칩니다.
+
+```powershell
+python .\scripts\build_archive_input.py .\out\capture-2026-10-incremental-01\new-bodies.jsonl .\out\capture-2026-10-incremental-01\metadata-map.csv .\out\capture-2026-10-incremental-01\verified.jsonl --month 2026-10 --prepend-to .\inbox\2026-10-received.md
+```
+
+앞에 합치기는 새 항목이 기존 파일 맨 위 시각보다 모두 최신이고 정확한 동일 항목이 없을 때만 실행됩니다. 원본 월별 파일은 임시 파일을 검증한 뒤 원자적으로 교체합니다. 증분 출력 폴더가 기존/새 메시지를 모두 포함한 경계 상태에 도달한 뒤에는 나중 도착분을 위해 새 폴더를 시작합니다.
+
+### 저장 구간보다 오래된 쪽지 이어 받기
+
+검증 JSONL과 범위 매니페스트가 있으면 가장 오래된 보관 경계를 다시 찾고, 그보다 오래된 쪽지를 별도 JSONL에 30건씩 이어 저장할 수 있습니다. 첫 호출은 기준 경계 후보를 찾기만 하고 아무 쪽지도 쓰지 않습니다. 화면에 선택된 행의 날짜와 발신자를 매니페스트의 `oldest`와 직접 대조한 다음, 같은 출력 폴더로 확인값을 전달해 캡처를 시작합니다. 다음 호출 때 후보 지문이 현재 선택과 모두 같으면 Home부터 다시 찾지 않고 그 행에서 이어갑니다. 앵커 뒤에서 기준 raw에 이미 저장된 미검증 행/본문 쌍은 중복으로 쓰지 않고 건너뜁니다. 쌍이 중복되거나 한 지문만 겹치면 추정하지 않고 멈춥니다.
+
+```javascript
+const candidate = await captureOlderThanKnown({
+  sky,
+  window: managerWindow,
+  baselineRawJsonl: "C:/.../capture-2026-10-received-run1/raw-bodies.jsonl",
+  baselineVerifiedJsonl: "C:/.../capture-2026-10-received-run1/verified-2026-10.jsonl",
+  baselineRangeManifest: "C:/.../capture-2026-10-received-run1/range-manifest.json",
+  outputDir: "C:/.../capture-before-2026-10-01",
+  maxItems: 30,
+});
+// 화면의 후보 행 날짜와 발신자가 매니페스트와 일치하는지 확인한 뒤에만 실행
+const batch = await captureOlderThanKnown({
+  sky,
+  window: managerWindow,
+  baselineRawJsonl: "C:/.../capture-2026-10-received-run1/raw-bodies.jsonl",
+  baselineVerifiedJsonl: "C:/.../capture-2026-10-received-run1/verified-2026-10.jsonl",
+  baselineRangeManifest: "C:/.../capture-2026-10-received-run1/range-manifest.json",
+  outputDir: "C:/.../capture-before-2026-10-01",
+  confirmedAnchor: { received_at: "2026-10-01T08:28:00", sender: "권윤옥" },
+  maxItems: 30,
+});
+```
+
+`paused-batch-complete`이면 같은 폴더로 재실행합니다. 현재 선택이 체크포인트의 `next_row`와 행/본문 지문 모두 일치하고 그 쌍이 raw 기준/저장 접두부와 겹치지 않으면 그 커서부터 계속합니다. 일치하지 않거나 모호하면 Home부터 확인된 경계와 저장된 과거 구간을 다시 대조하고, 기준 raw의 이미 캡처된 꼬리를 건너뜁니다. `paused-oldest-reached`만 목록 끝까지 확인한 상태입니다. 날짜/발신자 메타데이터를 입력한 뒤, 오래된 쪽지들을 해당 월의 받은쪽지 전용 파일에 합칩니다. `--append-to`는 이미 존재하는 월 파일에서 모든 새 시각이 가장 오래된 시각보다 이르고 중복이 없을 때만 원자적으로 뒤에 붙입니다. 월 파일이 없다면 첫 검증 배치에 `--markdown-output`을 사용하고, 이후 배치부터 `--append-to`를 사용합니다. 한 번의 과거 캡처가 여러 달에 걸치면 `--month`를 바꿔 각각 별도 월 파일로 처리할 수 있습니다.
+
+```powershell
+python .\scripts\build_archive_input.py .\out\capture-before-2026-10-01\older-bodies.jsonl .\out\capture-before-2026-10-01\metadata-map.csv .\out\capture-before-2026-10-01\verified-2026-09.jsonl --month 2026-09 --append-to .\inbox\2026-09-received.md --range-manifest .\out\capture-before-2026-10-01\range-2026-09.json
+```
+
+범위 매니페스트와 지문은 후보 위치를 찾는 근거입니다. 앱 목록에서 보이는 날짜/발신자 확인을 대신하지 않습니다. 동일한 본문과 행이 반복되거나 기준 범위가 수정되면 자동 저장을 멈추고 확인을 요구합니다.
 
 다른 UI에도 적용할 수 있는 포커스 탐색, 한 단계씩의 안전한 키 입력, 배치 크기 조정, 중단 복구 원칙은 [키보드 매크로 방법론](references/keyboard-macro-methodology.md)에 정리했습니다. 지비톡에서 확인한 키 경로나 컨트롤 구조를 다른 앱에서도 그대로 가정하지 말고, 대상 앱에서 다시 짧게 검증합니다.
 

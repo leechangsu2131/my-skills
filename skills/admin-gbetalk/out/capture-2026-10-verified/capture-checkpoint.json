@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "status": "paused",
+  "started_at": "2026-10-23T04:08:03.178Z",
+  "updated_at": "2026-10-23T04:08:17.692Z",
+  "saved_count": 4,
+  "next_sequence": 5,
+  "journal_file": "raw-bodies.jsonl",
+  "journal_bytes": 2862,
+  "last_body_sha256": "74261864f76b0d67733b0b94e89c1713d4b35ddab2a3b134ca67c108f84a3733",
+  "last_same_body_occurrence": 2,
+  "last_screen_sha256": "034feddc3a2c6808e4bc134f5766dc44cce7c3235b412e011eb216cdad8abfe8",
+  "prefix_sha256": "a23bd97d0731bcdc2e20f43dafc3ea5417a11743b60caac456ae62efbcfbd95d",
+  "metadata_status": "needs-visible-row-reconciliation"
+}

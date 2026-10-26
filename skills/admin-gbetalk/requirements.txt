@@ -1,0 +1,3 @@
+anthropic>=0.49.0
+pywinauto>=0.6.8; platform_system == "Windows"
+pyperclip>=1.9.0

@@ -1,0 +1,51 @@
+Pane	Afx:00FB0000:b:00010003:00900010:00000000	@Messenger7 Quick Menu
+Button	Button	
+Button	Button	
+Button	Button	
+Button	Button	
+Button	Button	
+Button	Button	
+Button	Button	
+Button	Button	
+Button	Button	
+Button	Button	
+Button	Button	
+Button	Button	
+Button	Button	
+Button	Button	
+Button	Button	
+Button	Button	
+Button	Button	
+Button	Button	
+Pane	USkinView	
+Button	Button	메뉴
+Button	Button	최소화
+Button	Button	최대화
+Button	Button	닫기
+Button	Button	환경설정
+Pane	NavigationBar	대화
+Pane	Afx:00FB0000:3:00010003:00000006:00000000	UNavigationButtonBar
+Button	Button	내목록
+Button	Button	부서그룹
+Button	Button	대화
+Button	Button	쪽지
+Button	Button	클라우드
+Button	Button	조직도
+Button	Button	공유그룹
+Button	Button	검색
+Button	Button	더보기
+Button	Button	
+Button	Button	
+Pane	USkinView	
+Pane	Afx:00FB0000:b:00010003:00000006:00000000	대화목록
+Pane	UltariListScrollView	방 목록
+Pane	UListScrollBar	UltariScrollBar
+Edit	UltariSkinEdit	
+Edit	UltariChildEdit	
+Button	Button	검색
+Edit	UltariSkinEdit	
+Edit	UltariChildEdit	
+Button	Button	대화 내용 동기화
+Button	Button	메일
+Button	Button	설문조사
+Button	Button	카운트 갱신

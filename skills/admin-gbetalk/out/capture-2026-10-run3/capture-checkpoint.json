@@ -1,0 +1,22 @@
+{
+  "schema_version": 2,
+  "status": "paused-before-outside-period",
+  "started_at": "2026-10-26T01:15:20.844Z",
+  "updated_at": "2026-10-26T01:21:35.691Z",
+  "saved_count": 61,
+  "next_sequence": 62,
+  "journal_file": "raw-bodies.jsonl",
+  "journal_bytes": 69523,
+  "prefix_sha256": "a9827ec6483c303eb4480acb83d0d44a9983fe29c6e1051b3b5130fec23034ce",
+  "last_row_sha256": "8b6601e74e2e46e5ce534b00763e0df74f686540eaed015bbcedf2f09720790e",
+  "last_body_sha256": "c768a0f4afd32d646ca6626119224f6f08f61672975f9927ad99f717f6cfdff4",
+  "next_row": {
+    "sequence": 62,
+    "row_sha256": "d589419bd4b614925a5ffe8880c97c9f88e73320201ac865cf950e7402d5c86b",
+    "row_occurrence": 1,
+    "body_sha256": "8a269e301ecacc06739347092fa52da72fb838910e4930f5e7d23d15023ab3da"
+  },
+  "pending_append": null,
+  "stop_before_row_sha256": "8a269e301ecacc06739347092fa52da72fb838910e4930f5e7d23d15023ab3da",
+  "last_row_occurrence": 1
+}

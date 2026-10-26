@@ -43,7 +43,7 @@
     "sender": "권윤옥",
     "row_sha256": "d3d6ca22b5d8768c1ec1ba3e8cbb8f6826a457f0ea1f1c70f247545dbc9ef702",
     "body_sha256": "d3d6ca22b5d8768c1ec1ba3e8cbb8f6826a457f0ea1f1c70f247545dbc9ef702",
-    "confirmed_at": "2026-10-26T04:52:23.398Z",
+    "confirmed_at": "2026-10-26T07:47:56.646Z",
     "confirmation_method": "visible-date-and-sender-compared-by-operator"
   },
   "stop_reason": {

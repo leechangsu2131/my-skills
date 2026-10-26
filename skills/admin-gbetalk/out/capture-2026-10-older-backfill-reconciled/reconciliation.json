@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "created_at": "2026-10-26T07:51:16.947Z",
+  "source_directory": "C:/Users/user/.gemini/antigravity/scratch/repos/my-skills/skills/admin-gbetalk/out/capture-2026-10-older-backfill-run1",
+  "source_journal_sha256": "3987686c88fb0b98858527bd33f3c9bbdfe6897001d6154efb712c1632971931",
+  "source_checkpoint_sha256": "f0b4809b37a6b32c98e2b932d00fe40cf2d663a40a3eb7c6e052c1a9c788019b",
+  "destination_directory": "C:/Users/user/.gemini/antigravity/scratch/repos/my-skills/skills/admin-gbetalk/out/capture-2026-10-older-backfill-reconciled",
+  "source_record_count": 265,
+  "destination_record_count": 263,
+  "removed_source_sequences": [
+    10,
+    11
+  ],
+  "removed_records": [
+    {
+      "sequence": 10,
+      "row_sha256": "0c97a62a5b0d7f17cfc1a0913185cec514f19b1d9f54422297a36108fcc66fd7",
+      "body_sha256": "0c97a62a5b0d7f17cfc1a0913185cec514f19b1d9f54422297a36108fcc66fd7"
+    },
+    {
+      "sequence": 11,
+      "row_sha256": "e1dc76459105c840310998564321ffc21bfcb03d871ad7fe58984d30e8f0be4a",
+      "body_sha256": "e1dc76459105c840310998564321ffc21bfcb03d871ad7fe58984d30e8f0be4a"
+    }
+  ],
+  "cursor_evidence": {
+    "next_live_cursor_source_sequence": 12,
+    "row_sha256": "c578d328a2e8ceed21ca573da9d9b3e9a7e7b8c1422d66d2e14a370bddedcaf4",
+    "body_sha256": "9b07d18f3e378ffc7d6354b7d8ea34c2e078819500593222d5bd13c6fe6d20f4"
+  },
+  "reason": "Fresh manager re-scan verified source rows 1–9 in order; the live selected row/body immediately afterward exactly matched source row 12. Source rows 10 and 11 repeat rows 8 and 9, so those two captures were duplicates from the prior run. Original source files were preserved."
+}

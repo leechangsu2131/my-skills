@@ -97,8 +97,28 @@ export function parseReceivedDateFromOcr(text, { year, previousDate = null } = {
     .map((match) => ({ year: Number(match[1]), month: Number(match[2]), day: Number(match[3]) }));
   const short = [...ocrText.matchAll(/(?<!\d)(\d{1,2})\s*[./-]\s*(\d{1,2})(?!\d)/gu)]
     .map((match) => ({ month: Number(match[1]), day: Number(match[2]) }));
-  const candidates = explicit.length ? explicit : short;
+  const compact = [...ocrText.matchAll(/(?<!\d)(0[1-9]|1[0-2])([0-3]\d)(?!\d)/gu)]
+    .map((match) => ({ month: Number(match[1]), day: Number(match[2]) }));
+  const candidates = explicit.length ? explicit : short.length ? short : compact;
   const unique = new Map(candidates.map((item) => [`${item.year ?? ''}-${item.month}-${item.day}`, item]));
+  if (unique.size === 0 && previousDate && /(?:오전|오후)/u.test(ocrText)) {
+    const damagedDate = ocrText.match(/(?<!\d)(\d{1,2})[^\d\s./-]+(\d{1,2})(?!\d)/u);
+    if (damagedDate) {
+      const [, previousYear, previousMonth, previousDay] = previousDate.match(/^(\d{4})-(\d{2})-(\d{2})$/u) ?? [];
+      const observedMonth = Number(damagedDate[1]);
+      const observedDay = Number(damagedDate[2]);
+      const expectedDay = Number(previousDay);
+      // OCR sometimes replaces the date separator with a Korean glyph and
+      // drops the tens digit from dates like 09.16. Reuse the prior date only
+      // when the visible partial date still identifies its month/day suffix;
+      // a different day fails closed and requires another inspection.
+      if (
+        previousYear
+        && observedMonth === Number(previousMonth)
+        && observedDay === (expectedDay >= 10 ? expectedDay % 10 : expectedDay)
+      ) return previousDate;
+    }
+  }
   if (unique.size === 0 && /(?:오전|오후)\s*\d{1,2}\s*:?\s*\d{2}/u.test(ocrText)) {
     // GBTalk shows a time-only header for today's messages and a date for older
     // messages. Reuse the previous date within a date group; for the first row,
@@ -846,24 +866,32 @@ function validateConfirmedBaselineDuplicate(current, confirmation, {
     throw new Error('취소 쪽지 중복 확인의 기준 순번이 raw 기준 파일과 다릅니다. 저장하지 않습니다.');
   }
 
-  const receivedAt = confirmation.received_at;
+  const receivedDate = confirmation.received_date
+    ?? (typeof confirmation.received_at === 'string' ? confirmation.received_at.slice(0, 10) : null);
   const sender = typeof confirmation.sender === 'string' ? confirmation.sender.trim() : '';
   if (
-    typeof receivedAt !== 'string'
-    || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$/.test(receivedAt)
-    || receivedAt >= anchor.received_at
+    typeof receivedDate !== 'string'
+    || !/^\d{4}-\d{2}-\d{2}$/.test(receivedDate)
+    || isoDate(...receivedDate.split('-').map(Number)) !== receivedDate
+    || receivedDate >= anchor.received_at.slice(0, 10)
     || !sender
   ) throw new Error('취소 쪽지의 화면 확인 날짜/발신자가 유효한 과거 경계 정보가 아닙니다.');
 
-  const visibleMatches = pairMatches.map((sequence) => {
+  const metadataMatchSequences = [...new Set(baselineRows
+    .filter((row) => row.row_sha256 === current.rowSha || row.body_sha256 === current.bodySha)
+    .map((row) => row.sequence))].sort((left, right) => left - right);
+  const visibleMatches = metadataMatchSequences.map((sequence) => {
     const row = verifiedRange?.bySequence.get(sequence);
     if (!row) throw new Error(`취소 placeholder 기준 ${sequence}번의 검증 메타데이터가 없습니다.`);
-    if (row.row_sha256 !== current.rowSha || row.body_sha256 !== current.bodySha) {
+    if (
+      (row.row_sha256 !== current.rowSha && row.body_sha256 !== current.bodySha)
+      || row.capture_sequence !== sequence
+    ) {
       throw new Error(`취소 placeholder 기준 ${sequence}번의 행/본문 지문이 검증 파일과 다릅니다.`);
     }
     return row;
   });
-  if (visibleMatches.some((row) => row.received_at === receivedAt && row.title === sender)) {
+  if (visibleMatches.some((row) => row.received_at?.slice(0, 10) === receivedDate && row.title === sender)) {
     throw new Error('화면에서 확인한 날짜/발신자가 기존 placeholder 메시지와 일치합니다. 중복으로 저장하지 않습니다.');
   }
 
@@ -876,7 +904,7 @@ function validateConfirmedBaselineDuplicate(current, confirmation, {
   ) return null;
 
   return {
-    received_at: receivedAt,
+    received_date: receivedDate,
     sender,
     baseline_match_sequences: pairMatches,
     row_sha256: current.rowSha,
@@ -1625,7 +1653,7 @@ export async function captureOlderThanKnown({
     }
   }
 
-  const advancePastExistingRawTail = async (start) => {
+  const advancePastExistingRawTail = async (start, expectedRecord = null) => {
     let cursor = start;
     let skipped = 0;
     while (cursor) {
@@ -1647,6 +1675,52 @@ export async function captureOlderThanKnown({
         expectedAfterSequence: rows.length,
       });
       if (duplicateConfirmation) return { current: cursor, skipped, duplicateConfirmation };
+      const savedPrevious = expectedRecord
+        ? rows[expectedRecord.sequence - 2] ?? null
+        : null;
+      if (
+        expectedRecord?.baseline_duplicate_confirmation
+        && cursor.rowSha === expectedRecord.row_sha256
+        && cursor.bodySha === expectedRecord.body_sha256
+      ) {
+        const savedDuplicateConfirmation = validateConfirmedBaselineDuplicate(
+          cursor,
+          expectedRecord.baseline_duplicate_confirmation,
+          {
+            baselineRows: allBaselineRows,
+            verifiedRange,
+            anchor,
+            previousRecord: savedPrevious,
+            expectedAfterSequence: expectedRecord.sequence - 1,
+          },
+        );
+        if (!savedDuplicateConfirmation) {
+          throw new Error(`저장된 중복 예외 ${expectedRecord.sequence}번이 화면 커서와 연결되지 않습니다.`);
+        }
+        return { current: cursor, skipped, duplicateConfirmation: savedDuplicateConfirmation };
+      }
+      if (
+        expectedRecord?.same_body_transition_confirmation
+        && cursor.rowSha === expectedRecord.row_sha256
+        && cursor.bodySha === expectedRecord.body_sha256
+      ) {
+        const savedRepeatBodyConfirmation = validateConfirmedRepeatBodyTransition(
+          cursor,
+          expectedRecord.same_body_transition_confirmation,
+          {
+            baselineRows: allBaselineRows,
+            verifiedRange,
+            savedRows: rows.slice(0, expectedRecord.sequence - 1),
+            previousRecord: savedPrevious,
+            expectedAfterSequence: expectedRecord.sequence - 1,
+            anchor,
+          },
+        );
+        if (!savedRepeatBodyConfirmation) {
+          throw new Error(`저장된 같은 본문 전환 확인 ${expectedRecord.sequence}번이 화면 커서와 연결되지 않습니다.`);
+        }
+        return { current: cursor, skipped, repeatBodyConfirmation: savedRepeatBodyConfirmation };
+      }
       const classification = classifyPreviouslyCapturedSnapshot(cursor, allBaselineRows);
       if (classification.kind === 'ambiguous') {
         const details = {
@@ -1695,9 +1769,34 @@ export async function captureOlderThanKnown({
     && current.rowSha === savedCandidate.row_sha256
     && current.bodySha === savedCandidate.body_sha256;
   const savedNext = checkpoint.next_row;
-  const nextPairIsNew = savedNext
-    && classifyPreviouslyCapturedSnapshot(current, allBaselineRows).kind === 'new'
-    && classifyPreviouslyCapturedSnapshot(current, rows).kind === 'new';
+  const lastRecord = rows.at(-1) ?? null;
+  let resumeAtLastStableCursor = Boolean(
+    checkpoint.status === 'paused-ui-sync-error'
+    && checkpoint.saved_count === rows.length
+    && checkpoint.next_row === null
+    && lastRecord
+    && checkpoint.stop_reason?.last_stable_row_sha256 === lastRecord.row_sha256
+    && checkpoint.stop_reason?.last_stable_body_sha256 === lastRecord.body_sha256
+    && current.bodySha === lastRecord.body_sha256
+    && (
+      current.rowSha === lastRecord.row_sha256
+      || (
+        rows.filter((row) => row.body_sha256 === current.bodySha).length === 1
+        && classifyPreviouslyCapturedSnapshot(current, allBaselineRows).kind === 'new'
+      )
+    ),
+  );
+  if (resumeAtLastStableCursor && current.rowSha !== lastRecord.row_sha256) {
+    try {
+      const observedDate = await readReceivedDateForSnapshot(sky, window, current, {
+        year: receivedDateYear ?? Number(checkpoint.last_received_date?.slice(0, 4) ?? anchor.received_at.slice(0, 4)),
+        previousDate: checkpoint.last_received_date ?? null,
+      });
+      resumeAtLastStableCursor = observedDate === checkpoint.last_received_date;
+    } catch {
+      resumeAtLastStableCursor = false;
+    }
+  }
   const confirmedCurrentDuplicate = validateConfirmedBaselineDuplicate(current, confirmedDistinctCandidate, {
     baselineRows: allBaselineRows,
     verifiedRange,
@@ -1720,7 +1819,6 @@ export async function captureOlderThanKnown({
   if (confirmedAttachmentReference && !confirmedCurrentAttachment) {
     throw new Error('화면의 첨부 전용 쪽지 또는 직전 저장 커서가 확인 정보와 다릅니다. 키 입력 없이 멈춥니다.');
   }
-  const lastRecord = rows.at(-1) ?? null;
   const resumeAtCommittedAttachmentCursor = Boolean(
     lastRecord?.capture_status === 'attachment-reference-only'
     && checkpoint.saved_count === rows.length
@@ -1768,12 +1866,11 @@ export async function captureOlderThanKnown({
     && savedNext.sequence === rows.length + 1
     && savedNext.row_occurrence === (rowOccurrences.get(savedNext.row_sha256) ?? 0) + 1
     && current.rowSha === savedNext.row_sha256
-    && current.bodySha === savedNext.body_sha256
-    && nextPairIsNew;
+    && current.bodySha === savedNext.body_sha256;
   // If the operator already inspected this candidate and the live selection
   // still matches it, continue from that exact row instead of rescanning Home.
   let scanned = resumeAtCandidate ? (savedCandidate.scanned_rows ?? 1) : 1;
-  if (!resumeAtCandidate && !resumeAtNextCursor && !resumeAtConfirmedDuplicate && !resumeAtConfirmedRepeatBody
+  if (!resumeAtCandidate && !resumeAtNextCursor && !resumeAtLastStableCursor && !resumeAtConfirmedDuplicate && !resumeAtConfirmedRepeatBody
     && !resumeAtConfirmedAttachment && !resumeAtCommittedAttachmentCursor) {
     let state = await latestState(sky, window);
     if (!isInboxRowFocus(state)) throw new Error('Home 입력 전 받은쪽지 목록 행 포커스를 확인하지 못했습니다.');
@@ -1784,7 +1881,7 @@ export async function captureOlderThanKnown({
     if (!isInboxRowFocus(state)) throw new Error('Home 입력 뒤 받은쪽지 목록 행 포커스를 확인하지 못했습니다.');
   }
 
-  while (!resumeAtNextCursor && !resumeAtConfirmedDuplicate && !resumeAtConfirmedRepeatBody
+  while (!resumeAtNextCursor && !resumeAtLastStableCursor && !resumeAtConfirmedDuplicate && !resumeAtConfirmedRepeatBody
     && !resumeAtConfirmedAttachment && !resumeAtCommittedAttachmentCursor
     && (current.rowSha !== anchorRaw.row_sha256 || current.bodySha !== anchorRaw.body_sha256)) {
     if (scanned >= maxAnchorScanRows) {
@@ -1808,7 +1905,7 @@ export async function captureOlderThanKnown({
     scanned += 1;
   }
 
-  if (!resumeAtNextCursor && !resumeAtConfirmedDuplicate && !resumeAtConfirmedRepeatBody
+  if (!resumeAtNextCursor && !resumeAtLastStableCursor && !resumeAtConfirmedDuplicate && !resumeAtConfirmedRepeatBody
     && !resumeAtConfirmedAttachment && !resumeAtCommittedAttachmentCursor) {
     const expectedAnchor = verifiedMessageAt(verifiedRange, anchor.capture_sequence);
     if (!checkpoint.anchor_confirmation && !anchorConfirmation) {
@@ -1847,7 +1944,7 @@ export async function captureOlderThanKnown({
     // committed older prefix before continuing.
     for (let index = 0; index < rows.length; index += 1) {
       const expected = rows[index];
-      const uncaptured = await advancePastExistingRawTail(current);
+      const uncaptured = await advancePastExistingRawTail(current, expected);
       if (!uncaptured.current) {
         throw new Error(`기존 raw 캡처 뒤에서 저장된 과거 캡처 ${index + 1}행을 찾기 전에 목록 끝에 도달했습니다.`);
       }
@@ -1880,6 +1977,18 @@ export async function captureOlderThanKnown({
       await finishIncrementalStop(checkpoint, checkpointPath, 'paused-oldest-reached', {
         last_saved_sequence: rows.length,
         message: '이미 기록한 첨부 참조 다음에 더 오래된 쪽지가 없습니다.',
+      });
+      return { count: 0, total: rows.length, status: checkpoint.status, journalPath, checkpointPath };
+    }
+    current = next.current;
+  }
+
+  if (resumeAtLastStableCursor) {
+    const next = await advanceBackfillAndSettle(current);
+    if (!next.moved) {
+      await finishIncrementalStop(checkpoint, checkpointPath, 'paused-oldest-reached', {
+        last_saved_sequence: rows.length,
+        message: '마지막으로 확인한 쪽지 다음에 더 오래된 항목이 없습니다.',
       });
       return { count: 0, total: rows.length, status: checkpoint.status, journalPath, checkpointPath };
     }
@@ -1939,6 +2048,16 @@ export async function captureOlderThanKnown({
       reader: dateReader,
       checkpointPath,
     });
+    if (duplicateConfirmation && duplicateConfirmation.received_date !== receivedDate) {
+      await finishIncrementalStop(checkpoint, checkpointPath, 'paused-confirmation-date-mismatch', {
+        expected_received_date: duplicateConfirmation.received_date,
+        observed_received_date: receivedDate,
+        row_sha256: current.rowSha,
+        body_sha256: current.bodySha,
+        message: '중복 예외 확인 날짜와 화면 OCR 날짜가 다릅니다. 저장하지 않고 멈췄습니다.',
+      });
+      throw new Error('취소 placeholder 확인 날짜와 화면 OCR 날짜가 다릅니다. 저장하지 않고 멈췄습니다.');
+    }
     const recordBody = attachmentReference
       ? `첨부파일 참조: ${attachmentReference.filename}`
       : current.body;
@@ -1962,7 +2081,6 @@ export async function captureOlderThanKnown({
         attachment_reference_confirmation: attachmentReference,
       } : {}),
       ...(duplicateConfirmation ? {
-        received_at: duplicateConfirmation.received_at,
         sender: duplicateConfirmation.sender,
         baseline_duplicate_confirmation: duplicateConfirmation,
       } : {}),

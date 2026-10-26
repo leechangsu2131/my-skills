@@ -65,9 +65,15 @@ def warp(path: Path, n: int, transform: Affine, method: Resampling) -> tuple[np.
     return out, meta
 
 
-def make_mesh(elevation: np.ndarray, size_mm: float, extent_m: float, base_mm: float) -> trimesh.Trimesh:
+def make_mesh(
+    elevation: np.ndarray,
+    size_mm: float,
+    extent_m: float,
+    base_mm: float,
+    vertical_exaggeration: float,
+) -> trimesh.Trimesh:
     rows, cols = elevation.shape
-    scale = size_mm / extent_m  # no vertical exaggeration
+    scale = size_mm / extent_m * vertical_exaggeration
     top_z = (elevation - float(elevation.min())) * scale + base_mm
     xx, yy = np.meshgrid(np.linspace(0, size_mm, cols), np.linspace(size_mm, 0, rows))
     top = np.column_stack((xx.ravel(), yy.ravel(), top_z.ravel()))
@@ -108,12 +114,21 @@ def main() -> None:
     parser.add_argument("--gebco", default="data/dokdo_gebco_2026_subset.tif")
     parser.add_argument("--tid", default="data/dokdo_gebco_2026_tid_subset.tif")
     parser.add_argument("--land-dem", default="data/Copernicus_DSM_COG_10_N37_00_E131_00_DEM.tif")
+    parser.add_argument("--land-dataset", default="Copernicus DEM GLO-30")
+    parser.add_argument("--land-source-url", default="https://dataspace.copernicus.eu/explore-data/data-collections/copernicus-contributing-missions/collections-description/COP-DEM")
+    parser.add_argument("--land-native-resolution", default="1 arc-second / approximately 30 m")
+    parser.add_argument("--land-product-type", default="DSM")
+    parser.add_argument("--land-classification", default="land cells are samples with elevation > 0 m")
+    parser.add_argument("--land-vertical-reference", default="Not explicitly identified in raster metadata; no datum transformation was applied")
+    parser.add_argument("--output-stem", default="dokdo_gebco_copernicus_200mm")
     parser.add_argument("--output-dir", default="output")
     parser.add_argument("--preview-dir", default="preview")
     parser.add_argument("--extent-m", type=float, default=6000)
     parser.add_argument("--size-mm", type=float, default=200)
     parser.add_argument("--base-mm", type=float, default=3)
     parser.add_argument("--grid-spacing-m", type=float, default=30)
+    parser.add_argument("--vertical-exaggeration", type=float, default=1.0)
+    parser.add_argument("--land-threshold-m", type=float, default=0.0)
     args = parser.parse_args()
 
     root = Path(__file__).resolve().parent
@@ -127,30 +142,39 @@ def main() -> None:
     n, dst_transform = target_grid(args.extent_m, args.grid_spacing_m)
 
     bathymetry, bathy_meta = warp(bathy_path, n, dst_transform, Resampling.bilinear)
-    land, land_meta = warp(land_path, n, dst_transform, Resampling.bilinear)
+    land, land_meta = warp(land_path, n, dst_transform, Resampling.cubic)
     tid, tid_meta = warp(tid_path, n, dst_transform, Resampling.nearest)
-    for label, grid in (("GEBCO bathymetry", bathymetry), ("Copernicus land DSM", land), ("GEBCO TID", tid)):
+    for label, grid in (("GEBCO bathymetry", bathymetry), ("GEBCO TID", tid)):
         invalid = ~np.isfinite(grid) | (grid == NODATA)
         if invalid.any():
             raise ValueError(f"{label} has {int(invalid.sum())} missing points in the output footprint")
 
-    # Copernicus DSM water cells are at/near zero; use positive surface values as land.
-    # GEBCO remains the elevation source for all non-land samples.
-    land_mask = land > 0.0
+    # Use positive land-raster elevations for the island; GEBCO supplies non-land samples.
+    # Interpolate the zero-elevation crossing for a less pixelated coastline.
+    # The 30 m source DEM still limits the actual shoreline detail.
+    land_mask = np.isfinite(land) & (land != NODATA) & (land > args.land_threshold_m)
     if not land_mask.any():
-        raise ValueError("No positive Copernicus land samples were found in the requested footprint")
+        raise ValueError("No positive land-raster samples were found in the requested footprint")
     composite = bathymetry.copy()
     composite[land_mask] = land[land_mask]
-    mesh = make_mesh(composite, args.size_mm, args.extent_m, args.base_mm)
+    if args.vertical_exaggeration <= 0:
+        raise ValueError("--vertical-exaggeration must be greater than zero")
+    mesh = make_mesh(
+        composite,
+        args.size_mm,
+        args.extent_m,
+        args.base_mm,
+        args.vertical_exaggeration,
+    )
 
-    stl_path = output_dir / "dokdo_gebco_copernicus_200mm.stl"
+    stl_path = output_dir / f"{args.output_stem}.stl"
     mesh.export(stl_path)
-    preview_path = preview_dir / "dokdo_gebco_copernicus_preview.png"
+    preview_path = preview_dir / f"{args.output_stem}_preview.png"
     fig, ax = plt.subplots(figsize=(9, 7), constrained_layout=True)
     im = ax.imshow(composite, cmap="terrain", origin="upper", extent=(0, args.size_mm, 0, args.size_mm))
     ax.contour(np.linspace(0, args.size_mm, n), np.linspace(args.size_mm, 0, n), land_mask.astype(float),
                levels=[0.5], colors="white", linewidths=0.5)
-    ax.set_title("Dokdo + surrounding seabed\nCopernicus DSM on land, GEBCO_2026 bathymetry at sea")
+    ax.set_title(f"Dokdo + surrounding seabed\n{args.land_dataset} on land, GEBCO_2026 bathymetry at sea")
     ax.set_xlabel("Model X (mm)")
     ax.set_ylabel("Model Y (mm)")
     fig.colorbar(im, ax=ax, label="Source elevation (m)")
@@ -173,11 +197,11 @@ def main() -> None:
             },
             "land_surface": {
                 **land_meta,
-                "dataset": "Copernicus DEM GLO-30",
-                "source_url": "https://dataspace.copernicus.eu/explore-data/data-collections/copernicus-contributing-missions/collections-description/COP-DEM",
-                "native_resolution": "1 arc-second / approximately 30 m",
-                "product_type": "DSM",
-                "vertical_reference": "Not encoded in the downloaded COG tags; no datum transformation was applied in this project",
+                "dataset": args.land_dataset,
+                "source_url": args.land_source_url,
+                "native_resolution": args.land_native_resolution,
+                "product_type": args.land_product_type,
+                "vertical_reference": args.land_vertical_reference,
             },
             "gebco_subset_coordinate_check": {
                 "latitude_range_north": [37.21458333333334, 37.264583333333334],
@@ -191,8 +215,9 @@ def main() -> None:
             "extent_m": args.extent_m,
             "grid_shape_rows_cols": [n, n],
             "grid_spacing_m": args.extent_m / (n - 1),
-            "resampling": "bilinear for elevation rasters; GEBCO for sea, positive Copernicus DSM for land",
-            "land_classification": "Copernicus DSM elevation > 0 m",
+            "resampling": "bilinear for bathymetry, cubic interpolation for land elevations and zero-elevation shoreline; GEBCO for sea and positive samples from the selected land raster for land",
+            "land_classification": args.land_classification,
+            "land_threshold_m": args.land_threshold_m,
             "source_elevation_range_m": [float(composite.min()), float(composite.max())],
             "land_sample_count": int(land_mask.sum()),
             "land_sample_fraction": float(land_mask.mean()),
@@ -202,7 +227,7 @@ def main() -> None:
             "preview_path": str(preview_path),
             "footprint_mm": [args.size_mm, args.size_mm],
             "base_thickness_mm": args.base_mm,
-            "vertical_exaggeration": 1.0,
+            "vertical_exaggeration": args.vertical_exaggeration,
             "model_height_mm": float(mesh.bounds[1, 2]),
             "vertices": len(mesh.vertices),
             "faces": len(mesh.faces),

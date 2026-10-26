@@ -10,7 +10,12 @@ from valuation_app.value_attribution import (
 
 
 def evaluate_signals(
-    input_set: ValuationInputSet, wacc_assumption: float = 0.09, terminal_growth: float = 0.03
+    input_set: ValuationInputSet,
+    wacc_assumption: float = 0.09,
+    terminal_growth: float = 0.03,
+    market: dict | None = None,
+    context: dict | None = None,
+    assumptions: dict | None = None,
 ) -> list[dict[str, str | float | None]]:
     """입력 데이터(ValuationInputSet)를 평가하여 3가지 핵심 신호(수익성, 기대감, 효율성)를 추출합니다."""
     signals: list[dict[str, str | float | None]] = []
@@ -19,6 +24,9 @@ def evaluate_signals(
     nopat = input_set.inputs.get("nopat")
     current_fcf = input_set.inputs.get("fcf")
     roic = input_set.inputs.get("roic")
+    market = market or {}
+    context = context or {}
+    assumptions = assumptions or {}
 
     # 1. 기대감 (Value Attribution)
     growth_ratio = None
@@ -90,6 +98,81 @@ def evaluate_signals(
         signals.append({
             "분야": "현재 자본 효율성(ROIC)",
             "핵심 수치": spread,
+            "수치 형태": "ratio",
+            "상태": status,
+            "해석": interpretation,
+        })
+
+    # 4. PEG-implied earnings growth and multiple-contraction growth
+    market_cap = market.get("market_cap")
+    net_income = input_set.inputs.get("net_income")
+    peg = assumptions.get("target_peg", 1.5)
+    if market_cap and net_income and net_income > 0 and peg and peg > 0:
+        current_per = market_cap / net_income
+        peg_growth = current_per / peg / 100.0
+        duration = max(1, int(assumptions.get("peg_duration", 5)))
+        terminal_per = assumptions.get("peg_terminal_per") or context.get("normal_per") or market.get("historical_average_per") or 15.0
+        target_return = assumptions.get("peg_target_return", 0.10)
+        contraction_growth = ((current_per / terminal_per) ** (1 / duration)) * (1 + target_return) - 1 if terminal_per > 0 else None
+
+        if peg_growth >= 0.30 or (contraction_growth is not None and contraction_growth >= 0.30):
+            status = "높은 이익성장 요구"
+            interpretation = "PER을 정당화하려면 높은 이익성장이 필요합니다. 특히 멀티플이 정상 수준으로 낮아질 때 필요한 성장률이 실현 가능한지 과거 성장과 사업 전망으로 확인해야 합니다."
+        elif peg_growth >= 0.15 or (contraction_growth is not None and contraction_growth >= 0.15):
+            status = "이익성장 검증 필요"
+            interpretation = "PEG와 멀티플 수축 가정이 요구하는 성장률을 회사의 과거 실적, 산업 성장률, 재투자 여력과 비교해야 합니다."
+        else:
+            status = "PEG 성장 요구 완만"
+            interpretation = "설정한 PEG와 정상 PER 가정에서 역산된 성장률은 상대적으로 낮습니다. PEG 자체가 적정가치를 보장하지는 않습니다."
+
+        signals.append({
+            "분야": "PEG 내포 이익성장률",
+            "핵심 수치": peg_growth,
+            "보조 수치": contraction_growth,
+            "수치 형태": "ratio",
+            "상태": status,
+            "해석": interpretation,
+        })
+
+    # 5. TAM-implied future market share
+    current_revenue = input_set.inputs.get("revenue")
+    current_op_income = input_set.inputs.get("operating_income")
+    years = max(1, int(assumptions.get("tam_duration", 5)))
+    currency = market.get("currency", "KRW")
+    scale_divider = 1_000_000_000 if currency in {"USD", "달러"} else 1_000_000_000_000
+    current_tam = (context.get("tam_current") or 0) * scale_divider
+    if current_tam <= 0:
+        current_tam = market.get("current_tam") or 0
+    tam_cagr = assumptions.get("tam_cagr", (context.get("tam_cagr") or 10.0) / 100.0)
+    target_return = assumptions.get("tam_target_return", 0.0)
+    target_opm = assumptions.get("tam_opm")
+    if target_opm is None:
+        target_opm = current_op_income / current_revenue if current_op_income and current_revenue else 0.10
+    target_per = assumptions.get("tam_target_per") or context.get("normal_per") or market.get("historical_average_per") or 15.0
+    tax_rate = input_set.inputs.get("tax_rate")
+    tax_rate = tax_rate if tax_rate is not None else 0.22
+    market_cap = market.get("market_cap")
+    if market_cap and current_tam > 0 and target_per > 0 and target_opm > 0 and tax_rate < 1:
+        target_future_market_cap = market_cap * ((1 + target_return) ** years)
+        required_net_income = target_future_market_cap / target_per
+        required_operating_income = required_net_income / (1 - tax_rate)
+        required_revenue = required_operating_income / target_opm
+        future_tam = current_tam * ((1 + tam_cagr) ** years)
+        implied_share = required_revenue / future_tam
+        if implied_share >= 1:
+            status = "요구 점유율 100% 이상"
+            interpretation = "설정한 TAM 성장률, 정상 PER, 목표 마진으로는 필요한 매출이 미래 시장 전체보다 큽니다. 현재 가격 또는 가정 조합을 다시 검토해야 합니다."
+        elif implied_share >= 0.30:
+            status = "높은 점유율 확대 요구"
+            interpretation = "현재 가격을 설명하려면 해당 시장의 큰 비중을 차지해야 합니다. TAM 범위와 경쟁사의 점유율을 확인하세요."
+        else:
+            status = "점유율 가정 검증 필요"
+            interpretation = "요구 점유율이 30% 미만이어도 실제 사업의 해당 시장 매출 비중과 경쟁 구도를 확인해야 합니다."
+
+        signals.append({
+            "분야": "TAM 내포 요구 점유율",
+            "핵심 수치": implied_share,
+            "보조 수치": float(years),
             "수치 형태": "ratio",
             "상태": status,
             "해석": interpretation,

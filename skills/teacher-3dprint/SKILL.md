@@ -10,8 +10,11 @@ Help a teacher turn a lesson idea, object, or real-world feature into a practica
 ## Choose the modeling path
 
 - **Designed object or teaching aid:** Translate the requested use into dimensions, printable parts, and assembly details. Read [references/functional-models.md](references/functional-models.md) when the model has moving, mating, load-bearing, or multi-part features.
+- **Food mold or stamp:** Design a positive master for silicone casting when food will touch the finished silicone mold. Read [references/food-mold-masters.md](references/food-mold-masters.md); do not describe an ordinary FDM print as food-safe.
 - **Real terrain or other measured subject:** Use verified source data and preserve its provenance. Read [references/terrain-stl-workflow.md](references/terrain-stl-workflow.md) before acquiring, combining, or meshing geospatial data.
 - **Illustrative or invented shape:** A generated shape is acceptable when the user asks for a concept or stylized model. Label it as illustrative; do not present it as a faithful measured object.
+
+When the user supplies or prefers an existing downloadable model, inspect its source, license, dimensions, and mesh integrity before recommending it. Preserve attribution and license terms with any copy saved in the skill folder; check that the slicer preview can repair or print the mesh.
 
 The completed Dokdo terrain example, including its STL, source rasters, preview, and regeneration scripts, is in [examples/dokdo_terrain/README.md](examples/dokdo_terrain/README.md).
 

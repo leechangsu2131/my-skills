@@ -9,7 +9,7 @@ Flutter로 만드는 부모 공동 놀이터 현황 앱입니다. 현재 핵심 
 - 실제 데이터 조회 실패 시 릴리스 빌드에서 데모 인물이나 가짜 현황을 표시하지 않음
 - Android 앱 ID, namespace, MainActivity 패키지를 `com.example.one_parent_watch`로 통일
 
-`00003_group_contract.sql`은 실제 모임 생성과 참여에 필요한 DB 호환 필드를 준비합니다. 원격 Supabase에 적용하기 전에는 중복된 기존 `00002` 마이그레이션의 적용 이력을 반드시 확인해야 합니다.
+모임 생성 화면은 등록된 놀이터와 내 소속을 선택하고 `create_group_with_owner` RPC로 그룹과 owner 멤버를 함께 저장합니다. 원격 Supabase에서 사용하려면 `00003_group_contract.sql`, `00004_group_creation_rpc.sql` 순서로 적용해야 합니다. 기존 `00002` 마이그레이션 번호가 중복되어 있으므로 원격 적용 이력을 먼저 확인하세요.
 
 ## 실행
 

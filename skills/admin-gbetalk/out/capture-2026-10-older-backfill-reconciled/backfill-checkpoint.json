@@ -2,7 +2,7 @@
   "schema_version": 2,
   "status": "paused-ui-sync-error",
   "started_at": "2026-10-26T04:45:14.718Z",
-  "updated_at": "2026-10-26T08:05:22.430Z",
+  "updated_at": "2026-10-26T23:17:48.004Z",
   "saved_count": 325,
   "next_sequence": 326,
   "journal_file": "older-bodies.jsonl",
@@ -43,17 +43,23 @@
     "sender": "권윤옥",
     "row_sha256": "d3d6ca22b5d8768c1ec1ba3e8cbb8f6826a457f0ea1f1c70f247545dbc9ef702",
     "body_sha256": "d3d6ca22b5d8768c1ec1ba3e8cbb8f6826a457f0ea1f1c70f247545dbc9ef702",
-    "confirmed_at": "2026-10-26T07:57:38.875Z",
+    "confirmed_at": "2026-10-26T23:08:29.603Z",
     "confirmation_method": "visible-date-and-sender-compared-by-operator"
   },
   "stop_reason": {
-    "last_stable_row_sha256": "dfd2ef6549059536afb69d27f75ca79c895a8bf6ff40964fa8c45db6deddce19",
-    "last_stable_body_sha256": "2f5082d609bf0b413d7da45eadb432912e32a94e7e8c5550d10391a046fb1026",
-    "message": "↓ 입력 뒤 수신 목록 행 포커스를 잃었습니다. 추가 키 입력 없이 멈춥니다: (없음)"
+    "last_stable_row_sha256": "db090cbc3683d9f5c2b6459d85792b6e4cf855dbd8b7530876b1eb58f04b2d57",
+    "last_stable_body_sha256": "ac65c46eb2ef9db57153011f6c022e9571e169f4d932144372015c82d5d1e82b",
+    "message": "↓ 입력 뒤 선택 행과 본문이 함께 갱신되지 않아 캡처를 멈췄습니다."
   },
   "last_row_occurrence": 2,
   "next_received_date": null,
   "received_date_year": 2026,
   "date_group_count": 5,
-  "last_received_date": "2026-09-10"
+  "last_received_date": "2026-09-10",
+  "replay_cursor": {
+    "sequence": 263,
+    "row_sha256": "3332e9e394ae73daadae6228fee14804f66169ca920111cb2e0fb00e0777645d",
+    "body_sha256": "3332e9e394ae73daadae6228fee14804f66169ca920111cb2e0fb00e0777645d",
+    "verified_at": "2026-10-26T23:17:48.004Z"
+  }
 }

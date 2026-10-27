@@ -1,0 +1,100 @@
+{
+  "schema_version": 2,
+  "status": "paused-date-read-error",
+  "started_at": "2026-10-26T04:45:14.718Z",
+  "updated_at": "2026-10-26T23:36:41.353Z",
+  "saved_count": 367,
+  "next_sequence": 368,
+  "journal_file": "older-bodies.jsonl",
+  "journal_bytes": 330203,
+  "prefix_sha256": "0f2344165d31287395070b61e29f3830526ac789a9503f0f0c52276950e6b472",
+  "last_row_sha256": "59c646bd9a68c72d81a5e425ee3fbbe33ebacd33f57c63bdc9e2c2f6a7e0cff5",
+  "last_body_sha256": "f7400a35450510fbeadc93b476f9f72929cb06fd8b456ad996115d05c97f154e",
+  "next_row": {
+    "sequence": 368,
+    "row_sha256": "a494f82ed2ddd8a889c4f34c873d84e9cad5d91ca46bf7e485c746488ae8a252",
+    "row_occurrence": 1,
+    "body_sha256": "a494f82ed2ddd8a889c4f34c873d84e9cad5d91ca46bf7e485c746488ae8a252"
+  },
+  "pending_append": null,
+  "stop_before_row_sha256": null,
+  "mode": "backfill",
+  "baseline_path": "C:\\Users\\user\\.gemini\\antigravity\\scratch\\repos\\my-skills\\skills\\admin-gbetalk\\out\\capture-2026-10-received-run1\\raw-bodies.jsonl",
+  "baseline_sha256": "c0d0382bb265b463c11a1e63564092e4374d4694b8dc872dc80e13e9e44515d9",
+  "baseline_verified_sha256": "0e85e0b9b0aee49c6f20b1805f4f048dda2f721ae1e88dc6af6d686c6d4fa140",
+  "baseline_manifest_path": "C:\\Users\\user\\.gemini\\antigravity\\scratch\\repos\\my-skills\\skills\\admin-gbetalk\\out\\capture-2026-10-received-run1\\range-manifest.json",
+  "baseline_manifest_sha256": "f9967b988c99aee480dc2eff9d1f4de1cacdb6ddeba45159fbe4761685b4b146",
+  "baseline_range": {
+    "record_count": 169,
+    "newest": {
+      "capture_sequence": 1,
+      "received_at": "2026-10-26T09:05:00",
+      "sender": "은민영",
+      "body_preview": "잘 받았습니다. 오늘도 화이팅하세요... -------------------- 원본메시지 -------------------- 발 신 자 : 이창수 교사(초등) (07051061150, 화천초등학교) 발신시간 : 2",
+      "row_sha256": "78271256409259dcc1199fb36379c2a6026ecb9b26789b7964acc44fe325815f",
+      "body_sha256": "99719b9ac1ccc53376f27242379f7f0c1dc081db9297251d6e5d3e1b8e501fdd"
+    },
+    "oldest": {
+      "capture_sequence": 169,
+      "received_at": "2026-10-01T08:28:00",
+      "sender": "권윤옥",
+      "body_preview": "선생님^^, 어제 심폐소생술교육 하시느라 수고많으셨지요?? 학생건강검진결과서 학생들에게 배부해 주시면 됩니다. 치료가 필요한 경우 병원진료 받도록 안내 부탁드립니다.~~",
+      "row_sha256": "d3d6ca22b5d8768c1ec1ba3e8cbb8f6826a457f0ea1f1c70f247545dbc9ef702",
+      "body_sha256": "d3d6ca22b5d8768c1ec1ba3e8cbb8f6826a457f0ea1f1c70f247545dbc9ef702"
+    }
+  },
+  "anchor_confirmation": {
+    "received_at": "2026-10-01T08:28:00",
+    "sender": "권윤옥",
+    "row_sha256": "d3d6ca22b5d8768c1ec1ba3e8cbb8f6826a457f0ea1f1c70f247545dbc9ef702",
+    "body_sha256": "d3d6ca22b5d8768c1ec1ba3e8cbb8f6826a457f0ea1f1c70f247545dbc9ef702",
+    "confirmed_at": "2026-10-26T23:08:29.603Z",
+    "confirmation_method": "visible-date-and-sender-compared-by-operator"
+  },
+  "stop_reason": null,
+  "last_row_occurrence": 1,
+  "next_received_date": null,
+  "received_date_year": 2026,
+  "date_group_count": 10,
+  "last_received_date": "2026-07-23",
+  "date_ocr_month_correction": {
+    "ocr_month": 3,
+    "month": 8,
+    "year": 2026,
+    "max_day_distance": 7,
+    "verified_date": "2026-08-27",
+    "verified_row_sha256": "d66c5516e872d9f5579cbb5145b6bfc63ca05400598ccb551fd4decff299b976",
+    "verification_method": "visible-manager-header",
+    "verified_at": "2026-10-26T23:29:09.324Z"
+  },
+  "skipped_attachment_pairs": [
+    {
+      "row_sha256": "0a067bd06a84e13a840f82a97f2710ba3e7efc323175a44686b98f48f330701a",
+      "body_sha256": "8a8de823d5ed3e12746a62ef169bcf372be0ca44f0a1236abc35df05d96928e1",
+      "filename": "육상대회희망자명단.xlsx"
+    },
+    {
+      "row_sha256": "3006e289bf97b9be184b688aba5c7d544717ab351ffba69a58caf8db9866fc40",
+      "body_sha256": "8a8de823d5ed3e12746a62ef169bcf372be0ca44f0a1236abc35df05d96928e1",
+      "filename": "8월 식단표.xlsx"
+    }
+  ],
+  "date_ocr_manual_overrides": [
+    {
+      "sequence": 366,
+      "row_sha256": "2bab36af35f00518abfa4188570cea435c50878cf6a6fc8aaa8bf2bee86a6635",
+      "body_sha256": "2bab36af35f00518abfa4188570cea435c50878cf6a6fc8aaa8bf2bee86a6635",
+      "received_date": "2026-08-05",
+      "visible_header": "박순현 · 08.05 오후 04:32",
+      "verification_method": "visible-manager-header",
+      "verified_at": "2026-10-26T23:36:11.107Z"
+    }
+  ],
+  "date_capture_error": {
+    "sequence": 368,
+    "row_sha256": "a494f82ed2ddd8a889c4f34c873d84e9cad5d91ca46bf7e485c746488ae8a252",
+    "body_sha256": "a494f82ed2ddd8a889c4f34c873d84e9cad5d91ca46bf7e485c746488ae8a252",
+    "message": "목록이 오래된순으로 진행되지 않았거나 OCR 날짜가 바뀌었습니다: 2026-07-27 다음 기준 2026-07-23",
+    "failed_at": "2026-10-26T23:36:41.353Z"
+  }
+}

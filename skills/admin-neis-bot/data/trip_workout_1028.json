@@ -1,0 +1,33 @@
+{
+  "trip_type": "10",
+  "trip_type_name": "국내출장(관내)",
+  "periods": [
+    {
+      "start_date": "2026-10-28",
+      "start_hour": "14",
+      "start_minute": "00",
+      "end_date": "2026-10-28",
+      "end_hour": "19",
+      "end_minute": "00",
+      "hours": 5,
+      "minutes": 0
+    }
+  ],
+  "destination": "화천군 일원",
+  "purpose": "학생 생활지도 및 학교 교육활동 발전 방안 모색",
+  "transportation": "자가용",
+  "contact": "010-4233-0844",
+  "include_lunch": false,
+  "official_vehicle": false,
+  "no_travel_expense": true,
+  "expense_institution": "화천초등학교",
+  "is_training": false,
+  "participants": [
+    {"name": "교장", "is_representative": false},
+    {"name": "교감", "is_representative": false},
+    {"name": "3학년 담임교사", "is_representative": true},
+    {"name": "6학년 담임교사", "is_representative": false}
+  ],
+  "total_count": 7,
+  "memo": "10/28(수) 지역연계 화천교육 운영을 위한 워크아웃 + 학교장과 대화의 시간 / 3,6학년 담임교사 7명"
+}

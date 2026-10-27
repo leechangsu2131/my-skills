@@ -2,7 +2,7 @@
   "schema_version": 2,
   "status": "paused-ui-sync-error",
   "started_at": "2026-10-26T04:45:14.718Z",
-  "updated_at": "2026-10-26T23:40:31.531Z",
+  "updated_at": "2026-10-27T01:33:38.951Z",
   "saved_count": 398,
   "next_sequence": 399,
   "journal_file": "older-bodies.jsonl",
@@ -76,6 +76,11 @@
       "row_sha256": "3006e289bf97b9be184b688aba5c7d544717ab351ffba69a58caf8db9866fc40",
       "body_sha256": "8a8de823d5ed3e12746a62ef169bcf372be0ca44f0a1236abc35df05d96928e1",
       "filename": "8월 식단표.xlsx"
+    },
+    {
+      "row_sha256": "82ca2d174cf33cf25984c8cd5a662c0f97d46d533f7e391c2127c5f7f1b781a4",
+      "body_sha256": "8a8de823d5ed3e12746a62ef169bcf372be0ca44f0a1236abc35df05d96928e1",
+      "filename": "9월 식단표.xlsx"
     }
   ],
   "date_ocr_manual_overrides": [
@@ -88,5 +93,11 @@
       "verification_method": "visible-manager-header",
       "verified_at": "2026-10-26T23:36:11.107Z"
     }
-  ]
+  ],
+  "replay_cursor": {
+    "sequence": 398,
+    "row_sha256": "a4cdff4f268bd33a2e32b900839afb415324add69a0a97f1c8c755f694730f58",
+    "body_sha256": "a4cdff4f268bd33a2e32b900839afb415324add69a0a97f1c8c755f694730f58",
+    "verified_at": "2026-10-27T01:33:38.333Z"
+  }
 }

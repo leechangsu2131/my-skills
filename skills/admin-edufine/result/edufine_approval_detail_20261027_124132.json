@@ -1,0 +1,52 @@
+{
+  "collected_at": "2026-10-27 12:41:32",
+  "status": "결재대기 (진행)",
+  "document": {
+    "title": "[안내] 2026학년도 스포츠인성교육 교사동아리(AI체육수업) 자율연수 안내",
+    "doc_id": "R10CB263009119897000",
+    "receipt_doc_no": "화천초등학교-11202",
+    "produce_doc_no": "체육건강과-21649",
+    "enforce_date": "2026-10-26",
+    "receipt_date": "2026-10-27 08:51",
+    "sender_org": "경상북도교육청 체육건강과",
+    "public_scope": "부분공개(6)",
+    "work_card": "지정대기",
+    "approval_path": [
+      {
+        "order": 1,
+        "role": "접수",
+        "position": "교무실무사",
+        "name": "박은정 (hrac****)",
+        "status": "완료",
+        "processed_at": "2026-10-27 08:51",
+        "comment": ""
+      },
+      {
+        "order": 2,
+        "role": "업무담당자",
+        "position": "교사",
+        "name": "이창수 (lee2***)",
+        "status": "진행 (현재 결재 대상자)",
+        "arrived_at": "2026-10-27 08:51",
+        "comment": ""
+      }
+    ],
+    "attachments": [
+      {
+        "order": 1,
+        "type": "본문 PDF",
+        "name": "[ 화천초등학교-11202  (본문)] [안내] 2026학년도 스포츠인성교육 교사동아리(AI체육수업) 자율연수 안내.pdf",
+        "size": "105 KB",
+        "public_type": "공개"
+      },
+      {
+        "order": 2,
+        "type": "붙임 HWP",
+        "name": "2026 스포츠인성교육 교사 동아리(나라찬) 연수 운영 계획.hwp",
+        "size": "140 KB (다운로드 용량: 78,336 bytes)",
+        "public_type": "비공개",
+        "saved_path": "C:\\Users\\user\\.gemini\\antigravity\\scratch\\repos\\my-skills\\skills\\admin-edufine\\result\\2026 스포츠인성교육 교사 동아리(나라찬) 연수 운영 계획.hwp"
+      }
+    ]
+  }
+}

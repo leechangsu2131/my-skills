@@ -112,10 +112,51 @@ async def get_document_list(page) -> list:
     """kedufine iframe에서 결재대기 문서 목록 수집."""
     docs = []
 
-    # kedufine iframe 찾기
+    # 1. frame_locator로 kedufine iframe 우선 탐색
+    try:
+        kedu_locator = page.frame_locator('iframe[name="kedufine"]')
+        count = await kedu_locator.locator("tr").count()
+        if count > 0:
+            rows = await kedu_locator.locator("tr").all()
+            for row in rows:
+                try:
+                    link = row.locator("a.ellipsis")
+                    if await link.count() == 0:
+                        link = row.locator("a")
+                    if await link.count() == 0:
+                        continue
+
+                    title = (await link.first.get_attribute("title") or "").strip()
+                    if not title:
+                        title = (await link.first.inner_text()).strip()
+
+                    writer_el = row.locator("td.writer")
+                    writer = ""
+                    if await writer_el.count() > 0:
+                        writer = (await writer_el.first.inner_text()).strip()
+
+                    date_el = row.locator("td.date")
+                    doc_date = ""
+                    if await date_el.count() > 0:
+                        doc_date = (await date_el.first.inner_text()).strip()
+
+                    if title:
+                        docs.append({
+                            "title": title,
+                            "writer": writer,
+                            "date": doc_date,
+                        })
+                except:
+                    pass
+            if docs:
+                return docs
+    except Exception:
+        pass
+
+    # 2. fallback: page.frames 순회
     kedu_frame = None
     for f in page.frames:
-        if f.name == "kedufine":
+        if f.name == "kedufine" or "retrieveSanctn" in f.url:
             kedu_frame = f
             break
 

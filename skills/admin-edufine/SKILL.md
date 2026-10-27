@@ -13,6 +13,12 @@ description: >
 
 경상북도 경주 화천초등학교 에듀파인 행정 업무를 실전 자동화(RPA)합니다.
 
+> [!IMPORTANT]
+> ### 🚨 작업 착수 전 필수 지침: `ing.md` 필독 및 오류수정 이력 확인
+> 에듀파인(K-에듀파인) 관련 모든 작업(물품 구매 품의, 전자결재 공문 기안, 공문 검색 및 열람, 결재대기/공람대기 처리, 생산문서 개인정보 점검 등)을 시작하기 전, **반드시 [ing.md](file:///C:/Users/user/.gemini/antigravity/scratch/repos/my-skills/skills/admin-edufine/ing.md)를 먼저 읽고 과거에 겪었던 실패와 오류 수정 과정(트러블슈팅 이력)을 완벽히 숙지한 후 진행**해야 합니다.
+> - **주요 실패/극복 사례**: 넥사크로 유령 노드(`x=-4999`) 회피, 상단 업무구분 콤보박스(`cboJobList`) 강제 전환, 넥사크로 직결 메뉴 오픈(`LeftFrame.gfnOpenMenu`), 전면 공지 팝업 메모리 파괴(`noticePopup0.destroy()`), 크롬 9222 포트 일상 프로필 디버깅, 포털 내 Cross-Origin iframe 탐색 시 Playwright `frame_locator` 필수 적용, WXSClient 네이티브 다이얼로그 프로토콜 허용 등 실전 노하우가 집대성되어 있습니다.
+> - **새로운 작업 완료 후**: 새로 발견한 예외 상황이나 실패를 극복한 해법이 있다면 즉시 `ing.md`에 새로운 날짜의 일지로 기록하여 지식을 누적 보존해야 합니다.
+
 ---
 
 ## 🛠 주요 기능 목록
@@ -81,6 +87,7 @@ run_studio.bat
 | [`templates/index.html`](templates/index.html) | Edufine Flow V5 프론트엔드 대시보드 (드롭존, 기안문 편집기, 트랙1/2/3 검색 버튼) |
 | [`launch_chrome_default.bat`](launch_chrome_default.bat) | 일상 크롬 프로필 디버깅 모드(9222 포트) 안전 실행기 |
 | [`run_studio.bat`](run_studio.bat) | 스튜디오 웹 서버 및 브라우저 기동 배치 |
+| [`ing.md`](ing.md) | **[필독]** 에듀파인 자동화 개발/오류수정 일지 및 실전 극복 수칙 누적 문서 |
 | [`troubleshooting.md`](troubleshooting.md) | 넥사크로17 좌표 타격, 유령 노드, 프레임 우회 등 기술적 트러블슈팅 백서 |
 
 ---

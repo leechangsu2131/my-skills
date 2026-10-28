@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "source_path": "C:/Users/user/.gemini/antigravity/scratch/repos/my-skills/skills/admin-gbetalk/out/date-backfill-20261027/october-raw-dated.jsonl",
+  "source_file_sha256": "396e8d642aff26d46c2364b60d16b836894061631e77e3c5f62d7c3584c5cc36",
+  "total_rows": 171,
+  "records": [
+    {
+      "sequence": 170,
+      "row_sha256": "810ad1c1a682f0cd9bce566b38a31639b2ce6694be6d1c777606f84e727dbec3",
+      "body_sha256": "b584609f26b554ce754ca460477e651904af7883d50f4f6b9117215f09e4d0b0",
+      "received_date": "2026-09-30",
+      "sender": "권다혜",
+      "verification_status": "verified-visible-header",
+      "manually_verified": true,
+      "verification_method": "unique-search-result-visible-sender-date-and-preview-subject-manual-review",
+      "search_query": "10월 안전점검의 날 안내 및 자료제출 요청",
+      "search_result_count": 1,
+      "visible_header": "권다혜; 09.30 오후 06:21",
+      "visible_list_label": "권다혜 · [10월 안전점검의 날 안내 및 자료제출 요청] · 09-30 18:21",
+      "visible_body_check": "미리보기 제목과 첫 문장이 기준 본문과 일치: [10월 안전점검의 날 안내 및 자료제출 요청] / 안녕하십니까 행정실 권다혜입니다.",
+      "verified_at": "2026-10-28T08:18:36.098+09:00"
+    },
+    {
+      "sequence": 171,
+      "row_sha256": "c2aab885eeb4af1f72f51c59f6037dea116d4a0ac15bede70632fa72c1544b3e",
+      "body_sha256": "c2aab885eeb4af1f72f51c59f6037dea116d4a0ac15bede70632fa72c1544b3e",
+      "received_date": "2026-09-30",
+      "sender": "채정아",
+      "verification_status": "verified-visible-header",
+      "manually_verified": true,
+      "verification_method": "unique-search-result-visible-sender-date-and-ui-accessibility-body-sha256",
+      "search_query": "발신시간 : 2026-09-30 오후 03:17",
+      "search_result_count": 1,
+      "visible_header": "채정아; 09.30 오후 04:45",
+      "visible_list_label": "채정아 교사 · 네^^~ 원본메시지… · 09-30 16:45",
+      "visible_body_check": "선택 미리보기 UIA 본문 SHA-256이 source body_sha256와 일치함.",
+      "verified_at": "2026-10-28T08:18:36.098+09:00"
+    }
+  ]
+}

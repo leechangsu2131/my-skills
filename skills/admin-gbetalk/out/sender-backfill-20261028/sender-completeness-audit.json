@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "created_at": "2026-10-28T08:27:31.304+09:00",
+  "source_files_unchanged": true,
+  "superseded_outputs": [
+    "out/sender-backfill-20261028/october-raw-with-senders.jsonl",
+    "out/sender-backfill-20261028/older-bodies-with-senders.jsonl"
+  ],
+  "october": {
+    "source_path": "out/date-backfill-20261027/october-raw-dated.jsonl",
+    "source_sha256": "396e8d642aff26d46c2364b60d16b836894061631e77e3c5f62d7c3584c5cc36",
+    "verified_metadata_path": "out/capture-2026-10-received-run1/verified-2026-10.jsonl",
+    "verified_metadata_sha256": "0e85e0b9b0aee49c6f20b1805f4f048dda2f721ae1e88dc6af6d686c6d4fa140",
+    "manual_map_path": "out/sender-backfill-20261028/october-manual-sender-map.json",
+    "manual_map_sha256": "7e55cdca7d485d31e4e69de70b1ca4129532e4e868ab151ad3e742ac9d31fc28",
+    "output_path": "out/sender-backfill-20261028/october-raw-with-senders-verified.jsonl",
+    "output_sha256": "b414dc0113723120f9588ebbd7c58b07671e954670fb86348f01c9aafb380508",
+    "total_records": 171,
+    "verified_metadata_joined": 169,
+    "manually_verified_in_manager": 2,
+    "sender_count": 171,
+    "missing_sender_count": 0,
+    "manual_sequences": [170, 171]
+  },
+  "older": {
+    "source_path": "out/date-backfill-20261027/older-bodies-dated.jsonl",
+    "source_sha256": "0c94b0b8408ce9e7b0c7f1747bf7aa437a16906ee1c946aed225dee2e41298b0",
+    "existing_sender_source_path": "out/capture-2026-10-older-backfill-continuation-263/older-bodies.jsonl",
+    "existing_sender_source_sha256": "f812aa562cdcbc68ada86780523cbedf651a78d8ed3e48ef23132e69987947cf",
+    "output_path": "out/sender-backfill-20261028/older-bodies-with-senders-verified.jsonl",
+    "output_sha256": "1992b3c77109780818c6a8cef92c65bf47bde873249164237e74f1fb83789409",
+    "total_records": 398,
+    "sender_count": 4,
+    "missing_sender_count": 394,
+    "sender_records_preserved": [96, 158, 188, 378],
+    "missing_sender_sequence_ranges": ["1-95", "97-157", "159-187", "189-377", "379-398"]
+  },
+  "live_ocr_probe": {
+    "selected_visible_sender": "이명숙",
+    "header_ocr_candidate": "이영숙",
+    "list_row_ocr_candidate": "이영숙 고사",
+    "tight_crop_ocr_candidate": "이영숙 고사",
+    "accepted_as_metadata": false,
+    "reason": "독립적인 한국어 OCR crop도 화면의 발신자 이름을 오독함. 화면과 직접 비교하지 않고는 자동 저장할 수 없음."
+  },
+  "recovery_notes": [
+    "첫 수동 매핑에서 sequence 170의 row_sha256을 잘못 옮겨 fingerprint mismatch가 발생했고, 새 JSONL을 만들기 전에 거부됐다. 원본 행에서 정확한 지문을 복사해 수정 후 성공했다.",
+    "과거 JSONL 전체를 verified metadata로 읽을 때 발신자 없는 행까지 날짜가 필요하다고 판단해 중단했다. 발신자가 비어 있는 레코드는 건너뛰고 이름이 있는 검증 후보만 지문과 날짜로 연결하도록 수정했다."
+  ]
+}

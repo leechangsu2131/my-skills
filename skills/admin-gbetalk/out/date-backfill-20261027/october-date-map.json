@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "dataset": "october-raw",
+  "source_path": "C:\\Users\\user\\.gemini\\antigravity\\scratch\\repos\\my-skills\\skills\\admin-gbetalk\\out\\capture-2026-10-received-run1\\raw-bodies.jsonl",
+  "source_file_sha256": "c0d0382bb265b463c11a1e63564092e4374d4694b8dc872dc80e13e9e44515d9",
+  "total_rows": 171,
+  "target_sequence_max": 171,
+  "target_stop_sequence": 170,
+  "date_policy": "화면 머리글에서 확인한 메시지 날짜만 저장. captured_at은 메시지 날짜로 사용하지 않는다.",
+  "created_at": "2026-10-27T08:23:17.692Z",
+  "updated_at": "2026-10-27T08:23:19.391Z",
+  "status": "complete",
+  "cursor": {
+    "sequence": 170,
+    "row_sha256": "810ad1c1a682f0cd9bce566b38a31639b2ce6694be6d1c777606f84e727dbec3",
+    "body_sha256": "b584609f26b554ce754ca460477e651904af7883d50f4f6b9117215f09e4d0b0",
+    "received_date": "2026-09-30",
+    "verified_at": "2026-10-27T08:23:19.386Z"
+  },
+  "navigation_pending": null,
+  "pending_date": null,
+  "skip_pairs": [],
+  "skipped_ui_items": [],
+  "records": [
+    {
+      "sequence": 171,
+      "row_sha256": "c2aab885eeb4af1f72f51c59f6037dea116d4a0ac15bede70632fa72c1544b3e",
+      "body_sha256": "c2aab885eeb4af1f72f51c59f6037dea116d4a0ac15bede70632fa72c1544b3e",
+      "received_date": "2026-09-30",
+      "verification_method": "visible-manager-header-manual",
+      "visible_header": "쪽지관리함 수신일시 09.30 오후 04:45",
+      "verified_at": "2026-10-27T08:23:17.780Z"
+    },
+    {
+      "sequence": 170,
+      "row_sha256": "810ad1c1a682f0cd9bce566b38a31639b2ce6694be6d1c777606f84e727dbec3",
+      "body_sha256": "b584609f26b554ce754ca460477e651904af7883d50f4f6b9117215f09e4d0b0",
+      "received_date": "2026-09-30",
+      "verification_method": "visible-manager-header-ocr",
+      "verified_at": "2026-10-27T08:23:19.386Z"
+    }
+  ]
+}

@@ -1,0 +1,2212 @@
+{
+  "schema_version": 1,
+  "created_at": "2026-10-27T07:46:54Z",
+  "date_policy": "Keep source raw JSONL unchanged. Count dates in date-enriched output built from existing received_date/received_at plus verified metadata and fingerprint-checked date maps. Store YYYY-MM-DD; captured_at is never a message date.",
+  "sources": [
+    {
+      "name": "october_raw",
+      "raw_file": "C:\\Users\\user\\.gemini\\antigravity\\scratch\\repos\\my-skills\\skills\\admin-gbetalk\\out\\capture-2026-10-received-run1\\raw-bodies.jsonl",
+      "raw_record_count": 171,
+      "verified_metadata_file": "C:\\Users\\user\\.gemini\\antigravity\\scratch\\repos\\my-skills\\skills\\admin-gbetalk\\out\\capture-2026-10-received-run1\\verified-2026-10.jsonl",
+      "verified_metadata_count": 169,
+      "date_present_count": 171,
+      "date_missing_count": 0,
+      "date_missing_sequence_ranges": [],
+      "unmapped_raw_sequence_ranges": [],
+      "missing_records": [],
+      "raw_file_sha256": "c0d0382bb265b463c11a1e63564092e4374d4694b8dc872dc80e13e9e44515d9",
+      "verified_metadata_sha256": "0e85e0b9b0aee49c6f20b1805f4f048dda2f721ae1e88dc6af6d686c6d4fa140",
+      "raw_before_backfill": {
+        "date_present_count": 169,
+        "date_missing_count": 2,
+        "date_missing_sequence_ranges": [
+          [
+            170,
+            171
+          ]
+        ],
+        "unmapped_raw_sequence_ranges": [
+          [
+            170,
+            171
+          ]
+        ],
+        "missing_records": [
+          {
+            "sequence": 170,
+            "row_sha256": "810ad1c1a682f0cd9bce566b38a31639b2ce6694be6d1c777606f84e727dbec3",
+            "body_sha256": "b584609f26b554ce754ca460477e651904af7883d50f4f6b9117215f09e4d0b0",
+            "captured_at": "2026-10-26T01:34:17.329Z",
+            "date_status": "missing",
+            "reason": "not_in_verified_october_range"
+          },
+          {
+            "sequence": 171,
+            "row_sha256": "c2aab885eeb4af1f72f51c59f6037dea116d4a0ac15bede70632fa72c1544b3e",
+            "body_sha256": "c2aab885eeb4af1f72f51c59f6037dea116d4a0ac15bede70632fa72c1544b3e",
+            "captured_at": "2026-10-26T01:34:17.807Z",
+            "date_status": "missing",
+            "reason": "not_in_verified_october_range"
+          }
+        ]
+      },
+      "date_enrichment": {
+        "output_file": "C:\\Users\\user\\.gemini\\antigravity\\scratch\\repos\\my-skills\\skills\\admin-gbetalk\\out\\date-backfill-20261027\\october-raw-dated.jsonl",
+        "output_sha256": "396e8d642aff26d46c2364b60d16b836894061631e77e3c5f62d7c3584c5cc36",
+        "record_count": 171,
+        "date_present_count": 171,
+        "date_missing_count": 0,
+        "date_maps": [
+          {
+            "file": "C:\\Users\\user\\.gemini\\antigravity\\scratch\\repos\\my-skills\\skills\\admin-gbetalk\\out\\date-backfill-20261027\\october-date-map.json",
+            "sha256": "7895d6c836b767e2c313d06ec37bfefd7d20d07aac50cce26be0757b8f1c67f1"
+          }
+        ],
+        "verified_metadata_file": "C:\\Users\\user\\.gemini\\antigravity\\scratch\\repos\\my-skills\\skills\\admin-gbetalk\\out\\capture-2026-10-received-run1\\verified-2026-10.jsonl",
+        "verified_metadata_sha256": "0e85e0b9b0aee49c6f20b1805f4f048dda2f721ae1e88dc6af6d686c6d4fa140",
+        "raw_source_sha256_verified": "c0d0382bb265b463c11a1e63564092e4374d4694b8dc872dc80e13e9e44515d9",
+        "completed_at": "2026-10-27T08:26:58Z",
+        "date_only": true
+      }
+    },
+    {
+      "name": "older_backfill",
+      "raw_file": "C:\\Users\\user\\.gemini\\antigravity\\scratch\\repos\\my-skills\\skills\\admin-gbetalk\\out\\capture-2026-10-older-backfill-continuation-263\\older-bodies.jsonl",
+      "raw_record_count": 398,
+      "verified_metadata_file": null,
+      "verified_metadata_count": null,
+      "date_present_count": 398,
+      "date_missing_count": 0,
+      "date_missing_sequence_ranges": [],
+      "unmapped_raw_sequence_ranges": [],
+      "missing_records": [],
+      "raw_file_sha256": "f812aa562cdcbc68ada86780523cbedf651a78d8ed3e48ef23132e69987947cf",
+      "raw_before_backfill": {
+        "date_present_count": 138,
+        "date_missing_count": 260,
+        "date_missing_sequence_ranges": [
+          [
+            1,
+            95
+          ],
+          [
+            97,
+            157
+          ],
+          [
+            159,
+            187
+          ],
+          [
+            189,
+            263
+          ]
+        ],
+        "unmapped_raw_sequence_ranges": [],
+        "missing_records": [
+          {
+            "sequence": 1,
+            "row_sha256": "90007fda5855623783aeb9b1500b720772ab3fc715b983b77edb5ba78a05bf25",
+            "body_sha256": "7a0bb57a72bfbdf14b16b9429c6352ee78fe95640544f7684336daab0e384a55",
+            "captured_at": "2026-10-26T04:52:24.900Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 2,
+            "row_sha256": "6f02730be211041bbefa52867abcfc02dc9cb2060f80ee9eaf594d5e6aa4df68",
+            "body_sha256": "6f02730be211041bbefa52867abcfc02dc9cb2060f80ee9eaf594d5e6aa4df68",
+            "captured_at": "2026-10-26T04:52:25.607Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 3,
+            "row_sha256": "2dac71d3d656e86e95fe5f989037090e511503d6f7b74c193fd8dd059f168bc3",
+            "body_sha256": "73826e2f2c02b0bd278933c06a8afdec3dad59481b85fe886845783ee8d179a5",
+            "captured_at": "2026-10-26T04:52:26.200Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 4,
+            "row_sha256": "62b9ce95d58b912c4788d577bef6209707e5d6ff11f90f635092131745196c65",
+            "body_sha256": "fa944e63ef49e923253703807d4b945297c076eb3f5dabdbb14dd3e74a2860c1",
+            "captured_at": "2026-10-26T04:52:26.719Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 5,
+            "row_sha256": "6b5ee4a6e493139bacf36b8c8bf483dfbfba7e2e8513c66e2be408da5812a90d",
+            "body_sha256": "6b5ee4a6e493139bacf36b8c8bf483dfbfba7e2e8513c66e2be408da5812a90d",
+            "captured_at": "2026-10-26T04:52:27.294Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 6,
+            "row_sha256": "e03bf00d9bb9dbbfac0b57c5fdca683054f1888fdf28d5e7b1e2963d0c41fbd2",
+            "body_sha256": "e03bf00d9bb9dbbfac0b57c5fdca683054f1888fdf28d5e7b1e2963d0c41fbd2",
+            "captured_at": "2026-10-26T04:52:27.974Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 7,
+            "row_sha256": "366799d8a4d29a989b03a7cfa4931e265957d7a2fe72491fd7644fceae8a7a2b",
+            "body_sha256": "366799d8a4d29a989b03a7cfa4931e265957d7a2fe72491fd7644fceae8a7a2b",
+            "captured_at": "2026-10-26T04:52:28.649Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 8,
+            "row_sha256": "0c97a62a5b0d7f17cfc1a0913185cec514f19b1d9f54422297a36108fcc66fd7",
+            "body_sha256": "0c97a62a5b0d7f17cfc1a0913185cec514f19b1d9f54422297a36108fcc66fd7",
+            "captured_at": "2026-10-26T04:52:29.287Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 9,
+            "row_sha256": "e1dc76459105c840310998564321ffc21bfcb03d871ad7fe58984d30e8f0be4a",
+            "body_sha256": "e1dc76459105c840310998564321ffc21bfcb03d871ad7fe58984d30e8f0be4a",
+            "captured_at": "2026-10-26T04:52:29.819Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 10,
+            "row_sha256": "c578d328a2e8ceed21ca573da9d9b3e9a7e7b8c1422d66d2e14a370bddedcaf4",
+            "body_sha256": "9b07d18f3e378ffc7d6354b7d8ea34c2e078819500593222d5bd13c6fe6d20f4",
+            "captured_at": "2026-10-26T04:52:31.452Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 11,
+            "row_sha256": "b6aac81aa8cadeee0db6205cf019ca8f2b67955295a18a3359bfe7d724c73482",
+            "body_sha256": "b6aac81aa8cadeee0db6205cf019ca8f2b67955295a18a3359bfe7d724c73482",
+            "captured_at": "2026-10-26T04:52:31.987Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 12,
+            "row_sha256": "51aeb15c6046dcaf5e4991cac73c139bde393f133a61716777ff7c7c3dbec9a4",
+            "body_sha256": "51aeb15c6046dcaf5e4991cac73c139bde393f133a61716777ff7c7c3dbec9a4",
+            "captured_at": "2026-10-26T04:52:32.623Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 13,
+            "row_sha256": "f794faa580b590fe7b43111da6e43c1971a20c529704a8d7c7de9a3271ec668e",
+            "body_sha256": "f794faa580b590fe7b43111da6e43c1971a20c529704a8d7c7de9a3271ec668e",
+            "captured_at": "2026-10-26T04:52:33.403Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 14,
+            "row_sha256": "25a84db9cc8e6b16a2536b2ce03875180728f894db0696b9eb3663514609c8dc",
+            "body_sha256": "cdb0c5d832f7e29c76433a3555cfe8b352d40ad40f641515ca93591f27efb854",
+            "captured_at": "2026-10-26T04:52:34.020Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 15,
+            "row_sha256": "40e2dcd1ae2d5d4175d90855855d589c184f9fd9ebec06dfccc9007eef02dc62",
+            "body_sha256": "40e2dcd1ae2d5d4175d90855855d589c184f9fd9ebec06dfccc9007eef02dc62",
+            "captured_at": "2026-10-26T04:52:34.615Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 16,
+            "row_sha256": "aa954e2c4e2a103e1e7da4016de2266c80478c6361471e99afb9f5ce33e79562",
+            "body_sha256": "aa954e2c4e2a103e1e7da4016de2266c80478c6361471e99afb9f5ce33e79562",
+            "captured_at": "2026-10-26T04:52:35.051Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 17,
+            "row_sha256": "a6ad4e690dbf887b011372fa7f39a9e86c5c82ea686c45ec600858a6a40fa311",
+            "body_sha256": "a6ad4e690dbf887b011372fa7f39a9e86c5c82ea686c45ec600858a6a40fa311",
+            "captured_at": "2026-10-26T04:52:35.539Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 18,
+            "row_sha256": "d79582d9a2524e68a0ce6658b8f8d3d6597dbacbadfc7cde1564a1e2f2336b67",
+            "body_sha256": "a4d4fd17bfc2e108b054ba90aff4c554db21df1e0741d0e76bfdb6e62b8e9e5b",
+            "captured_at": "2026-10-26T04:52:36.204Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 19,
+            "row_sha256": "47deae4916793cd9907e8607ec2f21db5e93d2619dd24bcec08a20aefc9e1782",
+            "body_sha256": "47deae4916793cd9907e8607ec2f21db5e93d2619dd24bcec08a20aefc9e1782",
+            "captured_at": "2026-10-26T04:52:36.671Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 20,
+            "row_sha256": "88af46d3e0383ed6f829cffc12d4c3ebb20c4415735756c48e45eeb3756d5508",
+            "body_sha256": "88af46d3e0383ed6f829cffc12d4c3ebb20c4415735756c48e45eeb3756d5508",
+            "captured_at": "2026-10-26T04:52:37.247Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 21,
+            "row_sha256": "0bde2060dd4b11c867aa5c27e1a5a1181054e68ecc223ffbae2075ca3e14fd7a",
+            "body_sha256": "3f2c0c9c92e12b55c97db66daf19b41117e817ef7077556235e76df8fa555bf2",
+            "captured_at": "2026-10-26T04:52:38.045Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 22,
+            "row_sha256": "93527b1e6923e4c34f1bc1810a1f832c6d941b60d1ba41e2ffe6bb4fc8590376",
+            "body_sha256": "adb442b072b67a6e63086fcaa92a5bee5908d820392aab4f04bdba22915b5a1d",
+            "captured_at": "2026-10-26T04:52:38.601Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 23,
+            "row_sha256": "cec8576efa5dd3aaf14c8f05262efca131786a09d41e434c9e88d4a6494e880b",
+            "body_sha256": "cec8576efa5dd3aaf14c8f05262efca131786a09d41e434c9e88d4a6494e880b",
+            "captured_at": "2026-10-26T04:52:39.073Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 24,
+            "row_sha256": "318fcc4ced347f852e7b35ce0e86566b182d8be9e5b84cffd1fe70a0881f4529",
+            "body_sha256": "73f9d1cd09905136c7e696dc211bc63ac5661884ca56e788d7ee806452b8108c",
+            "captured_at": "2026-10-26T04:52:40.357Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 25,
+            "row_sha256": "3405c6014750da07f85cc5d4dba57b29ff15ff3161ea78a258806981fe17a9bc",
+            "body_sha256": "3405c6014750da07f85cc5d4dba57b29ff15ff3161ea78a258806981fe17a9bc",
+            "captured_at": "2026-10-26T04:52:40.930Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 26,
+            "row_sha256": "b1e63814b36f9b0531fd1ef26da537f24a741f083300b646037c45a76b49597f",
+            "body_sha256": "b1e63814b36f9b0531fd1ef26da537f24a741f083300b646037c45a76b49597f",
+            "captured_at": "2026-10-26T04:52:41.477Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 27,
+            "row_sha256": "c43fbce6d4b39ba9af0212ef084f2b7c5fa4895e9e8cc7e3934187a29e2d9706",
+            "body_sha256": "c43fbce6d4b39ba9af0212ef084f2b7c5fa4895e9e8cc7e3934187a29e2d9706",
+            "captured_at": "2026-10-26T04:52:42.238Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 28,
+            "row_sha256": "8355be73729ca3f615f26f0e54f91978afbbcb7781ccd357b538982eb8bc4e1b",
+            "body_sha256": "8355be73729ca3f615f26f0e54f91978afbbcb7781ccd357b538982eb8bc4e1b",
+            "captured_at": "2026-10-26T04:52:42.741Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 29,
+            "row_sha256": "8b2195f9e261e5b2cc3f75d7bc05885fd84691205792b9203bbb6c9371ad4493",
+            "body_sha256": "8b2195f9e261e5b2cc3f75d7bc05885fd84691205792b9203bbb6c9371ad4493",
+            "captured_at": "2026-10-26T04:55:38.232Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 30,
+            "row_sha256": "b55f5359e4c6fd3c045b337460d7ab2399b7067319e066e084dd8def795d6675",
+            "body_sha256": "6f42f3323808c34877bc9facb5ea607b5f16e90719bbc334f999ed0d07a975fe",
+            "captured_at": "2026-10-26T04:55:39.148Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 31,
+            "row_sha256": "1c6e5c7aaee32bb356213e26a9df6d9fc3970b83ebabb871f7ccb0911cc243c7",
+            "body_sha256": "1c6e5c7aaee32bb356213e26a9df6d9fc3970b83ebabb871f7ccb0911cc243c7",
+            "captured_at": "2026-10-26T04:55:39.686Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 32,
+            "row_sha256": "899c88b94b7287e5dc19ee2b61f7b4b9f83dd07c9a723d53c0539357dc74b3b2",
+            "body_sha256": "5aafe44fe127bfa704983d13eb859e796da14f20ca05a2fe598175951e0c0103",
+            "captured_at": "2026-10-26T04:55:40.153Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 33,
+            "row_sha256": "def20a0dfb452dffeaf9c548df365bdfd486be8bc2c19250bd7ee15fa4cb8915",
+            "body_sha256": "05da125aa0926fe724778654c514df1b0f80cac4e2055a2090e9d0ab947f22d1",
+            "captured_at": "2026-10-26T04:55:40.876Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 34,
+            "row_sha256": "df86bccd14f085ff5cdf944d5700b6dcc918569f43a8ed891fd90dd917886d0c",
+            "body_sha256": "df86bccd14f085ff5cdf944d5700b6dcc918569f43a8ed891fd90dd917886d0c",
+            "captured_at": "2026-10-26T04:55:41.493Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 35,
+            "row_sha256": "a11ae3b2a859ed52cacf8689c8dfe8665728f2efdbeee61e60d8b9333a0ba10c",
+            "body_sha256": "988745dcb74b307fd3fe82d52aa0a83a0c0cfd832f1778f9dcbb53fc06f6eafc",
+            "captured_at": "2026-10-26T04:55:41.991Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 36,
+            "row_sha256": "18487c72511ecbb449e0946c5611678f56f81f5019d18a3688530e4d5873e059",
+            "body_sha256": "6b1901268d7cbafd2ccc0cb38aa42bc5f836b9a38c1fae912718580aa0b5fd3e",
+            "captured_at": "2026-10-26T04:55:42.518Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 37,
+            "row_sha256": "4f4851b71e2a21bf72b8972781aeaaa5baaaf22ae393535dd1e1c9cfc28da5b9",
+            "body_sha256": "452295a351eb92cae706ce1e138dca2c0b060499fbaf4a123f37bf673e02a64a",
+            "captured_at": "2026-10-26T04:55:43.259Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 38,
+            "row_sha256": "d0a1c3d3b74aa5c08988028e5fa440c6f9d46d71115f853e80b1d905dc4c0eda",
+            "body_sha256": "d0a1c3d3b74aa5c08988028e5fa440c6f9d46d71115f853e80b1d905dc4c0eda",
+            "captured_at": "2026-10-26T04:55:44.036Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 39,
+            "row_sha256": "bf1d407e0140fc8a61be93b5a50512c64057f8ca83d85fadd590967928ed3ad0",
+            "body_sha256": "a8fd112baf5ce5bb0655bf5612b6b6def3c20af7c0e30916ae31cc016e2027ad",
+            "captured_at": "2026-10-26T04:55:44.599Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 40,
+            "row_sha256": "8dbf090ed65e51656ccb1a1d597876d19230dec1b24694ee74d51c58bb2dbaad",
+            "body_sha256": "dccd2ab1e21d2efff3529da2a49bbca104515a2cdac57c7e168ae9586e86d6d9",
+            "captured_at": "2026-10-26T04:55:45.115Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 41,
+            "row_sha256": "02b707429078ae812318783f8a134185152d91bcd0350d9bc07d46efaded60ae",
+            "body_sha256": "f034bba86cdc426a4d423bf859c58350d1bc51986c184eab0d801ead17d6ef9c",
+            "captured_at": "2026-10-26T04:55:45.683Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 42,
+            "row_sha256": "b31c490680fdb968f26805da3c4c7bd4ed269ca6042059c4ee5ca66b896d7182",
+            "body_sha256": "b31c490680fdb968f26805da3c4c7bd4ed269ca6042059c4ee5ca66b896d7182",
+            "captured_at": "2026-10-26T04:55:46.263Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 43,
+            "row_sha256": "1dce4cf90b4ab79da807b3daee6c4d37fa80647ed4faa79a78bc9d3c656576fb",
+            "body_sha256": "1dce4cf90b4ab79da807b3daee6c4d37fa80647ed4faa79a78bc9d3c656576fb",
+            "captured_at": "2026-10-26T04:55:46.836Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 44,
+            "row_sha256": "26f83b7e7213b50c8a20298c38d87135a2fe3fbc0e9637061d8f9f8b9637a68b",
+            "body_sha256": "26f83b7e7213b50c8a20298c38d87135a2fe3fbc0e9637061d8f9f8b9637a68b",
+            "captured_at": "2026-10-26T04:55:47.615Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 45,
+            "row_sha256": "7e497d001c799fe4b288a435054b98c1ffd478186952b39c0a20c966f81850ab",
+            "body_sha256": "f12989e493f96681834dcd143d564687f937eaad1a6207467fd9846d8c039192",
+            "captured_at": "2026-10-26T04:55:48.217Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 46,
+            "row_sha256": "d3d9a7f9fb4aab0db0678dd1559f33143714af781b2ff7c90245cf8e0ebf447c",
+            "body_sha256": "df136f1bdc2b0f8ed9117b132b6f2e34f00e40bde2f8d26e67c06693a645ed52",
+            "captured_at": "2026-10-26T04:55:48.736Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 47,
+            "row_sha256": "94b5f3efa615a08912b9387d1420c0b7f46c3c90f524092e95c2fc09b7a18cc4",
+            "body_sha256": "92e20f9633bfa02146b984d99d5581a5a84940ddc28950f372712f7805e29096",
+            "captured_at": "2026-10-26T04:55:49.456Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 48,
+            "row_sha256": "d2f5c265863ed774167f067f83f4effb4a0bc78fc72d619f86591877a06712dd",
+            "body_sha256": "d2f5c265863ed774167f067f83f4effb4a0bc78fc72d619f86591877a06712dd",
+            "captured_at": "2026-10-26T04:55:49.946Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 49,
+            "row_sha256": "f63005ba0526acffde8e6757d86d0c9a94b0dc8817fc73acf707874a643fa9f9",
+            "body_sha256": "05c119744da051a4ef659a040025d8e39f5ca0afdf537144c21f520729273a5b",
+            "captured_at": "2026-10-26T04:55:50.555Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 50,
+            "row_sha256": "83a36bffc20eaf6eb684d4b8bb16dc0cd0ae402c5e7114bf770671c5351e3343",
+            "body_sha256": "9179bbb159042270194ebfbc4c61930993a5002fee431797263a020332d9a211",
+            "captured_at": "2026-10-26T04:55:51.114Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 51,
+            "row_sha256": "1811ccb39856ad1ab8bbb207eb5962ae530c6f8a697afc97d0fc0caccfd9a079",
+            "body_sha256": "1811ccb39856ad1ab8bbb207eb5962ae530c6f8a697afc97d0fc0caccfd9a079",
+            "captured_at": "2026-10-26T04:55:51.857Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 52,
+            "row_sha256": "f948e847a4571be5e6a4e83e97b180b794e360828df847663b17ef736d378182",
+            "body_sha256": "f948e847a4571be5e6a4e83e97b180b794e360828df847663b17ef736d378182",
+            "captured_at": "2026-10-26T04:55:52.471Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 53,
+            "row_sha256": "120a2095b9cc5de3f13ecd953b1860338f33074ef67858d890e8559ac6135393",
+            "body_sha256": "120a2095b9cc5de3f13ecd953b1860338f33074ef67858d890e8559ac6135393",
+            "captured_at": "2026-10-26T04:55:53.102Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 54,
+            "row_sha256": "05072483639a9386d5c73ba11bfb2d0c8336238e8bbcd6b95cff6a0d8788367a",
+            "body_sha256": "05072483639a9386d5c73ba11bfb2d0c8336238e8bbcd6b95cff6a0d8788367a",
+            "captured_at": "2026-10-26T04:55:53.587Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 55,
+            "row_sha256": "6eb9603db659c06e685ba283fa2241c8a310dd5192bbcccb8517589f729fe940",
+            "body_sha256": "31f43b4756b5e1895b093d6b400aa0e96d6751e449e81663471a120b340ebc60",
+            "captured_at": "2026-10-26T04:55:54.136Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 56,
+            "row_sha256": "050845c85c196ff84999b96facdeb5668ee792644a799396b03b63069cf328e9",
+            "body_sha256": "050845c85c196ff84999b96facdeb5668ee792644a799396b03b63069cf328e9",
+            "captured_at": "2026-10-26T04:55:54.675Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 57,
+            "row_sha256": "ecd1d49d52e4fc0d18fa21654c7af83f4a912dc826f904f570575aa53dd6f4e4",
+            "body_sha256": "ecd1d49d52e4fc0d18fa21654c7af83f4a912dc826f904f570575aa53dd6f4e4",
+            "captured_at": "2026-10-26T04:55:55.533Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 58,
+            "row_sha256": "935721db099199fce6ee7826958eca319680bf3bfed13fad2965ee22c0cf005e",
+            "body_sha256": "935721db099199fce6ee7826958eca319680bf3bfed13fad2965ee22c0cf005e",
+            "captured_at": "2026-10-26T04:55:56.115Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 59,
+            "row_sha256": "e6017dc44582d5c2219e08fb0d8419a03d14dc7e17f271c7befe0dec70fd7c5e",
+            "body_sha256": "e6017dc44582d5c2219e08fb0d8419a03d14dc7e17f271c7befe0dec70fd7c5e",
+            "captured_at": "2026-10-26T04:56:42.099Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 60,
+            "row_sha256": "ac1d7cf6ef0315cadb1965ab7efdad9a0c154fc24421d06d636003f52628b158",
+            "body_sha256": "ac1d7cf6ef0315cadb1965ab7efdad9a0c154fc24421d06d636003f52628b158",
+            "captured_at": "2026-10-26T04:56:42.752Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 61,
+            "row_sha256": "1a136f1e4ce0591e7aa1925c5bf89db32d0e72d190ad4c51054ea4e876d39c55",
+            "body_sha256": "1a136f1e4ce0591e7aa1925c5bf89db32d0e72d190ad4c51054ea4e876d39c55",
+            "captured_at": "2026-10-26T04:56:43.269Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 62,
+            "row_sha256": "68aa4d543ff056dca240baa67afd40fb861a22cdeb8f36c11d8d20bcd498f725",
+            "body_sha256": "68aa4d543ff056dca240baa67afd40fb861a22cdeb8f36c11d8d20bcd498f725",
+            "captured_at": "2026-10-26T04:56:43.742Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 63,
+            "row_sha256": "34613d47efc38a1dbb0d0d4f03a37341534a433a8ca86581917c9e5233a7bd16",
+            "body_sha256": "34613d47efc38a1dbb0d0d4f03a37341534a433a8ca86581917c9e5233a7bd16",
+            "captured_at": "2026-10-26T04:56:44.412Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 64,
+            "row_sha256": "e2cd3ce8d235c96f3fd1b48859e3526e17b6496680738cd8f120f727f9af620a",
+            "body_sha256": "e2cd3ce8d235c96f3fd1b48859e3526e17b6496680738cd8f120f727f9af620a",
+            "captured_at": "2026-10-26T04:56:45.028Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 65,
+            "row_sha256": "9e1c211040838618fbc8b1339a1a4eaec9580f0bfba95dc698cd8c66ceacf8b6",
+            "body_sha256": "4c5b806b59c29dcf5a7c085ffc18ef8e67b46f4ce2d185316505ddf571b105c9",
+            "captured_at": "2026-10-26T04:56:45.775Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 66,
+            "row_sha256": "eee79d9f1abe596dc8282cc781a0db14b6aeb01e4db545e75e0ba32f605d37dc",
+            "body_sha256": "68ceb938f55763f7cbcad46de847035afbf40de3b934cc88b6033cdae9854630",
+            "captured_at": "2026-10-26T04:56:46.427Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 67,
+            "row_sha256": "d5dbcbc4c0b42e1641fcfdf56b0f4ebd006263c3027ac2950dbf8ba0eb49cd18",
+            "body_sha256": "d5dbcbc4c0b42e1641fcfdf56b0f4ebd006263c3027ac2950dbf8ba0eb49cd18",
+            "captured_at": "2026-10-26T04:56:47.303Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 68,
+            "row_sha256": "86ed9c80ecbae306bcd68008883bbde9accf6901a5e283d28ac39dfe7f19c4ec",
+            "body_sha256": "58558810514d747789f428afb841c36a1eb18f192f4a05c3f71dc589905e247d",
+            "captured_at": "2026-10-26T04:56:47.863Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 69,
+            "row_sha256": "e8e61fa3113221ad560116a9398352e69aec1f5bb6ec0c8a7c34455710b01ce7",
+            "body_sha256": "5eead0370e0d8780ac32105580584a2d6d10046d71084ce9563fbe413fbfae1b",
+            "captured_at": "2026-10-26T04:56:48.664Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 70,
+            "row_sha256": "7fb4499eb4aab7a2a9353a830d30a916a7c51fe59c74719b116979455dcdaf88",
+            "body_sha256": "7fb4499eb4aab7a2a9353a830d30a916a7c51fe59c74719b116979455dcdaf88",
+            "captured_at": "2026-10-26T04:56:49.298Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 71,
+            "row_sha256": "1f37e6f68d21000c71705383a9cfc06158ea34ac6ab52d3fe9e1645f0383fa09",
+            "body_sha256": "736306a7c2b244a1bc74e7b233ae488e555a638ad6cb19570ae532962d1c27e9",
+            "captured_at": "2026-10-26T04:56:49.806Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 72,
+            "row_sha256": "4a199c9c90c35744a3d3dd485ee9cca765f48d525488205b115bc95ee80a5d23",
+            "body_sha256": "4a199c9c90c35744a3d3dd485ee9cca765f48d525488205b115bc95ee80a5d23",
+            "captured_at": "2026-10-26T04:56:50.396Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 73,
+            "row_sha256": "4168f8b6a08f7d3659c1566ef9f418cbfa225ad2993c15205fe93650a7fbf3d6",
+            "body_sha256": "4168f8b6a08f7d3659c1566ef9f418cbfa225ad2993c15205fe93650a7fbf3d6",
+            "captured_at": "2026-10-26T04:56:50.943Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 74,
+            "row_sha256": "87e5fb6a201abae5751bff3d7447c954b7850298b8c99e9016a6d3b8639eee4c",
+            "body_sha256": "87e5fb6a201abae5751bff3d7447c954b7850298b8c99e9016a6d3b8639eee4c",
+            "captured_at": "2026-10-26T04:56:51.650Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 75,
+            "row_sha256": "05bcc7075bf37545ce56560adad073d0a845539bfeadf6d1c41fd181817cc221",
+            "body_sha256": "05bcc7075bf37545ce56560adad073d0a845539bfeadf6d1c41fd181817cc221",
+            "captured_at": "2026-10-26T04:56:52.269Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 76,
+            "row_sha256": "9c9b8a2815d90e9e6193502d7fd10837dc3075cb533ef3cd9b5fb9eec252662c",
+            "body_sha256": "63c0e1be61e15c263761987115e3c1299153aaef30c93f45243acfc25b69b7a4",
+            "captured_at": "2026-10-26T04:56:52.776Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 77,
+            "row_sha256": "8be27b31d075c03a001571807ebb10f956906dfe22b478017b01e686d15423a8",
+            "body_sha256": "8be27b31d075c03a001571807ebb10f956906dfe22b478017b01e686d15423a8",
+            "captured_at": "2026-10-26T04:56:53.371Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 78,
+            "row_sha256": "e3ef889400f44d525d06bbc1e9c49988afb8c6f662a1c5ed0c66d44261d34fe9",
+            "body_sha256": "e3ef889400f44d525d06bbc1e9c49988afb8c6f662a1c5ed0c66d44261d34fe9",
+            "captured_at": "2026-10-26T04:56:54.024Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 79,
+            "row_sha256": "c46dc18b55a3bfe04ccee95180b3740003b47d1fb889267859c5b1b861b04e9b",
+            "body_sha256": "c46dc18b55a3bfe04ccee95180b3740003b47d1fb889267859c5b1b861b04e9b",
+            "captured_at": "2026-10-26T04:56:54.673Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 80,
+            "row_sha256": "8db3194f486d40142062dc04ddb3b8946a67471803db6cf1a8053b608d9a285d",
+            "body_sha256": "1c2fe99ef97d8dafcd0deb51174e5370c507430ffe1b2bb8d8b557c33ab88b65",
+            "captured_at": "2026-10-26T04:56:55.539Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 81,
+            "row_sha256": "d8de76b7a3ff89fdd216d793a8d7c98bfb70e086c2ae11500185dded5f82a4b7",
+            "body_sha256": "d8de76b7a3ff89fdd216d793a8d7c98bfb70e086c2ae11500185dded5f82a4b7",
+            "captured_at": "2026-10-26T04:56:56.154Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 82,
+            "row_sha256": "d37eb024408fb2a6e14bc7fd4720f9153e022e9f50537556838703b31b7838ac",
+            "body_sha256": "d5cfbd8030614a663e856ec9b9a1158d46c3e50dbb20456f590c663be05702d0",
+            "captured_at": "2026-10-26T04:56:56.837Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 83,
+            "row_sha256": "175fdeb5c41148f11f0f6fd70e111e75a666b9916c451e4f2e27ce9c7b3f754a",
+            "body_sha256": "175fdeb5c41148f11f0f6fd70e111e75a666b9916c451e4f2e27ce9c7b3f754a",
+            "captured_at": "2026-10-26T04:56:57.417Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 84,
+            "row_sha256": "7d006eef183a7a2abc6008ef4c74070ca38d22af9e96ab0848691d625af7c068",
+            "body_sha256": "7d006eef183a7a2abc6008ef4c74070ca38d22af9e96ab0848691d625af7c068",
+            "captured_at": "2026-10-26T04:56:57.895Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 85,
+            "row_sha256": "fa80689f292c371f1941e3dd18734d4ffa80bb7922f1242815492babf916bfd0",
+            "body_sha256": "fa80689f292c371f1941e3dd18734d4ffa80bb7922f1242815492babf916bfd0",
+            "captured_at": "2026-10-26T04:56:58.520Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 86,
+            "row_sha256": "18072ea60af94ac6c613b648bd3f0ab2696ad1ec140d8184f9fb8f72569dcbc6",
+            "body_sha256": "18072ea60af94ac6c613b648bd3f0ab2696ad1ec140d8184f9fb8f72569dcbc6",
+            "captured_at": "2026-10-26T04:56:59.201Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 87,
+            "row_sha256": "f0780c0acbd402d0e35b4164d4ce9528825dc1fde50ca4006228d5f42ad748d9",
+            "body_sha256": "8c8992f279afae32f2d2e467ab4a12270ddc41c09829a6b4340c9f18c366565d",
+            "captured_at": "2026-10-26T04:56:59.853Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 88,
+            "row_sha256": "b169a1009511cc9940c1a14019675aad9cd74224405ada99331a1f176b0829f2",
+            "body_sha256": "b169a1009511cc9940c1a14019675aad9cd74224405ada99331a1f176b0829f2",
+            "captured_at": "2026-10-26T04:57:00.502Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 89,
+            "row_sha256": "0a14c000a4e115537ad6cac116c01e81b4026d471cdc07eb11cbdc9f6c7786c3",
+            "body_sha256": "0a14c000a4e115537ad6cac116c01e81b4026d471cdc07eb11cbdc9f6c7786c3",
+            "captured_at": "2026-10-26T04:57:24.652Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 90,
+            "row_sha256": "b7b4ad2ab8a6f52e728dcb9031ca1db54591a92af515834c3860dba8a5da4506",
+            "body_sha256": "b7b4ad2ab8a6f52e728dcb9031ca1db54591a92af515834c3860dba8a5da4506",
+            "captured_at": "2026-10-26T04:57:25.202Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 91,
+            "row_sha256": "e98e1be01cb01bcab2417f694fdec1909cb090e63c82ab976b05e9283c2ca8bf",
+            "body_sha256": "860929be5d8dc79b5ca56d208ee55c0d3559ec5299c0879e6d019433f45b84eb",
+            "captured_at": "2026-10-26T04:57:25.648Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 92,
+            "row_sha256": "5233554e8daed4b76abd7a2d6d1439bdb27d38c3726348a8a34c46d599e59419",
+            "body_sha256": "5233554e8daed4b76abd7a2d6d1439bdb27d38c3726348a8a34c46d599e59419",
+            "captured_at": "2026-10-26T04:57:26.135Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 93,
+            "row_sha256": "52243edef1cc4520da1d115688a32caa5763b1cfc3a5c63bba91afbee2fd5351",
+            "body_sha256": "9133d9715eafd5cd08256545d985637f57600f3cfa6226d888f7038534c178bf",
+            "captured_at": "2026-10-26T04:57:26.707Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 94,
+            "row_sha256": "4f0a7c1c00118d50907059ea37bc71c576a723d4206149753c0730f22538d9f5",
+            "body_sha256": "4f0a7c1c00118d50907059ea37bc71c576a723d4206149753c0730f22538d9f5",
+            "captured_at": "2026-10-26T04:57:27.493Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 95,
+            "row_sha256": "4ae210759f3e4a14a51f3f849db8623ba467efd0585748e25691f8f7b142c0bd",
+            "body_sha256": "8700dbd5baf799ee0954115a520a2ad9bae775a87d255ff6381b815bc90cde3f",
+            "captured_at": "2026-10-26T04:57:28.039Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 97,
+            "row_sha256": "08ae35b8754a945ba2e45ccd39f5e3d513ea2f8d886c4a30754b339936e6a604",
+            "body_sha256": "08ae35b8754a945ba2e45ccd39f5e3d513ea2f8d886c4a30754b339936e6a604",
+            "captured_at": "2026-10-26T05:14:58.692Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 98,
+            "row_sha256": "f361f27d69c1fd4c538d3538453bd017e97601e6e961b3d7bffff31c143be88a",
+            "body_sha256": "53d12c57180660fd7fc13ddf19739fea6d7205b72970c9685ecb56b261da332e",
+            "captured_at": "2026-10-26T05:14:59.180Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 99,
+            "row_sha256": "66881838a46f45a418eb018f27e92681b3ff20938f26258cbe3a5f6c59e0bad6",
+            "body_sha256": "66881838a46f45a418eb018f27e92681b3ff20938f26258cbe3a5f6c59e0bad6",
+            "captured_at": "2026-10-26T05:14:59.635Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 100,
+            "row_sha256": "518bb19fa3faf94b611e3b94523c9f8637842e82008e00f6f99b17824b55bbf9",
+            "body_sha256": "518bb19fa3faf94b611e3b94523c9f8637842e82008e00f6f99b17824b55bbf9",
+            "captured_at": "2026-10-26T05:15:00.155Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 101,
+            "row_sha256": "b19f064119f98b1104d7fa946405db3fb16d9474235963430088f82f4940db8f",
+            "body_sha256": "b19f064119f98b1104d7fa946405db3fb16d9474235963430088f82f4940db8f",
+            "captured_at": "2026-10-26T05:15:00.699Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 102,
+            "row_sha256": "848229d3df9eae54c894a9d8da951fd9daa9514e51c1810ec5999dc2bb65c2a7",
+            "body_sha256": "848229d3df9eae54c894a9d8da951fd9daa9514e51c1810ec5999dc2bb65c2a7",
+            "captured_at": "2026-10-26T05:15:01.302Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 103,
+            "row_sha256": "7ab454442bb0435a7910f5c47562e4db5111ef9e6a32223281ce3da9aad8457f",
+            "body_sha256": "7ab454442bb0435a7910f5c47562e4db5111ef9e6a32223281ce3da9aad8457f",
+            "captured_at": "2026-10-26T05:15:01.780Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 104,
+            "row_sha256": "656b2a69d9a751711c685c1afbfaccff5691c7ebd29dde1b2f20649c03feeb53",
+            "body_sha256": "656b2a69d9a751711c685c1afbfaccff5691c7ebd29dde1b2f20649c03feeb53",
+            "captured_at": "2026-10-26T05:15:02.432Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 105,
+            "row_sha256": "8894fcba4d2cb85302a6a0d945bc9798f9dc32d52d5a657c21b4fa601aab4c6b",
+            "body_sha256": "273778c6074f6738165745269e22c86ccf5aa0350303afb51956b0a450209045",
+            "captured_at": "2026-10-26T05:15:03.038Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 106,
+            "row_sha256": "6e09b53db5381bdb9902e35407f0a6b05c789819519bfa0f312f513e88d3213b",
+            "body_sha256": "6e09b53db5381bdb9902e35407f0a6b05c789819519bfa0f312f513e88d3213b",
+            "captured_at": "2026-10-26T05:15:03.528Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 107,
+            "row_sha256": "925b2068472e2863b621b5e1e5886de97fe6e58faa0f5e4c5b19acc41e679161",
+            "body_sha256": "925b2068472e2863b621b5e1e5886de97fe6e58faa0f5e4c5b19acc41e679161",
+            "captured_at": "2026-10-26T05:15:03.970Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 108,
+            "row_sha256": "5e85e5e20783552631620fc04537f3ef19558c884a0465a862eb0aa70edcbdbd",
+            "body_sha256": "5e85e5e20783552631620fc04537f3ef19558c884a0465a862eb0aa70edcbdbd",
+            "captured_at": "2026-10-26T05:15:04.581Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 109,
+            "row_sha256": "ae846287185d696f2b736942e0c204e6d1fcc73aa1e6cd61766d9bdf3b8d1557",
+            "body_sha256": "ae846287185d696f2b736942e0c204e6d1fcc73aa1e6cd61766d9bdf3b8d1557",
+            "captured_at": "2026-10-26T05:15:05.113Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 110,
+            "row_sha256": "f1e0b3eb36d28128b601b78370af1436233a8361702b5320af03a884b4583674",
+            "body_sha256": "f1e0b3eb36d28128b601b78370af1436233a8361702b5320af03a884b4583674",
+            "captured_at": "2026-10-26T05:15:05.620Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 111,
+            "row_sha256": "d2cb82fbae6db2c737db0de9c6696e075d5082786b9cd075d04f8b3f636e7a83",
+            "body_sha256": "d2cb82fbae6db2c737db0de9c6696e075d5082786b9cd075d04f8b3f636e7a83",
+            "captured_at": "2026-10-26T05:15:06.110Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 112,
+            "row_sha256": "9878240781d6a2cc13a8ca29a9de3864084cfab9e9c6e53d15ff2bebdcae6c70",
+            "body_sha256": "9878240781d6a2cc13a8ca29a9de3864084cfab9e9c6e53d15ff2bebdcae6c70",
+            "captured_at": "2026-10-26T05:15:06.940Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 113,
+            "row_sha256": "de02c79c5056dc77ffbbb8386a4305f06617aa1d55bee04c89367b1b9e594c37",
+            "body_sha256": "de02c79c5056dc77ffbbb8386a4305f06617aa1d55bee04c89367b1b9e594c37",
+            "captured_at": "2026-10-26T05:15:07.579Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 114,
+            "row_sha256": "0a65d3835f46c8b25891a8aeb6bc9bfe532689955efe57e0a03a7398539bab57",
+            "body_sha256": "0a65d3835f46c8b25891a8aeb6bc9bfe532689955efe57e0a03a7398539bab57",
+            "captured_at": "2026-10-26T05:15:08.138Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 115,
+            "row_sha256": "a1c7e25536f0e2eb201fef76d42f77554ebdced60f4b86b6589d9f22f7eb1aa1",
+            "body_sha256": "a1c7e25536f0e2eb201fef76d42f77554ebdced60f4b86b6589d9f22f7eb1aa1",
+            "captured_at": "2026-10-26T05:15:08.605Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 116,
+            "row_sha256": "14b75442a8b7e20b5df8e2b68c942a0ab8c44b1a85df67f80f1ba1bdd9d9a957",
+            "body_sha256": "14b75442a8b7e20b5df8e2b68c942a0ab8c44b1a85df67f80f1ba1bdd9d9a957",
+            "captured_at": "2026-10-26T05:15:09.069Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 117,
+            "row_sha256": "25ea3c1275561e99c1b077dd0834d3b33c78488dd394ecf1592f6f43b33c08db",
+            "body_sha256": "1ae73c1899dbc6f2d8b45717c39c00ec19f50149f0062fd3e2685917c9669b28",
+            "captured_at": "2026-10-26T05:15:09.583Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 118,
+            "row_sha256": "651ba78e5c4fd202e915e01431661f70f4edd3a754d24294c6341ee14f74609c",
+            "body_sha256": "ab3e2f72de5a5091cc3b3477142ba624b4c4368c3d5b406a02318c93c874402f",
+            "captured_at": "2026-10-26T05:15:10.120Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 119,
+            "row_sha256": "67900af8dceb2c47600944a80419c82a0fdad5991e49c24cbb61eb06e4b82a3e",
+            "body_sha256": "67900af8dceb2c47600944a80419c82a0fdad5991e49c24cbb61eb06e4b82a3e",
+            "captured_at": "2026-10-26T05:15:10.782Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 120,
+            "row_sha256": "908b44d5691421125e9166931b6f9f7499473acdea6953a487be012aa7c9264a",
+            "body_sha256": "8b4674ddcc0480d0b43f5a0637772ebcf6469b25d138bc4e841dd660f6b7829d",
+            "captured_at": "2026-10-26T05:15:11.379Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 121,
+            "row_sha256": "03ce11c5b7acb7ae67a6365df1231597ea8e5efd8cbd701404c84892f8891b1a",
+            "body_sha256": "03ce11c5b7acb7ae67a6365df1231597ea8e5efd8cbd701404c84892f8891b1a",
+            "captured_at": "2026-10-26T05:15:11.904Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 122,
+            "row_sha256": "89b70694845b531a5c7693f26a883982492dcd18de3a89b9dea1bae35088185f",
+            "body_sha256": "89b70694845b531a5c7693f26a883982492dcd18de3a89b9dea1bae35088185f",
+            "captured_at": "2026-10-26T05:15:12.504Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 123,
+            "row_sha256": "5522baa201e283a232091539c148b2aa1489e5794c06dfbeb9b2432c9e82f933",
+            "body_sha256": "5522baa201e283a232091539c148b2aa1489e5794c06dfbeb9b2432c9e82f933",
+            "captured_at": "2026-10-26T05:15:12.978Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 124,
+            "row_sha256": "ed14f50a60a0ad521efcf0d91e89c5be1aea59ee42dc56a84bdd4741bb4ca10b",
+            "body_sha256": "ed14f50a60a0ad521efcf0d91e89c5be1aea59ee42dc56a84bdd4741bb4ca10b",
+            "captured_at": "2026-10-26T05:15:13.563Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 125,
+            "row_sha256": "096725d4e8d15eb195e866424a8ef0dfcd14269b69e5fa0fea71f728c249824e",
+            "body_sha256": "096725d4e8d15eb195e866424a8ef0dfcd14269b69e5fa0fea71f728c249824e",
+            "captured_at": "2026-10-26T05:15:14.170Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 126,
+            "row_sha256": "d87315e30a9dcf749a86fcda7f5496ec1b5905fe172c3541be6bde3494a46976",
+            "body_sha256": "d87315e30a9dcf749a86fcda7f5496ec1b5905fe172c3541be6bde3494a46976",
+            "captured_at": "2026-10-26T05:15:36.398Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 127,
+            "row_sha256": "d9ee1e9e096dc58fd09bda85ba1a7cb44221f0ad66b209d8e288fe92fe82a00b",
+            "body_sha256": "d9ee1e9e096dc58fd09bda85ba1a7cb44221f0ad66b209d8e288fe92fe82a00b",
+            "captured_at": "2026-10-26T05:15:36.939Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 128,
+            "row_sha256": "cd302d6cf53cfe4791e1a67b8711f7e3ca0f78a3bcaf237c65426db1bafbf27a",
+            "body_sha256": "cd302d6cf53cfe4791e1a67b8711f7e3ca0f78a3bcaf237c65426db1bafbf27a",
+            "captured_at": "2026-10-26T05:15:37.353Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 129,
+            "row_sha256": "3a8d525b17080d709ccd6a100ea7bb09e0e6380869cbb38d2bd56148d40d1136",
+            "body_sha256": "3a8d525b17080d709ccd6a100ea7bb09e0e6380869cbb38d2bd56148d40d1136",
+            "captured_at": "2026-10-26T05:15:37.840Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 130,
+            "row_sha256": "a83c24fd5d3dd6b98a4c2a6ad2361338c78ab94a8979ec67f3ea0f002be6ad1c",
+            "body_sha256": "5510a5270decc5971a5666fb821aea9b4ba5c3df7b975cf4c834cd36a2475128",
+            "captured_at": "2026-10-26T05:15:38.570Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 131,
+            "row_sha256": "a69bddd5ebaa1fede1e76c8f20cbdaea57564576c62c435cb6035aa0c34a2118",
+            "body_sha256": "a69bddd5ebaa1fede1e76c8f20cbdaea57564576c62c435cb6035aa0c34a2118",
+            "captured_at": "2026-10-26T05:15:39.172Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 132,
+            "row_sha256": "c19703fd58b4f6560862b9c6ddc8c99471bcf197f15e53d76920b976570e5371",
+            "body_sha256": "c19703fd58b4f6560862b9c6ddc8c99471bcf197f15e53d76920b976570e5371",
+            "captured_at": "2026-10-26T05:15:39.737Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 133,
+            "row_sha256": "c7bcf592458846039bbb83d08ca7a28836aead8bd8f327cbe018d4133bf64bd9",
+            "body_sha256": "c7bcf592458846039bbb83d08ca7a28836aead8bd8f327cbe018d4133bf64bd9",
+            "captured_at": "2026-10-26T05:15:40.342Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 134,
+            "row_sha256": "ab8d62edb80cb107e2cb186a21301dcfa90de07184e7228b5451c1559bcc3a09",
+            "body_sha256": "b2f95f3b72c8dc38276776e39b8ac5363eeda14b45839b13e011449b8deb26ef",
+            "captured_at": "2026-10-26T05:15:40.855Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 135,
+            "row_sha256": "62cfd5d5d0a927b993512465333dd3f23b2b197ec49674ce6fbe9936d87b4ee3",
+            "body_sha256": "4b334bf34005de6103613bad9ee7f1b1d9c4a72c637e7fcb57fc909df1ee10e8",
+            "captured_at": "2026-10-26T05:15:41.470Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 136,
+            "row_sha256": "525b783af06b5887d0fb9a2c97e93bdbffb6b074801414ab1eb15bcd9a1aab55",
+            "body_sha256": "7f702db73fd43c891a0a2b4728c2b19209e633f6bbe31cee89e0c6bf5bce78bb",
+            "captured_at": "2026-10-26T05:15:42.014Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 137,
+            "row_sha256": "9244bb579b38ad089c544c1841a97003332b7c3e386692132d89300e202d8000",
+            "body_sha256": "9244bb579b38ad089c544c1841a97003332b7c3e386692132d89300e202d8000",
+            "captured_at": "2026-10-26T05:15:42.616Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 138,
+            "row_sha256": "1a5e0bafcbbf93a5ee1a15ef18258139e17b2f13432e83cc83d33c721cf5b997",
+            "body_sha256": "1a5e0bafcbbf93a5ee1a15ef18258139e17b2f13432e83cc83d33c721cf5b997",
+            "captured_at": "2026-10-26T05:15:43.283Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 139,
+            "row_sha256": "fb5ca591cbc66a5e1939de9fec9a9253b72f7f75ae54b701e3624b66f529d622",
+            "body_sha256": "277e92d9f208daca8f98d8629d9830afff3cc1c985aada1113c84e246528a639",
+            "captured_at": "2026-10-26T05:15:43.974Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 140,
+            "row_sha256": "e6f5943e439b680711be623c1c394f9980cf4998b633a0657c58c63220455dc9",
+            "body_sha256": "e6f5943e439b680711be623c1c394f9980cf4998b633a0657c58c63220455dc9",
+            "captured_at": "2026-10-26T05:15:44.569Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 141,
+            "row_sha256": "f771fead0aefe98265362138d17c990bce55ff32686c3b7f8891b14adec9d577",
+            "body_sha256": "f771fead0aefe98265362138d17c990bce55ff32686c3b7f8891b14adec9d577",
+            "captured_at": "2026-10-26T05:15:45.037Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 142,
+            "row_sha256": "eb71947711dc34b690f403a7845895c8d4b30d66c854e4af7379a5630c6ff8bf",
+            "body_sha256": "a75ff981bcfd8a2408a274263a6f2a8ea50bc08408c920b5b298f6f489bd4787",
+            "captured_at": "2026-10-26T05:15:45.581Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 143,
+            "row_sha256": "9f705deb7b90be9b749539ff73f1fee66ef57dac88b0c9e5e4381635c140d33c",
+            "body_sha256": "9f705deb7b90be9b749539ff73f1fee66ef57dac88b0c9e5e4381635c140d33c",
+            "captured_at": "2026-10-26T05:15:46.103Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 144,
+            "row_sha256": "8f7271fdf163b43de731d8451ab20c7ee98672b55c1cbc0635ba9c7ecb003010",
+            "body_sha256": "ef6127c9bb660e6d7160bd276e668f971ca429a44fff991ea835e65f5006a853",
+            "captured_at": "2026-10-26T05:15:46.853Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 145,
+            "row_sha256": "3e0cad3f6743403ffdb49fec4600c25742b671a5fe72264012c14d2532b317df",
+            "body_sha256": "b9b589587e1e9b2c4c038a47a9e1bc290bae82ae26084ceb9ac59a250f5c0d2c",
+            "captured_at": "2026-10-26T05:15:47.385Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 146,
+            "row_sha256": "db8825082daf125f007cfe6c7bdc5926656c8d399c9c4382691ddfce922512aa",
+            "body_sha256": "db8825082daf125f007cfe6c7bdc5926656c8d399c9c4382691ddfce922512aa",
+            "captured_at": "2026-10-26T05:15:47.922Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 147,
+            "row_sha256": "d2a926794668f99c218642433011cb32ec73da9bdc2d46737ba7e00df9cbddf8",
+            "body_sha256": "d2a926794668f99c218642433011cb32ec73da9bdc2d46737ba7e00df9cbddf8",
+            "captured_at": "2026-10-26T05:15:48.516Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 148,
+            "row_sha256": "1528dafdbf9d8771e767e4b828f5ef64c1cec3765d47a4e6d42abd1edc1a4292",
+            "body_sha256": "465173ffb1c642664c7d5122ebd16b5fa3583d1025ef2495855fff4df5d5a607",
+            "captured_at": "2026-10-26T05:15:49.085Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 149,
+            "row_sha256": "81eb88c1ef5cd2734bdcfff6bcc29a92e4da2beabc1e1147b5fe8f9d9746e723",
+            "body_sha256": "e553e32bd439e4aeb10ffb8c9cfd205c767fd028c06a809127ccf1cf56e36e38",
+            "captured_at": "2026-10-26T05:15:49.620Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 150,
+            "row_sha256": "3a4d461da341955079faa547ba200f20b0929a5aa67329c00774a928790a8e97",
+            "body_sha256": "d338954f03e7a9cdf3134711993dbd7d5c9a166822bd79a9170cac75326dc9ba",
+            "captured_at": "2026-10-26T05:15:50.125Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 151,
+            "row_sha256": "e074e810d50614f057d3f19a8ae57875d06064c56aa9d80f38716f7fe0d296f6",
+            "body_sha256": "e074e810d50614f057d3f19a8ae57875d06064c56aa9d80f38716f7fe0d296f6",
+            "captured_at": "2026-10-26T05:15:50.593Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 152,
+            "row_sha256": "8d39325a8884e4758c6e92646f67c79be9c7d0afaa7c16819692e6aad4466473",
+            "body_sha256": "8d39325a8884e4758c6e92646f67c79be9c7d0afaa7c16819692e6aad4466473",
+            "captured_at": "2026-10-26T05:15:51.078Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 153,
+            "row_sha256": "1d8f76c27fa8c9cf9b3ad4a196c9a54d26968e2315c3769b25d1cbb383620477",
+            "body_sha256": "7e9ffb03aaf06a9ab0fb01d5ad0ac241033f70bf8f9ac609ece81e441c5a28ff",
+            "captured_at": "2026-10-26T05:15:51.867Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 154,
+            "row_sha256": "c73f5ef7b5f0f6855930f45e7cb3625786797a2ccbdfe8388c7a7ae95fc3ee87",
+            "body_sha256": "c73f5ef7b5f0f6855930f45e7cb3625786797a2ccbdfe8388c7a7ae95fc3ee87",
+            "captured_at": "2026-10-26T05:15:52.433Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 155,
+            "row_sha256": "e4cd5e67e4196ff22823d9e35248f8a509689365d2830529392e585f7840bc37",
+            "body_sha256": "e4cd5e67e4196ff22823d9e35248f8a509689365d2830529392e585f7840bc37",
+            "captured_at": "2026-10-26T05:15:52.940Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 156,
+            "row_sha256": "1ce4757084c48b38c6ec53867eb0904bd003d83be99f3d70ec9eb5a189bfddac",
+            "body_sha256": "1ce4757084c48b38c6ec53867eb0904bd003d83be99f3d70ec9eb5a189bfddac",
+            "captured_at": "2026-10-26T05:16:22.376Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 157,
+            "row_sha256": "db090cbc3683d9f5c2b6459d85792b6e4cf855dbd8b7530876b1eb58f04b2d57",
+            "body_sha256": "ac65c46eb2ef9db57153011f6c022e9571e169f4d932144372015c82d5d1e82b",
+            "captured_at": "2026-10-26T05:16:22.967Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 159,
+            "row_sha256": "d342407ba3432eed9466d87b9da2c9ca6ca0d236d766eea1ef1652f9fa515fa3",
+            "body_sha256": "d342407ba3432eed9466d87b9da2c9ca6ca0d236d766eea1ef1652f9fa515fa3",
+            "captured_at": "2026-10-26T05:20:46.296Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 160,
+            "row_sha256": "68c85a9c1a74dce0a110a789c5ccc2b4c17142ec302c8683766a700e5c8aa968",
+            "body_sha256": "68c85a9c1a74dce0a110a789c5ccc2b4c17142ec302c8683766a700e5c8aa968",
+            "captured_at": "2026-10-26T05:20:46.713Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 161,
+            "row_sha256": "95960f294608621ef3608dfcb1b67f97ac326d00b747e0f3e81e829c509010e4",
+            "body_sha256": "95960f294608621ef3608dfcb1b67f97ac326d00b747e0f3e81e829c509010e4",
+            "captured_at": "2026-10-26T05:20:47.286Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 162,
+            "row_sha256": "5cebad15353bfc3d7b03d2d6c59a0ff5b1fc4c0b142c28e5c7b2837faabc9d06",
+            "body_sha256": "4fbd939a7b91bcec69b245035435942cb6b59f172ab52dbdc1a3086a0bfc2989",
+            "captured_at": "2026-10-26T05:20:47.812Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 163,
+            "row_sha256": "c05eaa1427121256908de8c222cce31894301df95fa41aba5b15e08cf05bece3",
+            "body_sha256": "c05eaa1427121256908de8c222cce31894301df95fa41aba5b15e08cf05bece3",
+            "captured_at": "2026-10-26T05:20:48.438Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 164,
+            "row_sha256": "6806f40abcfd8366d06f7baa61b6cfa170bdd7f1aaf7ce29035f2de5b5fdc1f7",
+            "body_sha256": "6806f40abcfd8366d06f7baa61b6cfa170bdd7f1aaf7ce29035f2de5b5fdc1f7",
+            "captured_at": "2026-10-26T05:20:48.971Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 165,
+            "row_sha256": "4212453b0e2e22883992d96b592b54be84b8a5e8afb28d8625fc372c664cd557",
+            "body_sha256": "4212453b0e2e22883992d96b592b54be84b8a5e8afb28d8625fc372c664cd557",
+            "captured_at": "2026-10-26T05:20:49.598Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 166,
+            "row_sha256": "e37486f6da3a99d2137a8744635bef4ba708c0acfb1e56e57f1daa8de1be04be",
+            "body_sha256": "db39f65739e9d3ba85efe0a932f3804511f4547556e6c5c0ec910804789094c1",
+            "captured_at": "2026-10-26T05:20:50.612Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 167,
+            "row_sha256": "e573d6a16844b8d7efffd25a5030eb301f881f1f60fcaeafcae1d35d1ffba791",
+            "body_sha256": "e573d6a16844b8d7efffd25a5030eb301f881f1f60fcaeafcae1d35d1ffba791",
+            "captured_at": "2026-10-26T05:20:51.063Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 168,
+            "row_sha256": "f8c35165670de75fadd655c8309d04e09f91c5253cd2b6214fd5ce707a365387",
+            "body_sha256": "66871fd12c6dc79b6aa585b22dda86bf9bc33d8b1d7fcae97dc96d91d29891f1",
+            "captured_at": "2026-10-26T05:20:51.579Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 169,
+            "row_sha256": "6ea519c906c2b0870d9b2e94f6dbceee3cf729881df6a9365d36df9879471880",
+            "body_sha256": "6ea519c906c2b0870d9b2e94f6dbceee3cf729881df6a9365d36df9879471880",
+            "captured_at": "2026-10-26T05:20:52.065Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 170,
+            "row_sha256": "cc86b83ee07edd287cb2020a9333c13d93051926eedbebff21b3800dbefe3745",
+            "body_sha256": "cc86b83ee07edd287cb2020a9333c13d93051926eedbebff21b3800dbefe3745",
+            "captured_at": "2026-10-26T05:20:52.690Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 171,
+            "row_sha256": "87929ba3d0d69b22bcdd5a28410d2dfafc5701256ee26e515e613e9ccb96e742",
+            "body_sha256": "a5cb5b6cc96b1ad2514666bcc089f0d62cfee5ca67fe7c06f6d091dc1c543d93",
+            "captured_at": "2026-10-26T05:20:53.438Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 172,
+            "row_sha256": "2c70abe3905d0049bf5910fdcfda40db76232e88c2b4314dc9294283afacc550",
+            "body_sha256": "c9105fcd7f5c202314d07fff0ea841c1fd2b4cea74bdc01203f5da84291ad6fe",
+            "captured_at": "2026-10-26T05:20:54.049Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 173,
+            "row_sha256": "42c2c92ec82c9912892ea07b0bdf916fcac63fd39037964bdc775ebcbed54750",
+            "body_sha256": "42c2c92ec82c9912892ea07b0bdf916fcac63fd39037964bdc775ebcbed54750",
+            "captured_at": "2026-10-26T05:20:54.509Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 174,
+            "row_sha256": "ffcca3ba659435f3a71fbd948df99609b5f7342fc413f2c510e3e79d045b817b",
+            "body_sha256": "a153f193f410f757a1a56f5096eb0d369164606fe95b06844c4a8f93ebd8707b",
+            "captured_at": "2026-10-26T05:20:55.027Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 175,
+            "row_sha256": "b1d46ebffdfd23a13753be4f88a4da4caa259b1c651c00e08d91d10f31a04525",
+            "body_sha256": "b1d46ebffdfd23a13753be4f88a4da4caa259b1c651c00e08d91d10f31a04525",
+            "captured_at": "2026-10-26T05:20:55.680Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 176,
+            "row_sha256": "10747480da270ebf404c22022c6113f0889e6853aa09d0f82ddd591900e8e13e",
+            "body_sha256": "10747480da270ebf404c22022c6113f0889e6853aa09d0f82ddd591900e8e13e",
+            "captured_at": "2026-10-26T05:20:56.125Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 177,
+            "row_sha256": "e46477c22fb446467b39ac636eb3de48d8032d87989cae4edaa9611dd54aeafb",
+            "body_sha256": "e46477c22fb446467b39ac636eb3de48d8032d87989cae4edaa9611dd54aeafb",
+            "captured_at": "2026-10-26T05:20:56.709Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 178,
+            "row_sha256": "772321a0762807e580aeb2d50201ed1afa1e32305618519959002aa184a98fcc",
+            "body_sha256": "55cf2eb50642dbae5adaf7d1562355575bcdb7bbd52ad8014c99a27ed28c37d2",
+            "captured_at": "2026-10-26T05:20:57.270Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 179,
+            "row_sha256": "132df21aeda0f693a9e4fede43d94d7450bd479f907ef2d965129f7b4dc7973e",
+            "body_sha256": "132df21aeda0f693a9e4fede43d94d7450bd479f907ef2d965129f7b4dc7973e",
+            "captured_at": "2026-10-26T05:20:57.900Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 180,
+            "row_sha256": "4415987e18fa43393de3a09584cb7aae56c350e0b8214bbd7c4cc0023d9a07cc",
+            "body_sha256": "c1d134c360b8de7f33c240422b1bb911f7858d4ba9a44498abcffaa1123bf0c1",
+            "captured_at": "2026-10-26T05:20:58.550Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 181,
+            "row_sha256": "a714815fdc8d886e4de18e73f42c148b75f132f76b77d6edf5b159c8cdacf022",
+            "body_sha256": "a714815fdc8d886e4de18e73f42c148b75f132f76b77d6edf5b159c8cdacf022",
+            "captured_at": "2026-10-26T05:20:59.219Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 182,
+            "row_sha256": "f15a72a9ef054652228da2d3dd50602c282a2cb721e5cbd36854af2de053ccb6",
+            "body_sha256": "f15a72a9ef054652228da2d3dd50602c282a2cb721e5cbd36854af2de053ccb6",
+            "captured_at": "2026-10-26T05:20:59.796Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 183,
+            "row_sha256": "9b1db2de7d54f3a2638ef4aa8f8df266a79e1b254a177c0555365957a1ef3e33",
+            "body_sha256": "9b1db2de7d54f3a2638ef4aa8f8df266a79e1b254a177c0555365957a1ef3e33",
+            "captured_at": "2026-10-26T05:21:00.380Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 184,
+            "row_sha256": "36f2ce1cae34746041ebd5826db3e467780e48b76b577f50ce53e28ce41639b6",
+            "body_sha256": "36f2ce1cae34746041ebd5826db3e467780e48b76b577f50ce53e28ce41639b6",
+            "captured_at": "2026-10-26T05:21:01.115Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 185,
+            "row_sha256": "1a240cfb4425dfd2321f0f8dbf5bab61b33d8c4fc16f0b1db5cd7abd1333defe",
+            "body_sha256": "1a240cfb4425dfd2321f0f8dbf5bab61b33d8c4fc16f0b1db5cd7abd1333defe",
+            "captured_at": "2026-10-26T05:21:01.683Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 186,
+            "row_sha256": "cbc74e37907afb839c04c09935a2bf2b6076acd3528e76c0f620ee28443cbdec",
+            "body_sha256": "cbc74e37907afb839c04c09935a2bf2b6076acd3528e76c0f620ee28443cbdec",
+            "captured_at": "2026-10-26T05:21:02.282Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 187,
+            "row_sha256": "2c293cb1c4ab80b629782226cd5a15af784ac5dd68f590f0ab7a83012af47a0f",
+            "body_sha256": "dd8791ed26e595959d9d2c8d5473b5a56e47d60c8aaee27acfe57afa70258352",
+            "captured_at": "2026-10-26T05:21:03.000Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 189,
+            "row_sha256": "1868915fcc299dc23935db6bc962afa35e4f3ddc2760db2ec927b12080fe3728",
+            "body_sha256": "3365447b98aa25c71dc73a286fc77fab72b13c597ce2536bd47d5ecb85407eb3",
+            "captured_at": "2026-10-26T05:23:09.584Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 190,
+            "row_sha256": "578ffddaa2af4ab98aa27ca3b194a5282874960cfebef5865e9d73ca52d49444",
+            "body_sha256": "578ffddaa2af4ab98aa27ca3b194a5282874960cfebef5865e9d73ca52d49444",
+            "captured_at": "2026-10-26T05:23:10.060Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 191,
+            "row_sha256": "d74bcf4d8a90986dca1c70d9fcb2ea77b26bacb097c35db8a16ee5a75c15bee6",
+            "body_sha256": "d74bcf4d8a90986dca1c70d9fcb2ea77b26bacb097c35db8a16ee5a75c15bee6",
+            "captured_at": "2026-10-26T05:23:10.542Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 192,
+            "row_sha256": "facd8239159e89357cf297a70e0c9e2c89f5ac62cb94e63e0c9377303d6173d5",
+            "body_sha256": "7e086ff9f341c063c43fb5e71cb7fb5c8469dfb9b6dd8becb00e727faed2147c",
+            "captured_at": "2026-10-26T05:23:11.240Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 193,
+            "row_sha256": "d4d342e856d5a7cdcd2c17bc952bc9e2ea93bac0452c508564fe2a073455c3af",
+            "body_sha256": "5b6a931cfd2af413bf9b511efec309f38fe6222636c57f17f4239cfb16aaf172",
+            "captured_at": "2026-10-26T05:23:11.765Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 194,
+            "row_sha256": "e12baffe0e14aca71342cbfa280154b2cdcd25765fd43e102f3b0f9bdc610f1f",
+            "body_sha256": "e12baffe0e14aca71342cbfa280154b2cdcd25765fd43e102f3b0f9bdc610f1f",
+            "captured_at": "2026-10-26T05:23:12.360Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 195,
+            "row_sha256": "7b8af6bc8155a71b72b4d0d9378821240c806d9d8b66ffe3458463ea287fb0ac",
+            "body_sha256": "fd45428d95c3315b254dec452b884feeabebfed8429f82ec2dd1dbe6fa60922e",
+            "captured_at": "2026-10-26T05:23:13.287Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 196,
+            "row_sha256": "c66e6036025cb1c59dc9d5e9c5d395db2642b4103b2b42bad7319f79114e91d9",
+            "body_sha256": "c66e6036025cb1c59dc9d5e9c5d395db2642b4103b2b42bad7319f79114e91d9",
+            "captured_at": "2026-10-26T05:23:13.794Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 197,
+            "row_sha256": "bf0a13e434a9bde5326d3bc48508a2c8f71bc0510072207ed550beed993a7eef",
+            "body_sha256": "6bd7f33aa7f43519b71c35f008521f48e08779f96e4ba8316e88333de93e3d70",
+            "captured_at": "2026-10-26T05:23:14.428Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 198,
+            "row_sha256": "1a2678e6bd3ddae0ed9f6cea96bf3605fceed44338ad3c2887303189aa8cb2a4",
+            "body_sha256": "0f6ce4ed4df8f135c316912507d8e8d6709996feb65fbff25b34018e307804fb",
+            "captured_at": "2026-10-26T05:23:15.036Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 199,
+            "row_sha256": "d776bd353aa21099d046ff00cd5daed45bb8e518949ceaf31fdb461d9b6b676f",
+            "body_sha256": "d14b6112a4fcf04bd1a8e128f5a4bd86108d380f64ec582f73055bec751f6e80",
+            "captured_at": "2026-10-26T05:23:15.591Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 200,
+            "row_sha256": "e2ada6d8f7a156fe4464654168bc7b2603082e42608e166d372600ec5162ecbb",
+            "body_sha256": "ecac33e12a42d865215a82b87ae31af9d7a7ee5594cb3ebf79e64948b6336d72",
+            "captured_at": "2026-10-26T05:23:16.292Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 201,
+            "row_sha256": "d050d50ed9f9d0ad56d633ab94bdcdab0f76257f042520f362fc0b1d4264d78f",
+            "body_sha256": "d050d50ed9f9d0ad56d633ab94bdcdab0f76257f042520f362fc0b1d4264d78f",
+            "captured_at": "2026-10-26T05:23:16.892Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 202,
+            "row_sha256": "02b690fbbf3438943130397b87050506652b570876c6133d8450034eefb6a959",
+            "body_sha256": "02b690fbbf3438943130397b87050506652b570876c6133d8450034eefb6a959",
+            "captured_at": "2026-10-26T05:23:17.382Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 203,
+            "row_sha256": "08e162bc52e4ca1251add7b4d3366d09d9b27beceafd75f6a51daac62fcd64c1",
+            "body_sha256": "08e162bc52e4ca1251add7b4d3366d09d9b27beceafd75f6a51daac62fcd64c1",
+            "captured_at": "2026-10-26T05:23:17.849Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 204,
+            "row_sha256": "e9d57ee5cb9d3dd5fc9b443b3f1587a996b4918d2f0e1f33ef25da8fc908297b",
+            "body_sha256": "aa03bad215326366958eff7f9833abe9591476bc1bc186637b6e14f1d865f6d7",
+            "captured_at": "2026-10-26T05:23:18.493Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 205,
+            "row_sha256": "51db5162111917997943096f8217bdb085b3dde80025664546985aaa95b3e0d5",
+            "body_sha256": "51db5162111917997943096f8217bdb085b3dde80025664546985aaa95b3e0d5",
+            "captured_at": "2026-10-26T05:23:19.006Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 206,
+            "row_sha256": "70e8309899d5ec4904dcfb600b3eddc94d2cf71b7b36a422e010a7c62a02f682",
+            "body_sha256": "70e8309899d5ec4904dcfb600b3eddc94d2cf71b7b36a422e010a7c62a02f682",
+            "captured_at": "2026-10-26T05:23:19.584Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 207,
+            "row_sha256": "22d7f6bf960f6667d965f7a496147ad800c55c26682a0db3d5543e49d2c0e7f0",
+            "body_sha256": "22d7f6bf960f6667d965f7a496147ad800c55c26682a0db3d5543e49d2c0e7f0",
+            "captured_at": "2026-10-26T05:23:20.038Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 208,
+            "row_sha256": "20714b67727040b5849df1158f8abcf0eada1e0ee168819442919f68790c4377",
+            "body_sha256": "20714b67727040b5849df1158f8abcf0eada1e0ee168819442919f68790c4377",
+            "captured_at": "2026-10-26T05:23:20.652Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 209,
+            "row_sha256": "78b663f1e5b5454b1d7ed1b7a28dfbc3f1019f75240d69c2ed1a0c111f41fd95",
+            "body_sha256": "78b663f1e5b5454b1d7ed1b7a28dfbc3f1019f75240d69c2ed1a0c111f41fd95",
+            "captured_at": "2026-10-26T05:23:21.210Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 210,
+            "row_sha256": "5e4b01294331f9e33413e9fdcded54002165d8dab3ffb90a69ab89776cafd712",
+            "body_sha256": "6790ba1360b8f2a5e5fb392399802898cc23fe5bbf41d9ec94e5564866063b34",
+            "captured_at": "2026-10-26T05:23:21.838Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 211,
+            "row_sha256": "1feda4be2c0d565e917e2c2e2abd12bed0cfae1a4d0829ee0ecebbbc3bcaa989",
+            "body_sha256": "e78764558e18c06ba810aa2a2dfaa2a4f5d823dbe559eb443e1e11cb91801046",
+            "captured_at": "2026-10-26T05:23:22.472Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 212,
+            "row_sha256": "e540d1933def553886db27f417f1e351a1948e85f027d395ad36df86a435471e",
+            "body_sha256": "b89ce22de03a620a3e5786290f5b3696e51c23334cfee2034cd947d007422189",
+            "captured_at": "2026-10-26T05:23:23.017Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 213,
+            "row_sha256": "ffd5500c44a10f8ed1a0ac454b0cec67eb600448ed9392cf40df5dfa18d336c2",
+            "body_sha256": "ffd5500c44a10f8ed1a0ac454b0cec67eb600448ed9392cf40df5dfa18d336c2",
+            "captured_at": "2026-10-26T05:23:23.654Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 214,
+            "row_sha256": "f9ecbb789061c6d174b451adca3c3b15fb8a5a7b18461b1c9697aac08e6c94c0",
+            "body_sha256": "f9ecbb789061c6d174b451adca3c3b15fb8a5a7b18461b1c9697aac08e6c94c0",
+            "captured_at": "2026-10-26T05:23:24.406Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 215,
+            "row_sha256": "3592c7ded49a9046668048803043124838297ff7c1d1924679402d20954fc3df",
+            "body_sha256": "3592c7ded49a9046668048803043124838297ff7c1d1924679402d20954fc3df",
+            "captured_at": "2026-10-26T05:23:25.220Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 216,
+            "row_sha256": "85303cecef5fb077052641fdd2e8b4cd9e4b44500c69a13723378f5535523cdf",
+            "body_sha256": "85303cecef5fb077052641fdd2e8b4cd9e4b44500c69a13723378f5535523cdf",
+            "captured_at": "2026-10-26T05:23:25.744Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 217,
+            "row_sha256": "82c38f00591716ad002d385f393969ebc3b0ac2f786a9f43f6e09e269dd9ebff",
+            "body_sha256": "82c38f00591716ad002d385f393969ebc3b0ac2f786a9f43f6e09e269dd9ebff",
+            "captured_at": "2026-10-26T05:23:26.413Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 218,
+            "row_sha256": "7823da3916ad171757793d5515837610e78f0346a971aa52e6e82a1b4455419f",
+            "body_sha256": "7823da3916ad171757793d5515837610e78f0346a971aa52e6e82a1b4455419f",
+            "captured_at": "2026-10-26T05:23:42.768Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 219,
+            "row_sha256": "1fc95998b5fda255d0e8c8c2c3da6266badb28912bfa4e29c01a7265ac3174ef",
+            "body_sha256": "1fc95998b5fda255d0e8c8c2c3da6266badb28912bfa4e29c01a7265ac3174ef",
+            "captured_at": "2026-10-26T05:23:43.324Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 220,
+            "row_sha256": "f6c91018471bbffb79b9041ba3092d24524457739bdf0d644d4ad6ec865e2306",
+            "body_sha256": "bbe4cc765538d113b1539df81db1878d62f047f16e49fb360acac25e602c9a9a",
+            "captured_at": "2026-10-26T05:23:43.874Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 221,
+            "row_sha256": "377861584b1f730b418351b82f5c15edf3720e51c546938690f7c425a752b087",
+            "body_sha256": "377861584b1f730b418351b82f5c15edf3720e51c546938690f7c425a752b087",
+            "captured_at": "2026-10-26T05:23:44.459Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 222,
+            "row_sha256": "c66bd3b68cf24c03314fa82d6c68d6e1a2c83033221d4632e2767f14a51c511a",
+            "body_sha256": "c66bd3b68cf24c03314fa82d6c68d6e1a2c83033221d4632e2767f14a51c511a",
+            "captured_at": "2026-10-26T05:23:44.905Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 223,
+            "row_sha256": "f538fb35a26c98bce9becbae0a76460041dd2f18b344c677ad8d801a9ec81208",
+            "body_sha256": "f538fb35a26c98bce9becbae0a76460041dd2f18b344c677ad8d801a9ec81208",
+            "captured_at": "2026-10-26T05:23:45.540Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 224,
+            "row_sha256": "f3c8d422706b8315bb4a93466a9b93d8ed227535c407f3f493ebedbd8015dd59",
+            "body_sha256": "15610bdfedf7b391f261bde1b0d478d42bd07ea7d1080920b2d751b152dc62eb",
+            "captured_at": "2026-10-26T05:23:46.206Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 225,
+            "row_sha256": "cd6b3245545469071e28d541577220c616f27ef111f35100b4aa4239587351f9",
+            "body_sha256": "cd6b3245545469071e28d541577220c616f27ef111f35100b4aa4239587351f9",
+            "captured_at": "2026-10-26T05:23:46.987Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 226,
+            "row_sha256": "c6c2602112e5428ba477f5e84d779f9f666ad0745ac5120a6f27285f09f44416",
+            "body_sha256": "c6c2602112e5428ba477f5e84d779f9f666ad0745ac5120a6f27285f09f44416",
+            "captured_at": "2026-10-26T05:23:47.595Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 227,
+            "row_sha256": "a8dba71a28869a278913ad3b51bab12189e715ad5be2d0d94cc364265cf70bbe",
+            "body_sha256": "a8dba71a28869a278913ad3b51bab12189e715ad5be2d0d94cc364265cf70bbe",
+            "captured_at": "2026-10-26T05:23:48.037Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 228,
+            "row_sha256": "fec538d43d546f3dc291d0cf3bf3337c364a9f56e55407f4c6733515e787bc29",
+            "body_sha256": "20faa359d970046f4245c2d5075811bacf42b41499d7752af7ab875a6931168b",
+            "captured_at": "2026-10-26T05:23:48.612Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 229,
+            "row_sha256": "6ca502e03ae1b3b5d130c378f0e6a541fc5032c5e5dc004d3d702a889c43b108",
+            "body_sha256": "6ca502e03ae1b3b5d130c378f0e6a541fc5032c5e5dc004d3d702a889c43b108",
+            "captured_at": "2026-10-26T05:23:49.080Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 230,
+            "row_sha256": "31a3c60eb4c5b321c19d567525a9638e07dd011d84fb1018ca411b10ea760825",
+            "body_sha256": "31a3c60eb4c5b321c19d567525a9638e07dd011d84fb1018ca411b10ea760825",
+            "captured_at": "2026-10-26T05:23:49.554Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 231,
+            "row_sha256": "18e174432ee7c682a9d513b90db76c6b19d15381b716eed00de6a84fbb4edfe0",
+            "body_sha256": "bfca71fbd2b3f5f48f18464ccb90166e4bd5cd0980ca57a47a99046f724c9053",
+            "captured_at": "2026-10-26T05:23:50.112Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 232,
+            "row_sha256": "ea869df1d4de71410482b0151851c48adbc304de8c1af0508b1e6a923c0513c4",
+            "body_sha256": "ea869df1d4de71410482b0151851c48adbc304de8c1af0508b1e6a923c0513c4",
+            "captured_at": "2026-10-26T05:23:50.708Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 233,
+            "row_sha256": "b989b359c6072a458d2f9efd31f21d34bc4ea8ddde3ab5dcf4f6eb6b36ce8f95",
+            "body_sha256": "b989b359c6072a458d2f9efd31f21d34bc4ea8ddde3ab5dcf4f6eb6b36ce8f95",
+            "captured_at": "2026-10-26T05:23:51.300Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 234,
+            "row_sha256": "f1838f55ec2c7aa3547feb06fcd1e6a239756a8c1fb074912776b0081abb9ca4",
+            "body_sha256": "f1838f55ec2c7aa3547feb06fcd1e6a239756a8c1fb074912776b0081abb9ca4",
+            "captured_at": "2026-10-26T05:23:51.758Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 235,
+            "row_sha256": "3ba86eccd30d2be24152863971ddfa0c0a88ae7343bb05603268c9e4f5f92b33",
+            "body_sha256": "7f58edec28ea444d15c3fc307cded04ef6dc4c03f0a38dcd02f47b35678e8a84",
+            "captured_at": "2026-10-26T05:23:52.352Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 236,
+            "row_sha256": "b1fc2a684e3f4660c7e22339f70767d0e3c8c8f8336e61b90c9251546a8ef909",
+            "body_sha256": "ce24bda9a902e11e906ac8b4350d211d095c03a91c4ef3c7c93c713dd84163fa",
+            "captured_at": "2026-10-26T05:23:52.907Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 237,
+            "row_sha256": "4b012bd4631f67c49782c2ec160c491f8c0763dd6f0778397bf47f3de436a414",
+            "body_sha256": "4c6b4976476bbab19dfc30689d5f8eb827e644fa23b341d21584d05c26ad1b40",
+            "captured_at": "2026-10-26T05:23:53.514Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 238,
+            "row_sha256": "2004c3c9330e82fee6a7bbd0886f5cd8dfa866530aa627048cf890bcfc37b7cb",
+            "body_sha256": "e5aca66e6faf1a03c1f974be155d4c9fef35d3d45768717365cd13490efa4b4b",
+            "captured_at": "2026-10-26T05:23:54.039Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 239,
+            "row_sha256": "db81601f6a433084eb46012f391ad35e77cca1b47aee84e39972f90dc7ac0f12",
+            "body_sha256": "db81601f6a433084eb46012f391ad35e77cca1b47aee84e39972f90dc7ac0f12",
+            "captured_at": "2026-10-26T05:23:54.575Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 240,
+            "row_sha256": "3040e7b2bf3b79bc8c4cd4fba3f6def939db6abc621459a56fc695a556076fad",
+            "body_sha256": "3040e7b2bf3b79bc8c4cd4fba3f6def939db6abc621459a56fc695a556076fad",
+            "captured_at": "2026-10-26T05:23:55.208Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 241,
+            "row_sha256": "8ab85166d1ca85b0a917cac78362328e44ab44fa813d34c338f63607d9d6fb39",
+            "body_sha256": "8ab85166d1ca85b0a917cac78362328e44ab44fa813d34c338f63607d9d6fb39",
+            "captured_at": "2026-10-26T05:23:55.915Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 242,
+            "row_sha256": "cf1ae8e85c28fcd07b4ed8d784ce28f41fb1910418ffc705202c62b753a5b6a4",
+            "body_sha256": "cf1ae8e85c28fcd07b4ed8d784ce28f41fb1910418ffc705202c62b753a5b6a4",
+            "captured_at": "2026-10-26T05:23:56.435Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 243,
+            "row_sha256": "c66af33fa10739ee68e1d2f00f6900e7d3442800c00d5fd0fcf7cfa7126aaa91",
+            "body_sha256": "c66af33fa10739ee68e1d2f00f6900e7d3442800c00d5fd0fcf7cfa7126aaa91",
+            "captured_at": "2026-10-26T05:23:56.885Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 244,
+            "row_sha256": "de9166613be0bc9ea3706a8b81ecface580e6c92c223337da4cf597f20d535a1",
+            "body_sha256": "de9166613be0bc9ea3706a8b81ecface580e6c92c223337da4cf597f20d535a1",
+            "captured_at": "2026-10-26T05:23:57.484Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 245,
+            "row_sha256": "2923e5c05266d3a5beeae3119786e037ff529a9d88401ac1f0a594129b0817a2",
+            "body_sha256": "2923e5c05266d3a5beeae3119786e037ff529a9d88401ac1f0a594129b0817a2",
+            "captured_at": "2026-10-26T05:23:58.107Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 246,
+            "row_sha256": "8c7cb678e206c1841b78931ab31a437d81b3e6a2b05fdc3192ddcb1228b7484d",
+            "body_sha256": "8c7cb678e206c1841b78931ab31a437d81b3e6a2b05fdc3192ddcb1228b7484d",
+            "captured_at": "2026-10-26T05:23:58.640Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 247,
+            "row_sha256": "827267784b71d1186ceaba7fbd28a81f60659dbb7efb1ab7e56e2ee7bf5fc22c",
+            "body_sha256": "dd8a5133f5591d1654b718f8d82809e79b8a58634676658c5a51ce8bb91ff502",
+            "captured_at": "2026-10-26T05:23:59.238Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 248,
+            "row_sha256": "4c368ba6549b5f259fd2d2b4daa9c21f82ffc87dc4f18738e70abc30ca3fa761",
+            "body_sha256": "4c368ba6549b5f259fd2d2b4daa9c21f82ffc87dc4f18738e70abc30ca3fa761",
+            "captured_at": "2026-10-26T05:23:59.866Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 249,
+            "row_sha256": "16e2a5415258788849228c667cdd5e6874b9c546c718737aba246b56bf094764",
+            "body_sha256": "16e2a5415258788849228c667cdd5e6874b9c546c718737aba246b56bf094764",
+            "captured_at": "2026-10-26T05:24:00.385Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 250,
+            "row_sha256": "862282e990d055bc090778ef957fc282282b66ddbd795b36aec79e38e09705b8",
+            "body_sha256": "0b0918aa6fe19b04b4c970938c981d55b745716f5311c082d94ef7b4af3537dc",
+            "captured_at": "2026-10-26T05:24:00.874Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 251,
+            "row_sha256": "29e04994c89751d0b531190aded27286320b420193ae9dcf470a3b0f29fa8803",
+            "body_sha256": "29e04994c89751d0b531190aded27286320b420193ae9dcf470a3b0f29fa8803",
+            "captured_at": "2026-10-26T05:24:01.520Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 252,
+            "row_sha256": "72fd65170c45fc84cb2f5786924bbcd22925cf0c9eb2939b1bb694b912087178",
+            "body_sha256": "72fd65170c45fc84cb2f5786924bbcd22925cf0c9eb2939b1bb694b912087178",
+            "captured_at": "2026-10-26T05:24:02.120Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 253,
+            "row_sha256": "0eec4c5a98a7f332b363d06c75b366ab1084a80c681638710252bb446454e80e",
+            "body_sha256": "0eec4c5a98a7f332b363d06c75b366ab1084a80c681638710252bb446454e80e",
+            "captured_at": "2026-10-26T05:24:02.709Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 254,
+            "row_sha256": "65670c2549378dfef5e22cfb0590642039c225e48b7ed7fbbc97bcc313723173",
+            "body_sha256": "071fec4cceea372b6abd6ffeaf0c6d327a1b2cd15e7748f35d707636e978032e",
+            "captured_at": "2026-10-26T05:24:03.307Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 255,
+            "row_sha256": "9c65989cae5046b9e5a201a010a05f2bd700e0badc09f45a735f359459046f60",
+            "body_sha256": "4e787d7422160a70f9ec1761a8e1fc19fb9731ce808aa77523c825ac3f4d6dc8",
+            "captured_at": "2026-10-26T05:24:03.828Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 256,
+            "row_sha256": "2b0b732b4ebc640db3ea48fb6db8a97b47e25923c2dea8c02caf9b39689bf389",
+            "body_sha256": "2b0b732b4ebc640db3ea48fb6db8a97b47e25923c2dea8c02caf9b39689bf389",
+            "captured_at": "2026-10-26T05:24:04.474Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 257,
+            "row_sha256": "28cabdaeea28b692597e3acad4c130d77ed4a9a4e1343bbd77e9604a558ec35a",
+            "body_sha256": "3c0089f793f8095a8873e8d8838bc1a3d6249797b07dbaf9169236c8b3a35497",
+            "captured_at": "2026-10-26T05:24:05.068Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 258,
+            "row_sha256": "4abacf288346dcc8c5a705187956e63359007ca7d36699d5c6cfb753a507f096",
+            "body_sha256": "e42bb6410f6d99a513ce26e2f323b73b34ecb812b98a21d8dc8f79a1f20fff64",
+            "captured_at": "2026-10-26T05:24:05.640Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 259,
+            "row_sha256": "ef2af570b8759214b112251a0624ef0547a55eed05c51fd03e014fed396610a5",
+            "body_sha256": "ef2af570b8759214b112251a0624ef0547a55eed05c51fd03e014fed396610a5",
+            "captured_at": "2026-10-26T05:24:06.145Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 260,
+            "row_sha256": "feb1fe12cf1310d297e55e7fc29fabfb60e782295a44d8a6de717809063b6f5a",
+            "body_sha256": "5b70d457b0a98ed0bdb91f83ee7209ae407e4c3551d783d56da882e219ccedc3",
+            "captured_at": "2026-10-26T05:24:06.810Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 261,
+            "row_sha256": "a8d8d4c3074ac6e0039b68123233580ecf792564cff3e42bd9364f51f5aec5a6",
+            "body_sha256": "a8d8d4c3074ac6e0039b68123233580ecf792564cff3e42bd9364f51f5aec5a6",
+            "captured_at": "2026-10-26T05:24:07.435Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 262,
+            "row_sha256": "c59e25c09fc046161576ae28387075d84ab9dedfac03a9920b63e4c235db2db0",
+            "body_sha256": "c59e25c09fc046161576ae28387075d84ab9dedfac03a9920b63e4c235db2db0",
+            "captured_at": "2026-10-26T05:24:08.089Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          },
+          {
+            "sequence": 263,
+            "row_sha256": "3332e9e394ae73daadae6228fee14804f66169ca920111cb2e0fb00e0777645d",
+            "body_sha256": "3332e9e394ae73daadae6228fee14804f66169ca920111cb2e0fb00e0777645d",
+            "captured_at": "2026-10-26T05:24:08.686Z",
+            "date_status": "missing",
+            "reason": "date_missing_from_raw_capture"
+          }
+        ]
+      },
+      "date_enrichment": {
+        "output_file": "C:\\Users\\user\\.gemini\\antigravity\\scratch\\repos\\my-skills\\skills\\admin-gbetalk\\out\\date-backfill-20261027\\older-bodies-dated.jsonl",
+        "output_sha256": "0c94b0b8408ce9e7b0c7f1747bf7aa437a16906ee1c946aed225dee2e41298b0",
+        "record_count": 398,
+        "date_present_count": 398,
+        "date_missing_count": 0,
+        "date_maps": [
+          {
+            "file": "C:\\Users\\user\\.gemini\\antigravity\\scratch\\repos\\my-skills\\skills\\admin-gbetalk\\out\\date-backfill-20261027\\older-date-map.json",
+            "sha256": "ab5d2dd7360a164d4e96728b2393fdda98f345ad3e5d72d832ad2c8078df8152"
+          }
+        ],
+        "verified_metadata_file": null,
+        "verified_metadata_sha256": null,
+        "raw_source_sha256_verified": "f812aa562cdcbc68ada86780523cbedf651a78d8ed3e48ef23132e69987947cf",
+        "completed_at": "2026-10-27T08:26:58Z",
+        "date_only": true
+      }
+    }
+  ],
+  "updated_at": "2026-10-27T08:26:58Z",
+  "status": "complete",
+  "interpretation": "date_present_count/date_missing_count describe the date-enriched output. raw_before_backfill preserves the original raw-file gap; original raw JSONL files remain unchanged."
+}

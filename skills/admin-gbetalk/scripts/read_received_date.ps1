@@ -126,13 +126,37 @@ function Read-SenderHeaderText([string]$ImagePath, $Engine) {
 function Read-SenderRowText([string]$ImagePath, $Engine, [int]$Scale = 4) {
   $source = [System.Drawing.Bitmap]::new($ImagePath)
   try {
-    # The selected inbox row shows the sender label at the left edge of the
-    # message list. Keep the crop narrow enough to avoid the subject text, but
-    # include the role suffix that helps distinguish similar Korean names.
+    # Locate the selected row by its pale-blue background before cropping the
+    # sender. A fixed vertical offset can silently read a neighboring row.
     $x = [Math]::Max(0, [int]($source.Width * 0.165))
-    $y = [Math]::Max(0, [int]($source.Height * 0.26))
+    $sampleX = [Math]::Min($source.Width - 1, [int]($source.Width * 0.45))
+    $scanStart = [Math]::Max(0, [int]($source.Height * 0.09))
+    $scanEnd = [Math]::Min($source.Height, [int]($source.Height * 0.96))
+    $runs = [System.Collections.Generic.List[object]]::new()
+    $runStart = -1
+    for ($scanY = $scanStart; $scanY -lt $scanEnd; $scanY++) {
+      $pixel = $source.GetPixel($sampleX, $scanY)
+      $isSelected = $pixel.R -ge 185 -and $pixel.G -ge 205 -and $pixel.B -ge 220 -and ($pixel.B - $pixel.R) -ge 8
+      if ($isSelected -and $runStart -lt 0) { $runStart = $scanY }
+      if (-not $isSelected -and $runStart -ge 0) {
+        $runHeight = $scanY - $runStart
+        if ($runHeight -ge 24 -and $runHeight -le 90) {
+          $runs.Add([pscustomobject]@{ Start = $runStart; Height = $runHeight })
+        }
+        $runStart = -1
+      }
+    }
+    if ($runStart -ge 0) {
+      $runHeight = $scanEnd - $runStart
+      if ($runHeight -ge 24 -and $runHeight -le 90) {
+        $runs.Add([pscustomobject]@{ Start = $runStart; Height = $runHeight })
+      }
+    }
+    if ($runs.Count -ne 1) { throw ("Selected row highlight not uniquely found ({0})." -f $runs.Count) }
+    $cropHeight = [Math]::Min([int]($source.Height * 0.035), $runs[0].Height - 6)
+    $y = [Math]::Max(0, $runs[0].Start + [int](($runs[0].Height - $cropHeight) / 2))
     $width = [Math]::Min($source.Width - $x, [int]($source.Width * 0.095))
-    $height = [Math]::Min($source.Height - $y, [int]($source.Height * 0.035))
+    $height = [Math]::Min($source.Height - $y, $cropHeight)
     if ($width -lt 60 -or $height -lt 18) { throw '스크린샷 크기가 목록 발신자 표기를 읽기에 너무 작습니다.' }
 
     $crop = $source.Clone(

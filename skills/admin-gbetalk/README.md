@@ -227,9 +227,21 @@ python .\scripts\apply_sender_backfill.py `
   --verified-metadata .\out\capture-2026-10-older-backfill-continuation-263\older-bodies.jsonl
 ```
 
-2026-10-28 기준 10월 171건은 기존 검증 메타데이터 169건과 관리함에서 직접 확인한 2건을 합쳐 발신자 171건을 모두 채웠다. 과거 398건은 기존 sender 4건만 있으며 394건은 미확인이다. `out/sender-backfill-20261028/sender-completeness-audit.json`에 원본·출력 SHA-256, 누락 수, 판독 이력을 기록했다. 기존 보강본은 원본 행을 수정하지 않는다.
+2026-10-28 기준 기존 10월 171건은 발신자 171건을 채웠고, 같은 날 받은쪽지함을 키보드로 순회해 10월 신규 23건을 더 확인했다. 새 캡처는 `out/capture-2026-10-new-20261028-run1/`에 원본 그대로 분리돼 있다. 2026-10-26 09:05 경계 행의 행/본문 지문을 만나기 전까지만 저장하고, 경계에서 저장 0건으로 멈춘 것을 확인했다. 과거 398건은 기존 sender 4건만 있으며 394건은 미확인이다. 기존 보강본은 원본 행을 수정하지 않는다.
 
-한국어 Windows OCR이 화면의 `이명숙`을 `이영숙`으로 반복 오독했으므로 발신자 OCR은 검증되지 않은 후보로만 취급한다. 화면과 대조하지 않은 OCR값을 저장하지 않는다. 검색으로 쪽지를 찾은 뒤 탭을 닫았을 때 목록 강조와 미리보기가 달라진 사례도 있어, 검색 탭을 닫은 뒤에는 새 화면 상태를 확인하기 전까지 키 입력을 보내지 않는다. 자세한 실패와 복구는 [트러블슈팅 이력](references/troubleshooting.md)과 [키보드 매크로 방법론](references/keyboard-macro-methodology.md)에 기록했다.
+8·9·10월 파일을 따로 만들고 발신자 누락을 집계하려면 다음 스크립트를 사용한다. 기존 sender가 없는 메시지는 추정하지 않고 `sender: null`, `sender_capture_status: missing`으로 남기며, 10월 live capture는 같은 날짜 안에서 먼저 배치한다. 날짜별 수신 시각은 저장되지 않았으므로 같은 날짜의 정확한 시간순이라고 해석하지 않는다.
+
+```powershell
+python .\scripts\build_sender_month_slices.py `
+  .\out\sender-backfill-20261028\october-raw-with-senders-verified.jsonl `
+  .\out\sender-backfill-20261028\older-bodies-with-senders-verified.jsonl `
+  .\out\sender-monthly-20261028-with-new-october `
+  --new-october-jsonl .\out\capture-2026-10-new-20261028-run1\raw-bodies.jsonl
+```
+
+현재 월별 결과는 총 560건이며 발신자 확인 수는 8월 0/113, 9월 5/255, 10월 192/192다. 8월 113건과 9월 250건은 아직 미확인으로 남아 있다. 소스 해시와 월별 결과 해시는 출력 디렉터리의 `sender-month-slices-audit.json`에서 확인한다.
+
+한국어 Windows OCR이 화면의 `이명숙`을 `이영숙`으로, `강동휘`를 `강등뤼`로 잘못 읽은 사례가 있어 발신자 OCR은 검증되지 않은 후보로만 취급한다. 목록 `Ctrl+C`도 한 번 시험했으나 포커스가 메시지 본문이어서 클립보드는 비어 있었다. 화면과 대조하지 않은 OCR값을 저장하지 않는다. 검색으로 쪽지를 찾은 뒤 탭을 닫았을 때 목록 강조와 미리보기가 달라진 과거 사례도 있어, 검색 탭을 닫은 뒤에는 새 화면 상태를 확인하기 전까지 키 입력을 보내지 않는다. 자세한 실패와 복구는 [트러블슈팅 이력](references/troubleshooting.md)과 [키보드 매크로 방법론](references/keyboard-macro-methodology.md)에 기록했다.
 
 ## UIA가 작동하지 않을 때
 

@@ -52,11 +52,11 @@ function createReceivedDateOcrWorker() {
     if (receivedDateOcrWorker === worker) receivedDateOcrWorker = null;
   });
 
-  worker.recognize = (imagePath) => new Promise((resolve, reject) => {
+  worker.recognize = (imagePath, op = 'date') => new Promise((resolve, reject) => {
     if (worker.closed || child.stdin.destroyed) { reject(new Error('Windows 날짜 OCR 프로세스가 닫혀 있습니다.')); return; }
     const id = ++nextRequestId;
     pending.set(id, { resolve, reject });
-    child.stdin.write(`${JSON.stringify({ id, path: imagePath })}\n`, (error) => {
+    child.stdin.write(`${JSON.stringify({ id, path: imagePath, op })}\n`, (error) => {
       if (!error) return;
       pending.delete(id);
       reject(new Error(`날짜 OCR 요청을 전달하지 못했습니다: ${error.message}`));
@@ -91,7 +91,7 @@ function getReceivedDateOcrWorker() {
   return receivedDateOcrWorker;
 }
 
-export function parseReceivedDateFromOcr(text, { year, previousDate = null, monthCorrection = null } = {}) {
+export function parseReceivedDateFromOcr(text, { year, previousDate = null, monthCorrection = null, direction = 'older' } = {}) {
   const ocrText = String(text);
   const explicit = [...ocrText.matchAll(/(?<!\d)(20\d{2})\s*[./-]\s*(\d{1,2})\s*[./-]\s*(\d{1,2})(?!\d)/gu)]
     .map((match) => ({ year: Number(match[1]), month: Number(match[2]), day: Number(match[3]) }));
@@ -154,15 +154,25 @@ export function parseReceivedDateFromOcr(text, { year, previousDate = null, mont
     throw new Error('화면 날짜에 연도가 없어 사용할 기준 연도가 올바르지 않습니다.');
   }
   let receivedDate = isoDate(resolvedYear, candidate.month, candidate.day);
-  if (!candidate.year && previousDate && receivedDate > previousDate) {
+  if (!candidate.year && previousDate && direction === 'older' && receivedDate > previousDate) {
     const previous = new Date(`${previousDate}T00:00:00Z`);
     if (candidate.month > previous.getUTCMonth() + 1) {
       resolvedYear -= 1;
       receivedDate = isoDate(resolvedYear, candidate.month, candidate.day);
     }
   }
-  if (previousDate && receivedDate > previousDate) {
+  if (!candidate.year && previousDate && direction === 'newer' && receivedDate < previousDate) {
+    const previous = new Date(`${previousDate}T00:00:00Z`);
+    if (candidate.month < previous.getUTCMonth() + 1) {
+      resolvedYear += 1;
+      receivedDate = isoDate(resolvedYear, candidate.month, candidate.day);
+    }
+  }
+  if (previousDate && direction === 'older' && receivedDate > previousDate) {
     throw new Error(`목록이 오래된순으로 진행되지 않았거나 OCR 날짜가 바뀌었습니다: ${receivedDate} 다음 기준 ${previousDate}`);
+  }
+  if (previousDate && direction === 'newer' && receivedDate < previousDate) {
+    throw new Error(`목록이 최신순으로 진행되지 않았거나 OCR 날짜가 바뀌었습니다: ${receivedDate} 이전 기준 ${previousDate}`);
   }
   return receivedDate;
 }
@@ -176,7 +186,7 @@ function isoDate(year, month, day) {
   return value;
 }
 
-async function readReceivedDateForSnapshot(sky, window, expected, { year, previousDate = null, monthCorrection = null } = {}) {
+export async function readReceivedDateForSnapshot(sky, window, expected, { year, previousDate = null, monthCorrection = null, direction = 'older' } = {}) {
   let mismatch = null;
   for (let attempt = 0; attempt < 4; attempt += 1) {
     const state = await sky.get_window_state({ window, include_text: true, include_screenshot: true });
@@ -189,7 +199,7 @@ async function readReceivedDateForSnapshot(sky, window, expected, { year, previo
       continue;
     }
     const accessibleDateText = receivedDateTextFromAccessibility(state);
-    if (accessibleDateText) return parseReceivedDateFromOcr(accessibleDateText, { year, previousDate, monthCorrection });
+    if (accessibleDateText) return parseReceivedDateFromOcr(accessibleDateText, { year, previousDate, monthCorrection, direction });
 
     const screenshot = [...(state.screenshots ?? [])]
       .filter((item) => typeof item.url === 'string' && item.url.startsWith('data:image/'))
@@ -201,12 +211,94 @@ async function readReceivedDateForSnapshot(sky, window, expected, { year, previo
     try {
       await fs.writeFile(imagePath, Buffer.from(screenshot.url.slice(screenshot.url.indexOf(',') + 1), 'base64'));
       const text = await getReceivedDateOcrWorker().recognize(imagePath);
-      return parseReceivedDateFromOcr(text, { year, previousDate, monthCorrection });
+      return parseReceivedDateFromOcr(text, { year, previousDate, monthCorrection, direction });
     } finally {
       await fs.rm(tempDir, { recursive: true, force: true });
     }
   }
   throw new Error(`날짜 판독 전에 선택 행/본문 일치를 확인하지 못했습니다: ${mismatch?.message ?? '알 수 없는 UI 불일치'}`);
+}
+
+export async function readSenderHeaderForSnapshot(sky, window, expected, op = 'sender') {
+  if (!['sender', 'sender-row'].includes(op) && !/^sender-row-[2-8]$/u.test(op)) {
+    throw new Error(`지원하지 않는 발신자 OCR 영역입니다: ${op}`);
+  }
+  let mismatch = null;
+  for (let attempt = 0; attempt < 4; attempt += 1) {
+    const state = await sky.get_window_state({ window, include_text: true, include_screenshot: true });
+    let observed;
+    try { observed = snapshotFromState(state); }
+    catch (error) { mismatch = error; await sleep(100); continue; }
+    if (!sameSnapshot(expected, observed)) {
+      mismatch = new Error('발신자를 읽는 동안 선택 행 또는 본문이 바뀌었습니다.');
+      await sleep(100);
+      continue;
+    }
+    const screenshot = [...(state.screenshots ?? [])]
+      .filter((item) => typeof item.url === 'string' && item.url.startsWith('data:image/'))
+      .sort((left, right) => ((right.width ?? 0) * (right.height ?? 0)) - ((left.width ?? 0) * (left.height ?? 0)))[0];
+    if (!screenshot) throw new Error('발신자를 읽을 전체 쪽지관리함 스크린샷이 없습니다.');
+
+    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'gbtalk-sender-'));
+    const imagePath = path.join(tempDir, 'selected-message.jpg');
+    try {
+      await fs.writeFile(imagePath, Buffer.from(screenshot.url.slice(screenshot.url.indexOf(',') + 1), 'base64'));
+      const text = await getReceivedDateOcrWorker().recognize(imagePath, op);
+      return {
+        text: text.trim(),
+        rowSha: observed.rowSha,
+        bodySha: observed.bodySha,
+        area: op,
+        verificationStatus: 'unverified-ocr-candidate',
+        requiresVisualReview: true,
+      };
+    } finally {
+      await fs.rm(tempDir, { recursive: true, force: true });
+    }
+  }
+  throw new Error(`발신자 판독 전에 선택 행/본문 일치를 확인하지 못했습니다: ${mismatch?.message ?? '알 수 없는 UI 불일치'}`);
+}
+
+export function createVerifiedSenderReader(records) {
+  if (!Array.isArray(records)) throw new Error('검토된 발신자 매핑 records 배열이 필요합니다.');
+  const bySequence = new Map();
+  for (const record of records) {
+    const sequence = record?.sequence;
+    const sender = typeof record?.sender === 'string' ? record.sender.trim() : '';
+    const hasVisibleEvidence = Boolean(
+      (typeof record?.visible_header === 'string' && record.visible_header.trim())
+      || (typeof record?.visible_list_label === 'string' && record.visible_list_label.trim())
+    );
+    if (
+      !Number.isInteger(sequence)
+      || sequence < 1
+      || bySequence.has(sequence)
+      || !/^[a-f0-9]{64}$/u.test(record?.row_sha256 ?? '')
+      || !/^[a-f0-9]{64}$/u.test(record?.body_sha256 ?? '')
+      || !sender
+      || sender.length > 120
+      || /[\r\n]/u.test(sender)
+      || typeof record?.received_date !== 'string'
+      || !/^\d{4}-\d{2}-\d{2}$/u.test(record.received_date)
+      || isoDate(...record.received_date.split('-').map(Number)) !== record.received_date
+      || typeof record?.verification_method !== 'string'
+      || !record.verification_method.trim()
+      || !(record.manually_verified === true || record.verification_status === 'verified-visible-header')
+      || !hasVisibleEvidence
+    ) throw new Error(`검토된 발신자 매핑 ${sequence ?? '(순번 없음)'}의 필수 근거가 빠졌거나 중복입니다.`);
+    bySequence.set(sequence, record);
+  }
+  return async ({ sequence, snapshot }) => {
+    const record = bySequence.get(sequence);
+    if (!record) throw new Error(`순번 ${sequence}의 화면 검토 발신자 매핑이 없습니다.`);
+    if (record.row_sha256 !== snapshot.rowSha || record.body_sha256 !== snapshot.bodySha) {
+      throw new Error(`순번 ${sequence}의 화면 행/본문 지문이 발신자 매핑과 다릅니다.`);
+    }
+    if (record.received_date !== snapshot.receivedDate) {
+      throw new Error(`순번 ${sequence}의 화면 날짜가 발신자 매핑과 다릅니다.`);
+    }
+    return { ...record, verification_status: 'verified-visible-header' };
+  };
 }
 
 function receivedDateTextFromAccessibility(state) {
@@ -308,6 +400,79 @@ async function dateForRecord(sky, window, current, checkpoint, { year, reader, c
   }
 }
 
+async function senderForRecord(sky, window, current, checkpoint, { reader, checkpointPath } = {}) {
+  const sequence = checkpoint.next_row?.sequence ?? checkpoint.next_sequence;
+  try {
+    const pending = checkpoint.next_sender;
+    const canReusePending = pending
+      && pending.sequence === sequence
+      && pending.row_sha256 === current.rowSha
+      && pending.body_sha256 === current.bodySha;
+    if (pending && !canReusePending) delete checkpoint.next_sender;
+    if (!canReusePending && typeof reader !== 'function') {
+      throw new Error('발신자 확인기(senderReader)가 없습니다. 확인되지 않은 발신자를 저장하지 않습니다.');
+    }
+    const result = canReusePending ? {
+      sender: pending.sender,
+      ...pending.evidence,
+      verification_status: 'verified-visible-header',
+    } : await reader({ sky, window, snapshot: current, sequence });
+    const sender = typeof result?.sender === 'string' ? result.sender.trim() : '';
+    const hasVisibleEvidence = Boolean(
+      (typeof result?.visible_header === 'string' && result.visible_header.trim())
+      || (typeof result?.visible_list_label === 'string' && result.visible_list_label.trim())
+    );
+    if (
+      !sender
+      || sender.length > 120
+      || /[\r\n]/u.test(sender)
+      || result?.received_date !== current.receivedDate
+      || typeof result?.verification_method !== 'string'
+      || !result.verification_method.trim()
+      || !(result.verification_status === 'verified-visible-header' || result.manually_verified === true)
+      || !hasVisibleEvidence
+    ) {
+      throw new Error('발신자 확인 결과에 이름, 화면 근거, 시각 확인 상태가 모두 필요합니다. OCR 후보만으로는 저장할 수 없습니다.');
+    }
+
+    const observed = snapshotFromState(await latestState(sky, window));
+    if (!sameSnapshot(current, observed)) {
+      throw new Error('발신자 확인 중 선택 행 또는 본문이 바뀌었습니다.');
+    }
+    const evidence = {
+      received_date: result.received_date,
+      verification_method: result.verification_method.trim(),
+      ...(result.visible_header ? { visible_header: String(result.visible_header).trim() } : {}),
+      ...(result.visible_list_label ? { visible_list_label: String(result.visible_list_label).trim() } : {}),
+      verified_at: result.verified_at ?? new Date().toISOString(),
+    };
+    checkpoint.next_sender = {
+      sequence,
+      row_sha256: current.rowSha,
+      body_sha256: current.bodySha,
+      sender,
+      evidence,
+    };
+    checkpoint.status = 'paused';
+    delete checkpoint.sender_capture_error;
+    checkpoint.updated_at = new Date().toISOString();
+    if (checkpointPath) await atomicJson(checkpointPath, checkpoint);
+    return { sender, evidence };
+  } catch (error) {
+    checkpoint.status = 'paused-sender-read-error';
+    checkpoint.sender_capture_error = {
+      sequence,
+      row_sha256: current.rowSha,
+      body_sha256: current.bodySha,
+      message: error.message,
+      failed_at: new Date().toISOString(),
+    };
+    checkpoint.updated_at = new Date().toISOString();
+    if (checkpointPath) await atomicJson(checkpointPath, checkpoint);
+    throw error;
+  }
+}
+
 function extractSelectedRow(state) {
   const lines = (state?.accessibility?.tree ?? '').split(/\r?\n/);
   const listIndex = lines.findIndex((line) => /^\s*\d+ 창 UltariList\b/.test(line));
@@ -353,7 +518,7 @@ function inboxRowElementIndex(state) {
   throw new Error('수신 목록에서 선택된 쪽지 행을 찾지 못했습니다.');
 }
 
-function isInboxRowFocus(state) {
+export function isInboxRowFocus(state) {
   const focused = state?.accessibility?.focused_element?.trim() ?? '';
   const match = focused.match(/^\s*(\d+) 창\s+/);
   if (!match) return false;
@@ -384,7 +549,7 @@ function attachmentFilenameFromRow(row) {
   return match?.[1]?.trim() ?? null;
 }
 
-function snapshotFromState(state) {
+export function snapshotFromState(state) {
   const row = extractSelectedRow(state);
   // A recalled message can leave the previous message in the preview's UIA
   // Value. The selected list row itself is the authoritative visible marker.
@@ -511,8 +676,10 @@ function checkpointForEmpty(journalPath) {
     last_row_sha256: null,
     last_body_sha256: null,
     last_received_date: null,
+    last_sender: null,
     date_group_count: 0,
     next_received_date: null,
+    next_sender: null,
     next_row: null,
     pending_append: null,
     stop_before_row_sha256: null,
@@ -567,7 +734,9 @@ async function recoverPendingAppend(journalPath, checkpointPath, checkpoint, buf
       if (record.received_date !== checkpoint.last_received_date) checkpoint.date_group_count = (checkpoint.date_group_count ?? 0) + 1;
       checkpoint.last_received_date = record.received_date;
     }
+    if (record.sender) checkpoint.last_sender = record.sender;
     checkpoint.next_received_date = null;
+    checkpoint.next_sender = null;
     checkpoint.next_row = null;
     checkpoint.pending_append = null;
     checkpoint.stop_reason = null;
@@ -620,10 +789,13 @@ async function commitRecord(journalPath, checkpointPath, checkpoint, record) {
     if (record.received_date !== checkpoint.last_received_date) checkpoint.date_group_count = (checkpoint.date_group_count ?? 0) + 1;
     checkpoint.last_received_date = record.received_date;
   }
+  if (record.sender) checkpoint.last_sender = record.sender;
   checkpoint.next_received_date = null;
+  checkpoint.next_sender = null;
   checkpoint.pending_append = null;
   checkpoint.stop_reason = null;
   checkpoint.status = 'paused';
+  delete checkpoint.sender_capture_error;
   checkpoint.updated_at = new Date().toISOString();
   await atomicJson(checkpointPath, checkpoint);
 }
@@ -633,6 +805,7 @@ async function saveNextCursor(checkpointPath, checkpoint, current, sequence, occ
   checkpoint.stop_reason = null;
   checkpoint.status = 'paused';
   checkpoint.next_received_date = current.receivedDate ?? null;
+  checkpoint.next_sender = null;
   checkpoint.next_row = {
     sequence,
     row_sha256: current.rowSha,
@@ -749,8 +922,9 @@ async function resyncFromHome(sky, window, rows, delayMs, maxResyncRows) {
 }
 
 /**
- * Capture one small batch (30 by default) from newest to older. A checkpoint is
- * synced for every body; the caller should inspect the batch before starting another.
+ * Capture one small batch (30 by default) from newest to older. Each row needs
+ * a visually verified senderReader entry tied to its date and row/body hashes.
+ * A checkpoint is synced for every record; inspect the batch before starting another.
  */
 export async function captureRawBodies({
   sky,
@@ -762,9 +936,11 @@ export async function captureRawBodies({
   stopBeforeRowSha256,
   receivedDateYear,
   dateReader,
+  senderReader,
 }) {
   if (!sky || !window || !outputDir) throw new Error('sky, window, outputDir가 필요합니다.');
   if (!Number.isInteger(maxItems) || maxItems < 1 || maxItems > 30) throw new Error('한 번의 캡처는 1~30건으로 제한합니다.');
+  if (typeof senderReader !== 'function') throw new Error('senderReader가 필요합니다. 발신자 확인 없이 캡처를 시작하지 않습니다.');
   await fs.mkdir(outputDir, { recursive: true });
 
   const journalPath = path.join(outputDir, 'raw-bodies.jsonl');
@@ -845,11 +1021,14 @@ export async function captureRawBodies({
   while (rows.length - startedCount < maxItems) {
     const occurrence = (rowOccurrences.get(current.rowSha) ?? 0) + 1;
     const receivedDate = await dateForRecord(sky, window, current, checkpoint, { year: receivedDateYear, reader: dateReader, checkpointPath });
+    const senderCapture = await senderForRecord(sky, window, current, checkpoint, { reader: senderReader, checkpointPath });
     const record = {
       sequence: rows.length + 1,
       row_sha256: current.rowSha,
       row_occurrence: occurrence,
       received_date: receivedDate,
+      sender: senderCapture.sender,
+      sender_evidence: senderCapture.evidence,
       body: current.body,
       body_sha256: current.bodySha,
       captured_at: new Date().toISOString(),
@@ -1308,8 +1487,8 @@ function finishIncrementalStop(checkpoint, checkpointPath, status, details) {
 
 /**
  * Capture only messages newer than a trusted raw capture. Start at Home,
- * write new messages in small batches, and stop before a known row/body-pair
- * boundary candidate. Partial fingerprint matches stop as ambiguous.
+ * write new messages in small batches with a verified sender, and stop before
+ * a known row/body-pair boundary candidate. Partial fingerprint matches stop as ambiguous.
  */
 export async function captureNewUntilKnown({
   sky,
@@ -1323,6 +1502,7 @@ export async function captureNewUntilKnown({
   maxResyncRows = 300,
   receivedDateYear,
   dateReader,
+  senderReader,
 }) {
   if (!sky || !window || !baselineRawJsonl || !outputDir) {
     throw new Error('sky, window, baselineRawJsonl, outputDir가 필요합니다.');
@@ -1330,6 +1510,7 @@ export async function captureNewUntilKnown({
   if (!Number.isInteger(maxItems) || maxItems < 1 || maxItems > 30) {
     throw new Error('한 번의 증분 캡처는 1~30건으로 제한합니다.');
   }
+  if (typeof senderReader !== 'function') throw new Error('senderReader가 필요합니다. 발신자 확인 없이 증분 캡처를 시작하지 않습니다.');
 
   const baselinePath = path.resolve(baselineRawJsonl);
   const outputPath = path.resolve(outputDir);
@@ -1464,11 +1645,14 @@ export async function captureNewUntilKnown({
 
     const occurrence = (rowOccurrences.get(current.rowSha) ?? 0) + 1;
     const receivedDate = await dateForRecord(sky, window, current, checkpoint, { year: receivedDateYear, reader: dateReader, checkpointPath });
+    const senderCapture = await senderForRecord(sky, window, current, checkpoint, { reader: senderReader, checkpointPath });
     const record = {
       sequence: rows.length + 1,
       row_sha256: current.rowSha,
       row_occurrence: occurrence,
       received_date: receivedDate,
+      sender: senderCapture.sender,
+      sender_evidence: senderCapture.evidence,
       body: current.body,
       body_sha256: current.bodySha,
       captured_at: new Date().toISOString(),
@@ -1525,7 +1709,7 @@ export async function captureNewUntilKnown({
  * Backfill messages older than the oldest item in a verified archived range.
  * The first call only locates and records the anchor candidate. The caller
  * must compare the visible date/sender with the range manifest and call again
- * with confirmedAnchor before any older body is written.
+ * with confirmedAnchor and a verified senderReader before any older body is written.
  */
 export async function captureOlderThanKnown({
   sky,
@@ -1543,6 +1727,7 @@ export async function captureOlderThanKnown({
   maxAnchorScanRows = 1000,
   receivedDateYear,
   dateReader,
+  senderReader,
 }) {
   if (!sky || !window || !baselineRawJsonl || !baselineVerifiedJsonl || !baselineRangeManifest || !outputDir) {
     throw new Error('sky, window, 기준 raw/검증 JSONL/범위 매니페스트, outputDir가 필요합니다.');
@@ -1600,6 +1785,9 @@ export async function captureOlderThanKnown({
     anchorConfirmation.received_at !== anchor.received_at
     || anchorConfirmation.sender !== anchor.sender
   )) throw new Error('확인한 날짜/발신자가 범위 매니페스트의 가장 오래된 쪽지와 다릅니다.');
+  if (anchorConfirmation && typeof senderReader !== 'function') {
+    throw new Error('senderReader가 필요합니다. 발신자 확인 없이 과거 캡처를 시작하지 않습니다.');
+  }
 
   await fs.mkdir(outputPath, { recursive: true });
   const journalPath = path.join(outputPath, 'older-bodies.jsonl');
@@ -2234,6 +2422,25 @@ export async function captureOlderThanKnown({
       reader: dateReader,
       checkpointPath,
     });
+    const senderCapture = await senderForRecord(sky, window, current, checkpoint, {
+      reader: senderReader,
+      checkpointPath,
+    });
+    const expectedSenders = [
+      attachmentReference?.sender,
+      duplicateConfirmation?.sender,
+      confirmedCurrentRepeatBody?.sender,
+    ].filter((value) => typeof value === 'string' && value.trim());
+    if (expectedSenders.some((value) => value !== senderCapture.sender)) {
+      await finishIncrementalStop(checkpoint, checkpointPath, 'paused-confirmation-sender-mismatch', {
+        expected_senders: [...new Set(expectedSenders)],
+        observed_sender: senderCapture.sender,
+        row_sha256: current.rowSha,
+        body_sha256: current.bodySha,
+        message: '기존 중복/첨부 확인 발신자와 화면에서 확인한 발신자가 다릅니다. 저장하지 않고 멈췄습니다.',
+      });
+      throw new Error('중복/첨부 확인 발신자와 화면 발신자가 다릅니다. 저장하지 않고 멈췄습니다.');
+    }
     if (duplicateConfirmation && duplicateConfirmation.received_date !== receivedDate) {
       await finishIncrementalStop(checkpoint, checkpointPath, 'paused-confirmation-date-mismatch', {
         expected_received_date: duplicateConfirmation.received_date,
@@ -2252,6 +2459,8 @@ export async function captureOlderThanKnown({
       row_sha256: current.rowSha,
       row_occurrence: occurrence,
       received_date: receivedDate,
+      sender: senderCapture.sender,
+      sender_evidence: senderCapture.evidence,
       ...(current.receivedDateEvidence ? { received_date_verification: current.receivedDateEvidence } : {}),
       body: recordBody,
       body_sha256: sha256(recordBody),

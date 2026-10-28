@@ -66,9 +66,18 @@ python .\gbtalk_summary.py archive-session --before 2026-10-01 --period month
 
 `scripts/capture_macro.mjs`의 `captureRawBodies`는 Computer Use `sky`로 유일한 `쪽지관리함` 창을 지정해 실행합니다. 시작 전에 **받은쪽지함**을 선택합니다. 매크로는 필요할 때만 선택된 자식 행을 클릭해 목록 포커스를 잡고, 이동은 `Home`/`↓` 키보드로 수행하며 본문은 UIA 값으로 읽습니다. 한 번 실행은 최대 30건으로 제한합니다. 각 행을 JSONL에 동기화하고 체크포인트에 본문/행 해시를 기록하므로, 실행이 중간에 끝나면 확정된 행을 검증한 뒤 재개합니다. 재탐색 때 행 지문이 달라져도 본문 해시가 저장 구간에 한 번만 나타나면 일치로 인정하고, 중복 본문이면 중단합니다. 미완성 마지막 JSONL 줄이 예상 기록의 일부와 일치할 때만 미확정 꼬리를 복구하고, 앞부분 해시나 예상 내용이 다르면 중단합니다. 날짜 경계가 확인되면 `stopBeforeRowSha256`에 경계 행 지문을 지정할 수 있으며, 해당 값이 체크포인트에 보존되어 행 지문 또는 본문 지문이 맞는 행부터 기록하지 않고 멈춥니다.
 
-이 단계는 원문 백업용 임시 캡처입니다. 출력 폴더에는 `raw-bodies.jsonl`과 `capture-checkpoint.json`만 만들며, 화면 이미지와 사진·첨부 파일은 저장하지 않습니다. 새 레코드는 UIA 또는 화면에서 확인한 `received_date`만 가지며, 발신자/제목은 자동 검증하지 않습니다. 결과를 `archive-batch`에 바로 넣지 말고, 발신자/제목을 확인해 `sequence,title` CSV를 만든 뒤 아래 도구로 검증하세요. raw JSONL에 날짜가 없는 과거 행은 CSV에 `received_date` 또는 `received_at` 열을 추가해 날짜를 대조해야 합니다. 각 30건 묶음 뒤에는 순번, 본문 해시, 체크포인트 앞부분 해시를 확인하고 다음 묶음을 시작합니다. 관리함 입력은 전경 창을 사용합니다.
+이 단계는 원문 백업용 임시 캡처입니다. 출력 폴더에는 `raw-bodies.jsonl`과 `capture-checkpoint.json`만 만들며, 화면 이미지와 사진·첨부 파일은 저장하지 않습니다. 새 레코드에는 `received_date`, 검토된 `sender`, `sender_evidence`가 포함됩니다. 캡처 함수는 지문별로 확인된 `senderReader`가 없으면 시작을 거부하며, OCR 후보만으로는 발신자를 저장하지 않습니다. 기존 raw를 월별 보관으로 옮길 때는 발신자/날짜를 대조해 `sequence,title` CSV와 `received_date`를 준비한 뒤 `build_archive_input.py`로 검증합니다. 각 30건 묶음 뒤에는 순번, 본문 해시, 발신자 누락, 체크포인트 앞부분 해시를 확인하고 다음 묶음을 시작합니다. 관리함 입력은 전경 창을 사용합니다.
 
-취소 placeholder의 행/본문 지문이 기존 raw에 여러 번 있으면 자동으로 통과하지 않습니다. 모호한 후보는 저장 전 `paused-ambiguous-existing` 체크포인트에 지문과 기준 매치 순번을 기록합니다. `captureOlderThanKnown`의 `confirmedDistinctCandidate`는 화면에서 확인한 날짜/발신자, 기준 매치 순번 전체, 바로 앞에 저장된 순번 및 행/본문 지문이 일치할 때만 그 취소 쪽지를 별개 항목으로 저장합니다. 이 예외 레코드에만 확인한 수신시각/발신자가 함께 저장됩니다. 확인 정보는 다음 실행에서 다시 검증됩니다. 현재 행이나 직전 커서가 바뀌면 확인 객체를 전달하지 말고 화면에서 후보를 다시 대조하세요.
+취소 placeholder의 행/본문 지문이 기존 raw에 여러 번 있으면 자동으로 통과하지 않습니다. 모호한 후보는 저장 전 `paused-ambiguous-existing` 체크포인트에 지문과 기준 매치 순번을 기록합니다. `captureOlderThanKnown`의 `confirmedDistinctCandidate`는 화면에서 확인한 날짜/발신자, 기준 매치 순번 전체, 바로 앞에 저장된 순번 및 행/본문 지문이 일치할 때만 그 취소 쪽지를 별개 항목으로 저장합니다. 이 확인 정보는 일반 레코드의 `sender`에도 대조해 저장되며 다음 실행에서 다시 검증됩니다. 현재 행이나 직전 커서가 바뀌면 확인 객체를 전달하지 말고 화면에서 후보를 다시 대조하세요.
+
+캡처 전에 화면에서 발신자·날짜와 행/본문 지문을 확인한 목록을 준비한 뒤 reader를 만듭니다. 각 항목은 `sequence`, `received_date`, `row_sha256`, `body_sha256`, `sender`, `verification_method`, `manually_verified: true`, `visible_header` 또는 `visible_list_label`을 가져야 합니다. 캡처 함수는 현재 선택의 행/본문 지문과 날짜가 이 매핑과 정확히 맞는지 재검증합니다.
+
+```javascript
+import { createVerifiedSenderReader } from "./scripts/capture_macro.mjs";
+
+// verifiedSenderMap은 화면에서 직접 확인한 sender sidecar입니다.
+const senderReader = createVerifiedSenderReader(verifiedSenderMap.records);
+```
 
 앱 입력이 멈춘 동안에는 저장된 원문과 화면 자료로 발신자/제목을 정리할 수 있습니다. `sequence,title` CSV만 만들면 raw JSONL의 `received_date`를 사용합니다. 기존 raw에 날짜가 없는 행이라면 CSV에 `received_date`(날짜만) 또는 `received_at`(시각 포함)을 기록하세요. 다음 도구가 원문 순번, 본문 SHA-256, 월 범위, 최신순을 검증하고 별도 JSONL을 만듭니다.
 
@@ -94,6 +103,7 @@ const result = await captureNewUntilKnown({
   baselineVerifiedJsonl: "C:/.../capture-2026-10-received-run1/verified-2026-10.jsonl",
   baselineRangeManifest: "C:/.../capture-2026-10-received-run1/range-manifest.json",
   outputDir: "C:/.../capture-2026-10-incremental-01",
+  senderReader,
   maxItems: 30,
   delayMs: 100,
 });
@@ -130,6 +140,7 @@ const batch = await captureOlderThanKnown({
   baselineRangeManifest: "C:/.../capture-2026-10-received-run1/range-manifest.json",
   outputDir: "C:/.../capture-before-2026-10-01",
   confirmedAnchor: { received_at: "2026-10-01T08:28:00", sender: "권윤옥" },
+  senderReader,
   maxItems: 30,
 });
 ```
@@ -184,6 +195,41 @@ python .\gbtalk_summary.py file .\chat.txt
 ```
 
 `uia`, `clipboard`, `file` 모드는 요약을 요청하며, 결과는 `out/summary_날짜시간.md`에 저장되고 화면에도 출력됩니다. 입력 원문은 요약 모드에서 기본적으로 파일에 저장하지 않습니다. 디버깅 목적으로 원문 저장을 명시할 때만 `--save-raw`를 추가하세요. 입력 상한은 `--max-chars 30000`처럼 조절할 수 있습니다. `archive`는 별도 보관 명령으로, 복사한 원문을 날짜별 파일에 저장합니다.
+
+## 기존 캡처의 날짜 누락 보완
+
+기존 raw JSONL에 빠진 날짜를 채울 때는 원본을 수정하지 말고, 검증된 메타데이터와 지문 매핑을 새 JSONL로 합칩니다. 날짜 매핑은 해당 raw 파일의 SHA-256 및 각 행의 순번·행 지문·본문 지문에 연결되어야 합니다. 날짜가 한 건이라도 없거나 매핑이 충돌하면 출력 파일을 만들지 않습니다.
+
+```powershell
+python .\scripts\apply_date_backfill.py `
+  .\out\capture-2026-10-received-run1\raw-bodies.jsonl `
+  .\out\date-backfill-20261027\october-raw-dated.jsonl `
+  --verified-metadata .\out\capture-2026-10-received-run1\verified-2026-10.jsonl `
+  --date-map .\out\date-backfill-20261027\october-date-map.json
+```
+
+2026-10-27 보강본은 `out/date-backfill-20261027/`에 있다. 10월 원문 171건은 검증 메타데이터 169건과 화면 날짜 매핑 2건을 합쳤고, 과거 원문 398건은 기존 날짜 138건과 화면 날짜 매핑 260건을 합쳤다. 두 출력 모두 `received_date`가 100% 채워졌고 날짜 순서가 유지된다. 입력 raw JSONL은 그대로 보존된다. `out/date-completeness-audit-20261027.json`의 `raw_before_backfill`은 원래 누락을, `date_enrichment`는 보강본과 SHA-256을 기록한다.
+
+## 기존 캡처의 발신자 보완
+
+발신자를 추가할 때는 raw JSONL을 수정하지 않고 새 JSONL을 만든다. `scripts/apply_sender_backfill.py`는 원본 SHA-256, 행/본문 SHA-256, 메시지 날짜를 함께 사용해 기존 `sender` 또는 `title` 메타데이터를 1:1로 연결한다. 반복 placeholder는 날짜로도 구분되지 않으면 보강하지 않는다. 발신자 없는 행은 `sender_capture_status: missing`으로 남긴다.
+
+```powershell
+python .\scripts\apply_sender_backfill.py `
+  .\out\date-backfill-20261027\october-raw-dated.jsonl `
+  .\out\sender-backfill-20261028\october-raw-with-senders-verified.jsonl `
+  --verified-metadata .\out\capture-2026-10-received-run1\verified-2026-10.jsonl `
+  --manual-map .\out\sender-backfill-20261028\october-manual-sender-map.json
+
+python .\scripts\apply_sender_backfill.py `
+  .\out\date-backfill-20261027\older-bodies-dated.jsonl `
+  .\out\sender-backfill-20261028\older-bodies-with-senders-verified.jsonl `
+  --verified-metadata .\out\capture-2026-10-older-backfill-continuation-263\older-bodies.jsonl
+```
+
+2026-10-28 기준 10월 171건은 기존 검증 메타데이터 169건과 관리함에서 직접 확인한 2건을 합쳐 발신자 171건을 모두 채웠다. 과거 398건은 기존 sender 4건만 있으며 394건은 미확인이다. `out/sender-backfill-20261028/sender-completeness-audit.json`에 원본·출력 SHA-256, 누락 수, 판독 이력을 기록했다. 기존 보강본은 원본 행을 수정하지 않는다.
+
+한국어 Windows OCR이 화면의 `이명숙`을 `이영숙`으로 반복 오독했으므로 발신자 OCR은 검증되지 않은 후보로만 취급한다. 화면과 대조하지 않은 OCR값을 저장하지 않는다. 검색으로 쪽지를 찾은 뒤 탭을 닫았을 때 목록 강조와 미리보기가 달라진 사례도 있어, 검색 탭을 닫은 뒤에는 새 화면 상태를 확인하기 전까지 키 입력을 보내지 않는다. 자세한 실패와 복구는 [트러블슈팅 이력](references/troubleshooting.md)과 [키보드 매크로 방법론](references/keyboard-macro-methodology.md)에 기록했다.
 
 ## UIA가 작동하지 않을 때
 

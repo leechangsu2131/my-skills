@@ -1,0 +1,502 @@
+{
+  "collected_at": "2026-10-28 12:12:27",
+  "probe": {
+    "probes": [
+      {
+        "url": "https://klef.gbe.kr/bms/cz/cb/viw/retrieveSanctnWaitDocList.do?MENU_ID=A00AAB0102001&FILE_ID=AABSanctnWaitDocList&alimZon=alimZon",
+        "finalUrl": "https://klef.gbe.kr/bms/cz/cb/viw/retrieveSanctnWaitDocList.do?MENU_ID=A00AAB0102001&FILE_ID=AABSanctnWaitDocList&alimZon=alimZon",
+        "status": 200,
+        "title": "결재대기 | 업무관리시스템",
+        "errPage": false,
+        "hasWait": true,
+        "snippet": "결재대기 | 업무관리시스템 var isEnableAccessibility = ''; var manualInsttClSe = '5'; var docUiType = '01'; var docFontMg = '01'; var docFileExtListGubun = '02'; var docFileExtBlackList = 'JSP,ASP,ASS,ASPX,PHP,JSPX,INC,EXE,JAVA,CLASS,COM,SH,CSH,001,CAB,LZH,Z,7Z,GZ,RAR,ZIP,ZIPX,TAR,GZIP,ALZ,ARJ,IMG,TBZ,TBZ2,ISO,BH,BZ2,JAR,TGZ,BZIP2,LHA,WAR,ZCE,ARC,B64,BH,BHX,EAR,EGG,ENC,HA,HQX,LCD,UU,UUE,MIN,PAK,XXE,XOO,LNK'; "
+      },
+      {
+        "url": "https://klef.gbe.kr/bms/cz/cb/viw/retrieveSanctnWaitDocList.do?leftMenu=1",
+        "finalUrl": "https://klef.gbe.kr/bms/cz/cb/viw/retrieveSanctnWaitDocList.do?leftMenu=1",
+        "status": 200,
+        "title": "결재대기 | 업무관리시스템",
+        "errPage": false,
+        "hasWait": true,
+        "snippet": "결재대기 | 업무관리시스템 var isEnableAccessibility = ''; var manualInsttClSe = '5'; var docUiType = '01'; var docFontMg = '01'; var docFileExtListGubun = '02'; var docFileExtBlackList = 'JSP,ASP,ASS,ASPX,PHP,JSPX,INC,EXE,JAVA,CLASS,COM,SH,CSH,001,CAB,LZH,Z,7Z,GZ,RAR,ZIP,ZIPX,TAR,GZIP,ALZ,ARJ,IMG,TBZ,TBZ2,ISO,BH,BZ2,JAR,TGZ,BZIP2,LHA,WAR,ZCE,ARC,B64,BH,BHX,EAR,EGG,ENC,HA,HQX,LCD,UU,UUE,MIN,PAK,XXE,XOO,LNK'; "
+      },
+      {
+        "url": "https://klef.gbe.kr/bms/cz/cb/wrt/retrieveSanctnWaitDocList.do?leftMenu=1",
+        "finalUrl": "https://klef.gbe.kr/bms/cz/cb/wrt/retrieveSanctnWaitDocList.do?leftMenu=1",
+        "status": 404,
+        "title": "K-에듀파인",
+        "errPage": true,
+        "hasWait": false,
+        "snippet": "K-에듀파인 $(document).ready(function(){ var $footerImg = $(\".footer_logo img\"); var $footeraddress = $(\".footer_address\"); var sFooterLogoPath = \"/keris_ui/_resource_/_theme_/keris_default/images\"; var sCddcSeCd = \"A00\"; var sFooterJuso = \"(30119)세종특별자치시 갈매로 408, 14동 정부세종청사 COPYRIGHTS (c) K-에듀파인. ALL RIGHTS RESERVED.\"; var arrLocations = location.host.split(\".\"); if( arrLocations != null && arrLocati"
+      },
+      {
+        "url": "https://klef.gbe.kr/bms/cz/cb/sanctn/retrieveSanctnWaitDocList.do?leftMenu=1",
+        "finalUrl": "https://klef.gbe.kr/bms/cz/cb/sanctn/retrieveSanctnWaitDocList.do?leftMenu=1",
+        "status": 404,
+        "title": "K-에듀파인",
+        "errPage": true,
+        "hasWait": false,
+        "snippet": "K-에듀파인 $(document).ready(function(){ var $footerImg = $(\".footer_logo img\"); var $footeraddress = $(\".footer_address\"); var sFooterLogoPath = \"/keris_ui/_resource_/_theme_/keris_default/images\"; var sCddcSeCd = \"A00\"; var sFooterJuso = \"(30119)세종특별자치시 갈매로 408, 14동 정부세종청사 COPYRIGHTS (c) K-에듀파인. ALL RIGHTS RESERVED.\"; var arrLocations = location.host.split(\".\"); if( arrLocations != null && arrLocati"
+      },
+      {
+        "url": "https://klef.gbe.kr/portal/link.do?link=sanctnWait",
+        "finalUrl": "https://klef.gbe.kr/portal/link.do?link=sanctnWait",
+        "status": 200,
+        "title": "K-에듀파인",
+        "errPage": false,
+        "hasWait": false,
+        "snippet": "K-에듀파인 $(document).ready(function(){ var $form = $(\"#frmLink\"); var sLinkParam = '{\"cddcSeCd\":\"R10\",\"registerId\":\"lee2131\",\"link\":\"sanctnWait\",\"updusrId\":\"lee2131\",\"conectAreaIp\":\"10.21.136.37\"}'; var sSubmitUrl = '/keris_ui/main.do'; var oLinkParam = null; if( sLinkParam != null && sLinkParam != \"\" ) { oLinkParam = JSON.parse(sLinkParam); } if( oLinkParam ) { for( var sKey in oLinkParam ) { conso"
+      },
+      {
+        "url": "https://klef.gbe.kr/bms/cz/cb/wrt/retrieveSanctnWait.do",
+        "finalUrl": "https://klef.gbe.kr/bms/cz/cb/wrt/retrieveSanctnWait.do",
+        "status": 404,
+        "title": "K-에듀파인",
+        "errPage": true,
+        "hasWait": false,
+        "snippet": "K-에듀파인 $(document).ready(function(){ var $footerImg = $(\".footer_logo img\"); var $footeraddress = $(\".footer_address\"); var sFooterLogoPath = \"/keris_ui/_resource_/_theme_/keris_default/images\"; var sCddcSeCd = \"A00\"; var sFooterJuso = \"(30119)세종특별자치시 갈매로 408, 14동 정부세종청사 COPYRIGHTS (c) K-에듀파인. ALL RIGHTS RESERVED.\"; var arrLocations = location.host.split(\".\"); if( arrLocations != null && arrLocati"
+      },
+      {
+        "url": "https://klef.gbe.kr/bms/cz/cb/viw/retrieveSanctnWait.do",
+        "finalUrl": "https://klef.gbe.kr/bms/cz/cb/viw/retrieveSanctnWait.do",
+        "status": 404,
+        "title": "K-에듀파인",
+        "errPage": true,
+        "hasWait": false,
+        "snippet": "K-에듀파인 $(document).ready(function(){ var $footerImg = $(\".footer_logo img\"); var $footeraddress = $(\".footer_address\"); var sFooterLogoPath = \"/keris_ui/_resource_/_theme_/keris_default/images\"; var sCddcSeCd = \"A00\"; var sFooterJuso = \"(30119)세종특별자치시 갈매로 408, 14동 정부세종청사 COPYRIGHTS (c) K-에듀파인. ALL RIGHTS RESERVED.\"; var arrLocations = location.host.split(\".\"); if( arrLocations != null && arrLocati"
+      }
+    ],
+    "restored": "https://klef.gbe.kr/bms/cz/cb/viw/retrieveCnrsWaitDocList.do?MENU_ID=A00AAB0103001&FILE_ID=AABCnrsWaitDocList&alimZon=alimZon"
+  },
+  "cnrs_table": {
+    "href": "https://klef.gbe.kr/bms/cz/cb/viw/retrieveCnrsWaitDocList.do?MENU_ID=A00AAB0103001&FILE_ID=AABCnrsWaitDocList&alimZon=alimZon",
+    "title": "공람대기 | 업무관리시스템",
+    "heading": [
+      "문서의견 문서정보 일괄처리 즐겨찾기  조회",
+      "공람대기조회",
+      "제목\t\t공람지정자\t  ",
+      "등록일자\t  ~   ",
+      "개월",
+      "1M",
+      "3M",
+      "6M"
+    ],
+    "rows": [
+      {
+        "title": "다음에 나오는 이미지를 선택하면 하단에 문서의 상세정보가 나타납니다.",
+        "tds": [
+          "",
+          "",
+          "수신",
+          "화천초등학교-11278",
+          "2026년 김해시립김영원미술관 신규 전시 및 교육·체험프로그램 단체관람 안내",
+          "(재)김해문화관광재단 미술관운영팀",
+          "박은정",
+          "화천초등학교",
+          "2026-10-28 10:57",
+          "2026-10-28 10:57",
+          "공람"
+        ]
+      },
+      {
+        "title": "다음에 나오는 이미지를 선택하면 하단에 문서의 상세정보가 나타납니다.",
+        "tds": [
+          "",
+          "",
+          "일반",
+          "화천초등학교-11267",
+          "2026년 10월 30일 식단 변경",
+          "화천초등학교",
+          "강경실",
+          "화천초등학교",
+          "2026-10-27 11:09",
+          "2026-10-28 10:33",
+          "공람"
+        ]
+      },
+      {
+        "title": "다음에 나오는 이미지를 선택하면 하단에 문서의 상세정보가 나타납니다.",
+        "tds": [
+          "",
+          "",
+          "일반",
+          "화천초등학교-11257",
+          "2026년 하반기 자체 소방훈련 실시 계획",
+          "화천초등학교",
+          "권명옥",
+          "화천초등학교",
+          "2026-10-27 17:16",
+          "2026-10-28 09:16",
+          "공람"
+        ]
+      },
+      {
+        "title": "다음에 나오는 이미지를 선택하면 하단에 문서의 상세정보가 나타납니다.",
+        "tds": [
+          "",
+          "",
+          "수신",
+          "화천초등학교-11255",
+          "[협조] 2027년도 초등 수석교사 자격연수 선발 대상자 동료교원평가 관련 설문 참여 협조",
+          "경상북도교육청 유초등교육과",
+          "박은정",
+          "화천초등학교",
+          "2026-10-28 08:59",
+          "2026-10-28 08:59",
+          "공람"
+        ]
+      },
+      {
+        "title": "다음에 나오는 이미지를 선택하면 하단에 문서의 상세정보가 나타납니다.",
+        "tds": [
+          "",
+          "",
+          "수신",
+          "화천초등학교-11251",
+          "[안내] 웹메일 서비스 외부 접속 제한 조치 안내",
+          "경상북도교육청정보센터 디지털기반과",
+          "박은정",
+          "화천초등학교",
+          "2026-10-28 08:56",
+          "2026-10-28 08:56",
+          "공람"
+        ]
+      },
+      {
+        "title": "다음에 나오는 이미지를 선택하면 하단에 문서의 상세정보가 나타납니다.",
+        "tds": [
+          "",
+          "",
+          "수신",
+          "화천초등학교-11248",
+          "[안내] 경상북도교육청발명인공지능교육원 파견 희망 교사 공모 안내",
+          "경상북도교육청발명인공지능교육원 운영기획과",
+          "박은정",
+          "화천초등학교",
+          "2026-10-28 08:55",
+          "2026-10-28 08:55",
+          "공람"
+        ]
+      },
+      {
+        "title": "다음에 나오는 이미지를 선택하면 하단에 문서의 상세정보가 나타납니다.",
+        "tds": [
+          "",
+          "",
+          "수신",
+          "화천초등학교-11211",
+          "[추천] 2026학년도 이주배경학생 및 북한배경학생 교육 지원 유공 교육부장관·교육감 표창 계획 안내",
+          "경상북도교육청 행복교육지원과",
+          "김윤이",
+          "화천초등학교",
+          "2026-10-27 09:05",
+          "2026-10-28 08:31",
+          "공람"
+        ]
+      },
+      {
+        "title": "다음에 나오는 이미지를 선택하면 하단에 문서의 상세정보가 나타납니다.",
+        "tds": [
+          "",
+          "",
+          "일반",
+          "화천초등학교-11231",
+          "2026학년도 초등돌봄교육 발표회 운영 계획",
+          "화천초등학교",
+          "김유림",
+          "화천초등학교",
+          "2026-10-27 13:19",
+          "2026-10-27 16:03",
+          "공람"
+        ]
+      },
+      {
+        "title": "다음에 나오는 이미지를 선택하면 하단에 문서의 상세정보가 나타납니다.",
+        "tds": [
+          "",
+          "",
+          "수신",
+          "화천초등학교-11206",
+          "[추천] 2026년 교육부장관 및 교육감 표창(대안교육 및 학업중단 학생 지원 유공, 학업중단 예방 업무 유공, 중·고등학교 교복가격 안정화) 대상자 추천 안내",
+          "경상북도교육청 학생생활과",
+          "홍성철",
+          "화천초등학교",
+          "2026-10-27 08:55",
+          "2026-10-27 14:56",
+          "공람"
+        ]
+      },
+      {
+        "title": "다음에 나오는 이미지를 선택하면 하단에 문서의 상세정보가 나타납니다.",
+        "tds": [
+          "",
+          "",
+          "수신",
+          "화천초등학교-11200",
+          "[안내] 2026년 하하하 학생 챌린지(10월 당첨자, 11월 퀴즈) 안내",
+          "경상북도교육청연구원 정책연구부",
+          "홍성철",
+          "화천초등학교",
+          "2026-10-27 08:51",
+          "2026-10-27 14:55",
+          "공람"
+        ]
+      },
+      {
+        "title": "다음에 나오는 이미지를 선택하면 하단에 문서의 상세정보가 나타납니다.",
+        "tds": [
+          "",
+          "",
+          "수신",
+          "화천초등학교-11226",
+          "[신청] 2026년 경상북도교육청 칠곡수학체험센터 하반기 교사직무연수 안내",
+          "경상북도교육청 칠곡수학체험센터",
+          "박은정",
+          "화천초등학교",
+          "2026-10-27 12:28",
+          "2026-10-27 12:28",
+          "공람"
+        ]
+      },
+      {
+        "title": "다음에 나오는 이미지를 선택하면 하단에 문서의 상세정보가 나타납니다.",
+        "tds": [
+          "",
+          "",
+          "수신",
+          "화천초등학교-11225",
+          "[안내] 2026 봉화교육한마당 개최 안내",
+          "경상북도봉화교육지원청 교육지원과",
+          "박은정",
+          "화천초등학교",
+          "2026-10-27 12:27",
+          "2026-10-27 12:27",
+          "공람"
+        ]
+      },
+      {
+        "title": "다음에 나오는 이미지를 선택하면 하단에 문서의 상세정보가 나타납니다.",
+        "tds": [
+          "",
+          "",
+          "수신",
+          "화천초등학교-11171",
+          "[안내] 2026년 11월 안전점검의 날 및 산업안전점검의 날 운영",
+          "경상북도교육청 교육안전과",
+          "권다혜",
+          "화천초등학교",
+          "2026-10-26 12:35",
+          "2026-10-27 11:09",
+          "공람"
+        ]
+      },
+      {
+        "title": "다음에 나오는 이미지를 선택하면 하단에 문서의 상세정보가 나타납니다.",
+        "tds": [
+          "",
+          "",
+          "수신",
+          "화천초등학교-11216",
+          "[안내] 2026 경북학교예술교육페스티벌 「어울림1000인음악제」 관람 명단 안내",
+          "경상북도포항교육지원청 중등교육과",
+          "박은정",
+          "화천초등학교",
+          "2026-10-27 10:12",
+          "2026-10-27 10:12",
+          "공람"
+        ]
+      },
+      {
+        "title": "다음에 나오는 이미지를 선택하면 하단에 문서의 상세정보가 나타납니다.",
+        "tds": [
+          "",
+          "",
+          "수신",
+          "화천초등학교-11198",
+          "[수정] 2027년 경상북도교육청문화원 온빛갤러리 초청 전시 운영",
+          "경상북도교육청문화원 문화예술과",
+          "박은정",
+          "화천초등학교",
+          "2026-10-27 08:50",
+          "2026-10-27 08:50",
+          "공람"
+        ]
+      },
+      {
+        "title": "다음에 나오는 이미지를 선택하면 하단에 문서의 상세정보가 나타납니다.",
+        "tds": [
+          "",
+          "",
+          "수신",
+          "화천초등학교-11196",
+          "[안내] 2026학년도 학생 주도형 수업 자료집 「나의 수업 성장기 Vol.9」 원고 공모",
+          "경상북도교육청 유초등교육과",
+          "박은정",
+          "화천초등학교",
+          "2026-10-27 08:49",
+          "2026-10-27 08:49",
+          "공람"
+        ]
+      },
+      {
+        "title": "다음에 나오는 이미지를 선택하면 하단에 문서의 상세정보가 나타납니다.",
+        "tds": [
+          "",
+          "",
+          "수신",
+          "화천초등학교-11001",
+          "2026년「초등 AI교육 담당교원 역량 강화 연수」운영 안내 및 대상자 모집",
+          "한국교육학술정보원",
+          "안대규",
+          "화천초등학교",
+          "2026-10-22 08:57",
+          "2026-10-26 16:47",
+          "공람"
+        ]
+      },
+      {
+        "title": "다음에 나오는 이미지를 선택하면 하단에 문서의 상세정보가 나타납니다.",
+        "tds": [
+          "",
+          "",
+          "수신",
+          "화천초등학교-11183",
+          "2027. 전국보드게임교사네트워크 동계 전국단위 직무 및 자율 연수 모집 안내(수정)",
+          "도원초등학교",
+          "박은정",
+          "화천초등학교",
+          "2026-10-26 15:12",
+          "2026-10-26 15:12",
+          "공람"
+        ]
+      },
+      {
+        "title": "다음에 나오는 이미지를 선택하면 하단에 문서의 상세정보가 나타납니다.",
+        "tds": [
+          "",
+          "",
+          "수신",
+          "화천초등학교-11175",
+          "[안내] 2027년 경상북도교육청연수원 원격연수 관리 강사(교사 튜터) 모집",
+          "경상북도교육청연수원 유초등연수부",
+          "박은정",
+          "화천초등학교",
+          "2026-10-26 12:37",
+          "2026-10-26 12:37",
+          "공람"
+        ]
+      },
+      {
+        "title": "다음에 나오는 이미지를 선택하면 하단에 문서의 상세정보가 나타납니다.",
+        "tds": [
+          "",
+          "",
+          "수신",
+          "화천초등학교-11173",
+          "[안내/제출] 2026학년도 유·초등 교원 선진교육 탐방 국외연수 계획",
+          "경상북도교육청 유초등교육과",
+          "박은정",
+          "화천초등학교",
+          "2026-10-26 12:36",
+          "2026-10-26 12:36",
+          "공람"
+        ]
+      },
+      {
+        "title": "다음에 나오는 이미지를 선택하면 하단에 문서의 상세정보가 나타납니다.",
+        "tds": [
+          "",
+          "",
+          "수신",
+          "화천초등학교-11151",
+          "[안내] 학교 내 성희롱·성폭력 발생 시 학교 및 학부모 대응 안내",
+          "경상북도교육청 학생생활과",
+          "홍성철",
+          "화천초등학교",
+          "2026-10-26 09:03",
+          "2026-10-26 11:58",
+          "공람"
+        ]
+      },
+      {
+        "title": "다음에 나오는 이미지를 선택하면 하단에 문서의 상세정보가 나타납니다.",
+        "tds": [
+          "",
+          "",
+          "수신",
+          "화천초등학교-11170",
+          "[신청] 2027년 경상북도교육청문화원 온빛갤러리 초청 전시 운영",
+          "경상북도교육청문화원 문화예술과",
+          "박은정",
+          "화천초등학교",
+          "2026-10-26 11:53",
+          "2026-10-26 11:53",
+          "공람"
+        ]
+      },
+      {
+        "title": "다음에 나오는 이미지를 선택하면 하단에 문서의 상세정보가 나타납니다.",
+        "tds": [
+          "",
+          "",
+          "수신",
+          "화천초등학교-11168",
+          "2027. 전국보드게임교사네트워크 동계 전국단위 직무 및 자율 연수 모집 안내",
+          "도원초등학교",
+          "박은정",
+          "화천초등학교",
+          "2026-10-26 11:51",
+          "2026-10-26 11:51",
+          "공람"
+        ]
+      }
+    ]
+  },
+  "portal": {
+    "title": "업무포털 메인",
+    "href": "https://gbe.eduptl.kr/bpm_man_mn00_001.do",
+    "iframes": [
+      {
+        "name": "kedu",
+        "src": "https://gbe.eduptl.kr/bpm_man_mn00_001.do"
+      },
+      {
+        "name": "kedufine",
+        "src": ""
+      }
+    ],
+    "as": [
+      {
+        "text": "결재대기",
+        "href": "",
+        "title": ""
+      },
+      {
+        "text": "공람대기",
+        "href": "",
+        "title": ""
+      }
+    ],
+    "text": "좌측메뉴 접기/펴기 버튼 이창수 lee2131 화천초등학교 업무바로가기 내부메일작성 문서작성 자체(관사, 상훈) 59:01후에 로그아웃됩니다. 세션 시간 초기화 글꼴크기 글꼴 크기 확대 글꼴 크기 원복 글꼴 크기 축소 다크모드 나이스 승인사항 ※ 현재 나이스의 통신이 원활하지 않아, 승인 사항 목록을 불러오는데 실패하였습니다. K-에듀파인 전자결재 현황 교육행정데이터통합관리 알림 현황 공지사항 나의할일 업무포털 나이스 K-에듀파인 전체 more K-에듀파인 문서함 결재대기 공람대기 공문게시 새로고침 조회결과가 없습니다. ‹ › 포틀릿 편집 포틀릿 지정영역 1 나이스 업무승인 전자결재 포틀릿 지정영역 2 공지사항 나의 할 일 포틀릿 추가하기 포틀릿 지정영역 3 게시판 1, 게시판 2 게시판 3, 게시판 4 저장 취소 팝업존 우측메뉴 접기/펴기 버튼 Logout 상단 이동 스크롤"
+  },
+  "iframe_scrapes": [
+    {
+      "url": "https://klef.gbe.kr/bms/cz/cb/viw/retrieveSanctnWaitDocListNice.do?DEPTID=R100006630&EDUPTLYN=Y&EDUPTLTHEMENO=1&EDUPTLFONTSIZE=15",
+      "type": "iframe",
+      "data": {
+        "href": "https://klef.gbe.kr/bms/cz/cb/viw/retrieveSanctnWaitDocListNice.do?DEPTID=R100006630&EDUPTLYN=Y&EDUPTLTHEMENO=1&EDUPTLFONTSIZE=15",
+        "title": "결재대기 | 업무관리시스템",
+        "text": "[안내] 제26회 경상북도교육감기 초등학교 수영대회 개최 참가요강 알림\t박은정\t2026-10-27"
+      }
+    },
+    {
+      "url": "https://klef.gbe.kr/bms/cz/cb/viw/retrieveSanctnWaitDocListNice.do?DEPTID=R100006630&EDUPTLYN=Y&EDUPTLTHEMENO=1&EDUPTLFONTSIZE=15",
+      "type": "iframe",
+      "data": {
+        "href": "https://klef.gbe.kr/bms/cz/cb/viw/retrieveSanctnWaitDocListNice.do?DEPTID=R100006630&EDUPTLYN=Y&EDUPTLTHEMENO=1&EDUPTLFONTSIZE=15",
+        "title": "결재대기 | 업무관리시스템",
+        "text": "[안내] 제26회 경상북도교육감기 초등학교 수영대회 개최 참가요강 알림\t박은정\t2026-10-27"
+      }
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "months": [
+    "2026-08",
+    "2026-09",
+    "2026-10"
+  ],
+  "sources": {
+    "october-sender-backfill": {
+      "path": "skills\\admin-gbetalk\\out\\sender-backfill-20261028\\october-raw-with-senders-verified.jsonl",
+      "sha256": "b414dc0113723120f9588ebbd7c58b07671e954670fb86348f01c9aafb380508",
+      "record_count": 171
+    },
+    "older-sender-backfill": {
+      "path": "skills\\admin-gbetalk\\out\\sender-backfill-20261028\\older-bodies-with-senders-verified.jsonl",
+      "sha256": "1992b3c77109780818c6a8cef92c65bf47bde873249164237e74f1fb83789409",
+      "record_count": 398
+    }
+  },
+  "month_slices": {
+    "2026-08": {
+      "output_path": "received-2026-08-sender-status.jsonl",
+      "output_sha256": "2b93e326b25f6cf665d17bd7e5e9e8aa835074201452b3a84cea41e949b49bc6",
+      "record_count": 113,
+      "sender_count": 0,
+      "missing_sender_count": 113,
+      "newest_date": "2026-08-31",
+      "oldest_date": "2026-08-05",
+      "source_counts": {
+        "october-sender-backfill": 0,
+        "older-sender-backfill": 113
+      }
+    },
+    "2026-09": {
+      "output_path": "received-2026-09-sender-status.jsonl",
+      "output_sha256": "ef717ad6ab00a90782619b8394106eb20bb5be680f7647878800406c87ba1aea",
+      "record_count": 255,
+      "sender_count": 5,
+      "missing_sender_count": 250,
+      "newest_date": "2026-09-30",
+      "oldest_date": "2026-09-01",
+      "source_counts": {
+        "october-sender-backfill": 2,
+        "older-sender-backfill": 253
+      }
+    },
+    "2026-10": {
+      "output_path": "received-2026-10-sender-status.jsonl",
+      "output_sha256": "3da76859dfd426224d34b78fd4eb82b9f15ee6a61cc4a071ca36c5cca54a5dd0",
+      "record_count": 169,
+      "sender_count": 169,
+      "missing_sender_count": 0,
+      "newest_date": "2026-10-26",
+      "oldest_date": "2026-10-01",
+      "source_counts": {
+        "october-sender-backfill": 169,
+        "older-sender-backfill": 0
+      }
+    }
+  },
+  "total_records": 537,
+  "total_senders": 174,
+  "total_missing_senders": 363,
+  "note": "Sender fields are preserved only when present in a fingerprint-verified source; missing values are not inferred."
+}

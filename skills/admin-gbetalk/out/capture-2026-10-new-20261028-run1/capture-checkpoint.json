@@ -1,0 +1,29 @@
+{
+  "schema_version": 2,
+  "status": "paused-before-outside-period",
+  "started_at": "2026-10-28T03:36:45.807Z",
+  "updated_at": "2026-10-28T03:40:35.962Z",
+  "saved_count": 23,
+  "next_sequence": 24,
+  "journal_file": "raw-bodies.jsonl",
+  "journal_bytes": 29244,
+  "prefix_sha256": "76c408958cb69e962c3131086bd87472e6837d8aeedf951b8f51a55e1da8480e",
+  "last_row_sha256": "e3513ff365ca1a4033e943834abaf6e585c0f45c1464867e3f9aacc81fdb7930",
+  "last_body_sha256": "186cbdad9478e97f023d8204c2ec6245a0aa2e3c3b8c7cac72e6a2d3072e1c1e",
+  "last_received_date": "2026-10-26",
+  "last_sender": "최수민",
+  "date_group_count": 3,
+  "next_received_date": null,
+  "next_sender": null,
+  "next_row": {
+    "sequence": 24,
+    "row_sha256": "78271256409259dcc1199fb36379c2a6026ecb9b26789b7964acc44fe325815f",
+    "row_occurrence": 1,
+    "body_sha256": "99719b9ac1ccc53376f27242379f7f0c1dc081db9297251d6e5d3e1b8e501fdd"
+  },
+  "pending_append": null,
+  "stop_before_row_sha256": "78271256409259dcc1199fb36379c2a6026ecb9b26789b7964acc44fe325815f",
+  "stop_reason": null,
+  "received_date_year": 2026,
+  "last_row_occurrence": 1
+}

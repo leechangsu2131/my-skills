@@ -47,9 +47,39 @@
    - 수신문서(`APPRTYPE == '3'`)이면서 업무담당자(`isCharge == 'true'`)인 경우 단순 일괄결재(`fncBndeSanctn`)는 비즈니스 로직상 제외 처리됩니다.
    - 웹 폼 제출(`fncProcessDocApn`) 시에는 행정전자서명(EPKI)/웹 DRM 컨트롤 미설치 오류가 발생하므로, 브라우저에서 `doCallClientApp(0, APPRID, 0, '')`로 WXSClient 결재기(`HCLTAPP_KYUL`)를 띄운 뒤 네이티브 서명 창에서 [결재]를 수행하는 것이 가장 안전하고 완벽한 하이브리드 자동화 표준입니다.
 
+9. **Playwright `connect_over_cdp` 전체 브라우저 락 회피**:
+   - Chrome 9222에 Playwright를 붙이면 메인 프로세스 락으로 수십 초~무한 대기가 발생할 수 있다.
+   - `http://127.0.0.1:9222/json`에서 `type==page`(및 필요 시 `type==iframe`)의 `webSocketDebuggerUrl`로 `websockets` JSON-RPC `Runtime.evaluate`를 사용한다.
+
+10. **결재대기 HTML 경로 (`viw`, 포털 Nice 위젯)**:
+    - 결재대기 본화면: `https://klef.gbe.kr/bms/cz/cb/viw/retrieveSanctnWaitDocList.do?leftMenu=1` (`wrt/` 경로는 404).
+    - 업무포털 위젯은 교차출처 OOPIF `retrieveSanctnWaitDocListNice.do`이며, 위젯 목록과 본화면 조회 결과가 어긋날 수 있다. 최종 건수는 본화면 `fncSearch()` 결과를 따른다.
+    - 공람대기: `https://klef.gbe.kr/bms/cz/cb/viw/retrieveCnrsWaitDocList.do?MENU_ID=A00AAB0103001&FILE_ID=AABCnrsWaitDocList&alimZon=alimZon`
+
 ---
 
 ## 📅 일자별 개발 실패 극복 및 트러블슈팅 일지
+
+---
+
+### 2026-10-28: 결재대기 조회 — Playwright CDP 행과 위젯/본화면 불일치 극복
+
+#### 1. 문제 상황
+- `python edufine_auto_approve.py`가 Chrome 9222 `connect_over_cdp`에서 출력 없이 무한 대기.
+- 업무포털 `kedufine` iframe은 교차출처라 포털 페이지 JS에서 DOM을 읽지 못함.
+- 결재대기 iframe `src`를 `.../wrt/retrieveSanctnWaitDocList.do`로 바꾸면 오류 페이지. 공람대기 화면이 덮어씌워짐.
+
+#### 2. 원인 및 해결
+1. 탭 전용 `webSocketDebuggerUrl` + `Runtime.evaluate`로 수집.
+2. `/json`의 `type=iframe` 타겟 `retrieveSanctnWaitDocListNice.do`에 직접 접속해 위젯 목록 수집.
+3. 결재대기 본화면은 `viw/retrieveSanctnWaitDocList.do?leftMenu=1`에서 `fncSearch()` 후 건수 확인.
+4. 작업 후 공람대기 iframe `src`를 원래 `retrieveCnrsWaitDocList.do`로 복구.
+
+#### 3. 조회 결과 (2026-10-28 12:13)
+- 에듀파인 결재대기 본화면: **0건**.
+- 포털 위젯: `[안내] 제26회 경상북도교육감기 초등학교 수영대회 개최 참가요강 알림` (박은정, 2026-10-27) 1건 — 본화면과 불일치, 위젯 미갱신 가능.
+- 어제 결재대기였던 스포츠인성교육 자율연수 안내는 결재대기에서 사라짐.
+- 공람대기: 23건 (오늘 도착 포함).
 
 ---
 

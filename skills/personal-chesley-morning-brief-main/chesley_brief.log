@@ -1,0 +1,38 @@
+[2026-02-28 16:00:01] ===== 실행 시작 =====
+[2026-02-28 16:00:01] ===== 실행 시작 =====
+[2026-02-28 16:00:01] chesley_brief.py 실행 중...
+[2026-02-28 16:00:01] chesley_brief.py 실행 중...
+/Users/ichangsu/.gemini/antigravity/scratch/chesley-morning-brief/.venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+/Users/ichangsu/.gemini/antigravity/scratch/chesley-morning-brief/.venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+==================================================
+체슬리모닝브리프 자동요약 | 2026-02-28 16:00
+==================================================
+[1/5] YouTube RSS 확인 중... (https://www.youtube.com/feeds/videos.xml?channel_id=UCXST0Hq6CAmG0dmo3jgrlEw)
+==================================================
+체슬리모닝브리프 자동요약 | 2026-02-28 16:00
+==================================================
+[1/5] YouTube RSS 확인 중... (https://www.youtube.com/feeds/videos.xml?channel_id=UCXST0Hq6CAmG0dmo3jgrlEw)
+Traceback (most recent call last):
+  File "/Users/ichangsu/.gemini/antigravity/scratch/chesley-morning-brief/chesley_brief.py", line 364, in <module>
+Traceback (most recent call last):
+  File "/Users/ichangsu/.gemini/antigravity/scratch/chesley-morning-brief/chesley_brief.py", line 364, in <module>
+    main()
+    main()
+  File "/Users/ichangsu/.gemini/antigravity/scratch/chesley-morning-brief/chesley_brief.py", line 331, in main
+  File "/Users/ichangsu/.gemini/antigravity/scratch/chesley-morning-brief/chesley_brief.py", line 331, in main
+    video = get_todays_video()
+    video = get_todays_video()
+  File "/Users/ichangsu/.gemini/antigravity/scratch/chesley-morning-brief/chesley_brief.py", line 39, in get_todays_video
+  File "/Users/ichangsu/.gemini/antigravity/scratch/chesley-morning-brief/chesley_brief.py", line 39, in get_todays_video
+    resp.raise_for_status()
+    resp.raise_for_status()
+  File "/Users/ichangsu/.gemini/antigravity/scratch/chesley-morning-brief/.venv/lib/python3.9/site-packages/requests/models.py", line 1026, in raise_for_status
+  File "/Users/ichangsu/.gemini/antigravity/scratch/chesley-morning-brief/.venv/lib/python3.9/site-packages/requests/models.py", line 1026, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 404 Client Error: Not Found for url: https://www.youtube.com/feeds/videos.xml?channel_id=UCXST0Hq6CAmG0dmo3jgrlEw
+requests.exceptions.HTTPError: 404 Client Error: Not Found for url: https://www.youtube.com/feeds/videos.xml?channel_id=UCXST0Hq6CAmG0dmo3jgrlEw
+[2026-02-28 16:00:02] ===== 실행 완료 =====
+[2026-02-28 16:00:02] ===== 실행 완료 =====

@@ -1,0 +1,1531 @@
+{
+  "before": {
+    "idx": 3,
+    "href": "https://klef.gbe.kr/bms/cz/cb/viw/retrieveSanctnWaitDocList.do?MENU_ID=A00AAB0102001&FILE_ID=AABSanctnWaitDocList&alimZon=alimZon",
+    "keys": [
+      "afterClientOpened",
+      "appendDocTooltip",
+      "beforeClientOpened",
+      "cancelIdleCallback",
+      "cfExecuteAjaxSubmitCallback",
+      "checkAboutImportantDoc",
+      "checkAbsDocView",
+      "checkClientClosed",
+      "checkClientOpened",
+      "checkDocApprLine",
+      "checkDocView",
+      "checkDocViewUsingApprID",
+      "checkDocViewUsingApprID8010",
+      "checkDocViewUsingApprIDNew",
+      "checkDocViewUsingApprIDSearch",
+      "checkEnrollPublicList",
+      "checkForAttachDraft",
+      "checkSanctnWaitIngExiAt",
+      "checkSearchDateDocRegist",
+      "deletePublicDoc",
+      "doCallClientApp",
+      "doCallDelete",
+      "doCallDocInfo",
+      "doCallDocInfoWnd",
+      "doCallEnrollPublicList",
+      "doCallExtView",
+      "doCallExtView2",
+      "doCallFileManager",
+      "doCallFileManagerBackup_20120516",
+      "doCallOldClientApp",
+      "doCallSetApprFlag",
+      "fileUploadPreview",
+      "filterByDocClass",
+      "filterByGongRamDoc",
+      "filterDocToApprove",
+      "fncApprLineModify",
+      "fncBndeSanctn",
+      "fncCallCodeByName",
+      "fncCntcExchngDocTyPop",
+      "fncCntcExchngDocTySeClear",
+      "fncCntcExchngDocTySeClearAfter",
+      "fncCntcSanctnerClear",
+      "fncCommCallSetApprFlag",
+      "fncContinuSanctn",
+      "fncDocMultiUpdate",
+      "fncDocPreExList",
+      "fncDocSearchPeriod",
+      "fncDocSecurityAt",
+      "fncListMoveDown",
+      "fncOpenDocChk",
+      "fncOpenDocPopup",
+      "fncOpenDocPopupWithName",
+      "fncOpenPopupSubmitClient",
+      "fncOpenPopupSubmitClient2",
+      "fncOpenWXSClient",
+      "fncOpinionView",
+      "fncSanctnDocTyAll",
+      "fncSanctnDocTyNotAll",
+      "fncSanctnRtrvl",
+      "fncSaveMngDoc",
+      "fncSetCntcDocTySeRP",
+      "fncSetCntcDocTySeRPafter",
+      "fncShowLayer_left_CnrsEqp",
+      "getClientAppType",
+      "getClientAppTypeName",
+      "getDocClass",
+      "getDocCookie",
+      "getDocTitles",
+      "getDocValue",
+      "getFileMgrHandyTemp",
+      "getSelectedAllDocValue",
+      "getSelectedAllDocValueForDocAttr",
+      "getTmpFile",
+      "getValidFileName",
+      "inprogressCheckDocView",
+      "isCheckDocAppl",
+      "isChkClientAppType",
+      "isDocToApprove",
+      "isGongRamDoc",
+      "isRefDoc",
+      "onkeydown",
+      "openPopupDocTooltipByWee",
+      "readPublicDoc",
+      "recallApproval",
+      "requestIdleCallback",
+      "setAllCheckBoxStatusByDocClass",
+      "setAllCheckBoxStatusByGongRamDoc",
+      "setAllCheckBoxStatusForDocAttr",
+      "showOpenFilePicker",
+      "showSaveFilePicker",
+      "unselectImportantPublicDoc",
+      "unselectImportantSusinDoc",
+      "viewHelp",
+      "viewReadyService",
+      "viewSttsHelp",
+      "webkitRequestFileSystem",
+      "webkitResolveLocalFileSystemURL"
+    ],
+    "as": [
+      {
+        "text": "",
+        "onclick": "fncClickBMSLogo()",
+        "href": "#a",
+        "id": ""
+      },
+      {
+        "text": "",
+        "onclick": "fncGlobalLogOut();",
+        "href": "#a",
+        "id": ""
+      },
+      {
+        "text": "",
+        "onclick": "",
+        "href": "#a",
+        "id": "allMenu"
+      },
+      {
+        "text": "",
+        "onclick": "wdSetFontSize(+1); return false;",
+        "href": "#a",
+        "id": ""
+      },
+      {
+        "text": "",
+        "onclick": "wdSetFontSize(0);",
+        "href": "#a",
+        "id": ""
+      },
+      {
+        "text": "",
+        "onclick": "wdSetFontSize(-1); return false;",
+        "href": "#a",
+        "id": ""
+      },
+      {
+        "text": "전체",
+        "onclick": "",
+        "href": "#leftMenuTab_01",
+        "id": ""
+      },
+      {
+        "text": "화면등록",
+        "onclick": "",
+        "href": "#leftMenuTab_02",
+        "id": ""
+      },
+      {
+        "text": "문서의견",
+        "onclick": "fncOpinionView()",
+        "href": "",
+        "id": ""
+      },
+      {
+        "text": "문서정보",
+        "onclick": "doCallDocInfo('0.0',0,1,'1,3,7');",
+        "href": "",
+        "id": ""
+      },
+      {
+        "text": "연속결재",
+        "onclick": "fncContinuSanctn()",
+        "href": "",
+        "id": ""
+      },
+      {
+        "text": "일괄결재",
+        "onclick": "fncBndeSanctn()",
+        "href": "",
+        "id": ""
+      },
+      {
+        "text": "일괄과제결재",
+        "onclick": "fncBndeTaskCrd()",
+        "href": "",
+        "id": ""
+      },
+      {
+        "text": "일괄담당자과제지정",
+        "onclick": "fncBndeTaskCrdCharger()",
+        "href": "",
+        "id": ""
+      },
+      {
+        "text": "즐겨찾기",
+        "onclick": "fncBkmk(6);",
+        "href": "",
+        "id": ""
+      },
+      {
+        "text": "조회",
+        "onclick": "fncValidate()",
+        "href": "",
+        "id": ""
+      },
+      {
+        "text": "",
+        "onclick": "fncCntcReportrClear()",
+        "href": "",
+        "id": ""
+      },
+      {
+        "text": "",
+        "onclick": "dui.Calendar.open('reportDe','reportDe3','from')",
+        "href": "",
+        "id": ""
+      },
+      {
+        "text": "",
+        "onclick": "dui.Calendar.open('reportDe3','reportDe','to')",
+        "href": "",
+        "id": ""
+      },
+      {
+        "text": "",
+        "onclick": "fncCntcReportCoursClear()",
+        "href": "",
+        "id": ""
+      },
+      {
+        "text": "",
+        "onclick": "javascript:fncCntcExchngDocTyPop('99');",
+        "href": "",
+        "id": ""
+      },
+      {
+        "text": "",
+        "onclick": "fncCntcExchngDocTySeClear()",
+        "href": "",
+        "id": ""
+      },
+      {
+        "text": "",
+        "onclick": "fncClearInit()",
+        "href": "",
+        "id": ""
+      },
+      {
+        "text": "",
+        "onclick": "javascript:fncSearchDetail('2');",
+        "href": "",
+        "id": ""
+      },
+      {
+        "text": "",
+        "onclick": "javascript:fncSearchDetail('3');",
+        "href": "",
+        "id": ""
+      },
+      {
+        "text": "",
+        "onclick": "fncPreIseIse('/bms/cz/cb/viw/retrieveSanctnWaitDocListExcelDwld.do?leftMenu=1','1')",
+        "href": "",
+        "id": ""
+      },
+      {
+        "text": "",
+        "onclick": "doCallFileManager(HCLTAPP_FILESAVE);",
+        "href": "",
+        "id": ""
+      },
+      {
+        "text": "",
+        "onclick": "fncDocPreExList('01');",
+        "href": "",
+        "id": ""
+      },
+      {
+        "text": "상태",
+        "onclick": "fncSort('ai__EMRGNCY_AT','',document.aform);",
+        "href": "",
+        "id": ""
+      },
+      {
+        "text": "",
+        "onclick": "viewSttsHelp()",
+        "href": "",
+        "id": ""
+      },
+      {
+        "text": "문서종류",
+        "onclick": "fncSort('ai__SANCTN_DOC_TY','',document.aform);",
+        "href": "",
+        "id": ""
+      },
+      {
+        "text": "제목",
+        "onclick": "fncSort('ai__SANCTN_SJ','',document.aform);",
+        "href": "",
+        "id": ""
+      },
+      {
+        "text": "기안(담당)자",
+        "onclick": "fncSort('ai__DRFT_SANCTNER_NM','',document.aform);",
+        "href": "",
+        "id": ""
+      },
+      {
+        "text": "기안일시",
+        "onclick": "fncSort('AI__SANC_INDEX_DT','',document.aform);",
+        "href": "",
+        "id": ""
+      },
+      {
+        "text": "",
+        "onclick": "doCallDocInfoWnd('R10CB263019605900000',0,1,'1,3,7,11');",
+        "href": "",
+        "id": ""
+      },
+      {
+        "text": "[협조] 2026년 학생선수 e-school 만족도 조사 실시 안내 및 홍보",
+        "onclick": "doCallClientApp(0,'R10CB263019605900000','0','')",
+        "href": "",
+        "id": ""
+      }
+    ],
+    "imgs": [
+      {
+        "tag": "IMG",
+        "id": "",
+        "src": "/bmsWeb/images/common/loading.gif",
+        "onclick": "",
+        "title": ""
+      },
+      {
+        "tag": "A",
+        "id": "",
+        "src": "",
+        "onclick": "fncClickBMSLogo()",
+        "title": ""
+      },
+      {
+        "tag": "IMG",
+        "id": "",
+        "src": "/bmsWeb/images/common/topLogo.jpg",
+        "onclick": "",
+        "title": ""
+      },
+      {
+        "tag": "A",
+        "id": "",
+        "src": "",
+        "onclick": "fncGlobalLogOut();",
+        "title": ""
+      },
+      {
+        "tag": "IMG",
+        "id": "",
+        "src": "/bmsWeb/images/common/btn_logout.gif",
+        "onclick": "",
+        "title": ""
+      },
+      {
+        "tag": "IMG",
+        "id": "",
+        "src": "/bmsWeb/images/common/smenu_mail.gif",
+        "onclick": "",
+        "title": ""
+      },
+      {
+        "tag": "IMG",
+        "id": "",
+        "src": "/bmsWeb/images/common/smenu_setting.gif",
+        "onclick": "",
+        "title": ""
+      },
+      {
+        "tag": "IMG",
+        "id": "",
+        "src": "/bmsWeb/images/common/topmenu_full.gif",
+        "onclick": "javascript:fncRetrieveFullMenuList()",
+        "title": ""
+      },
+      {
+        "tag": "A",
+        "id": "",
+        "src": "",
+        "onclick": "wdSetFontSize(+1); return false;",
+        "title": ""
+      },
+      {
+        "tag": "IMG",
+        "id": "",
+        "src": "/bmsWeb/images/common/quick_fontsize_p.gif",
+        "onclick": "",
+        "title": "확대"
+      },
+      {
+        "tag": "A",
+        "id": "",
+        "src": "",
+        "onclick": "wdSetFontSize(0);",
+        "title": ""
+      },
+      {
+        "tag": "IMG",
+        "id": "",
+        "src": "/bmsWeb/images/common/quick_fontsize_base.gif",
+        "onclick": "",
+        "title": "기본크기"
+      },
+      {
+        "tag": "A",
+        "id": "",
+        "src": "",
+        "onclick": "wdSetFontSize(-1); return false;",
+        "title": ""
+      },
+      {
+        "tag": "IMG",
+        "id": "",
+        "src": "/bmsWeb/images/common/quick_fontsize_m.gif",
+        "onclick": "",
+        "title": "축소"
+      },
+      {
+        "tag": "IMG",
+        "id": "",
+        "src": "/bmsWeb/images/common/leftMenu_btnClose.gif",
+        "onclick": "javascript:onOff()",
+        "title": ""
+      },
+      {
+        "tag": "IMG",
+        "id": "",
+        "src": "/bmsWeb/images/common/leftMenu_btnOpen.gif",
+        "onclick": "javascript:onOff()",
+        "title": ""
+      },
+      {
+        "tag": "A",
+        "id": "",
+        "src": "",
+        "onclick": "fncOpinionView()",
+        "title": "문서의견(새창열기)"
+      },
+      {
+        "tag": "A",
+        "id": "",
+        "src": "",
+        "onclick": "doCallDocInfo('0.0',0,1,'1,3,7');",
+        "title": "문서정보"
+      },
+      {
+        "tag": "A",
+        "id": "",
+        "src": "",
+        "onclick": "fncContinuSanctn()",
+        "title": "연속결재"
+      },
+      {
+        "tag": "A",
+        "id": "",
+        "src": "",
+        "onclick": "fncBndeSanctn()",
+        "title": "일괄결재"
+      },
+      {
+        "tag": "A",
+        "id": "",
+        "src": "",
+        "onclick": "fncBndeTaskCrd()",
+        "title": "일괄과제결재(새창열기)"
+      },
+      {
+        "tag": "A",
+        "id": "",
+        "src": "",
+        "onclick": "fncBndeTaskCrdCharger()",
+        "title": "일괄담당자과제지정"
+      },
+      {
+        "tag": "A",
+        "id": "",
+        "src": "",
+        "onclick": "fncBkmk(6);",
+        "title": "즐겨찾기"
+      },
+      {
+        "tag": "IMG",
+        "id": "",
+        "src": "/bmsWeb/images/common/bar_btn.gif",
+        "onclick": "",
+        "title": ""
+      },
+      {
+        "tag": "A",
+        "id": "",
+        "src": "",
+        "onclick": "fncValidate()",
+        "title": "조회"
+      },
+      {
+        "tag": "IMG",
+        "id": "",
+        "src": "/bmsWeb/images/icon/ic_search.png",
+        "onclick": "fncSearchUser('basicReportr', 'basicReportrID', 'reportrDeptID')",
+        "title": "사용자검색(새창열기)"
+      },
+      {
+        "tag": "IMG",
+        "id": "",
+        "src": "/bmsWeb/images/icon/ic_organ.png",
+        "onclick": "javascript:fncSearchOrgzntUserPopInit('basicReportr')",
+        "title": "조직도로 사용자검색(새창열기)"
+      },
+      {
+        "tag": "INPUT",
+        "id": "orgSanctnDocTy1",
+        "src": "",
+        "onclick": "fncSanctnDocTyAll()",
+        "title": ""
+      },
+      {
+        "tag": "INPUT",
+        "id": "orgSanctnDocTy2",
+        "src": "",
+        "onclick": "fncSanctnDocTyNotAll()",
+        "title": ""
+      },
+      {
+        "tag": "INPUT",
+        "id": "orgSanctnDocTy3",
+        "src": "",
+        "onclick": "fncSanctnDocTyNotAll()",
+        "title": ""
+      },
+      {
+        "tag": "INPUT",
+        "id": "orgSanctnDocTy4",
+        "src": "",
+        "onclick": "fncSanctnDocTyNotAll()",
+        "title": ""
+      },
+      {
+        "tag": "INPUT",
+        "id": "orgSanctnDocTy5",
+        "src": "",
+        "onclick": "fncSanctnDocTyNotAll()",
+        "title": ""
+      },
+      {
+        "tag": "IMG",
+        "id": "",
+        "src": "/bmsWeb/images/icon/ic_search.png",
+        "onclick": "fncSearchUser('reportr', 'reportrID', 'reportrDeptID')",
+        "title": "사용자검색(새창열기)"
+      },
+      {
+        "tag": "IMG",
+        "id": "",
+        "src": "/bmsWeb/images/icon/ic_organ.png",
+        "onclick": "javascript:fncSearchOrgzntUserPopInit('reportr')",
+        "title": "조직도로 사용자검색(새창열기)"
+      },
+      {
+        "tag": "A",
+        "id": "",
+        "src": "",
+        "onclick": "fncCntcReportrClear()",
+        "title": ""
+      },
+      {
+        "tag": "IMG",
+        "id": "",
+        "src": "/bmsWeb/images/icon/ic_erase.png",
+        "onclick": "",
+        "title": "초기화"
+      },
+      {
+        "tag": "A",
+        "id": "",
+        "src": "",
+        "onclick": "dui.Calendar.open('reportDe','reportDe3','from')",
+        "title": ""
+      },
+      {
+        "tag": "IMG",
+        "id": "",
+        "src": "/bmsWeb/images/icon/ic_cal.png",
+        "onclick": "",
+        "title": ""
+      },
+      {
+        "tag": "A",
+        "id": "",
+        "src": "",
+        "onclick": "dui.Calendar.open('reportDe3','reportDe','to')",
+        "title": ""
+      },
+      {
+        "tag": "IMG",
+        "id": "",
+        "src": "/bmsWeb/images/icon/ic_cal.png",
+        "onclick": "",
+        "title": ""
+      }
+    ],
+    "chk": "R10CB263019605900000,1,hraclove,1,3,3,4224,NNYNN,0010020000000000000000000000000000000000000000000,0,1,화천초등학교-11287,0,R100006630,0,R10CB263015153072000,0,true,000000000000000,이창수,0,N,false,48,,N",
+    "userId": null,
+    "uidEls": [
+      {
+        "name": "detailSearch",
+        "id": "detailSearch",
+        "value": ""
+      },
+      {
+        "name": "detailSearchSort",
+        "id": "detailSearchSort",
+        "value": ""
+      },
+      {
+        "name": "basicReportrID",
+        "id": "basicReportrID",
+        "value": ""
+      },
+      {
+        "name": "_orgSanctnDocTy",
+        "id": "",
+        "value": "on"
+      },
+      {
+        "name": "_orgSanctnDocTy",
+        "id": "",
+        "value": "on"
+      },
+      {
+        "name": "_orgSanctnDocTy",
+        "id": "",
+        "value": "on"
+      },
+      {
+        "name": "_orgSanctnDocTy",
+        "id": "",
+        "value": "on"
+      },
+      {
+        "name": "_orgSanctnDocTy",
+        "id": "",
+        "value": "on"
+      },
+      {
+        "name": "cntcExchngDocTySe",
+        "id": "cntcExchngDocTySe",
+        "value": ""
+      },
+      {
+        "name": "reportCoursID",
+        "id": "reportCoursID",
+        "value": ""
+      },
+      {
+        "name": "reportrID",
+        "id": "reportrID",
+        "value": ""
+      },
+      {
+        "name": "reportrDeptID",
+        "id": "reportrDeptID",
+        "value": ""
+      },
+      {
+        "name": "reportCoursDeptID",
+        "id": "reportCoursDeptID",
+        "value": ""
+      },
+      {
+        "name": "docId",
+        "id": "",
+        "value": ""
+      },
+      {
+        "name": "pageIndex",
+        "id": "pageIndex",
+        "value": "0"
+      }
+    ],
+    "scripts": [
+      "https://klef.gbe.kr/bmsWeb/js/validator/jquery-1.11.3.min.js",
+      "",
+      "https://klef.gbe.kr/bmsWeb/js/common/common.js?_v=12.0",
+      "https://klef.gbe.kr/bmsWeb/js/dui_all.js?_v=12.0",
+      "https://klef.gbe.kr/bmsWeb/js/common/common_all.js?_v=12.0",
+      "https://klef.gbe.kr/bmsWeb/js/validator/validator.js?_v=12.0",
+      "https://klef.gbe.kr/bmsWeb/js/common/manual.js?_v=12.0",
+      ""
+    ],
+    "detailHtml": "",
+    "bodyIds": [
+      "LblockSkipLink",
+      "LblockWrapper",
+      "browserLoading",
+      "LblockHeader",
+      "LblockHeaderIn",
+      "LblockTopLogo",
+      "LblockTopSlogan",
+      "LblockWelcome",
+      "LblockTopMenu",
+      "allMenu",
+      "LblockQuickMenu",
+      "QCNT",
+      "QWRT",
+      "QLNK",
+      "LblockWrapperIn",
+      "LblockMiddler",
+      "LblockLeft",
+      "leftMenuTab_01",
+      "LblockLeftMenu",
+      "leftMenuTab_02",
+      "LblockLeftClose",
+      "LblockLeftOpen",
+      "LblockMain",
+      "paginationInfo",
+      "detailSearch",
+      "detailSearchSort",
+      "basicReportrID",
+      "LblockPageTitle",
+      "LblockMainBody",
+      "detailSearch1",
+      "basicSj",
+      "basicReportr",
+      "detailSearch2",
+      "sj",
+      "searchDraftDeptName",
+      "docNo",
+      "orgSanctnDocTy1",
+      "orgSanctnDocTy2",
+      "orgSanctnDocTy3",
+      "orgSanctnDocTy4",
+      "orgSanctnDocTy5",
+      "reportr",
+      "reportDe",
+      "reportDe3",
+      "reportDeOption",
+      "reportCours",
+      "othbcAt",
+      "cntcExchngDocTySeNm",
+      "cntcExchngDocTySe",
+      "reportCoursID",
+      "reportrID",
+      "reportrDeptID",
+      "reportCoursDeptID",
+      "detailSearchInit",
+      "detailSch1",
+      "detailSch2",
+      "inqireLmttText",
+      "tbList",
+      "ai__SANCTN_DOC_TY",
+      "ai__SANCTN_SJ",
+      "ai__DRFT_SANCTNER_NM",
+      "AI__SANC_INDEX_DT",
+      "img0",
+      "pageUnit",
+      "pageIndex",
+      "dvMainBottom",
+      "apprInfoWnd"
+    ]
+  },
+  "click": [
+    "eval doCallDocInfoWnd('R10CB263019605900000',0,1,'1,3,7,11');",
+    "eval doCallClientApp(0,'R10CB263019605900000','0','')",
+    "clicked td"
+  ],
+  "after": {
+    "idx": 3,
+    "href": "https://klef.gbe.kr/bms/cz/cb/viw/retrieveSanctnWaitDocList.do?MENU_ID=A00AAB0102001&FILE_ID=AABSanctnWaitDocList&alimZon=alimZon",
+    "keys": [
+      "afterClientOpened",
+      "appendDocTooltip",
+      "beforeClientOpened",
+      "cancelIdleCallback",
+      "cfExecuteAjaxSubmitCallback",
+      "checkAboutImportantDoc",
+      "checkAbsDocView",
+      "checkClientClosed",
+      "checkClientOpened",
+      "checkDocApprLine",
+      "checkDocView",
+      "checkDocViewUsingApprID",
+      "checkDocViewUsingApprID8010",
+      "checkDocViewUsingApprIDNew",
+      "checkDocViewUsingApprIDSearch",
+      "checkEnrollPublicList",
+      "checkForAttachDraft",
+      "checkSanctnWaitIngExiAt",
+      "checkSearchDateDocRegist",
+      "deletePublicDoc",
+      "doCallClientApp",
+      "doCallDelete",
+      "doCallDocInfo",
+      "doCallDocInfoWnd",
+      "doCallEnrollPublicList",
+      "doCallExtView",
+      "doCallExtView2",
+      "doCallFileManager",
+      "doCallFileManagerBackup_20120516",
+      "doCallOldClientApp",
+      "doCallSetApprFlag",
+      "fileUploadPreview",
+      "filterByDocClass",
+      "filterByGongRamDoc",
+      "filterDocToApprove",
+      "fncApprLineModify",
+      "fncBndeSanctn",
+      "fncCallCodeByName",
+      "fncCntcExchngDocTyPop",
+      "fncCntcExchngDocTySeClear",
+      "fncCntcExchngDocTySeClearAfter",
+      "fncCntcSanctnerClear",
+      "fncCommCallSetApprFlag",
+      "fncContinuSanctn",
+      "fncDocMultiUpdate",
+      "fncDocPreExList",
+      "fncDocSearchPeriod",
+      "fncDocSecurityAt",
+      "fncListMoveDown",
+      "fncOpenDocChk",
+      "fncOpenDocPopup",
+      "fncOpenDocPopupWithName",
+      "fncOpenPopupSubmitClient",
+      "fncOpenPopupSubmitClient2",
+      "fncOpenWXSClient",
+      "fncOpinionView",
+      "fncSanctnDocTyAll",
+      "fncSanctnDocTyNotAll",
+      "fncSanctnRtrvl",
+      "fncSaveMngDoc",
+      "fncSetCntcDocTySeRP",
+      "fncSetCntcDocTySeRPafter",
+      "fncShowLayer_left_CnrsEqp",
+      "getClientAppType",
+      "getClientAppTypeName",
+      "getDocClass",
+      "getDocCookie",
+      "getDocTitles",
+      "getDocValue",
+      "getFileMgrHandyTemp",
+      "getSelectedAllDocValue",
+      "getSelectedAllDocValueForDocAttr",
+      "getTmpFile",
+      "getValidFileName",
+      "inprogressCheckDocView",
+      "isCheckDocAppl",
+      "isChkClientAppType",
+      "isDocToApprove",
+      "isGongRamDoc",
+      "isRefDoc",
+      "onkeydown",
+      "openPopupDocTooltipByWee",
+      "readPublicDoc",
+      "recallApproval",
+      "requestIdleCallback",
+      "setAllCheckBoxStatusByDocClass",
+      "setAllCheckBoxStatusByGongRamDoc",
+      "setAllCheckBoxStatusForDocAttr",
+      "showOpenFilePicker",
+      "showSaveFilePicker",
+      "unselectImportantPublicDoc",
+      "unselectImportantSusinDoc",
+      "viewHelp",
+      "viewReadyService",
+      "viewSttsHelp",
+      "webkitRequestFileSystem",
+      "webkitResolveLocalFileSystemURL"
+    ],
+    "as": [
+      {
+        "text": "",
+        "onclick": "fncClickBMSLogo()",
+        "href": "#a",
+        "id": ""
+      },
+      {
+        "text": "",
+        "onclick": "fncGlobalLogOut();",
+        "href": "#a",
+        "id": ""
+      },
+      {
+        "text": "",
+        "onclick": "",
+        "href": "#a",
+        "id": "allMenu"
+      },
+      {
+        "text": "",
+        "onclick": "wdSetFontSize(+1); return false;",
+        "href": "#a",
+        "id": ""
+      },
+      {
+        "text": "",
+        "onclick": "wdSetFontSize(0);",
+        "href": "#a",
+        "id": ""
+      },
+      {
+        "text": "",
+        "onclick": "wdSetFontSize(-1); return false;",
+        "href": "#a",
+        "id": ""
+      },
+      {
+        "text": "전체",
+        "onclick": "",
+        "href": "#leftMenuTab_01",
+        "id": ""
+      },
+      {
+        "text": "화면등록",
+        "onclick": "",
+        "href": "#leftMenuTab_02",
+        "id": ""
+      },
+      {
+        "text": "문서의견",
+        "onclick": "fncOpinionView()",
+        "href": "",
+        "id": ""
+      },
+      {
+        "text": "문서정보",
+        "onclick": "doCallDocInfo('0.0',0,1,'1,3,7');",
+        "href": "",
+        "id": ""
+      },
+      {
+        "text": "연속결재",
+        "onclick": "fncContinuSanctn()",
+        "href": "",
+        "id": ""
+      },
+      {
+        "text": "일괄결재",
+        "onclick": "fncBndeSanctn()",
+        "href": "",
+        "id": ""
+      },
+      {
+        "text": "일괄과제결재",
+        "onclick": "fncBndeTaskCrd()",
+        "href": "",
+        "id": ""
+      },
+      {
+        "text": "일괄담당자과제지정",
+        "onclick": "fncBndeTaskCrdCharger()",
+        "href": "",
+        "id": ""
+      },
+      {
+        "text": "즐겨찾기",
+        "onclick": "fncBkmk(6);",
+        "href": "",
+        "id": ""
+      },
+      {
+        "text": "조회",
+        "onclick": "fncValidate()",
+        "href": "",
+        "id": ""
+      },
+      {
+        "text": "",
+        "onclick": "fncCntcReportrClear()",
+        "href": "",
+        "id": ""
+      },
+      {
+        "text": "",
+        "onclick": "dui.Calendar.open('reportDe','reportDe3','from')",
+        "href": "",
+        "id": ""
+      },
+      {
+        "text": "",
+        "onclick": "dui.Calendar.open('reportDe3','reportDe','to')",
+        "href": "",
+        "id": ""
+      },
+      {
+        "text": "",
+        "onclick": "fncCntcReportCoursClear()",
+        "href": "",
+        "id": ""
+      },
+      {
+        "text": "",
+        "onclick": "javascript:fncCntcExchngDocTyPop('99');",
+        "href": "",
+        "id": ""
+      },
+      {
+        "text": "",
+        "onclick": "fncCntcExchngDocTySeClear()",
+        "href": "",
+        "id": ""
+      },
+      {
+        "text": "",
+        "onclick": "fncClearInit()",
+        "href": "",
+        "id": ""
+      },
+      {
+        "text": "",
+        "onclick": "javascript:fncSearchDetail('2');",
+        "href": "",
+        "id": ""
+      },
+      {
+        "text": "",
+        "onclick": "javascript:fncSearchDetail('3');",
+        "href": "",
+        "id": ""
+      },
+      {
+        "text": "",
+        "onclick": "fncPreIseIse('/bms/cz/cb/viw/retrieveSanctnWaitDocListExcelDwld.do?leftMenu=1','1')",
+        "href": "",
+        "id": ""
+      },
+      {
+        "text": "",
+        "onclick": "doCallFileManager(HCLTAPP_FILESAVE);",
+        "href": "",
+        "id": ""
+      },
+      {
+        "text": "",
+        "onclick": "fncDocPreExList('01');",
+        "href": "",
+        "id": ""
+      },
+      {
+        "text": "상태",
+        "onclick": "fncSort('ai__EMRGNCY_AT','',document.aform);",
+        "href": "",
+        "id": ""
+      },
+      {
+        "text": "",
+        "onclick": "viewSttsHelp()",
+        "href": "",
+        "id": ""
+      },
+      {
+        "text": "문서종류",
+        "onclick": "fncSort('ai__SANCTN_DOC_TY','',document.aform);",
+        "href": "",
+        "id": ""
+      },
+      {
+        "text": "제목",
+        "onclick": "fncSort('ai__SANCTN_SJ','',document.aform);",
+        "href": "",
+        "id": ""
+      },
+      {
+        "text": "기안(담당)자",
+        "onclick": "fncSort('ai__DRFT_SANCTNER_NM','',document.aform);",
+        "href": "",
+        "id": ""
+      },
+      {
+        "text": "기안일시",
+        "onclick": "fncSort('AI__SANC_INDEX_DT','',document.aform);",
+        "href": "",
+        "id": ""
+      },
+      {
+        "text": "",
+        "onclick": "doCallDocInfoWnd('R10CB263019605900000',0,1,'1,3,7,11');",
+        "href": "",
+        "id": ""
+      },
+      {
+        "text": "[협조] 2026년 학생선수 e-school 만족도 조사 실시 안내 및 홍보",
+        "onclick": "doCallClientApp(0,'R10CB263019605900000','0','')",
+        "href": "",
+        "id": ""
+      }
+    ],
+    "imgs": [
+      {
+        "tag": "IMG",
+        "id": "",
+        "src": "/bmsWeb/images/common/loading.gif",
+        "onclick": "",
+        "title": ""
+      },
+      {
+        "tag": "A",
+        "id": "",
+        "src": "",
+        "onclick": "fncClickBMSLogo()",
+        "title": ""
+      },
+      {
+        "tag": "IMG",
+        "id": "",
+        "src": "/bmsWeb/images/common/topLogo.jpg",
+        "onclick": "",
+        "title": ""
+      },
+      {
+        "tag": "A",
+        "id": "",
+        "src": "",
+        "onclick": "fncGlobalLogOut();",
+        "title": ""
+      },
+      {
+        "tag": "IMG",
+        "id": "",
+        "src": "/bmsWeb/images/common/btn_logout.gif",
+        "onclick": "",
+        "title": ""
+      },
+      {
+        "tag": "IMG",
+        "id": "",
+        "src": "/bmsWeb/images/common/smenu_mail.gif",
+        "onclick": "",
+        "title": ""
+      },
+      {
+        "tag": "IMG",
+        "id": "",
+        "src": "/bmsWeb/images/common/smenu_setting.gif",
+        "onclick": "",
+        "title": ""
+      },
+      {
+        "tag": "IMG",
+        "id": "",
+        "src": "/bmsWeb/images/common/topmenu_full.gif",
+        "onclick": "javascript:fncRetrieveFullMenuList()",
+        "title": ""
+      },
+      {
+        "tag": "A",
+        "id": "",
+        "src": "",
+        "onclick": "wdSetFontSize(+1); return false;",
+        "title": ""
+      },
+      {
+        "tag": "IMG",
+        "id": "",
+        "src": "/bmsWeb/images/common/quick_fontsize_p.gif",
+        "onclick": "",
+        "title": "확대"
+      },
+      {
+        "tag": "A",
+        "id": "",
+        "src": "",
+        "onclick": "wdSetFontSize(0);",
+        "title": ""
+      },
+      {
+        "tag": "IMG",
+        "id": "",
+        "src": "/bmsWeb/images/common/quick_fontsize_base.gif",
+        "onclick": "",
+        "title": "기본크기"
+      },
+      {
+        "tag": "A",
+        "id": "",
+        "src": "",
+        "onclick": "wdSetFontSize(-1); return false;",
+        "title": ""
+      },
+      {
+        "tag": "IMG",
+        "id": "",
+        "src": "/bmsWeb/images/common/quick_fontsize_m.gif",
+        "onclick": "",
+        "title": "축소"
+      },
+      {
+        "tag": "IMG",
+        "id": "",
+        "src": "/bmsWeb/images/common/leftMenu_btnClose.gif",
+        "onclick": "javascript:onOff()",
+        "title": ""
+      },
+      {
+        "tag": "IMG",
+        "id": "",
+        "src": "/bmsWeb/images/common/leftMenu_btnOpen.gif",
+        "onclick": "javascript:onOff()",
+        "title": ""
+      },
+      {
+        "tag": "A",
+        "id": "",
+        "src": "",
+        "onclick": "fncOpinionView()",
+        "title": "문서의견(새창열기)"
+      },
+      {
+        "tag": "A",
+        "id": "",
+        "src": "",
+        "onclick": "doCallDocInfo('0.0',0,1,'1,3,7');",
+        "title": "문서정보"
+      },
+      {
+        "tag": "A",
+        "id": "",
+        "src": "",
+        "onclick": "fncContinuSanctn()",
+        "title": "연속결재"
+      },
+      {
+        "tag": "A",
+        "id": "",
+        "src": "",
+        "onclick": "fncBndeSanctn()",
+        "title": "일괄결재"
+      },
+      {
+        "tag": "A",
+        "id": "",
+        "src": "",
+        "onclick": "fncBndeTaskCrd()",
+        "title": "일괄과제결재(새창열기)"
+      },
+      {
+        "tag": "A",
+        "id": "",
+        "src": "",
+        "onclick": "fncBndeTaskCrdCharger()",
+        "title": "일괄담당자과제지정"
+      },
+      {
+        "tag": "A",
+        "id": "",
+        "src": "",
+        "onclick": "fncBkmk(6);",
+        "title": "즐겨찾기"
+      },
+      {
+        "tag": "IMG",
+        "id": "",
+        "src": "/bmsWeb/images/common/bar_btn.gif",
+        "onclick": "",
+        "title": ""
+      },
+      {
+        "tag": "A",
+        "id": "",
+        "src": "",
+        "onclick": "fncValidate()",
+        "title": "조회"
+      },
+      {
+        "tag": "IMG",
+        "id": "",
+        "src": "/bmsWeb/images/icon/ic_search.png",
+        "onclick": "fncSearchUser('basicReportr', 'basicReportrID', 'reportrDeptID')",
+        "title": "사용자검색(새창열기)"
+      },
+      {
+        "tag": "IMG",
+        "id": "",
+        "src": "/bmsWeb/images/icon/ic_organ.png",
+        "onclick": "javascript:fncSearchOrgzntUserPopInit('basicReportr')",
+        "title": "조직도로 사용자검색(새창열기)"
+      },
+      {
+        "tag": "INPUT",
+        "id": "orgSanctnDocTy1",
+        "src": "",
+        "onclick": "fncSanctnDocTyAll()",
+        "title": ""
+      },
+      {
+        "tag": "INPUT",
+        "id": "orgSanctnDocTy2",
+        "src": "",
+        "onclick": "fncSanctnDocTyNotAll()",
+        "title": ""
+      },
+      {
+        "tag": "INPUT",
+        "id": "orgSanctnDocTy3",
+        "src": "",
+        "onclick": "fncSanctnDocTyNotAll()",
+        "title": ""
+      },
+      {
+        "tag": "INPUT",
+        "id": "orgSanctnDocTy4",
+        "src": "",
+        "onclick": "fncSanctnDocTyNotAll()",
+        "title": ""
+      },
+      {
+        "tag": "INPUT",
+        "id": "orgSanctnDocTy5",
+        "src": "",
+        "onclick": "fncSanctnDocTyNotAll()",
+        "title": ""
+      },
+      {
+        "tag": "IMG",
+        "id": "",
+        "src": "/bmsWeb/images/icon/ic_search.png",
+        "onclick": "fncSearchUser('reportr', 'reportrID', 'reportrDeptID')",
+        "title": "사용자검색(새창열기)"
+      },
+      {
+        "tag": "IMG",
+        "id": "",
+        "src": "/bmsWeb/images/icon/ic_organ.png",
+        "onclick": "javascript:fncSearchOrgzntUserPopInit('reportr')",
+        "title": "조직도로 사용자검색(새창열기)"
+      },
+      {
+        "tag": "A",
+        "id": "",
+        "src": "",
+        "onclick": "fncCntcReportrClear()",
+        "title": ""
+      },
+      {
+        "tag": "IMG",
+        "id": "",
+        "src": "/bmsWeb/images/icon/ic_erase.png",
+        "onclick": "",
+        "title": "초기화"
+      },
+      {
+        "tag": "A",
+        "id": "",
+        "src": "",
+        "onclick": "dui.Calendar.open('reportDe','reportDe3','from')",
+        "title": ""
+      },
+      {
+        "tag": "IMG",
+        "id": "",
+        "src": "/bmsWeb/images/icon/ic_cal.png",
+        "onclick": "",
+        "title": ""
+      },
+      {
+        "tag": "A",
+        "id": "",
+        "src": "",
+        "onclick": "dui.Calendar.open('reportDe3','reportDe','to')",
+        "title": ""
+      },
+      {
+        "tag": "IMG",
+        "id": "",
+        "src": "/bmsWeb/images/icon/ic_cal.png",
+        "onclick": "",
+        "title": ""
+      }
+    ],
+    "chk": "R10CB263019605900000,1,hraclove,1,3,3,4224,NNYNN,0010020000000000000000000000000000000000000000000,0,1,화천초등학교-11287,0,R100006630,0,R10CB263015153072000,0,true,000000000000000,이창수,0,N,false,48,,N",
+    "userId": null,
+    "uidEls": [
+      {
+        "name": "detailSearch",
+        "id": "detailSearch",
+        "value": ""
+      },
+      {
+        "name": "detailSearchSort",
+        "id": "detailSearchSort",
+        "value": ""
+      },
+      {
+        "name": "basicReportrID",
+        "id": "basicReportrID",
+        "value": ""
+      },
+      {
+        "name": "_orgSanctnDocTy",
+        "id": "",
+        "value": "on"
+      },
+      {
+        "name": "_orgSanctnDocTy",
+        "id": "",
+        "value": "on"
+      },
+      {
+        "name": "_orgSanctnDocTy",
+        "id": "",
+        "value": "on"
+      },
+      {
+        "name": "_orgSanctnDocTy",
+        "id": "",
+        "value": "on"
+      },
+      {
+        "name": "_orgSanctnDocTy",
+        "id": "",
+        "value": "on"
+      },
+      {
+        "name": "cntcExchngDocTySe",
+        "id": "cntcExchngDocTySe",
+        "value": ""
+      },
+      {
+        "name": "reportCoursID",
+        "id": "reportCoursID",
+        "value": ""
+      },
+      {
+        "name": "reportrID",
+        "id": "reportrID",
+        "value": ""
+      },
+      {
+        "name": "reportrDeptID",
+        "id": "reportrDeptID",
+        "value": ""
+      },
+      {
+        "name": "reportCoursDeptID",
+        "id": "reportCoursDeptID",
+        "value": ""
+      },
+      {
+        "name": "docId",
+        "id": "",
+        "value": ""
+      },
+      {
+        "name": "pageIndex",
+        "id": "pageIndex",
+        "value": "0"
+      }
+    ],
+    "scripts": [
+      "https://klef.gbe.kr/bmsWeb/js/validator/jquery-1.11.3.min.js",
+      "",
+      "https://klef.gbe.kr/bmsWeb/js/common/common.js?_v=12.0",
+      "https://klef.gbe.kr/bmsWeb/js/dui_all.js?_v=12.0",
+      "https://klef.gbe.kr/bmsWeb/js/common/common_all.js?_v=12.0",
+      "https://klef.gbe.kr/bmsWeb/js/validator/validator.js?_v=12.0",
+      "https://klef.gbe.kr/bmsWeb/js/common/manual.js?_v=12.0",
+      ""
+    ],
+    "detailHtml": "",
+    "bodyIds": [
+      "LblockSkipLink",
+      "LblockWrapper",
+      "browserLoading",
+      "LblockHeader",
+      "LblockHeaderIn",
+      "LblockTopLogo",
+      "LblockTopSlogan",
+      "LblockWelcome",
+      "LblockTopMenu",
+      "allMenu",
+      "LblockQuickMenu",
+      "QCNT",
+      "QWRT",
+      "QLNK",
+      "LblockWrapperIn",
+      "LblockMiddler",
+      "LblockLeft",
+      "leftMenuTab_01",
+      "LblockLeftMenu",
+      "leftMenuTab_02",
+      "LblockLeftClose",
+      "LblockLeftOpen",
+      "LblockMain",
+      "paginationInfo",
+      "detailSearch",
+      "detailSearchSort",
+      "basicReportrID",
+      "LblockPageTitle",
+      "LblockMainBody",
+      "detailSearch1",
+      "basicSj",
+      "basicReportr",
+      "detailSearch2",
+      "sj",
+      "searchDraftDeptName",
+      "docNo",
+      "orgSanctnDocTy1",
+      "orgSanctnDocTy2",
+      "orgSanctnDocTy3",
+      "orgSanctnDocTy4",
+      "orgSanctnDocTy5",
+      "reportr",
+      "reportDe",
+      "reportDe3",
+      "reportDeOption",
+      "reportCours",
+      "othbcAt",
+      "cntcExchngDocTySeNm",
+      "cntcExchngDocTySe",
+      "reportCoursID",
+      "reportrID",
+      "reportrDeptID",
+      "reportCoursDeptID",
+      "detailSearchInit",
+      "detailSch1",
+      "detailSch2",
+      "inqireLmttText",
+      "tbList",
+      "ai__SANCTN_DOC_TY",
+      "ai__SANCTN_SJ",
+      "ai__DRFT_SANCTNER_NM",
+      "AI__SANC_INDEX_DT",
+      "img0",
+      "pageUnit",
+      "pageIndex",
+      "dvMainBottom",
+      "apprInfoWnd"
+    ]
+  }
+}

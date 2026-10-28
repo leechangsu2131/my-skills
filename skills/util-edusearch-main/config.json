@@ -1,0 +1,15 @@
+{
+  "_comment": "target_sites에 수집할 URL을 추가하세요. use_selenium은 로그인/동적 페이지에서 true로 설정.",
+  "target_sites": [
+    {
+      "url": "https://example.com/page1",
+      "use_selenium": false,
+      "memo": "예시 URL - 실제 URL로 교체하세요"
+    }
+  ],
+  "delay_seconds": 5,
+  "max_summary_chars": 1000,
+  "user_agent": "MyPersonalSearchBot/1.0 (Personal use only)",
+  "chromedriver_path": "C:/chromedriver/chromedriver.exe",
+  "db_path": "data.db"
+}

@@ -1,0 +1,8 @@
+watchdog>=4.0.0
+odfpy>=1.4.1
+pdfminer.six>=20221105
+chromadb>=0.5.0
+sentence-transformers>=3.0.0
+python-dotenv>=1.0.0
+rank-bm25>=0.2.2
+openai>=1.0.0

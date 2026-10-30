@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "months": [
+    "2026-08",
+    "2026-09",
+    "2026-10"
+  ],
+  "sources": {
+    "october-sender-backfill": {
+      "path": "skills\\admin-gbetalk\\out\\sender-backfill-20261028\\october-raw-with-senders-verified.jsonl",
+      "sha256": "b414dc0113723120f9588ebbd7c58b07671e954670fb86348f01c9aafb380508",
+      "record_count": 171
+    },
+    "older-sender-backfill": {
+      "path": "skills\\admin-gbetalk\\out\\sender-backfill-20261028\\older-bodies-with-senders-verified-search11.jsonl",
+      "sha256": "182ad8ac863c1a72bec192fd4843e550fe4b7c157b4c84ccff1b9651b571cb59",
+      "record_count": 398
+    }
+  },
+  "month_slices": {
+    "2026-08": {
+      "output_path": "received-2026-08-sender-status.jsonl",
+      "output_sha256": "c680a41eee77d2c655a3797e3b5a83a2ec0629bfb73e2ce4970ff6333d286ea9",
+      "record_count": 113,
+      "sender_count": 80,
+      "missing_sender_count": 33,
+      "newest_date": "2026-08-31",
+      "oldest_date": "2026-08-05",
+      "source_counts": {
+        "october-sender-backfill": 0,
+        "older-sender-backfill": 113
+      }
+    },
+    "2026-09": {
+      "output_path": "received-2026-09-sender-status.jsonl",
+      "output_sha256": "10ca6f2819a3461d06c5627593d51a5e9821ea0d7385e9c453d522ff7eccc671",
+      "record_count": 255,
+      "sender_count": 33,
+      "missing_sender_count": 222,
+      "newest_date": "2026-09-30",
+      "oldest_date": "2026-09-01",
+      "source_counts": {
+        "october-sender-backfill": 2,
+        "older-sender-backfill": 253
+      }
+    },
+    "2026-10": {
+      "output_path": "received-2026-10-sender-status.jsonl",
+      "output_sha256": "3da76859dfd426224d34b78fd4eb82b9f15ee6a61cc4a071ca36c5cca54a5dd0",
+      "record_count": 169,
+      "sender_count": 169,
+      "missing_sender_count": 0,
+      "newest_date": "2026-10-26",
+      "oldest_date": "2026-10-01",
+      "source_counts": {
+        "october-sender-backfill": 169,
+        "older-sender-backfill": 0
+      }
+    }
+  },
+  "total_records": 537,
+  "total_senders": 282,
+  "total_missing_senders": 255,
+  "ordering_note": "Records are ordered by received_date descending, then source priority and source sequence descending. Message times are not available, so cross-source ordering within one date is not asserted.",
+  "note": "Sender fields are preserved only when present in a fingerprint-verified source; missing values are not inferred. Directly verified live captures retain visible-header evidence."
+}

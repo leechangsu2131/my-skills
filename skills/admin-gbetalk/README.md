@@ -241,6 +241,16 @@ python .\scripts\build_sender_month_slices.py `
 
 현재 월별 결과는 총 560건이며 발신자 확인 수는 8월 0/113, 9월 5/255, 10월 192/192다. 8월 113건과 9월 250건은 아직 미확인으로 남아 있다. 소스 해시와 월별 결과 해시는 출력 디렉터리의 `sender-month-slices-audit.json`에서 확인한다.
 
+월별 JSONL을 Markdown으로 변환할 때는 원본 JSONL 해시·본문 해시·날짜 순서·sender 개수를 다시 검증한다. 없는 발신자는 `발신자 미확인`으로 표시한다. 기존 문서를 덮어쓰지 않는다.
+
+```powershell
+python .\scripts\render_sender_month_markdown.py `
+  .\out\sender-monthly-20261028-with-new-october `
+  'C:\Users\user\Documents\zipmessage'
+```
+
+이 실행은 `2026-08.md`, `2026-09.md`, `2026-10.md`와 월별 목록 `README.md`를 만든다. 날짜만 있는 자료이므로 같은 날짜 안 정확한 수신 시각순은 보증하지 않는다.
+
 한국어 Windows OCR이 화면의 `이명숙`을 `이영숙`으로, `강동휘`를 `강등뤼`로 잘못 읽은 사례가 있어 발신자 OCR은 검증되지 않은 후보로만 취급한다. 목록 `Ctrl+C`도 한 번 시험했으나 포커스가 메시지 본문이어서 클립보드는 비어 있었다. 화면과 대조하지 않은 OCR값을 저장하지 않는다. 검색으로 쪽지를 찾은 뒤 탭을 닫았을 때 목록 강조와 미리보기가 달라진 과거 사례도 있어, 검색 탭을 닫은 뒤에는 새 화면 상태를 확인하기 전까지 키 입력을 보내지 않는다. 자세한 실패와 복구는 [트러블슈팅 이력](references/troubleshooting.md)과 [키보드 매크로 방법론](references/keyboard-macro-methodology.md)에 기록했다.
 
 ## UIA가 작동하지 않을 때

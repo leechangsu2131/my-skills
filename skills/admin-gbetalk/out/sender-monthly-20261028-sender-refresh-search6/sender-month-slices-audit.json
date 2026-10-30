@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "months": [
+    "2026-08",
+    "2026-09",
+    "2026-10"
+  ],
+  "sources": {
+    "october-live-capture": {
+      "path": "skills\\admin-gbetalk\\out\\capture-2026-10-new-20261028-run1\\raw-bodies.jsonl",
+      "sha256": "76c408958cb69e962c3131086bd87472e6837d8aeedf951b8f51a55e1da8480e",
+      "record_count": 23
+    },
+    "october-sender-backfill": {
+      "path": "skills\\admin-gbetalk\\out\\sender-backfill-20261028\\october-raw-with-senders-verified.jsonl",
+      "sha256": "b414dc0113723120f9588ebbd7c58b07671e954670fb86348f01c9aafb380508",
+      "record_count": 171
+    },
+    "older-sender-backfill": {
+      "path": "skills\\admin-gbetalk\\out\\sender-backfill-20261028\\older-bodies-with-senders-verified-search6.jsonl",
+      "sha256": "92b5ac5e90f923382440efa5b3dc5e70a67cbb0f9bf5691f5d499d8ec8207212",
+      "record_count": 398
+    }
+  },
+  "month_slices": {
+    "2026-08": {
+      "output_path": "received-2026-08-sender-status.jsonl",
+      "output_sha256": "09ccae571d64b1810d31e3c600086681cca134f0fc1e89342d82b797ba7a30d8",
+      "record_count": 113,
+      "sender_count": 45,
+      "missing_sender_count": 68,
+      "newest_date": "2026-08-31",
+      "oldest_date": "2026-08-05",
+      "source_counts": {
+        "october-live-capture": 0,
+        "october-sender-backfill": 0,
+        "older-sender-backfill": 113
+      }
+    },
+    "2026-09": {
+      "output_path": "received-2026-09-sender-status.jsonl",
+      "output_sha256": "03f3295f9bb552ed1ad7923a211bd5f93e1f8d2a6b7841cfd5291100af4f6f49",
+      "record_count": 255,
+      "sender_count": 21,
+      "missing_sender_count": 234,
+      "newest_date": "2026-09-30",
+      "oldest_date": "2026-09-01",
+      "source_counts": {
+        "october-live-capture": 0,
+        "october-sender-backfill": 2,
+        "older-sender-backfill": 253
+      }
+    },
+    "2026-10": {
+      "output_path": "received-2026-10-sender-status.jsonl",
+      "output_sha256": "b1300719a2ba685268e39104f99d5f3c452bce31501c1bdb64d5a2eb3f946b53",
+      "record_count": 192,
+      "sender_count": 192,
+      "missing_sender_count": 0,
+      "newest_date": "2026-10-28",
+      "oldest_date": "2026-10-01",
+      "source_counts": {
+        "october-live-capture": 23,
+        "october-sender-backfill": 169,
+        "older-sender-backfill": 0
+      }
+    }
+  },
+  "total_records": 560,
+  "total_senders": 258,
+  "total_missing_senders": 302,
+  "ordering_note": "Records are ordered by received_date descending, then source priority and source sequence descending. Message times are not available, so cross-source ordering within one date is not asserted.",
+  "note": "Sender fields are preserved only when present in a fingerprint-verified source; missing values are not inferred. Directly verified live captures retain visible-header evidence."
+}

@@ -65,6 +65,13 @@ def read_and_validate(month: str, source: Path, expected: dict) -> list[dict]:
     return records
 
 
+def heading_time(row: dict) -> str:
+    received_at = row.get("received_at")
+    if isinstance(received_at, str) and received_at.startswith(row["received_date"]) and len(received_at) >= 16:
+        return f"{row['received_date']} {received_at[11:16]}"
+    return row["received_date"]
+
+
 def render_month(month: str, rows: list[dict], summary: dict, source_sha256: str) -> str:
     year, month_number = map(int, month.split("-"))
     oldest = summary.get("oldest_date") or "-"
@@ -92,7 +99,7 @@ def render_month(month: str, rows: list[dict], summary: dict, source_sha256: str
         else:
             sender_label = "발신자 미확인"
         lines.extend([
-            f"## {row['received_date']} — {sender_label}",
+            f"## {heading_time(row)} — {sender_label}",
             "",
             f"- 원본: `{row.get('backfill_source', 'unknown')}` 순번 {row['backfill_source_sequence']}",
             f"- 행 SHA-256: `{row['row_sha256']}`",

@@ -12,7 +12,7 @@ from datetime import date
 from pathlib import Path
 
 
-MONTHS = ("2026-08", "2026-09", "2026-10")
+MONTHS = ("2026-08", "2026-09", "2026-10", "2026-11")
 SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
 
 
@@ -72,19 +72,27 @@ def main() -> int:
         type=Path,
         help="Optional newly verified October messages; this source is placed first within each date.",
     )
+    parser.add_argument(
+        "--newer-live-jsonl",
+        type=Path,
+        action="append",
+        default=[],
+        help="Verified live captures newer than --new-october-jsonl, newest first; may repeat.",
+    )
     args = parser.parse_args()
 
     if args.output_dir.exists():
         raise SystemExit(f"output directory already exists; refusing to overwrite: {args.output_dir}")
     args.output_dir.mkdir(parents=True)
 
-    sources = []
+    live = [(f"live-{path.parent.name}", path) for path in args.newer_live_jsonl]
     if args.new_october_jsonl:
-        sources.append(("october-live-capture", args.new_october_jsonl, 0))
-    sources.extend([
-        ("october-sender-backfill", args.october_sender_jsonl, 1 if args.new_october_jsonl else 0),
-        ("older-sender-backfill", args.older_sender_jsonl, 2 if args.new_october_jsonl else 1),
+        live.append(("october-live-capture", args.new_october_jsonl))
+    live.extend([
+        ("october-sender-backfill", args.october_sender_jsonl),
+        ("older-sender-backfill", args.older_sender_jsonl),
     ])
+    sources = [(name, path, rank) for rank, (name, path) in enumerate(live)]
     source_audit = {}
     by_month: dict[str, list[dict]] = defaultdict(list)
     seen_fingerprints = set()

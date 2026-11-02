@@ -1,0 +1,10 @@
+{
+  "capture": "capture-2026-11-new-20261102-run1",
+  "inbox": "쪽지관리함 > 받은쪽지함",
+  "method": "pywinauto UIA: body from RICHEDIT50W id 1022; navigation Home-selected row click then Down only; sender/date/time read visually from per-row header screenshots",
+  "newest": {"sequence": 1, "received_at": "2026-11-02T10:50:00+09:00", "sender": "강경실"},
+  "oldest": {"sequence": 34, "received_at": "2026-10-28T12:47:00+09:00", "sender": "김경영"},
+  "boundary": {"stopped_before": "capture-2026-10-new-20261028-run1 sequence 1", "visible": "강동휘 · 2026-10-28 11:35", "match": "whitespace-normalized body equal to baseline seq1; header visually confirmed"},
+  "record_count": 34,
+  "notes": ["seq24 list row shows 취소된 메시지입니다. (UIA body empty); placeholder body stored", "row_sha256 is sha256 of the visually transcribed list label 'sender / date time' because the list rows are not exposed through pywinauto UIA", "body newlines normalized from UIA CR to LF; uia_body_sha256 keeps the raw UIA hash"]
+}

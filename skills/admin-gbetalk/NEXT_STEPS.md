@@ -16,6 +16,13 @@
 - 다음 신규 캡처의 기준(baseline)은 `out/capture-2026-11-new-20261102-run1/raw-bodies.jsonl` seq1(강경실 · 2026-11-02 10:50, 첨부만 있는 본문 `?`)이다. 본문이 `?`인 첨부 쪽지는 다른 첨부 쪽지와 겹칠 수 있으므로 seq1–3 전체와 머리글을 함께 대조한다.
 - 8·9월 미확인 발신자 작업(아래 search12 상태)은 그대로 남아 있다.
 
+### 재개 전 읽을 문서
+
+1. [references/troubleshooting.md](references/troubleshooting.md)의 "2026-11-02 신규 수신 캡처" — pywinauto 경로의 관찰·한계
+2. [references/keyboard-macro-methodology.md](references/keyboard-macro-methodology.md)의 "2026-11-02 보강" — 재현 순서와 안전 규칙
+3. `scripts/capture_pywinauto.py`, `out/capture-2026-11-new-20261102-run1/range-manifest.json`·`metadata.csv`
+4. `C:\Users\user\Documents\zipmessage\README.md`와 월별 Markdown, staging 폴더
+
 ## 최신 상태 — 2026-10-29 (KST, search12)
 
 ### 목표와 안전한 범위

@@ -229,6 +229,23 @@ python .\scripts\apply_sender_backfill.py `
 
 2026-10-28 기준 기존 10월 171건은 발신자 171건을 채웠고, 같은 날 받은쪽지함을 키보드로 순회해 10월 신규 23건을 더 확인했다. 새 캡처는 `out/capture-2026-10-new-20261028-run1/`에 원본 그대로 분리돼 있다. 2026-10-26 09:05 경계 행의 행/본문 지문을 만나기 전까지만 저장하고, 경계에서 저장 0건으로 멈춘 것을 확인했다. 과거 398건은 기존 sender 4건만 있으며 394건은 미확인이다. 기존 보강본은 원본 행을 수정하지 않는다.
 
+## 받은쪽지 신규 캡처 (Computer Use 없이)
+
+`sky` Computer Use 클라이언트를 쓸 수 없을 때는 사용자 PC에서 `scripts/capture_pywinauto.py`를 실행한다. `pywinauto`(UIA), Pillow, pywin32가 필요하다. 동작은 읽기 중심이다. 본문은 UIA `RICHEDIT50W`(ID 1022)의 Value로 읽고, 이동은 `Down` 키만 보내며, 확인용으로 행마다 창 스크린샷을 저장한다.
+
+- 쪽지관리함은 메인 창의 `쪽지관리함` 버튼을 UIA `Invoke`로 눌러 연다. 이미 열려 있고 받은쪽지함이 선택된 상태인지 먼저 확인한다.
+- `UltariListScrollView`(수신함 리스트)는 pywinauto UIA에서 자식 행과 머리글(발신자·시각)을 노출하지 않는다. 발신자·날짜·시각은 행마다 저장한 스크린샷의 머리글을 육안으로 읽어 `metadata.csv`에 기록한다. `row_sha256`은 확인한 라벨(`발신자 / 날짜 시각`)의 해시이며 `sky` 행 지문과는 비교할 수 없다.
+- 관리함이 전경 창이 아니거나 목록 포커스가 없으면 시작·이동하지 않는다. 포커스를 잃었을 때는 이미 선택된 행을 한 번만 클릭(`CLICK_XY`)하고 다른 행은 누르지 않는다.
+- 이동 판정은 (본문, 머리글) 쌍 기준이다. `강동휘 · 09:40`처럼 머리글이 같은 인접 쪽지가 있어 머리글만 보면 정지로 오인한다.
+- 취소된 쪽지와 첨부만 있는 쪽지(본문 `?`)는 본문만으로 구분이 어렵다. 경계 판정은 baseline 앞 3건의 공백 정규화 본문과 머리글 확인을 함께 쓴다.
+- 중단되면 `RESUME=1`로 이어 한다. 현재 (본문, 머리글)이 마지막 저장 행과 같으면 건너뛰고 다르면 다음 순번으로 저장한다.
+
+```powershell
+python .\scripts\capture_pywinauto.py <관리함-hwnd> <출력-폴더> 30 <기준-raw.jsonl>
+```
+
+출력 `rows.jsonl`과 행별 `row-NNNN.jpg`를 검토해 `metadata.csv`를 만든 뒤, 기존 raw 스키마(순번·`received_date`·`received_at`·`sender`·`sender_evidence`·`body`·`body_sha256`)로 `raw-bodies.jsonl`을 작성한다. 산출 예시는 `out/capture-2026-11-new-20261102-run1/`과 `range-manifest.json`을 본다.
+
 8·9·10월 파일을 따로 만들고 발신자 누락을 집계하려면 다음 스크립트를 사용한다. 기존 sender가 없는 메시지는 추정하지 않고 `sender: null`, `sender_capture_status: missing`으로 남기며, 10월 live capture는 같은 날짜 안에서 먼저 배치한다. 날짜별 수신 시각은 저장되지 않았으므로 같은 날짜의 정확한 시간순이라고 해석하지 않는다.
 
 ```powershell
@@ -236,10 +253,13 @@ python .\scripts\build_sender_month_slices.py `
   .\out\sender-backfill-20261028\october-raw-with-senders-verified.jsonl `
   .\out\sender-backfill-20261028\older-bodies-with-senders-verified.jsonl `
   .\out\sender-monthly-20261028-with-new-october `
-  --new-october-jsonl .\out\capture-2026-10-new-20261028-run1\raw-bodies.jsonl
+  --new-october-jsonl .\out\capture-2026-10-new-20261028-run1\raw-bodies.jsonl `
+  --newer-live-jsonl .\out\capture-2026-11-new-20261102-run1\raw-bodies.jsonl
 ```
 
-현재 월별 결과는 총 560건이며 발신자 확인 수는 8월 0/113, 9월 5/255, 10월 192/192다. 8월 113건과 9월 250건은 아직 미확인으로 남아 있다. 소스 해시와 월별 결과 해시는 출력 디렉터리의 `sender-month-slices-audit.json`에서 확인한다.
+`--newer-live-jsonl`은 최신 캡처부터 순서대로 반복해서 줄 수 있고, 각 날짜 안에서 앞쪽 소스가 먼저 온다. `MONTHS`에 달을 추가하면 11월처럼 새 월도 같은 방식으로 슬라이스된다.
+
+2026-11-02 기준 월별 결과는 총 594건이며 발신자 확인 수는 8월 80/113, 9월 53/255, 10월 217/217, 11월 9/9다. 8·9월 미확인 235건은 아직 남아 있다. 소스 해시와 월별 결과 해시는 출력 디렉터리의 `sender-month-slices-audit.json`에서 확인한다.
 
 월별 JSONL을 Markdown으로 변환할 때는 원본 JSONL 해시·본문 해시·날짜 순서·sender 개수를 다시 검증한다. 없는 발신자는 `발신자 미확인`으로 표시한다. 기존 문서를 덮어쓰지 않는다.
 
@@ -249,7 +269,7 @@ python .\scripts\render_sender_month_markdown.py `
   'C:\Users\user\Documents\zipmessage'
 ```
 
-이 실행은 `2026-08.md`, `2026-09.md`, `2026-10.md`와 월별 목록 `README.md`를 만든다. 날짜만 있는 자료이므로 같은 날짜 안 정확한 수신 시각순은 보증하지 않는다.
+이 실행은 `YYYY-MM.md` 월별 파일과 월별 목록 `README.md`를 만든다. `received_at`(시각 포함)이 있는 행은 제목이 `## YYYY-MM-DD HH:MM — 발신자`로 표시된다. 시각이 없는 자료는 같은 날짜 안 정확한 수신 시각순을 보증하지 않는다.
 
 한국어 Windows OCR이 화면의 `이명숙`을 `이영숙`으로, `강동휘`를 `강등뤼`로 잘못 읽은 사례가 있어 발신자 OCR은 검증되지 않은 후보로만 취급한다. 목록 `Ctrl+C`도 한 번 시험했으나 포커스가 메시지 본문이어서 클립보드는 비어 있었다. 화면과 대조하지 않은 OCR값을 저장하지 않는다. 검색으로 쪽지를 찾은 뒤 탭을 닫았을 때 목록 강조와 미리보기가 달라진 과거 사례도 있어, 검색 탭을 닫은 뒤에는 새 화면 상태를 확인하기 전까지 키 입력을 보내지 않는다. 자세한 실패와 복구는 [트러블슈팅 이력](references/troubleshooting.md)과 [키보드 매크로 방법론](references/keyboard-macro-methodology.md)에 기록했다.
 

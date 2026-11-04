@@ -1,5 +1,28 @@
 # 지비톡 쪽지 보관 작업 인계
 
+## 최신 상태 — 2026-11-02 (KST, 신규 수신 캡처)
+
+### 이번에 한 일
+
+- 2026-10-28 11:35(강동휘) 이후 받은 쪽지 34건을 받은쪽지함 최신 행부터 `Down`만으로 캡처했다. 35번째 행에서 기존 `capture-2026-10-new-20261028-run1` seq1(강동휘 · 2026-10-28 11:35)과 공백 정규화 본문이 일치했고, 머리글도 화면에서 확인해 경계로 판단했다.
+- 이번 세션에는 Computer Use `sky` 클라이언트가 없어서 사용자 PC에서 `scripts/capture_pywinauto.py`(pywinauto UIA)로 수집했다. 본문은 UIA `RICHEDIT50W`(ID 1022) 값, 발신자·날짜·시각은 행별 전체 창 스크린샷의 머리글을 육안으로 읽어 `metadata.csv`에 기록했다.
+- 산출물: `out/capture-2026-11-new-20261102-run1/` — `uia-rows.jsonl`(UIA 원값, CR 줄바꿈), `metadata.csv`, `raw-bodies.jsonl`(34행, LF 정규화·앞뒤 공백 제거, `received_at` 포함, SHA-256 `f88caa96c22ebbf71cc33861fc3ab2f19b162078a0747319f584aab97fe66674`), `range-manifest.json`.
+- 월별 슬라이스 `out/sender-monthly-20261102-with-new-november/`: 8월 113(80/33), 9월 255(53/202), 10월 217(217/0), 11월 9(9/0). 8·9월 JSONL은 search12와 바이트 단위로 같다.
+- 사용자 출력 `C:\Users\user\Documents\zipmessage`: README·8–11월 Markdown 갱신, 이전 파일은 `previous-before-20261102-new-november`, staging은 `sender-refresh-20261102-new-november`. 이제 `received_at`이 있는 항목은 제목에 시각이 표시된다(9월 3건 포함).
+- 스크린샷(행별 jpg)은 사용자 PC `C:\Users\user\gbtalk-work\cap-20261102`에만 있고 저장소에는 넣지 않았다.
+
+### 다음 재개
+
+- 다음 신규 캡처의 기준(baseline)은 `out/capture-2026-11-new-20261102-run1/raw-bodies.jsonl` seq1(강경실 · 2026-11-02 10:50, 첨부만 있는 본문 `?`)이다. 본문이 `?`인 첨부 쪽지는 다른 첨부 쪽지와 겹칠 수 있으므로 seq1–3 전체와 머리글을 함께 대조한다.
+- 8·9월 미확인 발신자 작업(아래 search12 상태)은 그대로 남아 있다.
+
+### 재개 전 읽을 문서
+
+1. [references/troubleshooting.md](references/troubleshooting.md)의 "2026-11-02 신규 수신 캡처" — pywinauto 경로의 관찰·한계
+2. [references/keyboard-macro-methodology.md](references/keyboard-macro-methodology.md)의 "2026-11-02 보강" — 재현 순서와 안전 규칙
+3. `scripts/capture_pywinauto.py`, `out/capture-2026-11-new-20261102-run1/range-manifest.json`·`metadata.csv`
+4. `C:\Users\user\Documents\zipmessage\README.md`와 월별 Markdown, staging 폴더
+
 ## 최신 상태 — 2026-10-29 (KST, search12)
 
 ### 목표와 안전한 범위

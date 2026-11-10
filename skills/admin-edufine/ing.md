@@ -48,17 +48,51 @@
    - 웹 폼 제출(`fncProcessDocApn`) 시에는 행정전자서명(EPKI)/웹 DRM 컨트롤 미설치 오류가 발생하므로, 브라우저에서 `doCallClientApp(0, APPRID, 0, '')`로 WXSClient 결재기(`HCLTAPP_KYUL`)를 띄운 뒤 네이티브 서명 창에서 [결재]를 수행하는 것이 가장 안전하고 완벽한 하이브리드 자동화 표준입니다.
 
 9. **Playwright `connect_over_cdp` 전체 브라우저 락 회피**:
-   - Chrome 9222에 Playwright를 붙이면 메인 프로세스 락으로 수십 초~무한 대기가 발생할 수 있다.
-   - `http://127.0.0.1:9222/json`에서 `type==page`(및 필요 시 `type==iframe`)의 `webSocketDebuggerUrl`로 `websockets` JSON-RPC `Runtime.evaluate`를 사용한다.
+   - Chrome 9222에 Playwright를 직접 붙이면 메인 프로세스 락으로 수십 초~무한 대기가 발생할 수 있습니다.
+   - `http://127.0.0.1:9222/json`에서 `type==page`(및 필요 시 `type==iframe`)의 `webSocketDebuggerUrl`로 경량 WebSocket 통신을 하거나 Selenium 디버거 주소 매핑을 활용합니다.
 
 10. **결재대기 HTML 경로 (`viw`, 포털 Nice 위젯)**:
     - 결재대기 본화면: `https://klef.gbe.kr/bms/cz/cb/viw/retrieveSanctnWaitDocList.do?leftMenu=1` (`wrt/` 경로는 404).
-    - 업무포털 위젯은 교차출처 OOPIF `retrieveSanctnWaitDocListNice.do`이며, 위젯 목록과 본화면 조회 결과가 어긋날 수 있다. 최종 건수는 본화면 `fncSearch()` 결과를 따른다.
+    - 업무포털 위젯은 교차출처 OOPIF `retrieveSanctnWaitDocListNice.do`이며, 위젯 목록과 본화면 조회 결과가 어긋날 수 있습니다. 최종 건수는 본화면 `fncSearch()` 결과를 따릅니다.
     - 공람대기: `https://klef.gbe.kr/bms/cz/cb/viw/retrieveCnrsWaitDocList.do?MENU_ID=A00AAB0103001&FILE_ID=AABCnrsWaitDocList&alimZon=alimZon`
+
+11. **결재대기 수신문서 본문(ODT) 직접 다운로드 및 고품질 PDF 변환 파이프라인**:
+    - 결재대기(`retrieveSanctnWaitDocList`) 하단의 `apprInfoWnd` -> `docInfoFrame` 콘텍스트에서 `/bms/cz/cb/viw/retrieveViwAtchmnfl.do`에 `POST`로 `USERID, APPLID, APPRDEPTID, DOCID, OBJID=aid[:-3]+'001', FILENAME='결재문서본문.odt', FTYPE='01', ORDER='1'`를 전송하면 원본 규격 ODT 파일을 직결 다운로드할 수 있습니다.
+    - 다운로드한 ODT 파일은 Windows COM 자동화(`Word.Application` 또는 `HWPFrame.HwpObject`)를 통해 서식 손실 없이 즉시 고품질 PDF로 변환 보관할 수 있습니다.
+    - 다중 문서 팝업 순회 시 `driver.close()` 직후 반드시 `driver.switch_to.window(main_handle)`를 호출해야 연속 창 생성 시 `NoSuchWindowException` 에러를 원천 방지할 수 있습니다.
 
 ---
 
 ## 📅 일자별 개발 실패 극복 및 트러블슈팅 일지
+
+---
+
+### 2026-11-10: 결재대기 공문 3건 전교사 공람 일괄 지정 및 본문 ODT 직결 추출/PDF 변환 다운로드 완결 🏆
+
+#### 1. 업무 현황 및 요구사항
+- 결재대기 중인 수신 공문 3건 확인:
+  1. `화천초등학교-11905`: `[안내, 참가] 2026 경북 학교 체육 한마당(도전! 체력 인증왕 선발 대회) 참가 안내`
+  2. `화천초등학교-11907`: `[안내] 제5회 경주 초등학생 축구페스티벌 개최 안내 및 참가 신청`
+  3. `화천초등학교-11915`: `[추천] 2026학년도 학교체육활성화 유공 표창 계획 안내`
+- 요구사항:
+  - 3건 모두 화천초 전교사 대상 공람 지정
+  - 각 공문의 본문 문서를 PDF로 변환하여 다운로드 폴더 내 `공문` 폴더(`C:\Users\user\Downloads\공문\`)에 보관
+
+#### 2. 기술적 난제 및 트러블슈팅
+
+1. **결재대기 문서의 본문 PDF 다운로드 엔드포인트 규명**:
+   - `retrieveViwAtchmnflDirect.do`는 `APPLID === '8010'`(문서등록대장/열람함) 환경에서만 뷰어 저장을 지원하며, 결재대기(`APPLID === '2010'`)에서는 HTML 파일저장 팝업이 반환되어 직접 다운로드 불가.
+   - `retrieveAtchmnfl.do` 화면의 `goSubmit()` 소스 분석 결과:
+     일반 첨부 및 본문 파일은 `/bms/cz/cb/viw/retrieveViwAtchmnfl.do`에 `POST`로 `FTYPE='01'`, `OBJID = aid[:-3] + '001'`, `FILENAME = '결재문서본문.odt'`를 요청하면 원본 ODT 바이너리가 그대로 반환됨을 확인.
+2. **ODT 원본의 무손실 PDF 변환 구현**:
+   - 에듀파인은 ODT(OpenDocument Text) 표준을 사용하므로 폰트/표 깨짐 없이 PDF로 변환하기 위해 Windows 로컬에 설치된 `Word.Application` COM 인스턴스(`ExportAsFixedFormat`) 및 `HWPFrame.HwpObject`를 연동하여 고품질 PDF를 생성하는 파이프라인(`odt_to_pdf.py`) 구축.
+3. **다중 문서 공람 팝업 루프 시 `NoSuchWindowException` 극복**:
+   - 첫 번째 공람 팝업 탭을 처리하고 `driver.close()`를 수행한 뒤, 활성 핸들이 메인 윈도우로 복원되지 않은 상태에서 `driver.switch_to.new_window('tab')`을 호출하면 브라우저 컨텍스트 유실로 에러 발생.
+   - 루프 시작 전 `main_handle`을 기록해두고 팝업 닫기 직후 반드시 `driver.switch_to.window(main_handle)`를 명시적으로 실행하여 3건 모두 연속 공람 지정 완결.
+
+#### 3. 최종 결과
+- **공람 지정**: 11905, 11907, 11915 공문 3건 모두 화천초 교직원 43명 전원에 대해 공람 등록 완료.
+- **파일 저장**: `C:\Users\user\Downloads\공문\` 폴더에 각 공문의 본문 ODT, 고품질 변환 PDF, 붙임 파일(xlsx, hwp, hwpx, 포스터 pdf 등 총 12개 파일) 일괄 보관 완료.
 
 ---
 

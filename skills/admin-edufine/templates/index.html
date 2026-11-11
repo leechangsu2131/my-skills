@@ -378,6 +378,7 @@
         <button class="tab-btn active" id="tabFileBtn" onclick="switchTab('file')">📄 공문 파일 올리기 (ODT / HWPX)</button>
         <button class="tab-btn" id="tabTextBtn" onclick="switchTab('text')">✍️ 공문 텍스트 직접 붙여넣기</button>
         <button class="tab-btn" id="tabSearchBtn" onclick="switchTab('search')">🔍 [트랙 3] 에듀파인 공문 검색 & 열람</button>
+        <button class="tab-btn" id="tabGaisanBtn" onclick="switchTab('gaisan')" style="background: linear-gradient(135deg, rgba(16,185,129,0.15), rgba(5,150,105,0.1)); border-color: rgba(16,185,129,0.4); color: #34d399;">💰 [트랙 7] 개산금정산</button>
         
         <div style="margin-left: auto; display: flex; gap: 8px;">
             <button class="btn btn-sm btn-accent" onclick="fetchFromClipboard()" title="에듀파인에서 Ctrl+C 복사한 텍스트를 바로 기안문으로 변환">
@@ -408,6 +409,100 @@
         <div style="text-align: right; margin-top: 10px;">
             <button class="btn btn-accent" onclick="parseRawText()">공문 분석 및 초안 생성 ⚡</button>
         </div>
+    </div>
+
+    
+    <!-- [트랙 7] 개산금정산 등록 섹션 -->
+    <div id="gaisanSection" style="display: none;" class="card" style="border-color: rgba(16,185,129,0.4);">
+        <div class="card-header">
+            <h3 class="card-title" style="color: #34d399;">💰 학급 자율 운영비 개산금정산 자동 입력</h3>
+            <span style="font-size: 0.85rem; color: #94a3b8;">
+                K-에듀파인 [학교회계] &gt; 사업담당 &gt; 개산금정산등록 화면에 영수증별 정산 내역을 자동 입력합니다.
+            </span>
+        </div>
+
+        <!-- 집행 안내 -->
+        <details style="margin: 14px 0; border: 1px solid rgba(16,185,129,0.25); border-radius: 10px; padding: 12px;">
+            <summary style="cursor: pointer; font-weight: 600; color: #34d399; font-size: 0.95rem;">
+                📋 집행 절차 및 주의사항 (클릭하여 펼치기)
+            </summary>
+            <div style="margin-top: 10px; font-size: 0.88rem; color: #94a3b8; line-height: 1.7;">
+                <strong style="color: #f8fafc;">➊ 개산금 지급 이후에만 정산 가능</strong><br>
+                개산급이 지급된 이후에 집행하고, 집행 완료 후 5일 이내에 정산서를 제출해야 합니다.<br><br>
+                <strong style="color: #f8fafc;">➋ 증빙 구분 안내</strong><br>
+                • 신용카드 사용 → <code>전산자료</code> (매출전표 원본 첨부)<br>
+                • 현금영수증 → <code>현금영수증</code><br>
+                • 세금계산서 → <code>세금계산서</code><br><br>
+                <strong style="color: #f8fafc;">➌ 집행 금지 항목</strong>: 학습준비물, 사무용품, 각종 상품권, 일시 일괄 집행 등<br>
+                <strong style="color: #f8fafc;">➍ 1회 집행액이 전체 50% 초과 시</strong>: 학교장 승인 필요<br>
+                <strong style="color: #f8fafc;">➎ 포인트 적립 금지</strong>: 개인 구매와 학급비 구매를 분리 결제할 것
+            </div>
+        </details>
+
+        <!-- 조회 시작일자 -->
+        <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 14px;">
+            <label style="white-space: nowrap; color: #94a3b8; font-size: 0.9rem; font-weight: 600;">
+                📅 조회 시작일자:
+            </label>
+            <input type="date" id="gaisanStartDate" value="2026-03-01"
+                   style="width: 160px; padding: 8px 12px; background: rgba(15,23,42,0.6);
+                          border: 1px solid rgba(255,255,255,0.15); border-radius: 8px;
+                          color: #f8fafc; font-size: 0.9rem;">
+            <span style="font-size: 0.82rem; color: #64748b;">← 개산급 지급일보다 이전 날짜로 설정</span>
+        </div>
+
+        <!-- 정산 항목 입력 테이블 -->
+        <div style="font-weight: 600; color: #34d399; margin-bottom: 8px; font-size: 0.95rem;">
+            📝 영수증별 정산 내역 입력
+            <span style="font-size: 0.8rem; color: #64748b; font-weight: 400; margin-left: 8px;">
+                (영수증 1장 = 행 1개, 집행한 순서대로 입력)
+            </span>
+        </div>
+
+        <div id="gaisanRowsContainer">
+            <!-- 행은 JS로 동적 생성 -->
+        </div>
+
+        <div style="display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap;">
+            <button class="btn btn-secondary" onclick="gaisanAddRow()" style="font-size: 0.88rem;">
+                ➕ 행 추가
+            </button>
+            <button class="btn btn-secondary" onclick="gaisanLoadSample()" style="font-size: 0.88rem; color: #94a3b8;">
+                📋 예시 항목 불러오기
+            </button>
+            <button class="btn btn-secondary" onclick="gaisanClearAll()" style="font-size: 0.88rem; color: #ef4444; border-color: rgba(239,68,68,0.3);">
+                🗑️ 전체 초기화
+            </button>
+        </div>
+
+        <!-- 합계 표시 -->
+        <div id="gaisanSummary" style="margin-top: 14px; padding: 12px 16px;
+             background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.25);
+             border-radius: 10px; font-size: 0.9rem; color: #94a3b8; display: none;">
+            <span>총 <strong id="gaisanRowCount" style="color: #34d399;">0</strong>건 집행 |</span>
+            <span>합계: <strong id="gaisanTotalAmount" style="color: #34d399;">0</strong>원 |</span>
+            <span id="gaisanBalanceInfo"></span>
+        </div>
+
+        <!-- 실행 버튼 -->
+        <div style="margin-top: 18px; display: flex; gap: 12px; flex-wrap: wrap; align-items: center;">
+            <button class="btn btn-accent" id="gaisanRunBtn" onclick="runGaisanJungsan(false)"
+                    style="background: linear-gradient(135deg, #10b981, #059669); min-width: 220px; font-size: 1rem; padding: 12px 24px;">
+                🤖 개산금정산 자동 입력 (저장까지)
+            </button>
+            <button class="btn" id="gaisanSubmitBtn" onclick="runGaisanJungsan(true)"
+                    style="background: linear-gradient(135deg, rgba(16,185,129,0.3), rgba(5,150,105,0.2));
+                           border-color: rgba(16,185,129,0.5); color: #34d399; font-size: 0.9rem;">
+                🚀 저장 + 정산서 제출까지 자동
+            </button>
+            <span style="font-size: 0.82rem; color: #64748b; flex: 1; min-width: 200px;">
+                ⚠️ 제출 후 화면에서 반드시 확인하세요
+            </span>
+        </div>
+
+        <!-- 결과 메시지 -->
+        <div id="gaisanResult" style="display: none; margin-top: 14px; padding: 12px 16px;
+             border-radius: 10px; font-size: 0.9rem; line-height: 1.6;"></div>
     </div>
 
     <!-- [트랙 3] 에듀파인 수신공문 검색 섹션 -->
@@ -584,14 +679,22 @@
         document.getElementById('tabTextBtn').classList.toggle('active', tab === 'text');
         const searchBtn = document.getElementById('tabSearchBtn');
         if (searchBtn) searchBtn.classList.toggle('active', tab === 'search');
+        const gaisanBtn = document.getElementById('tabGaisanBtn');
+        if (gaisanBtn) gaisanBtn.classList.toggle('active', tab === 'gaisan');
 
         document.getElementById('fileSection').style.display = (tab === 'file') ? 'block' : 'none';
         document.getElementById('textSection').style.display = (tab === 'text') ? 'block' : 'none';
         const searchSec = document.getElementById('searchSection');
         if (searchSec) searchSec.style.display = (tab === 'search') ? 'block' : 'none';
+        const gaisanSec = document.getElementById('gaisanSection');
+        if (gaisanSec) gaisanSec.style.display = (tab === 'gaisan') ? 'block' : 'none';
 
         if (tab === 'search') {
             document.getElementById('gongmunSearchKeyword').focus();
+        }
+        if (tab === 'gaisan') {
+            if (document.querySelectorAll('.gaisan-row').length === 0) gaisanAddRow();
+            gaisanUpdateSummary();
         }
     }
 
@@ -1186,7 +1289,162 @@
             body: JSON.stringify({event: eventType, items: itemsText})
         });
     }
-</script>
+
+    // ═══════════════════════════════════════════════════════════════
+    // [트랙 7] 개산금정산 JS
+    // ═══════════════════════════════════════════════════════════════
+
+    const JEUNGBIG_OPTIONS = ['전산자료', '현금영수증', '세금계산서', '간이영수증', '기타'];
+
+    function gaisanAddRow(data = {}) {
+        const container = document.getElementById('gaisanRowsContainer');
+        const rowIdx = container.querySelectorAll('.gaisan-row').length + 1;
+        const div = document.createElement('div');
+        div.className = 'gaisan-row';
+        div.style.cssText = `
+            display: grid;
+            grid-template-columns: 36px 140px 1fr 110px 150px 2fr 36px;
+            gap: 6px;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 0.85rem;
+        `;
+
+        const opts = JEUNGBIG_OPTIONS.map(o =>
+            `<option value="${o}" ${(data.증빙구분||'전산자료') === o ? 'selected' : ''}>${o}</option>`
+        ).join('');
+
+        div.innerHTML = `
+            <span style="color: #64748b; text-align: center; font-weight: 600;">${rowIdx}</span>
+            <input type="date" class="g-date" value="${data.사용일자||''}"
+                   style="padding: 7px 8px; background: rgba(15,23,42,0.6); border: 1px solid rgba(255,255,255,0.15);
+                          border-radius: 8px; color: #f8fafc; width: 100%;" oninput="gaisanUpdateSummary()">
+            <input type="text" class="g-biz" placeholder="사용업체명" value="${data.사용업체명||''}"
+                   style="padding: 7px 10px; background: rgba(15,23,42,0.6); border: 1px solid rgba(255,255,255,0.15);
+                          border-radius: 8px; color: #f8fafc; width: 100%;">
+            <input type="number" class="g-amt" placeholder="금액(원)" value="${data.사용금액||''}"
+                   style="padding: 7px 8px; background: rgba(15,23,42,0.6); border: 1px solid rgba(255,255,255,0.15);
+                          border-radius: 8px; color: #34d399; width: 100%; text-align: right;"
+                   oninput="gaisanUpdateSummary()">
+            <select class="g-jeungbig"
+                    style="padding: 7px 8px; background: rgba(15,23,42,0.6); border: 1px solid rgba(255,255,255,0.15);
+                           border-radius: 8px; color: #f8fafc; width: 100%;">
+                ${opts}
+            </select>
+            <input type="text" class="g-detail" placeholder="사용내역 (예: 학급 생일잔치 간식)" value="${data.사용내역||''}"
+                   style="padding: 7px 10px; background: rgba(15,23,42,0.6); border: 1px solid rgba(255,255,255,0.15);
+                          border-radius: 8px; color: #f8fafc; width: 100%;">
+            <button onclick="this.closest('.gaisan-row').remove(); gaisanUpdateSummary();"
+                    style="background: none; border: none; color: #ef4444; cursor: pointer; font-size: 1.1rem; padding: 2px;">✕</button>
+        `;
+        container.appendChild(div);
+        gaisanUpdateSummary();
+    }
+
+    function gaisanLoadSample() {
+        const samples = [
+            { 사용일자: '2026-04-10', 사용업체명: '○○문구', 사용금액: 80000, 증빙구분: '전산자료', 사용내역: '생일선물(문구세트) 구입' },
+            { 사용일자: '2026-05-02', 사용업체명: '△△마트', 사용금액: 45000, 증빙구분: '전산자료', 사용내역: '학급 생일잔치 간식' },
+            { 사용일자: '2026-06-15', 사용업체명: '□□카페', 사용금액: 35000, 증빙구분: '전산자료', 사용내역: '학부모 상담 다과' },
+        ];
+        document.getElementById('gaisanRowsContainer').innerHTML = '';
+        samples.forEach(s => gaisanAddRow(s));
+    }
+
+    function gaisanClearAll() {
+        document.getElementById('gaisanRowsContainer').innerHTML = '';
+        gaisanUpdateSummary();
+    }
+
+    function gaisanUpdateSummary() {
+        const rows = document.querySelectorAll('.gaisan-row');
+        let total = 0;
+        rows.forEach(r => {
+            total += parseInt(r.querySelector('.g-amt').value || '0', 10);
+        });
+        const summary = document.getElementById('gaisanSummary');
+        summary.style.display = rows.length > 0 ? 'flex' : 'none';
+        summary.style.gap = '12px';
+        document.getElementById('gaisanRowCount').textContent = rows.length;
+        document.getElementById('gaisanTotalAmount').textContent = total.toLocaleString();
+        // 번호 갱신
+        rows.forEach((r, i) => {
+            const num = r.querySelector('span');
+            if (num) num.textContent = i + 1;
+        });
+    }
+
+    function gaisanCollectRows() {
+        const rows = document.querySelectorAll('.gaisan-row');
+        const result = [];
+        let valid = true;
+        rows.forEach((r, i) => {
+            const date = r.querySelector('.g-date').value;
+            const biz  = r.querySelector('.g-biz').value.trim();
+            const amt  = parseInt(r.querySelector('.g-amt').value || '0', 10);
+            const jeung = r.querySelector('.g-jeungbig').value;
+            const detail = r.querySelector('.g-detail').value.trim();
+            if (!date || !biz || !amt || !detail) {
+                alert(`${i+1}번 항목의 필수 값(날짜/업체명/금액/사용내역)을 모두 입력해 주세요.`);
+                valid = false;
+                return;
+            }
+            result.push({ 사용일자: date, 사용업체명: biz, 사용금액: amt, 증빙구분: jeung, 사용내역: detail });
+        });
+        return valid ? result : null;
+    }
+
+    async function runGaisanJungsan(autoSubmit = false) {
+        const rows = gaisanCollectRows();
+        if (!rows) return;
+        if (rows.length === 0) {
+            alert('정산 항목을 1개 이상 입력해 주세요.');
+            return;
+        }
+
+        const startDate = document.getElementById('gaisanStartDate').value || '2026-03-01';
+
+        document.getElementById('gaisanRunBtn').disabled = true;
+        document.getElementById('gaisanSubmitBtn').disabled = true;
+
+        const resultEl = document.getElementById('gaisanResult');
+        resultEl.style.display = 'block';
+        resultEl.style.background = 'rgba(16,185,129,0.08)';
+        resultEl.style.borderColor = 'rgba(16,185,129,0.3)';
+        resultEl.style.color = '#94a3b8';
+        resultEl.textContent = `🤖 개산금정산 봇 가동 중... (${rows.length}건 입력)`;
+
+        appendLog(`💰 [트랙 7] 개산금정산 자동 입력 시작 (${rows.length}건)`, 'system');
+
+        try {
+            const res = await fetch('/api/gaisan-jungsan', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ start_date: startDate, auto_submit: autoSubmit, rows })
+            });
+            const json = await res.json();
+            if (!res.ok || json.error) {
+                resultEl.style.background = 'rgba(239,68,68,0.1)';
+                resultEl.style.color = '#fca5a5';
+                resultEl.textContent = '❌ ' + (json.error || '요청 실패');
+                appendLog('❌ 개산금정산 오류: ' + (json.error || ''), 'error');
+            } else {
+                // SSE 스트림에서 로그 수신 (기존 로그 패널 활용)
+                startLogStream();
+                resultEl.textContent = `✅ 봇 실행 중... 아래 로그를 확인하세요. (${rows.length}건)`;
+            }
+        } catch (e) {
+            resultEl.style.background = 'rgba(239,68,68,0.1)';
+            resultEl.style.color = '#fca5a5';
+            resultEl.textContent = '❌ 네트워크 오류: ' + e.message;
+        } finally {
+            document.getElementById('gaisanRunBtn').disabled = false;
+            document.getElementById('gaisanSubmitBtn').disabled = false;
+        }
+    }
+    // ═══════════════════════════════════════════════════════════════
+
+    </script>
 
 </body>
 </html>

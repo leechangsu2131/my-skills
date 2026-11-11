@@ -1,0 +1,15 @@
+const task=await takeOverTaskSpace(2);const page=task.page("p1");
+await page.click('#correctAnswer_5_0');
+await page.click('.sticky.select-chip .chip-list button:nth-child(4)');
+await page.fill('details:nth-of-type(8) input[placeholder="질문 생략 가능"]', "[10차시] 그림의 느낌과 이야기에 맞는 재료를 찾는 가장 좋은 방법은 무엇인가요?");
+await page.fill('details:nth-of-type(8) input[placeholder="보기1. 생략 가능"]', "여러 재료를 작게 시험해 보고, 표현하려는 느낌에 맞는 것을 고른다.");
+await page.fill('details:nth-of-type(8) input[placeholder="보기2. 생략 가능"]', "가장 비싼 재료를 무조건 고른다.");
+await page.fill('details:nth-of-type(8) input[placeholder="보기3. 생략 가능"]', "유행하는 그림을 그대로 따라 그린다.");
+await page.fill('details:nth-of-type(8) input[placeholder="보기4. 생략 가능"]', "재료의 촉감이나 표현 가능성은 살피지 않는다.");
+await page.click('#correctAnswer_7_0');
+await page.click('.sticky.select-chip .chip-list button:nth-child(5)');
+await page.fill('details:nth-of-type(9) textarea[placeholder="질문 생략 가능"]', "[11차시] 독자에게 들려주고 싶은 작가의 말을 1~2문장으로 써 보세요. 작품 속 인물이나 상상 세계에 관한 말로 써도 됩니다.");
+await page.click('.sticky.select-chip .chip-list button:nth-child(3)');
+await page.fill('details:nth-of-type(10) textarea[placeholder="질문 생략 가능"]', "[12차시] 학생 작품을 온라인에 공개하기 전에 학생과 보호자의 동의를 확인하고, 동의하지 않으면 공개하지 않아야 한다.");
+await page.click('details:nth-of-type(10) button.ox_answer_btn.o');
+console.log(await page.evaluate(()=>({title:document.querySelector('input[placeholder="제목을 입력해 주세요."]')?.value,description:document.querySelector('textarea.text-field')?.value,subject:[...document.querySelectorAll('div.chip-list.multi[aria-labelledby="list3"] button[aria-selected=true]')].map(x=>x.innerText),activities:[...document.querySelectorAll('details')].map((d,i)=>({i:i+1,type:d.querySelector('summary .title')?.innerText,body:d.innerText.slice(0,220),correct:[...d.querySelectorAll('input[type=checkbox]:checked')].map(x=>x.id),ox:[...d.querySelectorAll('.ox_answer_btn')].map(x=>({text:x.innerText,cls:x.className}))}))})));

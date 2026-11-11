@@ -1,0 +1,11 @@
+const task=await takeOverTaskSpace(2);const page=task.page("p1");
+await page.fill('input[placeholder="제목을 입력해 주세요."]', "우리 반 그림책 작가 되기 | 12차시 상호작용 수업");
+await page.fill('textarea.text-field', "2020 그림책 연수 자료를 바탕으로 한 12차시 수업입니다. 그림책 읽기, 장면과 인물 탐색, 공동 창작, 이야기 구조와 스토리보드, 재료 실험, 작가의 말, 독자와의 나눔을 다룹니다. 3~6학년 공통안입니다. 개인 경험 공유는 선택이며 가상 인물·상상 이야기로 참여할 수 있습니다. 학생 작품의 촬영·온라인 공개는 별도 동의를 확인합니다.");
+await page.fill('details:nth-of-type(4) input[placeholder="질문 생략 가능"]', "[4차시] 장점과 어려움이 함께 있는 인물을 만들 때, 어떤 생각이 알맞나요?");
+await page.fill('details:nth-of-type(4) input[placeholder="보기1. 생략 가능"]', "같은 특성도 상황에 따라 장점이나 어려움으로 다르게 나타날 수 있다.");
+await page.fill('details:nth-of-type(4) input[placeholder="보기2. 생략 가능"]', "주인공은 약점이 없어야 한다.");
+await page.fill('details:nth-of-type(4) input[placeholder="보기3. 생략 가능"]', "단점은 이야기에서 반드시 감춰야 한다.");
+await page.fill('details:nth-of-type(4) input[placeholder="보기4. 생략 가능"]', "인물의 선택은 사건과 관계가 없다.");
+await page.click('#correctAnswer_2_0');
+await page.click('.sticky.select-chip .chip-list button:nth-child(3)');
+console.log(await page.snapshot({scope:"full_page"}));

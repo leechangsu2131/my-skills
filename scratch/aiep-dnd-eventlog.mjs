@@ -1,0 +1,12 @@
+const task = await claimTaskSpace(0);
+const page = task.page('p1');
+await page.evaluate(() => { window.__egoLog=[]; for (const t of ['pointerdown','mousedown','pointermove','mousemove','pointerup','mouseup','dragstart','dragend']) window.addEventListener(t,e=>window.__egoLog.push({t, target:e.target?.className?.toString(), x:e.clientX,y:e.clientY, button:e.button, prevented:e.defaultPrevented}), true); });
+await page.mouse.move(300,570);
+await page.mouse.down({button:'left'});
+await page.mouse.move(315,570);
+await page.mouse.move(500,570);
+await page.mouse.move(700,550);
+await page.mouse.move(920,520);
+await page.mouse.up();
+console.log(await page.evaluate(() => window.__egoLog));
+console.log(await page.evaluate(() => document.querySelector('#DndLiveRegion-0')?.innerText));

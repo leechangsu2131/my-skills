@@ -1,0 +1,2 @@
+const t=await taskSpace(0); const p=t.page('p1');
+console.log(await p.evaluate(()=>{const a=document.querySelectorAll('.drawer-item--file'); const b=document.querySelectorAll('.bundle-card__cell');const r=e=>{const x=e.getBoundingClientRect();return{x:x.x,y:x.y,w:x.width,h:x.height}};return{files:[...a].map((e,i)=>({i,text:e.innerText,rect:r(e)})),cells:[...b].slice(0,4).map((e,i)=>({i,text:e.innerText.slice(0,30),rect:r(e)}))}}));

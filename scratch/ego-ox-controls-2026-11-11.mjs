@@ -1,0 +1,2 @@
+const task=await takeOverTaskSpace(2);const page=task.page("p1");
+console.log(await page.evaluate(()=>{const d=[...document.querySelectorAll('details')].find(x=>x.innerText.startsWith('OX'));return {html:d?.innerHTML.slice(0,3500),inputs:[...d.querySelectorAll('input,textarea,button')].map(e=>({tag:e.tagName,type:e.type,text:e.innerText,ph:e.placeholder,value:e.value,checked:e.checked,aria:e.getAttribute('aria-selected'),outer:e.outerHTML.slice(0,200)}))}}));

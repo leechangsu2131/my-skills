@@ -14,6 +14,7 @@ from edufine_report import save_report
 import playwright_edufine
 import playwright_gongmun_draft
 import playwright_gongmun_search
+import playwright_gaisan_jungsan
 
 app = Flask(__name__)
 
@@ -612,6 +613,77 @@ def api_open_gongmun():
         return jsonify({'status': 'ok' if res else 'fail'})
     except Exception as e:
         return jsonify({'status': 'error', 'message': str(e)}), 500
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# [트랙 7] 개산금정산 등록 API
+# ─────────────────────────────────────────────────────────────────────────────
+
+async def _run_gaisan_jungsan_async(rows: list, start_date: str, auto_submit: bool):
+    """개산금정산 자동화 코루틴 래퍼"""
+    try:
+        result = await playwright_gaisan_jungsan.execute_gaisan_jungsan(
+            rows, start_date=start_date, auto_submit=auto_submit
+        )
+        _q.put(('log', f"[개산금정산] {result.get('message', '')}"))
+    except Exception as e:
+        _q.put(('log', f"[개산금정산 오류] {e}"))
+    finally:
+        _state['running'] = False
+        _q.put(('done', None))
+
+
+@app.route('/api/gaisan-jungsan', methods=['POST'])
+def api_gaisan_jungsan():
+    """
+    [트랙 7] 개산금정산 자동 입력
+
+    Request JSON:
+    {
+        "start_date": "2026-03-01",           // 조회 시작일자 (기본 2026-03-01)
+        "auto_submit": false,                 // true이면 저장 후 정산서 제출까지 자동 클릭
+        "rows": [
+            {
+                "사용일자": "2026-04-10",
+                "사용업체명": "○○문구",
+                "사용금액": 80000,
+                "증빙구분": "전산자료",
+                "사용내역": "생일선물(문구세트) 구입"
+            },
+            ...
+        ]
+    }
+    """
+    try:
+        if _state['running']:
+            return jsonify({'error': '이미 다른 자동화 작업이 진행 중입니다.'}), 409
+
+        data = request.get_json() or {}
+        rows = data.get('rows', [])
+        start_date = data.get('start_date', '2026-03-01').strip()
+        auto_submit = bool(data.get('auto_submit', False))
+
+        if not rows:
+            return jsonify({'error': '정산 항목(rows)이 비어 있습니다.'}), 400
+
+        # 필수 필드 검증
+        for i, row in enumerate(rows):
+            for field in ('사용일자', '사용업체명', '사용금액', '사용내역'):
+                if not str(row.get(field, '')).strip():
+                    return jsonify({'error': f'항목 {i+1}번의 [{field}]가 비어 있습니다.'}), 400
+
+        while not _q.empty():
+            try: _q.get_nowait()
+            except queue.Empty: break
+
+        _state['running'] = True
+        _run_in_bg(_run_gaisan_jungsan_async, rows, start_date, auto_submit)
+        return jsonify({'status': 'started', 'count': len(rows)})
+
+    except Exception as e:
+        _state['running'] = False
+        import traceback
+        return jsonify({'error': f'{e}\n{traceback.format_exc()}'}), 500
 
 @app.route('/api/stream')
 def stream():

@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="AIEP 수업꾸러미 제작 스킬을 요청하는 방법과 자료 제작부터 사이트 등록까지의 흐름을 안내합니다.">
+  <title>AIEP 수업꾸러미 제작 스킬 사용 안내</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #18312f;
+      --muted: #637875;
+      --paper: #f6f8f2;
+      --card: #fff;
+      --line: #dfe8df;
+      --green: #126b58;
+      --green-dark: #0b5143;
+      --mint: #e2f1e9;
+      --gold: #f2c66d;
+      --shadow: 0 18px 50px rgba(24, 49, 47, .08);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+      line-height: 1.7;
+    }
+    a { color: var(--green-dark); }
+    .wrap { width: min(1080px, calc(100% - 40px)); margin: 0 auto; }
+    header { padding: 22px 0; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+    .brand { display: flex; align-items: center; gap: 11px; font-weight: 800; letter-spacing: -.03em; }
+    .brand-mark { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 13px; background: var(--green); color: white; }
+    nav { display: flex; gap: 22px; font-size: 14px; }
+    nav a { text-decoration: none; color: var(--muted); }
+    nav a:hover { color: var(--green); }
+    .hero { position: relative; overflow: hidden; padding: 74px 0 70px; }
+    .hero::after { content: ""; position: absolute; width: 410px; height: 410px; right: -80px; top: -70px; border-radius: 50%; background: radial-gradient(circle, #dceee2 0 42%, transparent 43%); opacity: .8; pointer-events: none; }
+    .hero-inner { position: relative; z-index: 1; max-width: 740px; }
+    .eyebrow { display: inline-flex; gap: 8px; align-items: center; color: var(--green); background: var(--mint); padding: 6px 12px; border-radius: 999px; font-size: 13px; font-weight: 750; }
+    h1 { margin: 22px 0 16px; max-width: 710px; font-size: clamp(38px, 6vw, 66px); line-height: 1.12; letter-spacing: -.055em; }
+    h1 span { color: var(--green); }
+    .hero p { max-width: 630px; margin: 0; color: var(--muted); font-size: 18px; }
+    .actions { display: flex; flex-wrap: wrap; gap: 11px; margin-top: 28px; }
+    .button { display: inline-flex; align-items: center; justify-content: center; min-height: 47px; padding: 0 18px; border: 1px solid var(--green); border-radius: 12px; background: var(--green); color: white; text-decoration: none; font-weight: 750; cursor: pointer; }
+    .button:hover { background: var(--green-dark); }
+    .button.secondary { color: var(--green-dark); background: white; border-color: var(--line); }
+    .button.secondary:hover { background: var(--mint); }
+    section { padding: 42px 0; }
+    .section-head { max-width: 650px; margin-bottom: 23px; }
+    .kicker { margin: 0 0 7px; color: var(--green); font-size: 12px; font-weight: 850; letter-spacing: .1em; text-transform: uppercase; }
+    h2 { margin: 0; font-size: clamp(27px, 4vw, 38px); line-height: 1.22; letter-spacing: -.04em; }
+    .section-head p { color: var(--muted); margin: 10px 0 0; }
+    .grid { display: grid; gap: 15px; }
+    .steps { grid-template-columns: repeat(4, 1fr); }
+    .card { background: var(--card); border: 1px solid var(--line); border-radius: 18px; box-shadow: var(--shadow); }
+    .step { padding: 22px; min-height: 205px; }
+    .number { display: grid; place-items: center; width: 34px; height: 34px; margin-bottom: 19px; border-radius: 11px; background: var(--mint); color: var(--green); font-size: 14px; font-weight: 850; }
+    .step h3, .deliverable h3 { margin: 0 0 7px; font-size: 18px; letter-spacing: -.02em; }
+    .step p, .deliverable p { margin: 0; color: var(--muted); font-size: 14px; }
+    .prompt-layout { display: grid; grid-template-columns: 1.15fr .85fr; gap: 18px; align-items: stretch; }
+    .prompt { position: relative; padding: 26px; background: #18312f; color: #f3f7ef; border-radius: 20px; }
+    .prompt-label { margin: 0 0 13px; color: #a9d7c7; font-size: 12px; font-weight: 800; letter-spacing: .08em; }
+    .prompt blockquote { margin: 0; font-size: 17px; line-height: 1.8; }
+    .prompt .button { margin-top: 20px; color: #18312f; background: #d4eedf; border-color: #d4eedf; }
+    .fields { padding: 25px; }
+    .fields h3 { margin: 0 0 12px; }
+    .fields ul { padding-left: 20px; margin: 0; color: var(--muted); }
+    .fields li + li { margin-top: 6px; }
+    .hint { margin-top: 17px; padding: 12px 14px; background: #fff7e5; border-radius: 12px; color: #6b5425; font-size: 13px; }
+    .deliverables { grid-template-columns: repeat(3, 1fr); }
+    .deliverable { padding: 21px; }
+    .icon { font-size: 22px; margin-bottom: 12px; }
+    .flow { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; align-items: stretch; }
+    .flow-item { padding: 18px 15px; text-align: center; background: white; border: 1px solid var(--line); border-radius: 15px; }
+    .flow-item strong { display: block; color: var(--green); font-size: 14px; }
+    .flow-item span { color: var(--muted); font-size: 12px; }
+    .flow-arrow { display: none; }
+    .note { display: grid; grid-template-columns: 1fr auto; gap: 20px; align-items: center; padding: 27px; background: var(--mint); border-radius: 20px; }
+    .note h3 { margin: 0 0 6px; font-size: 20px; }
+    .note p { margin: 0; color: #47665e; }
+    .note .button { white-space: nowrap; }
+    footer { padding: 28px 0 44px; color: var(--muted); font-size: 13px; }
+    footer .wrap { display: flex; justify-content: space-between; gap: 20px; border-top: 1px solid var(--line); padding-top: 21px; }
+    @media (max-width: 850px) {
+      .steps { grid-template-columns: repeat(2, 1fr); }
+      .flow { grid-template-columns: 1fr; }
+      .flow-item { text-align: left; }
+      .prompt-layout { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 600px) {
+      .wrap { width: min(100% - 28px, 1080px); }
+      nav { display: none; }
+      .hero { padding: 52px 0 45px; }
+      .hero p { font-size: 16px; }
+      .steps, .deliverables { grid-template-columns: 1fr; }
+      .step { min-height: 0; }
+      .note { grid-template-columns: 1fr; }
+      footer .wrap { flex-direction: column; }
+    }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+  </style>
+</head>
+<body>
+  <header class="wrap">
+    <div class="topbar">
+      <div class="brand"><span class="brand-mark" aria-hidden="true">수</span><span>AIEP 수업꾸러미 제작 안내</span></div>
+      <nav aria-label="페이지 목차">
+        <a href="#how">사용 순서</a>
+        <a href="#prompt">요청 예시</a>
+        <a href="#site">AIEP 입력</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero wrap">
+      <div class="hero-inner">
+        <span class="eyebrow">교사 수업 자료 제작 스킬</span>
+        <h1>수업 아이디어를<br><span>바로 쓸 꾸러미</span>로</h1>
+        <p>학년과 주제, 원하는 자료를 알려 주면 수업 흐름과 학습 자료를 설계하고, AIEP 저작 도구에 입력하기 좋은 표준 형식으로 묶어 드립니다.</p>
+        <div class="actions">
+          <a class="button" href="#prompt">요청 예시 보기</a>
+          <a class="button secondary" href="https://aiep-courseware.gbe.kr/course/new?snb=objective" target="_blank" rel="noopener">AIEP 저작 도구 열기 ↗</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="how" class="wrap">
+      <div class="section-head">
+        <p class="kicker">How it works</p>
+        <h2>이렇게 시작하면 됩니다</h2>
+        <p>처음부터 완벽한 기획서를 준비할 필요는 없습니다. 아는 조건만 적으면 빠진 부분을 표시해 초안을 만듭니다.</p>
+      </div>
+      <div class="grid steps">
+        <article class="card step"><span class="number">01</span><h3>수업 조건 말하기</h3><p>학년, 교과, 주제, 차시와 수업 시간을 알려 주세요. 학급 특성이나 수업 환경도 있으면 함께 적습니다.</p></article>
+        <article class="card step"><span class="number">02</span><h3>필요한 결과 고르기</h3><p>지도안, 활동지, 발표 자료, 읽기 자료, 평가 문항 등 필요한 것을 적습니다.</p></article>
+        <article class="card step"><span class="number">03</span><h3>자료 패키지 만들기</h3><p>성취기준과 목표부터 수업 흐름, 학습 자료, 평가, 출처를 한 묶음으로 정리합니다.</p></article>
+        <article class="card step"><span class="number">04</span><h3>검토하고 사이트에 반영</h3><p>파일 묶음만 받을 수도 있고, 요청하면 Ego Lite로 AIEP 입력과 미리보기까지 진행할 수 있습니다.</p></article>
+      </div>
+    </section>
+
+    <section id="prompt" class="wrap">
+      <div class="section-head">
+        <p class="kicker">A good request</p>
+        <h2>이 예시를 복사해 바꿔 보세요</h2>
+      </div>
+      <div class="prompt-layout">
+        <div class="prompt">
+          <p class="prompt-label">복사해서 바로 쓰는 요청문</p>
+          <blockquote id="sample-prompt">초등 5학년 과학 ‘태양계와 별’ 2차시 수업을 준비해 줘. 차시별 지도안, 학생용 활동지, 형성평가 문항을 만들고, 성취기준과 수업 목표를 연결해 줘. AIEP 수업꾸러미 입력 순서와 각 콘텐츠의 제목·설명·학습 유형도 정리해 줘. 결과 파일은 수업 자료 폴더에 모아 줘. 사이트에는 등록하지 말고 먼저 검토용 초안을 보여 줘.</blockquote>
+          <button class="button" id="copy-prompt" type="button">요청문 복사</button>
+        </div>
+        <aside class="card fields">
+          <h3>이 정보가 있으면 좋아요</h3>
+          <ul>
+            <li>학교급, 학년, 교과/과목</li>
+            <li>단원·주제와 차시/수업 시간</li>
+            <li>학생의 선행 지식이나 학급 특성</li>
+            <li>필요한 자료와 평가 방식</li>
+            <li>사이트 입력 여부와 공개 범위</li>
+          </ul>
+          <div class="hint">성취기준을 아직 몰라도 괜찮아요. 확인된 정보로 초안을 만들고, 불확실한 부분은 임의로 단정하지 않고 표시합니다.</div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="wrap">
+      <div class="section-head">
+        <p class="kicker">Your package</p>
+        <h2>수업 자료를 한 폴더에 모읍니다</h2>
+        <p>작업 종류에 따라 구성은 달라지지만, 기본적으로 교사용·학생용 자료와 AIEP 입력안을 함께 정리합니다.</p>
+      </div>
+      <div class="grid deliverables">
+        <article class="card deliverable"><div class="icon" aria-hidden="true">✦</div><h3>수업 설계</h3><p>성취기준, 학습 목표, 차시별 흐름, 교사·학생 활동, 평가 증거</p></article>
+        <article class="card deliverable"><div class="icon" aria-hidden="true">▤</div><h3>학습 자료</h3><p>요청한 활동지·읽기 자료·문항 등을 파일로 만들고 사용 위치를 기록</p></article>
+        <article class="card deliverable"><div class="icon" aria-hidden="true">↗</div><h3>AIEP 입력안</h3><p>단원 행과 콘텐츠 순서, 제목·설명·학습 유형·보충자료·출처 정리</p></article>
+      </div>
+    </section>
+
+    <section id="site" class="wrap">
+      <div class="section-head">
+        <p class="kicker">AIEP workflow</p>
+        <h2>사이트에서는 이 순서로 확인합니다</h2>
+        <p>저작 도구의 과목·성취기준·콘텐츠 구조에 맞춰 자료를 옮긴 후 학습자 화면에서 점검합니다.</p>
+      </div>
+      <div class="flow" aria-label="AIEP 등록 전 검토 순서">
+        <div class="flow-item"><strong>과목·성취기준</strong><span>학년과 과목에 맞는 기준 선택</span></div>
+        <div class="flow-item"><strong>단원·콘텐츠 배치</strong><span>캔버스 행별로 학습 흐름 구성</span></div>
+        <div class="flow-item"><strong>속성·자료 설정</strong><span>설명, 유형, 보충자료, 저작권 확인</span></div>
+        <div class="flow-item"><strong>목차·학습 화면</strong><span>학습자 관점에서 미리보기</span></div>
+        <div class="flow-item"><strong>저장 또는 등록</strong><span>요청한 범위에 따라 마무리</span></div>
+      </div>
+    </section>
+
+    <section class="wrap">
+      <div class="note">
+        <div><h3>사이트 등록은 요청에 맞춰 진행합니다</h3><p>공개 범위는 직접 확인합니다. 검토용 자료만 원하면 파일 패키지까지만 만들고, 온라인 등록을 원하면 미리보기와 출처를 점검한 뒤 진행합니다.</p></div>
+        <a class="button" href="https://aiep-courseware.gbe.kr/course/new?snb=objective" target="_blank" rel="noopener">AIEP 열기 ↗</a>
+      </div>
+    </section>
+  </main>
+
+  <footer><div class="wrap"><span>AIEP 수업꾸러미 제작 스킬 · 사용 안내</span><span>기준: AIEP 저작 도구 사용자 매뉴얼 v1.2 및 2026-11-10 화면 확인</span></div></footer>
+  <script>
+    const copyButton = document.querySelector("#copy-prompt");
+    const promptText = document.querySelector("#sample-prompt").innerText;
+    copyButton.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(promptText);
+        copyButton.textContent = "복사했어요 ✓";
+      } catch {
+        const range = document.createRange();
+        range.selectNodeContents(document.querySelector("#sample-prompt"));
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+        copyButton.textContent = "요청문을 선택했어요 · Ctrl+C";
+      }
+      window.setTimeout(() => { copyButton.textContent = "요청문 복사"; }, 2200);
+    });
+  </script>
+</body>
+</html>

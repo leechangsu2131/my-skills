@@ -17,21 +17,22 @@
           <p>NEIS 주간학습안내에서 가져온 수업내용을 날짜와 교시별로 확인합니다.</p>
         </div>
         <div class="top-actions">
-          <a class="button button-primary" href="http://127.0.0.1:5101">NEIS 수업 뷰어</a>
           <button id="refreshButton" class="button button-quiet" type="button">새로고침</button>
         </div>
       </header>
 
       <section class="toolbar card">
         <div class="date-control">
-          <label for="selectedDate">수업 날짜</label>
+          <label for="selectedDate">기준 날짜</label>
+          <button id="prevPeriod" class="period-nav" type="button" aria-label="이전 기간" title="이전 기간">‹</button>
           <input id="selectedDate" type="date" />
+          <button id="nextPeriod" class="period-nav" type="button" aria-label="다음 기간" title="다음 기간">›</button>
           <button id="todayButton" class="button button-soft" type="button">오늘</button>
         </div>
         <div class="view-switch" role="group" aria-label="조회 범위">
-          <button class="view-button is-active" data-view="day" type="button">하루</button>
-          <button class="view-button" data-view="week" type="button">이번 주</button>
-          <button class="view-button" data-view="month" type="button">이번 달</button>
+          <button class="view-button is-active" data-view="day" type="button" aria-pressed="true">하루</button>
+          <button class="view-button" data-view="week" type="button" aria-pressed="false">주간</button>
+          <button class="view-button" data-view="month" type="button" aria-pressed="false">월간</button>
         </div>
         <div id="syncStatus" class="sync-status" aria-live="polite">NEIS 자료를 아직 가져오지 않았습니다.</div>
       </section>
@@ -60,13 +61,28 @@
             <div class="eyebrow">LESSON PLAN</div>
             <h2 id="listTitle">선택한 날짜 수업</h2>
           </div>
-          <span id="rangeLabel" class="range-pill"></span>
+          <div class="heading-actions">
+            <div id="calendarControls" class="calendar-controls" hidden>
+              <label class="cell-height-control" for="cellHeightInput">
+                <span>하루 칸 높이</span>
+                <input id="cellHeightInput" type="range" min="120" max="360" step="20" value="160" />
+                <output id="cellHeightOutput" for="cellHeightInput">160px</output>
+              </label>
+              <label class="weekend-toggle" for="weekendInput">
+                <input id="weekendInput" type="checkbox" checked />
+                <span>토·일 표시</span>
+              </label>
+            </div>
+            <span id="rangeLabel" class="range-pill"></span>
+          </div>
         </div>
         <div id="lessonGroups" class="lesson-groups"></div>
+        <div id="weekView" class="week-view" hidden></div>
+        <div id="calendarView" class="calendar-view" hidden></div>
         <div id="emptyState" class="empty-state" hidden>
           <div class="empty-icon">▦</div>
-          <h3>표시할 수업내용이 없습니다</h3>
-          <p>NEIS 주간학습안내 화면에서 주차를 조회한 다음, Chrome 확장 프로그램에서 자료를 가져오세요.</p>
+          <h3>수업 자료를 불러오지 못했습니다</h3>
+          <p>로컬 뷰어 서버와 NEIS 자료 동기화 상태를 확인해 주세요.</p>
         </div>
       </section>
 

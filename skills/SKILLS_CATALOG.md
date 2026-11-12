@@ -1,8 +1,8 @@
 # 스킬·도구 종합 안내
 
-> 기준일: 2026-11-11
-> 범위: 이 폴더 바로 아래의 57개 디렉터리. `SKILL.md`가 있는 40개와 README·AGENTS·코드만 있는 프로젝트/자료 폴더 17개를 함께 정리했다.
-> 버전: 아래 값은 각 폴더의 Markdown 또는 패키지 메타데이터에서 확인한 표기다. 버전 표기가 없으면 `미기재`로 적었다. 이는 폴더를 실제 실행해 최신 동작까지 검증했다는 뜻은 아니다.
+> 기준일: 2026-11-12
+> 범위: 이 폴더 바로 아래의 58개 디렉터리. `SKILL.md`가 있는 41개와 README·AGENTS·코드만 있는 프로젝트/자료 폴더 17개를 함께 정리했다.
+> 버전: 아래 값은 각 폴더의 Markdown, 확장 매니페스트 또는 패키지 메타데이터에서 확인한 표기다. 버전 표기가 없으면 `미기재`로 적었다. 이는 폴더를 실제 실행해 최신 동작까지 검증했다는 뜻은 아니다.
 
 ## 빠른 찾기
 
@@ -35,6 +35,7 @@
 | `classmanage-student-classifier` | 미기재 | 클로바노트·자유 메모·폼 응답에서 학생별 기록을 분류하고 날짜/과목/분야 등을 구조화해 Notion 입력용으로 만든다. |
 | `classmanage-student-eval-generator` | 미기재 | 학생 누적 기록을 바탕으로 학기말 교과 평가와 종합발달상황 문장을 생성한다. |
 | `classmanage-student-photo-organizer` | 미기재 | 학생 작품·활동 사진을 학생별 폴더로 분류하고 파일명을 정리한다. |
+| `photo-organizer` | 미기재 | 활동 사진 폴더의 EXIF 제작 날짜를 인식해 폴더명에 날짜(또는 기간)를 붙이고, 중복 사진(MD5) 제거 및 자동 생성 파일명을 `활동명_YYYYMMDD_반_순번`으로 일괄 정리한다. |
 | `classmanage-supabase-export` | 미기재 | Supabase의 다중 학생 기록을 학생별로 분리해 개인별 워크시트가 있는 Excel 파일로 내보낸다. |
 
 ## 수업·교사 도구
@@ -50,6 +51,7 @@
 | `teacherlesson-aiep-courseware` | 미기재 | 상위 공통 수업꾸러미의 AIEP 어댑터. 경북 AIEP의 성취기준, LCMS·파일/링크 배치, 공개 범위와 학습 순서를 반영해 꾸러미를 만들고 학습자 미리보기를 점검한다. |
 | `teacherlesson-classtool-courseware` | 미기재 | 클래스툴의 내 수업 보관함에서 수업자료를 설계하고, 링크·콘텐츠·OX·객관식·주관식·화이트보드 활동을 구성한다. 교사 자료실 공개와 학생 클래스 배포, 실시간 응답 흐름을 구분한다. |
 | `teacherlesson-schedule` | v1.0.0 | Google Sheets 기반 교사 수업 진도·수업 배치 관리와 자동 시간표 계획 기능을 다룬다. |
+| `teacherlesson-from-neis` | Chrome 확장 v1.1.0 | NEIS 주간학습안내를 읽어 등록된 주차를 자동 동기화하고, 오늘 수업 플로팅 패널과 로컬 주간·월간 뷰어에 표시한다. 조회 전용이며 자료는 이 PC의 Chrome 저장소와 로컬 뷰어에서 관리한다. |
 | `teacherlesson-social-helper` | 미기재 | Douclass 사회 차시 자료를 열고 자주 쓰는 수업 구성을 저장하는 반자동 도우미다. |
 | `teacherlesson-music-helper` | 미기재 | Douclass 음악 자료 접근, 지도서 PDF 추출·요약과 수업 관리용 스크립트가 들어 있다. 설명용 `SKILL.md`는 없다. |
 | `teacherlesson-workspace` | v0.1.0 | Supabase 등 여러 교사 도구의 데이터를 모아 보여주는 교사용 대시보드/워크스페이스 앱이다. 별도 `SKILL.md`는 없다. |
@@ -97,6 +99,7 @@
 | v0.1.0 | `classmanage-record-viewer`, `teacherlesson-workspace` |
 | v0.2.6 | `personal-video-note` |
 | v1.0.0 | `teacherlesson-schedule`, `util-pdf-translator`의 스크립트 패키지 |
+| Chrome 확장 v1.1.0 | `teacherlesson-from-neis` |
 | v2.1.0 / README V3 | `util-storagemap` |
 | 미기재 | 나머지 폴더 |
 

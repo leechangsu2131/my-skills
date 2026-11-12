@@ -114,6 +114,15 @@ description: 나이스(NEIS) 교외체험학습 신청서/보고서 및 결석�
 - **[neis_collect_semester_timetable.py](file:///C:/Users/user/.gemini/antigravity/scratch/repos/my-skills/skills/admin-neis-bot/neis_collect_semester_timetable.py)**: `cell-click` 이벤트 직접 호출을 통해 1~27주차 전체 시간표 및 과목별 시수표(`dsHcntList`), 개설과목을 전수 수집하는 도구.
 - **[neis_execute_save_final.py](file:///C:/Users/user/.gemini/antigravity/scratch/repos/my-skills/skills/admin-neis-bot/neis_execute_save_final.py)**: 플로팅 메뉴 핸들러를 통한 `mbIsModified = true` 활성화 및 타겟 주차별 시간표 저장/모달 자동 처리 마스터 실행기.
 
+### 4. NEIS 업무 데이터 연동 분석 기록
+
+NEIS 화면에서 데이터를 읽는 방식과 응답 구조를 참고할 때는 아래 문서를 주제에 맞춰 확인합니다.
+
+| 주제 | 문서 | 포함 내용 |
+|---|---|---|
+| 복무 달력 확장 프로그램 | [references/duty-calendar-extension-analysis.md](references/duty-calendar-extension-analysis.md) | REA 정적 분석, `fetch`/XHR 관찰, `workYmd` 요청 템플릿 재사용, `dsMain` 필드·캐시, 다른 업무에 적용할 때의 제한과 설계 원칙. REA 원본 증거 파일 위치도 문서 안에 기록되어 있습니다. |
+| 주간학습·오늘의 수업 | [references/weekly-learning-live-analysis.md](references/weekly-learning-live-analysis.md) | m00/m02 메뉴와 화면 차이, 실제 `/002`·`/003` 읽기 요청·응답 구조, 날짜·교시 정규화, 월 단위 주차 조회·날짜 필터링 실측, 미저장 상태 보존 기록. |
+
 ---
 
 ## 제공 기능 및 실행 방법
@@ -280,6 +289,16 @@ browser = await p.chromium.connect_over_cdp("http://127.0.0.1:9222")
 ## eXBuilder6 플랫폼 자동화 노하우 (중요)
 
 나이스 시스템은 eXBuilder6 플랫폼 기반이므로 표준 Selenium 제어와 다릅니다. 다음 가이드를 준수해야 에러 없이 자동화가 완료됩니다:
+
+### 0. 복무 달력 확장 프로그램 분석을 다른 NEIS 업무에 적용
+- 확장 프로그램 v1.6의 정적 분석과 재사용 가능한 설계 관점은 [references/duty-calendar-extension-analysis.md](references/duty-calendar-extension-analysis.md)를 참조합니다.
+- 이 확장 프로그램은 일일근무상황조회 통신을 관찰해 요청 템플릿을 저장하고, 검색 날짜를 바꾼 요청으로 응답을 모아 달력에 표시합니다. 핵심 참고점은 업무 화면의 요청·응답 구조를 찾아 데이터로 활용하는 방법입니다. 다만 복무의 endpoint·필드·응답 형식이 시간표나 주간학습에도 같다고 가정하지 않습니다.
+- 새 업무를 자동화할 때는 해당 화면의 실제 조회·입력 흐름을 관찰하여 화면, 요청, 응답, 검증 결과를 연결합니다. 로그인은 사용자가 완료한 NEIS 세션을 사용하고 자격 증명·쿠키·토큰은 추출하거나 저장하지 않습니다. 업무별 권한과 운영 정책을 지키고, 업무상 필요한 범위에서만 데이터를 처리합니다.
+- eXBuilder 화면에 등록된 읽기 제출이 확인되면 먼저 현재 앱 인스턴스의 제출과 데이터맵을 활용합니다. `_AUTHDATA`·`_SWCDATA`는 브라우저 앱의 인증 문맥 안에 두고 로그·파일·외부 캐시에 복사하지 않습니다. 재조회 조건은 화면에서 확인한 필드만 사용합니다.
+- 읽기 기능은 업무별 응답을 정규화해 다른 화면에서 재사용할 수 있게 설계합니다. 예: 일일근무상황조회는 복무 현황, 시간표와 주간학습은 날짜별 과목·차시·학습내용으로 변환하여 **오늘의 수업** 화면을 구성할 수 있습니다.
+- 쓰기 기능은 읽기 요청을 임의로 변형해 추정하지 않습니다. 사용자가 수행하는 실제 입력 흐름의 요청·필수 필드·검증 응답을 별도로 확인하고, 기존 화면 검증과 승인 절차를 보존합니다. 미리보기와 사용자 확인, 저장 후 재조회 검증을 거치며 읽기 모듈과 쓰기 액션을 분리합니다.
+- 이 저장소에는 학급시간표관리 화면의 탐색·주차별 수집·최적화 코드가 이미 있습니다. 이는 시간표 조정 기능의 기반이며, 교사가 오늘 수업할 내용을 읽어 표시하는 기능과는 별개입니다. 오늘의 수업 화면을 만들려면 시간표와 주간학습내용의 조회 구조 및 날짜·교시 매핑을 각 화면에서 확인해야 합니다.
+- 주간학습의 실제 읽기 요청·응답과 요일별 데이터셋 계약은 [references/weekly-learning-live-analysis.md](references/weekly-learning-live-analysis.md)를 참조합니다. m00의 `/002`·`/003` 읽기는 실제 응답까지 확인했고, m02의 눈에 보이는 조회 버튼은 Crownix 보고서 흐름을 열었습니다. 월 단위 조회는 `dsWeekList`에서 대상 월과 겹치는 평일 주차를 조회한 뒤 `<day>AllTiYmd`로 날짜를 필터링합니다. 작성 화면의 `isModified()`가 true인 데이터셋이 있으면 조회·화면이동을 중단하고 원본 상태를 보존한 채 별도 탭에서 조사합니다.
 
 ### 1. 그리드 가상화 스크롤 한계 극복 (시간표 주차 선택 등)
 - 화면에 보이지 않는 스크롤 하단 행(예: 19~27주차)은 DOM 요소가 생성되지 않아 일반 클릭이 불가합니다.

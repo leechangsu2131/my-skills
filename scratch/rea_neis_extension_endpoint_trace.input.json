@@ -1,0 +1,15 @@
+{
+  "query": {
+    "direction": "forward-influence",
+    "include_ambiguous_dynamic_edges": true,
+    "expected": null,
+    "seed": {
+      "value": "srv_mym_mm01_001.do",
+      "kind": "literal"
+    }
+  },
+  "application": {
+    "evidence_id": "ev_37a031cbeb9e6277b341e617a5c6ff4381c64a8ef01bbc70d0441f4abe7ccfe6",
+    "kind": "retained-evidence"
+  }
+}

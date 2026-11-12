@@ -47,6 +47,13 @@
    - 수신문서(`APPRTYPE == '3'`)이면서 업무담당자(`isCharge == 'true'`)인 경우 단순 일괄결재(`fncBndeSanctn`)는 비즈니스 로직상 제외 처리됩니다.
    - 웹 폼 제출(`fncProcessDocApn`) 시에는 행정전자서명(EPKI)/웹 DRM 컨트롤 미설치 오류가 발생하므로, 브라우저에서 `doCallClientApp(0, APPRID, 0, '')`로 WXSClient 결재기(`HCLTAPP_KYUL`)를 띄운 뒤 네이티브 서명 창에서 [결재]를 수행하는 것이 가장 안전하고 완벽한 하이브리드 자동화 표준입니다.
 
+15. **넥사크로 앱 접근은 `_pApplication` / `_application` 사용 (2026-11-12 확정)**:
+   - `nexacro.getApplication()` 및 `nexacro._applications`는 K-에듀파인(`klef.gbe.kr`) 환경에서 `undefined` 반환.
+   - **실제 앱 객체**: `window._pApplication` 또는 `window._application` → `mainframe` 포함.
+   - 올바른 접근: `var app = _pApplication || _application; var mf = app.mainframe;`
+   - 탭별 WS 직결이 타임아웃될 때: **브라우저 레벨 WS** (`/json/version` → `webSocketDebuggerUrl`) + `Target.attachToTarget(targetId, flatten=True)` 으로 세션 획득 후 JS 주입.
+   - 클립보드 복사: Python `ctypes` 방식은 샌드박스에서 access violation → **PowerShell `Set-Clipboard` 사용**.
+
 9. **Playwright `connect_over_cdp` 전체 브라우저 락 회피**:
    - Chrome 9222에 Playwright를 직접 붙이면 메인 프로세스 락으로 수십 초~무한 대기가 발생할 수 있습니다.
    - `http://127.0.0.1:9222/json`에서 `type==page`(및 필요 시 `type==iframe`)의 `webSocketDebuggerUrl`로 경량 WebSocket 통신을 하거나 Selenium 디버거 주소 매핑을 활용합니다.
@@ -95,6 +102,50 @@
 ---
 
 ## 📅 일자별 개발 실패 극복 및 트러블슈팅 일지
+
+---
+
+
+### 2026-11-12: CDP 경량 직결 — `_pApplication` 경로로 nexacro 앱 접근 및 기안 메뉴 직결 🏆
+
+#### 1. 문제 상황
+- `playwright_gongmun_draft.py` 실행 시 Chrome 9222 `connect_over_cdp`가 무한 대기 (수칙 9번 현상).
+- 탭별 `webSocketDebuggerUrl` 직접 접속(`klef.gbe.kr`, `gbe.eduptl.kr`)도 모든 CDP 호출이 타임아웃.
+- `Runtime.enable` → `executionContextCreated` 이벤트가 0개 — 컨텍스트 목록 수집 불가.
+
+#### 2. 원인 분석
+- 탭별 `webSocketDebuggerUrl`로 직결 시 넥사크로 메인 프레임(`klef.gbe.kr/keris_ui/main.do`)의 Renderer 프로세스가 CDP 응답을 반환하지 못하는 `프로세스 락` 상태.
+- `nexacro.getApplication()`이 `undefined` 반환 → 넥사크로 앱이 메인 DOM에 `nexacro` 전역을 올려두지 않고, `window._pApplication` / `window._application`에 등록.
+
+#### 3. 돌파구: 브라우저 레벨 WS + `Target.attachToTarget(flatten=True)` + `_pApplication`
+
+```python
+# 브라우저 레벨 WS (/json/version webSocketDebuggerUrl)로 연결
+browser_ws = json.loads(urlopen("/json/version"))["webSocketDebuggerUrl"]
+# Target.attachToTarget + flatten=True → 탭 프로세스 락 우회, 세션 획득
+session_id = attach_target(target_id, flatten=True)
+# _pApplication 경로로 mainframe 접근
+js = "_pApplication.mainframe.MainVFrameSet.SubHFrameSet.LeftFrame.form.gfnOpenMenu('A00AAB0101001')"
+```
+
+**핵심 발견 사항:**
+- `nexacro.getApplication()` → ❌ 반환값 없음 (`_applications` 맵도 없음)
+- `window._pApplication` → ✅ **실제 넥사크로 앱 객체** (mainframe 포함)
+- `window._application` → ✅ 대안 경로 (동일 객체)
+- `gfnOpenMenu('A00AAB0101001')` → ✅ **공용서식 기안 화면 직결 오픈 성공**
+
+#### 4. 확정 패턴 (이후 모든 트랙에 적용)
+```python
+# 브라우저 WS 연결 → flatten 세션 → JS에서 _pApplication 사용
+app = _pApplication || _application;
+mf = app.mainframe;
+lf = mf.MainVFrameSet.SubHFrameSet.LeftFrame;
+lf.form.gfnOpenMenu(menuId);
+```
+
+#### 5. 클립보드 안전망
+- Python `ctypes.windll.user32.OpenClipboard` 방식은 **샌드박스 환경에서 access violation** 발생.
+- **PowerShell `Set-Clipboard`** 가 100% 안정적 → 본문 복사는 PowerShell로 처리.
 
 ---
 

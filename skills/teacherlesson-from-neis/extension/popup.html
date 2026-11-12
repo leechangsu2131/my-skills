@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NEIS 오늘의 수업</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <main class="popup">
+      <header>
+        <div class="mark">N</div>
+        <div>
+          <h1>오늘의 수업</h1>
+          <p>첫 조회 후 NEIS 등록 주차 자동 동기화 · 월간 가져오기도 지원</p>
+        </div>
+      </header>
+      <label for="monthInput">가져올 달</label>
+      <input id="monthInput" type="month" />
+      <button id="weekButton" class="button secondary" type="button">현재 주 가져오기</button>
+      <button id="monthButton" class="button primary" type="button">선택한 달 가져오기</button>
+      <div id="status" role="status" aria-live="polite">NEIS에서 주간학습을 한 번 조회하면 등록된 나머지 주차도 자동으로 가져옵니다.</div>
+      <a class="viewer-link" href="http://127.0.0.1:5101" target="_blank" rel="noreferrer">오늘의 수업 뷰어 열기 ↗</a>
+      <p class="privacy">수업내용만 이 PC의 로컬 뷰어로 보냅니다. NEIS에는 저장하지 않습니다.</p>
+    </main>
+    <script src="popup.js"></script>
+  </body>
+</html>

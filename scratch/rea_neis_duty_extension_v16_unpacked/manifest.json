@@ -1,0 +1,36 @@
+{
+  "manifest_version": 3,
+  "name": "나이스 부서 복무 달력",
+  "version": "1.6",
+  "description": "나이스 월간일정에서 이름·직급별 대상자의 승인완료 및 결재중 복무현황을 표시합니다.",
+  "permissions": [
+    "storage"
+  ],
+  "host_permissions": [
+    "https://*.neis.go.kr/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://*.neis.go.kr/*"
+      ],
+      "js": [
+        "injected.js"
+      ],
+      "run_at": "document_start",
+      "world": "MAIN"
+    },
+    {
+      "matches": [
+        "https://*.neis.go.kr/*"
+      ],
+      "css": [
+        "styles.css"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ]
+}

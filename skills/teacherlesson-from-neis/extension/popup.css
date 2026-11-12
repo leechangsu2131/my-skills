@@ -1,0 +1,16 @@
+* { box-sizing: border-box; }
+body { width: 310px; margin: 0; color: #17314e; background: #f4f8fc; font-family: "Segoe UI", sans-serif; }
+.popup { padding: 16px; }
+header { display: flex; align-items: center; gap: 10px; margin-bottom: 17px; }
+.mark { display: grid; width: 38px; height: 38px; place-items: center; border-radius: 13px; color: #fff; background: #075bb4; font-size: 18px; font-weight: 900; }
+h1 { margin: 0; font-size: 17px; }
+header p { margin: 4px 0 0; color: #7a8ba0; font-size: 11px; }
+label { display: block; margin-bottom: 6px; color: #687c93; font-size: 11px; font-weight: 800; }
+input { width: 100%; height: 36px; margin-bottom: 10px; padding: 0 9px; border: 1px solid #d8e2ec; border-radius: 9px; color: #17314e; background: #fff; font: inherit; }
+.button { display: block; width: 100%; min-height: 38px; margin-top: 8px; border: 0; border-radius: 10px; font-size: 12px; font-weight: 800; cursor: pointer; }
+.button:disabled { opacity: .55; cursor: wait; }
+.primary { color: #fff; background: #075bb4; }
+.secondary { color: #23577f; background: #e7f1fa; }
+#status { min-height: 48px; margin-top: 12px; padding: 10px; border: 1px solid #e0e9f1; border-radius: 10px; color: #718399; background: #fff; font-size: 11px; line-height: 1.5; }
+.viewer-link { display: block; margin-top: 12px; color: #075bb4; font-size: 12px; font-weight: 800; text-decoration: none; }
+.privacy { margin: 10px 0 0; color: #91a0b0; font-size: 10px; line-height: 1.45; }

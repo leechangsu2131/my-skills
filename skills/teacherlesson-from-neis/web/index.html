@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f1f6fb" />
+    <title>오늘의 수업 · NEIS</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="topbar">
+        <div class="brand-mark">N</div>
+        <div class="brand-copy">
+          <div class="eyebrow">TEACHER LESSONS</div>
+          <h1>오늘의 수업</h1>
+          <p>NEIS 주간학습안내에서 가져온 수업내용을 날짜와 교시별로 확인합니다.</p>
+        </div>
+        <div class="top-actions">
+          <a class="button button-primary" href="http://127.0.0.1:5101">NEIS 수업 뷰어</a>
+          <button id="refreshButton" class="button button-quiet" type="button">새로고침</button>
+        </div>
+      </header>
+
+      <section class="toolbar card">
+        <div class="date-control">
+          <label for="selectedDate">수업 날짜</label>
+          <input id="selectedDate" type="date" />
+          <button id="todayButton" class="button button-soft" type="button">오늘</button>
+        </div>
+        <div class="view-switch" role="group" aria-label="조회 범위">
+          <button class="view-button is-active" data-view="day" type="button">하루</button>
+          <button class="view-button" data-view="week" type="button">이번 주</button>
+          <button class="view-button" data-view="month" type="button">이번 달</button>
+        </div>
+        <div id="syncStatus" class="sync-status" aria-live="polite">NEIS 자료를 아직 가져오지 않았습니다.</div>
+      </section>
+
+      <section class="summary-row" aria-label="요약">
+        <article class="summary-card card">
+          <span class="summary-label">표시 수업</span>
+          <strong id="lessonCount">0</strong>
+          <span id="summaryRange" class="summary-foot">선택한 날짜</span>
+        </article>
+        <article class="summary-card card summary-highlight">
+          <span class="summary-label">자료 출처</span>
+          <strong>NEIS</strong>
+          <span class="summary-foot">주간학습안내 조회 결과</span>
+        </article>
+        <article class="summary-card card">
+          <span class="summary-label">가져오기</span>
+          <strong id="lastImported">-</strong>
+          <span class="summary-foot">이 PC 메모리에 임시 보관</span>
+        </article>
+      </section>
+
+      <section class="content-card card">
+        <div class="section-heading">
+          <div>
+            <div class="eyebrow">LESSON PLAN</div>
+            <h2 id="listTitle">선택한 날짜 수업</h2>
+          </div>
+          <span id="rangeLabel" class="range-pill"></span>
+        </div>
+        <div id="lessonGroups" class="lesson-groups"></div>
+        <div id="emptyState" class="empty-state" hidden>
+          <div class="empty-icon">▦</div>
+          <h3>표시할 수업내용이 없습니다</h3>
+          <p>NEIS 주간학습안내 화면에서 주차를 조회한 다음, Chrome 확장 프로그램에서 자료를 가져오세요.</p>
+        </div>
+      </section>
+
+      <footer class="footer-note">
+        자료는 로컬 브라우저와 이 PC의 메모리에만 임시로 표시됩니다. NEIS에 쓰기 요청은 보내지 않습니다.
+      </footer>
+    </main>
+    <script src="/app.js" defer></script>
+  </body>
+</html>

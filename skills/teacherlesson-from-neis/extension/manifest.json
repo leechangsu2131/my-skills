@@ -1,0 +1,28 @@
+{
+  "manifest_version": 3,
+  "name": "NEIS 오늘의 수업",
+  "version": "1.1.0",
+  "description": "NEIS 주간학습안내의 주별 수업내용을 자동 동기화해 로컬 수업 뷰어에 표시합니다.",
+  "permissions": ["activeTab", "scripting", "storage"],
+  "host_permissions": ["https://*.neis.go.kr/*", "http://127.0.0.1:5101/*"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://*.neis.go.kr/*"],
+      "js": ["neis-reader.js"],
+      "run_at": "document_start",
+      "world": "MAIN"
+    },
+    {
+      "matches": ["https://*.neis.go.kr/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_title": "NEIS 오늘의 수업",
+    "default_popup": "popup.html"
+  }
+}

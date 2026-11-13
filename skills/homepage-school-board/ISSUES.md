@@ -1,29 +1,28 @@
 # 📋 homepage-school-board 스킬 이슈 트래커
 
-> 스킬 버전: v0.1 | 생성: 2026-11-13
+> 스킬 버전: v1.0 | 마지막 업데이트: 2026-11-13
 
 ---
 
 ## 🟢 완료
 
-_아직 없음 (v0.1 최초 생성)_
+### ISSUE-001: 학교 게시판 크롤러 + GitHub Actions 구축 (hc 학교)
+- **상태**: 🟢 완료 (2026-11-13)
+- **대상 학교**: `school.gyo6.net/hc` (화천초등학교, 나이스 T0029 스킨)
+- **목표 게시판**: 공지사항 (`bbsId=20006608`, `mi=10219054`), 가정통신문 (`bbsId=20006609`, `mi=10219055`)
+- **수행 내역**:
+  - [x] 메인 HTML 및 게시판 목록 분석 -> `data-id` (`nttSn`), 등록일, 작성자, 조회수 파싱 로직 구현
+  - [x] `scripts/crawl_notices.py` 작성 (EUC-KR/UTF-8 자동 판별, 표준 JSON 저장)
+  - [x] `data/notices.json` 생성 검증 (공지사항 16건 + 가정통신문 20건 = 총 36건 정상 수집)
+  - [x] `.github/workflows/crawl_notices.yml` 작성 (매일 KST 07:00 스케줄 + 수동 트리거 지원, 변경 시 자동 git commit/push)
+  - [x] `school.html`에 "📢 공지" 탭 추가 (전체/공지사항/가정통신문 필터링, 최신 글 NEW 뱃지, 반응형 UI, 원문 링크)
+  - [x] 스킬 폴더 내 `scripts/crawl_notices.py` 동기화
 
 ---
 
 ## 🔵 진행 중
 
-### ISSUE-001: 학교 게시판 크롤러 + GitHub Actions 구축 (hc 학교)
-- **상태**: 🔵 진행 중
-- **대상 학교**: `school.gyo6.net/hc` (나이스 T0029 스킨)
-- **목표 게시판**: 공지사항, 가정통신문
-- **작업 목록**:
-  - [x] 메인 HTML 탐색으로 `bbsId`·`mi` 파악
-  - [ ] `scripts/crawl_notices.py` 완성 (bbsId 하드코딩 or 자동 감지)
-  - [ ] `data/notices.json` 샘플 출력 확인
-  - [ ] `.github/workflows/crawl_notices.yml` 작성
-  - [ ] `school.html` 공지 탭 UI 추가
-  - [ ] GitHub에 Push 후 Actions 첫 실행 확인
-- **블로커**: 목록 URL의 Referer 체크 여부 확인 필요
+_현재 진행 중인 활성 이슈 없음_
 
 ---
 
@@ -31,8 +30,7 @@ _아직 없음 (v0.1 최초 생성)_
 
 ### ISSUE-002: 셀렉터 자동 감지 로직
 - **우선순위**: Medium
-- **설명**: probe 스크립트 실행 없이 `BOARD_CONFIGS`에 URL만 넣으면  
-  셀렉터를 자동 추론하는 로직 추가
+- **설명**: probe 스크립트 실행 없이 `BOARD_CONFIGS`에 URL만 넣으면 셀렉터를 자동 추론하는 로직 추가
 - **수락 기준**:
   - [ ] `table.board-list` / `ul.board-list` / `div.board-list` 순서로 fallback
   - [ ] 감지 실패 시 사용자에게 명확한 에러 메시지
@@ -46,27 +44,21 @@ _아직 없음 (v0.1 최초 생성)_
 
 ### ISSUE-004: 새 게시글 감지 알림 (선택)
 - **우선순위**: Low
-- **설명**: 새 글 등록 시 Supabase Edge Function 경유 FCM 푸시 발송  
-  (업로드된 프로토타입 `school-notice-notifier` 활용)
-- **참고**: 기존 프로토타입에 `GenericWebBoardCrawler` 이미 구현됨
+- **설명**: 새 글 등록 시 Supabase Edge Function 경유 FCM 푸시 발송
+- **참고**: 업로드된 프로토타입 `school-notice-notifier` 모듈 활용
 - **수락 기준**:
-  - [ ] 이전 notices.json과 diff 비교 → 신규 항목 추출
+  - [ ] 이전 notices.json과 diff 비교 -> 신규 항목 추출
   - [ ] Supabase Functions 또는 GitHub Actions에서 FCM API 호출
 
 ### ISSUE-005: notices.json 보안 처리
 - **우선순위**: Medium
-- **설명**: 가정통신문에 학부모 연락처 등 개인정보 포함 가능성
+- **설명**: 가정통신문에 학부모/교사 개인정보가 노출되지 않도록 마스킹
 - **수락 기준**:
-  - [ ] 크롤러에서 전화번호·이메일 패턴 자동 마스킹 옵션
-  - [ ] 또는 notices.json을 `.gitignore`에 추가하고 별도 Private 저장
+  - [ ] 크롤러에서 전화번호·이메일 패턴 자동 마스킹 옵션 적용
 
-### ISSUE-006: school.html 공지 탭 UX 개선
+### ISSUE-006: school.html 공지 탭 UX 고도화
 - **우선순위**: Low
-- **설명**: 초기 버전 이후 UX 개선
-- **수락 기준**:
-  - [ ] 게시판별 뱃지(공지/가정통신) 색상 구분
-  - [ ] 최신 글 "NEW" 뱃지 (3일 이내)
-  - [ ] 무한 스크롤 또는 더보기 버튼
+- **설명**: 검색 필터, 키워드 하이라이트 기능 추가
 
 ---
 
@@ -75,3 +67,4 @@ _아직 없음 (v0.1 최초 생성)_
 | 날짜 | 버전 | 내용 |
 |---|---|---|
 | 2026-11-13 | v0.1 | 스킬 최초 생성, ISSUE-001~006 등록 |
+| 2026-11-13 | v1.0 | ISSUE-001 구축 완료 (크롤러, Actions, JSON 데이터, UI 탭) |

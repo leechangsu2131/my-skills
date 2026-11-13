@@ -1,0 +1,45 @@
+name: Daily YouTube transcripts
+
+on:
+  schedule:
+    - cron: "0 22 * * *"   # UTC 22시 = 한국 시간 매일 오전 7시
+  workflow_dispatch:        # 수동 실행 버튼
+
+permissions:
+  contents: write
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install
+        run: pip install -U yt-dlp requests
+
+      - name: Run
+        run: python main.py
+        env:
+          PLAYLIST_URL: ${{ secrets.PLAYLIST_URL }}
+          KAKAO_REST_API_KEY: ${{ secrets.KAKAO_REST_API_KEY }}
+          KAKAO_CLIENT_SECRET: ${{ secrets.KAKAO_CLIENT_SECRET }}
+          KAKAO_REFRESH_TOKEN: ${{ secrets.KAKAO_REFRESH_TOKEN }}
+
+      # 카카오가 새 리프레시 토큰을 줬을 때 Secrets를 자동 갱신 (GH_PAT 필요)
+      - name: Save new Kakao refresh token
+        if: always() && hashFiles('new_refresh_token.txt') != ''
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+        run: gh secret set KAKAO_REFRESH_TOKEN --body "$(cat new_refresh_token.txt)" --repo "$GITHUB_REPOSITORY"
+
+      - name: Commit transcripts
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add transcripts state.json || true
+          git diff --cached --quiet || (git commit -m "자막 업데이트 $(date +%F)" && git push)

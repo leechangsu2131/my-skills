@@ -12,36 +12,36 @@ description: >-
 # 🏫 학교 게시판 → 홈페이지 자동 연동 스킬
 
 학교 홈페이지 게시판을 **GitHub Actions(매일 1회)** 로 크롤링 →  
-`data/notices.json` 커밋 → `school.html` 공지탭 표시까지 한 번에 구축한다.
+`data/notices.json` 자동 커밋 → `school.html` 공지 탭(실시간 검색·필터·새로고침) 표시까지 한 번에 구축한다.
 
-> **전제 조건**: `leechangsu2131.github.io` (또는 동일 구조의) GitHub Pages 저장소
+> **전제 조건**: `leechangsu2131.github.io` (또는 동일 구조의) GitHub Pages 정적 웹사이트
 
 ---
 
 ## 📐 아키텍처
 
 ```
-학교 홈페이지 게시판
-       ↓ Python + httpx/BeautifulSoup
-GitHub Actions (cron: 매일 KST 07:00)
+학교 홈페이지 게시판 (나이스 T0029 등)
+       ↓ Python (urllib + re / 추가 패키지 없이 경량 동작)
+GitHub Actions (cron: 매일 KST 07:00 / workflow_dispatch 수동 실행)
        ↓ 변경 시 자동 git commit & push
-data/notices.json  (최신 50건 × 게시판 수)
-       ↓ fetch()
-school.html — 📢 공지 탭
+data/notices.json  (최신 공지사항 + 가정통신문 피드)
+       ↓ fetch() 비동기 로드
+school.html — 📢 공지 탭 (실시간 검색 · 칩 필터 · NEW 뱃지 · 새로고침)
 ```
 
-**서버·DB 없음** — 완전 정적, 무료.
+**서버·DB 없음** — 완전 정적, 무과금 자동화.
 
 ---
 
-## 📁 생성 파일 목록
+## 📁 파일 구성
 
 | 경로 | 역할 |
 |---|---|
-| `scripts/crawl_notices.py` | 크롤러 본체 |
-| `data/notices.json` | 크롤링 결과 (자동 갱신) |
-| `.github/workflows/crawl_notices.yml` | 스케줄 워크플로우 |
-| `school.html` | 공지 탭 UI 추가 |
+| `scripts/crawl_notices.py` | 크롤러 본체 (EUC-KR/UTF-8 자동 판별, 표준 파서) |
+| `data/notices.json` | 크롤링 결과 JSON (GitHub Actions에 의해 매일 갱신) |
+| `.github/workflows/crawl_notices.yml` | GitHub Actions 스케줄 워크플로우 (KST 07:00 실행) |
+| `school.html` | 공지 탭 UI (실시간 검색창, 카운트 뱃지, 새로고침, 원문 링크) |
 
 ---
 
@@ -49,56 +49,57 @@ school.html — 📢 공지 탭
 
 ### STEP 1 — 학교 홈페이지 URL 패턴 파악
 
-1. 메인 페이지 HTML 다운로드 후 `bbsId`, `nttSn`, `selectNttList.do` 패턴 추출
+1. 학교 메인 페이지 HTML 다운로드 후 `bbsId`, `nttSn`, `selectNttList.do` 패턴 추출
 2. 나이스 표준 패턴 감지:
    - 목록: `https://<도메인>/hc/na/ntt/selectNttList.do?mi=<mi>&bbsId=<bbsId>`
-   - 상세: `https://<도메인>/hc/na/ntt/selectNttInfo.do?mi=<mi>&nttSn=<nttSn>`
+   - 상세: `https://<도메인>/hc/na/ntt/selectNttInfo.do?mi=<mi>&bbsId=<bbsId>&nttSn=<nttSn>`
 3. 공지사항/가정통신문 `mi` + `bbsId` 조합 확인
-4. 셀렉터 검증: 목록 HTML에서 `ul.se-ul li` 또는 `table.board-list tbody tr` 패턴 확인
+4. 셀렉터 검증: 목록 테이블의 `<td class="bbs_tit">` 안 `<a data-id="nttSn" class="nttInfoBtn">`
 
-참고 스크립트: [scripts/probe_school.py](./scripts/probe_school.py)
+참고 도구: [scripts/probe_school.py](./scripts/probe_school.py)
 
-### STEP 2 — 크롤러 스크립트 생성
+### STEP 2 — 크롤러 스크립트 작성 (`scripts/crawl_notices.py`)
 
-[scripts/crawl_notices.py](./scripts/crawl_notices.py) 생성:
-- `BOARD_CONFIGS` 상수에 게시판별 `mi`, `bbsId`, `name` 설정
-- 나이스 표준 목록 API 또는 HTML 파싱 선택
-- 결과를 `data/notices.json`으로 저장 (최신 50건)
-- 실행: `python scripts/crawl_notices.py`
+- `BOARD_CONFIGS` 상수에 게시판별 `mi`, `bbs_id`, `board_name` 지정
+- 외부 의존성(pip) 없이 파이썬 내장 `urllib`과 정규표현식(`re`)으로 고속 크롤링
+- UTF-8 및 EUC-KR 인코딩 자동 폴백 지원
+- 결과: `data/notices.json` 저장
 
-### STEP 3 — GitHub Actions 워크플로우 생성
+### STEP 3 — GitHub Actions 워크플로우 작성
 
-`.github/workflows/crawl_notices.yml` 생성:
+`.github/workflows/crawl_notices.yml`:
 ```yaml
-schedule:
-  - cron: '0 22 * * *'   # KST 07:00 = UTC 22:00 (전날)
+name: Crawl School Notices
+on:
+  schedule:
+    - cron: '0 22 * * *'   # KST 07:00 (UTC 22:00 전날)
+  workflow_dispatch:        # 수동 즉시 실행 지원
+
+jobs:
+  crawl:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python scripts/crawl_notices.py
+      - run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add data/notices.json
+          git diff --staged --quiet || (git commit -m "chore(data): 학교 공지사항 자동 갱신 [skip ci]" && git push)
 ```
-- `workflow_dispatch` 트리거로 수동 실행도 지원
-- `notices.json` 변경 시에만 커밋 (변경 없으면 no-op)
 
-### STEP 4 — school.html 공지 탭 추가
+### STEP 4 — school.html 탭 & 고도화 UI 연동
 
-기존 탭(시간표·급식·학사일정·학교정보)에 **📢 공지** 탭 추가:
-- `fetch('data/notices.json')` 로드
-- 게시판별 섹션 카드로 렌더링
-- 클릭 → 학교 원문 링크 새 탭 열기
-- 로딩 스피너 + 에러 fallback 처리
-
-### STEP 5 — 테스트 & 첫 커밋
-
-```powershell
-# 로컬 테스트
-cd C:\Users\lee21\Documents\GitHub\HomePage
-python scripts/crawl_notices.py
-
-# 결과 확인
-cat data/notices.json
-
-# 커밋
-git add data/notices.json scripts/crawl_notices.py .github/workflows/crawl_notices.yml school.html
-git commit -m "feat: 학교 게시판 크롤링 자동화"
-git push
-```
+- **실시간 검색창**: 검색어 입력 시 제목/작성자 실시간 필터링 + ✕ 지우기 버튼
+- **필터 칩**: [전체 (N)], [공지사항 (N)], [가정통신문 (N)] 게시글 수 동적 집계
+- **시각적 강조**: 4일 이내 등록 글 `NEW` 뱃지, `통합공지` 뱃지
+- **원문 연결**: 클릭 시 학교 홈페이지 원문 상세 페이지 새 탭 오픈
+- **수동 재조회**: 캐시 무효화 쿼리스트링(`?v=Date.now()`) 기반 `🔄 새로고침` 버튼
 
 ---
 
@@ -106,22 +107,13 @@ git push
 
 | 항목 | 기본값 | 변경 위치 |
 |---|---|---|
-| 크롤링 시각 | KST 07:00 | `.github/workflows/crawl_notices.yml` cron |
-| 최대 보관 건수 | 50건/게시판 | `crawl_notices.py` `MAX_POSTS` |
-| 게시판 목록 | 공지사항·가정통신문 | `crawl_notices.py` `BOARD_CONFIGS` |
-| 셀렉터 | 나이스 표준 | `crawl_notices.py` `SELECTORS` |
+| 크롤링 주기 | 매일 KST 07:00 | `.github/workflows/crawl_notices.yml` cron |
+| 최대 수집 건수 | 게시판당 30건 | `scripts/crawl_notices.py` `MAX_POSTS` |
+| 대상 학교/게시판 | 화천초 (공지/가통) | `scripts/crawl_notices.py` `BOARD_CONFIGS` |
 
 ---
 
 ## 📌 나이스 gyo6.net 패턴 레퍼런스
 
 참고: [references/neis_gyo6_pattern.md](./references/neis_gyo6_pattern.md)
-
----
-
-## ⚠️ 주의사항
-
-- `robots.txt` 및 학교 홈페이지 이용약관 확인 후 사용
-- GitHub Actions 1회 실행 시 ~1분 소요 (월 무료 2,000분 내 충분)
-- 학교 사이트가 IP 차단 시 `User-Agent` 조정 또는 크롤링 중단
-- 개인정보(학부모 연락처 등)가 게시판에 있을 경우 `notices.json` 비공개 처리 필요
+이슈 추적: [ISSUES.md](./ISSUES.md)

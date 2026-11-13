@@ -42,7 +42,7 @@
 
 | 스킬 폴더 | 설명 | 상태 | 이슈 |
 |---|---|---|---|
-| **`homepage-school-board`** | 학교 게시판 크롤링 → GitHub Actions → school.html 공지 탭 연동 | 🔵 진행 | [ISSUES.md](./homepage-school-board/ISSUES.md) |
+| **`homepage-school-board`** | 학교 게시판 크롤링 → GitHub Actions → school.html 공지 탭 연동 | ✅ 운영 | [ISSUES.md](../skills/homepage-school-board/ISSUES.md) |
 
 ---
 

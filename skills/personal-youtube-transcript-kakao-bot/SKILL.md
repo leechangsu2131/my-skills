@@ -11,9 +11,9 @@ description: 유튜브 재생목록의 새 영상 자막을 매일 자동으로 
 
 | 파일 | 역할 |
 |---|---|
-| `scripts/main.py` | 재생목록 조회 → 자막 추출 → 파일 저장 → 카톡 전송. 로컬에서는 같은 폴더의 `.env`를 자동으로 읽는다 |
-| `assets/daily.yml` | 깃허브 액션 워크플로. 저장소의 `.github/workflows/daily.yml`로 둔다 |
-| `assets/gitignore.txt` | 저장소의 `.gitignore`로 둔다 (`.env` 등 제외) |
+| `main.py` | 재생목록 조회 → 자막 추출 → 파일 저장 → 카톡 전송. 로컬에서는 같은 폴더의 `.env`를 자동으로 읽는다 |
+| `daily.yml` | 깃허브 액션 워크플로. 저장소의 `.github/workflows/daily.yml`로 둔다 |
+| `gitignore.txt` | 저장소의 `.gitignore`로 둔다 (`.env` 등 제외) |
 | `references/kakao-setup.md` | 카카오 앱 설정, 토큰 발급, 오류 코드, 친구에게 보내기 제약 |
 
 사용자에게 줄 때는 `main.py`는 저장소 최상위, `daily.yml`은 `.github/workflows/daily.yml`, `gitignore.txt`는 `.gitignore`라는 이름으로 두도록 안내한다.

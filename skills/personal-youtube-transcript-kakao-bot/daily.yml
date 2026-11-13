@@ -18,8 +18,12 @@ jobs:
         with:
           python-version: "3.12"
 
+      - uses: denoland/setup-deno@v2   # yt-dlp가 유튜브 처리에 쓰는 JS 런타임
+        with:
+          deno-version: v2.x
+
       - name: Install
-        run: pip install -U yt-dlp requests
+        run: pip install -U "yt-dlp[default]" requests
 
       - name: Run
         run: python main.py
@@ -28,6 +32,7 @@ jobs:
           KAKAO_REST_API_KEY: ${{ secrets.KAKAO_REST_API_KEY }}
           KAKAO_CLIENT_SECRET: ${{ secrets.KAKAO_CLIENT_SECRET }}
           KAKAO_REFRESH_TOKEN: ${{ secrets.KAKAO_REFRESH_TOKEN }}
+          KAKAO_FRIEND_UUIDS: ${{ secrets.KAKAO_FRIEND_UUIDS }}  # 선택: 친구에게도 보낼 때만
 
       # 카카오가 새 리프레시 토큰을 줬을 때 Secrets를 자동 갱신 (GH_PAT 필요)
       - name: Save new Kakao refresh token

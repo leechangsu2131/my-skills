@@ -1,0 +1,67 @@
+name: morning-todo
+
+on:
+  schedule:
+    - cron: "30 21 * * 0-4" # 한국시간 월~금 06:30 (UTC 일~목 21:30). 예약 실행은 몇 분 늦어질 수 있다.
+  workflow_dispatch: # Actions 탭에서 수동 실행(시험용)
+
+permissions:
+  contents: read
+
+concurrency:
+  group: morning-todo
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    # 시트 주소(ID)도 Secrets에 두면 공개 로그에서 자동으로 가려진다.
+    env:
+      KAKAO_REST_API_KEY: ${{ secrets.KAKAO_REST_API_KEY }}
+      KAKAO_CLIENT_SECRET: ${{ secrets.KAKAO_CLIENT_SECRET }}
+      KAKAO_REFRESH_TOKEN: ${{ secrets.KAKAO_REFRESH_TOKEN }}
+      KAKAO_FRIEND_UUIDS: ${{ secrets.KAKAO_FRIEND_UUIDS }}
+      KAKAO_SEND_TO_ME: ${{ vars.KAKAO_SEND_TO_ME }}
+      GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
+      DB_SHEET_ID: ${{ secrets.DB_SHEET_ID }}
+      SRC_WEEK_SHEET_ID: ${{ secrets.SRC_WEEK_SHEET_ID }}
+      SRC_WEEK_GID: ${{ secrets.SRC_WEEK_GID }}
+      SRC_TODAY_SHEET_ID: ${{ secrets.SRC_TODAY_SHEET_ID }}
+      SRC_TODAY_GID: ${{ secrets.SRC_TODAY_GID }}
+      MY_NAME: ${{ secrets.MY_NAME }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - run: pip install -r requirements.txt
+
+      - name: 공용 시트 → 일정DB 동기화
+        id: sync
+        continue-on-error: true # 실패해도 아침 메시지는 보낸다(실패 사실을 메시지에 표시)
+        run: python -m schooltodo sync
+
+      - name: 아침 카톡 발송
+        env:
+          SYNC_FAILED: ${{ steps.sync.outcome == 'failure' && '1' || '' }}
+        run: python -m schooltodo morning
+
+      # 만료 1달 전부터 카카오가 새 리프레시 토큰을 주면, 다음 실행을 위해 Secrets에 다시 저장한다.
+      # GH_PAT: 이 저장소의 'Secrets 읽기/쓰기' 권한만 준 개인 액세스 토큰(fine-grained)
+      - name: 갱신된 카카오 리프레시 토큰 저장
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+        run: |
+          if [ -s new_refresh_token.txt ]; then
+            if [ -z "$GH_TOKEN" ]; then
+              echo "::warning::새 리프레시 토큰이 발급됐지만 GH_PAT이 없어 저장하지 못했습니다. 한 달 안에 설정하세요."
+              exit 0
+            fi
+            gh secret set KAKAO_REFRESH_TOKEN --repo "$GITHUB_REPOSITORY" < new_refresh_token.txt
+            echo "리프레시 토큰을 갱신해 저장했습니다."
+          fi

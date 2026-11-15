@@ -1,0 +1,14 @@
+# 비밀·개인 설정: 절대 올리지 않는다
+.env
+config.toml
+new_refresh_token.txt
+service-account*.json
+*credentials*.json
+
+# 실제 일정이 담긴 파일
+out/
+real/
+
+__pycache__/
+.pytest_cache/
+.venv/

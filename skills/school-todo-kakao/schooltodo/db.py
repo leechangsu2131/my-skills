@@ -30,6 +30,9 @@ class MemoryDb:
     def append(self, rows: list[dict]) -> None:
         self._rows.extend(dict(r) for r in rows)
 
+    def inbox(self):
+        return None
+
 
 class CsvDb(MemoryDb):
     """로컬 시험용 읽기 전용 DB."""
@@ -43,8 +46,22 @@ class CsvDb(MemoryDb):
 
 
 class SheetsDb:
-    def __init__(self, worksheet):
+    def __init__(self, worksheet, spreadsheet=None):
         self._ws = worksheet
+        self._sh = spreadsheet
+
+    def inbox(self):
+        """'빠른입력' 탭이 있으면 그 탭을, 없으면 None (탭 이름은 INBOX_TAB로 바꿀 수 있다)."""
+        if self._sh is None:
+            return None
+        import gspread
+
+        from .inbox import InboxSheet
+
+        try:
+            return InboxSheet(self._sh.worksheet(os.environ.get("INBOX_TAB", "빠른입력")))
+        except gspread.exceptions.WorksheetNotFound:
+            return None
 
     @classmethod
     def from_env(cls) -> "SheetsDb":
@@ -52,14 +69,28 @@ class SheetsDb:
 
         raw = os.environ.get("GOOGLE_SERVICE_ACCOUNT_JSON", "").strip()
         if raw:
-            gc = gspread.service_account_from_dict(json.loads(raw))
+            info = json.loads(raw)
         else:
             path = resolve_path(need("GOOGLE_SERVICE_ACCOUNT_FILE"))
             if not path.is_file():
                 raise SystemExit(f"서비스 계정 키 파일을 찾을 수 없습니다: {path}")
-            gc = gspread.service_account(filename=str(path))
+            info = json.loads(path.read_text(encoding="utf-8"))
+        gc = gspread.service_account_from_dict(info)
+        email = info.get("client_email", "(키 파일에 client_email 없음)")  # 공유 대상 안내용: 비밀이 아님
         tab = os.environ.get("DB_TAB", "일정DB")
-        return cls(gc.open_by_key(need("DB_SHEET_ID")).worksheet(tab))
+        try:
+            sh = gc.open_by_key(need("DB_SHEET_ID"))
+        except PermissionError:
+            raise SystemExit(
+                "일정DB 시트에 접근할 수 없습니다(403). 시트 '공유'에 아래 계정을 편집자로 추가했는지, "
+                f"DB_SHEET_ID가 맞는지 확인하세요.\n  서비스 계정: {email}"
+            ) from None
+        except gspread.exceptions.SpreadsheetNotFound:
+            raise SystemExit("DB_SHEET_ID에 해당하는 시트가 없습니다. 주소의 /d/ 뒤 ID인지 확인하세요.") from None
+        try:
+            return cls(sh.worksheet(tab), sh)
+        except gspread.exceptions.WorksheetNotFound:
+            raise SystemExit(f"일정DB 시트에 '{tab}' 탭이 없습니다. 탭 이름을 맞추거나 .env에 DB_TAB을 지정하세요.") from None
 
     def _header(self, vals: list[list[str]]) -> list[str]:
         header = [h.strip() for h in vals[0]] if vals else []

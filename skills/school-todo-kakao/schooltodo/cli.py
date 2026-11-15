@@ -14,6 +14,7 @@ from zoneinfo import ZoneInfo
 from .classify import load_config
 from .db import CsvDb, SheetsDb, need
 from .envload import load_env, update_env_value
+from .inbox import plan_inbox
 from .kakao import KakaoError, refresh_access_token, send_friends, send_memo
 from .message import build_message, split_message
 from .sources import SourceError, fetch_rows, parse_today, parse_week, read_csv_file
@@ -42,9 +43,33 @@ def _load_rows(path: str | None, id_env: str, gid_env: str):
     return None
 
 
+def _sync_inbox(db, today, dry_run: bool, verbose: bool) -> list[dict]:
+    """'빠른입력' 탭의 새 글을 일정DB 행으로. 공용 시트를 못 읽는 날에도 먼저 처리된다."""
+    inbox = db.inbox()
+    if inbox is None:
+        return []
+    items = inbox.pending()
+    if not items:
+        return []
+    keys = {(r.get("키") or "").strip() for r in db.rows()}
+    rows, marks = plan_inbox(items, keys, today)
+    if verbose:
+        for r in rows:
+            print(f"  + {r['날짜']} [{r['구분']}|수동] {r['내용']}")
+    if not dry_run:
+        db.append(rows)
+        inbox.mark(marks)
+    print(f"inbox: 빠른입력 {len(items)}건 중 새로 추가 {len(rows)}건" + (" (dry-run)" if dry_run else ""))
+    return rows
+
+
 def cmd_sync(args) -> int:
     today = _today(args)
     cfg = load_config()
+    db = _open_db(args)
+    verbose = args.dry_run or args.verbose  # 공개 로그에는 일정 내용을 남기지 않는다
+    pending_inbox = _sync_inbox(db, today, args.dry_run, verbose)  # 원본 시트 읽기보다 먼저
+
     cands = []
     used = 0
     week = _load_rows(args.week_csv, "SRC_WEEK_SHEET_ID", "SRC_WEEK_GID")
@@ -59,9 +84,8 @@ def cmd_sync(args) -> int:
         print("읽을 원본이 없습니다: SRC_WEEK_SHEET_ID 또는 SRC_TODAY_SHEET_ID (또는 --week-csv/--today-csv)")
         return 2
 
-    db = _open_db(args)
-    added = plan_sync(db.rows(), cands, today, cfg)
-    verbose = args.dry_run or args.verbose  # 공개 로그에는 일정 내용을 남기지 않는다
+    # dry-run에서는 빠른입력 행이 아직 DB에 없으니 중복 판단에 같이 넣는다
+    added = plan_sync(db.rows() + (pending_inbox if args.dry_run else []), cands, today, cfg)
     if verbose:
         for r in added:
             print(f"  + {r['날짜']} [{r['구분']}|{r['대상']}] {r['내용']}")

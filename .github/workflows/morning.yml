@@ -16,6 +16,10 @@ jobs:
   run:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    # 이 프로젝트가 저장소 맨 위가 아니라 하위 폴더에 있을 때의 위치 (맨 위면 이 3줄을 지운다)
+    defaults:
+      run:
+        working-directory: skills/school-todo-kakao
     # 시트 주소(ID)도 Secrets에 두면 공개 로그에서 자동으로 가려진다.
     env:
       KAKAO_REST_API_KEY: ${{ secrets.KAKAO_REST_API_KEY }}
@@ -37,6 +41,7 @@ jobs:
         with:
           python-version: "3.12"
           cache: pip
+          cache-dependency-path: skills/school-todo-kakao/requirements.txt
 
       - run: pip install -r requirements.txt
 

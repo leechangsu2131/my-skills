@@ -2,11 +2,14 @@ name: morning-todo
 
 on:
   schedule:
-    - cron: "30 21 * * 0-4" # 한국시간 월~금 06:30 (UTC 일~목 21:30). 예약 실행은 몇 분 늦어질 수 있다.
+    # 깃허브 cron은 항상 UTC. 한국시간 월~금 = UTC 일~목. 정각·30분은 몰려서 늦거나 빠지기 쉬워 어긋난 분을 쓴다.
+    - cron: "17 21 * * 0-4" # 한국시간 월~금 06:17
+    - cron: "7 22 * * 0-4"  # 백업: 06:17 실행이 빠졌을 때만 실제로 돈다(아래 guard 단계)
   workflow_dispatch: # Actions 탭에서 수동 실행(시험용)
 
 permissions:
   contents: read
+  actions: read # 오늘 예약 실행이 이미 성공했는지 확인용
 
 concurrency:
   group: morning-todo
@@ -35,22 +38,38 @@ jobs:
       SRC_TODAY_GID: ${{ secrets.SRC_TODAY_GID }}
       MY_NAME: ${{ secrets.MY_NAME }}
     steps:
+      - name: 오늘 예약 실행이 이미 성공했으면 건너뛰기 (백업 예약 중복 발송 방지)
+        id: guard
+        if: github.event_name == 'schedule'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        working-directory: ${{ github.workspace }} # 아직 체크아웃 전이라 하위 폴더 기본값을 쓰지 않는다
+        run: |
+          since=$(date -u -d '8 hours ago' +%Y-%m-%dT%H:%M:%SZ)
+          n=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow "morning-todo" --event schedule --status success --created ">=$since" --json databaseId --jq 'length')
+          if [ "${n:-0}" -gt 0 ]; then echo "done=1" >> "$GITHUB_OUTPUT"; echo "앞선 예약 실행이 이미 성공해 건너뜁니다."; fi
+
       - uses: actions/checkout@v4
+        if: steps.guard.outputs.done != '1'
 
       - uses: actions/setup-python@v5
+        if: steps.guard.outputs.done != '1'
         with:
           python-version: "3.12"
           cache: pip
           cache-dependency-path: skills/school-todo-kakao/requirements.txt
 
-      - run: pip install -r requirements.txt
+      - if: steps.guard.outputs.done != '1'
+        run: pip install -r requirements.txt
 
       - name: 공용 시트 → 일정DB 동기화
         id: sync
+        if: steps.guard.outputs.done != '1'
         continue-on-error: true # 실패해도 아침 메시지는 보낸다(실패 사실을 메시지에 표시)
         run: python -m schooltodo sync
 
       - name: 아침 카톡 발송
+        if: steps.guard.outputs.done != '1'
         env:
           SYNC_FAILED: ${{ steps.sync.outcome == 'failure' && '1' || '' }}
         run: python -m schooltodo morning
@@ -58,7 +77,7 @@ jobs:
       # 만료 1달 전부터 카카오가 새 리프레시 토큰을 주면, 다음 실행을 위해 Secrets에 다시 저장한다.
       # GH_PAT: 이 저장소의 'Secrets 읽기/쓰기' 권한만 준 개인 액세스 토큰(fine-grained)
       - name: 갱신된 카카오 리프레시 토큰 저장
-        if: always()
+        if: always() && steps.guard.outputs.done != '1'
         env:
           GH_TOKEN: ${{ secrets.GH_PAT }}
         run: |

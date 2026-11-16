@@ -398,6 +398,39 @@ lf.form.gfnOpenMenu(menuId);
 
 ---
 
+### 2026-11-16: S2B 장바구니 에듀파인 전용 엑셀 추출 및 품의등록 화면 자동 주입 완성 (`s2b_to_edufine_flow.py`)
+
+#### 1. 문제 상황 및 실무 요구사항
+- S2B 장바구니에 담긴 물품(스타 넷볼 스포츠 골대 농구링 높이 조절형, 650,000원)을 에듀파인 학교회계 품의로 신속하게 상신하고자 함.
+- 단순 수동 입력 대신, **S2B의 공식 에듀파인 연계 다운로드 기능**을 활용하여 에듀파인 품목 그리드 업로드 규격에 맞는 엑셀을 내려받고, 에듀파인 폼 필드와 연계하는 엔드투엔드(End-to-End) 워크플로우 정비 필요.
+- 에듀파인 품의등록 화면의 넥사크로17 DOM 구조, 내부 컴포넌트 ID(`edtCnsulSj`, `txtareaCnsulSumrCn`), 예산 종속성 및 엑셀 업로드 버튼(`파일 ⇧`, `btnExceUpload`) 연계 실전 파악 필요.
+
+#### 2. 핵심 분석 및 기술적 돌파 (Breakthroughs)
+1. **S2B 에듀파인 연계 파일 다운로드 메커니즘 (`estimateEdufine`)**:
+   - S2B 장바구니(견적서 접수 목록, `remc100.do?forwardName=estimateList`) 하단의 `btn_03_12_17.gif`는 `javascript:estimateEdufine();` 함수로 연결됨.
+   - 내부적으로 체크된 품목의 견적접수코드(`f_rc_estimate_code`)를 수집하여 `forwardName=estimateEdufine`, `f_sep=1`(또는 `2`) 파라미터로 POST 전송 시 **K-에듀파인 품의등록 표준 규격 엑셀 파일**(`20261116_에듀파인리스트.xls`)이 즉시 바이너리로 반환됨.
+   - **엑셀 시트 5대 컬럼 규격**: `[내용, 규격, 수량, 예상단가, 물품번호]`
+     - 예: `스타 넷볼 스포츠 골대 농구링 높이 조절형` | `2개1조/실버/약 50㎏/(L)120X(W)70X(H)175~305㎝/넷볼링38㎝` | `1.0` | `650000.0` | `202606028605894`
+2. **K-에듀파인 학교회계 품의등록 화면 넥사크로 컴포넌트 매핑**:
+   - MDI 윈도우 ID: `winId_A00FAA0104001001_411`
+   - 품의 제목 컴포넌트: `divWork.form.divMain.form.edtCnsulSj` (DOM ID: `...edtCnsulSj:input`)
+   - 품의 개요 컴포넌트: `divWork.form.divMain.form.txtareaCnsulSumrCn` (DOM ID: `...txtareaCnsulSumrCn:textarea`)
+   - 품목 그리드 데이터셋: `dsPrdlstDtlList` (주요 컬럼: `prdlstCn`, `stndrd`, `qty`, `expectUntpc`, `expectAmt`, `s2bThngNo`, `rm` 등 36개)
+   - 품목 엑셀 업로드 버튼: `divWork.form.divAuth2.form.btnExceUpload` (화면 텍스트: `파일 ⇧`)
+   - 품목 엑셀 다운로드 버튼: `divWork.form.divAuth2.form.btnExceDwld` (화면 텍스트: `파일 ⇩`)
+   - 행추가/삭제: `btnRowAdit` (`행추가 +`), `btnAuthRDelRow` (`행삭제 -`)
+3. **예산 비목 종속성 규명**:
+   - K-에듀파인 품의등록의 품목 그리드(`grdPrdlstDtl`)는 **상단 예산내역(`dsBgtDtlList`)이 1건 이상 바인딩되어 있어야만** 행추가 및 엑셀 업로드가 활성화됨.
+   - 따라서 스킬의 최적 자동화 분기:
+     1) S2B 에듀파인 전용 엑셀(`S2B_에듀파인연계_양식1.xls`) 자동 다운로드
+     2) 에듀파인 탭 활성화 및 제목(`edtCnsulSj`), 개요(`txtareaCnsulSumrCn`) 자동 주입
+     3) 교사가 `[예산선택]`으로 본교 체육 관련 세부사업(교수학습활동지원 등)을 1회 지정하면,
+     4) 품목내역의 `[파일 ⇧]` 버튼을 눌러 다운로드된 엑셀을 업로드하거나 `Ctrl+V`로 즉시 완료!
+4. **비품 / 소모품 자동 판정 로직 내재화**:
+   - 단가 50만 원 이상 & 내용연수 1년 이상인 경우 자동으로 개요 본문에 `비품 (정수/교구대장 등재 대상)`으로 명시하여 행정실 계약 및 물품 관리 업무와 완전 일치시킴.
+
+---
+
 ## 💡 새로운 작업 완료 시 지식 보존 원칙
 
 새로운 작업이나 기능을 추가하면서 예외 상황, 넥사크로 특이 동작, 프레임 버그를 발견하여 해결했을 경우:

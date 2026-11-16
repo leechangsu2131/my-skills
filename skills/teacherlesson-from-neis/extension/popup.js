@@ -3,6 +3,7 @@ const monthInput = document.querySelector("#monthInput");
 const weekButton = document.querySelector("#weekButton");
 const monthButton = document.querySelector("#monthButton");
 const statusNode = document.querySelector("#status");
+const viewerButton = document.querySelector("#viewerButton");
 
 function localMonth() {
     const now = new Date();
@@ -223,9 +224,7 @@ async function runImport(mode) {
     setStatus(mode === "week" ? "현재 주 수업을 읽는 중입니다…" : "NEIS에서 월별 주차를 순서대로 조회하고 있습니다…");
     try {
         const result = await importFromNeis(mode);
-        setStatus(result.viewer_updated
-            ? `${result.range_start} ~ ${result.range_end} · ${result.imported}개 수업을 자동 동기화했습니다.`
-            : `${result.range_start} ~ ${result.range_end} · 브라우저에 저장했습니다. 뷰어: ${result.viewer_error || "연결되지 않음"}`);
+        setStatus(`${result.range_start} ~ ${result.range_end} · ${result.imported}개 수업을 Chrome에 저장했습니다.`);
     } catch (error) {
         setStatus(error.message || "수업을 가져오지 못했습니다.", true);
     } finally {
@@ -237,3 +236,6 @@ async function runImport(mode) {
 monthInput.value = localMonth();
 weekButton.addEventListener("click", () => runImport("week"));
 monthButton.addEventListener("click", () => runImport("month"));
+viewerButton.addEventListener("click", () => {
+    chrome.tabs.create({ url: chrome.runtime.getURL("viewer.html") });
+});

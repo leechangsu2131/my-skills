@@ -12,5 +12,5 @@ input { width: 100%; height: 36px; margin-bottom: 10px; padding: 0 9px; border: 
 .primary { color: #fff; background: #075bb4; }
 .secondary { color: #23577f; background: #e7f1fa; }
 #status { min-height: 48px; margin-top: 12px; padding: 10px; border: 1px solid #e0e9f1; border-radius: 10px; color: #718399; background: #fff; font-size: 11px; line-height: 1.5; }
-.viewer-link { display: block; margin-top: 12px; color: #075bb4; font-size: 12px; font-weight: 800; text-decoration: none; }
+.viewer-link { display: block; width: 100%; margin-top: 12px; padding: 0; border: 0; color: #075bb4; background: transparent; font: inherit; font-size: 12px; font-weight: 800; text-align: left; cursor: pointer; }
 .privacy { margin: 10px 0 0; color: #91a0b0; font-size: 10px; line-height: 1.45; }

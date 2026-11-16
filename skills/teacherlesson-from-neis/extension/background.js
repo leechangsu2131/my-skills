@@ -1,5 +1,4 @@
 const STORAGE_KEY = "teacherlessonNeisCache";
-const API_URL = "http://127.0.0.1:5101/api/import";
 const MAX_RECORDS = 2500;
 const WEEK_CACHE_TTL_MS = 12 * 60 * 60 * 1000;
 
@@ -53,7 +52,7 @@ function normalizePayload(payload) {
     };
 }
 
-async function storeAndForward(payload) {
+async function storePayload(payload) {
     const normalized = normalizePayload(payload);
     const stored = await chrome.storage.local.get(STORAGE_KEY);
     const previous = stored[STORAGE_KEY] || {};
@@ -78,40 +77,12 @@ async function storeAndForward(payload) {
     };
     await chrome.storage.local.set({ [STORAGE_KEY]: cache });
 
-    let viewerUpdated = false;
-    let viewerError = "";
-    try {
-        const response = await fetch(API_URL, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                source: normalized.source,
-                range_start: normalized.start,
-                range_end: normalized.end,
-                records: normalized.records.map((record) => ({
-                    ...record,
-                    lessonNumber: record.lesson_number,
-                    totalLessons: record.total_lessons,
-                    textbookPage: record.textbook_page,
-                    additionalPage: record.additional_page,
-                })),
-            }),
-        });
-        const result = await response.json().catch(() => ({}));
-        if (!response.ok) throw new Error(result.error || "로컬 뷰어가 자료를 받지 못했습니다.");
-        viewerUpdated = true;
-    } catch (error) {
-        viewerError = error.message || "로컬 뷰어에 연결하지 못했습니다.";
-    }
-
     return {
         ok: true,
         imported: normalized.records.length,
         range_start: normalized.start,
         range_end: normalized.end,
         stored_locally: true,
-        viewer_updated: viewerUpdated,
-        viewer_error: viewerError,
     };
 }
 
@@ -121,6 +92,18 @@ function isNeisPage(sender) {
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (!message) return false;
+    if (message.type === "OPEN_VIEWER") {
+        if (!isNeisPage(sender)) {
+            sendResponse({ ok: false, error: "NEIS 화면에서 온 요청이 아닙니다." });
+            return false;
+        }
+        chrome.tabs.create({ url: chrome.runtime.getURL("viewer.html") }, () => {
+            sendResponse(chrome.runtime.lastError
+                ? { ok: false, error: "수업 뷰어를 열지 못했습니다." }
+                : { ok: true });
+        });
+        return true;
+    }
     if (message.type === "CHECK_WEEK_CACHE") {
         if (!isNeisPage(sender)) {
             sendResponse({ ok: false, error: "NEIS 페이지에서 온 요청이 아닙니다." });
@@ -151,7 +134,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         return false;
     }
 
-    storeAndForward(message.payload)
+    storePayload(message.payload)
         .then(sendResponse)
         .catch((error) => sendResponse({ ok: false, error: error.message || "수업내용을 저장하지 못했습니다." }));
     return true;

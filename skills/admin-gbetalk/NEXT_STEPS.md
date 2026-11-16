@@ -1,6 +1,38 @@
 # 지비톡 쪽지 보관 작업 인계
 
-## 최신 상태 — 2026-10-29 (KST, search12)
+## 최신 상태 — 2026-11-16 (KST, Antigravity sky-engine incremental-run1)
+
+### 1. 신규 수집 및 보관 요약
+- **수집 범위**: 2026-11-16 (오늘 14:32 최신 쪽지) ~ 2026-11-02
+- **수집 성과**: 총 **116건** 안전 수집 완료 (`new-bodies.jsonl`, 116건 / 116건 발신자 OCR 및 지문 확인 완료)
+- **최종 보관 반영**: `C:\Users\user\Documents\zipmessage\2026-11.md`에 신규 116건 + 기존 9건(중복 정제) 통합, 총 **124건** (117.5 KB) 갱신 완료. `README.md` 현황표 반영 완료.
+- **출력 경로**: `skills/admin-gbetalk/out/capture-2026-11-new-20261116-run1/`
+  - `new-bodies.jsonl` (116행, 161,643 bytes)
+  - `incremental-checkpoint.json` (`saved_count: 116`, `next_sequence: 117`, `last_received_date: "2026-11-02"`, `last_sender: "김봉선"`, `status: "paused-batch-complete"`)
+
+### 2. 자동화 엔진 및 어댑터 구축 내역
+- **환경**: Antigravity(Windows)와 ChatGPT Codex(`@oai/sky`) 양방향 환경을 모두 지원하는 하이브리드 어댑터 구축.
+  - `scripts/sky-adapter.mjs`: Codex 환경 감지 시 `@oai/sky` 연동, Antigravity 환경 시 `sky_engine.py` 프로세스 연동.
+  - `scripts/sky_engine.py`: Default 데스크톱 바인딩(`SetThreadDesktop("Default")`), UIA `RICHEDIT50W(ID 1022)` 본문 직접 읽기, `PrintWindow(PW_RENDERFULLCONTENT)` 전체 화면 캡처, `keybd_event` 키 제어 및 `AttachThreadInput` 포커스 강제화.
+- **실행 래퍼**: `scripts/run_capture_new.mjs`
+  - 기준 원본: `out/capture-2026-10-received-run1/raw-bodies.jsonl` (169행)
+  - 발신자 OCR: `readSenderHeaderForSnapshot` + 헤더 정규식(`[가-힣]{2,4}`) 파싱 연동.
+
+### 3. 해결된 장애 및 코드 개선 사항
+1. **날짜 역행 오류 (Seq 56~57)**:
+   - 증상: 56번(권다예: 11/6 발신) OCR 날짜가 `2026-11-03`으로 오독되어, 다음 57번(권윤옥: 11/6 금요일 발신) 처리 시 날짜가 과거에서 미래로 역행한다며 `dateForRecord`에서 중단됨.
+   - 해결: 56번의 `received_date`를 실제 발신일인 `2026-11-06`으로 보정하고 체크포인트를 일치시킴. `run_capture_new.mjs`에 `dateReader`를 탑재하여 역행 오류 발생 시 직전 일자(`previousDate`)로 안전 폴백하는 보호 로직 적용.
+2. **Resync 8행 멈춤 및 Home 이동 오류**:
+   - 증상: 재개 시 맨 위(Home)부터 기존 쪽지를 대조하며 내려오는 과정에서 8행(첫 페이지 끝단)에서 스크롤 렌더링 딜레이로 멈추거나 포커스가 풀리는 현상 발생.
+   - 해결: `sky_engine.py`의 `send_key`에서 매 `Down` 키마다 부모 윈도우에 `SetFocus`를 호출하던 코드를 제거. `Home` 키 전송 시 항상 목록 뷰 영역을 1회 물리 마우스 클릭하여 포커스를 확보한 후 첫 행으로 점프하도록 보강. 목록 탐색 딜레이(`delayMs`)를 150ms에서 `200ms`로 상향.
+
+### 4. 다음 단계 (Next Steps)
+- 116번 이후(2026-11-02 ~ 10-26) 10월 말 경계선(`2026-10-26T09:05:00` 은민영 쪽지 `row_sha256: 78271256...`)까지 남은 약 10~20여 건의 쪽지는 PC 유휴 시간(퇴근 전 또는 비사용 시간)에 이어서 1~2분 만에 최종 수집 완료 및 경계선(`paused-existing-boundary`) 확정.
+- 수집 완료 후 10월 잔여분(2026-10-28 이후 약 23건)을 `C:\Users\user\Documents\zipmessage\2026-10.md` 앞에 병합(prepend).
+
+---
+
+## 이전 상태 — 2026-10-29 (KST, search12)
 
 ### 목표와 안전한 범위
 

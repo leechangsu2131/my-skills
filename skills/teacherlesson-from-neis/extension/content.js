@@ -41,7 +41,7 @@
         </header>
         <div class="body">
           <div id="lessons" class="empty">주간학습안내작성 화면에서 조회하면 수업내용이 자동으로 동기화됩니다.</div>
-          <div class="foot"><span id="updated">로컬 저장</span><a href="http://127.0.0.1:5101" target="_blank" rel="noreferrer">전체 보기 ↗</a></div>
+          <div class="foot"><span id="updated">Chrome 로컬 저장</span><a href="#" id="openViewer">전체 보기 ↗</a></div>
         </div>
       </section>`;
 
@@ -50,6 +50,11 @@
     const lessonHost = shadow.querySelector("#lessons");
     const updated = shadow.querySelector("#updated");
     let progressStatus = "";
+
+    shadow.querySelector("#openViewer").addEventListener("click", (event) => {
+        event.preventDefault();
+        chrome.runtime.sendMessage({ type: "OPEN_VIEWER" });
+    });
 
     function todayIso() {
         const now = new Date();
@@ -134,9 +139,7 @@
         chrome.runtime.sendMessage({ type: "AUTO_SYNC_LESSONS", payload: message.payload })
             .then((result) => {
                 if (result?.ok) {
-                    if (!progressStatus) status.textContent = result.viewer_updated
-                        ? `오늘 수업 ${result.imported}개 · 자동 동기화 완료`
-                        : `오늘 수업 ${result.imported}개 · 브라우저에 저장됨 (뷰어 연결 확인 필요)`;
+                    if (!progressStatus) status.textContent = `오늘 수업 ${result.imported}개 · Chrome에 저장됨`;
                 } else {
                     progressStatus = result?.error || "자동 동기화에 실패했습니다.";
                     status.textContent = progressStatus;

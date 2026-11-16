@@ -1,0 +1,18 @@
+{
+  "trip_type": "10",
+  "is_training": false,
+  "start_date": "2026-11-21",
+  "start_hour": "09",
+  "start_minute": "00",
+  "end_date": "2026-11-21",
+  "end_hour": "17",
+  "end_minute": "00",
+  "destination": "더케이호텔 경주 본관 2층 전관",
+  "purpose": "2026년 AI·디지털교육 축제 참석 창의인재과-17907(2026. 7. 2.) 「2026년 AI·디지털교육 축제 개최 안내」",
+  "emergency_tel": "010-4233-0844",
+  "movement_method": "자가용",
+  "has_daily_repeat": false,
+  "include_lunch": true,
+  "public_vehicle": false,
+  "no_travel_expense": false
+}

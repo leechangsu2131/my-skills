@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f1f6fb" />
+    <title>오늘의 수업 · NEIS</title>
+    <link rel="stylesheet" href="viewer.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="topbar">
+        <div class="brand-mark">N</div>
+        <div class="brand-copy">
+          <div class="eyebrow">TEACHER LESSONS</div>
+          <h1>오늘의 수업</h1>
+          <p>NEIS 주간학습안내에서 가져온 수업내용을 날짜와 교시별로 확인합니다.</p>
+        </div>
+        <div class="top-actions">
+          <button id="refreshButton" class="button button-quiet" type="button">새로고침</button>
+        </div>
+      </header>
+
+      <section class="toolbar card">
+        <div class="date-control">
+          <label for="selectedDate">기준 날짜</label>
+          <button id="prevPeriod" class="period-nav" type="button" aria-label="이전 기간" title="이전 기간">‹</button>
+          <input id="selectedDate" type="date" />
+          <button id="nextPeriod" class="period-nav" type="button" aria-label="다음 기간" title="다음 기간">›</button>
+          <button id="todayButton" class="button button-soft" type="button">오늘</button>
+        </div>
+        <div class="view-switch" role="group" aria-label="조회 범위">
+          <button class="view-button is-active" data-view="day" type="button" aria-pressed="true">하루</button>
+          <button class="view-button" data-view="week" type="button" aria-pressed="false">주간</button>
+          <button class="view-button" data-view="month" type="button" aria-pressed="false">월간</button>
+        </div>
+        <div id="syncStatus" class="sync-status" aria-live="polite">NEIS 자료를 아직 가져오지 않았습니다.</div>
+      </section>
+
+      <section class="summary-row" aria-label="요약">
+        <article class="summary-card card">
+          <span class="summary-label">표시 수업</span>
+          <strong id="lessonCount">0</strong>
+          <span id="summaryRange" class="summary-foot">선택한 날짜</span>
+        </article>
+        <article class="summary-card card summary-highlight">
+          <span class="summary-label">자료 출처</span>
+          <strong>NEIS</strong>
+          <span class="summary-foot">주간학습안내 조회 결과</span>
+        </article>
+        <article class="summary-card card">
+          <span class="summary-label">가져오기</span>
+          <strong id="lastImported">-</strong>
+          <span class="summary-foot">이 Chrome 프로필에 로컬 저장</span>
+        </article>
+      </section>
+
+      <section class="content-card card">
+        <div class="section-heading">
+          <div>
+            <div class="eyebrow">LESSON PLAN</div>
+            <h2 id="listTitle">선택한 날짜 수업</h2>
+          </div>
+          <div class="heading-actions">
+            <div id="calendarControls" class="calendar-controls" hidden>
+              <label class="cell-height-control" for="cellHeightInput">
+                <span>하루 칸 높이</span>
+                <input id="cellHeightInput" type="range" min="120" max="360" step="20" value="160" />
+                <output id="cellHeightOutput" for="cellHeightInput">160px</output>
+              </label>
+              <label class="weekend-toggle" for="weekendInput">
+                <input id="weekendInput" type="checkbox" checked />
+                <span>토·일 표시</span>
+              </label>
+            </div>
+            <span id="rangeLabel" class="range-pill"></span>
+          </div>
+        </div>
+        <div id="lessonGroups" class="lesson-groups"></div>
+        <div id="weekView" class="week-view" hidden></div>
+        <div id="calendarView" class="calendar-view" hidden></div>
+        <div id="emptyState" class="empty-state" hidden>
+          <div class="empty-icon">▦</div>
+          <h3>수업 자료를 불러오지 못했습니다</h3>
+          <p>NEIS 주간학습 자료가 Chrome에 동기화됐는지 확인해 주세요.</p>
+        </div>
+      </section>
+
+      <footer class="footer-note">
+        자료는 이 Chrome 프로필의 확장 저장소에 보관됩니다. NEIS에 쓰기 요청은 보내지 않습니다.
+      </footer>
+    </main>
+    <script src="viewer.js" defer></script>
+  </body>
+</html>

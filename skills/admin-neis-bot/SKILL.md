@@ -32,6 +32,7 @@ description: 나이스(NEIS) 교외체험학습 신청서/보고서 및 결석�
 | **"결석신고서 처리"** | 없음 (나이스 조회) | `neis_absence_report.py` | `--apply --confirm APPLY_NEIS` |
 | **"누가기록 등록"** (동아리/스포츠/자율) | 활동내용 텍스트/마크다운 초안 | `neis_club_*.py`, `neis_sports_club_writer.py`, `neis_jayul_*.py` | `--apply` |
 | **"시간표 최적화"** (편차 0) | 연간 수업시수표 | `neis_collect_semester_timetable.py` → `neis_execute_save_final.py` | 분석 후 승인 시 DB 반영 |
+| **"근무상황 신청해줘"**<br>**"조퇴/연가/외출/지각 신청"** | 신청 종류(조퇴 등), 시간, 사유 | `edu/ga/srv/mym/mm/srv_mymmm00_p00` (하이브리드 UI 제어) | 폼 입력 후 화면 확인 및 승인요청 |
 | **"나이스 로그인/상태 봐줘"** | Chrome 9222 포트 | `check_chrome.py`, `open_neis_sso.py` | 상태 진단 및 SSO 탭 복구 |
 
 ### 1. 연수 이수실적 등록 표준 워크플로우
@@ -83,6 +84,24 @@ description: 나이스(NEIS) 교외체험학습 신청서/보고서 및 결석�
 9. **출장자 기간 확인**: 날짜별 기간 행과 출장자 목록의 `bsrpSn`, 시작/종료 일시를 행마다 일치시킨다.
 10. **교육훈련여부 매핑**: 데이터 JSON의 `is_training`을 나이스 `cbxEduDisciYn` / `dsBsrp.eduDisciYn`에 반영한다.
 11. **화면 캡처 제시 및 검증**: 각 기간의 날짜/시간, 출장자 전원의 목록/시간 동기화 상태를 최종 점검하고 화면 캡처를 제시한다. 사용자가 최종 확인 후 [승인요청]을 클릭하도록 안내한다.
+
+### 3. 개인근무상황(조퇴/연가/외출/지각) 신청 표준 워크플로우
+1. **메뉴 호출**:
+   - 복무 메뉴는 기본 좌측 교무 메뉴 트리(`dsAllMenu`) 대신 `dsBaseMenu`에 속해 있음.
+   - `window.openMdiMenu("AMCMC40043")` 대신 **`idx.callAppMethod("doOpenMenuToMdi", ["AMCMC40043"])`**를 호출하여 `개인근무상황관리`(`srv_mymmm00_m00`)를 연다.
+2. **신청 팝업 오픈**:
+   - 메인 화면의 `btnAply` [신청] 버튼을 클릭하여 `srv_mymmm00_p00` 팝업을 호출한다.
+3. **핵심 컨트롤 매핑 및 이벤트 주입**:
+   - `dtiWorkYmdFrom` / `dtiWorkYmdTo`: 시작일자 / 종료일자 (YYYYMMDD)
+   - `cmbWorkSittnLclfCd`: 대분류 (`W01`: 연가 등)
+   - `cmbWorkSittnSclfCd`: 소분류 (`W0104`: 조퇴, `W0101`: 연가, `W0102`: 반일연가, `W0103`: 지각, `W0105`: 외출 등)
+   - `cmbBgngH` / `cmbBgngM`: 시작시 / 시작분
+   - `cmbEndH` / `cmbEndM`: 종료시 / 종료분
+   - `ipbWorkSittnRsnCn`: 사유 (예: "도서관 방문")
+   - `mse1`: 비상연락처 (예: "***REMOVED***")
+   - 각 컨트롤에 `cpr.events.CUIEvent("value-change")` 및 `selection-change`를 디스패치하여 나이스 비즈니스 로직(시간 합계 계산 `nbeWorkSittnHrTtl`)이 자동 실행되도록 한다.
+4. **검증 및 사용자 확인**:
+   - 합계 시간 및 일수(`nbeWorkSittnHrTtl`, `nbeWorkSittnDdTtl`) 자동 계산 결과 확인 후 화면 캡처 제시, 사용자가 직접 [승인요청]을 클릭하도록 안내한다.
 
 **다일 출장 JSON 형식**: 하나의 연속 출장 구간은 시작일과 종료일이 다른 단일 구간으로 표현할 수 있다. 날짜별로 실제 구간을 나눠 신청해야 하는 경우에만 `periods` 배열에 여러 행을 둔다. 자동으로 하루씩 분리하지 않는다.
 ```json

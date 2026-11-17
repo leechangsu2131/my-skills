@@ -54,6 +54,12 @@
    - 탭별 WS 직결이 타임아웃될 때: **브라우저 레벨 WS** (`/json/version` → `webSocketDebuggerUrl`) + `Target.attachToTarget(targetId, flatten=True)` 으로 세션 획득 후 JS 주입.
    - 클립보드 복사: Python `ctypes` 방식은 샌드박스에서 access violation → **PowerShell `Set-Clipboard` 사용**.
 
+16. **에듀파인 품의등록 예산선택 모달(`FADMANGEXCN004P01`) 제어 및 품목 자동 바인딩 (2026-11-17 확정)**:
+   - 넥사크로 17 모달 팝업 프레임은 `nexacro.getPopupFrames()["FADMANGEXCN004P01"]`로 직결 획득합니다.
+   - 팝업 내 `dsMain`에서 대상 행의 `choise`를 `1`로 설정하고 `pop.form.btnCnfirm_onclick.call(...)`을 호출하면 메인 폼의 `fnPopupCallback`을 거쳐 `dsBgtDtlList`에 예산이 100% 정상 바인딩됩니다.
+   - 품목(`dsPrdlstDtlList`) 직접 주입 시 예산 매핑 필드(`detlBsnsCd`, `detlIemCd`, `cptDtl`, `prmpcStatsExpitmCd`, `aebgtSn`, `bgtCrntam`)를 함께 채우고, **`form.fnExpectAmtCreat()`**를 반드시 호출해야 상단 예산 요구액(`dmndAmt`)과 총액이 완벽히 동기화됩니다.
+   - 저장 전 `form.gfnConfirm = function() { return true; };`로 브라우저 확인창을 우회한 후 `form.fnSaveExpdCnsulWrtgList()`를 호출하면 즉시 품의번호가 발급되며 `품의저장` 상태로 확정됩니다.
+
 9. **Playwright `connect_over_cdp` 전체 브라우저 락 회피**:
    - Chrome 9222에 Playwright를 직접 붙이면 메인 프로세스 락으로 수십 초~무한 대기가 발생할 수 있습니다.
    - `http://127.0.0.1:9222/json`에서 `type==page`(및 필요 시 `type==iframe`)의 `webSocketDebuggerUrl`로 경량 WebSocket 통신을 하거나 Selenium 디버거 주소 매핑을 활용합니다.
@@ -428,6 +434,45 @@ lf.form.gfnOpenMenu(menuId);
      4) 품목내역의 `[파일 ⇧]` 버튼을 눌러 다운로드된 엑셀을 업로드하거나 `Ctrl+V`로 즉시 완료!
 4. **비품 / 소모품 자동 판정 로직 내재화**:
    - 단가 50만 원 이상 & 내용연수 1년 이상인 경우 자동으로 개요 본문에 `비품 (정수/교구대장 등재 대상)`으로 명시하여 행정실 계약 및 물품 관리 업무와 완전 일치시킴.
+
+---
+
+### 2026-11-17 (2차): [트랙 1] S2B 물품 기반 품의 등록, 예산선택 모달(`FADMANGEXCN004P01`) 제어 및 자동 저장 완결 🏆
+
+#### 1. 문제 상황 및 요구사항
+- S2B(학교장터)에 로그인되어 있는 상태에서 견적 접수된 `생존수영 아레나 극세사 건식 타월 스포츠 수건` 1건(단가 16,500원)을 에듀파인에 품의하고자 함.
+- 관련문서: 종전 수영 관련 물품 품의와 동일한 **`화천초등학교-9207 (2026. 9. 8.) 「2026학년도 수영교육 운영계획」`** 지정.
+- 집행예산: **`학생안전교육 > [초]생존수영교육 > [목]수영실기교육운영비`** (잔액 16,500원 전액 일치).
+- 목표: 에듀파인 품의등록 화면 열기 $\rightarrow$ 제목/개요 주입 $\rightarrow$ 예산 모달 팝업 자동 선택 및 바인딩 $\rightarrow$ S2B 물품 데이터 주입 $\rightarrow$ 자동 저장 완결.
+
+#### 2. 기술적 발견 및 해결책
+
+1. **S2B 에듀파인 연계 엑셀 백그라운드 자동 다운로드**:
+   - `fetch('https://www.s2b.kr/S2BNCustomer/remc100.do')` with POST 파라미터 `f_rc_estimate_code`, `f_sep=1`, `forwardName='estimateEdufine'`을 브라우저 컨텍스트에서 호출하여 `S2B_에듀파인연계_수영타월.xls`를 1초 만에 다운로드 성공.
+
+2. **넥사크로 17 모달 팝업 프레임 식별 및 제어 (`FADMANGEXCN004P01`)**:
+   - 에듀파인 품의 폼(`winId_A00FAA0104001001_xxx`)에서 [예산선택](`divAuth1.form.btnBgtDtl`) 클릭 시 `showModal`로 `FADMANGEXCN004P01.xfdl`이 오픈됨.
+   - Nexacro 17에서는 `app.popupframes`가 아닌 **`nexacro.getPopupFrames()["FADMANGEXCN004P01"]`**를 통해 팝업 객체 및 내부 `form`에 직결 가능.
+   - 팝업 내부의 `dsMain` 데이터셋에 학교 예산 전체가 로드되어 있으며, `cptBasisCn`에서 `[목]수영실기교육운영비`를 탐색.
+   - 선택 처리: 해당 행의 `choise` 컬럼을 `1`로 설정하고 `pop.form.btnCnfirm_onclick.call(pop.form, pop.form.btnCnfirm, {})`를 실행.
+   - 메인 폼의 `fnPopupCallback`이 발동하면서 상단 예산내역(`dsBgtDtlList`)에 1행이 100% 정상 바인딩됨!
+
+3. **품목내역(`dsPrdlstDtlList`) 주입 및 예산 요구액(`dmndAmt`) 동기화 메커니즘**:
+   - 품목 그리드 행 추가 시 필수 메타데이터:
+     - 품명(`prdlstCn`), 규격(`stndrd`), 수량(`qty=1`), 단위(`thngUnitSeCd="001"`: 개), 단가(`expectUntpc=16500`), 금액(`expectAmt=16500`), S2B물품번호(`s2bThngNo="202604067716781"`)
+     - **예산 연결 필수 필드**: `detlBsnsCd`, `detlIemCd`, `cptDtl`, `prmpcStatsExpitmCd`, `aebgtSn`, `bgtCrntam`, `cnsulSn=0`
+   - **핵심 수칙**: 주입 완료 후 반드시 **`form.fnExpectAmtCreat()`**를 호출해야 상단 예산내역(`dsBgtDtlList`)의 `dmndAmt`(요구액)와 품의 총액이 16,500원으로 자동 동기화됨.
+
+4. **품의 자동 저장 트랜잭션 (`fnSaveExpdCnsulWrtgList`)**:
+   - `form.gfnConfirm = function() { return true; };`로 넥사크로 확인 다이얼로그를 자동 승인 처리.
+   - `form.fnSaveExpdCnsulWrtgList()` 호출 $\rightarrow$ 서버 저장 트랜잭션 즉시 완료.
+   - 결과: 품의번호 **`2026R100006630201221`** 발급 및 진행상태 **`품의저장`** 확정 ✅
+
+#### 3. 실전 적용 결과
+- 품의번호: `2026R100006630201221` (순번 01221)
+- 제목: `2026학년도 수영교육 운영물품(생존수영 타월) 구입`
+- 개요: 관련공문 `화천초등학교-9207(2026. 9. 8.)` 포함 규격 서식 완벽 입력
+- 예산: `학생안전교육 > [초]생존수영교육 > [목]수영실기교육운영비` 16,500원 바인딩 및 품의 저장 완료 ✅
 
 ---
 

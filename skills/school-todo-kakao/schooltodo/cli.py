@@ -1,6 +1,7 @@
 """사용법:
   python -m schooltodo sync     공용 시트 -> 일정DB (새 일정만 추가)
-  python -m schooltodo morning  일정DB -> 아침 카톡
+  python -m schooltodo morning  일정DB -> 아침 카톡 (+ 지정한 요일에 가족 등에게 '출장' 주간 메시지)
+  python -m schooltodo friends  카카오 친구의 uuid 조회(받는 사람 등록용, 로컬에서만 실행)
 시험: --db-csv/--week-csv/--today-csv/--today/--dry-run 으로 자격증명 없이 돌려볼 수 있다.
 """
 from __future__ import annotations
@@ -15,8 +16,8 @@ from .classify import load_config
 from .db import CsvDb, SheetsDb, need
 from .envload import load_env, update_env_value
 from .inbox import plan_inbox
-from .kakao import KakaoError, refresh_access_token, send_friends, send_memo
-from .message import build_message, split_message
+from .kakao import KakaoError, list_friends, refresh_access_token, send_friends, send_memo
+from .message import build_message, build_weekly_trips, split_message
 from .sources import SourceError, fetch_rows, parse_today, parse_week, read_csv_file
 from .sync import plan_sync
 
@@ -98,7 +99,8 @@ def cmd_sync(args) -> int:
 def cmd_morning(args) -> int:
     today = _today(args)
     db = _open_db(args)
-    lines, count = build_message(db.rows(), today)
+    rows = db.rows()
+    lines, count = build_message(rows, today)
     sync_failed = bool(os.environ.get("SYNC_FAILED"))
     if sync_failed:
         lines.append("⚠ 공용 시트 동기화 실패: 일정이 최신이 아닐 수 있어요")
@@ -107,9 +109,18 @@ def cmd_morning(args) -> int:
         return 0
 
     chunks = split_message(lines)
+    weekly_uuids, weekly_day = _weekly_settings()
+    weekly_due = args.weekly or today.weekday() == weekly_day
+    wlines, wcount = build_weekly_trips(rows, today)
     if args.dry_run:
         for i, c in enumerate(chunks, 1):
             print(f"----- 메시지 {i}/{len(chunks)} ({len(c)}자) -----\n{c}")
+        if weekly_due:
+            if wcount:
+                for i, c in enumerate(split_message(wlines), 1):
+                    print(f"----- 주간 출장 메시지 {i} ({len(c)}자) -----\n{c}")
+            else:
+                print("----- 주간 출장 메시지: 이번 주 출장이 없어 보내지 않음 -----")
         return 0
 
     rt_file = _new_rt_path()
@@ -133,6 +144,15 @@ def cmd_morning(args) -> int:
         if friends:
             send_friends(token, friends, c, link)
     print(f"morning: 카톡 {len(chunks)}통 전송, 일정 {count}건")
+    if weekly_due and weekly_uuids and wcount:
+        wchunks = split_message(wlines)
+        for i, c in enumerate(wchunks):
+            if i:
+                time.sleep(1)
+            send_friends(token, weekly_uuids, c, link, button_title="일정 보기")
+        print(f"morning: 주간 출장 메시지 {len(wchunks)}통, 받는 사람 {len(weekly_uuids)}명, 출장 {wcount}건")
+    elif weekly_due:
+        print("morning: 주간 출장 메시지는 보내지 않음(받는 사람 미설정 또는 출장 없음)")
     return 0
 
 
@@ -147,6 +167,35 @@ def _new_rt_path():
     if name:
         return resolve_path(name)
     return (ENV_DIRS[-1] if ENV_DIRS else Path.cwd()) / "new_refresh_token.txt"
+
+
+def _weekly_settings() -> tuple[list[str], int]:
+    """주간 출장 메시지 받는 사람(WEEKLY_FRIEND_UUIDS, 쉼표로 최대 5명)과 보내는 요일(WEEKLY_DAY, 0=월 ... 6=일, 기본 월)."""
+    uuids = [u.strip() for u in os.environ.get("WEEKLY_FRIEND_UUIDS", "").split(",") if u.strip()][:5]
+    try:
+        day = int((os.environ.get("WEEKLY_DAY") or "0").strip())
+    except ValueError:
+        day = 0
+    return uuids, day if 0 <= day <= 6 else 0
+
+
+def cmd_friends(args) -> int:
+    rt_file = _new_rt_path()
+    token = refresh_access_token(
+        need("KAKAO_REST_API_KEY"),
+        need("KAKAO_REFRESH_TOKEN"),
+        os.environ.get("KAKAO_CLIENT_SECRET", ""),
+        str(rt_file),
+    )
+    _adopt_new_refresh_token(rt_file)
+    friends = list_friends(token)
+    if not friends:
+        print("조회된 친구가 없습니다. 상대가 이 카카오 앱에 로그인해 동의했는지, 내 카카오톡 친구인지, 앱 팀원으로 등록됐는지 확인하세요.")
+        return 0
+    for f in friends:
+        print(f"{f['name']}\t{f['uuid']}")
+    print("※ uuid는 이 화면에서만 보고 깃허브 Secrets(WEEKLY_FRIEND_UUIDS)에 넣으세요. 채팅·공개 로그에 올리지 마세요.")
+    return 0
 
 
 def _adopt_new_refresh_token(rt_file) -> None:
@@ -173,12 +222,17 @@ def main(argv: list[str] | None = None) -> int:
         s.add_argument("--db-csv", help="일정DB 대신 읽을 로컬 CSV(읽기 전용, 시험용)")
         s.add_argument("--today", help="오늘 날짜 덮어쓰기 YYYY-MM-DD (시험용)")
         s.add_argument("--dry-run", action="store_true", help="쓰기·전송 없이 결과만 출력")
+        if name == "morning":
+            s.add_argument("--weekly", action="store_true", help="요일과 상관없이 주간 출장 메시지도 보냄(시험용)")
         if name == "sync":
             s.add_argument("--week-csv", help="주간 일정 CSV 파일(시험용)")
             s.add_argument("--today-csv", help="오늘 일정 CSV 파일(시험용)")
             s.add_argument("--verbose", action="store_true", help="추가할 일정 내용까지 출력")
+    sub.add_parser("friends")
     args = p.parse_args(argv)
     try:
+        if args.cmd == "friends":
+            return cmd_friends(args)
         return cmd_sync(args) if args.cmd == "sync" else cmd_morning(args)
     except (SourceError, KakaoError) as e:
         print(f"오류: {e}")

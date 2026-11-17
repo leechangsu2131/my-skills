@@ -14,6 +14,8 @@ TASK_CATEGORY = "개인"  # 구분이 '개인'인 행 = 기한이 있는 해야 
 UPCOMING_DAYS = 30  # 오늘부터 이 기간 안의 기한만 '📌 기한 있는 할 일'에 매일 보여 준다
 UPCOMING_CAP = 5
 WEEK_CAP = 6  # '그 주 일정'에 보여 줄 최대 개수
+TRIP_CATEGORY = "출장"  # 가족 등에게 주 1회 보내는 주간 메시지에 담는 구분
+TRIP_CAP = 8
 
 
 @dataclass(frozen=True)
@@ -69,8 +71,8 @@ def build_message(rows: list[dict], today: date) -> tuple[list[str], int]:
     todays = _order([i for i in items if i.date == today])
     nxt = next_workday(today)
     nexts = _order([i for i in items if i.date == nxt])
-    # 지연은 내가 적은 할 일만. 학교 일정(자동)은 지나가면 그냥 끝난 일이다.
-    late = sorted((i for i in items if i.date < today and i.source != "자동"), key=lambda i: i.date)
+    # 지연은 해야 할 일(구분 '개인')만. 기한이 지난 행사(출장·학교·공지)는 지연이 아니라 그냥 지나간 일이다.
+    late = sorted((i for i in items if i.date < today and i.category == TASK_CATEGORY), key=lambda i: i.date)
 
     lines = [f"📅 {fmt_md_wd(today)} 오늘"]
     lines += [_bullet(i) for i in todays] or ["• 등록된 일정 없음"]
@@ -147,3 +149,21 @@ def split_message(lines: list[str], limit: int = MAX_CHARS) -> list[str]:
     chunks = _pack(lines, limit - 8)  # '(1/3) ' 표시 자리
     n = len(chunks)
     return [f"({i}/{n}) " + "\n".join(c) for i, c in enumerate(chunks, 1)]
+
+
+def build_weekly_trips(rows: list[dict], today: date, days: int = 7) -> tuple[list[str], int]:
+    """구분이 '출장'인 행만 모은 주간 메시지(오늘부터 days일). 상태 칸이 비었고 내 대상인 행만. (줄 목록, 개수)"""
+    end = today + timedelta(days=days - 1)
+    trips = sorted(
+        (
+            i
+            for i in parse_items(rows, today)
+            if i.category == TRIP_CATEGORY and not i.status and i.target != OTHER and today <= i.date <= end
+        ),
+        key=lambda i: i.date,
+    )
+    lines = [f"🧳 {fmt_md(today)}~{fmt_md(end)} 출장 일정"]
+    lines += [f"• {fmt_md_wd(i.date)} {i.text}" for i in trips[:TRIP_CAP]]
+    if len(trips) > TRIP_CAP:
+        lines.append(f"• … 외 {len(trips) - TRIP_CAP}건")
+    return lines, len(trips)

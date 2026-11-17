@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from datetime import date
+from datetime import date, timedelta
 
 from .classify import OTHER
 from .dates import fmt_md, fmt_md_wd, next_workday, parse_date
@@ -10,6 +10,12 @@ from .dates import fmt_md, fmt_md_wd, next_workday, parse_date
 MAX_CHARS = 190  # 카카오 제한 200자에서 여유를 둔다
 CATEGORY_ORDER = {"출장": 0, "개인": 1, "학교": 2, "공지": 3}
 LATE_CAP = 5
+TASK_CATEGORY = "개인"  # 구분이 '개인'인 행 = 기한이 있는 해야 할 일(행사는 학교·출장·공지)
+UPCOMING_DAYS = 30  # 오늘부터 이 기간 안의 기한만 '📌 기한 있는 할 일'에 매일 보여 준다
+UPCOMING_CAP = 5
+WEEK_CAP = 6  # '그 주 일정'에 보여 줄 최대 개수
+TRIP_CATEGORY = "출장"  # 가족 등에게 주 1회 보내는 주간 메시지에 담는 구분
+TRIP_CAP = 8
 
 
 @dataclass(frozen=True)
@@ -51,14 +57,22 @@ def _bullet(i: Item, with_date: bool = False) -> str:
     return f"• {prefix}[{i.category}] {i.text}"
 
 
+def _task_bullet(i: Item, today: date) -> str:
+    return f"• {fmt_md(i.date)} D-{(i.date - today).days} {i.text}"
+
+
+def _week_bullet(i: Item) -> str:
+    return f"• {fmt_md_wd(i.date)} [{i.category}] {i.text}"
+
+
 def build_message(rows: list[dict], today: date) -> tuple[list[str], int]:
     """(메시지 줄 목록, 보낼 일정 개수). 상태 칸이 비어 있는 행만 보낸다(✔·검토대기 등은 제외)."""
     items = [i for i in parse_items(rows, today) if not i.status and i.target != OTHER]
     todays = _order([i for i in items if i.date == today])
     nxt = next_workday(today)
     nexts = _order([i for i in items if i.date == nxt])
-    # 지연은 내가 적은 할 일만. 학교 일정(자동)은 지나가면 그냥 끝난 일이다.
-    late = sorted((i for i in items if i.date < today and i.source != "자동"), key=lambda i: i.date)
+    # 지연은 해야 할 일(구분 '개인')만. 기한이 지난 행사(출장·학교·공지)는 지연이 아니라 그냥 지나간 일이다.
+    late = sorted((i for i in items if i.date < today and i.category == TASK_CATEGORY), key=lambda i: i.date)
 
     lines = [f"📅 {fmt_md_wd(today)} 오늘"]
     lines += [_bullet(i) for i in todays] or ["• 등록된 일정 없음"]
@@ -67,9 +81,35 @@ def build_message(rows: list[dict], today: date) -> tuple[list[str], int]:
         lines += [_bullet(i, with_date=True) for i in late[:LATE_CAP]]
         if len(late) > LATE_CAP:
             lines.append(f"• … 외 {len(late) - LATE_CAP}건")
+    # 기한 있는 할 일: 오늘·다음 근무일 항목은 위 구역에 이미 나오니 빼고, 끝낼 때(상태 칸 ✔)까지 매일 보여 준다.
+    ups = sorted(
+        (
+            i
+            for i in items
+            if i.category == TASK_CATEGORY and i.date > today and i.date != nxt and i.date <= today + timedelta(days=UPCOMING_DAYS)
+        ),
+        key=lambda i: i.date,
+    )
+    if ups:
+        lines.append("📌 기한 있는 할 일")
+        lines += [_task_bullet(i, today) for i in ups[:UPCOMING_CAP]]
+        if len(ups) > UPCOMING_CAP:
+            lines.append(f"• … 외 {len(ups) - UPCOMING_CAP}건")
     lines.append(f"👉 {fmt_md_wd(nxt)} 미리보기")
     lines += [_bullet(i) for i in nexts] or ["• 없음"]
-    return lines, len(todays) + len(late) + len(nexts)
+    # 그 주 일정: 다음 근무일이 속한 주(월~일)에서 미리보기 이후의 행사. 금요일에는 다음 주 일정이 된다. 할 일(개인)은 위 📌에 나온다.
+    week_end = nxt - timedelta(days=nxt.weekday()) + timedelta(days=6)
+    this_week = nxt.isocalendar()[:2] == today.isocalendar()[:2]
+    wk = sorted(
+        (i for i in items if i.category != TASK_CATEGORY and nxt < i.date <= week_end),
+        key=lambda i: (i.date, CATEGORY_ORDER.get(i.category, 2)),
+    )
+    if wk:
+        lines.append("🗓 이번 주 남은 일정" if this_week else "🗓 다음 주 일정")
+        lines += [_week_bullet(i) for i in wk[:WEEK_CAP]]
+        if len(wk) > WEEK_CAP:
+            lines.append(f"• … 외 {len(wk) - WEEK_CAP}건")
+    return lines, len(todays) + len(late) + len(ups) + len(nexts) + len(wk)
 
 
 def _size(ls: list[str]) -> int:
@@ -109,3 +149,21 @@ def split_message(lines: list[str], limit: int = MAX_CHARS) -> list[str]:
     chunks = _pack(lines, limit - 8)  # '(1/3) ' 표시 자리
     n = len(chunks)
     return [f"({i}/{n}) " + "\n".join(c) for i, c in enumerate(chunks, 1)]
+
+
+def build_weekly_trips(rows: list[dict], today: date, days: int = 7) -> tuple[list[str], int]:
+    """구분이 '출장'인 행만 모은 주간 메시지(오늘부터 days일). 상태 칸이 비었고 내 대상인 행만. (줄 목록, 개수)"""
+    end = today + timedelta(days=days - 1)
+    trips = sorted(
+        (
+            i
+            for i in parse_items(rows, today)
+            if i.category == TRIP_CATEGORY and not i.status and i.target != OTHER and today <= i.date <= end
+        ),
+        key=lambda i: i.date,
+    )
+    lines = [f"🧳 {fmt_md(today)}~{fmt_md(end)} 출장 일정"]
+    lines += [f"• {fmt_md_wd(i.date)} {i.text}" for i in trips[:TRIP_CAP]]
+    if len(trips) > TRIP_CAP:
+        lines.append(f"• … 외 {len(trips) - TRIP_CAP}건")
+    return lines, len(trips)

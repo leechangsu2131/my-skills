@@ -85,3 +85,19 @@ def send_friends(access_token: str, uuids: list[str], text: str, link_url: str, 
     if j.get("failure_info"):  # 일부 수신자만 실패한 경우
         codes = {str(f.get("code")) for f in j["failure_info"]}
         raise KakaoError(f"친구 {len(j['failure_info'])}명에게 전달 실패 (코드 {', '.join(sorted(codes))})")
+
+
+FRIENDS_LIST_URL = "https://kapi.kakao.com/v1/api/talk/friends"
+
+
+def list_friends(access_token: str) -> list[dict]:
+    """카카오 친구 목록(이 앱에 동의한 친구만): [{'name': 별명, 'uuid': 고유번호}]. 한 번에 최대 100명."""
+    r = requests.get(
+        FRIENDS_LIST_URL,
+        headers={"Authorization": f"Bearer {access_token}"},
+        params={"limit": 100},
+        timeout=30,
+    )
+    if not r.ok:
+        raise KakaoError("친구 목록 조회 실패: " + _describe(r))
+    return [{"name": f.get("profile_nickname", ""), "uuid": f.get("uuid", "")} for f in r.json().get("elements", [])]

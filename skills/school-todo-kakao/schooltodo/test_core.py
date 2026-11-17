@@ -6,7 +6,7 @@ import pytest
 from schooltodo.classify import OTHER, ClassifyConfig, classify
 from schooltodo.dates import next_workday, parse_date, resolve_year
 from schooltodo.db import CsvDb, MemoryDb
-from schooltodo.message import build_message, split_message
+from schooltodo.message import build_message, build_weekly_trips, split_message
 from schooltodo.sources import parse_today, parse_week, read_csv_file
 from schooltodo.sync import make_key, plan_sync
 
@@ -238,3 +238,47 @@ def test_week_section_is_capped():
     rows = [_ev(str(i), f"2026-11-{20 + (i % 2)}", f"행사 {i}") for i in range(9)]
     lines, _ = build_message(rows, T)
     assert lines[-1] == "• … 외 3건"
+
+
+def _trip(key, d, text, status="", target="3학년", src="수동"):
+    return {"키": key, "날짜": d, "구분": "출장", "내용": text, "상태": status, "출처": src, "대상": target}
+
+
+def test_weekly_trips_only_trip_rows_within_seven_days():
+    rows = [
+        _trip("a", "2026-11-23", "경주 연수 출장 (09:00~17:00)"),
+        _trip("b", "2026-11-29", "일요일 출장"),
+        _trip("c", "2026-11-30", "8일째라 제외"),
+        _trip("d", "2026-11-24", "끝낸 출장", status="✔"),
+        _trip("e", "2026-11-25", "타학년 출장", target="타학년·유치원", src="자동"),
+        _task("t", "2026-11-24", "개인 할 일"),
+        _ev("v", "2026-11-26", "학교 행사"),
+        _trip("p", "2026-11-22", "지난 출장"),
+    ]
+    lines, count = build_weekly_trips(rows, date(2026, 11, 23))
+    assert lines == ["🧳 11/23~11/29 출장 일정", "• 11/23(월) 경주 연수 출장 (09:00~17:00)", "• 11/29(일) 일요일 출장"]
+    assert count == 2
+
+
+def test_weekly_trips_empty_and_capped():
+    lines, count = build_weekly_trips([_task("t", "2026-11-24", "개인 할 일")], date(2026, 11, 23))
+    assert count == 0 and lines == ["🧳 11/23~11/29 출장 일정"]
+    rows = [_trip(str(i), f"2026-11-{23 + i % 7}", f"출장 {i}") for i in range(10)]
+    lines, count = build_weekly_trips(rows, date(2026, 11, 23))
+    assert count == 10 and lines[-1] == "• … 외 2건"
+
+
+def test_overdue_only_for_tasks_events_just_pass():
+    rows = [
+        _task("a", "2026-11-16", "밀린 할 일"),
+        _task("b", "2026-11-16", "밀린 자동 할 일"),
+        _trip("c", "2026-11-16", "지난 출장"),
+        _ev("d", "2026-11-16", "지난 학교 행사"),
+        _task("e", "2026-11-16", "지난 공지", cat="공지"),
+        _task("f", "2026-11-16", "끝낸 할 일", status="✔"),
+    ]
+    lines, count = build_message(rows, T)
+    text = "\n".join(lines)
+    assert "⚠ 지연\n• 11/16 [개인] 밀린 할 일\n• 11/16 [개인] 밀린 자동 할 일" in text
+    assert "지난 출장" not in text and "지난 학교 행사" not in text and "지난 공지" not in text and "끝낸 할 일" not in text
+    assert count == 2

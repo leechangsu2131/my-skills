@@ -28,6 +28,8 @@ jobs:
       KAKAO_REFRESH_TOKEN: ${{ secrets.KAKAO_REFRESH_TOKEN }}
       KAKAO_FRIEND_UUIDS: ${{ secrets.KAKAO_FRIEND_UUIDS }}
       KAKAO_SEND_TO_ME: ${{ vars.KAKAO_SEND_TO_ME }}
+      WEEKLY_FRIEND_UUIDS: ${{ secrets.WEEKLY_FRIEND_UUIDS }} # 주 1회 '출장' 메시지를 받을 사람(uuid, 쉼표로 최대 5명)
+      WEEKLY_DAY: ${{ vars.WEEKLY_DAY }} # 보내는 요일 0=월 ... 6=일 (비우면 월요일)
       GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
       DB_SHEET_ID: ${{ secrets.DB_SHEET_ID }}
       SRC_WEEK_SHEET_ID: ${{ secrets.SRC_WEEK_SHEET_ID }}

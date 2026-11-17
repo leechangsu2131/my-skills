@@ -1,11 +1,9 @@
 name: morning-todo
 
 on:
-  schedule:
-    # 깃허브 cron은 항상 UTC. 한국시간 월~금 = UTC 일~목. 정각·30분은 몰려서 늦거나 빠지기 쉬워 어긋난 분을 쓴다.
-    - cron: "17 21 * * 0-4" # 한국시간 월~금 06:17
-    - cron: "7 22 * * 0-4"  # 백업: 06:17 실행이 빠졌을 때만 실제로 돈다(아래 guard 단계)
-  workflow_dispatch: # Actions 탭에서 수동 실행(시험용)
+  # 깃허브 예약(cron)은 몇 시간씩 늦거나 건너뛰는 일이 있어, 외부 사이트(cron-job.org)가
+  # 정해진 시각에 아래 workflow_dispatch를 호출하는 방식으로 바꿨다. (예약과 같이 두면 메시지가 두 번 간다)
+  workflow_dispatch: # Actions 탭 수동 실행 + cron-job.org 호출
 
 permissions:
   contents: read

@@ -39,6 +39,9 @@ import os
 import sys
 import time
 from pathlib import Path
+import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(next(p / "_shared" for p in _pl.Path(__file__).resolve().parents if (p / "_shared" / "skill_env.py").is_file())))
+from skill_env import load_env
+load_env()  # 중앙 .env
 
 # CP949 터미널 깨짐 방지
 if sys.stdout.encoding and sys.stdout.encoding.lower() not in ("utf-8", "utf8"):
@@ -391,21 +394,21 @@ async def submit_single_period(page, period: dict, destination: str, reason: str
         setValAndDispatch("txaWorkSittnRsnCn", "REASON");
         result.steps.push("✓ 사유: REASON");
         
-        // 7) 비상연락처 입력 (***REMOVED***)
+        // 7) 비상연락처 입력 (중앙 .env NEIS_EMERGENCY_CONTACT)
         var tel = popApp.lookup("ipbEmgCnctTelno");
         if (tel) {
             var oldT = tel.value;
-            tel.value = "***REMOVED***";
+            tel.value = "EMG_CONTACT_TEL";
             try { tel.redraw(); } catch(e) {}
-            try { tel.dispatchEvent(new cpr.events.CValueChangeEvent("value-change", {oldValue: oldT, newValue: "***REMOVED***"})); } catch(e) {}
+            try { tel.dispatchEvent(new cpr.events.CValueChangeEvent("value-change", {oldValue: oldT, newValue: "EMG_CONTACT_TEL"})); } catch(e) {}
         }
         popApp.getAllDataControls().forEach(function(dc) {
             if (dc.setValue) {
-                try { dc.setValue("emgCnctTelno", "***REMOVED***"); } catch(e) {}
-                try { if (dc.getRowCount && dc.getRowCount() > 0) dc.setValue(0, "emgCnctTelno", "***REMOVED***"); } catch(e) {}
+                try { dc.setValue("emgCnctTelno", "EMG_CONTACT_TEL"); } catch(e) {}
+                try { if (dc.getRowCount && dc.getRowCount() > 0) dc.setValue(0, "emgCnctTelno", "EMG_CONTACT_TEL"); } catch(e) {}
             }
         });
-        result.steps.push("✓ 비상연락처: ***REMOVED***");
+        result.steps.push("✓ 비상연락처 입력");
 
         // 8) 공휴일/주말 제외한 일수(workSittnDdTtl) 강제 설정
         var startYmd = "START_DT";
@@ -435,7 +438,8 @@ async def submit_single_period(page, period: dict, destination: str, reason: str
        .replace("END_H", end_h)\
        .replace("END_M", end_m)\
        .replace("DESTINATION", destination.replace('"', '\\"'))\
-       .replace("REASON", reason.replace('"', '\\"'))
+       .replace("REASON", reason.replace('"', '\\"'))\
+       .replace("EMG_CONTACT_TEL", os.environ.get("NEIS_EMERGENCY_CONTACT", ""))  # 중앙 .env
 
     fill_res = await page.evaluate(js_fill_popup)
     if fill_res.get("error"):

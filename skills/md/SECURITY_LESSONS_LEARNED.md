@@ -48,7 +48,7 @@
   - `skills/classmanage-iscream-evaluate/scratch/final_verify_save.py`
   - `skills/classmanage-iscream-evaluate/SKILL.md` 및 `ing.md`
 - **노출 내용**:
-  - 환경변수 fallback 기본값으로 실제 비밀번호 문자열(`***REMOVED***`)을 지정 (`os.environ.get("ISCREAM_EVAL_PASSWORD", "***REMOVED***")`).
+  - 환경변수 fallback 기본값으로 실제 비밀번호 문자열(`<비밀번호>`)을 지정 (`os.environ.get("ISCREAM_EVAL_PASSWORD", "<비밀번호>")`).
   - 안내 문서 및 구현 일지에 비밀번호를 평문으로 기재.
 - **위험성**:
   - 소스코드나 문서 열람 권한이 있는 누구나 해당 교육 포털 계정에 침입 가능.
@@ -59,7 +59,7 @@
   - `skills/classmanage-iscream-evaluate/iscream_pwd_check_dom.html`
   - `skills/classmanage-iscream-evaluate/iscream_verification_dom.html`
 - **노출 내용**:
-  - 브라우저 자동화 디버깅 중 저장된 DOM HTML 파일 내에 교사 로그인 ID(`lee2131`), 생년월일(`***REMOVED***`), 소속 학교(`화천초등학교`), 실제 만료 전 OAuth `idToken`(JWT)이 그대로 포함됨.
+  - 브라우저 자동화 디버깅 중 저장된 DOM HTML 파일 내에 교사 로그인 ID(`<아이디>`), 생년월일(`<생년월일>`), 소속 학교(`<소속학교>`), 실제 만료 전 OAuth `idToken`(JWT)이 그대로 포함됨.
 - **원인 분석**:
   - 셀렉터 디버깅용 임시 덤프 파일을 `.gitignore`에 등록하지 않고 Git에 커밋함.
 

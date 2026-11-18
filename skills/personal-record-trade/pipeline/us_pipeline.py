@@ -243,8 +243,9 @@ def run_us_pipeline(ticker_str: str, year: int, quarter: str = "A"):
 
 
 if __name__ == "__main__":
-    from dotenv import load_dotenv
-    load_dotenv()
+    import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(next(p / "_shared" for p in _pl.Path(__file__).resolve().parents if (p / "_shared" / "skill_env.py").is_file())))
+    from skill_env import load_env
+    load_env()
     
     if len(sys.argv) < 3:
         print("사용법: python us_pipeline.py <TICKER> <YEAR> [QUARTER]")

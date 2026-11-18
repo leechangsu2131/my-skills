@@ -2,10 +2,11 @@ import asyncio
 import os
 import re
 
-from dotenv import load_dotenv
+import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(next(p / "_shared" for p in _pl.Path(__file__).resolve().parents if (p / "_shared" / "skill_env.py").is_file())))
+from skill_env import load_env
 from playwright.async_api import async_playwright
 
-load_dotenv()
+load_env()
 url = os.getenv("GEMINI_GEM_URL", "").split("?")[0]
 gem_id = url.rstrip("/").split("/")[-1]
 profile = os.getenv("PLAYWRIGHT_PROFILE_DIR", "./chrome_profile")

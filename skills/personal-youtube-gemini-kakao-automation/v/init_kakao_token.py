@@ -2,11 +2,12 @@ import json
 import os
 
 import requests
-from dotenv import load_dotenv
+import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(next(p / "_shared" for p in _pl.Path(__file__).resolve().parents if (p / "_shared" / "skill_env.py").is_file())))
+from skill_env import load_env
 
 
 def main() -> None:
-    load_dotenv()
+    load_env()
     app_key = os.getenv("KAKAO_REST_API_KEY", "").strip()
     redirect_uri = os.getenv("KAKAO_REDIRECT_URI", "https://example.com").strip()
     auth_code = os.getenv("KAKAO_AUTH_CODE", "").strip()

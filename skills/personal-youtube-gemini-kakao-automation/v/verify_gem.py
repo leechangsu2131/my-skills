@@ -4,7 +4,8 @@ import asyncio
 import os
 import re
 
-from dotenv import load_dotenv
+import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(next(p / "_shared" for p in _pl.Path(__file__).resolve().parents if (p / "_shared" / "skill_env.py").is_file())))
+from skill_env import load_env
 from playwright.async_api import async_playwright
 
 from gemini_session import (
@@ -49,7 +50,7 @@ async def page_contains(page, needle: str) -> bool:
 
 
 async def main() -> None:
-    load_dotenv()
+    load_env()
     gem_url = os.getenv("GEMINI_GEM_URL", "").strip().split("?")[0]
     expected_name = os.getenv("GEMINI_GEM_EXPECTED_NAME", "스크립트 정리 도우미").strip()
     configured_id = extract_gem_id(gem_url)

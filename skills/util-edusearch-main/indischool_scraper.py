@@ -10,7 +10,8 @@ import time
 import sqlite3
 import argparse
 from datetime import datetime
-from dotenv import load_dotenv
+import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(next(p / "_shared" for p in _pl.Path(__file__).resolve().parents if (p / "_shared" / "skill_env.py").is_file())))
+from skill_env import load_env
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
@@ -18,7 +19,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
 
-load_dotenv()
+load_env()
 
 # ── 설정 ──────────────────────────────────────────
 INDISCHOOL_ID = os.getenv("INDISCHOOL_ID")

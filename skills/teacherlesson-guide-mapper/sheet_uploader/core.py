@@ -2,13 +2,14 @@ import json
 import os
 from pathlib import Path
 
-from dotenv import load_dotenv
+import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(next(p / "_shared" for p in _pl.Path(__file__).resolve().parents if (p / "_shared" / "skill_env.py").is_file())))
+from skill_env import load_env
 import gspread
 from google.oauth2.service_account import Credentials
 
 
 SCHEDULE_DIR = Path(__file__).resolve().parents[1]
-load_dotenv(SCHEDULE_DIR / ".env")
+load_env()
 
 SHEET_ID = os.getenv("SHEET_ID")
 SHEET_NAME = os.getenv("SHEET_NAME", "\uc2dc\ud2b81")

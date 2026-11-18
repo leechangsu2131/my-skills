@@ -3,7 +3,8 @@ import os
 import sys
 import io
 import urllib.parse
-from dotenv import load_dotenv
+import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(next(p / "_shared" for p in _pl.Path(__file__).resolve().parents if (p / "_shared" / "skill_env.py").is_file())))
+from skill_env import load_env
 
 # Windows CP949 인코딩 문제 해결
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
@@ -14,7 +15,7 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 from s2b_login import login as s2b_login
 
 async def explore_search_result():
-    load_dotenv(os.path.join(SCRIPT_DIR, '.env'))
+    load_env()
     uid = os.getenv('S2B_USER_ID')
     pwd = os.getenv('S2B_USER_PW')
 

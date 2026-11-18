@@ -280,6 +280,7 @@ python -m pytest tests/test_synthesis.py tests/test_advanced_reverse.py -v
 
 해결:
 - 파이프라인(또는 수집 스크립트) 최상단에 `from dotenv import load_dotenv` 및 `load_dotenv(...)`를 추가하여 `.env` 내의 자격 증명을 확실하게 물려주고 파이프라인을 재가동합니다.
+- (2026-11-18 갱신) 이제 모든 스크립트는 `skills/_shared/skill_env.py`의 `load_env()`로 중앙 `OneDrive\96. 인증\.env`을 읽습니다.
 
 ## 과거 연도(History) 재무 추이 테이블에서 ROIC가 비어있는 경우
 

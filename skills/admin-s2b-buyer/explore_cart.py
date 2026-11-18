@@ -2,7 +2,8 @@ import asyncio
 import os
 import sys
 import io
-from dotenv import load_dotenv
+import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(next(p / "_shared" for p in _pl.Path(__file__).resolve().parents if (p / "_shared" / "skill_env.py").is_file())))
+from skill_env import load_env
 
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace') if hasattr(sys, 'stdout') and hasattr(sys.stdout, 'buffer') else sys.stdout
 sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace') if hasattr(sys, 'stderr') and hasattr(sys.stderr, 'buffer') else sys.stderr
@@ -13,7 +14,7 @@ from s2b_login import login as s2b_login
 from s2b_search import search_items
 
 async def explore_cart():
-    load_dotenv(os.path.join(SCRIPT_DIR, '.env'))
+    load_env()
     uid = os.getenv('S2B_USER_ID')
     pwd = os.getenv('S2B_USER_PW')
 

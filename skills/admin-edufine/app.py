@@ -703,8 +703,9 @@ def stream():
     return Response(generate(), mimetype='text/event-stream', headers={'Cache-Control': 'no-cache'})
 
 if __name__ == '__main__':
-    from dotenv import load_dotenv
-    load_dotenv()
+    import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(next(p / "_shared" for p in _pl.Path(__file__).resolve().parents if (p / "_shared" / "skill_env.py").is_file())))
+    from skill_env import load_env
+    load_env()
     
     print("=" * 50)
     print("[안내] 에듀파인 다중 기안 자동화 웹 서버 시작 (V4 하이브리드)")

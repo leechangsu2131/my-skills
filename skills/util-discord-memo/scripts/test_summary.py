@@ -1,7 +1,8 @@
 import os, requests
-from dotenv import load_dotenv
+import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(next(p / "_shared" for p in _pl.Path(__file__).resolve().parents if (p / "_shared" / "skill_env.py").is_file())))
+from skill_env import load_env
 
-load_dotenv(".env")
+load_env()
 TOKEN = os.getenv("DISCORD_BOT_TOKEN")
 CHANNEL_ID = os.getenv("DISCORD_CHANNEL_ID")
 WEBHOOK_URL = os.getenv("DISCORD_WEBHOOK_URL")

@@ -8,10 +8,11 @@ from io import BytesIO, StringIO
 import re
 import traceback
 from datetime import datetime, timedelta
-from dotenv import load_dotenv
+import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(next(p / "_shared" for p in _pl.Path(__file__).resolve().parents if (p / "_shared" / "skill_env.py").is_file())))
+from skill_env import load_env
 
 
-load_dotenv()
+load_env()
 # 상수 정의
 # API 설정
 API_KEY = os.environ.get("DART_API_KEY")  # 환경 변수에서 API 키 로드, 없으면 기본값 사용

@@ -8,7 +8,8 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 import requests
 
 try:
-    from dotenv import load_dotenv
+    import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(next(p / "_shared" for p in _pl.Path(__file__).resolve().parents if (p / "_shared" / "skill_env.py").is_file())))
+    from skill_env import load_env
 except ImportError:
     print("❌ python-dotenv가 설치되지 않았습니다. 의존성을 설치해주세요:")
     print("pip install -r requirements.txt")
@@ -16,9 +17,7 @@ except ImportError:
 
 
 def load_environment():
-    env_path = Path(__file__).parent / ".env"
-    if env_path.exists():
-        load_dotenv(env_path)
+    load_env()
     
     config = {
         "NOTION_API_KEY": os.getenv("NOTION_API_KEY"),

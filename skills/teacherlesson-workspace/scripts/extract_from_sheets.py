@@ -8,12 +8,10 @@ SCHEDULE_DIR = os.path.join(
 )
 sys.path.insert(0, os.path.abspath(SCHEDULE_DIR))
 
-try:
-    from dotenv import load_dotenv
-except ImportError:
-    def load_dotenv(*a, **k): pass
+import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(next(p / "_shared" for p in _pl.Path(__file__).resolve().parents if (p / "_shared" / "skill_env.py").is_file())))
+from skill_env import load_env
 
-load_dotenv(os.path.join(SCHEDULE_DIR, ".env"))
+load_env()
 
 SUBJECT_COLORS = {
     "국어": "#005bbf", "수학": "#e85d04", "사회": "#6a994e",

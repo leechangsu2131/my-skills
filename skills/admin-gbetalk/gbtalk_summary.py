@@ -12,8 +12,11 @@ import re
 import sys
 
 BASE = pathlib.Path(__file__).resolve().parent
-OUT = BASE / "out"
-ARCHIVE = BASE / "inbox"
+import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(next(p / "_shared" for p in _pl.Path(__file__).resolve().parents if (p / "_shared" / "skill_env.py").is_file())))
+from skill_env import data_dir
+# 수신 메시지(개인정보)는 깃 밖에 저장: 내 문서\my-skills-data\admin-gbetalk\(out|inbox)
+OUT = data_dir("admin-gbetalk", "out")
+ARCHIVE = data_dir("admin-gbetalk", "inbox")
 WINDOW_TITLE_RE = os.getenv("GBTALK_WINDOW_TITLE_RE", r".*(지비톡|GBTalk|gbtalk).*")
 DEFAULT_MODEL = "claude-sonnet-4-5"
 MAX_CHARS = 60_000

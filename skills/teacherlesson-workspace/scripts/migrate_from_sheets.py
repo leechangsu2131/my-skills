@@ -21,19 +21,11 @@ SCHEDULE_DIR = os.path.join(
 )
 sys.path.insert(0, os.path.abspath(SCHEDULE_DIR))
 
-try:
-    from dotenv import load_dotenv
-except ImportError:
-    def load_dotenv(*a, **k): pass
+import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(next(p / "_shared" for p in _pl.Path(__file__).resolve().parents if (p / "_shared" / "skill_env.py").is_file())))
+from skill_env import load_env
 
-# .env 로드
-env_path = os.path.join(SCHEDULE_DIR, ".env")
-if os.path.exists(env_path):
-    load_dotenv(env_path)
-
-local_env = os.path.join(os.path.dirname(__file__), "..", ".env.local")
-if os.path.exists(local_env):
-    load_dotenv(local_env, override=True)
+# 중앙 .env 로드 (skills/_shared/skill_env.py)
+load_env()
 
 SUPABASE_URL = os.getenv("NEXT_PUBLIC_SUPABASE_URL", "").rstrip("/")
 SUPABASE_KEY = os.getenv("NEXT_PUBLIC_SUPABASE_ANON_KEY", "")

@@ -1,4 +1,4 @@
-# Register Windows Task Scheduler job (weekdays at RUN_TIME from .env)
+﻿# Register Windows Task Scheduler job (weekdays at RUN_TIME from .env)
 param(
     [string]$TaskName = "ChesleyMorningBrief",
     [string]$RunTime = ""
@@ -14,8 +14,18 @@ if (-not (Test-Path $RunScript)) {
 
 # Read RUN_TIME from .env if not passed
 if (-not $RunTime) {
-    $EnvFile = Join-Path $ScriptDir ".env"
-    if (Test-Path $EnvFile) {
+    # 중앙 .env: %OneDriveCommercial%\96*\.env (계정 이름이 달라도 찾음)
+    $EnvFile = $env:MY_SKILLS_ENV
+    if (-not $EnvFile) {
+        foreach ($root in @($env:OneDriveCommercial, $env:OneDrive)) {
+            if ($root -and (Test-Path $root)) {
+                $cand = Get-ChildItem -Path $root -Directory -Filter '96*' -ErrorAction SilentlyContinue |
+                    ForEach-Object { Join-Path $_.FullName '.env' } | Where-Object { Test-Path $_ } | Select-Object -First 1
+                if ($cand) { $EnvFile = $cand; break }
+            }
+        }
+    }
+    if ($EnvFile -and (Test-Path $EnvFile)) {
         $line = Get-Content $EnvFile | Where-Object { $_ -match '^\s*RUN_TIME\s*=' } | Select-Object -First 1
         if ($line -match 'RUN_TIME\s*=\s*(.+)') {
             $RunTime = $Matches[1].Trim()

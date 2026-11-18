@@ -153,8 +153,9 @@ async def search_items(page, query):
 # =====================================================
 async def run_search_test():
     """검색 모듈 단독 테스트"""
-    from dotenv import load_dotenv
-    load_dotenv(os.path.join(SCRIPT_DIR, '.env'))
+    import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(next(p / "_shared" for p in _pl.Path(__file__).resolve().parents if (p / "_shared" / "skill_env.py").is_file())))
+    from skill_env import load_env
+    load_env()
     uid = os.getenv('S2B_USER_ID')
     pwd = os.getenv('S2B_USER_PW')
 

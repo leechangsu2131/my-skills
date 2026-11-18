@@ -172,19 +172,18 @@ def check_python_packages() -> bool:
 
 
 def check_env_file() -> bool:
-    env_path = Path(".env")
-    if env_path.exists():
-        print("  ✅ .env 파일 존재")
-
-        # 필수 키 확인
-        content = env_path.read_text(encoding="utf-8")
+    import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(next(p / "_shared" for p in _pl.Path(__file__).resolve().parents if (p / "_shared" / "skill_env.py").is_file())))
+    from skill_env import central_env_path, env_values
+    env_path = central_env_path()
+    if env_path:
+        print(f"  ✅ 중앙 .env 존재: {env_path}")
+        values = env_values("personal-carrot")
         required = ["GOOGLE_SA_PROJECT_ID", "GOOGLE_SHEET_ID"]
-        missing = [k for k in required if k not in content or f"{k}=" not in content]
+        missing = [k for k in required if not values.get(k)]
         if missing:
-            print(f"  ⚠️ .env에 다음 키가 비어있을 수 있음: {missing}")
+            print(f"  ⚠️ 중앙 .env에 다음 키가 비어있음: {missing}")
         return True
-    print("  ❌ .env 파일 없음 — .env.example을 복사하여 생성:")
-    print("       copy .env.example .env")
+    print("  ❌ 중앙 .env 없음 — OneDrive\\96. 인증\\.env 를 확인하세요")
     return False
 
 

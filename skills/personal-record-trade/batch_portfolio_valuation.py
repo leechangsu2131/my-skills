@@ -22,8 +22,9 @@ if hasattr(sys.stderr, 'reconfigure'):
 sys.path.insert(0, str(Path(__file__).parent.resolve()))
 
 # .env 로드를 가장 먼저 수행하여 KRX_ID 등 환경변수가 설정되도록 함
-from dotenv import load_dotenv
-load_dotenv()
+import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(next(p / "_shared" for p in _pl.Path(__file__).resolve().parents if (p / "_shared" / "skill_env.py").is_file())))
+from skill_env import load_env
+load_env()
 
 from gsheet_auth import get_client
 from pipeline.cli import run_pipeline

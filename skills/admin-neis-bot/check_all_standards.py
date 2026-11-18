@@ -3,8 +3,12 @@
 import json
 from pathlib import Path
 from collections import defaultdict
+import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(next(p / "_shared" for p in _pl.Path(__file__).resolve().parents if (p / "_shared" / "skill_env.py").is_file())))
+from skill_env import data_dir
+NEIS_DATA = data_dir("admin-neis-bot")  # 내 문서\my-skills-data\admin-neis-bot (학생 데이터)
 
-data = json.loads(Path("scratch/neis-achievement-levels.json").read_text(encoding="utf-8"))
+
+data = json.loads((NEIS_DATA / "neis-achievement-levels.json").read_text(encoding="utf-8"))
 
 # Group by subject -> standard_code -> assessment
 by_subject = defaultdict(lambda: defaultdict(dict))

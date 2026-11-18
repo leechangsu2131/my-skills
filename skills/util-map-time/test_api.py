@@ -1,9 +1,10 @@
 """카카오 API 실제 호출 테스트 (경주시)"""
 import os
 import requests
-from dotenv import load_dotenv
+import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(next(p / "_shared" for p in _pl.Path(__file__).resolve().parents if (p / "_shared" / "skill_env.py").is_file())))
+from skill_env import load_env
 
-load_dotenv()
+load_env()
 API_KEY = os.getenv("KAKAO_API_KEY")
 HEADERS = {"Authorization": f"KakaoAK {API_KEY}"}
 

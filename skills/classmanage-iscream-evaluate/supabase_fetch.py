@@ -35,7 +35,8 @@ def _patched_async_init(self, *args, **kwargs):
     _original_async_init(self, *args, **kwargs)
 httpx.AsyncClient.__init__ = _patched_async_init
 
-from dotenv import load_dotenv
+import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(next(p / "_shared" for p in _pl.Path(__file__).resolve().parents if (p / "_shared" / "skill_env.py").is_file())))
+from skill_env import load_env
 from supabase import create_client, Client
 
 
@@ -59,34 +60,15 @@ VALID_SUBJECTS = [
 
 def _load_env() -> tuple[str, str]:
     """
-    .env 파일에서 Supabase 자격 증명을 로드합니다.
-
-    우선순위:
-        1. 현재 프로젝트의 .env 파일
-        2. 형제 프로젝트(classmanage-record-viewer)의 .env.local 파일
+    중앙 .env(OneDrive\\96. 인증\\.env)에서 Supabase 자격 증명을 로드합니다.
 
     Returns:
         (supabase_url, supabase_key) 튜플
     """
-    # 1) 현재 프로젝트의 .env 로드 시도
-    own_env = Path(__file__).parent / ".env"
-    if own_env.exists():
-        load_dotenv(own_env, override=True)
+    load_env()
 
     url = os.environ.get("SUPABASE_URL") or os.environ.get("NEXT_PUBLIC_SUPABASE_URL")
     key = os.environ.get("SUPABASE_KEY") or os.environ.get("NEXT_PUBLIC_SUPABASE_ANON_KEY")
-
-    # 2) 자격 증명이 없으면 형제 프로젝트의 .env.local 폴백
-    if not url or not key:
-        sibling_env = (
-            Path(__file__).parent.parent
-            / "classmanage-record-viewer"
-            / ".env.local"
-        )
-        if sibling_env.exists():
-            load_dotenv(sibling_env, override=True)
-            url = os.environ.get("SUPABASE_URL") or os.environ.get("NEXT_PUBLIC_SUPABASE_URL")
-            key = os.environ.get("SUPABASE_KEY") or os.environ.get("NEXT_PUBLIC_SUPABASE_ANON_KEY")
 
     if not url or not key:
         raise EnvironmentError(

@@ -9,8 +9,9 @@ from math import radians, cos, sin, asin, sqrt
 from itertools import product
 
 try:
-    from dotenv import load_dotenv
-    load_dotenv()
+    import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(next(p / "_shared" for p in _pl.Path(__file__).resolve().parents if (p / "_shared" / "skill_env.py").is_file())))
+    from skill_env import load_env
+    load_env()
 except ImportError:
     pass
 

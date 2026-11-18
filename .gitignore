@@ -8,10 +8,11 @@
 # Browser temporary files
 *.pma
 
-# Environments
-.env
-.env.local
-.env.*.local
+# Environments — 비밀값은 OneDrive\96. 인증\.env 하나로 관리 (skills/_shared/skill_env.py)
+**/.env
+**/.env.local
+**/.env.*.local
+**/.env.oauth
 
 # API keys and secrets (just in case)
 credential*
@@ -32,8 +33,9 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
-lib64/
+# (주의) 'lib/' 로 쓰면 Next 앱의 src/lib 소스까지 무시되므로 루트만
+/lib/
+/lib64/
 parts/
 sdist/
 var/
@@ -106,3 +108,14 @@ skills/social-class-helper/tmp*/
 # personal-record-trade secrets
 skills/personal-record-trade/service_account.json
 skills/personal-record-trade/sheet_id.txt
+
+# 개인정보·실행 결과물은 깃 밖: 내 문서\my-skills-data\<스킬>\ (skills/_shared/skill_env.py 의 data_dir)
+/scratch/
+/reference/
+skills/admin-gbetalk/out/
+skills/admin-gbetalk/inbox/
+skills/admin-edufine/result/
+skills/output/
+**/rollout-*.jsonl
+**/neis-achievement-levels*
+*.bundle

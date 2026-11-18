@@ -1,7 +1,8 @@
 import os, requests
-from dotenv import load_dotenv
+import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(next(p / "_shared" for p in _pl.Path(__file__).resolve().parents if (p / "_shared" / "skill_env.py").is_file())))
+from skill_env import load_env
 
-load_dotenv(".env")
+load_env()
 webhook_url = os.getenv("DISCORD_WEBHOOK_URL")
 
 summary = """📣 **[안티그래비티 요약 비서] 화천초등학교 업무 공지 및 종합 사항 (3월 2주차)**

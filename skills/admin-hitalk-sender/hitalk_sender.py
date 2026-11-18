@@ -27,11 +27,8 @@ import shutil
 import re
 
 DOTENV_IMPORT_ERROR = None
-try:
-    from dotenv import dotenv_values
-except ModuleNotFoundError as exc:
-    DOTENV_IMPORT_ERROR = exc
-    dotenv_values = None
+import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(next(p / "_shared" for p in _pl.Path(__file__).resolve().parents if (p / "_shared" / "skill_env.py").is_file())))
+from skill_env import env_values, central_env_path
 
 def _wrap_stream_utf8(stream):
     """pythonw 등 콘솔이 없는 환경에서도 안전하게 UTF-8 래핑"""
@@ -155,31 +152,12 @@ def format_sheet_runtime_error(error_text):
     return normalized or "구글시트 읽기 중 알 수 없는 오류가 발생했습니다."
 
 
-def get_env_candidate_paths():
-    """현재 스킬과 이웃 스킬에서 공유 가능한 .env 후보 경로"""
-    return [
-        os.path.join(SCRIPT_DIR, ".env"),
-        os.path.join(os.path.dirname(SCRIPT_DIR), "teacher-schedule", ".env"),
-    ]
-
-
 def load_shared_env_values():
-    """현재 스킬 또는 이웃 스킬의 .env에서 필요한 값 읽기"""
-    if dotenv_values is None:
+    """중앙 .env(OneDrive\96. 인증\.env) 값 읽기"""
+    try:
+        return env_values("admin-hitalk-sender")
+    except Exception:
         return {}
-
-    merged = {}
-    for env_path in get_env_candidate_paths():
-        if not os.path.exists(env_path):
-            continue
-        try:
-            values = dotenv_values(env_path)
-        except Exception:
-            continue
-        for key, value in values.items():
-            if value is not None and key not in merged:
-                merged[key] = value
-    return merged
 
 
 def find_service_account_material():
@@ -213,24 +191,17 @@ def find_service_account_material():
 
     creds_path = shared_values.get("GOOGLE_CREDENTIALS_PATH")
     if creds_path:
-        for env_path in get_env_candidate_paths():
-            if not os.path.exists(env_path) or dotenv_values is None:
-                continue
-            try:
-                values = dotenv_values(env_path)
-            except Exception:
-                continue
-            if values.get("GOOGLE_CREDENTIALS_PATH") == creds_path:
-                resolved = (
-                    creds_path
-                    if os.path.isabs(creds_path)
-                    else os.path.normpath(os.path.join(os.path.dirname(env_path), creds_path))
-                )
-                return {
-                    "kind": "path",
-                    "value": resolved,
-                    "source": f"{env_path} 의 GOOGLE_CREDENTIALS_PATH",
-                }
+        env_path = central_env_path()
+        resolved = (
+            creds_path
+            if os.path.isabs(creds_path)
+            else os.path.normpath(os.path.join(os.path.dirname(env_path), creds_path))
+        )
+        return {
+            "kind": "path",
+            "value": resolved,
+            "source": f"{env_path} 의 GOOGLE_CREDENTIALS_PATH",
+        }
 
     return None
 

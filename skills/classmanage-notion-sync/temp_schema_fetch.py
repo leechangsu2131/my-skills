@@ -1,8 +1,9 @@
 import os
 import requests
-from dotenv import load_dotenv
+import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(next(p / "_shared" for p in _pl.Path(__file__).resolve().parents if (p / "_shared" / "skill_env.py").is_file())))
+from skill_env import load_env
 
-load_dotenv(r'C:\Users\user\.gemini\antigravity\scratch\repos\my-skills\skills\notion-to-supabase\.env')
+load_env()
 
 db_id = os.environ.get('NOTION_DATABASE_ID')
 api_key = os.environ.get('NOTION_API_KEY')

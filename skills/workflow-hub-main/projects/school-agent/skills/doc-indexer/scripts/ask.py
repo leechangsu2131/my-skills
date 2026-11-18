@@ -11,14 +11,15 @@ import os
 import sys
 import re
 import argparse
-from dotenv import load_dotenv
+import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(next(p / "_shared" for p in _pl.Path(__file__).resolve().parents if (p / "_shared" / "skill_env.py").is_file())))
+from skill_env import load_env
 from openai import OpenAI
 
 import chromadb
 from chromadb.utils.embedding_functions import SentenceTransformerEmbeddingFunction
 from rank_bm25 import BM25Okapi
 
-load_dotenv()
+load_env()
 
 CHROMA_PATH = os.getenv("CHROMA_PATH", "./chroma-db")
 EMBED_MODEL = os.getenv("EMBED_MODEL", "jhgan/ko-sroberta-multitask")

@@ -20,19 +20,8 @@ except ImportError:
     sys.exit(1)
 
 # load ENV
-def load_env():
-    env_path = Path(__file__).parent.parent / ".env.local"
-    if not env_path.exists():
-        print("❌ .env.local 파일이 없습니다.")
-        sys.exit(1)
-    env = {}
-    with open(env_path, "r", encoding="utf-8") as f:
-        for line in f:
-            line = line.strip()
-            if line and not line.startswith("#") and "=" in line:
-                k, v = line.split("=", 1)
-                env[k.strip()] = v.strip().strip("'\"")
-    return env
+import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(next(p / "_shared" for p in _pl.Path(__file__).resolve().parents if (p / "_shared" / "skill_env.py").is_file())))
+from skill_env import env_values as load_env  # 중앙 .env (dict 반환)
 
 ENV = load_env()
 SUPABASE_URL = ENV.get("NEXT_PUBLIC_SUPABASE_URL", "").rstrip("/")

@@ -42,8 +42,9 @@ except:
 # ─────────────────────────────────────────────────────────────────────────────
 CDP_PORT = 9222
 PORTAL_URL_PATTERN = "eduptl.kr"
-RESULT_DIR = Path(__file__).parent / "result"
-RESULT_DIR.mkdir(exist_ok=True)
+import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(next(p / "_shared" for p in _pl.Path(__file__).resolve().parents if (p / "_shared" / "skill_env.py").is_file())))
+from skill_env import data_dir
+RESULT_DIR = data_dir("admin-edufine", "result")  # 내 문서\my-skills-data\admin-edufine\result
 
 TAB_MAP = {
     "sanctnWait": "결재대기",

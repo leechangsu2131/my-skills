@@ -11,7 +11,8 @@ from typing import Optional
 import requests
 import schedule
 import urllib3
-from dotenv import load_dotenv
+import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(next(p / "_shared" for p in _pl.Path(__file__).resolve().parents if (p / "_shared" / "skill_env.py").is_file())))
+from skill_env import load_env
 from playwright.async_api import TimeoutError as PlaywrightTimeoutError
 from playwright.async_api import async_playwright
 from youtube_transcript_api import YouTubeTranscriptApi
@@ -73,7 +74,7 @@ def bool_env(name: str, default: bool) -> bool:
 
 
 def load_settings() -> Settings:
-    load_dotenv(encoding="utf-8")
+    load_env()
 
     channel_url = os.getenv("CHANNEL_URL", "").strip()
     title_prefix = os.getenv("TITLE_PREFIX", "[체슬리모닝브리프]").strip()

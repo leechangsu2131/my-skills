@@ -1,7 +1,8 @@
 """로그인 테스트 스크립트"""
-from dotenv import load_dotenv
+import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(next(p / "_shared" for p in _pl.Path(__file__).resolve().parents if (p / "_shared" / "skill_env.py").is_file())))
+from skill_env import load_env
 import os, time
-load_dotenv()
+load_env()
 
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options

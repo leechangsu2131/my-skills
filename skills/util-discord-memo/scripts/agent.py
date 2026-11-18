@@ -25,8 +25,9 @@ from datetime import datetime, timezone
 
 # .env 파일 자동 로딩
 try:
-    from dotenv import load_dotenv
-    load_dotenv(os.path.join(os.path.dirname(__file__), ".env"))
+    import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(next(p / "_shared" for p in _pl.Path(__file__).resolve().parents if (p / "_shared" / "skill_env.py").is_file())))
+    from skill_env import load_env
+    load_env()
 except ImportError:
     pass
 

@@ -14,15 +14,8 @@ requests.Session.request = new_request
 # =====================================================
 # .env 파일에서 환경변수 로드
 # =====================================================
-def load_env():
-    env_path = os.path.join(os.path.dirname(__file__), '.env')
-    if os.path.exists(env_path):
-        with open(env_path, encoding='utf-8') as f:
-            for line in f:
-                line = line.strip()
-                if line and not line.startswith('#') and '=' in line:
-                    key, _, val = line.partition('=')
-                    os.environ.setdefault(key.strip(), val.strip().strip('"').strip("'"))
+import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(next(p / "_shared" for p in _pl.Path(__file__).resolve().parents if (p / "_shared" / "skill_env.py").is_file())))
+from skill_env import load_env  # 중앙 .env
 
 load_env()
 NOTION_TOKEN = os.environ.get('NOTION_TOKEN', '')

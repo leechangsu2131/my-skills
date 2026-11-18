@@ -14,7 +14,8 @@ import os
 import sys
 import argparse
 from datetime import datetime
-from dotenv import load_dotenv
+import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(next(p / "_shared" for p in _pl.Path(__file__).resolve().parents if (p / "_shared" / "skill_env.py").is_file())))
+from skill_env import load_env
 
 # 내부 모듈
 from s2b_login import login as s2b_login
@@ -59,7 +60,7 @@ async def process_items(input_path, dry_run=False, headless=False, report_path=N
     print(f"📋 총 {len(items_to_buy)}개의 품목을 장바구니(견적서)에 담습니다.")
     print(f"   S2B번호 직접 담기: {direct_count}건 / 품목명 검색: {search_count}건")
 
-    load_dotenv(os.path.join(SCRIPT_DIR, '.env'))
+    load_env()
     uid = os.getenv('S2B_USER_ID')
     pwd = os.getenv('S2B_USER_PW')
 

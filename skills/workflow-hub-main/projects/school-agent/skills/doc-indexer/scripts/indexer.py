@@ -14,7 +14,8 @@ import re
 from pathlib import Path
 from datetime import datetime
 
-from dotenv import load_dotenv
+import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(next(p / "_shared" for p in _pl.Path(__file__).resolve().parents if (p / "_shared" / "skill_env.py").is_file())))
+from skill_env import load_env
 from odf.opendocument import load as load_odt
 from odf.text import P as OdfP
 from odf.table import Table, TableRow, TableCell
@@ -24,7 +25,7 @@ from chromadb.utils.embedding_functions import SentenceTransformerEmbeddingFunct
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 
-load_dotenv()
+load_env()
 
 # ── 설정 ────────────────────────────────────────────────────────────
 WATCH_FOLDER = Path(os.getenv("WATCH_FOLDER", "./docs-inbox"))

@@ -1,4 +1,4 @@
-require('dotenv').config();
+require('../_shared/skill_env.js').loadEnv('util-storagemap'); // 중앙 .env
 const express = require('express');
 const cors = require('cors');
 const https = require('node:https');

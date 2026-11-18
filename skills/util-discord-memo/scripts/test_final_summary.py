@@ -1,7 +1,8 @@
 import os, requests
-from dotenv import load_dotenv
+import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(next(p / "_shared" for p in _pl.Path(__file__).resolve().parents if (p / "_shared" / "skill_env.py").is_file())))
+from skill_env import load_env
 
-load_dotenv(".env")
+load_env()
 webhook_url = os.getenv("DISCORD_WEBHOOK_URL")
 
 summary = """📣 **[업무 공지 및 요약] 학교 업무 (안티그래비티 어썸 스킬 개발 건)**

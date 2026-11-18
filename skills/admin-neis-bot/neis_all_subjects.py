@@ -20,6 +20,10 @@ from pathlib import Path
 
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(next(p / "_shared" for p in _pl.Path(__file__).resolve().parents if (p / "_shared" / "skill_env.py").is_file())))
+from skill_env import data_dir
+NEIS_DATA = data_dir("admin-neis-bot")  # 내 문서\my-skills-data\admin-neis-bot (학생 데이터)
+
 
 FIND_APP = """
     var instances = cpr.core.Platform.INSTANCE.getAllRunningAppInstances();
@@ -443,7 +447,7 @@ def match_standard(subject, std_label, records):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--records", default="scratch/neis-achievement-levels.json")
+    parser.add_argument("--records", default=str(NEIS_DATA / "neis-achievement-levels.json"))
     parser.add_argument("--port", type=int, default=9222)
     parser.add_argument("--subjects", nargs="*", help="Specific subjects to process (e.g., 도덕 수학)")
     parser.add_argument("--list-only", action="store_true", help="List subjects and exit")

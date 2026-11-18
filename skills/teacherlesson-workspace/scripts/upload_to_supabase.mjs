@@ -1,26 +1,22 @@
 // Step 2: JSON 파일 → Supabase 업로드 (Node.js fetch 사용)
 // 실행: node scripts/upload_to_supabase.mjs
 
-import { readFileSync } from 'fs';
+import { readFileSync } from 'fs'; // eslint-disable-line no-unused-vars
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-// .env.local 읽기
-const envPath = join(__dirname, '..', '.env.local');
-const env = Object.fromEntries(
-    readFileSync(envPath, 'utf-8')
-        .split('\n')
-        .filter(line => line.trim() && !line.startsWith('#'))
-        .map(line => line.split('=').map((p, i) => i === 0 ? p.trim() : line.slice(line.indexOf('=') + 1).trim()))
-);
+// 중앙 .env 읽기 (skills/_shared/skill_env.js)
+import { createRequire } from 'module';
+const { envValues } = createRequire(import.meta.url)('../../_shared/skill_env.js');
+const env = { ...envValues('teacherlesson-workspace'), ...process.env };
 
 const SUPABASE_URL = env['NEXT_PUBLIC_SUPABASE_URL'];
 const SUPABASE_KEY = env['NEXT_PUBLIC_SUPABASE_ANON_KEY'];
 
 if (!SUPABASE_URL || SUPABASE_URL.includes('your-project')) {
-    console.error('❌ .env.local에 SUPABASE_URL이 없습니다.');
+    console.error('❌ 중앙 .env에 NEXT_PUBLIC_SUPABASE_URL이 없습니다.');
     process.exit(1);
 }
 

@@ -1,13 +1,14 @@
 import os
 import json
 import google.generativeai as genai
-from dotenv import load_dotenv
+import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(next(p / "_shared" for p in _pl.Path(__file__).resolve().parents if (p / "_shared" / "skill_env.py").is_file())))
+from skill_env import load_env
 
 def generate_draft_from_items(items):
     """
     S2B 물품 목록을 기반으로 에듀파인 기안문 제목과 개요를 생성합니다.
     """
-    load_dotenv(r'C:\Users\user\.gemini\antigravity\scratch\repos\my-skills\skills\admin-edufine\.env')
+    load_env()
     api_key = os.getenv("GEMINI_API_KEY")
     if not api_key:
         raise Exception("GEMINI_API_KEY가 .env 파일에 없습니다.")

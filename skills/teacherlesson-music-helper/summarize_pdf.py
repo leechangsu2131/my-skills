@@ -9,7 +9,10 @@ except ImportError:
     sys.exit(1)
 
 # OpenRouter API Configuration
-OPENROUTER_API_KEY = "***REMOVED***"
+import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(next(p / "_shared" for p in _pl.Path(__file__).resolve().parents if (p / "_shared" / "skill_env.py").is_file())))
+from skill_env import load_env
+load_env()  # 중앙 .env
+OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY", "")
 MODEL_NAME = "openrouter/hunter-alpha"
 
 def extract_text_from_pdf(pdf_path):

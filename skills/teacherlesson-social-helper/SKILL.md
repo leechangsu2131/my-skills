@@ -18,7 +18,7 @@ tags: ["education", "social-studies", "douclass", "selenium", "classroom-managem
 
 ## Setup
 
-1. `skills/teacherlesson-social-helper/.env.example`를 복사해 `skills/teacherlesson-social-helper/.env`를 만듭니다.
+1. 비밀값·설정은 스킬 폴더가 아니라 중앙 `OneDrive\96. 인증\.env` 한 곳에 넣습니다 (코드는 `skills/_shared/skill_env.py`가 자동으로 찾음). 키 이름은 `.env.example` 참고. 이 스킬에서만 쓰는 값은 `스킬폴더명대문자__KEY` 형식으로 적습니다.
 2. `SOCIAL_CLASS_BASE_URL`에 사회 교과서 차시 첫 화면 URL을 넣습니다.
 3. 지도서 PDF가 있다면 `SOCIAL_CLASS_GUIDE_PDF`에 경로를 넣습니다.
 4. 필요하면 `SOCIAL_CLASS_RESOURCE_KEYWORDS`를 수정해 열고 싶은 버튼 이름에 맞춥니다.

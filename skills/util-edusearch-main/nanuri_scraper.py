@@ -8,7 +8,8 @@ nanuri_scraper.py - 수업나누리 수집기 (수동 로그인 방식)
 import os, re, time, sqlite3, argparse
 from datetime import datetime
 from urllib.parse import urlencode
-from dotenv import load_dotenv
+import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(next(p / "_shared" for p in _pl.Path(__file__).resolve().parents if (p / "_shared" / "skill_env.py").is_file())))
+from skill_env import load_env
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
@@ -16,7 +17,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from bs4 import BeautifulSoup
 
-load_dotenv()
+load_env()
 DB_PATH   = "data.db"
 BASE_URL  = "http://nanuri.gyo6.net"
 LOGIN_URL = f"{BASE_URL}/login/login.tc"

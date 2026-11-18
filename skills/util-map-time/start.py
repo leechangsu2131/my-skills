@@ -24,26 +24,13 @@ if sys.version_info < (3, 7):
     wait_for_enter("Press Enter to exit...")
     sys.exit(1)
 
-# Check .env
-env_path = os.path.join(ROOT, ".env")
-if not os.path.exists(env_path):
+# Check central .env (skills/_shared/skill_env.py)
+import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(next(p / "_shared" for p in _pl.Path(__file__).resolve().parents if (p / "_shared" / "skill_env.py").is_file())))
+from skill_env import env_values, central_env_path
+_key = env_values("util-map-time").get("KAKAO_API_KEY", "")
+if not _key or "your_key" in _key:
     msg(
-        "[WARNING] .env file not found.",
-        "Please create .env with: KAKAO_API_KEY=your_key_here",
-        "",
-        "1. Go to https://developers.kakao.com",
-        "2. Create app -> copy REST API key",
-        "3. Save to .env file in this folder",
-    )
-    wait_for_enter("Press Enter to exit...")
-    sys.exit(1)
-
-# Check if KAKAO_API_KEY exists in .env
-with open(env_path, "r", encoding="utf-8") as f:
-    content = f.read()
-if "KAKAO_API_KEY=" not in content or "your_key" in content:
-    msg(
-        "[WARNING] KAKAO_API_KEY not set in .env",
+        f"[WARNING] KAKAO_API_KEY not set in central .env: {central_env_path()}",
         "Please replace 'your_key_here' with your actual API key.",
     )
     wait_for_enter("Press Enter to exit...")

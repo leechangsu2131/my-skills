@@ -3,16 +3,15 @@ import re
 import urllib3
 import requests
 import pandas as pd
-from dotenv import load_dotenv
+import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(next(p / "_shared" for p in _pl.Path(__file__).resolve().parents if (p / "_shared" / "skill_env.py").is_file())))
+from skill_env import load_env
 from pathlib import Path
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 def get_supabase_data():
     # 상위 폴더(classmanage-notion-sync)의 .env 파일 로드 시도
-    env_path = Path(__file__).parent.parent / "classmanage-notion-sync" / ".env"
-    if env_path.exists():
-        load_dotenv(env_path)
+    load_env()
     
     url = os.environ.get('SUPABASE_URL')
     key = os.environ.get('SUPABASE_KEY')

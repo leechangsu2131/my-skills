@@ -1,12 +1,13 @@
 import asyncio
 import os
 import sys
-from dotenv import load_dotenv
+import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(next(p / "_shared" for p in _pl.Path(__file__).resolve().parents if (p / "_shared" / "skill_env.py").is_file())))
+from skill_env import load_env
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 async def dump_search_form():
-    load_dotenv(os.path.join(SCRIPT_DIR, '.env'))
+    load_env()
     uid = os.getenv('S2B_USER_ID')
     pwd = os.getenv('S2B_USER_PW')
 

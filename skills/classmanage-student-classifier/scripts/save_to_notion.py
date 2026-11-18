@@ -29,14 +29,9 @@ from pathlib import Path
 sys.stdout.reconfigure(encoding='utf-8')
 
 # ── 설정 로드 ──────────────────────────────────────────────────────
-env_path = Path(__file__).parent.parent / '.env'
-config = {}
-if env_path.exists():
-    for line in env_path.read_text(encoding='utf-8').splitlines():
-        line = line.strip()
-        if line and not line.startswith('#') and '=' in line:
-            k, v = line.split('=', 1)
-            config[k.strip()] = v.strip()
+import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(next(p / "_shared" for p in _pl.Path(__file__).resolve().parents if (p / "_shared" / "skill_env.py").is_file())))
+from skill_env import env_values
+config = env_values('classmanage-student-classifier')  # 중앙 .env
 
 API_KEY        = config.get('NOTION_API_KEY', '')
 STUDENT_DB_ID  = config.get('NOTION_STUDENT_DB_ID', '')

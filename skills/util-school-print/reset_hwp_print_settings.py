@@ -22,7 +22,8 @@ except ImportError:
     sys.exit("Windows에서만 실행할 수 있습니다.")
 
 try:
-    from dotenv import load_dotenv
+    import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(next(p / "_shared" for p in _pl.Path(__file__).resolve().parents if (p / "_shared" / "skill_env.py").is_file())))
+    from skill_env import load_env
 except ImportError:
     sys.exit("python-dotenv 없음 → pip install python-dotenv")
 
@@ -52,7 +53,7 @@ def get_hprint_keys():
 HPRINT_KEYS = get_hprint_keys()
 
 
-load_dotenv(BASE_DIR / ".env")
+load_env()
 PRINTER_NAME = os.getenv("PRINTER_NAME", "")
 RESET_TRAY = int(os.getenv("POST_PRINT_TRAY", "15"))
 

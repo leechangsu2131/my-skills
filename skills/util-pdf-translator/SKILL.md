@@ -30,11 +30,7 @@ scripts/
 ## 🚀 최초 설정 (1회만)
 
 ### 1. 환경 설정
-```powershell
-cd scripts
-copy .env.example .env
-# .env 파일 편집: PDF_PATH, GEMS_URL, DISCORD_WEBHOOK_URL 입력
-```
+비밀값·설정은 스킬 폴더가 아니라 중앙 `OneDrive\96. 인증\.env` 한 곳에 넣습니다 (코드는 `skills/_shared/skill_env.py`가 자동으로 찾음). 키 이름은 `.env.example` 참고. 이 스킬에서만 쓰는 값은 `스킬폴더명대문자__KEY` 형식으로 적습니다. (PDF_PATH, GEMS_URL, DISCORD_WEBHOOK_URL)
 
 ### 2. 패키지 설치
 ```powershell

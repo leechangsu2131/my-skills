@@ -77,8 +77,9 @@ def safe_read_excel(file_path_or_obj, sheet_name=0, header=0, engine=None, **kwa
     raise last_err
 
 try:
-    from dotenv import load_dotenv
-    load_dotenv()
+    import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(next(p / "_shared" for p in _pl.Path(__file__).resolve().parents if (p / "_shared" / "skill_env.py").is_file())))
+    from skill_env import load_env
+    load_env()
 except ImportError:
     pass
 

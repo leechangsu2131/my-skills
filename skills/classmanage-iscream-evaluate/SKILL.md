@@ -42,11 +42,7 @@ playwright install chromium
 
 ### 2. 환경 변수 세팅
 
-`.env.example`을 `.env`로 복사 후 실제 값 입력:
-
-```bash
-cp .env.example .env
-```
+비밀값·설정은 스킬 폴더가 아니라 중앙 `OneDrive\96. 인증\.env` 한 곳에 넣습니다 (코드는 `skills/_shared/skill_env.py`가 자동으로 찾음). 키 이름은 `.env.example` 참고. 이 스킬에서만 쓰는 값은 `스킬폴더명대문자__KEY` 형식으로 적습니다.
 
 | 변수 | 설명 |
 |------|------|

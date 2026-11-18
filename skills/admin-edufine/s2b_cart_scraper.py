@@ -8,7 +8,8 @@ S2B_PATH = r'C:\Users\user\.gemini\antigravity\scratch\repos\my-skills\skills\ad
 if S2B_PATH not in sys.path:
     sys.path.insert(0, S2B_PATH)
 
-from dotenv import load_dotenv
+import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(next(p / "_shared" for p in _pl.Path(__file__).resolve().parents if (p / "_shared" / "skill_env.py").is_file())))
+from skill_env import load_env
 
 async def get_s2b_cart_items():
     """
@@ -21,7 +22,7 @@ async def get_s2b_cart_items():
     importlib.reload(_s2b_login_mod)
     s2b_do_login = _s2b_login_mod.login
 
-    load_dotenv(os.path.join(S2B_PATH, '.env'))
+    load_env()
     uid = os.getenv('S2B_USER_ID')
     pwd = os.getenv('S2B_USER_PW')
 

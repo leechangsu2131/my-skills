@@ -18,13 +18,9 @@ KEYWORD         = "[체슬리모닝브리프]"
 GEMINI_GEMS_URL = "https://gemini.google.com/gem/1R_gmS2NpyslXs0KJB6wpUjOuSad9TlVH"
 
 # .env 파일에서 민감 정보 읽기
-env_file = os.path.join(os.path.dirname(__file__), ".env")
-DISCORD_WEBHOOK = ""
-if os.path.exists(env_file):
-    with open(env_file) as f:
-        for line in f:
-            if line.startswith("DISCORD_WEBHOOK="):
-                DISCORD_WEBHOOK = line.strip().split("=", 1)[1].strip('"').strip("'")
+import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(next(p / "_shared" for p in _pl.Path(__file__).resolve().parents if (p / "_shared" / "skill_env.py").is_file())))
+from skill_env import env_values
+DISCORD_WEBHOOK = env_values().get("DISCORD_WEBHOOK", "")  # 중앙 .env
 
 PROCESSED_FILE  = os.path.join(os.path.dirname(__file__), "processed.json")
 RSS_URL         = f"https://www.youtube.com/feeds/videos.xml?channel_id={CHANNEL_ID}"

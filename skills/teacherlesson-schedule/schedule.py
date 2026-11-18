@@ -9,14 +9,11 @@ import re
 import sys
 from datetime import date, datetime, timedelta
 
-try:
-    from dotenv import load_dotenv
-except ImportError:
-    def load_dotenv(*_args, **_kwargs):
-        return False
+import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(next(p / "_shared" for p in _pl.Path(__file__).resolve().parents if (p / "_shared" / "skill_env.py").is_file())))
+from skill_env import load_env
 
 
-load_dotenv()
+load_env()
 
 SHEET_ID = os.getenv("SHEET_ID")
 CREDS_PATH = os.getenv("GOOGLE_CREDENTIALS_PATH", "credentials.json")

@@ -21,6 +21,10 @@ from pathlib import Path
 
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(next(p / "_shared" for p in _pl.Path(__file__).resolve().parents if (p / "_shared" / "skill_env.py").is_file())))
+from skill_env import data_dir
+NEIS_DATA = data_dir("admin-neis-bot")  # 내 문서\my-skills-data\admin-neis-bot (학생 데이터)
+
 
 
 def connect_cdp(port=9222):
@@ -356,7 +360,7 @@ def phase_save(driver):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--phase", required=True, help="1, 2, verify, save")
-    parser.add_argument("--records", default="scratch/neis-achievement-levels-korean-4guk0504.json")
+    parser.add_argument("--records", default=str(NEIS_DATA / "neis-achievement-levels-korean-4guk0504.json"))
     parser.add_argument("--port", type=int, default=9222)
     args = parser.parse_args()
 

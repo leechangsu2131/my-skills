@@ -15,22 +15,11 @@ from pathlib import Path
 PORT = 5020
 ROOT = Path(__file__).parent
 
-# ── load .env ──
-env_path = ROOT / ".env"
+# ── 중앙 .env 로드 (skills/_shared/skill_env.py) ──
+import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(next(p / "_shared" for p in _pl.Path(__file__).resolve().parents if (p / "_shared" / "skill_env.py").is_file())))
+from skill_env import env_values
 
-def load_env(path):
-    values = {}
-    if not path.exists():
-        return values
-    for raw in path.read_text(encoding="utf-8-sig").splitlines():
-        line = raw.strip()
-        if not line or line.startswith("#") or "=" not in line:
-            continue
-        key, value = line.split("=", 1)
-        values[key.strip()] = value.strip().strip('"').strip("'")
-    return values
-
-ENV = load_env(env_path)
+ENV = env_values("util-map-time")
 KAKAO_API_KEY = ENV.get("KAKAO_API_KEY", "")
 APP_CONFIG = {
     "home": ENV.get("DEFAULT_HOME", ""),

@@ -1,7 +1,8 @@
 import os, requests, json
-from dotenv import load_dotenv
+import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(next(p / "_shared" for p in _pl.Path(__file__).resolve().parents if (p / "_shared" / "skill_env.py").is_file())))
+from skill_env import load_env
 
-load_dotenv(".env")
+load_env()
 user_channel_id = os.getenv("DISCORD_CHANNEL_ID")
 bot_token = os.getenv("DISCORD_BOT_TOKEN")
 

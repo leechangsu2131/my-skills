@@ -69,10 +69,9 @@ def _load_password() -> str:
     """
     .env 파일에서 i-scream 평가 비밀번호를 로드합니다.
     """
-    own_env = Path(__file__).parent / ".env"
-    if own_env.exists():
-        from dotenv import load_dotenv
-        load_dotenv(own_env, override=True)
+    import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(next(p / "_shared" for p in _pl.Path(__file__).resolve().parents if (p / "_shared" / "skill_env.py").is_file())))
+    from skill_env import load_env
+    load_env()
     return os.environ.get("ISCREAM_EVAL_PASSWORD", "")
 
 

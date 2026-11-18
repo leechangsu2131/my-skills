@@ -21,7 +21,7 @@ Use `$personal-analyze-trade` instead when the task is to inspect or analyze the
 
 - **`.env` File Path:** `C:\Users\lee21\.gemini\antigravity\scratch\my-skills\skills\personal-record-trade\.env`
 - This file contains all critical secrets: `GOOGLE_SA_*` credentials, `GOOGLE_SHEET_ID`, `DART_API_KEY`, and `KRX` login info.
-- **CRITICAL REMINDER:** When writing custom python scripts or checking environment variables, ALWAYS use `from dotenv import load_dotenv; load_dotenv(r'C:\Users\lee21\.gemini\antigravity\scratch\my-skills\skills\personal-record-trade\.env')` so you don't falsely assume keys are missing!
+- **CRITICAL REMINDER:** When writing custom python scripts or checking environment variables, ALWAYS use `import sys, pathlib; sys.path.insert(0, str(next(p / "_shared" for p in pathlib.Path(__file__).resolve().parents if (p / "_shared" / "skill_env.py").is_file()))); from skill_env import load_env; load_env()` (중앙 `OneDrive\96. 인증\.env`을 읽음) so you don't falsely assume keys are missing!
 - Keep the existing scripts and resources in this folder. Do not recreate the portfolio spreadsheet unless the user explicitly asks for setup or migration work.
 
 ## Trade Entry Workflow
@@ -97,7 +97,7 @@ This skill contains several sub-modules for data ingestion and deep investment a
 
 To prevent breaking the pipeline or Google Sheet, rigidly follow these steps:
 
-1. **Environment Initialization:** ALWAYS run `from dotenv import load_dotenv; load_dotenv(r'C:\Users\lee21\.gemini\antigravity\scratch\my-skills\skills\personal-record-trade\.env')` in EVERY script. Never assume an API key is missing just because the environment is empty.
+1. **Environment Initialization:** ALWAYS run `import sys, pathlib; sys.path.insert(0, str(next(p / "_shared" for p in pathlib.Path(__file__).resolve().parents if (p / "_shared" / "skill_env.py").is_file()))); from skill_env import load_env; load_env()` (중앙 `OneDrive\96. 인증\.env`을 읽음) in EVERY script. Never assume an API key is missing just because the environment is empty.
 2. **Local Data First:** Do not rely on external web APIs for basic lookups (like ticker codes) when DART API and `.env` are already established as the project standard.
 3. **Google Sheets Safeties:**
    - **Emoji Ban:** Never use emojis (like ✅) in `print()` statements when running Python in the Windows console (cp949 encoding errors will crash the script mid-execution).

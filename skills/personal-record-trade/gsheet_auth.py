@@ -26,10 +26,9 @@ SCOPES = [
 def _load_dotenv() -> None:
     """Load .env file if python-dotenv is available."""
     try:
-        from dotenv import load_dotenv
-        env_path = BASE_DIR / ".env"
-        if env_path.exists():
-            load_dotenv(env_path, override=False)
+        import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(next(p / "_shared" for p in _pl.Path(__file__).resolve().parents if (p / "_shared" / "skill_env.py").is_file())))
+        from skill_env import load_env
+        load_env()
     except ImportError:
         pass  # python-dotenv not installed — rely on system env vars
 

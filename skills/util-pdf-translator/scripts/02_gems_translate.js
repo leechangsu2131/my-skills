@@ -16,19 +16,11 @@ chromium.use(stealth);
 const fs = require("fs");
 const path = require("path");
 
-// .env 파일 수동 로드 (dotenv 없이)
+// 중앙 .env 로드 (skills/_shared/skill_env.js)
 function loadEnv() {
-  const envPath = path.join(__dirname, ".env");
-  if (!fs.existsSync(envPath)) {
-    console.error("❌ .env 파일이 없습니다. .env.example을 복사하고 설정하세요.");
-    process.exit(1);
-  }
-  const lines = fs.readFileSync(envPath, "utf-8").split("\n");
-  for (const line of lines) {
-    const trimmed = line.trim();
-    if (!trimmed || trimmed.startsWith("#")) continue;
-    const [key, ...vals] = trimmed.split("=");
-    process.env[key.trim()] = vals.join("=").trim();
+  const { loadEnv: loadCentral, centralEnvPath } = require(path.join(__dirname, '..', '..', '_shared', 'skill_env.js'));
+  if (!loadCentral('util-pdf-translator')) {
+    console.error('❌ 중앙 .env를 찾지 못했습니다 (OneDrive\96. 인증\.env). 환경변수만 사용합니다.');
   }
 }
 

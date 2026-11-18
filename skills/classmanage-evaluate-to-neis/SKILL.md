@@ -22,8 +22,10 @@ Use this skill to move 성취기준별 단계 배정표 data from `classmanage-i
 ```powershell
 python skills/classmanage-evaluate-to-neis/scripts/parse_achievement_levels.py `
   --input skills/classmanage-iscream-evaluate/data/2026_1학기_성취기준별_단계배정표.md `
-  --json scratch/neis-achievement-levels.json `
-  --csv scratch/neis-achievement-levels.csv `
+  --json $env:USERPROFILE\Documents\my-skills-datadmin-neis-bot
+eis-achievement-levels.json `
+  --csv $env:USERPROFILE\Documents\my-skills-datadmin-neis-bot
+eis-achievement-levels.csv `
   --summary
 ```
 
@@ -33,7 +35,8 @@ python skills/classmanage-evaluate-to-neis/scripts/parse_achievement_levels.py `
 
 ```powershell
 python skills/classmanage-evaluate-to-neis/scripts/neis_achievement_entry.py `
-  --records scratch/neis-achievement-levels.json `
+  --records $env:USERPROFILE\Documents\my-skills-datadmin-neis-bot
+eis-achievement-levels.json `
   --diagnose `
   --dump scratch/neis-fields.json
 ```
@@ -44,7 +47,8 @@ python skills/classmanage-evaluate-to-neis/scripts/neis_achievement_entry.py `
 
 ```powershell
 python skills/classmanage-evaluate-to-neis/scripts/neis_achievement_entry.py `
-  --records scratch/neis-achievement-levels.json `
+  --records $env:USERPROFILE\Documents\my-skills-datadmin-neis-bot
+eis-achievement-levels.json `
   --selector-config scratch/neis-selector-config.json `
   --dry-run
 ```
@@ -53,7 +57,8 @@ python skills/classmanage-evaluate-to-neis/scripts/neis_achievement_entry.py `
 
 ```powershell
 python skills/classmanage-evaluate-to-neis/scripts/neis_achievement_entry.py `
-  --records scratch/neis-achievement-levels.json `
+  --records $env:USERPROFILE\Documents\my-skills-datadmin-neis-bot
+eis-achievement-levels.json `
   --selector-config scratch/neis-selector-config.json `
   --apply `
   --confirm APPLY_NEIS

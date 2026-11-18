@@ -53,8 +53,9 @@ def run_pipeline(ticker: str, year: int, quarter: str = "A"):
     print("\n🎉 모든 파이프라인 작업이 완료되었습니다! 대시보드(dashboard.py)를 실행해보세요.")
 
 if __name__ == "__main__":
-    from dotenv import load_dotenv
-    load_dotenv()
+    import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(next(p / "_shared" for p in _pl.Path(__file__).resolve().parents if (p / "_shared" / "skill_env.py").is_file())))
+    from skill_env import load_env
+    load_env()
     
     parser = argparse.ArgumentParser(description="Valuation Data Pipeline CLI")
     parser.add_argument("ticker", type=str, help="종목코드 (예: 009150)")

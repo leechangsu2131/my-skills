@@ -34,7 +34,10 @@ import social_class_store
 import social_guide_extract
 
 
-ENV_FILE = Path(__file__).with_name(".env")
+import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(next(p / "_shared" for p in _pl.Path(__file__).resolve().parents if (p / "_shared" / "skill_env.py").is_file())))
+from skill_env import env_values as _central_env_values, central_env_path
+
+ENV_FILE = central_env_path() or Path(__file__).with_name(".env")  # 표시용
 DEFAULT_REMOTE_PORT = 9222
 DOUCLASS_RESOURCE_KEYWORDS = [
     "PPT",
@@ -96,9 +99,8 @@ def parse_env_lines(lines: Iterable[str]) -> Dict[str, str]:
 
 
 def load_env_file(path: Path = ENV_FILE) -> Dict[str, str]:
-    if not path.exists():
-        return {}
-    return parse_env_lines(path.read_text(encoding="utf-8").splitlines())
+    """중앙 .env(OneDrive\\96. 인증\\.env) 값을 읽는다. path 인자는 호환용."""
+    return _central_env_values("teacherlesson-social-helper")
 
 
 def parse_csv(value: str) -> List[str]:
@@ -177,7 +179,7 @@ def validate_config(config: HelperConfig) -> bool:
         return True
 
     print("[!] SOCIAL_CLASS_BASE_URL 값이 비어 있습니다.")
-    print(f"    `{ENV_FILE}` 파일을 만들고 `{ENV_FILE.with_name('.env.example')}`를 참고해 주세요.")
+    print(f"    중앙 .env(`{ENV_FILE}`)에 값을 넣어 주세요. 키 목록은 .env.example 참고.")
     return False
 
 

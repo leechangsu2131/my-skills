@@ -1,9 +1,10 @@
 import os
 import requests
 import json
-from dotenv import load_dotenv
+import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(next(p / "_shared" for p in _pl.Path(__file__).resolve().parents if (p / "_shared" / "skill_env.py").is_file())))
+from skill_env import load_env
 
-load_dotenv('C:/Users/lee21/.gemini/antigravity/scratch/my-skills/skills/personal-record-trade/.env')
+load_env()
 DART_API_KEY = os.getenv('DART_API_KEY')
 
 if not DART_API_KEY:

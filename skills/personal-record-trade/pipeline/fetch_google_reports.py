@@ -5,11 +5,11 @@ import requests
 import urllib.parse
 from pathlib import Path
 import pypdf
-from dotenv import load_dotenv
+import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(next(p / "_shared" for p in _pl.Path(__file__).resolve().parents if (p / "_shared" / "skill_env.py").is_file())))
+from skill_env import load_env
 
 # Load environment variables
-env_path = Path(r'C:\Users\lee21\.gemini\antigravity\scratch\my-skills\skills\personal-record-trade\.env')
-load_dotenv(env_path)
+load_env()
 
 def validate_pdf_content(pdf_path: Path, ticker: str, company_name: str) -> bool:
     """Read the first 2 pages of the PDF to verify if it belongs to the target company."""

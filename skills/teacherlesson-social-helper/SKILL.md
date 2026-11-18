@@ -6,6 +6,10 @@ risk: medium
 source: local
 date_added: "2026-03-19"
 tags: ["education", "social-studies", "douclass", "selenium", "classroom-management"]
+metadata:
+  category: 수업·교사 도구
+  status: 운영
+  summary: Douclass 사회 차시 자료를 열고 자주 쓰는 수업 구성을 저장하는 반자동 도우미다.
 ---
 
 # 사회 수업 도우미 (Social Class Helper)

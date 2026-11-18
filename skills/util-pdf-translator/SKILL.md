@@ -1,6 +1,11 @@
 ---
 name: pdf-book-translator
 description: "PDF 원서를 챕터 단위로 잘라 Gemini Gems로 자동 번역하고 Discord로 전송합니다. 하루 한 챕터씩 영어 원문과 번역본을 Discord 채널에서 읽을 수 있습니다."
+metadata:
+  category: 공통 유틸
+  status: 운영
+  version: 스크립트 패키지 v1.0.0
+  summary: 영문 PDF를 챕터별로 나누고 Gemini Gems로 번역한 뒤 Discord로 보낸다.
 ---
 
 # PDF 원서 챕터 번역기 (Gemini Gems + Discord)

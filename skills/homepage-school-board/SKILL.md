@@ -7,6 +7,10 @@ description: >-
   나이스(gyo6.net) 계열 학교 홈페이지 표준 패턴을 지원하며,
   CSS 셀렉터·bbsId 설정만 바꾸면 타 학교에도 재사용 가능하다.
   사용자가 "학교 게시판 연동", "공지사항 크롤링", "GitHub Actions 스케줄 크롤러" 등을 요청할 때 활성화한다.
+metadata:
+  category: 홈페이지
+  status: 운영
+  summary: 학교 게시판 크롤링 → GitHub Actions → school.html 공지 탭 연동
 ---
 
 # 🏫 학교 게시판 → 홈페이지 자동 연동 스킬

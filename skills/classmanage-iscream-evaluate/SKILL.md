@@ -6,6 +6,10 @@ risk: moderate
 source: community
 date_added: "2026-06-16"
 tags: ["education", "korean", "evaluation", "classroom-management", "playwright", "automation"]
+metadata:
+  category: 학생 기록·평가
+  status: 운영
+  summary: Supabase의 학생 관찰 기록 및 평가 문장을 바탕으로 i-Scream 과목별 평가 페이지 입력을 자동화한다.
 ---
 
 # i-scream 과목별 평가 자동 기록 (classmanage-iscream-evaluate)

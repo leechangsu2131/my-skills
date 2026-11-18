@@ -194,7 +194,7 @@ GOOGLE_SHEET_ID=12csrOj-6xgW45JSjbh8O9okxmA34eaatszvio6hQlmc # 기본 구글 시
 - `docs/superpowers/notes/2026-05-23-implied-valuation-conversation.md`: 사용자와의 설계 대화 기록.
 - `docs/superpowers/specs/2026-05-24-samsung-electro-implied-valuation-design.md`: 큰 설계 방향.
 - `PLANS.md`: 현재 진행 상태와 다음 작업 계획.
-- `TROUBLESHOOTING.md`: 흔한 문제 해결법.
+- `ISSUES.md`: 흔한 문제 해결법.
 
 ## 현재 구현된 렌즈
 

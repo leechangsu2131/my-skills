@@ -1,6 +1,10 @@
 ---
 name: admin-neis-bot
 description: 나이스(NEIS) 교외체험학습 신청서/보고서 및 결석신고서 일괄 접수/결재선 상신 자동화, 출장신청, 교원연수 이수등록, 자율/동아리/스포츠클럽 누가기록 관리, 41조 연수 상신, 학급시간표 시수 최적화(편차 0) 자동화. Chrome 원격 디버깅(9222)으로 나이스에 로그인한 브라우저에 연결하여 eXBuilder6 CPR API 및 DOM 이벤트를 제어하여 자동 처리.
+metadata:
+  category: 학교 행정
+  status: 운영
+  summary: NEIS 체험학습·결석 서류 접수, 출장·연수 등록, 창체/동아리 기록, 시간표 작업 등 교사 행정을 자동화한다.
 ---
 
 # admin-neis-bot

@@ -218,6 +218,6 @@ python -m streamlit run valuation_app/dashboard.py --server.port 8501
 
 1. `CLAUDE.md`: 프로젝트 원칙, 실행법, 데이터/화면/검증 규칙
 2. `PLANS.md`: 현재 진행 상태와 다음 구현 순서
-3. `TROUBLESHOOTING.md`: Streamlit, 데이터, PER, ROIC, 인코딩 문제 해결법
+3. `ISSUES.md`: Streamlit, 데이터, PER, ROIC, 인코딩 문제 해결법
 4. `docs/superpowers/notes/2026-05-23-implied-valuation-conversation.md`: 사용자와의 설계 대화 기록
 5. `docs/superpowers/specs/2026-05-24-samsung-electro-implied-valuation-design.md`: 삼성전기 가치분석 대시보드 설계

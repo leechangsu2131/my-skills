@@ -1,6 +1,10 @@
 ---
 name: personal-attach-files
 description: Gather distributed core code files into a single popup window for easy drag-and-drop attachment to frontier AI models (Claude, Gemini).
+metadata:
+  category: 개인·생활
+  status: 운영
+  summary: 프로젝트의 핵심 코드/기획 파일을 모아 AI에 첨부하기 쉬운 임시 폴더로 준비한다.
 ---
 
 # 📂 personal-attach-files 스킬 가이드

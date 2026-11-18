@@ -1,6 +1,10 @@
 ---
 name: util-webtoguide
 description: Converting Naver blog post with images to a markdown guide
+metadata:
+  category: 공통 유틸
+  status: 운영
+  summary: 웹페이지, 특히 네이버 블로그의 글·이미지를 추출해 출처 링크가 포함된 Markdown 가이드로 변환한다.
 ---
 # util-webtoguide
 이 스킬은 웹사이트(특히 네이버 블로그) 등의 링크에서 글과 이미지를 추출하여,

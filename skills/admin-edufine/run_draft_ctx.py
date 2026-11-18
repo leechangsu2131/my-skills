@@ -3,7 +3,7 @@
 """
 run_draft_ctx.py
 올바른 iframe 실행 컨텍스트(contextId)에서 nexacro 직결 호출
-ing.md: nexacro는 메인 프레임이 아닌 하위 iframe에서 동작
+ISSUES.md: nexacro는 메인 프레임이 아닌 하위 iframe에서 동작
 """
 
 import asyncio

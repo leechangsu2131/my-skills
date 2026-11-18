@@ -6,6 +6,10 @@ risk: safe
 source: community
 date_added: "2026-03-01"
 tags: ["education", "korean", "photo", "classroom-management"]
+metadata:
+  category: 학생 기록·평가
+  status: 운영
+  summary: 학생 작품·활동 사진을 학생별 폴더로 분류하고 파일명을 정리한다.
 ---
 
 # 학생 사진 정리기 (Student Photo Organizer)

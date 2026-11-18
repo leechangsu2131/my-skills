@@ -1,6 +1,10 @@
 ---
 name: teacherlesson-aiep-courseware
 description: Develop classroom-ready lesson packages and supporting materials, then map them to the available fields and authoring flow in Gyeongbuk AIEP Courseware. Use when a teacher wants a lesson planned, organized as files, or prepared for entry into the AIEP courseware authoring tool.
+metadata:
+  category: 수업·교사 도구
+  status: 운영
+  summary: 상위 공통 수업꾸러미의 AIEP 어댑터. 경북 AIEP의 성취기준, LCMS·파일/링크 배치, 공개 범위와 학습 순서를 반영해 꾸러미를 만들고 학습자 미리보기를 점검한다.
 ---
 
 # AIEP 수업꾸러미 제작

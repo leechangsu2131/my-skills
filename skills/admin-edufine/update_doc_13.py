@@ -1,4 +1,4 @@
-with open('troubleshooting.md', 'r', encoding='utf-8') as f:
+with open('ISSUES.md', 'r', encoding='utf-8') as f:
     content = f.read()
 
 addition = """
@@ -8,5 +8,5 @@ addition = """
 * **해결 과정 (사용자 피드백):** "우리가 긁어오는 것인데, 기록할 때 복붙하기 쉽게 잘 기록하면 되지 않느냐"는 사용자의 정곡을 찌르는 지적에 따라 설계 철학을 수정함. 봇이 기상천외한 텍스트를 파싱하도록 만드는 대신, 애초에 데이터를 수집하는 `s2b_cart_scraper.py` 단계에서 불필요한 텍스트(`[규격...]`, 줄바꿈 등)를 모두 제거하여 최초부터 깔끔한 포맷(`- 물품명 (수량: X, 단가: Y원)`)으로 텍스트 상자에 기록하도록 근본적인 문제를 해결함.
 """
 
-with open('troubleshooting.md', 'w', encoding='utf-8') as f:
+with open('ISSUES.md', 'w', encoding='utf-8') as f:
     f.write(content.replace('---', addition + '\n---'))

@@ -21,13 +21,13 @@ def main() -> int:
     skill = require_file(ROOT / "SKILL.md")
     rules = require_file(ROOT / "references" / "class_fund_rules.md")
     workflow = require_file(ROOT / "references" / "edufine_workflow.md")
-    troubleshooting = require_file(ROOT / "문제해결.md")
+    troubleshooting = require_file(ROOT / "ISSUES.md")
 
     required_terms = {
-        "SKILL.md": (skill, ["admin-class-buy", "개산급정산등록", "문제해결.md"]),
+        "SKILL.md": (skill, ["admin-class-buy", "개산급정산등록", "ISSUES.md"]),
         "class_fund_rules.md": (rules, ["20,000", "증빙자료", "정산"]),
         "edufine_workflow.md": (workflow, ["Chrome remote debugging", "개산급정산등록", "2026-03-01"]),
-        "문제해결.md": (troubleshooting, ["실제 실행", "해결"]),
+        "ISSUES.md": (troubleshooting, ["실제 실행", "해결"]),
     }
     for label, (text, terms) in required_terms.items():
         for term in terms:

@@ -1,6 +1,10 @@
 ---
 name: ego-browser
 description: Use Ego Lite's ego-browser CLI to inspect and operate browser pages, especially signed-in web apps and multi-step forms. Use when the user asks to use Ego Lite or its existing pages.
+metadata:
+  category: 공통 유틸
+  status: 개발
+  summary: Ego Lite의 `ego-browser` CLI로 브라우저를 조작하고, 사용자 탭과 관리형 TaskSpace 창의 차이를 확인하며 작업 기록·스크린샷을 과업별 폴더에 정리한다.
 ---
 
 # Ego Browser

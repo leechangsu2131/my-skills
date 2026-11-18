@@ -8,16 +8,36 @@
 
 ```
 .agents/workflows/   → Antigravity 워크플로우 정의 (.md)
-skills/[name]/       → 스킬 구현 (SKILL.md + scripts/)
-docs/                → 기획 문서, 플랜, 회고
+skills/_shared/      → 공통 로더 (skill_env.py / skill_env.js) — 비밀값·데이터 경로
+skills/[name]/       → 스킬 하나 = 독립 폴더 (SKILL.md + ISSUES.md + 코드)
+tools/               → build_catalog.py (CATALOG.md 생성·점검)
+docs/                → 기획 문서, 플랜, 회고, templates/
+CATALOG.md           → 자동 생성 목록 (직접 수정 금지)
 ```
 
 ## 필수 규칙
 
 - `main` 브랜치에 직접 push 금지 → 반드시 PR로 머지
 - PR 머지 전 반드시 사람이 리뷰
-- 새 스킬 추가 시 `skills/[name]/SKILL.md` 필수 포함
+- 새 스킬 추가 시 `skills/[name]/SKILL.md`와 `ISSUES.md` 필수 (양식: `docs/templates/`)
+- 스킬 정보를 바꾸면 해당 `SKILL.md`의 `metadata`를 고치고 `python tools/build_catalog.py` 실행
+- 문제를 해결하거나 막히면 그 스킬의 `ISSUES.md`에 기록 (증상·원인·해결·관련 파일)
 - `.env`, 시크릿, API 키 커밋 절대 금지
+
+## 비밀값·개인정보 규칙 (코드 작성 시 반드시)
+
+- 비밀값·설정은 중앙 `OneDrive\96. 인증\.env` 한 곳에만 둔다. 스킬 폴더에 `.env`를 만들지 않는다.
+- 코드는 공통 로더로 읽는다. 키·비밀번호·전화번호를 코드나 문서에 직접 쓰지 않는다.
+  ```python
+  import sys, pathlib; sys.path.insert(0, str(next(p / "_shared" for p in pathlib.Path(__file__).resolve().parents if (p / "_shared" / "skill_env.py").is_file())))
+  from skill_env import load_env, data_dir
+  load_env()                          # 중앙 .env → os.environ
+  out = data_dir() / "result"         # 내 문서\my-skills-data\<스킬>\result
+  ```
+  Node: `require('../_shared/skill_env.js').loadEnv('<스킬>')`
+- 한 스킬 전용 설정은 `스킬폴더명대문자__KEY` 로 적는다 (DRY_RUN, PORT 같은 흔한 이름이 다른 스킬로 새지 않게).
+- 학생·학부모 이름·연락처·평어, 화면 덤프, 로그인 세션, 실행 결과물은 `data_dir()` 아래에만 저장한다. 저장소에 커밋하지 않는다.
+- `C:\Users\<이름>\...` 같은 절대 경로를 하드코딩하지 않는다 (`%OneDrive%`, `%USERPROFILE%`, `data_dir()` 사용).
 
 ## 브랜치 네이밍
 
@@ -43,11 +63,14 @@ refactor: 코드 정리 설명
 
 ```
 skills/[skill-name]/
-├── SKILL.md          ← 스킬 설명 + AI 행동 지침 (필수)
+├── SKILL.md          ← 스킬 설명 + AI 행동 지침 (필수, 앞머리 metadata 포함)
+├── ISSUES.md         ← 문제·해결 기록, 진행 중/백로그 (필수)
+├── README.md         ← 사람용 상세 안내 (선택)
+├── .env.example      ← 필요한 키 목록 (실제 값 X, 실제 값은 중앙 .env)
 └── scripts/          ← 실제 코드
-    ├── main.py
-    └── .env.example  ← 환경 변수 예시 (실제 값 X)
 ```
+
+문제 기록 파일은 `ISSUES.md` 하나로 통일한다 (`troubleshooting.md`, `ing.md`, `NEXT_STEPS.md` 등 새로 만들지 않음).
 
 ## 도구별 역할 분담
 

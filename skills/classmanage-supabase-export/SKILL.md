@@ -1,5 +1,10 @@
 ---
+name: classmanage-supabase-export
 description: Download and separate Supabase classroom records into individual student Excel sheets (A-type normalized mapping)
+metadata:
+  category: 학생 기록·평가
+  status: 운영
+  summary: Supabase의 다중 학생 기록을 학생별로 분리해 개인별 워크시트가 있는 Excel 파일로 내보낸다.
 ---
 
 # Supabase-to-Sheet Экспорт 스킬 (학생별 낱개 분리)

@@ -6,6 +6,10 @@ risk: safe
 source: community
 date_added: "2026-03-01"
 tags: ["education", "korean", "notion", "classroom-management"]
+metadata:
+  category: 학생 기록·평가
+  status: 운영
+  summary: 클로바노트·자유 메모·폼 응답에서 학생별 기록을 분류하고 날짜/과목/분야 등을 구조화해 Notion 입력용으로 만든다.
 ---
 
 # 학생 기록 자동 분류기 (Student Record Classifier)

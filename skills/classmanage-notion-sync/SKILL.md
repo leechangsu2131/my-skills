@@ -1,6 +1,10 @@
 ---
 name: Notion to Supabase Migrator
 description: 노션(Notion) 데이터베이스의 자료를 읽어와서 Supabase 테이블로 자동 이관해주는 스크립트입니다.
+metadata:
+  category: 학생 기록·평가
+  status: 운영
+  summary: Notion 데이터베이스의 레코드와 속성을 Supabase 테이블로 옮긴다.
 ---
 
 # Notion to Supabase Migrator

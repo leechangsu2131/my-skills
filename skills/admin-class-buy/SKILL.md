@@ -1,6 +1,10 @@
 ---
 name: admin-class-buy
 description: "Help with Korean elementary school class operating fund work: K-에듀파인 학급운영비 개산급/개산급정산등록, receipt-by-receipt settlement row preparation, and creation of DOCX 증빙자료 pages from receipt and purchase item data. Use when Codex needs to support 담임교사 학급 자율 운영비 개산급 지급 후 정산, 증빙자료 서식 작성, or K-에듀파인 개산급정산등록 workflows."
+metadata:
+  category: 학교 행정
+  status: 운영
+  summary: 학급운영비 개산급 정산 행을 준비하고 영수증별 증빙 DOCX를 만든다. 규정·에듀파인 절차 참고 문서가 포함되어 있다.
 ---
 
 # Admin Class Buy
@@ -11,7 +15,7 @@ Support the teacher-facing workflow for 학급 자율 운영비 paid as 개산�
 
 1. Read `references/class_fund_rules.md` when checking whether an expense is allowed, how much can be spent, what evidence is needed, or what submission rules apply.
 2. Read `references/edufine_workflow.md` before driving K-에듀파인.
-3. Read `문제해결.md` before live K-에듀파인 execution and append any new failures and fixes after troubleshooting.
+3. Read `ISSUES.md` before live K-에듀파인 execution and append any new failures and fixes after troubleshooting.
 4. Ask for or infer these fields before creating output: 학년도, 학년, 반, 학생 수, 담임명, receipt date, vendor, amount, evidence type, activity category, usage detail, and item rows.
 5. Never invent receipt contents from blurry images. If the receipt or item list is uncertain, show the extracted text and get user confirmation before writing files or entering K-에듀파인.
 

@@ -5,6 +5,10 @@ description: >-
   pipeline in v/. Use when the user asks to summarize missed morning brief
   videos, run backlog/catch-up after downtime, fix personal-youtube-gemini-kakao-automation,
   or process 체슬리모닝브리프/모닝브리프 videos through Gemini and Discord.
+metadata:
+  category: 개인·생활
+  status: 운영
+  summary: 체슬리 모닝 브리프 YouTube 영상의 Gemini 요약 파이프라인을 실행하고 중단 기간의 요약 백로그를 처리한다.
 ---
 
 # 체슬리 모닝 브리프 자동화 (백로그 포함)

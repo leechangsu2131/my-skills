@@ -1,4 +1,4 @@
-with open('troubleshooting.md', 'r', encoding='utf-8') as f:
+with open('ISSUES.md', 'r', encoding='utf-8') as f:
     content = f.read()
 
 addition = """
@@ -13,5 +13,5 @@ addition = """
   2. `bounding_box()['y'] > 300` 조건을 추가하여, 상단의 오탐지 요소를 무시하고 실제 하단(품목내역)에 위치한 진짜 '행추가' 버튼만 정확하게 타격하도록 보완.
 """
 
-with open('troubleshooting.md', 'w', encoding='utf-8') as f:
+with open('ISSUES.md', 'w', encoding='utf-8') as f:
     f.write(content.replace('---', addition + '\n---'))

@@ -1,6 +1,10 @@
 ---
 name: personal-carrot
 description: 당근마켓 매물 자동 수집 시스템 (Appium 기반)
+metadata:
+  category: 개인·생활
+  status: 개발
+  summary: Appium으로 Android 당근마켓 앱의 매물을 검색·수집해 Google Sheets에 기록한다.
 ---
 
 # 당근마켓 자동 수집 스킬

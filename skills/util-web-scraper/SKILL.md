@@ -1,6 +1,10 @@
 ---
 name: web-scraper
 description: "URL을 주면 자동으로 웹 페이지를 수집(scraping)하고 로컬 검색 인덱스를 업데이트합니다. EduSearch(edusearch 레포)와 연동하여 여러 사이트 자료를 한 곳에서 검색할 수 있게 해줍니다."
+metadata:
+  category: 공통 유틸
+  status: 개발
+  summary: URL의 페이지를 수집해 EduSearch 로컬 검색 인덱스를 갱신한다.
 ---
 
 # 웹 스크래퍼 + 로컬 검색 인덱서 스킬

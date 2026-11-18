@@ -1,6 +1,10 @@
 ---
 name: util-school-print
 description: "한글(HWP) OLE 자동화로 학년/반별 안내장을 배치 인쇄하고, 반 구분 간지를 자동 삽입하는 Windows 전용 스킬입니다."
+metadata:
+  category: 공통 유틸
+  status: 운영
+  summary: Windows 한글(HWP) 자동화로 학년/반별 안내장을 배치 인쇄하고 반별 간지를 넣는다.
 ---
 
 # 학교 안내장 반별 자동 인쇄 스킬
@@ -124,4 +128,4 @@ Get-Printer | Select-Object Name, Default | Format-Table -AutoSize
 
 ## 디버깅 및 트러블슈팅 기록
 
-프린터의 용지함(트레이) 제어 오류(액세스 거부) 해결 과정과 OLE 자동화 권한 문제 회피(Level 9)에 대한 개발 비하인드 스토리는 [TROUBLESHOOTING.md](./TROUBLESHOOTING.md)에 상세히 기록되어 있습니다. 향후 환경이 바뀌거나 프린터가 변경되어 비슷한 문제가 발생하면 참고하시기 바랍니다.
+프린터의 용지함(트레이) 제어 오류(액세스 거부) 해결 과정과 OLE 자동화 권한 문제 회피(Level 9)에 대한 개발 비하인드 스토리는 [ISSUES.md](./TROUBLESHOOTING.md)에 상세히 기록되어 있습니다. 향후 환경이 바뀌거나 프린터가 변경되어 비슷한 문제가 발생하면 참고하시기 바랍니다.

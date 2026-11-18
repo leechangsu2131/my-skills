@@ -1,6 +1,10 @@
 ---
 name: teacherlesson-courseware-builder
 description: Design reusable lesson packages and learning materials, then adapt them to a supported learning platform such as AIEP Courseware or ClassTool. Use when a teacher wants a lesson planned, its files organized, or the package prepared for a learning site; check each platform's actual response and publishing capabilities separately.
+metadata:
+  category: 수업·교사 도구
+  status: 운영
+  summary: 플랫폼 공통 수업 패키지와 자료를 설계하고, AIEP·클래스툴 등 사이트별 어댑터로 콘텐츠 배치, 학생 응답 방식, 공개/배포 범위를 구분해 제작한다. 새 플랫폼은 어댑터와 카탈로그 항목으로 확장한다.
 ---
 
 # 학습 플랫폼 수업꾸러미 제작
@@ -12,7 +16,7 @@ description: Design reusable lesson packages and learning materials, then adapt 
 - 사용자가 사이트나 URL을 지정하면 그 플랫폼을 선택한다.
 - AIEP는 [AIEP 어댑터](platforms/aiep.md)와 [AIEP 전용 스킬](../teacherlesson-aiep-courseware/SKILL.md)을 읽는다.
 - 클래스툴은 [클래스툴 어댑터](platforms/classtool.md)와 [클래스툴 전용 스킬](../teacherlesson-classtool-courseware/SKILL.md)을 읽는다.
-- 새 플랫폼은 로그인된 실제 화면이나 공식 문서를 확인한 뒤 `platforms/<platform>.md`로 추가한다. 실제 편집 절차가 충분히 다르면 전용 하위 스킬도 추가하고 `skills/SKILLS_CATALOG.md`를 갱신한다.
+- 새 플랫폼은 로그인된 실제 화면이나 공식 문서를 확인한 뒤 `platforms/<platform>.md`로 추가한다. 실제 편집 절차가 충분히 다르면 전용 하위 스킬도 추가하고 새 스킬의 `SKILL.md` 앞머리(metadata)를 채우고 `python tools/build_catalog.py`로 루트 `CATALOG.md`를 갱신한다.
 - 플랫폼의 작성 화면에 로그인할 수 없으면 확인된 공개 문서만으로 초안을 만들고, 실제 메뉴·업로드·게시 동작은 확인되지 않았다고 표시한다. 계정 비밀번호를 기록하지 않는다.
 
 ## 공통 제작 절차

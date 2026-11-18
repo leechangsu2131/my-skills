@@ -4,6 +4,10 @@ description: >-
   Collects media URLs exposed as frame URLs by the native player on krcls.kr,
   using the user's already-authenticated Chrome session. Use when the user asks
   to save lesson media addresses locally; does not download video files.
+metadata:
+  category: 개인·생활
+  status: 운영
+  summary: '`krcls.kr`의 기존 로그인 Chrome(CDP 9222)에서 플레이어 프레임에 노출된 미디어 URL을 확인해 CSV/Markdown으로 저장하고, 차시별 진도를 전후 비교한다. 영상은 다운로드하지 않는다.'
 ---
 
 # 강의 미디어 URL 수집

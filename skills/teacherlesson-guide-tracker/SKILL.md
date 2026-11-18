@@ -1,6 +1,10 @@
 ---
 name: teacher-guide-notion-tracker
 description: 지도서 분할기의 groups.json을 읽어 노션 진도표 DB를 자동 생성
+metadata:
+  category: 수업·교사 도구
+  status: 운영
+  summary: 분할기의 `groups.json`을 읽어 Notion 과목별 진도표 데이터베이스를 만든다.
 ---
 
 # teacher-guide-notion-tracker

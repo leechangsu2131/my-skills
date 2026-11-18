@@ -6,6 +6,10 @@ risk: safe
 source: community
 date_added: "2026-03-01"
 tags: ["education", "korean", "evaluation", "classroom-management"]
+metadata:
+  category: 학생 기록·평가
+  status: 운영
+  summary: 학생 누적 기록을 바탕으로 학기말 교과 평가와 종합발달상황 문장을 생성한다.
 ---
 
 # 학기말 평가 문장 생성기 (Student Eval Generator)

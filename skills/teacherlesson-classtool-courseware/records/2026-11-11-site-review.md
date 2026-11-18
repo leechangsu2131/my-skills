@@ -21,4 +21,4 @@
 
 - 상위 `teacherlesson-courseware-builder`는 수업 설계, 폴더 표준, 학생 응답 방식 표기와 게시 전 검토를 관리한다.
 - 플랫폼 기능과 입력 절차는 `platforms/` 어댑터 및 전용 스킬로 분리한다.
-- 새 플랫폼이 추가되면 이 기록 형식을 참고하고 `skills/SKILLS_CATALOG.md`를 갱신한다.
+- 새 플랫폼이 추가되면 이 기록 형식을 참고하고 새 스킬의 `SKILL.md` 앞머리(metadata)를 채우고 `python tools/build_catalog.py`로 루트 `CATALOG.md`를 갱신한다.

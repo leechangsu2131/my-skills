@@ -1,6 +1,10 @@
 ---
 name: teacherlesson-classtool-courseware
 description: Build and organize ClassTool lesson-library materials, activity sequences, and interactive class sessions. Use when a teacher wants ClassTool-specific lesson design or site entry; distinguish public teacher-resource sharing from student access through a selected class.
+metadata:
+  category: 수업·교사 도구
+  status: 운영
+  summary: 클래스툴의 내 수업 보관함에서 수업자료를 설계하고, 링크·콘텐츠·OX·객관식·주관식·화이트보드 활동을 구성한다. 교사 자료실 공개와 학생 클래스 배포, 실시간 응답 흐름을 구분한다.
 ---
 
 # 클래스툴 수업자료 제작

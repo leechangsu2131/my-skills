@@ -166,4 +166,4 @@
 - 화면 본문 전체를 raw 원문과 눈으로 대조했으면 manual-screen-body-match라고 기록한다. UIA 전체 본문을 가져와 SHA-256을 계산하고 source body hash와 일치시켰을 때만 exact UIA hash라고 기록한다. stale, 잘린 본문, 모호한 인용 경계, 복수의 본문 후보가 있으면 sender를 확정하지 않는다.
 - 첨부 아이콘이나 인라인 사진은 식별에 필요한 범위에서 화면에 표시된 사실만 기록한다. 사용자 범위에서 제외된 첨부는 열거나 저장하지 않는다.
 - 새 발신자 sidecar는 날짜 포함 source SHA, sequence, row/body SHA, received_date, 화면 머리글, 검색어, 결과 수, 검증 방식을 묶는다. 새 dated JSONL에서 apply_sender_backfill.py로 적용하고, 월별 집계 후 Markdown을 다시 만든다.
-- 사용자 문서 교체 전에는 README와 각 월별 파일의 기존 버전을 별도 새 폴더에 보존한다. 교체 뒤에는 staging 결과와 최종 파일 네 개 각각의 SHA-256을 대조한다. 다음 재개를 위해 마지막 앱 선택/검색어, 다음 미확인 sequence, 배치별 count/hash를 NEXT_STEPS.md에 남긴다.
+- 사용자 문서 교체 전에는 README와 각 월별 파일의 기존 버전을 별도 새 폴더에 보존한다. 교체 뒤에는 staging 결과와 최종 파일 네 개 각각의 SHA-256을 대조한다. 다음 재개를 위해 마지막 앱 선택/검색어, 다음 미확인 sequence, 배치별 count/hash를 ISSUES.md에 남긴다.

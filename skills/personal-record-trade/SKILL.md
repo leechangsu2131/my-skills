@@ -1,6 +1,10 @@
 ---
 name: personal-record-trade
 description: "Use this skill when Codex needs to record a new trade entry in the user's Google Sheets trade journal from natural language, brokerage screenshots, or parsed execution details. This skill is for trade-entry capture and append workflows using the existing 2_add_trade.py script. For portfolio analysis, return checks, rebalancing signals, trade-signal review, journal review, or Google Sheets range-based inspection, use $personal-analyze-trade instead."
+metadata:
+  category: 개인·생활
+  status: 운영
+  summary: 자연어·거래 화면 캡처 등에서 새 매매 내역을 정리해 Google Sheets 매매일지에 추가한다.
 ---
 
 # Personal Record Trade

@@ -6,7 +6,7 @@ Gemini 또는 Antigravity 계열 IDE에서 이 저장소를 이어받는다면 �
 
 1. `CLAUDE.md`
 2. `PLANS.md`
-3. `TROUBLESHOOTING.md`
+3. `ISSUES.md`
 4. `docs/superpowers/notes/2026-05-23-implied-valuation-conversation.md`
 5. `docs/superpowers/specs/2026-05-24-samsung-electro-implied-valuation-design.md`
 

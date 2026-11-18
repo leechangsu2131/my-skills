@@ -1,6 +1,10 @@
 ---
 name: personal-mp3-baby
 description: Create Korean SRT subtitles for baby bedtime-story MP3s so a caregiver can identify stories and seek past unwanted sections. Use when the user provides audio files or asks to transcribe, subtitle, inspect, or skip stories in a bedtime-story recording.
+metadata:
+  category: 개인·생활
+  status: 운영
+  summary: 아기 잠자리동화 MP3를 한국어 타임코드 SRT로 전사해 이야기 구간을 찾아 넘길 수 있게 한다.
 ---
 
 # 아기 잠자리동화 MP3 자막

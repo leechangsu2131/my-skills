@@ -1,6 +1,11 @@
 ---
 name: teacher-schedule
 description: "Google Sheets 기반 교사 수업 관리 스킬. schedule.py, bridge_sheet.py, auto_planner.py, server.py, src/를 함께 다루며 진도표와 수업배치 시트를 분리해 유지한다."
+metadata:
+  category: 수업·교사 도구
+  status: 운영
+  version: v1.0.0
+  summary: Google Sheets 기반 교사 수업 진도·수업 배치 관리와 자동 시간표 계획 기능을 다룬다.
 ---
 
 # Teacher Schedule Skill

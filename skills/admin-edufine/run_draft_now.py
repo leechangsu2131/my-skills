@@ -3,7 +3,7 @@
 """
 run_draft_now.py
 경량 CDP(WebSocket) 직결 방식으로 에듀파인 기안 자동화 실행
-ing.md 수칙 9번: connect_over_cdp 락 회피 → 탭별 webSocketDebuggerUrl 직결
+ISSUES.md 수칙 9번: connect_over_cdp 락 회피 → 탭별 webSocketDebuggerUrl 직결
 """
 
 import asyncio

@@ -1,6 +1,10 @@
 ---
 name: teacher-guide-sheet-mapper
 description: "D:\\지도서의 지도서 원본과 분할 결과를 읽어 진도표 행을 만들고 업로드하는 전용 도구입니다."
+metadata:
+  category: 수업·교사 도구
+  status: 운영
+  summary: 지도서 및 분할 결과에서 진도표 행을 만들고 시트 업로드용 데이터를 생성한다.
 ---
 
 # Teacher Guide Sheet Mapper

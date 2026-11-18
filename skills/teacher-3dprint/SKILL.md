@@ -1,6 +1,10 @@
 ---
 name: teacher-3dprint
 description: Design classroom-friendly 3D-printable models and deliver usable STL files, including data-based terrain models when real elevation data is required.
+metadata:
+  category: 수업·교사 도구
+  status: 개발
+  summary: 수업 아이디어·물체·지형을 실제 출력 가능한 STL로 설계한다. 실측 지형, 기능 부품, 식품 몰드 참고 절차와 독도 지형 예제가 있다.
 ---
 
 # Teacher 3D Print

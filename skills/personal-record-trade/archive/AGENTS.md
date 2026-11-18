@@ -1,6 +1,6 @@
 # AGENTS.md
 
-이 저장소의 표준 에이전트 지침은 `CLAUDE.md`입니다. Codex, Claude, Gemini, Cursor, Windsurf 등 어떤 IDE/에이전트에서 이어받더라도 먼저 `CLAUDE.md`, `PLANS.md`, `TROUBLESHOOTING.md`를 읽고 작업하세요.
+이 저장소의 표준 에이전트 지침은 `CLAUDE.md`입니다. Codex, Claude, Gemini, Cursor, Windsurf 등 어떤 IDE/에이전트에서 이어받더라도 먼저 `CLAUDE.md`, `PLANS.md`, `ISSUES.md`를 읽고 작업하세요.
 
 핵심 요약:
 

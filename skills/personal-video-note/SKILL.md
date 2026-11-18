@@ -5,6 +5,11 @@ description: >-
   For YouTube URLs, checks and extracts available captions before speech recognition.
   Use for archiving, transcription, slide extraction, or Obsidian notes. Preserves
   timestamps and does not present automatic transcripts as fully accurate.
+metadata:
+  category: 개인·생활
+  status: 운영
+  version: v0.2.6
+  summary: YouTube 자막을 먼저 조회·추출하고, 권한 있는 강의 영상에서 슬라이드 캡처·타임스탬프 전사·Obsidian용 노트를 로컬 생성한다. 같은 슬라이드의 누적 공개 화면은 대표 화면으로 통합하고, 이미지 링크와 `slides/` 구성을 유지한다. 외부 AI에 영상을 자동 전송하지 않는다.
 ---
 
 # 개인 강의 영상 노트

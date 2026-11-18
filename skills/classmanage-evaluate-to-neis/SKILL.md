@@ -1,6 +1,10 @@
 ---
 name: classmanage-evaluate-to-neis
 description: Parse classmanage-iscream-evaluate achievement-level markdown tables and prepare or run safe NEIS achievement-level entry automation for gbe.neis.go.kr. Use when the user wants to enter 성취기준별 성취수준/단계(매우잘함, 잘함, 노력요함, 미응시) from 2026_1학기_성취기준별_단계배정표.md or similar class evaluation tables into NEIS, especially by reusing admin-neis-bot browser automation patterns.
+metadata:
+  category: 학생 기록·평가
+  status: 운영
+  summary: Markdown 성취수준 배정표를 읽어 NEIS 입력 자료를 준비하고, 확인·시험 실행 뒤 입력 자동화를 수행한다.
 ---
 
 # Classmanage Evaluate To NEIS

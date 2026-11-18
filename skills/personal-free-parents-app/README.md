@@ -33,4 +33,4 @@ flutter test
 flutter build apk --debug
 ```
 
-네이버 지도 설정과 변경 이력은 [ing.md](ing.md), 화면·제품 원칙은 [SKILL.md](SKILL.md)에 정리되어 있습니다.
+네이버 지도 설정과 변경 이력은 [ISSUES.md](ISSUES.md), 화면·제품 원칙은 [SKILL.md](SKILL.md)에 정리되어 있습니다.

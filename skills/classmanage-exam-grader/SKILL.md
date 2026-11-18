@@ -1,6 +1,10 @@
 ---
 name: classmanage-exam-grader
 description: Local-first exam grading workstation with blank-template alignment, grouped student PDF support, teacher review, and annotated feedback PDFs.
+metadata:
+  category: 학생 기록·평가
+  status: 운영
+  summary: 로컬 시험 채점 워크스테이션. 템플릿 정렬, 학생 PDF 묶음 처리, 교사 검토, 피드백 표시 PDF 생성을 지원한다.
 ---
 
 # classmanage-exam-grader

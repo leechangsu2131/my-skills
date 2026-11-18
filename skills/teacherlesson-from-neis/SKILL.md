@@ -1,6 +1,11 @@
 ---
 name: teacherlesson-from-neis
 description: "NEIS 주간학습안내에서 날짜·교시별 수업내용을 읽어 오늘/주간/월간 수업 뷰어에 표시하는 읽기 전용 스킬."
+metadata:
+  category: 수업·교사 도구
+  status: 운영
+  version: Chrome 확장 v1.1.0
+  summary: NEIS 주간학습안내를 읽어 등록된 주차를 자동 동기화하고, 오늘 수업 플로팅 패널과 로컬 주간·월간 뷰어에 표시한다. 조회 전용이며 자료는 이 PC의 Chrome 저장소와 로컬 뷰어에서 관리한다.
 ---
 
 # Teacher Lesson From NEIS

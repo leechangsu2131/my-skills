@@ -1,6 +1,10 @@
 ---
 name: hitalk-score-sender
 description: Send individualized HiTalk messages from HiClass using a Google Sheet roster and a reusable text template. Use when working in HiTalk to send parents or students personalized messages such as score notices, learning-support invitations, counseling follow-ups, participation requests, or other small-batch classroom notices. This skill fits especially well when only a subset of students should receive a message and the wording should be previewed before sending.
+metadata:
+  category: 학교 행정
+  status: 운영
+  summary: Google Sheets 명단과 템플릿으로 학생·학부모별 HiTalk 메시지를 작성한다. 미리보기·리허설 후 발송할 수 있다.
 ---
 
 # HiTalk Individual Sender

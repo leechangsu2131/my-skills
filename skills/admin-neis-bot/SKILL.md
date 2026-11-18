@@ -98,7 +98,7 @@ description: 나이스(NEIS) 교외체험학습 신청서/보고서 및 결석�
    - `cmbBgngH` / `cmbBgngM`: 시작시 / 시작분
    - `cmbEndH` / `cmbEndM`: 종료시 / 종료분
    - `ipbWorkSittnRsnCn`: 사유 (예: "도서관 방문")
-   - `mse1`: 비상연락처 (예: "***REMOVED***")
+   - `mse1`: 비상연락처 (중앙 .env 의 `NEIS_EMERGENCY_CONTACT`)
    - 각 컨트롤에 `cpr.events.CUIEvent("value-change")` 및 `selection-change`를 디스패치하여 나이스 비즈니스 로직(시간 합계 계산 `nbeWorkSittnHrTtl`)이 자동 실행되도록 한다.
 4. **검증 및 사용자 확인**:
    - 합계 시간 및 일수(`nbeWorkSittnHrTtl`, `nbeWorkSittnDdTtl`) 자동 계산 결과 확인 후 화면 캡처 제시, 사용자가 직접 [승인요청]을 클릭하도록 안내한다.

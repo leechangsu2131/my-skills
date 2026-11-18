@@ -12,7 +12,9 @@ except ImportError:
     print("❌ browser-cookie3가 없습니다: pip install browser-cookie3")
     import sys; sys.exit(1)
 
-OUTPUT_PATH = Path(__file__).parent / "auth" / "google_session.json"
+import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(next(p / "_shared" for p in _pl.Path(__file__).resolve().parents if (p / "_shared" / "skill_env.py").is_file())))
+from skill_env import data_dir
+OUTPUT_PATH = data_dir("util-pdf-translator", "auth") / "google_session.json"  # 로그인 정보: 깃 밖
 
 print("🍪 Chrome Google 쿠키 추출 중...")
 

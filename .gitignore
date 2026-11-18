@@ -119,3 +119,7 @@ skills/output/
 **/rollout-*.jsonl
 **/neis-achievement-levels*
 *.bundle
+/skills/*/scripts/auth/
+skills/*/result/
+**/.bkit/
+**/verify_*.png

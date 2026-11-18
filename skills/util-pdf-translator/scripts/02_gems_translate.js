@@ -72,11 +72,12 @@ function saveTranslation(chapterNum, title, text) {
   return outputPath;
 }
 
-// auth 세션 경로
-const SESSION_PATH = path.join(__dirname, "auth", "google_session.json");
+// auth 세션 경로 — 로그인 정보라 깃 밖(내 문서\my-skills-data\util-pdf-translator\auth)에 둔다
+const AUTH_DIR = require(path.join(__dirname, "..", "..", "_shared", "skill_env.js")).dataDir("util-pdf-translator", "auth");
+const SESSION_PATH = path.join(AUTH_DIR, "google_session.json");
 
 async function saveGoogleSession() {
-  const authDir = path.join(__dirname, "auth");
+  const authDir = AUTH_DIR;
   const profilePath = path.join(authDir, "playwright_profile");
   if (!fs.existsSync(authDir)) fs.mkdirSync(authDir, { recursive: true });
 

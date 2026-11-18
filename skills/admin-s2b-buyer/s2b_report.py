@@ -6,6 +6,8 @@ S2B 학교장터 - 구매 결과 Excel 리포트 생성 모듈
 
 import os
 from datetime import datetime
+import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(next(p / "_shared" for p in _pl.Path(__file__).resolve().parents if (p / "_shared" / "skill_env.py").is_file())))
+from skill_env import data_dir
 
 try:
     import openpyxl
@@ -73,9 +75,7 @@ def save_report(results: list, output_path: str = None) -> str:
 
     # 저장 경로 자동 생성 (result 폴더 내)
     if output_path is None:
-        base_dir = os.path.dirname(os.path.abspath(__file__))
-        result_dir = os.path.join(base_dir, 'result')
-        os.makedirs(result_dir, exist_ok=True)
+        result_dir = str(data_dir("admin-s2b-buyer", "result"))  # 내 문서\my-skills-data\admin-s2b-buyer\result
         now_str = datetime.now().strftime("%Y%m%d_%H%M%S")
         output_path = os.path.join(result_dir, f"s2b_구매결과_{now_str}.xlsx")
 

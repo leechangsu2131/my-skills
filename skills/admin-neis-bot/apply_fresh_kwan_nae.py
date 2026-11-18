@@ -3,6 +3,9 @@ import os
 import sys
 import time
 import json
+import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(next(p / "_shared" for p in _pl.Path(__file__).resolve().parents if (p / "_shared" / "skill_env.py").is_file())))
+from skill_env import load_env
+load_env()
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
@@ -38,7 +41,7 @@ js_fill_two = """
     
     var fullPurpose = '2026 AIEDAP 마스터교원 신규연수(초등 1차) 참석 화천초등학교-9604(2026. 9. 17.) 「[참석] 교육부 「2026 AIEDAP 마스터교원 신규연수 초등 1차」 대상자 선정 결과 및 연수 일정 안내」';
     var destination = '경상북도 경주시 더케이호텔 경주';
-    var contact = '***REMOVED***';
+    var contact = __CONTACT__;
     var transport = '자가용';
     
     function setControl(id, val) {
@@ -147,6 +150,7 @@ js_fill_two = """
 """
 
 time.sleep(1)
+js_fill_two = js_fill_two.replace('__CONTACT__', json.dumps(os.environ.get('NEIS_EMERGENCY_CONTACT', '')))  # 중앙 .env
 fill_info = driver.execute_script(js_fill_two)
 print('Fill info:')
 print(json.dumps(fill_info, ensure_ascii=False, indent=2))

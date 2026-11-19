@@ -123,3 +123,7 @@ skills/output/
 skills/*/result/
 **/.bkit/
 **/verify_*.png
+
+# Claude Code 개인 로컬 설정 (커밋하지 않음)
+.claude/settings.local.json
+CLAUDE.local.md

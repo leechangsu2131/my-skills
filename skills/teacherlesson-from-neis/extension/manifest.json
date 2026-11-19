@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "NEIS 오늘의 수업",
-  "version": "1.5.3",
+  "version": "1.5.4",
   "description": "NEIS 수업과 학생 출결·신청 현황을 Chrome에 저장해 보여줍니다.",
   "icons": {
     "16": "icons/icon16.png",

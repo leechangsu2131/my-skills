@@ -20,6 +20,44 @@ async function processSelectedAbsenceWorkOnNeis({ monthStart, monthEnd, batches 
     const menuId = "AMEDS40531";
     const appsFor = (targetId) => platform.getAllRunningAppInstances().filter((instance) => instance?.app?.id === targetId);
     const appFor = (targetId) => appsFor(targetId)[0] || null;
+    function approverPickerCandidates() {
+        return platform.getAllRunningAppInstances().filter((instance) => {
+            if (instance?.app?.id === approverAppId) return true;
+            return Boolean(instance?.lookup("dsParam")?.getRowCount
+                && instance?.lookup("dsMain")?.getRowCount
+                && instance?.lookup("grdUserListFrom")?.selectRows
+                && instance?.lookup("grdUserListTo")?.setCheckRowIndex
+                && instance?.lookup("btn15")?.click);
+        });
+    }
+    function isApproverPickerVisible(instance) {
+        const grid = instance?.lookup("grdUserListFrom");
+        const element = grid?.uuid ? document.getElementById(`uuid-${grid.uuid}`) : null;
+        const bounds = element?.getBoundingClientRect();
+        return Boolean(bounds?.width && bounds?.height && getComputedStyle(element).visibility !== "hidden");
+    }
+    async function waitForApproverPicker(timeoutMs) {
+        const until = Date.now() + timeoutMs;
+        let candidateCount = 0;
+        let visibleCount = 0;
+        while (Date.now() < until) {
+            const candidates = approverPickerCandidates();
+            const visible = candidates.filter(isApproverPickerVisible);
+            candidateCount = candidates.length;
+            visibleCount = visible.length;
+            if (visible.length === 1) return { instance: visible[0], candidateCount, visibleCount };
+            await sleep(150);
+        }
+        return { instance: null, candidateCount, visibleCount };
+    }
+    async function waitForApproverPickerClosed(timeoutMs) {
+        const until = Date.now() + timeoutMs;
+        while (Date.now() < until) {
+            if (!approverPickerCandidates().length) return true;
+            await sleep(150);
+        }
+        return false;
+    }
     function isListVisible(instance) {
         const grid = instance?.lookup("grdMain");
         const element = grid?.uuid ? document.getElementById(`uuid-${grid.uuid}`) : null;
@@ -150,7 +188,7 @@ async function processSelectedAbsenceWorkOnNeis({ monthStart, monthEnd, batches 
     try {
         instance = await openListApp();
         if (appsFor(appId).length !== 1) throw new Error("결석신고서 목록 화면이 하나인지 확인하지 못해 처리를 중단했습니다.");
-        if (appsFor(detailAppId).length || appsFor(draftAppId).length || appsFor(approverAppId).length) {
+        if (appsFor(detailAppId).length || appsFor(draftAppId).length || approverPickerCandidates().length) {
             throw new Error("결석신고서 상세창 또는 결재창이 이미 열려 있습니다. 창을 정리한 뒤 처리대상을 다시 조회해 주세요.");
         }
         if (!setControlValue(instance, "dtAbeBgngYmd", monthStart.replace(/-/g, ""))
@@ -286,7 +324,7 @@ async function processSelectedAbsenceWorkOnNeis({ monthStart, monthEnd, batches 
 
         for (const batch of approvalBatches) {
             if (appsFor(appId).length !== 1 || appsFor(detailAppId).length
-                || appsFor(draftAppId).length || appsFor(approverAppId).length) {
+                || appsFor(draftAppId).length || approverPickerCandidates().length) {
                 throw new Error("상신 전 결석신고서 목록이나 결재 창이 중복/변경되어 처리를 멈췄습니다.");
             }
             await search(instance);
@@ -337,7 +375,7 @@ async function processSelectedAbsenceWorkOnNeis({ monthStart, monthEnd, batches 
             if (checkedIds.size !== expectedIds.size || [...expectedRows].some((row) => !grid.getCheckRowIndices().includes(row))) {
                 throw new Error("그리드에서 선택한 승인요청 대상을 확인하지 못해 상신하지 않았습니다.");
             }
-            if (appsFor(draftAppId).length || appsFor(approverAppId).length) {
+            if (appsFor(draftAppId).length || approverPickerCandidates().length) {
                 throw new Error("기존 결재창이 열려 있어 중복 상신을 막았습니다. 창의 상태를 확인한 뒤 다시 조회해 주세요.");
             }
             const submitButton = instance.lookup("btnUpdateCancel3");
@@ -346,10 +384,16 @@ async function processSelectedAbsenceWorkOnNeis({ monthStart, monthEnd, batches 
             const draft = await waitForApp(draftAppId, 10000);
             if (!draft || appsFor(draftAppId).length !== 1) throw new Error("승인요청 결재선 화면이 하나인지 확인하지 못했습니다. NEIS에서 처리 상태를 확인해 주세요.");
             const selectApproversButton = draft.lookup("btnSelectSancr");
-            if (!selectApproversButton?.click) throw new Error("결재자 지정 화면을 열지 못했습니다.");
+            if (!selectApproversButton?.click || selectApproversButton.enabled === false) throw new Error("NEIS 기안 화면의 결재자 지정 버튼이 비활성 상태입니다.");
             selectApproversButton.click();
-            const approverPopup = await waitForApp(approverAppId, 10000);
-            if (!approverPopup || appsFor(approverAppId).length !== 1) throw new Error("결재자 선택 창이 하나인지 확인하지 못했습니다.");
+            const pickerState = await waitForApproverPicker(15000);
+            const approverPopup = pickerState.instance;
+            if (!approverPopup) {
+                throw new Error(`NEIS 결재자 선택 창을 확인하지 못했습니다 (창 후보 ${pickerState.candidateCount}개, 화면에 보이는 창 ${pickerState.visibleCount}개). 상신하지 않았습니다.`);
+            }
+            if (approverPickerCandidates().filter(isApproverPickerVisible).length !== 1) {
+                throw new Error("NEIS 화면에 결재자 선택 창이 여러 개 보여 중복 지정을 막았습니다.");
+            }
             const approverDataset = approverPopup.lookup("dsMain");
             const selectedApproverDataset = approverPopup.lookup("dsParam");
             const approverGrid = approverPopup.lookup("grdUserListFrom");
@@ -424,8 +468,8 @@ async function processSelectedAbsenceWorkOnNeis({ monthStart, monthEnd, batches 
             const saveApproverButton = approverPopup.lookup("btn4");
             if (!saveApproverButton?.click) throw new Error("결재선을 지정할 수 없습니다.");
             saveApproverButton.click();
-            await waitForApp(approverAppId, 5000, false);
-            if (appFor(approverAppId)) throw new Error("결재자 선택 창이 닫히지 않아 상신을 중단했습니다.");
+            await waitForApproverPickerClosed(5000);
+            if (approverPickerCandidates().length) throw new Error("결재자 선택 창이 닫히지 않아 상신을 중단했습니다.");
             const currentDraft = appFor(draftAppId);
             const draftApproverDataset = currentDraft?.lookup("dsSancr");
             if (!draftApproverDataset?.getRowCount) throw new Error("결재자 지정 후 기안 화면의 결재선 데이터를 확인하지 못했습니다.");
@@ -435,7 +479,7 @@ async function processSelectedAbsenceWorkOnNeis({ monthStart, monthEnd, batches 
                 const roleCode = text(valueAt(draftApproverDataset, row, "atrzScCd"), 4);
                 const sequence = Number(valueAt(draftApproverDataset, row, "atrzSeqSn"));
                 if (roleName === "기안" || (roleCode === "1" && sequence === 0)) continue;
-                draftApprovers.push(text(valueAt(draftApproverDataset, row, "sancrUserNm"), 40));
+                draftApprovers.push(text(valueAt(draftApproverDataset, row, "userNm"), 40));
             }
             if (draftApprovers.length !== batch.approvers.length
                 || draftApprovers.some((name, index) => name !== batch.approvers[index])) {

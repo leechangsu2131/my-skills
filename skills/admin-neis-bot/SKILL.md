@@ -20,6 +20,7 @@ metadata:
 > 나이스(NEIS) 관련 모든 작업(출장, 근태, 결석, 연수, 시간표, 누가기록 등)을 시작하기 전, **반드시 [ing.md](file:///C:/Users/user/.gemini/antigravity/scratch/repos/my-skills/skills/admin-neis-bot/ing.md)를 먼저 읽고 과거에 겪었던 실패와 오류 수정 과정(트러블슈팅 이력)을 완벽히 숙지한 후 진행**해야 합니다.
 > - **주요 실패/극복 사례**: 데이터셋 직접 수정 시 `ErrorCode: -1` 발생 원인과 해결책(하이브리드 UI 이벤트 주입), 그리드 체크박스 버퍼 미반영, 세션 격리(Session 0/1), 다중 출장자 동기화(`btnDdHr.click()`), 동명이인 검증 기준 등 실전 노하우가 집대성되어 있습니다.
 > - **새로운 작업 완료 후**: 새로 발견한 예외 상황이나 실패를 극복한 해법이 있다면 즉시 `ing.md`에 새로운 날짜의 일지로 기록하여 지식을 누적 보존해야 합니다.
+> - **[ISSUES.md](ISSUES.md)도 반드시 확인**: CDP 직접 연결, 탭 고정(`NEIS_TAB`), 메뉴 선택창 누적, 늦게 뜨는 확인창, **결재자지정(p04) 검증 순서** 등 2026-11-19 이후 문제·해결이 ISSUE-00N 형식으로 정리되어 있습니다. (`ing.md`가 없으면 ISSUES.md가 기준)
 
 ---
 
@@ -38,6 +39,7 @@ metadata:
 | **"시간표 최적화"** (편차 0) | 연간 수업시수표 | `neis_collect_semester_timetable.py` → `neis_execute_save_final.py` | 분석 후 승인 시 DB 반영 |
 | **"근무상황 신청해줘"**<br>**"조퇴/연가/외출/지각 신청"** | 신청 종류(조퇴 등), 시간, 사유 | `edu/ga/srv/mym/mm/srv_mymmm00_p00` (하이브리드 UI 제어) | 폼 입력 후 화면 확인 및 승인요청 |
 | **"나이스 로그인/상태 봐줘"** | Chrome 9222 포트 | `check_chrome.py`, `open_neis_sso.py` | 상태 진단 및 SSO 탭 복구 |
+| **"PAPS 마감/제출"**<br>**"건강체력평가 누락 확인"** | 없음 (나이스 조회) | [references/paps-submission-workflow.md](references/paps-submission-workflow.md) 절차 | 누락·마감 상태 조회까지만 자동, 마감·승인요청·제출은 사용자 확인 후 |
 
 ### 1. 연수 이수실적 등록 표준 워크플로우
 1. **이수증 분석**: 제공된 이수증(PDF/이미지)에서 연수명, 이수시간, 연수기간, 연수기관, 직무연수구분, 이수번호를 PyMuPDF(`fitz`)로 추출.

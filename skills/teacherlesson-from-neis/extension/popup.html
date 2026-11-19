@@ -20,10 +20,31 @@
       <button id="weekButton" class="button secondary" type="button">현재 주 가져오기</button>
       <button id="monthButton" class="button primary" type="button">선택한 달 가져오기</button>
       <button id="studentButton" class="button students" type="button">오늘 출결·결석·체험학습 현황 조회</button>
-      <p class="student-scope">오늘 출결과 이번 달 결석 신고서, NEIS 기본조건의 체험학습 신청서를 읽어 이 PC에 저장합니다.</p>
+      <p class="student-scope">조회가 끝나면 패널이 학생 현황 탭으로 전환됩니다. 오늘 출결과 이번 달 결석·NEIS 기본조건의 체험학습 신청목록을 이 PC에 저장합니다.</p>
+      <details id="approvalSettings" class="approval-settings">
+        <summary>신청 유형별 NEIS 개인결재선 기준 저장·관리</summary>
+        <p>결재자 이름과 순서는 이 Chrome 프로필에만 저장됩니다. 승인요청을 실행하면 NEIS에 저장된 개인결재선 중 이름과 순서가 정확히 일치하는 선을 불러옵니다. 일치하지 않거나 여러 개면 상신하지 않습니다.</p>
+        <div id="approvalProfiles" class="approval-profiles"></div>
+        <button id="addApprovalProfileButton" class="button secondary" type="button">신청 유형 결재선 추가</button>
+      </details>
+      <button id="reviewAbsenceButton" class="button action-review" type="button">결석신고 접수·상신 대상 확인</button>
+      <p class="action-scope">선택한 달의 접수대기·접수 후 미상신 건만 다시 조회합니다. 신청 내용과 필요 시 담임/교사 사유를 보완하고, 접수대기 건은 접수 저장 후 NEIS 개인결재선을 불러와 승인요청합니다.</p>
+      <section id="actionPanel" class="action-panel" hidden aria-label="결석신고 처리 대상">
+        <div id="actionStatus" class="action-status" role="status" aria-live="polite"></div>
+        <div class="action-toolbar">
+          <button id="selectAllAbsenceButton" class="button secondary" type="button">모두 선택</button>
+          <button id="clearAbsenceSelectionButton" class="button secondary" type="button">선택 해제</button>
+        </div>
+        <div id="actionCandidates" class="action-candidates"></div>
+        <div id="actionPreview" class="action-preview" hidden>
+          <p id="actionPreviewText"></p>
+          <p id="actionSelectionSummary" class="action-selection-summary"></p>
+          <button id="actionExecuteButton" class="button action-run" type="button" disabled>선택 건 접수 · 결재 상신</button>
+        </div>
+      </section>
       <div id="status" role="status" aria-live="polite">NEIS에서 주간학습을 한 번 조회하면 등록된 나머지 주차도 자동으로 가져옵니다.</div>
       <button id="viewerButton" class="viewer-link" type="button">오늘의 수업 뷰어 열기 ↗</button>
-      <p class="privacy">표시용 수업·출결 필드만 이 Chrome 프로필에 저장합니다. 사유와 연락처는 가져오지 않고 NEIS 신청·결재는 하지 않습니다.</p>
+      <p class="privacy">신청 사유·보호자 연락처는 저장하지 않습니다. 결재자 이름·순서 기준만 이 PC의 Chrome 로컬 저장소에 보관하며, 실제 결재선은 NEIS에 저장된 개인결재선에서 불러옵니다. 접수·승인요청은 선택 건을 확인하고 실행한 경우에만 NEIS에 반영합니다. 최종 결재는 하지 않습니다.</p>
     </main>
     <script src="popup.js"></script>
   </body>

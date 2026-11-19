@@ -1,7 +1,7 @@
 # 스킬 카탈로그
 
 > 이 파일은 `python tools/build_catalog.py`로 자동 생성된다. 직접 고치지 말고 각 스킬의 `SKILL.md` 앞머리(`metadata`)를 고친 뒤 다시 실행한다.
-> 생성일: 2026-11-18 · 스킬 58개
+> 생성일: 2026-11-19 · 스킬 58개
 
 ## 빠른 찾기
 
@@ -23,7 +23,7 @@
 | `admin-hitalk-sender` | ✅ 운영 | - | Google Sheets 명단과 템플릿으로 학생·학부모별 HiTalk 메시지를 작성한다. 미리보기·리허설 후 발송할 수 있다. | [SKILL](skills/admin-hitalk-sender/SKILL.md) · [이슈](skills/admin-hitalk-sender/ISSUES.md) |
 | `admin-neis-bot` | ✅ 운영 | - | NEIS 체험학습·결석 서류 접수, 출장·연수 등록, 창체/동아리 기록, 시간표 작업 등 교사 행정을 자동화한다. | [SKILL](skills/admin-neis-bot/SKILL.md) · [이슈](skills/admin-neis-bot/ISSUES.md) |
 | `admin-s2b-buyer` | ✅ 운영 | - | CSV/Excel 품목을 S2B에서 검색해 견적서(장바구니)에 담고 처리 결과 엑셀을 만든다. 실제 구매 확정은 범위에 포함되지 않는다. | [SKILL](skills/admin-s2b-buyer/SKILL.md) · [이슈](skills/admin-s2b-buyer/ISSUES.md) |
-| `school-todo-kakao` | ✅ 운영 | - | 학교 공용 일정 시트와 내가 직접 적은 할 일을 **내 일정DB 시트 한 곳**에 모으고, 평일 아침마다 그날 일정을 카카오톡 **나에게 보내기**로 알려 주는 작은 파이썬 프로그램입니다. | [SKILL](skills/school-todo-kakao/SKILL.md) · [이슈](skills/school-todo-kakao/ISSUES.md) · [README](skills/school-todo-kakao/README.md) |
+| `school-todo-kakao` | ✅ 운영 | - | 학교 공용 일정 시트와 내가 직접 적은 할 일을 **내 일정DB 시트 한 곳**에 모으고, 평일 아침마다 그날 일정을 카카오톡 **나에게 보내기**로 알려 주는 작은 파이썬 프로그램입니다. | [SKILL](skills/school-todo-kakao/SKILL.md) · [이슈](skills/school-todo-kakao/ISSUES.md) |
 
 ## 학생 기록·평가
 
@@ -49,7 +49,7 @@
 | `teacherlesson-aiep-courseware` | ✅ 운영 | - | 상위 공통 수업꾸러미의 AIEP 어댑터. 경북 AIEP의 성취기준, LCMS·파일/링크 배치, 공개 범위와 학습 순서를 반영해 꾸러미를 만들고 학습자 미리보기를 점검한다. | [SKILL](skills/teacherlesson-aiep-courseware/SKILL.md) · [이슈](skills/teacherlesson-aiep-courseware/ISSUES.md) · [README](skills/teacherlesson-aiep-courseware/README.md) |
 | `teacherlesson-classtool-courseware` | ✅ 운영 | - | 클래스툴의 내 수업 보관함에서 수업자료를 설계하고, 링크·콘텐츠·OX·객관식·주관식·화이트보드 활동을 구성한다. 교사 자료실 공개와 학생 클래스 배포, 실시간 응답 흐름을 구분한다. | [SKILL](skills/teacherlesson-classtool-courseware/SKILL.md) · [이슈](skills/teacherlesson-classtool-courseware/ISSUES.md) |
 | `teacherlesson-courseware-builder` | ✅ 운영 | - | 플랫폼 공통 수업 패키지와 자료를 설계하고, AIEP·클래스툴 등 사이트별 어댑터로 콘텐츠 배치, 학생 응답 방식, 공개/배포 범위를 구분해 제작한다. 새 플랫폼은 어댑터와 카탈로그 항목으로 확장한다. | [SKILL](skills/teacherlesson-courseware-builder/SKILL.md) · [이슈](skills/teacherlesson-courseware-builder/ISSUES.md) |
-| `teacherlesson-from-neis` | ✅ 운영 | Chrome 확장 v1.1.0 | NEIS 주간학습안내를 읽어 등록된 주차를 자동 동기화하고, 오늘 수업 플로팅 패널과 로컬 주간·월간 뷰어에 표시한다. 조회 전용이며 자료는 이 PC의 Chrome 저장소와 로컬 뷰어에서 관리한다. | [SKILL](skills/teacherlesson-from-neis/SKILL.md) · [이슈](skills/teacherlesson-from-neis/ISSUES.md) · [README](skills/teacherlesson-from-neis/README.md) |
+| `teacherlesson-from-neis` | ✅ 운영 | Chrome 확장 v1.5.2 | NEIS 수업내용과 학생 출결·신청 현황을 조회해 뷰어에 표시하고, 신청 내용을 확인해 선택한 결석신고서만 결석 구분과 유형별 결재선을 적용해 접수·승인요청한다. 최종 결재는 하지 않는다. | [SKILL](skills/teacherlesson-from-neis/SKILL.md) · [이슈](skills/teacherlesson-from-neis/ISSUES.md) 🔵2 · [README](skills/teacherlesson-from-neis/README.md) |
 | `teacherlesson-guide-mapper` | ✅ 운영 | - | 지도서 및 분할 결과에서 진도표 행을 만들고 시트 업로드용 데이터를 생성한다. | [SKILL](skills/teacherlesson-guide-mapper/SKILL.md) · [이슈](skills/teacherlesson-guide-mapper/ISSUES.md) · [README](skills/teacherlesson-guide-mapper/README.md) |
 | `teacherlesson-guide-splitter` | ✅ 운영 | - | 지도서 PDF를 구조 신호에 따라 단원 또는 세부 항목으로 분할하고 그룹명을 보정한다. | [SKILL](skills/teacherlesson-guide-splitter/SKILL.md) · [이슈](skills/teacherlesson-guide-splitter/ISSUES.md) · [README](skills/teacherlesson-guide-splitter/README.md) |
 | `teacherlesson-guide-tracker` | ✅ 운영 | - | 분할기의 `groups.json`을 읽어 Notion 과목별 진도표 데이터베이스를 만든다. | [SKILL](skills/teacherlesson-guide-tracker/SKILL.md) · [이슈](skills/teacherlesson-guide-tracker/ISSUES.md) · [README](skills/teacherlesson-guide-tracker/README.md) |

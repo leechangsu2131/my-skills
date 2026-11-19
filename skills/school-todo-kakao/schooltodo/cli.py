@@ -17,7 +17,7 @@ from .db import CsvDb, SheetsDb, need
 from .envload import load_env, update_env_value
 from .inbox import plan_inbox
 from .kakao import KakaoError, list_friends, refresh_access_token, send_friends, send_memo
-from .message import build_message, build_weekly_trips, split_message
+from .message import IMMINENT_DAYS, build_message, build_weekend_message, build_weekly_trips, split_message
 from .sources import SourceError, fetch_rows, parse_today, parse_week, read_csv_file
 from .sync import plan_sync
 
@@ -100,27 +100,39 @@ def cmd_morning(args) -> int:
     today = _today(args)
     db = _open_db(args)
     rows = db.rows()
-    lines, count = build_message(rows, today)
+    task_day, imminent_days = _task_settings()
+    weekend = today.weekday() >= 5
+    if weekend:
+        # 주말에는 평소 메시지를 보내지 않고, 오늘 행사(출장 등)가 있을 때만 그것만 보낸다.
+        lines, count = build_weekend_message(rows, today)
+    else:
+        lines, count = build_message(rows, today, task_day=task_day, imminent_days=imminent_days)
     sync_failed = bool(os.environ.get("SYNC_FAILED"))
-    if sync_failed:
+    skip_if_empty = os.environ.get("SKIP_IF_EMPTY", "").lower() in ("1", "true")
+    send_main = not (count == 0 and (weekend or (skip_if_empty and not sync_failed)))
+    if send_main and sync_failed:
         lines.append("⚠ 공용 시트 동기화 실패: 일정이 최신이 아닐 수 있어요")
-    if os.environ.get("SKIP_IF_EMPTY", "").lower() in ("1", "true") and count == 0 and not sync_failed:
-        print("morning: 보낼 일정이 없어 건너뜀")
-        return 0
 
-    chunks = split_message(lines)
+    chunks = split_message(lines) if send_main else []
     weekly_uuids, weekly_day = _weekly_settings()
     weekly_due = args.weekly or today.weekday() == weekly_day
     wlines, wcount = build_weekly_trips(rows, today)
+    weekly_ready = weekly_due and bool(weekly_uuids) and wcount > 0
     if args.dry_run:
-        for i, c in enumerate(chunks, 1):
-            print(f"----- 메시지 {i}/{len(chunks)} ({len(c)}자) -----\n{c}")
+        if send_main:
+            for i, c in enumerate(chunks, 1):
+                print(f"----- 메시지 {i}/{len(chunks)} ({len(c)}자) -----\n{c}")
+        else:
+            print("----- 메시지 없음: " + ("주말이고 오늘 행사가 없어 보내지 않음" if weekend else "보낼 일정이 없어 건너뜀") + " -----")
         if weekly_due:
             if wcount:
                 for i, c in enumerate(split_message(wlines), 1):
                     print(f"----- 주간 출장 메시지 {i} ({len(c)}자) -----\n{c}")
             else:
                 print("----- 주간 출장 메시지: 이번 주 출장이 없어 보내지 않음 -----")
+        return 0
+    if not send_main and not weekly_ready:
+        print("morning: " + ("주말이고 오늘 행사가 없어 건너뜀" if weekend else "보낼 일정이 없어 건너뜀"))
         return 0
 
     rt_file = _new_rt_path()
@@ -143,8 +155,9 @@ def cmd_morning(args) -> int:
             send_memo(token, c, link)
         if friends:
             send_friends(token, friends, c, link)
-    print(f"morning: 카톡 {len(chunks)}통 전송, 일정 {count}건")
-    if weekly_due and weekly_uuids and wcount:
+    if send_main:
+        print(f"morning: 카톡 {len(chunks)}통 전송, 일정 {count}건")
+    if weekly_ready:
         wchunks = split_message(wlines)
         for i, c in enumerate(wchunks):
             if i:
@@ -167,6 +180,20 @@ def _new_rt_path():
     if name:
         return resolve_path(name)
     return (ENV_DIRS[-1] if ENV_DIRS else Path.cwd()) / "new_refresh_token.txt"
+
+
+def _task_settings() -> tuple[int | None, int]:
+    """'기한 있는 할 일'을 전부 보여 주는 요일(TASK_DAY: 0=월 … 6=일, 기본 월요일, 'daily'면 매일)과 임박 알림 일수(TASK_IMMINENT_DAYS, 기본 3)."""
+    raw = (os.environ.get("TASK_DAY") or "0").strip().lower()
+    if raw in ("daily", "매일", "-1"):
+        day = None
+    else:
+        day = int(raw) if raw.isdigit() and 0 <= int(raw) <= 6 else 0
+    try:
+        imminent = int((os.environ.get("TASK_IMMINENT_DAYS") or str(IMMINENT_DAYS)).strip())
+    except ValueError:
+        imminent = IMMINENT_DAYS
+    return day, max(imminent, 1)
 
 
 def _weekly_settings() -> tuple[list[str], int]:

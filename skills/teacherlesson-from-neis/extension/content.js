@@ -46,6 +46,7 @@
         .student-name { color:#264a4b;font-weight:900; }
         .student-meta { color:#607b83;overflow-wrap:anywhere; }
         .student-empty { padding:10px 4px;color:#77899e;font-size:10px; }
+        .student-warning { margin:3px 0 5px;padding:6px 7px;border-radius:7px;color:#8c5a35;background:#fff5eb;font-size:9px;line-height:1.4; }
         .collapsed .body { display:none; }
       </style>
       <section class="card" aria-label="오늘의 수업">
@@ -80,6 +81,25 @@
     const lessonsPanel = shadow.querySelector("#lessonsPanel");
     const studentsPanel = shadow.querySelector("#studentsPanel");
     let progressStatus = "";
+    let extensionContextLost = false;
+
+    function reportExtensionApiError(error) {
+        if (!/extension context invalidated/i.test(String(error?.message || error || ""))) return;
+        extensionContextLost = true;
+        status.textContent = "확장 프로그램이 갱신되었습니다. NEIS에 저장할 내용이 있으면 먼저 저장한 뒤 이 탭을 새로고침하세요.";
+    }
+
+    function safeExtensionApiCall(callback) {
+        try {
+            return Promise.resolve(callback()).catch((error) => {
+                reportExtensionApiError(error);
+                return null;
+            });
+        } catch (error) {
+            reportExtensionApiError(error);
+            return Promise.resolve(null);
+        }
+    }
 
     function setPanelView(view) {
         const showStudents = view === "students";
@@ -101,7 +121,8 @@
         };
     }
 
-    chrome.storage.local.get(POSITION_KEY).then((data) => {
+    safeExtensionApiCall(() => chrome.storage.local.get(POSITION_KEY)).then((data) => {
+        if (!data || extensionContextLost) return;
         const position = data[POSITION_KEY];
         if (!Number.isFinite(position?.left) || !Number.isFinite(position?.top)) return;
         const bounded = clampPanelPosition(position.left, position.top);
@@ -134,7 +155,7 @@
         dragState = null;
         const rect = host.getBoundingClientRect();
         const position = clampPanelPosition(rect.left, rect.top);
-        chrome.storage.local.set({ [POSITION_KEY]: position });
+        safeExtensionApiCall(() => chrome.storage.local.set({ [POSITION_KEY]: position }));
     };
     dragHandle.addEventListener("pointerup", finishDrag);
     dragHandle.addEventListener("pointercancel", finishDrag);
@@ -144,12 +165,15 @@
         const bounded = clampPanelPosition(rect.left, rect.top);
         host.style.left = `${bounded.left}px`;
         host.style.top = `${bounded.top}px`;
-        chrome.storage.local.set({ [POSITION_KEY]: bounded });
+        safeExtensionApiCall(() => chrome.storage.local.set({ [POSITION_KEY]: bounded }));
     });
 
     shadow.querySelector("#openViewer").addEventListener("click", (event) => {
         event.preventDefault();
-        chrome.runtime.sendMessage({ type: "OPEN_VIEWER" });
+        safeExtensionApiCall(() => chrome.runtime.sendMessage({ type: "OPEN_VIEWER" })).then((result) => {
+            if (extensionContextLost) return;
+            if (!result?.ok) status.textContent = result?.error || "수업 뷰어를 열지 못했습니다.";
+        });
     });
 
     function todayIso() {
@@ -195,8 +219,8 @@
     function renderStudents(cache) {
         const today = todayIso();
         const attendance = (cache?.attendance || []).filter((row) => row.date === today);
-        const absence = (cache?.absenceApplications || []).filter((row) => row.date <= today && row.end_date >= today);
-        const fieldtrip = (cache?.experientialApplications || []).filter((row) => row.date <= today && row.end_date >= today);
+        const absence = cache?.absenceApplications || [];
+        const fieldtrip = cache?.experientialApplications || [];
         studentsHost.replaceChildren();
 
         if (!cache) {
@@ -206,41 +230,45 @@
         }
         studentsHost.className = "student-list";
 
+        const failed = new Set(cache.failedSections || []);
         const groups = [
-            ["오늘 출결", attendance],
-            ["결석 신고서", absence],
-            ["체험학습", fieldtrip],
+            ["attendance", "오늘 출결", attendance],
+            ["absence_applications", "결석 신고서 · 이번 달 조회", absence],
+            ["experiential_applications", "체험학습 신청서 · 조회 결과", fieldtrip],
         ];
-        for (const [title, rows] of groups) {
+        for (const [key, title, rows] of groups) {
             const section = document.createElement("section");
             section.className = "student-group";
             const heading = document.createElement("div");
             heading.className = "student-heading";
-            heading.append(el("strong", "", title), el("span", "", `${rows.length}건`));
+            heading.append(el("strong", "", title), el("span", "", `${rows.length}건${failed.has(key) ? " · 갱신 실패" : ""}`));
             section.append(heading);
+            if (failed.has(key)) {
+                section.append(el("div", "student-warning", rows.length ? "이번 조회에 실패해 이전 자료를 표시합니다." : "이번 조회가 실패했습니다. 조회 가능한 화면은 저장했습니다."));
+            }
             if (!rows.length) {
-                section.append(el("div", "student-empty", "해당 학생 없음"));
+                section.append(el("div", "student-empty", failed.has(key) ? "표시할 저장 자료 없음" : "해당 학생 없음"));
             } else {
                 for (const row of rows.slice(0, 80)) {
                     const item = document.createElement("div");
                     item.className = "student-row";
                     const name = el("span", "student-name", row.student);
                     const details = [row.class_name, row.kind];
-                    if (title !== "오늘 출결") {
+                    if (key !== "attendance") {
                         const range = row.date === row.end_date ? row.date : `${row.date} ~ ${row.end_date}`;
                         details.push(range, row.status, row.approval_status);
                     } else if (row.count > 1) details.push(`${row.count}일`);
                     item.append(name, el("span", "student-meta", details.filter(Boolean).join(" · ")));
                     section.append(item);
                 }
-                if (rows.length > 80) section.append(el("div", "student-empty", `외 ${rows.length - 80}명 · 전체 보기에서 확인`));
+                if (rows.length > 80) section.append(el("div", "student-empty", `외 ${rows.length - 80}건 · 전체 보기에서 확인`));
             }
             studentsHost.append(section);
         }
         const importedAt = cache.updatedAt
             ? new Intl.DateTimeFormat("ko-KR", { hour: "2-digit", minute: "2-digit" }).format(new Date(cache.updatedAt))
             : "시간 미상";
-        studentsHost.append(el("div", "student-empty", `마지막 조회 ${importedAt} · 다시 가져오기로 갱신`));
+        studentsHost.append(el("div", "student-empty", `마지막 조회 시도 ${importedAt} · 다시 가져오기로 갱신`));
     }
 
     shadow.querySelector("#collapse").addEventListener("click", (event) => {
@@ -249,14 +277,23 @@
         event.currentTarget.title = card.classList.contains("collapsed") ? "펼치기" : "접기";
     });
 
-    chrome.storage.local.get([STORAGE_KEY, STUDENT_STATUS_KEY]).then((data) => {
+    safeExtensionApiCall(() => chrome.storage.local.get([STORAGE_KEY, STUDENT_STATUS_KEY])).then((data) => {
+        if (!data || extensionContextLost) return;
         render(data[STORAGE_KEY]);
         renderStudents(data[STUDENT_STATUS_KEY]);
+        if (data[STUDENT_STATUS_KEY]) setPanelView("students");
     });
-    chrome.storage.onChanged.addListener((changes, area) => {
-        if (area === "local" && changes[STORAGE_KEY]) render(changes[STORAGE_KEY].newValue);
-        if (area === "local" && changes[STUDENT_STATUS_KEY]) renderStudents(changes[STUDENT_STATUS_KEY].newValue);
-    });
+    try {
+        chrome.storage.onChanged.addListener((changes, area) => {
+            if (area === "local" && changes[STORAGE_KEY]) render(changes[STORAGE_KEY].newValue);
+            if (area === "local" && changes[STUDENT_STATUS_KEY]) {
+                renderStudents(changes[STUDENT_STATUS_KEY].newValue);
+                setPanelView("students");
+            }
+        });
+    } catch (error) {
+        reportExtensionApiError(error);
+    }
 
     window.addEventListener("message", (event) => {
         const message = event.data;
@@ -272,31 +309,29 @@
             return;
         }
         if (message.type === "week-cache-check") {
-            chrome.runtime.sendMessage({ type: "CHECK_WEEK_CACHE", weeks: message.payload?.weeks || [] })
-                .then((result) => window.postMessage({
-                    source: SOURCE,
-                    type: "week-cache-result",
-                    payload: { requestId: message.payload?.requestId, ...(result || {}) },
-                }, location.origin))
-                .catch(() => window.postMessage({
-                    source: SOURCE,
-                    type: "week-cache-result",
-                    payload: { requestId: message.payload?.requestId, ok: false, fresh: {} },
-                }, location.origin));
+            safeExtensionApiCall(() => chrome.runtime.sendMessage({ type: "CHECK_WEEK_CACHE", weeks: message.payload?.weeks || [] }))
+                .then((result) => {
+                    if (extensionContextLost) return;
+                    window.postMessage({
+                        source: SOURCE,
+                        type: "week-cache-result",
+                        payload: { requestId: message.payload?.requestId, ...(result || {}) },
+                    }, location.origin);
+                });
             return;
         }
         if (message.type !== "lessons") return;
         status.textContent = "수업내용을 로컬에 저장하는 중…";
-        chrome.runtime.sendMessage({ type: "AUTO_SYNC_LESSONS", payload: message.payload })
+        safeExtensionApiCall(() => chrome.runtime.sendMessage({ type: "AUTO_SYNC_LESSONS", payload: message.payload }))
             .then((result) => {
+                if (extensionContextLost) return;
                 if (result?.ok) {
                     if (!progressStatus) status.textContent = `오늘 수업 ${result.imported}개 · Chrome에 저장됨`;
                 } else {
                     progressStatus = result?.error || "자동 동기화에 실패했습니다.";
                     status.textContent = progressStatus;
                 }
-            })
-            .catch(() => { status.textContent = "자동 동기화 연결에 실패했습니다."; });
+            });
     });
 
     window.postMessage({ source: SOURCE, type: "reader-ready" }, location.origin);

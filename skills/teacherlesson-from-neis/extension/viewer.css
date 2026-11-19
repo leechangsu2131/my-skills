@@ -190,6 +190,7 @@ body { background: radial-gradient(circle at 10% -12%, #d9f2eb 0, transparent 36
 .student-view { display: grid; gap: 12px; }
 .student-view-intro { padding: 12px 14px; border: 1px solid #dfe8e5; border-radius: 13px; color: #647c7b; background: #f9fcfb; font-size: 11px; line-height: 1.55; }
 .student-view-meta { color: #829093; font-size: 10px; text-align: right; }
+.student-view-warning { padding: 9px 11px; border: 1px solid #f1d3b7; border-radius: 10px; color: #865631; background: #fff7ef; font-size: 10px; line-height: 1.5; }
 .student-empty { padding: 35px 16px; border: 1px dashed #d5e0dc; border-radius: 14px; color: #758787; background: #fbfdfc; font-size: 12px; line-height: 1.6; text-align: center; }
 .student-group { padding: 14px; border: 1px solid #e1e9e6; border-radius: 16px; background: rgba(255,255,255,.94); }
 .student-group-heading { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
@@ -208,3 +209,4 @@ body { background: radial-gradient(circle at 10% -12%, #d9f2eb 0, transparent 36
 .student-event-fieldtrip .student-event-tag { color: #5e4b9c; background: #f0ecfb; }
 .student-event-meta { grid-column: 1 / -1; color: #768789; font-size: 9px; line-height: 1.4; }
 .student-group-empty { padding: 12px; border: 1px dashed #e0e8e4; border-radius: 10px; color: #9aa7a4; font-size: 10px; text-align: center; }
+.student-section-warning { margin-bottom: 8px; color: #925e36; font-size: 10px; line-height: 1.5; }

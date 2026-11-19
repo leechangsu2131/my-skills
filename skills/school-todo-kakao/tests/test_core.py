@@ -6,7 +6,7 @@ import pytest
 from schooltodo.classify import OTHER, ClassifyConfig, classify
 from schooltodo.dates import next_workday, parse_date, resolve_year
 from schooltodo.db import CsvDb, MemoryDb
-from schooltodo.message import build_message, split_message
+from schooltodo.message import build_message, build_weekend_message, build_weekly_trips, split_message
 from schooltodo.sources import parse_today, parse_week, read_csv_file
 from schooltodo.sync import make_key, plan_sync
 
@@ -168,3 +168,167 @@ def test_split_keeps_every_chunk_under_limit_and_loses_nothing():
 def test_single_overlong_line_is_clipped():
     chunks = split_message(["📅 제목", "• " + "가" * 500])
     assert all(len(c) <= 200 for c in chunks)
+
+
+def _task(key, d, text, status="", cat="개인"):
+    return {"키": key, "날짜": d, "구분": cat, "내용": text, "상태": status, "출처": "수동", "대상": "3학년"}
+
+
+def test_upcoming_tasks_are_shown_every_day_until_done():
+    rows = [
+        _task("a", "2026-11-25", "보고서 제출"),
+        _task("b", "2026-11-27", "이미 한 일", status="✔"),
+        _task("c", "2026-11-28", "행사 안내", cat="학교"),
+        _task("d", "2027-03-01", "너무 먼 일"),
+    ]
+    lines, count = build_message(rows, T, task_day=None)
+    text = "\n".join(lines)
+    assert "📌 기한 있는 할 일\n• 11/25 D-7 보고서 제출" in text
+    assert "이미 한 일" not in text and "행사 안내" not in text and "너무 먼 일" not in text
+    assert count == 1
+    # 다음 날에도 계속 보인다
+    lines2, _ = build_message(rows, date(2026, 11, 19), task_day=None)
+    assert "• 11/25 D-6 보고서 제출" in "\n".join(lines2)
+
+
+def test_upcoming_task_is_not_repeated_in_today_or_preview():
+    rows = [_task("t", "2026-11-18", "오늘 마감"), _task("n", "2026-11-19", "내일 마감")]
+    lines, _ = build_message(rows, T, task_day=None)
+    assert "📌 기한 있는 할 일" not in lines  # 이미 오늘·미리보기에 나온다
+    assert lines.count("• [개인] 오늘 마감") == 1 and lines.count("• [개인] 내일 마감") == 1
+
+
+def test_upcoming_tasks_are_capped_and_sorted_by_date():
+    rows = [_task(str(i), f"2026-11-{20 + i}", f"할 일 {i}") for i in range(8)][::-1]
+    lines, _ = build_message(rows, T, task_day=None)
+    ups = lines[lines.index("📌 기한 있는 할 일") + 1 : lines.index("👉 11/19(목) 미리보기")]
+    assert [x.split()[1] for x in ups[:5]] == ["11/20", "11/21", "11/22", "11/23", "11/24"]
+    assert ups[-1] == "• … 외 3건"
+
+
+def _ev(key, d, text, status=""):
+    return _task(key, d, text, status, cat="학교")
+
+
+def test_week_section_shows_rest_of_this_week_events_only():
+    rows = [
+        _task("t", "2026-11-21", "주말 할 일"),  # 개인(할 일)은 📌에 나오고 그 주 일정에는 안 나온다
+        _ev("a", "2026-11-19", "내일 행사"),  # 다음 근무일 = 미리보기
+        _ev("b", "2026-11-20", "금요일 행사"),
+        _ev("c", "2026-11-21", "토요일 행사"),
+        _ev("d", "2026-11-23", "다음 주 행사"),
+        _ev("e", "2026-11-20", "끝낸 행사", status="✔"),
+    ]
+    lines, _ = build_message(rows, T)
+    text = "\n".join(lines)
+    assert "🗓 이번 주 남은 일정\n• 11/20(금) [학교] 금요일 행사\n• 11/21(토) [학교] 토요일 행사" in text
+    assert "다음 주 행사" not in text and "끝낸 행사" not in text
+    assert text.count("내일 행사") == 1 and "주말 할 일" in text and "🗓 이번 주 남은 일정\n• 11/21 D-3" not in text
+
+
+def test_week_section_on_friday_shows_weekend_and_next_week():
+    rows = [
+        _ev("w", "2026-11-21", "토요일 행사"),
+        _ev("a", "2026-11-23", "월요일 행사"),
+        _ev("b", "2026-11-25", "수요일 행사"),
+        _ev("c", "2026-12-02", "그다음 주 행사"),
+    ]
+    lines, _ = build_message(rows, date(2026, 11, 20))
+    text = "\n".join(lines)
+    assert "🗓 주말·다음 주 일정\n• 11/21(토) [학교] 토요일 행사\n• 11/25(수) [학교] 수요일 행사" in text
+    assert "그다음 주 행사" not in text and text.count("월요일 행사") == 1  # 월요일은 미리보기에만
+
+
+def test_week_section_is_capped():
+    rows = [_ev(str(i), f"2026-11-{20 + (i % 2)}", f"행사 {i}") for i in range(9)]
+    lines, _ = build_message(rows, T)
+    assert lines[-1] == "• … 외 3건"
+
+
+def _trip(key, d, text, status="", target="3학년", src="수동"):
+    return {"키": key, "날짜": d, "구분": "출장", "내용": text, "상태": status, "출처": src, "대상": target}
+
+
+def test_weekly_trips_only_trip_rows_within_seven_days():
+    rows = [
+        _trip("a", "2026-11-23", "경주 연수 출장 (09:00~17:00)"),
+        _trip("b", "2026-11-29", "일요일 출장"),
+        _trip("c", "2026-11-30", "8일째라 제외"),
+        _trip("d", "2026-11-24", "끝낸 출장", status="✔"),
+        _trip("e", "2026-11-25", "타학년 출장", target="타학년·유치원", src="자동"),
+        _task("t", "2026-11-24", "개인 할 일"),
+        _ev("v", "2026-11-26", "학교 행사"),
+        _trip("p", "2026-11-22", "지난 출장"),
+    ]
+    lines, count = build_weekly_trips(rows, date(2026, 11, 23))
+    assert lines == ["🧳 11/23~11/29 출장 일정", "• 11/23(월) 경주 연수 출장 (09:00~17:00)", "• 11/29(일) 일요일 출장"]
+    assert count == 2
+
+
+def test_weekly_trips_empty_and_capped():
+    lines, count = build_weekly_trips([_task("t", "2026-11-24", "개인 할 일")], date(2026, 11, 23))
+    assert count == 0 and lines == ["🧳 11/23~11/29 출장 일정"]
+    rows = [_trip(str(i), f"2026-11-{23 + i % 7}", f"출장 {i}") for i in range(10)]
+    lines, count = build_weekly_trips(rows, date(2026, 11, 23))
+    assert count == 10 and lines[-1] == "• … 외 2건"
+
+
+def test_overdue_only_for_tasks_events_just_pass():
+    rows = [
+        _task("a", "2026-11-16", "밀린 할 일"),
+        _task("b", "2026-11-16", "밀린 자동 할 일"),
+        _trip("c", "2026-11-16", "지난 출장"),
+        _ev("d", "2026-11-16", "지난 학교 행사"),
+        _task("e", "2026-11-16", "지난 공지", cat="공지"),
+        _task("f", "2026-11-16", "끝낸 할 일", status="✔"),
+    ]
+    lines, count = build_message(rows, T)
+    text = "\n".join(lines)
+    assert "⚠ 지연\n• 11/16 [개인] 밀린 할 일\n• 11/16 [개인] 밀린 자동 할 일" in text
+    assert "지난 출장" not in text and "지난 학교 행사" not in text and "지난 공지" not in text and "끝낸 할 일" not in text
+    assert count == 2
+
+
+def test_tasks_weekly_on_monday_then_once_more_when_imminent():
+    rows = [_task("a", "2026-11-27", "금요일 마감"), _task("b", "2026-12-04", "멀리 있는 마감")]
+
+    def day(d):
+        return "\n".join(build_message(rows, d)[0])
+
+    # 월요일(기본 요일)에는 전부
+    assert "📌 기한 있는 할 일\n• 11/27 D-4 금요일 마감\n• 12/4 D-11 멀리 있는 마감" in day(date(2026, 11, 23))
+    # 화요일 = 금요일 마감의 3일 전 → 한 번 더, 멀리 있는 건 안 나옴
+    tue = day(date(2026, 11, 24))
+    assert "📌 기한 있는 할 일\n• 11/27 D-3 금요일 마감" in tue and "멀리 있는 마감" not in tue
+    # 수요일에는 임박일이 지났으니 조용
+    assert "📌" not in day(date(2026, 11, 25))
+
+
+def test_imminent_on_weekend_is_sent_friday():
+    rows = [
+        _task("a", "2026-12-01", "화요일 마감"),  # 3일 전 = 토요일
+        _task("b", "2026-12-02", "수요일 마감"),  # 3일 전 = 일요일
+        _task("c", "2026-12-03", "목요일 마감"),  # 3일 전 = 월요일 → 금요일엔 아직
+        _task("d", "2026-12-07", "다음 주 금요일 마감"),
+    ]
+    text = "\n".join(build_message(rows, date(2026, 11, 27))[0])
+    assert "• 12/1 D-4 화요일 마감" in text and "• 12/2 D-5 수요일 마감" in text
+    assert "목요일 마감" not in text and "다음 주 금요일 마감" not in text
+
+
+def test_weekend_message_only_today_events():
+    sat = date(2026, 11, 21)
+    rows = [
+        _trip("a", "2026-11-21", "AI·디지털교육 축제 출장"),
+        _ev("b", "2026-11-21", "토요일 학교 행사"),
+        _task("t", "2026-11-21", "토요일 마감 할 일"),
+        _trip("c", "2026-11-22", "일요일 출장"),
+        _trip("d", "2026-11-21", "끝낸 출장", status="✔"),
+        _trip("e", "2026-11-21", "타학년 출장", target="타학년·유치원"),
+        _task("late", "2026-11-16", "밀린 할 일"),
+    ]
+    lines, count = build_weekend_message(rows, sat)
+    assert lines == ["📅 11/21(토) 오늘", "• [출장] AI·디지털교육 축제 출장", "• [학교] 토요일 학교 행사"]
+    assert count == 2
+    # 오늘 행사가 없으면 0건 → 보내지 않는다 (밀린 할 일·할 일 마감일은 주말 메시지 사유가 아니다)
+    assert build_weekend_message([_task("t", "2026-11-21", "할 일"), _task("late", "2026-11-16", "밀린 할 일")], sat)[1] == 0

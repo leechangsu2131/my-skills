@@ -13,6 +13,7 @@ LATE_CAP = 5
 TASK_CATEGORY = "개인"  # 구분이 '개인'인 행 = 기한이 있는 해야 할 일(행사는 학교·출장·공지)
 UPCOMING_DAYS = 30  # 오늘부터 이 기간 안의 기한만 '📌 기한 있는 할 일'에 매일 보여 준다
 UPCOMING_CAP = 5
+IMMINENT_DAYS = 3  # 기한이 이 일수 남았을 때 한 번 더 알린다
 WEEK_CAP = 6  # '그 주 일정'에 보여 줄 최대 개수
 TRIP_CATEGORY = "출장"  # 가족 등에게 주 1회 보내는 주간 메시지에 담는 구분
 TRIP_CAP = 8
@@ -65,8 +66,11 @@ def _week_bullet(i: Item) -> str:
     return f"• {fmt_md_wd(i.date)} [{i.category}] {i.text}"
 
 
-def build_message(rows: list[dict], today: date) -> tuple[list[str], int]:
-    """(메시지 줄 목록, 보낼 일정 개수). 상태 칸이 비어 있는 행만 보낸다(✔·검토대기 등은 제외)."""
+def build_message(
+    rows: list[dict], today: date, task_day: int | None = 0, imminent_days: int = IMMINENT_DAYS
+) -> tuple[list[str], int]:
+    """(메시지 줄 목록, 보낼 일정 개수). 상태 칸이 비어 있는 행만 보낸다(✔·검토대기 등은 제외).
+    task_day: '기한 있는 할 일'을 전부 보여 주는 요일(0=월 … 6=일). None이면 매일. 다른 날은 기한 imminent_days일 전에 한 번만 알린다."""
     items = [i for i in parse_items(rows, today) if not i.status and i.target != OTHER]
     todays = _order([i for i in items if i.date == today])
     nxt = next_workday(today)
@@ -81,15 +85,17 @@ def build_message(rows: list[dict], today: date) -> tuple[list[str], int]:
         lines += [_bullet(i, with_date=True) for i in late[:LATE_CAP]]
         if len(late) > LATE_CAP:
             lines.append(f"• … 외 {len(late) - LATE_CAP}건")
-    # 기한 있는 할 일: 오늘·다음 근무일 항목은 위 구역에 이미 나오니 빼고, 끝낼 때(상태 칸 ✔)까지 매일 보여 준다.
-    ups = sorted(
-        (
-            i
-            for i in items
-            if i.category == TASK_CATEGORY and i.date > today and i.date != nxt and i.date <= today + timedelta(days=UPCOMING_DAYS)
-        ),
-        key=lambda i: i.date,
-    )
+    # 기한 있는 할 일: 오늘·다음 근무일 항목은 위 구역에 이미 나오니 빼고, 끝낼 때(상태 칸 ✔)까지 보여 준다.
+    # 매일 보이면 시끄러우므로 지정 요일(task_day, 기본 월요일)에 전부 보여 주고, 다른 날은 기한 imminent_days일 전에 한 번만 다시 알린다.
+    # 그 '임박일'이 주말이면 주말에는 안 보내므로 금요일(다음 메시지 전날)에 알린다. task_day가 None이면 매일.
+    upcoming = [
+        i
+        for i in items
+        if i.category == TASK_CATEGORY and i.date > today and i.date != nxt and i.date <= today + timedelta(days=UPCOMING_DAYS)
+    ]
+    if task_day is not None and today.weekday() != task_day:
+        upcoming = [i for i in upcoming if today <= i.date - timedelta(days=imminent_days) < nxt]
+    ups = sorted(upcoming, key=lambda i: i.date)
     if ups:
         lines.append("📌 기한 있는 할 일")
         lines += [_task_bullet(i, today) for i in ups[:UPCOMING_CAP]]
@@ -97,19 +103,32 @@ def build_message(rows: list[dict], today: date) -> tuple[list[str], int]:
             lines.append(f"• … 외 {len(ups) - UPCOMING_CAP}건")
     lines.append(f"👉 {fmt_md_wd(nxt)} 미리보기")
     lines += [_bullet(i) for i in nexts] or ["• 없음"]
-    # 그 주 일정: 다음 근무일이 속한 주(월~일)에서 미리보기 이후의 행사. 금요일에는 다음 주 일정이 된다. 할 일(개인)은 위 📌에 나온다.
+    # 그 주 일정: 오늘 이후 다음 근무일이 속한 주 일요일까지의 행사(미리보기 날 제외). 금요일에는 주말과 다음 주가 된다. 할 일(개인)은 위 📌에 나온다.
     week_end = nxt - timedelta(days=nxt.weekday()) + timedelta(days=6)
     this_week = nxt.isocalendar()[:2] == today.isocalendar()[:2]
     wk = sorted(
-        (i for i in items if i.category != TASK_CATEGORY and nxt < i.date <= week_end),
+        (i for i in items if i.category != TASK_CATEGORY and today < i.date <= week_end and i.date != nxt),
         key=lambda i: (i.date, CATEGORY_ORDER.get(i.category, 2)),
     )
     if wk:
-        lines.append("🗓 이번 주 남은 일정" if this_week else "🗓 다음 주 일정")
+        lines.append("🗓 이번 주 남은 일정" if this_week else "🗓 주말·다음 주 일정")
         lines += [_week_bullet(i) for i in wk[:WEEK_CAP]]
         if len(wk) > WEEK_CAP:
             lines.append(f"• … 외 {len(wk) - WEEK_CAP}건")
     return lines, len(todays) + len(late) + len(ups) + len(nexts) + len(wk)
+
+
+def build_weekend_message(rows: list[dict], today: date) -> tuple[list[str], int]:
+    """주말용: 평소 메시지(지연·할 일·미리보기)는 보내지 않고, 오늘 행사(출장·학교·공지)가 있을 때만 그것만 보낸다.
+    해야 할 일(개인)은 금요일 메시지에 이미 나갔다. (줄 목록, 개수) — 개수가 0이면 보내지 않는다."""
+    todays = _order(
+        [
+            i
+            for i in parse_items(rows, today)
+            if not i.status and i.target != OTHER and i.date == today and i.category != TASK_CATEGORY
+        ]
+    )
+    return [f"📅 {fmt_md_wd(today)} 오늘"] + [_bullet(i) for i in todays], len(todays)
 
 
 def _size(ls: list[str]) -> int:

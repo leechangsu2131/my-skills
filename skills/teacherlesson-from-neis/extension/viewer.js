@@ -311,7 +311,7 @@ function renderMonth(records, selected) {
 function renderStudentView(status, selected) {
     studentView.replaceChildren();
     const dateTitle = dateLabel(selected, { year: "numeric", month: "long", day: "numeric", weekday: "long" });
-    const intro = makeText("div", "student-view-intro", "학생 이름과 필요한 날짜·처리상태만 표시합니다. 결석 사유, 보호자 연락처, 상세 내용은 저장하지 않습니다.");
+    const intro = makeText("div", "student-view-intro", "출결은 선택한 날짜 기준입니다. 신청서는 마지막 조회에서 가져온 결과 전체를 보여줍니다. 사유·보호자 연락처·상세 내용은 저장하지 않습니다.");
     studentView.append(intro);
     if (!status) {
         const empty = makeText("div", "student-empty", "학생 현황 자료가 없습니다. NEIS에서 확장 프로그램을 열고 ‘오늘 출결·결석·체험학습 현황 조회’를 눌러 주세요.");
@@ -323,20 +323,27 @@ function renderStudentView(status, selected) {
         ? new Intl.DateTimeFormat("ko-KR", { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" }).format(new Date(status.updatedAt))
         : "시간 미상";
     studentView.append(makeText("div", "student-view-meta", `${dateTitle} · NEIS 조회 ${updated}`));
+    if (status.errors?.length) {
+        studentView.append(makeText("div", "student-view-warning", `일부 조회에 실패했습니다. 성공한 화면은 저장했고 실패한 구역은 이전 자료를 유지했습니다. ${status.errors.join(" · ")}`));
+    }
 
     const attendance = (status.attendance || []).filter((row) => row.date === selected);
-    const absenceApplications = (status.absenceApplications || []).filter((row) => row.date <= selected && row.end_date >= selected);
-    const experientialApplications = (status.experientialApplications || []).filter((row) => row.date <= selected && row.end_date >= selected);
+    const absenceApplications = status.absenceApplications || [];
+    const experientialApplications = status.experientialApplications || [];
 
-    function addGroup(title, records, type) {
+    const failed = new Set(status.failedSections || []);
+    function addGroup(title, records, type, key) {
         const section = document.createElement("section");
         section.className = `student-group student-group-${type}`;
         const heading = document.createElement("header");
         heading.className = "student-group-heading";
-        heading.append(makeText("h3", "", title), makeText("span", "student-group-count", `${records.length}건`));
+        heading.append(makeText("h3", "", title), makeText("span", "student-group-count", `${records.length}건${failed.has(key) ? " · 갱신 실패" : ""}`));
         section.append(heading);
+        if (failed.has(key)) {
+            section.append(makeText("div", "student-section-warning", records.length ? "이번 조회 실패 · 아래는 이전 저장 자료입니다." : "조회 실패 · 이전 저장 자료가 없습니다."));
+        }
         if (!records.length) {
-            section.append(makeText("p", "student-group-empty", "해당 날짜 자료 없음"));
+            section.append(makeText("p", "student-group-empty", failed.has(key) ? "표시할 저장 자료 없음" : "해당 조회기간 자료 없음"));
         } else {
             const list = document.createElement("div");
             list.className = "student-event-list";
@@ -368,9 +375,9 @@ function renderStudentView(status, selected) {
         studentView.append(section);
     }
 
-    addGroup("일일 출결", attendance, "attendance");
-    addGroup("결석 신고서", absenceApplications, "absence");
-    addGroup("체험학습 신청서", experientialApplications, "fieldtrip");
+    addGroup("일일 출결", attendance, "attendance", "attendance");
+    addGroup("결석 신고서 · 조회 기간 전체", absenceApplications, "absence", "absence_applications");
+    addGroup("체험학습 신청서 · 조회 결과 전체", experientialApplications, "fieldtrip", "experiential_applications");
 }
 
 function setEmptyError(message) {

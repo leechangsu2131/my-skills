@@ -30,6 +30,8 @@ jobs:
       KAKAO_SEND_TO_ME: ${{ vars.KAKAO_SEND_TO_ME }}
       WEEKLY_FRIEND_UUIDS: ${{ secrets.WEEKLY_FRIEND_UUIDS }} # 주 1회 '출장' 메시지를 받을 사람(uuid, 쉼표로 최대 5명)
       WEEKLY_DAY: ${{ vars.WEEKLY_DAY }} # 보내는 요일 0=월 ... 6=일 (비우면 월요일)
+      TASK_DAY: ${{ vars.TASK_DAY }} # '기한 있는 할 일'을 전부 보여 주는 요일 0=월 ... 6=일, daily면 매일 (비우면 월요일)
+      TASK_IMMINENT_DAYS: ${{ vars.TASK_IMMINENT_DAYS }} # 기한 며칠 전에 한 번 더 알릴지 (비우면 3)
       GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
       DB_SHEET_ID: ${{ secrets.DB_SHEET_ID }}
       SRC_WEEK_SHEET_ID: ${{ secrets.SRC_WEEK_SHEET_ID }}

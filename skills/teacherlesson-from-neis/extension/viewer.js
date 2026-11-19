@@ -1,7 +1,9 @@
 const dateInput = document.querySelector("#selectedDate");
+const lessonSummary = document.querySelector("#lessonSummary");
 const lessonGroups = document.querySelector("#lessonGroups");
 const weekView = document.querySelector("#weekView");
 const calendarView = document.querySelector("#calendarView");
+const studentView = document.querySelector("#studentView");
 const emptyState = document.querySelector("#emptyState");
 const viewButtons = [...document.querySelectorAll(".view-button")];
 const calendarControls = document.querySelector("#calendarControls");
@@ -9,12 +11,14 @@ const weekendInput = document.querySelector("#weekendInput");
 const cellHeightInput = document.querySelector("#cellHeightInput");
 const cellHeightOutput = document.querySelector("#cellHeightOutput");
 const STORAGE_KEY = "teacherlessonNeisCache";
+const STUDENT_STATUS_KEY = "teacherlessonNeisStudentStatus";
 const USE_EXTENSION_STORAGE = typeof chrome !== "undefined" && Boolean(chrome.storage?.local);
 let activeView = "day";
 let loadSequence = 0;
 let visibleRecords = [];
 let showWeekends = true;
 let cellHeight = 160;
+let studentStatus = null;
 const expandedDates = new Set();
 
 try {
@@ -304,6 +308,71 @@ function renderMonth(records, selected) {
     }
 }
 
+function renderStudentView(status, selected) {
+    studentView.replaceChildren();
+    const dateTitle = dateLabel(selected, { year: "numeric", month: "long", day: "numeric", weekday: "long" });
+    const intro = makeText("div", "student-view-intro", "학생 이름과 필요한 날짜·처리상태만 표시합니다. 결석 사유, 보호자 연락처, 상세 내용은 저장하지 않습니다.");
+    studentView.append(intro);
+    if (!status) {
+        const empty = makeText("div", "student-empty", "학생 현황 자료가 없습니다. NEIS에서 확장 프로그램을 열고 ‘오늘 출결·결석·체험학습 현황 조회’를 눌러 주세요.");
+        studentView.append(empty);
+        return;
+    }
+
+    const updated = status.updatedAt
+        ? new Intl.DateTimeFormat("ko-KR", { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" }).format(new Date(status.updatedAt))
+        : "시간 미상";
+    studentView.append(makeText("div", "student-view-meta", `${dateTitle} · NEIS 조회 ${updated}`));
+
+    const attendance = (status.attendance || []).filter((row) => row.date === selected);
+    const absenceApplications = (status.absenceApplications || []).filter((row) => row.date <= selected && row.end_date >= selected);
+    const experientialApplications = (status.experientialApplications || []).filter((row) => row.date <= selected && row.end_date >= selected);
+
+    function addGroup(title, records, type) {
+        const section = document.createElement("section");
+        section.className = `student-group student-group-${type}`;
+        const heading = document.createElement("header");
+        heading.className = "student-group-heading";
+        heading.append(makeText("h3", "", title), makeText("span", "student-group-count", `${records.length}건`));
+        section.append(heading);
+        if (!records.length) {
+            section.append(makeText("p", "student-group-empty", "해당 날짜 자료 없음"));
+        } else {
+            const list = document.createElement("div");
+            list.className = "student-event-list";
+            for (const record of records) {
+                const article = document.createElement("article");
+                article.className = `student-event-card student-event-${type}`;
+                const main = document.createElement("div");
+                main.className = "student-event-main";
+                main.append(makeText("strong", "student-event-name", record.student));
+                if (record.class_name) main.append(makeText("span", "student-event-class", record.class_name));
+                const tag = makeText("span", "student-event-tag", record.kind);
+                const meta = document.createElement("div");
+                meta.className = "student-event-meta";
+                if (type === "attendance") {
+                    const count = Number(record.count);
+                    meta.textContent = `${Number.isFinite(count) ? count : 1}일`;
+                } else {
+                    const range = record.date === record.end_date
+                        ? dateLabel(record.date)
+                        : `${dateLabel(record.date)} ~ ${dateLabel(record.end_date)}`;
+                    const statuses = [record.status, record.approval_status].filter(Boolean).join(" · ");
+                    meta.textContent = [range, statuses].filter(Boolean).join(" · ");
+                }
+                article.append(main, tag, meta);
+                list.append(article);
+            }
+            section.append(list);
+        }
+        studentView.append(section);
+    }
+
+    addGroup("일일 출결", attendance, "attendance");
+    addGroup("결석 신고서", absenceApplications, "absence");
+    addGroup("체험학습 신청서", experientialApplications, "fieldtrip");
+}
+
 function setEmptyError(message) {
     emptyState.hidden = false;
     emptyState.querySelector("h3").textContent = "수업 자료를 불러오지 못했습니다";
@@ -329,10 +398,14 @@ async function loadLessons() {
         ? dateLabel(start)
         : activeView === "week"
             ? shortRange(start, end)
-            : dateLabel(selected, { year: "numeric", month: "long" });
+            : activeView === "month"
+                ? dateLabel(selected, { year: "numeric", month: "long" })
+                : dateLabel(selected);
+    lessonSummary.hidden = activeView === "students";
     lessonGroups.hidden = activeView !== "day";
     weekView.hidden = activeView !== "week";
     calendarView.hidden = activeView !== "month";
+    studentView.hidden = activeView !== "students";
     calendarControls.hidden = activeView !== "month";
     emptyState.hidden = true;
 
@@ -358,6 +431,7 @@ async function loadLessons() {
         document.querySelector("#lessonCount").textContent = String(records.length);
         if (activeView === "week") renderWeek(records, selected);
         else if (activeView === "month") renderMonth(records, selected);
+        else if (activeView === "students") renderStudentView(studentStatus, selected);
         else renderDay(records, selected);
     } catch (error) {
         if (sequence === loadSequence) setEmptyError(error.message);
@@ -394,6 +468,17 @@ async function loadStatus() {
     }
 }
 
+async function loadStudentStatus() {
+    if (!USE_EXTENSION_STORAGE) return;
+    try {
+        const stored = await chrome.storage.local.get(STUDENT_STATUS_KEY);
+        studentStatus = stored[STUDENT_STATUS_KEY] || null;
+        if (activeView === "students") renderStudentView(studentStatus, dateInput.value || localIsoDate());
+    } catch {
+        studentStatus = null;
+    }
+}
+
 dateInput.value = localIsoDate();
 dateInput.addEventListener("change", loadLessons);
 document.querySelector("#todayButton").addEventListener("click", () => {
@@ -423,11 +508,16 @@ cellHeightInput.addEventListener("change", () => {
 updatePeriodControls();
 loadStatus();
 loadLessons();
+loadStudentStatus();
 if (USE_EXTENSION_STORAGE) {
     chrome.storage.onChanged.addListener((changes, area) => {
         if (area === "local" && changes[STORAGE_KEY]) {
             loadStatus();
             loadLessons();
+        }
+        if (area === "local" && changes[STUDENT_STATUS_KEY]) {
+            studentStatus = changes[STUDENT_STATUS_KEY].newValue || null;
+            if (activeView === "students") renderStudentView(studentStatus, dateInput.value || localIsoDate());
         }
     });
 } else {

@@ -1,4 +1,5 @@
 const STORAGE_KEY = "teacherlessonNeisCache";
+const STUDENT_STATUS_KEY = "teacherlessonNeisStudentStatus";
 const MAX_RECORDS = 2500;
 const WEEK_CACHE_TTL_MS = 12 * 60 * 60 * 1000;
 
@@ -86,6 +87,53 @@ async function storePayload(payload) {
     };
 }
 
+function normalizeStudentRecords(rows, { attendance = false } = {}) {
+    if (!Array.isArray(rows)) return [];
+    return rows.slice(0, 1000).flatMap((item) => {
+        const startDate = normalizeDate(item?.date || item?.start_date || item?.startDate);
+        const endDate = normalizeDate(item?.end_date || item?.endDate) || startDate;
+        const student = normalizeText(item?.student || item?.student_name, 50);
+        const kind = normalizeText(item?.kind || item?.category, 40);
+        if (!startDate || !endDate || startDate > endDate || !student || !kind) return [];
+        const row = {
+            date: startDate,
+            end_date: endDate,
+            student,
+            class_name: normalizeText(item?.class_name || item?.className, 30),
+            kind,
+        };
+        if (attendance) {
+            const count = Number(item?.count);
+            if (!Number.isFinite(count) || count <= 0 || count > 100) return [];
+            row.count = count;
+        } else {
+            row.status = normalizeText(item?.status, 30);
+            row.approval_status = normalizeText(item?.approval_status || item?.approvalStatus, 30);
+        }
+        return [row];
+    });
+}
+
+async function storeStudentStatus(payload) {
+    const asOf = normalizeDate(payload?.as_of);
+    if (!asOf) throw new Error("출결 기준 날짜를 확인할 수 없습니다.");
+    const cache = {
+        asOf,
+        updatedAt: new Date().toISOString(),
+        attendance: normalizeStudentRecords(payload.attendance, { attendance: true }),
+        absenceApplications: normalizeStudentRecords(payload.absence_applications),
+        experientialApplications: normalizeStudentRecords(payload.experiential_applications),
+    };
+    await chrome.storage.local.set({ [STUDENT_STATUS_KEY]: cache });
+    return {
+        ok: true,
+        as_of: cache.asOf,
+        attendance: cache.attendance.length,
+        absence_applications: cache.absenceApplications.length,
+        experiential_applications: cache.experientialApplications.length,
+    };
+}
+
 function isNeisPage(sender) {
     return /^https:\/\/.+\.neis\.go\.kr\//.test(sender.tab?.url || sender.url || "");
 }
@@ -102,6 +150,16 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                 ? { ok: false, error: "수업 뷰어를 열지 못했습니다." }
                 : { ok: true });
         });
+        return true;
+    }
+    if (message.type === "STORE_STUDENT_STATUS") {
+        if (sender.id !== chrome.runtime.id) {
+            sendResponse({ ok: false, error: "확장 프로그램 팝업에서 보낸 자료만 저장할 수 있습니다." });
+            return false;
+        }
+        storeStudentStatus(message.payload)
+            .then(sendResponse)
+            .catch((error) => sendResponse({ ok: false, error: error.message || "학생 현황을 저장하지 못했습니다." }));
         return true;
     }
     if (message.type === "CHECK_WEEK_CACHE") {

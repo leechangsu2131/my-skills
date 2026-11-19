@@ -19,9 +19,11 @@
       <input id="monthInput" type="month" />
       <button id="weekButton" class="button secondary" type="button">현재 주 가져오기</button>
       <button id="monthButton" class="button primary" type="button">선택한 달 가져오기</button>
+      <button id="studentButton" class="button students" type="button">오늘 출결·결석·체험학습 현황 조회</button>
+      <p class="student-scope">오늘 출결과 이번 달 결석 신고서, NEIS 기본조건의 체험학습 신청서를 읽어 이 PC에 저장합니다.</p>
       <div id="status" role="status" aria-live="polite">NEIS에서 주간학습을 한 번 조회하면 등록된 나머지 주차도 자동으로 가져옵니다.</div>
       <button id="viewerButton" class="viewer-link" type="button">오늘의 수업 뷰어 열기 ↗</button>
-      <p class="privacy">수업내용은 이 Chrome 프로필에 로컬 저장합니다. NEIS에는 저장하지 않습니다.</p>
+      <p class="privacy">표시용 수업·출결 필드만 이 Chrome 프로필에 저장합니다. 사유와 연락처는 가져오지 않고 NEIS 신청·결재는 하지 않습니다.</p>
     </main>
     <script src="popup.js"></script>
   </body>

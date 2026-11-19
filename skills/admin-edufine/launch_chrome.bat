@@ -19,7 +19,7 @@ if not defined CHROME_EXE (
     exit /b
 )
 
-start "" "%CHROME_EXE%" --remote-debugging-port=9222 --user-data-dir="%TEMP%\edufine_chrome_profile" https://gbe.eduptl.kr/bpm_man_mn00_001.do
+start "" "%CHROME_EXE%" --remote-debugging-port=9222 --user-data-dir="%TEMP%\edufine_chrome_profile" --profile-directory="Default" https://gbe.eduptl.kr/bpm_man_mn00_001.do
 
 echo.
 echo 2. Starting Python Flask app...

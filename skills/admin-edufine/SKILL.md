@@ -24,6 +24,10 @@ metadata:
 > - **주요 실패/극복 사례**: 넥사크로 유령 노드(`x=-4999`) 회피, 상단 업무구분 콤보박스(`cboJobList`) 강제 전환, 넥사크로 직결 메뉴 오픈(`LeftFrame.gfnOpenMenu`), 전면 공지 팝업 메모리 파괴(`noticePopup0.destroy()`), 크롬 9222 포트 일상 프로필 디버깅, 포털 내 Cross-Origin iframe 탐색 시 Playwright `frame_locator` 필수 적용, WXSClient 네이티브 다이얼로그 프로토콜 허용 등 실전 노하우가 집대성되어 있습니다.
 > - **새로운 작업 완료 후**: 새로 발견한 예외 상황이나 실패를 극복한 해법이 있다면 즉시 `ISSUES.md`에 새로운 날짜의 일지로 기록하여 지식을 누적 보존해야 합니다.
 
+> [!NOTE]
+> ### 공문 받아서 처리할 때
+> 공문 찾기 → 요구사항 정리 → 처리 → **기록 두 갈래**(방법은 이 저장소, 우리 학교 처리 내역은 업무 폴더 `_업무기록\`) 순서를 따른다. 절차와 기록 양식은 [`references/gongmun-handling-workflow.md`](references/gongmun-handling-workflow.md).
+
 ---
 
 ## 🛠 주요 기능 목록

@@ -50,6 +50,22 @@ skills/<스킬>/
 - 스킬 폴더에 `.env`를 만들지 않습니다 (`.gitignore`가 막습니다).
 - 사용법은 [skills/_shared/skill_env.py](skills/_shared/skill_env.py) 맨 위 설명을 참고하세요.
 
+## 업무 처리 흐름 (공문 → 처리 → 기록)
+
+학교 업무를 AI와 함께 처리할 때는 **방법**과 **우리 학교 상황**을 나눠 기록합니다. 그래야 다음에 어떤 AI가 와도 이어서 일할 수 있습니다.
+
+1. **공문 확인**: 공문 저장 폴더를 검색하고, 없으면 K-에듀파인 문서등록대장에서 찾아 직접 내려받습니다.
+2. **요구사항 정리**: 무엇을, 언제까지, 누구에게 내는지 정리하고 우리 학교가 해당하는지 확인합니다.
+3. **처리**: NEIS·에듀파인·서식 작업을 합니다. 제출·상신·발송은 사람에게 먼저 묻습니다.
+4. **기록 두 갈래**
+
+| 무엇 | 어디에 |
+|---|---|
+| 어떻게 하는가 (반복 절차, 화면 조작, 함정) — 이름·번호 없이 | 이 저장소 해당 스킬의 `SKILL.md` · `references/` · `ISSUES.md` |
+| 우리 학교에서 무엇을 했는가 (공문번호, 학생·교사, 결재 상태, 남은 일) | 업무 폴더(OneDrive) `_업무기록\<연도> <업무> 처리기록.md` |
+
+자세한 절차와 기록 양식: [skills/admin-edufine/references/gongmun-handling-workflow.md](skills/admin-edufine/references/gongmun-handling-workflow.md)
+
 ## 자주 하는 일
 
 ```powershell

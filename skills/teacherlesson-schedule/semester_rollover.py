@@ -107,9 +107,15 @@ def main() -> None:
 
     # 2) 기존 행 제목·PDF 고치기 (예: 도덕 2학기 단원)
     new_rows = load_new_rows(cfg)
+    existing = {(r.get("과목"), r.get("대단원"), str(r.get("차시")), r.get("비고")) for r in records}
+    dup = [r for r in new_rows if (r.get("과목"), r.get("대단원"), str(r.get("차시")), r.get("비고")) in existing]
+    if dup:
+        raise SystemExit(f"새로 붙일 행 중 {len(dup)}개가 이미 진도표에 있어요(이미 반영한 설정으로 보임). 중복을 막으려고 멈춥니다.")
     for spec in cfg.get("update_titles", []):
         data = json.loads(pathlib.Path(spec["rows_file"]).read_text(encoding="utf-8"))
         src = data["rows"] if isinstance(data, dict) and "rows" in data else data
+        if isinstance(src, dict):
+            src = [r for sub in src.values() for r in sub]
         src = [r for r in src if r.get("과목") == spec["subject"] and r.get("대단원") in spec["units"]]
         n = 0
         for r_new in src:
@@ -138,7 +144,8 @@ def main() -> None:
         rows = [r for r in new_rows if r["과목"] == rule["subject"]]
         n = mark_until(rows, rule)
         nxt = next((r for r in rows if not r[DONE]), None)
-        report.append(f"[{rule['subject']}] 새 행 {len(rows)}개 중 {n}개 완료 · 다음 수업: {nxt['대단원'][:14]} {nxt['차시']} {nxt['수업내용'][:30] if nxt else ''}")
+        nxt_text = f"{nxt['대단원'][:14]} {nxt['차시']} {nxt['수업내용'][:30]}" if nxt else "없음(모두 완료)"
+        report.append(f"[{rule['subject']}] 새 행 {len(rows)}개 중 {n}개 완료 · 다음 수업: {nxt_text}")
 
     # 5) 지난 계획일 비우기 (완료 안 된 행)
     cutoff = cfg.get("clear_stale_dates_before")

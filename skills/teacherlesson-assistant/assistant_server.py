@@ -39,7 +39,7 @@ CONFIG_PATH = DATA / "config.json"
 FLOWS = DATA / "flows"
 SESSIONS = DATA / "sessions"
 CAUTIONS_PATH = DATA / "publisher_notes.json"
-PROGRESS_ACTIONS = {"done", "extend", "push"}
+PROGRESS_ACTIONS = {"done", "extend", "push", "catch-up"}
 _lock = threading.Lock()
 
 
@@ -106,6 +106,23 @@ def _period_no(value) -> int | None:
     return int(m.group()) if m else None
 
 
+def upcoming(subject: str) -> list[dict]:
+    """오늘 이후 이 과목의 차시 목록(진도 서버 agenda). '여기부터 다시 잡기'에서 고를 후보."""
+    cfg = load_config()
+    base = cfg.get("schedule_api", "http://127.0.0.1:5000").rstrip("/")
+    with urllib.request.urlopen(f"{base}/api/dashboard", timeout=25) as res:
+        payload = json.load(res)
+    agenda = next((v for v in payload.get("views", []) if v.get("id") == "agenda"), {}).get("data", [])
+    out = []
+    for i in agenda:
+        if i.get("subject") == subject and str(i.get("status", "")).lower() != "done":
+            out.append({"record_key": str(i.get("record_key") or ""), "unit": i.get("unit", ""),
+                        "lesson": i.get("lesson", ""), "title": i.get("title", ""),
+                        "planned_date": str(i.get("planned_date", ""))[:10],
+                        "planned_period": i.get("planned_period", "")})
+    return out[:40]
+
+
 def find_flow(lesson: dict) -> dict | None:
     candidates = []
     if lesson.get("record_key"):
@@ -160,7 +177,14 @@ def state(day: date) -> dict:
 
 
 def session_path(day: str, period, subject: str) -> pathlib.Path:
-    return SESSIONS / day / f"{period or 0}교시_{safe_name(subject)}.json"
+    try:
+        period_no = int(period or 0)
+    except (TypeError, ValueError):
+        period_no = 0
+    path = SESSIONS / day / f"{period_no}교시_{safe_name(subject)}.json"
+    if not path.resolve().is_relative_to(SESSIONS.resolve()):
+        raise ValueError("저장 위치가 올바르지 않아요.")
+    return path
 
 
 # ──────────────────────────── 창 띄우기·클립보드 ────────────────────────────
@@ -182,6 +206,21 @@ def screen_size() -> tuple[int, int]:
         return 1920, 1080
 
 
+def allowed_urls(cfg: dict) -> set[str]:
+    urls = {s.get("site", "") for s in cfg.get("subjects", {}).values()}
+    urls |= {l.get("url", "") for l in cfg.get("links", [])}
+    urls.add(cfg.get("hiclass_url", ""))
+    return {u for u in urls if u}
+
+
+def check_site_url(url: str, cfg: dict) -> str:
+    """오른쪽 창으로 열 주소는 설정(과목 사이트·바로가기·하이클래스)에 있는 http(s) 주소만 허용."""
+    parsed = urllib.parse.urlparse(str(url))
+    if parsed.scheme not in ("http", "https") or url not in allowed_urls(cfg):
+        raise ValueError("설정에 없는 주소는 열지 않아요.")
+    return url
+
+
 def open_window(url: str, side: str, cfg: dict) -> str:
     """수업 전용 Chrome 프로필로 창을 연다. side=left(수업 비서) / right(수업 사이트)."""
     exe = chrome_path()
@@ -198,7 +237,7 @@ def open_window(url: str, side: str, cfg: dict) -> str:
     args = [exe, f"--user-data-dir={os.path.expandvars(profile)}", f"--window-position={x},0", f"--window-size={width},{h - 40}"]
     if cfg.get("debug_port"):
         args.append(f"--remote-debugging-port={int(cfg['debug_port'])}")
-    args += [f"--app={url}"] if side == "left" else ["--new-window", url]
+    args += [f"--app={url}"] if side == "left" else ["--new-window", "--", url]
     subprocess.Popen(args, close_fds=True)
     return "창을 열었어요."
 
@@ -216,7 +255,13 @@ def copy_secret(subject: str, field: str) -> str:
     subprocess.run(["powershell", "-NoProfile", "-Command", "Set-Clipboard -Value $input"],
                    input=value, text=True, encoding="utf-8", check=True,
                    creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
-    return f"{'아이디' if field == 'id' else '비밀번호'}를 복사했어요. 로그인 칸에 Ctrl+V 하세요."
+    threading.Timer(30, _clear_clipboard).start()
+    return f"{'아이디' if field == 'id' else '비밀번호'}를 복사했어요. 30초 안에 로그인 칸에 Ctrl+V 하세요."
+
+
+def _clear_clipboard() -> None:
+    subprocess.run(["powershell", "-NoProfile", "-Command", "Set-Clipboard -Value ' '"],
+                   check=False, creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
 
 
 # ──────────────────────────── 진도 서버로 넘기기 ────────────────────────────
@@ -246,7 +291,7 @@ class Handler(BaseHTTPRequestHandler):
     server_version = "LessonAssistant/1"
 
     def log_message(self, fmt, *args):  # 녹음 조각 요청이 많아 조용히
-        if "/api/rec" not in (args[0] if args else ""):
+        if "/api/rec" not in str(args[0] if args else ""):
             sys.stderr.write("[%s] %s\n" % (datetime.now().strftime("%H:%M:%S"), fmt % args))
 
     def _send(self, code: int, body: bytes, ctype: str) -> None:
@@ -260,19 +305,33 @@ class Handler(BaseHTTPRequestHandler):
     def _json(self, value, code: int = 200) -> None:
         self._send(code, json.dumps(value, ensure_ascii=False).encode("utf-8"), "application/json; charset=utf-8")
 
-    def _same_origin(self) -> bool:
+    def _trusted(self) -> bool:
+        """DNS 리바인딩·다른 사이트 요청 막기: Host 는 127.0.0.1/localhost 만, Origin 은 없거나 그 둘만."""
+        port = self.server.server_port
+        hosts = {f"127.0.0.1:{port}", f"localhost:{port}"}
+        if self.headers.get("Host", "") not in hosts:
+            return False
         origin = self.headers.get("Origin")
-        host = f"http://{self.headers.get('Host', '')}"
-        return origin is None or origin == host
+        return origin is None or origin in {f"http://{h}" for h in hosts}
 
     def do_GET(self):
+        if not self._trusted():
+            return self._json({"status": "error", "message": "이 PC의 수업 비서 화면에서만 열 수 있어요."}, 403)
         url = urllib.parse.urlparse(self.path)
         q = urllib.parse.parse_qs(url.query)
         if url.path in ("/", "/index.html"):
             return self._send(200, (WEB / "index.html").read_bytes(), "text/html; charset=utf-8")
         if url.path == "/api/state":
-            day = date.fromisoformat(q.get("date", [date.today().isoformat()])[0])
+            try:
+                day = date.fromisoformat(q.get("date", [date.today().isoformat()])[0])
+            except ValueError:
+                return self._json({"status": "error", "message": "날짜 형식이 잘못됐어요."}, 400)
             return self._json(state(day))
+        if url.path == "/api/upcoming":
+            try:
+                return self._json({"status": "success", "items": upcoming(q.get("subject", [""])[0])})
+            except (urllib.error.URLError, OSError, ValueError):
+                return self._json({"status": "error", "message": "진도 서버(teacherlesson-schedule)가 꺼져 있어요."}, 502)
         if url.path.startswith("/api/pdf/"):
             base = load_config().get("schedule_api", "http://127.0.0.1:5000").rstrip("/")
             self.send_response(302)
@@ -282,7 +341,7 @@ class Handler(BaseHTTPRequestHandler):
         return self._json({"status": "error", "message": "없는 주소"}, 404)
 
     def do_POST(self):
-        if not self._same_origin():
+        if not self._trusted():
             return self._json({"status": "error", "message": "다른 사이트의 요청은 받지 않아요."}, 403)
         url = urllib.parse.urlparse(self.path)
         q = urllib.parse.parse_qs(url.query)
@@ -293,7 +352,8 @@ class Handler(BaseHTTPRequestHandler):
                 return self._json(save_audio(q, raw))
             body = json.loads(raw.decode("utf-8") or "{}")
             if url.path == "/api/open-site":
-                return self._json({"status": "success", "message": open_window(body["url"], "right", load_config())})
+                cfg = load_config()
+                return self._json({"status": "success", "message": open_window(check_site_url(body.get("url", ""), cfg), "right", cfg)})
             if url.path == "/api/copy-secret":
                 return self._json({"status": "success", "message": copy_secret(body.get("subject", ""), body.get("field", ""))})
             if url.path == "/api/session":
@@ -315,9 +375,15 @@ def save_audio(q: dict, raw: bytes) -> dict:
     ext = "mp4" if q.get("ext", ["webm"])[0] == "mp4" else "webm"
     path = SESSIONS / day / f"{name}.{ext}"
     path.parent.mkdir(parents=True, exist_ok=True)
-    with _lock, open(path, "wb" if seq == 0 else "ab") as fh:
-        fh.write(raw)
-    return {"status": "success", "bytes": path.stat().st_size}
+    with _lock:
+        if seq == 0 and path.exists():  # 앞 녹음을 덮어쓰지 않는다
+            n = 2
+            while (SESSIONS / day / f"{name}_{n}.{ext}").exists():
+                n += 1
+            raise ValueError(f"같은 이름 녹음이 있어요. 이름: {name}_{n}")
+        with open(path, "wb" if seq == 0 else "ab") as fh:
+            fh.write(raw)
+    return {"status": "success", "bytes": path.stat().st_size, "file": path.name}
 
 
 def save_session(body: dict) -> dict:

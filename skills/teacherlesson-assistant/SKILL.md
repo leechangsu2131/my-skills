@@ -19,7 +19,8 @@ metadata:
 
 - `실행_수업비서.bat` → 서버(127.0.0.1:5180)가 켜지고 화면 왼쪽 1/3에 수업 비서 창이 열린다.
 - 진도를 진도표에서 가져오려면 `teacherlesson-schedule` 서버(5000번)도 켜 둔다. 꺼져 있으면 설정의 `fallback_timetable`(요일별 과목)을 쓴다.
-- "수업 사이트 열기"는 수업 전용 Chrome 프로필(`%LOCALAPPDATA%\TeacherLessonAssistant\chrome_profile`)로 화면 오른쪽 2/3에 창을 연다. 한 번 로그인하면 그 프로필에 로그인이 유지된다.
+- "수업 사이트 열기"는 수업 도우미 공용 Chrome 프로필(config `chrome_profile`, 기본 `%LOCALAPPDATA%\MusicClassHelper\chrome_profile`, 원격 디버깅 포트 `debug_port` 9233)로 화면 오른쪽 2/3에 창을 연다. 열 수 있는 주소는 config 의 과목 사이트·바로가기·하이클래스 주소뿐이다. 한 번 로그인하면 그 프로필에 로그인이 유지된다.
+- 서버는 Host 가 127.0.0.1/localhost 인 요청만 받는다(다른 사이트·DNS 리바인딩 차단). 클립보드로 복사한 비밀번호는 30초 뒤 지운다.
 
 ## 화면 기능 (v0.1)
 

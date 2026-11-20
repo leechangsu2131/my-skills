@@ -39,7 +39,9 @@ def connect(cfg: dict, start_url: str):
         time.sleep(4)
     opts = webdriver.ChromeOptions()
     opts.debugger_address = f"127.0.0.1:{port}"
-    return webdriver.Chrome(options=opts)
+    driver = webdriver.Chrome(options=opts)
+    driver.switch_to.new_window("tab")  # 수업 비서 창(같은 프로필)을 다른 사이트로 넘기지 않도록 새 탭에서만 일한다
+    return driver
 
 
 def safe(text: str) -> str:
@@ -52,8 +54,6 @@ ISCREAM_LIST = "https://www.i-scream.co.kr/user/subject/SubjectChasiList.do"
 
 
 def iscream_guides(driver, subject: str, with_plan: bool, grade_term: str = "", hint: str = "") -> tuple[str, list[dict]]:
-    handles = driver.window_handles
-    driver.switch_to.window(next((h for h in handles if _url(driver, h).startswith("https://www.i-scream")), handles[-1]))
     driver.get(ISCREAM_LIST)
     time.sleep(3)
     if "login" in driver.current_url:
@@ -130,7 +130,11 @@ class HttpRangeFile(io.RawIOBase):
         end = min(self.size, self.pos + n) - 1
         req = urllib.request.Request(self.url, headers={"Range": f"bytes={self.pos}-{end}"})
         with urllib.request.urlopen(req, timeout=300) as res:
+            if res.status != 206:
+                raise RuntimeError(f"서버가 부분 받기를 하지 않아요(응답 {res.status}).")
             data = res.read()
+        if len(data) != end - self.pos + 1:
+            raise RuntimeError("받은 길이가 요청과 달라요.")
         self.pos += len(data)
         return data
 
@@ -151,6 +155,8 @@ def _zip_name(info: zipfile.ZipInfo) -> str:
 
 def pick_google_account(driver, hint: str) -> None:
     """구글 계정 선택 화면이 뜨면 hint 로 시작하는 계정을 누른다. 비밀번호 화면이면 멈춘다."""
+    if not hint:
+        raise RuntimeError("config 의 google_account_hint 가 비어 있어 구글 계정을 자동으로 고르지 않아요(공용 PC 보호).")
     for handle in driver.window_handles:
         driver.switch_to.window(handle)
         if "accounts.google.com" not in driver.current_url:
@@ -252,15 +258,18 @@ def browser_download(driver, label: str, folder: pathlib.Path) -> str:
     driver.execute_script(
         r"""const e=[...document.querySelectorAll('li.table-row')].find(x=>x.offsetParent!==null && x.querySelector('.file-name')?.textContent.trim()===arguments[0]);
             e.querySelector('[aria-label="다운로드"]').click();""", label)
-    for _ in range(300):
-        time.sleep(2)
-        new = set(p.name for p in folder.iterdir()) - before
-        if new and not any(n.endswith((".crdownload", ".tmp")) for n in new):
-            name = sorted(new)[0]
-            return f"받음 {name} {(folder / name).stat().st_size / 1048576:.1f}MB"
-        if not new and _ == 15:
-            return "이미 있거나 다운로드가 시작되지 않았어요"
-    return "시간 초과(10분)"
+    try:
+        for _ in range(300):
+            time.sleep(2)
+            new = set(p.name for p in folder.iterdir()) - before
+            if new and not any(n.endswith((".crdownload", ".tmp")) for n in new):
+                name = sorted(new)[0]
+                return f"받음 {name} {(folder / name).stat().st_size / 1048576:.1f}MB"
+            if not new and _ == 60:
+                return "2분 안에 다운로드가 시작되지 않았어요"
+        return "시간 초과(10분)"
+    finally:  # 교사가 이후 직접 받는 파일까지 이 폴더로 가지 않게 되돌린다
+        driver.execute_cdp_cmd("Browser.setDownloadBehavior", {"behavior": "default"})
 
 
 PUBLISHERS = {

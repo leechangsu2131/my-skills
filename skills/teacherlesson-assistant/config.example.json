@@ -24,6 +24,7 @@
   "chrome_profile": "%LOCALAPPDATA%\\MusicClassHelper\\chrome_profile",
   "debug_port": 9233,
   "google_account_hint": "",
+  "grade_term": "3-2",
   "subjects": {
     "수학": {"publisher": "아이스크림", "site": "https://www.i-scream.co.kr/user/subject/SubjectChasiList.do", "login": "google"},
     "음악": {"publisher": "두클래스", "site": "https://ele.douclass.com", "login": "google"},

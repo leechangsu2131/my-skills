@@ -12,6 +12,8 @@ header{position:sticky;top:0;z-index:5;background:var(--acc);color:#fff;padding:
 .row{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
 .grow{flex:1}
 header button{background:rgba(255,255,255,.15);color:#fff;border:0}
+#datePick{font:inherit;border:0;border-radius:6px;padding:3px 6px;color:var(--acc);font-weight:700}
+#dow{font-weight:700}
 #clock{font-size:20px;font-weight:700;font-variant-numeric:tabular-nums}
 #tabs{display:flex;gap:4px;margin-top:6px;overflow-x:auto}
 #tabs button{flex:1;min-width:58px;padding:4px 2px;line-height:1.2}
@@ -55,7 +57,7 @@ textarea,input[type=text]{width:100%;font:inherit;border:1px solid var(--line);b
 <body>
 <header>
   <div class="row">
-    <button id="prevDay">◀</button><span id="dateLabel"></span><button id="nextDay">▶</button>
+    <button id="prevDay" title="전날">◀</button><input type="date" id="datePick" title="달력에서 날짜 고르기"><span id="dow"></span><button id="nextDay" title="다음날">▶</button><button id="todayBtn">오늘</button>
     <span class="grow"></span>
     <span id="clock"></span>
     <button id="phoneBtn" title="교실 내선번호">📞</button>
@@ -95,7 +97,7 @@ textarea,input[type=text]{width:100%;font:inherit;border:1px solid var(--line);b
       <button data-k="student">🙋 학생 발표</button><button data-k="star">★ 표시</button>
       <button id="voiceBtn" title="크롬 음성 인식(구글 서버로 소리가 전송됨)">🎤 음성 메모</button>
     </div>
-    <input type="text" id="memoIn" style="margin-top:6px" placeholder="메모 입력 후 Enter (메모·고칠점은 같은 과목 다음 수업에 다시 보여 줍니다)">
+    <input type="text" id="memoIn" style="margin-top:6px" placeholder="메모 입력 후 Enter (같은 과목 다음 수업에 다시 보여 줌) · 🎤 음성 메모는 구글로 전송되니 학생 이름은 말하지 마세요">
     <div id="memoList"></div>
   </section>
 
@@ -108,6 +110,11 @@ textarea,input[type=text]{width:100%;font:inherit;border:1px solid var(--line);b
   <section>
     <h2>📅 진도 조정 <span class="muted">(진도표 시트에 바로 반영)</span></h2>
     <div class="row"><button data-p="done">✅ 이 차시 완료</button><button data-p="extend">➕ 한 차시 더 필요</button><button data-p="push">⏭ 이후 진도 미루기</button></div>
+    <div class="row" style="margin-top:6px"><button id="catchBtn">📍 여기부터 다시 잡기</button><span class="muted">실제 진도와 어긋났을 때: 다음에 할 차시를 고르면 앞 차시는 완료, 뒤는 오늘 이후로 다시 배치</span></div>
+    <div id="catchBox" style="display:none;margin-top:6px">
+      <select id="catchSel" style="width:100%;font:inherit;padding:5px"></select>
+      <div class="row" style="margin-top:6px"><button id="catchGo" class="pri">이 차시부터 다시 잡기</button><button id="catchCancel">닫기</button></div>
+    </div>
   </section>
 
   <section>
@@ -144,8 +151,9 @@ function nowPeriod(){
 }
 
 async function load(){
-  if (rec) { toast('녹음 중에는 날짜를 바꿀 수 없어요'); return; }
-  $('dateLabel').textContent = iso(day);
+  if (rec) { toast('녹음 중에는 날짜를 바꿀 수 없어요'); $('datePick').value = S ? S.date : iso(day); return; }
+  await flushSave();
+  $('datePick').value = iso(day); $('dow').textContent = '일월화수목금토'[day.getDay()];
   S = await (await fetch('/api/state?date='+iso(day))).json();
   $('source').textContent = '출처: ' + S.source;
   $('phones').innerHTML = S.phones.map(p=>`<div><span>${esc(p.name)}</span><b>${esc(p.no)}</b></div>`).join('') || '설정에 내선번호를 적어 주세요';
@@ -163,13 +171,16 @@ function renderTabs(){
 
 function select(i){
   if (rec) { toast('녹음 중입니다. 먼저 수업을 마쳐 주세요'); return; }
+  flushSave();
   cur = i>=0 ? S.lessons[i] : null; stepIdx = -1; stepAt = 0;
   renderTabs();
   if (!cur){ $('lTitle').textContent='수업 없음'; $('lMeta').textContent=''; $('siteBtns').innerHTML=''; $('cautions').innerHTML=''; $('steps').innerHTML=''; $('goal').innerHTML=''; return; }
   const saved = cur.saved;
   sess = saved || {date:S.date, period:cur.period, subject:cur.subject, publisher:cur.publisher, title:cur.title, unit:cur.unit, lesson:cur.lesson, record_key:cur.record_key, memos:[], notice:''};
   $('lTitle').textContent = `${cur.subject} · ${cur.title || cur.lesson || '차시 정보 없음'}`;
-  $('lMeta').innerHTML = [cur.publisher && `<span class="tag">${esc(cur.publisher)}</span>`, cur.unit && esc(cur.unit), cur.lesson && esc(cur.lesson), cur.status && `상태: ${esc(cur.status)}`].filter(Boolean).join(' · ');
+  $('lMeta').innerHTML = [cur.publisher && `<span class="tag">${esc(cur.publisher)}</span>`, cur.unit && esc(cur.unit), cur.lesson && `${esc(cur.lesson)}차시`,
+    cur.status === 'done' ? '<span class="tag" style="background:#e6f4ea">✅ 완료됨</span>' : (cur.status && `상태: ${esc(cur.status)}`)].filter(Boolean).join(' · ');
+  $('catchBox').style.display = 'none';
   $('siteBtns').innerHTML = [
     cur.site && `<button class="pri" id="openSite">🖥 수업 사이트 열기</button>`,
     cur.has_login && `<button id="cpId">아이디 복사</button><button id="cpPw">비번 복사</button>`,
@@ -211,14 +222,25 @@ function addMemo(kind, text, quiet){
 function renderMemos(){
   $('memoList').innerHTML = (sess?sess.memos:[]).slice().reverse().map(m=>`<div><code>${esc(m.t)}</code>${KIND[m.kind]||''} ${esc(m.text)}</div>`).join('');
 }
+let pendingSave = null;
 function scheduleSave(quiet=true){
+  if (!sess) return;
+  sess.notice = $('notice').value;
+  const target = sess, lesson = cur;   // 타이머가 돌 때 다른 교시로 바뀌어도 이 기록을 저장
   clearTimeout(saveTimer);
-  saveTimer = setTimeout(async ()=>{
-    sess.notice = $('notice').value;
-    const r = await fetch('/api/session', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(sess)});
-    if (!quiet || !r.ok) toast(r.ok ? '기록을 저장했어요' : '저장 실패');
-    cur.saved = sess; renderTabs();
-  }, 800);
+  pendingSave = () => doSave(target, lesson, quiet);
+  saveTimer = setTimeout(flushSave, 800);
+}
+async function doSave(target, lesson, quiet){
+  const r = await fetch('/api/session', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(target)}).catch(()=>null);
+  if (!quiet || !r || !r.ok) toast(r && r.ok ? '기록을 저장했어요' : '저장 실패');
+  if (lesson) lesson.saved = target;
+  if (S) renderTabs();
+}
+function flushSave(){
+  clearTimeout(saveTimer);
+  const job = pendingSave; pendingSave = null;
+  return job ? job() : Promise.resolve();
 }
 
 /* ===== 녹음: 10초마다 조각을 서버로 보내 이어 붙인다 ===== */
@@ -232,8 +254,8 @@ async function startRec(){
   if (stream){
     const mt = ['audio/webm;codecs=opus','audio/webm','audio/mp4'].find(t=>MediaRecorder.isTypeSupported(t)) || '';
     const ext = mt.includes('mp4') ? 'mp4' : 'webm';
-    const name = `${cur.period??0}교시_${cur.subject}_${new Date().toTimeString().slice(0,5).replace(':','')}`;
-    sess.rec_file = `${name}.${ext}`;
+    const name = `${cur.period??0}교시_${cur.subject}_${new Date().toTimeString().slice(0,8).replace(/:/g,'')}`;
+    sess.rec_files = (sess.rec_files || []).concat(`${name}.${ext}`);
     const mr = new MediaRecorder(stream, mt?{mimeType:mt, audioBitsPerSecond:48000}:{});
     mr.ondataavailable = e => {
       if (!e.data.size) return;
@@ -283,6 +305,8 @@ function voiceMemo(){
 $('tabs').onclick = e => { const b=e.target.closest('button'); if (b) select(+b.dataset.i); };
 $('prevDay').onclick = () => { day.setDate(day.getDate()-1); load(); };
 $('nextDay').onclick = () => { day.setDate(day.getDate()+1); load(); };
+$('datePick').onchange = e => { if (e.target.value) { day = new Date(e.target.value + 'T09:00:00'); load(); } };
+$('todayBtn').onclick = () => { day = new Date(); load(); };
 $('phoneBtn').onclick = () => { const p=$('phones'); p.style.display = p.style.display==='block'?'none':'block'; };
 $('steps').onclick = e => { const s=e.target.closest('.step'); if (s) goStep(+s.dataset.s); };
 $('stepPrev').onclick = () => goStep(stepIdx-1);
@@ -297,6 +321,7 @@ $('memoBtns').onclick = e => {
 };
 $('memoIn').onkeydown = e => { if (e.key==='Enter' && !e.isComposing && e.target.value.trim()){ addMemo('note', e.target.value.trim()); e.target.value=''; } };
 $('notice').oninput = () => { if (sess) scheduleSave(true); };
+window.addEventListener('pagehide', () => { if (pendingSave) { clearTimeout(saveTimer); navigator.sendBeacon && sess && navigator.sendBeacon('/api/session', new Blob([JSON.stringify(sess)], {type:'application/json'})); } });
 $('cautionAdd').onclick = async () => {
   const t = $('cautionIn').value.trim(); if (!t || !cur) return;
   const j = await post('/api/caution', {publisher:cur.publisher, subject:cur.subject, text:t});
@@ -317,12 +342,29 @@ $('siteBtns').onclick = e => {
 $('links').onclick = e => { const b=e.target.closest('button'); if (b) post('/api/open-site', {url:S.links[+b.dataset.l].url}); };
 document.querySelector('main').addEventListener('click', async e => {
   const p = e.target.closest('button')?.dataset.p; if (!p || !cur) return;
+  if (!cur.record_key) { toast('진도표에서 불러온 수업이 아니라 진도를 바꿀 수 없어요 (진도 서버 확인)'); return; }
   const body = {subject:cur.subject, record_key:cur.record_key, row_number:cur.row_number, bridge_row:cur.bridge_row, target_date:S.date};
   if (p==='push'){ const d = prompt(`${cur.subject} 이후 진도를 며칠 미룰까요?`, '7'); if (!d) return; body.days = +d; body.from_date = S.date; }
   else if (!confirm({done:`${cur.subject} 「${cur.title}」을(를) 완료로 표시할까요?`, extend:`${cur.subject} 「${cur.title}」에 한 차시를 더 쓰고 뒤 진도를 밀까요?`}[p])) return;
   const j = await post('/api/progress/'+p, body);
   if (j.status==='success'){ addMemo('sys', `진도 조정: ${p}`, true); setTimeout(load, 600); }
 });
+$('catchBtn').onclick = async () => {
+  if (!cur) return;
+  if (!cur.record_key) { toast('진도표에서 불러온 수업이 아니라 진도를 바꿀 수 없어요 (진도 서버 확인)'); return; }
+  $('catchSel').innerHTML = '<option>불러오는 중…</option>'; $('catchBox').style.display = 'block';
+  const j = await (await fetch('/api/upcoming?subject=' + encodeURIComponent(cur.subject))).json().catch(() => ({items: []}));
+  if (!j.items || !j.items.length) { $('catchSel').innerHTML = '<option value="">남은 차시가 없거나 진도 서버가 꺼져 있어요</option>'; return; }
+  $('catchSel').innerHTML = j.items.map(i => `<option value="${esc(i.record_key)}">${esc(i.unit)} ${esc(i.lesson)}차시 · ${esc(i.title)} (지금 계획: ${esc(i.planned_date)} ${esc(i.planned_period)}교시)</option>`).join('');
+};
+$('catchCancel').onclick = () => { $('catchBox').style.display = 'none'; };
+$('catchGo').onclick = async () => {
+  const key = $('catchSel').value; if (!key) return;
+  const label = $('catchSel').selectedOptions[0].textContent;
+  if (!confirm(`[${cur.subject}] 다음에 할 차시를\n${label}\n로 정할까요?\n\n이 앞의 남은 차시는 완료 처리되고, 이 차시부터는 오늘 이후 시간표에 맞춰 다시 배치됩니다.`)) return;
+  const j = await post('/api/progress/catch-up', {subject: cur.subject, record_key: key});
+  if (j.status === 'success') { addMemo('sys', `진도 다시 잡기: ${label}`, true); $('catchBox').style.display = 'none'; setTimeout(load, 800); }
+};
 window.addEventListener('beforeunload', e => { if (rec){ e.preventDefault(); e.returnValue=''; } });
 
 setInterval(()=>{ const n=new Date(); $('clock').textContent=n.toTimeString().slice(0,5);

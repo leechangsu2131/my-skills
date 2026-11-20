@@ -63,6 +63,33 @@ class SheetsDb:
         except gspread.exceptions.WorksheetNotFound:
             return None
 
+    def recipients(self):
+        """'받는사람' 탭(친구에게 보내기 받는 사람)이 있으면 그 탭을, 없으면 None."""
+        if self._sh is None:
+            return None
+        import gspread
+
+        from .recipients import RecipientSheet
+
+        try:
+            return RecipientSheet(self._sh.worksheet("받는사람"))  # 챗봇(Apps Script)과 같은 이름으로 고정
+        except gspread.exceptions.WorksheetNotFound:
+            return None
+
+    def share_tab(self):
+        """'공유링크' 탭(없으면 만든다). 시트가 아니면 None."""
+        if self._sh is None:
+            return None
+        import gspread
+
+        from .recipients import ShareTab
+
+        try:
+            ws = self._sh.worksheet("공유링크")
+        except gspread.exceptions.WorksheetNotFound:
+            ws = self._sh.add_worksheet("공유링크", rows=10, cols=2)
+        return ShareTab(ws)
+
     @classmethod
     def from_env(cls) -> "SheetsDb":
         import gspread  # 드라이런·테스트에는 필요 없으니 늦게 불러온다

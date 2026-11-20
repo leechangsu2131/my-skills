@@ -18,7 +18,16 @@ from .db import CsvDb, SheetsDb, need
 from .envload import load_env, update_env_value
 from .inbox import plan_inbox
 from .kakao import KakaoError, list_friends, refresh_access_token, send_friends, send_memo
-from .message import IMMINENT_DAYS, build_message, build_weekend_message, build_weekly_trips, split_message
+from . import recipients as rcp
+from .message import (
+    IMMINENT_DAYS,
+    build_message,
+    build_weekend_message,
+    build_weekly_trips,
+    friend_rows,
+    one_message,
+    split_message,
+)
 from .sources import SourceError, fetch_rows, parse_today, parse_week, read_csv_file
 from .sync import plan_sync
 
@@ -115,10 +124,13 @@ def cmd_morning(args) -> int:
         lines.append("⚠ 공용 시트 동기화 실패: 일정이 최신이 아닐 수 있어요")
 
     chunks = split_message(lines) if send_main else []
-    weekly_uuids, weekly_day = _weekly_settings()
+    env_weekly, weekly_day = _weekly_settings()
     weekly_due = args.weekly or today.weekday() == weekly_day
     wlines, wcount = build_weekly_trips(rows, today)
-    weekly_ready = weekly_due and bool(weekly_uuids) and wcount > 0
+    rsheet = db.recipients() if hasattr(db, "recipients") else None
+    rrows = rsheet.rows() if rsheet else []
+    has_weekly = bool(env_weekly) or any(r.get("받기") == rcp.KIND_WEEKLY for r in rrows)
+    weekly_ready = weekly_due and has_weekly and wcount > 0
     if args.dry_run:
         if send_main:
             for i, c in enumerate(chunks, 1):
@@ -131,6 +143,16 @@ def cmd_morning(args) -> int:
                     print(f"----- 주간 출장 메시지 {i} ({len(c)}자) -----\n{c}")
             else:
                 print("----- 주간 출장 메시지: 이번 주 출장이 없어 보내지 않음 -----")
+        env_daily = os.environ.get("KAKAO_FRIEND_UUIDS", "").strip()
+        if rrows or env_daily:
+            print(_recipient_summary(rrows))
+            flines, fcount = (build_weekend_message if weekend else build_message)(friend_rows(rows), today)
+            if fcount:
+                fm = one_message(flines)
+                print(f"----- 친구용 한 통 ({len(fm)}자, 개인 할 일 제외) -----" + chr(10) + fm)
+            if weekly_due and wcount:
+                wm = one_message(wlines)
+                print(f"----- 친구용 주간 출장 한 통 ({len(wm)}자) -----" + chr(10) + wm)
         return 0
     if not send_main and not weekly_ready:
         print("morning: " + ("주말이고 오늘 행사가 없어 건너뜀" if weekend else "보낼 일정이 없어 건너뜀"))
@@ -144,30 +166,56 @@ def cmd_morning(args) -> int:
         str(rt_file),
     )
     _adopt_new_refresh_token(rt_file)
-    friends = [u.strip() for u in os.environ.get("KAKAO_FRIEND_UUIDS", "").split(",") if u.strip()][:5]
     to_me = os.environ.get("KAKAO_SEND_TO_ME", "1").strip().lower() not in ("0", "false", "no")
-    if not to_me and not friends:
-        raise SystemExit("KAKAO_SEND_TO_ME=0 인데 KAKAO_FRIEND_UUIDS가 비어 있어 보낼 곳이 없습니다.")
     link = os.environ.get("MESSAGE_LINK_URL") or f"https://docs.google.com/spreadsheets/d/{need('DB_SHEET_ID')}"
-    for i, c in enumerate(chunks):
-        if i:
-            time.sleep(1)
-        if to_me:
-            send_memo(token, c, link)
-        if friends:
-            send_friends(token, friends, c, link)
-    if send_main:
-        print(f"morning: 카톡 {len(chunks)}통 전송, 일정 {count}건")
-    if weekly_ready:
-        wchunks = split_message(wlines)
-        for i, c in enumerate(wchunks):
+    # 1) 내 메시지를 먼저 보낸다. 아래 친구 단계에서 무슨 오류가 나도 이미 간 뒤다.
+    if to_me:
+        for i, c in enumerate(chunks):
             if i:
                 time.sleep(1)
-            send_friends(token, weekly_uuids, c, link, button_title="일정 보기")
-        print(f"morning: 주간 출장 메시지 {len(wchunks)}통, 받는 사람 {len(weekly_uuids)}명, 출장 {wcount}건")
-    elif weekly_due:
-        print("morning: 주간 출장 메시지는 보내지 않음(받는 사람 미설정 또는 출장 없음)")
+            send_memo(token, c, link)
+        if send_main:
+            print(f"morning: 카톡 {len(chunks)}통 전송, 일정 {count}건")
+    elif send_main:
+        print("morning: KAKAO_SEND_TO_ME=0 이라 내 메시지는 보내지 않음")
+    # 2) 가족·동료(친구에게 보내기): 오류는 경고만 남기고 실행은 성공으로 끝낸다.
+    try:
+        _morning_friends(token, db, rsheet, rrows, rows, today, weekend, weekly_due, weekly_ready, wlines, wcount, env_weekly, link)
+    except Exception as e:  # noqa: BLE001 - 친구 쪽 실패가 아침 실행 전체를 실패로 만들지 않게
+        print(f"⚠ 친구 발송 단계 오류({type(e).__name__}): {e}")
     return 0
+
+
+def _morning_friends(token, db, rsheet, rrows, rows, today, weekend, weekly_due, weekly_ready, wlines, wcount, env_weekly, link) -> None:
+    """가족·동료: 개인 할 일은 빼고, 사람당 하루 한 통(요약 + '자세히 보기' 버튼 → 읽기 전용 페이지)."""
+    if rsheet and rcp.needs_lookup(rrows):
+        _fill_recipients(token, rsheet, rrows)
+    env_daily = [u.strip() for u in os.environ.get("KAKAO_FRIEND_UUIDS", "").split(",") if u.strip()]
+    friends = rcp.merge(env_daily, rcp.targets(rrows, rcp.KIND_DAILY))
+    flines, fcount = (build_weekend_message if weekend else build_message)(friend_rows(rows), today)
+    daily_to = friends if fcount else []
+    # 매일 받는 사람은 그날 일정에 출장이 이미 있으니 같은 날 주간 메시지를 또 보내지 않는다(하루 한 통).
+    weekly_to = [u for u in rcp.merge(env_weekly, rcp.targets(rrows, rcp.KIND_WEEKLY)) if u not in daily_to] if weekly_ready else []
+    if not daily_to and not weekly_to:
+        if weekly_due:
+            print("morning: 주간 출장 메시지는 보내지 않음(받는 사람 미설정·미확인 또는 출장 없음)")
+        return
+    if len(daily_to) + len(weekly_to) > rcp.DAILY_QUOTA:
+        print(f"⚠ 친구 발송 예정 {len(daily_to) + len(weekly_to)}건이 카카오 하루 한도({rcp.DAILY_QUOTA}건)를 넘을 수 있어요.")
+    share = {}
+    try:
+        share = _share_links(db, flines if daily_to else None, wlines if weekly_to else None, today)
+    except Exception as e:  # noqa: BLE001 - 페이지 갱신이 안 돼도 메시지는 보낸다(버튼은 시트 링크)
+        print(f"⚠ 공유 페이지 갱신 실패({type(e).__name__}): 버튼은 시트 링크로 보냅니다.")
+    failed = 0
+    if daily_to:
+        failed += _send_to_friends(token, daily_to, one_message(flines), share.get("daily") or link, button_title="자세히 보기")
+        print(f"morning: 친구 {len(daily_to)}명에게 한 통" + ("" if share.get("daily") else " (공유 페이지 없음: 시트 링크)"))
+    if weekly_to:
+        failed += _send_to_friends(token, weekly_to, one_message(wlines), share.get("weekly") or link, button_title="자세히 보기")
+        print(f"morning: 주간 출장 메시지 받는 사람 {len(weekly_to)}명, 출장 {wcount}건")
+    if failed:
+        print(f"⚠ 친구에게 보내기 {failed}번 실패(위 메시지 참고). 내 메시지는 정상 전송됐어요.")
 
 
 def _new_rt_path():
@@ -197,6 +245,77 @@ def _task_settings() -> tuple[int | None, int]:
     return day, max(imminent, 1)
 
 
+def _send_to_friends(token, uuids, text, link, button_title="일정DB 열기") -> int:
+    """5명씩 나눠 보낸다. 실패해도 멈추지 않고 실패 횟수만 돌려준다(내 메시지는 이미 갔으므로)."""
+    failed = 0
+    for group in rcp.batches(uuids):
+        try:
+            send_friends(token, group, text, link, button_title=button_title)
+        except Exception as e:  # noqa: BLE001 - 네트워크 오류 등도 다음 묶음은 계속 보낸다
+            failed += 1
+            print(f"⚠ {e}" if isinstance(e, KakaoError) else f"⚠ 친구에게 보내기 오류({type(e).__name__})")
+    return failed
+
+
+def _share_links(db, daily_lines, weekly_lines, today) -> dict[str, str]:
+    """'자세히 보기' 페이지 본문을 공유링크 탭에 쓰고 {'daily': 주소, 'weekly': 주소}를 돌려준다.
+    탭에 WEBAPP_URL이 없거나 시트가 아니면 빈 dict(→ 예전처럼 시트 링크)."""
+    if daily_lines is None and weekly_lines is None:
+        return {}
+    tab = db.share_tab() if hasattr(db, "share_tab") else None
+    if tab is None:
+        return {}
+    import secrets
+
+    vals = tab.values()
+    base = vals.get("WEBAPP_URL", "").strip()
+    if not base:
+        print("⚠ 공유링크 탭에 WEBAPP_URL이 없어 '자세히 보기'는 시트 링크로 보냅니다.")
+        return {}
+    updates = {}
+    token = vals.get("VIEW_TOKEN", "").strip()
+    if not token:
+        token = secrets.token_urlsafe(24)
+        updates["VIEW_TOKEN"] = token
+    out = {}
+    if daily_lines is not None:
+        updates["DAILY_TEXT"] = "\n".join(daily_lines)
+        out["daily"] = rcp.view_link(base, token, "daily")
+    if weekly_lines is not None:
+        updates["WEEKLY_TEXT"] = "\n".join(weekly_lines)
+        out["weekly"] = rcp.view_link(base, token, "weekly")
+    now = datetime.now(ZoneInfo("Asia/Seoul")).strftime("%Y-%m-%d %H:%M")
+    if "daily" in out:
+        updates["DAILY_UPDATED"] = now
+    if "weekly" in out:
+        updates["WEEKLY_UPDATED"] = now
+    tab.save(updates)
+    return out
+
+
+def _fill_recipients(token, rsheet, rrows) -> None:
+    """받는사람 탭에서 uuid·이름이 빈 사람을 친구 목록에서 찾아 채운다(실패해도 아침 메시지는 계속)."""
+    try:
+        changes = rcp.fill_from_friends(rrows, list_friends(token))
+        rsheet.write(changes)
+    except Exception as e:  # noqa: BLE001 - 시트 쓰기·네트워크 오류여도 이미 확인된 사람에게는 보낸다
+        print(f"⚠ 받는 사람 확인 실패: {e}" if isinstance(e, KakaoError) else f"⚠ 받는 사람 확인 실패({type(e).__name__})")
+        return
+    for kind in (rcp.KIND_DAILY, rcp.KIND_WEEKLY):
+        n = rcp.waiting(rrows, kind)
+        if n:
+            print(f"⚠ '{kind}' 받는 사람 {n}명을 친구 목록에서 못 찾았어요(카톡 친구인지, 앱 멤버인지, 프로필 공개인지 확인).")
+
+
+def _recipient_summary(rrows) -> str:
+    parts = []
+    for kind in (rcp.KIND_DAILY, rcp.KIND_WEEKLY):
+        ok, wait = len(rcp.targets(rrows, kind)), rcp.waiting(rrows, kind)
+        if ok or wait:
+            parts.append(f"{kind} {ok}명" + (f"(+확인 대기 {wait}명)" if wait else ""))
+    return "----- 받는사람 탭: " + (", ".join(parts) if parts else "받기 설정된 사람 없음") + " -----"
+
+
 def _weekly_settings() -> tuple[list[str], int]:
     """주간 출장 메시지 받는 사람(WEEKLY_FRIEND_UUIDS, 쉼표로 최대 5명)과 보내는 요일(WEEKLY_DAY, 0=월 ... 6=일, 기본 월)."""
     uuids = [u.strip() for u in os.environ.get("WEEKLY_FRIEND_UUIDS", "").split(",") if u.strip()][:5]
@@ -218,11 +337,24 @@ def cmd_friends(args) -> int:
     _adopt_new_refresh_token(rt_file)
     friends = list_friends(token)
     if not friends:
-        print("조회된 친구가 없습니다. 상대가 이 카카오 앱에 로그인해 동의했는지, 내 카카오톡 친구인지, 앱 팀원으로 등록됐는지 확인하세요.")
+        print("조회된 친구가 없습니다. 상대가 등록 링크로 동의했는지, 내 카카오톡 친구인지, 앱 멤버로 등록됐는지, 프로필이 공개인지 확인하세요.")
         return 0
+    print("이 앱에 동의한 카카오톡 친구:")
     for f in friends:
-        print(f"{f['name']}\t{f['uuid']}")
-    print("※ uuid는 이 화면에서만 보고 깃허브 Secrets(WEEKLY_FRIEND_UUIDS)에 넣으세요. 채팅·공개 로그에 올리지 마세요.")
+        print(f"  {f['name']}")
+    rsheet = None
+    try:
+        rsheet = SheetsDb.from_env().recipients()
+    except SystemExit as e:
+        print(f"(시트에 연결하지 못해 받는사람 탭은 건너뜀: {e})")
+    if rsheet:
+        rrows = rsheet.rows()
+        changes = rcp.fill_from_friends(rrows, friends)
+        rsheet.write(changes)
+        print(f"받는사람 탭: {len({c[0] for c in changes})}명 확인해 채움")
+        print(_recipient_summary(rrows))
+    else:
+        print("받는사람 탭이 없습니다. 등록 링크로 한 명이라도 등록하면 생깁니다.")
     return 0
 
 

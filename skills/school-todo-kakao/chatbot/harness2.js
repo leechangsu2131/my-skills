@@ -4,24 +4,29 @@ const fmtDate = d => new Date(d).toLocaleDateString('sv-SE', { timeZone: TZ });
 const today = fmtDate(new Date());
 const off = n => fmtDate(new Date(new Date(today + 'T00:00:00+09:00').getTime() + n * 86400000));
 
-let tabs, props, lockCalls;
+let tabs, props, lockCalls, fetchLog = [];
+let fetchMock = () => { throw new Error('fetch not mocked'); };
+const resp = (code, body) => ({ getResponseCode: () => code, getContentText: () => JSON.stringify(body) });
 function mkSheet(name) {
   return {
     name,
     getDataRange: () => ({ getValues: () => tabs[name].map(r => r.slice()) }),
-    getRange: (r, c) => ({ setValue: v => { while (tabs[name].length < r) tabs[name].push([]); const row = tabs[name][r-1]; while (row.length < c) row.push(''); row[c-1] = v; } }),
+    getRange: (r, c) => ({ setNumberFormat() { return this; }, setValue: v => { while (tabs[name].length < r) tabs[name].push([]); const row = tabs[name][r-1]; while (row.length < c) row.push(''); row[c-1] = v; } }),
     appendRow: row => tabs[name].push(row.slice()),
     deleteRow: r => tabs[name].splice(r - 1, 1),
   };
 }
 const ctx = {
-  PropertiesService: { getScriptProperties: () => ({ getProperty: k => props[k] }) },
+  PropertiesService: { getScriptProperties: () => ({ getProperty: k => props[k], setProperty: (k, v) => { props[k] = v; } }) },
+  HtmlService: { createHtmlOutput: h => ({ html: h, setTitle() { return this; }, addMetaTag() { return this; } }) },
+  UrlFetchApp: { fetch: (url, opt) => fetchMock(url, opt) },
   ContentService: { MimeType: { JSON: 'json' }, createTextOutput: t => ({ text: t, setMimeType() { return this; } }) },
   LockService: { getScriptLock: () => ({ waitLock: () => { lockCalls++; }, releaseLock: () => {} }) },
   Utilities: { formatDate: (d, tz, f) => /HH/.test(f) ? new Date(d).toLocaleString('sv-SE', { timeZone: tz }).slice(0, 16) : fmtDate(d) },
   SpreadsheetApp: { getActive: () => ({
     getSheetByName: n => tabs[n] ? mkSheet(n) : null,
     insertSheet: n => { tabs[n] = []; return mkSheet(n); },
+    deleteSheet: sh => { delete tabs[sh.name]; },
   }) },
   console, Date, JSON, String, Math, Object, Number, Array,
 };
@@ -174,6 +179,34 @@ tabs['일정DB'][1][1] = new Date(off(7) + 'T00:00:00+09:00');
 t = say('완료 탄소중립', 'U-kim');
 check('Date cell', t.startsWith('✔'), t);
 check('doGet alive', ctx.doGet().text.includes('켜져'));
+// 20. 친구에게 보내기 받는 사람 등록
+reset();
+let pg = ctx.doGet({ parameter: { join: 'weekly' } });
+check('join without config', pg.html.includes('준비 중'), pg.html);
+tabs['비밀설정'] = [['KAKAO_REST_API_KEY', 'REST1'], ['KAKAO_CLIENT_SECRET', 'CS1'], ['KAKAO_REDIRECT_URI', 'https://x/exec']];
+pg = ctx.doGet({ parameter: { join: 'daily' } });
+check('setup moved to props and tab deleted', props.KAKAO_REST_API_KEY === 'REST1' && props.KAKAO_CLIENT_SECRET === 'CS1' && !tabs['비밀설정']);
+check('join page links kakao', pg.html.includes('kauth.kakao.com/oauth/authorize') && pg.html.includes('client_id=REST1') && pg.html.includes('state=daily') && pg.html.includes('target="_top"'), pg.html);
+fetchMock = (url, opt) => { fetchLog.push([url, opt]); return url.includes('/oauth/token') ? resp(200, { access_token: 'AT' }) : resp(200, { id: 12345 }); };
+pg = ctx.doGet({ parameter: { code: 'C1', state: 'daily' } });
+check('callback registers', pg.html.includes('등록됐어요') && tabs['받는사람'].length === 2 && tabs['받는사람'][1][1] === '매일' && tabs['받는사람'][1][2] === '12345', JSON.stringify(tabs['받는사람']));
+check('token request has secret+redirect', fetchLog[0][1].payload.client_secret === 'CS1' && fetchLog[0][1].payload.redirect_uri === 'https://x/exec');
+pg = ctx.doGet({ parameter: { code: 'C2', state: 'weekly' } });
+check('same person updates, no duplicate', tabs['받는사람'].length === 2 && tabs['받는사람'][1][1] === '주간출장', JSON.stringify(tabs['받는사람']));
+check('no token stored', !JSON.stringify(tabs).includes('"AT"'));
+fetchMock = () => resp(400, { error_code: 'KOE320' });
+pg = ctx.doGet({ parameter: { code: 'bad' } });
+check('token error page', pg.html.includes('등록하지 못했어요') && pg.html.includes('KOE320'), pg.html);
+pg = ctx.doGet({ parameter: { error: 'access_denied' } });
+check('user cancel page', pg.html.includes('취소'), pg.html);
+// 21. 자세히 보기 페이지
+tabs['공유링크'] = [['VIEW_TOKEN', 'tok123'], ['DAILY_TEXT', '📅 오늘\n• [학교] <행사>'], ['WEEKLY_TEXT', '🧳 출장'], ['DAILY_UPDATED', '2026-11-23 07:00'], ['WEEKLY_UPDATED', '2026-11-16 07:00']];
+pg = ctx.doGet({ parameter: { view: 'tok123', k: 'daily' } });
+check('view daily escaped', pg.html.includes('&lt;행사&gt;') && pg.html.includes('07:00 기준'), pg.html);
+pg = ctx.doGet({ parameter: { view: 'tok123', k: 'weekly' } });
+check('view weekly own time', pg.html.includes('🧳 출장') && pg.html.includes('11-16 07:00'), pg.html);
+pg = ctx.doGet({ parameter: { view: 'wrong', k: 'daily' } });
+check('view wrong token blocked', pg.html.includes('볼 수 없는') && !pg.html.includes('행사'), pg.html);
 console.log(pass + ' passed, ' + fail + ' failed');
 reset(); say('완료 탄소중립', 'U-kim');
 console.log('--- 샘플 ---'); console.log(say('현황', 'U-teacher').split('\n\n')[0]); console.log(); console.log(say('할일', 'U-kim'));

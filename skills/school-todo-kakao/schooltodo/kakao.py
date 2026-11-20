@@ -100,4 +100,7 @@ def list_friends(access_token: str) -> list[dict]:
     )
     if not r.ok:
         raise KakaoError("친구 목록 조회 실패: " + _describe(r))
-    return [{"name": f.get("profile_nickname", ""), "uuid": f.get("uuid", "")} for f in r.json().get("elements", [])]
+    return [
+        {"name": f.get("profile_nickname", ""), "uuid": f.get("uuid", ""), "id": str(f.get("id", ""))}
+        for f in r.json().get("elements", [])
+    ]

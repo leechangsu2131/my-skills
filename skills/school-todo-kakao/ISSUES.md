@@ -5,6 +5,13 @@
 
 ## 🔵 진행 중
 
+### ISSUE-006: 가족·친한 동료 '친구에게 보내기' 등록 간소화 (2026-11-20)
+- **상태**: 🔵 진행 중
+- **배경**: 받는 사람마다 앱 멤버 등록·카카오 로그인 동의·uuid 복사·GitHub Secret 수정이 필요해 번거로움.
+- **조치**: 등록 링크(웹앱 `?join=`) + 챗봇이 동의 후 토큰 교환으로 앱 연결 + `받는사람` 탭 + 아침 실행이 uuid 자동 채움. 친구에게는 사람당 하루 한 통(개인 할 일 제외) + `자세히 보기` 읽기 전용 페이지(`?view=`, `공유링크` 탭). reviewer 검토 반영: 친구 단계 오류가 내 메시지를 막지 않게 분리, 같은 날 중복 발송 방지, 카카오ID 텍스트 저장. 시험: pytest 60, 챗봇 52 통과. 챗봇 v5 배포.
+- **남은 일**: Apps Script `권한승인` 실행(외부 호출 권한), 카카오 앱에 리다이렉트 URI·Web 도메인(`https://script.google.com`) 등록·친구목록 동의항목 확인, 실제 한 명 등록해 아침 발송 확인. 알려진 한계는 `AGENTS.md` 12-2.
+- **관련 파일**: `chatbot/kakao_chatbot.gs`, `schooltodo/recipients.py`, `schooltodo/cli.py`, `schooltodo/db.py`, `schooltodo/kakao.py`
+
 ### ISSUE-002: 챗봇·카카오 실제 연결 확인 (2026-11-20)
 - **상태**: 🔵 진행 중
 - **증상**: 오픈빌더 봇 테스트에서 `[THRUST] skill exec error`. Apps Script 웹앱 주소로 `curl.exe -i -X POST` 하면 첫 줄이 `HTTP/1.1 302 Found`.

@@ -51,8 +51,14 @@ function doPost(e) {
   }
 }
 
-// 브라우저로 주소를 열어 봤을 때(GET) 살아 있는지만 알려 준다.
-function doGet() {
+// 브라우저로 주소를 열었을 때(GET).
+//   ?join=weekly|daily → 가족·동료가 '친구에게 보내기' 받는 사람으로 등록하는 페이지
+//   ?code=… / ?error=… → 카카오 동의 후 돌아온 요청
+//   그 밖에는 살아 있는지만 알려 준다.
+function doGet(e) {
+  const p = (e && e.parameter) || {};
+  if (p.view) return viewPage_(p);
+  if (p.join || p.code || p.error) return joinPage_(p);
   return ContentService.createTextOutput('일정DB 챗봇 서버가 켜져 있어요.');
 }
 
@@ -376,4 +382,134 @@ function byDate_(a, b) { return a.date < b.date ? -1 : a.date > b.date ? 1 : 0; 
 function json_(text) {
   const out = { version: '2.0', template: { outputs: [{ simpleText: { text: String(text).slice(0, 900) } }] } };
   return ContentService.createTextOutput(JSON.stringify(out)).setMimeType(ContentService.MimeType.JSON);
+}
+
+// ---------- 친구에게 보내기 받는 사람 등록 (가족·친한 동료) ----------
+// 카카오는 '토큰을 발급할 때' 사용자를 앱에 연결하므로, 동의 후 돌아온 code로 토큰을 받아 연결만 끝내고 토큰은 버린다.
+// 받는 사람의 uuid는 보내는 사람(선생님) 기준 값이라 여기서는 알 수 없다. 아침 실행(python)이 친구 목록에서 카카오ID로 찾아 채운다.
+const RECIPIENT_SHEET = '받는사람';
+const RECIPIENT_HEAD = ['이름', '받기', '카카오ID', 'uuid', '등록시각'];
+const JOIN_KINDS = { daily: '매일', weekly: '주간출장' };
+const SETUP_SHEET = '비밀설정'; // 처음 한 번 값을 스크립트 속성으로 옮기고 탭은 지운다
+const KAKAO_PROPS = ['KAKAO_REST_API_KEY', 'KAKAO_CLIENT_SECRET', 'KAKAO_REDIRECT_URI'];
+
+function kakaoConfig_() {
+  const props = PropertiesService.getScriptProperties();
+  const ss = SpreadsheetApp.getActive();
+  const setup = ss.getSheetByName(SETUP_SHEET);
+  if (setup) {
+    setup.getDataRange().getValues().forEach(function (r) {
+      const k = trim_(r[0]), v = trim_(r[1]);
+      if (KAKAO_PROPS.indexOf(k) >= 0 && v) props.setProperty(k, v);
+    });
+    ss.deleteSheet(setup);
+  }
+  const cfg = {
+    restKey: props.getProperty('KAKAO_REST_API_KEY') || '',
+    secret: props.getProperty('KAKAO_CLIENT_SECRET') || '',
+    redirect: props.getProperty('KAKAO_REDIRECT_URI') || '',
+  };
+  return cfg.restKey && cfg.redirect ? cfg : null;
+}
+
+function joinPage_(p) {
+  const cfg = kakaoConfig_();
+  if (!cfg) return page_('준비 중이에요', '선생님이 아직 등록 기능을 켜지 않았어요. 선생님께 알려 주세요.');
+  if (p.error) return page_('등록을 취소했어요', '다시 하려면 받은 링크를 한 번 더 눌러 주세요.');
+  if (p.code) return finishJoin_(cfg, String(p.code), String(p.state || ''));
+  const kind = JOIN_KINDS[p.join] ? String(p.join) : 'weekly';
+  const url = 'https://kauth.kakao.com/oauth/authorize?response_type=code'
+    + '&client_id=' + encodeURIComponent(cfg.restKey)
+    + '&redirect_uri=' + encodeURIComponent(cfg.redirect)
+    + '&scope=friends'
+    + '&state=' + encodeURIComponent(kind);
+  const what = kind === 'daily' ? '매일 아침 일정' : '매주 출장 일정';
+  return page_('카톡으로 ' + what + ' 받기',
+    '아래 버튼을 누르고 카카오 로그인 → "동의하고 계속하기"만 누르면 끝이에요.',
+    { href: url, label: '카카오로 등록하기' });
+}
+
+function finishJoin_(cfg, code, state) {
+  const payload = { grant_type: 'authorization_code', client_id: cfg.restKey, redirect_uri: cfg.redirect, code: code };
+  if (cfg.secret) payload.client_secret = cfg.secret;
+  const res = UrlFetchApp.fetch('https://kauth.kakao.com/oauth/token', { method: 'post', payload: payload, muteHttpExceptions: true });
+  if (res.getResponseCode() !== 200) {
+    let why = '';
+    try { why = JSON.parse(res.getContentText()).error_code || ''; } catch (err) { why = ''; }
+    return page_('등록하지 못했어요', '링크를 처음부터 다시 눌러 주세요. 계속 안 되면 선생님께 이 글자를 알려 주세요: ' + (why || res.getResponseCode()));
+  }
+  const token = JSON.parse(res.getContentText()).access_token;
+  const me = UrlFetchApp.fetch('https://kapi.kakao.com/v2/user/me', { headers: { Authorization: 'Bearer ' + token }, muteHttpExceptions: true });
+  if (me.getResponseCode() !== 200) return page_('등록하지 못했어요', '잠시 뒤 링크를 다시 눌러 주세요.');
+  const kakaoId = String(JSON.parse(me.getContentText()).id || '');
+  if (!kakaoId) return page_('등록하지 못했어요', '잠시 뒤 링크를 다시 눌러 주세요.');
+  try {
+    saveRecipient_(kakaoId, JOIN_KINDS[state] || JOIN_KINDS.weekly);
+  } catch (err) {
+    return page_('잠시 뒤 다시 해 주세요', '동의는 끝났는데 기록 중에 문제가 생겼어요. 링크를 한 번 더 눌러 주세요.');
+  }
+  return page_('등록됐어요 🎉', '이제 이 창을 닫아도 돼요. 다음 알림부터 카카오톡으로 받아요.');
+}
+
+function saveRecipient_(kakaoId, kindLabel) {
+  const lock = LockService.getScriptLock();
+  lock.waitLock(3000);
+  try {
+    const sh = sheet_(RECIPIENT_SHEET, RECIPIENT_HEAD);
+    const values = sh.getDataRange().getValues();
+    const col = headIndex_(values[0].map(String));
+    const iKind = col('받기', true), iId = col('카카오ID', true), iAt = col('등록시각');
+    const now = Utilities.formatDate(new Date(), TZ, 'yyyy-MM-dd HH:mm');
+    for (let r = 1; r < values.length; r++) {
+      if (trim_(values[r][iId]) === kakaoId) {
+        sh.getRange(r + 1, iKind + 1).setValue(kindLabel);
+        if (iAt >= 0) sh.getRange(r + 1, iAt + 1).setValue(now);
+        return;
+      }
+    }
+    const row = values[0].map(function () { return ''; });
+    row[iKind] = kindLabel;
+    if (iAt >= 0) row[iAt] = now;
+    sh.appendRow(row);
+    // 카카오ID는 긴 숫자라 숫자 칸이 되면 지수 표기·반올림으로 대조가 틀어질 수 있어 텍스트로 넣는다.
+    sh.getRange(values.length + 1, iId + 1).setNumberFormat('@').setValue(kakaoId);
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+// '자세히 보기' 버튼 → 읽기 전용 일정 페이지. 본문은 아침 실행(python)이 '공유링크' 탭에 써 둔 글을 그대로 보여 준다.
+const SHARE_SHEET = '공유링크';
+function viewPage_(p) {
+  const sh = SpreadsheetApp.getActive().getSheetByName(SHARE_SHEET);
+  const vals = {};
+  if (sh) sh.getDataRange().getValues().forEach(function (r) { if (trim_(r[0])) vals[trim_(r[0])] = String(r[1] === undefined ? '' : r[1]); });
+  if (!vals.VIEW_TOKEN || String(p.view) !== vals.VIEW_TOKEN) return page_('볼 수 없는 주소예요', '카카오톡으로 받은 버튼을 다시 눌러 주세요.');
+  const weekly = p.k === 'weekly';
+  const text = weekly ? vals.WEEKLY_TEXT : vals.DAILY_TEXT;
+  vals.UPDATED = (weekly ? vals.WEEKLY_UPDATED : vals.DAILY_UPDATED) || vals.UPDATED;
+  if (!text) return page_('아직 내용이 없어요', '다음 알림 뒤에 다시 열어 주세요.');
+  const esc = function (s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); };
+  const html = '<div style="font-family:sans-serif;max-width:480px;margin:24px auto;padding:0 16px;font-size:17px;line-height:1.7;white-space:pre-wrap">'
+    + esc(text) + '</div>'
+    + '<p style="font-family:sans-serif;max-width:480px;margin:8px auto;padding:0 16px;color:#888;font-size:13px">'
+    + esc(vals.UPDATED ? vals.UPDATED + ' 기준' : '') + '</p>';
+  return HtmlService.createHtmlOutput(html).setTitle('일정').addMetaTag('viewport', 'width=device-width, initial-scale=1');
+}
+
+function page_(title, msg, button) {
+  const esc = function (s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); };
+  const btn = button
+    ? '<p><a target="_top" href="' + esc(button.href) + '" style="display:inline-block;padding:14px 22px;background:#FEE500;color:#191919;'
+      + 'border-radius:10px;text-decoration:none;font-weight:bold;font-size:18px">' + esc(button.label) + '</a></p>'
+    : '';
+  const html = '<div style="font-family:sans-serif;max-width:420px;margin:40px auto;padding:0 16px;line-height:1.6">'
+    + '<h2>' + esc(title) + '</h2><p>' + esc(msg) + '</p>' + btn + '</div>';
+  return HtmlService.createHtmlOutput(html).setTitle(title).addMetaTag('viewport', 'width=device-width, initial-scale=1');
+}
+
+// 처음 한 번: Apps Script 편집기에서 이 함수를 선택해 [실행] → 권한 허용. (외부 호출 권한이 있어야 등록 링크가 마무리된다)
+function 권한승인() {
+  UrlFetchApp.fetch('https://kapi.kakao.com', { muteHttpExceptions: true });
+  return 'ok';
 }

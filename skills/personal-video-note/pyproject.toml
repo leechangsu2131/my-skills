@@ -15,7 +15,7 @@ dependencies = [
 
 [project.optional-dependencies]
 youtube = ["yt-dlp>=2024.1.0"]
-transcribe = ["faster-whisper>=1.0.0"]
+transcribe = ["faster-whisper>=1.0.0", "av>=11,<17"]
 test = ["pytest>=8.0"]
 
 [project.scripts]

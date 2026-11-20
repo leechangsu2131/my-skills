@@ -296,8 +296,10 @@ def write_slide_images(states: list[FrameState], output_dir: Path, jpeg_quality:
     for idx, state in enumerate(states, start=1):
         filename = f"slide_{idx:04d}.jpg"
         path = output_dir / filename
-        ok = cv2.imwrite(str(path), state.image, [int(cv2.IMWRITE_JPEG_QUALITY), jpeg_quality])
+        # cv2.imwrite는 Windows에서 한글 등 비ASCII 경로에 쓰지 못하므로 인코딩 후 직접 저장한다.
+        ok, buf = cv2.imencode(".jpg", state.image, [int(cv2.IMWRITE_JPEG_QUALITY), jpeg_quality])
         if not ok:
             raise OSError(f"슬라이드 이미지 저장 실패: {path}")
+        path.write_bytes(buf.tobytes())
         relative_paths.append(filename)
     return relative_paths

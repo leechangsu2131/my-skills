@@ -1,13 +1,13 @@
 # 스킬 카탈로그
 
 > 이 파일은 `python tools/build_catalog.py`로 자동 생성된다. 직접 고치지 말고 각 스킬의 `SKILL.md` 앞머리(`metadata`)를 고친 뒤 다시 실행한다.
-> 생성일: 2026-11-20 · 스킬 59개
+> 생성일: 2026-11-21 · 스킬 60개
 
 ## 빠른 찾기
 
 - [🏫 학교 행정](#학교-행정) — 9개
 - [📝 학생 기록·평가](#학생-기록평가) — 11개
-- [📚 수업·교사 도구](#수업교사-도구) — 13개
+- [📚 수업·교사 도구](#수업교사-도구) — 14개
 - [🌐 홈페이지](#홈페이지) — 1개
 - [👤 개인·생활](#개인생활) — 15개
 - [🛠️ 공통 유틸](#공통-유틸) — 10개
@@ -51,6 +51,7 @@
 | `teacherlesson-classtool-courseware` | ✅ 운영 | - | 클래스툴의 내 수업 보관함에서 수업자료를 설계하고, 링크·콘텐츠·OX·객관식·주관식·화이트보드 활동을 구성한다. 교사 자료실 공개와 학생 클래스 배포, 실시간 응답 흐름을 구분한다. | [SKILL](skills/teacherlesson-classtool-courseware/SKILL.md) · [이슈](skills/teacherlesson-classtool-courseware/ISSUES.md) |
 | `teacherlesson-courseware-builder` | ✅ 운영 | - | 플랫폼 공통 수업 패키지와 자료를 설계하고, AIEP·클래스툴 등 사이트별 어댑터로 콘텐츠 배치, 학생 응답 방식, 공개/배포 범위를 구분해 제작한다. 새 플랫폼은 어댑터와 카탈로그 항목으로 확장한다. | [SKILL](skills/teacherlesson-courseware-builder/SKILL.md) · [이슈](skills/teacherlesson-courseware-builder/ISSUES.md) |
 | `teacherlesson-from-neis` | ✅ 운영 | Chrome 확장 v1.5.4 | NEIS 수업내용과 학생 출결·신청 현황을 조회해 뷰어에 표시하고, 신청 내용을 확인해 선택한 결석신고서만 결석 구분과 Chrome에 저장한 유형별 결재선을 적용해 접수·승인요청한다. 최종 결재는 하지 않는다. | [SKILL](skills/teacherlesson-from-neis/SKILL.md) · [이슈](skills/teacherlesson-from-neis/ISSUES.md) 🔵2 · [README](skills/teacherlesson-from-neis/README.md) |
+| `teacherlesson-assistant` | 🔧 개발 | v0.1.0 | 진도표·지도서·출판사 사이트·녹음·메모를 묶은 교시별 수업 진행 화면과, 지도서에서 수업 흐름을 뽑고 수업 뒤 메모를 분석해 다음 수업에 반영하는 Claude 작업 절차. | [SKILL](skills/teacherlesson-assistant/SKILL.md) · [이슈](skills/teacherlesson-assistant/ISSUES.md) |
 | `teacherlesson-guide-mapper` | ✅ 운영 | - | 지도서 및 분할 결과에서 진도표 행을 만들고 시트 업로드용 데이터를 생성한다. | [SKILL](skills/teacherlesson-guide-mapper/SKILL.md) · [이슈](skills/teacherlesson-guide-mapper/ISSUES.md) · [README](skills/teacherlesson-guide-mapper/README.md) |
 | `teacherlesson-guide-splitter` | ✅ 운영 | - | 지도서 PDF를 구조 신호에 따라 단원 또는 세부 항목으로 분할하고 그룹명을 보정한다. | [SKILL](skills/teacherlesson-guide-splitter/SKILL.md) · [이슈](skills/teacherlesson-guide-splitter/ISSUES.md) · [README](skills/teacherlesson-guide-splitter/README.md) |
 | `teacherlesson-guide-tracker` | ✅ 운영 | - | 분할기의 `groups.json`을 읽어 Notion 과목별 진도표 데이터베이스를 만든다. | [SKILL](skills/teacherlesson-guide-tracker/SKILL.md) · [이슈](skills/teacherlesson-guide-tracker/ISSUES.md) · [README](skills/teacherlesson-guide-tracker/README.md) |

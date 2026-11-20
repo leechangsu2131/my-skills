@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>수업 비서</title>
+<style>
+:root{--bg:#f6f4ef;--card:#fff;--ink:#222;--sub:#6b6b6b;--line:#e3dfd6;--acc:#2f6f5e;--warn:#b5651d;--red:#c0392b}
+*{box-sizing:border-box}
+body{margin:0;font:15px/1.5 "Malgun Gothic",system-ui,sans-serif;background:var(--bg);color:var(--ink)}
+header{position:sticky;top:0;z-index:5;background:var(--acc);color:#fff;padding:8px 12px}
+.row{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.grow{flex:1}
+header button{background:rgba(255,255,255,.15);color:#fff;border:0}
+#clock{font-size:20px;font-weight:700;font-variant-numeric:tabular-nums}
+#tabs{display:flex;gap:4px;margin-top:6px;overflow-x:auto}
+#tabs button{flex:1;min-width:58px;padding:4px 2px;line-height:1.2}
+#tabs button.on{background:#fff;color:var(--acc);font-weight:700}
+#tabs button.now{outline:2px solid #ffd54f}
+#tabs small{display:block;font-size:11px;opacity:.85}
+main{padding:10px 12px 80px}
+section{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:10px}
+h2{font-size:14px;margin:0 0 6px;color:var(--sub)}
+h1{font-size:19px;margin:0}
+button{font:inherit;border:1px solid var(--line);background:#fff;border-radius:7px;padding:5px 9px;cursor:pointer}
+button:hover{filter:brightness(.95)}
+button.pri{background:var(--acc);color:#fff;border-color:var(--acc)}
+button.rec{background:var(--red);color:#fff;border-color:var(--red)}
+.muted{color:var(--sub);font-size:13px}
+.tag{display:inline-block;font-size:12px;padding:1px 7px;border-radius:10px;background:#eef3f1;color:var(--acc);margin-right:4px}
+ul{margin:4px 0;padding-left:18px}
+.caution li{color:var(--warn)}
+.step{border-left:4px solid var(--line);padding:5px 8px;margin:5px 0;cursor:pointer;border-radius:0 6px 6px 0}
+.step.cur{border-color:var(--acc);background:#eef6f3}
+.step b{font-size:14px}
+.step .say{color:#1f4e8c;margin-top:2px}
+.step .tip{color:var(--warn);font-size:13px}
+#recbar{display:flex;gap:8px;align-items:center}
+#rdot{width:12px;height:12px;border-radius:50%;background:#bbb}
+#rdot.on{background:var(--red);animation:blink 1s infinite}
+@keyframes blink{50%{opacity:.3}}
+#meter{flex:1;height:6px;background:#eee;border-radius:3px;overflow:hidden}
+#meter i{display:block;height:100%;width:0;background:var(--acc)}
+#memoBtns button{padding:4px 7px;font-size:14px}
+#memoList{max-height:220px;overflow:auto;font-size:14px;margin-top:6px}
+#memoList div{border-bottom:1px dashed var(--line);padding:2px 0}
+#memoList code{color:var(--sub);margin-right:5px}
+textarea,input[type=text]{width:100%;font:inherit;border:1px solid var(--line);border-radius:7px;padding:6px}
+#toast{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);background:#333;color:#fff;padding:8px 14px;border-radius:8px;display:none;max-width:90%;z-index:9}
+#phones{display:none;position:absolute;right:10px;top:46px;background:#fff;color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:8px 12px;box-shadow:0 4px 14px rgba(0,0,0,.15);z-index:8}
+#phones div{display:flex;justify-content:space-between;gap:18px;font-size:15px}
+#phones b{font-size:17px}
+</style>
+</head>
+<body>
+<header>
+  <div class="row">
+    <button id="prevDay">◀</button><span id="dateLabel"></span><button id="nextDay">▶</button>
+    <span class="grow"></span>
+    <span id="clock"></span>
+    <button id="phoneBtn" title="교실 내선번호">📞</button>
+  </div>
+  <div id="tabs"></div>
+  <div id="phones"></div>
+</header>
+
+<main>
+  <section id="lessonCard">
+    <div class="muted" id="source"></div>
+    <h1 id="lTitle">수업을 불러오는 중…</h1>
+    <div id="lMeta" class="muted"></div>
+    <div class="row" style="margin-top:8px" id="siteBtns"></div>
+  </section>
+
+  <section id="cautionBox">
+    <h2>⚠ 이번 수업에서 주의할 점</h2>
+    <ul class="caution" id="cautions"></ul>
+    <div class="row"><input type="text" id="cautionIn" class="grow" placeholder="이 출판사 지도서의 특징·주의점 추가 (예: 설명이 단순해 개념 보충 필요)"><button id="cautionAdd">추가</button></div>
+  </section>
+
+  <section>
+    <h2>📘 수업 흐름 <span class="muted" id="flowSrc"></span></h2>
+    <div id="goal"></div>
+    <div id="steps"></div>
+    <div class="row" style="margin-top:6px"><button id="stepPrev">◀ 이전 단계</button><button id="stepNext" class="pri">다음 단계 ▶</button><span class="muted" id="stepTimer"></span></div>
+  </section>
+
+  <section>
+    <h2>🎙 수업 기록</h2>
+    <div id="recbar"><span id="rdot"></span><span id="rtime">녹음 대기</span><span id="meter"><i id="mlev"></i></span>
+      <button id="recBtn" class="pri">● 수업 시작</button></div>
+    <div class="muted" id="recMsg">녹음은 이 PC의 내 문서\my-skills-data 에만 저장됩니다. 학생 목소리가 담기니 학교 지침을 따르세요.</div>
+    <div class="row" id="memoBtns" style="margin-top:8px">
+      <button data-k="good">👍 좋았음</button><button data-k="fix">🔧 고칠점</button>
+      <button data-k="student">🙋 학생 발표</button><button data-k="star">★ 표시</button>
+      <button id="voiceBtn" title="크롬 음성 인식(구글 서버로 소리가 전송됨)">🎤 음성 메모</button>
+    </div>
+    <input type="text" id="memoIn" style="margin-top:6px" placeholder="메모 입력 후 Enter (메모·고칠점은 같은 과목 다음 수업에 다시 보여 줍니다)">
+    <div id="memoList"></div>
+  </section>
+
+  <section>
+    <h2>📢 알림장·숙제</h2>
+    <textarea id="notice" rows="3" placeholder="하이클래스 알림장에 올릴 내용"></textarea>
+    <div class="row" style="margin-top:6px"><button id="noticeBtn">복사하고 하이클래스 열기</button></div>
+  </section>
+
+  <section>
+    <h2>📅 진도 조정 <span class="muted">(진도표 시트에 바로 반영)</span></h2>
+    <div class="row"><button data-p="done">✅ 이 차시 완료</button><button data-p="extend">➕ 한 차시 더 필요</button><button data-p="push">⏭ 이후 진도 미루기</button></div>
+  </section>
+
+  <section>
+    <h2>🔗 바로가기</h2>
+    <div class="row" id="links"></div>
+  </section>
+</main>
+<div id="toast"></div>
+
+<script>
+const $ = id => document.getElementById(id);
+const qDate = new URLSearchParams(location.search).get('date');
+let S = null, day = qDate ? new Date(qDate+'T09:00:00') : new Date(), cur = null, stepIdx = -1, stepAt = 0;
+let sess = null, rec = null, saveTimer = null;
+
+const iso = d => new Date(d.getTime() - d.getTimezoneOffset()*6e4).toISOString().slice(0,10);
+const hm = s => { const [h,m] = s.split(':').map(Number); return h*60+m; };
+const mmss = ms => { const s = Math.max(0, Math.floor(ms/1000)); return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0'); };
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function toast(msg, ms=2600){ const t=$('toast'); t.textContent=msg; t.style.display='block'; clearTimeout(t._h); t._h=setTimeout(()=>t.style.display='none', ms); }
+async function post(url, body){
+  const r = await fetch(url, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)});
+  const j = await r.json().catch(()=>({status:'error', message:'응답을 읽지 못했어요'}));
+  if (j.message) toast(j.message);
+  return j;
+}
+
+function nowPeriod(){
+  if (!S || S.date !== iso(new Date())) return null;
+  const n = new Date(), m = n.getHours()*60+n.getMinutes();
+  // 쉬는 시간에는 다음 교시를 '지금'으로 본다.
+  for (const p of S.periods) if (m <= hm(p.end)) return p.no;
+  return null;
+}
+
+async function load(){
+  if (rec) { toast('녹음 중에는 날짜를 바꿀 수 없어요'); return; }
+  $('dateLabel').textContent = iso(day);
+  S = await (await fetch('/api/state?date='+iso(day))).json();
+  $('source').textContent = '출처: ' + S.source;
+  $('phones').innerHTML = S.phones.map(p=>`<div><span>${esc(p.name)}</span><b>${esc(p.no)}</b></div>`).join('') || '설정에 내선번호를 적어 주세요';
+  $('links').innerHTML = S.links.map((l,i)=>`<button data-l="${i}">${esc(l.name)}</button>`).join('');
+  renderTabs();
+  const np = nowPeriod();
+  const first = S.lessons.find(l=>l.period===np) || S.lessons[0];
+  select(first ? S.lessons.indexOf(first) : -1);
+}
+
+function renderTabs(){
+  const np = nowPeriod();
+  $('tabs').innerHTML = S.lessons.map((l,i)=>`<button data-i="${i}" class="${cur===l?'on':''} ${l.period===np?'now':''}">${l.period??'-'}교시<small>${esc(l.subject)}${l.saved?' ✓':''}</small></button>`).join('') || '<span class="muted">이 날은 수업이 없어요</span>';
+}
+
+function select(i){
+  if (rec) { toast('녹음 중입니다. 먼저 수업을 마쳐 주세요'); return; }
+  cur = i>=0 ? S.lessons[i] : null; stepIdx = -1; stepAt = 0;
+  renderTabs();
+  if (!cur){ $('lTitle').textContent='수업 없음'; $('lMeta').textContent=''; $('siteBtns').innerHTML=''; $('cautions').innerHTML=''; $('steps').innerHTML=''; $('goal').innerHTML=''; return; }
+  const saved = cur.saved;
+  sess = saved || {date:S.date, period:cur.period, subject:cur.subject, publisher:cur.publisher, title:cur.title, unit:cur.unit, lesson:cur.lesson, record_key:cur.record_key, memos:[], notice:''};
+  $('lTitle').textContent = `${cur.subject} · ${cur.title || cur.lesson || '차시 정보 없음'}`;
+  $('lMeta').innerHTML = [cur.publisher && `<span class="tag">${esc(cur.publisher)}</span>`, cur.unit && esc(cur.unit), cur.lesson && esc(cur.lesson), cur.status && `상태: ${esc(cur.status)}`].filter(Boolean).join(' · ');
+  $('siteBtns').innerHTML = [
+    cur.site && `<button class="pri" id="openSite">🖥 수업 사이트 열기</button>`,
+    cur.has_login && `<button id="cpId">아이디 복사</button><button id="cpPw">비번 복사</button>`,
+    cur.has_pdf && cur.record_key && `<button id="openPdf">📄 지도서</button>`].filter(Boolean).join('');
+  const cs = [...cur.cautions.map(c=>`<li>${esc(c.text)} <span class="muted">(${esc(cur.publisher)})</span></li>`),
+              ...cur.recent_memos.filter(m=>m.kind!=='good').map(m=>`<li>${esc(m.text)} <span class="muted">(${esc(m.date)} ${esc(m.title)})</span></li>`),
+              ...cur.recent_memos.filter(m=>m.kind==='good').map(m=>`<li style="color:var(--acc)">👍 ${esc(m.text)} <span class="muted">(${esc(m.date)})</span></li>`)];
+  $('cautions').innerHTML = cs.join('') || '<li class="muted" style="color:var(--sub)">아직 쌓인 메모가 없어요</li>';
+  renderFlow(); renderMemos();
+  $('notice').value = sess.notice || '';
+}
+
+function renderFlow(){
+  const f = cur && cur.flow;
+  if (!f){ $('flowSrc').textContent=''; $('goal').innerHTML='<div class="muted">아직 수업 흐름이 없어요. Claude에게 "내일 수업 흐름 만들어줘"라고 하면 지도서에서 뽑아 둡니다.</div>'; $('steps').innerHTML=''; return; }
+  $('flowSrc').textContent = f.source ? `(${f.source})` : '';
+  $('goal').innerHTML = (f.goal?`<div><b>🎯 ${esc(f.goal)}</b></div>`:'') + (f.materials&&f.materials.length?`<div class="muted">준비물: ${esc(f.materials.join(', '))}</div>`:'');
+  $('steps').innerHTML = (f.steps||[]).map((s,i)=>`<div class="step ${i===stepIdx?'cur':''}" data-s="${i}">
+      <b>${esc(s.name)}</b> <span class="muted">${s.minutes?s.minutes+'분':''}</span>
+      ${s.do?`<div>${esc(s.do)}</div>`:''}${s.say?`<div class="say">💬 ${esc(s.say)}</div>`:''}${s.tip?`<div class="tip">💡 ${esc(s.tip)}</div>`:''}</div>`).join('');
+}
+
+function goStep(i){
+  const steps = (cur && cur.flow && cur.flow.steps) || [];
+  if (i<0 || i>=steps.length) return;
+  stepIdx = i; stepAt = Date.now();
+  addMemo('step', `단계: ${steps[i].name}`, true);
+  renderFlow();
+  const el = document.querySelector(`.step[data-s="${i}"]`); if (el) el.scrollIntoView({block:'nearest'});
+}
+
+function relTime(){ return rec && sess.started_ms ? mmss(Date.now()-sess.started_ms) : new Date().toTimeString().slice(0,5); }
+const KIND = {good:'👍', fix:'🔧', student:'🙋', star:'★', voice:'🎤', step:'▶', note:'📝', sys:'⏱'};
+function addMemo(kind, text, quiet){
+  if (!sess) return;
+  sess.memos.push({t:relTime(), at:new Date().toISOString(), kind, text});
+  renderMemos(); scheduleSave(quiet);
+}
+function renderMemos(){
+  $('memoList').innerHTML = (sess?sess.memos:[]).slice().reverse().map(m=>`<div><code>${esc(m.t)}</code>${KIND[m.kind]||''} ${esc(m.text)}</div>`).join('');
+}
+function scheduleSave(quiet=true){
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(async ()=>{
+    sess.notice = $('notice').value;
+    const r = await fetch('/api/session', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(sess)});
+    if (!quiet || !r.ok) toast(r.ok ? '기록을 저장했어요' : '저장 실패');
+    cur.saved = sess; renderTabs();
+  }, 800);
+}
+
+/* ===== 녹음: 10초마다 조각을 서버로 보내 이어 붙인다 ===== */
+async function startRec(){
+  if (!cur) return;
+  let stream;
+  try { stream = await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false, noiseSuppression:false}}); }
+  catch(e){ $('recMsg').textContent='마이크를 쓸 수 없어요. 녹음 없이 기록만 합니다.'; }
+  sess.started_ms = Date.now(); sess.started_at = new Date().toISOString();
+  rec = {seq:0, chain:Promise.resolve(), stream};
+  if (stream){
+    const mt = ['audio/webm;codecs=opus','audio/webm','audio/mp4'].find(t=>MediaRecorder.isTypeSupported(t)) || '';
+    const ext = mt.includes('mp4') ? 'mp4' : 'webm';
+    const name = `${cur.period??0}교시_${cur.subject}_${new Date().toTimeString().slice(0,5).replace(':','')}`;
+    sess.rec_file = `${name}.${ext}`;
+    const mr = new MediaRecorder(stream, mt?{mimeType:mt, audioBitsPerSecond:48000}:{});
+    mr.ondataavailable = e => {
+      if (!e.data.size) return;
+      const seq = rec.seq++;
+      rec.chain = rec.chain.then(()=>fetch(`/api/rec?date=${S.date}&name=${encodeURIComponent(name)}&seq=${seq}&ext=${ext}`, {method:'POST', body:e.data}))
+        .then(r=>r.json()).then(j=>{ $('recMsg').textContent = `저장 중 · ${(j.bytes/1048576).toFixed(1)}MB`; })
+        .catch(()=>{ $('recMsg').textContent='⚠ 녹음 조각 저장 실패 (서버 확인)'; });
+    };
+    mr.start(10000); rec.mr = mr;
+    const ac = new AudioContext(), an = ac.createAnalyser(); ac.createMediaStreamSource(stream).connect(an);
+    const buf = new Uint8Array(an.fftSize); rec.ac = ac;
+    (function lv(){ if(!rec) return; an.getByteTimeDomainData(buf); let p=0; for(const v of buf) p=Math.max(p,Math.abs(v-128)); $('mlev').style.width=Math.min(100,p*1.6)+'%'; requestAnimationFrame(lv); })();
+    $('rdot').classList.add('on');
+  }
+  if ('wakeLock' in navigator) navigator.wakeLock.request('screen').then(w=>rec.wake=w).catch(()=>{});
+  $('recBtn').textContent='■ 수업 마침'; $('recBtn').className='rec';
+  addMemo('sys', '수업 시작', true);
+  if (cur.flow && cur.flow.steps && cur.flow.steps.length) goStep(0);
+}
+async function stopRec(){
+  addMemo('sys', '수업 마침', true);
+  if (rec.mr && rec.mr.state !== 'inactive'){ await new Promise(r=>{ rec.mr.onstop=r; rec.mr.stop(); }); }
+  await rec.chain;
+  if (rec.stream) rec.stream.getTracks().forEach(t=>t.stop());
+  if (rec.ac) rec.ac.close(); if (rec.wake) rec.wake.release();
+  rec = null;
+  $('rdot').classList.remove('on'); $('mlev').style.width='0';
+  $('recBtn').textContent='● 수업 시작'; $('recBtn').className='pri';
+  sess.ended_at = new Date().toISOString();
+  scheduleSave(false);
+  $('recMsg').textContent = '수업 기록을 저장했어요. Claude에게 "오늘 수업 정리해줘"라고 하면 메모를 분석해 다음 수업에 반영합니다.';
+}
+
+/* ===== 음성 메모 (크롬 음성 인식) ===== */
+function voiceMemo(){
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR){ toast('이 브라우저는 음성 인식을 지원하지 않아요'); return; }
+  const r = new SR(); r.lang='ko-KR'; r.interimResults=false;
+  $('voiceBtn').textContent='🎤 듣는 중…';
+  r.onresult = e => addMemo('voice', e.results[0][0].transcript);
+  r.onend = () => $('voiceBtn').textContent='🎤 음성 메모';
+  r.onerror = e => toast('음성 인식 실패: '+e.error);
+  r.start();
+}
+
+/* ===== 이벤트 ===== */
+$('tabs').onclick = e => { const b=e.target.closest('button'); if (b) select(+b.dataset.i); };
+$('prevDay').onclick = () => { day.setDate(day.getDate()-1); load(); };
+$('nextDay').onclick = () => { day.setDate(day.getDate()+1); load(); };
+$('phoneBtn').onclick = () => { const p=$('phones'); p.style.display = p.style.display==='block'?'none':'block'; };
+$('steps').onclick = e => { const s=e.target.closest('.step'); if (s) goStep(+s.dataset.s); };
+$('stepPrev').onclick = () => goStep(stepIdx-1);
+$('stepNext').onclick = () => goStep(stepIdx+1);
+$('recBtn').onclick = () => rec ? stopRec() : startRec();
+$('voiceBtn').onclick = voiceMemo;
+$('memoBtns').onclick = e => {
+  const k = e.target.closest('button')?.dataset.k; if (!k) return;
+  const label = {good:'좋았던 점', fix:'고칠 점', student:'학생 이름과 발표 내용', star:'표시 이유(비워도 됨)'}[k];
+  const text = prompt(label+'을(를) 적어 주세요', k==='student'?'이름: ':'');
+  if (text !== null) addMemo(k, text.trim() || '(표시)');
+};
+$('memoIn').onkeydown = e => { if (e.key==='Enter' && !e.isComposing && e.target.value.trim()){ addMemo('note', e.target.value.trim()); e.target.value=''; } };
+$('notice').oninput = () => { if (sess) scheduleSave(true); };
+$('cautionAdd').onclick = async () => {
+  const t = $('cautionIn').value.trim(); if (!t || !cur) return;
+  const j = await post('/api/caution', {publisher:cur.publisher, subject:cur.subject, text:t});
+  if (j.status==='success'){ cur.cautions.push({text:t}); $('cautionIn').value=''; select(S.lessons.indexOf(cur)); }
+};
+$('noticeBtn').onclick = async () => {
+  const t = $('notice').value.trim(); if (!t) { toast('알림장 내용이 비어 있어요'); return; }
+  await navigator.clipboard.writeText(t).catch(()=>{});
+  if (S.hiclass_url) post('/api/open-site', {url:S.hiclass_url});
+  toast('복사했어요. 하이클래스 알림장 쓰기에 붙여 넣으세요');
+};
+$('siteBtns').onclick = e => {
+  const id = e.target.id;
+  if (id==='openSite') post('/api/open-site', {url:cur.site});
+  if (id==='cpId' || id==='cpPw') post('/api/copy-secret', {subject:cur.subject, field:id==='cpId'?'id':'pw'});
+  if (id==='openPdf') window.open('/api/pdf/'+encodeURIComponent(cur.record_key), '_blank');
+};
+$('links').onclick = e => { const b=e.target.closest('button'); if (b) post('/api/open-site', {url:S.links[+b.dataset.l].url}); };
+document.querySelector('main').addEventListener('click', async e => {
+  const p = e.target.closest('button')?.dataset.p; if (!p || !cur) return;
+  const body = {subject:cur.subject, record_key:cur.record_key, row_number:cur.row_number, bridge_row:cur.bridge_row, target_date:S.date};
+  if (p==='push'){ const d = prompt(`${cur.subject} 이후 진도를 며칠 미룰까요?`, '7'); if (!d) return; body.days = +d; body.from_date = S.date; }
+  else if (!confirm({done:`${cur.subject} 「${cur.title}」을(를) 완료로 표시할까요?`, extend:`${cur.subject} 「${cur.title}」에 한 차시를 더 쓰고 뒤 진도를 밀까요?`}[p])) return;
+  const j = await post('/api/progress/'+p, body);
+  if (j.status==='success'){ addMemo('sys', `진도 조정: ${p}`, true); setTimeout(load, 600); }
+});
+window.addEventListener('beforeunload', e => { if (rec){ e.preventDefault(); e.returnValue=''; } });
+
+setInterval(()=>{ const n=new Date(); $('clock').textContent=n.toTimeString().slice(0,5);
+  if (stepAt) $('stepTimer').textContent='이 단계 '+mmss(Date.now()-stepAt)+((cur&&cur.flow&&cur.flow.steps[stepIdx]&&cur.flow.steps[stepIdx].minutes)?` / ${cur.flow.steps[stepIdx].minutes}분`:'');
+  if (rec && sess.started_ms) $('rtime').textContent='● '+mmss(Date.now()-sess.started_ms);
+}, 1000);
+load();
+</script>
+</body>
+</html>

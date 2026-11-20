@@ -676,6 +676,17 @@ def extract_moral_titles(unit_num):
     doc = fitz.open(pdf_path)
     titles = {}
 
+    # 통합본(천재 T셀파) 형식: 단원 앞쪽에 "1차시 공감이 필요한 까닭: 설명 2차시 감정 읽기: 설명 …"
+    intro = " ".join(
+        " ".join(PDF_CONTROL_CHAR_RE.sub(" ", doc[i].get_text()).split()) for i in range(min(6, len(doc)))
+    )
+    for m in re.finditer(r"(?<!\d)(\d)차시\s+([^:：]{2,40}?)\s*[:：]", intro):
+        titles.setdefault(int(m.group(1)), m.group(2).strip())
+    if len(titles) >= 4:
+        doc.close()
+        return titles
+    titles = {}
+
     # p2에서 차시별 소제목 찾기
     if len(doc) >= 2:
         text = doc[1].get_text()
@@ -751,6 +762,30 @@ def generate_moral_data():
 # ══════════════════════════════════════════════════════════
 #  국어 데이터 생성
 # ══════════════════════════════════════════════════════════
+KOREAN_GRADE = "3-1"  # generate_korean_data(grade_str) 가 바꾼다
+
+KOREAN_UNIT_NAMES_BY_GRADE = {
+    "3-2": {
+        1: "1. 경험과 관련지으며 이해해요",
+        2: "2. 유창하게 읽고 발표해요",
+        3: "3. 정확하게 글을 써요",
+        4: "4. 서로 존중하며 대화해요",
+        5: "5. 사전으로 여는 세상",
+        6: "6. 감상과 표현의 즐거움",
+    },
+}
+
+# 독서·매체 단원 차시표 (엠티처 교과서 화면의 [N~M차시] 목록에서 옮김)
+KOREAN_SPECIAL_LESSONS_BY_GRADE = {
+    "3-2": {
+        "독서": [(1, 2, "읽을 책을 정하고 독서 계획 세우기"), (3, 6, "중심 내용을 찾으며 독서 계획 실천하기"),
+                 (7, 10, "책을 읽고 중심 내용에 대한 의견 말하기")],
+        "매체": [(1, 1, "온라인 상황에서 소통한 경험 이야기하기"), (2, 2, "초상권과 개인 정보를 보호하는 방법 알기"),
+                 (3, 4, "온라인 상황에서 글을 쓰는 방법 알기"), (5, 6, "매체의 특성을 고려하며 글 쓰기"),
+                 (7, 7, "배운 내용 적용하기")],
+    },
+}
+
 KOREAN_UNIT_NAMES = {
     1: "1. 생생하게 표현해요",
     2: "2. 분명하고 유창하게",
@@ -892,7 +927,7 @@ def parse_korean_overview_lines(lines):
 
 def extract_korean_overview(unit_num):
     """국어 지도서 개요 페이지(p3)에서 차시 구조와 대표 제목을 읽어온다."""
-    pdf_path = find_best_pdf("국어", unit_num, None, "3-1")
+    pdf_path = find_best_pdf("국어", unit_num, None, KOREAN_GRADE)
     if not pdf_path or not os.path.exists(pdf_path):
         return [], {}
 
@@ -1016,7 +1051,7 @@ def parse_korean_detail_page_blocks(blocks, overview_titles=None):
 
 def extract_korean_detail_entries(unit_num, overview_titles=None):
     """국어 지도서 상세 차시 페이지에서 실제 차시 범위별 학습목표를 추출한다."""
-    pdf_path = find_best_pdf("국어", unit_num, None, "3-1")
+    pdf_path = find_best_pdf("국어", unit_num, None, KOREAN_GRADE)
     if not pdf_path or not os.path.exists(pdf_path):
         return {}
 
@@ -1048,15 +1083,42 @@ def extract_korean_detail_titles(unit_num):
     }
 
 
-def generate_korean_data():
-    """국어 지도서 PDF → 진도표 행 생성"""
+KOREAN_GOAL_RE = re.compile(r"(?<!\d)(\d{1,2}(?:\s*[~∼]\s*\d{1,2})?)\s*차시\s*/\s*\d{1,2}\s*차시\s+(.{2,60}?)\s+학습\s*목표")
+
+
+def scan_korean_lesson_goals(unit_num):
+    """'8~9차시 / 14차시 국어사전에서 낱말을 찾는 방법을 안다. 학습 목표' 형식의 쪽 머리를 모두 찾는다(상세 추출 보완용)."""
+    pdf_path = find_best_pdf("국어", unit_num, None, KOREAN_GRADE)
+    if not pdf_path or not os.path.exists(pdf_path):
+        return {}
+    goals = {}
+    doc = fitz.open(pdf_path)
+    try:
+        for page in doc:
+            head = " ".join(PDF_CONTROL_CHAR_RE.sub(" ", page.get_text()).split())[:220]
+            m = KOREAN_GOAL_RE.search(head)
+            if m:
+                key = re.sub(r"\s+", "", m.group(1)).replace("∼", "~")
+                goals.setdefault(key, m.group(2).strip())
+    finally:
+        doc.close()
+    return goals
+
+
+def generate_korean_data(grade_str="3-1"):
+    """국어 지도서 PDF → 진도표 행 생성 (grade_str 예: 3-1, 3-2)"""
+    global KOREAN_GRADE
+    KOREAN_GRADE = grade_str or "3-1"
+    unit_names = KOREAN_UNIT_NAMES_BY_GRADE.get(KOREAN_GRADE, KOREAN_UNIT_NAMES)
     rows = []
 
     # 단원 1~6
     for unit_num in range(1, 7):
-        unit_name = KOREAN_UNIT_NAMES[unit_num]
+        unit_name = unit_names[unit_num]
         overview_ranges, overview_titles = extract_korean_overview(unit_num)
         detail_entries = extract_korean_detail_entries(unit_num, overview_titles=overview_titles)
+        for lr, goal in scan_korean_lesson_goals(unit_num).items():
+            detail_entries.setdefault(lr, {"수업내용": goal})
 
         lesson_ranges = sorted(detail_entries.keys(), key=parse_lesson_range_key)
         if not lesson_ranges:
@@ -1076,7 +1138,7 @@ def generate_korean_data():
                 start = int(m.group(1))
                 end = int(m.group(2))
                 for i in range(start, end + 1):
-                    lesson_pdf_path = find_best_pdf("국어", unit_num, i, "3-1") or find_best_pdf("국어", unit_num, None, "3-1")
+                    lesson_pdf_path = find_best_pdf("국어", unit_num, i, KOREAN_GRADE) or find_best_pdf("국어", unit_num, None, KOREAN_GRADE)
                     rows.append({
                         "수업내용": title,
                         "과목": "국어",
@@ -1092,7 +1154,7 @@ def generate_korean_data():
                     })
             else:
                 first_lesson = int(re.match(r'^(\d+)', lr).group(1)) if re.match(r'^(\d+)', lr) else None
-                lesson_pdf_path = find_best_pdf("국어", unit_num, first_lesson, "3-1") or find_best_pdf("국어", unit_num, None, "3-1")
+                lesson_pdf_path = find_best_pdf("국어", unit_num, first_lesson, KOREAN_GRADE) or find_best_pdf("국어", unit_num, None, KOREAN_GRADE)
                 rows.append({
                     "수업내용": title,
                     "과목": "국어",
@@ -1107,39 +1169,26 @@ def generate_korean_data():
                     "비고": "",
                 })
 
-    # 독서 단원 (10차시)
-    for i in range(1, 11):
-        lesson_pdf_path = find_best_pdf("국어", "독서", i, "3-1") or find_best_pdf("국어", "독서", None, "3-1")
-        rows.append({
-            "수업내용": f"독서 단원 {i}차시",
-            "과목": "국어",
-            "대단원": "독서 단원",
-            "소단원": "",
-            "차시": str(i),
-            "계획일": "",
-            "실행여부": False,
-            "pdf파일": format_pdf_path(lesson_pdf_path),
-            "시작페이지": "",
-            "끝페이지": "",
-            "비고": "",
-        })
-
-    # 매체 단원 (10차시)
-    for i in range(1, 11):
-        lesson_pdf_path = find_best_pdf("국어", "매체", i, "3-1") or find_best_pdf("국어", "매체", None, "3-1")
-        rows.append({
-            "수업내용": f"매체 단원 {i}차시",
-            "과목": "국어",
-            "대단원": "매체 단원",
-            "소단원": "",
-            "차시": str(i),
-            "계획일": "",
-            "실행여부": False,
-            "pdf파일": format_pdf_path(lesson_pdf_path),
-            "시작페이지": "",
-            "끝페이지": "",
-            "비고": "",
-        })
+    # 독서·매체 단원: 학기별 차시표가 있으면 그 제목·차시 수를, 없으면 10차시 기본값
+    special = KOREAN_SPECIAL_LESSONS_BY_GRADE.get(KOREAN_GRADE, {})
+    for unit_key in ("독서", "매체"):
+        plan = special.get(unit_key) or [(i, i, f"{unit_key} 단원 {i}차시") for i in range(1, 11)]
+        for first, last, title in plan:
+            for i in range(first, last + 1):
+                lesson_pdf_path = find_best_pdf("국어", unit_key, i, KOREAN_GRADE) or find_best_pdf("국어", unit_key, None, KOREAN_GRADE)
+                rows.append({
+                    "수업내용": title,
+                    "과목": "국어",
+                    "대단원": f"{unit_key} 단원",
+                    "소단원": "",
+                    "차시": f"{i}({first}~{last})" if last > first else str(i),
+                    "계획일": "",
+                    "실행여부": False,
+                    "pdf파일": format_pdf_path(lesson_pdf_path),
+                    "시작페이지": "",
+                    "끝페이지": "",
+                    "비고": "",
+                })
 
     return rows
 

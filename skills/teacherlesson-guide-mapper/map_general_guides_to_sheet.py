@@ -146,7 +146,7 @@ def generate_rows_for_config(config):
 
     if kind == "special":
         if subject_name == "국어":
-            return generate_korean_data()
+            return generate_korean_data(config.get("grade_str") or "3-1")
         if subject_name == "도덕":
             return generate_moral_data()
         raise ValueError(f"unknown special subject: {subject_name}")

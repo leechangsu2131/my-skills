@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import argparse
 import os
+import sys
 import time
 from datetime import date, datetime
 from zoneinfo import ZoneInfo
@@ -241,6 +242,10 @@ def _adopt_new_refresh_token(rt_file) -> None:
 
 
 def main(argv: list[str] | None = None) -> int:
+    # 윈도우 콘솔(cp949)은 이모지를 못 찍어 dry-run이 멈추므로 UTF-8로 출력한다.
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, "reconfigure"):
+            stream.reconfigure(encoding="utf-8", errors="replace")
     load_env()
     p = argparse.ArgumentParser(prog="schooltodo")
     sub = p.add_subparsers(dest="cmd", required=True)

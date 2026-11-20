@@ -58,12 +58,14 @@ function doGet() {
 
 function handle_(utter, uid, props) {
   const text = utter.replace(/\s+/g, ' ').trim();
-  if (text === '내아이디') {
+  // '내 아이디', '아이디', 'id'처럼 띄어쓰기·표현이 달라도 알아듣는다.
+  if (/^(?:내\s*)?(?:챗봇\s*)?(?:아이디|id)(?:\s*(?:알려\s*줘|확인))?[?!.]*$/i.test(text)) {
     return '선생님의 챗봇 아이디예요:\n' + uid + '\n선생님께 전달하면 구성원 탭에 등록해 줘요.';
   }
   const ctx = context_(props, uid);
   if (!ctx.me && !ctx.isAdmin) {
-    return '아직 등록되지 않은 사용자예요. "내아이디"를 보내 아이디를 확인한 뒤 선생님께 알려 주세요.';
+    // 무엇을 보냈든 아이디를 함께 알려 준다(이메일·이름을 보내는 경우가 많다).
+    return '아직 등록되지 않은 사용자예요.\n아래 아이디를 선생님께 알려 주세요.\n\n' + uid;
   }
   let m = text.match(/^(?:되돌리기|취소)\s+(.+)$/);
   if (m) return undo_(ctx, m[1]);

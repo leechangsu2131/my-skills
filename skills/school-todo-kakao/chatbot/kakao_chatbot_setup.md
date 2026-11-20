@@ -53,3 +53,16 @@
 - **답이 없거나 오류**: 오픈빌더 응답 제한(몇 초)이나 구글 앱스 스크립트 웹 앱 주소를 카카오가 못 받는 경우일 수 있습니다. 어느 단계에서 어떤 화면이었는지 알려 주세요.
 - **"접근할 수 없어요"**: 스킬 URL 끝의 `?key=` 값이 `SECRET`과 다릅니다.
 - **"아직 등록되지 않은 사용자"**: 구성원 탭의 `챗봇아이디`가 비었거나 다릅니다(앞뒤 공백 확인).
+
+## 중계 서버가 필요할 때 (봇 테스트에서 `skill exec error`가 나는 경우)
+구글 앱스 스크립트 웹앱은 POST 요청에 대한 답을 다른 주소로 이동(302)시켜 주는데, 카카오 스킬 호출은 이 이동을 따라가지 못해 오류가 날 수 있습니다.
+`curl.exe -i -X POST ...` 시험에서 `HTTP/1.1 302 Found`가 나오면 이 경우입니다.
+무료 Cloudflare Workers에 `cloudflare_worker.js`를 올려 이동을 대신 따라가게 하고, 카카오 스킬 URL을 워커 주소로 바꿉니다.
+
+1. cloudflare.com 에서 무료 계정을 만든다(이메일 인증).
+2. 대시보드에서 Workers & Pages → 만들기 → Hello World로 시작 → 이름(예: schedule-relay) → 배포.
+3. 이 워커의 코드 편집에서 기존 코드를 지우고 `cloudflare_worker.js`를 붙여 넣은 뒤 배포.
+4. 워커 설정 → 변수 및 비밀(Variables and Secrets)에 세 개를 추가하고 배포:
+   `KAKAO_KEY`(카카오 스킬 URL에 붙일 새 비밀값), `APPS_SCRIPT_URL`(앱스 스크립트 웹 앱 URL, `?key=` 제외), `APPS_KEY`(앱스 스크립트 SECRET과 같은 값).
+5. 카카오 오픈빌더 스킬 URL을 `워커주소?key=KAKAO_KEY값`으로 바꾼다.
+시험: `curl.exe -i -X POST "워커주소?key=KAKAO_KEY값" -H "Content-Type: application/json" -d "{\"userRequest\":{\"utterance\":\"내아이디\",\"user\":{\"id\":\"test\"}}}"` 에서 200과 JSON이 나오면 된다.

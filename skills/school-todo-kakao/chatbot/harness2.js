@@ -143,6 +143,10 @@ t = say('완료 탄소중립', 'U-lee', 'wrong');
 check('wrong key', t === '접근할 수 없어요.', t);
 t = say('내아이디', 'U-new');
 check('my id works for anyone', t.includes('U-new'), t);
+t = say('내 아이디', 'U-new');
+check('my id with space', t.includes('챗봇 아이디예요') && t.includes('U-new'), t);
+t = say('someone@example.com', 'U-new');
+check('stranger sees own id', t.startsWith('아직 등록되지 않은') && t.includes('U-new'), t);
 // 15. 탭이 없으면 자동 생성
 reset();
 delete tabs['완료기록']; delete tabs['구성원'];

@@ -92,6 +92,17 @@ def fetch_schedule(cfg: dict, day: date) -> tuple[list[dict], str]:
             "status": i.get("status", ""),
             "has_pdf": bool(i.get("pdf_path")),
         } for i in items]
+        # '여기부터 다시 잡기' 뒤에는 완료된 차시가 원래 날짜 칸에 남는다.
+        # 오늘 이후 날짜에서는 완료된 칸을 숨기고, 같은 교시가 겹치면 예정된 수업을 보여 준다.
+        if day > date.today():
+            lessons = [l for l in lessons if l["status"] != "done"]
+        by_period: dict = {}
+        for l in lessons:
+            key = l["period"] if l["period"] is not None else id(l)
+            prev = by_period.get(key)
+            if prev is None or (prev["status"] == "done" and l["status"] != "done"):
+                by_period[key] = l
+        lessons = list(by_period.values())
         return sorted(lessons, key=lambda x: x["period"] or 99), "진도표"
     except (urllib.error.URLError, OSError, ValueError):
         pass

@@ -211,7 +211,7 @@ function select(i){
 function lessonNo(v){ const m = String(v ?? '').match(/\d+/); return m ? +m[0] : null; }
 function renderUnit(){
   const u = cur && cur.unit_overview;
-  if (!u){ $('unitSrc').textContent=''; $('unitBody').innerHTML = '<div class="muted">아직 단원 개관이 없어요. Claude에게 "단원 개관 만들어줘"라고 하면 지도서 앞부분에서 뽑아 둡니다.</div>'; return; }
+  if (!u){ $('unitSrc').textContent=''; $('unitBody').innerHTML = '<div class="muted">아직 단원 개관이 없어요. 수업 비서를 다시 켜면(실행_수업비서.bat) 진도표와 지도서에서 자동으로 만들어요.</div>'; return; }
   const n = lessonNo(cur.lesson);
   $('unitSrc').textContent = u.source ? `(${u.source})` : '';
   const goals = (u.goals||[]).map(g=>`<li>${esc(g)}</li>`).join('');
@@ -221,6 +221,7 @@ function renderUnit(){
     return `<li class="${cls}">${a===b?a:a+'~'+b}차시 · ${esc(l.title)}${cls==='now'?' ◀ 지금':''}</li>`;
   }).join('');
   $('unitBody').innerHTML =
+    (u.overview_pdf?`<div class="row" style="margin-bottom:4px"><button onclick="window.open('/api/unit-pdf/'+encodeURIComponent('${esc(u.overview_pdf)}'),'_blank')">📄 단원 개관 PDF</button>${u.summary?'':'<span class="muted">요약이 필요하면 🤖 AI 단추로 물어보세요</span>'}</div>`:'') +
     (u.summary?`<div>${esc(u.summary)}</div>`:'') +
     (goals?`<div style="margin-top:4px"><b>🎯 단원 목표</b><ul>${goals}</ul></div>`:'') +
     (lessons?`<div><b>🧭 단원 흐름</b><ul class="ulist">${lessons}</ul></div>`:'') +

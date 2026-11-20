@@ -366,6 +366,12 @@ class Handler(BaseHTTPRequestHandler):
                 return self._json({"status": "success", "items": upcoming(q.get("subject", [""])[0])})
             except (urllib.error.URLError, OSError, ValueError):
                 return self._json({"status": "error", "message": "진도 서버(teacherlesson-schedule)가 꺼져 있어요."}, 502)
+        if url.path.startswith("/api/unit-pdf/"):
+            name = urllib.parse.unquote(url.path.rsplit("/", 1)[-1])
+            path = UNITS / name
+            if not name.endswith(".pdf") or "/" in name or "\\" in name or not path.is_file()                     or not path.resolve().is_relative_to(UNITS.resolve()):
+                return self._json({"status": "error", "message": "단원 개관 PDF가 없어요."}, 404)
+            return self._send(200, path.read_bytes(), "application/pdf")
         if url.path.startswith("/api/pdf/"):
             base = load_config().get("schedule_api", "http://127.0.0.1:5000").rstrip("/")
             self.send_response(302)

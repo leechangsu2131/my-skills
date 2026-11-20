@@ -1,0 +1,1166 @@
+<!DOCTYPE html>
+<html>
+<head>
+<base target="_top">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Arial,"Malgun Gothic","Apple SD Gothic Neo",sans-serif;font-size:14px;color:#222;background:#f4f6f9;height:100vh;display:flex;flex-direction:column}
+  #bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:8px 10px;background:#fff;border-bottom:1px solid #d8dde6}
+  #bar label{font-size:12px;color:#555}
+  input,select,button{font:inherit;padding:6px 8px;border:1px solid #bcc3d0;border-radius:6px;background:#fff}
+  button{cursor:pointer}
+  button.on{background:#2f5597;color:#fff;border-color:#2f5597}
+  #main{flex:1;display:flex;min-height:0}
+  #stage{flex:1;position:relative;min-width:0}
+  #canvas{position:absolute;inset:0;background:linear-gradient(#9cc4e6,#eef4fb)}
+  #labels{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+  .lab{position:absolute;transform:translate(-50%,-100%);font-size:11px;line-height:1.25;text-align:center;background:rgba(255,255,255,.88);border-radius:4px;padding:1px 5px;white-space:nowrap;border:1px solid #cfd5df}
+  .lab b{display:block}
+  #tablev{position:absolute;inset:0;overflow:auto;background:#fff;padding:10px;display:none}
+  #tablev table{border-collapse:collapse;font-size:12px}
+  #tablev td,#tablev th{border:1px solid #cfd5df;padding:4px 6px;text-align:center;min-width:76px}
+  #tablev th{background:#2f5597;color:#fff}
+  #tablev td.used{background:#c6e0b4}
+  #tablev td.free{color:#aaa}
+  #panel{width:300px;background:#fff;border-left:1px solid #d8dde6;padding:10px;overflow:auto}
+  #panel h3{margin:0 0 6px}
+  #panel table{width:100%;border-collapse:collapse;font-size:12px}
+  #panel td{border-bottom:1px solid #eceff4;padding:4px 2px;vertical-align:top}
+  .used{color:#2d7a2d;font-weight:bold}
+  .free{color:#999}
+  .small{font-size:12px;color:#777}
+  #legend{position:absolute;left:8px;bottom:8px;background:rgba(255,255,255,.9);border:1px solid #cfd5df;border-radius:6px;padding:4px 8px;font-size:12px}
+  .sw{display:inline-block;width:11px;height:11px;border-radius:2px;margin:0 3px -1px 6px}
+  #gate{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;z-index:10}
+  #gate div{background:#fff;padding:20px;border-radius:10px;width:300px}
+  #msg{font-size:12px;color:#777}
+  #form{margin-top:8px;padding:8px;background:#f4f6f9;border-radius:6px;display:none}
+  #form input,#form select{width:100%;margin:3px 0}
+  .row{display:flex;gap:7px;padding:5px 2px;border-bottom:1px solid #eceff4;cursor:pointer;align-items:flex-start}
+  .row:hover{background:rgba(127,127,127,.12)}
+  .dot{width:10px;height:10px;border-radius:50%;margin-top:4px;flex:none;border:1px solid rgba(0,0,0,.25)}
+  #nav{position:absolute;right:8px;bottom:8px;display:flex;flex-direction:column;gap:4px;z-index:3}
+  #nav button{width:36px;height:36px;padding:0;font-size:15px;background:var(--labbg,rgba(255,255,255,.92));border:1px solid var(--border2,#cfd5df);color:var(--text,#222);border-radius:10px}
+  #tip{position:absolute;display:none;pointer-events:none;z-index:4;background:var(--labbg,rgba(255,255,255,.95));border:1px solid var(--border2,#cfd5df);color:var(--text,#222);border-radius:8px;padding:4px 8px;font-size:12px;white-space:nowrap}
+  #hint{position:absolute;left:50%;transform:translateX(-50%);bottom:14px;background:rgba(30,30,30,.88);color:#fff;border-radius:12px;padding:8px 14px;font-size:13px;display:none;z-index:6;max-width:90%;text-align:center}
+  #help{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;z-index:12}
+  #help .box{background:var(--surface,#fff);color:var(--text,#222);border-radius:12px;padding:16px 18px;max-width:430px;width:92%;font-size:13px;line-height:1.75}
+  #main.nopanel #panel{display:none}
+  #canvas canvas{cursor:grab}
+  .k-regular{background:rgba(106,163,232,.38)}
+  .k-program{background:rgba(181,139,224,.38)}
+  .k-booking{background:var(--tblused,#c6e0b4)}
+  #tablev td.k-regular,#tablev td.k-program,#tablev td.k-booking{color:inherit}
+  #sr{position:absolute;top:100%;left:0;min-width:300px;max-height:62vh;overflow:auto;background:var(--surface,#fff);border:1px solid var(--border2,#cfd5df);border-radius:10px;z-index:30;display:none;box-shadow:0 6px 18px rgba(0,0,0,.25);font-size:13px}
+  #sr .sr-h{padding:5px 10px;font-size:11px;color:var(--muted,#777);background:rgba(127,127,127,.12)}
+  #sr .sr-i{padding:7px 10px;cursor:pointer;border-bottom:1px solid rgba(127,127,127,.15);line-height:1.5}
+  #sr .sr-i.on,#sr .sr-i:hover{background:rgba(47,85,151,.22)}
+  #dlg{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;z-index:14}
+  #dlg .box{background:var(--surface,#fff);color:var(--text,#222);border-radius:12px;padding:16px 18px;max-width:470px;width:94%;max-height:88vh;overflow:auto;font-size:13px;line-height:1.6}
+  #dlg input,#dlg select{width:100%;margin:4px 0}
+  .itrow .row{border-bottom:1px solid rgba(127,127,127,.2)}
+  .idt{background:rgba(127,127,127,.1);border-radius:8px;padding:6px 8px;margin:2px 0 6px;font-size:12px;line-height:1.6}
+  .idt table td{border:0;padding:1px 4px}
+  .sonly{display:none}
+  .student .sonly{display:inline}
+  .student .tonly{display:none !important}
+  .wk{border-collapse:collapse;margin-top:4px}
+  .wk td,.wk th{border:1px solid rgba(127,127,127,.35);text-align:center;font-size:11px;padding:2px 3px;min-width:34px}
+  .wk th{background:rgba(127,127,127,.15)}
+  .st-free{color:#1d7a1d;font-weight:bold}
+  .chip{display:inline-block;margin:2px;padding:2px 7px;border:1px solid rgba(127,127,127,.4);border-radius:10px;cursor:pointer;font-size:12px}
+  .grp{font-weight:bold;margin:10px 0 2px;font-size:13px}
+  .lab.fl{font-weight:bold;background:#2f5597;color:#fff;border-color:#2f5597}
+  #floorBtns button{padding:4px 9px}
+  @media(max-width:700px){#main{flex-direction:column}#panel{width:100%;height:38%;border-left:0;border-top:1px solid #d8dde6}}
+</style>
+</head>
+<body>
+<div id="gate"><div>
+  <b>접근 코드를 입력하세요</b>
+  <p class="small">선생님들께 안내된 코드를 입력하면 한 번만 입력해도 됩니다.</p>
+  <input id="codeIn" type="password" style="width:100%"> <button id="codeBtn" style="margin-top:8px">확인</button>
+  <div id="gateMsg" class="small" style="color:#c00"></div>
+</div></div>
+
+<div id="bar">
+  <b class="sonly">빈 교실 찾기</b>
+  <label class="tonly">날짜 <input type="date" id="date"></label>
+  <label class="tonly">교시 <select id="period"></select></label>
+  <span class="tonly"><button id="pPrev" title="이전 교시 (,)">◀</button><button id="pNext" title="다음 교시 (.)">▶</button><button id="pNow">지금</button><button id="pPlay">▶ 하루 재생</button></span>
+  <span>층 <span id="floorBtns"></span></span><select id="floor" style="display:none"><option value="all">전체</option></select>
+  <label class="tonly"><input type="checkbox" id="showAll" checked> 모든 방 보기</label>
+  <label class="sonly"><input type="checkbox" id="hlFree" checked> 빈 교실 반짝이기</label>
+  <button id="bReset">시점 초기화</button>
+  <span id="srwrap" style="position:relative"><input id="q" placeholder="🔍 방·물품 찾기  ( / )" autocomplete="off" style="width:190px"><div id="sr"></div></span>
+  <button id="bPanel">패널 접기</button>
+  <button id="bMine" class="tonly" title="내 신청 내역·PIN">👤 내 신청</button><button id="bAdmin" class="tonly" title="관리자 화면">🛠 관리자</button>
+  <span class="tonly">
+    <button id="bUse" class="on">사용 현황</button>
+    <button id="bItems">물품 위치</button>
+    <button id="bTable">표로 보기</button>
+  </span>
+  <span id="itemTools" class="tonly" style="display:none">
+    <select id="fCat"><option value="">분류 전체</option></select>
+    <select id="fSt"><option value="">상태 전체</option></select>
+    <input id="fQ" type="hidden">
+  </span>
+  <span id="msg"></span>
+</div>
+<div id="main">
+  <div id="stage">
+    <div id="canvas"></div>
+    <div id="labels"></div>
+    <div id="tablev"></div>
+    <div id="legend"></div>
+    <div id="nav">
+      <button id="nZin" title="확대 (+)">＋</button><button id="nZout" title="축소 (-)">－</button>
+      <button id="nL" title="왼쪽으로 회전 (Q)">⟲</button><button id="nR" title="오른쪽으로 회전 (E)">⟳</button>
+      <button id="nTouch" title="한 손가락으로 드래그할 때 이동할지 회전할지 바꿔요" style="display:none;font-size:11px">☝이동</button>
+      <button id="nTop" title="위에서 보기 / 되돌리기 (T)">▦</button><button id="nHome" title="처음 시점 (R)">⌂</button><button id="nHelp" title="도움말 (?)">?</button>
+    </div>
+    <div id="tip"></div><div id="hint"></div>
+  </div>
+  <div id="dlg"><div class="box" id="dlgBox"></div></div>
+<div id="help"><div class="box"><b>조작 방법</b><br>
+  <b>마우스</b> 왼쪽 드래그 = 이동 · 오른쪽 드래그 = 회전 · 휠 = 확대/축소<br>
+  클릭 = 방 선택 · 더블클릭 = 그 방으로 이동 · Shift+왼쪽 드래그 = 회전<br>
+  <b>키보드</b> W A S D / 방향키 = 이동 · Q E = 회전 · + − = 확대/축소<br>
+  R = 시점 초기화 · T = 위에서 보기 · 0 = 건물 전체 · 1~5 = 층 선택 · Esc = 선택 해제<br>
+  <b>터치(태블릿·휴대폰)</b> 한 손가락 드래그 = 이동 · 두 손가락 = 확대 + 회전(비틀면 돌고 위아래로 밀면 기울어요) · 탭 = 선택<br>
+  오른쪽 아래 <b>☝이동/☝회전</b> 버튼으로 한 손가락 동작을 바꿀 수 있고, ＋ − ⟲ ⟳ 버튼으로도 조작해요. 방을 고른 뒤 패널의 <b>🎯 이동</b>을 누르면 그 방으로 가요.<br>
+  <b>시간 보기</b> ◀ ▶ 버튼 또는 , . 키 = 이전/다음 교시 · '지금' = 현재 교시 · '하루 재생' = 교시를 차례로 보여 줘요. 파랑 = 정규 수업, 보라 = 방과후·돌봄, 초록 = 교사 신청.<br>
+  <b>신청·대여</b> 물품 상세의 '📦 대여 신청', 위쪽 '👤 내 신청'(내 신청 확인·취소·반납, PIN 정하기), '🛠 관리자'(승인·반납·연체 보기).<br>
+  <b>찾기</b> 위쪽 검색칸(또는 <b>/</b> 키)에 방 이름이나 물품을 써 보세요. 초성도 돼요(예: ㅂㅍㄹㅈㅌ → 빔프로젝터). 물품을 고르면 그 물건이 있는 방이 3D에 표시되고, 위치별 개수가 묶여서 나와요.<br>
+  <div style="text-align:right;margin-top:8px"><button id="helpClose">닫기</button></div></div></div>
+<div id="panel"><div class="small">3D 화면에서 교실을 눌러 보세요.<br>마우스: 왼쪽 드래그 이동 · 오른쪽 드래그 회전 · 휠 확대<br>터치: 한 손가락 이동 · 두 손가락 확대·회전 · ? 도움말</div></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+var PARAMS = /*__PARAMS__*/{}/*__END__*/;
+var STUDENT = PARAMS.mode === 'student';
+var $ = function (id) { return document.getElementById(id); };
+var CODE = '', DATA = null, selected = null, mode = 'use', built = false;
+var FH = 4, STORY = 3.6, view = null, bld = {}, badges = {}, facadeObjs = [], isBook = {}, meshes = {}, labels = {}, scene, camera, renderer, controls, raycaster, mouse, downPos;
+try { CODE = localStorage.getItem('fcode') || ''; } catch (e) {}
+if (STUDENT && PARAMS.c) CODE = String(PARAMS.c);
+if (STUDENT) document.body.className = 'student';
+
+function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+function todayStr() { var d = new Date(); return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
+
+function load() {
+  $('msg').textContent = '불러오는 중…';
+  var run = google.script.run.withSuccessHandler(onData).withFailureHandler(onFail);
+  if (STUDENT) run.getStudentData(CODE); else run.getData(CODE, $('date').value);
+}
+function onFail(err) {
+  var m = String((err && err.message) || err);
+  if (m.indexOf('접근 코드') >= 0) { $('gate').style.display = 'flex'; $('gateMsg').textContent = CODE ? '코드가 올바르지 않습니다.' : ''; $('msg').textContent = ''; }
+  else $('msg').textContent = '불러오지 못했습니다: ' + m;
+}
+$('codeBtn').onclick = function () {
+  CODE = $('codeIn').value.trim();
+  try { localStorage.setItem('fcode', CODE); } catch (e) {}
+  $('gate').style.display = 'none'; load();
+};
+
+function onData(d) {
+  DATA = d; $('msg').textContent = '';
+  isBook = {}; var bl = STUDENT ? (d.open || []) : ((d.bookable && d.bookable.length) ? d.bookable : d.layout.map(function (r) { return r.space; }));
+  bl.forEach(function (n) { isBook[n] = true; });
+  if (!built) build();
+  fillRoomList();
+  if (!STUDENT) fillItemFilters();
+  refresh();
+  if (STUDENT) deepLink();
+}
+
+function build() {
+  built = true;
+  var ps = $('period'); ps.innerHTML = '';
+  DATA.periods.forEach(function (p) { var o = document.createElement('option'); o.value = p.name; o.textContent = p.name + ' (' + p.time + ')'; ps.appendChild(o); });
+  var floors = {}; DATA.layout.forEach(function (r) { for (var f = r.floor; f <= r.floorEnd; f++) floors[f] = 1; });
+  var flist = Object.keys(floors).map(Number).sort(function (a, b) { return a - b; });
+  flist.forEach(function (f) { var o = document.createElement('option'); o.value = f; o.textContent = f + '층'; $('floor').appendChild(o); });
+  [['all', '전체']].concat(flist.map(function (f) { return [String(f), f + '층']; })).forEach(function (p) {
+    var b = document.createElement('button'); b.textContent = p[1]; b.setAttribute('data-f', p[0]);
+    b.onclick = function () { $('floor').value = p[0]; selected = null; focusFloor(); refresh(); };
+    $('floorBtns').appendChild(b);
+  });
+
+  var host = $('canvas'), W = host.clientWidth, H = host.clientHeight;
+  scene = new THREE.Scene();
+  camera = new THREE.PerspectiveCamera(45, W / H, 0.1, 1000);
+  renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true }); renderer.setClearColor(0x000000, 0); renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap; renderer.setSize(W, H); renderer.setPixelRatio(window.devicePixelRatio || 1);
+  host.appendChild(renderer.domElement);
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x8a9a7a, 0.75));
+  var dl = new THREE.DirectionalLight(0xffffff, 0.85); dl.castShadow = true; dl.shadow.mapSize.set(2048, 2048); scene.add(dl); scene.add(dl.target);
+
+  var bx0 = 1e9, by0 = 1e9, bx1 = -1e9, by1 = -1e9, fx0 = 1e9, fy0 = 1e9, fx1 = -1e9, fy1 = -1e9, maxF = 1;
+  DATA.layout.forEach(function (r) {
+    var base = (r.floor - 1) * FH, hh = r.h > 0 ? r.h : ((r.floorEnd - r.floor) * FH + 3);
+    fx0 = Math.min(fx0, r.x); fy0 = Math.min(fy0, r.y); fx1 = Math.max(fx1, r.x + r.w); fy1 = Math.max(fy1, r.y + r.d);
+    if (!(r.h > 0 && r.h < 1)) { bx0 = Math.min(bx0, r.x); by0 = Math.min(by0, r.y); bx1 = Math.max(bx1, r.x + r.w); by1 = Math.max(by1, r.y + r.d); maxF = Math.max(maxF, r.floorEnd); }
+    meshes[r.space] = buildRoom(r, base, hh); scene.add(meshes[r.space].mesh);
+    var l = document.createElement('div'); l.className = 'lab'; $('labels').appendChild(l); labels[r.space] = l;
+  });
+  if (bx0 > bx1) { bx0 = 0; by0 = 0; bx1 = 20; by1 = 20; }
+  var cx = (bx0 + bx1) / 2, cz = (by0 + by1) / 2, span = Math.max(bx1 - bx0, by1 - by0, 10);
+  view = { cx: cx, cz: cz, span: span, topY: maxF * FH, maxF: maxF, ax: (fx0 + fx1) / 2, az: (fy0 + fy1) / 2, aspan: Math.max(fx1 - fx0, fy1 - fy0, 10) };
+  buildEnvironment(fx0, fy0, fx1, fy1, span, cx, cz, dl);   // 나무는 땅 전체(운동장 포함) 가장자리
+  buildShell(maxF, bx0, by0, bx1, by1, cz);
+  controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls.mouseButtons = { LEFT: THREE.MOUSE.PAN, MIDDLE: THREE.MOUSE.DOLLY, RIGHT: THREE.MOUSE.ROTATE };   // 왼쪽 = 이동, 오른쪽 = 회전
+  renderer.domElement.style.touchAction = 'none';
+  applyTouchMode(ls_('touchRot') === '1');
+  controls.screenSpacePanning = false; controls.panSpeed = 1.1;                                             // 이동은 땅 위에서 지도처럼
+  controls.addEventListener('start', function () { anim = null; });
+  controls.enableDamping = true; controls.dampingFactor = 0.08; controls.minDistance = 6; controls.maxDistance = Math.max(span, view.aspan) * 4;
+  controls.maxPolarAngle = Math.PI / 2.05; focusFloor(true);
+  raycaster = new THREE.Raycaster(); mouse = new THREE.Vector2();
+
+  var cv = renderer.domElement, lastMove = 0;
+  cv.addEventListener('pointerdown', function (e) { downPos = { x: e.clientX, y: e.clientY }; cv.style.cursor = 'grabbing'; hideTip(); });
+  cv.addEventListener('pointerup', function (e) {
+    cv.style.cursor = 'grab';
+    if (e.button !== 0 || !downPos || Math.abs(e.clientX - downPos.x) + Math.abs(e.clientY - downPos.y) > 6) return;
+    if ($('floor').value === 'all') {                                   // 외관: 건물을 누르면 그 층 내부로
+      var fh = facadeAt(e);
+      if (fh) { setFloor(String(fh)); return; }
+    }
+    selected = pickRoom(e);
+    refresh();
+  });
+  cv.addEventListener('dblclick', function (e) { if ($('floor').value === 'all') return; var n = pickRoom(e); if (n) { selected = n; focusRoom(n); refresh(); } });
+  cv.addEventListener('pointermove', function (e) {
+    if (e.buttons) { hideTip(); return; }
+    var now = Date.now(); if (now - lastMove < 50) return; lastMove = now;
+    var rect = cv.getBoundingClientRect(), txt = '', n = null;
+    if ($('floor').value === 'all') { var f = facadeAt(e); if (f) txt = f + '층 · 눌러서 들어가기'; setHover(null); }
+    else { n = pickRoom(e); setHover(n); if (n) txt = tipText(n); }
+    if (txt) { var t = $('tip'); t.textContent = txt; t.style.display = 'block'; t.style.left = (e.clientX - rect.left + 14) + 'px'; t.style.top = (e.clientY - rect.top + 14) + 'px'; cv.style.cursor = 'pointer'; }
+    else { hideTip(); cv.style.cursor = 'grab'; }
+  });
+  cv.addEventListener('pointerleave', function () { hideTip(); setHover(null); });
+  window.addEventListener('resize', function () {
+    var W2 = host.clientWidth, H2 = host.clientHeight; renderer.setSize(W2, H2); camera.aspect = W2 / H2; camera.updateProjectionMatrix();
+  });
+  (function loop() { requestAnimationFrame(loop); stepAnim(); controls.update(); pulseRooms(); renderer.render(scene, camera); placeLabels(); })();
+}
+
+function roomType(n) {
+  if (/^\d+-\d+/.test(n) || /^특수/.test(n)) return 'class';
+  if (/교무|행정|교장|방송|관리|보건|상담|위클래스|교사실|원감|협의|휴게|전기|창고|당직|준비/.test(n)) return 'admin';
+  return 'other';
+}
+var KIND_COLOR = { regular: 0x6aa3e8, program: 0xb58be0, booking: 0x5cb85c };
+var KIND_CSS = { regular: '#6aa3e8', program: '#b58be0', booking: '#5cb85c' };
+var KIND_NAME = { regular: '정규 수업', program: '방과후·돌봄', booking: '교사 신청' };
+function useKind(u) { return !u ? '' : (u.fixed ? (/^방과후/.test(u.who) ? 'program' : 'regular') : 'booking'); }
+function useText(u) { return u.fixed ? String(u.who).replace(/^(정규|방과후)\s*/, '').replace(/^(맞춤형|선택형)\s*/, '') : u.who; }
+var ttCache = {};
+function ttHtml(t) {
+  var dn = ['월', '화', '수', '목', '금'], h = '<table class="wk"><tr><th></th>' + dn.map(function (d, i) { return '<th>' + d + '<br><span class="small">' + t.days[i].slice(5).replace('-', '/') + '</span></th>'; }).join('') + '</tr>';
+  t.periods.forEach(function (pe, pi) {
+    h += '<tr><th>' + esc(pe.name) + '</th>' + t.grid[pi].map(function (c) { return c ? '<td class="k-' + c.kind + '" title="' + KIND_NAME[c.kind] + '">' + esc(c.text) + '</td>' : '<td></td>'; }).join('') + '</tr>';
+  });
+  return h + '</table><div class="small" style="margin-top:3px">파랑 = 정규 수업 · 보라 = 방과후·돌봄 · 초록 = 교사 신청</div>';
+}
+function loadTimetable(room) {
+  var key = room + '|' + $('date').value, c = ttCache[key];
+  if (c && Date.now() - c.t < 120000) { if ($('tt')) $('tt').innerHTML = ttHtml(c.v); return; }
+  google.script.run.withSuccessHandler(function (v) { ttCache[key] = { t: Date.now(), v: v }; if (selected === room && $('tt')) $('tt').innerHTML = ttHtml(v); })
+    .withFailureHandler(function () { if ($('tt')) $('tt').textContent = '불러오지 못했어요.'; }).getRoomTimetable(CODE, room, $('date').value);
+}
+function periodTime(name) { var p = DATA.periods.filter(function (x) { return x.name === name; })[0]; return p ? p.time : ''; }
+function periodMin(p) { var m = String(p.time).split('-'); function t(x) { var a = (x || '').split(':'); return a.length === 2 ? +a[0] * 60 + +a[1] : null; } return { from: t(m[0]), to: t(m[1]) }; }
+function stepPeriod(d) { var sel = $('period'), n = sel.options.length; if (!n || STUDENT) return; sel.selectedIndex = (sel.selectedIndex + d + n) % n; refresh(); }
+function nowPeriod() {
+  var d = new Date(), m = d.getHours() * 60 + d.getMinutes(), best = -1;
+  DATA.periods.forEach(function (p, i) { var t = periodMin(p); if (t.from != null && best < 0 && m < t.to) best = i; });
+  if (best < 0) best = DATA.periods.length - 1;
+  $('date').value = todayStr(); $('period').selectedIndex = best; load();
+}
+var playT = null;
+function togglePlay() {
+  if (playT) { clearInterval(playT); playT = null; $('pPlay').textContent = '▶ 하루 재생'; return; }
+  $('pPlay').textContent = '⏸ 멈춤'; playT = setInterval(function () { stepPeriod(1); }, 1600);
+}
+function noBookText(n) {
+  var t = roomType(n);
+  return t === 'admin' ? '행정·지원실이라 사용 신청을 받지 않아요.' : (t === 'class' ? '학급 교실이라 사용 신청 대상이 아니에요. (신청은 특별실·빈 교실만 받아요)' : '사용 신청을 받지 않는 공간이에요.');
+}
+function typeColor(n) { var t = roomType(n); return t === 'class' ? 0xbcd7f0 : (t === 'admin' ? 0xf0d9b5 : 0xd5dbe5); }
+function short(n) { return String(n).replace(/\(\d+\)$/, ''); }
+var anim = null, savedOffset = null, hoverName = null;
+function flyTo(tgt, pos, ms) {
+  if (!ms) { controls.target.copy(tgt); camera.position.copy(pos); controls.update(); anim = null; return; }
+  anim = { t0: performance.now(), ms: ms, t1: controls.target.clone(), p1: camera.position.clone(), t2: tgt.clone(), p2: pos.clone() };
+}
+function stepAnim() {
+  if (!anim) return;
+  var k = Math.min(1, (performance.now() - anim.t0) / anim.ms), e = k < 0.5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
+  controls.target.lerpVectors(anim.t1, anim.t2, e); camera.position.lerpVectors(anim.p1, anim.p2, e);
+  if (k >= 1) anim = null;
+}
+function focusFloor(instant) {
+  if (!view || !controls) return;
+  var fs = $('floor').value, tgt, pos;
+  if (fs === 'all') { tgt = new THREE.Vector3(view.ax, view.topY * 0.3, view.az); pos = new THREE.Vector3(view.ax + view.aspan * 0.3, view.topY * 0.9 + view.aspan * 0.5, view.az + view.aspan * 0.95); }
+  else { var by = (Number(fs) - 1) * FH; tgt = new THREE.Vector3(view.cx, by, view.cz); pos = new THREE.Vector3(view.cx, by + view.span * 0.95, view.cz + view.span * 0.5); }
+  flyTo(tgt, pos, instant ? 0 : 650);
+}
+function focusRoom(name) {
+  var o = meshes[name]; if (!o || !controls) return;
+  var r = o.r, base = (r.floor - 1) * FH, tgt = new THREE.Vector3(r.x + r.w / 2, base + 0.6, r.y + r.d / 2), d = Math.max(9, Math.max(r.w, r.d) * 2.4);
+  flyTo(tgt, new THREE.Vector3(tgt.x, tgt.y + d * 0.85, tgt.z + d * 0.55), 650);
+}
+var IS_TOUCH = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+function ls_(k, v) { try { if (v === undefined) return localStorage.getItem(k) || ''; localStorage.setItem(k, v); } catch (e) { return ''; } }
+// 한 손가락 = 이동(기본) 또는 회전. 두 손가락 = 확대 + (이동일 때) 회전 / (회전일 때) 이동
+function applyTouchMode(oneFingerRotate) {
+  if (!controls) return;
+  controls.touches = oneFingerRotate ? { ONE: THREE.TOUCH.ROTATE, TWO: THREE.TOUCH.DOLLY_PAN } : { ONE: THREE.TOUCH.PAN, TWO: THREE.TOUCH.DOLLY_ROTATE };
+  var b = $('nTouch'); if (b) b.textContent = oneFingerRotate ? '☝회전' : '☝이동';
+  ls_('touchRot', oneFingerRotate ? '1' : '0');
+}
+function setFloor(v) { $('floor').value = String(v); selected = null; if (typeof formOpen !== 'undefined') formOpen = false; focusFloor(); refresh(); }
+function goRoom(name) {
+  var o = meshes[name]; if (!o) return false;
+  $('floor').value = String(o.r.floor); selected = name; focusRoom(name); refresh(); return true;
+}
+var CHO = 'ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎ', srItems = [], srIdx = -1;
+function chosung(t) { var o = ''; for (var i = 0; i < t.length; i++) { var c = t.charCodeAt(i); o += (c >= 0xAC00 && c <= 0xD7A3) ? CHO.charAt(Math.floor((c - 0xAC00) / 588)) : t.charAt(i); } return o; }
+function normQ(t) { return String(t == null ? '' : t).toLowerCase().replace(/[\s()\-·_.,\/]+/g, ''); }
+function isJamoQ(t) { return /^[ㄱ-ㅎ]+$/.test(t); }
+function matchText(hay, qn, jamo) {
+  var h = normQ(hay); if (!h) return 0;
+  if (h === qn) return 4; if (h.indexOf(qn) === 0) return 3; if (h.indexOf(qn) > 0) return 2;
+  return (jamo && chosung(h).indexOf(qn) >= 0) ? 1 : 0;
+}
+function searchAll(q) {
+  var qn = normQ(q); if (!qn) return { rooms: [], groups: [] };
+  var jamo = isJamoQ(qn), rooms = [], groups = {};
+  Object.keys(meshes).forEach(function (k) {
+    if (STUDENT && !isBook[k]) return;
+    var sc = Math.max(matchText(k, qn, jamo), matchText(short(k), qn, jamo)); if (sc) rooms.push({ k: k, sc: sc });
+  });
+  rooms.sort(function (a, b) { return b.sc - a.sc || a.k.length - b.k.length; });
+  if (!STUDENT && DATA && DATA.items) DATA.items.forEach(function (it) {
+    var sc = Math.max(matchText(it.name, qn, jamo) * 3, matchText(it.id, qn, false) * 3, matchText(it.cat, qn, jamo) * 2, matchText(it.spec, qn, false), matchText(it.mgr, qn, jamo), matchText(it.note, qn, jamo));
+    if (!sc) return;
+    var g = groups[it.name] || (groups[it.name] = { name: it.name, qty: 0, locs: {}, bad: 0, sc: 0 });
+    g.qty += it.qty; g.locs[it.loc] = (g.locs[it.loc] || 0) + it.qty; if (ITEM_BAD.indexOf(it.status) >= 0) g.bad++; g.sc = Math.max(g.sc, sc);
+  });
+  var gl = Object.keys(groups).map(function (k) { return groups[k]; }).sort(function (a, b) { return b.sc - a.sc || b.qty - a.qty; });
+  return { rooms: rooms, groups: gl };
+}
+function syncQ() { $('fQ').value = mode === 'items' ? $('q').value.trim() : ''; }
+function floorTxt(k) { var r = meshes[k] && meshes[k].r; return r ? (r.floorEnd > r.floor ? r.floor + '~' + r.floorEnd + '층' : r.floor + '층') : ''; }
+function locSummary(g) {
+  var ks = Object.keys(g.locs).sort(function (a, b) { return g.locs[b] - g.locs[a]; });
+  return ks.slice(0, 3).map(function (l) { return esc(short(l || '(위치 미정)')) + ' ' + g.locs[l]; }).join(' · ') + (ks.length > 3 ? ' 외 ' + (ks.length - 3) + '곳' : '');
+}
+function recentQ() { try { return JSON.parse(localStorage.getItem('recentQ') || '[]'); } catch (e) { return []; } }
+function addRecent(v) { try { var a = recentQ().filter(function (x) { return x !== v; }); a.unshift(v); localStorage.setItem('recentQ', JSON.stringify(a.slice(0, 6))); } catch (e) {} }
+function markSr() { Array.prototype.forEach.call($('sr').querySelectorAll('.sr-i'), function (el) { el.className = 'sr-i' + (Number(el.getAttribute('data-i')) === srIdx ? ' on' : ''); }); }
+function renderSr() {
+  var q = $('q').value, box = $('sr'), h = ''; srItems = [];
+  if (!DATA) return;
+  if (!q.trim()) {
+    var rc = recentQ(); if (!rc.length) { box.style.display = 'none'; return; }
+    h = '<div class="sr-h">최근 검색</div>' + rc.map(function (v) { srItems.push({ t: 'recent', v: v }); return '<div class="sr-i" data-i="' + (srItems.length - 1) + '">🕘 ' + esc(v) + '</div>'; }).join('');
+  } else {
+    var r = searchAll(q);
+    if (r.rooms.length) h += '<div class="sr-h">방 (' + r.rooms.length + ')</div>' + r.rooms.slice(0, 6).map(function (x) { srItems.push({ t: 'room', v: x.k }); return '<div class="sr-i" data-i="' + (srItems.length - 1) + '">' + esc(x.k) + ' <span class="small">' + floorTxt(x.k) + '</span></div>'; }).join('');
+    if (r.groups.length) h += '<div class="sr-h">물품 (' + r.groups.length + '종)</div>' + r.groups.slice(0, 8).map(function (g) {
+      srItems.push({ t: 'item', v: g.name });
+      return '<div class="sr-i" data-i="' + (srItems.length - 1) + '"><b>' + esc(g.name) + '</b> · 총 ' + g.qty + '개' + (g.bad ? ' <span style="color:#d9822b">⚠' + g.bad + '</span>' : '') + '<br><span class="small">' + locSummary(g) + '</span></div>'; }).join('');
+    if (!h) h = '<div class="sr-h">찾지 못했어요 — 다른 글자(초성도 가능)로 써 보세요</div>';
+  }
+  box.innerHTML = h; box.style.display = 'block'; srIdx = srItems.length ? 0 : -1; markSr();
+}
+function pickSr(i) {
+  var it = srItems[i]; if (!it) return; $('sr').style.display = 'none';
+  if (it.t === 'recent') { $('q').value = it.v; renderSr(); return; }
+  addRecent(it.v);
+  if (it.t === 'room') { $('q').value = it.v; syncQ(); goRoom(it.v); } else applyItemSearch(it.v);
+}
+function applyItemSearch(name) {
+  $('q').value = name; setMode('items');
+  var locs = {}, floors = {};
+  DATA.items.forEach(function (it) { if (it.name === name && meshes[it.loc]) { locs[it.loc] = 1; floors[meshes[it.loc].r.floor] = 1; } });
+  var ks = Object.keys(locs), fk = Object.keys(floors);
+  selected = null;
+  if (ks.length === 1) goRoom(ks[0]); else if (fk.length === 1) setFloor(fk[0]); else refresh();
+}
+function findRoom(q) {
+  q = String(q || '').trim().toLowerCase(); if (!q) return null;
+  var names = Object.keys(meshes).filter(function (k) { return !STUDENT || isBook[k]; });
+  var ex = names.filter(function (k) { return k.toLowerCase() === q; })[0]; if (ex) return ex;
+  var st = names.filter(function (k) { return short(k).toLowerCase().indexOf(q) === 0 || k.toLowerCase().indexOf(q) === 0; })[0];
+  return st || names.filter(function (k) { return k.toLowerCase().indexOf(q) >= 0; })[0] || null;
+}
+function fillRoomList() { if (STUDENT) $('q').placeholder = '🔍 방 찾기  ( / )'; }
+// 카메라 보조 동작 (화면 버튼·키보드 공용)
+function camOffset() { return camera.position.clone().sub(controls.target); }
+function setOffset(v) { camera.position.copy(controls.target).add(v); controls.update(); }
+function zoomBy(f) { var o = camOffset(), len = Math.min(Math.max(o.length() * f, controls.minDistance), controls.maxDistance); anim = null; setOffset(o.setLength(len)); }
+function rotateBy(deg) { var o = camOffset(), a = deg * Math.PI / 180, x = o.x * Math.cos(a) - o.z * Math.sin(a), z = o.x * Math.sin(a) + o.z * Math.cos(a); o.x = x; o.z = z; anim = null; setOffset(o); }
+function moveBy(dx, dz) {
+  var f = new THREE.Vector3(); camera.getWorldDirection(f); f.y = 0; if (f.lengthSq() < 1e-6) f.set(0, 0, -1); f.normalize();
+  var r = new THREE.Vector3(-f.z, 0, f.x), step = camOffset().length() * 0.05, mv = f.multiplyScalar(dz * step).add(r.multiplyScalar(dx * step));
+  anim = null; controls.target.add(mv); camera.position.add(mv); controls.update();
+}
+function topDown() {
+  var o = camOffset(), len = o.length(), tgt = controls.target.clone();
+  if (controls.getPolarAngle() < 0.2 && savedOffset) { var back = savedOffset.clone().setLength(len); savedOffset = null; flyTo(tgt, tgt.clone().add(back), 450); }
+  else { savedOffset = o.clone(); flyTo(tgt, tgt.clone().add(new THREE.Vector3(0, len, len * 0.02)), 450); }
+}
+function setHover(n) {
+  if (hoverName === n) return;
+  if (hoverName && meshes[hoverName] && selected !== hoverName) meshes[hoverName].wallMat.emissive.setHex(0x000000);
+  hoverName = n;
+  if (n && meshes[n] && selected !== n) meshes[n].wallMat.emissive.setHex(0x26456e);
+}
+function hideTip() { var t = $('tip'); if (t) t.style.display = 'none'; }
+function rayAt(e) {
+  var rect = renderer.domElement.getBoundingClientRect();
+  mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1; mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+  raycaster.setFromCamera(mouse, camera);
+}
+function pickRoom(e) {
+  rayAt(e);
+  var vis = Object.keys(meshes).map(function (k) { return meshes[k]; }).filter(function (o) { return o.mesh.visible; }).map(function (o) { return o.hit; });
+  var hit = raycaster.intersectObjects(vis, false); return hit.length ? hit[0].object.userData.space : null;
+}
+function facadeAt(e) { rayAt(e); var h = raycaster.intersectObjects(facadeObjs, false); return h.length ? h[0].object.userData.floor : null; }
+function tipText(n) {
+  var t = short(n);
+  if (STUDENT) { var st = sState(n); return t + (st ? ' · ' + (st.state === 'free' ? '비어 있어요' : (st.state === 'student' ? '학생 활동 중' : '선생님 신청')) : ''); }
+  if (isBook[n] && DATA && DATA.usage) { var u = usageMap()[n + '|' + $('period').value]; return t + ' · ' + (u ? useText(u) + ' (' + KIND_NAME[useKind(u)] + ')' : '비어 있음'); }
+  var ty = roomType(n); return t + (ty === 'class' ? ' · 학급 교실(신청 불가)' : (ty === 'admin' ? ' · 행정·지원실(신청 불가)' : ' · 신청 불가'));
+}
+function showHint(msg, ms) { var h = $('hint'); h.textContent = msg; h.style.display = 'block'; setTimeout(function () { h.style.display = 'none'; }, ms || 6000); }
+function toggleHelp(force) { $('help').style.display = (force === false || ($('help').style.display === 'flex' && force !== true)) ? 'none' : 'flex'; }
+document.addEventListener('keydown', function (e) {
+  var tg = e.target && e.target.tagName; if (tg === 'INPUT' || tg === 'SELECT' || tg === 'TEXTAREA' || e.ctrlKey || e.metaKey || e.altKey || !controls) return;
+  var k = e.key, used = true;
+  if (k === 'ArrowUp' || k === 'w' || k === 'W') moveBy(0, 1); else if (k === 'ArrowDown' || k === 's' || k === 'S') moveBy(0, -1);
+  else if (k === 'ArrowLeft' || k === 'a' || k === 'A') moveBy(-1, 0); else if (k === 'ArrowRight' || k === 'd' || k === 'D') moveBy(1, 0);
+  else if (k === 'q' || k === 'Q') rotateBy(6); else if (k === 'e' || k === 'E') rotateBy(-6);
+  else if (k === '+' || k === '=') zoomBy(0.85); else if (k === '-' || k === '_') zoomBy(1.18);
+  else if (k === 'r' || k === 'R' || k === 'Home') focusFloor(); else if (k === 't' || k === 'T') topDown();
+  else if (k === '/') { $('q').focus(); $('q').select(); }
+  else if (k === ',') stepPeriod(-1); else if (k === '.') stepPeriod(1);
+  else if (k === '?' || k === 'h' || k === 'H') toggleHelp();
+  else if (k === 'Escape') { toggleHelp(false); closeDlg(); if (selected) { selected = null; if (typeof formOpen !== 'undefined') formOpen = false; refresh(); } }
+  else if (k === '0') setFloor('all'); else if (/^[1-9]$/.test(k)) { if (view && Number(k) <= view.maxF) setFloor(k); else used = false; }
+  else used = false;
+  if (used) e.preventDefault();
+});
+
+// 땅, 그림자 빛, 나무
+function buildEnvironment(bx0, by0, bx1, by1, span, cx, cz, dl) {
+  var gm = new THREE.Mesh(new THREE.PlaneGeometry(span * 10, span * 10), new THREE.MeshLambertMaterial({ color: 0x9cc08a }));
+  gm.rotation.x = -Math.PI / 2; gm.position.set(cx, -0.45, cz); gm.receiveShadow = true; scene.add(gm);
+  dl.position.set(cx - span * 0.7, span * 1.4 + 20, cz + span * 0.9); dl.target.position.set(cx, 0, cz);
+  var sc = dl.shadow.camera, e = span * 0.9 + 15; sc.left = -e; sc.right = e; sc.top = e; sc.bottom = -e; sc.near = 1; sc.far = span * 4 + 80; sc.updateProjectionMatrix();
+  dl.shadow.bias = -0.0008;
+  var trunk = new THREE.MeshLambertMaterial({ color: 0x7a5a3a }), leaf = new THREE.MeshLambertMaterial({ color: 0x4f8f4a });
+  var tg = new THREE.CylinderGeometry(0.15, 0.2, 1.2, 6), cg = new THREE.ConeGeometry(1.1, 2.6, 8);
+  var pts = [], m = 5, step = 6, x0 = bx0 - m, x1 = bx1 + m, z0 = by0 - m, z1 = by1 + m, q;   // 땅 전체(건물+운동장) 가장자리를 따라 나무
+  for (q = x0; q <= x1; q += step) { pts.push([q, z0]); pts.push([q, z1]); }
+  for (q = z0 + step; q < z1; q += step) { pts.push([x0, q]); pts.push([x1, q]); }
+  pts.forEach(function (p, i) {
+    var tr = new THREE.Mesh(tg, trunk); tr.position.set(p[0], 0.15, p[1]);
+    var lf = new THREE.Mesh(cg, leaf); lf.position.set(p[0], 1.9, p[1]); lf.scale.setScalar(0.8 + (i % 4) * 0.12);
+    tr.castShadow = true; lf.castShadow = true; scene.add(tr); scene.add(lf);
+  });
+}
+
+function makeFacadeTex() {
+  var c = document.createElement('canvas'); c.width = 256; c.height = 256; var x = c.getContext('2d');
+  x.fillStyle = '#e7e1d3'; x.fillRect(0, 0, 256, 256);
+  x.fillStyle = '#cfc8b8'; x.fillRect(0, 236, 256, 20);
+  [[26, 74], [150, 74]].forEach(function (p) {
+    x.fillStyle = '#4d5f75'; x.fillRect(p[0] - 4, p[1] - 4, 88, 108);
+    x.fillStyle = '#8fb4d4'; x.fillRect(p[0], p[1], 80, 100);
+    x.fillStyle = 'rgba(255,255,255,.35)'; x.fillRect(p[0], p[1], 80, 28);
+    x.fillStyle = '#4d5f75'; x.fillRect(p[0] + 38, p[1], 4, 100);
+  });
+  var t = new THREE.CanvasTexture(c); t.wrapS = THREE.RepeatWrapping; t.anisotropy = 4; return t;
+}
+
+// 건물 껍데기: 층마다 방들이 차지한 영역(작은 틈은 복도로 메움)을 구해 바닥 슬래브 + 창문 있는 바깥벽 + 지붕을 만든다.
+function buildShell(maxF, bx0, by0, bx1, by1, cz) {
+  var gx0 = Math.floor(bx0) - 4, gy0 = Math.floor(by0) - 4, NX = Math.ceil(bx1) - gx0 + 4, NY = Math.ceil(by1) - gy0 + 4;
+  var facadeMat = new THREE.MeshStandardMaterial({ map: makeFacadeTex(), roughness: 0.9, metalness: 0 });
+  var slabMat = new THREE.MeshStandardMaterial({ color: 0xd9d4ca, roughness: 1 }), roofMat = new THREE.MeshStandardMaterial({ color: 0x8c929b, roughness: 0.95 });
+  function inb(x, y) { return x >= gx0 && x < gx0 + NX && y >= gy0 && y < gy0 + NY; }
+  function idx(x, y) { return (y - gy0) * NX + (x - gx0); }
+  function morph(src, dil, K) {
+    var out = new Uint8Array(NX * NY);
+    for (var y = gy0; y < gy0 + NY; y++) for (var x = gx0; x < gx0 + NX; x++) {
+      var v = dil ? 0 : 1;
+      for (var dy = -K; dy <= K && (dil ? !v : v); dy++) for (var dx = -K; dx <= K; dx++) {
+        var s = inb(x + dx, y + dy) ? src[idx(x + dx, y + dy)] : 0;
+        if (dil) { if (s) { v = 1; break; } } else if (!s) { v = 0; break; }
+      }
+      out[idx(x, y)] = v;
+    }
+    return out;
+  }
+  for (var f = 1; f <= maxF; f++) {
+    var occ = new Uint8Array(NX * NY), any = false;
+    for (var q = 0; q < DATA.layout.length; q++) {
+      var r = DATA.layout[q];
+      if ((r.h > 0 && r.h < 1) || f < r.floor || f > r.floorEnd) continue;
+      for (var yy = Math.floor(r.y); yy < Math.ceil(r.y + r.d); yy++) for (var xx = Math.floor(r.x); xx < Math.ceil(r.x + r.w); xx++) if (inb(xx, yy)) { occ[idx(xx, yy)] = 1; any = true; }
+    }
+    if (!any) continue;
+    var R = morph(morph(occ, true, 2), false, 2);
+    var has = (function (RR) { return function (x, y) { return inb(x, y) && RR[idx(x, y)] === 1; }; })(R);
+    var grp = new THREE.Group(); grp.position.y = (f - 1) * FH; scene.add(grp);
+    var walls = new THREE.Group(), roof = new THREE.Group(); grp.add(walls); grp.add(roof);
+    var wall = (function (ff, wg) { return function (len, cxw, czw, alongX) {
+      var geo = alongX ? new THREE.BoxGeometry(len, STORY, 0.3) : new THREE.BoxGeometry(0.3, STORY, len);
+      var uv = geo.attributes.uv; for (var i = 0; i < uv.count; i++) uv.setX(i, uv.getX(i) * len / 4);
+      var m = new THREE.Mesh(geo, facadeMat); m.position.set(cxw, STORY / 2, czw); m.castShadow = true; m.receiveShadow = true; m.userData.floor = ff; wg.add(m); facadeObjs.push(m);
+    }; })(f, walls);
+    for (var y = gy0; y < gy0 + NY; y++) {                       // 바닥 슬래브와 지붕: 가로 줄 단위로 합침
+      var x = gx0;
+      while (x < gx0 + NX) {
+        if (!has(x, y)) { x++; continue; }
+        var x1 = x; while (has(x1 + 1, y)) x1++;
+        var len = x1 - x + 1, mid = x + len / 2;
+        var sl = new THREE.Mesh(new THREE.BoxGeometry(len, 0.4, 1), slabMat); sl.position.set(mid, -0.2, y + 0.5); sl.receiveShadow = true; grp.add(sl);
+        var rf = new THREE.Mesh(new THREE.BoxGeometry(len, 0.14, 1), roofMat); rf.position.set(mid, STORY + 0.07, y + 0.5); rf.castShadow = true; rf.receiveShadow = true; rf.userData.floor = f; roof.add(rf); facadeObjs.push(rf);
+        x = x1 + 1;
+      }
+    }
+    for (var y2 = gy0; y2 <= gy0 + NY; y2++) for (var sd = 0; sd < 2; sd++) {          // 바깥벽(북·남쪽 면)
+      var isE = function (x, y) { return sd === 0 ? (has(x, y) && !has(x, y - 1)) : (has(x, y - 1) && !has(x, y)); };
+      var xs = gx0;
+      while (xs < gx0 + NX) {
+        if (!isE(xs, y2)) { xs++; continue; }
+        var xe = xs; while (xe + 1 < gx0 + NX && isE(xe + 1, y2)) xe++;
+        wall(xe - xs + 1, xs + (xe - xs + 1) / 2, y2, true); xs = xe + 1;
+      }
+    }
+    for (var x2 = gx0; x2 <= gx0 + NX; x2++) for (var sd2 = 0; sd2 < 2; sd2++) {        // 바깥벽(서·동쪽 면)
+      var isE2 = function (x, y) { return sd2 === 0 ? (has(x, y) && !has(x - 1, y)) : (has(x - 1, y) && !has(x, y)); };
+      var ys = gy0;
+      while (ys < gy0 + NY) {
+        if (!isE2(x2, ys)) { ys++; continue; }
+        var ye = ys; while (ye + 1 < gy0 + NY && isE2(x2, ye + 1)) ye++;
+        wall(ye - ys + 1, x2, ys + (ye - ys + 1) / 2, false); ys = ye + 1;
+      }
+    }
+    bld[f] = { grp: grp, walls: walls, roof: roof };
+    var bd = document.createElement('div'); bd.className = 'lab fl'; bd.style.cursor = 'pointer'; bd.style.pointerEvents = 'auto';
+    bd.onclick = (function (ff) { return function () { $('floor').value = String(ff); selected = null; focusFloor(); refresh(); }; })(f);
+    $('labels').appendChild(bd); badges[f] = { el: bd, pos: new THREE.Vector3(bx1 + 1.8, (f - 1) * FH + STORY / 2, cz) };
+  }
+}
+
+// 방 하나를 '지붕 없는 방'으로 만든다: 바닥(상태 색) + 벽 + 문 틈 + 칠판 + (신청 대상이면) 책상.
+function buildRoom(r, base, hh) {
+  var g = new THREE.Group(), tall = r.floorEnd > r.floor;
+  var W = r.w - 0.3, D = r.d - 0.3, x0 = r.x + 0.15, z0 = r.y + 0.15;
+  var floorMat = new THREE.MeshLambertMaterial({ color: 0xe3e3e3 }), wallMat = new THREE.MeshLambertMaterial({ color: 0xf3f5f9 });
+  var boardMat = new THREE.MeshLambertMaterial({ color: 0x3f6f5a }), deskMat = new THREE.MeshLambertMaterial({ color: 0xb58b5a });
+  var wh = hh < 0.6 ? 0 : (tall ? hh * 0.7 : Math.min(hh, 2.0));
+  function add(w, h, d, cx, cy, cz, mat) {
+    var m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat); m.position.set(cx, base + cy, cz); m.castShadow = true; m.receiveShadow = true; g.add(m); return m;
+  }
+  add(W, 0.14, D, x0 + W / 2, 0.07, z0 + D / 2, floorMat);
+  if (wh > 0) {
+    var t = Math.min(0.16, Math.min(W, D) * 0.08);
+    add(W, wh, t, x0 + W / 2, wh / 2, z0 + t / 2, wallMat);                                   // 뒤(북)쪽 벽
+    if (W >= 3) {                                                                              // 앞(남)쪽 벽: 문 틈
+      var gap = Math.min(1.3, W * 0.35), seg = (W - gap) / 2;
+      add(seg, wh, t, x0 + seg / 2, wh / 2, z0 + D - t / 2, wallMat);
+      add(seg, wh, t, x0 + W - seg / 2, wh / 2, z0 + D - t / 2, wallMat);
+    } else add(W, wh, t, x0 + W / 2, wh / 2, z0 + D - t / 2, wallMat);
+    add(t, wh, D, x0 + t / 2, wh / 2, z0 + D / 2, wallMat);                                    // 왼쪽 벽
+    add(t, wh, D, x0 + W - t / 2, wh / 2, z0 + D / 2, wallMat);                                // 오른쪽 벽
+    if (W >= 2.4 && D >= 2.2) add(Math.min(W * 0.5, 3), 0.7, 0.05, x0 + W / 2, 1.0, z0 + t + 0.04, boardMat);   // 칠판
+    if (isBook[r.space] && !tall && W >= 3 && D >= 3.5) {                                      // 책상
+      var rows = Math.min(3, Math.floor((D - 2.0) / 1.1)), cols = Math.min(4, Math.floor((W - 0.8) / 1.0));
+      var sx = (W - 1.0) / cols, sz = (D - 2.2) / rows;
+      for (var i = 0; i < rows; i++) for (var j = 0; j < cols; j++) add(0.6, 0.45, 0.4, x0 + 0.5 + sx * (j + 0.5), 0.36, z0 + 1.6 + sz * (i + 0.5), deskMat);
+    }
+  }
+  var hitH = Math.max(wh, 0.6) + 0.2;
+  var hit = new THREE.Mesh(new THREE.BoxGeometry(W, hitH, D), new THREE.MeshBasicMaterial({ visible: false }));
+  hit.position.set(x0 + W / 2, base + hitH / 2, z0 + D / 2); hit.userData.space = r.space; g.add(hit);
+  return { mesh: g, hit: hit, floorMat: floorMat, wallMat: wallMat, mats: [floorMat, wallMat, boardMat, deskMat], ghost: false, r: r,
+           top: new THREE.Vector3(r.x + r.w / 2, base + wh + 0.3, r.y + r.d / 2), qty: 0 };
+}
+
+function placeLabels() {
+  var host = $('canvas'), W = host.clientWidth, H = host.clientHeight, fs = $('floor').value, showAllRooms = $('showAll').checked, fsn = fs === 'all' ? 0 : Number(fs);
+  function put(l, vec) {
+    var v = vec.clone().project(camera);
+    if (v.z > 1) { l.style.display = 'none'; return; }
+    l.style.display = 'block'; l.style.left = ((v.x * 0.5 + 0.5) * W) + 'px'; l.style.top = ((-v.y * 0.5 + 0.5) * H) + 'px';
+  }
+  Object.keys(bld).forEach(function (f) {          // 외관: 모든 층 + 지붕 / 층 선택: 그 층까지만, 선택한 층은 지붕을 열고 바깥벽을 낮춤
+    var b = bld[f], fn = Number(f);
+    b.grp.visible = mode !== 'table' && (fs === 'all' || fn <= fsn);
+    b.roof.visible = fs === 'all' || fn < fsn;
+    b.walls.scale.y = (fs !== 'all' && fn === fsn) ? 0.56 : 1;
+  });
+  Object.keys(badges).forEach(function (f) { if (mode !== 'table' && fs === 'all') put(badges[f].el, badges[f].pos); else badges[f].el.style.display = 'none'; });
+  Object.keys(meshes).forEach(function (k) {
+    var o = meshes[k], l = labels[k], ground = o.r.h > 0 && o.r.h < 1;
+    var onFloor = ground || (fs !== 'all' && o.r.floor <= fsn && fsn <= o.r.floorEnd);
+    var vis = mode !== 'table' && onFloor && (isBook[k] || showAllRooms || selected === k || (mode === 'items' && o.qty > 0));
+    o.mesh.visible = vis;
+    var wantLabel = vis && (isBook[k] || selected === k || (!STUDENT && ((mode === 'items' && o.qty > 0) || showAllRooms)));
+    if (!wantLabel) { l.style.display = 'none'; return; }
+    put(l, o.top);
+  });
+}
+
+function usageMap() { var m = {}; DATA.usage.forEach(function (u) { m[u.space + '|' + u.period] = u; }); return m; }
+var ITEM_BAD = ['수리필요', '수리중', '분실'], itemHist = {};
+function filteredItems() {
+  var cat = $('fCat').value, st = $('fSt').value, q = $('fQ').value.trim().toLowerCase();
+  return DATA.items.filter(function (it) {
+    return (!cat || it.cat === cat) && (!st || it.status === st) && (!q || it.name.toLowerCase().indexOf(q) >= 0 || it.id.toLowerCase().indexOf(q) >= 0);
+  });
+}
+function filterActive() { return !!($('fCat').value || $('fSt').value || $('fQ').value.trim()); }
+function itemMap(all) {
+  var m = {}, arr = (mode === 'items' && !all) ? filteredItems() : DATA.items;
+  arr.forEach(function (it) { (m[it.loc] = m[it.loc] || []).push(it); }); return m;
+}
+function fillItemFilters() {
+  function fill(sel, key, label) {
+    var cur = sel.value, vals = {};
+    DATA.items.forEach(function (it) { if (it[key]) vals[it[key]] = 1; });
+    sel.innerHTML = '<option value="">' + label + '</option>' + Object.keys(vals).sort().map(function (v) { return '<option>' + esc(v) + '</option>'; }).join('');
+    sel.value = cur;
+  }
+  fill($('fCat'), 'cat', '분류 전체'); fill($('fSt'), 'status', '상태 전체');
+}
+function itemRowHtml(it, withRoom) {
+  var bad = ITEM_BAD.indexOf(it.status) >= 0, room = it.loc && meshes[it.loc] ? ' data-sp="' + esc(it.loc) + '"' : '';
+  return '<div class="row"' + room + '><div style="flex:1"><b>' + esc(it.name) + '</b> ×' + it.qty + '<br><span class="small">' + esc(short(it.loc || '(위치 미정)')) + '</span></div><span class="small" style="' + (bad ? 'color:#d9822b;font-weight:bold' : '') + '">' + esc(it.status) + '</span></div>';
+}
+function itemSummaryHtml() {
+  var items = filteredItems(), qty = 0, byCat = {}, bySt = {};
+  items.forEach(function (it) { qty += it.qty; var c = it.cat || '(분류 없음)', s = it.status || '(상태 없음)'; byCat[c] = (byCat[c] || 0) + it.qty; bySt[s] = (bySt[s] || 0) + it.qty; });
+  var h = '<div style="margin-bottom:6px"><b>' + items.length + '종 · ' + qty + '개</b> <span class="small">(' + (filterActive() ? '필터 적용' : '전체') + ')</span></div>';
+  var max = Math.max.apply(null, Object.keys(byCat).map(function (k) { return byCat[k]; }).concat([1]));
+  Object.keys(byCat).sort(function (a, b) { return byCat[b] - byCat[a]; }).forEach(function (k) {
+    h += '<div class="small">' + esc(k) + ' · ' + byCat[k] + '개</div><div class="bar" style="height:6px;margin:2px 0 6px"><div style="width:' + (byCat[k] / max * 100) + '%"></div></div>';
+  });
+  h += '<div>' + Object.keys(bySt).map(function (k) { return '<span class="chip" data-st="' + esc(k) + '" style="' + (ITEM_BAD.indexOf(k) >= 0 ? 'border-color:#d9822b;color:#d9822b' : '') + '">' + esc(k) + ' ' + bySt[k] + '</span>'; }).join('') + '</div>';
+  if ($('fQ').value.trim()) {
+    h += '<div class="grp">검색 결과 (' + items.length + '건)</div>' + itemGroupsHtml(items);
+  } else {
+    var bad = DATA.items.filter(function (it) { return ITEM_BAD.indexOf(it.status) >= 0; });
+    if (bad.length) h += '<div class="grp">⚠ 점검이 필요한 물건 (' + bad.length + ')</div>' + bad.slice(0, 12).map(function (it) { return itemRowHtml(it); }).join('') + (bad.length > 12 ? '<div class="small">… 외 ' + (bad.length - 12) + '건 · 위 상태 칩이나 필터로 전체 보기</div>' : '');
+  }
+  return h;
+}
+function itemGroupsHtml(items) {
+  var g = {};
+  items.forEach(function (it) { var x = g[it.name] || (g[it.name] = { name: it.name, qty: 0, locs: {}, bad: {} }); x.qty += it.qty; x.locs[it.loc] = (x.locs[it.loc] || 0) + it.qty; if (ITEM_BAD.indexOf(it.status) >= 0) x.bad[it.loc] = 1; });
+  var names = Object.keys(g).sort(function (a, b) { return g[b].qty - g[a].qty; });
+  return names.slice(0, 25).map(function (k) {
+    var x = g[k];
+    return '<div class="grp">' + esc(x.name) + ' <span class="small">총 ' + x.qty + '개 · ' + Object.keys(x.locs).length + '곳</span></div>' +
+      Object.keys(x.locs).sort(function (a, b) { return x.locs[b] - x.locs[a]; }).map(function (loc) {
+        return '<span class="chip"' + (meshes[loc] ? ' data-sp="' + esc(loc) + '"' : ' style="opacity:.65"') + '>' + esc(short(loc || '(위치 미정)')) + ' ×' + x.locs[loc] + (x.bad[loc] ? ' ⚠' : '') + '</span>';
+      }).join('');
+  }).join('') + (names.length > 25 ? '<div class="small">… 외 ' + (names.length - 25) + '종</div>' : '');
+}
+function itemsByCat(list) {
+  var g = {}; list.forEach(function (it) { var c = it.cat || '(분류 없음)'; (g[c] = g[c] || []).push(it); });
+  return Object.keys(g).sort().map(function (cat) {
+    return '<div class="grp">' + esc(cat) + ' (' + g[cat].length + ')</div>' + g[cat].map(function (it) {
+      var i = DATA.items.indexOf(it), bad = ITEM_BAD.indexOf(it.status) >= 0;
+      return '<div class="itrow" data-item="' + i + '"><div class="row"><div style="flex:1"><b>' + esc(it.name) + '</b> ×' + it.qty + '</div><span class="small" style="' + (bad ? 'color:#d9822b;font-weight:bold' : '') + '">' + esc(it.status) + '</span></div><div class="idt" id="idt-' + i + '" style="display:none"></div></div>';
+    }).join('');
+  }).join('');
+}
+function toggleItem(i) {
+  var it = DATA.items[i], box = $('idt-' + i); if (!it || !box) return;
+  if (box.style.display === 'block') { box.style.display = 'none'; return; }
+  box.style.display = 'block';
+  var f = function (k, v) { return v ? '<tr><td class="small">' + k + '</td><td>' + esc(v) + '</td></tr>' : ''; };
+  box.innerHTML = '<table>' + f('관리번호', it.id) + f('분류', it.cat) + f('규격', it.spec) + f('수량', it.qty + '개') + f('취득일', it.acq) + f('담당자', it.mgr) + f('최초 위치', it.first) + f('현재 위치', it.loc) + f('비고', it.note) + '</table><div class="small" id="ln-' + i + '" style="margin:4px 0"></div><div class="small" id="hist-' + i + '">이동·수리 이력 불러오는 중…</div>';
+  var show = function (hs) { var el = $('hist-' + i); if (el) el.innerHTML = hs.length ? '<b>이동·수리 이력</b><br>' + hs.map(function (h) { return esc(h.date) + ' · ' + esc(h.kind) + (h.to ? ' → ' + esc(h.to) : '') + (h.memo ? ' (' + esc(h.memo) + ')' : ''); }).join('<br>') : '이력이 없어요.'; };
+  loadLoanInfo(it, i);
+  if (itemHist[it.id]) return show(itemHist[it.id]);
+  google.script.run.withSuccessHandler(function (hs) { itemHist[it.id] = hs; show(hs); }).withFailureHandler(function () { var el = $('hist-' + i); if (el) el.textContent = '이력을 불러오지 못했어요.'; }).getItemHistory(CODE, it.id);
+}
+
+function refresh() { if (STUDENT) refreshS(); else refreshT(); }
+function refreshT() {
+  if (!DATA) return;
+  var per = $('period').value, um = usageMap(), im = itemMap(), imAll = itemMap(true);
+  Object.keys(meshes).forEach(function (k) {
+    var o = meshes[k], u = um[k + '|' + per], list = im[k] || [], qty = list.reduce(function (a, b) { return a + b.qty; }, 0);
+    var color, txt; o.qty = qty;
+    if (mode === 'items') {
+      var warm = ITEM_BAD.indexOf($('fSt').value) >= 0, badN = (imAll[k] || []).filter(function (it) { return ITEM_BAD.indexOf(it.status) >= 0; }).length;
+      color = qty === 0 ? 0xe3e3e3 : (warm ? (qty < 3 ? 0xf6c98a : (qty < 8 ? 0xf0ad4e : 0xd9822b)) : (qty < 10 ? 0x9dc3e6 : (qty < 30 ? 0x5b9bd5 : 0x2e75b6)));
+      txt = '<b>' + esc(short(k)) + '</b>' + qty + '개' + (badN ? ' <span style="color:#d9822b">⚠' + badN + '</span>' : '');
+    } else if (!isBook[k]) {
+      color = typeColor(k); txt = '<b>' + esc(short(k)) + '</b>' + (roomType(k) === 'admin' ? '🔒' : '');
+    } else {
+      var kd = useKind(u);
+      color = u ? KIND_COLOR[kd] : 0xe3e3e3;
+      txt = '<b>' + esc(short(k)) + '</b>' + (u ? esc(useText(u)) : '<span style="color:#999">비어있음</span>');
+    }
+    var ghost = false;
+    if (o.ghost !== ghost) { o.ghost = ghost; o.mats.forEach(function (m) { m.transparent = ghost; m.opacity = ghost ? 0.3 : 1; m.needsUpdate = true; }); }
+    o.floorMat.color.setHex(color);
+    o.floorMat.emissive.setHex(selected === k ? 0x333300 : 0x000000);
+    o.wallMat.emissive.setHex(selected === k ? 0x4a4a10 : 0x000000);
+    labels[k].innerHTML = txt;
+  });
+  var lg = mode === 'items'
+    ? '<span class="sw" style="background:#e3e3e3"></span>없음<span class="sw" style="background:#9dc3e6"></span>적음<span class="sw" style="background:#5b9bd5"></span>보통<span class="sw" style="background:#2e75b6"></span>많음'
+    : '<span class="sw" style="background:#6aa3e8"></span>정규 수업<span class="sw" style="background:#b58be0"></span>방과후·돌봄<span class="sw" style="background:#5cb85c"></span>교사 신청<span class="sw" style="background:#e3e3e3"></span>비어 있음<span class="sw" style="background:#bcd7f0"></span>학급 교실<span class="sw" style="background:#f0d9b5"></span>행정·지원실<span class="sw" style="background:#d5dbe5"></span>기타';
+  var bc = {};
+  Object.keys(meshes).forEach(function (k) { if (!isBook[k]) return; var rr = meshes[k].r, b = bc[rr.floor] || (bc[rr.floor] = { u: 0, t: 0 }); b.t++; if (um[k + '|' + per]) b.u++; });
+  var ic = {};
+  if (mode === 'items') Object.keys(im).forEach(function (loc) { if (!meshes[loc]) return; var fl = meshes[loc].r.floor, q2 = im[loc].reduce(function (t, it) { return t + it.qty; }, 0); (ic[fl] = ic[fl] || { q: 0, n: 0 }); ic[fl].q += q2; ic[fl].n++; });
+  Object.keys(badges).forEach(function (f) {
+    var b = bc[f] || { u: 0, t: 0 };
+    if (mode === 'items') { var c = ic[f] || { q: 0, n: 0 }; badges[f].el.innerHTML = '<b>' + f + '층</b> 물품 ' + c.q + '개 · ' + c.n + '곳'; badges[f].el.style.background = (filterActive() && c.q > 0) ? '#d9822b' : ''; }
+    else { badges[f].el.innerHTML = '<b>' + f + '층</b> 사용 ' + b.u + '/' + b.t; badges[f].el.style.background = ''; }
+  });
+  Array.prototype.forEach.call($('floorBtns').children, function (b) { b.className = b.getAttribute('data-f') === $('floor').value ? 'on' : ''; });
+  $('legend').innerHTML = lg; $('legend').style.display = mode === 'table' ? 'none' : 'block';
+  renderTable(um); renderPanel(um, im);
+}
+
+function renderTable(um) {
+  var t = $('tablev'); t.style.display = mode === 'table' ? 'block' : 'none';
+  if (mode !== 'table') return;
+  var h = '<table><tr><th>공간</th>' + DATA.periods.map(function (p) { return '<th>' + esc(p.name) + '<br>' + esc(p.time) + '</th>'; }).join('') + '</tr>';
+  var lastF = null, ncol = DATA.periods.length + 1;
+  Object.keys(isBook).sort(function (a, b) { var fa = meshes[a] ? meshes[a].r.floor : 99, fb = meshes[b] ? meshes[b].r.floor : 99; return fa - fb; }).forEach(function (sp) {
+    var fl = meshes[sp] ? meshes[sp].r.floor : 0;
+    if (fl !== lastF) { lastF = fl; h += '<tr><td colspan="' + ncol + '" style="background:#dde6f3;font-weight:bold;text-align:left">' + (fl ? fl + '층' : '배치 없음') + '</td></tr>'; }
+    h += '<tr><th>' + esc(sp) + '</th>' + DATA.periods.map(function (p) {
+      var u = um[sp + '|' + p.name];
+      var kd = useKind(u);
+      return u ? '<td class="k-' + kd + '">' + esc(useText(u)) + '<br><span class="small">' + KIND_NAME[kd] + (u.fixed ? '' : ' · ' + esc(u.purpose)) + '</span></td>' : '<td class="free">비어있음</td>';
+    }).join('') + '</tr>';
+  });
+  t.innerHTML = h + '</table>';
+}
+
+function renderPanel(um, im) {
+  var p = $('panel');
+  if (!selected) { p.innerHTML = listPanel(um, im); return; }
+  var list = im[selected] || [];
+  var rr = meshes[selected] && meshes[selected].r, fl = rr ? (rr.floorEnd > rr.floor ? rr.floor + '~' + rr.floorEnd + '층' : rr.floor + '층') : '';
+  var h = '<button onclick="selected=null;refresh()">← 목록</button> <button onclick="focusRoom(selected)">🎯 이동</button> <h3 style="display:inline">' + esc(selected) + '</h3><div class="small">' + esc(fl) + ' · ' + esc($('date').value) + '</div><table>';
+  (isBook[selected] ? DATA.periods : []).forEach(function (pe) {
+    var u = um[selected + '|' + pe.name];
+    h += '<tr><td><b>' + esc(pe.name) + '</b><br><span class="small">' + esc(pe.time) + '</span></td><td>' +
+      (u ? '<span style="color:' + KIND_CSS[useKind(u)] + ';font-weight:bold">' + esc(useText(u)) + '</span><br><span class="small">' + KIND_NAME[useKind(u)] + (u.fixed ? '' : ' · ' + esc(u.purpose)) + '</span>'
+         : '<span class="free">비어있음</span> <button onclick="openForm(\'' + esc(pe.name) + '\')">신청</button>') + '</td></tr>';
+  });
+  h += '</table>' + (isBook[selected] ? '' : '<div class="small" style="margin-top:6px">🔒 ' + esc(noBookText(selected)) + '</div>') + '<div id="form"></div>' + (isBook[selected] ? '<h4>이번 주 시간표</h4><div id="tt" class="small">불러오는 중…</div>' : '') + '<h4>이 장소의 물품 (' + list.length + '종)' + (mode === 'items' && filterActive() ? ' <span class="small">필터 적용</span>' : '') + '</h4>';
+  h += list.length ? '<div class="small">물건을 누르면 자세한 정보와 이동 이력이 나와요.</div>' + itemsByCat(list) : '<div class="small">' + (mode === 'items' && filterActive() ? '조건에 맞는 물품이 없습니다.' : '등록된 물품이 없습니다.') + '</div>';
+  p.innerHTML = h;
+  if (isBook[selected]) loadTimetable(selected);
+}
+
+function listPanel(um, im) {
+  var fs = $('floor').value, per = $('period').value, rows = [];
+  Object.keys(meshes).forEach(function (k) {
+    var r = meshes[k].r, on = fs === 'all' || (r.floor <= Number(fs) && Number(fs) <= r.floorEnd);
+    if (on) rows.push({ k: k, r: r, qty: meshes[k].qty });
+  });
+  var h = '', usedN = 0, total = 0;
+  if (mode === 'items') {
+    rows = rows.filter(function (x) { return x.qty > 0; }).sort(function (a, b) { return b.qty - a.qty; });
+    h += itemSummaryHtml() + '<h4 style="margin:10px 0 4px">물품이 있는 장소 (' + rows.length + '곳)</h4>';
+    rows.forEach(function (x) {
+      var c = x.qty < 10 ? '#9dc3e6' : (x.qty < 30 ? '#5b9bd5' : '#2e75b6');
+      h += '<div class="row" data-sp="' + esc(x.k) + '"><span class="dot" style="background:' + c + '"></span><div><b>' + esc(short(x.k)) + '</b><br><span class="small">' + x.qty + '개 · ' + (im[x.k] || []).length + '종</span></div></div>';
+    });
+    var others = Object.keys(im).filter(function (k) { return !meshes[k]; });
+    if (others.length) h += '<div class="grp">3D 배치에 없는 장소</div>' + others.map(function (k) { return '<div class="small">' + esc(k || '(위치 미정)') + ' · ' + im[k].reduce(function (a, b) { return a + b.qty; }, 0) + '개</div>'; }).join('');
+    return h || '<div class="small">이 층에는 등록된 물품이 없습니다.</div>';
+  }
+  var others = rows.filter(function (x) { return !isBook[x.k]; });
+  rows = rows.filter(function (x) { return isBook[x.k]; }).sort(function (a, b) { return a.r.floor - b.r.floor || a.r.y - b.r.y || a.r.x - b.r.x; });
+  var cnt = { regular: 0, program: 0, booking: 0 };
+  rows.forEach(function (x) { total++; var kd0 = useKind(um[x.k + '|' + per]); if (kd0) cnt[kd0]++; });
+  usedN = cnt.regular + cnt.program + cnt.booking;
+  h += '<div style="margin-bottom:6px"><b>' + esc(per) + '</b> <span class="small">' + esc(periodTime(per)) + '</span><br>' +
+    ['regular', 'program', 'booking'].map(function (k) { return '<span class="pill" style="border-color:' + KIND_CSS[k] + '">' + KIND_NAME[k] + ' ' + cnt[k] + '</span>'; }).join(' ') + ' <span class="pill">비어 있음 ' + (total - usedN) + '</span></div>';
+  var last = null;
+  rows.forEach(function (x) {
+    if (x.r.floor !== last) { last = x.r.floor; h += '<div class="grp">' + last + '층</div>'; }
+    var u = um[x.k + '|' + per], kd = useKind(u);
+    h += '<div class="row" data-sp="' + esc(x.k) + '"><span class="dot" style="background:' + (u ? KIND_CSS[kd] : '#e3e3e3') + '"></span><div><b>' + esc(short(x.k)) + '</b><br>' +
+      (u ? '<span style="color:' + KIND_CSS[kd] + ';font-weight:bold">' + esc(useText(u)) + '</span> <span class="small">' + KIND_NAME[kd] + '</span>' : '<span class="small">비어있음</span>') + '</div></div>';
+  });
+  if (fs !== 'all' && others.length) {
+    var gl = { 'class': '학급 교실', admin: '행정·지원실', other: '기타 방' }, bt = { 'class': [], admin: [], other: [] };
+    others.forEach(function (x) { bt[roomType(x.k)].push(x.k); });
+    ['class', 'admin', 'other'].forEach(function (t) {
+      if (!bt[t].length) return;
+      h += '<div class="grp">' + gl[t] + ' (' + bt[t].length + ')</div>' + bt[t].sort().map(function (n) { return '<span class="chip" data-sp="' + esc(n) + '">' + esc(short(n)) + '</span>'; }).join('');
+    });
+  }
+  return h + '<div class="small" style="margin-top:8px">목록이나 3D 방을 눌러 자세히 보세요.<br>마우스: 왼쪽 드래그 이동 · 오른쪽 드래그 회전 · 휠 확대 / 터치: 한 손가락 이동 · 두 손가락 확대·회전 · ? 도움말</div>';
+}
+
+// ===================== 내 신청 · 기물 대여 · 관리자 =====================
+var ME = { name: '', pin: '' }, ADM = '';
+try { ME.name = localStorage.getItem('fname') || ''; } catch (e) {}
+function showDlg(html) { $('dlgBox').innerHTML = html; $('dlg').style.display = 'flex'; }
+function closeDlg() { $('dlg').style.display = 'none'; }
+function addDays(ds, n) { var p = ds.split('-'), d = new Date(+p[0], +p[1] - 1, +p[2] + n); return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
+function nameField(id) {
+  var ppl = (DATA && DATA.people) || [];
+  return ppl.length ? '<select id="' + id + '"><option value="">이름을 고르세요</option>' + ppl.map(function (n) { return '<option' + (n === ME.name ? ' selected' : '') + '>' + esc(n) + '</option>'; }).join('') + '</select>'
+    : '<input id="' + id + '" placeholder="이름" value="' + esc(ME.name) + '">';
+}
+function authFlow(title, next) {
+  if (ME.name && ME.pin) return next();
+  showDlg('<h3 style="margin:0 0 6px">' + esc(title) + '</h3><div class="small">이름과 개인 PIN으로 본인 확인을 해요. (처음이면 아래 "PIN 정하기")</div>' + nameField('aName') +
+    '<input id="aPin" type="password" inputmode="numeric" maxlength="8" placeholder="PIN (숫자 4~8자리)"><div style="margin-top:8px"><button class="on" id="aGo">확인</button> <button id="aNew">PIN 정하기·바꾸기</button> <button onclick="closeDlg()">닫기</button></div><div id="aMsg" class="small" style="color:#d9822b;margin-top:6px"></div>');
+  $('aGo').onclick = function () { var n = $('aName').value.trim(), p = $('aPin').value.trim(); if (!n || !p) { $('aMsg').textContent = '이름과 PIN을 입력해 주세요.'; return; } ME.name = n; ME.pin = p; try { localStorage.setItem('fname', n); } catch (e) {} next(); };
+  $('aNew').onclick = function () { pinForm(next); };
+}
+function pinForm(next) {
+  showDlg('<h3 style="margin:0 0 6px">PIN 정하기·바꾸기</h3><div class="small">PIN은 숫자 4~8자리예요. 서버에는 암호화해서 저장되니 남에게 알려 주지 마세요.</div>' + nameField('pName') +
+    '<input id="pOld" type="password" inputmode="numeric" maxlength="8" placeholder="기존 PIN (처음이면 비워 두세요)"><input id="pNew" type="password" inputmode="numeric" maxlength="8" placeholder="새 PIN"><input id="pNew2" type="password" inputmode="numeric" maxlength="8" placeholder="새 PIN 한 번 더">' +
+    '<div style="margin-top:8px"><button class="on" id="pGo">저장</button> <button onclick="closeDlg()">닫기</button></div><div id="pMsg" class="small" style="color:#d9822b;margin-top:6px"></div>');
+  $('pGo').onclick = function () {
+    var n = $('pName').value.trim(), a = $('pNew').value.trim(), b = $('pNew2').value.trim(), o = $('pOld').value.trim();
+    if (!n) { $('pMsg').textContent = '이름을 골라 주세요.'; return; } if (a !== b) { $('pMsg').textContent = '새 PIN이 서로 달라요.'; return; }
+    $('pGo').disabled = true;
+    google.script.run.withSuccessHandler(function (r) {
+      $('pGo').disabled = false; if (!r.ok) { $('pMsg').textContent = r.msg; return; }
+      ME.name = n; ME.pin = a; try { localStorage.setItem('fname', n); } catch (e) {} if (next) next(); else closeDlg();
+    }).withFailureHandler(onFail).setPin(CODE, n, a, o);
+  };
+}
+function authFail(msg, next) { ME.pin = ''; showDlg('<div style="color:#d9822b">' + esc(msg) + '</div>'); setTimeout(function () { authFlow('본인 확인', next); }, 1100); }
+
+function openMine() { authFlow('내 신청 보기', loadMine); }
+function loadMine() {
+  showDlg('불러오는 중…');
+  google.script.run.withSuccessHandler(function (r) {
+    if (!r.ok) return authFail(r.msg, loadMine);
+    var today = todayStr();
+    var h = '<h3 style="margin:0 0 4px">' + esc(ME.name) + ' 님의 신청</h3><div style="text-align:right"><button onclick="pinForm(loadMine)">PIN 바꾸기</button> <button onclick="ME.pin=\'\';closeDlg()">로그아웃</button> <button onclick="closeDlg()">닫기</button></div>';
+    h += '<div class="grp">기물 대여</div>' + (r.loans.length ? r.loans.map(function (l) {
+      var btns = '';
+      if (l.status === '승인' && l.start <= today) btns += '<button class="on" onclick="loanAct(\'ret\',\'' + esc(l.id) + '\')">반납했어요</button> ';
+      if (l.status === '승인대기' || (l.status === '승인' && l.start > today)) btns += '<button onclick="loanAct(\'can\',\'' + esc(l.id) + '\')">취소</button>';
+      return '<div style="padding:5px 0;border-bottom:1px solid rgba(127,127,127,.2)"><b>' + esc(l.name) + '</b> ×' + l.qty + ' <span class="pill"' + (l.overdue ? ' style="border-color:#d64545;color:#d64545"' : '') + '>' + (l.overdue ? '반납 기한 지남' : esc(l.status)) + '</span><br><span class="small">' + l.start + ' ~ ' + l.due + ' · ' + esc(l.id) + '</span><br>' + btns + '</div>';
+    }).join('') : '<div class="small">진행 중인 대여가 없어요.</div>');
+    h += '<div class="grp">공간 신청 (앞으로)</div>' + (r.spaces.length ? r.spaces.map(function (p) {
+      return '<div style="padding:5px 0;border-bottom:1px solid rgba(127,127,127,.2)"><b>' + esc(p.space) + '</b> · ' + p.date + ' ' + esc(p.period) + ' <span class="pill">' + (p.status === '승인대기' ? '⏳ 승인대기' : '확정') + '</span><br><span class="small">' + esc(p.purpose) + '</span> <button onclick="spaceCancel(' + p.row + ')">취소</button></div>';
+    }).join('') : '<div class="small">앞으로의 공간 신청이 없어요.</div>');
+    showDlg(h);
+  }).withFailureHandler(onFail).myRequests(CODE, ME.name, ME.pin);
+}
+function loanAct(kind, id) {
+  var run = google.script.run.withSuccessHandler(function (r) { if (!r.ok) { alert(r.msg); if (/PIN/.test(r.msg)) ME.pin = ''; return; } ttCache = {}; loadMine(); load(); }).withFailureHandler(onFail);
+  if (kind === 'ret') run.returnLoan(CODE, id, ME.name, ME.pin); else { if (!confirm('이 대여 신청을 취소할까요?')) return; run.cancelLoan(CODE, id, ME.name, ME.pin); }
+}
+function spaceCancel(row) {
+  if (!confirm('이 공간 신청을 취소할까요?')) return;
+  google.script.run.withSuccessHandler(function (r) { if (!r.ok) { alert(r.msg); return; } ttCache = {}; loadMine(); load(); }).withFailureHandler(onFail).cancelMySpace(CODE, ME.name, ME.pin, row);
+}
+
+function loadLoanInfo(it, i) {
+  google.script.run.withSuccessHandler(function (info) {
+    var el = $('ln-' + i); if (!el) return;
+    var out = 0; info.loans.forEach(function (l) { if (l.start <= info.today && l.due >= info.today) out += l.qty; });
+    el.innerHTML = (info.lendable ? '<b>대여</b> 지금 빌릴 수 있는 수량 ' + Math.max(0, info.total - out) + '개 <button class="on" onclick="openLoanForm(' + i + ')">📦 대여 신청</button>' : '<b>대여 불가</b> · ' + esc(info.why || '')) +
+      (info.loans.length ? '<br>' + info.loans.map(function (l) { return esc(l.who) + ' ×' + l.qty + ' (' + l.start.slice(5) + '~' + l.due.slice(5) + (l.status === '승인대기' ? ' 대기' : '') + ')'; }).join(' · ') : '');
+  }).withFailureHandler(function () {}).getItemLoans(CODE, it.id);
+}
+function openLoanForm(i) {
+  var it = DATA.items[i]; showDlg('불러오는 중…');
+  google.script.run.withSuccessHandler(function (info) {
+    if (!info.lendable) { showDlg('<h3 style="margin:0">' + esc(it.name) + '</h3><div style="margin:6px 0">' + esc(info.why || '대여할 수 없어요.') + '</div><div style="text-align:right"><button onclick="closeDlg()">닫기</button></div>'); return; }
+    var t = todayStr(), t2 = addDays(t, 1);
+    showDlg('<h3 style="margin:0">📦 ' + esc(it.name) + ' 대여 신청</h3><div class="small">' + esc(it.id) + ' · 전체 ' + info.total + '개 · 위치 ' + esc(it.loc) + '</div>' +
+      '<label class="small">대여일</label><input id="lStart" type="date" value="' + t + '" min="' + t + '"><label class="small">반납 예정일 (최대 30일)</label><input id="lDue" type="date" value="' + t2 + '" min="' + t + '">' +
+      '<label class="small">수량</label><input id="lQty" type="number" min="1" value="1"><input id="lWhy" maxlength="40" placeholder="사용 목적 (예: 6학년 과학 실험)">' + nameField('lName') +
+      (ME.pin ? '' : '<input id="lPin" type="password" inputmode="numeric" maxlength="8" placeholder="PIN (없으면 먼저 내 신청에서 정해요)">') +
+      '<div id="lAvail" class="small" style="margin:6px 0"></div><div id="lOthers" class="small" style="margin-bottom:6px"></div><div><button class="on" id="lGo">대여 신청</button> <button onclick="closeDlg()">취소</button></div>');
+    var calc = function () {
+      var s0 = $('lStart').value, d0 = $('lDue').value, used = 0;
+      info.loans.forEach(function (l) { if (!(l.due < s0 || d0 < l.start)) used += l.qty; });
+      var left = info.total - used; $('lAvail').innerHTML = '그 기간에 빌릴 수 있는 수량: <b>' + Math.max(0, left) + '개</b>'; $('lQty').max = Math.max(1, left);
+    };
+    $('lOthers').innerHTML = info.loans.length ? '다른 분의 대여: ' + info.loans.map(function (l) { return esc(l.who) + ' ×' + l.qty + ' (' + l.start.slice(5) + '~' + l.due.slice(5) + ')'; }).join(' · ') : '';
+    ['lStart', 'lDue'].forEach(function (id) { $(id).onchange = calc; }); calc();
+    $('lGo').onclick = function () {
+      var n = $('lName').value.trim(), p = ME.pin || ($('lPin') ? $('lPin').value.trim() : '');
+      if (!n || !p) { alert('이름과 PIN을 입력해 주세요.'); return; }
+      $('lGo').disabled = true;
+      google.script.run.withSuccessHandler(function (r) {
+        $('lGo').disabled = false; if (!r.ok) { alert(r.msg); if (/PIN/.test(r.msg)) ME.pin = ''; return; }
+        ME.name = n; ME.pin = p; try { localStorage.setItem('fname', n); } catch (e) {}
+        alert('대여가 승인되었어요! (' + r.id + ') 같은 기간 남은 수량 ' + r.left + '개'); closeDlg();
+      }).withFailureHandler(function (e) { $('lGo').disabled = false; onFail(e); }).requestLoan(CODE, { id: it.id, qty: Number($('lQty').value), who: n, pin: p, start: $('lStart').value, due: $('lDue').value, purpose: $('lWhy').value });
+    };
+  }).withFailureHandler(onFail).getItemLoans(CODE, it.id);
+}
+
+function openAdmin() {
+  if (ADM) return loadAdmin();
+  showDlg('<h3 style="margin:0 0 6px">🛠 관리자 확인</h3><input id="adCode" type="password" placeholder="관리자 코드"><div style="margin-top:8px"><button class="on" id="adGo">확인</button> <button onclick="closeDlg()">닫기</button></div>');
+  $('adGo').onclick = function () { ADM = $('adCode').value.trim(); loadAdmin(); };
+}
+function loadAdmin() {
+  showDlg('불러오는 중…');
+  google.script.run.withSuccessHandler(adminRender).withFailureHandler(function (e) {
+    ADM = ''; var m = String((e && e.message) || e).replace(/^Error:\s*/, '');
+    showDlg('<div style="color:#d9822b">' + esc(m) + '</div><div style="text-align:right;margin-top:8px"><button onclick="openAdmin()">다시</button> <button onclick="closeDlg()">닫기</button></div>');
+  }).adminSummary(ADM);
+}
+function adminRender(r) {
+  var btn = function (txt, kind, key, st, cls) { return '<button class="' + (cls || '') + '" onclick="adminAct(\'' + kind + '\',\'' + esc(String(key)) + '\',\'' + st + '\')">' + txt + '</button> '; };
+  var sec = function (title, arr, fn) { return '<div class="grp">' + title + ' (' + arr.length + ')</div>' + (arr.length ? arr.map(fn).join('') : '<div class="small">없음</div>'); };
+  var row = function (inner) { return '<div style="padding:5px 0;border-bottom:1px solid rgba(127,127,127,.2)">' + inner + '</div>'; };
+  var lrow = function (l, btns) { return row('<b>' + esc(l.name) + '</b> ×' + l.qty + ' · ' + esc(l.who) + '<br><span class="small">' + l.start + ' ~ ' + l.due + (l.purpose ? ' · ' + esc(l.purpose) : '') + ' · ' + esc(l.id) + '</span><br>' + btns); };
+  showDlg('<h3 style="margin:0 0 4px">🛠 관리자</h3><div class="small">오늘 ' + esc(r.today) + ' <button onclick="loadAdmin()">새로고침</button> <button onclick="ADM=\'\';closeDlg()">잠그기</button> <button onclick="closeDlg()">닫기</button></div>' +
+    sec('승인 대기 · 공간', r.pendingSpace, function (p) { return row('<b>' + esc(p.space) + '</b> · ' + p.date + ' ' + esc(p.period) + ' · ' + esc(p.who) + '<br><span class="small">' + esc(p.purpose) + '</span><br>' + btn('승인', 'space', p.row, '확정', 'on') + btn('반려', 'space', p.row, '반려')); }) +
+    sec('승인 대기 · 대여', r.pendingLoans, function (l) { return lrow(l, btn('승인', 'loan', l.id, '승인', 'on') + btn('반려', 'loan', l.id, '반려')); }) +
+    sec('오늘 반납 예정', r.dueToday, function (l) { return lrow(l, btn('반납 처리', 'loan', l.id, '반납완료', 'on')); }) +
+    sec('⚠ 반납 기한 지남', r.overdue, function (l) { return lrow(l, btn('반납 처리', 'loan', l.id, '반납완료', 'on')); }) +
+    sec('대여 중', r.active, function (l) { return lrow(l, btn('반납 처리', 'loan', l.id, '반납완료')); }) +
+    sec('대여 예정', r.upcoming, function (l) { return lrow(l, btn('취소 처리', 'loan', l.id, '취소')); }) +
+    '<div class="grp">PIN 초기화 (PIN을 잊은 분)</div>' + nameField('adName') + '<button onclick="adminPin()">초기화</button>');
+}
+function adminAct(kind, key, st) {
+  google.script.run.withSuccessHandler(function (r) { if (!r.ok) { alert(r.msg); return; } ttCache = {}; load(); loadAdmin(); }).withFailureHandler(onFail).adminSetStatus(ADM, kind, key, st);
+}
+function adminPin() {
+  var n = $('adName').value.trim(); if (!n) return; if (!confirm(n + ' 님의 PIN을 초기화할까요?')) return;
+  google.script.run.withSuccessHandler(function (r) { alert(r.ok ? '초기화했어요. 본인이 새 PIN을 다시 정하면 돼요.' : r.msg); }).withFailureHandler(onFail).adminResetPin(ADM, n);
+}
+
+function openForm(period) {
+  var f = $('form'), nm = ''; try { nm = localStorage.getItem('fname') || ''; } catch (e) {}
+  var ppl = (DATA && DATA.people) || [];
+  var whoField = ppl.length
+    ? '<select id="fWho"><option value="">이름을 고르세요</option>' + ppl.map(function (n) { return '<option' + (n === nm ? ' selected' : '') + '>' + esc(n) + '</option>'; }).join('') + '</select>'
+    : '<input id="fWho" placeholder="이름" value="' + esc(nm) + '">';
+  f.style.display = 'block';
+  f.innerHTML = '<b>' + esc(selected) + ' · ' + esc(period) + ' 신청</b>' + ((DATA.approval || []).indexOf(selected) >= 0 ? '<div class="small" style="color:#d9822b">⏳ 이 공간은 관리자 승인 후에 확정돼요.</div>' : '') + whoField + '<input id="fWhy" placeholder="용도 (예: 6학년 합창 연습)"><button id="fOk">신청하기</button> <button onclick="$(\'form\').style.display=\'none\'">취소</button>';
+  $('fOk').onclick = function () {
+    var who = $('fWho').value.trim(); try { localStorage.setItem('fname', who); } catch (e) {}
+    var mine = DATA.usage.filter(function (u) { return u.period === period && u.who.replace(/\s+/g, '') === who.replace(/\s+/g, ''); })[0];
+    if (who && mine) { alert('같은 시간(' + period + ')에 이미 ' + mine.space + ' 사용을 신청하셨습니다. 한 시간에는 한 곳만 신청할 수 있어요.'); return; }
+    $('fOk').disabled = true; $('msg').textContent = '저장 중…';
+    google.script.run.withSuccessHandler(function (r) {
+      if (r.ok) { $('msg').textContent = r.pending ? '승인 대기 중입니다.' : '신청되었습니다.'; if (r.pending) alert(r.msg); ttCache = {}; load(); } else { $('msg').textContent = ''; alert(r.msg); $('fOk').disabled = false; }
+    }).withFailureHandler(onFail).submitRequest(CODE, { date: $('date').value, period: period, space: selected, who: who, purpose: $('fWhy').value });
+  };
+}
+
+
+// ===================== 학생 화면 =====================
+var weekCache = {}, formOpen = false, formRoom = '', deepDone = false;
+function sState(k) { return (DATA && DATA.rooms && DATA.rooms[k]) || null; }
+function stColor(s) { return s === 'free' ? '#5cb85c' : (s === 'student' ? '#f0ad4e' : '#9db4d8'); }
+function stText(st) {
+  if (st.state === 'free') return '<span class="st-free">비어 있어요</span> <span class="small">' + (st.next ? '· ' + st.next + ' 선생님 신청 전까지' : '· 오늘 남은 일정 없음') + '</span>';
+  if (st.state === 'student') return '학생 활동 중 <span class="small">· ' + esc(st.until) + ' 종료 예정</span>';
+  return '선생님 수업·신청 <span class="small">· ' + esc(st.until) + '까지</span>';
+}
+function refreshS() {
+  if (!DATA) return;
+  var freeN = {}, openN = {};
+  Object.keys(meshes).forEach(function (k) {
+    var o = meshes[k], st = isBook[k] ? sState(k) : null, color, txt;
+    o.state = st ? st.state : '';
+    if (st) {
+      color = st.state === 'free' ? 0x5cb85c : (st.state === 'student' ? 0xf0ad4e : 0x9db4d8);
+      txt = '<b>' + esc(short(k)) + '</b>' + (st.state === 'free' ? '<span style="color:#1d7a1d">비어 있어요</span>' : (st.state === 'student' ? '학생 활동 ~' + esc(st.until) : '선생님 ~' + esc(st.until)));
+      var f = o.r.floor; openN[f] = (openN[f] || 0) + 1; if (st.state === 'free') freeN[f] = (freeN[f] || 0) + 1;
+    } else { color = typeColor(k); txt = '<b>' + esc(short(k)) + '</b>'; }
+    o.floorMat.color.setHex(color);
+    o.floorMat.emissive.setHex(selected === k ? 0x333300 : 0x000000);
+    o.wallMat.emissive.setHex(selected === k ? 0x4a4a10 : 0x000000);
+    labels[k].innerHTML = txt;
+  });
+  Object.keys(badges).forEach(function (f) { badges[f].el.innerHTML = '<b>' + f + '층</b> 빈 교실 ' + (freeN[f] || 0) + '/' + (openN[f] || 0); });
+  Array.prototype.forEach.call($('floorBtns').children, function (b) { b.className = b.getAttribute('data-f') === $('floor').value ? 'on' : ''; });
+  $('legend').innerHTML = '<span class="sw" style="background:#5cb85c"></span>비어 있음<span class="sw" style="background:#f0ad4e"></span>학생 활동 중<span class="sw" style="background:#9db4d8"></span>선생님 신청<span class="sw" style="background:#d5dbe5"></span>그 밖의 방';
+  $('legend').style.display = 'block';
+  renderPanelS();
+}
+function pulseRooms() {
+  if (!STUDENT || !DATA || !$('hlFree').checked) return;
+  var k2 = 0.5 + 0.5 * Math.sin(Date.now() / 300);
+  Object.keys(meshes).forEach(function (k) { var o = meshes[k]; if (o.state === 'free' && selected !== k && o.mesh.visible) o.floorMat.emissive.setRGB(0.05 * k2, 0.5 * k2, 0.05 * k2); });
+}
+function backToList() { selected = null; formOpen = false; refresh(); }
+function renderPanelS() {
+  var p = $('panel');
+  if (formOpen && selected === formRoom) return;                      // 입력 중에는 패널을 다시 그리지 않음
+  if (!selected) { p.innerHTML = listPanelS(); return; }
+  var st = sState(selected), rr = meshes[selected] && meshes[selected].r;
+  var fl = rr ? (rr.floorEnd > rr.floor ? rr.floor + '~' + rr.floorEnd + '층' : rr.floor + '층') : '';
+  var h = '<button onclick="backToList()">← 목록</button> <button onclick="focusRoom(selected)">🎯 이동</button> <h3 style="display:inline">' + esc(selected) + '</h3><div class="small">' + esc(fl) + '</div>';
+  if (!st) { p.innerHTML = h + '<div class="small" style="margin-top:8px">학생이 사용하는 공간이 아니에요.</div>'; return; }
+  h += '<div style="margin:8px 0"><span class="dot" style="display:inline-block;background:' + stColor(st.state) + '"></span> ' + stText(st) + '</div>';
+  var mine = ''; try { mine = localStorage.getItem('sactive') || ''; } catch (e) {}
+  if (st.state === 'free') h += '<button class="on" onclick="openUse()">여기서 사용 시작</button>';
+  else if (st.state === 'student' && mine === selected) h += '<button class="on" onclick="endUse()">다 썼어요</button>';
+  h += '<div id="form"></div><h4>오늘 이 방</h4>';
+  h += (st.today && st.today.length) ? '<table>' + st.today.map(function (g) {
+    return '<tr><td>' + esc(g.from) + '~' + esc(g.to) + '</td><td>' + (g.type === 'teacher' ? '선생님 신청 <span class="small">(' + esc(g.period) + ')</span>' : '학생 활동 <span class="small">' + esc(g.activity || '') + (g.active ? ' · 지금' : '') + '</span>') + '</td></tr>'; }).join('') + '</table>'
+    : '<div class="small">오늘 등록된 일정이 없어요.</div>';
+  h += '<h4>요일별 이용 <span class="small">(이번 주 선생님 신청 + 최근 4주 학생 활동)</span></h4><div id="week" class="small">불러오는 중…</div>';
+  p.innerHTML = h;
+  loadWeek(selected);
+}
+function listPanelS() {
+  var fs = $('floor').value, rows = [], free = 0;
+  Object.keys(meshes).forEach(function (k) {
+    var r = meshes[k].r; if (!isBook[k]) return;
+    if (fs !== 'all' && !(r.floor <= Number(fs) && Number(fs) <= r.floorEnd)) return;
+    var st = sState(k); if (st) rows.push({ k: k, r: r, st: st });
+  });
+  rows.sort(function (a, b) { return a.r.floor - b.r.floor || a.r.y - b.r.y || a.r.x - b.r.x; });
+  rows.forEach(function (x) { if (x.st.state === 'free') free++; });
+  var h = '<h4 style="margin:0 0 4px">지금 ' + esc(DATA.now.time) + ' · 비어 있는 교실 ' + free + '곳</h4>', last = null;
+  rows.forEach(function (x) {
+    if (x.r.floor !== last) { last = x.r.floor; h += '<div class="grp">' + last + '층</div>'; }
+    h += '<div class="row" data-sp="' + esc(x.k) + '"><span class="dot" style="background:' + stColor(x.st.state) + '"></span><div><b>' + esc(short(x.k)) + '</b><br>' + stText(x.st) + '</div></div>';
+  });
+  if (!rows.length) h += '<div class="small">이 층에는 학생이 쓸 수 있는 교실이 없어요.</div>';
+  return h + '<div class="small" style="margin-top:8px">방을 눌러 자세히 보세요. 교실 문 앞 QR을 찍으면 바로 사용을 시작할 수 있어요.<br>마우스: 왼쪽 드래그 이동 · 오른쪽 드래그 회전 · 휠 확대 / 터치: 한 손가락 이동 · 두 손가락 확대·회전</div>';
+}
+function weekHtml(w) {
+  var dn = ['월', '화', '수', '목', '금'], free = [];
+  var h = '<table class="wk"><tr><th></th>' + dn.map(function (d) { return '<th>' + d + '</th>'; }).join('') + '</tr>';
+  w.periods.forEach(function (pe, i) {
+    h += '<tr><th>' + esc(pe.name) + '</th>';
+    for (var d = 0; d < 5; d++) {
+      var t = w.teacher[i][d], c = w.student[i][d];
+      if (t) h += '<td style="background:#9db4d8" title="이번 주 선생님 신청">선생님</td>';
+      else {
+        var bg = c === 0 ? '' : (c === 1 ? '#d8f0d2' : (c === 2 ? '#b4e1aa' : '#7fc771'));
+        h += '<td' + (bg ? ' style="background:' + bg + ';color:#222"' : '') + '>' + (c || '') + '</td>';
+        if (c === 0 && free.length < 6) free.push(dn[d] + ' ' + pe.name);
+      }
+    }
+    h += '</tr>';
+  });
+  h += '</table><div class="small" style="margin-top:3px">파랑 = 이번 주 선생님 신청 · 초록 숫자 = 학생 활동 횟수(최근 4주)</div>';
+  if (free.length) h += '<div style="margin-top:4px"><b>대체로 비어 있는 시간</b><br>' + free.map(esc).join(', ') + '</div>';
+  return h;
+}
+function loadWeek(room) {
+  var c = weekCache[room];
+  if (c && Date.now() - c.t < 300000) { if ($('week')) $('week').innerHTML = weekHtml(c.w); return; }
+  google.script.run.withSuccessHandler(function (w) {
+    weekCache[room] = { t: Date.now(), w: w };
+    if (selected === room && $('week')) $('week').innerHTML = weekHtml(w);
+  }).withFailureHandler(function () { if ($('week')) $('week').textContent = '불러오지 못했어요.'; }).getRoomWeek(CODE, room);
+}
+function openUse() {
+  formOpen = true; formRoom = selected;
+  var lab = ''; try { lab = localStorage.getItem('slabel') || ''; } catch (e) {}
+  var f = $('form'), minutes = 30;
+  f.style.display = 'block';
+  f.innerHTML = '<b>' + esc(selected) + ' 사용 시작</b><div class="small">실명 대신 학급·번호나 별명을 써 주세요 (예: 5-2-7, 하늘팀)</div>' +
+    '<input id="uLabel" maxlength="12" placeholder="학급·번호 또는 별명" value="' + esc(lab) + '"><input id="uAct" maxlength="20" placeholder="무슨 활동을 하나요? (예: 모둠 토의)">' +
+    '<div id="uMin" style="margin:4px 0"><button data-m="15">15분</button> <button data-m="30" class="on">30분</button> <button data-m="45">45분</button> <button data-m="60">60분</button></div>' +
+    '<button id="uGo" class="on">사용 시작</button> <button id="uNo">취소</button>';
+  Array.prototype.forEach.call($('uMin').children, function (b) { b.onclick = function () { minutes = Number(b.getAttribute('data-m')); Array.prototype.forEach.call($('uMin').children, function (x) { x.className = x === b ? 'on' : ''; }); }; });
+  $('uNo').onclick = function () { formOpen = false; f.style.display = 'none'; refresh(); };
+  $('uGo').onclick = function () {
+    var label = $('uLabel').value.trim();
+    if (!label) { alert('학급·번호 또는 별명을 입력해 주세요.'); return; }
+    try { localStorage.setItem('slabel', label); } catch (e) {}
+    $('uGo').disabled = true; $('msg').textContent = '저장 중…';
+    google.script.run.withSuccessHandler(function (r) {
+      $('msg').textContent = ''; $('uGo').disabled = false;
+      if (r.ok) { try { localStorage.setItem('sactive', formRoom); } catch (e) {} formOpen = false; weekCache = {}; alert('사용을 시작했어요! ' + r.until + '까지 쓸 수 있어요.' + (r.note ? '\n' + r.note : '')); load(); }
+      else alert(r.msg);
+    }).withFailureHandler(function (e) { $('uGo').disabled = false; onFail(e); }).startStudentUse(CODE, { room: formRoom, label: label, activity: $('uAct').value, minutes: minutes });
+  };
+}
+function endUse() {
+  var lab = ''; try { lab = localStorage.getItem('slabel') || ''; } catch (e) {}
+  google.script.run.withSuccessHandler(function (r) {
+    if (r.ok) { try { localStorage.removeItem('sactive'); } catch (e) {} alert('사용을 마쳤어요. 정리해 주셔서 고마워요!'); load(); } else alert(r.msg);
+  }).withFailureHandler(onFail).endStudentUse(CODE, selected, lab);
+}
+function deepLink() {
+  if (deepDone || !PARAMS.room) return; deepDone = true;
+  var o = meshes[PARAMS.room]; if (!o) return;
+  selected = PARAMS.room; $('floor').value = String(o.r.floor); focusFloor(); refresh();
+  var st = sState(selected); if (st && st.state === 'free') setTimeout(openUse, 50);
+}
+setInterval(function () { if (STUDENT && !document.hidden && DATA) load(); }, 30000);
+
+function setMode(m) {
+  mode = m; $('itemTools').style.display = m === 'items' ? 'inline' : 'none'; syncQ();
+  $('bUse').className = m === 'use' ? 'on' : ''; $('bItems').className = m === 'items' ? 'on' : ''; $('bTable').className = m === 'table' ? 'on' : '';
+  refresh();
+}
+$('bUse').onclick = function () { setMode('use'); };
+$('bItems').onclick = function () { setMode('items'); };
+$('bTable').onclick = function () { setMode('table'); };
+$('panel').addEventListener('click', function (e) {
+  var st = e.target.closest ? e.target.closest('[data-st]') : null;
+  if (st) { $('fSt').value = st.getAttribute('data-st'); refresh(); return; }
+  var itx = e.target.closest ? e.target.closest('[data-item]') : null;
+  if (itx) { toggleItem(Number(itx.getAttribute('data-item'))); return; }
+  var el = e.target.closest ? e.target.closest('[data-sp]') : null; if (el) { var nm = el.getAttribute('data-sp'); if (meshes[nm]) goRoom(nm); else { selected = nm; refresh(); } } });
+$('showAll').onchange = refresh;
+['fCat', 'fSt'].forEach(function (id) { $(id).onchange = refresh; });
+$('hlFree').onchange = refresh;
+$('bReset').onclick = function () { focusFloor(); };
+$('pPrev').onclick = function () { stepPeriod(-1); }; $('pNext').onclick = function () { stepPeriod(1); }; $('pNow').onclick = function () { if (DATA) nowPeriod(); }; $('pPlay').onclick = togglePlay;
+$('q').addEventListener('input', function () { syncQ(); if (mode === 'items') refresh(); renderSr(); });
+$('q').addEventListener('focus', function () { renderSr(); });
+$('q').addEventListener('keydown', function (e) {
+  var k = e.key;
+  if (k === 'ArrowDown' || k === 'ArrowUp') { e.preventDefault(); if (srItems.length) { srIdx = (srIdx + (k === 'ArrowDown' ? 1 : -1) + srItems.length) % srItems.length; markSr(); var el = $('sr').querySelector('.sr-i.on'); if (el && el.scrollIntoView) el.scrollIntoView({ block: 'nearest' }); } }
+  else if (k === 'Enter') { e.preventDefault(); if (srIdx >= 0 && $('sr').style.display === 'block') pickSr(srIdx); else if (this.value.trim()) { var n = findRoom(this.value); if (n) { addRecent(n); goRoom(n); } else if (!STUDENT) applyItemSearch(this.value.trim()); } }
+  else if (k === 'Escape') { $('sr').style.display = 'none'; this.blur(); }
+});
+$('sr').addEventListener('pointerdown', function (e) { var el = e.target.closest ? e.target.closest('.sr-i') : null; if (el) { e.preventDefault(); pickSr(Number(el.getAttribute('data-i'))); } });
+document.addEventListener('pointerdown', function (e) { if (!$('srwrap').contains(e.target)) $('sr').style.display = 'none'; });
+$('bMine').onclick = openMine; $('bAdmin').onclick = openAdmin;
+$('bPanel').onclick = function () { var m = $('main'); m.classList.toggle('nopanel'); this.textContent = m.classList.contains('nopanel') ? '패널 펴기' : '패널 접기'; setTimeout(function () { window.dispatchEvent(new Event('resize')); }, 30); };
+if (IS_TOUCH) { $('nTouch').style.display = 'block'; $('nTouch').onclick = function () { applyTouchMode(!(controls.touches.ONE === THREE.TOUCH.ROTATE)); showHint(controls.touches.ONE === THREE.TOUCH.ROTATE ? '한 손가락: 회전 · 두 손가락: 확대·이동' : '한 손가락: 이동 · 두 손가락: 확대·회전', 3500); }; }
+$('nZin').onclick = function () { zoomBy(0.8); }; $('nZout').onclick = function () { zoomBy(1.25); };
+$('nL').onclick = function () { rotateBy(15); }; $('nR').onclick = function () { rotateBy(-15); };
+$('nTop').onclick = topDown; $('nHome').onclick = function () { focusFloor(); };
+$('nHelp').onclick = function () { toggleHelp(true); }; $('helpClose').onclick = function () { toggleHelp(false); };
+$('help').addEventListener('click', function (e) { if (e.target === this) toggleHelp(false); });
+try { if (!localStorage.getItem('hintSeen2')) { localStorage.setItem('hintSeen2', '1'); setTimeout(function () { showHint(IS_TOUCH ? '한 손가락: 이동 · 두 손가락: 확대·회전 · 오른쪽 아래 버튼으로도 조작해요' : '왼쪽 드래그: 이동 · 오른쪽 드래그: 회전 · 휠: 확대 · ? 버튼: 도움말', 7000); }, 1200); } } catch (e) {}
+$('date').value = todayStr();
+$('date').onchange = load;
+$('period').onchange = refresh;
+$('floor').onchange = refresh;
+load();
+</script>
+</body>
+</html>

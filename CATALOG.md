@@ -1,11 +1,11 @@
 # 스킬 카탈로그
 
 > 이 파일은 `python tools/build_catalog.py`로 자동 생성된다. 직접 고치지 말고 각 스킬의 `SKILL.md` 앞머리(`metadata`)를 고친 뒤 다시 실행한다.
-> 생성일: 2026-11-19 · 스킬 58개
+> 생성일: 2026-11-20 · 스킬 59개
 
 ## 빠른 찾기
 
-- [🏫 학교 행정](#학교-행정) — 8개
+- [🏫 학교 행정](#학교-행정) — 9개
 - [📝 학생 기록·평가](#학생-기록평가) — 11개
 - [📚 수업·교사 도구](#수업교사-도구) — 13개
 - [🌐 홈페이지](#홈페이지) — 1개
@@ -21,9 +21,10 @@
 | `admin-edufine` | ✅ 운영 | - | K-에듀파인 물품 품의, 공문 기안, 결재/공람 대기 문서 확인과 관련한 RPA 및 웹 대시보드를 제공한다. | [SKILL](skills/admin-edufine/SKILL.md) · [이슈](skills/admin-edufine/ISSUES.md) 🔵2 · [README](skills/admin-edufine/README.md) |
 | `admin-gbetalk` | ✅ 운영 | - | 지비톡(경북교육청 업무 메신저)에서 받은 쪽지를 날짜·발신자와 함께 로컬 Markdown으로 보관하고 요약한다. 이어받기 체크포인트를 지원하며, 쪽지를 보내거나 답장하지 않는다. | [SKILL](skills/admin-gbetalk/SKILL.md) · [이슈](skills/admin-gbetalk/ISSUES.md) 🔵2 · [README](skills/admin-gbetalk/README.md) |
 | `admin-hitalk-sender` | ✅ 운영 | - | Google Sheets 명단과 템플릿으로 학생·학부모별 HiTalk 메시지를 작성한다. 미리보기·리허설 후 발송할 수 있다. | [SKILL](skills/admin-hitalk-sender/SKILL.md) · [이슈](skills/admin-hitalk-sender/ISSUES.md) |
-| `admin-neis-bot` | ✅ 운영 | - | NEIS 체험학습·결석 서류 접수, 출장·연수 등록, 창체/동아리 기록, 시간표 작업 등 교사 행정을 자동화한다. | [SKILL](skills/admin-neis-bot/SKILL.md) · [이슈](skills/admin-neis-bot/ISSUES.md) |
+| `admin-neis-bot` | ✅ 운영 | - | NEIS 체험학습·결석 서류 접수, 출장·연수 등록, 창체/동아리 기록, 시간표 작업 등 교사 행정을 자동화한다. | [SKILL](skills/admin-neis-bot/SKILL.md) · [이슈](skills/admin-neis-bot/ISSUES.md) 🔵1 |
 | `admin-s2b-buyer` | ✅ 운영 | - | CSV/Excel 품목을 S2B에서 검색해 견적서(장바구니)에 담고 처리 결과 엑셀을 만든다. 실제 구매 확정은 범위에 포함되지 않는다. | [SKILL](skills/admin-s2b-buyer/SKILL.md) · [이슈](skills/admin-s2b-buyer/ISSUES.md) |
-| `school-todo-kakao` | ✅ 운영 | - | 학교 공용 일정 시트와 내가 직접 적은 할 일을 **내 일정DB 시트 한 곳**에 모으고, 평일 아침마다 그날 일정을 카카오톡 **나에게 보내기**로 알려 주는 작은 파이썬 프로그램입니다. | [SKILL](skills/school-todo-kakao/SKILL.md) · [이슈](skills/school-todo-kakao/ISSUES.md) |
+| `admin-school-facility` | 🔧 개발 | 0.1.0 | 구글 시트로 학교 기물 대장·공간(특별실·강당 등) 교시별 사용 신청·기물 대여를 관리하고, 3D 건물 화면으로 현황을 보여 주는 Apps Script 웹앱을 만든다. | [SKILL](skills/admin-school-facility/SKILL.md) · [이슈](skills/admin-school-facility/ISSUES.md) |
+| `school-todo-kakao` | ✅ 운영 | - | 학교 공용 일정 시트와 내가 직접 적은 할 일을 **내 일정DB 시트 한 곳**에 모으고, 평일 아침마다 그날 일정을 카카오톡 **나에게 보내기**로 알려 주는 작은 파이썬 프로그램입니다. | [SKILL](skills/school-todo-kakao/SKILL.md) · [이슈](skills/school-todo-kakao/ISSUES.md) 🔵1 · [README](skills/school-todo-kakao/README.md) |
 
 ## 학생 기록·평가
 

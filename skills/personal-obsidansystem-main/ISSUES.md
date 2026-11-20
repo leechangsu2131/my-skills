@@ -13,7 +13,12 @@ _없음_
 
 ## 🟢 해결됨
 
-_없음_
+### ISSUE-001: 저장소 밖 obsidansystem 파이프라인을 스킬로 이관 (2026-11-20)
+- **상태**: 🟢 해결 (2026-11-20)
+- **증상**: 볼트 묶음·NotebookLM 분석·추천표 반영 도구가 `GitHub\obsidansystem`(별도 저장소)에만 있었고, 스킬 폴더의 `pkm_*.py`는 그보다 오래된 판이었다.
+- **원인**: 스킬 보관소 정리(2026-11-18) 때 GUI 부분만 옮겨 왔다.
+- **해결/조치**: `orchestrator.py`, `md_merger.py`, `notebooklm_*.py`, `apply_gemini_recommendations.py`, `pkm_batch_apply.py`, `rehome_notes_by_path.py`와 최신 `pkm_*.py`를 복사했다. 하드코딩 경로·볼트 이름을 없애고(볼트 이름은 폴더 이름에서, 경로는 중앙 `.env`의 `PERSONAL_OBSIDANSYSTEM_MAIN__VAULT`), 묶음·상태 파일은 `data_dir()`로 옮겼다. 기존 `.pkm_batch_state.json`도 `data_dir()`로 복사했다. 노트 내용이 든 `response*`, `spec_*.yaml`, `dist/`, 일회성 `make_spec_*.py`, `fix_links.py`, 외부 `mindvault-master`는 옮기지 않았다(원래 폴더에 남아 있음).
+- **관련 파일**: 위 스크립트, `docs/`, `SKILL.md`
 
 <!--
 항목 양식 (복사해서 사용)

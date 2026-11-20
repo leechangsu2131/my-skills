@@ -66,11 +66,11 @@ function createApprovalProfileRow(kind = "", names = [], saved = false) {
     kindLabel.append(kindInput);
 
     const namesLabel = document.createElement("label");
-    namesLabel.textContent = "결재자 이름 · 순서대로 한 줄에 한 명씩";
+    namesLabel.textContent = "결재자 · 순서대로 한 줄에 한 명 (이름 뒤에 검토/결재/협조/공람, 생략 시 마지막=결재·나머지=검토)";
     const namesInput = document.createElement("textarea");
     namesInput.rows = 2;
     namesInput.value = names.join("\n");
-    namesInput.placeholder = "예: 결재자 이름";
+    namesInput.placeholder = "예:\n홍길동 검토\n김철수 결재";
     namesLabel.append(namesInput);
 
     const buttons = document.createElement("div");
@@ -174,11 +174,11 @@ async function loadApprovalProfiles() {
 
 function updateCandidateProfileLabels() {
     actionCandidatesNode.querySelectorAll(".action-candidate").forEach((label) => {
-        const candidate = absenceWorkCandidates.find((item) => item.application_id === label.dataset.applicationId);
+        const candidate = absenceWorkCandidates.find((item) => item.key === label.dataset.applicationId);
         const profileLabel = label.querySelector(".profile-status");
         if (!candidate || !profileLabel) return;
         const configured = (approvalProfiles[normalizeProfileKind(candidate.kind)] || []).length > 0;
-        profileLabel.textContent = configured ? "신청 유형 결재선 저장됨" : "신청 유형 결재선 미등록";
+        profileLabel.textContent = configured ? `'${candidate.kind}' 결재선 저장됨` : `'${candidate.kind}' 결재선 미등록 — 아래 결재선 설정에 저장하세요`;
         profileLabel.classList.toggle("missing", !configured);
     });
 }
@@ -186,10 +186,11 @@ function updateCandidateProfileLabels() {
 function buildApprovalBatches(selected) {
     const byKind = new Map();
     for (const item of selected) {
-        const kind = "결석신고";
+        const kind = normalizeProfileKind(item.kind);
         if (!byKind.has(kind)) byKind.set(kind, { kind, applicationIds: [], approvers: approvalProfiles[kind] || [], absenceCategoryCodes: {}, teacherReasons: {} });
         const batch = byKind.get(kind);
         batch.applicationIds.push(item.application_id);
+        if (kind !== "결석신고") continue;
         batch.absenceCategoryCodes[item.application_id] = item.selected_absence_category_code || item.absence_category_code || "01";
         batch.teacherReasons[item.application_id] = item.selected_teacher_reason ?? item.teacher_reason ?? "";
     }
@@ -482,6 +483,8 @@ async function collectStudentStatusOnNeis({ today, monthStart, monthEnd }) {
     async function searchWithButton(instance, endpoint) {
         const button = instance.lookup("btnSearch");
         if (!button?.click) throw new Error("조회 버튼을 찾지 못했습니다.");
+        // 리소스 타이밍 버퍼(기본 250개)가 차면 새 조회 응답이 기록되지 않는다(NEIS를 오래 켜 둔 경우).
+        try { performance.setResourceTimingBufferSize(5000); performance.clearResourceTimings(); } catch (_) { }
         const started = performance.now();
         button.click();
         if (!await waitForRequest(endpoint, started)) throw new Error("NEIS 조회 응답을 확인하지 못했습니다.");
@@ -531,6 +534,8 @@ async function collectStudentStatusOnNeis({ today, monthStart, monthEnd }) {
         }
         const query = attendanceApp.lookup("subListAbeYmdAbeStu");
         if (typeof query?.send !== "function") throw new Error("일일 출결 조회를 찾지 못했습니다.");
+        // 리소스 타이밍 버퍼(기본 250개)가 차면 새 조회 응답이 기록되지 않는다(NEIS를 오래 켜 둔 경우).
+        try { performance.setResourceTimingBufferSize(5000); performance.clearResourceTimings(); } catch (_) { }
         const attendanceQueryStarted = performance.now();
         await query.send();
         if (!await waitForRequest("/els_srg_aa02_010.do", attendanceQueryStarted)) throw new Error("일일 출결 조회 응답을 확인하지 못했습니다.");
@@ -606,30 +611,48 @@ async function scanAbsenceWorkQueueOnNeis({ monthStart, monthEnd }) {
     const valueAt = (dataset, row, column) => {
         try { return dataset.getValue(row, column) ?? ""; } catch (_) { return ""; }
     };
-    const appId = "edu/sa/eds/eaa/ae/eds_eaaae03_m01";
-    const menuId = "AMEDS40531";
-    const appsFor = () => platform.getAllRunningAppInstances().filter((instance) => instance?.app?.id === appId);
-    const appFor = () => appsFor()[0] || null;
-    async function waitForApp(timeoutMs) {
-        const until = Date.now() + timeoutMs;
-        while (Date.now() < until) {
-            const instance = appFor();
-            if (instance) return instance;
-            await sleep(250);
-        }
-        return null;
-    }
-    async function openApp() {
+    /* absence-workflow.js의 SCREENS와 같은 화면 정보. 체험학습 목록은 기간 조건 없이 올해 전체를 보여준다. */
+    const screens = [
+        {
+            kind: "결석신고", label: "결석신고서", appId: "edu/sa/eds/eaa/ae/eds_eaaae03_m01", menuId: "AMEDS40531",
+            dataset: "dsStdntListForAbe", idColumn: "abeDclrId", startColumn: "abeBgngDt", endColumn: "abeEndDt",
+            endpoint: "/eds_eaa_ae03_002.do", monthFilter: true,
+        },
+        {
+            kind: "체험학습신청서", label: "체험학습 신청서", appId: "edu/sa/eds/eaa/ae/eds_eaaae01_m01", menuId: "AMEDS40501",
+            dataset: "dsStdntListForAply", idColumn: "ousExperLrnAplyId", startColumn: "experLrnBgngDt", endColumn: "experLrnEndDt",
+            endpoint: "/eds_eaa_ae01_002.do", monthFilter: false,
+        },
+        {
+            kind: "체험학습보고서", label: "체험학습 보고서", appId: "edu/sa/eds/eaa/ae/eds_eaaae02_m01", menuId: "AMEDS40511",
+            dataset: "dsStdntListForRlt", idColumn: "ousExperLrnRltId", startColumn: "experLrnBgngDt", endColumn: "experLrnEndDt",
+            endpoint: "/eds_eaa_ae02_002.do", monthFilter: false,
+        },
+    ];
+    const running = () => platform.getAllRunningAppInstances();
+    const alertsBefore = new Set(running().filter((instance) => /cmn\/(alert|confirm)$/.test(String(instance?.app?.id || ""))));
+    async function openApp(screen) {
+        const appsFor = () => running().filter((instance) => instance?.app?.id === screen.appId);
         const existingApps = appsFor();
         if (existingApps.length > 1) {
-            throw new Error("결석신고서 목록 화면이 여러 개 열려 있습니다. 목록 창을 하나만 남긴 뒤 다시 조회해 주세요.");
+            throw new Error(`${screen.label} 목록 화면이 여러 개 열려 있습니다. 목록 창을 하나만 남긴 뒤 다시 조회해 주세요.`);
         }
-        const existing = existingApps[0] || null;
-        if (existing) return existing;
-        const index = platform.getAllRunningAppInstances().find((instance) => instance?.app?.id === "app/com/main/Index");
+        if (existingApps[0]) return existingApps[0];
+        const waitForApp = async (timeoutMs) => {
+            const until = Date.now() + timeoutMs;
+            while (Date.now() < until) {
+                if (appsFor()[0]) {
+                    await sleep(1500);
+                    return appsFor()[0];
+                }
+                await sleep(250);
+            }
+            return null;
+        };
+        const index = running().find((instance) => instance?.app?.id === "app/com/main/Index");
         if (typeof index?.callAppMethod === "function") {
             try {
-                const result = index.callAppMethod("doOpenMenuToMdi", [menuId]);
+                const result = index.callAppMethod("doOpenMenuToMdi", [screen.menuId]);
                 if (result && typeof result.catch === "function") result.catch(() => { });
                 const opened = await waitForApp(10000);
                 if (opened) return opened;
@@ -637,12 +660,12 @@ async function scanAbsenceWorkQueueOnNeis({ monthStart, monthEnd }) {
         }
         if (typeof window.openMdiMenu === "function") {
             try {
-                window.openMdiMenu(menuId);
+                window.openMdiMenu(screen.menuId);
                 const opened = await waitForApp(10000);
                 if (opened) return opened;
             } catch (_) { }
         }
-        throw new Error("결석신고서 목록 화면을 열지 못했습니다.");
+        throw new Error(`${screen.label} 목록 화면을 열지 못했습니다.`);
     }
     function setControlValue(instance, controlId, value) {
         const control = instance.lookup(controlId);
@@ -651,73 +674,105 @@ async function scanAbsenceWorkQueueOnNeis({ monthStart, monthEnd }) {
         try { control.dispatchEvent(new cpr.events.CUIEvent("value-change")); } catch (_) { }
         return true;
     }
-    async function search(instance) {
+    async function search(instance, screen) {
         const button = instance.lookup("btnSearch");
-        if (!button?.click) throw new Error("결석신고서 조회 버튼을 찾지 못했습니다.");
-        const started = performance.now();
-        button.click();
-        for (let attempt = 0; attempt < 40; attempt += 1) {
-            const completed = performance.getEntriesByType("resource").some((entry) => {
-                if (entry.startTime < started || entry.responseEnd <= 0) return false;
-                try { return new URL(entry.name, location.href).pathname.endsWith("/eds_eaa_ae03_002.do"); } catch (_) { return false; }
-            });
-            if (completed) return;
-            await sleep(150);
+        if (!button?.click) throw new Error(`${screen.label} 조회 버튼을 찾지 못했습니다.`);
+        // 막 연 화면은 초기 조회 준비 전에 누른 [조회]가 무시될 수 있다. 응답이 없으면 한 번 더 누른다.
+        for (let tryCount = 0; tryCount < 2; tryCount += 1) {
+            // 리소스 타이밍 버퍼(기본 250개)가 차면 새 조회 응답이 기록되지 않는다(NEIS를 오래 켜 둔 경우).
+            try { performance.setResourceTimingBufferSize(5000); performance.clearResourceTimings(); } catch (_) { }
+            const started = performance.now();
+            button.click();
+            for (let attempt = 0; attempt < 50; attempt += 1) {
+                const completed = performance.getEntriesByType("resource").some((entry) => {
+                    if (entry.startTime < started || entry.responseEnd <= 0) return false;
+                    try { return new URL(entry.name, location.href).pathname.endsWith(screen.endpoint); } catch (_) { return false; }
+                });
+                if (completed) {
+                    await sleep(200);
+                    return;
+                }
+                await sleep(150);
+            }
         }
-        throw new Error("결석신고서 조회 응답을 확인하지 못했습니다.");
+        throw new Error("조회 응답을 확인하지 못했습니다.");
     }
-
-    const instance = await openApp();
-    if (!setControlValue(instance, "dtAbeBgngYmd", monthStart.replace(/-/g, ""))
-        || !setControlValue(instance, "dtAbeEndYmd", monthEnd.replace(/-/g, ""))) {
-        return { ok: false, error: "결석신고서 조회기간을 설정하지 못했습니다." };
-    }
-    await search(instance);
-    const dataset = instance.lookup("dsStdntListForAbe");
-    if (!dataset?.getRowCount) return { ok: false, error: "결석신고서 목록을 읽지 못했습니다." };
 
     const candidates = [];
-    const seenIds = new Map();
+    const errors = [];
+    let duplicates = 0;
     let skippedMissingId = 0;
-    for (let row = 0; row < dataset.getRowCount() && candidates.length < 1000; row += 1) {
-        const status = text(valueAt(dataset, row, "eduActPrcsStsNm"), 30);
-        const approvalStatus = text(valueAt(dataset, row, "atrzStsNm"), 30);
-        if (status !== "접수대기" && !(status === "접수" && approvalStatus === "미상신")) continue;
-        const applicationId = text(valueAt(dataset, row, "abeDclrId"), 80);
-        if (!applicationId) {
-            skippedMissingId += 1;
-            continue;
+    for (const screen of screens) {
+        try {
+            const instance = await openApp(screen);
+            if (screen.monthFilter && (!setControlValue(instance, "dtAbeBgngYmd", monthStart.replace(/-/g, ""))
+                || !setControlValue(instance, "dtAbeEndYmd", monthEnd.replace(/-/g, "")))) {
+                throw new Error("조회기간을 설정하지 못했습니다.");
+            }
+            await search(instance, screen);
+            const dataset = instance.lookup(screen.dataset);
+            if (!dataset?.getRowCount) throw new Error("목록을 읽지 못했습니다.");
+            const absence = screen.kind === "결석신고";
+            const seenIds = new Map();
+            const found = [];
+            for (let row = 0; row < dataset.getRowCount() && found.length < 1000; row += 1) {
+                const status = text(valueAt(dataset, row, "eduActPrcsStsNm"), 30);
+                const approvalStatus = text(valueAt(dataset, row, "atrzStsNm"), 30);
+                if (status !== "접수대기" && !(status === "접수" && approvalStatus === "미상신")) continue;
+                const applicationId = text(valueAt(dataset, row, screen.idColumn), 80);
+                if (!applicationId) {
+                    skippedMissingId += 1;
+                    continue;
+                }
+                const startDate = date(valueAt(dataset, row, screen.startColumn));
+                const endDate = date(valueAt(dataset, row, screen.endColumn)) || startDate;
+                const student = text(valueAt(dataset, row, "stuFlnm"), 50);
+                if (!startDate || !endDate || !student) continue;
+                seenIds.set(applicationId, (seenIds.get(applicationId) || 0) + 1);
+                const namedClass = text(valueAt(dataset, row, "clsNm"), 24);
+                const grade = text(valueAt(dataset, row, "grd"), 8);
+                const classNo = text(valueAt(dataset, row, "clsNo"), 8);
+                found.push({
+                    key: `${screen.kind}:${applicationId}`,
+                    application_id: applicationId,
+                    student,
+                    class_name: namedClass || [grade && `${grade}학년`, classNo && `${classNo}반`].filter(Boolean).join(" "),
+                    start_date: startDate,
+                    end_date: endDate,
+                    kind: screen.kind,
+                    kind_label: screen.label,
+                    absence_category_code: absence ? text(valueAt(dataset, row, "abeDclrScCd"), 2) : "",
+                    absence_category: text(valueAt(dataset, row, absence ? "abeDclrScNm" : "experLrnScNm"), 40),
+                    reason: text(valueAt(dataset, row, absence ? "abeRsnCn" : "experLrnPlaceNm"), 500),
+                    teacher_reason: absence ? exactText(valueAt(dataset, row, "shlOpiCn")) : "",
+                    status,
+                    approval_status: approvalStatus,
+                });
+            }
+            for (const candidate of found) candidate.selectable = seenIds.get(candidate.application_id) === 1;
+            duplicates += [...seenIds.values()].filter((count) => count > 1).length;
+            candidates.push(...found);
+        } catch (error) {
+            errors.push(`${screen.label}: ${error.message || "조회 실패"}`);
         }
-        const startDate = date(valueAt(dataset, row, "abeBgngDt"));
-        const endDate = date(valueAt(dataset, row, "abeEndDt")) || startDate;
-        const student = text(valueAt(dataset, row, "stuFlnm"), 50);
-        if (!startDate || !endDate || !student) continue;
-        seenIds.set(applicationId, (seenIds.get(applicationId) || 0) + 1);
-        const namedClass = text(valueAt(dataset, row, "clsNm"), 24);
-        const grade = text(valueAt(dataset, row, "grd"), 8);
-        const classNo = text(valueAt(dataset, row, "clsNo"), 8);
-        candidates.push({
-            application_id: applicationId,
-            student,
-            class_name: namedClass || [grade && `${grade}학년`, classNo && `${classNo}반`].filter(Boolean).join(" "),
-            start_date: startDate,
-            end_date: endDate,
-            kind: "결석신고",
-            absence_category_code: text(valueAt(dataset, row, "abeDclrScCd"), 2),
-            absence_category: text(valueAt(dataset, row, "abeDclrScNm"), 40),
-            reason: text(valueAt(dataset, row, "abeRsnCn"), 500),
-            teacher_reason: exactText(valueAt(dataset, row, "shlOpiCn")),
-            status,
-            approval_status: approvalStatus,
-        });
     }
-    for (const candidate of candidates) candidate.selectable = seenIds.get(candidate.application_id) === 1;
+    // 조회 중 새로 뜬 안내 알림(오류가 아닌 것)만 닫는다. 원래 떠 있던 창은 건드리지 않는다.
+    await sleep(800);
+    for (const dialog of running().filter((instance) => /cmn\/alert$/.test(String(instance?.app?.id || "")) && !alertsBefore.has(instance))) {
+        let children = [];
+        try { children = dialog.getContainer().getAllRecursiveChildren(); } catch (_) { }
+        const message = children.filter((control) => ["output", "htmlsnippet", "textarea"].includes(control?.type)).map((control) => String(control.value ?? "")).join(" ");
+        if (/(오류|실패|불가|권한)/.test(message)) continue;
+        children.find((control) => control?.id === "btnConfirm" || String(control?.value ?? "").trim() === "확인")?.click?.();
+    }
+    if (!candidates.length && errors.length === screens.length) return { ok: false, error: errors.join(" · ") };
     return {
         ok: true,
         month_start: monthStart,
         month_end: monthEnd,
         candidates,
-        duplicates: [...seenIds.values()].filter((count) => count > 1).length,
+        errors,
+        duplicates,
         skipped_missing_id: skippedMissingId,
     };
 }
@@ -805,7 +860,7 @@ function selectedAbsenceCandidates() {
             .filter(Boolean),
     );
     selectedWorkApplicationIds = selectedIds;
-    return absenceWorkCandidates.filter((item) => selectedIds.has(item.application_id));
+    return absenceWorkCandidates.filter((item) => selectedIds.has(item.key));
 }
 
 function updateAbsenceSelection() {
@@ -815,12 +870,15 @@ function updateAbsenceSelection() {
     actionPreviewText.textContent = `${selected.length}건 선택 · 새 접수 ${receiptCount}건 · 승인요청 ${submissionCount}건`;
     actionSelectionSummary.textContent = selected.map((item) => {
         const period = item.start_date === item.end_date ? item.start_date : `${item.start_date} ~ ${item.end_date}`;
-        const code = item.selected_absence_category_code || item.absence_category_code || "01";
-        const category = ABSENCE_CATEGORY_OPTIONS.find((option) => option.code === code)?.name || "구분 확인 필요";
         const approvers = approvalProfiles[normalizeProfileKind(item.kind)] || [];
         const approvalLine = approvers.length ? approvers.join(" → ") : "결재선 미등록";
+        if (item.kind !== "결석신고") {
+            return `[${item.kind_label || item.kind}] ${item.class_name} ${item.student} · ${period} · ${item.absence_category || ""}\n장소 · ${item.reason || "기재 없음"}\n결재선(${item.kind}) · ${approvalLine}`.trim();
+        }
+        const code = item.selected_absence_category_code || item.absence_category_code || "01";
+        const category = ABSENCE_CATEGORY_OPTIONS.find((option) => option.code === code)?.name || "구분 확인 필요";
         const teacherReason = item.selected_teacher_reason ?? item.teacher_reason ?? "";
-        return `${item.class_name} ${item.student} · ${period} · ${category}\n신청 내용 · ${item.reason || "기재 없음"}\n담임/교사 추가 내용 · ${teacherReason || "없음"}\n결재선 · ${approvalLine}`.trim();
+        return `[결석신고서] ${item.class_name} ${item.student} · ${period} · ${category}\n신청 내용 · ${item.reason || "기재 없음"}\n담임/교사 추가 내용 · ${teacherReason || "없음"}\n결재선(결석신고) · ${approvalLine}`.trim();
     }).join("\n");
     actionExecuteButton.disabled = selected.length === 0 || absenceUiExecutionInFlight;
 }
@@ -835,10 +893,11 @@ function renderAbsenceWorkCandidates(items) {
     clearAbsenceSelectionButton.disabled = !items.some((item) => item.selectable);
 
     if (!items.length) {
-        actionStatus.textContent = "이 달에 접수대기 또는 접수 후 미상신 상태인 결석신고서가 없습니다.";
+        actionStatus.textContent = "접수대기 또는 접수 후 미상신 상태인 결석신고서(이 달)·체험학습 신청서·보고서가 없습니다.";
         return;
     }
 
+    const hasAbsence = items.some((item) => item.kind === "결석신고");
     const bulkCategory = document.createElement("div");
     bulkCategory.className = "absence-bulk-category";
     const bulkLabel = document.createElement("label");
@@ -856,9 +915,9 @@ function renderAbsenceWorkCandidates(items) {
     bulkSelect.addEventListener("change", () => {
         let applied = 0;
         for (const item of selectedAbsenceCandidates()) {
-            if (item.status !== "접수대기") continue;
+            if (item.status !== "접수대기" || item.kind !== "결석신고") continue;
             item.selected_absence_category_code = bulkSelect.value;
-            const row = actionCandidatesNode.querySelector(`[data-application-id="${CSS.escape(item.application_id)}"]`);
+            const row = actionCandidatesNode.querySelector(`[data-application-id="${CSS.escape(item.key)}"]`);
             const select = row?.querySelector("select.absence-category-select");
             if (select) select.value = bulkSelect.value;
             applied += 1;
@@ -867,12 +926,16 @@ function renderAbsenceWorkCandidates(items) {
         updateAbsenceSelection();
     });
     bulkCategory.append(bulkLabel);
-    actionCandidatesNode.append(bulkCategory);
+    if (hasAbsence) actionCandidatesNode.append(bulkCategory);
 
-    const groups = [
-        ["접수대기 · 접수 후 승인요청까지", items.filter((item) => item.status === "접수대기")],
-        ["접수 · 미상신 · 승인요청 대상", items.filter((item) => item.status === "접수" && item.approval_status === "미상신")],
-    ];
+    const groups = [];
+    for (const kind of ["결석신고", "체험학습신청서", "체험학습보고서"]) {
+        const ofKind = items.filter((item) => item.kind === kind);
+        if (!ofKind.length) continue;
+        const label = ofKind[0].kind_label || kind;
+        groups.push([`${label} · 접수대기 · 접수 후 승인요청까지`, ofKind.filter((item) => item.status === "접수대기")]);
+        groups.push([`${label} · 접수 · 미상신 · 승인요청 대상`, ofKind.filter((item) => item.status === "접수" && item.approval_status === "미상신")]);
+    }
     for (const [title, rows] of groups) {
         if (!rows.length) continue;
         const heading = document.createElement("div");
@@ -882,10 +945,10 @@ function renderAbsenceWorkCandidates(items) {
         for (const item of rows) {
             const label = document.createElement("div");
             label.className = `action-candidate${item.selectable ? "" : " disabled"}`;
-            label.dataset.applicationId = item.application_id;
+            label.dataset.applicationId = item.key;
             const checkbox = document.createElement("input");
             checkbox.type = "checkbox";
-            checkbox.dataset.applicationId = item.application_id;
+            checkbox.dataset.applicationId = item.key;
             checkbox.disabled = !item.selectable;
             checkbox.addEventListener("change", updateAbsenceSelection);
             const body = document.createElement("div");
@@ -894,11 +957,12 @@ function renderAbsenceWorkCandidates(items) {
             name.textContent = `${item.class_name} ${item.student}`.trim();
             body.append(name);
             const detail = document.createElement("small");
-            detail.textContent = `${item.kind} · ${period} · ${item.status}${item.approval_status ? ` / ${item.approval_status}` : ""}`;
+            detail.textContent = `${item.kind_label || item.kind}${item.kind !== "결석신고" && item.absence_category ? ` (${item.absence_category})` : ""} · ${period} · ${item.status}${item.approval_status ? ` / ${item.approval_status}` : ""}`;
             body.append(detail);
             const reason = document.createElement("small");
-            reason.textContent = `신청 내용 · ${item.reason || "기재 없음"}`;
+            reason.textContent = `${item.kind === "결석신고" ? "신청 내용" : "장소"} · ${item.reason || "기재 없음"}`;
             body.append(reason);
+            if (item.kind === "결석신고") {
             const teacherReasonLabel = document.createElement("label");
             teacherReasonLabel.className = "teacher-reason-label";
             teacherReasonLabel.textContent = "담임/교사 결석 사유 · 필요할 때만 추가";
@@ -938,11 +1002,12 @@ function renderAbsenceWorkCandidates(items) {
             });
             categoryLabel.append(categorySelect);
             body.append(categoryLabel);
+            }
             const profileStatus = document.createElement("small");
             profileStatus.className = "profile-status";
             profileStatus.textContent = (approvalProfiles[normalizeProfileKind(item.kind)] || []).length
-                ? "신청 유형 결재선 저장됨"
-                : "신청 유형 결재선 미등록";
+                ? `'${item.kind}' 결재선 저장됨`
+                : `'${item.kind}' 결재선 미등록 — 아래 결재선 설정에 저장하세요`;
             if (!approvalProfiles[normalizeProfileKind(item.kind)]?.length) profileStatus.classList.add("missing");
             body.append(profileStatus);
             if (!item.selectable) {
@@ -954,7 +1019,7 @@ function renderAbsenceWorkCandidates(items) {
             actionCandidatesNode.append(label);
         }
     }
-    actionStatus.textContent = `학생·날짜·신청 내용과 결석 구분을 확인하고 처리할 건을 선택하세요. 선택 건 접수와 결재 상신은 아래 버튼 한 번으로 시작합니다.${items.some((item) => !item.selectable) ? " 중복 식별값은 처리 대상에서 제외했습니다." : ""}`;
+    actionStatus.textContent = `학생·날짜·신청 내용(결석신고는 결석 구분)을 확인하고 처리할 건을 선택하세요. 선택 건 접수와 결재 상신은 아래 버튼 한 번으로 시작합니다.${items.some((item) => !item.selectable) ? " 중복 식별값은 처리 대상에서 제외했습니다." : ""}`;
     actionPreview.hidden = false;
     updateAbsenceSelection();
 }
@@ -963,7 +1028,7 @@ async function reviewAbsenceWorkQueue() {
     await approvalProfilesReady;
     actionPanel.hidden = false;
     reviewAbsenceButton.disabled = true;
-    actionStatus.textContent = "NEIS에서 이번 달 결석신고 처리대상을 다시 확인하고 있습니다…";
+    actionStatus.textContent = "NEIS에서 결석신고(이 달)·체험학습 신청서·보고서 처리대상을 확인하고 있습니다…";
     actionCandidatesNode.replaceChildren();
     actionPreview.hidden = true;
     absenceWorkCandidates = [];
@@ -983,7 +1048,7 @@ async function reviewAbsenceWorkQueue() {
             func: scanAbsenceWorkQueueOnNeis,
             args: [{ monthStart, monthEnd }],
         });
-        if (!result?.ok) throw new Error(result?.error || "결석신고 처리대상을 읽지 못했습니다.");
+        if (!result?.ok) throw new Error(result?.error || "처리대상을 읽지 못했습니다.");
         await chrome.storage.local.remove("teacherlessonNeisAbsenceExecutionLock");
         const previous = await chrome.storage.local.get(LAST_ABSENCE_ACTION_KEY);
         if (previous[LAST_ABSENCE_ACTION_KEY]?.status === "unknown") {
@@ -1000,6 +1065,7 @@ async function reviewAbsenceWorkQueue() {
         renderAbsenceWorkCandidates(result.candidates || []);
         if (result.duplicates) actionStatus.textContent += ` 중복 신청 ID ${result.duplicates}개는 선택할 수 없습니다.`;
         if (result.skipped_missing_id) actionStatus.textContent += ` 신청 ID를 확인할 수 없는 ${result.skipped_missing_id}건은 제외했습니다.`;
+        if (result.errors?.length) actionStatus.textContent += ` 일부 화면 조회 실패: ${result.errors.join(" · ")}`;
     } catch (error) {
         actionStatus.textContent = error.message || "처리대상을 확인하지 못했습니다.";
     } finally {
@@ -1038,7 +1104,8 @@ function renderLastAbsenceActionStatus(last) {
         return;
     }
     const summary = `최근 처리 결과 · 접수 ${last.receiptCount || 0}건 · 승인요청 ${last.submittedCount || 0}건`;
-    const issues = last.errors?.length ? ` · 확인 필요: ${last.errors.join(" · ")}` : " · NEIS에서 상태를 확인했습니다.";
+    const notes = last.warnings?.length ? ` · 참고: ${last.warnings.join(" · ")}` : "";
+    const issues = notes + (last.errors?.length ? ` · 확인 필요: ${last.errors.join(" · ")}` : " · NEIS에서 상태를 확인했습니다.");
     actionStatus.textContent = `${summary}${issues}`;
 }
 
@@ -1046,6 +1113,8 @@ async function restoreLastAbsenceActionStatus() {
     try {
         const stored = await chrome.storage.local.get(LAST_ABSENCE_ACTION_KEY);
         renderLastAbsenceActionStatus(stored[LAST_ABSENCE_ACTION_KEY]);
+        // 결과를 팝업에서 확인했으므로 완료·확인필요 배지는 지운다(처리 중 배지는 유지).
+        if (stored[LAST_ABSENCE_ACTION_KEY]?.status !== "running") chrome.action.setBadgeText({ text: "" }).catch(() => { });
     } catch (_) { }
 }
 
@@ -1089,16 +1158,17 @@ async function executeSelectedAbsenceWork() {
                 batches,
             },
         });
-        if (!response?.ok) throw new Error(response?.error || "선택한 결석신고서를 처리하지 못했습니다.");
+        if (!response?.ok) throw new Error(response?.error || "선택한 신청서를 처리하지 못했습니다.");
         const summary = `접수 ${response.receiptCount || 0}건 · 승인요청 ${response.submittedCount || 0}건`;
-        const issues = response.errors?.length ? ` · 확인 필요: ${response.errors.join(" · ")}` : " · NEIS 목록에서 상태를 확인했습니다.";
+        const notes = response.warnings?.length ? ` · 참고: ${response.warnings.join(" · ")}` : "";
+        const issues = notes + (response.errors?.length ? ` · 확인 필요: ${response.errors.join(" · ")}` : " · NEIS 목록에서 상태를 확인했습니다.");
         actionStatus.textContent = `${summary}${issues}`;
         actionCandidatesNode.replaceChildren();
         actionPreview.hidden = true;
         absenceWorkCandidates = [];
         selectedWorkApplicationIds = new Set();
     } catch (error) {
-        actionStatus.textContent = error.message || "선택한 결석신고서를 처리하지 못했습니다. NEIS 화면의 상태를 확인해 주세요.";
+        actionStatus.textContent = error.message || "선택한 신청서를 처리하지 못했습니다. NEIS 화면의 상태를 확인해 주세요.";
         actionCandidatesNode.replaceChildren();
         actionPreview.hidden = true;
         absenceWorkCandidates = [];
@@ -1128,7 +1198,7 @@ function setNeisButtonsDisabled(disabled) {
             return;
         }
         const applicationId = control.dataset.applicationId || control.closest(".action-candidate")?.dataset.applicationId;
-        const item = absenceWorkCandidates.find((candidate) => candidate.application_id === applicationId);
+        const item = absenceWorkCandidates.find((candidate) => candidate.key === applicationId);
         const canEdit = control.matches('input[type="checkbox"]') ? item?.selectable : item?.status === "접수대기";
         control.disabled = disabled || !canEdit;
     });

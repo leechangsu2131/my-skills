@@ -1,5 +1,17 @@
 importScripts("absence-workflow.js");
 
+/* 팝업은 다른 곳을 클릭하거나 NEIS 확인창이 뜨면 닫힌다. 결과를 아이콘 배지로도 보여준다. */
+function showAbsenceBadge(status, submittedCount) {
+    const text = status === "running" ? "…" : status === "complete" ? String(submittedCount || "✓") : "!";
+    const color = status === "running" ? "#6b7280" : status === "complete" ? "#16a34a" : "#dc2626";
+    try {
+        chrome.action.setBadgeBackgroundColor({ color });
+        chrome.action.setBadgeText({ text });
+        chrome.action.setTitle({ title: status === "running" ? "NEIS 신청서 접수·상신 처리 중…" : status === "complete" ? `신청서 승인요청 ${submittedCount || 0}건 완료` : "신청서 처리 확인 필요 — 팝업을 열어 확인하세요" });
+    } catch (_) { }
+}
+
+
 const STORAGE_KEY = "teacherlessonNeisCache";
 const STUDENT_STATUS_KEY = "teacherlessonNeisStudentStatus";
 const LAST_ABSENCE_ACTION_KEY = "teacherlessonNeisLastAbsenceAction";
@@ -196,7 +208,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             return false;
         }
         if (absenceExecutionInFlight) {
-            sendResponse({ ok: false, error: "결석신고 처리가 이미 진행 중입니다. 중복 실행하지 말고 현재 NEIS 상태를 확인해 주세요." });
+            sendResponse({ ok: false, error: "신청서 처리가 이미 진행 중입니다. 중복 실행하지 말고 현재 NEIS 상태를 확인해 주세요." });
             return false;
         }
         absenceExecutionInFlight = true;
@@ -221,13 +233,13 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                         .map(([id, reason]) => [normalizeText(id, 80), String(reason ?? "").slice(0, 3000)]).filter(([id]) => id))
                     : {},
             }));
-            const allIds = batches.flatMap((batch) => batch.applicationIds);
             if (!monthStart || !monthEnd || monthStart > monthEnd || !batches.length
                 || batches.some((batch) => !batch.kind || !batch.applicationIds.length || !batch.approvers.length)
-                || batches.some((batch) => batch.applicationIds.some((id) => !["01", "02", "03", "04"].includes(batch.absenceCategoryCodes[id])))
-                || batches.some((batch) => batch.applicationIds.some((id) => typeof batch.teacherReasons[id] !== "string"))
+                || batches.some((batch) => !["결석신고", "체험학습신청서", "체험학습보고서"].includes(batch.kind))
+                || batches.some((batch) => batch.kind === "결석신고" && batch.applicationIds.some((id) => !["01", "02", "03", "04"].includes(batch.absenceCategoryCodes[id])))
+                || batches.some((batch) => batch.kind === "결석신고" && batch.applicationIds.some((id) => typeof batch.teacherReasons[id] !== "string"))
                 || new Set(batches.map((batch) => batch.kind)).size !== batches.length
-                || new Set(allIds).size !== allIds.length) {
+                || batches.some((batch) => new Set(batch.applicationIds).size !== batch.applicationIds.length)) {
                 throw new Error("선택 기간, 신청 유형별 대상, 저장 결재선을 다시 확인해 주세요.");
             }
             const tabId = Number(message.tabId);
@@ -247,6 +259,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                 },
             });
             absenceExecutionLockCreated = true;
+            showAbsenceBadge("running");
             await chrome.storage.local.set({
                 [LAST_ABSENCE_ACTION_KEY]: {
                     status: "running",
@@ -271,15 +284,17 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             knownExecutionResult = result;
             await chrome.storage.local.remove(ABSENCE_EXECUTION_LOCK_KEY);
             absenceExecutionLockCreated = false;
-            if (Array.isArray(result.absence_applications)) await updateAbsenceApplications(result.absence_applications);
+            if (Array.isArray(result.processedKinds) && result.processedKinds.includes("결석신고") && Array.isArray(result.absence_applications)) await updateAbsenceApplications(result.absence_applications);
             const summary = {
                 status: result.errors?.length ? "attention" : "complete",
                 updatedAt: new Date().toISOString(),
                 receiptCount: Array.isArray(result.receiptIds) ? result.receiptIds.length : 0,
                 submittedCount: Array.isArray(result.submittedIds) ? result.submittedIds.length : 0,
-                errors: Array.isArray(result.errors) ? result.errors.map((item) => normalizeText(item, 180)).filter(Boolean) : [],
+                errors: Array.isArray(result.errors) ? result.errors.map((item) => normalizeText(item, 400)).filter(Boolean) : [],
+                warnings: Array.isArray(result.warnings) ? result.warnings.map((item) => normalizeText(item, 300)).filter(Boolean) : [],
             };
             await chrome.storage.local.set({ [LAST_ABSENCE_ACTION_KEY]: summary });
+            showAbsenceBadge(summary.status, summary.submittedCount);
             sendResponse({ ok: true, ...summary });
         })().catch(async (error) => {
             const uncertain = absenceExecutionLockCreated && !knownExecutionResult;
@@ -303,6 +318,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             } else if (knownExecutionResult) {
                 await chrome.storage.local.set({ [LAST_ABSENCE_ACTION_KEY]: summary });
             }
+            showAbsenceBadge(summary.status, summary.submittedCount);
             sendResponse({ ok: false, error: summary.errors[0] });
         }).finally(() => { absenceExecutionInFlight = false; });
         return true;

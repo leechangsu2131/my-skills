@@ -5,9 +5,9 @@ let pass = 0, fail = 0;
 const ck = (n, c, x) => { c ? (pass++, console.log('  OK ', n)) : (fail++, console.log('  FAIL', n, x === undefined ? '' : JSON.stringify(x))); };
 
 console.log('말 나누기');
-for (const t of ['대여 빔프로젝터', '반납', '예약 강당 내일 3교시', '빈곳 내일 3교시', '빈 교실', '내 신청', '내대여', '시설', '시설등록 김교사 1234', '대여취소 R0001', '예약 취소 12'])
+for (const t of ['대여 빔프로젝터', '반납', '예약 강당 내일 3교시', '빈곳 내일 3교시', '빈 교실', '내 신청', '내대여', '시설', '시설등록 김교사 1234', '대여취소 R0001', '예약 취소 12', '시설 도움말', '내 신청 목록', '빌려줘 빔프로젝터', '예약', '시설?'])
   ck('시설 ← ' + t, routeOf(t) === 'facility');
-for (const t of ['완료 탄소중립', '취소 탄소중립', '할일', '오늘', '내아이디', '현황', '도움말', ''])
+for (const t of ['완료 탄소중립', '취소 탄소중립', '할일', '오늘', '내아이디', '현황', '도움말', '', '시설점검 완료', '예약안내 완료', '대여물품 정리 했어', '시설점검', '예약안내', '반납함 정리', '빈곳 정리 끝'])
   ck('일정 ← ' + (t || '(빈 말)'), routeOf(t) === 'schedule');
 
 const env = { KAKAO_KEY: 'k', APPS_SCRIPT_URL: 'https://sched/exec', APPS_KEY: 'a', FACILITY_URL: 'https://fac/exec', FACILITY_KEY: 'f' };

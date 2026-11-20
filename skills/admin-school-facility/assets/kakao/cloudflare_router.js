@@ -13,10 +13,15 @@
  *
  * 앱스 스크립트 웹앱은 POST 답을 302로 이동시키는데 카카오는 이를 못 따라가서, 여기서 대신 따라간다.
  */
-const FACILITY_WORDS = /^(대여|반납|빌려|빌릴|예약|빈곳|빈교실|빈자리|빈공간|내신청|내대여|내예약|시설)/;
+// 시설 명령어는 낱말 하나로 끝나거나 뒤에 띄어쓰기가 와야 한다("시설점검 완료", "예약안내" 같은 일정 제목은 일정DB로).
+const FACILITY_CMD = /^(대여\s*취소|예약\s*취소|대여|반납|빌려\s*줘|빌릴래|예약|빈\s*(곳|교실|자리|공간)|내\s*(신청|대여|예약)(\s*(목록|내역))?|시설\s*등록|시설(\s*(도움말|안내|사용법))?)(\s|\?|$)/;
+// 스쿨투두의 완료 표현("○○ 완료", "○○ 했어")은 앞 낱말과 상관없이 일정DB로
+const SCHEDULE_DONE = /(완료|끝|했어|끝났어|완료했어)\s*[.!]*$/;
 
 export function routeOf(utterance) {
-  return FACILITY_WORDS.test(String(utterance || '').replace(/\s+/g, '')) ? 'facility' : 'schedule';
+  const t = String(utterance || '').replace(/\s+/g, ' ').trim();
+  if (SCHEDULE_DONE.test(t)) return 'schedule';
+  return FACILITY_CMD.test(t) ? 'facility' : 'schedule';
 }
 
 function reply(text) {

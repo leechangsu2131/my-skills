@@ -112,8 +112,15 @@ function submitRequest(code, p) {
   var lock = LockService.getScriptLock();
   lock.waitLock(20000);
   try {
-    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    return submitRequestAs_(SpreadsheetApp.getActiveSpreadsheet(), p);
+  } finally {
+    lock.releaseLock();
+  }
+}
+// 잠금을 잡은 상태에서 부른다 (웹앱 submitRequest, 카톡 챗봇)
+function submitRequestAs_(ss, p) {
     var tz = ss.getSpreadsheetTimeZone();
+    if (!validDay_(p.date)) return { ok: false, msg: '날짜가 올바르지 않아요.' };
     if (bookable_(ss).indexOf(String(p.space)) < 0) {
       return { ok: false, msg: '"' + p.space + '"은(는) 사용 신청을 받지 않는 공간이에요. (교무실·교장실·행정실 같은 곳은 신청할 수 없어요)' };
     }
@@ -145,9 +152,12 @@ function submitRequest(code, p) {
     var needs = approvalSpaces_(ss).indexOf(String(p.space)) >= 0;
     sh.getRange(target, 11).setValue(needs ? '승인대기' : '확정');
     return needs ? { ok: true, pending: true, msg: '관리자 승인 후에 확정돼요. 승인되면 이 시간은 다른 분이 신청할 수 없어요.' } : { ok: true };
-  } finally {
-    lock.releaseLock();
-  }
+}
+// 'yyyy-MM-dd'이고 실제로 있는 날짜인지 (2/30 같은 날짜가 다른 날로 바뀌어 저장되지 않게)
+function validDay_(s) {
+  var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(s || '')); if (!m) return false;
+  var d = new Date(Date.UTC(+m[1], +m[2] - 1, +m[3]));
+  return d.getUTCFullYear() === +m[1] && d.getUTCMonth() === +m[2] - 1 && d.getUTCDate() === +m[3];
 }
 
 function layout_(ss) {
@@ -487,7 +497,7 @@ function requestLoanAs_(ss, who, p) {
   var ld = lendable_(ss, it); if (!ld.ok) return { ok: false, msg: ld.why };
   var qty = Math.floor(Number(p.qty)), start = String(p.start || ''), due = String(p.due || '');
   if (!(qty >= 1)) return { ok: false, msg: '수량을 1개 이상으로 적어 주세요.' };
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(start) || !/^\d{4}-\d{2}-\d{2}$/.test(due)) return { ok: false, msg: '대여일과 반납예정일을 골라 주세요.' };
+  if (!validDay_(start) || !validDay_(due)) return { ok: false, msg: '대여일과 반납예정일을 골라 주세요.' };
   if (start < today) return { ok: false, msg: '지난 날짜는 신청할 수 없어요.' };
   if (due < start) return { ok: false, msg: '반납예정일은 대여일 이후여야 해요.' };
   if (daysBetween_(start, due) > 30) return { ok: false, msg: '한 번에 30일까지만 빌릴 수 있어요.' };
@@ -571,8 +581,9 @@ function cancelMySpace(code, who, pin, row) {
 function cancelMySpaceAs_(ss, who, row) {
   var tz = ss.getSpreadsheetTimeZone(), today = dayStr_(new Date(), tz);
   row = Number(row);
-  if (!(row >= 2)) return { ok: false, msg: '신청 번호가 올바르지 않아요.' };
-  var sh = ss.getSheetByName('사용신청'), r = sh.getRange(row, 1, 1, 11).getValues()[0];
+  var sh = ss.getSheetByName('사용신청');
+  if (!(row >= 2) || row > sh.getLastRow()) return { ok: false, msg: '신청 번호가 올바르지 않아요.' };
+  var r = sh.getRange(row, 1, 1, 11).getValues()[0];
   if (!(r[1] instanceof Date) || norm_(r[5]) !== norm_(who) || r[10] === '취소' || r[10] === '반려') return { ok: false, msg: '내 신청이 아니에요.' };
   if (dayStr_(r[1], tz) < today) return { ok: false, msg: '지난 신청은 취소할 수 없어요.' };
   sh.getRange(row, 11).setValue('취소'); return { ok: true, date: dayStr_(r[1], tz), period: String(r[3]), space: String(r[4]) };

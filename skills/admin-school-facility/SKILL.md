@@ -84,7 +84,7 @@ python scripts/build_sheet.py --config my_config.json --out 학교_관리시트.
 
 ### 2-2c. 카카오톡으로 대여·반납·예약할 때
 - `references/kakao-chatbot.md`를 읽고 그 순서대로 안내한다. 카톡 채널은 school-todo-kakao 것을 같이 쓰고(사용자가 정함), 시트는 따로 둔다.
-- 챗봇은 웹앱과 같은 처리 함수(`requestLoanAs_`, `returnLoanAs_`, `cancelLoanAs_`, `cancelMySpaceAs_`, `myRequestsAs_`, `submitRequest`)를 부른다. 챗봇에만 있는 규칙을 따로 만들지 않는다.
+- 챗봇은 웹앱과 같은 처리 함수(`requestLoanAs_`, `returnLoanAs_`, `cancelLoanAs_`, `cancelMySpaceAs_`, `myRequestsAs_`, `submitRequestAs_`)를 부른다. 챗봇에만 있는 규칙을 따로 만들지 않는다.
 - 규칙이나 말 알아듣기를 고치면 `node scripts/test_server.js`, `node scripts/test_chatbot.js`, `node scripts/test_router.mjs`를 모두 돌린다(스킬 폴더에서).
 - 중계기 배포·오픈빌더 설정은 운영 중인 스쿨투두 챗봇에 영향을 주므로 사용자가 직접 하거나, 먼저 묻는다.
 

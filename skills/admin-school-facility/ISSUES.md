@@ -11,6 +11,7 @@
 - **설계 초안**: 시트는 일정DB와 별개(시설 관리 시트). 시설 Code.gs에 `doPost`(카카오 스킬 응답)를 추가해 기존 `requestLoan`/`returnLoan` 규칙을 그대로 재사용하고, 기존 Cloudflare 중계기가 말머리(대여·반납·예약…)를 보고 시설 웹앱으로 넘긴다. 카톡 사용자 ↔ 신청자 명단 연결은 `챗봇아이디` 열로 하고, 챗봇 경로에서는 PIN 대신 이 연결로 본인을 확인한다.
 - **관련 파일**: `assets/apps_script/Code.gs`, `scripts/test_server.js`, `../school-todo-kakao/chatbot/`
 - **진행 (2026-11-20)**: 채널은 스쿨투두 것을 같이 쓰기로 결정. `Chatbot.gs`(doPost), 처리 함수 분리(`...As_`), 말머리로 나누는 중계기 `assets/kakao/cloudflare_router.js` 작성. 시험 test_server 49·test_chatbot 47·test_router 24 통과. 본인 확인은 `시설등록 이름 PIN` 또는 관리자가 `챗봇연결` 탭에 적기.
+- **검토 반영 (2026-11-20)**: reviewer 지적 7건 수정 — 띄어 쓴 날짜(다음 주 수요일) 오인, 최근 지난 날짜가 조용히 내년으로 저장, 카톡 등록의 PIN 대입·웹앱 잠금 방해·명단 노출(→ 카톡 계정별 시도 제한, 실패 문구 통일, PIN 바뀌면 연결 해제), 2/30 같은 없는 날짜, 예약만 20초 잠금 대기(→ `submitRequestAs_`), 중계기가 "시설점검 완료" 같은 일정 완료를 가로챔, `대여 X 내일`이 오늘부터로 잡힘. 시험 test_server 49·test_chatbot 68·test_router 36 통과.
 - **남은 일**: 시설 시트에 Chatbot.gs 추가·배포, 중계기 교체(FACILITY_URL/KEY), 실제 카톡에서 응답 시간 확인.
 
 

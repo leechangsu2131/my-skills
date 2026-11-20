@@ -37,6 +37,7 @@ DATA = data_dir(SKILL)
 WEB = SKILL_DIR / "web"
 CONFIG_PATH = DATA / "config.json"
 FLOWS = DATA / "flows"
+UNITS = DATA / "units"
 SESSIONS = DATA / "sessions"
 CAUTIONS_PATH = DATA / "publisher_notes.json"
 PROGRESS_ACTIONS = {"done", "extend", "push", "catch-up"}
@@ -146,6 +147,14 @@ def find_flow(lesson: dict) -> dict | None:
     return None
 
 
+def find_unit(lesson: dict) -> dict | None:
+    """단원 개관 요약: units/<과목>__<대단원>.json (Claude 가 지도서 단원 개관 쪽에서 만든다)."""
+    if not lesson.get("unit"):
+        return None
+    path = UNITS / f"{safe_name(lesson['subject'])}__{safe_name(lesson['unit'])}.json"
+    return read_json(path, None) if path.is_file() else None
+
+
 def recent_memos(subject: str, limit: int = 6) -> list[dict]:
     """같은 과목의 지난 수업에서 남긴 '고칠점'·'좋았음' 메모 (최근 것부터)."""
     found = []
@@ -171,6 +180,7 @@ def state(day: date) -> dict:
         lesson["site"] = info.get("site", "")
         lesson["has_login"] = bool(info.get("secret_prefix"))
         lesson["flow"] = find_flow(lesson)
+        lesson["unit_overview"] = find_unit(lesson)
         key = f"{lesson['publisher']}|{lesson['subject']}"
         lesson["cautions"] = cautions.get(key, []) + cautions.get(f"{lesson['publisher']}|*", [])
         lesson["recent_memos"] = recent_memos(lesson["subject"])
@@ -422,6 +432,7 @@ def add_caution(body: dict) -> dict:
 def main() -> None:
     cfg = load_config()
     FLOWS.mkdir(parents=True, exist_ok=True)
+    UNITS.mkdir(parents=True, exist_ok=True)
     SESSIONS.mkdir(parents=True, exist_ok=True)
     port = int(cfg.get("port", 5180))
     server = ThreadingHTTPServer(("127.0.0.1", port), Handler)

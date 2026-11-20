@@ -37,6 +37,10 @@ ul{margin:4px 0;padding-left:18px}
 .step b{font-size:14px}
 .step .say{color:#1f4e8c;margin-top:2px}
 .step .tip{color:var(--warn);font-size:13px}
+.ulist{margin:4px 0;padding-left:0;list-style:none;font-size:14px}
+.ulist li{padding:2px 6px;border-radius:5px}
+.ulist li.done{color:var(--sub)}
+.ulist li.now{background:#fff3c4;font-weight:700}
 #recbar{display:flex;gap:8px;align-items:center}
 #rdot{width:12px;height:12px;border-radius:50%;background:#bbb}
 #rdot.on{background:var(--red);animation:blink 1s infinite}
@@ -78,6 +82,13 @@ textarea,input[type=text]{width:100%;font:inherit;border:1px solid var(--line);b
     <h2>⚠ 이번 수업에서 주의할 점</h2>
     <ul class="caution" id="cautions"></ul>
     <div class="row"><input type="text" id="cautionIn" class="grow" placeholder="이 출판사 지도서의 특징·주의점 추가 (예: 설명이 단순해 개념 보충 필요)"><button id="cautionAdd">추가</button></div>
+  </section>
+
+  <section>
+    <details id="unitBox" open>
+      <summary style="cursor:pointer"><h2 style="display:inline">📗 단원 개관 <span class="muted" id="unitSrc"></span></h2></summary>
+      <div id="unitBody"></div>
+    </details>
   </section>
 
   <section>
@@ -190,8 +201,29 @@ function select(i){
               ...cur.recent_memos.filter(m=>m.kind!=='good').map(m=>`<li>${esc(m.text)} <span class="muted">(${esc(m.date)} ${esc(m.title)})</span></li>`),
               ...cur.recent_memos.filter(m=>m.kind==='good').map(m=>`<li style="color:var(--acc)">👍 ${esc(m.text)} <span class="muted">(${esc(m.date)})</span></li>`)];
   $('cautions').innerHTML = cs.join('') || '<li class="muted" style="color:var(--sub)">아직 쌓인 메모가 없어요</li>';
-  renderFlow(); renderMemos();
+  renderUnit(); renderFlow(); renderMemos();
   $('notice').value = sess.notice || '';
+}
+
+function lessonNo(v){ const m = String(v ?? '').match(/\d+/); return m ? +m[0] : null; }
+function renderUnit(){
+  const u = cur && cur.unit_overview;
+  if (!u){ $('unitSrc').textContent=''; $('unitBody').innerHTML = '<div class="muted">아직 단원 개관이 없어요. Claude에게 "단원 개관 만들어줘"라고 하면 지도서 앞부분에서 뽑아 둡니다.</div>'; return; }
+  const n = lessonNo(cur.lesson);
+  $('unitSrc').textContent = u.source ? `(${u.source})` : '';
+  const goals = (u.goals||[]).map(g=>`<li>${esc(g)}</li>`).join('');
+  const lessons = (u.lessons||[]).map(l=>{
+    const a = l.from, b = l.to ?? l.from;
+    const cls = n==null ? '' : (n>=a && n<=b ? 'now' : (b<n ? 'done' : ''));
+    return `<li class="${cls}">${a===b?a:a+'~'+b}차시 · ${esc(l.title)}${cls==='now'?' ◀ 지금':''}</li>`;
+  }).join('');
+  $('unitBody').innerHTML =
+    (u.summary?`<div>${esc(u.summary)}</div>`:'') +
+    (goals?`<div style="margin-top:4px"><b>🎯 단원 목표</b><ul>${goals}</ul></div>`:'') +
+    (lessons?`<div><b>🧭 단원 흐름</b><ul class="ulist">${lessons}</ul></div>`:'') +
+    ((u.cautions||[]).length?`<div><b>💡 지도할 때 유의점</b><ul class="caution">${u.cautions.map(c=>`<li>${esc(c)}</li>`).join('')}</ul></div>`:'') +
+    (u.assessment?`<div class="muted">📝 평가: ${esc(u.assessment)}</div>`:'');
+  const now = $('unitBody').querySelector('li.now'); if (now) now.scrollIntoView({block:'nearest'});
 }
 
 function renderFlow(){

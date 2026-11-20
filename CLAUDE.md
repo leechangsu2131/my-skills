@@ -10,7 +10,7 @@
 - **(임시, 2026-11-20~) `main`에 바로 커밋·푸시한다.** 브랜치·PR은 만들지 않는다. 나중에 PR 방식으로 돌아갈 예정이다(`CONTRIBUTING.md` "커밋·푸시 방식" 참고).
   - 커밋 전 `git diff --staged`로 학생·교사 이름, 전화번호, 공문번호 같은 개인정보·학교 정보가 없는지 확인한다(공개 저장소).
   - 내가 고친 파일만 골라 `git add <파일>` 한다. 다른 세션·도구가 고치는 중인 파일은 함께 올리지 않는다(`git add -A` 금지).
-  - 푸시 전 `git pull --rebase`로 원격 변경을 먼저 받는다.
+  - 푸시 전 `git pull --rebase`로 원격 변경을 먼저 받는다. 다른 세션의 미커밋 파일 때문에 막히면 `git fetch` 후 뒤처졌을 때만 `--autostash`를 붙인다.
 - 스킬 하나를 고칠 때는 그 폴더의 `SKILL.md`와 `ISSUES.md`부터 읽는다. 다른 스킬 폴더는 필요할 때만 연다.
 - `CATALOG.md`는 직접 고치지 않는다. 메타데이터를 고친 뒤 `python tools/build_catalog.py`, 마무리 전 `python tools/build_catalog.py --check`.
 - 비밀값은 중앙 `.env`, 결과물·개인정보는 `data_dir()` — 코드·문서·커밋 메시지에 실제 값(이름·번호·비밀번호)을 쓰지 않는다.

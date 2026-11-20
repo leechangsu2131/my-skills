@@ -46,7 +46,7 @@ CATALOG.md           → 자동 생성 목록 (직접 수정 금지)
   1. `git diff --staged`로 개인정보·학교 정보(학생·교사 이름, 전화번호, 공문번호, 비밀값)가 없는지 확인한다. 저장소는 공개다.
   2. 내가 고친 파일만 `git add <파일>`로 고른다. 다른 도구·세션이 작업 중인 파일은 섞지 않는다(`git add -A` 금지).
   3. `python tools/build_catalog.py --check` 통과를 확인한다.
-  4. 푸시 전 `git pull --rebase`.
+  4. 푸시 전 원격 변경을 받는다: `git pull --rebase` (다른 세션이 커밋 안 한 파일이 있어 막히면 `git fetch` 후 뒤처졌을 때만 `git pull --rebase --autostash`).
 
 **나중에 (여럿이 쓰거나 작업이 커지면): PR 방식으로 복귀**
 - `main` 직접 push 금지 → 아래 이름의 브랜치에서 작업하고 PR로 머지, 머지 전 사람이 리뷰.

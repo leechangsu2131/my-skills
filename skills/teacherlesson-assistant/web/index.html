@@ -154,6 +154,7 @@ async function load(){
   if (rec) { toast('녹음 중에는 날짜를 바꿀 수 없어요'); $('datePick').value = S ? S.date : iso(day); return; }
   await flushSave();
   $('datePick').value = iso(day); $('dow').textContent = '일월화수목금토'[day.getDay()];
+  history.replaceState(null, '', iso(day) === iso(new Date()) ? location.pathname : '?date=' + iso(day));  // F5 해도 보던 날짜 유지
   S = await (await fetch('/api/state?date='+iso(day))).json();
   $('source').textContent = '출처: ' + S.source;
   $('phones').innerHTML = S.phones.map(p=>`<div><span>${esc(p.name)}</span><b>${esc(p.no)}</b></div>`).join('') || '설정에 내선번호를 적어 주세요';

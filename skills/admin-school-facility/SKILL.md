@@ -4,8 +4,8 @@ description: 학교 기물(비품) 대장과 특별실·강당·운동장·빈 �
 metadata:
   category: 학교 행정
   status: 개발
-  version: 0.1.0
-  summary: 구글 시트로 학교 기물 대장·공간(특별실·강당 등) 교시별 사용 신청·기물 대여를 관리하고, 3D 건물 화면으로 현황을 보여 주는 Apps Script 웹앱을 만든다.
+  version: 0.2.0
+  summary: 구글 시트로 학교 기물 대장·공간(특별실·강당 등) 교시별 사용 신청·기물 대여를 관리하고, 3D 건물 화면으로 현황을 보여 주는 Apps Script 웹앱을 만든다. 카카오톡 챗봇(스쿨투두 채널 공유)으로 대여·반납·예약도 된다.
 ---
 
 # 학교 기물 대장 · 공간 사용 관리 + 3D 현황
@@ -27,6 +27,9 @@ metadata:
 - `scripts/make_stl.py`: 학교 배치로 3D 프린터용 층별 STL(돌하우스 모형)을 만든다. trimesh·shapely·manifold3d 필요.
 - `scripts/hwpx_tables.py`: 한글(.hwpx) 문서의 표를 격자로 뽑는다(방과후·돌봄 시간표 등).
 - `scripts/test_server.js`: Code.gs 서버 규칙(PIN·대여·승인·관리자) 시험. 가짜 시트로 node에서 돌린다.
+- `assets/apps_script/Chatbot.gs`: 카카오톡 챗봇(대여·반납·예약·빈곳·내 신청). Code.gs와 같은 프로젝트에 파일로 추가한다. 시험: `scripts/test_chatbot.js`.
+- `assets/kakao/cloudflare_router.js`: 스쿨투두 카톡 채널 하나로 일정DB와 시설 시트를 나눠 보내는 중계기. 시험: `scripts/test_router.mjs`.
+- `references/kakao-chatbot.md`: 챗봇 설치 순서, 선생님 연결, 카톡에서 하는 말, 한계.
 - `scripts/make_preview.py`: 대화 안에서 바로 보여 줄 미리보기 HTML(가짜 백엔드 + 샘플 데이터)을 만든다.
 - `assets/config.example.json`: 설정 예시(공간 10개, 교시 9개, 4층 배치, 여러 층을 쓰는 강당 포함).
 - `references/design-notes.md`: 시트 구조, 접근 제어, 배포 체크리스트, 함정. 설계를 바꾸거나 막힐 때 읽는다.
@@ -76,8 +79,14 @@ python scripts/build_sheet.py --config my_config.json --out 학교_관리시트.
 
 ### 2-2b. 기물 대여·승인·관리자가 필요할 때
 - `lendable_categories`(대여 가능 분류), `approval_spaces`(관리자 승인 필요 공간)를 설정에 넣고, `people`(신청자 명단)을 채운다. 접근 방식은 접근 코드 + 명단 + 개인 PIN, 기물은 자동 승인, 공간은 자동 확정 + 행사용 공간만 승인으로 시작한다(사용자가 정했다).
-- 웹앱 배포 때 스크립트 속성 `ADMIN_CODE`(관리자 화면)도 설정하게 안내한다. 서버 규칙을 고치면 `node scripts/test_server.js`를 먼저 돌린다.
+- 웹앱 배포 때 스크립트 속성 `ADMIN_CODE`(관리자 화면)도 설정하게 안내한다. 서버 규칙을 고치면 `node scripts/test_server.js`(챗봇을 쓰면 `test_chatbot.js`도)를 먼저 돌린다.
 - PIN·관리자 코드의 한계(개인 구글 계정 환경, 코드가 새면 뚫림)를 솔직히 알린다.
+
+### 2-2c. 카카오톡으로 대여·반납·예약할 때
+- `references/kakao-chatbot.md`를 읽고 그 순서대로 안내한다. 카톡 채널은 school-todo-kakao 것을 같이 쓰고(사용자가 정함), 시트는 따로 둔다.
+- 챗봇은 웹앱과 같은 처리 함수(`requestLoanAs_`, `returnLoanAs_`, `cancelLoanAs_`, `cancelMySpaceAs_`, `myRequestsAs_`, `submitRequest`)를 부른다. 챗봇에만 있는 규칙을 따로 만들지 않는다.
+- 규칙이나 말 알아듣기를 고치면 `node scripts/test_server.js`, `node scripts/test_chatbot.js`, `node scripts/test_router.mjs`를 모두 돌린다(스킬 폴더에서).
+- 중계기 배포·오픈빌더 설정은 운영 중인 스쿨투두 챗봇에 영향을 주므로 사용자가 직접 하거나, 먼저 묻는다.
 
 ### 2-3. 학생 대결(듀얼)이 필요할 때
 - 시설 신청·3D는 구글 시트 + Apps Script에 두고, 실시간 대결만 Supabase로 따로 만든다(`assets/duel_supabase/`). Apps Script는 실시간 통신이 없어 폴링(2~4초)이라 빠른 턴 교환에 맞지 않는다.

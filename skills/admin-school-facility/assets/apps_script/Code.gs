@@ -467,31 +467,37 @@ function getItemLoans(code, id) {
       .map(function (l) { return { id: l.id, who: l.who, qty: l.qty, start: l.start, due: l.due, status: l.status }; }) };
 }
 
+// 웹앱(이름+PIN)과 카톡 챗봇(연결된 카톡 계정)이 같은 규칙을 쓰도록 본인 확인과 실제 처리를 나눈다.
+// 아래의 ...As_ 함수는 본인 확인이 끝난 뒤 스크립트 잠금을 잡은 상태에서만 부른다.
 function requestLoan(code, p) {
   auth_(code);
   p = p || {};
   var lock = LockService.getScriptLock(); lock.waitLock(20000);
   try {
-    var ss = SpreadsheetApp.getActiveSpreadsheet(), tz = ss.getSpreadsheetTimeZone(), today = dayStr_(new Date(), tz), who = String(p.who || '').trim();
+    var ss = SpreadsheetApp.getActiveSpreadsheet(), who = String(p.who || '').trim();
     if (!who) return { ok: false, msg: '이름을 골라 주세요.' };
     if (!inPeople_(ss, who)) return { ok: false, msg: '신청자 명단에 없는 이름이에요.' };
     var chk = pinCheck_(ss, who, p.pin); if (!chk.ok) return chk;
-    var it = itemOf_(ss, p.id); if (!it) return { ok: false, msg: '물품을 찾을 수 없어요.' };
-    var ld = lendable_(ss, it); if (!ld.ok) return { ok: false, msg: ld.why };
-    var qty = Math.floor(Number(p.qty)), start = String(p.start || ''), due = String(p.due || '');
-    if (!(qty >= 1)) return { ok: false, msg: '수량을 1개 이상으로 적어 주세요.' };
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(start) || !/^\d{4}-\d{2}-\d{2}$/.test(due)) return { ok: false, msg: '대여일과 반납예정일을 골라 주세요.' };
-    if (start < today) return { ok: false, msg: '지난 날짜는 신청할 수 없어요.' };
-    if (due < start) return { ok: false, msg: '반납예정일은 대여일 이후여야 해요.' };
-    if (daysBetween_(start, due) > 30) return { ok: false, msg: '한 번에 30일까지만 빌릴 수 있어요.' };
-    var loans = loanRows_(ss, tz), avail = it.qty - reserved_(loans, it.id, start, due);
-    if (qty > avail) return { ok: false, msg: '그 기간에 빌릴 수 있는 수량은 ' + Math.max(0, avail) + '개예요. (전체 ' + it.qty + '개)' };
-    var seq = 0; loans.forEach(function (l) { var m = /^R(\d+)$/.exec(l.id); if (m) seq = Math.max(seq, Number(m[1])); });
-    var id = 'R' + ('000' + (seq + 1)).slice(-4), sh = loanSheet_(ss), s = start.split('-'), d = due.split('-');
-    sh.appendRow([id, new Date(), it.id, it.name, qty, who, new Date(+s[0], +s[1] - 1, +s[2]), new Date(+d[0], +d[1] - 1, +d[2]), String(p.purpose || '').trim().slice(0, 40), '승인', '', '']);
-    var r = sh.getLastRow(); sh.getRange(r, 2).setNumberFormat('yyyy-mm-dd hh:mm'); sh.getRange(r, 7, 1, 2).setNumberFormat('yyyy-mm-dd');
-    return { ok: true, id: id, status: '승인', left: avail - qty };
+    return requestLoanAs_(ss, who, p);
   } finally { lock.releaseLock(); }
+}
+function requestLoanAs_(ss, who, p) {
+  var tz = ss.getSpreadsheetTimeZone(), today = dayStr_(new Date(), tz);
+  var it = itemOf_(ss, p.id); if (!it) return { ok: false, msg: '물품을 찾을 수 없어요.' };
+  var ld = lendable_(ss, it); if (!ld.ok) return { ok: false, msg: ld.why };
+  var qty = Math.floor(Number(p.qty)), start = String(p.start || ''), due = String(p.due || '');
+  if (!(qty >= 1)) return { ok: false, msg: '수량을 1개 이상으로 적어 주세요.' };
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(start) || !/^\d{4}-\d{2}-\d{2}$/.test(due)) return { ok: false, msg: '대여일과 반납예정일을 골라 주세요.' };
+  if (start < today) return { ok: false, msg: '지난 날짜는 신청할 수 없어요.' };
+  if (due < start) return { ok: false, msg: '반납예정일은 대여일 이후여야 해요.' };
+  if (daysBetween_(start, due) > 30) return { ok: false, msg: '한 번에 30일까지만 빌릴 수 있어요.' };
+  var loans = loanRows_(ss, tz), avail = it.qty - reserved_(loans, it.id, start, due);
+  if (qty > avail) return { ok: false, msg: '그 기간에 빌릴 수 있는 수량은 ' + Math.max(0, avail) + '개예요. (전체 ' + it.qty + '개)' };
+  var seq = 0; loans.forEach(function (l) { var m = /^R(\d+)$/.exec(l.id); if (m) seq = Math.max(seq, Number(m[1])); });
+  var id = 'R' + ('000' + (seq + 1)).slice(-4), sh = loanSheet_(ss), s = start.split('-'), d = due.split('-');
+  sh.appendRow([id, new Date(), it.id, it.name, qty, who, new Date(+s[0], +s[1] - 1, +s[2]), new Date(+d[0], +d[1] - 1, +d[2]), String(p.purpose || '').trim().slice(0, 40), '승인', '', '']);
+  var r = sh.getLastRow(); sh.getRange(r, 2).setNumberFormat('yyyy-mm-dd hh:mm'); sh.getRange(r, 7, 1, 2).setNumberFormat('yyyy-mm-dd');
+  return { ok: true, id: id, status: '승인', left: avail - qty, name: it.name, qty: qty, start: start, due: due };
 }
 
 function loanOfMine_(ss, tz, id, who) {
@@ -508,30 +514,40 @@ function returnLoan(code, id, who, pin) {
   auth_(code);
   var lock = LockService.getScriptLock(); lock.waitLock(20000);
   try {
-    var ss = SpreadsheetApp.getActiveSpreadsheet(), tz = ss.getSpreadsheetTimeZone(), chk = pinCheck_(ss, who, pin); if (!chk.ok) return chk;
-    var m = loanOfMine_(ss, tz, id, who); if (m.err) return { ok: false, msg: m.err };
-    if (m.loan.status !== '승인') return { ok: false, msg: '지금 상태("' + m.loan.status + '")에서는 반납 처리를 할 수 없어요.' };
-    setLoan_(ss, m.loan.row, '반납완료', new Date()); return { ok: true };
+    var ss = SpreadsheetApp.getActiveSpreadsheet(), chk = pinCheck_(ss, who, pin); if (!chk.ok) return chk;
+    return returnLoanAs_(ss, id, who);
   } finally { lock.releaseLock(); }
+}
+function returnLoanAs_(ss, id, who) {
+  var m = loanOfMine_(ss, ss.getSpreadsheetTimeZone(), id, who); if (m.err) return { ok: false, msg: m.err };
+  if (m.loan.status !== '승인') return { ok: false, msg: '지금 상태("' + m.loan.status + '")에서는 반납 처리를 할 수 없어요.' };
+  setLoan_(ss, m.loan.row, '반납완료', new Date()); return { ok: true, loan: m.loan };
 }
 function cancelLoan(code, id, who, pin) {
   auth_(code);
   var lock = LockService.getScriptLock(); lock.waitLock(20000);
   try {
-    var ss = SpreadsheetApp.getActiveSpreadsheet(), tz = ss.getSpreadsheetTimeZone(), today = dayStr_(new Date(), tz), chk = pinCheck_(ss, who, pin); if (!chk.ok) return chk;
-    var m = loanOfMine_(ss, tz, id, who); if (m.err) return { ok: false, msg: m.err };
-    var l = m.loan;
-    if (!(l.status === '승인대기' || (l.status === '승인' && l.start > today))) return { ok: false, msg: '이미 시작된 대여는 취소할 수 없어요. 반납 처리를 해 주세요.' };
-    setLoan_(ss, l.row, '취소'); return { ok: true };
+    var ss = SpreadsheetApp.getActiveSpreadsheet(), chk = pinCheck_(ss, who, pin); if (!chk.ok) return chk;
+    return cancelLoanAs_(ss, id, who);
   } finally { lock.releaseLock(); }
+}
+function cancelLoanAs_(ss, id, who) {
+  var tz = ss.getSpreadsheetTimeZone(), today = dayStr_(new Date(), tz);
+  var m = loanOfMine_(ss, tz, id, who); if (m.err) return { ok: false, msg: m.err };
+  var l = m.loan;
+  if (!(l.status === '승인대기' || (l.status === '승인' && l.start > today))) return { ok: false, msg: '이미 시작된 대여는 취소할 수 없어요. 반납 처리를 해 주세요.' };
+  setLoan_(ss, l.row, '취소'); return { ok: true, loan: l };
 }
 
 // 내 신청 내역: 대여(진행 중 + 최근) + 앞으로의 공간 신청
 function myRequests(code, who, pin) {
   auth_(code);
-  var ss = SpreadsheetApp.getActiveSpreadsheet(), tz = ss.getSpreadsheetTimeZone(), today = dayStr_(new Date(), tz), chk = pinCheck_(ss, who, pin);
+  var ss = SpreadsheetApp.getActiveSpreadsheet(), chk = pinCheck_(ss, who, pin);
   if (!chk.ok) return chk;
-  var n = norm_(who);
+  return myRequestsAs_(ss, who);
+}
+function myRequestsAs_(ss, who) {
+  var tz = ss.getSpreadsheetTimeZone(), today = dayStr_(new Date(), tz), n = norm_(who);
   var loans = loanRows_(ss, tz).filter(function (l) { return norm_(l.who) === n && (l.status === '승인대기' || l.status === '승인' || (l.status === '반납완료' && l.returned >= dayStr_(new Date(Date.now() - 14 * 86400000), tz))); })
     .map(function (l) { return { id: l.id, name: l.name, qty: l.qty, start: l.start, due: l.due, status: l.status, overdue: l.status === '승인' && l.due < today }; });
   var sh = ss.getSheetByName('사용신청'), spaces = [];
@@ -548,12 +564,18 @@ function cancelMySpace(code, who, pin, row) {
   auth_(code);
   var lock = LockService.getScriptLock(); lock.waitLock(20000);
   try {
-    var ss = SpreadsheetApp.getActiveSpreadsheet(), tz = ss.getSpreadsheetTimeZone(), today = dayStr_(new Date(), tz), chk = pinCheck_(ss, who, pin); if (!chk.ok) return chk;
-    var sh = ss.getSheetByName('사용신청'), r = sh.getRange(Number(row), 1, 1, 11).getValues()[0];
-    if (!(r[1] instanceof Date) || norm_(r[5]) !== norm_(who)) return { ok: false, msg: '내 신청이 아니에요.' };
-    if (dayStr_(r[1], tz) < today) return { ok: false, msg: '지난 신청은 취소할 수 없어요.' };
-    sh.getRange(Number(row), 11).setValue('취소'); return { ok: true };
+    var ss = SpreadsheetApp.getActiveSpreadsheet(), chk = pinCheck_(ss, who, pin); if (!chk.ok) return chk;
+    return cancelMySpaceAs_(ss, who, row);
   } finally { lock.releaseLock(); }
+}
+function cancelMySpaceAs_(ss, who, row) {
+  var tz = ss.getSpreadsheetTimeZone(), today = dayStr_(new Date(), tz);
+  row = Number(row);
+  if (!(row >= 2)) return { ok: false, msg: '신청 번호가 올바르지 않아요.' };
+  var sh = ss.getSheetByName('사용신청'), r = sh.getRange(row, 1, 1, 11).getValues()[0];
+  if (!(r[1] instanceof Date) || norm_(r[5]) !== norm_(who) || r[10] === '취소' || r[10] === '반려') return { ok: false, msg: '내 신청이 아니에요.' };
+  if (dayStr_(r[1], tz) < today) return { ok: false, msg: '지난 신청은 취소할 수 없어요.' };
+  sh.getRange(row, 11).setValue('취소'); return { ok: true, date: dayStr_(r[1], tz), period: String(r[3]), space: String(r[4]) };
 }
 
 // ---- 관리자 ----

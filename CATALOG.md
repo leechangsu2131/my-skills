@@ -23,8 +23,8 @@
 | `admin-hitalk-sender` | ✅ 운영 | - | Google Sheets 명단과 템플릿으로 학생·학부모별 HiTalk 메시지를 작성한다. 미리보기·리허설 후 발송할 수 있다. | [SKILL](skills/admin-hitalk-sender/SKILL.md) · [이슈](skills/admin-hitalk-sender/ISSUES.md) |
 | `admin-neis-bot` | ✅ 운영 | - | NEIS 체험학습·결석 서류 접수, 출장·연수 등록, 창체/동아리 기록, 시간표 작업 등 교사 행정을 자동화한다. | [SKILL](skills/admin-neis-bot/SKILL.md) · [이슈](skills/admin-neis-bot/ISSUES.md) 🔵1 |
 | `admin-s2b-buyer` | ✅ 운영 | - | CSV/Excel 품목을 S2B에서 검색해 견적서(장바구니)에 담고 처리 결과 엑셀을 만든다. 실제 구매 확정은 범위에 포함되지 않는다. | [SKILL](skills/admin-s2b-buyer/SKILL.md) · [이슈](skills/admin-s2b-buyer/ISSUES.md) |
-| `admin-school-facility` | 🔧 개발 | 0.1.0 | 구글 시트로 학교 기물 대장·공간(특별실·강당 등) 교시별 사용 신청·기물 대여를 관리하고, 3D 건물 화면으로 현황을 보여 주는 Apps Script 웹앱을 만든다. | [SKILL](skills/admin-school-facility/SKILL.md) · [이슈](skills/admin-school-facility/ISSUES.md) |
-| `school-todo-kakao` | ✅ 운영 | - | 학교 공용 일정 시트와 내가 직접 적은 할 일을 **내 일정DB 시트 한 곳**에 모으고, 평일 아침마다 그날 일정을 카카오톡 **나에게 보내기**로 알려 주는 작은 파이썬 프로그램입니다. | [SKILL](skills/school-todo-kakao/SKILL.md) · [이슈](skills/school-todo-kakao/ISSUES.md) 🔵1 · [README](skills/school-todo-kakao/README.md) |
+| `admin-school-facility` | 🔧 개발 | 0.2.0 | 구글 시트로 학교 기물 대장·공간(특별실·강당 등) 교시별 사용 신청·기물 대여를 관리하고, 3D 건물 화면으로 현황을 보여 주는 Apps Script 웹앱을 만든다. 카카오톡 챗봇(스쿨투두 채널 공유)으로 대여·반납·예약도 된다. | [SKILL](skills/admin-school-facility/SKILL.md) · [이슈](skills/admin-school-facility/ISSUES.md) 🔵1 |
+| `school-todo-kakao` | ✅ 운영 | - | 학교 공용 일정 시트와 내가 직접 적은 할 일을 **내 일정DB 시트 한 곳**에 모으고, 평일 아침마다 그날 일정을 카카오톡 **나에게 보내기**로 알려 주는 작은 파이썬 프로그램입니다. | [SKILL](skills/school-todo-kakao/SKILL.md) · [이슈](skills/school-todo-kakao/ISSUES.md) 🔵2 · [README](skills/school-todo-kakao/README.md) |
 
 ## 학생 기록·평가
 

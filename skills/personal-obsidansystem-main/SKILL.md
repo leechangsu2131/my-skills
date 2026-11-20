@@ -1,11 +1,11 @@
 ---
 name: personal-obsidansystem-main
-description: Google Drive 안의 Obsidian 볼트(개인 PKM 메모)를 운용지침에 맞게 저장·분류·정리할 때 쓴다. 인박스·루트에 쌓인 메모 분류, 노트 속성(domain·engine·topic·type) 일괄 수정, 볼트를 묶음(md)으로 만들어 NotebookLM·Gemini에 올리기, Gemini·NotebookLM 추천표를 볼트에 반영, NotebookLM 소스를 md로 받아 볼트에 넣기. '옵시디언', '볼트', '메모 정리', '인박스 정리', 'PKM', '노트북LM 묶음', '병합본' 같은 말이 나오면 쓴다.
+description: Google Drive 안의 Obsidian 볼트(개인 PKM 메모)를 운용지침에 맞게 저장·분류·정리할 때 쓴다. 인박스·루트에 쌓인 메모 분류, 노트 속성(domain·engine·topic·type) 일괄 수정, 볼트를 묶음(md)으로 만들어 NotebookLM·Gemini에 올리기, Gemini·NotebookLM 추천표를 볼트에 반영, NotebookLM 소스를 md로 받아 볼트에 넣기, Google Keep 메모를 가져와 승격 후보 고르기. '옵시디언', '볼트', '메모 정리', '인박스 정리', 'PKM', '노트북LM 묶음', '병합본', '구글 킵', 'Keep 메모' 같은 말이 나오면 쓴다.
 metadata:
   category: 개인·생활
   status: 운영
-  version: v0.2.0
-  summary: Obsidian 볼트 메모를 운용지침에 맞게 분류·정리한다. 속성 일괄 수정 GUI, 볼트 묶음(md) 생성 → NotebookLM/Gemini 분석 → 추천표 검증·반영 파이프라인, NotebookLM 소스 추출 연계를 담았다.
+  version: v0.3.0
+  summary: Obsidian 볼트 메모를 운용지침에 맞게 분류·정리한다. 속성 일괄 수정 GUI, 볼트 묶음(md) 생성 → NotebookLM/Gemini 분석 → 추천표 검증·반영 파이프라인, NotebookLM 소스 추출 연계, Google Keep 메모 가져오기를 담았다.
 ---
 
 # personal-obsidansystem-main
@@ -34,6 +34,15 @@ Google Drive에 있는 Obsidian 볼트를 볼트 안 운용지침(`PKM_Rules/PKM
 - 파일을 옮길 때는 링크가 깨지지 않게 `pkm_core.update_links_for_note_change`를 쓰거나 Obsidian CLI `move`를 쓴다(그냥 파일 이동 금지).
 - 볼트에는 git이 없다(구글 드라이브 버전 기록으로 대신). 일괄 수정 전에는 도구의 자동 백업(`<내 문서>\backupvault`)이 켜져 있는지 확인하고, 먼저 `--dry-run`으로 돌린다.
 - 결과물(묶음, 응답, CSV, 상태 파일)에는 노트 내용이 들어 있으므로 `data_dir()`(`<내 문서>\my-skills-data\personal-obsidansystem-main\`)에만 둔다.
+
+## Keep 메모 가져오기
+운용지침 "데이터 흐름 원칙"에 따라 Keep 같은 원시 기록은 **볼트에 통째로 옮기지 않는다.** 승격 조건 두 가지(① 왜 중요한지 한 문장으로 말할 수 있다 ② 기존 노트와 연결된다)를 갖춘 것만 `00_Inbox`로 올린다.
+
+1. 사용자가 [Google Takeout](https://takeout.google.com)에서 **Keep만 선택**해 내보내고 zip을 받는다(Keep은 개인 계정용 공식 API가 없다).
+2. `python keep_import.py <takeout.zip>` 실행. 볼트는 건드리지 않고 `data_dir()\keep\<시각>\`에 메모별 md, `_전체.md`, `_목록.csv`를 만든다. 휴지통 메모는 빼고, 보관 메모는 `--include-archived`일 때만 넣는다. 다음부터는 `--only-new`로 새 메모만 뽑는다.
+3. 분류(Claude): **`_목록.csv`(제목·첫 줄·라벨·날짜)부터 보고** 후보를 고른다. 후보 메모만 열어 읽는다. 메모가 수백 개라 내용 판단이 필요하면 `_전체.md`를 NotebookLM에 올려 묶어 보게 한다.
+4. 사용자에게 `승격 | 보류 | 버림` 표(승격은 연결할 기존 노트와 이유 한 줄)를 보여 준다. 승인받은 것만 `00_Inbox`로 복사하고, 그다음에는 평소 인박스 정리 순서를 따른다.
+5. 할 일·장보기 같은 체크리스트 메모는 승격하지 않는다(Obsidian에는 통찰만).
 
 ## 준비
 - Python 3.10+, `pip install pyyaml` (나머지는 표준 라이브러리)

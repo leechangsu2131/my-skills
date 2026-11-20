@@ -40,6 +40,13 @@ FLOWS = DATA / "flows"
 UNITS = DATA / "units"
 SESSIONS = DATA / "sessions"
 CAUTIONS_PATH = DATA / "publisher_notes.json"
+DEFAULT_AI_SITES = [
+    {"name": "Claude", "url": "https://claude.ai/new"},
+    {"name": "Gemini", "url": "https://gemini.google.com/app"},
+    {"name": "ChatGPT", "url": "https://chatgpt.com/"},
+    {"name": "Grok", "url": "https://grok.com/"},
+    {"name": "NotebookLM", "url": "https://notebooklm.google.com/"},
+]
 PROGRESS_ACTIONS = {"done", "extend", "push", "catch-up"}
 _lock = threading.Lock()
 
@@ -192,6 +199,7 @@ def state(day: date) -> dict:
         "phones": cfg.get("phones", []),
         "links": cfg.get("links", []),
         "hiclass_url": cfg.get("hiclass_url", ""),
+        "ai_sites": ai_sites(cfg),
         "schedule_api": cfg.get("schedule_api", ""),
         "lessons": lessons,
     }
@@ -227,10 +235,15 @@ def screen_size() -> tuple[int, int]:
         return 1920, 1080
 
 
+def ai_sites(cfg: dict) -> list[dict]:
+    return cfg.get("ai_sites") or DEFAULT_AI_SITES
+
+
 def allowed_urls(cfg: dict) -> set[str]:
     urls = {s.get("site", "") for s in cfg.get("subjects", {}).values()}
     urls |= {l.get("url", "") for l in cfg.get("links", [])}
     urls.add(cfg.get("hiclass_url", ""))
+    urls |= {s.get("url", "") for s in ai_sites(cfg)}
     return {u for u in urls if u}
 
 
@@ -377,6 +390,8 @@ class Handler(BaseHTTPRequestHandler):
                 return self._json({"status": "success", "message": open_window(check_site_url(body.get("url", ""), cfg), "right", cfg)})
             if url.path == "/api/copy-secret":
                 return self._json({"status": "success", "message": copy_secret(body.get("subject", ""), body.get("field", ""))})
+            if url.path == "/api/ask-prepare":
+                return self._json(ask_prepare(body))
             if url.path == "/api/session":
                 return self._json(save_session(body))
             if url.path == "/api/caution":
@@ -386,6 +401,70 @@ class Handler(BaseHTTPRequestHandler):
         except (ValueError, KeyError, subprocess.CalledProcessError) as exc:
             return self._json({"status": "error", "message": str(exc)}, 400)
         return self._json({"status": "error", "message": "없는 주소"}, 404)
+
+
+def ask_prepare(body: dict) -> dict:
+    """웹 AI(Claude·Gemini·ChatGPT 등)에 물어볼 준비: 단원 개관 PDF + 차시 지도서 PDF 를 한 폴더에 모으고 질문 문장을 만든다.
+    학생 메모·녹음은 넣지 않는다(개인정보)."""
+    cfg = load_config()
+    day = body.get("date", "")
+    date.fromisoformat(day)
+    subject, unit = str(body.get("subject", "")), str(body.get("unit", ""))
+    lesson, title = str(body.get("lesson", "")), str(body.get("title", ""))
+    record_key = str(body.get("record_key", ""))
+    if record_key and not re.fullmatch(r"[A-Za-z0-9_\-]{1,40}", record_key):
+        raise ValueError("차시 번호 형식이 잘못됐어요.")
+    folder = DATA / "ask" / day / safe_name(f"{body.get('period') or 0}교시_{subject}")
+    if not folder.resolve().is_relative_to(DATA.resolve()):
+        raise ValueError("저장 위치가 올바르지 않아요.")
+    folder.mkdir(parents=True, exist_ok=True)
+    files, missing = [], []
+    unit_info = find_unit({"subject": subject, "unit": unit}) or {}
+    overview = UNITS / str(unit_info.get("overview_pdf", ""))
+    if unit_info.get("overview_pdf") and overview.is_file():
+        dest = folder / f"1_단원개관_{safe_name(unit)}.pdf"
+        shutil.copyfile(overview, dest)
+        files.append(dest.name)
+    else:
+        missing.append("단원 개관 PDF")
+    if record_key:
+        base = cfg.get("schedule_api", "http://127.0.0.1:5000").rstrip("/")
+        try:
+            with urllib.request.urlopen(f"{base}/api/pdf/{urllib.parse.quote(record_key)}", timeout=60) as res:
+                data = res.read()
+            if data[:5] == b"%PDF-":
+                dest = folder / f"2_차시지도서_{safe_name(lesson)}차시.pdf"
+                dest.write_bytes(data)
+                files.append(dest.name)
+            else:
+                missing.append("차시 지도서 PDF")
+        except (urllib.error.URLError, OSError):
+            missing.append("차시 지도서 PDF(진도 서버 확인)")
+    else:
+        missing.append("차시 지도서 PDF")
+    publisher = cfg.get("subjects", {}).get(subject, {}).get("publisher", "")
+    notes = read_json(CAUTIONS_PATH, {})
+    cautions = [c["text"] for c in notes.get(f"{publisher}|{subject}", []) + notes.get(f"{publisher}|*", [])]
+    lines = [f"초등학교 3학년 {subject} 수업을 준비하고 있습니다.",
+             f"- 단원: {unit}", f"- 이번 차시: {lesson}차시 「{title}」"]
+    if publisher:
+        lines.append(f"- 교과서·지도서 출판사: {publisher}")
+    if files:
+        lines.append("첨부: " + ", ".join(files))
+    lines += ["", "첨부한 지도서를 바탕으로 아래를 짧고 실용적으로 알려 주세요.",
+              "1. 40분 수업 흐름(도입–전개–정리)과 시간 배분",
+              "2. 핵심 발문 3~5개와 예상되는 학생 답",
+              "3. 학생들이 어려워할 부분과 도와주는 방법",
+              "4. 지도서 활동을 더 쉽게·재미있게 바꿀 아이디어 (준비물이 적은 것)",
+              "5. 수업 끝에 이해를 확인할 질문 1~2개"]
+    if cautions:
+        lines += ["", "참고 – 이 출판사 지도서를 쓰며 느낀 점:"] + [f"- {c}" for c in cautions[:5]]
+    prompt = "\n".join(lines)
+    (folder / "질문.txt").write_text(prompt, encoding="utf-8")
+    subprocess.Popen(["explorer", str(folder)])
+    return {"status": "success", "prompt": prompt, "files": files, "missing": missing,
+            "message": "파일 폴더를 열고 질문을 복사했어요. 파일을 대화창에 끌어다 놓고 Ctrl+V 하세요."
+                       + (f" (없음: {', '.join(missing)})" if missing else "")}
 
 
 def save_audio(q: dict, raw: bytes) -> dict:

@@ -21,6 +21,13 @@
     {"name": "하이클래스", "url": "https://www.hiclass.net"}
   ],
   "hiclass_url": "https://www.hiclass.net",
+  "ai_sites": [
+    {"name": "Claude", "url": "https://claude.ai/new"},
+    {"name": "Gemini", "url": "https://gemini.google.com/app"},
+    {"name": "ChatGPT", "url": "https://chatgpt.com/"},
+    {"name": "Grok", "url": "https://grok.com/"},
+    {"name": "NotebookLM", "url": "https://notebooklm.google.com/"}
+  ],
   "chrome_profile": "%LOCALAPPDATA%\\MusicClassHelper\\chrome_profile",
   "debug_port": 9233,
   "google_account_hint": "",

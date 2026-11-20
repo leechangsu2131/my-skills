@@ -76,6 +76,8 @@ textarea,input[type=text]{width:100%;font:inherit;border:1px solid var(--line);b
     <h1 id="lTitle">수업을 불러오는 중…</h1>
     <div id="lMeta" class="muted"></div>
     <div class="row" style="margin-top:8px" id="siteBtns"></div>
+    <div class="row" style="margin-top:8px"><span class="muted">🤖 AI와 수업 준비</span><span id="aiBtns" class="row"></span></div>
+    <div class="muted" style="font-size:12px">누르면 단원 개관·차시 지도서 PDF 폴더가 열리고 질문이 복사돼요 → 대화창에 파일을 끌어다 놓고 Ctrl+V</div>
   </section>
 
   <section id="cautionBox">
@@ -170,6 +172,7 @@ async function load(){
   $('source').textContent = '출처: ' + S.source;
   $('phones').innerHTML = S.phones.map(p=>`<div><span>${esc(p.name)}</span><b>${esc(p.no)}</b></div>`).join('') || '설정에 내선번호를 적어 주세요';
   $('links').innerHTML = S.links.map((l,i)=>`<button data-l="${i}">${esc(l.name)}</button>`).join('');
+  $('aiBtns').innerHTML = (S.ai_sites||[]).map((a,i)=>`<button data-ai="${i}">${esc(a.name)}</button>`).join('');
   renderTabs();
   const np = nowPeriod();
   const first = S.lessons.find(l=>l.period===np) || S.lessons[0];
@@ -382,6 +385,17 @@ document.querySelector('main').addEventListener('click', async e => {
   const j = await post('/api/progress/'+p, body);
   if (j.status==='success'){ addMemo('sys', `진도 조정: ${p}`, true); setTimeout(load, 600); }
 });
+$('aiBtns').onclick = async e => {
+  const b = e.target.closest('button'); if (!b || !cur) return;
+  const site = S.ai_sites[+b.dataset.ai];
+  b.disabled = true; toast('지도서 PDF를 모으는 중…', 8000);
+  const j = await post('/api/ask-prepare', {date:S.date, period:cur.period, subject:cur.subject, unit:cur.unit, lesson:cur.lesson, title:cur.title, record_key:cur.record_key});
+  b.disabled = false;
+  if (j.status !== 'success') return;
+  await navigator.clipboard.writeText(j.prompt).catch(()=>{});
+  await post('/api/open-site', {url: site.url});
+  toast(j.message, 7000);
+};
 $('catchBtn').onclick = async () => {
   if (!cur) return;
   if (!cur.record_key) { toast('진도표에서 불러온 수업이 아니라 진도를 바꿀 수 없어요 (진도 서버 확인)'); return; }

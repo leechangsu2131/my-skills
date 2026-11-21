@@ -1,7 +1,7 @@
 # 스킬 카탈로그
 
 > 이 파일은 `python tools/build_catalog.py`로 자동 생성된다. 직접 고치지 말고 각 스킬의 `SKILL.md` 앞머리(`metadata`)를 고친 뒤 다시 실행한다.
-> 생성일: 2026-11-21 · 스킬 60개
+> 생성일: 2026-11-21 · 스킬 61개
 
 ## 빠른 찾기
 
@@ -9,7 +9,7 @@
 - [📝 학생 기록·평가](#학생-기록평가) — 11개
 - [📚 수업·교사 도구](#수업교사-도구) — 14개
 - [🌐 홈페이지](#홈페이지) — 1개
-- [👤 개인·생활](#개인생활) — 15개
+- [👤 개인·생활](#개인생활) — 16개
 - [🛠️ 공통 유틸](#공통-유틸) — 10개
 
 ## 학교 행정
@@ -48,10 +48,10 @@
 |---|---|---|---|---|
 | `teacher-3dprint` | 🔧 개발 | - | 수업 아이디어·물체·지형을 실제 출력 가능한 STL로 설계한다. 실측 지형, 기능 부품, 식품 몰드 참고 절차와 독도 지형 예제가 있다. | [SKILL](skills/teacher-3dprint/SKILL.md) · [이슈](skills/teacher-3dprint/ISSUES.md) |
 | `teacherlesson-aiep-courseware` | ✅ 운영 | - | 상위 공통 수업꾸러미의 AIEP 어댑터. 경북 AIEP의 성취기준, LCMS·파일/링크 배치, 공개 범위와 학습 순서를 반영해 꾸러미를 만들고 학습자 미리보기를 점검한다. | [SKILL](skills/teacherlesson-aiep-courseware/SKILL.md) · [이슈](skills/teacherlesson-aiep-courseware/ISSUES.md) · [README](skills/teacherlesson-aiep-courseware/README.md) |
+| `teacherlesson-assistant` | 🔧 개발 | v0.1.0 | 진도표·지도서·출판사 사이트·녹음·메모를 묶은 교시별 수업 진행 화면과, 지도서에서 수업 흐름을 뽑고 수업 뒤 메모를 분석해 다음 수업에 반영하는 Claude 작업 절차. | [SKILL](skills/teacherlesson-assistant/SKILL.md) · [이슈](skills/teacherlesson-assistant/ISSUES.md) |
 | `teacherlesson-classtool-courseware` | ✅ 운영 | - | 클래스툴의 내 수업 보관함에서 수업자료를 설계하고, 링크·콘텐츠·OX·객관식·주관식·화이트보드 활동을 구성한다. 교사 자료실 공개와 학생 클래스 배포, 실시간 응답 흐름을 구분한다. | [SKILL](skills/teacherlesson-classtool-courseware/SKILL.md) · [이슈](skills/teacherlesson-classtool-courseware/ISSUES.md) |
 | `teacherlesson-courseware-builder` | ✅ 운영 | - | 플랫폼 공통 수업 패키지와 자료를 설계하고, AIEP·클래스툴 등 사이트별 어댑터로 콘텐츠 배치, 학생 응답 방식, 공개/배포 범위를 구분해 제작한다. 새 플랫폼은 어댑터와 카탈로그 항목으로 확장한다. | [SKILL](skills/teacherlesson-courseware-builder/SKILL.md) · [이슈](skills/teacherlesson-courseware-builder/ISSUES.md) |
 | `teacherlesson-from-neis` | ✅ 운영 | Chrome 확장 v1.5.4 | NEIS 수업내용과 학생 출결·신청 현황을 조회해 뷰어에 표시하고, 신청 내용을 확인해 선택한 결석신고서만 결석 구분과 Chrome에 저장한 유형별 결재선을 적용해 접수·승인요청한다. 최종 결재는 하지 않는다. | [SKILL](skills/teacherlesson-from-neis/SKILL.md) · [이슈](skills/teacherlesson-from-neis/ISSUES.md) 🔵2 · [README](skills/teacherlesson-from-neis/README.md) |
-| `teacherlesson-assistant` | 🔧 개발 | v0.1.0 | 진도표·지도서·출판사 사이트·녹음·메모를 묶은 교시별 수업 진행 화면과, 지도서에서 수업 흐름을 뽑고 수업 뒤 메모를 분석해 다음 수업에 반영하는 Claude 작업 절차. | [SKILL](skills/teacherlesson-assistant/SKILL.md) · [이슈](skills/teacherlesson-assistant/ISSUES.md) |
 | `teacherlesson-guide-mapper` | ✅ 운영 | - | 지도서 및 분할 결과에서 진도표 행을 만들고 시트 업로드용 데이터를 생성한다. | [SKILL](skills/teacherlesson-guide-mapper/SKILL.md) · [이슈](skills/teacherlesson-guide-mapper/ISSUES.md) · [README](skills/teacherlesson-guide-mapper/README.md) |
 | `teacherlesson-guide-splitter` | ✅ 운영 | - | 지도서 PDF를 구조 신호에 따라 단원 또는 세부 항목으로 분할하고 그룹명을 보정한다. | [SKILL](skills/teacherlesson-guide-splitter/SKILL.md) · [이슈](skills/teacherlesson-guide-splitter/ISSUES.md) · [README](skills/teacherlesson-guide-splitter/README.md) |
 | `teacherlesson-guide-tracker` | ✅ 운영 | - | 분할기의 `groups.json`을 읽어 Notion 과목별 진도표 데이터베이스를 만든다. | [SKILL](skills/teacherlesson-guide-tracker/SKILL.md) · [이슈](skills/teacherlesson-guide-tracker/ISSUES.md) · [README](skills/teacherlesson-guide-tracker/README.md) |
@@ -71,16 +71,17 @@
 
 | 스킬 | 상태 | 버전 | 할 수 있는 일 | 문서 |
 |---|---|---|---|---|
-| `personal-analyze-trade` | ✅ 운영 | - | Google Sheets 투자 기록을 읽어 포트폴리오, 수익, 비중, 섹터, 매매 신호와 전략을 분석한다. 신규 매매 입력은 `personal-record-trade` 담당이다. | [SKILL](skills/personal-analyze-trade/SKILL.md) · [이슈](skills/personal-analyze-trade/ISSUES.md) |
+| `personal-analyze-trade` | 📦 보관 | - | Google Sheets 투자 기록을 읽어 포트폴리오, 수익, 비중, 섹터, 매매 신호와 전략을 분석한다. 신규 매매 입력은 `personal-record-trade` 담당이다. | [SKILL](skills/personal-analyze-trade/SKILL.md) · [이슈](skills/personal-analyze-trade/ISSUES.md) |
 | `personal-attach-files` | ✅ 운영 | - | 프로젝트의 핵심 코드/기획 파일을 모아 AI에 첨부하기 쉬운 임시 폴더로 준비한다. | [SKILL](skills/personal-attach-files/SKILL.md) · [이슈](skills/personal-attach-files/ISSUES.md) |
 | `personal-carrot` | 🔧 개발 | - | Appium으로 Android 당근마켓 앱의 매물을 검색·수집해 Google Sheets에 기록한다. | [SKILL](skills/personal-carrot/SKILL.md) · [이슈](skills/personal-carrot/ISSUES.md) |
 | `personal-chesley-morning-brief-main` | ✅ 운영 | - | 유튜브 '체슬리모닝브리프' 새 영상을 감지해 전체 스크립트를 Gemini Gems 웹 세션으로 구조화 요약하고 디스코드로 보낸다. | [SKILL](skills/personal-chesley-morning-brief-main/SKILL.md) · [이슈](skills/personal-chesley-morning-brief-main/ISSUES.md) · [README](skills/personal-chesley-morning-brief-main/README.md) |
 | `personal-free-parents-app` | 🔧 개발 | - | 공동 육아 놀이터 앱 ‘같이 놀자’의 개발·디자인 통합 안내와 구현 메모를 담는다. | [SKILL](skills/personal-free-parents-app/SKILL.md) · [이슈](skills/personal-free-parents-app/ISSUES.md) 🔵2 · [README](skills/personal-free-parents-app/README.md) |
+| `personal-invest-sheet` | ✅ 운영 | 0.2.0 | 투자시트와 드라이브 invest 폴더(문서·수집 스크립트)를 정해진 순서와 쓰기 규칙으로 읽고 갱신한다. 예전 analyze/record-trade 스킬을 대신한다. | [SKILL](skills/personal-invest-sheet/SKILL.md) · [이슈](skills/personal-invest-sheet/ISSUES.md) 🔵1 |
 | `personal-library-search` | ✅ 운영 | - | Notion 도서 목록에서 ISBN/서점 정보를 찾고 경주시립도서관 소장 여부를 확인하며, 미소장 도서 희망도서 신청 흐름을 지원한다. | [SKILL](skills/personal-library-search/SKILL.md) · [이슈](skills/personal-library-search/ISSUES.md) · [README](skills/personal-library-search/README.md) |
 | `personal-mp3-baby` | ✅ 운영 | - | 아기 잠자리동화 MP3를 한국어 타임코드 SRT로 전사해 이야기 구간을 찾아 넘길 수 있게 한다. | [SKILL](skills/personal-mp3-baby/SKILL.md) · [이슈](skills/personal-mp3-baby/ISSUES.md) |
 | `personal-obsidansystem-main` | ✅ 운영 | v0.3.0 | Obsidian 볼트 메모를 운용지침에 맞게 분류·정리한다. 속성 일괄 수정 GUI, 볼트 묶음(md) 생성 → NotebookLM/Gemini 분석 → 추천표 검증·반영 파이프라인, NotebookLM 소스 추출 연계, Google Keep 메모 가져오기를 담았다. | [SKILL](skills/personal-obsidansystem-main/SKILL.md) · [이슈](skills/personal-obsidansystem-main/ISSUES.md) |
 | `personal-reading-book` | ✅ 운영 | - | 긴 문서를 로컬 우선으로 읽고 설명하는 Reading Tutor 프로젝트의 규칙과 정리 스크립트를 담는다. | [SKILL](skills/personal-reading-book/SKILL.md) · [이슈](skills/personal-reading-book/ISSUES.md) |
-| `personal-record-trade` | ✅ 운영 | - | 자연어·거래 화면 캡처 등에서 새 매매 내역을 정리해 Google Sheets 매매일지에 추가한다. | [SKILL](skills/personal-record-trade/SKILL.md) · [이슈](skills/personal-record-trade/ISSUES.md) · [README](skills/personal-record-trade/README.md) |
+| `personal-record-trade` | 📦 보관 | - | 자연어·거래 화면 캡처 등에서 새 매매 내역을 정리해 Google Sheets 매매일지에 추가한다. | [SKILL](skills/personal-record-trade/SKILL.md) · [이슈](skills/personal-record-trade/ISSUES.md) · [README](skills/personal-record-trade/README.md) |
 | `personal-vba-book` | ✅ 운영 | - | 책 목록·독서 감상문 데이터와 VBA/서재 관리용 스크립트를 보관한다. | [SKILL](skills/personal-vba-book/SKILL.md) · [이슈](skills/personal-vba-book/ISSUES.md) |
 | `personal-video-note` | ✅ 운영 | v0.2.6 | YouTube 자막을 먼저 조회·추출하고, 강의 영상에서 슬라이드 캡처·타임스탬프 전사·Obsidian용 노트를 로컬 생성한다. 같은 슬라이드의 누적 공개 화면은 대표 화면으로 통합하고, 이미지 링크와 `slides/` 구성을 유지한다. | [SKILL](skills/personal-video-note/SKILL.md) · [이슈](skills/personal-video-note/ISSUES.md) 🔵1 · [README](skills/personal-video-note/README.md) |
 | `personal-video-url` | ✅ 운영 | - | `krcls.kr`의 기존 로그인 Chrome(CDP 9222)에서 플레이어 프레임에 노출된 미디어 URL을 확인해 CSV/Markdown으로 저장하고, 차시별 진도를 전후 비교한다. 영상은 다운로드하지 않는다. | [SKILL](skills/personal-video-url/SKILL.md) · [이슈](skills/personal-video-url/ISSUES.md) |

@@ -1,134 +1,76 @@
 ---
 name: teacherlesson-assistant
-description: "수업 비서. 진도표(teacherlesson-schedule)의 그날 수업을 교시별로 넘겨 보며 왼쪽 창에 수업 흐름·주의점·메모, 오른쪽 창에 출판사 수업 사이트를 띄우고 녹음·메모·알림장 초안·진도 조정을 한 화면에서 한다. '내일 수업 준비해줘', '수업 흐름 만들어줘', '오늘 수업 정리해줘', '출판사 지도서 특징 정리', '수업 비서 켜줘' 같은 요청에 사용한다."
+description: "수업 비서. 진도표(teacherlesson-schedule)의 그날 수업을 교시별로 넘겨 보며 왼쪽 창에 수업 흐름·주의점·메모, 오른쪽 창에 출판사 수업 사이트를 띄우고 녹음·메모·알림장 초안·진도 조정을 한 화면에서 한다. '내일 수업 준비해줘', '수업 흐름 만들어줘', '오늘 수업 정리해줘', '출판사 지도서 특징 정리', '수업 비서 켜줘', '지도서 받아줘' 같은 요청에 사용한다."
 metadata:
   category: 수업·교사 도구
   status: 개발
   version: v0.1.0
-  summary: 진도표·지도서·출판사 사이트·녹음·메모를 묶은 교시별 수업 진행 화면과, 지도서에서 수업 흐름을 뽑고 수업 뒤 메모를 분석해 다음 수업에 반영하는 Claude 작업 절차.
+  summary: 진도표·지도서·출판사 사이트·녹음·메모를 묶은 교시별 수업 진행 화면과, 수업 뒤 메모를 정리해 다음 수업에 반영하는 Claude 작업 절차.
 ---
 
 # 수업 비서 (teacherlesson-assistant)
 
-두 부분으로 나뉜다.
+- **수업 화면** (`assistant_server.py` + `web/index.html`, 파이썬 기본 기능만) — 교사가 수업 중에 직접 쓴다. 실행 방법·화면 기능·저장 위치·지도서 받기는 [README.md](README.md).
+- **Claude 작업 절차** (아래) — 화면은 Claude가 만든 파일을 읽기만 한다.
 
-1. **수업 화면** (`assistant_server.py` + `web/index.html`) — 수업 중에 교사가 직접 쓰는 화면. 파이썬 기본 기능만 쓰므로 추가 설치가 없다.
-2. **Claude 작업 절차** (이 문서 아래) — 수업 전에 지도서에서 수업 흐름을 만들고, 수업 뒤 기록을 정리해 다음 수업에 반영한다. 화면은 Claude가 만든 파일을 읽기만 한다.
-
-## 실행
-
-- `실행_수업비서.bat` → 서버(127.0.0.1:5180)가 켜지고 화면 왼쪽 1/3에 수업 비서 창이 열린다.
-- 진도를 진도표에서 가져오려면 `teacherlesson-schedule` 서버(5000번)도 켜 둔다. 꺼져 있으면 설정의 `fallback_timetable`(요일별 과목)을 쓴다.
-- "수업 사이트 열기"는 수업 도우미 공용 Chrome 프로필(config `chrome_profile`, 기본 `%LOCALAPPDATA%\MusicClassHelper\chrome_profile`, 원격 디버깅 포트 `debug_port` 9233)로 화면 오른쪽 2/3에 창을 연다. 열 수 있는 주소는 config 의 과목 사이트·바로가기·하이클래스 주소뿐이다. 한 번 로그인하면 그 프로필에 로그인이 유지된다.
-- 서버는 Host 가 127.0.0.1/localhost 인 요청만 받는다(다른 사이트·DNS 리바인딩 차단). 클립보드로 복사한 비밀번호는 30초 뒤 지운다.
-
-## 화면 기능 (v0.1)
-
-| 영역 | 내용 |
-|---|---|
-| 위쪽 | 날짜 이동, 시계, 교시 탭(지금 교시 노란 테두리, 기록 저장된 교시 ✓), 📞 내선번호 |
-| 수업 카드 | 과목·출판사·단원·차시, 수업 사이트 열기, 아이디/비번 복사, 지도서 PDF(진도 서버 `/api/pdf`) |
-| 주의할 점 | 출판사별 주의점(`publisher_notes.json`) + 같은 과목 지난 수업 메모·고칠점 |
-| 단원 개관 | `units/*.json`의 단원 목표·단원 흐름(지금 차시 ◀)·유의점·평가 (접기/펴기) |
-| 수업 흐름 | `flows/*.json`의 목표·준비물·단계(활동, 💬발문, 💡팁). 단계 이동 시 시각 기록, 단계별 경과 시간 |
-| 수업 기록 | 녹음(10초마다 서버에 이어 저장), 👍좋았음 🔧고칠점 🙋학생 발표 ★표시 🎤음성 메모, 직접 입력 메모. 모두 녹음 기준 [mm:ss] |
-| 알림장 | 내용 작성 → 클립보드 복사 + 하이클래스 열기 (자동 게시는 아직 없음) |
-| 진도 조정 | 완료 / 한 차시 더(뒤 진도 밀림) / 며칠 미루기 → 진도 서버 API(`/api/done`, `/api/extend`, `/api/push`)로 시트에 바로 반영. 실행 전 확인 창 |
-
-## 저장 위치 (깃에 올리지 않음)
-
-`내 문서\my-skills-data\teacherlesson-assistant\`
-
-- `config.json` — 교시 시각, 내선번호, 바로가기, 과목별 출판사·사이트·`secret_prefix`, 진도 서버 주소. 처음 실행 때 `config.example.json`을 복사해 만든다.
-- `units/<과목>__<대단원>.json` — 단원 개관 (Claude가 만든다)
-- `flows/<record_key>.json` 또는 `flows/<과목>__<차시제목>.json` — 수업 흐름 (Claude가 만든다)
-- `sessions/<날짜>/<교시>교시_<과목>.json` — 그 수업의 메모·알림장·시작/마침 시각
-- `sessions/<날짜>/<교시>교시_<과목>_<시각>.webm` — 녹음
-- `publisher_notes.json` — `{"출판사|과목": [{"text","date"}], "출판사|*": [...]}`
-
-아이디·비밀번호는 중앙 .env(`OneDrive\96. 인증\.env`)에 `<secret_prefix>_ID`, `<secret_prefix>_PW`로 적는다(예: `ISCREAM_ID`). 서버는 값을 화면에 보내지 않고 클립보드로만 넘긴다. 학생 이름이 들어간 메모·녹음은 이 PC의 데이터 폴더에만 두고, 기억(memory)·CLAUDE.md·깃·홈페이지에 옮기지 않는다.
+데이터 폴더: `내 문서\my-skills-data\teacherlesson-assistant\` (config, units, flows, sessions, publisher_notes). 학생 이름이 들어간 메모·녹음은 이 폴더에만 두고 기억(memory)·CLAUDE.md·깃·홈페이지에 옮기지 않는다.
 
 ## 역할 나눔 (토큰 아끼기)
 
-- **Claude Code(이 스킬)**: 자동화 — 지도서 받기·나누기, 진도표 연결·조정, 단원 개관 정리, 화면 기능. 한 번 만들어 두면 계속 쓰는 일.
-- **웹 AI(Claude·Gemini·ChatGPT·Grok·NotebookLM)**: 수업 중·수업 전 "이 차시 어떻게 할까" 상담. 화면의 **🤖 AI와 수업 준비** 단추가
-  ① 단원 개관 PDF(`units/*.pdf`) + 차시 지도서 PDF(진도 서버 `/api/pdf`)를 `my-skills-data/teacherlesson-assistant/ask/<날짜>/<교시>_<과목>/`에 모아 폴더를 열고,
-  ② 질문 문장(질문.txt)을 클립보드에 복사하고, ③ 고른 AI 사이트를 오른쪽 창에 연다. 교사는 파일을 대화창에 끌어다 놓고 Ctrl+V.
-  학생 메모·녹음은 넣지 않는다. AI 사이트 목록은 config `ai_sites`(없으면 기본 5곳). 파일 자동 첨부는 사이트 화면이 자주 바뀌어 넣지 않았다.
+- **날마다 쓰는 기능은 Claude 토큰 0**: 단원 개관(`build_units.py`), 진도 조정, AI 준비 자료 모으기는 규칙·스크립트로 돈다.
+- **수업 상담·많이 읽기는 웹 AI**(Claude·Gemini·ChatGPT·NotebookLM): 화면의 **🤖 AI와 수업 준비** 단추가 지도서 PDF를 모으고 질문을 복사해 AI 사이트를 연다. 학생 메모·녹음은 넣지 않는다.
+- **Claude Code(이 스킬)**: 자동화·연결·검토 — 지도서 받기·나누기, 진도표 연결, 화면 기능 고치기, 수업 정리.
 
 ## Claude 작업 절차
 
-### A. 수업 준비 — "내일 수업 준비해줘", "수업 흐름 만들어줘"
+### A. 수업 흐름 만들기 — 선택 사항 (기본으로 하지 않음)
 
-1. 서버가 켜져 있으면 `GET http://127.0.0.1:5180/api/state?date=YYYY-MM-DD`로 그날 수업 목록을 받는다(꺼져 있으면 `teacherlesson-schedule`의 `/api/dashboard`). `flow`가 비어 있는 수업만 대상으로 한다.
-2. 지도서 쪽을 구한다: `http://127.0.0.1:5000/api/pdf/<record_key>`(그 차시 쪽만 잘린 PDF)를 받아 텍스트를 뽑는다. 지도서 전체 PDF를 통째로 읽지 않는다(사용량 절약).
-3. 아래 형식으로 `flows/<record_key>.json`을 쓴다. 지도서 문장을 그대로 길게 옮기지 말고 수업 중 한눈에 보이게 줄인다.
+교사가 **그 차시를 콕 집어** "이 수업 흐름 만들어줘"라고 할 때만 한다. "내일 수업 준비해줘"에는 흐름을 만들지 말고, 그날 수업 목록·빠진 지도서 PDF·단원 개관 상태만 확인해 알려 주고 🤖 AI 단추를 안내한다.
+
+1. `GET http://127.0.0.1:5180/api/state?date=YYYY-MM-DD`(꺼져 있으면 `teacherlesson-schedule`의 `/api/dashboard`)로 수업을 찾는다.
+2. `http://127.0.0.1:5000/api/pdf/<record_key>`(그 차시 쪽만 잘린 PDF)에서 텍스트를 뽑는다. 지도서 전체를 통째로 읽지 않는다.
+3. `flows/<record_key>.json`을 쓴다. 지도서 문장은 수업 중 한눈에 보이게 줄인다.
 
 ```json
 {
   "record_key": "...", "subject": "수학", "title": "분수의 덧셈(2)", "publisher": "아이스크림",
-  "source": "지도서 p.120-123",
-  "goal": "학습 목표 한 줄",
-  "materials": ["분수 막대", "활동지"],
-  "steps": [
-    {"name": "도입", "minutes": 5, "do": "할 활동", "say": "핵심 발문", "tip": "주의·보충할 점"}
-  ],
-  "homework": "숙제·알림장 후보 (없으면 빈 문자열)"
+  "source": "지도서 p.120-123", "goal": "학습 목표 한 줄", "materials": ["분수 막대"],
+  "steps": [{"name": "도입", "minutes": 5, "do": "할 활동", "say": "핵심 발문", "tip": "주의·보충할 점"}],
+  "homework": ""
 }
 ```
 
-4. `tip`에는 그 수업의 `cautions`(출판사 주의점)와 `recent_memos`(같은 과목 지난 고칠점)를 실제로 적용한 내용을 넣는다. 예: 출판사 주의점이 "설명이 단순함"이면 개념 설명 단계에 보충 발문을 넣는다.
-5. 무엇을 만들었고 지도서에서 확인이 안 된 부분(쪽 누락, 스캔 PDF 등)이 무엇인지 보고한다.
+4. `tip`에는 그 수업의 `cautions`(출판사 주의점)와 `recent_memos`(같은 과목 지난 고칠점)를 실제로 적용한다.
+5. 지도서에서 확인이 안 된 부분(쪽 누락, 스캔 PDF 등)을 보고한다.
 
 ### A-2. 단원 개관 — 자동 (Claude 판단 없음)
 
-`py -3.13 build_units.py` (실행_수업비서.bat 가 12시간에 한 번 자동 실행). 토큰을 쓰지 않는다.
+`py -3.13 build_units.py` (bat 가 12시간마다 실행). 단원 흐름은 진도표 행을 그대로 묶고, 단원 개관 PDF는 1차시 지도서에서 첫 차시 앞쪽을 규칙(`LESSON_START`)으로 자른다. 수학처럼 분할 결과에 plan 묶음이 있으면 그것을 쓴다. `summary`·`goals`·`cautions`·`assessment` 칸은 있으면 보여 주고 지우지 않지만, Claude가 새로 쓰지 않는다.
 
-- 단원 흐름: 진도표 행(차시·수업내용)을 그대로 묶는다 → 차시 번호가 진도표와 항상 같다.
-- 단원 개관 PDF: 1차시 지도서 PDF 에서 첫 차시가 시작되는 쪽 앞까지를 규칙으로 잘라 `units/<과목>__<대단원>.pdf`.
-  분할 결과에 '단원 개관'(plan) 묶음이 있으면(수학) 그것을 쓴다. 차시 시작 표시는 `build_units.py` 의 `LESSON_START`.
-- 화면: "📗 단원 개관" 칸에 단원 흐름(지금 차시 ◀)과 "📄 단원 개관 PDF" 단추. 요약·해석이 필요하면 🤖 AI 단추로 웹 AI에 묻는다.
-- `summary`·`goals`·`cautions`·`assessment` 칸은 선택이다. 있으면 그대로 보여 주고 자동 갱신 때 지우지 않는다(2026-11-21 에 몇 단원은 Claude 가 써 둠). 새로 쓰는 일은 하지 않는다.
+### A-3. NotebookLM 소스 — "NotebookLM 소스 만들어줘" (학기 초·새 지도서 받은 뒤)
+
+`py -3.13 notebook_sources.py [과목…] [--all]` 를 돌리고 출력 줄(구간 수·단어 수·PDF 없음·⚠ 한도)을 그대로 보고한다. 소스 내용을 Claude가 읽거나 요약하지 않는다. "구간 1개"인 단원은 차시 표시를 못 찾은 것이므로 그 PDF의 차시 머리 모양을 확인해 `KOREAN_LESSON`/`STAGE` 규칙을 고친다. 업로드·노트북 주소 등록은 교사가 한다(README).
 
 ### B. 수업 정리 — "오늘 수업 정리해줘"
 
-1. `sessions/<날짜>/*.json`을 읽는다.
-2. 과목별로 잘된 점·고칠 점을 요약해 보고한다.
-3. 같은 출판사에서 반복해 나오는 특징(예: "아이스크림: 활동은 재밌지만 개념 설명이 단순")은 `publisher_notes.json`에 추가할 후보로 제시하고, **교사가 동의한 것만** 추가한다.
-4. 🙋 학생 발표 메모는 `observations/<학기>.csv`(날짜, 과목, 차시, 학생, 내용)에 모아 성적·누가기록 참고 자료로 쌓는다. 평가 문구로 자동 변환하지 않는다(그 일은 `classmanage-student-eval-generator`).
-5. 진도가 실제 수업과 어긋났으면(한 차시 더 했음, 못 했음) 진도 조정 버튼이나 `teacherlesson-schedule` 기능을 제안한다. 시트 변경은 교사 확인 뒤에만 한다.
-6. 녹음 파일은 지금은 클로바노트 등에 넣어 받아쓰기를 받고, 받아쓴 텍스트가 있으면 그 내용도 함께 분석한다.
+1. `sessions/<날짜>/*.json`을 읽고 과목별 잘된 점·고칠 점을 요약한다.
+2. 같은 출판사에서 반복되는 특징(예: "아이스크림: 활동은 재밌지만 개념 설명이 단순")은 `publisher_notes.json` 추가 후보로 제시하고, **교사가 동의한 것만** 넣는다.
+3. 🙋 학생 발표 메모는 `observations/<학기>.csv`(날짜, 과목, 차시, 학생, 내용)에 모은다. 평가 문구로 자동 변환하지 않는다(`classmanage-student-eval-generator`의 일).
+4. 진도가 실제와 어긋났으면 화면의 진도 조정 단추를 안내한다. 시트 변경은 교사 확인 뒤에만.
+5. 녹음은 지금은 클로바노트 등으로 받아쓰고, 받아쓴 텍스트가 있으면 함께 분석한다.
 
 ### C. 알림장 — "알림장 올려줘"
 
-v0.1은 화면의 "복사하고 하이클래스 열기"까지만 한다. 자동 게시는 `admin-hitalk-sender`의 Chrome 원격 디버깅 방식을 하이클래스 알림장 화면에 맞게 고쳐 붙일 예정이다(ISSUES 참고). 게시 전에는 반드시 내용을 교사에게 보여 주고 확인받는다.
+v0.1은 "복사하고 하이클래스 열기"까지만. 자동 게시는 ISSUES 다음 단계 1번. 게시 전에는 반드시 교사 확인.
 
 ### D. 지도서 받기 — "지도서 받아줘"
 
-`C:\Python313\python.exe guide_download.py 수학 사회 [--list] [--with-plan]` (selenium 필요, C:\Python313 에 있음)
-
-- 수업 도우미 전용 크롬(`chrome_profile`, `debug_port` 9233)에 붙어 출판사 사이트의 지도서 목록을 그때그때 읽고 `D:\지도서\<과목> <학년-학기>\`에 받는다. 같은 크기 파일이 있으면 건너뛴다. 받은 기록은 데이터 폴더 `guide_downloads.json`.
-- 로그인: 이 프로필에서 구글(크롬)에 한 번 로그인해 두면 크롬이 저장된 아이디·비번을 채워 주고, 스크립트는 "로그인하기"만 누른다. 비밀번호는 스크립트가 다루지 않는다.
-- 지원 출판사 (`PUBLISHERS`, 다른 출판사는 함수를 추가):
-  - **아이스크림**(수학·사회): 차시 화면 → "전자책등 자료" → "교사용 지도서". 단원별 PDF, 로그인 없이 받아짐
-  - **미래엔 엠티처**(국어): 교사용 DVD ZIP(학기당 약 3GB)에서 `지도서/pdf/*.pdf`만 부분 받기(Range)로 꺼냄. 파일 이름은 출판사 원래 이름(`국어3-2지도서_2_4.pdf`)
-  - **천재 T셀파**(도덕): 교과서 카드 → 공통 자료 → "지도서" 다운로드 단추를 크롬이 직접 받음. 1년 한 권이라 폴더는 `도덕 3`
-  - 미술(아트앤컬쳐)·음악(두클래스)은 1년 한 권이라 1학기에 받은 `D:\지도서\미술.pdf`, `음악.pdf`를 그대로 씀
-- 학년·학기는 config 의 `grade_term`(아이스크림은 사이트의 '내 교과서 설정'). 구글 계정 선택은 `google_account_hint`로 시작하는 계정을 고른다.
-- 9222 포트는 다른 자동화(에듀파인)가 쓰고 있을 수 있어 9233을 쓴다.
-- 받은 뒤에는 `teacherlesson-guide-splitter`로 차시별 분할, `teacherlesson-guide-mapper`로 진도표 연결.
+`C:\Python313\python.exe guide_download.py <과목…> [--list] [--with-plan]` — 출판사별 방법과 주의점은 [README.md](README.md#지도서-받기-guide_downloadpy). 받은 뒤 `teacherlesson-guide-splitter` → `teacherlesson-guide-mapper`.
 
 ## 연결되는 스킬
 
 - `teacherlesson-schedule` — 진도표·수업배치, 진도 조정 API, 차시별 지도서 PDF
-- `teacherlesson-from-neis` — 나이스 주간학습안내(보결·시간표 변경 확인용)
+- `teacherlesson-from-neis` — 나이스 주간학습안내(보결·시간표 변경)
 - `teacherlesson-guide-splitter`, `teacherlesson-guide-mapper` — 지도서 분할·진도표 행 생성
-- `teacherlesson-social-helper`, `teacherlesson-music-helper` — 과목별 사이트 자동 열기 참고 구현
-- `admin-hitalk-sender` — 하이클래스 자동 전송 참고 구현
-- 홈페이지 `castle-class.html` — 녹음·단계 기록 화면의 원형
-
-## 변경 시 확인할 곳
-
-- 화면: `web/index.html` (한 파일)
-- 서버·저장 형식: `assistant_server.py`
-- 설정 항목: `config.example.json` (실사용 설정은 데이터 폴더의 `config.json`)
+- `teacherlesson-social-helper`, `teacherlesson-music-helper` — 과목별 사이트 자동 열기 참고
+- `admin-hitalk-sender` — 하이클래스 자동 전송 참고

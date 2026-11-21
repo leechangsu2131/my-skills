@@ -32,8 +32,10 @@
   "debug_port": 9233,
   "google_account_hint": "",
   "grade_term": "3-2",
+  "_notebooklm": "과목마다 NotebookLM 노트북 주소를 subjects.<과목>.notebooklm 에 적으면 NotebookLM 단추가 그 노트북을 연다. 소스는 notebook_sources.py 로 만든다. 그림만 PDF 로도 넣을 과목:",
+  "notebooklm_image_subjects": ["음악", "미술"],
   "subjects": {
-    "수학": {"publisher": "아이스크림", "site": "https://www.i-scream.co.kr/user/subject/SubjectChasiList.do", "login": "google"},
+    "수학": {"publisher": "아이스크림", "site": "https://www.i-scream.co.kr/user/subject/SubjectChasiList.do", "login": "google", "notebooklm": ""},
     "음악": {"publisher": "두클래스", "site": "https://ele.douclass.com", "login": "google"},
     "도덕": {"publisher": "천재교육", "site": "https://www.tsherpa.co.kr", "secret_prefix": "TSHERPA"}
   },

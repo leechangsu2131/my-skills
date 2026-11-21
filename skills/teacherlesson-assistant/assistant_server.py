@@ -40,6 +40,7 @@ FLOWS = DATA / "flows"
 UNITS = DATA / "units"
 SESSIONS = DATA / "sessions"
 CAUTIONS_PATH = DATA / "publisher_notes.json"
+NOTEBOOKLM = DATA / "notebooklm"
 DEFAULT_AI_SITES = [
     {"name": "Claude", "url": "https://claude.ai/new"},
     {"name": "Gemini", "url": "https://gemini.google.com/app"},
@@ -75,6 +76,24 @@ def write_json(path: pathlib.Path, value) -> None:
 
 def safe_name(text: str) -> str:
     return re.sub(r'[\\/:*?"<>|\s]+', "_", str(text)).strip("_")[:80] or "x"
+
+
+# NotebookLM 소스·노트에서 차시를 찾는 표시: "[수학 6단원] 4차시" (notebook_sources.py, split_notes.py 와 같이 씀)
+def unit_label(unit: str) -> str:
+    m = re.match(r"\s*(\d+(?:\.\d+)?)", str(unit))
+    return f"{m.group(1)}단원" if m else (str(unit).split() or ["단원"])[0]
+
+
+def lesson_tag(subject: str, unit: str) -> str:
+    return f"[{subject} {unit_label(unit)}]"
+
+
+def lesson_range(start: int, end: int | None = None) -> str:
+    return f"{start}~{end}차시" if end and end != start else f"{start}차시"
+
+
+def lesson_note_path(subject: str, unit: str, n: int) -> pathlib.Path:
+    return NOTEBOOKLM / safe_name(subject) / "notes" / f"{safe_name(unit_label(unit))}_{n}차시.md"
 
 
 # ──────────────────────────── 수업 목록 ────────────────────────────
@@ -244,11 +263,12 @@ def allowed_urls(cfg: dict) -> set[str]:
     urls |= {l.get("url", "") for l in cfg.get("links", [])}
     urls.add(cfg.get("hiclass_url", ""))
     urls |= {s.get("url", "") for s in ai_sites(cfg)}
+    urls |= {s.get("notebooklm", "") for s in cfg.get("subjects", {}).values()}
     return {u for u in urls if u}
 
 
 def check_site_url(url: str, cfg: dict) -> str:
-    """오른쪽 창으로 열 주소는 설정(과목 사이트·바로가기·하이클래스)에 있는 http(s) 주소만 허용."""
+    """오른쪽 창으로 열 주소는 설정(과목 사이트·노트북·바로가기·하이클래스·AI)에 있는 http(s) 주소만 허용."""
     parsed = urllib.parse.urlparse(str(url))
     if parsed.scheme not in ("http", "https") or url not in allowed_urls(cfg):
         raise ValueError("설정에 없는 주소는 열지 않아요.")
@@ -409,14 +429,59 @@ class Handler(BaseHTTPRequestHandler):
         return self._json({"status": "error", "message": "없는 주소"}, 404)
 
 
+ASK_ITEMS = ["1. 40분 수업 흐름(도입–전개–정리)과 시간 배분",
+             "2. 핵심 발문 3~5개와 예상되는 학생 답",
+             "3. 학생들이 어려워할 부분과 도와주는 방법",
+             "4. 지도서 활동을 더 쉽게·재미있게 바꿀 아이디어 (준비물이 적은 것)",
+             "5. 수업 끝에 이해를 확인할 질문 1~2개"]
+
+
+def lesson_numbers(lesson: str) -> tuple[int, int] | None:
+    """진도표 차시 '3(3~4)' → (3, 4), '5' → (5, 5)."""
+    m = re.search(r"\((\d+)\s*[~∼]\s*(\d+)\)", lesson) or re.search(r"(\d+)(?:\s*[~∼]\s*(\d+))?", lesson)
+    if not m:
+        return None
+    a = int(m.group(1))
+    return a, int(m.group(2) or a)
+
+
+def cautions_for(cfg: dict, subject: str) -> list[str]:
+    publisher = cfg.get("subjects", {}).get(subject, {}).get("publisher", "")
+    notes = read_json(CAUTIONS_PATH, {})
+    return [c["text"] for c in notes.get(f"{publisher}|{subject}", []) + notes.get(f"{publisher}|*", [])]
+
+
+def ask_notebooklm(cfg: dict, subject: str, unit: str, lesson: str, title: str) -> dict:
+    """NotebookLM: 지도서는 이미 소스로 올라가 있으니 파일은 모으지 않고, '[과목 N단원] N차시' 를 짚는 질문만 만든다."""
+    nums = lesson_numbers(lesson)
+    mark = f"{lesson_tag(subject, unit)} {lesson_range(*nums)}" if nums and unit else ""
+    url = cfg.get("subjects", {}).get(subject, {}).get("notebooklm", "")
+    lines = [f"초등학교 3학년 {subject} 수업을 준비하고 있습니다."]
+    if mark:
+        lines += [f"소스 「{unit}」에서 \"{mark}\" 제목 아래 부분(이번 차시: 「{title}」)을 바탕으로 답해 주세요.",
+                  f"답의 맨 위에는 다음 제목을 그대로 써 주세요: ## {mark} {title}"]
+    else:
+        lines.append(f"이번 차시: 「{title}」")
+    lines += ["", "짧고 실용적으로 알려 주세요.", *ASK_ITEMS]
+    cautions = cautions_for(cfg, subject)
+    if cautions:
+        lines += ["", "참고 – 이 출판사 지도서를 쓰며 느낀 점:"] + [f"- {c}" for c in cautions[:5]]
+    msg = ("과목 노트북을 열고 질문을 복사했어요. 대화창에 Ctrl+V 하세요." if url else
+           "이 과목 노트북 주소가 config 에 없어 NotebookLM 첫 화면을 열어요(subjects.<과목>.notebooklm).")
+    return {"status": "success", "prompt": "\n".join(lines), "files": [], "missing": [],
+            "url": url or None, "message": msg}
+
+
 def ask_prepare(body: dict) -> dict:
     """웹 AI(Claude·Gemini·ChatGPT 등)에 물어볼 준비: 단원 개관 PDF + 차시 지도서 PDF 를 한 폴더에 모으고 질문 문장을 만든다.
-    학생 메모·녹음은 넣지 않는다(개인정보)."""
+    학생 메모·녹음은 넣지 않는다(개인정보). mode=notebooklm 이면 질문만 만든다."""
     cfg = load_config()
     day = body.get("date", "")
     date.fromisoformat(day)
     subject, unit = str(body.get("subject", "")), str(body.get("unit", ""))
     lesson, title = str(body.get("lesson", "")), str(body.get("title", ""))
+    if body.get("mode") == "notebooklm":
+        return ask_notebooklm(cfg, subject, unit, lesson, title)
     record_key = str(body.get("record_key", ""))
     if record_key and not re.fullmatch(r"[A-Za-z0-9_\-]{1,40}", record_key):
         raise ValueError("차시 번호 형식이 잘못됐어요.")
@@ -448,21 +513,21 @@ def ask_prepare(body: dict) -> dict:
             missing.append("차시 지도서 PDF(진도 서버 확인)")
     else:
         missing.append("차시 지도서 PDF")
+    nums = lesson_numbers(lesson)
+    note = lesson_note_path(subject, unit, nums[0]) if nums and unit else None
+    if note and note.is_file() and note.resolve().is_relative_to(NOTEBOOKLM.resolve()):
+        dest = folder / f"3_NotebookLM노트_{nums[0]}차시.md"
+        shutil.copyfile(note, dest)
+        files.append(dest.name)
     publisher = cfg.get("subjects", {}).get(subject, {}).get("publisher", "")
-    notes = read_json(CAUTIONS_PATH, {})
-    cautions = [c["text"] for c in notes.get(f"{publisher}|{subject}", []) + notes.get(f"{publisher}|*", [])]
+    cautions = cautions_for(cfg, subject)
     lines = [f"초등학교 3학년 {subject} 수업을 준비하고 있습니다.",
              f"- 단원: {unit}", f"- 이번 차시: {lesson}차시 「{title}」"]
     if publisher:
         lines.append(f"- 교과서·지도서 출판사: {publisher}")
     if files:
         lines.append("첨부: " + ", ".join(files))
-    lines += ["", "첨부한 지도서를 바탕으로 아래를 짧고 실용적으로 알려 주세요.",
-              "1. 40분 수업 흐름(도입–전개–정리)과 시간 배분",
-              "2. 핵심 발문 3~5개와 예상되는 학생 답",
-              "3. 학생들이 어려워할 부분과 도와주는 방법",
-              "4. 지도서 활동을 더 쉽게·재미있게 바꿀 아이디어 (준비물이 적은 것)",
-              "5. 수업 끝에 이해를 확인할 질문 1~2개"]
+    lines += ["", "첨부한 지도서를 바탕으로 아래를 짧고 실용적으로 알려 주세요.", *ASK_ITEMS]
     if cautions:
         lines += ["", "참고 – 이 출판사 지도서를 쓰며 느낀 점:"] + [f"- {c}" for c in cautions[:5]]
     prompt = "\n".join(lines)

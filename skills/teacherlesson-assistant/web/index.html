@@ -389,12 +389,13 @@ document.querySelector('main').addEventListener('click', async e => {
 $('aiBtns').onclick = async e => {
   const b = e.target.closest('button'); if (!b || !cur) return;
   const site = S.ai_sites[+b.dataset.ai];
-  b.disabled = true; toast('지도서 PDF를 모으는 중…', 8000);
-  const j = await post('/api/ask-prepare', {date:S.date, period:cur.period, subject:cur.subject, unit:cur.unit, lesson:cur.lesson, title:cur.title, record_key:cur.record_key});
+  const nb = /notebooklm/i.test(site.name);  // 지도서가 과목 노트북 소스로 올라가 있으니 파일은 모으지 않음
+  b.disabled = true; toast(nb ? '질문을 만드는 중…' : '지도서 PDF를 모으는 중…', 8000);
+  const j = await post('/api/ask-prepare', {date:S.date, period:cur.period, subject:cur.subject, unit:cur.unit, lesson:cur.lesson, title:cur.title, record_key:cur.record_key, mode: nb ? 'notebooklm' : ''});
   b.disabled = false;
   if (j.status !== 'success') return;
   await navigator.clipboard.writeText(j.prompt).catch(()=>{});
-  await post('/api/open-site', {url: site.url});
+  await post('/api/open-site', {url: j.url || site.url});
   toast(j.message, 7000);
 };
 $('catchBtn').onclick = async () => {

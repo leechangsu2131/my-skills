@@ -6,7 +6,7 @@
 - 일지에만 있는 행은 다른 계좌(토스·ISA 등) 기록일 수 있어 개수만 보여 준다.
 
 실행: python -X utf8 journal_reconcile.py <trades_rows_*.tsv> [--since YYYY-MM-DD]
-설정: 공용 .env 의 PERSONAL_INVEST_SHEET__INVEST_DIR → tools/sheet_io.py 로 시트를 연다.
+설정: 같은 폴더의 sheet_io.py 가 공용 .env 의 시트 ID·서비스 계정 키로 시트를 연다.
 """
 import argparse
 import collections
@@ -20,11 +20,8 @@ from datetime import date, timedelta
 sys.path.insert(0, str(next(p / "_shared" for p in pathlib.Path(__file__).resolve().parents if (p / "_shared" / "skill_env.py").is_file())))
 from skill_env import data_dir, load_env  # noqa: E402
 
-load_env()
-invest_dir = os.environ.get("INVEST_DIR")
-if not invest_dir or not os.path.isdir(invest_dir):
-    sys.exit("공용 .env에 PERSONAL_INVEST_SHEET__INVEST_DIR(invest 폴더 경로)가 없거나 폴더가 없습니다.")
-sys.path.insert(0, os.path.join(invest_dir, "tools"))
+load_env(skill="personal-invest-sheet")
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))  # 같은 폴더의 sheet_io.py
 import sheet_io  # noqa: E402
 
 

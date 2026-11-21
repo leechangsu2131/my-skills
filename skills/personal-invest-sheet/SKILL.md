@@ -1,30 +1,33 @@
 ---
 name: personal-invest-sheet
-description: "투자시트(구글 시트 '투자시트 업그레이드')와 G:\\내 드라이브\\invest 폴더를 함께 관리할 때 사용한다. 포트폴리오·비중·신호 확인, 키움 매매내역을 매매일지·포트폴리오에 반영, 자연어·캡처로 매매 기록, 재무·FCF·raw data 갱신, 분위기 일지, 원칙·전략·등급 문서 개정, 분기·반기 점검이 모두 여기에 해당한다. '투자시트', '매매 반영', '매매일지', '포트폴리오 비중', '비중조절신호', '재무수집 갱신', '분위기 일지', '종목 노트', '내 규칙' 같은 말이 나오면 쓴다."
+description: "투자시트(구글 시트 '투자시트 업그레이드')와 G:\\내 드라이브\\invest 폴더를 함께 관리할 때 사용한다. 포트폴리오·비중·신호 확인, 키움 매매내역을 매매일지·포트폴리오에 반영, 자연어·캡처로 매매 기록, 재무·FCF·raw data 갱신, 분위기 일지, 가격·상관·위험 분석, 원칙·전략·등급 문서 개정, 분기·반기 점검이 모두 여기에 해당한다. 수집·분석 스크립트도 이 스킬 scripts 폴더에 있다. '투자시트', '매매 반영', '매매일지', '포트폴리오 비중', '비중조절신호', '재무수집 갱신', '분위기 일지', '종목 노트', '내 규칙', '키움 조회' 같은 말이 나오면 쓴다."
 metadata:
   category: 개인·생활
   status: 운영
-  version: 0.2.0
-  summary: 투자시트와 드라이브 invest 폴더(문서·수집 스크립트)를 정해진 순서와 쓰기 규칙으로 읽고 갱신한다. 예전 analyze/record-trade 스킬을 대신한다.
+  version: 0.3.0
+  summary: 투자시트와 드라이브 invest 폴더(문서·종목 목록·데이터)를 정해진 순서와 쓰기 규칙으로 다루고, 수집·분석 스크립트를 로컬에서 실행해 결과를 시트에 반영한다. 예전 analyze/record-trade 스킬을 대신한다.
 ---
 
 # 투자시트 관리 (personal-invest-sheet)
 
-이 스킬은 **안내판**이다. 시트 구조·원칙·종목 판단 같은 실제 내용은 아래 "기준 문서"에 있고 계속 바뀐다.
-이 파일에 수치·종목·명의를 옮겨 적지 않는다(공개 저장소). 필요할 때마다 기준 문서와 시트에서 읽는다.
+이 스킬은 **안내판 + 실행 도구**다. 시트 구조·원칙·종목 판단 같은 내용은 아래 "기준 문서"에 있고 계속 바뀐다.
+공개 저장소라 이 폴더(문서·코드)에 **수치·종목·명의·키를 적지 않는다.** 그런 것은 드라이브 invest 폴더와 공용 .env에 있다.
 
 ## 1. 기준 문서 (내용이 다르면 이쪽이 맞다)
 
-| 무엇 | 어디 |
+드라이브 invest 폴더 = 공용 .env 의 `PERSONAL_INVEST_SHEET__INVEST_DIR` (이 PC: `G:/내 드라이브/invest`)
+
+| 무엇 | 어디 (invest 폴더 기준) |
 |---|---|
-| 전체 지도·운영 주기·Claude 작업 규칙 | `G:\내 드라이브\invest\docs\00_총괄_투자시스템.md` (특히 §6 운영 주기, §9 작업 규칙) |
-| 폴더·스크립트·데이터 흐름 | `G:\내 드라이브\invest\README.md` |
-| 키움 매매 → 시트 반영 규칙 1~11 | `G:\내 드라이브\invest\fetch\README.md` "시트 반영 규칙" |
+| 전체 지도·운영 주기·Claude 작업 규칙 | `docs/00_총괄_투자시스템.md` (§6 운영 주기, §9 작업 규칙) |
+| **미결 항목(열린 목록)** | `docs/00_총괄_투자시스템.md` §7-1 — 상태는 여기서만 바꾼다. 다른 문서의 열린 질문은 배경 |
+| 폴더·데이터 흐름·실행 방법 | `README.md` **0절** (2026-11-21 코드 위치 변경) |
+| 종목 목록 (보유·관심·정리) | `portfolio/universe.csv` — 스크립트는 종목을 코드에 두지 않고 여기서 읽는다 |
+| 키움 매매 → 시트 반영 규칙 1~11 | `fetch/README.md` "시트 반영 규칙" |
 | 시트 탭 지도·열 설명·AI 쓰기 규칙 | 시트 `📖 README` 탭 (3번 탭 지도, 4번 📊 열 설명, 5번 매매일지 규칙, 7번 쓰기 규칙) |
-| 원칙 위계·전략·등급 | `docs\11_원칙_위계.md` → `12_전략_명세.md` → `13_기업_등급표.md` |
-| 종목 판단 | `docs\<종목>_YYYYMM.md` (양식 `템플릿_기업분석.md`) |
-| 과거 결정·롤백 수식 | `docs\변경기록_결정기록\README.md` 목차부터 |
-| **미결 항목(열린 목록)** | `00_총괄_투자시스템.md` §7-1 — 상태는 여기서만 바꾼다. 다른 문서의 열린 질문은 배경 |
+| 원칙 위계·전략·등급 | `docs/11_원칙_위계.md` → `12_전략_명세.md` → `13_기업_등급표.md` |
+| 종목 판단 | `docs/<종목>_YYYYMM.md` (양식 `템플릿_기업분석.md`) |
+| 과거 결정·롤백 수식 | `docs/변경기록_결정기록/README.md` 목차부터 |
 
 - 문서는 **필요한 절만** 찾아 읽는다(`grep -n '^#'`로 목차 → 해당 절). 통째로 읽지 않는다.
 - 새 대화에서 판단이 필요한 작업이면: 총괄 → 11 → 12 → 13 → 해당 종목 노트 순서.
@@ -32,41 +35,51 @@ metadata:
 
 ## 2. 설정 (공용 .env)
 
-`OneDrive\96. 인증\.env`(my-skills 공용 파일)에 있다. 값은 열어 보거나 출력하지 않는다.
+`OneDrive/96. 인증/.env`(my-skills 공용 파일). 값은 열어 보거나 출력하지 않는다.
 
 | 키 | 뜻 |
 |---|---|
-| `PERSONAL_INVEST_SHEET__GOOGLE_SHEET_ID` | 투자시트 ID (`sheet_io.py`와 이 스킬이 읽음) |
-| `PERSONAL_INVEST_SHEET__GOOGLE_SHEET_URL` | 사람이 열어 볼 주소 |
-| `PERSONAL_INVEST_SHEET__INVEST_DIR` | 드라이브 invest 폴더 경로 |
+| `PERSONAL_INVEST_SHEET__GOOGLE_SHEET_ID` / `__GOOGLE_SHEET_URL` | 투자시트 ID / 사람이 열어 볼 주소 |
+| `PERSONAL_INVEST_SHEET__INVEST_DIR` | 드라이브 invest 폴더 (문서·`universe.csv`) |
+| `PERSONAL_INVEST_SHEET__UNIVERSE` | 종목 목록 경로를 따로 줄 때 (기본 `<INVEST_DIR>/portfolio/universe.csv`) |
+| `PERSONAL_INVEST_SHEET__OUTPUT_DIR` | 결과물 폴더 (이 PC는 드라이브 `invest/data`). 비우면 `내 문서/my-skills-data/personal-invest-sheet` |
+| `PERSONAL_INVEST_SHEET__KIWOOM_TAG` | 매매근거 칸 앞 태그 (이름이 들어가므로 .env 에만) |
 | `GOOGLE_CREDENTIALS_PATH` | 서비스 계정 키 (상대 경로면 .env 폴더 기준) |
-| `KIWOOM_*`, `DART_API_KEY`, `NAVER_CLIENT_*` | 수집 스크립트용 |
+| `KIWOOM_APPKEY`·`KIWOOM_SECRETKEY`, `DART_API_KEY`, `NAVER_CLIENT_ID`·`_SECRET` | 수집용 키 |
 
-시트가 바뀌면 `PERSONAL_INVEST_SHEET__GOOGLE_SHEET_ID` 한 줄만 고치면 된다. 이 스킬 스크립트에서는 `load_env()` 뒤 `GOOGLE_SHEET_ID`·`INVEST_DIR`로 보인다.
+시트가 바뀌면 시트 ID 한 줄만 고친다. 스크립트 공통 설정은 `scripts/invest_common.py`(종목 목록·결과 폴더·태그).
 
-## 3. 시트 읽기·쓰기·점검 도구
+## 3. 스크립트 (`scripts/`, 실행은 로컬)
 
-`<INVEST_DIR>\tools\sheet_io.py` (서비스 계정, 시트 ID·키 경로는 공용 .env에서 읽음)
+종목은 `universe.csv`, 키·태그·결과 폴더는 공용 .env에서 읽는다. 종목을 더하거나 빼려면 스크립트가 아니라 `universe.csv`를 고친다
+(`role`: holding/watch/closed, `asset`: stock/etf/other, `fin`: 금융·지주면 Y. 재무 수집은 개별주 중 보유·관심, 정리 종목은 코드를 직접 줄 때만).
+파이썬은 pandas·yfinance·gspread·requests·lxml 이 있는 것(이 PC: `C:/Python313/python.exe`, 목록은 `scripts/requirements.txt`), 항상 `-X utf8`.
+
+| 스크립트 | 하는 일 | 결과 (OUTPUT_DIR 아래) |
+|---|---|---|
+| `kiwoom_fetch_trades.py --since YYYYMMDD` | 키움 매매내역·미국 잔고 (조회 전용) | `invest-output/` |
+| `journal_reconcile.py <trades_rows.tsv>` | 키움 내역 ↔ 📒 매매일지 대조 (읽기 전용) | 누락 목록 (`my-skills-data`) |
+| `fetch_fundamentals_us.py` / `fetch_fundamentals_kr.py` | 재무 (yfinance / DART) | `finance/` sheet_paste_*.csv |
+| `fetch_fcf_history.py`, `fetch_rawdata_yahoo.py`, `fetch_margin_history.py` | FCF 이력, raw data yahoo 행, 마진 이력 | `finance/` |
+| `fetch_sentiment.py` | 분위기 지표 (네이버) | `sentiment_out/` |
+| `fetch_prices.py` → `corr_diagnosis.py` → `risk_mpt.py` | 가격·상관·위험 분석 (`--selftest` 있음) | `portfolio_out/` |
+| `sheet_io.py` | 시트 읽기·쓰기 (5행 제한·빈 범위 확인·재확인 강제) | — |
+| `sheet_check.py` | 시트 점검: 오류 셀, 🎯 하방 임시식, 🔬에 남은 청산 종목 (읽기 전용) | — |
+
+**결과물은 Claude가 직접 읽어 요약·반영한다.** 사용자가 파일을 내려받거나 복사·붙여넣기 하지 않게 한다.
 
 ```bash
-cd "/g/내 드라이브/invest/tools"
+cd ~/Documents/GitHub/my-skills/skills/personal-invest-sheet/scripts
 python -X utf8 sheet_io.py tabs                         # 탭 목록·크기
 python -X utf8 sheet_io.py read "📊 포트폴리오!A4:AJ60"   # 값 읽기 (--formula 수식, --raw 원값)
 python -X utf8 sheet_io.py write "탭!A10:N10" rows.tsv   # 미리보기만
 python -X utf8 sheet_io.py write "탭!A10:N10" rows.tsv --apply   # 실제 쓰기 (빈 범위만)
 ```
 
-- `-X utf8` 필수(탭 이름 이모지). gspread가 있는 파이썬을 쓴다. 범위에는 이모지 포함 탭 이름을 그대로 쓴다.
-- 쓰기 도구가 5행 제한·빈 범위 확인·쓴 뒤 재확인을 강제한다. `--overwrite`는 사용자가 덮어쓰기를 허락했을 때만.
-- 쓰기용 임시 TSV는 `내 문서\my-skills-data\personal-invest-sheet\`에 둔다(드라이브 invest 폴더에 흩뿌리지 않는다).
-- 구글 시트 커넥터를 쓸 수 있는 환경(claude.ai 등)에서도 같은 범위·같은 규칙을 따른다.
-
-**건강 점검 (읽기 전용)**: `python -X utf8 scripts/sheet_check.py`
-오류 셀(#N/A 등) 위치, 🎯 하방이 현재가×0.9x 임시식인 종목, 🔬 기업분석에 남은 청산 종목(행 삭제 후보)을 보여 준다.
-큰 작업 전후, 매매 반영 뒤, 사용자가 "시트 점검"을 부탁할 때 돌린다. 고칠지는 사용자에게 묻는다.
-
-**매매일지 대조 (읽기 전용)**: `python -X utf8 scripts/journal_reconcile.py <trades_rows_*.tsv>`
-키움 체결을 한 종목·하루로 묶어(해외 ±1일 허용) 📒 매매일지에 없는 묶음을 보여 주고 전체 목록을 `my-skills-data\personal-invest-sheet\`에 저장한다. 일지에만 있는 행은 다른 계좌 기록일 수 있다.
+- 범위에는 이모지 포함 탭 이름을 그대로 쓴다. `--overwrite`는 사용자가 덮어쓰기를 허락했을 때만.
+- 쓰기용 임시 TSV는 `내 문서/my-skills-data/personal-invest-sheet/`에 둔다.
+- 구글 시트 커넥터를 쓰는 환경(claude.ai 등)에서도 같은 범위·같은 규칙을 따른다.
+- 점검(`sheet_check.py`)은 큰 작업 전후, 매매 반영 뒤, "시트 점검" 요청 때 돌린다. 고칠지는 사용자에게 묻는다.
 
 ## 4. 작업별 절차
 
@@ -75,7 +88,7 @@ python -X utf8 sheet_io.py write "탭!A10:N10" rows.tsv --apply   # 실제 쓰�
 2. 수치는 시점 값이다. 답할 때 기준 시각과 어느 탭·범위에서 읽었는지 밝힌다.
 3. 사거나 팔라고 권하지 않는다. 사실, 해당하는 내 규칙·원칙, 선택지만 정리한다.
 4. 시트에서 읽은 값과 그걸로 추론한 해석을 나눠 쓴다.
-5. 매매·비중 이야기에는 **명의·계좌·세금**(증여 이월과세, 명의별 해외주식 공제, 손익통산, ISA 배치)을 함께 점검한다. 기준은 드라이브 `docs\변경기록_결정기록\user-context-from-memory.md` §1·§4와 🧾 세금현황.
+5. 매매·비중 이야기에는 **명의·계좌·세금**(증여 이월과세, 명의별 해외주식 공제, 손익통산, ISA 배치)을 함께 점검한다. 기준은 invest `docs/변경기록_결정기록/user-context-from-memory.md` §1·§4와 🧾 세금현황.
 6. 📊 가격데이터는 크니 필요한 열만 좁게 읽는다.
 
 ### A-2. 주문 전 점검 (사용자가 "살까/팔까"를 물을 때)
@@ -89,44 +102,45 @@ python -X utf8 sheet_io.py write "탭!A10:N10" rows.tsv --apply   # 실제 쓰�
 빈칸이 있으면 채우자고 제안하고, 사용자가 답한 내용은 종목 노트나 🎯 AD:AG에 옮길지 묻는다.
 
 ### B. 키움 매매내역 반영
-1. 사용자 PC에서 `cd "G:\내 드라이브\invest\fetch"` → `python kiwoom_fetch_trades.py --since YYYYMMDD` (Claude Code에서 직접 실행해도 된다. 키는 출력하지 않는다).
-2. `data\invest-output\`의 최신 `trades_rows_*.tsv`·`us_balance_*.tsv`를 읽고, `journal_reconcile.py`로 이미 일지에 있는 것과 새로 넣을 것을 가른다. 출력에 `[경고] … 조회 실패`가 있으면 그 구간이 빠진 것이니 다시 돌린다(429 요청 과다는 스크립트가 재시도한다).
-3. `fetch\README.md` 반영 규칙대로 정리: 한국 날짜, 포지션ID, 한 종목·하루 1행, 해외는 **거래일 서울 종가환율**(키움 환율 쓰지 않음), 매매근거엔 출처 태그·가격만.
-4. 반영 순서: 📒 매매일지 → 📊 수량(H)·계좌(Z)·평균매입가(K, 가중평균, 매도는 그대로) → 전량 매도면 👋 청산종목 추가 + 🔬 기업분석의 그 종목 행 삭제(2026-11-06 결정: 보유하지 않는 종목 행은 지움. 지우기 전 행 내용을 보여 주고 확인) → 현금 행.
+1. `python -X utf8 kiwoom_fetch_trades.py --since YYYYMMDD` (Claude Code가 직접 실행. 키는 출력하지 않는다).
+2. 출력에 `[경고] … 조회 실패`가 있으면 그 구간이 빠진 것이니 다시 돌린다(429 요청 과다는 스크립트가 재시도한다).
+3. `journal_reconcile.py`로 이미 일지에 있는 것과 새로 넣을 것을 가른다.
+4. invest `fetch/README.md` 반영 규칙대로 정리: 한국 날짜, 포지션ID, 한 종목·하루 1행, 해외는 **거래일 서울 종가환율**(키움 환율 쓰지 않음), 매매근거엔 출처 태그·가격만.
+5. 반영 순서: 📒 매매일지 → 📊 수량(H)·계좌(Z)·평균매입가(K, 가중평균, 매도는 그대로) → 전량 매도면 👋 청산종목 추가 + 🔬 기업분석의 그 종목 행 삭제(2026-11-06 결정. 지우기 전 행 내용을 보여 주고 확인) → 현금 행.
    - 본인 계좌 간 이동(예: ISA→일반)과 정기 적립식 펀드 매수는 매매일지에 넣지 않는다.
    - 포지션ID는 "종목당 하나"가 아니라 **한 투자 아이디어(진입~청산 흐름)** 단위다. 같은 종목이라도 시기·전략이 다르면 새 ID. 애매하면 기존 ID를 보여 주고 묻는다.
-5. **쓰기 직전에 종목코드(C열)로 행 번호를 다시 읽어 확인**한다. 예전에 확인한 행 번호는 믿지 않는다(행 번호만 믿고 다른 종목 평단을 덮어쓴 사고가 있었다).
-6. 5행씩 미리보기 → 사용자 확인 → `--apply` → 다시 읽어 종목명과 함께 대조.
-7. 매매사유·만족도·컨디션·인지오류는 **사용자가 쓴다.** 비워 두고 채울 칸을 알려준다. 기록 직후가 가장 정확하므로 "이번 매매 이유를 한 줄로 말해 주면 그대로 적겠다"고 한 번 묻는다(이유 없는 매수 행이 쌓인 게 복기의 가장 큰 구멍이었다).
+6. **쓰기 직전에 종목코드(C열)로 행 번호를 다시 읽어 확인**한다. 예전에 확인한 행 번호는 믿지 않는다(행 번호만 믿고 다른 종목 평단을 덮어쓴 사고가 있었다).
+7. 5행씩 미리보기 → 사용자 확인 → `--apply` → 다시 읽어 종목명과 함께 대조.
+8. 매매사유·만족도·컨디션·인지오류는 **사용자가 쓴다.** 비워 두고 채울 칸을 알려준다. 기록 직후가 가장 정확하므로 "이번 매매 이유를 한 줄로 말해 주면 그대로 적겠다"고 한 번 묻는다(이유 없는 매수 행이 쌓인 게 복기의 가장 큰 구멍이었다).
 
 ### B-2. 빠진 매매 소급 입력 (기간 합산)
 - 소액 반복 매매는 한 건씩 넣지 않고 묶는다(2026-11-21 사용자 결정): 같은 종목·구분·포지션ID 안에서 **10일 넘게 쉬면 새 기간**.
-- 매매일 = 기간의 마지막 날, 매매근거 = `[키움 …] 기간합산 YYYY-MM-DD~MM-DD N일·M체결, 평균단가 (소급 입력)`. `journal_reconcile.py`가 이 표기를 읽어 기간 전체를 기록된 것으로 본다.
+- 매매일 = 기간의 마지막 날, 매매근거 = `<태그> 기간합산 YYYY-MM-DD~MM-DD N일·M체결, 평균단가 (소급 입력)`. `journal_reconcile.py`가 이 표기를 읽어 기간 전체를 기록된 것으로 본다.
 - **절세 매매(같은 기간 같은 수량을 팔고 다시 산 것)는 넣지 않는다.** 수량 변화가 0인 짝, 하루~이틀 사이 같은 수량 매도·매수가 후보다. 섞여서 떼기 어려우면 넣고 매매근거에 "절세 매매 섞임 추정"을 적는다. 짧게 사고판 실제 매매(단타)는 넣는다.
-- 해외 원화 금액은 거래일 서울 종가환율이 원칙이고, 소급분은 `data\portfolio_outx_usdkrw.csv`(야후 일별 종가)로 근사하고 그렇게 적는다.
+- 해외 원화 금액은 거래일 서울 종가환율이 원칙이고, 소급분은 OUTPUT_DIR `portfolio_out/fx_usdkrw.csv`(야후 일별 종가)로 근사하고 그렇게 적는다.
 - 일지 맨 아래에 붙이고, 날짜 정렬은 사용자가 한다.
 
 ### C. 말·캡처로 매매 기록 (키움 외 계좌 포함)
 - 사용자가 말한 내용을 📒 매매일지 열(헤더 A3:N3)에 맞춰 정리하고, 매매근거는 **말한 그대로** 적는다. 추측해서 채우지 않는다.
 - 마지막 행 위치는 매매일지 Q3 값으로 확인한 뒤, 그 아래가 비어 있는지 읽고 쓴다.
-- 이후 단계는 B의 4~6과 같다.
+- 이후 단계는 B의 5~7과 같다.
 
 ### D. 재무·밸류 데이터 갱신 (분기 또는 필요할 때)
-- `fetch\`에서 `fetch_fundamentals_us.py` → `fetch_fundamentals_kr.py` → `fetch_fcf_history.py` → `fetch_rawdata_yahoo.py`.
-- 결과 CSV는 실행 폴더에 생긴다. 붙여넣을 곳: `sheet_paste_*.csv` → 📥 재무수집 A2부터, `fcf_history.csv` → 📥 FCF이력, `rawdata_yahoo.csv` → raw data 탭 yahoo 행.
-- 여러 행을 한꺼번에 바꾸는 붙여넣기는 5행 규칙에 걸린다. 사용자에게 직접 붙여 넣게 하거나, 5행씩 나눠 쓸지 먼저 묻는다.
-- 스크립트마다 종목 목록이 따로 박혀 있다(invest README §9). 실행 전에 📊 포트폴리오 보유 종목과 맞는지 대조하고 빠진·정리된 종목을 알려준다.
+- `fetch_fundamentals_us.py` → `fetch_fundamentals_kr.py` → `fetch_fcf_history.py` → `fetch_rawdata_yahoo.py` (마진 이력은 `fetch_margin_history.py`, narrative_dcf 입력용).
+- 실행 전에 `universe.csv`의 보유·관심 종목이 📊 포트폴리오와 맞는지 대조하고, 빠지거나 정리된 종목이 있으면 알린다.
+- 붙일 곳: `sheet_paste_*.csv` → 📥 재무수집 A2부터, `fcf_history.csv` → 📥 FCF이력, `rawdata_yahoo.csv` → raw data 탭 yahoo 행.
+- 수집 탭 전체 교체는 5행 규칙에 걸린다(열린 목록 P9). 정해지기 전에는 사용자에게 붙여 넣을지, 5행씩 나눠 쓸지 묻는다.
 
 ### E. 분위기 일지 (주 1회)
-- `sentiment\fetch_sentiment.py` → `data\sentiment_out\journal_hint.txt`를 읽어 📝 분위기 일지 형식에 맞춰 정리. 기록 시점(실시간/회상)을 구분하고, 내 심리 칸은 사용자에게 묻는다.
+- `fetch_sentiment.py` → OUTPUT_DIR `sentiment_out/journal_hint.txt`를 읽어 📝 분위기 일지 형식에 맞춰 정리. 기록 시점(실시간/회상)을 구분하고, 내 심리 칸은 사용자에게 묻는다.
 
 ### F. 문서 개정 (원칙·전략·등급·종목 노트)
-- 최신 파일은 같은 이름 유지, 이전 버전은 `_보관\<이름>_v<n>_YYYYMMDD.md`로 옮긴다.
+- 최신 파일은 같은 이름 유지, 이전 버전은 `_보관/<이름>_v<n>_YYYYMMDD.md`로 옮긴다.
 - 총괄 문서의 상태 칸·변경 이력도 함께 고친다. 시트 구조가 바뀌면 `📖 README` 탭 3·4·8번도 고칠 거리로 알려준다.
 - 교훈·원인 진단은 사용자 확인 전까지 "후보"로 적는다. 확정은 사용자가 한다.
 - 새 문서를 만들기보다 기존 문서를 고친다. 문서에는 원칙·결론·위치만 적고 수치는 시트에 둔다("종류마다 집 하나", 총괄 §4).
 - 사건·실수·교훈 후보의 원본은 드라이브 구글 문서 `투자 이슈 로그`다(.md가 아니라서 Drive/Docs 커넥터로 고친다).
-- 시트 구조 설명은 `📖 README` 탭이 기준이고, `investment-project-handoff.md`는 claude.ai 프로젝트용 사본이다. 구조가 바뀌면 둘 다 고칠 거리로 알린다.
+- 시트 구조 설명은 `📖 README` 탭이 기준이고, `docs/investment-project-handoff.md`는 claude.ai 프로젝트용 사본이다. 구조가 바뀌면 둘 다 고칠 거리로 알린다.
 
 ### G. 정기 점검
 - 분기: 리밸런싱 점검, 실적 뒤 종목 노트의 훼손 조건을 **지표로** 점검, 등급은 크게 바뀐 항목만.
@@ -139,11 +153,11 @@ python -X utf8 sheet_io.py write "탭!A10:N10" rows.tsv --apply   # 실제 쓰�
 - 시트: 한 번에 5행 이내, 쓰기 전 대상 범위가 비었는지 읽기, 쓴 뒤 다시 읽어 확인. 탭 추가·열 삽입/삭제 등 **구조 변경은 하지 않는다**(사용자가 함).
 - 수식: `&` 대신 CONCATENATE, 수식 안 `""` 비교 대신 LEN·ISNUMBER. 쉼표·0으로 시작하는 텍스트는 앞에 `'`.
 - 매매일지 1~2행(병합)에는 쓰지 않는다. 분당 쓰기 한도에 걸리면 약 45초 쉬고 재시도.
-- 종목코드 앞자리 0: `sheet_io.py`는 USER_ENTERED로 써서 `009540`이 `9540`이 된다. 📒 매매일지는 0을 떼는 게 규칙이지만, 0을 살려야 하는 칸(🔬 B열 등)은 `'009540`처럼 작은따옴표를 붙인다.
+- 종목코드 앞자리 0: `sheet_io.py`는 USER_ENTERED로 써서 `009540`이 `9540`이 된다. 📒 매매일지는 숫자 코드의 0을 떼는 게 규칙이지만, 영문이 섞인 코드(`0162Y0`)나 0을 살려야 하는 칸(🔬 B열 등)은 `'009540`처럼 작은따옴표를 붙인다.
 - 종목을 추가할 때는 그 탭에 이미 같은 티커 행이 있는지 먼저 읽는다(중복 행 방지). 아직 사지 않은 관심종목은 🔬 포지션ID를 비우고 상태를 "관심종목"으로 둔다.
 - 커넥터(MCP)로 쓸 때 한글이 긴 행이 깨지거나 `&`가 들어간 문자열이 파싱 오류를 내면, 숫자 열과 긴 글 열을 나눠 쓴다.
 - `.env`·`credentials.json`은 열지 않고, 키·계좌번호를 출력·대화·시트·기억에 남기지 않는다.
-- 명의·종목·금액 같은 개인 투자 정보를 이 저장소(공개)나 기억(memory)에 적지 않는다. 그런 내용은 드라이브 invest 폴더에 둔다.
+- **공개 저장소**: 이 폴더의 문서·코드·시험 데이터에 명의·보유 종목·수량·금액·시트 ID를 넣지 않는다. 종목은 `universe.csv`, 이름이 들어가는 값은 공용 .env. 커밋 전 `git diff --staged`로 확인한다.
 
 ## 6. 참고: 예전 도구 (보관된 `personal-record-trade` 폴더)
 

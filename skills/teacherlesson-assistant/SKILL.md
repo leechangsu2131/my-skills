@@ -23,9 +23,11 @@ metadata:
 
 ## Claude 작업 절차
 
-### A. 수업 흐름 만들기 — 선택 사항 (기본으로 하지 않음)
+### A. 수업 흐름 — 자동 준비가 기본 (Claude 토큰 0)
 
-교사가 **그 차시를 콕 집어** "이 수업 흐름 만들어줘"라고 할 때만 한다. "내일 수업 준비해줘"에는 흐름을 만들지 말고, 그날 수업 목록·빠진 지도서 PDF·단원 개관 상태만 확인해 알려 주고 🤖 AI 단추를 안내한다.
+"내일 수업 준비해줘" → `python prepare_lessons.py --date tomorrow` (화면의 **🌙 수업 준비** 단추·아침 bat 와 같은 일). 흐름 없는 차시마다 NotebookLM 소스 md 의 그 차시 구간(없으면 진도 서버 차시 PDF)을 Gemini(util-notebooklm, 무료 flash, 붐비면 다른 모델)에 넘겨 `flows/<record_key>.json` 을 만든다. 결과 줄(성공·실패·이유)만 보고한다. 사람이 고친 흐름은 덮어쓰지 않는다(`--redo` 는 자동 흐름만).
+
+아래 손 절차는 교사가 **그 차시를 콕 집어** Claude 에게 직접 만들어 달라고 할 때만 한다.
 
 1. `GET http://127.0.0.1:5180/api/state?date=YYYY-MM-DD`(꺼져 있으면 `teacherlesson-schedule`의 `/api/dashboard`)로 수업을 찾는다.
 2. `http://127.0.0.1:5000/api/pdf/<record_key>`(그 차시 쪽만 잘린 PDF)에서 텍스트를 뽑는다. 지도서 전체를 통째로 읽지 않는다.

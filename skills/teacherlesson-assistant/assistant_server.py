@@ -309,6 +309,41 @@ def open_window(url: str, side: str, cfg: dict) -> str:
     return "창을 열었어요."
 
 
+def prepare_status() -> dict:
+    """수업 준비(prepare_lessons.py) 진행 상황. 프로세스가 죽었으면 진행 중이 아님."""
+    import prepare_lessons  # 기본 파이썬만 씀
+    status = read_json(prepare_lessons.STATUS, {})
+    status["running"] = prepare_lessons.is_running(status)
+    return status
+
+
+def start_prepare(body: dict) -> dict:
+    """그날 흐름이 없는 차시를 뒤에서 자동 준비(Gemini, 차시당 30초~2분). 화면은 /api/prepare-status 로 지켜본다."""
+    day = str(body.get("date", ""))
+    date.fromisoformat(day)
+    if prepare_status().get("running"):
+        return {"status": "error", "message": "이미 수업 준비가 돌고 있어요. 끝나면 알려 드릴게요."}
+    args = [sys.executable, str(SKILL_DIR / "prepare_lessons.py"), "--date", day]
+    if body.get("redo"):
+        args.append("--redo")
+    import time as _time
+    import prepare_lessons
+    with _lock:
+        if prepare_status().get("running"):
+            return {"status": "error", "message": "이미 수업 준비가 돌고 있어요."}
+        token = os.urandom(6).hex()
+        log = open(DATA / "prepare.log", "w", encoding="utf-8")
+        proc = subprocess.Popen(args, cwd=SKILL_DIR, stdout=log, stderr=subprocess.STDOUT,
+                                env=dict(os.environ, PYTHONIOENCODING="utf-8", PREPARE_TOKEN=token),
+                                creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
+        # 두 번 눌러도 하나만 돌도록 바로 '준비 중' 표시. 스크립트는 같은 token 이면 자기 표시로 보고 계속한다
+        # (가상환경 python 은 실행기라 pid 가 스크립트와 다를 수 있음)
+        write_json(prepare_lessons.STATUS, {"date": day, "running": True, "started_ts": _time.time(),
+                                            "pid": proc.pid, "token": token,
+                                            "started": _time.strftime("%H:%M"), "items": []})
+    return {"status": "success", "message": "수업 준비를 시작했어요. 차시당 30초~2분 걸려요(다른 일 하셔도 돼요)."}
+
+
 SITE_HELPERS = {  # config subjects.<과목>.helper → sites/ 아래 차시 자료 자동 열기 도우미
     "music_douclass": ("music_douclass", "music_helper.py"),
     "social_class": ("social_class", "social_class_helper.py"),
@@ -430,6 +465,8 @@ class Handler(BaseHTTPRequestHandler):
                 return self._json({"status": "success", "items": upcoming(q.get("subject", [""])[0])})
             except (urllib.error.URLError, OSError, ValueError):
                 return self._json({"status": "error", "message": "진도 서버(teacherlesson-schedule)가 꺼져 있어요."}, 502)
+        if url.path == "/api/prepare-status":
+            return self._json(prepare_status())
         if url.path.startswith("/api/unit-pdf/"):
             name = urllib.parse.unquote(url.path.rsplit("/", 1)[-1])
             path = UNITS / name
@@ -458,6 +495,8 @@ class Handler(BaseHTTPRequestHandler):
             if url.path == "/api/open-site":
                 cfg = load_config()
                 return self._json({"status": "success", "message": open_window(check_site_url(body.get("url", ""), cfg), "right", cfg)})
+            if url.path == "/api/prepare":
+                return self._json(start_prepare(body))
             if url.path == "/api/open-lesson":
                 return self._json({"status": "success", "message": open_lesson(body)})
             if url.path == "/api/copy-secret":

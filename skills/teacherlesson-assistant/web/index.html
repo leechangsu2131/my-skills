@@ -70,6 +70,7 @@ textarea,input[type=text]{width:100%;font:inherit;border:1px solid var(--line);b
 <header>
   <div class="row">
     <button id="prevDay" title="전날">◀</button><input type="date" id="datePick" title="달력에서 날짜 고르기"><span id="dow"></span><button id="nextDay" title="다음날">▶</button><button id="todayBtn">오늘</button>
+    <button id="prepBtn" title="이 날 수업 중 흐름이 없는 차시를 지도서로 자동 준비 (Gemini, 차시당 30초~2분)">🌙 수업 준비</button><span id="prepMsg" class="muted"></span>
     <span class="grow"></span>
     <span id="clock"></span>
     <button id="phoneBtn" title="교실 내선번호">📞</button>
@@ -190,7 +191,7 @@ async function load(){
 
 function renderTabs(){
   const np = nowPeriod();
-  $('tabs').innerHTML = S.lessons.map((l,i)=>`<button data-i="${i}" class="${cur===l?'on':''} ${l.period===np?'now':''}">${l.period??'-'}교시<small>${esc(l.subject)}${l.saved?' ✓':''}</small></button>`).join('') || '<span class="muted">이 날은 수업이 없어요</span>';
+  $('tabs').innerHTML = S.lessons.map((l,i)=>`<button data-i="${i}" class="${cur===l?'on':''} ${l.period===np?'now':''}">${l.period??'-'}교시<small>${esc(l.subject)}${l.flow?' 📋':''}${l.saved?' ✓':''}</small></button>`).join('') || '<span class="muted">이 날은 수업이 없어요</span>';
 }
 
 function select(i){
@@ -242,7 +243,7 @@ function renderUnit(){
 
 function renderFlow(){
   const f = cur && cur.flow;
-  if (!f){ $('flowSrc').textContent=''; $('goal').innerHTML='<div class="muted">아직 수업 흐름이 없어요. Claude에게 "내일 수업 흐름 만들어줘"라고 하면 지도서에서 뽑아 둡니다.</div>'; $('steps').innerHTML=''; return; }
+  if (!f){ $('flowSrc').textContent=''; $('goal').innerHTML='<div class="muted">아직 수업 흐름이 없어요. 위의 <b>🌙 수업 준비</b>를 누르면 지도서로 자동으로 만들어요(수업 끝난 뒤나 아침에 미리).</div>'; $('steps').innerHTML=''; return; }
   $('flowSrc').textContent = f.source ? `(${f.source})` : '';
   $('goal').innerHTML = (f.goal?`<div><b>🎯 ${esc(f.goal)}</b></div>`:'') + (f.materials&&f.materials.length?`<div class="muted">준비물: ${esc(f.materials.join(', '))}</div>`:'');
   $('steps').innerHTML = (f.steps||[]).map((s,i)=>`<div class="step ${i===stepIdx?'cur':''}" data-s="${i}">
@@ -449,6 +450,32 @@ $('catchList').onclick = async e => {
   $('catchList').style.pointerEvents = ''; $('catchList').style.opacity = '';
   if (j.status === 'success') { addMemo('sys', `진도 맞춤: ${it.unit} ${name(it)}부터`, true); $('catchBox').style.display = 'none'; setTimeout(load, 800); }
 };
+// ── 🌙 수업 준비: 흐름 없는 차시를 뒤에서 자동 준비, 진행 상황을 지켜봄 ──
+let prepTimer = null;
+async function prepPoll(){
+  const st = await (await fetch('/api/prepare-status')).json().catch(() => ({}));
+  const items = (st.items || []).filter(i => i.status !== 'skip');
+  const done = items.filter(i => ['ok','fail','have'].includes(i.status)).length;
+  if (st.running) {
+    $('prepMsg').textContent = ` 준비 중 ${done}/${items.length || '?'} (${st.date?.slice(5)})`;
+    $('prepBtn').disabled = true;
+    return;
+  }
+  clearInterval(prepTimer); prepTimer = null; $('prepBtn').disabled = false;
+  if (st.finished) {
+    const fails = items.filter(i => i.status === 'fail');
+    $('prepMsg').textContent = fails.length ? ` ⚠ ${fails.length}개 실패 — 다시 누르면 빠진 것만 해요` : ` ✓ ${st.date?.slice(5)} 준비 끝`;
+    if (fails.length) toast('준비 못 한 차시: ' + fails.map(i => `${i.period}교시 ${i.subject} (${i.msg})`).join(' / '), 12000);
+    if (st.date === S.date) load();
+  }
+}
+$('prepBtn').onclick = async () => {
+  const redo = false;
+  const j = await post('/api/prepare', {date: S.date, redo});
+  if (j.status === 'success' || /이미/.test(j.message || '')) { if (!prepTimer) prepTimer = setInterval(prepPoll, 4000); prepPoll(); }
+};
+fetch('/api/prepare-status').then(r => r.json()).then(st => { if (st.running && !prepTimer) { prepTimer = setInterval(prepPoll, 4000); prepPoll(); } }).catch(() => {});
+
 window.addEventListener('beforeunload', e => { if (rec){ e.preventDefault(); e.returnValue=''; } });
 
 setInterval(()=>{ const n=new Date(); $('clock').textContent=n.toTimeString().slice(0,5);

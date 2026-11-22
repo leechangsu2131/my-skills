@@ -937,6 +937,44 @@ class ScheduleTests(unittest.TestCase):
         done = [schedule._is_done(r) for r in schedule.load_all(progress_ws)]
         self.assertEqual(done, [True, True, True, True, False, False])
 
+    def test_catch_up_back_to_completed_lesson_without_bridge_rows(self):
+        # 2026-11-22 국어: 학기 초 '여기까지 완료'로 칸이 지워진 매체 3~6차시로 되돌리기
+        progress_ws, bridge_ws = self.make_progress_and_bridge(
+            [
+                ["lesson-0001", "Math", "", "TRUE", "1", "A", "Unit 1"],
+                ["lesson-0002", "Math", "", "TRUE", "2", "B", "Unit 1"],
+                ["lesson-0003", "Math", "", "TRUE", "3", "C", "Unit 1"],
+                ["lesson-0004", "Math", "2026-04-08", "FALSE", "4", "D", "Unit 2"],
+                ["lesson-0005", "Math", "2026-04-10", "FALSE", "5", "E", "Unit 2"],
+                ["lesson-0006", "Math", "2026-04-13", "FALSE", "6", "F", "Unit 2"],
+            ],
+            [
+                ["2026-04-08", 2, 1, "Math", "lesson-0004", "planned", "progress_sync", ""],
+                ["2026-04-10", 1, 1, "Math", "lesson-0005", "planned", "progress_sync", ""],
+                ["2026-04-13", 2, 1, "Math", "lesson-0006", "planned", "progress_sync", ""],
+            ],
+            progress_headers=[
+                schedule.COLUMN_LESSON_ID, schedule.COLUMN_SUBJECT, schedule.COLUMN_DATE, schedule.COLUMN_DONE,
+                schedule.COLUMN_LESSON, schedule.COLUMN_TITLE, schedule.COLUMN_UNIT,
+            ],
+        )
+        FakeWorksheet(
+            ["월", "화", "수", "목", "금"],
+            [["", "", "Science", "", "Math"], ["Math", "", "Math", "", ""]],
+            title=auto_planner.TIMETABLE_SHEET_NAME,
+            spreadsheet=progress_ws.spreadsheet,
+        )
+        self._catch_up(progress_ws, "lesson-0002")
+        by_id = {row[4]: (row[0], row[1], row[5]) for row in bridge_ws.rows}
+        # 칸 수(3개)는 그대로: 2·3차시가 앞 칸을 차지하고 4차시까지만 날짜, 5·6차시는 날짜 없음
+        self.assertEqual([by_id[k][0] for k in ("lesson-0002", "lesson-0003", "lesson-0004")],
+                         ["2026-04-08", "2026-04-10", "2026-04-13"])
+        self.assertTrue(all(by_id[k][2] == "planned" for k in ("lesson-0002", "lesson-0003", "lesson-0004")))
+        self.assertNotIn("lesson-0005", by_id)
+        self.assertNotIn("lesson-0006", by_id)
+        done = [schedule._is_done(r) for r in schedule.load_all(progress_ws)]
+        self.assertEqual(done, [True, False, False, False, False, False])
+
     def test_catch_up_back_to_completed_lesson_reopens_it_and_later_ones(self):
         progress_ws, bridge_ws = self._catch_up_fixture()
         self._catch_up(progress_ws, "lesson-0004")   # 너무 앞으로 감

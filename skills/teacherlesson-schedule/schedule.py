@@ -1723,7 +1723,7 @@ def _give_slots_to_unscheduled_lessons(records, sorted_bridge_rows, target_recor
     고른 차시부터 칸 없는 차시들에게 차시 순서대로 넘겨준다.
     반환: (고른 차시의 칸, 칸이 없던 앞 차시 lesson_id 목록, 칸을 넘겨준 lesson_id 목록)"""
     if not target_record:
-        return None, [], []
+        return None, [], [], []
     subject = _subject_of(target_record)
     lessons = sorted(
         (r for r in records if _subject_of(r) == subject and _lesson_id_of(r)),
@@ -1732,7 +1732,7 @@ def _give_slots_to_unscheduled_lessons(records, sorted_bridge_rows, target_recor
     ids = [_lesson_id_of(r) for r in lessons]
     target_id = _lesson_id_of(target_record)
     if target_id not in ids:
-        return None, [], []
+        return None, [], [], []
     t = ids.index(target_id)
     with_rows = {_clean_text(row.get(COLUMN_LESSON_ID)) for row in sorted_bridge_rows}
     need = [lesson_id for lesson_id in ids[t:] if lesson_id not in with_rows]
@@ -1742,8 +1742,26 @@ def _give_slots_to_unscheduled_lessons(records, sorted_bridge_rows, target_recor
          if _clean_text(row.get(COLUMN_LESSON_ID)) in before and _is_bridge_planned(row)),
         key=_bridge_row_sort_key,
     )
-    if not spare or not need or need[0] != target_id:
-        return None, [], []
+    if not need or need[0] != target_id:
+        return None, [], [], []
+    if not spare:
+        # 되돌리기: 이미 완료돼 칸이 지워진 차시(예: 학기 초 '여기까지 완료' 표시)로 돌아가는 경우.
+        # 고른 차시부터 칸이 있는 다음 차시 앞까지(틈) 새 칸을 만든다. 칸 수를 늘린 만큼
+        # 끝쪽 차시를 날짜 없음으로 돌리는 일은 catch_up_to_lesson 이 한다(_created 표시).
+        gap = []
+        for lesson_id in ids[t:]:
+            if lesson_id in with_rows:
+                break
+            gap.append(lesson_id)
+        if not with_rows.intersection(ids[t:]):
+            return None, [], [], []   # 뒤에 칸 있는 차시가 하나도 없으면 기준 칸이 없어 만들지 않는다
+        created = [
+            {COLUMN_SUBJECT: subject, COLUMN_LESSON_ID: lesson_id, "status": "planned",
+             "source": "manual_catch_up", "memo": "", "slot_date": "", "slot_period": "",
+             "slot_order": "", "_created": True}
+            for lesson_id in gap
+        ]
+        return (created[0] if created else None), [], [], created
     target_row, reassigned_from = None, []
     for row, lesson_id in zip(spare, need):
         reassigned_from.append(_clean_text(row.get(COLUMN_LESSON_ID)))
@@ -1752,7 +1770,7 @@ def _give_slots_to_unscheduled_lessons(records, sorted_bridge_rows, target_recor
         if lesson_id == target_id:
             target_row = row
     extra_done = [lesson_id for lesson_id in ids[:t] if lesson_id not in with_rows]
-    return target_row, extra_done, reassigned_from
+    return target_row, extra_done, reassigned_from, []
 
 
 def catch_up_to_lesson(
@@ -1805,12 +1823,14 @@ def catch_up_to_lesson(
             same_lesson[0] if same_lesson else None
         )
 
-    extra_done_ids, reassigned_from = [], []
+    extra_done_ids, reassigned_from, created_rows = [], [], []
     if target_row is None and record_key:
-        # 날짜(수업배치 칸)가 없는 차시(방학 전 칸 부족 등)를 고른 경우
-        target_row, extra_done_ids, reassigned_from = _give_slots_to_unscheduled_lessons(
+        # 수업배치 칸이 없는 차시를 고른 경우: 날짜 없는 뒤 차시(방학 전 칸 부족)로 건너뛰거나,
+        # 칸이 지워진 완료 차시로 되돌아가기
+        target_row, extra_done_ids, reassigned_from, created_rows = _give_slots_to_unscheduled_lessons(
             records, sorted_bridge_rows, find_record_by_key(records, record_key)
         )
+        bridge_support["rows"].extend(created_rows)
         sorted_bridge_rows = sorted(bridge_support["rows"], key=_lesson_order_key)
 
     if target_row is None:
@@ -1846,6 +1866,18 @@ def catch_up_to_lesson(
         completed_rows.append(bridge_row)
 
     reflow_rows = subject_rows[target_index:]
+    untimed_ids = set()
+    if created_rows:
+        # 새로 만든 칸 수만큼 끝쪽 차시를 '날짜 없음'으로 돌려 지금 계획된 마지막 날짜를 넘기지 않는다
+        # (학기 끝·방학을 넘겨 배치되지 않도록. 방학 전 칸 부족과 같은 방식)
+        overflow = len(created_rows)
+        trimmed = [row for row in reflow_rows if not row.get("_created") and row is not target_row][-overflow:]
+        for row in trimmed:
+            untimed_ids.add(_clean_text(row.get(COLUMN_LESSON_ID)))
+            bridge_support["rows"].remove(row)
+        reflow_rows = [row for row in reflow_rows if all(row is not t for t in trimmed)]
+        for row in created_rows:
+            row.pop("_created", None)
     slot_templates = _subject_slots_from_timetable(
         bridge_support.get("spreadsheet"),
         bridge_support["module"],
@@ -1863,6 +1895,7 @@ def catch_up_to_lesson(
     affected_rows = completed_rows + reflow_rows
     lesson_ids = _bridge_lesson_ids(affected_rows)
     lesson_ids |= {i for i in [*reassigned_from, *extra_done_ids] if i}  # 칸을 넘겨준 차시·칸 없던 앞 차시도 '완료'로
+    lesson_ids |= untimed_ids  # 날짜 없음으로 돌린 끝쪽 차시(완료 아님)
     result_bridge_rows = [row.get("_row") for row in completed_rows if row.get("_row")]
 
     done_by_lesson_id = {}
@@ -1871,7 +1904,7 @@ def catch_up_to_lesson(
             _clean_text(row.get(COLUMN_LESSON_ID)) == lesson_id and _is_bridge_planned(row)
             for row in bridge_support["rows"]
         )
-        done_by_lesson_id[lesson_id] = not has_remaining_planned
+        done_by_lesson_id[lesson_id] = not has_remaining_planned and lesson_id not in untimed_ids
 
     done_column = get_header_map(ws)[COLUMN_DONE]
     worksheet_name = _worksheet_title(ws)

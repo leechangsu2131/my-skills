@@ -213,9 +213,16 @@ def has_lesson_page_loaded(driver, timeout=1.0):
         WebDriverWait(driver, timeout).until(
             EC.presence_of_element_located((By.CLASS_NAME, "textbook-chapter"))
         )
-        return True
     except Exception:
         return False
+    # 로그아웃 상태에서도 차시 틀(textbook-chapter)은 보이지만 차시 목록은 비어 있다(2026-11-22 확인).
+    # 로그인 링크가 보이면 '아직 로그인 안 됨'으로 본다.
+    login_links = driver.find_elements(
+        By.XPATH,
+        "//a[contains(@href, 'sign.dongapublishing.com') or contains(@href, 'guest_login') or contains(@href, 'sign.douclass.com')]",
+    )
+    logout_links = driver.find_elements(By.XPATH, "//a[contains(@href, 'logout') or contains(@class, 'logout')]")
+    return bool(logout_links) or not login_links
 
 
 def login_if_needed(driver, wait, reuse_existing_browser=False):

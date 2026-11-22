@@ -215,14 +215,41 @@ def has_lesson_page_loaded(driver, timeout=1.0):
         )
     except Exception:
         return False
-    # 로그아웃 상태에서도 차시 틀(textbook-chapter)은 보이지만 차시 목록은 비어 있다(2026-11-22 확인).
-    # 로그인 링크가 보이면 '아직 로그인 안 됨'으로 본다.
-    login_links = driver.find_elements(
-        By.XPATH,
-        "//a[contains(@href, 'sign.dongapublishing.com') or contains(@href, 'guest_login') or contains(@href, 'sign.douclass.com')]",
-    )
-    logout_links = driver.find_elements(By.XPATH, "//a[contains(@href, 'logout') or contains(@class, 'logout')]")
-    return bool(logout_links) or not login_links
+    # 로그아웃 상태에서도 차시 틀(textbook-chapter)은 보이지만 차시 제목(resource-title)이 비어 있다(2026-11-22 확인).
+    # 로그인 링크는 로그인한 뒤에도 페이지 곳곳에 남아 있어 판단에 쓰지 않는다.
+    return has_lesson_titles(driver)
+
+
+def has_lesson_titles(driver):
+    try:
+        # 단원이 접혀 있으면 .text 는 빈 글자 → 접힘과 상관없이 textContent 로 본다
+        return any((el.get_attribute("textContent") or "").strip()
+                   for el in driver.find_elements(By.CSS_SELECTOR, ".textbook-chapter .resource-title")[:5])
+    except Exception:
+        return False
+
+
+def try_sso_login(driver, login_url, seconds=12):
+    """두클래스 로그인 허브 주소를 거치면, 크롬에 로그인이 남아 있을 때 자동으로 로그인돼 돌아온다(SSO).
+    돌아와서 차시 제목이 보이면 True — 이때는 교사에게 Enter 를 묻지 않는다."""
+    driver.get(login_url)
+    end = time.time() + seconds
+    while time.time() < end:
+        time.sleep(1)
+        try:
+            alert = driver.switch_to.alert
+            alert.accept()
+        except Exception:
+            pass
+        if "ele.douclass.com" in (driver.current_url or ""):
+            break
+    driver.get(BASE_URL)
+    try:
+        WebDriverWait(driver, 6).until(EC.presence_of_element_located((By.CLASS_NAME, "textbook-chapter")))
+    except Exception:
+        return False
+    time.sleep(1)
+    return has_lesson_titles(driver)
 
 
 def login_if_needed(driver, wait, reuse_existing_browser=False):
@@ -256,6 +283,9 @@ def login_if_needed(driver, wait, reuse_existing_browser=False):
                 "https://sign.douclass.com/authlogin/guest_login.donga"
                 "?returl=https://ele.douclass.com/textbooks/30050/518?arch_id=12553"
             )
+            if try_sso_login(driver, login_url):
+                print("  -> 저장된 로그인으로 자동 로그인했습니다.")
+                return True
             driver.get(login_url)
             time.sleep(0.5)
 

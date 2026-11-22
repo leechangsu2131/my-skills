@@ -54,12 +54,12 @@ function doPost(e) {
 // 브라우저로 주소를 열었을 때(GET).
 //   ?join=weekly|daily → 가족·동료가 '친구에게 보내기' 받는 사람으로 등록하는 페이지
 //   ?code=… / ?error=… → 카카오 동의 후 돌아온 요청
-//   그 밖에는 살아 있는지만 알려 준다.
+//   주소만 열면 → 등록 안내 화면(매일 / 주 1회 출장 버튼). 카카오 설정이 아직 없으면 살아 있는지만 알려 준다.
 function doGet(e) {
   const p = (e && e.parameter) || {};
   if (p.view) return viewPage_(p);
   if (p.join || p.code || p.error) return joinPage_(p);
-  return ContentService.createTextOutput('일정DB 챗봇 서버가 켜져 있어요.');
+  return homePage_();
 }
 
 function handle_(utter, uid, props) {
@@ -412,6 +412,21 @@ function kakaoConfig_() {
   return cfg.restKey && cfg.redirect ? cfg : null;
 }
 
+// 주소만 열었을 때 보이는 안내 화면. 받는 사람이 주소를 고칠 필요 없이 버튼만 누르면 된다.
+// 버튼 주소의 바탕은 카카오에 등록한 리다이렉트 URI(= 웹앱 …/exec 주소)다.
+function homePage_() {
+  const cfg = kakaoConfig_();
+  if (!cfg) return ContentService.createTextOutput('일정DB 챗봇 서버가 켜져 있어요.');
+  const base = cfg.redirect.split('?')[0];
+  return page_('카톡으로 일정 받기',
+    '받고 싶은 것을 골라 버튼을 누르세요. 카카오 로그인 후 "동의하고 계속하기"만 누르면 끝이에요. 선생님이 먼저 초대한 분만 등록할 수 있어요.',
+    [
+      { href: base + '?join=daily', label: '매일 아침 일정 받기' },
+      { href: base + '?join=weekly', label: '주 1회 출장 일정만 받기' },
+    ],
+    '일정DB 챗봇 서버가 켜져 있어요.');
+}
+
 function joinPage_(p) {
   const cfg = kakaoConfig_();
   if (!cfg) return page_('준비 중이에요', '선생님이 아직 등록 기능을 켜지 않았어요. 선생님께 알려 주세요.');
@@ -497,14 +512,17 @@ function viewPage_(p) {
   return HtmlService.createHtmlOutput(html).setTitle('일정').addMetaTag('viewport', 'width=device-width, initial-scale=1');
 }
 
-function page_(title, msg, button) {
+// button: 버튼 하나({href,label}) 또는 여러 개(배열). note: 맨 아래 작은 글씨(선택).
+function page_(title, msg, button, note) {
   const esc = function (s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); };
-  const btn = button
-    ? '<p><a target="_top" href="' + esc(button.href) + '" style="display:inline-block;padding:14px 22px;background:#FEE500;color:#191919;'
-      + 'border-radius:10px;text-decoration:none;font-weight:bold;font-size:18px">' + esc(button.label) + '</a></p>'
-    : '';
+  const buttons = button ? (Array.isArray(button) ? button : [button]) : [];
+  const btn = buttons.map(function (b) {
+    return '<p><a target="_top" href="' + esc(b.href) + '" style="display:inline-block;padding:14px 22px;background:#FEE500;color:#191919;'
+      + 'border-radius:10px;text-decoration:none;font-weight:bold;font-size:18px">' + esc(b.label) + '</a></p>';
+  }).join('');
+  const small = note ? '<p style="color:#888;font-size:13px">' + esc(note) + '</p>' : '';
   const html = '<div style="font-family:sans-serif;max-width:420px;margin:40px auto;padding:0 16px;line-height:1.6">'
-    + '<h2>' + esc(title) + '</h2><p>' + esc(msg) + '</p>' + btn + '</div>';
+    + '<h2>' + esc(title) + '</h2><p>' + esc(msg) + '</p>' + btn + small + '</div>';
   return HtmlService.createHtmlOutput(html).setTitle(title).addMetaTag('viewport', 'width=device-width, initial-scale=1');
 }
 

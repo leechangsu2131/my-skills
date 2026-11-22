@@ -187,6 +187,9 @@ tabs['비밀설정'] = [['KAKAO_REST_API_KEY', 'REST1'], ['KAKAO_CLIENT_SECRET',
 pg = ctx.doGet({ parameter: { join: 'daily' } });
 check('setup moved to props and tab deleted', props.KAKAO_REST_API_KEY === 'REST1' && props.KAKAO_CLIENT_SECRET === 'CS1' && !tabs['비밀설정']);
 check('join page links kakao', pg.html.includes('kauth.kakao.com/oauth/authorize') && pg.html.includes('client_id=REST1') && pg.html.includes('state=daily') && pg.html.includes('target="_top"'), pg.html);
+pg = ctx.doGet();
+check('home page shows both join buttons', pg.html && pg.html.includes('href="https://x/exec?join=daily"') && pg.html.includes('href="https://x/exec?join=weekly"') && pg.html.includes('target="_top"') && pg.html.includes('켜져 있어요'), pg.html || pg.text);
+check('home page has no secrets', !pg.html.includes('REST1') && !pg.html.includes('CS1'), pg.html);
 fetchMock = (url, opt) => { fetchLog.push([url, opt]); return url.includes('/oauth/token') ? resp(200, { access_token: 'AT' }) : resp(200, { id: 12345 }); };
 pg = ctx.doGet({ parameter: { code: 'C1', state: 'daily' } });
 check('callback registers', pg.html.includes('등록됐어요') && tabs['받는사람'].length === 2 && tabs['받는사람'][1][1] === '매일' && tabs['받는사람'][1][2] === '12345', JSON.stringify(tabs['받는사람']));

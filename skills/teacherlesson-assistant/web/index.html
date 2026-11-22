@@ -117,6 +117,19 @@ ul{margin:4px 0;padding-left:18px}
 #meter i{display:block;height:100%;width:0;background:var(--ok)}
 #memoBtns{margin-top:12px}
 #memoBtns button{padding:6px 11px;border-radius:999px;font-size:14px}
+#memoBtns button.on{background:var(--acc);color:#fff}
+
+/* 수업 흐름 고치기 */
+.ed-step{border:1px solid var(--line);border-radius:12px;padding:10px;margin:8px 0;background:#fff}
+.ed-head{display:flex;gap:6px;align-items:center}
+.ed-head .no{font-weight:700;color:var(--sub);min-width:1.3em;text-align:center}
+.ed-name{flex:1;min-width:0}
+input.ed-min{width:64px;font:inherit;border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px 8px}
+.ed-step textarea{margin-top:6px;resize:vertical}
+.ed-bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px}
+#edSum{font-size:13px;color:var(--sub)}
+#edSum.over{color:var(--red);font-weight:600}
+.ed-lab{display:block;font-size:12px;color:var(--sub);margin:8px 0 3px}
 .memolog{margin-top:10px}
 .memolog>summary{cursor:pointer;list-style:none;font-size:14px;color:var(--sub);padding:4px 0;display:flex;align-items:center;gap:6px}
 .memolog>summary::-webkit-details-marker{display:none}
@@ -195,7 +208,7 @@ textarea:focus,input[type=text]:focus{outline:2px solid var(--acc-soft);border-c
     <div class="muted" id="recMsg" style="margin-top:6px">녹음은 이 PC의 내 문서\my-skills-data 에만 저장됩니다. 학생 목소리가 담기니 학교 지침을 따르세요.</div>
     <div class="row" id="memoBtns">
       <button data-k="good">👍 좋았음</button><button data-k="fix">🔧 고칠점</button>
-      <button data-k="student">🙋 학생 발표</button><button data-k="star">★ 표시</button>
+      <button data-k="student">🙋 학생 발표</button><button data-k="star" title="그냥 누르면 지금 순간에 ★ 표시만 남겨요. 이유를 입력칸에 먼저 적고 누르면 함께 기록돼요">★ 표시</button>
       <button id="voiceBtn" title="크롬 음성 인식(구글 서버로 소리가 전송됨)">🎤 음성 메모</button>
     </div>
     <div class="muted" style="margin-top:6px">🎤 음성 메모는 구글 서버로 소리가 전송돼요. 학생 이름은 말하지 마세요.</div>
@@ -218,8 +231,12 @@ textarea:focus,input[type=text]:focus{outline:2px solid var(--acc-soft);border-c
   <details class="fold" id="flowBox">
     <summary>📘 수업 흐름 전체 <span class="muted" id="flowSrc"></span></summary>
     <div class="fold-body">
-      <div id="goal"></div>
-      <div id="steps"></div>
+      <div id="flowView">
+        <div id="goal"></div>
+        <div id="steps"></div>
+        <div class="row" style="margin-top:10px"><button id="flowEditBtn" hidden>✏ 흐름 고치기</button></div>
+      </div>
+      <div id="flowEdit" hidden></div>
     </div>
   </details>
 
@@ -291,7 +308,8 @@ function nowPeriod(){
 }
 
 async function load(){
-  if (rec) { toast('녹음 중에는 날짜를 바꿀 수 없어요'); $('datePick').value = S ? S.date : iso(day); return; }
+  if (rec) { toast('녹음 중에는 날짜를 바꿀 수 없어요'); if (S) { day = new Date(S.date+'T09:00:00'); $('datePick').value = S.date; } return; }
+  if (!leaveEdit()) { day = new Date(S.date+'T09:00:00'); $('datePick').value = S.date; return; }
   await flushSave();
   $('datePick').value = iso(day); $('dow').textContent = '일월화수목금토'[day.getDay()];
   history.replaceState(null, '', iso(day) === iso(new Date()) ? location.pathname : '?date=' + iso(day));  // F5 해도 보던 날짜 유지
@@ -313,11 +331,13 @@ function renderTabs(){
 
 function select(i){
   if (rec) { toast('녹음 중입니다. 먼저 수업을 마쳐 주세요'); return; }
+  if (!leaveEdit()) return;
   flushSave();
   cur = i>=0 ? S.lessons[i] : null; stepIdx = -1; stepAt = 0;
   $('memoLog').open = false;   // 교시를 바꾸면 기록 목록은 다시 접음
+  $('memoIn').value = ''; setMemoKind('note');   // 쓰던 메모가 다른 수업에 들어가지 않게
   renderTabs();
-  if (!cur){ $('lTitle').textContent='수업 없음'; $('lMeta').textContent=''; $('siteBtns').innerHTML=''; $('cautions').innerHTML=''; $('steps').innerHTML=''; $('goal').innerHTML=''; sess=null; renderMemos(); renderHero(); return; }
+  if (!cur){ $('flowEditBtn').hidden = true; $('lTitle').textContent='수업 없음'; $('lMeta').textContent=''; $('siteBtns').innerHTML=''; $('cautions').innerHTML=''; $('steps').innerHTML=''; $('goal').innerHTML=''; sess=null; renderMemos(); renderHero(); return; }
   const saved = cur.saved;
   sess = saved || {date:S.date, period:cur.period, subject:cur.subject, publisher:cur.publisher, title:cur.title, unit:cur.unit, lesson:cur.lesson, record_key:cur.record_key, memos:[], notice:''};
   $('lTitle').textContent = `${cur.subject} · ${cur.title || cur.lesson || '차시 정보 없음'}`;
@@ -374,14 +394,91 @@ function renderUnit(){
 
 function renderFlow(){
   const f = cur && cur.flow;
-  if (!f){ $('flowSrc').textContent=''; $('goal').innerHTML='<div class="muted">아직 수업 흐름이 없어요. 위의 <b>🌙 준비</b>를 누르면 지도서로 자동으로 만들어요(수업 끝난 뒤나 아침에 미리).</div>'; $('steps').innerHTML=''; renderHero(); return; }
-  $('flowSrc').textContent = f.source ? `(${f.source})` : '';
+  $('flowEditBtn').hidden = !cur; $('flowEditBtn').textContent = f ? '✏ 흐름 고치기' : '✏ 직접 만들기';
+  if (!f){ $('flowSrc').textContent=''; $('goal').innerHTML='<div class="muted">아직 수업 흐름이 없어요. 위의 <b>🌙 준비</b>를 누르면 지도서로 자동으로 만들어요(수업 끝난 뒤나 아침에 미리). 직접 적어도 돼요.</div>'; $('steps').innerHTML=''; renderHero(); return; }
+  $('flowSrc').textContent = [f.source, f.edited && '직접 고침'].filter(Boolean).map(t => `(${t})`).join(' ');
   $('goal').innerHTML = (f.goal?`<div><b>🎯 ${esc(f.goal)}</b></div>`:'') + (f.materials&&f.materials.length?`<div class="muted">준비물: ${esc(f.materials.join(', '))}</div>`:'');
   $('steps').innerHTML = (f.steps||[]).map((s,i)=>`<div class="step ${i===stepIdx?'cur':''}" data-s="${i}">
       <b>${esc(s.name)}</b> <span class="muted">${s.minutes?s.minutes+'분':''}</span>
       ${s.do?`<div>${esc(s.do)}</div>`:''}${s.say?`<div class="say">💬 ${esc(s.say)}</div>`:''}${s.tip?`<div class="tip">💡 ${esc(s.tip)}</div>`:''}</div>`).join('');
   renderHero();
 }
+
+/* ===== 수업 흐름 고치기: 저장하면 flows/ 에 직접 고친 흐름으로 남아 자동 준비가 덮어쓰지 않는다 ===== */
+let editing = null, editDirty = false;
+const emptyStep = () => ({name:'', minutes:5, do:'', say:'', tip:''});
+function leaveEdit(){   // 고치던 흐름이 있으면 버려도 되는지 묻고, 괜찮으면 편집을 닫는다
+  if (!editing) return true;
+  if (editDirty && !confirm('고치던 수업 흐름이 아직 저장되지 않았어요. 버리고 이동할까요?')) return false;
+  editing = null; editDirty = false; $('flowEdit').hidden = true; $('flowView').hidden = false;
+  return true;
+}
+function startEdit(){
+  if (!cur) return;
+  const f = cur.flow;
+  editing = f ? {goal: f.goal || '', materials: (f.materials || []).join(', '),
+                 steps: (f.steps || []).map(s => ({name: s.name || '', minutes: s.minutes || 0, do: s.do || '', say: s.say || '', tip: s.tip || ''}))}
+              : {goal: '', materials: '', steps: [emptyStep()]};
+  if (!editing.steps.length) editing.steps.push(emptyStep());
+  editDirty = false; $('flowBox').open = true; renderEdit();
+}
+function collectEdit(){
+  const box = $('flowEdit'); if (!editing) return;
+  const q = (el, sel) => el.querySelector(sel).value;
+  editing.goal = q(box, '.ed-goal'); editing.materials = q(box, '.ed-mat');
+  editing.steps = [...box.querySelectorAll('.ed-step')].map(el => ({name: q(el,'.ed-name'), minutes: q(el,'.ed-min'), do: q(el,'.ed-do'), say: q(el,'.ed-say'), tip: q(el,'.ed-tip')}));
+}
+function renderEdit(){
+  const n = editing.steps.length;
+  $('flowView').hidden = true; $('flowEdit').hidden = false;
+  $('flowEdit').innerHTML =
+    `<label class="ed-lab">🎯 학습 목표</label><input type="text" class="ed-goal" value="${esc(editing.goal)}">
+     <label class="ed-lab">준비물 (쉼표로 구분)</label><input type="text" class="ed-mat" value="${esc(editing.materials)}">` +
+    editing.steps.map((s, i) => `<div class="ed-step">
+      <div class="ed-head"><span class="no">${i+1}</span>
+        <input type="text" class="ed-name" placeholder="단계 이름 (예: 도입)" maxlength="60" value="${esc(s.name)}">
+        <input type="number" class="ed-min" min="0" max="120" step="1" value="${esc(s.minutes)}" title="이 단계에 쓸 시간(분)"><span class="muted">분</span>
+        <button class="ghost icon" data-a="up" title="위로" ${i===0?'disabled':''}>↑</button>
+        <button class="ghost icon" data-a="down" title="아래로" ${i===n-1?'disabled':''}>↓</button>
+        <button class="ghost icon" data-a="del" title="이 단계 지우기" ${n===1?'disabled':''}>✕</button></div>
+      <textarea class="ed-do" rows="2" placeholder="활동 (학생이 하는 일)">${esc(s.do)}</textarea>
+      <textarea class="ed-say" rows="2" placeholder="💬 핵심 발문">${esc(s.say)}</textarea>
+      <textarea class="ed-tip" rows="1" placeholder="💡 지도 팁·주의">${esc(s.tip)}</textarea></div>`).join('') +
+    `<div class="ed-bar"><button data-a="add">＋ 단계 추가</button><span id="edSum"></span><span class="grow"></span>
+       <button data-a="cancel">취소</button><button class="pri" data-a="save">저장</button></div>`;
+  updSum();
+}
+function updSum(){
+  const box = $('flowEdit'); if (!editing || box.hidden) return;
+  const sum = [...box.querySelectorAll('.ed-min')].reduce((a, el) => a + (parseInt(el.value, 10) || 0), 0);
+  const p = S && cur && (S.periods || []).find(x => x.no === cur.period), len = p ? hm(p.end) - hm(p.start) : 0;
+  const el = $('edSum'); el.textContent = `합계 ${sum}분` + (len ? ` · 교시 ${len}분` : '');
+  el.classList.toggle('over', !!len && sum > len);
+}
+async function saveEdit(){
+  collectEdit();
+  const j = await post('/api/flow', {record_key: cur.record_key || '', subject: cur.subject, title: cur.title || '', flow: editing});
+  if (j.status !== 'success') return;   // 거절 이유는 post() 가 화면 아래에 보여 줌 — 고치던 내용은 그대로 둠
+  cur.flow = j.flow; editing = null; editDirty = false;
+  $('flowEdit').hidden = true; $('flowView').hidden = false;
+  if (stepIdx >= j.flow.steps.length) stepIdx = j.flow.steps.length - 1;
+  renderTabs(); renderFlow();
+}
+$('flowEditBtn').onclick = startEdit;
+$('flowEdit').addEventListener('input', () => { editDirty = true; updSum(); });
+$('flowEdit').addEventListener('click', e => {
+  const a = e.target.closest('button')?.dataset.a; if (!a) return;
+  if (a === 'cancel') { leaveEdit(); return; }
+  if (a === 'save') { saveEdit(); return; }
+  collectEdit();
+  const row = e.target.closest('.ed-step'), i = row ? [...$('flowEdit').querySelectorAll('.ed-step')].indexOf(row) : -1, st = editing.steps;
+  if (a === 'add') st.push(emptyStep());
+  else if (a === 'del' && i >= 0 && st.length > 1) st.splice(i, 1);
+  else if (a === 'up' && i > 0) [st[i-1], st[i]] = [st[i], st[i-1]];
+  else if (a === 'down' && i >= 0 && i < st.length-1) [st[i+1], st[i]] = [st[i], st[i+1]];
+  editDirty = true; renderEdit();
+  if (a === 'add') $('flowEdit').querySelectorAll('.ed-name')[st.length-1].focus();
+});
 
 /* ===== 지금 할 일 (수업 중 큰 화면) ===== */
 function setBlock(id, text){ const el = $(id); el.textContent = text || ''; el.hidden = !text; }
@@ -595,13 +692,27 @@ document.addEventListener('keydown', e => {
 $('recBtn').onclick = () => rec ? stopRec() : startRec();
 $('voiceBtn').onclick = voiceMemo;
 $('stepLogBtn').onclick = () => { showStepLog = !showStepLog; renderMemos(); };
+/* 메모: 단추를 누르면 입력칸이 그 종류로 바뀌고(팝업 없음), Enter 로 기록한다.
+   입력칸에 글을 먼저 적고 단추를 눌러도 그 종류로 바로 기록된다. ★ 은 입력칸이 비어 있으면 그 순간에 바로 표시만 남긴다. */
+let memoKind = 'note';
+const MEMO_HINT = {note:'메모 입력 후 Enter (같은 과목 다음 수업에 다시 보여 줘요)', good:'👍 좋았던 점을 적고 Enter · Esc 취소',
+  fix:'🔧 고칠 점을 적고 Enter · Esc 취소', student:'🙋 학생 이름과 발표 내용을 적고 Enter · Esc 취소', star:'★ 표시 이유를 적고 Enter · Esc 취소'};
+function setMemoKind(k){
+  memoKind = k; $('memoIn').placeholder = MEMO_HINT[k];
+  document.querySelectorAll('#memoBtns button[data-k]').forEach(b => b.classList.toggle('on', b.dataset.k === k));
+}
 $('memoBtns').onclick = e => {
-  const k = e.target.closest('button')?.dataset.k; if (!k) return;
-  const label = {good:'좋았던 점', fix:'고칠 점', student:'학생 이름과 발표 내용', star:'표시 이유(비워도 됨)'}[k];
-  const text = prompt(label+'을(를) 적어 주세요', k==='student'?'이름: ':'');
-  if (text !== null) addMemo(k, text.trim() || '(표시)');
+  const k = e.target.closest('button')?.dataset.k; if (!k || !cur) return;
+  const v = $('memoIn').value.trim();
+  if (v) { addMemo(k, v); $('memoIn').value = ''; setMemoKind('note'); return; }
+  if (k === 'star') { addMemo('star', '(표시)'); return; }
+  if (memoKind === k) { setMemoKind('note'); return; }   // 같은 단추를 다시 누르면 취소
+  setMemoKind(k); $('memoIn').focus();
 };
-$('memoIn').onkeydown = e => { if (e.key==='Enter' && !e.isComposing && e.target.value.trim()){ addMemo('note', e.target.value.trim()); e.target.value=''; } };
+$('memoIn').onkeydown = e => {
+  if (e.key === 'Escape') { e.target.value = ''; setMemoKind('note'); return; }
+  if (e.key === 'Enter' && !e.isComposing && e.target.value.trim()) { addMemo(memoKind, e.target.value.trim()); e.target.value = ''; setMemoKind('note'); }
+};
 $('notice').oninput = () => { if (sess) scheduleSave(true); };
 window.addEventListener('pagehide', () => { if (pendingSave) { clearTimeout(saveTimer); navigator.sendBeacon && sess && navigator.sendBeacon('/api/session', new Blob([JSON.stringify(sess)], {type:'application/json'})); } });
 $('cautionAdd').onclick = async () => {

@@ -1,0 +1,197 @@
+"""assistant_server.py 의 수업 흐름 저장(POST /api/flow) 시험. 표준 라이브러리만 쓴다.
+
+    python -m unittest test_assistant_server -v      (이 폴더에서)
+
+임시 폴더만 쓰므로 내 문서의 실제 데이터(flows 등)는 건드리지 않는다.
+"""
+import http.client
+import json
+import pathlib
+import sys
+import tempfile
+import threading
+import unittest
+from http.server import ThreadingHTTPServer
+
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+import assistant_server as app  # noqa: E402
+
+STEP = {"name": "도입", "minutes": 5, "do": "지난 시간 떠올리기", "say": "무엇을 배웠나요?", "tip": "앞 차시 확인"}
+
+
+def body(**over):
+    base = {"record_key": "K1", "subject": "수학", "title": "분수의 덧셈",
+            "flow": {"goal": "분수를 더한다", "materials": "분수 막대, 딱지", "steps": [dict(STEP), {"name": "정리", "minutes": 5}]}}
+    base.update(over)
+    return base
+
+
+class FlowTestBase(unittest.TestCase):
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.flows = pathlib.Path(self._tmp.name) / "flows"
+        self.flows.mkdir()
+        self._saved = (app.FLOWS, app.load_config)
+        app.FLOWS = self.flows
+        app.load_config = lambda: {"subjects": {"수학": {"publisher": "아이스크림"}}}
+
+    def tearDown(self):
+        app.FLOWS, app.load_config = self._saved
+        self._tmp.cleanup()
+
+
+class SaveFlowTest(FlowTestBase):
+    def test_saves_new_flow_by_record_key(self):
+        res = app.save_flow(body())
+        self.assertEqual(res["status"], "success")
+        saved = json.loads((self.flows / "K1.json").read_text(encoding="utf-8"))
+        self.assertEqual(saved["goal"], "분수를 더한다")
+        self.assertEqual(saved["materials"], ["분수 막대", "딱지"])
+        self.assertEqual([s["name"] for s in saved["steps"]], ["도입", "정리"])
+        self.assertEqual(saved["steps"][1], {"name": "정리", "minutes": 5, "do": "", "say": "", "tip": ""})
+        self.assertEqual(saved["publisher"], "아이스크림")
+        self.assertEqual(saved["edited"]["by"], "teacher")
+
+    def test_saved_flow_is_found_by_find_flow(self):
+        app.save_flow(body())
+        found = app.find_flow({"record_key": "K1", "subject": "수학", "title": "분수의 덧셈"})
+        self.assertEqual(found["title"], "분수의 덧셈")
+
+    def test_edit_removes_auto_mark_and_keeps_other_fields(self):
+        auto = {"record_key": "K1", "subject": "수학", "title": "분수의 덧셈", "publisher": "미래엔",
+                "source": "지도서 p.1", "homework": "익힘 1쪽", "auto": {"by": "gemini", "at": "2026-11-22 10:00"},
+                "steps": [{"name": "옛 단계", "minutes": 40}]}
+        (self.flows / "K1.json").write_text(json.dumps(auto, ensure_ascii=False), encoding="utf-8")
+        app.save_flow(body())
+        saved = json.loads((self.flows / "K1.json").read_text(encoding="utf-8"))
+        self.assertNotIn("auto", saved)  # prepare_lessons 는 auto 가 없으면 '직접 고친 흐름'으로 보고 --redo 로도 안 덮어쓴다
+        self.assertEqual(saved["source"], "지도서 p.1")
+        self.assertEqual(saved["homework"], "익힘 1쪽")
+        self.assertEqual(saved["publisher"], "미래엔")
+        self.assertEqual([s["name"] for s in saved["steps"]], ["도입", "정리"])
+
+    def test_saves_into_existing_title_file_when_no_record_key_file(self):
+        path = self.flows / "수학__분수의_덧셈.json"
+        path.write_text(json.dumps({"subject": "수학", "title": "분수의 덧셈", "steps": []}, ensure_ascii=False), encoding="utf-8")
+        app.save_flow(body(record_key=""))
+        self.assertTrue(path.is_file())
+        self.assertFalse((self.flows / "K1.json").exists())
+        self.assertEqual(json.loads(path.read_text(encoding="utf-8"))["steps"][0]["name"], "도입")
+
+    def test_title_only_lesson_uses_subject_title_file(self):
+        app.save_flow(body(record_key=""))
+        self.assertTrue((self.flows / "수학__분수의_덧셈.json").is_file())
+
+    def test_materials_accept_list_and_drop_blanks(self):
+        b = body()
+        b["flow"]["materials"] = ["자", " ", "  가위 "]
+        app.save_flow(b)
+        self.assertEqual(json.loads((self.flows / "K1.json").read_text(encoding="utf-8"))["materials"], ["자", "가위"])
+
+    def test_control_characters_are_removed_but_newline_kept(self):
+        b = body()
+        b["flow"]["steps"][0]["do"] = "첫 줄\n둘째 줄\x00\x07끝"
+        app.save_flow(b)
+        saved = json.loads((self.flows / "K1.json").read_text(encoding="utf-8"))
+        self.assertEqual(saved["steps"][0]["do"], "첫 줄\n둘째 줄  끝")
+
+    def test_long_text_is_cut(self):
+        b = body()
+        b["flow"]["steps"][0]["do"] = "가" * 5000
+        app.save_flow(b)
+        self.assertEqual(len(json.loads((self.flows / "K1.json").read_text(encoding="utf-8"))["steps"][0]["do"]), 600)
+
+    def test_odd_record_key_stays_inside_flows_folder(self):
+        app.save_flow(body(record_key="../../evil"))
+        self.assertEqual([p.parent for p in self.flows.rglob("*.json")], [self.flows])
+        self.assertFalse((self.flows.parent / "evil.json").exists())
+
+
+class ValidationTest(FlowTestBase):
+    def assertRejected(self, payload, text):
+        with self.assertRaises(ValueError) as ctx:
+            app.save_flow(payload)
+        self.assertIn(text, str(ctx.exception))
+        self.assertEqual(list(self.flows.iterdir()), [], "거절한 요청은 파일을 만들면 안 돼요")
+
+    def test_needs_subject_and_lesson(self):
+        self.assertRejected(body(subject=""), "과목과 차시")
+        self.assertRejected(body(record_key="", title=""), "과목과 차시")
+
+    def test_needs_flow_dict(self):
+        self.assertRejected(body(flow="x"), "수업 흐름")
+        self.assertRejected(body(flow=None), "수업 흐름")
+
+    def test_step_count_limits(self):
+        b = body(); b["flow"]["steps"] = []
+        self.assertRejected(b, "1~12개")
+        b["flow"]["steps"] = [dict(STEP) for _ in range(13)]
+        self.assertRejected(b, "1~12개")
+        b["flow"]["steps"] = "도입"
+        self.assertRejected(b, "1~12개")
+
+    def test_twelve_steps_ok(self):
+        b = body(); b["flow"]["steps"] = [dict(STEP, minutes=3) for _ in range(12)]
+        self.assertEqual(app.save_flow(b)["status"], "success")
+
+    def test_step_name_required(self):
+        b = body(); b["flow"]["steps"][1]["name"] = "  "
+        self.assertRejected(b, "2번째 단계 이름")
+
+    def test_minutes_must_be_number_in_range(self):
+        for bad, text in (("abc", "숫자가 아니에요"), (-1, "0~120"), (121, "0~120")):
+            b = body(); b["flow"]["steps"][0]["minutes"] = bad
+            self.assertRejected(b, text)
+
+    def test_step_must_be_object(self):
+        b = body(); b["flow"]["steps"][0] = "도입"
+        self.assertRejected(b, "1번째 단계 형식")
+
+    def test_materials_must_be_text_or_list(self):
+        b = body(); b["flow"]["materials"] = {"a": 1}
+        self.assertRejected(b, "준비물 형식")
+
+    def test_minutes_blank_means_zero(self):
+        b = body(); b["flow"]["steps"][0]["minutes"] = ""
+        app.save_flow(b)
+        self.assertEqual(json.loads((self.flows / "K1.json").read_text(encoding="utf-8"))["steps"][0]["minutes"], 0)
+
+
+class HttpTest(FlowTestBase):
+    def setUp(self):
+        super().setUp()
+        self.server = ThreadingHTTPServer(("127.0.0.1", 0), app.Handler)
+        threading.Thread(target=self.server.serve_forever, daemon=True).start()
+
+    def tearDown(self):
+        self.server.shutdown()
+        self.server.server_close()
+        super().tearDown()
+
+    def post(self, payload, headers=None):
+        conn = http.client.HTTPConnection("127.0.0.1", self.server.server_port, timeout=10)
+        conn.request("POST", "/api/flow", json.dumps(payload, ensure_ascii=False).encode("utf-8"),
+                     {"Content-Type": "application/json", **(headers or {})})
+        res = conn.getresponse()
+        return res.status, json.loads(res.read().decode("utf-8"))
+
+    def test_post_saves(self):
+        status, data = self.post(body())
+        self.assertEqual((status, data["status"]), (200, "success"))
+        self.assertEqual(data["flow"]["steps"][0]["name"], "도입")
+        self.assertTrue((self.flows / "K1.json").is_file())
+
+    def test_post_error_is_400_with_korean_message(self):
+        b = body(); b["flow"]["steps"][0]["name"] = ""
+        status, data = self.post(b)
+        self.assertEqual(status, 400)
+        self.assertIn("이름이 비어", data["message"])
+
+    def test_other_site_origin_is_refused(self):
+        status, _ = self.post(body(), {"Origin": "https://evil.example"})
+        self.assertEqual(status, 403)
+        self.assertEqual(list(self.flows.iterdir()), [])
+
+
+if __name__ == "__main__":
+    unittest.main()

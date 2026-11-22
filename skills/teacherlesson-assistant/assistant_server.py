@@ -170,16 +170,76 @@ def upcoming(subject: str) -> list[dict]:
     return out[:40]
 
 
-def find_flow(lesson: dict) -> dict | None:
+def flow_candidates(lesson: dict) -> list[pathlib.Path]:
+    """이 수업의 흐름 파일 후보(앞쪽이 우선): 차시 번호(record_key) → 과목__차시제목."""
     candidates = []
     if lesson.get("record_key"):
         candidates.append(FLOWS / f"{safe_name(lesson['record_key'])}.json")
     if lesson.get("title"):
         candidates.append(FLOWS / f"{safe_name(lesson['subject'])}__{safe_name(lesson['title'])}.json")
-    for path in candidates:
+    return candidates
+
+
+def find_flow(lesson: dict) -> dict | None:
+    for path in flow_candidates(lesson):
         if path.is_file():
             return read_json(path, None)
     return None
+
+
+_CTRL = re.compile(r"[\x00-\x08\x0b-\x1f\x7f]")  # 줄바꿈(\n)·탭만 남기고 제어문자 제거
+
+
+def _clean(value, limit: int = 600) -> str:
+    return _CTRL.sub(" ", str(value if value is not None else "")).strip()[:limit]
+
+
+def save_flow(body: dict) -> dict:
+    """화면에서 고친 수업 흐름을 flows/ 에 저장한다. 값은 서버에서 다시 검사하고,
+    직접 고친 흐름이 되도록 자동 준비 표시(auto)는 지운다(prepare_lessons 가 덮어쓰지 않음)."""
+    lesson = {k: _clean(body.get(k), 200) for k in ("record_key", "subject", "title")}
+    if not lesson["subject"] or not (lesson["record_key"] or lesson["title"]):
+        raise ValueError("과목과 차시 정보가 없어 흐름을 저장할 수 없어요.")
+    raw = body.get("flow")
+    if not isinstance(raw, dict):
+        raise ValueError("저장할 수업 흐름이 없어요.")
+    steps_in = raw.get("steps")
+    if not isinstance(steps_in, list) or not 1 <= len(steps_in) <= 12:
+        raise ValueError("단계는 1~12개로 만들어 주세요.")
+    steps = []
+    for n, item in enumerate(steps_in, 1):
+        if not isinstance(item, dict):
+            raise ValueError(f"{n}번째 단계 형식이 올바르지 않아요.")
+        name = _clean(item.get("name"), 60)
+        if not name:
+            raise ValueError(f"{n}번째 단계 이름이 비어 있어요.")
+        try:
+            minutes = int(item.get("minutes") or 0)
+        except (TypeError, ValueError):
+            raise ValueError(f"{n}번째 단계의 시간(분)이 숫자가 아니에요.") from None
+        if not 0 <= minutes <= 120:
+            raise ValueError(f"{n}번째 단계의 시간은 0~120분 사이로 적어 주세요.")
+        steps.append({"name": name, "minutes": minutes, **{k: _clean(item.get(k)) for k in ("do", "say", "tip")}})
+    materials = raw.get("materials", [])
+    if isinstance(materials, str):
+        materials = re.split(r"[,\n]", materials)
+    if not isinstance(materials, list):
+        raise ValueError("준비물 형식이 올바르지 않아요.")
+    materials = [m for m in (_clean(m, 60) for m in materials) if m][:20]
+
+    candidates = flow_candidates(lesson)
+    path = next((p for p in candidates if p.is_file()), candidates[0])
+    if not path.resolve().is_relative_to(FLOWS.resolve()):
+        raise ValueError("저장 위치가 올바르지 않아요.")
+    base = read_json(path, {}) if path.is_file() else {}
+    flow = {k: v for k, v in (base if isinstance(base, dict) else {}).items() if k != "auto"}
+    flow.update(record_key=lesson["record_key"], subject=lesson["subject"], title=lesson["title"],
+                goal=_clean(raw.get("goal"), 300), materials=materials, steps=steps,
+                edited={"by": "teacher", "at": datetime.now().strftime("%Y-%m-%d %H:%M")})
+    flow.setdefault("publisher", load_config().get("subjects", {}).get(lesson["subject"], {}).get("publisher", ""))
+    with _lock:
+        write_json(path, flow)
+    return {"status": "success", "message": "수업 흐름을 저장했어요.", "flow": flow}
 
 
 def find_unit(lesson: dict) -> dict | None:
@@ -507,6 +567,8 @@ class Handler(BaseHTTPRequestHandler):
                 return self._json(ask_prepare(body))
             if url.path == "/api/session":
                 return self._json(save_session(body))
+            if url.path == "/api/flow":
+                return self._json(save_flow(body))
             if url.path == "/api/caution":
                 return self._json(add_caution(body))
             if url.path.startswith("/api/progress/"):

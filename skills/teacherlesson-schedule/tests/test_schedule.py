@@ -857,6 +857,100 @@ class ScheduleTests(unittest.TestCase):
         self.assertEqual(refreshed_records[2][schedule.COLUMN_DATE], "2026-04-08")
         self.assertEqual(refreshed_records[3][schedule.COLUMN_DATE], "2026-04-10")
 
+    def _catch_up_fixture(self):
+        progress_ws, bridge_ws = self.make_progress_and_bridge(
+            [
+                ["lesson-0001", "Math", "2026-03-24", "FALSE", "1", "Fractions", "Unit 1"],
+                ["lesson-0002", "Math", "2026-03-31", "FALSE", "2", "Division", "Unit 1"],
+                ["lesson-0003", "Math", "2026-04-07", "FALSE", "3", "Decimals", "Unit 1"],
+                ["lesson-0004", "Math", "2026-04-14", "FALSE", "4", "Geometry", "Unit 1"],
+            ],
+            [
+                ["2026-03-24", 2, 1, "Math", "lesson-0001", "planned", "progress_sync", ""],
+                ["2026-03-31", 2, 1, "Math", "lesson-0002", "planned", "progress_sync", ""],
+                ["2026-04-07", 2, 1, "Math", "lesson-0003", "planned", "progress_sync", ""],
+                ["2026-04-14", 2, 1, "Math", "lesson-0004", "planned", "progress_sync", ""],
+            ],
+            progress_headers=[
+                schedule.COLUMN_LESSON_ID, schedule.COLUMN_SUBJECT, schedule.COLUMN_DATE, schedule.COLUMN_DONE,
+                schedule.COLUMN_LESSON, schedule.COLUMN_TITLE, schedule.COLUMN_UNIT,
+            ],
+        )
+        FakeWorksheet(
+            ["월", "화", "수", "목", "금"],
+            [["", "", "Science", "", "Math"], ["Math", "", "Math", "", ""]],
+            title=auto_planner.TIMETABLE_SHEET_NAME,
+            spreadsheet=progress_ws.spreadsheet,
+        )
+        return progress_ws, bridge_ws
+
+    def _catch_up(self, progress_ws, key):
+        return schedule.catch_up_to_lesson(
+            progress_ws, schedule.load_all(progress_ws), "Math", record_key=key, current_date=date(2026, 4, 8)
+        )
+
+    def test_catch_up_twice_to_same_lesson_keeps_earlier_lessons_done(self):
+        # 2026-11-22 도덕: 같은 차시를 두 번 누르니 날짜순 정렬 때문에 앞 차시들이 다시 '할 차시'로 섞였다
+        progress_ws, bridge_ws = self._catch_up_fixture()
+        self._catch_up(progress_ws, "lesson-0004")
+        self._catch_up(progress_ws, "lesson-0004")
+        status = {row[4]: row[5] for row in bridge_ws.rows}
+        self.assertEqual(status, {"lesson-0001": "done", "lesson-0002": "done",
+                                  "lesson-0003": "done", "lesson-0004": "planned"})
+        done = [schedule._is_done(r) for r in schedule.load_all(progress_ws)]
+        self.assertEqual(done, [True, True, True, False])
+
+    def test_catch_up_to_unscheduled_lesson_takes_over_earlier_slots(self):
+        # 2026-11-22 도덕: 방학 전 칸이 모자라 날짜 없는 7단원 3차시가 실제 진도
+        progress_ws, bridge_ws = self.make_progress_and_bridge(
+            [
+                ["lesson-0001", "Math", "2026-03-24", "TRUE", "1", "A", "Unit 1"],
+                ["lesson-0002", "Math", "2026-03-31", "FALSE", "2", "B", "Unit 1"],
+                ["lesson-0003", "Math", "2026-04-07", "FALSE", "3", "C", "Unit 1"],
+                ["lesson-0004", "Math", "", "FALSE", "4", "D", "Unit 2"],
+                ["lesson-0005", "Math", "", "FALSE", "5", "E", "Unit 2"],
+                ["lesson-0006", "Math", "", "FALSE", "6", "F", "Unit 2"],
+            ],
+            [
+                ["2026-03-24", 2, 1, "Math", "lesson-0001", "done", "progress_sync", ""],
+                ["2026-03-31", 2, 1, "Math", "lesson-0002", "planned", "progress_sync", ""],
+                ["2026-04-07", 2, 1, "Math", "lesson-0003", "planned", "progress_sync", ""],
+            ],
+            progress_headers=[
+                schedule.COLUMN_LESSON_ID, schedule.COLUMN_SUBJECT, schedule.COLUMN_DATE, schedule.COLUMN_DONE,
+                schedule.COLUMN_LESSON, schedule.COLUMN_TITLE, schedule.COLUMN_UNIT,
+            ],
+        )
+        FakeWorksheet(
+            ["월", "화", "수", "목", "금"],
+            [["", "", "Science", "", "Math"], ["Math", "", "Math", "", ""]],
+            title=auto_planner.TIMETABLE_SHEET_NAME,
+            spreadsheet=progress_ws.spreadsheet,
+        )
+        self._catch_up(progress_ws, "lesson-0005")   # 4차시(칸 없음)도 건너뛰고 5차시부터
+        by_id = {row[4]: (row[0], row[1], row[5]) for row in bridge_ws.rows}
+        self.assertEqual(by_id["lesson-0005"], ("2026-04-08", 2, "planned"))
+        self.assertEqual(by_id["lesson-0006"][2], "planned")
+        self.assertLess(by_id["lesson-0005"][:2], by_id["lesson-0006"][:2])
+        self.assertNotIn("lesson-0002", by_id)      # 칸을 넘겨줌
+        self.assertNotIn("lesson-0003", by_id)
+        done = [schedule._is_done(r) for r in schedule.load_all(progress_ws)]
+        self.assertEqual(done, [True, True, True, True, False, False])
+
+    def test_catch_up_back_to_completed_lesson_reopens_it_and_later_ones(self):
+        progress_ws, bridge_ws = self._catch_up_fixture()
+        self._catch_up(progress_ws, "lesson-0004")   # 너무 앞으로 감
+        self._catch_up(progress_ws, "lesson-0002")   # 실제는 2차시 → 되돌리기
+        status = {row[4]: row[5] for row in bridge_ws.rows}
+        slot = {row[4]: (row[0], row[1]) for row in bridge_ws.rows}
+        self.assertEqual(status, {"lesson-0001": "done", "lesson-0002": "planned",
+                                  "lesson-0003": "planned", "lesson-0004": "planned"})
+        self.assertEqual(slot["lesson-0002"], ("2026-04-08", 2))
+        self.assertEqual(slot["lesson-0003"], ("2026-04-10", 1))
+        self.assertLess(slot["lesson-0003"], slot["lesson-0004"])
+        done = [schedule._is_done(r) for r in schedule.load_all(progress_ws)]
+        self.assertEqual(done, [True, False, False, False])
+
     def test_resolve_progress_worksheet_skips_invalid_first_candidate(self):
         invalid = FakeWorksheet([schedule.COLUMN_SUBJECT, schedule.COLUMN_DONE], [], title="invalid")
         valid = FakeWorksheet(

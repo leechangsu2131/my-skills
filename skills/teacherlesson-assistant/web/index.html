@@ -34,6 +34,8 @@ button.rec{background:var(--red);color:#fff;border-color:var(--red)}
 .pick button{display:block;width:100%;text-align:left;border:0;border-bottom:1px solid var(--line);border-radius:0;padding:9px 10px}
 .pick button:hover{background:#eef3f1}
 .pick button.now{background:#fff8dc}
+.pick button.done{color:#8a8a8a;background:#fafafa}
+.pick button:disabled{color:#b0b0b0;cursor:default}
 .pick small{color:var(--sub);margin-left:6px}
 .tag{display:inline-block;font-size:12px;padding:1px 7px;border-radius:10px;background:#eef3f1;color:var(--acc);margin-right:4px}
 ul{margin:4px 0;padding-left:18px}
@@ -133,7 +135,7 @@ textarea,input[type=text]{width:100%;font:inherit;border:1px solid var(--line);b
     <div id="catchBox" style="display:none;margin-top:6px">
       <div class="muted" style="margin-bottom:4px">👇 <b>오늘 실제로 할 차시</b>를 누르세요. 앞 차시는 '이미 함'이 되고, 누른 차시부터 다시 배치돼요.</div>
       <div id="catchList" class="pick"></div>
-      <div class="row" style="margin-top:6px"><button id="catchCancel">닫기</button><span class="muted">이미 '함'으로 표시된 차시로 되돌리기는 아직 안 돼요</span></div>
+      <div class="row" style="margin-top:6px"><button id="catchCancel">닫기</button><span class="muted">회색 '✓ 함' 차시를 누르면 거기로 되돌려요</span></div>
     </div>
   </section>
 
@@ -418,26 +420,33 @@ $('catchBtn').onclick = async () => {
   catchItems.forEach((i, n) => {
     if (i.unit !== unit) { unit = i.unit; html += `<h4>${esc(unit || '단원 없음')}</h4>`; }
     const now = i.record_key === cur.record_key;
-    const plan = i.planned_date ? `${i.planned_date.slice(5).replace('-', '/')} ${esc(i.planned_period)}교시` : '날짜 없음';
-    html += `<button data-n="${n}" class="${now ? 'now' : ''}">${esc(i.lesson)}차시 · ${esc(i.title)}<small>계획 ${plan}${now ? ' ◀ 지금 계획된 차시' : ''}</small></button>`;
+    const plan = i.planned_date ? `${i.planned_date.slice(5).replace('-', '/')} ${esc(i.planned_period)}교시` : '';
+    const note = i.done ? '✓ 함 (누르면 여기로 되돌리기)' : plan ? `계획 ${plan}` : '날짜 없음 (누르면 앞 차시의 남은 시간을 넘겨받아요)';
+    html += `<button data-n="${n}" class="${now ? 'now' : ''}${i.done ? ' done' : ''}">`
+          + `${esc(i.lesson)}차시 · ${esc(i.title)}<small>${note}${now ? ' ◀ 지금 계획된 차시' : ''}</small></button>`;
   });
   $('catchList').innerHTML = html;
-  $('catchList').querySelector('button.now')?.scrollIntoView({block: 'center'});
+  ($('catchList').querySelector('button.now') || $('catchList').querySelector('button:not(.done)'))?.scrollIntoView({block: 'center'});
 };
 let catchItems = [];
 $('catchCancel').onclick = () => { $('catchBox').style.display = 'none'; };
 $('catchList').onclick = async e => {
   const b = e.target.closest('button[data-n]'); if (!b || !cur) return;
-  const n = +b.dataset.n, it = catchItems[n], before = catchItems.slice(0, n);
+  const n = +b.dataset.n, it = catchItems[n];
+  const before = catchItems.slice(0, n).filter(i => !i.done);          // 건너뛰어 '이미 함'이 될 차시
+  const reopen = catchItems.slice(n).filter(i => i.done);              // 되돌려 '아직 안 함'이 될 차시
   const name = i => `${i.lesson}차시 ${i.title}`;
+  const list = a => `${a.slice(0, 4).map(name).join(', ')}${a.length > 4 ? ' …' : ''}`;
   const msg = [`[${cur.subject}] 「${it.unit} ${name(it)}」을(를)\n오늘 실제로 할 차시로 정할까요?`, '',
-    before.length ? `• 그 앞의 ${before.length}개 차시는 '이미 함'으로 표시돼요:\n   ${before.slice(0, 4).map(name).join(', ')}${before.length > 4 ? ' …' : ''}`
-                  : '• 앞에 건너뛰는 차시는 없어요.',
-    `• 이 차시부터 오늘 이후 ${cur.subject} 시간에 차례로 다시 배치돼요.`].join('\n');
+    before.length ? `• 그 앞의 ${before.length}개 차시는 '이미 함'으로 표시돼요:\n   ${list(before)}` : '',
+    reopen.length ? `• ${reopen.length}개 차시를 '아직 안 함'으로 되돌려요:\n   ${list(reopen)}` : '',
+    !before.length && !reopen.length ? '• 건너뛰거나 되돌리는 차시는 없어요.' : '',
+    `• 이 차시부터 오늘 이후 ${cur.subject} 시간에 차례로 다시 배치돼요.`].filter(Boolean).join('\n');
   if (!confirm(msg)) return;
-  b.disabled = true;
+  $('catchList').style.pointerEvents = 'none'; $('catchList').style.opacity = .5;   // 반영 중 두 번 눌리지 않게
+  toast('진도표에 반영하는 중…', 15000);
   const j = await post('/api/progress/catch-up', {subject: cur.subject, record_key: it.record_key});
-  b.disabled = false;
+  $('catchList').style.pointerEvents = ''; $('catchList').style.opacity = '';
   if (j.status === 'success') { addMemo('sys', `진도 맞춤: ${it.unit} ${name(it)}부터`, true); $('catchBox').style.display = 'none'; setTimeout(load, 800); }
 };
 window.addEventListener('beforeunload', e => { if (rec){ e.preventDefault(); e.returnValue=''; } });

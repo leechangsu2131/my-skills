@@ -145,9 +145,18 @@ def _period_no(value) -> int | None:
 
 
 def upcoming(subject: str) -> list[dict]:
-    """오늘 이후 이 과목의 차시 목록(진도 서버 agenda). '여기부터 다시 잡기'에서 고를 후보."""
+    """'실제로 할 차시 고르기' 후보: 이 과목의 차시를 진도표 순서대로(완료 포함 → 되돌리기 가능).
+    남은 첫 차시 앞의 완료 차시는 최근 12개만. 진도 서버가 옛 버전이면 남은 차시(agenda)만."""
     cfg = load_config()
     base = cfg.get("schedule_api", "http://127.0.0.1:5000").rstrip("/")
+    try:
+        with urllib.request.urlopen(f"{base}/api/lessons?subject={urllib.parse.quote(subject)}", timeout=25) as res:
+            items = json.load(res).get("items", [])
+        first_open = next((n for n, i in enumerate(items) if not i.get("done")), len(items))
+        return [{**i, "record_key": str(i.get("record_key") or "")} for i in items[max(0, first_open - 12):first_open + 48]]
+    except urllib.error.HTTPError as exc:
+        if exc.code != 404:
+            raise
     with urllib.request.urlopen(f"{base}/api/dashboard", timeout=25) as res:
         payload = json.load(res)
     agenda = next((v for v in payload.get("views", []) if v.get("id") == "agenda"), {}).get("data", [])

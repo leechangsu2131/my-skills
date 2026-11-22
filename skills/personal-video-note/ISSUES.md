@@ -13,7 +13,14 @@
   - 로그인 안 된 상태로 강의 주소를 열면 첫 화면으로 돌려보낸다.
   - 영상이 계속 스트리밍되므로 `wait_until="networkidle"`은 끝나지 않는다. `domcontentloaded` 사용.
   - `--remote-debugging-port`로 따로 띄운 크롬에서는 로그인이 되지 않았다. Playwright `launch_persistent_context`(프로필은 `data_dir()/browser-profile`)를 쓴다.
-- **할 일**: 시험 스크립트를 `lecturecapture` 명령(예: `fetch-neti`)으로 옮기기.
+- **복습하기(이수한 과정) 경로** (2026-11-22, AIEDAP 10~13차시로 확인):
+  - 차시 창은 `POST /lh/ms/ac/selectPreViewPopupByCntsId.do` (`cntsId=<차시 번호>`). 응답 HTML의 `var getVideoList = [...]`에 영상 목록(`iem_nm`, `bgng_file_nm`, `plytm_ss`, `cnts_year`)이 있다. 차시 번호는 수강과정 페이지의 `$.openCnts(event, <cntsId>)`에서 얻는다.
+  - 파일 위치: `/eduup_cmmn/contents/nonscorm/nonscorm<연도>/<cntsId>/mp4/<차시>_<순번>.mp4`, 같은 이름의 `.vtt`(**공식 자막, Whisper 불필요** → `--subtitle`), `<cntsId>.zip`(강의자료 PDF, 글자 추출 가능·도식은 그림), `/html/<차시>_quiz.html`(base64 iframe 안 `const quiz=[...]`에 정답·해설).
+  - 한 차시의 학습 영상이 두 개로 나뉜 경우가 많다(도구 소개 + 본편). ffmpeg가 없어 `1부/`, `2부/` 하위 프로젝트로 처리하고 요약만 차시 폴더에 하나로 둔다. 이때 각 부의 note.md에 있는 요약 링크는 동작하지 않는다.
+  - 공식 자막 일부 구간이 영어 번역문으로 들어 있는 경우가 있다(11·12차시). PDF로 보완한다.
+- **로그인**: 중앙 `.env`의 `NETI_ID`/`NETI_PW`로 `POST /system/loginProcess.do`(JSON `userId`, `userPw`)를 보내 자동 로그인한다(확인됨). 요청 기록 스크립트에서는 로그인 요청 본문을 남기지 않는다.
+- **주의(Playwright)**: 대기 루프에서 `time.sleep`을 쓰면 새 창(팝업)이 열리지 않는다. `page.wait_for_timeout`을 쓴다. PowerShell 5.1 스크립트(.ps1)에 한글이 있으면 UTF-8 BOM으로 저장한다.
+- **할 일**: 시험 스크립트(`neti_review_fetch.py` 등)를 `lecturecapture` 명령(예: `fetch-neti --course-id … --sessions 10-13`)으로 옮기기. 퀴즈·PDF 글자 추출과 부별 처리도 포함.
 
 ## 📌 백로그
 

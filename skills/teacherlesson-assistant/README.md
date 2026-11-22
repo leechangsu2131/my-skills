@@ -41,13 +41,15 @@ Claude 작업 절차는 [SKILL.md](SKILL.md), 문제·할 일은 [ISSUES.md](ISS
 
 ## NotebookLM 소스 (학기에 한 번)
 
+공용 도구는 [`util-notebooklm`](../util-notebooklm/SKILL.md)(글자 뽑기·그림 PDF·md 자르기·노트북 목록·Gemini 찾기). 여기 있는 것은 진도표 차시에 맞추는 수업용 부분이다.
+
 1. `py -3.13 notebook_sources.py [과목…] [--all] [--open]` — 진도표의 단원마다 `notebooklm/<과목>/<대단원>.md` 를 만든다(LLM 없음, 전 과목 30초 안팎).
    - 지도서 글자만 뽑고 차시마다 `## [수학 6단원] 4차시 제목 (지도서 p.25~28)` 표시를 심는다. 쪽마다 `〔p.N〕`.
    - 국어 단원 한 권은 쪽 머리의 `3~4차시 / 14차시`, 매체 단원은 `이 차시는 '다가가기' 학습` 표시로 차시를 나눈다.
    - 글자가 거의 없는 쪽과 음악·미술(`notebooklm_image_subjects`) 단원 전체는 `<대단원>_그림.pdf`(흑백, 쪽마다 차시 표시)로 따로 만든다.
    - 지도서 PDF가 이 PC에 없는 차시는 제목만 넣고 "PDF 없음"으로 알려 준다(지금 음악).
 2. 과목마다 노트북을 하나 만들고 그 과목 폴더의 `.md`·`_그림.pdf` 를 소스로 올린다(공개 API가 없어 직접). 한도: 소스당 50만 단어/200MB.
-3. 노트북 주소를 `config.json` 의 `subjects.<과목>.notebooklm` 에 적는다 → 🤖 줄의 **NotebookLM** 단추가 그 노트북을 열고 `[과목 N단원] N차시` 를 짚는 질문을 복사한다(파일은 모으지 않음).
+3. 노트북 주소를 `C:\Python313\python.exe ..\util-notebooklm\nlm.py nb add 수업-수학 <주소>` 로 등록한다(또는 `config.json` 의 `subjects.<과목>.notebooklm`) → 🤖 줄의 **NotebookLM** 단추가 그 노트북을 열고 `[과목 N단원] N차시` 를 짚는 질문을 복사한다(파일은 모으지 않음).
 4. 답을 오빠두엑셀 북마클릿 등으로 md 로 받았다면 `python split_notes.py 받은.md` → `notebooklm/<과목>/notes/<N단원>_<N>차시.md` 로 잘린다. 그 차시에 다른 AI 단추를 누르면 이 노트도 `ask/` 폴더에 함께 들어간다.
 
 ## 지도서 받기 (`guide_download.py`)

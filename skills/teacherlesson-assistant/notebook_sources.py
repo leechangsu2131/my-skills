@@ -33,14 +33,12 @@ import time
 import build_units as bu  # schedule·fitz·assistant_server 를 함께 불러온다
 from build_units import app, fitz, schedule
 
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent / "util-notebooklm"))
+import nlm  # noqa: E402  (공용: 글자 뽑기·흑백 그림 PDF·소스 쓰기)
+
 IMAGE_SUBJECTS_DEFAULT = ["음악", "미술"]
 KOREAN_LESSON = re.compile(r"(\d{1,2})(?:\s*[~∼]\s*(\d{1,2}))?\s*차시\s*/\s*\d{1,2}\s*차시")
 STAGE = re.compile(r"이 차시는\s*[‘'\"“]([^’'\"”]{1,12})[’'\"”]\s*학습")
-DOUBLED =re.compile(r"([•◼○●▒■□◆◇▶▷※])(?:\s*\1)+")
-HANGUL = re.compile(r"[가-힣]")
-LOW_TEXT = 40          # 한글 글자가 이보다 적으면 '그림 쪽'
-WORD_LIMIT = 450_000   # NotebookLM 소스당 50만 단어 (여유 두고 경고)
-GRAY_DPI, GRAY_QUALITY = 90, 50
 
 
 # ──────────────────────────── 진도표 → 차시 묶음 ────────────────────────────
@@ -139,9 +137,7 @@ def page_count(pdf: str) -> int:
 
 
 def whole(head: str, pdf: str, start: int | None) -> dict:
-    n = page_count(pdf)
-    return {"heading": head, "pdf": pdf, "note": "",
-            "pages": [(i, (start + i) if start else i + 1) for i in range(n)]}
+    return nlm.whole_section(head, pdf, start)
 
 
 def slice_sec(head: str, pdf: str, a: int, z: int, label_start: int) -> dict:
@@ -193,26 +189,7 @@ def by_stage_markers(pdf: str, b: list[dict]) -> list[tuple[int, dict]]:
     return list(zip(pages, b)) if len(pages) == len(b) else []
 
 
-# ──────────────────────────── 글자 뽑기·흑백 PDF ────────────────────────────
-
-def page_text(page) -> str:
-    lines = []
-    for line in bu.CTL.sub(" ", page.get_text()).splitlines():
-        line = DOUBLED.sub(r"\1", " ".join(line.split()))
-        if line:
-            lines.append("\\" + line if line.startswith("#") else line)  # 지도서 글이 차시 제목으로 읽히지 않게
-    return "\n".join(lines)
-
-
-def gray_page(out, page, label: str) -> None:
-    pix = page.get_pixmap(dpi=GRAY_DPI, colorspace=fitz.csGRAY)
-    new = out.new_page(width=page.rect.width, height=page.rect.height)
-    new.insert_image(new.rect, stream=pix.tobytes("jpeg", jpg_quality=GRAY_QUALITY))
-    try:  # 그림 쪽이 어느 차시인지 NotebookLM 이 글자로 알 수 있게
-        new.insert_text((12, 14), label, fontname="korea", fontsize=9)
-    except Exception:
-        pass
-
+# ──────────────────────────── 소스 쓰기 (util-notebooklm) ────────────────────────────
 
 def build_unit(subject: str, unit: str, rows: list[dict], cfg: dict, image_subjects: list[str]) -> str:
     tag = app.lesson_tag(subject, unit)
@@ -220,62 +197,20 @@ def build_unit(subject: str, unit: str, rows: list[dict], cfg: dict, image_subje
     secs = sections_for(tag, unit, groups)
     all_pages = subject in image_subjects
     folder = app.NOTEBOOKLM / app.safe_name(subject)
-    folder.mkdir(parents=True, exist_ok=True)
     md_path = folder / f"{app.safe_name(unit)}.md"
     img_path = folder / f"{app.safe_name(unit)}_그림.pdf"
     info = cfg.get("subjects", {}).get(subject, {})
-    out = [f"# {tag} {unit}", "",
-           f"과목: {subject} · 출판사: {info.get('publisher', '')} · 학년·학기: {cfg.get('grade_term', '')} · 만든 날: {time.strftime('%Y-%m-%d')}",
-           "", f"교사용 지도서의 글자를 차시별로 나눈 자료입니다. 각 차시는 \"## {tag} N차시\" 제목으로 시작하고,",
-           "〔p.N〕은 지도서 쪽 번호입니다.", "", "차시 목록:"]
-    out += [f"- {app.lesson_range(g['from'], g['to'])} {g['title']}" for g in groups]
-    gray = fitz.open()
-    low_pages = 0
-    docs: dict[str, object] = {}
-    try:
-        for s in secs:
-            out += ["", s["heading"], ""]
-            if s["note"]:
-                out.append(s["note"])
-                continue
-            doc = docs.setdefault(s["pdf"], fitz.open(s["pdf"]))
-            short = s["heading"].removeprefix("## ").split(" (")[0]
-            for idx, label in s["pages"]:
-                page = doc[idx]
-                text = page_text(page)
-                low = len(HANGUL.findall(text)) < LOW_TEXT
-                if low or all_pages:
-                    gray_page(gray, page, f"{short} p.{label}")
-                if low:
-                    low_pages += 1
-                    out.append(f"〔p.{label}〕 (글자가 거의 없는 쪽 — 그림·악보는 {img_path.name} 참고)")
-                    if text:
-                        out.append(text)
-                else:
-                    out += [f"〔p.{label}〕", text]
-                out.append("")
-        if gray.page_count:
-            gray.save(img_path, garbage=3, deflate=True)
-        elif img_path.exists():
-            img_path.unlink()
-    finally:
-        gray.close()
-        for d in docs.values():
-            d.close()
-    body = "\n".join(out).rstrip() + "\n"
-    md_path.write_text(body, encoding="utf-8")
-    words = len(body.split())
-    warn = f" ⚠ {words:,}단어 — NotebookLM 한도(50만) 가까움" if words > WORD_LIMIT else ""
-    missing = sum(1 for s in secs if s["note"])
-    extra = f", 그림 쪽 {low_pages}" if low_pages and not all_pages else ""
-    img = f" + {img_path.name}({gray_page_count(img_path)}쪽)" if img_path.exists() else ""
-    return (f"[{subject}] {unit}: 구간 {len(secs)}개, {words:,}단어{extra}{img}"
-            + (f", PDF 없음 {missing}" if missing else "") + warn)
-
-
-def gray_page_count(path: pathlib.Path) -> int:
-    with fitz.open(path) as d:
-        return d.page_count
+    header = [f"# {tag} {unit}", "",
+              f"과목: {subject} · 출판사: {info.get('publisher', '')} · 학년·학기: {cfg.get('grade_term', '')} · 만든 날: {time.strftime('%Y-%m-%d')}",
+              "", f"교사용 지도서의 글자를 차시별로 나눈 자료입니다. 각 차시는 \"## {tag} N차시\" 제목으로 시작하고,",
+              "〔p.N〕은 지도서 쪽 번호입니다.", "", "차시 목록:"]
+    header += [f"- {app.lesson_range(g['from'], g['to'])} {g['title']}" for g in groups]
+    r = nlm.write_source(md_path, img_path, header, secs, "all" if all_pages else "auto")
+    warn = f" ⚠ {r['words']:,}단어 — NotebookLM 한도(50만) 가까움" if r["too_big"] else ""
+    extra = f", 그림 쪽 {r['low_pages']}" if r["low_pages"] and not all_pages else ""
+    img = f" + {img_path.name}({r['gray_pages']}쪽)" if r["gray_pages"] else ""
+    return (f"[{subject}] {unit}: 구간 {len(secs)}개, {r['words']:,}단어{extra}{img}"
+            + (f", PDF 없음 {r['missing']}" if r["missing"] else "") + warn)
 
 
 # ──────────────────────────── 실행 ────────────────────────────

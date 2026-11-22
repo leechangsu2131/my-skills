@@ -16,25 +16,19 @@ import sys
 
 import assistant_server as app
 
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent / "util-notebooklm"))
+import nlm  # noqa: E402  (공용 md 자르기 — 기본 파이썬만 씀)
+
 MARK = re.compile(r"\[\s*([^\]\s]+)\s+([^\]\s]+)\s*\]\s*(\d{1,2})(?:\s*[~∼-]\s*(\d{1,2}))?\s*차시")
-HEADING = re.compile(r"^\s*(#{1,6}\s|\*\*)")
 
 
 def split(text: str) -> list[tuple[str, str, int, int, str]]:
     """(과목, 단원표시, 시작, 끝, 내용) 목록."""
-    parts, cur, buf = [], None, []
-    for line in text.splitlines():
-        m = MARK.search(line) if HEADING.match(line) else None
-        if m:
-            if cur:
-                parts.append((*cur, "\n".join(buf).strip()))
-            a = int(m.group(3))
-            cur, buf = (m.group(1), m.group(2), a, int(m.group(4) or a)), [line]
-        elif cur:
-            buf.append(line)
-    if cur:
-        parts.append((*cur, "\n".join(buf).strip()))
-    return parts
+    out = []
+    for m, _head, body in nlm.split_text(text, MARK):
+        a = int(m.group(3))
+        out.append((m.group(1), m.group(2), a, int(m.group(4) or a), body))
+    return out
 
 
 def main(paths: list[str]) -> None:

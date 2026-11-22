@@ -74,3 +74,4 @@ v0.1은 "복사하고 하이클래스 열기"까지만. 자동 게시는 ISSUES 
 - `teacherlesson-guide-splitter`, `teacherlesson-guide-mapper` — 지도서 분할·진도표 행 생성
 - `teacherlesson-social-helper`, `teacherlesson-music-helper` — 과목별 사이트 자동 열기 참고
 - `admin-hitalk-sender` — 하이클래스 자동 전송 참고
+- `util-notebooklm` — 긴 지도서에서 찾기(Gemini CLI)·쪽 잘라내기·NotebookLM 소스·노트북 목록. 지도서를 통째로 읽어야 할 것 같으면 먼저 `nlm.py find`

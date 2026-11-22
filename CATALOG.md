@@ -1,7 +1,7 @@
 # 스킬 카탈로그
 
 > 이 파일은 `python tools/build_catalog.py`로 자동 생성된다. 직접 고치지 말고 각 스킬의 `SKILL.md` 앞머리(`metadata`)를 고친 뒤 다시 실행한다.
-> 생성일: 2026-11-22 · 스킬 60개
+> 생성일: 2026-11-22 · 스킬 61개
 
 ## 빠른 찾기
 
@@ -10,7 +10,7 @@
 - [📚 수업·교사 도구](#수업교사-도구) — 13개
 - [🌐 홈페이지](#홈페이지) — 1개
 - [👤 개인·생활](#개인생활) — 16개
-- [🛠️ 공통 유틸](#공통-유틸) — 10개
+- [🛠️ 공통 유틸](#공통-유틸) — 11개
 
 ## 학교 행정
 
@@ -95,6 +95,7 @@
 | `util-discord-memo` | ✅ 운영 | - | Discord 메모 채널의 내용을 요약해 공지/리포트로 정리하는 대화형 워크플로를 설명한다. | [SKILL](skills/util-discord-memo/SKILL.md) · [이슈](skills/util-discord-memo/ISSUES.md) |
 | `util-edusearch-main` | ✅ 운영 | - | 인디스쿨·수업나누리 등에서 수집한 교육 자료를 내 PC의 로컬 검색 DB로 모아 한 번에 검색하는 개인용 스크래퍼+검색 시스템. | [SKILL](skills/util-edusearch-main/SKILL.md) · [이슈](skills/util-edusearch-main/ISSUES.md) · [README](skills/util-edusearch-main/README.md) |
 | `util-map-time` | ✅ 운영 | - | Kakao 지도 기반 로컬 웹 앱. Excel 장소의 이동 거리·시간, 다대다 경로, 중간지점 및 경유지 비교를 제공한다. | [SKILL](skills/util-map-time/SKILL.md) · [이슈](skills/util-map-time/ISSUES.md) · [README](skills/util-map-time/README.md) |
+| `util-notebooklm` | 🔧 개발 | v0.1.0 | 긴 PDF 를 Claude 가 통째로 읽지 않도록, Gemini CLI·NotebookLM 이 관련 쪽을 찾고 그 쪽만 잘라 프런티어 모델에 넘기는 찾기·잘라내기·소스 만들기 도구. | [SKILL](skills/util-notebooklm/SKILL.md) · [이슈](skills/util-notebooklm/ISSUES.md) 🔵1 |
 | `util-pdf-translator` | ✅ 운영 | 스크립트 패키지 v1.0.0 | 영문 PDF를 챕터별로 나누고 Gemini Gems로 번역한 뒤 Discord로 보낸다. | [SKILL](skills/util-pdf-translator/SKILL.md) · [이슈](skills/util-pdf-translator/ISSUES.md) |
 | `util-school-print` | ✅ 운영 | - | Windows 한글(HWP) 자동화로 학년/반별 안내장을 배치 인쇄하고 반별 간지를 넣는다. | [SKILL](skills/util-school-print/SKILL.md) · [이슈](skills/util-school-print/ISSUES.md) |
 | `util-storagemap` | ✅ 운영 | 패키지 v2.1.0; README는 V3 표기 | 물건 위치와 공간별 2D 배치를 관리하는 Supabase 기반 웹앱이다. README의 V3와 `package.json` 버전 표기가 서로 다르다. | [SKILL](skills/util-storagemap/SKILL.md) · [이슈](skills/util-storagemap/ISSUES.md) · [README](skills/util-storagemap/README.md) |

@@ -264,6 +264,9 @@ def allowed_urls(cfg: dict) -> set[str]:
     urls.add(cfg.get("hiclass_url", ""))
     urls |= {s.get("url", "") for s in ai_sites(cfg)}
     urls |= {s.get("notebooklm", "") for s in cfg.get("subjects", {}).values()}
+    reg = read_json(data_dir("util-notebooklm") / "notebooks.json", {})
+    if isinstance(reg, dict):
+        urls |= {registry_notebook(k) for k in reg if str(k).startswith("수업-")}
     return {u for u in urls if u}
 
 
@@ -451,11 +454,18 @@ def cautions_for(cfg: dict, subject: str) -> list[str]:
     return [c["text"] for c in notes.get(f"{publisher}|{subject}", []) + notes.get(f"{publisher}|*", [])]
 
 
+def registry_notebook(topic: str) -> str:
+    """util-notebooklm 의 노트북 목록(nlm.py nb add 수업-수학 <주소>)에서 주소 찾기. https://notebooklm.google.com/ 주소만."""
+    reg = read_json(data_dir("util-notebooklm") / "notebooks.json", {})
+    url = str(reg.get(topic, {}).get("url", "")) if isinstance(reg, dict) else ""
+    return url if url.startswith("https://notebooklm.google.com/") else ""
+
+
 def ask_notebooklm(cfg: dict, subject: str, unit: str, lesson: str, title: str) -> dict:
     """NotebookLM: 지도서는 이미 소스로 올라가 있으니 파일은 모으지 않고, '[과목 N단원] N차시' 를 짚는 질문만 만든다."""
     nums = lesson_numbers(lesson)
     mark = f"{lesson_tag(subject, unit)} {lesson_range(*nums)}" if nums and unit else ""
-    url = cfg.get("subjects", {}).get(subject, {}).get("notebooklm", "")
+    url = cfg.get("subjects", {}).get(subject, {}).get("notebooklm", "") or registry_notebook(f"수업-{subject}")
     lines = [f"초등학교 3학년 {subject} 수업을 준비하고 있습니다."]
     if mark:
         lines += [f"소스 「{unit}」에서 \"{mark}\" 제목 아래 부분(이번 차시: 「{title}」)을 바탕으로 답해 주세요.",

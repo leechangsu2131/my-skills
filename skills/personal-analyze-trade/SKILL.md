@@ -9,7 +9,7 @@ metadata:
 
 # Personal Analyze Trade
 
-> **보관 (2026-11-20)**: 투자시트 작업은 `personal-invest-sheet` 스킬을 쓴다. 이 문서의 시트 지도·`.env` 경로는 옛 구조다.
+> **보관 (2026-11-20)**: 투자시트 작업은 `personal-invest-sheet` 스킬을 쓴다(2026-11-22부터 이 저장소 밖, 비공개 GitLab 저장소 `invest-sheet`로 옮김. 이 PC에서는 `~/.claude/skills/personal-invest-sheet`로 연결). 이 문서의 시트 지도·`.env` 경로는 옛 구조다.
 
 ## Core Rules
 

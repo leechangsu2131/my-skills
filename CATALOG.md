@@ -1,13 +1,13 @@
 # 스킬 카탈로그
 
 > 이 파일은 `python tools/build_catalog.py`로 자동 생성된다. 직접 고치지 말고 각 스킬의 `SKILL.md` 앞머리(`metadata`)를 고친 뒤 다시 실행한다.
-> 생성일: 2026-11-22 · 스킬 57개
+> 생성일: 2026-11-22 · 스킬 58개
 
 ## 빠른 찾기
 
 - [🏫 학교 행정](#학교-행정) — 9개
 - [📝 학생 기록·평가](#학생-기록평가) — 11개
-- [📚 수업·교사 도구](#수업교사-도구) — 10개
+- [📚 수업·교사 도구](#수업교사-도구) — 11개
 - [🌐 홈페이지](#홈페이지) — 1개
 - [👤 개인·생활](#개인생활) — 15개
 - [🛠️ 공통 유틸](#공통-유틸) — 11개
@@ -46,6 +46,7 @@
 
 | 스킬 | 상태 | 버전 | 할 수 있는 일 | 문서 |
 |---|---|---|---|---|
+| `picture-book-library` | ✅ 운영 | - | 초등 그림책 수업 자료와 개인 서재를 연계하여 도서 추천, 카드 작성, 검색 색인 및 HTML 목록을 관리한다. | [SKILL](skills/picture-book-library/SKILL.md) · [이슈](skills/picture-book-library/ISSUES.md) |
 | `teacher-3dprint` | 🔧 개발 | - | 수업 아이디어·물체·지형을 실제 출력 가능한 STL로 설계한다. 실측 지형, 기능 부품, 식품 몰드 참고 절차와 독도 지형 예제가 있다. | [SKILL](skills/teacher-3dprint/SKILL.md) · [이슈](skills/teacher-3dprint/ISSUES.md) |
 | `teacherlesson-aiep-courseware` | ✅ 운영 | - | 상위 공통 수업꾸러미의 AIEP 어댑터. 경북 AIEP의 성취기준, LCMS·파일/링크 배치, 공개 범위와 학습 순서를 반영해 꾸러미를 만들고 학습자 미리보기를 점검한다. | [SKILL](skills/teacherlesson-aiep-courseware/SKILL.md) · [이슈](skills/teacherlesson-aiep-courseware/ISSUES.md) · [README](skills/teacherlesson-aiep-courseware/README.md) |
 | `teacherlesson-assistant` | 🔧 개발 | v0.1.0 | 진도표·지도서·출판사 사이트·녹음·메모를 묶은 교시별 수업 진행 화면과, 수업 뒤 메모를 정리해 다음 수업에 반영하는 Claude 작업 절차. | [SKILL](skills/teacherlesson-assistant/SKILL.md) · [이슈](skills/teacherlesson-assistant/ISSUES.md) · [README](skills/teacherlesson-assistant/README.md) |
@@ -77,7 +78,7 @@
 | `personal-obsidansystem-main` | ✅ 운영 | v0.3.0 | Obsidian 볼트 메모를 운용지침에 맞게 분류·정리한다. 속성 일괄 수정 GUI, 볼트 묶음(md) 생성 → NotebookLM/Gemini 분석 → 추천표 검증·반영 파이프라인, NotebookLM 소스 추출 연계, Google Keep 메모 가져오기를 담았다. | [SKILL](skills/personal-obsidansystem-main/SKILL.md) · [이슈](skills/personal-obsidansystem-main/ISSUES.md) |
 | `personal-reading-book` | ✅ 운영 | - | 긴 문서를 로컬 우선으로 읽고 설명하는 Reading Tutor 프로젝트의 규칙과 정리 스크립트를 담는다. | [SKILL](skills/personal-reading-book/SKILL.md) · [이슈](skills/personal-reading-book/ISSUES.md) |
 | `personal-record-trade` | 📦 보관 | - | 자연어·거래 화면 캡처 등에서 새 매매 내역을 정리해 Google Sheets 매매일지에 추가한다. | [SKILL](skills/personal-record-trade/SKILL.md) · [이슈](skills/personal-record-trade/ISSUES.md) · [README](skills/personal-record-trade/README.md) |
-| `personal-vba-book` | ✅ 운영 | - | 책 목록·독서 감상문 데이터와 VBA/서재 관리용 스크립트를 보관한다. | [SKILL](skills/personal-vba-book/SKILL.md) · [이슈](skills/personal-vba-book/ISSUES.md) |
+| `personal-vba-book` | 📦 보관 | - | 과거 Excel VBA 도서 크롤러 원본과 Python 마크다운 서재 마이그레이션 아카이브를 보관한다 (실운영은 picture-book-library). | [SKILL](skills/personal-vba-book/SKILL.md) · [이슈](skills/personal-vba-book/ISSUES.md) |
 | `personal-video-note` | ✅ 운영 | v0.2.6 | YouTube 자막을 먼저 조회·추출하고, 강의 영상에서 슬라이드 캡처·타임스탬프 전사·Obsidian용 노트를 로컬 생성한다. 같은 슬라이드의 누적 공개 화면은 대표 화면으로 통합하고, 이미지 링크와 `slides/` 구성을 유지한다. | [SKILL](skills/personal-video-note/SKILL.md) · [이슈](skills/personal-video-note/ISSUES.md) 🔵1 · [README](skills/personal-video-note/README.md) |
 | `personal-video-url` | ✅ 운영 | - | `krcls.kr`의 기존 로그인 Chrome(CDP 9222)에서 플레이어 프레임에 노출된 미디어 URL을 확인해 CSV/Markdown으로 저장하고, 차시별 진도를 전후 비교한다. 영상은 다운로드하지 않는다. | [SKILL](skills/personal-video-url/SKILL.md) · [이슈](skills/personal-video-url/ISSUES.md) |
 | `personal-youtube-gemini-kakao-automation` | ✅ 운영 | - | 체슬리 모닝 브리프 YouTube 영상의 Gemini 요약 파이프라인을 실행하고 중단 기간의 요약 백로그를 처리한다. | [SKILL](skills/personal-youtube-gemini-kakao-automation/SKILL.md) · [이슈](skills/personal-youtube-gemini-kakao-automation/ISSUES.md) |

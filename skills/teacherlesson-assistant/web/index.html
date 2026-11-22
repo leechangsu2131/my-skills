@@ -117,7 +117,13 @@ ul{margin:4px 0;padding-left:18px}
 #meter i{display:block;height:100%;width:0;background:var(--ok)}
 #memoBtns{margin-top:12px}
 #memoBtns button{padding:6px 11px;border-radius:999px;font-size:14px}
-#memoList{max-height:200px;overflow:auto;font-size:14px;margin-top:8px}
+.memolog{margin-top:10px}
+.memolog>summary{cursor:pointer;list-style:none;font-size:14px;color:var(--sub);padding:4px 0;display:flex;align-items:center;gap:6px}
+.memolog>summary::-webkit-details-marker{display:none}
+.memolog>summary::before{content:"›";font-size:18px;line-height:1;transition:transform .15s}
+.memolog[open]>summary::before{transform:rotate(90deg)}
+#stepLogBtn{margin:4px 0;padding:4px 10px;font-size:13px;color:var(--sub)}
+#memoList{max-height:200px;overflow:auto;font-size:14px;margin-top:4px}
 #memoList div{border-bottom:1px dashed var(--line);padding:3px 0}
 #memoList code{color:var(--sub);margin-right:6px}
 textarea,input[type=text]{width:100%;font:inherit;border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px 10px}
@@ -194,7 +200,11 @@ textarea:focus,input[type=text]:focus{outline:2px solid var(--acc-soft);border-c
     </div>
     <div class="muted" style="margin-top:6px">🎤 음성 메모는 구글 서버로 소리가 전송돼요. 학생 이름은 말하지 마세요.</div>
     <input type="text" id="memoIn" style="margin-top:8px" placeholder="메모 입력 후 Enter (같은 과목 다음 수업에 다시 보여 줘요)">
-    <div id="memoList"></div>
+    <details class="memolog" id="memoLog">
+      <summary id="memoSum">📝 기록 0개</summary>
+      <button id="stepLogBtn" class="ghost" hidden></button>
+      <div id="memoList"></div>
+    </details>
   </section>
 
   <details class="fold" id="cautionBox" open>
@@ -305,6 +315,7 @@ function select(i){
   if (rec) { toast('녹음 중입니다. 먼저 수업을 마쳐 주세요'); return; }
   flushSave();
   cur = i>=0 ? S.lessons[i] : null; stepIdx = -1; stepAt = 0;
+  $('memoLog').open = false;   // 교시를 바꾸면 기록 목록은 다시 접음
   renderTabs();
   if (!cur){ $('lTitle').textContent='수업 없음'; $('lMeta').textContent=''; $('siteBtns').innerHTML=''; $('cautions').innerHTML=''; $('steps').innerHTML=''; $('goal').innerHTML=''; sess=null; renderMemos(); renderHero(); return; }
   const saved = cur.saved;
@@ -470,10 +481,19 @@ const KIND = {good:'👍', fix:'🔧', student:'🙋', star:'★', voice:'🎤',
 function addMemo(kind, text, quiet, extra){
   if (!sess) return;
   sess.memos.push({t:relTime(), at:new Date().toISOString(), kind, text, ...(extra||{})});
+  if (kind !== 'step' && kind !== 'sys') $('memoLog').open = true;   // 직접 적은 메모는 바로 확인할 수 있게 펼침
   renderMemos(); scheduleSave(quiet);
 }
+/* 기록 목록은 접어 두고, 단계를 넘길 때마다 쌓이는 '단계 이동' 줄은 따로 켜고 끈다 */
+let showStepLog = false;
 function renderMemos(){
-  $('memoList').innerHTML = (sess?sess.memos:[]).slice().reverse().map(m=>`<div><code>${esc(m.t)}</code>${KIND[m.kind]||''} ${esc(m.text)}</div>`).join('');
+  const all = sess ? sess.memos : [], notes = all.filter(m => m.kind !== 'step'), moves = all.length - notes.length;
+  $('memoSum').textContent = `📝 기록 ${notes.length}개` + (moves ? ` · 단계 이동 ${moves}번` : '');
+  $('stepLogBtn').hidden = !moves;
+  $('stepLogBtn').textContent = showStepLog ? '단계 이동 기록 숨기기' : '단계 이동 기록도 보기';
+  const shown = showStepLog ? all : notes;
+  $('memoList').innerHTML = shown.length ? shown.slice().reverse().map(m=>`<div><code>${esc(m.t)}</code>${KIND[m.kind]||''} ${esc(m.text)}</div>`).join('')
+    : '<div class="muted">아직 남긴 메모가 없어요</div>';
 }
 let pendingSave = null;
 function scheduleSave(quiet=true){
@@ -574,6 +594,7 @@ document.addEventListener('keydown', e => {
 });
 $('recBtn').onclick = () => rec ? stopRec() : startRec();
 $('voiceBtn').onclick = voiceMemo;
+$('stepLogBtn').onclick = () => { showStepLog = !showStepLog; renderMemos(); };
 $('memoBtns').onclick = e => {
   const k = e.target.closest('button')?.dataset.k; if (!k) return;
   const label = {good:'좋았던 점', fix:'고칠 점', student:'학생 이름과 발표 내용', star:'표시 이유(비워도 됨)'}[k];

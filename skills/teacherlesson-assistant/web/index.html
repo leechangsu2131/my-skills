@@ -3,147 +3,254 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
 <title>수업 비서</title>
 <style>
-:root{--bg:#f6f4ef;--card:#fff;--ink:#222;--sub:#6b6b6b;--line:#e3dfd6;--acc:#2f6f5e;--warn:#b5651d;--red:#c0392b}
+:root{
+  --bg:#f5f5f7;--card:#fff;--ink:#1d1d1f;--sub:#6e6e73;--line:#e5e5ea;--fill:#f0f0f3;
+  --acc:#0071e3;--acc-soft:#e8f1fc;--ok:#1d8a4a;--warn:#c77700;--warn-soft:#fff4e0;--red:#d92d20;--red-soft:#fdecea;
+  --r:16px;--shadow:0 1px 2px rgba(0,0,0,.04),0 4px 16px rgba(0,0,0,.05);
+}
 *{box-sizing:border-box}
-body{margin:0;font:15px/1.5 "Malgun Gothic",system-ui,sans-serif;background:var(--bg);color:var(--ink)}
-header{position:sticky;top:0;z-index:5;background:var(--acc);color:#fff;padding:8px 12px}
-.row{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+[hidden]{display:none!important}
+body{margin:0;font:15px/1.55 "Malgun Gothic","Apple SD Gothic Neo",system-ui,sans-serif;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .grow{flex:1}
-header button{background:rgba(255,255,255,.15);color:#fff;border:0}
-#datePick{font:inherit;border:0;border-radius:6px;padding:3px 6px;color:var(--acc);font-weight:700}
-#dow{font-weight:700}
-#clock{font-size:20px;font-weight:700;font-variant-numeric:tabular-nums}
-#tabs{display:flex;gap:4px;margin-top:6px;overflow-x:auto}
-#tabs button{flex:1;min-width:58px;padding:4px 2px;line-height:1.2}
-#tabs button.on{background:#fff;color:var(--acc);font-weight:700}
-#tabs button.now{outline:2px solid #ffd54f}
-#tabs small{display:block;font-size:11px;opacity:.85}
-main{padding:10px 12px 80px}
-section{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:10px}
-h2{font-size:14px;margin:0 0 6px;color:var(--sub)}
-h1{font-size:19px;margin:0}
-button{font:inherit;border:1px solid var(--line);background:#fff;border-radius:7px;padding:5px 9px;cursor:pointer}
-button:hover{filter:brightness(.95)}
-button.pri{background:var(--acc);color:#fff;border-color:var(--acc)}
-button.rec{background:var(--red);color:#fff;border-color:var(--red)}
 .muted{color:var(--sub);font-size:13px}
-.pick{max-height:340px;overflow:auto;border:1px solid var(--line);border-radius:8px;background:#fff}
-.pick h4{margin:0;padding:5px 10px;background:#f3f1eb;font-size:13px;position:sticky;top:0}
-.pick button{display:block;width:100%;text-align:left;border:0;border-bottom:1px solid var(--line);border-radius:0;padding:9px 10px}
-.pick button:hover{background:#eef3f1}
+
+/* 위쪽 바 */
+header{position:sticky;top:0;z-index:5;background:rgba(255,255,255,.86);backdrop-filter:saturate(180%) blur(16px);-webkit-backdrop-filter:saturate(180%) blur(16px);border-bottom:1px solid var(--line);padding:8px 12px 8px}
+.bar-row{display:flex;gap:6px;align-items:center}
+.datenav{display:flex;gap:4px;align-items:center}
+#datePick{font:inherit;font-weight:600;border:0;background:transparent;color:var(--ink);padding:2px 2px;width:132px}
+#dow{font-weight:600;color:var(--sub);min-width:1.2em}
+#clock{font-size:17px;font-weight:600;font-variant-numeric:tabular-nums;color:var(--ink);padding:0 4px}
+#tabs{display:flex;gap:2px;margin-top:8px;padding:3px;background:#e9e9ed;border-radius:12px;overflow-x:auto}
+#tabs button{flex:1;min-width:62px;padding:5px 4px;line-height:1.25;background:transparent;border-radius:9px;color:var(--sub);position:relative}
+#tabs button.on{background:#fff;color:var(--ink);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+#tabs button.now::before{content:"";position:absolute;top:5px;right:6px;width:7px;height:7px;border-radius:50%;background:var(--acc)}
+#tabs small{display:block;font-size:11px;font-weight:400;opacity:.85}
+
+main{padding:14px 14px 90px;max-width:900px;margin:0 auto}
+
+/* 버튼 */
+button{font:inherit;border:0;background:var(--fill);color:var(--ink);border-radius:10px;padding:7px 12px;cursor:pointer;transition:filter .12s,transform .05s}
+button:hover{filter:brightness(.95)}
+button:active{transform:scale(.98)}
+button:disabled{opacity:.45;cursor:default;filter:none;transform:none}
+button.pri{background:var(--acc);color:#fff}
+button.rec{background:var(--red);color:#fff}
+button.ghost{background:transparent;padding:6px 9px}
+button.ghost:hover{background:rgba(0,0,0,.06);filter:none}
+button.icon{padding:6px 10px;font-size:17px;line-height:1}
+
+/* 수업 제목 */
+#titleBlock{margin:2px 2px 12px}
+h1{font-size:22px;line-height:1.3;margin:2px 0 4px;letter-spacing:-.01em}
+#lMeta{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+#siteBtns{margin-top:10px}
+.tag{display:inline-block;font-size:12px;padding:1px 9px;border-radius:10px;background:var(--acc-soft);color:var(--acc);font-weight:600}
+
+/* 지금 할 일 */
+.hero{background:var(--card);border-radius:22px;padding:18px 18px 16px;box-shadow:var(--shadow);margin-bottom:12px;border-top:6px solid var(--line);transition:background .3s,border-color .3s}
+.hero.run{border-top-color:var(--acc)}
+.hero.warn{border-top-color:var(--warn);background:var(--warn-soft)}
+.hero.over{border-top-color:var(--red);background:var(--red-soft)}
+.hero-top{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px}
+#heroStatus{font-size:13px;font-weight:700;color:var(--acc);letter-spacing:.02em}
+.hero.warn #heroStatus{color:var(--warn)}
+.hero.over #heroStatus{color:var(--red)}
+#heroEnd{font-size:13px;color:var(--sub)}
+#heroName{font-size:30px;line-height:1.25;font-weight:700;letter-spacing:-.02em;margin:2px 0 8px;word-break:keep-all}
+.hero.idle #heroName{font-size:22px}
+#heroSay{font-size:22px;line-height:1.45;font-weight:600;color:var(--acc);margin:6px 0;word-break:keep-all}
+.hero.over #heroSay,.hero.warn #heroSay{color:var(--ink)}
+#heroDo{font-size:17px;line-height:1.55;margin:6px 0}
+#heroTip{font-size:15px;color:var(--warn);margin:6px 0}
+#heroTimer{margin:12px 0 4px}
+#heroLabel{font-size:12px;color:var(--sub)}
+#heroRemain{font-size:46px;line-height:1.1;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.hero.warn #heroRemain{color:var(--warn)}
+.hero.over #heroRemain{color:var(--red)}
+.bar{height:8px;background:var(--fill);border-radius:4px;overflow:hidden;margin-top:6px}
+.bar i{display:block;height:100%;width:0;background:var(--acc);border-radius:4px;transition:width .9s linear,background .3s}
+.hero.warn .bar i{background:var(--warn)}
+.hero.over .bar i{background:var(--red)}
+#heroNext{font-size:14px;color:var(--sub);margin:10px 0 2px;padding-top:10px;border-top:1px solid var(--line)}
+.hero.warn #heroNext,.hero.over #heroNext{border-top-color:rgba(0,0,0,.08)}
+#heroSuggest{margin-top:10px;width:100%;text-align:left;background:var(--acc-soft);color:var(--acc);font-size:14px}
+.hero-ctl{display:grid;grid-template-columns:76px 1fr;gap:10px;margin-top:14px}
+.hero-ctl button{border-radius:14px}
+#stepPrev{font-size:20px;height:56px}
+#stepNext{font-size:20px;font-weight:700;height:56px}
+.keyhint{font-size:12px;color:var(--sub);text-align:center;margin-top:6px}
+
+/* 카드·접이식 */
+.card{background:var(--card);border-radius:var(--r);padding:14px 16px;margin-bottom:12px;box-shadow:var(--shadow)}
+.card h2{font-size:14px;margin:0 0 8px;color:var(--sub);font-weight:600}
+details.fold{background:var(--card);border-radius:var(--r);margin-bottom:10px;box-shadow:var(--shadow)}
+details.fold>summary{padding:14px 16px;font-weight:600;cursor:pointer;list-style:none;display:flex;align-items:center;gap:6px}
+details.fold>summary::-webkit-details-marker{display:none}
+details.fold>summary::after{content:"›";margin-left:auto;color:var(--sub);font-size:20px;line-height:1;transition:transform .15s}
+details.fold[open]>summary::after{transform:rotate(90deg)}
+.fold-body{padding:0 16px 14px}
+
+ul{margin:4px 0;padding-left:18px}
+.caution li{color:var(--warn)}
+.step{border-left:4px solid var(--line);padding:6px 10px;margin:6px 0;cursor:pointer;border-radius:0 10px 10px 0}
+.step.cur{border-color:var(--acc);background:var(--acc-soft)}
+.step b{font-size:14px}
+.step .say{color:var(--acc);margin-top:2px}
+.step .tip{color:var(--warn);font-size:13px}
+.ulist{margin:4px 0;padding-left:0;list-style:none;font-size:14px}
+.ulist li{padding:3px 8px;border-radius:7px}
+.ulist li.done{color:var(--sub)}
+.ulist li.now{background:#fff3c4;font-weight:700}
+
+/* 기록 */
+#recbar{display:flex;gap:10px;align-items:center}
+#rdot{width:12px;height:12px;border-radius:50%;background:#c7c7cc;flex:none}
+#rdot.on{background:var(--red);animation:blink 1s infinite}
+@keyframes blink{50%{opacity:.3}}
+#rtime{font-variant-numeric:tabular-nums;color:var(--sub);min-width:4.5em}
+#meter{flex:1;height:6px;background:var(--fill);border-radius:3px;overflow:hidden}
+#meter i{display:block;height:100%;width:0;background:var(--ok)}
+#memoBtns{margin-top:12px}
+#memoBtns button{padding:6px 11px;border-radius:999px;font-size:14px}
+#memoList{max-height:200px;overflow:auto;font-size:14px;margin-top:8px}
+#memoList div{border-bottom:1px dashed var(--line);padding:3px 0}
+#memoList code{color:var(--sub);margin-right:6px}
+textarea,input[type=text]{width:100%;font:inherit;border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px 10px}
+textarea:focus,input[type=text]:focus{outline:2px solid var(--acc-soft);border-color:var(--acc)}
+
+/* 진도 고르기 목록 */
+.pick{max-height:340px;overflow:auto;border:1px solid var(--line);border-radius:12px;background:#fff}
+.pick h4{margin:0;padding:6px 12px;background:var(--bg);font-size:13px;position:sticky;top:0;color:var(--sub)}
+.pick button{display:block;width:100%;text-align:left;border-radius:0;background:#fff;border-bottom:1px solid var(--line);padding:10px 12px}
+.pick button:hover{background:var(--acc-soft);filter:none}
 .pick button.now{background:#fff8dc}
 .pick button.done{color:#8a8a8a;background:#fafafa}
 .pick button:disabled{color:#b0b0b0;cursor:default}
 .pick small{color:var(--sub);margin-left:6px}
-.tag{display:inline-block;font-size:12px;padding:1px 7px;border-radius:10px;background:#eef3f1;color:var(--acc);margin-right:4px}
-ul{margin:4px 0;padding-left:18px}
-.caution li{color:var(--warn)}
-.step{border-left:4px solid var(--line);padding:5px 8px;margin:5px 0;cursor:pointer;border-radius:0 6px 6px 0}
-.step.cur{border-color:var(--acc);background:#eef6f3}
-.step b{font-size:14px}
-.step .say{color:#1f4e8c;margin-top:2px}
-.step .tip{color:var(--warn);font-size:13px}
-.ulist{margin:4px 0;padding-left:0;list-style:none;font-size:14px}
-.ulist li{padding:2px 6px;border-radius:5px}
-.ulist li.done{color:var(--sub)}
-.ulist li.now{background:#fff3c4;font-weight:700}
-#recbar{display:flex;gap:8px;align-items:center}
-#rdot{width:12px;height:12px;border-radius:50%;background:#bbb}
-#rdot.on{background:var(--red);animation:blink 1s infinite}
-@keyframes blink{50%{opacity:.3}}
-#meter{flex:1;height:6px;background:#eee;border-radius:3px;overflow:hidden}
-#meter i{display:block;height:100%;width:0;background:var(--acc)}
-#memoBtns button{padding:4px 7px;font-size:14px}
-#memoList{max-height:220px;overflow:auto;font-size:14px;margin-top:6px}
-#memoList div{border-bottom:1px dashed var(--line);padding:2px 0}
-#memoList code{color:var(--sub);margin-right:5px}
-textarea,input[type=text]{width:100%;font:inherit;border:1px solid var(--line);border-radius:7px;padding:6px}
-#toast{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);background:#333;color:#fff;padding:8px 14px;border-radius:8px;display:none;max-width:90%;z-index:9}
-#phones{display:none;position:absolute;right:10px;top:46px;background:#fff;color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:8px 12px;box-shadow:0 4px 14px rgba(0,0,0,.15);z-index:8}
+
+#toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:rgba(29,29,31,.92);color:#fff;padding:10px 16px;border-radius:12px;display:none;max-width:90%;z-index:9;box-shadow:0 6px 20px rgba(0,0,0,.25)}
+#phones{display:none;position:absolute;right:10px;top:46px;background:#fff;color:var(--ink);border-radius:12px;padding:10px 14px;box-shadow:0 8px 28px rgba(0,0,0,.18);z-index:8}
 #phones div{display:flex;justify-content:space-between;gap:18px;font-size:15px}
 #phones b{font-size:17px}
 </style>
 </head>
 <body>
 <header>
-  <div class="row">
-    <button id="prevDay" title="전날">◀</button><input type="date" id="datePick" title="달력에서 날짜 고르기"><span id="dow"></span><button id="nextDay" title="다음날">▶</button><button id="todayBtn">오늘</button>
-    <button id="prepBtn" title="이 날 수업 중 흐름이 없는 차시를 지도서로 자동 준비 (Gemini, 차시당 30초~2분)">🌙 수업 준비</button><span id="prepMsg" class="muted"></span>
+  <div class="bar-row">
+    <div class="datenav">
+      <button class="ghost icon" id="prevDay" title="전날">‹</button><input type="date" id="datePick" title="달력에서 날짜 고르기"><span id="dow"></span><button class="ghost icon" id="nextDay" title="다음날">›</button><button class="ghost" id="todayBtn">오늘</button>
+    </div>
     <span class="grow"></span>
+    <span id="prepMsg" class="muted"></span>
+    <button class="ghost" id="prepBtn" title="이 날 수업 중 흐름이 없는 차시를 지도서로 자동 준비 (Gemini, 차시당 30초~2분)">🌙 준비</button>
     <span id="clock"></span>
-    <button id="phoneBtn" title="교실 내선번호">📞</button>
+    <button class="ghost icon" id="phoneBtn" title="교실 내선번호">📞</button>
   </div>
   <div id="tabs"></div>
   <div id="phones"></div>
 </header>
 
 <main>
-  <section id="lessonCard">
+  <div id="titleBlock">
     <div class="muted" id="source"></div>
     <h1 id="lTitle">수업을 불러오는 중…</h1>
     <div id="lMeta" class="muted"></div>
-    <div class="row" style="margin-top:8px" id="siteBtns"></div>
-    <div class="row" style="margin-top:8px"><span class="muted">🤖 AI와 수업 준비</span><span id="aiBtns" class="row"></span></div>
-    <div class="muted" style="font-size:12px">누르면 단원 개관·차시 지도서 PDF 폴더가 열리고 질문이 복사돼요 → 대화창에 파일을 끌어다 놓고 Ctrl+V</div>
+    <div class="row" id="siteBtns"></div>
+  </div>
+
+  <!-- 지금 할 일 -->
+  <section class="hero idle" id="hero">
+    <div class="hero-top"><span id="heroStatus"></span><span id="heroEnd"></span></div>
+    <div id="heroName"></div>
+    <div id="heroSay" hidden></div>
+    <div id="heroDo" hidden></div>
+    <div id="heroTip" hidden></div>
+    <div id="heroTimer" hidden>
+      <div id="heroLabel"></div>
+      <div id="heroRemain"></div>
+      <div class="bar"><i id="heroBar"></i></div>
+    </div>
+    <div id="heroNext" hidden></div>
+    <button id="heroSuggest" hidden></button>
+    <div class="hero-ctl"><button id="stepPrev" title="이전 단계 (←, PageUp)">◀</button><button id="stepNext" class="pri" title="다음 단계 (→, PageDown)">다음 단계 ▶</button></div>
+    <div class="keyhint">← → 키나 발표용 리모컨(PageUp·PageDown)으로도 넘길 수 있어요</div>
   </section>
 
-  <section id="cautionBox">
-    <h2>⚠ 이번 수업에서 주의할 점</h2>
-    <ul class="caution" id="cautions"></ul>
-    <div class="row"><input type="text" id="cautionIn" class="grow" placeholder="이 출판사 지도서의 특징·주의점 추가 (예: 설명이 단순해 개념 보충 필요)"><button id="cautionAdd">추가</button></div>
-  </section>
-
-  <section>
-    <details id="unitBox" open>
-      <summary style="cursor:pointer"><h2 style="display:inline">📗 단원 개관 <span class="muted" id="unitSrc"></span></h2></summary>
-      <div id="unitBody"></div>
-    </details>
-  </section>
-
-  <section>
-    <h2>📘 수업 흐름 <span class="muted" id="flowSrc"></span></h2>
-    <div id="goal"></div>
-    <div id="steps"></div>
-    <div class="row" style="margin-top:6px"><button id="stepPrev">◀ 이전 단계</button><button id="stepNext" class="pri">다음 단계 ▶</button><span class="muted" id="stepTimer"></span></div>
-  </section>
-
-  <section>
+  <!-- 수업 기록 -->
+  <section class="card">
     <h2>🎙 수업 기록</h2>
     <div id="recbar"><span id="rdot"></span><span id="rtime">녹음 대기</span><span id="meter"><i id="mlev"></i></span>
       <button id="recBtn" class="pri">● 수업 시작</button></div>
-    <div class="muted" id="recMsg">녹음은 이 PC의 내 문서\my-skills-data 에만 저장됩니다. 학생 목소리가 담기니 학교 지침을 따르세요.</div>
-    <div class="row" id="memoBtns" style="margin-top:8px">
+    <div class="muted" id="recMsg" style="margin-top:6px">녹음은 이 PC의 내 문서\my-skills-data 에만 저장됩니다. 학생 목소리가 담기니 학교 지침을 따르세요.</div>
+    <div class="row" id="memoBtns">
       <button data-k="good">👍 좋았음</button><button data-k="fix">🔧 고칠점</button>
       <button data-k="student">🙋 학생 발표</button><button data-k="star">★ 표시</button>
       <button id="voiceBtn" title="크롬 음성 인식(구글 서버로 소리가 전송됨)">🎤 음성 메모</button>
     </div>
-    <input type="text" id="memoIn" style="margin-top:6px" placeholder="메모 입력 후 Enter (같은 과목 다음 수업에 다시 보여 줌) · 🎤 음성 메모는 구글로 전송되니 학생 이름은 말하지 마세요">
+    <div class="muted" style="margin-top:6px">🎤 음성 메모는 구글 서버로 소리가 전송돼요. 학생 이름은 말하지 마세요.</div>
+    <input type="text" id="memoIn" style="margin-top:8px" placeholder="메모 입력 후 Enter (같은 과목 다음 수업에 다시 보여 줘요)">
     <div id="memoList"></div>
   </section>
 
-  <section>
-    <h2>📢 알림장·숙제</h2>
-    <textarea id="notice" rows="3" placeholder="하이클래스 알림장에 올릴 내용"></textarea>
-    <div class="row" style="margin-top:6px"><button id="noticeBtn">복사하고 하이클래스 열기</button></div>
-  </section>
-
-  <section>
-    <h2>📅 진도 조정 <span class="muted">(진도표 시트에 바로 반영)</span></h2>
-    <div class="row"><button data-p="done">✅ 이 차시 완료</button><button data-p="extend">➕ 한 차시 더 필요</button><button data-p="push">⏭ 이후 진도 미루기</button></div>
-    <div class="row" style="margin-top:6px"><button id="catchBtn" class="pri">📍 실제로 할 차시 고르기</button><span class="muted">계획과 실제 진도가 다를 때 눌러요</span></div>
-    <div id="catchBox" style="display:none;margin-top:6px">
-      <div class="muted" style="margin-bottom:4px">👇 <b>오늘 실제로 할 차시</b>를 누르세요. 앞 차시는 '이미 함'이 되고, 누른 차시부터 다시 배치돼요.</div>
-      <div id="catchList" class="pick"></div>
-      <div class="row" style="margin-top:6px"><button id="catchCancel">닫기</button><span class="muted">회색 '✓ 함' 차시를 누르면 거기로 되돌려요</span></div>
+  <details class="fold" id="cautionBox" open>
+    <summary>⚠ 이번 수업에서 주의할 점</summary>
+    <div class="fold-body">
+      <ul class="caution" id="cautions"></ul>
+      <div class="row"><input type="text" id="cautionIn" class="grow" style="width:auto" placeholder="이 출판사 지도서의 특징·주의점 추가 (예: 설명이 단순해 개념 보충 필요)"><button id="cautionAdd">추가</button></div>
     </div>
-  </section>
+  </details>
 
-  <section>
-    <h2>🔗 바로가기</h2>
-    <div class="row" id="links"></div>
-  </section>
+  <details class="fold" id="flowBox">
+    <summary>📘 수업 흐름 전체 <span class="muted" id="flowSrc"></span></summary>
+    <div class="fold-body">
+      <div id="goal"></div>
+      <div id="steps"></div>
+    </div>
+  </details>
+
+  <details class="fold" id="unitBox">
+    <summary>📗 단원 개관 <span class="muted" id="unitSrc"></span></summary>
+    <div class="fold-body" id="unitBody"></div>
+  </details>
+
+  <details class="fold" id="aiBox">
+    <summary>🤖 AI와 수업 준비</summary>
+    <div class="fold-body">
+      <div class="row" id="aiBtns"></div>
+      <div class="muted" style="margin-top:8px">누르면 단원 개관·차시 지도서 PDF 폴더가 열리고 질문이 복사돼요 → 대화창에 파일을 끌어다 놓고 Ctrl+V</div>
+    </div>
+  </details>
+
+  <details class="fold">
+    <summary>📢 알림장·숙제</summary>
+    <div class="fold-body">
+      <textarea id="notice" rows="3" placeholder="하이클래스 알림장에 올릴 내용"></textarea>
+      <div class="row" style="margin-top:8px"><button id="noticeBtn">복사하고 하이클래스 열기</button></div>
+    </div>
+  </details>
+
+  <details class="fold">
+    <summary>📅 진도 조정 <span class="muted">(진도표 시트에 바로 반영)</span></summary>
+    <div class="fold-body">
+      <div class="row"><button data-p="done">✅ 이 차시 완료</button><button data-p="extend">➕ 한 차시 더 필요</button><button data-p="push">⏭ 이후 진도 미루기</button></div>
+      <div class="row" style="margin-top:8px"><button id="catchBtn" class="pri">📍 실제로 할 차시 고르기</button><span class="muted">계획과 실제 진도가 다를 때 눌러요</span></div>
+      <div id="catchBox" style="display:none;margin-top:8px">
+        <div class="muted" style="margin-bottom:4px">👇 <b>오늘 실제로 할 차시</b>를 누르세요. 앞 차시는 '이미 함'이 되고, 누른 차시부터 다시 배치돼요.</div>
+        <div id="catchList" class="pick"></div>
+        <div class="row" style="margin-top:8px"><button id="catchCancel">닫기</button><span class="muted">회색 '✓ 함' 차시를 누르면 거기로 되돌려요</span></div>
+      </div>
+    </div>
+  </details>
+
+  <details class="fold">
+    <summary>🔗 바로가기</summary>
+    <div class="fold-body"><div class="row" id="links"></div></div>
+  </details>
 </main>
 <div id="toast"></div>
 
@@ -191,7 +298,7 @@ async function load(){
 
 function renderTabs(){
   const np = nowPeriod();
-  $('tabs').innerHTML = S.lessons.map((l,i)=>`<button data-i="${i}" class="${cur===l?'on':''} ${l.period===np?'now':''}">${l.period??'-'}교시<small>${esc(l.subject)}${l.flow?' 📋':''}${l.saved?' ✓':''}</small></button>`).join('') || '<span class="muted">이 날은 수업이 없어요</span>';
+  $('tabs').innerHTML = S.lessons.map((l,i)=>`<button data-i="${i}" class="${cur===l?'on':''} ${l.period===np?'now':''}">${l.period??'-'}교시<small>${esc(l.subject)}${l.flow?' 📋':''}${l.saved?' ✓':''}</small></button>`).join('') || '<span class="muted" style="padding:6px 10px">이 날은 수업이 없어요</span>';
 }
 
 function select(i){
@@ -199,12 +306,12 @@ function select(i){
   flushSave();
   cur = i>=0 ? S.lessons[i] : null; stepIdx = -1; stepAt = 0;
   renderTabs();
-  if (!cur){ $('lTitle').textContent='수업 없음'; $('lMeta').textContent=''; $('siteBtns').innerHTML=''; $('cautions').innerHTML=''; $('steps').innerHTML=''; $('goal').innerHTML=''; return; }
+  if (!cur){ $('lTitle').textContent='수업 없음'; $('lMeta').textContent=''; $('siteBtns').innerHTML=''; $('cautions').innerHTML=''; $('steps').innerHTML=''; $('goal').innerHTML=''; sess=null; renderMemos(); renderHero(); return; }
   const saved = cur.saved;
   sess = saved || {date:S.date, period:cur.period, subject:cur.subject, publisher:cur.publisher, title:cur.title, unit:cur.unit, lesson:cur.lesson, record_key:cur.record_key, memos:[], notice:''};
   $('lTitle').textContent = `${cur.subject} · ${cur.title || cur.lesson || '차시 정보 없음'}`;
   $('lMeta').innerHTML = [cur.publisher && `<span class="tag">${esc(cur.publisher)}</span>`, cur.unit && esc(cur.unit), cur.lesson && `${esc(cur.lesson)}차시`,
-    cur.status === 'done' ? '<span class="tag" style="background:#e6f4ea">✅ 완료됨</span>' : (cur.status && `상태: ${esc(cur.status)}`)].filter(Boolean).join(' · ');
+    cur.status === 'done' ? '<span class="tag" style="background:#e6f4ea;color:var(--ok)">✅ 완료됨</span>' : (cur.status && `상태: ${esc({planned:'예정', pending:'예정'}[cur.status] || cur.status)}`)].filter(Boolean).join(' · ');
   $('catchBox').style.display = 'none';
   $('siteBtns').innerHTML = [
     cur.site && `<button class="pri" id="openSite">🖥 수업 사이트 열기</button>`,
@@ -213,10 +320,23 @@ function select(i){
     cur.has_pdf && cur.record_key && `<button id="openPdf">📄 지도서</button>`].filter(Boolean).join('');
   const cs = [...cur.cautions.map(c=>`<li>${esc(c.text)} <span class="muted">(${esc(cur.publisher)})</span></li>`),
               ...cur.recent_memos.filter(m=>m.kind!=='good').map(m=>`<li>${esc(m.text)} <span class="muted">(${esc(m.date)} ${esc(m.title)})</span></li>`),
-              ...cur.recent_memos.filter(m=>m.kind==='good').map(m=>`<li style="color:var(--acc)">👍 ${esc(m.text)} <span class="muted">(${esc(m.date)})</span></li>`)];
+              ...cur.recent_memos.filter(m=>m.kind==='good').map(m=>`<li style="color:var(--ok)">👍 ${esc(m.text)} <span class="muted">(${esc(m.date)})</span></li>`)];
   $('cautions').innerHTML = cs.join('') || '<li class="muted" style="color:var(--sub)">아직 쌓인 메모가 없어요</li>';
+  restoreStep();
   renderUnit(); renderFlow(); renderMemos();
   $('notice').value = sess.notice || '';
+}
+
+/* 새로고침(F5)·창을 다시 열어도 수업 중이던 단계와 시간을 이어 간다: 오늘 수업이고, 마지막 단계 기록 뒤에 '수업 마침'이 없을 때 */
+function restoreStep(){
+  stepIdx = -1; stepAt = 0;
+  const steps = (cur && cur.flow && cur.flow.steps) || [];
+  if (!sess || !steps.length || S.date !== iso(new Date())) return;
+  for (let i = sess.memos.length-1; i >= 0; i--) {
+    const m = sess.memos[i];
+    if (m.kind === 'sys' && m.text === '수업 마침') return;
+    if (m.kind === 'step' && Number.isInteger(m.idx) && m.idx >= 0 && m.idx < steps.length) { stepIdx = m.idx; stepAt = Date.parse(m.at) || Date.now(); return; }
+  }
 }
 
 function lessonNo(v){ const m = String(v ?? '').match(/\d+/); return m ? +m[0] : null; }
@@ -243,28 +363,113 @@ function renderUnit(){
 
 function renderFlow(){
   const f = cur && cur.flow;
-  if (!f){ $('flowSrc').textContent=''; $('goal').innerHTML='<div class="muted">아직 수업 흐름이 없어요. 위의 <b>🌙 수업 준비</b>를 누르면 지도서로 자동으로 만들어요(수업 끝난 뒤나 아침에 미리).</div>'; $('steps').innerHTML=''; return; }
+  if (!f){ $('flowSrc').textContent=''; $('goal').innerHTML='<div class="muted">아직 수업 흐름이 없어요. 위의 <b>🌙 준비</b>를 누르면 지도서로 자동으로 만들어요(수업 끝난 뒤나 아침에 미리).</div>'; $('steps').innerHTML=''; renderHero(); return; }
   $('flowSrc').textContent = f.source ? `(${f.source})` : '';
   $('goal').innerHTML = (f.goal?`<div><b>🎯 ${esc(f.goal)}</b></div>`:'') + (f.materials&&f.materials.length?`<div class="muted">준비물: ${esc(f.materials.join(', '))}</div>`:'');
   $('steps').innerHTML = (f.steps||[]).map((s,i)=>`<div class="step ${i===stepIdx?'cur':''}" data-s="${i}">
       <b>${esc(s.name)}</b> <span class="muted">${s.minutes?s.minutes+'분':''}</span>
       ${s.do?`<div>${esc(s.do)}</div>`:''}${s.say?`<div class="say">💬 ${esc(s.say)}</div>`:''}${s.tip?`<div class="tip">💡 ${esc(s.tip)}</div>`:''}</div>`).join('');
+  renderHero();
+}
+
+/* ===== 지금 할 일 (수업 중 큰 화면) ===== */
+function setBlock(id, text){ const el = $(id); el.textContent = text || ''; el.hidden = !text; }
+function stepMin(s){ return s && s.minutes ? ` · ${s.minutes}분` : ''; }
+
+function renderHero(){
+  const steps = (cur && cur.flow && cur.flow.steps) || [];
+  const f = cur && cur.flow;
+  const next = $('stepNext');
+  $('stepPrev').disabled = stepIdx <= 0;
+  setBlock('heroSuggest', '');
+  if (!cur) {
+    $('hero').className = 'hero idle'; $('heroStatus').textContent = '';
+    $('heroName').textContent = '이 날은 수업이 없어요';
+    ['heroSay','heroDo','heroTip','heroNext'].forEach(id => setBlock(id, '')); $('heroTimer').hidden = true;
+    next.textContent = '다음 단계 ▶'; next.disabled = true; tickHero(); return;
+  }
+  if (!steps.length) {
+    $('hero').className = 'hero idle'; $('heroStatus').textContent = '수업 흐름 없음';
+    $('heroName').textContent = '아직 수업 흐름이 없어요';
+    setBlock('heroSay', ''); setBlock('heroTip', ''); setBlock('heroNext', ''); $('heroTimer').hidden = true;
+    setBlock('heroDo', '위쪽의 🌙 준비를 누르면 지도서로 자동으로 만들어요. 수업 끝난 뒤나 아침에 미리 해 두면 수업 중에는 이 화면만 보면 돼요.');
+    next.textContent = '다음 단계 ▶'; next.disabled = true; tickHero(); return;
+  }
+  if (stepIdx < 0 || !steps[stepIdx]) {
+    $('hero').className = 'hero idle'; $('heroStatus').textContent = '수업 시작 전';
+    $('heroName').textContent = f.goal || '수업 준비가 됐어요';
+    setBlock('heroSay', ''); setBlock('heroTip', ''); $('heroTimer').hidden = true;
+    setBlock('heroDo', f.materials && f.materials.length ? '준비물: ' + f.materials.join(', ') : '');
+    setBlock('heroNext', `첫 단계 ▸ ${steps[0].name}${stepMin(steps[0])}`);
+    next.textContent = '첫 단계 시작 ▶'; next.disabled = false; tickHero(); return;
+  }
+  const st = steps[stepIdx], nx = steps[stepIdx+1];
+  $('heroStatus').textContent = `${stepIdx+1} / ${steps.length} 단계`;
+  $('heroName').textContent = st.name + stepMin(st);
+  setBlock('heroSay', st.say ? '💬 ' + st.say : '');
+  setBlock('heroDo', st.do); setBlock('heroTip', st.tip ? '💡 ' + st.tip : '');
+  setBlock('heroNext', nx ? `다음 ▸ ${nx.name}${stepMin(nx)}` : '마지막 단계예요. 정리하고 마무리!');
+  $('heroTimer').hidden = false;
+  next.textContent = nx ? '다음 단계 ▶' : '마지막 단계'; next.disabled = !nx;
+  tickHero();
+}
+
+/* 오늘 수업이 지금 진행 중이면 시간표 시각으로 '지금쯤 어느 단계인지' 짚어 준다 */
+function periodWindow(){
+  if (!S || !cur || S.date !== iso(new Date())) return null;
+  const p = (S.periods||[]).find(x => x.no === cur.period);
+  return p ? {s: hm(p.start), e: hm(p.end)} : null;
+}
+function nowMin(){ const n = new Date(); return n.getHours()*60 + n.getMinutes() + n.getSeconds()/60; }
+function suggestIdx(steps){
+  const w = periodWindow(); if (!w || !steps.some(s => s.minutes)) return -1;
+  const m = nowMin(); if (m < w.s || m > w.e) return -1;
+  let acc = 0;
+  for (let i = 0; i < steps.length; i++) { acc += steps[i].minutes || 0; if (m - w.s < acc) return i; }
+  return steps.length - 1;
+}
+
+function tickHero(){
+  const hero = $('hero'), steps = (cur && cur.flow && cur.flow.steps) || [];
+  const w = periodWindow(); let end = '';
+  if (w) { const m = nowMin(); end = m < w.s ? `${Math.ceil(w.s-m)}분 뒤 시작` : m <= w.e ? `교시 종료까지 ${Math.ceil(w.e-m)}분` : '교시가 끝났어요'; }
+  $('heroEnd').textContent = end;
+  if (!cur || !steps.length) return;
+  if (stepIdx < 0 || !steps[stepIdx]) {
+    const k = suggestIdx(steps), b = $('heroSuggest');
+    if (k >= 0) { b.hidden = false; b.dataset.s = k; b.textContent = `⏱ 시간표상 지금은 「${steps[k].name}」 단계쯤이에요 · 눌러서 여기서 시작`; }
+    else b.hidden = true;
+    return;
+  }
+  const st = steps[stepIdx], el = (Date.now() - stepAt) / 1000, total = (st.minutes || 0) * 60;
+  if (total) {
+    const left = total - el, state = left < 0 ? 'over' : left <= 60 ? 'warn' : 'run';
+    hero.className = 'hero ' + state;
+    $('heroLabel').textContent = left < 0 ? '시간이 지났어요' : '이 단계 남은 시간';
+    $('heroRemain').textContent = left < 0 ? '+' + mmss(-left*1000) : mmss(Math.ceil(left)*1000);
+    $('heroBar').style.width = Math.min(100, el/total*100) + '%';
+  } else {
+    hero.className = 'hero run';
+    $('heroLabel').textContent = '이 단계 경과 시간';
+    $('heroRemain').textContent = mmss(el*1000);
+    $('heroBar').style.width = '0';
+  }
 }
 
 function goStep(i){
   const steps = (cur && cur.flow && cur.flow.steps) || [];
   if (i<0 || i>=steps.length) return;
   stepIdx = i; stepAt = Date.now();
-  addMemo('step', `단계: ${steps[i].name}`, true);
+  addMemo('step', `단계: ${steps[i].name}`, true, {idx: i});
   renderFlow();
   const el = document.querySelector(`.step[data-s="${i}"]`); if (el) el.scrollIntoView({block:'nearest'});
 }
 
 function relTime(){ return rec && sess.started_ms ? mmss(Date.now()-sess.started_ms) : new Date().toTimeString().slice(0,5); }
 const KIND = {good:'👍', fix:'🔧', student:'🙋', star:'★', voice:'🎤', step:'▶', note:'📝', sys:'⏱'};
-function addMemo(kind, text, quiet){
+function addMemo(kind, text, quiet, extra){
   if (!sess) return;
-  sess.memos.push({t:relTime(), at:new Date().toISOString(), kind, text});
+  sess.memos.push({t:relTime(), at:new Date().toISOString(), kind, text, ...(extra||{})});
   renderMemos(); scheduleSave(quiet);
 }
 function renderMemos(){
@@ -321,7 +526,7 @@ async function startRec(){
   if ('wakeLock' in navigator) navigator.wakeLock.request('screen').then(w=>rec.wake=w).catch(()=>{});
   $('recBtn').textContent='■ 수업 마침'; $('recBtn').className='rec';
   addMemo('sys', '수업 시작', true);
-  if (cur.flow && cur.flow.steps && cur.flow.steps.length) goStep(0);
+  if (cur.flow && cur.flow.steps && cur.flow.steps.length && stepIdx < 0) goStep(0);   // 이미 단계를 시작했으면 시간을 되돌리지 않음
 }
 async function stopRec(){
   addMemo('sys', '수업 마침', true);
@@ -333,6 +538,7 @@ async function stopRec(){
   $('rdot').classList.remove('on'); $('mlev').style.width='0';
   $('recBtn').textContent='● 수업 시작'; $('recBtn').className='pri';
   sess.ended_at = new Date().toISOString();
+  stepIdx = -1; stepAt = 0; renderFlow();   // 수업이 끝나면 '지금 할 일' 도 처음 상태로
   scheduleSave(false);
   $('recMsg').textContent = '수업 기록을 저장했어요. Claude에게 "오늘 수업 정리해줘"라고 하면 메모를 분석해 다음 수업에 반영합니다.';
 }
@@ -359,6 +565,13 @@ $('phoneBtn').onclick = () => { const p=$('phones'); p.style.display = p.style.d
 $('steps').onclick = e => { const s=e.target.closest('.step'); if (s) goStep(+s.dataset.s); };
 $('stepPrev').onclick = () => goStep(stepIdx-1);
 $('stepNext').onclick = () => goStep(stepIdx+1);
+$('heroSuggest').onclick = e => goStep(+e.currentTarget.dataset.s);
+// 키보드·발표용 리모컨(PageUp/PageDown)으로 단계 넘기기 — 글 쓰는 칸에서는 동작하지 않음
+document.addEventListener('keydown', e => {
+  if (e.ctrlKey || e.metaKey || e.altKey || e.target.closest('input,textarea,select,[contenteditable]')) return;
+  if (e.key === 'ArrowRight' || e.key === 'PageDown') { e.preventDefault(); goStep(stepIdx+1); }
+  else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); goStep(stepIdx-1); }
+});
 $('recBtn').onclick = () => rec ? stopRec() : startRec();
 $('voiceBtn').onclick = voiceMemo;
 $('memoBtns').onclick = e => {
@@ -488,7 +701,7 @@ fetch('/api/prepare-status').then(r => r.json()).then(st => { if (st.running && 
 window.addEventListener('beforeunload', e => { if (rec){ e.preventDefault(); e.returnValue=''; } });
 
 setInterval(()=>{ const n=new Date(); $('clock').textContent=n.toTimeString().slice(0,5);
-  if (stepAt) $('stepTimer').textContent='이 단계 '+mmss(Date.now()-stepAt)+((cur&&cur.flow&&cur.flow.steps[stepIdx]&&cur.flow.steps[stepIdx].minutes)?` / ${cur.flow.steps[stepIdx].minutes}분`:'');
+  tickHero();
   if (rec && sess.started_ms) $('rtime').textContent='● '+mmss(Date.now()-sess.started_ms);
 }, 1000);
 load();

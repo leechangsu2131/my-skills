@@ -4,7 +4,7 @@
     C:\\Python313\\python.exe semester_rollover.py rollover_3-2.json --apply    # 실제 반영
 
 설정 JSON (예시는 아래 EXAMPLE):
-- append: 새로 붙일 과목과 guide-mapper 결과 파일, 대단원 이름 바꾸기, 순서
+- append: 새로 붙일 과목과 teacherlesson-guide/mapper 결과 파일, 대단원 이름 바꾸기, 순서
 - done_until: 과목별로 "여기까지 완료" 기준 (새 행 / 기존 행 모두). 대단원·수업내용 일부 글자로 찾는다
 - update_titles: 기존 행의 수업내용·pdf파일을 새 결과로 고칠 과목(예: 도덕 5~8단원)
 - close_old_rows: 이 과목들의 기존 행(지난 학기)은 모두 완료 처리

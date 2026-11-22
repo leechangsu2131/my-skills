@@ -125,7 +125,7 @@ npm.cmd run dev -- --host 127.0.0.1 --port 5173 --strictPort
 
 별도 저장소:
 
-- `C:\Users\user\.gemini\antigravity\scratch\repos\my-skills\skills\teacher-guide-sheet-mapper`
+- `skills/teacherlesson-guide` (지도서 받기·분할·진도표 행 생성 — 옛 guide-splitter·guide-mapper)
 
 ## 설치
 

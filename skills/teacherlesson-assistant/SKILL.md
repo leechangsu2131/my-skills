@@ -65,13 +65,13 @@ v0.1은 "복사하고 하이클래스 열기"까지만. 자동 게시는 ISSUES 
 
 ### D. 지도서 받기 — "지도서 받아줘"
 
-`C:\Python313\python.exe guide_download.py <과목…> [--list] [--with-plan]` — 출판사별 방법과 주의점은 [README.md](README.md#지도서-받기-guide_downloadpy). 받은 뒤 `teacherlesson-guide-splitter` → `teacherlesson-guide-mapper`.
+`teacherlesson-guide` 스킬로 옮겼다: `C:\Python313\python.exe ..\teacherlesson-guide\download\guide_download.py <과목…>` → 같은 스킬의 splitter → mapper.
 
 ## 연결되는 스킬
 
 - `teacherlesson-schedule` — 진도표·수업배치, 진도 조정 API, 차시별 지도서 PDF
 - `teacherlesson-from-neis` — 나이스 주간학습안내(보결·시간표 변경)
-- `teacherlesson-guide-splitter`, `teacherlesson-guide-mapper` — 지도서 분할·진도표 행 생성
+- `teacherlesson-guide` — 지도서 받기·분할·진도표 행 생성
 - `teacherlesson-social-helper`, `teacherlesson-music-helper` — 과목별 사이트 자동 열기 참고
 - `admin-hitalk-sender` — 하이클래스 자동 전송 참고
 - `util-notebooklm` — 긴 지도서에서 찾기(Gemini CLI)·쪽 잘라내기·NotebookLM 소스·노트북 목록. 지도서를 통째로 읽어야 할 것 같으면 먼저 `nlm.py find`

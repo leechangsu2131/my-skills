@@ -22,7 +22,11 @@ import urllib.parse
 import urllib.request
 import zipfile
 
-import assistant_server as app  # 설정·크롬 실행 재사용
+# 크롬 프로필·포트·학년학기·출판사 설정과 창 띄우기는 수업 비서(teacherlesson-assistant)의 것을 같이 쓴다.
+# 받은 기록도 수업 비서 데이터 폴더의 guide_downloads.json 에 남는다.
+sys.path.insert(0, str(next(p / "teacherlesson-assistant" for p in pathlib.Path(__file__).resolve().parents
+                            if (p / "teacherlesson-assistant" / "assistant_server.py").is_file())))
+import assistant_server as app  # noqa: E402
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By

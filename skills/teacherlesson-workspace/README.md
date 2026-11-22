@@ -12,8 +12,7 @@
 
 ### 2. 의존 스킬 (my-skills/skills)
 이 애플리케이션 화면에 출력되는 PDF 파일 구조 및 일정 데이터는 아래 내부 스킬들로부터 자동 파싱되어 주입됩니다.
-* `teacherlesson-guide-mapper`
-* `teacherlesson-guide-splitter`
+* `teacherlesson-guide` (mapper·splitter)
 * `teacherlesson-schedule`
 
 ### 3. 참고 및 벤치마크 (Reference)

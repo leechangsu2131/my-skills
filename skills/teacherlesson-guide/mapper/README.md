@@ -4,7 +4,7 @@
 
 `teacher-schedule`과 역할을 나눕니다.
 
-- `teacher-guide-sheet-mapper`: 지도서에서 진도표 데이터를 만든다
+- `teacherlesson-guide/mapper`(이 폴더): 지도서에서 진도표 데이터를 만든다
 - `teacher-schedule`: 이미 입력된 진도표 데이터를 조회/운영/계획 관리한다
 
 ## 주요 파일
@@ -21,12 +21,12 @@
 ## 실행 위치
 
 ```powershell
-cd C:\Users\user\.gemini\antigravity\scratch\repos\my-skills\skills\teacher-guide-sheet-mapper
+cd my-skills\skills\teacherlesson-guide\mapper
 ```
 
 가장 쉬운 실행 방법:
 
-- [실행.bat](C:/Users/user/.gemini/antigravity/scratch/repos/my-skills/skills/teacherlesson-guide-mapper/실행.bat) 더블클릭
+- [실행.bat](실행.bat) 더블클릭
 - 미리보기 후 `업로드할까요? [Y/n]` 에서 `Enter`를 누르면 바로 업로드
 - `n`을 누르면 미리보기만 하고 종료
 

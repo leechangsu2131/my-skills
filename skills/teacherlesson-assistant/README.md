@@ -52,19 +52,9 @@ Claude 작업 절차는 [SKILL.md](SKILL.md), 문제·할 일은 [ISSUES.md](ISS
 3. 노트북 주소를 `C:\Python313\python.exe ..\util-notebooklm\nlm.py nb add 수업-수학 <주소>` 로 등록한다(또는 `config.json` 의 `subjects.<과목>.notebooklm`) → 🤖 줄의 **NotebookLM** 단추가 그 노트북을 열고 `[과목 N단원] N차시` 를 짚는 질문을 복사한다(파일은 모으지 않음).
 4. 답을 오빠두엑셀 북마클릿 등으로 md 로 받았다면 `python split_notes.py 받은.md` → `notebooklm/<과목>/notes/<N단원>_<N>차시.md` 로 잘린다. 그 차시에 다른 AI 단추를 누르면 이 노트도 `ask/` 폴더에 함께 들어간다.
 
-## 지도서 받기 (`guide_download.py`)
+## 지도서 받기
 
-`C:\Python313\python.exe guide_download.py 수학 사회 [--list] [--with-plan]` (selenium 필요, C:\Python313 에 있음)
-
-- 수업 도우미 전용 크롬(`chrome_profile`, `debug_port` 9233)에 붙어 출판사 사이트의 지도서 목록을 그때그때 읽고 `D:\지도서\<과목> <학년-학기>\`에 받는다. 같은 크기 파일이 있으면 건너뛴다. 받은 기록은 데이터 폴더 `guide_downloads.json`.
-- 로그인: 이 프로필에서 구글(크롬)에 한 번 로그인해 두면 크롬이 저장된 아이디·비번을 채워 주고, 스크립트는 "로그인하기"만 누른다. 비밀번호는 스크립트가 다루지 않는다.
-- 지원 출판사 (`PUBLISHERS`, 다른 출판사는 함수를 추가):
-  - **아이스크림**(수학·사회): 차시 화면 → "전자책등 자료" → "교사용 지도서". 단원별 PDF, 로그인 없이 받아짐
-  - **미래엔 엠티처**(국어): 교사용 DVD ZIP(학기당 약 3GB)에서 `지도서/pdf/*.pdf`만 부분 받기(Range)로 꺼냄. 파일 이름은 출판사 원래 이름(`국어3-2지도서_2_4.pdf`)
-  - **천재 T셀파**(도덕): 교과서 카드 → 공통 자료 → "지도서" 다운로드 단추를 크롬이 직접 받음. 1년 한 권이라 폴더는 `도덕 3`
-  - 미술(아트앤컬쳐)·음악(두클래스)은 1년 한 권이라 1학기에 받은 `D:\지도서\미술.pdf`, `음악.pdf`를 그대로 씀
-- 학년·학기는 config 의 `grade_term`(아이스크림은 사이트의 '내 교과서 설정'). 구글 계정 선택은 `google_account_hint`로 시작하는 계정을 고른다.
-- 받은 뒤에는 `teacherlesson-guide-splitter`로 차시별 분할, `teacherlesson-guide-mapper`로 진도표 연결.
+[`teacherlesson-guide/download`](../teacherlesson-guide/download/README.md) 로 옮겼다(2026-11-22). 크롬 프로필·포트 설정은 여기 config 를 같이 쓴다.
 
 ## 고칠 때 볼 곳
 

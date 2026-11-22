@@ -416,7 +416,7 @@ $('catchBtn').onclick = async () => {
   $('catchList').innerHTML = '<div class="muted" style="padding:8px">불러오는 중…</div>'; $('catchBox').style.display = 'block';
   const j = await (await fetch('/api/upcoming?subject=' + encodeURIComponent(cur.subject))).json().catch(() => ({items: []}));
   catchItems = j.items || [];
-  if (!catchItems.length) { $('catchList').innerHTML = '<div class="muted" style="padding:8px">남은 차시가 없거나 진도 서버가 꺼져 있어요</div>'; return; }
+  if (!catchItems.length) { $('catchList').innerHTML = `<div class="muted" style="padding:8px">${esc(j.message || '이 과목 차시가 없거나 진도 서버가 꺼져 있어요')}</div>`; return; }
   let html = '', unit = null;
   catchItems.forEach((i, n) => {
     if (i.unit !== unit) { unit = i.unit; html += `<h4>${esc(unit || '단원 없음')}</h4>`; }
@@ -440,16 +440,25 @@ $('catchList').onclick = async e => {
   const list = a => `${a.slice(0, 4).map(name).join(', ')}${a.length > 4 ? ' …' : ''}`;
   const msg = [`[${cur.subject}] 「${it.unit} ${name(it)}」을(를)\n오늘 실제로 할 차시로 정할까요?`, '',
     before.length ? `• 그 앞의 ${before.length}개 차시는 '이미 함'으로 표시돼요:\n   ${list(before)}` : '',
-    reopen.length ? `• ${reopen.length}개 차시를 '아직 안 함'으로 되돌려요:\n   ${list(reopen)}` : '',
+    reopen.length ? `• ${reopen.length}개 차시를 '아직 안 함'으로 되돌려요:\n   ${list(reopen)}\n• 계획된 마지막 날짜를 넘지 않도록 맨 끝 차시 몇 개는 '날짜 없음'이 될 수 있어요.` : '',
     !before.length && !reopen.length ? '• 건너뛰거나 되돌리는 차시는 없어요.' : '',
     `• 이 차시부터 오늘 이후 ${cur.subject} 시간에 차례로 다시 배치돼요.`].filter(Boolean).join('\n');
-  if (!confirm(msg)) return;
-  $('catchList').style.pointerEvents = 'none'; $('catchList').style.opacity = .5;   // 반영 중 두 번 눌리지 않게
+  if (catchBusy || !confirm(msg)) return;
+  catchBusy = true;   // 반영 중에는 마우스·키보드 모두 다시 못 보냄
+  const btns = [...$('catchList').querySelectorAll('button')];
+  btns.forEach(x => x.disabled = true); $('catchList').style.opacity = .5;
   toast('진도표에 반영하는 중…', 15000);
-  const j = await post('/api/progress/catch-up', {subject: cur.subject, record_key: it.record_key});
-  $('catchList').style.pointerEvents = ''; $('catchList').style.opacity = '';
-  if (j.status === 'success') { addMemo('sys', `진도 맞춤: ${it.unit} ${name(it)}부터`, true); $('catchBox').style.display = 'none'; setTimeout(load, 800); }
+  let j = {};
+  try {
+    j = await post('/api/progress/catch-up', {subject: cur.subject, record_key: it.record_key});
+  } catch (err) {
+    toast('수업 비서 서버에 연결하지 못했어요. 잠시 뒤 다시 해 주세요.', 8000);
+  } finally {
+    catchBusy = false; btns.forEach(x => x.disabled = false); $('catchList').style.opacity = '';
+  }
+  if (j.status === 'success') { addMemo('sys', `진도 맞춤: ${it.unit} ${name(it)}부터 — ${j.message || ''}`, true); $('catchBox').style.display = 'none'; setTimeout(load, 800); }
 };
+let catchBusy = false;
 // ── 🌙 수업 준비: 흐름 없는 차시를 뒤에서 자동 준비, 진행 상황을 지켜봄 ──
 let prepTimer = null;
 async function prepPoll(){

@@ -153,10 +153,10 @@ def upcoming(subject: str) -> list[dict]:
         with urllib.request.urlopen(f"{base}/api/lessons?subject={urllib.parse.quote(subject)}", timeout=25) as res:
             items = json.load(res).get("items", [])
         first_open = next((n for n, i in enumerate(items) if not i.get("done")), len(items))
-        return [{**i, "record_key": str(i.get("record_key") or "")} for i in items[max(0, first_open - 12):first_open + 48]]
+        return [{**i, "record_key": str(i.get("record_key") or "")} for i in items[max(0, first_open - 30):first_open + 80]]
     except urllib.error.HTTPError as exc:
         if exc.code != 404:
-            raise
+            raise ValueError(f"진도 서버 오류({exc.code}) — 진도표 시트 형식을 확인해 주세요.") from exc
     with urllib.request.urlopen(f"{base}/api/dashboard", timeout=25) as res:
         payload = json.load(res)
     agenda = next((v for v in payload.get("views", []) if v.get("id") == "agenda"), {}).get("data", [])
@@ -463,7 +463,9 @@ class Handler(BaseHTTPRequestHandler):
         if url.path == "/api/upcoming":
             try:
                 return self._json({"status": "success", "items": upcoming(q.get("subject", [""])[0])})
-            except (urllib.error.URLError, OSError, ValueError):
+            except ValueError as exc:
+                return self._json({"status": "error", "message": str(exc)}, 502)
+            except (urllib.error.URLError, OSError):
                 return self._json({"status": "error", "message": "진도 서버(teacherlesson-schedule)가 꺼져 있어요."}, 502)
         if url.path == "/api/prepare-status":
             return self._json(prepare_status())

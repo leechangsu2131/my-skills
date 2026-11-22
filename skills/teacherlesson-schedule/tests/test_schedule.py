@@ -937,6 +937,57 @@ class ScheduleTests(unittest.TestCase):
         done = [schedule._is_done(r) for r in schedule.load_all(progress_ws)]
         self.assertEqual(done, [True, True, True, True, False, False])
 
+    def _six_lesson_fixture(self, done_flags, bridge_rows):
+        progress_ws, bridge_ws = self.make_progress_and_bridge(
+            [[f"lesson-000{n}", "Math", "", "TRUE" if done_flags[n - 1] else "FALSE", str(n), chr(64 + n), "Unit"]
+             for n in range(1, len(done_flags) + 1)],
+            bridge_rows,
+            progress_headers=[
+                schedule.COLUMN_LESSON_ID, schedule.COLUMN_SUBJECT, schedule.COLUMN_DATE, schedule.COLUMN_DONE,
+                schedule.COLUMN_LESSON, schedule.COLUMN_TITLE, schedule.COLUMN_UNIT,
+            ],
+        )
+        FakeWorksheet(
+            ["월", "화", "수", "목", "금"],
+            [["", "", "Science", "", "Math"], ["Math", "", "Math", "", ""]],
+            title=auto_planner.TIMETABLE_SHEET_NAME,
+            spreadsheet=progress_ws.spreadsheet,
+        )
+        return progress_ws, bridge_ws
+
+    def test_skip_forward_then_back_to_first_reopens_skipped_lessons(self):
+        # 검토(2026-11-22): 날짜 없는 5차시로 건너뛴 뒤 1차시로 되돌리면 2·3·4차시가 '완료'로 남던 문제
+        progress_ws, bridge_ws = self._six_lesson_fixture(
+            [False, False, False, False, False, False],
+            [
+                ["2026-03-24", 2, 1, "Math", "lesson-0001", "planned", "progress_sync", ""],
+                ["2026-03-31", 2, 1, "Math", "lesson-0002", "planned", "progress_sync", ""],
+                ["2026-04-07", 2, 1, "Math", "lesson-0003", "planned", "progress_sync", ""],
+            ],
+        )
+        self._catch_up(progress_ws, "lesson-0005")
+        result = self._catch_up(progress_ws, "lesson-0001")
+        done = [schedule._is_done(r) for r in schedule.load_all(progress_ws)]
+        self.assertEqual(done, [False] * 6)
+        by_id = {row[4]: row[5] for row in bridge_ws.rows}
+        for key in ("lesson-0001", "lesson-0002", "lesson-0003", "lesson-0004"):
+            self.assertEqual(by_id.get(key), "planned", key)
+        self.assertIn("되돌린 차시", result["message"])
+
+    def test_pick_later_lesson_marks_rowless_earlier_lessons_done(self):
+        # 검토(2026-11-22): 2차시가 칸 없고 안 함일 때 4차시를 고르면 2차시가 '안 함'으로 남던 문제
+        progress_ws, bridge_ws = self._six_lesson_fixture(
+            [True, False, False, False],
+            [
+                ["2026-03-24", 2, 1, "Math", "lesson-0001", "done", "progress_sync", ""],
+                ["2026-04-07", 2, 1, "Math", "lesson-0003", "planned", "progress_sync", ""],
+                ["2026-04-14", 2, 1, "Math", "lesson-0004", "planned", "progress_sync", ""],
+            ],
+        )
+        self._catch_up(progress_ws, "lesson-0004")
+        done = [schedule._is_done(r) for r in schedule.load_all(progress_ws)]
+        self.assertEqual(done, [True, True, True, False])
+
     def test_catch_up_back_to_completed_lesson_without_bridge_rows(self):
         # 2026-11-22 국어: 학기 초 '여기까지 완료'로 칸이 지워진 매체 3~6차시로 되돌리기
         progress_ws, bridge_ws = self.make_progress_and_bridge(

@@ -398,8 +398,11 @@ def subject_lessons():
     subject = schedule._clean_text(request.args.get("subject", ""))
     if not subject:
         return _action_error("subject 가 필요해요.")
-    ws = schedule.connect()
-    records = schedule.load_all(ws)
+    try:
+        ws = schedule.connect()
+        records = schedule.load_all(ws)
+    except (ValueError, schedule.ScheduleError) as exc:
+        return _action_error(f"진도표를 읽지 못했어요: {exc}", 500)
     # 계획 날짜·교시는 수업배치(bridge)의 '계획' 칸에서 읽는다(진도표 날짜 열은 머리글이 덮여 믿기 어려움)
     slots = {}
     bridge = schedule._load_bridge_support(ws)

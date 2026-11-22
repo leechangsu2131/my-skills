@@ -29,6 +29,12 @@ button:hover{filter:brightness(.95)}
 button.pri{background:var(--acc);color:#fff;border-color:var(--acc)}
 button.rec{background:var(--red);color:#fff;border-color:var(--red)}
 .muted{color:var(--sub);font-size:13px}
+.pick{max-height:340px;overflow:auto;border:1px solid var(--line);border-radius:8px;background:#fff}
+.pick h4{margin:0;padding:5px 10px;background:#f3f1eb;font-size:13px;position:sticky;top:0}
+.pick button{display:block;width:100%;text-align:left;border:0;border-bottom:1px solid var(--line);border-radius:0;padding:9px 10px}
+.pick button:hover{background:#eef3f1}
+.pick button.now{background:#fff8dc}
+.pick small{color:var(--sub);margin-left:6px}
 .tag{display:inline-block;font-size:12px;padding:1px 7px;border-radius:10px;background:#eef3f1;color:var(--acc);margin-right:4px}
 ul{margin:4px 0;padding-left:18px}
 .caution li{color:var(--warn)}
@@ -123,10 +129,11 @@ textarea,input[type=text]{width:100%;font:inherit;border:1px solid var(--line);b
   <section>
     <h2>📅 진도 조정 <span class="muted">(진도표 시트에 바로 반영)</span></h2>
     <div class="row"><button data-p="done">✅ 이 차시 완료</button><button data-p="extend">➕ 한 차시 더 필요</button><button data-p="push">⏭ 이후 진도 미루기</button></div>
-    <div class="row" style="margin-top:6px"><button id="catchBtn">📍 여기부터 다시 잡기</button><span class="muted">실제 진도와 어긋났을 때: 다음에 할 차시를 고르면 앞 차시는 완료, 뒤는 오늘 이후로 다시 배치</span></div>
+    <div class="row" style="margin-top:6px"><button id="catchBtn" class="pri">📍 실제로 할 차시 고르기</button><span class="muted">계획과 실제 진도가 다를 때 눌러요</span></div>
     <div id="catchBox" style="display:none;margin-top:6px">
-      <select id="catchSel" style="width:100%;font:inherit;padding:5px"></select>
-      <div class="row" style="margin-top:6px"><button id="catchGo" class="pri">이 차시부터 다시 잡기</button><button id="catchCancel">닫기</button></div>
+      <div class="muted" style="margin-bottom:4px">👇 <b>오늘 실제로 할 차시</b>를 누르세요. 앞 차시는 '이미 함'이 되고, 누른 차시부터 다시 배치돼요.</div>
+      <div id="catchList" class="pick"></div>
+      <div class="row" style="margin-top:6px"><button id="catchCancel">닫기</button><span class="muted">이미 '함'으로 표시된 차시로 되돌리기는 아직 안 돼요</span></div>
     </div>
   </section>
 
@@ -403,18 +410,35 @@ $('aiBtns').onclick = async e => {
 $('catchBtn').onclick = async () => {
   if (!cur) return;
   if (!cur.record_key) { toast('진도표에서 불러온 수업이 아니라 진도를 바꿀 수 없어요 (진도 서버 확인)'); return; }
-  $('catchSel').innerHTML = '<option>불러오는 중…</option>'; $('catchBox').style.display = 'block';
+  $('catchList').innerHTML = '<div class="muted" style="padding:8px">불러오는 중…</div>'; $('catchBox').style.display = 'block';
   const j = await (await fetch('/api/upcoming?subject=' + encodeURIComponent(cur.subject))).json().catch(() => ({items: []}));
-  if (!j.items || !j.items.length) { $('catchSel').innerHTML = '<option value="">남은 차시가 없거나 진도 서버가 꺼져 있어요</option>'; return; }
-  $('catchSel').innerHTML = j.items.map(i => `<option value="${esc(i.record_key)}">${esc(i.unit)} ${esc(i.lesson)}차시 · ${esc(i.title)} (지금 계획: ${esc(i.planned_date)} ${esc(i.planned_period)}교시)</option>`).join('');
+  catchItems = j.items || [];
+  if (!catchItems.length) { $('catchList').innerHTML = '<div class="muted" style="padding:8px">남은 차시가 없거나 진도 서버가 꺼져 있어요</div>'; return; }
+  let html = '', unit = null;
+  catchItems.forEach((i, n) => {
+    if (i.unit !== unit) { unit = i.unit; html += `<h4>${esc(unit || '단원 없음')}</h4>`; }
+    const now = i.record_key === cur.record_key;
+    const plan = i.planned_date ? `${i.planned_date.slice(5).replace('-', '/')} ${esc(i.planned_period)}교시` : '날짜 없음';
+    html += `<button data-n="${n}" class="${now ? 'now' : ''}">${esc(i.lesson)}차시 · ${esc(i.title)}<small>계획 ${plan}${now ? ' ◀ 지금 계획된 차시' : ''}</small></button>`;
+  });
+  $('catchList').innerHTML = html;
+  $('catchList').querySelector('button.now')?.scrollIntoView({block: 'center'});
 };
+let catchItems = [];
 $('catchCancel').onclick = () => { $('catchBox').style.display = 'none'; };
-$('catchGo').onclick = async () => {
-  const key = $('catchSel').value; if (!key) return;
-  const label = $('catchSel').selectedOptions[0].textContent;
-  if (!confirm(`[${cur.subject}] 다음에 할 차시를\n${label}\n로 정할까요?\n\n이 앞의 남은 차시는 완료 처리되고, 이 차시부터는 오늘 이후 시간표에 맞춰 다시 배치됩니다.`)) return;
-  const j = await post('/api/progress/catch-up', {subject: cur.subject, record_key: key});
-  if (j.status === 'success') { addMemo('sys', `진도 다시 잡기: ${label}`, true); $('catchBox').style.display = 'none'; setTimeout(load, 800); }
+$('catchList').onclick = async e => {
+  const b = e.target.closest('button[data-n]'); if (!b || !cur) return;
+  const n = +b.dataset.n, it = catchItems[n], before = catchItems.slice(0, n);
+  const name = i => `${i.lesson}차시 ${i.title}`;
+  const msg = [`[${cur.subject}] 「${it.unit} ${name(it)}」을(를)\n오늘 실제로 할 차시로 정할까요?`, '',
+    before.length ? `• 그 앞의 ${before.length}개 차시는 '이미 함'으로 표시돼요:\n   ${before.slice(0, 4).map(name).join(', ')}${before.length > 4 ? ' …' : ''}`
+                  : '• 앞에 건너뛰는 차시는 없어요.',
+    `• 이 차시부터 오늘 이후 ${cur.subject} 시간에 차례로 다시 배치돼요.`].join('\n');
+  if (!confirm(msg)) return;
+  b.disabled = true;
+  const j = await post('/api/progress/catch-up', {subject: cur.subject, record_key: it.record_key});
+  b.disabled = false;
+  if (j.status === 'success') { addMemo('sys', `진도 맞춤: ${it.unit} ${name(it)}부터`, true); $('catchBox').style.display = 'none'; setTimeout(load, 800); }
 };
 window.addEventListener('beforeunload', e => { if (rec){ e.preventDefault(); e.returnValue=''; } });
 

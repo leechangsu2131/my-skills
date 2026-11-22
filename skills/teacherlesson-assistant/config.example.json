@@ -36,7 +36,8 @@
   "notebooklm_image_subjects": ["음악", "미술"],
   "subjects": {
     "수학": {"publisher": "아이스크림", "site": "https://www.i-scream.co.kr/user/subject/SubjectChasiList.do", "login": "google", "notebooklm": ""},
-    "음악": {"publisher": "두클래스", "site": "https://ele.douclass.com", "login": "google"},
+    "음악": {"publisher": "두클래스", "site": "https://ele.douclass.com", "login": "google", "helper": "music_douclass"},
+    "사회": {"publisher": "아이스크림", "site": "https://www.i-scream.co.kr/user/subject/SubjectChasiList.do", "login": "google", "helper": "social_class"},
     "도덕": {"publisher": "천재교육", "site": "https://www.tsherpa.co.kr", "secret_prefix": "TSHERPA"}
   },
   "fallback_timetable": {

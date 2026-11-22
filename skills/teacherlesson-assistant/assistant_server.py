@@ -205,6 +205,7 @@ def state(day: date) -> dict:
         lesson["publisher"] = info.get("publisher", "")
         lesson["site"] = info.get("site", "")
         lesson["has_login"] = bool(info.get("secret_prefix"))
+        lesson["has_helper"] = info.get("helper", "") in SITE_HELPERS
         lesson["flow"] = find_flow(lesson)
         lesson["unit_overview"] = find_unit(lesson)
         key = f"{lesson['publisher']}|{lesson['subject']}"
@@ -297,6 +298,37 @@ def open_window(url: str, side: str, cfg: dict) -> str:
     args += [f"--app={url}"] if side == "left" else ["--new-window", "--", url]
     subprocess.Popen(args, close_fds=True)
     return "창을 열었어요."
+
+
+SITE_HELPERS = {  # config subjects.<과목>.helper → sites/ 아래 차시 자료 자동 열기 도우미
+    "music_douclass": ("music_douclass", "music_helper.py"),
+    "social_class": ("social_class", "social_class_helper.py"),
+}
+
+
+def open_lesson(body: dict) -> str:
+    """과목 도우미(selenium)를 새 창에서 실행해 출판사 사이트의 그 차시 자료를 연다: <도우미> run <단원> <차시>."""
+    cfg = load_config()
+    subject = str(body.get("subject", ""))
+    helper = cfg.get("subjects", {}).get(subject, {}).get("helper", "")
+    if helper not in SITE_HELPERS:
+        raise ValueError("이 과목은 차시 자료 도우미가 설정되지 않았어요 (config subjects.<과목>.helper).")
+    clean = lambda v: re.sub(r"[\x00-\x1f]", " ", str(v or "")).strip()[:100]
+    unit, title = clean(body.get("unit")), clean(body.get("title"))
+    if not unit or not title:
+        raise ValueError("단원·차시 정보가 없어요.")
+    folder, script = SITE_HELPERS[helper]
+    cwd = SKILL_DIR / "sites" / folder
+    py = cfg.get("helper_python") or r"C:\Python313\python.exe"
+    if not pathlib.Path(py).is_file():
+        py = sys.executable
+    port = str(cfg.get("debug_port", 9233))
+    profile = os.path.expandvars(cfg.get("chrome_profile", r"%LOCALAPPDATA%\MusicClassHelper\chrome_profile"))
+    env = dict(os.environ, MUSIC_CLASS_REMOTE_PORT=port, SOCIAL_CLASS_REMOTE_PORT=port,
+               SOCIAL_CLASS_CHROME_PROFILE_DIR=profile, PYTHONIOENCODING="utf-8")
+    subprocess.Popen([py, script, "run", unit, title], cwd=cwd, env=env,
+                     creationflags=getattr(subprocess, "CREATE_NEW_CONSOLE", 0))
+    return f"{subject} 도우미가 「{title}」 자료를 여는 중이에요 (새 창)."
 
 
 def copy_secret(subject: str, field: str) -> str:
@@ -417,6 +449,8 @@ class Handler(BaseHTTPRequestHandler):
             if url.path == "/api/open-site":
                 cfg = load_config()
                 return self._json({"status": "success", "message": open_window(check_site_url(body.get("url", ""), cfg), "right", cfg)})
+            if url.path == "/api/open-lesson":
+                return self._json({"status": "success", "message": open_lesson(body)})
             if url.path == "/api/copy-secret":
                 return self._json({"status": "success", "message": copy_secret(body.get("subject", ""), body.get("field", ""))})
             if url.path == "/api/ask-prepare":

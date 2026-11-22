@@ -198,6 +198,7 @@ function select(i){
   $('catchBox').style.display = 'none';
   $('siteBtns').innerHTML = [
     cur.site && `<button class="pri" id="openSite">🖥 수업 사이트 열기</button>`,
+    cur.has_helper && cur.title && `<button id="openLesson">📂 차시 자료 바로 열기</button>`,
     cur.has_login && `<button id="cpId">아이디 복사</button><button id="cpPw">비번 복사</button>`,
     cur.has_pdf && cur.record_key && `<button id="openPdf">📄 지도서</button>`].filter(Boolean).join('');
   const cs = [...cur.cautions.map(c=>`<li>${esc(c.text)} <span class="muted">(${esc(cur.publisher)})</span></li>`),
@@ -373,6 +374,7 @@ $('noticeBtn').onclick = async () => {
 $('siteBtns').onclick = e => {
   const id = e.target.id;
   if (id==='openSite') post('/api/open-site', {url:cur.site});
+  if (id==='openLesson') post('/api/open-lesson', {subject:cur.subject, unit:cur.unit, title:cur.title});
   if (id==='cpId' || id==='cpPw') post('/api/copy-secret', {subject:cur.subject, field:id==='cpId'?'id':'pw'});
   if (id==='openPdf') window.open('/api/pdf/'+encodeURIComponent(cur.record_key), '_blank');
 };

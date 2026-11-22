@@ -10,7 +10,7 @@ metadata:
 
 # 수업 비서 (teacherlesson-assistant)
 
-- **수업 화면** (`assistant_server.py` + `web/index.html`, 파이썬 기본 기능만) — 교사가 수업 중에 직접 쓴다. 실행 방법·화면 기능·저장 위치·지도서 받기는 [README.md](README.md).
+- **수업 화면** (`assistant_server.py` + `web/index.html`, 파이썬 기본 기능만) — 교사가 수업 중에 직접 쓴다. 과목별 차시 자료 자동 열기 도우미는 `sites/`(음악 Douclass, 사회 아이스크림·Douclass, selenium). 실행 방법·화면 기능·저장 위치·지도서 받기는 [README.md](README.md).
 - **Claude 작업 절차** (아래) — 화면은 Claude가 만든 파일을 읽기만 한다.
 
 데이터 폴더: `내 문서\my-skills-data\teacherlesson-assistant\` (config, units, flows, sessions, publisher_notes). 학생 이름이 들어간 메모·녹음은 이 폴더에만 두고 기억(memory)·CLAUDE.md·깃·홈페이지에 옮기지 않는다.
@@ -72,6 +72,5 @@ v0.1은 "복사하고 하이클래스 열기"까지만. 자동 게시는 ISSUES 
 - `teacherlesson-schedule` — 진도표·수업배치, 진도 조정 API, 차시별 지도서 PDF
 - `teacherlesson-from-neis` — 나이스 주간학습안내(보결·시간표 변경)
 - `teacherlesson-guide` — 지도서 받기·분할·진도표 행 생성
-- `teacherlesson-social-helper`, `teacherlesson-music-helper` — 과목별 사이트 자동 열기 참고
 - `admin-hitalk-sender` — 하이클래스 자동 전송 참고
 - `util-notebooklm` — 긴 지도서에서 찾기(Gemini CLI)·쪽 잘라내기·NotebookLM 소스·노트북 목록. 지도서를 통째로 읽어야 할 것 같으면 먼저 `nlm.py find`

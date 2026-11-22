@@ -38,7 +38,7 @@ import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(next(p / "_shared" f
 from skill_env import env_values as _central_env_values, central_env_path
 
 ENV_FILE = central_env_path() or Path(__file__).with_name(".env")  # 표시용
-DEFAULT_REMOTE_PORT = 9222
+DEFAULT_REMOTE_PORT = 9233  # 9222 는 에듀파인 자동화가 쓸 수 있음
 DOUCLASS_RESOURCE_KEYWORDS = [
     "PPT",
     "수업자료",
@@ -414,18 +414,20 @@ def switch_to_live_window(
             current_url = (driver.current_url or "").lower()
             if host_hint and host_hint in current_url:
                 return True
-            if fallback_handle is None:
+            # 같은 크롬에 떠 있는 수업 비서 창(127.0.0.1)은 다른 사이트로 넘기지 않는다
+            if fallback_handle is None and not re.match(r"https?://(127\.0\.0\.1|localhost)", current_url):
                 fallback_handle = handle
         except Exception:
             continue
 
-    if fallback_handle is not None:
-        try:
+    try:
+        if fallback_handle is not None:
             driver.switch_to.window(fallback_handle)
-            return True
-        except Exception:
-            return False
-    return False
+        else:
+            driver.switch_to.new_window("tab")
+        return True
+    except Exception:
+        return False
 
 
 def ensure_live_driver(driver: Any, config: HelperConfig) -> Any:

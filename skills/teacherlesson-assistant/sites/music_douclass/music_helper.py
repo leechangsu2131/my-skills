@@ -17,7 +17,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 import class_manager
 
 
-REMOTE_PORT = 9222
+# 9222 는 에듀파인 자동화 크롬이 쓸 수 있어 수업 도우미 공용 포트 9233 (수업 비서가 MUSIC_CLASS_REMOTE_PORT 로 넘김)
+REMOTE_PORT = int(os.environ.get("MUSIC_CLASS_REMOTE_PORT") or 9233)
 BASE_URL = "https://ele.douclass.com/textbooks/30050/518?arch_id=12553"
 DEFAULT_GUIDE_DIR = Path.home() / "Documents" / "지도서"
 PERSISTENT_CHROME_PROFILE_DIR = Path(os.environ.get("LOCALAPPDATA", Path.home())) / "MusicClassHelper" / "chrome_profile"
@@ -148,12 +149,27 @@ def choose_pdf_from_folder(default_path=None, allow_skip=True):
     return selection
 
 
+def avoid_local_window(driver):
+    """같은 크롬에 수업 비서 창(127.0.0.1)이 떠 있으면 그 창을 건드리지 않도록 다른 탭으로, 없으면 새 탭으로."""
+    try:
+        if not re.match(r"https?://(127\.0\.0\.1|localhost)", driver.current_url or ""):
+            return
+        for handle in reversed(driver.window_handles):
+            driver.switch_to.window(handle)
+            if not re.match(r"https?://(127\.0\.0\.1|localhost)", driver.current_url or ""):
+                return
+        driver.switch_to.new_window("tab")
+    except Exception:
+        pass
+
+
 def attach_to_chrome():
     opts = Options()
     opts.add_experimental_option("debuggerAddress", f"localhost:{REMOTE_PORT}")
     if is_debug_port_open():
         try:
             driver = connect_to_debug_chrome(opts, retries=2, delay=0.2)
+            avoid_local_window(driver)
             try:
                 alert = driver.switch_to.alert
                 print(f"[알림] 브라우저 경고창이 있어 자동으로 확인합니다: {alert.text}")

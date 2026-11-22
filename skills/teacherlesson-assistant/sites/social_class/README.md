@@ -1,18 +1,6 @@
----
-name: social-class-helper
-description: "사회 교과서 차시 자료를 빠르게 열고, 반복 수업 구성을 저장하는 반자동 수업 도우미입니다."
-category: education
-risk: medium
-source: local
-date_added: "2026-03-19"
-tags: ["education", "social-studies", "douclass", "selenium", "classroom-management"]
-metadata:
-  category: 수업·교사 도구
-  status: 운영
-  summary: Douclass 사회 차시 자료를 열고 자주 쓰는 수업 구성을 저장하는 반자동 도우미다.
----
+# 사회 차시 자료 도우미 (아이스크림·Douclass) — 수업 비서 sites/social_class
 
-# 사회 수업 도우미 (Social Class Helper)
+> 2026-11-22 별도 스킬(teacherlesson-social-helper)에서 수업 비서 아래로 옮김. 수업 비서 화면의 '📂 차시 자료 바로 열기' 단추가 `run <단원> <차시>` 로 부른다(config subjects.<과목>.helper). 크롬 포트는 9233(수업 비서가 환경변수로 넘김). 같은 크롬의 수업 비서 창(127.0.0.1)은 건드리지 않고 다른 탭·새 탭을 쓴다. 문제 기록은 수업 비서 ISSUES.md.
 
 ## Overview
 
@@ -33,20 +21,20 @@ metadata:
 대화형 메뉴:
 
 ```bash
-cd skills/teacherlesson-social-helper
+cd skills/teacherlesson-assistant/sites/social_class
 python social_class_helper.py menu
 ```
 
 바로 실행:
 
 ```bash
-python skills/teacherlesson-social-helper/social_class_helper.py run "1단원" "1~2차시" --save "3학년 1단원 첫 수업"
+python skills/teacherlesson-assistant/sites/social_class/social_class_helper.py run "1단원" "1~2차시" --save "3학년 1단원 첫 수업"
 ```
 
 저장된 수업 실행:
 
 ```bash
-python skills/teacherlesson-social-helper/social_class_helper.py saved run "3학년 1단원 첫 수업"
+python skills/teacherlesson-assistant/sites/social_class/social_class_helper.py saved run "3학년 1단원 첫 수업"
 ```
 
 ## What It Stores

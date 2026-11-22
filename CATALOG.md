@@ -1,13 +1,13 @@
 # 스킬 카탈로그
 
 > 이 파일은 `python tools/build_catalog.py`로 자동 생성된다. 직접 고치지 말고 각 스킬의 `SKILL.md` 앞머리(`metadata`)를 고친 뒤 다시 실행한다.
-> 생성일: 2026-11-22 · 스킬 60개
+> 생성일: 2026-11-22 · 스킬 58개
 
 ## 빠른 찾기
 
 - [🏫 학교 행정](#학교-행정) — 9개
 - [📝 학생 기록·평가](#학생-기록평가) — 11개
-- [📚 수업·교사 도구](#수업교사-도구) — 12개
+- [📚 수업·교사 도구](#수업교사-도구) — 10개
 - [🌐 홈페이지](#홈페이지) — 1개
 - [👤 개인·생활](#개인생활) — 16개
 - [🛠️ 공통 유틸](#공통-유틸) — 11개
@@ -53,9 +53,7 @@
 | `teacherlesson-courseware-builder` | ✅ 운영 | - | 플랫폼 공통 수업 패키지와 자료를 설계하고, AIEP·클래스툴 등 사이트별 어댑터로 콘텐츠 배치, 학생 응답 방식, 공개/배포 범위를 구분해 제작한다. 새 플랫폼은 어댑터와 카탈로그 항목으로 확장한다. | [SKILL](skills/teacherlesson-courseware-builder/SKILL.md) · [이슈](skills/teacherlesson-courseware-builder/ISSUES.md) |
 | `teacherlesson-from-neis` | ✅ 운영 | Chrome 확장 v1.5.4 | NEIS 수업내용과 학생 출결·신청 현황을 조회해 뷰어에 표시하고, 신청 내용을 확인해 선택한 결석신고서만 결석 구분과 Chrome에 저장한 유형별 결재선을 적용해 접수·승인요청한다. 최종 결재는 하지 않는다. | [SKILL](skills/teacherlesson-from-neis/SKILL.md) · [이슈](skills/teacherlesson-from-neis/ISSUES.md) 🔵2 · [README](skills/teacherlesson-from-neis/README.md) |
 | `teacherlesson-guide` | ✅ 운영 | v1.0.0 | 출판사 지도서 PDF 받기 → 차시별 분할 → 진도표 행 생성·업로드를 한 스킬로 묶은 지도서 처리 흐름. (옛 guide-splitter·guide-mapper·수업 비서의 지도서 받기를 합침) | [SKILL](skills/teacherlesson-guide/SKILL.md) · [이슈](skills/teacherlesson-guide/ISSUES.md) 🔵1 |
-| `teacherlesson-music-helper` | ✅ 운영 | - | Douclass 음악 자료 접근, 지도서 PDF 추출·요약과 수업 관리용 스크립트가 들어 있다. | [SKILL](skills/teacherlesson-music-helper/SKILL.md) · [이슈](skills/teacherlesson-music-helper/ISSUES.md) |
 | `teacherlesson-schedule` | ✅ 운영 | v1.0.0 | Google Sheets 기반 교사 수업 진도·수업 배치 관리와 자동 시간표 계획 기능을 다룬다. | [SKILL](skills/teacherlesson-schedule/SKILL.md) · [이슈](skills/teacherlesson-schedule/ISSUES.md) · [README](skills/teacherlesson-schedule/README.md) |
-| `teacherlesson-social-helper` | ✅ 운영 | - | Douclass 사회 차시 자료를 열고 자주 쓰는 수업 구성을 저장하는 반자동 도우미다. | [SKILL](skills/teacherlesson-social-helper/SKILL.md) · [이슈](skills/teacherlesson-social-helper/ISSUES.md) |
 | `teacherlesson-update-app` | ✅ 운영 | v0.0.1 | 초등 교사를 위한 Update 앱의 프런트엔드 코드와 가이드라인이다. | [SKILL](skills/teacherlesson-update-app/SKILL.md) · [이슈](skills/teacherlesson-update-app/ISSUES.md) · [README](skills/teacherlesson-update-app/README.md) |
 | `teacherlesson-workspace` | ✅ 운영 | v0.1.0 | Supabase 등 여러 교사 도구의 데이터를 모아 보여주는 교사용 대시보드/워크스페이스 앱이다. | [SKILL](skills/teacherlesson-workspace/SKILL.md) · [이슈](skills/teacherlesson-workspace/ISSUES.md) · [README](skills/teacherlesson-workspace/README.md) |
 

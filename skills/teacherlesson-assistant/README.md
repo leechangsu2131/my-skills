@@ -15,7 +15,7 @@ Claude 작업 절차는 [SKILL.md](SKILL.md), 문제·할 일은 [ISSUES.md](ISS
 | 영역 | 내용 |
 |---|---|
 | 위쪽 | 날짜 이동(달력·요일·'오늘'), 시계, 교시 탭(지금 교시 노란 테두리, 기록 저장된 교시 ✓), 📞 내선번호 |
-| 수업 카드 | 과목·출판사·단원·차시, 수업 사이트 열기, 아이디/비번 복사, 지도서 PDF(진도 서버 `/api/pdf`) |
+| 수업 카드 | 과목·출판사·단원·차시, 수업 사이트 열기, 📂 차시 자료 바로 열기(`sites/` 도우미, config `subjects.<과목>.helper`), 아이디/비번 복사, 지도서 PDF(진도 서버 `/api/pdf`) |
 | 🤖 AI와 수업 준비 | 단원 개관·차시 지도서 PDF(+NotebookLM 차시 노트)를 `ask/<날짜>/<교시>_<과목>/`에 모아 폴더 열기 + 질문 복사 + 고른 AI 사이트 열기. NotebookLM 은 과목 노트북을 열고 질문만 복사 |
 | 주의할 점 | 출판사별 주의점(`publisher_notes.json`) + 같은 과목 지난 수업 메모·고칠점 |
 | 📗 단원 개관 | `units/*.json`의 단원 흐름(지금 차시 ◀)·목표·유의점·평가, 단원 개관 PDF (접기/펴기) |
@@ -61,5 +61,6 @@ Claude 작업 절차는 [SKILL.md](SKILL.md), 문제·할 일은 [ISSUES.md](ISS
 - 화면: `web/index.html` (한 파일)
 - 서버·저장 형식: `assistant_server.py`
 - 단원 개관 규칙: `build_units.py` (`LESSON_START`)
+- 과목별 차시 자료 도우미: `sites/music_douclass/`, `sites/social_class/` (각 README). 서버의 `SITE_HELPERS` 에 등록
 - NotebookLM 소스·노트: `notebook_sources.py`, `split_notes.py` (차시 표시 규칙 `lesson_tag` 은 `assistant_server.py`)
 - 설정 항목: `config.example.json` (실사용 설정은 데이터 폴더의 `config.json`)

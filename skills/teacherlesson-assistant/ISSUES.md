@@ -70,7 +70,13 @@
 0. **학교 PC 에서도 같게 쓰기 + 분할 자동화** (2026-11-22 교사와 논의, 가장 먼저)
    - 지금 PC 에만 있는 것: `D:\지도서`(2.2GB, 진도표에 절대 경로), 데이터 폴더(흐름·단원 개관·NotebookLM md·config, 49MB), Python·Node·Gemini CLI, 크롬 사이트 로그인, 진도 서버 실행
    - 방향: **PDF 는 집 PC, 글(md)·결과(flows·units·config·publisher_notes)는 학교 OneDrive(gyo6.net)**, 녹음(webm)은 PC 에만. 학교 PC 는 프로그램 설치·로그인만 → '학교 PC 점검 bat'(설치·로그인·경로·서버 확인, 진도 서버도 켜기)
-   - 교사 확인 필요: 학교 PC 도 같은 OneDrive 계정인지, 수업 메모(학생 이름 가능)를 OneDrive 에 둬도 되는지
+   - **교사 결정 (2026-11-22)**: 학교 PC 도 같은 OneDrive(gyo6.net) 로그인됨 → 위 방향대로. **수업 메모는 OneDrive 가 아니라 슈파베이스**에 바로 저장하고, 각 PC 는 하루 한 번(또는 일주일에 한 번) 내려받기. **🙋 학생 발표 메모는 그 학생의 슈파베이스 기록**(학생 기록 표)에 넣기
+   - 메모 설계안(다음에 확인하며 만들기):
+     - 새 표 `lesson_memos`: date, period, subject, record_key, unit, lesson, title, kind(good/fix/note/voice/step/sys), text, t(녹음 기준 mm:ss), pc, created_at. 수업 비서 `/api/session` 저장 때 슈파베이스에도 올림(실패하면 PC 에 쌓아 두고 다음에 다시 올림)
+     - 🙋 학생 메모: 기존 학생 기록 표(`classmanage-supabase-export` 가 읽는 표, 학생 이름 열 `🧑‍🎓 이름`, 표 이름은 .env `SUPABASE_TABLE_NAME` — 중앙 .env 에 없음, 확인 필요)에 한 줄씩. 학생 이름 고르기는 화면에서 명단 선택(오타 방지) → 명단 출처 확인 필요
+     - 내려받기: `sync_memos.py`(하루 1번, 아침 bat 에서 실행) → 데이터 폴더 sessions 에 합침 → '지난 고칠점'·수업 정리(B) 가 그대로 씀
+     - 녹음(webm)은 PC 에만. 키는 중앙 .env 의 SUPABASE_URL·SUPABASE_SERVICE_ROLE_KEY(코드·커밋에 값 금지)
+     - 확인할 것: 학생 기록 표 이름·열 구조, 학생 명단 출처, 슈파베이스 표 만들기(SQL) 권한
    - 분할 자동화(Gemini, 쓸 때 토큰 0)는 `teacherlesson-guide` ISSUE-001 — 쪽 머리 글만 주면 9/9 정답 확인
 1. **흐름을 화면에서 바로 고치고 저장** + 메모 단추를 `prompt()` 대신 화면 안 입력칸으로 (아래 3·5번 남은 일)
 2. **사회(아이스크림) '차시 자료 바로 열기'** 실제로 눌러 보기 / 도우미가 PPT 자동 열기·Enter 없이 창 닫기 (아래 '확인 필요' 쪽 #4 차시별 사이트)

@@ -138,7 +138,7 @@ FILL = r"""
   if (typeof setRcvListCount === 'function') setRcvListCount();
   const rows = [...document.querySelectorAll('#rcvList .chkItem')].map(c => c.getAttribute('data-mobile') || c.getAttribute('data-key'));
   return {sender: sel.options[sel.selectedIndex].text, rows, type: ($('#serviceType').text() || '').trim(),
-          bytes: ([...document.body.innerText.matchAll(/(\d+)\s*byte/g)].pop() || [])[1],  // 첫 일치는 안내문의 "140byte" count: (document.body.innerText.match(/받는사람\s*:\s*(\d+)/) || [])[1]};
+          bytes: ([...document.body.innerText.matchAll(/(\d+)\s*byte/g)].pop() || [])[1], /* 첫 일치는 안내문의 140byte */ count: (document.body.innerText.match(/받는사람\s*:\s*(\d+)/) || [])[1]};
 })
 """
 

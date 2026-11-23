@@ -41,12 +41,13 @@ PROMPT = """@{file} 이 자료는 초등학교 3학년 {subject} 교사용 지�
 
 {{"goal": "학습 목표 한 문장",
  "materials": ["준비물"],
- "steps": [{{"name": "도입", "minutes": 5, "do": "교사·학생 활동 한두 문장", "say": "핵심 발문 한 문장", "tip": "주의하거나 보충할 점"}}],
+ "steps": [{{"name": "도입", "minutes": 5, "do": "교사·학생 활동 한두 문장", "say": "핵심 발문 한 문장", "tip": "주의하거나 보충할 점", "flag": "keep 또는 cut 또는 빈 문자열"}}],
  "homework": "알림장에 쓸 숙제·준비물 (없으면 빈 문자열)",
  "pages": "근거로 쓴 쪽 (예: p.2-4, 자료의 〔p.N〕 표시가 있으면 그 번호)"}}
 
 규칙
 - steps 는 3~6개(도입–전개–정리), minutes 합계는 40.
+- flag: 이 차시의 핵심 활동은 "keep", 시간이 모자랄 때 줄이거나 건너뛰어도 되는 단계(복습·정리 보충 등)는 "cut", 모르겠으면 "".
 - 지도서에 있는 활동과 발문을 우선 쓰고, 지도서에 없는 내용을 지어내지 않습니다. 근거가 없으면 tip 에 "지도서에 없음"이라고 씁니다.
 - 자료에 여러 차시가 들어 있으면 반드시 「{title}」 차시 부분만 씁니다. 다른 차시 내용을 쓰지 않습니다.
 - 묶음 차시(예: 3(3~4)차시)면 이번 한 시간 분량만 씁니다.
@@ -153,7 +154,10 @@ def parse_flow(text: str) -> dict:
             minutes = int(re.search(r"\d+", str(s.get("minutes", "0"))).group())
         except (AttributeError, ValueError):
             minutes = 0
-        clean_steps.append({k: str(s.get(k, "") or "").strip() for k in ("name", "do", "say", "tip")} | {"minutes": minutes})
+        step = {k: str(s.get(k, "") or "").strip() for k in ("name", "do", "say", "tip")} | {"minutes": minutes}
+        if str(s.get("flag", "")).strip().lower() in ("keep", "cut"):
+            step["flag"] = str(s["flag"]).strip().lower()
+        clean_steps.append(step)
     materials = data.get("materials") or []
     if isinstance(materials, str):
         materials = [m.strip() for m in re.split(r"[,、·]", materials) if m.strip()]

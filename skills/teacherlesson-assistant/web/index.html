@@ -413,14 +413,14 @@ function renderFlow(){
   $('flowSrc').textContent = [f.source, f.edited && '직접 고침'].filter(Boolean).map(t => `(${t})`).join(' ');
   $('goal').innerHTML = (f.goal?`<div><b>🎯 ${esc(f.goal)}</b></div>`:'') + (f.materials&&f.materials.length?`<div class="muted">준비물: ${esc(f.materials.join(', '))}</div>`:'');
   $('steps').innerHTML = (f.steps||[]).map((s,i)=>`<div class="step ${i===stepIdx?'cur':''}" data-s="${i}">
-      <b>${esc(s.name)}</b> <span class="muted">${s.minutes?s.minutes+'분':''}</span>
+      <b>${esc(s.name)}</b> <span class="muted">${s.minutes?s.minutes+'분':''}</span>${s.flag==='cut'?' <span class="muted" title="시간이 모자라면 줄여도 되는 단계">✂ 줄여도 됨</span>':''}${s.flag==='keep'?' <span class="muted" title="꼭 해야 하는 단계">⭐ 핵심</span>':''}
       ${s.do?`<div>${esc(s.do)}</div>`:''}${s.say?`<div class="say">💬 ${esc(s.say)}</div>`:''}${s.tip?`<div class="tip">💡 ${esc(s.tip)}</div>`:''}</div>`).join('');
   renderHero();
 }
 
 /* ===== 수업 흐름 고치기: 저장하면 flows/ 에 직접 고친 흐름으로 남아 자동 준비가 덮어쓰지 않는다 ===== */
 let editing = null, editDirty = false;
-const emptyStep = () => ({name:'', minutes:5, do:'', say:'', tip:''});
+const emptyStep = () => ({name:'', minutes:5, do:'', say:'', tip:'', flag:''});
 function leaveEdit(){   // 고치던 흐름이 있으면 버려도 되는지 묻고, 괜찮으면 편집을 닫는다
   if (!editing) return true;
   if (editDirty && !confirm('고치던 수업 흐름이 아직 저장되지 않았어요. 버리고 이동할까요?')) return false;
@@ -431,7 +431,7 @@ function startEdit(){
   if (!cur) return;
   const f = cur.flow;
   editing = f ? {goal: f.goal || '', materials: (f.materials || []).join(', '),
-                 steps: (f.steps || []).map(s => ({name: s.name || '', minutes: s.minutes || 0, do: s.do || '', say: s.say || '', tip: s.tip || ''}))}
+                 steps: (f.steps || []).map(s => ({name: s.name || '', minutes: s.minutes || 0, do: s.do || '', say: s.say || '', tip: s.tip || '', flag: s.flag || ''}))}
               : {goal: '', materials: '', steps: [emptyStep()]};
   if (!editing.steps.length) editing.steps.push(emptyStep());
   editDirty = false; $('flowBox').open = true; renderEdit();
@@ -440,7 +440,7 @@ function collectEdit(){
   const box = $('flowEdit'); if (!editing) return;
   const q = (el, sel) => el.querySelector(sel).value;
   editing.goal = q(box, '.ed-goal'); editing.materials = q(box, '.ed-mat');
-  editing.steps = [...box.querySelectorAll('.ed-step')].map(el => ({name: q(el,'.ed-name'), minutes: q(el,'.ed-min'), do: q(el,'.ed-do'), say: q(el,'.ed-say'), tip: q(el,'.ed-tip')}));
+  editing.steps = [...box.querySelectorAll('.ed-step')].map(el => ({name: q(el,'.ed-name'), minutes: q(el,'.ed-min'), do: q(el,'.ed-do'), say: q(el,'.ed-say'), tip: q(el,'.ed-tip'), flag: q(el,'.ed-flag')}));
 }
 function renderEdit(){
   const n = editing.steps.length;
@@ -457,7 +457,8 @@ function renderEdit(){
         <button class="ghost icon" data-a="del" title="이 단계 지우기" ${n===1?'disabled':''}>✕</button></div>
       <textarea class="ed-do" rows="2" placeholder="활동 (학생이 하는 일)">${esc(s.do)}</textarea>
       <textarea class="ed-say" rows="2" placeholder="💬 핵심 발문">${esc(s.say)}</textarea>
-      <textarea class="ed-tip" rows="1" placeholder="💡 지도 팁·주의">${esc(s.tip)}</textarea></div>`).join('') +
+      <textarea class="ed-tip" rows="1" placeholder="💡 지도 팁·주의">${esc(s.tip)}</textarea>
+      <select class="ed-flag" title="시간이 모자랄 때 어느 단계를 줄일지 알려 줘요"><option value="" ${s.flag?'':'selected'}>중요도 표시 없음</option><option value="keep" ${s.flag==='keep'?'selected':''}>⭐ 꼭 해야 함</option><option value="cut" ${s.flag==='cut'?'selected':''}>✂ 모자라면 줄여도 됨</option></select></div>`).join('') +
     `<div class="ed-bar"><button data-a="add">＋ 단계 추가</button><span id="edSum"></span><span class="grow"></span>
        <button data-a="cancel">취소</button><button class="pri" data-a="save">저장</button></div>`;
   updSum();
@@ -612,7 +613,11 @@ function paceInfo(steps){
   for (let i = stepIdx + 1; i < steps.length; i++) need += effMin(i);
   const short = Math.round(need - (w.e - nowMin()));
   const parts = [Math.abs(late) >= 1 ? `계획보다 ${Math.abs(late)}분 ${late > 0 ? '늦음' : '빠름'}` : '시간표대로 진행 중'];
-  if (short >= 1) parts.push(`교시 끝까지 ${short}분 모자라요`);
+  if (short >= 1) {
+    parts.push(`교시 끝까지 ${short}분 모자라요`);
+    const cut = steps.slice(stepIdx + 1).filter(s => s.flag === 'cut').map(s => s.name);
+    if (cut.length) parts.push(`✂ 줄여도 되는 단계: ${cut.join(', ')}`);
+  }
   else if (short <= -1) parts.push(`${-short}분 여유`);
   return {text: parts.join(' · '), bad: late >= 3 || short >= 1};
 }

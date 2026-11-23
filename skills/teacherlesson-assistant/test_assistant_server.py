@@ -101,10 +101,32 @@ class SaveFlowTest(FlowTestBase):
         app.save_flow(b)
         self.assertEqual(len(json.loads((self.flows / "K1.json").read_text(encoding="utf-8"))["steps"][0]["do"]), 600)
 
+    def test_flag_keep_cut_saved_and_other_values_dropped(self):
+        b = body(); b["flow"]["steps"][0]["flag"] = "keep"; b["flow"]["steps"][1]["flag"] = "아무거나"
+        app.save_flow(b)
+        steps = json.loads((self.flows / "K1.json").read_text(encoding="utf-8"))["steps"]
+        self.assertEqual(steps[0]["flag"], "keep")
+        self.assertNotIn("flag", steps[1])  # 옛 흐름과 같은 모양 유지
+
+    def test_cut_flag_roundtrip(self):
+        b = body(); b["flow"]["steps"][1]["flag"] = "cut"
+        app.save_flow(b)
+        self.assertEqual(app.find_flow({"record_key": "K1", "subject": "수학", "title": "x"})["steps"][1]["flag"], "cut")
+
     def test_odd_record_key_stays_inside_flows_folder(self):
         app.save_flow(body(record_key="../../evil"))
         self.assertEqual([p.parent for p in self.flows.rglob("*.json")], [self.flows])
         self.assertFalse((self.flows.parent / "evil.json").exists())
+
+
+class PrepareFlagTest(unittest.TestCase):
+    def test_parse_flow_keeps_valid_flag_only(self):
+        import prepare_lessons as pl
+        raw = json.dumps({"goal": "g", "steps": [{"name": "a", "minutes": 20, "flag": "Cut"}, {"name": "b", "minutes": 20, "flag": "??"}, {"name": "c", "minutes": 0}]})
+        steps = pl.parse_flow(raw)["steps"]
+        self.assertEqual(steps[0]["flag"], "cut")
+        self.assertNotIn("flag", steps[1])
+        self.assertNotIn("flag", steps[2])
 
 
 class ValidationTest(FlowTestBase):

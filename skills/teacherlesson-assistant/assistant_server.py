@@ -232,7 +232,10 @@ def save_flow(body: dict) -> dict:
             raise ValueError(f"{n}번째 단계의 시간(분)이 숫자가 아니에요.") from None
         if not 0 <= minutes <= 120:
             raise ValueError(f"{n}번째 단계의 시간은 0~120분 사이로 적어 주세요.")
-        steps.append({"name": name, "minutes": minutes, **{k: _clean(item.get(k)) for k in ("do", "say", "tip")}})
+        step = {"name": name, "minutes": minutes, **{k: _clean(item.get(k)) for k in ("do", "say", "tip")}}
+        if item.get("flag") in ("keep", "cut"):  # 'keep'=꼭 해야 함, 'cut'=시간이 모자라면 줄여도 되는 단계 (없으면 키 자체를 안 둠 → 옛 흐름과 같은 모양)
+            step["flag"] = item["flag"]
+        steps.append(step)
     materials = raw.get("materials", [])
     if isinstance(materials, str):
         materials = re.split(r"[,\n]", materials)

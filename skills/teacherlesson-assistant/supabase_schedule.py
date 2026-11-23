@@ -3,6 +3,8 @@ from __future__ import annotations
 
 import os
 import sys
+import threading
+from concurrent.futures import ThreadPoolExecutor
 from datetime import date, datetime, timedelta
 from pathlib import Path
 
@@ -21,16 +23,40 @@ SLOTS = "lesson_slots"
 LESSON_REL = "id,lesson_id,slot_date,slot_period,slot_order,status,memo,lesson:lesson_lessons(id,legacy_lesson_id,subject_id,lesson_number,title,pdf_path,start_page,end_page,note,sort_order,subject:lesson_subjects(id,name,color),unit:lesson_units(name))"
 
 
+_sessions: dict = {}          # (url, key) → Session. 요청마다 새 연결(TLS 악수)을 맺던 것을 재사용해 빠르게 한다
+_sessions_lock = threading.Lock()
+_truststore_done = False
+
+
 def _client():
+    global _truststore_done
     load_env()
     url = (os.getenv("SUPABASE_URL") or os.getenv("NEXT_PUBLIC_SUPABASE_URL") or "").rstrip("/")
     key = os.getenv("SUPABASE_SERVICE_ROLE_KEY") or ""
     if not url or not key:
         raise RuntimeError("중앙 .env에 SUPABASE_URL과 SUPABASE_SERVICE_ROLE_KEY가 필요합니다.")
-    truststore.inject_into_ssl()
-    session = requests.Session()
-    session.headers.update({"apikey": key, "Authorization": f"Bearer {key}", "Content-Type": "application/json"})
+    with _sessions_lock:
+        if not _truststore_done:
+            truststore.inject_into_ssl()
+            _truststore_done = True
+        session = _sessions.get((url, key))
+        if session is None:
+            session = requests.Session()
+            session.headers.update({"apikey": key, "Authorization": f"Bearer {key}", "Content-Type": "application/json"})
+            adapter = requests.adapters.HTTPAdapter(pool_connections=4, pool_maxsize=8)  # 동시 갱신용 연결 8개까지
+            session.mount("https://", adapter); session.mount("http://", adapter)
+            _sessions[(url, key)] = session
     return url, session
+
+
+def _parallel(fn, items, workers: int = 6):
+    """items 마다 fn 을 동시에 실행한다(슬롯 여러 개를 하나씩 차례로 고치면 요청 수만큼 기다려야 해서).
+    하나라도 실패하면 첫 오류를 그대로 올린다. 한 번에 한 행씩만 건드리는 갱신이라 서로 영향이 없다."""
+    items = list(items)
+    if len(items) <= 1:
+        return [fn(i) for i in items]
+    with ThreadPoolExecutor(max_workers=min(workers, len(items))) as pool:
+        return list(pool.map(fn, items))
 
 
 def _get(table, **params):
@@ -219,9 +245,7 @@ def progress(action: str, body: dict) -> dict:
             return {"status": "error", "message": "미룰 날짜나 일수가 올바르지 않아요."}
         targets = [s for s in slots if subject_of(s) == subject and s.get("status") == "planned"
                    and s.get("slot_date", "") >= from_date.isoformat()]
-        for row in targets:
-            shifted = date.fromisoformat(row["slot_date"]) + timedelta(days=days)
-            _patch(SLOTS, row["id"], {"slot_date": shifted.isoformat()})
+        _parallel(lambda row: _patch(SLOTS, row["id"], {"slot_date": (date.fromisoformat(row["slot_date"]) + timedelta(days=days)).isoformat()}), targets)
         return {"status": "success", "updated": len(targets), "message": f"{len(targets)}개 슬롯을 {days}일 미뤘어요."}
 
     if action == "extend":
@@ -249,16 +273,21 @@ def progress(action: str, body: dict) -> dict:
         templates.append(future)
         rewritten = subject_slots[:insertion] + [None] + subject_slots[insertion:]
         url, session = _client()
-        changed = 0
+        jobs = []
         for index, row in enumerate(rewritten):
             template = templates[index]
+            if row is None or any(row.get(k) != template[k] for k in ("slot_date", "slot_period", "slot_order")):
+                jobs.append((row, template))
+        def apply(job):
+            row, template = job
             if row is None:
                 result = session.post(f"{url}/rest/v1/{SLOTS}", headers={"Prefer": "return=representation"},
                     json={"lesson_id": lesson_id, **template, "status": "planned", "source": "manual_extend", "memo": ""}, timeout=30)
                 if not result.ok: raise RuntimeError(f"Supabase 슬롯 추가 실패 ({result.status_code})")
-                changed += 1
-            elif any(row.get(k) != template[k] for k in ("slot_date", "slot_period", "slot_order")):
-                _patch(SLOTS, row["id"], template); changed += 1
+            else:
+                _patch(SLOTS, row["id"], template)
+        _parallel(apply, jobs)
+        changed = len(jobs)
         return {"status": "success", "updated": changed, "message": f"차시를 연장하고 {changed}개 시간표 슬롯을 조정했어요."}
 
     if action == "catch-up":
@@ -286,8 +315,7 @@ def progress(action: str, body: dict) -> dict:
         idx = next(i for i, s in enumerate(ordered) if s["id"] == target["id"])
         earlier = [s for s in ordered[:idx] if s.get("status") == "planned"]
         first_template = next((s for s in earlier if s.get("status") == "planned"), None)
-        for row in earlier:
-            _patch(SLOTS, row["id"], {"status": "done"})
+        _parallel(lambda row: _patch(SLOTS, row["id"], {"status": "done"}), earlier)
         if target.get("status") != "planned":
             _patch(SLOTS, target["id"], {"status": "planned", "source": "manual_catch_up"})
         if first_template:

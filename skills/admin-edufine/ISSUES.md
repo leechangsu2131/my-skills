@@ -6,6 +6,14 @@
 
 ## 🔵 진행 중
 
+### ISSUE-011: 기안기(WXSClient) 안의 IE 문서를 직접 조작하는 방법 (2026-11-23)
+- **상태**: 🔵 진행 중 (제목 읽기까지 확인, 본문 입력은 미검증)
+- **확인된 것**:
+  - 공용서식 목록 `/bms/cz/cb/wrt/retrieveCmmnFormatList.do`(메인 넥사크로에서 `LeftFrame.form.gfnOpenMenu('A00AAB0101001')`)의 iframe에서 `fncFormDraft('<서식ID>','일반서식','표준서식(결재4인,협조4인)')`를 실행하면 WXSClient 기안기가 열린다.
+  - 기안기는 IE(`Internet Explorer_Server`) + 한글 컨트롤(`HwpMainEditWnd`)로 되어 있다. 창 핸들에서 `WM_HTML_GETOBJECT` → `ObjectFromLresult(IID_IHTMLDocument2)`로 문서를 얻어 `parentWindow.execScript`로 ES5 JS를 실행할 수 있다. 제목란 `#Sj`, 본문 탭 `onBodyClick();onTabChange('maindoc1')`, 본문 칸 함수 `IMPL_GetFieldListEx/IMPL_PutFieldText(word_id, …)`가 있다.
+- **미해결**: `word_id` 값을 아직 모른다(`'maindoc1'`, `0`은 GetControl 오류). 본문 탭 전환 직후 사용자가 창을 닫아 확인하지 못했다. 다음에는 `editorImpl.IMPL_GetFieldListEx` 소스부터 읽을 것.
+- **주의**: 사용자가 같은 기안기에서 직접 입력 중일 수 있다(제목이 이미 들어가 있었음). 조작 전에 사용자에게 확인하고, [결재올림]은 사용자가 누른다.
+
 ### ISSUE-010: 결재대기·공람대기 문서 본문·붙임을 웹에서 바로 내려받기 (2026-11-20)
 - **상태**: 🔵 진행 중 (다운로드는 검증됨, 일괄 공람완료·결재는 미검증)
 - **증상**: 제목 클릭은 WXSClient 네이티브 뷰어라 자동화로 못 읽음. 사용자는 "저장 버튼을 직접 눌러 받아 달라"고 함.

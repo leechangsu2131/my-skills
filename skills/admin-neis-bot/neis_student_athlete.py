@@ -219,11 +219,15 @@ class Neis:
             time.sleep(1)
             return
         if not self.click_text(leaf, xmax=280, ymin=170):  # 왼쪽 트리에 이미 보이면 바로
-            self.click_text("체육", ymin=40, ymax=80)
-            time.sleep(1.5)
-            self.click_text("학생선수관리", xmin=200, xmax=450, ymin=90, ymax=360)  # 메가메뉴
-            time.sleep(2)
-            if not self.click_text(leaf, xmax=280, ymin=170):
+            for _ in range(4):  # 새 탭은 화면이 늦게 그려짐 → 재시도
+                if self.click_text("체육", ymin=40, ymax=80):
+                    time.sleep(1.5)
+                    self.click_text("학생선수관리", xmin=200, xmax=450, ymin=90, ymax=360)  # 메가메뉴
+                    time.sleep(2)
+                    if self.click_text(leaf, xmax=280, ymin=170):
+                        break
+                time.sleep(3)
+            else:
                 raise RuntimeError(f"메뉴 '{leaf}'를 찾지 못했습니다")
         for _ in range(20):
             time.sleep(1)

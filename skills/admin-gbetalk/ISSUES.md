@@ -6,6 +6,14 @@
 
 ## 🔵 진행 중
 
+### SMS-001: 지비톡 문자(SMS) 발송 자동화 — 실제 전송 미검증 (2026-11-23)
+- **상태**: 🔵 진행 중 (채우기까지 검증, `--confirm SEND_SMS` 실제 전송은 미검증)
+- **증상**: 지비톡 [문자]는 디버그 포트 없는 평소 Chrome에 `msg.gbe.kr/messaging/`으로 열려 CDP/Playwright가 붙을 수 없음. 9222 Chrome에서 같은 주소를 열면 `/invalid`("세션이 만료되었습니다").
+- **원인**: 로그인은 지비톡이 넘기는 `https://msg.gbe.kr/ssa/<토큰>` 주소(`Client.ini` `[SMS] USE_SMS_POST=Y`)로 평소 Chrome에만 세션이 생김. 임시 HTML 파일은 만들지 않고 chrome.exe 실행 인자로 주소를 넘김.
+- **해결/조치**: `gbetalk_sms.py capture`가 [문자] 클릭 순간의 chrome.exe 명령줄에서 `/ssa/` 주소를 잡아 `data_dir()/sms/sms_url.txt`에 저장 → 9222 Chrome에서 열면 로그인된 문자 창(같은 토큰 재사용 가능, 2026-11-23). `send`가 `#message`·`#sndNumber`·`#quickAddr`+`setQuickAddrToRcvList()`로 채우고 전송 직전 멈춤.
+- **주의**: 평소 Chrome 방문 기록(History DB) 읽기는 권한 확인에서 거부됨 → 쓰지 않음. 토큰 만료 주기는 미확인(만료 시 `capture` 다시). byte 표시는 안내문 "140byte"와 겹치므로 마지막 일치를 읽음.
+- **관련 파일**: `gbetalk_sms.py`
+
 ### 📄 기존 `NEXT_STEPS.md` 내용
 
 ### 지비톡 쪽지 보관 작업 인계

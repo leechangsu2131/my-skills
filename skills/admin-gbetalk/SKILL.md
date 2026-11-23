@@ -1,11 +1,23 @@
 ---
 name: admin-gbetalk
-description: Archive received GBTalk notes to local Markdown with resumable checkpoints. Use when collecting notes from the GBTalk Message Manager; never send or reply to notes.
+description: Archive received GBTalk notes to local Markdown with resumable checkpoints, and send SMS through the GBTalk web SMS page (msg.gbe.kr) with an explicit confirmation. Use when collecting notes from the GBTalk Message Manager or when the user asks to send a text message (문자) to parents/teachers; never send or reply to notes.
 metadata:
   category: 학교 행정
   status: 운영
-  summary: 지비톡(경북교육청 업무 메신저)에서 받은 쪽지를 날짜·발신자와 함께 로컬 Markdown으로 보관하고 요약한다. 이어받기 체크포인트를 지원하며, 쪽지를 보내거나 답장하지 않는다.
+  summary: 지비톡(경북교육청 업무 메신저)에서 받은 쪽지를 날짜·발신자와 함께 로컬 Markdown으로 보관·요약하고, 지비톡 문자(SMS) 창을 9222 Chrome에서 열어 문자를 채우고 확인 후 발송한다. 쪽지 답장은 하지 않는다.
 ---
+
+## 문자(SMS) 보내기 — `gbetalk_sms.py`
+
+쪽지 보관과 별개 기능. 문자는 **실제로 바깥에 나가는 동작**이라 기본은 [전송] 직전에 멈추고, `--confirm SEND_SMS`일 때만 보낸다.
+
+1. 처음 한 번(또는 "토큰 만료" 메시지가 나올 때): `python gbetalk_sms.py capture` 실행 후 사용자가 지비톡 퀵메뉴 **[문자]**를 누른다. 지비톡은 평소 Chrome을 `https://msg.gbe.kr/ssa/<토큰>`으로 여는데, 이 주소를 잡아 `data_dir()/sms/sms_url.txt`에 저장한다(토큰은 저장소·출력에 남기지 않음). 같은 주소를 9222 Chrome에서 열면 로그인된 문자 창이 뜬다(2026-11-23 확인).
+2. `python gbetalk_sms.py send --to 010...,010... --text "내용" [--from 발신번호]` → 내용·발신번호·받는 번호를 채우고 화면을 `data_dir()/sms/sms_before_send.png`로 저장한 뒤 멈춘다. 사용자에게 받는 사람 수·발신번호·내용을 보여 주고 확인받는다.
+3. 확인 후 같은 명령에 `--confirm SEND_SMS` → [전송], "문자 전송 완료!!" 확인, `sent_log.jsonl` 기록.
+
+- 화면 구조: 내용 `#message`, 발신번호 `select#sndNumber`, 받는 번호 직접입력 `#quickAddr` + `setQuickAddrToRcvList()`, 받는 사람 목록 `#rcvList .chkItem`, 전송 `#btnRegistMessage`(→ `transactionBeforeRegistMessage` → `registMessage`, 결과 `#progressbar-label`).
+- 140byte가 넘으면 LMS로 자동 전환된다. 링크(URL)는 스미싱 예방을 위해 넣지 않는 것이 안내 사항이다.
+- 받는 번호는 학부모·교직원 개인정보다. 명단은 `data_dir()`에만 두고 저장소·커밋 메시지에 쓰지 않는다.
 
 # GBTalk note archive
 

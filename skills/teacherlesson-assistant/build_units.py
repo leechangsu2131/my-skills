@@ -12,7 +12,7 @@
   · 표시를 못 찾으면 12쪽 이하 파일은 통째로, 더 길면 앞 6쪽.
 - 이미 있는 summary·goals·cautions·assessment(사람이나 AI가 쓴 것)는 지우지 않는다.
 
-진도표는 teacherlesson-schedule 의 schedule 모듈로 읽는다(gspread·PyMuPDF 필요 → C:\\Python313).
+진도표는 Supabase에서 읽고, `schedule_backend`가 `google_sheets`일 때만 teacherlesson-schedule의 시트 연결을 쓴다.
 """
 from __future__ import annotations
 
@@ -68,6 +68,15 @@ def group_lessons(rows: list[dict]) -> list[dict]:
     return out
 
 
+def load_progress_records() -> list[dict]:
+    """Read current progress from the selected backend (Supabase by default)."""
+    if app.load_config().get("schedule_backend", "supabase") == "supabase":
+        import supabase_schedule
+        return supabase_schedule.records()
+    ws = schedule.connect()
+    return schedule.load_all(ws)
+
+
 def plan_split(pdf: pathlib.Path, unit: str) -> pathlib.Path | None:
     """분할 결과 groups.json 에 이 단원의 '단원 개관'(plan) 묶음이 있으면 그 PDF."""
     for groups_path in (pdf.parent.parent / "groups.json", pdf.parent / "groups.json"):
@@ -98,8 +107,7 @@ def overview_pages(pdf: pathlib.Path) -> tuple[int, int]:
 
 
 def build(only_open: bool) -> list[str]:
-    ws = schedule.connect()
-    records = schedule.load_all(ws)
+    records = load_progress_records()
     units: dict[tuple[str, str], list[dict]] = {}
     for r in sorted(records, key=lambda r: r.get("_row", 0)):
         subject, unit = str(r.get("과목", "")).strip(), str(r.get("대단원", "")).strip()

@@ -262,12 +262,13 @@ textarea:focus,input[type=text]:focus{outline:2px solid var(--acc-soft);border-c
   </details>
 
   <details class="fold">
-    <summary>📅 진도 조정 <span class="muted">(진도표 시트에 바로 반영)</span></summary>
+    <summary>📅 진도 조정 <span class="muted">(Supabase에 바로 반영)</span></summary>
     <div class="fold-body">
       <div class="row"><button data-p="done">✅ 이 차시 완료</button><button data-p="extend">➕ 한 차시 더 필요</button><button data-p="push">⏭ 이후 진도 미루기</button></div>
       <div class="row" style="margin-top:8px"><button id="catchBtn" class="pri">📍 실제로 할 차시 고르기</button><span class="muted">계획과 실제 진도가 다를 때 눌러요</span></div>
       <div id="catchBox" style="display:none;margin-top:8px">
         <div class="muted" style="margin-bottom:4px">👇 <b>오늘 실제로 할 차시</b>를 누르세요. 앞 차시는 '이미 함'이 되고, 누른 차시부터 다시 배치돼요.</div>
+        <input id="catchSearch" type="search" placeholder="단원·차시·제목 검색 (예: 그림그래프)" style="width:100%;margin:6px 0">
         <div id="catchList" class="pick"></div>
         <div class="row" style="margin-top:8px"><button id="catchCancel">닫기</button><span class="muted">회색 '✓ 함' 차시를 누르면 거기로 되돌려요</span></div>
       </div>
@@ -737,7 +738,7 @@ $('links').onclick = e => { const b=e.target.closest('button'); if (b) post('/ap
 document.querySelector('main').addEventListener('click', async e => {
   const p = e.target.closest('button')?.dataset.p; if (!p || !cur) return;
   if (!cur.record_key) { toast('진도표에서 불러온 수업이 아니라 진도를 바꿀 수 없어요 (진도 서버 확인)'); return; }
-  const body = {subject:cur.subject, record_key:cur.record_key, row_number:cur.row_number, bridge_row:cur.bridge_row, target_date:S.date};
+  const body = {subject:cur.subject, record_key:cur.record_key, slot_id:cur.slot_id, row_number:cur.row_number, bridge_row:cur.bridge_row, target_date:S.date};
   if (p==='push'){ const d = prompt(`${cur.subject} 이후 진도를 며칠 미룰까요?`, '7'); if (!d) return; body.days = +d; body.from_date = S.date; }
   else if (!confirm({done:`${cur.subject} 「${cur.title}」을(를) 완료로 표시할까요?`, extend:`${cur.subject} 「${cur.title}」에 한 차시를 더 쓰고 뒤 진도를 밀까요?`}[p])) return;
   const j = await post('/api/progress/'+p, body);
@@ -755,15 +756,17 @@ $('aiBtns').onclick = async e => {
   await post('/api/open-site', {url: j.url || site.url});
   toast(j.message, 7000);
 };
-$('catchBtn').onclick = async () => {
-  if (!cur) return;
-  if (!cur.record_key) { toast('진도표에서 불러온 수업이 아니라 진도를 바꿀 수 없어요 (진도 서버 확인)'); return; }
-  $('catchList').innerHTML = '<div class="muted" style="padding:8px">불러오는 중…</div>'; $('catchBox').style.display = 'block';
-  const j = await (await fetch('/api/upcoming?subject=' + encodeURIComponent(cur.subject))).json().catch(() => ({items: []}));
-  catchItems = j.items || [];
-  if (!catchItems.length) { $('catchList').innerHTML = `<div class="muted" style="padding:8px">${esc(j.message || '이 과목 차시가 없거나 진도 서버가 꺼져 있어요')}</div>`; return; }
+let catchItems = [];
+function renderCatchList(query = '') {
+  const needle = query.trim().toLocaleLowerCase();
+  const matches = catchItems.map((item, index) => ({item, index}))
+    .filter(({item}) => !needle || `${item.unit} ${item.lesson} ${item.title}`.toLocaleLowerCase().includes(needle));
+  if (!matches.length) {
+    $('catchList').innerHTML = '<div class="muted" style="padding:8px">검색 결과가 없어요.</div>';
+    return;
+  }
   let html = '', unit = null;
-  catchItems.forEach((i, n) => {
+  matches.forEach(({item: i, index: n}) => {
     if (i.unit !== unit) { unit = i.unit; html += `<h4>${esc(unit || '단원 없음')}</h4>`; }
     const now = i.record_key === cur.record_key;
     const plan = i.planned_date ? `${i.planned_date.slice(5).replace('-', '/')} ${esc(i.planned_period)}교시` : '';
@@ -772,9 +775,19 @@ $('catchBtn').onclick = async () => {
           + `${esc(i.lesson)}차시 · ${esc(i.title)}<small>${note}${now ? ' ◀ 지금 계획된 차시' : ''}</small></button>`;
   });
   $('catchList').innerHTML = html;
+}
+$('catchBtn').onclick = async () => {
+  if (!cur) return;
+  if (!cur.record_key) { toast('진도표에서 불러온 수업이 아니라 진도를 바꿀 수 없어요 (진도 서버 확인)'); return; }
+  $('catchList').innerHTML = '<div class="muted" style="padding:8px">불러오는 중…</div>'; $('catchBox').style.display = 'block';
+  const j = await (await fetch('/api/upcoming?subject=' + encodeURIComponent(cur.subject))).json().catch(() => ({items: []}));
+  catchItems = j.items || [];
+  if (!catchItems.length) { $('catchList').innerHTML = `<div class="muted" style="padding:8px">${esc(j.message || '이 과목 차시가 없거나 진도 서버가 꺼져 있어요')}</div>`; return; }
+  $('catchSearch').value = '';
+  renderCatchList();
   ($('catchList').querySelector('button.now') || $('catchList').querySelector('button:not(.done)'))?.scrollIntoView({block: 'center'});
 };
-let catchItems = [];
+$('catchSearch').oninput = e => renderCatchList(e.target.value);
 $('catchCancel').onclick = () => { $('catchBox').style.display = 'none'; };
 $('catchList').onclick = async e => {
   const b = e.target.closest('button[data-n]'); if (!b || !cur) return;
@@ -795,7 +808,7 @@ $('catchList').onclick = async e => {
   toast('진도표에 반영하는 중…', 15000);
   let j = {};
   try {
-    j = await post('/api/progress/catch-up', {subject: cur.subject, record_key: it.record_key});
+    j = await post('/api/progress/catch-up', {subject: cur.subject, record_key: it.record_key, slot_id: it.slot_id, target_date: S.date});
   } catch (err) {
     toast('수업 비서 서버에 연결하지 못했어요. 잠시 뒤 다시 해 주세요.', 8000);
   } finally {

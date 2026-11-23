@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import argparse
 import io
+import os
 import pathlib
 import re
 import sys
@@ -30,8 +31,11 @@ import assistant_server as app  # noqa: E402
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.common.exceptions import WebDriverException
+from urllib3.exceptions import ReadTimeoutError
 
-GUIDE_ROOT = pathlib.Path(r"D:\지도서")
+GUIDE_ROOT = pathlib.Path(os.environ.get("GUIDE_ROOT") or r"D:\지도서")
+MIRAEN_CACHE = app.DATA / "guide_download_candidates.json"
 
 
 def connect(cfg: dict, start_url: str):
@@ -200,6 +204,14 @@ def miraen_guides(driver, subject: str, with_plan: bool, grade_term: str, hint: 
         grade, term)
     if not zip_url:
         raise RuntimeError(f"미래엔 {subject} {grade_term} DVD 파일을 찾지 못했어요. (엠티처 로그인 확인)")
+    return miraen_items_from_url(subject, grade_term, zip_url)
+
+
+def miraen_items_from_url(subject: str, grade_term: str, zip_url: str) -> tuple[str, list[dict]]:
+    """Use a recently listed DVD URL to extract PDFs without reconnecting to Chrome."""
+    if subject not in MIRAEN_DVD:
+        raise RuntimeError(f"미래엔 {subject} 교사용 DVD 주소를 아직 몰라요.")
+    grade, term = grade_term.split("-")
     archive = zipfile.ZipFile(HttpRangeFile(zip_url))
     items = []
     for info in archive.infolist():
@@ -208,6 +220,24 @@ def miraen_guides(driver, subject: str, with_plan: bool, grade_term: str, hint: 
             items.append({"label": "교사용 지도서", "url": zip_url, "member": info, "archive": archive,
                           "file": name.rsplit("/", 1)[-1], "size": info.file_size})
     return f"{grade}학년{term}학기", items
+
+
+def cached_miraen_url(subject: str, grade_term: str) -> str:
+    cache = app.read_json(MIRAEN_CACHE, {})
+    item = cache.get(subject, {}) if isinstance(cache, dict) else {}
+    return str(item.get("url", "")) if item.get("grade_term") == grade_term else ""
+
+
+def cache_miraen_url(subject: str, grade_term: str, term: str, items: list[dict]) -> None:
+    url = next((str(x.get("url", "")) for x in items if x.get("url")), "")
+    if not url:
+        return
+    cache = app.read_json(MIRAEN_CACHE, {})
+    if not isinstance(cache, dict):
+        cache = {}
+    cache[subject] = {"grade_term": grade_term, "term": term, "url": url,
+                      "at": time.strftime("%Y-%m-%d %H:%M")}
+    app.write_json(MIRAEN_CACHE, cache)
 
 
 # ──────────────────────────── 천재(T셀파 초등) ────────────────────────────
@@ -327,6 +357,8 @@ def main() -> None:
     ap.add_argument("--with-plan", action="store_true", help="연간지도계획도 받기")
     ap.add_argument("--root", default=str(GUIDE_ROOT), help="저장 폴더 (기본 D:\\지도서)")
     ap.add_argument("--term", help="학년-학기, 예: 3-2 (기본: config 의 grade_term). 아이스크림은 사이트 설정을 따름")
+    ap.add_argument("--allow-term-mismatch", action="store_true",
+                    help="아이스크림 사이트 학기와 config 학기가 달라도 다운로드 (잘못된 학기 자료 주의)")
     args = ap.parse_args()
 
     cfg = app.load_config()
@@ -338,13 +370,35 @@ def main() -> None:
             print(f"[{subject}] {publisher or '출판사 미설정'}: 아직 지원하지 않는 출판사예요.")
             continue
         start_url, finder = PUBLISHERS[publisher]
-        driver = driver or connect(cfg, start_url)
+        requested_term = args.term or cfg.get("grade_term", "3-2")
         try:
-            term, items = finder(driver, subject, args.with_plan, args.term or cfg.get("grade_term", "3-2"),
-                                 cfg.get("google_account_hint", ""))
+            cached_url = cached_miraen_url(subject, requested_term) if publisher == "미래엔" and not args.list else ""
+            if cached_url:
+                term, items = miraen_items_from_url(subject, requested_term, cached_url)
+            else:
+                driver = driver or connect(cfg, start_url)
+                term, items = finder(driver, subject, args.with_plan, requested_term,
+                                     cfg.get("google_account_hint", ""))
         except RuntimeError as exc:
             print(f"[{subject}] {publisher}: {exc}")
             continue
+        except (WebDriverException, ReadTimeoutError, OSError) as exc:
+            print(f"[{subject}] {publisher}: 브라우저 또는 자료 목록 연결 실패 ({type(exc).__name__}).")
+            driver = None
+            break
+        if publisher == "미래엔":
+            cache_miraen_url(subject, requested_term, term, items)
+        if publisher == "아이스크림":
+            expected_term = args.term or cfg.get("grade_term", "")
+            expected_digits = "".join(re.findall(r"\d", expected_term))
+            actual_digits = "".join(re.findall(r"\d", term))
+            if not actual_digits:
+                print(f"[{subject}] 아이스크림: 사이트에서 학기를 확인하지 못했어요. 다운로드를 건너뜁니다.")
+                continue
+            if expected_digits and actual_digits != expected_digits and not args.allow_term_mismatch:
+                print(f"[{subject}] 아이스크림: 사이트는 {term}, 설정은 {expected_term}이에요. 잘못된 학기 자료를 막으려고 건너뜁니다. "
+                      "사이트의 내 교과서 설정을 확인하거나 --allow-term-mismatch를 지정해 주세요.")
+                continue
         grade_term = "-".join(re.findall(r"\d", term)) or "학기미상"
         folder = pathlib.Path(args.root) / f"{subject} {grade_term}"
         print(f"[{subject}] {publisher} {term} — {len(items)}개 → {folder}")

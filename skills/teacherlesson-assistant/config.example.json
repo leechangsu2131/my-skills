@@ -1,6 +1,7 @@
 {
   "_안내": "처음 실행하면 이 파일이 내 문서\\my-skills-data\\teacherlesson-assistant\\config.json 으로 복사된다. 그 복사본을 고친다. 구글 로그인 사이트는 login: google (chrome_profile 에서 구글에 한 번 로그인해 두면 이어 씀). 아이디·비밀번호 로그인 사이트는 여기 적지 말고 중앙 .env 에 <secret_prefix>_ID, <secret_prefix>_PW 로 적는다.",
   "port": 5180,
+  "schedule_backend": "supabase",
   "schedule_api": "http://127.0.0.1:5000",
   "left_ratio": 0.32,
   "periods": [
@@ -35,6 +36,7 @@
   "_notebooklm": "과목마다 NotebookLM 노트북 주소를 subjects.<과목>.notebooklm 에 적으면 NotebookLM 단추가 그 노트북을 연다. 소스는 notebook_sources.py 로 만든다. 그림만 PDF 로도 넣을 과목:",
   "notebooklm_image_subjects": ["음악", "미술"],
   "subjects": {
+    "국어": {"publisher": "미래엔", "site": "https://e.m-teacher.co.kr/pages/ele/Main.mrn", "login": "google", "notebooklm": ""},
     "수학": {"publisher": "아이스크림", "site": "https://www.i-scream.co.kr/user/subject/SubjectChasiList.do", "login": "google", "notebooklm": ""},
     "음악": {"publisher": "두클래스", "site": "https://ele.douclass.com", "login": "google", "helper": "music_douclass"},
     "사회": {"publisher": "아이스크림", "site": "https://www.i-scream.co.kr/user/subject/SubjectChasiList.do", "login": "google", "helper": "social_class"},

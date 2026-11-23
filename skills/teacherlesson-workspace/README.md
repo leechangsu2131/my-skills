@@ -26,3 +26,14 @@
 npm install
 npm run dev
 ```
+
+## 2학기 진도 동기화
+
+진도표(Google Sheets)의 2학기 차시와 수업배치를 현재 Supabase 테이블에 동기화합니다. 기본 시작일은 `2026-08-01`이며, 미리보기는 외부 데이터를 변경하지 않습니다.
+
+```bash
+python scripts/sync_semester2.py --dry-run
+python scripts/sync_semester2.py --apply
+```
+
+중앙 `.env`에 Google Sheets 연결 설정과 `SUPABASE_URL`(또는 `NEXT_PUBLIC_SUPABASE_URL`), `SUPABASE_SERVICE_ROLE_KEY`가 필요합니다. 같은 스크립트를 다시 실행해도 기존 차시와 슬롯을 중복 생성하지 않습니다.

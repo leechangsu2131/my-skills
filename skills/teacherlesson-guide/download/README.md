@@ -1,15 +1,16 @@
 # 지도서 받기 (teacherlesson-guide/download)
 
-`C:\Python313\python.exe download\guide_download.py 수학 사회 [--list] [--with-plan]` (selenium 필요, C:\Python313 에 있음)
+`python download\guide_download.py 수학 사회 [--list] [--with-plan]` (selenium 필요)
 
-- 수업 도우미 전용 크롬(`chrome_profile`, `debug_port` 9233)에 붙어 출판사 사이트의 지도서 목록을 그때그때 읽고 `D:\지도서\<과목> <학년-학기>\`에 받는다. 같은 크기 파일이 있으면 건너뛴다. 받은 기록은 수업 비서 데이터 폴더의 `guide_downloads.json`.
-- 로그인: 이 프로필에서 구글(크롬)에 한 번 로그인해 두면 크롬이 저장된 아이디·비번을 채워 주고, 스크립트는 "로그인하기"만 누른다. 비밀번호는 스크립트가 다루지 않는다.
+- 수업 도우미 전용 크롬(`chrome_profile`, `debug_port` 9233)에 붙어 출판사 사이트의 지도서 목록을 그때그때 읽고 `%GUIDE_ROOT%\<과목> <학년-학기>\`에 받는다. `GUIDE_ROOT` 환경 변수가 없으면 `D:\지도서`를 쓴다. `--root`로도 저장 위치를 지정할 수 있다. 같은 크기 파일이 있으면 건너뛴다. 받은 기록은 수업 비서 데이터 폴더의 `guide_downloads.json`.
+- 로그인: 처음에는 이 크롬 프로필에서 교사가 직접 로그인한다. 이후 세션이 살아 있으면 스크립트가 자료 목록을 읽는다. 비밀번호는 스크립트가 다루지 않는다. 천재 T셀파에서 구글 계정 선택이 필요하면 `google_account_hint`를 설정하거나 먼저 직접 로그인한다.
 - 지원 출판사 (`PUBLISHERS`, 다른 출판사는 함수를 추가):
   - **아이스크림**(수학·사회): 차시 화면 → "전자책등 자료" → "교사용 지도서". 단원별 PDF, 로그인 없이 받아짐
   - **미래엔 엠티처**(국어): 교사용 DVD ZIP(학기당 약 3GB)에서 `지도서/pdf/*.pdf`만 부분 받기(Range)로 꺼냄. 파일 이름은 출판사 원래 이름(`국어3-2지도서_2_4.pdf`)
   - **천재 T셀파**(도덕): 교과서 카드 → 공통 자료 → "지도서" 다운로드 단추를 크롬이 직접 받음. 1년 한 권이라 폴더는 `도덕 3`
   - 미술(아트앤컬쳐)·음악(두클래스)은 1년 한 권이라 1학기에 받은 `D:\지도서\미술.pdf`, `음악.pdf`를 그대로 씀
-- 학년·학기는 수업 비서 config 의 `grade_term`(아이스크림은 사이트의 '내 교과서 설정'). 구글 계정 선택은 `google_account_hint`로 시작하는 계정을 고른다.
+- 학년·학기는 수업 비서 config 의 `grade_term`(아이스크림은 사이트의 '내 교과서 설정'). 아이스크림은 사이트에서 읽은 학기가 설정과 다르면 잘못된 학기 자료를 막으려고 건너뛴다. 정말 다른 학기 자료를 받을 때만 `--allow-term-mismatch`를 지정한다. 구글 계정 선택은 `google_account_hint`로 시작하는 계정을 고른다.
+- 미래엔 `--list`가 성공하면 DVD URL을 수업 비서 데이터의 `guide_download_candidates.json`에 저장한다. 이어서 실제 받기를 실행할 때 이 URL을 재사용해 Chrome을 다시 열지 않는다. `--list`를 다시 실행하면 사이트에서 목록을 새로 읽는다.
 - 받은 뒤에는 `splitter/` 로 차시별 분할, `mapper/` 로 진도표 행 만들기 (상위 [SKILL.md](../SKILL.md)).
 - 크롬 프로필·포트·출판사 설정은 수업 비서(`teacherlesson-assistant`)의 `config.json` 을 같이 쓴다(9222는 에듀파인 자동화가 쓸 수 있어 9233).
 

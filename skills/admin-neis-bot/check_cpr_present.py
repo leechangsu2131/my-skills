@@ -1,0 +1,21 @@
+import urllib.request
+import json
+import websocket
+
+def main():
+    resp = json.loads(urllib.request.urlopen('http://127.0.0.1:9222/json').read().decode('utf-8'))
+    neis_tab = next((t for t in resp if 'neis.go.kr' in t.get('url', '')), None)
+    ws = websocket.create_connection(neis_tab['webSocketDebuggerUrl'], suppress_origin=True, timeout=10)
+    
+    ws.send(json.dumps({'id': 1, 'method': 'Runtime.evaluate', 'params': {'expression': 'Boolean(window.cpr && cpr.core && cpr.core.Platform && cpr.core.Platform.INSTANCE)'}}))
+    res = json.loads(ws.recv())
+    print("cpr present:", res.get('result', {}).get('result', {}).get('value'))
+    
+    ws.send(json.dumps({'id': 2, 'method': 'Runtime.evaluate', 'params': {'expression': 'window.location.href + " | " + document.title'}}))
+    res = json.loads(ws.recv())
+    print("page:", res.get('result', {}).get('result', {}).get('value'))
+
+    ws.close()
+
+if __name__ == '__main__':
+    main()

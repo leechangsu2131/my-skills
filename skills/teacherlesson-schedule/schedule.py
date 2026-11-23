@@ -5,6 +5,7 @@
 
 import json
 import os
+import pathlib
 import re
 import sys
 from datetime import date, datetime, timedelta
@@ -97,6 +98,36 @@ def _clean_text(value):
     if value is None:
         return ""
     return str(value).strip()
+
+
+def resolve_pdf_path(value):
+    """Resolve a stale split-PDF path to a downloaded full-unit PDF when possible.
+
+    Schedule rows can keep pointing at ``pdf_splits`` files from another PC.
+    The original download is usually one directory above that folder and keeps
+    the unit page numbering used by the schedule, so callers can still apply
+    the row's start/end page range.
+    """
+    raw_path = os.path.expandvars(os.path.expanduser(_clean_text(value)))
+    if not raw_path or os.path.isfile(raw_path):
+        return raw_path
+
+    path = pathlib.Path(raw_path)
+    if "pdf_splits" not in {part.casefold() for part in path.parts}:
+        return raw_path
+
+    match = re.search(r"subunit_\d+_(\d+)\.", path.name, re.IGNORECASE)
+    if not match:
+        return raw_path
+
+    unit_folder = path.parent.parent
+    if not unit_folder.is_dir():
+        return raw_path
+    unit_no = match.group(1)
+    candidates = sorted(unit_folder.glob(f"*{unit_no}단원*.pdf"))
+    if not candidates:
+        candidates = sorted(unit_folder.glob(f"*_{unit_no}.*단원*.pdf"))
+    return str(candidates[0]) if len(candidates) == 1 else raw_path
 
 
 def _normalize_done_value(value):

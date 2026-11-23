@@ -41,6 +41,7 @@ metadata:
 | **"나이스 로그인/상태 봐줘"** | Chrome 9222 포트 | `check_chrome.py`, `open_neis_sso.py` | 상태 진단 및 SSO 탭 복구 |
 | **"학생선수 대회 참가 처리"**<br>**"학교장확인서 결재요청"**<br>**"출석인정결석 처리 공문"**<br>**"학생선수 등록"** | 대회 공문(`Downloads\공문`의 본문·붙임) | `neis_student_athlete.py` ([절차](references/student-athlete-workflow.md)) | `run`(공문→기안문→결재요청 체크까지, 실행 없음) → 사용자 확인 후 `request --apply`, `submit` |
 | **"PAPS 마감/제출"**<br>**"건강체력평가 누락 확인"** | 없음 (나이스 조회) | [references/paps-submission-workflow.md](references/paps-submission-workflow.md) 절차 | 누락·마감 상태 조회까지만 자동, 마감·승인요청·제출은 사용자 확인 후 |
+| **"학생 생년월일/보호자명 추출"**<br>**"3-2 학생 명단 추출"**<br>**"명렬표 다운로드"** | 다운로드 사유(예: "2027 학습지원 신청") | `export_student_roster.py` | 엑셀 다운로드(사유 팝업 자동 처리) 및 생년월일/보호자 CSV 자동 추출 |
 
 ### 1. 연수 이수실적 등록 표준 워크플로우
 1. **이수증 분석**: 제공된 이수증(PDF/이미지)에서 연수명, 이수시간, 연수기간, 연수기관, 직무연수구분, 이수번호를 PyMuPDF(`fitz`)로 추출.
@@ -110,6 +111,25 @@ metadata:
 4. **검증 및 사용자 확인**:
    - 합계 시간 및 일수(`nbeWorkSittnHrTtl`, `nbeWorkSittnDdTtl`) 자동 계산 결과 확인 후 화면 캡처 제시, 사용자가 직접 [승인요청]을 클릭하도록 안내한다.
 
+### 4. 학생 명렬표 다운로드 및 생년월일/보호자명 추출 표준 워크플로우
+1. **화면 호출**:
+   - 명렬표 출력: `idx.callAppMethod("doOpenMenuToMdi", ["AMELS40038"])` (`edu/sw/els/srg/bm/els_srgbm02_m00`)
+   - 학부모서비스 승인관리: `idx.callAppMethod("doOpenMenuToMdi", ["AMELS40004"])` (`edu/sw/els/sdl/pa/els_sdlpa00_m00`)
+2. **명렬표 엑셀 다운로드 및 개인정보 사유 팝업(`privateCmtPop`) 자동 처리**:
+   - 나이스에서 명렬표나 학생 정보 관련 엑셀 다운로드 버튼(`btn6` [엑셀내려받기] 등)을 클릭하면, eXBuilder6 플랫폼 레벨에서 **개인정보 포함 파일 다운로드 사유 입력 팝업(`app/cmn/privateCmtPop`)**이 필수 모달로 뜬다.
+   - 사유 구분 콤보: `cmbReason` ("업무수행", "타 부서 제공", "타 기관 제공", "감사 및 평가", "기타" 중 선택)
+   - 상세 사유 입력: `txaReason` (예: "2027 학습지원 신청")
+   - 제출 버튼: `btnConfirm.click()` 호출하여 팝업 닫힘 및 파일 다운로드 트리거.
+   - CDP 세션에 사전 `Page.setDownloadBehavior` (behavior="allow", downloadPath=...) 설정 필수.
+3. **학생 생년월일 및 학부모(보호자) 명단 일괄 추출**:
+   - 학부모서비스승인관리(`els_sdlpa00_m00`) [조회] 시 `dsStu`에 학급 전체 학생(번호 `clsNo`, 성명 `stuFlnm`, 생년월일 `stuBrdt`, 학생고유번호 `stuDtcNo`)이 로드됨.
+   - 각 행을 `grdMain.selectRows([i])`로 선택하면 비동기 서브미션(`subNeisPlusSchpaAprv`, `swc_cmc_cm01_003.do`)을 통해 보호자 데이터셋(`dsSchpaAprv`)에 보호자명(`userNm`), 연락처(`mblTelno`), 승인상태(`aprvStsCdNm`)가 로드됨.
+   - 브라우저 내부 비동기 루프로 전원 순회 수집 후 `Downloads\3학년2반_학생_생년월일_보호자명단.csv` (UTF-8-SIG)로 저장.
+4. **원클릭 실행**:
+   ```bash
+   python skills/admin-neis-bot/export_student_roster.py --reason "2027 학습지원 신청"
+   ```
+
 **다일 출장 JSON 형식**: 하나의 연속 출장 구간은 시작일과 종료일이 다른 단일 구간으로 표현할 수 있다. 날짜별로 실제 구간을 나눠 신청해야 하는 경우에만 `periods` 배열에 여러 행을 둔다. 자동으로 하루씩 분리하지 않는다.
 ```json
 {"trip_type":"10","start_date":"2026-11-07","start_hour":"08","start_minute":"40","end_date":"2026-11-08","end_hour":"16","end_minute":"40"}
@@ -139,6 +159,7 @@ metadata:
 - **[neis_jayul_record_writer.py](file:///C:/Users/user/.gemini/antigravity/scratch/repos/my-skills/skills/admin-neis-bot/neis_jayul_record_writer.py)**: 자율활동 누가기록 일괄 등록 스크립트.
 - **[neis_collect_semester_timetable.py](file:///C:/Users/user/.gemini/antigravity/scratch/repos/my-skills/skills/admin-neis-bot/neis_collect_semester_timetable.py)**: `cell-click` 이벤트 직접 호출을 통해 1~27주차 전체 시간표 및 과목별 시수표(`dsHcntList`), 개설과목을 전수 수집하는 도구.
 - **[neis_execute_save_final.py](file:///C:/Users/user/.gemini/antigravity/scratch/repos/my-skills/skills/admin-neis-bot/neis_execute_save_final.py)**: 플로팅 메뉴 핸들러를 통한 `mbIsModified = true` 활성화 및 타겟 주차별 시간표 저장/모달 자동 처리 마스터 실행기.
+- **[export_student_roster.py](file:///C:/Users/user/.gemini/antigravity/scratch/repos/my-skills/skills/admin-neis-bot/export_student_roster.py)**: [명렬표출력] 화면에서 엑셀 다운로드(개인정보 사유 팝업 자동 처리) 및 [학부모서비스승인관리] 화면 순회를 통한 학급 전원 생년월일/보호자명/연락처 CSV 자동 추출 도구.
 
 ### 4. NEIS 업무 데이터 연동 분석 기록
 

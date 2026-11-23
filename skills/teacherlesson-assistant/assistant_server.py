@@ -1,6 +1,6 @@
 """수업 비서(teacherlesson-assistant) 로컬 서버.
 
-파이썬 기본 기능만 쓴다(추가 설치 없음). 이 PC 안(127.0.0.1)에서만 열린다.
+이 PC 안(127.0.0.1)에서만 열린다. 시간표·진도 변경은 Supabase에 연결한다.
 
     python assistant_server.py          # 서버만 켜기
     python assistant_server.py --open   # 서버 + 왼쪽 수업 비서 창 열기
@@ -10,7 +10,7 @@
 - 수업 흐름(flows/*.json), 출판사별 주의점, 지난 메모를 왼쪽 창에 붙여 준다.
 - 출판사 사이트를 오른쪽 창으로 연다. 아이디·비밀번호는 중앙 .env 에서 읽어 클립보드로만 넘긴다.
 - 녹음 조각과 수업 기록(메모·알림장 초안)을 내 문서\\my-skills-data\\teacherlesson-assistant 에 저장한다.
-- 진도 완료/늘리기/미루기는 진도 서버 API 로 그대로 넘긴다.
+- 완료·연장·미루기·따라잡기는 Supabase 진도 슬롯을 갱신한다.
 """
 from __future__ import annotations
 
@@ -99,7 +99,14 @@ def lesson_note_path(subject: str, unit: str, n: int) -> pathlib.Path:
 # ──────────────────────────── 수업 목록 ────────────────────────────
 
 def fetch_schedule(cfg: dict, day: date) -> tuple[list[dict], str]:
-    """진도 서버에서 그날 수업을 가져온다. 실패하면 설정의 기본 시간표를 쓴다."""
+    """설정된 진도 저장소에서 그날 수업을 가져온다."""
+    if cfg.get("schedule_backend", "supabase") == "supabase":
+        try:
+            import supabase_schedule
+            return supabase_schedule.day_schedule(day), "Supabase 진도표"
+        except Exception as exc:
+            print(f"[schedule] Supabase 조회 실패: {type(exc).__name__}: {exc}", file=sys.stderr)
+            return [], "Supabase 연결 오류"
     base = cfg.get("schedule_api", "http://127.0.0.1:5000").rstrip("/")
     url = f"{base}/api/dashboard?board_date={day.isoformat()}"
     try:
@@ -148,6 +155,12 @@ def upcoming(subject: str) -> list[dict]:
     """'실제로 할 차시 고르기' 후보: 이 과목의 차시를 진도표 순서대로(완료 포함 → 되돌리기 가능).
     남은 첫 차시 앞의 완료 차시는 최근 12개만. 진도 서버가 옛 버전이면 남은 차시(agenda)만."""
     cfg = load_config()
+    if cfg.get("schedule_backend", "supabase") == "supabase":
+        import supabase_schedule
+        items = supabase_schedule.upcoming(subject)
+        first_open = next((n for n, item in enumerate(items) if not item.get("done")), len(items))
+        return [{**item, "record_key": str(item.get("record_key") or "")}
+                for item in items[max(0, first_open - 30):]]
     base = cfg.get("schedule_api", "http://127.0.0.1:5000").rstrip("/")
     try:
         with urllib.request.urlopen(f"{base}/api/lessons?subject={urllib.parse.quote(subject)}", timeout=25) as res:
@@ -463,6 +476,9 @@ def progress(action: str, body: dict) -> dict:
     if action not in PROGRESS_ACTIONS:
         raise ValueError("지원하지 않는 진도 작업이에요.")
     cfg = load_config()
+    if cfg.get("schedule_backend", "supabase") == "supabase":
+        import supabase_schedule
+        return supabase_schedule.progress(action, body)
     base = cfg.get("schedule_api", "http://127.0.0.1:5000").rstrip("/")
     req = urllib.request.Request(f"{base}/api/{action}", data=json.dumps(body).encode("utf-8"),
                                  headers={"Content-Type": "application/json"}, method="POST")
@@ -527,6 +543,8 @@ class Handler(BaseHTTPRequestHandler):
                 return self._json({"status": "error", "message": str(exc)}, 502)
             except (urllib.error.URLError, OSError):
                 return self._json({"status": "error", "message": "진도 서버(teacherlesson-schedule)가 꺼져 있어요."}, 502)
+            except RuntimeError as exc:
+                return self._json({"status": "error", "message": str(exc)}, 502)
         if url.path == "/api/prepare-status":
             return self._json(prepare_status())
         if url.path.startswith("/api/unit-pdf/"):
@@ -536,7 +554,15 @@ class Handler(BaseHTTPRequestHandler):
                 return self._json({"status": "error", "message": "단원 개관 PDF가 없어요."}, 404)
             return self._send(200, path.read_bytes(), "application/pdf")
         if url.path.startswith("/api/pdf/"):
-            base = load_config().get("schedule_api", "http://127.0.0.1:5000").rstrip("/")
+            cfg = load_config()
+            if cfg.get("schedule_backend", "supabase") == "supabase":
+                record_key = urllib.parse.unquote(url.path.rsplit("/", 1)[-1])
+                try:
+                    import supabase_schedule
+                    return self._send(200, supabase_schedule.pdf_for_lesson(record_key), "application/pdf")
+                except (OSError, ValueError, RuntimeError) as exc:
+                    return self._json({"status": "error", "message": str(exc)}, 404)
+            base = cfg.get("schedule_api", "http://127.0.0.1:5000").rstrip("/")
             self.send_response(302)
             self.send_header("Location", base + url.path)
             self.end_headers()
@@ -573,7 +599,7 @@ class Handler(BaseHTTPRequestHandler):
                 return self._json(add_caution(body))
             if url.path.startswith("/api/progress/"):
                 return self._json(progress(url.path.rsplit("/", 1)[-1], body))
-        except (ValueError, KeyError, subprocess.CalledProcessError) as exc:
+        except (ValueError, KeyError, RuntimeError, subprocess.CalledProcessError) as exc:
             return self._json({"status": "error", "message": str(exc)}, 400)
         return self._json({"status": "error", "message": "없는 주소"}, 404)
 
@@ -655,10 +681,14 @@ def ask_prepare(body: dict) -> dict:
     else:
         missing.append("단원 개관 PDF")
     if record_key:
-        base = cfg.get("schedule_api", "http://127.0.0.1:5000").rstrip("/")
         try:
-            with urllib.request.urlopen(f"{base}/api/pdf/{urllib.parse.quote(record_key)}", timeout=60) as res:
-                data = res.read()
+            if cfg.get("schedule_backend", "supabase") == "supabase":
+                import supabase_schedule
+                data = supabase_schedule.pdf_for_lesson(record_key)
+            else:
+                base = cfg.get("schedule_api", "http://127.0.0.1:5000").rstrip("/")
+                with urllib.request.urlopen(f"{base}/api/pdf/{urllib.parse.quote(record_key)}", timeout=60) as res:
+                    data = res.read()
             if data[:5] == b"%PDF-":
                 dest = folder / f"2_차시지도서_{safe_name(lesson)}차시.pdf"
                 dest.write_bytes(data)

@@ -53,7 +53,7 @@ def page_range(row: dict) -> tuple[int, int] | None:
 
 
 def pdf_of(row: dict) -> str:
-    return os.path.expandvars(os.path.expanduser(str(row.get("pdf파일", "")).strip()))
+    return schedule.resolve_pdf_path(row.get("pdf파일", ""))
 
 
 def lesson_groups(rows: list[dict]) -> list[dict]:
@@ -223,7 +223,7 @@ def main() -> None:
     args = ap.parse_args()
     cfg = app.load_config()
     image_subjects = cfg.get("notebooklm_image_subjects", IMAGE_SUBJECTS_DEFAULT)
-    records = schedule.load_all(schedule.connect())
+    records = bu.load_progress_records()
     units: dict[tuple[str, str], list[dict]] = {}
     for r in sorted(records, key=lambda r: r.get("_row", 0)):
         subject, unit = str(r.get("과목", "")).strip(), str(r.get("대단원", "")).strip()

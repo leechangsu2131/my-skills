@@ -1,0 +1,2578 @@
+[
+  {
+    "id": "002001",
+    "name": "학급담임",
+    "depth": " ┕학급담임",
+    "up": "AMSWC00003",
+    "page": "",
+    "desc": "[학급담임] "
+  },
+  {
+    "id": "AMELS20001",
+    "name": "경영지원",
+    "depth": "     ┕경영지원",
+    "up": "002001",
+    "page": "",
+    "desc": "[경영지원] "
+  },
+  {
+    "id": "AMELS30001",
+    "name": "경영지원",
+    "depth": "         ┕경영지원",
+    "up": "AMELS20001",
+    "page": "",
+    "desc": "[경영지원] "
+  },
+  {
+    "id": "AMELS40004",
+    "name": "학부모서비스승인관리",
+    "depth": "             ┕학부모서비스승인관리",
+    "up": "AMELS30001",
+    "page": "edu/sw/els/sdl/pa/els_sdlpa00_m00",
+    "desc": "[학부모서비스승인관리] "
+  },
+  {
+    "id": "AMELS20003",
+    "name": "교육과정",
+    "depth": "     ┕교육과정",
+    "up": "002001",
+    "page": "",
+    "desc": "[교육과정] "
+  },
+  {
+    "id": "AMELS30004",
+    "name": "교과편제관리",
+    "depth": "         ┕교과편제관리",
+    "up": "AMELS20003",
+    "page": "",
+    "desc": "[교과편제관리] "
+  },
+  {
+    "id": "AMELS40015",
+    "name": "교과별학습내용등록",
+    "depth": "             ┕교과별학습내용등록",
+    "up": "AMELS30004",
+    "page": "edu/sw/els/edc/oh/els_edcoh01_m00",
+    "desc": "[교과별학습내용등록] "
+  },
+  {
+    "id": "AMELS30008",
+    "name": "시간표관리",
+    "depth": "         ┕시간표관리",
+    "up": "AMELS20003",
+    "page": "",
+    "desc": "[시간표관리] "
+  },
+  {
+    "id": "AMELS40022",
+    "name": "학급시간표관리",
+    "depth": "             ┕학급시간표관리",
+    "up": "AMELS30008",
+    "page": "edu/sw/els/edc/tm/els_edctm00_m00",
+    "desc": "[학급시간표관리] "
+  },
+  {
+    "id": "AMELS40023",
+    "name": "학급별시간표조회",
+    "depth": "             ┕학급별시간표조회",
+    "up": "AMELS30008",
+    "page": "edu/sw/els/edc/tm/els_edctm08_m00",
+    "desc": "[학급별시간표조회] "
+  },
+  {
+    "id": "AMELS40024",
+    "name": "전체시간표조회",
+    "depth": "             ┕전체시간표조회",
+    "up": "AMELS30008",
+    "page": "edu/sw/els/edc/tm/els_edctm09_m00",
+    "desc": "[전체시간표조회] "
+  },
+  {
+    "id": "AMELS30009",
+    "name": "진도표관리",
+    "depth": "         ┕진도표관리",
+    "up": "AMELS20003",
+    "page": "",
+    "desc": "[진도표관리] "
+  },
+  {
+    "id": "AMELS40027",
+    "name": "교과진도표관리",
+    "depth": "             ┕교과진도표관리",
+    "up": "AMELS30009",
+    "page": "edu/sw/els/edc/tm/els_edctm03_m00",
+    "desc": "[교과진도표관리] "
+  },
+  {
+    "id": "AMELS40029",
+    "name": "교육과정재구성",
+    "depth": "             ┕교육과정재구성",
+    "up": "AMELS30009",
+    "page": "edu/sw/els/edc/tm/els_edctm05_m00",
+    "desc": "[교육과정재구성] "
+  },
+  {
+    "id": "AMELS40030",
+    "name": "진도표조회",
+    "depth": "             ┕진도표조회",
+    "up": "AMELS30009",
+    "page": "edu/sw/els/edc/tm/els_edctm07_m00",
+    "desc": "[진도표조회] "
+  },
+  {
+    "id": "AMELS30010",
+    "name": "주간학습안내관리",
+    "depth": "         ┕주간학습안내관리",
+    "up": "AMELS20003",
+    "page": "",
+    "desc": "[주간학습안내관리] "
+  },
+  {
+    "id": "AMELS40031",
+    "name": "주간학습안내작성",
+    "depth": "             ┕주간학습안내작성",
+    "up": "AMELS30010",
+    "page": "edu/sw/els/edc/tm/els_edctm06_m00",
+    "desc": "[주간학습안내작성] "
+  },
+  {
+    "id": "AMELS40032",
+    "name": "주간학습안내조회",
+    "depth": "             ┕주간학습안내조회",
+    "up": "AMELS30010",
+    "page": "edu/sw/els/edc/tm/els_edctm06_m02",
+    "desc": "[주간학습안내조회] "
+  },
+  {
+    "id": "AMELS30011",
+    "name": "결보강관리",
+    "depth": "         ┕결보강관리",
+    "up": "AMELS20003",
+    "page": "",
+    "desc": "[결보강관리] "
+  },
+  {
+    "id": "AMELS40033",
+    "name": "결보강처리",
+    "depth": "             ┕결보강처리",
+    "up": "AMELS30011",
+    "page": "edu/sw/els/edc/tm/els_edctm02_m00",
+    "desc": "[결보강처리] "
+  },
+  {
+    "id": "AMELS30012",
+    "name": "학교일지관리",
+    "depth": "         ┕학교일지관리",
+    "up": "AMELS20003",
+    "page": "",
+    "desc": "[학교일지관리] "
+  },
+  {
+    "id": "AMELS40034",
+    "name": "학교일지관리",
+    "depth": "             ┕학교일지관리",
+    "up": "AMELS30012",
+    "page": "edu/sw/els/edc/sd/els_edcsd00_m00",
+    "desc": "[학교일지관리] "
+  },
+  {
+    "id": "AMELS20004",
+    "name": "학적",
+    "depth": "     ┕학적",
+    "up": "002001",
+    "page": "",
+    "desc": "[학적] "
+  },
+  {
+    "id": "AMELS30014",
+    "name": "기본학적관리",
+    "depth": "         ┕기본학적관리",
+    "up": "AMELS20004",
+    "page": "",
+    "desc": "[기본학적관리] "
+  },
+  {
+    "id": "AMELS40036",
+    "name": "기본신상관리",
+    "depth": "             ┕기본신상관리",
+    "up": "AMELS30014",
+    "page": "edu/sw/els/srg/bm/els_srgbm00_m00",
+    "desc": "[기본신상관리] "
+  },
+  {
+    "id": "AMELS40037",
+    "name": "사진일괄입력",
+    "depth": "             ┕사진일괄입력",
+    "up": "AMELS30014",
+    "page": "edu/sw/els/srg/bm/els_srgbm01_m00",
+    "desc": "[사진일괄입력] "
+  },
+  {
+    "id": "AMELS40038",
+    "name": "명렬표출력",
+    "depth": "             ┕명렬표출력",
+    "up": "AMELS30014",
+    "page": "edu/sw/els/srg/bm/els_srgbm02_m00",
+    "desc": "[명렬표출력] "
+  },
+  {
+    "id": "AMELS40046",
+    "name": "학생주소연계",
+    "depth": "             ┕학생주소연계",
+    "up": "AMELS30014",
+    "page": "edu/sw/els/srg/bm/els_srgbm11_m00",
+    "desc": "[학생주소연계] "
+  },
+  {
+    "id": "AMELS40047",
+    "name": "학생주소연계이력조회",
+    "depth": "             ┕학생주소연계이력조회",
+    "up": "AMELS30014",
+    "page": "edu/sw/els/srg/bm/els_srgbm12_m00",
+    "desc": "[학생주소연계이력조회] "
+  },
+  {
+    "id": "AMELS30018",
+    "name": "진급자 반편성관리",
+    "depth": "         ┕진급자 반편성관리",
+    "up": "AMELS20004",
+    "page": "",
+    "desc": "[진급자 반편성관리] "
+  },
+  {
+    "id": "AMELS40055",
+    "name": "진급자 반편성관리",
+    "depth": "             ┕진급자 반편성관리",
+    "up": "AMELS30018",
+    "page": "edu/sw/els/srg/cf/els_srgcf00_m00",
+    "desc": "[진급자 반편성관리] "
+  },
+  {
+    "id": "AMELS40184",
+    "name": "개별반편성",
+    "depth": "             ┕개별반편성",
+    "up": "AMELS40055",
+    "page": "edu/sw/els/srg/cf/els_srgcf00_m06",
+    "desc": "[개별반편성] "
+  },
+  {
+    "id": "AMELS40186",
+    "name": "반편성결과조회",
+    "depth": "             ┕반편성결과조회",
+    "up": "AMELS40055",
+    "page": "edu/sw/els/srg/cf/els_srgcf00_m08",
+    "desc": "[반편성결과조회] "
+  },
+  {
+    "id": "AMELS30019",
+    "name": "출결관리",
+    "depth": "         ┕출결관리",
+    "up": "AMELS20004",
+    "page": "",
+    "desc": "[출결관리] "
+  },
+  {
+    "id": "AMELS40056",
+    "name": "교과시간별출석부출력",
+    "depth": "             ┕교과시간별출석부출력",
+    "up": "AMELS30019",
+    "page": "edu/sw/els/srg/aa/els_srgaa00_m00",
+    "desc": "[교과시간별출석부출력] "
+  },
+  {
+    "id": "AMELS40057",
+    "name": "출결관리",
+    "depth": "             ┕출결관리",
+    "up": "AMELS30019",
+    "page": "edu/sw/els/srg/aa/els_srgaa01_m00",
+    "desc": "[출결관리] "
+  },
+  {
+    "id": "AMELS40190",
+    "name": "일일출결관리",
+    "depth": "             ┕일일출결관리",
+    "up": "AMELS40057",
+    "page": "edu/sw/els/srg/aa/els_srgaa01_m02",
+    "desc": "[일일출결관리] "
+  },
+  {
+    "id": "AMELS40191",
+    "name": "출결특기사항등록",
+    "depth": "             ┕출결특기사항등록",
+    "up": "AMELS40057",
+    "page": "edu/sw/els/srg/aa/els_srgaa01_m03",
+    "desc": "[출결특기사항등록] "
+  },
+  {
+    "id": "AMELS40236",
+    "name": "교과시간별출결관리",
+    "depth": "             ┕교과시간별출결관리",
+    "up": "AMELS30019",
+    "page": "edu/sw/els/srg/aa/els_srgaa01_m01",
+    "desc": "[교과시간별출결관리] "
+  },
+  {
+    "id": "AMELS40058",
+    "name": "출결현황및통계",
+    "depth": "             ┕출결현황및통계",
+    "up": "AMELS30019",
+    "page": "edu/sw/els/srg/aa/els_srgaa02_m00",
+    "desc": "[출결현황및통계] "
+  },
+  {
+    "id": "AMELS40192",
+    "name": "학급별출결현황",
+    "depth": "             ┕학급별출결현황",
+    "up": "AMELS40058",
+    "page": "edu/sw/els/srg/aa/els_srgaa02_m01",
+    "desc": "[학급별출결현황] "
+  },
+  {
+    "id": "AMELS40195",
+    "name": "반별연간출결통계",
+    "depth": "             ┕반별연간출결통계",
+    "up": "AMELS40058",
+    "page": "edu/sw/els/srg/aa/els_srgaa02_m04",
+    "desc": "[반별연간출결통계] "
+  },
+  {
+    "id": "AMELS40197",
+    "name": "결석자및개인별출결현황",
+    "depth": "             ┕결석자및개인별출결현황",
+    "up": "AMELS40058",
+    "page": "edu/sw/els/srg/aa/els_srgaa02_m06",
+    "desc": "[결석자및개인별출결현황] "
+  },
+  {
+    "id": "AMELS30022",
+    "name": "명예졸업관리",
+    "depth": "         ┕명예졸업관리",
+    "up": "AMELS20004",
+    "page": "",
+    "desc": "[명예졸업관리] "
+  },
+  {
+    "id": "AMELS40065",
+    "name": "명예졸업 대상자 관리",
+    "depth": "             ┕명예졸업 대상자 관리",
+    "up": "AMELS30022",
+    "page": "edu/sw/els/srg/hm/els_srghm00_m00",
+    "desc": "[명예졸업 대상자 관리] "
+  },
+  {
+    "id": "AMELS40066",
+    "name": "명예졸업장 출력",
+    "depth": "             ┕명예졸업장 출력",
+    "up": "AMELS30022",
+    "page": "edu/sw/els/srg/hm/els_srghm01_m00",
+    "desc": "[명예졸업장 출력] "
+  },
+  {
+    "id": "AMELS40067",
+    "name": "명예졸업대장조회",
+    "depth": "             ┕명예졸업대장조회",
+    "up": "AMELS30022",
+    "page": "edu/sw/els/srg/hm/els_srghm02_m00",
+    "desc": "[명예졸업대장조회] "
+  },
+  {
+    "id": "AMELS30026",
+    "name": "미인정결석학생관리",
+    "depth": "         ┕미인정결석학생관리",
+    "up": "AMELS20004",
+    "page": "",
+    "desc": "[미인정결석학생관리] "
+  },
+  {
+    "id": "AMELS40084",
+    "name": "미인정결석학생관리",
+    "depth": "             ┕미인정결석학생관리",
+    "up": "AMELS30026",
+    "page": "edu/sw/els/srg/sh/els_srgsh00_m00",
+    "desc": "[미인정결석학생관리] "
+  },
+  {
+    "id": "AMELS20005",
+    "name": "학생생활",
+    "depth": "     ┕학생생활",
+    "up": "002001",
+    "page": "",
+    "desc": "[학생생활] "
+  },
+  {
+    "id": "AMELS30027",
+    "name": "창의적체험활동",
+    "depth": "         ┕창의적체험활동",
+    "up": "AMELS20005",
+    "page": "",
+    "desc": "[창의적체험활동] "
+  },
+  {
+    "id": "AMELS40085",
+    "name": "자율·자치활동(자율활동)관리",
+    "depth": "             ┕자율·자치활동(자율활동)관리",
+    "up": "AMELS30027",
+    "page": "edu/sw/els/sdl/ce/els_sdlce00_m00",
+    "desc": "[자율·자치활동(자율활동)관리] "
+  },
+  {
+    "id": "AMELS40086",
+    "name": "동아리활동관리",
+    "depth": "             ┕동아리활동관리",
+    "up": "AMELS30027",
+    "page": "edu/sw/els/sdl/ce/els_sdlce01_m00",
+    "desc": "[동아리활동관리] "
+  },
+  {
+    "id": "AMELS40209",
+    "name": "부서배정",
+    "depth": "             ┕부서배정",
+    "up": "AMELS40086",
+    "page": "edu/sw/els/sdl/ce/els_sdlce01_m02",
+    "desc": "[부서배정] "
+  },
+  {
+    "id": "AMELS40087",
+    "name": "동아리활동반별조회",
+    "depth": "             ┕동아리활동반별조회",
+    "up": "AMELS30027",
+    "page": "edu/sw/els/sdl/ce/els_sdlce08_m00",
+    "desc": "[동아리활동반별조회] "
+  },
+  {
+    "id": "AMELS40088",
+    "name": "동아리활동관리(전입생용)",
+    "depth": "             ┕동아리활동관리(전입생용)",
+    "up": "AMELS30027",
+    "page": "edu/sw/els/sdl/ce/els_sdlce02_m00",
+    "desc": "[동아리활동관리(전입생용)] "
+  },
+  {
+    "id": "AMELS40089",
+    "name": "봉사활동실적관리",
+    "depth": "             ┕봉사활동실적관리",
+    "up": "AMELS30027",
+    "page": "edu/sw/els/sdl/ce/els_sdlce03_m00",
+    "desc": "[봉사활동실적관리] "
+  },
+  {
+    "id": "AMELS40090",
+    "name": "진로활동관리",
+    "depth": "             ┕진로활동관리",
+    "up": "AMELS30027",
+    "page": "edu/sw/els/sdl/ce/els_sdlce04_m00",
+    "desc": "[진로활동관리] "
+  },
+  {
+    "id": "AMELS40093",
+    "name": "학생부자료기록",
+    "depth": "             ┕학생부자료기록",
+    "up": "AMELS30027",
+    "page": "edu/sw/els/sdl/ce/els_sdlce06_m00",
+    "desc": "[학생부자료기록] "
+  },
+  {
+    "id": "AMELS30028",
+    "name": "수상경력",
+    "depth": "         ┕수상경력",
+    "up": "AMELS20005",
+    "page": "",
+    "desc": "[수상경력] "
+  },
+  {
+    "id": "AMELS40094",
+    "name": "수상대장관리",
+    "depth": "             ┕수상대장관리",
+    "up": "AMELS30028",
+    "page": "edu/sw/els/sdl/aw/els_sdlaw00_m00",
+    "desc": "[수상대장관리] "
+  },
+  {
+    "id": "AMELS40095",
+    "name": "학급별수상관리",
+    "depth": "             ┕학급별수상관리",
+    "up": "AMELS30028",
+    "page": "edu/sw/els/sdl/aw/els_sdlaw01_m00",
+    "desc": "[학급별수상관리] "
+  },
+  {
+    "id": "AMELS30030",
+    "name": "행동특성및종합의견",
+    "depth": "         ┕행동특성및종합의견",
+    "up": "AMELS20005",
+    "page": "",
+    "desc": "[행동특성및종합의견] "
+  },
+  {
+    "id": "AMELS40101",
+    "name": "행동특성및종합의견",
+    "depth": "             ┕행동특성및종합의견",
+    "up": "AMELS30030",
+    "page": "edu/sw/els/sdl/bg/els_sdlbg00_m00",
+    "desc": "[행동특성및종합의견] "
+  },
+  {
+    "id": "AMELS30045",
+    "name": "학교폭력조치상황관리",
+    "depth": "         ┕학교폭력조치상황관리",
+    "up": "AMELS20005",
+    "page": "",
+    "desc": "[학교폭력조치상황관리] "
+  },
+  {
+    "id": "AMELS50100",
+    "name": "학교폭력조치상황관리",
+    "depth": "             ┕학교폭력조치상황관리",
+    "up": "AMELS30045",
+    "page": "edu/sw/els/sdl/vm/els_sdlvm01_m00",
+    "desc": "[학교폭력조치상황관리] "
+  },
+  {
+    "id": "AMELS30031",
+    "name": "학부모서비스승인관리",
+    "depth": "         ┕학부모서비스승인관리",
+    "up": "AMELS20005",
+    "page": "",
+    "desc": "[학부모서비스승인관리] "
+  },
+  {
+    "id": "AMELS40103",
+    "name": "학부모서비스승인관리",
+    "depth": "             ┕학부모서비스승인관리",
+    "up": "AMELS30031",
+    "page": "edu/sw/els/sdl/pa/els_sdlpa00_m00",
+    "desc": "[학부모서비스승인관리] "
+  },
+  {
+    "id": "AMELS20006",
+    "name": "성적",
+    "depth": "     ┕성적",
+    "up": "002001",
+    "page": "",
+    "desc": "[성적] "
+  },
+  {
+    "id": "AMELS30032",
+    "name": "평가계획",
+    "depth": "         ┕평가계획",
+    "up": "AMELS20006",
+    "page": "",
+    "desc": "[평가계획] "
+  },
+  {
+    "id": "AMELS40104",
+    "name": "평가계획(안)관리",
+    "depth": "             ┕평가계획(안)관리",
+    "up": "AMELS30032",
+    "page": "edu/sw/els/scr/ep/els_screp00_m00",
+    "desc": "[평가계획(안)관리] "
+  },
+  {
+    "id": "AMELS40211",
+    "name": "성취기준관리",
+    "depth": "             ┕성취기준관리",
+    "up": "AMELS40104",
+    "page": "edu/sw/els/scr/ep/els_screp01_m00",
+    "desc": "[성취기준관리] "
+  },
+  {
+    "id": "AMELS40212",
+    "name": "성취기준(평가기준)관리",
+    "depth": "             ┕성취기준(평가기준)관리",
+    "up": "AMELS40104",
+    "page": "edu/sw/els/scr/ep/els_screp02_m00",
+    "desc": "[성취기준(평가기준)관리] "
+  },
+  {
+    "id": "AMELS40105",
+    "name": "평가계획(안)관리(반별)",
+    "depth": "             ┕평가계획(안)관리(반별)",
+    "up": "AMELS30032",
+    "page": "edu/sw/els/scr/ep/els_screp05_m00",
+    "desc": "[평가계획(안)관리(반별)] "
+  },
+  {
+    "id": "AMELS40213",
+    "name": "성취기준관리",
+    "depth": "             ┕성취기준관리",
+    "up": "AMELS40105",
+    "page": "edu/sw/els/scr/ep/els_screp06_m00",
+    "desc": "[성취기준관리] "
+  },
+  {
+    "id": "AMELS40214",
+    "name": "성취기준(평가기준)관리",
+    "depth": "             ┕성취기준(평가기준)관리",
+    "up": "AMELS40105",
+    "page": "edu/sw/els/scr/ep/els_screp07_m00",
+    "desc": "[성취기준(평가기준)관리] "
+  },
+  {
+    "id": "AMELS40106",
+    "name": "예시문",
+    "depth": "             ┕예시문",
+    "up": "AMELS30032",
+    "page": "edu/sw/els/scr/ep/els_screp10_m00",
+    "desc": "[예시문] "
+  },
+  {
+    "id": "AMELS30033",
+    "name": "학생평가",
+    "depth": "         ┕학생평가",
+    "up": "AMELS20006",
+    "page": "",
+    "desc": "[학생평가] "
+  },
+  {
+    "id": "AMELS40108",
+    "name": "교과평가",
+    "depth": "             ┕교과평가",
+    "up": "AMELS30033",
+    "page": "edu/sw/els/scr/es/els_scres00_m00",
+    "desc": "[교과평가] "
+  },
+  {
+    "id": "AMELS40109",
+    "name": "학기말종합의견",
+    "depth": "             ┕학기말종합의견",
+    "up": "AMELS30033",
+    "page": "edu/sw/els/scr/es/els_scres10_m00",
+    "desc": "[학기말종합의견] "
+  },
+  {
+    "id": "AMELS40110",
+    "name": "교과학습발달상황",
+    "depth": "             ┕교과학습발달상황",
+    "up": "AMELS30033",
+    "page": "edu/sw/els/scr/es/els_scres20_m00",
+    "desc": "[교과학습발달상황] "
+  },
+  {
+    "id": "AMELS40243",
+    "name": "학교자율시간관리(전입생용)",
+    "depth": "             ┕학교자율시간관리(전입생용)",
+    "up": "AMELS30033",
+    "page": "edu/sw/els/scr/es/els_scres30_m00",
+    "desc": "[학교자율시간관리(전입생용)] "
+  },
+  {
+    "id": "AMELS30034",
+    "name": "성적조회",
+    "depth": "         ┕성적조회",
+    "up": "AMELS20006",
+    "page": "",
+    "desc": "[성적조회] "
+  },
+  {
+    "id": "AMELS50097",
+    "name": "교과별성적조회",
+    "depth": "             ┕교과별성적조회",
+    "up": "AMELS30034",
+    "page": "edu/sw/els/scr/er/els_screr00_m01",
+    "desc": "[교과별성적조회] "
+  },
+  {
+    "id": "AMELS40111",
+    "name": "개인별성적조회",
+    "depth": "             ┕개인별성적조회",
+    "up": "AMELS30034",
+    "page": "edu/sw/els/scr/er/els_screr00_m00",
+    "desc": "[개인별성적조회] "
+  },
+  {
+    "id": "AMELS40244",
+    "name": "학교자율시간반별조회",
+    "depth": "             ┕학교자율시간반별조회",
+    "up": "AMELS30034",
+    "page": "edu/sw/els/scr/er/els_screr30_m00",
+    "desc": "[학교자율시간반별조회] "
+  },
+  {
+    "id": "AMELS40112",
+    "name": "수행영역분석표",
+    "depth": "             ┕수행영역분석표",
+    "up": "AMELS30034",
+    "page": "edu/sw/els/scr/er/els_screr10_m00",
+    "desc": "[수행영역분석표] "
+  },
+  {
+    "id": "AMELS30035",
+    "name": "관찰기록관리",
+    "depth": "         ┕관찰기록관리",
+    "up": "AMELS20006",
+    "page": "",
+    "desc": "[관찰기록관리] "
+  },
+  {
+    "id": "AMELS40114",
+    "name": "관찰내용관리",
+    "depth": "             ┕관찰내용관리",
+    "up": "AMELS30035",
+    "page": "edu/sw/els/scr/ll/els_scrll00_m00",
+    "desc": "[관찰내용관리] "
+  },
+  {
+    "id": "AMELS20007",
+    "name": "학생부",
+    "depth": "     ┕학생부",
+    "up": "002001",
+    "page": "",
+    "desc": "[학생부] "
+  },
+  {
+    "id": "AMELS30036",
+    "name": "학교생활기록부",
+    "depth": "         ┕학교생활기록부",
+    "up": "AMELS20007",
+    "page": "",
+    "desc": "[학교생활기록부] "
+  },
+  {
+    "id": "AMELS40115",
+    "name": "학교생활기록부",
+    "depth": "             ┕학교생활기록부",
+    "up": "AMELS30036",
+    "page": "edu/sw/els/slr/cm/els_slrcm00_m00",
+    "desc": "[학교생활기록부] "
+  },
+  {
+    "id": "AMELS40215",
+    "name": "자료반영",
+    "depth": "             ┕자료반영",
+    "up": "AMELS40115",
+    "page": "edu/sw/els/slr/cm/els_slrcm00_m02",
+    "desc": "[자료반영] "
+  },
+  {
+    "id": "AMELS40216",
+    "name": "자료검증",
+    "depth": "             ┕자료검증",
+    "up": "AMELS40115",
+    "page": "edu/sw/els/slr/cm/els_slrcm00_m03",
+    "desc": "[자료검증] "
+  },
+  {
+    "id": "AMELS40217",
+    "name": "검증결과조회",
+    "depth": "             ┕검증결과조회",
+    "up": "AMELS40115",
+    "page": "edu/sw/els/slr/cm/els_slrcm00_m04",
+    "desc": "[검증결과조회] "
+  },
+  {
+    "id": "AMELS40218",
+    "name": "학생부조회및출력",
+    "depth": "             ┕학생부조회및출력",
+    "up": "AMELS40115",
+    "page": "edu/sw/els/slr/cm/els_slrcm00_m05",
+    "desc": "[학생부조회및출력] "
+  },
+  {
+    "id": "AMELS40219",
+    "name": "항목별조회",
+    "depth": "             ┕항목별조회",
+    "up": "AMELS40115",
+    "page": "edu/sw/els/slr/cm/els_slrcm00_m06",
+    "desc": "[항목별조회] "
+  },
+  {
+    "id": "AMELS30037",
+    "name": "정정대장관리",
+    "depth": "         ┕정정대장관리",
+    "up": "AMELS20007",
+    "page": "",
+    "desc": "[정정대장관리] "
+  },
+  {
+    "id": "AMELS40116",
+    "name": "정정대장작성",
+    "depth": "             ┕정정대장작성",
+    "up": "AMELS30037",
+    "page": "edu/sw/els/slr/cr/els_slrcr00_m00",
+    "desc": "[정정대장작성] "
+  },
+  {
+    "id": "AMELS40120",
+    "name": "정정대장공개여부관리",
+    "depth": "             ┕정정대장공개여부관리",
+    "up": "AMELS30037",
+    "page": "edu/sw/els/slr/cr/els_slrcr04_m00",
+    "desc": "[정정대장공개여부관리] "
+  },
+  {
+    "id": "AMELS30038",
+    "name": "생활통지표",
+    "depth": "         ┕생활통지표",
+    "up": "AMELS20007",
+    "page": "",
+    "desc": "[생활통지표] "
+  },
+  {
+    "id": "AMELS40121",
+    "name": "생활통지표",
+    "depth": "             ┕생활통지표",
+    "up": "AMELS30038",
+    "page": "edu/sw/els/slr/ap/els_slrap00_m00",
+    "desc": "[생활통지표] "
+  },
+  {
+    "id": "AMELS40221",
+    "name": "통지표등록",
+    "depth": "             ┕통지표등록",
+    "up": "AMELS40121",
+    "page": "edu/sw/els/slr/ap/els_slrap00_m02",
+    "desc": "[통지표등록] "
+  },
+  {
+    "id": "AMELS40222",
+    "name": "통지표자료반영및마감관리",
+    "depth": "             ┕통지표자료반영및마감관리",
+    "up": "AMELS40121",
+    "page": "edu/sw/els/slr/ap/els_slrap00_m03",
+    "desc": "[통지표자료반영및마감관리] "
+  },
+  {
+    "id": "AMELS40223",
+    "name": "통지표조회및출력",
+    "depth": "             ┕통지표조회및출력",
+    "up": "AMELS40121",
+    "page": "edu/sw/els/slr/ap/els_slrap00_m05",
+    "desc": "[통지표조회및출력] "
+  },
+  {
+    "id": "AMELS40224",
+    "name": "통지표마감관리",
+    "depth": "             ┕통지표마감관리",
+    "up": "AMELS40121",
+    "page": "edu/sw/els/slr/ap/els_slrap00_m04",
+    "desc": "[통지표마감관리] "
+  },
+  {
+    "id": "AMELS40122",
+    "name": "종합일람표",
+    "depth": "             ┕종합일람표",
+    "up": "AMELS30038",
+    "page": "edu/sw/els/slr/ap/els_slrap01_m00",
+    "desc": "[종합일람표] "
+  },
+  {
+    "id": "AMELS20008",
+    "name": "개별화교육계획",
+    "depth": "     ┕개별화교육계획",
+    "up": "002001",
+    "page": "",
+    "desc": "[개별화교육계획] "
+  },
+  {
+    "id": "AMELS30041",
+    "name": "개별화교육계획관리",
+    "depth": "         ┕개별화교육계획관리",
+    "up": "AMELS20008",
+    "page": "",
+    "desc": "[개별화교육계획관리] "
+  },
+  {
+    "id": "AMELS40126",
+    "name": "학기별개별화교육계획/평가조회(교과담당)",
+    "depth": "             ┕학기별개별화교육계획/평가조회(교과담당)",
+    "up": "AMELS30041",
+    "page": "edu/sw/els/iep/ss/els_iepss01_m00",
+    "desc": "[학기별개별화교육계획/평가조회(교과담당)] "
+  },
+  {
+    "id": "AMELS40127",
+    "name": "학기별개별화교육계획/평가조회(담임)",
+    "depth": "             ┕학기별개별화교육계획/평가조회(담임)",
+    "up": "AMELS30041",
+    "page": "edu/sw/els/iep/ss/els_iepss02_m00",
+    "desc": "[학기별개별화교육계획/평가조회(담임)] "
+  },
+  {
+    "id": "AMELS40128",
+    "name": "월별개별화교육계획/평가조회(교과담당) ",
+    "depth": "             ┕월별개별화교육계획/평가조회(교과담당) ",
+    "up": "AMELS30041",
+    "page": "edu/sw/els/iep/ss/els_iepss03_m00",
+    "desc": "[월별개별화교육계획/평가조회(교과담당) ] "
+  },
+  {
+    "id": "AMELS40129",
+    "name": "월별개별화교육계획/평가조회(담임)",
+    "depth": "             ┕월별개별화교육계획/평가조회(담임)",
+    "up": "AMELS30041",
+    "page": "edu/sw/els/iep/ss/els_iepss04_m00",
+    "desc": "[월별개별화교육계획/평가조회(담임)] "
+  },
+  {
+    "id": "AMELS30042",
+    "name": "개별화교육조회",
+    "depth": "         ┕개별화교육조회",
+    "up": "AMELS20008",
+    "page": "",
+    "desc": "[개별화교육조회] "
+  },
+  {
+    "id": "AMELS40131",
+    "name": "개별화교육조회(재학생)",
+    "depth": "             ┕개별화교육조회(재학생)",
+    "up": "AMELS30042",
+    "page": "edu/sw/els/iep/ad/els_iepad00_m00",
+    "desc": "[개별화교육조회(재학생)] "
+  },
+  {
+    "id": "AMHTH20053",
+    "name": "보건",
+    "depth": "     ┕보건#학교",
+    "up": "002001",
+    "page": "",
+    "desc": "[보건] "
+  },
+  {
+    "id": "AMHTH30322",
+    "name": "예방접종연계관리",
+    "depth": "         ┕예방접종연계관리",
+    "up": "AMHTH20053",
+    "page": "",
+    "desc": "[예방접종연계관리] "
+  },
+  {
+    "id": "AMHTH41100",
+    "name": "연계대상학생관리",
+    "depth": "             ┕연계대상학생관리",
+    "up": "AMHTH30322",
+    "page": "edu/sw/hth/hts/pi/hth_htspi00_m00",
+    "desc": "[연계대상학생관리] "
+  },
+  {
+    "id": "AMHTH41101",
+    "name": "예방접종수신내역관리",
+    "depth": "             ┕예방접종수신내역관리",
+    "up": "AMHTH30322",
+    "page": "edu/sw/hth/hts/pi/hth_htspi01_m00",
+    "desc": "[예방접종수신내역관리] "
+  },
+  {
+    "id": "AMHTH30323",
+    "name": "건강기록부관리",
+    "depth": "         ┕건강기록부관리",
+    "up": "AMHTH20053",
+    "page": "",
+    "desc": "[건강기록부관리] "
+  },
+  {
+    "id": "AMHTH41102",
+    "name": "개인별등록",
+    "depth": "             ┕개인별등록",
+    "up": "AMHTH30323",
+    "page": "edu/sw/hth/hts/hr/hth_htshr00_m00",
+    "desc": "[개인별등록] "
+  },
+  {
+    "id": "AMHTH41103",
+    "name": "반별등록",
+    "depth": "             ┕반별등록",
+    "up": "AMHTH30323",
+    "page": "edu/sw/hth/hts/hr/hth_htshr01_m00",
+    "desc": "[반별등록] "
+  },
+  {
+    "id": "AMHTH41104",
+    "name": "반별출력",
+    "depth": "             ┕반별출력",
+    "up": "AMHTH30323",
+    "page": "edu/sw/hth/hts/hr/hth_htshr02_m00",
+    "desc": "[반별출력] "
+  },
+  {
+    "id": "AMHTH41128",
+    "name": "반별조회",
+    "depth": "             ┕반별조회",
+    "up": "AMHTH30323",
+    "page": "edu/sw/hth/hts/hr/hth_htshr02_m01",
+    "desc": "[반별조회] "
+  },
+  {
+    "id": "AMHTH41105",
+    "name": "항목별등록",
+    "depth": "             ┕항목별등록",
+    "up": "AMHTH30323",
+    "page": "edu/sw/hth/hts/hr/hth_htshr03_m00",
+    "desc": "[항목별등록] "
+  },
+  {
+    "id": "AMHTH41106",
+    "name": "건강기록부항목별조회",
+    "depth": "             ┕건강기록부항목별조회",
+    "up": "AMHTH30323",
+    "page": "edu/sw/hth/hts/hr/hth_htshr04_m00",
+    "desc": "[건강기록부항목별조회] "
+  },
+  {
+    "id": "AMHTH41109",
+    "name": "건강기록부전송관리",
+    "depth": "             ┕건강기록부전송관리",
+    "up": "AMHTH30323",
+    "page": "edu/sw/hth/hts/hr/hth_htshr07_m00",
+    "desc": "[건강기록부전송관리] "
+  },
+  {
+    "id": "AMHTH41110",
+    "name": "정정대장등록",
+    "depth": "             ┕정정대장등록",
+    "up": "AMHTH30323",
+    "page": "edu/sw/hth/hts/hr/hth_htshr08_m00",
+    "desc": "[정정대장등록] "
+  },
+  {
+    "id": "AMHTH41111",
+    "name": "정정대장조회",
+    "depth": "             ┕정정대장조회",
+    "up": "AMHTH30323",
+    "page": "edu/sw/hth/hts/hr/hth_htshr09_m00",
+    "desc": "[정정대장조회] "
+  },
+  {
+    "id": "AMEDS20004",
+    "name": "학교폭력실태조사",
+    "depth": "     ┕학교폭력실태조사#학교",
+    "up": "002001",
+    "page": "",
+    "desc": "[학교폭력실태조사] "
+  },
+  {
+    "id": "AMEDS30013",
+    "name": "설문대상관리",
+    "depth": "         ┕설문대상관리",
+    "up": "AMEDS20004",
+    "page": "",
+    "desc": "[설문대상관리] "
+  },
+  {
+    "id": "AMEDS40050",
+    "name": "참여번호관리",
+    "depth": "             ┕참여번호관리",
+    "up": "AMEDS30013",
+    "page": "edu/sa/eds/vfs/st/eds_vfsst03_m01",
+    "desc": "[참여번호관리] "
+  },
+  {
+    "id": "AMEDS40532",
+    "name": "설문대상제외관리",
+    "depth": "             ┕설문대상제외관리",
+    "up": "AMEDS30013",
+    "page": "edu/sa/eds/vfs/st/eds_vfsst04_m01",
+    "desc": "[설문대상제외관리] "
+  },
+  {
+    "id": "AMEDS20009",
+    "name": "학생정서행동특성검사",
+    "depth": "     ┕학생정서행동특성검사#학교",
+    "up": "002001",
+    "page": "",
+    "desc": "[학생정서행동특성검사] "
+  },
+  {
+    "id": "AMEDS30029",
+    "name": "자료관리",
+    "depth": "         ┕자료관리",
+    "up": "AMEDS20009",
+    "page": "",
+    "desc": "[자료관리] "
+  },
+  {
+    "id": "AMEDS40100",
+    "name": "검사지조회",
+    "depth": "             ┕검사지조회",
+    "up": "AMEDS30029",
+    "page": "edu/sa/eds/ses/dm/eds_sesdm02_m01",
+    "desc": "[검사지조회] "
+  },
+  {
+    "id": "AMEDS30030",
+    "name": "기본사항관리",
+    "depth": "         ┕기본사항관리",
+    "up": "AMEDS20009",
+    "page": "",
+    "desc": "[기본사항관리] "
+  },
+  {
+    "id": "AMEDS40101",
+    "name": "온라인검사기간조회",
+    "depth": "             ┕온라인검사기간조회",
+    "up": "AMEDS30030",
+    "page": "edu/sa/eds/ses/dm/eds_sesdm03_m01",
+    "desc": "[온라인검사기간조회] "
+  },
+  {
+    "id": "AMEDS40102",
+    "name": "참여번호관리",
+    "depth": "             ┕참여번호관리",
+    "up": "AMEDS30030",
+    "page": "edu/sa/eds/ses/dm/eds_sesdm04_m01",
+    "desc": "[참여번호관리] "
+  },
+  {
+    "id": "AMEDS30031",
+    "name": "검사진행현황",
+    "depth": "         ┕검사진행현황",
+    "up": "AMEDS20009",
+    "page": "",
+    "desc": "[검사진행현황] "
+  },
+  {
+    "id": "AMEDS40104",
+    "name": "반별참여현황조회",
+    "depth": "             ┕반별참여현황조회",
+    "up": "AMEDS30031",
+    "page": "edu/sa/eds/ses/ip/eds_sesip02_m01",
+    "desc": "[반별참여현황조회] "
+  },
+  {
+    "id": "AMEDS40105",
+    "name": "검사및2차조치일자관리",
+    "depth": "             ┕검사및2차조치일자관리",
+    "up": "AMEDS30031",
+    "page": "edu/sa/eds/ses/ip/eds_sesip03_m01",
+    "desc": "[검사및2차조치일자관리] "
+  },
+  {
+    "id": "AMEDS30032",
+    "name": "검사결과관리",
+    "depth": "         ┕검사결과관리",
+    "up": "AMEDS20009",
+    "page": "",
+    "desc": "[검사결과관리] "
+  },
+  {
+    "id": "AMEDS40106",
+    "name": "반별검사결과관리",
+    "depth": "             ┕반별검사결과관리",
+    "up": "AMEDS30032",
+    "page": "edu/sa/eds/ses/ir/eds_sesir01_m01",
+    "desc": "[반별검사결과관리] "
+  },
+  {
+    "id": "AMEDS40108",
+    "name": "반별검사결과",
+    "depth": "             ┕반별검사결과",
+    "up": "AMEDS30032",
+    "page": "edu/sa/eds/ses/ir/eds_sesir03_m01",
+    "desc": "[반별검사결과] "
+  },
+  {
+    "id": "AMEDS40110",
+    "name": "검사결과지통보",
+    "depth": "             ┕검사결과지통보",
+    "up": "AMEDS30032",
+    "page": "edu/sa/eds/ses/ir/eds_sesir05_m01",
+    "desc": "[검사결과지통보] "
+  },
+  {
+    "id": "AMEDS20501",
+    "name": "교육활동신청관리",
+    "depth": "     ┕교육활동신청관리#학교",
+    "up": "002001",
+    "page": "",
+    "desc": "[교육활동신청관리] "
+  },
+  {
+    "id": "AMEDS30501",
+    "name": "교외체험학습관리",
+    "depth": "         ┕교외체험학습관리",
+    "up": "AMEDS20501",
+    "page": "",
+    "desc": "[교외체험학습관리] "
+  },
+  {
+    "id": "AMEDS40501",
+    "name": "교외체험학습신청서관리",
+    "depth": "             ┕교외체험학습신청서관리",
+    "up": "AMEDS30501",
+    "page": "edu/sa/eds/eaa/ae/eds_eaaae01_m01",
+    "desc": "[교외체험학습신청서관리] "
+  },
+  {
+    "id": "AMEDS40511",
+    "name": "교외체험학습보고서관리",
+    "depth": "             ┕교외체험학습보고서관리",
+    "up": "AMEDS30501",
+    "page": "edu/sa/eds/eaa/ae/eds_eaaae02_m01",
+    "desc": "[교외체험학습보고서관리] "
+  },
+  {
+    "id": "AMEDS40521",
+    "name": "교외체험학습현황관리",
+    "depth": "             ┕교외체험학습현황관리",
+    "up": "AMEDS30501",
+    "page": "edu/sa/eds/eaa/ae/eds_eaaae04_m01",
+    "desc": "[교외체험학습현황관리] "
+  },
+  {
+    "id": "AMEDS30511",
+    "name": "출결관리",
+    "depth": "         ┕출결관리",
+    "up": "AMEDS20501",
+    "page": "",
+    "desc": "[출결관리] "
+  },
+  {
+    "id": "AMEDS40531",
+    "name": "결석신고서관리 ",
+    "depth": "             ┕결석신고서관리 ",
+    "up": "AMEDS30511",
+    "page": "edu/sa/eds/eaa/ae/eds_eaaae03_m01",
+    "desc": "[결석신고서관리 ] "
+  },
+  {
+    "id": "AMEDS40562",
+    "name": "지각·조퇴·결과신고서관리",
+    "depth": "             ┕지각·조퇴·결과신고서관리",
+    "up": "AMEDS30511",
+    "page": "edu/sa/eds/eaa/ae/eds_eaaae06_m01",
+    "desc": "[지각·조퇴·결과신고서관리] "
+  },
+  {
+    "id": "AMPAP20001",
+    "name": "{학생건강체력평가}PAPS",
+    "depth": "     ┕{학생건강체력평가}PAPS#초등학교",
+    "up": "002001",
+    "page": "",
+    "desc": "[{학생건강체력평가}PAPS] "
+  },
+  {
+    "id": "AMPAP30002",
+    "name": "측정결과입력",
+    "depth": "         ┕측정결과입력",
+    "up": "AMPAP20001",
+    "page": "",
+    "desc": "[측정결과입력] "
+  },
+  {
+    "id": "AMPAP40003",
+    "name": "학급별필수평가입력",
+    "depth": "             ┕학급별필수평가입력",
+    "up": "AMPAP30002",
+    "page": "edu/sa/pap/els/mr/pap_elsmr00_m00",
+    "desc": "[학급별필수평가입력] "
+  },
+  {
+    "id": "AMPAP40004",
+    "name": "학급별선택평가입력",
+    "depth": "             ┕학급별선택평가입력",
+    "up": "AMPAP30002",
+    "page": "edu/sa/pap/els/mr/pap_elsmr01_m00",
+    "desc": "[학급별선택평가입력] "
+  },
+  {
+    "id": "AMPAP40006",
+    "name": "개인별평가입력",
+    "depth": "             ┕개인별평가입력",
+    "up": "AMPAP30002",
+    "page": "edu/sa/pap/els/mr/pap_elsmr03_m00",
+    "desc": "[개인별평가입력] "
+  },
+  {
+    "id": "AMPAP40007",
+    "name": "학급별일괄입력",
+    "depth": "             ┕학급별일괄입력",
+    "up": "AMPAP30002",
+    "page": "edu/sa/pap/els/mr/pap_elsmr04_m00",
+    "desc": "[학급별일괄입력] "
+  },
+  {
+    "id": "AMPAP40008",
+    "name": "입력누락학생조회",
+    "depth": "             ┕입력누락학생조회",
+    "up": "AMPAP30002",
+    "page": "edu/sa/pap/els/ps/pap_elsps02_m00",
+    "desc": "[입력누락학생조회] "
+  },
+  {
+    "id": "AMPAP40009",
+    "name": "전입생자료관리",
+    "depth": "             ┕전입생자료관리",
+    "up": "AMPAP30002",
+    "page": "edu/sa/pap/els/mr/pap_elsmr05_m00",
+    "desc": "[전입생자료관리] "
+  },
+  {
+    "id": "AMPAP40010",
+    "name": "측정결과삭제",
+    "depth": "             ┕측정결과삭제",
+    "up": "AMPAP30002",
+    "page": "edu/sa/pap/els/mr/pap_elsmr06_m00",
+    "desc": "[측정결과삭제] "
+  },
+  {
+    "id": "AMPAP30003",
+    "name": "마감관리",
+    "depth": "         ┕마감관리",
+    "up": "AMPAP20001",
+    "page": "",
+    "desc": "[마감관리] "
+  },
+  {
+    "id": "AMPAP40011",
+    "name": "입력마감",
+    "depth": "             ┕입력마감",
+    "up": "AMPAP30003",
+    "page": "edu/sa/pap/els/dm/pap_elsdm00_m00",
+    "desc": "[입력마감] "
+  },
+  {
+    "id": "AMPAP30004",
+    "name": "평가결과조회",
+    "depth": "         ┕평가결과조회",
+    "up": "AMPAP20001",
+    "page": "",
+    "desc": "[평가결과조회] "
+  },
+  {
+    "id": "AMPAP40013",
+    "name": "학급별조회",
+    "depth": "             ┕학급별조회",
+    "up": "AMPAP30004",
+    "page": "edu/sa/pap/els/er/pap_elser00_m00",
+    "desc": "[학급별조회] "
+  },
+  {
+    "id": "AMPAP40014",
+    "name": "종목별조회",
+    "depth": "             ┕종목별조회",
+    "up": "AMPAP30004",
+    "page": "edu/sa/pap/els/er/pap_elser01_m00",
+    "desc": "[종목별조회] "
+  },
+  {
+    "id": "AMPAP40015",
+    "name": "개인별조회",
+    "depth": "             ┕개인별조회",
+    "up": "AMPAP30004",
+    "page": "edu/sa/pap/els/er/pap_elser02_m00",
+    "desc": "[개인별조회] "
+  },
+  {
+    "id": "AMPAP40016",
+    "name": "개인별이력조회",
+    "depth": "             ┕개인별이력조회",
+    "up": "AMPAP30004",
+    "page": "edu/sa/pap/els/er/pap_elser03_m00",
+    "desc": "[개인별이력조회] "
+  },
+  {
+    "id": "AMPAP40017",
+    "name": "PAPS지수조회 학년급",
+    "depth": "             ┕PAPS지수조회 학년급",
+    "up": "AMPAP30004",
+    "page": "edu/sa/pap/els/er/pap_elser04_m00",
+    "desc": "[PAPS지수조회 학년급] "
+  },
+  {
+    "id": "AMPAP40018",
+    "name": "PAPS지수조회 개인별",
+    "depth": "             ┕PAPS지수조회 개인별",
+    "up": "AMPAP30004",
+    "page": "edu/sa/pap/els/er/pap_elser05_m00",
+    "desc": "[PAPS지수조회 개인별] "
+  },
+  {
+    "id": "AMPAP30005",
+    "name": "신체활동관리",
+    "depth": "         ┕신체활동관리",
+    "up": "AMPAP20001",
+    "page": "",
+    "desc": "[신체활동관리] "
+  },
+  {
+    "id": "AMPAP40019",
+    "name": "신체활동처방",
+    "depth": "             ┕신체활동처방",
+    "up": "AMPAP30005",
+    "page": "edu/sa/pap/els/ba/pap_elsba00_m00",
+    "desc": "[신체활동처방] "
+  },
+  {
+    "id": "AMPAP30006",
+    "name": "관심학생조회",
+    "depth": "         ┕관심학생조회",
+    "up": "AMPAP20001",
+    "page": "",
+    "desc": "[관심학생조회] "
+  },
+  {
+    "id": "AMPAP40020",
+    "name": "측정제외학생관리",
+    "depth": "             ┕측정제외학생관리",
+    "up": "AMPAP30006",
+    "page": "edu/sa/pap/els/cs/pap_elscs00_m00",
+    "desc": "[측정제외학생관리] "
+  },
+  {
+    "id": "AMPAP40022",
+    "name": "체력우려학생조회",
+    "depth": "             ┕체력우려학생조회",
+    "up": "AMPAP30006",
+    "page": "edu/sa/pap/els/cs/pap_elscs02_m00",
+    "desc": "[체력우려학생조회] "
+  },
+  {
+    "id": "AMPAP40023",
+    "name": "체력우수학생조회",
+    "depth": "             ┕체력우수학생조회",
+    "up": "AMPAP30006",
+    "page": "edu/sa/pap/els/cs/pap_elscs03_m00",
+    "desc": "[체력우수학생조회] "
+  },
+  {
+    "id": "AMPAP40024",
+    "name": "체력향상우수학생조회",
+    "depth": "             ┕체력향상우수학생조회",
+    "up": "AMPAP30006",
+    "page": "edu/sa/pap/els/cs/pap_elscs05_m00",
+    "desc": "[체력향상우수학생조회] "
+  },
+  {
+    "id": "AMPAP40025",
+    "name": "측정종목별백분위조회",
+    "depth": "             ┕측정종목별백분위조회",
+    "up": "AMPAP30006",
+    "page": "edu/sa/pap/els/cs/pap_elscs06_m00",
+    "desc": "[측정종목별백분위조회] "
+  },
+  {
+    "id": "AMPAP30007",
+    "name": "통계및현황",
+    "depth": "         ┕통계및현황",
+    "up": "AMPAP20001",
+    "page": "",
+    "desc": "[통계및현황] "
+  },
+  {
+    "id": "AMPAP40026",
+    "name": "등급/점수통계",
+    "depth": "             ┕등급/점수통계",
+    "up": "AMPAP30007",
+    "page": "edu/sa/pap/els/ps/pap_elsps00_m00",
+    "desc": "[등급/점수통계] "
+  },
+  {
+    "id": "AMPAP40027",
+    "name": "측정기록통계",
+    "depth": "             ┕측정기록통계",
+    "up": "AMPAP30007",
+    "page": "edu/sa/pap/els/ps/pap_elsps01_m00",
+    "desc": "[측정기록통계] "
+  },
+  {
+    "id": "AMPAP40028",
+    "name": "측정현황",
+    "depth": "             ┕측정현황",
+    "up": "AMPAP30007",
+    "page": "edu/sa/pap/els/ps/pap_elsps03_m00",
+    "desc": "[측정현황] "
+  },
+  {
+    "id": "AMPAP40029",
+    "name": "등급별분포통계",
+    "depth": "             ┕등급별분포통계",
+    "up": "AMPAP30007",
+    "page": "edu/sa/pap/els/ps/pap_elsps04_m00",
+    "desc": "[등급별분포통계] "
+  },
+  {
+    "id": "AMPAP40030",
+    "name": "종목별평균기록통계",
+    "depth": "             ┕종목별평균기록통계",
+    "up": "AMPAP30007",
+    "page": "edu/sa/pap/els/ps/pap_elsps05_m00",
+    "desc": "[종목별평균기록통계] "
+  },
+  {
+    "id": "AMPAP30008",
+    "name": "PAPS자료실",
+    "depth": "         ┕PAPS자료실",
+    "up": "AMPAP20001",
+    "page": "",
+    "desc": "[PAPS자료실] "
+  },
+  {
+    "id": "AMPAP40032",
+    "name": "용어사전",
+    "depth": "             ┕용어사전",
+    "up": "AMPAP30008",
+    "page": "edu/sa/pap/els/pr/pap_elspr00_m00",
+    "desc": "[용어사전] "
+  },
+  {
+    "id": "AMPAP40033",
+    "name": "평가기준조회",
+    "depth": "             ┕평가기준조회",
+    "up": "AMPAP30008",
+    "page": "edu/sa/pap/els/pr/pap_elspr01_m00",
+    "desc": "[평가기준조회] "
+  },
+  {
+    "id": "AMDCM20001",
+    "name": "상담관리",
+    "depth": "     ┕상담관리#학교",
+    "up": "002001",
+    "page": "",
+    "desc": "[상담관리] "
+  },
+  {
+    "id": "AMDCM30001",
+    "name": "상담현황",
+    "depth": "         ┕상담현황",
+    "up": "AMDCM20001",
+    "page": "edu/sa/dcm/sch/dp/dcm_schdp01_m01",
+    "desc": "[상담현황] "
+  },
+  {
+    "id": "AMDCM30004",
+    "name": "상담통계",
+    "depth": "         ┕상담통계",
+    "up": "AMDCM20001",
+    "page": "edu/sa/dcm/sch/dp/dcm_schdp03_m01",
+    "desc": "[상담통계] "
+  },
+  {
+    "id": "002003",
+    "name": "동아리담임",
+    "depth": " ┕동아리담임",
+    "up": "AMSWC00003",
+    "page": "",
+    "desc": "[동아리담임] "
+  },
+  {
+    "id": "AMELS20005",
+    "name": "학생생활",
+    "depth": "     ┕학생생활",
+    "up": "002003",
+    "page": "",
+    "desc": "[학생생활] "
+  },
+  {
+    "id": "AMELS30027",
+    "name": "창의적체험활동",
+    "depth": "         ┕창의적체험활동",
+    "up": "AMELS20005",
+    "page": "",
+    "desc": "[창의적체험활동] "
+  },
+  {
+    "id": "AMELS40086",
+    "name": "동아리활동관리",
+    "depth": "             ┕동아리활동관리",
+    "up": "AMELS30027",
+    "page": "edu/sw/els/sdl/ce/els_sdlce01_m00",
+    "desc": "[동아리활동관리] "
+  },
+  {
+    "id": "AMELS40208",
+    "name": "부서만들기",
+    "depth": "             ┕부서만들기",
+    "up": "AMELS40086",
+    "page": "edu/sw/els/sdl/ce/els_sdlce01_m01",
+    "desc": "[부서만들기] "
+  },
+  {
+    "id": "AMELS40210",
+    "name": "동아리활동관리",
+    "depth": "             ┕동아리활동관리",
+    "up": "AMELS40086",
+    "page": "edu/sw/els/sdl/ce/els_sdlce01_m04",
+    "desc": "[동아리활동관리] "
+  },
+  {
+    "id": "105008",
+    "name": "체육",
+    "depth": " ┕체육",
+    "up": "AMSWC00003",
+    "page": "",
+    "desc": "[체육] "
+  },
+  {
+    "id": "AMPHE20001",
+    "name": "{체육}학교운동부관리",
+    "depth": "     ┕{체육}학교운동부관리#학교",
+    "up": "105008",
+    "page": "",
+    "desc": "[{체육}학교운동부관리] "
+  },
+  {
+    "id": "AMPHE30001",
+    "name": "학교운동부등록관리",
+    "depth": "         ┕학교운동부등록관리#학교",
+    "up": "AMPHE20001",
+    "page": "",
+    "desc": "[학교운동부등록관리] "
+  },
+  {
+    "id": "AMPHE40001",
+    "name": "학교운동부관리",
+    "depth": "             ┕학교운동부관리",
+    "up": "AMPHE30001",
+    "page": "edu/sa/phe/phe/am/phe_pheam01_m00",
+    "desc": "[학교운동부관리] "
+  },
+  {
+    "id": "AMPHE30002",
+    "name": "학교운동부지도교사·지도자관리",
+    "depth": "         ┕학교운동부지도교사·지도자관리#학교",
+    "up": "AMPHE20001",
+    "page": "",
+    "desc": "[학교운동부지도교사·지도자관리] "
+  },
+  {
+    "id": "AMPHE40002",
+    "name": "학교운동부지도교사·지도자관리",
+    "depth": "             ┕학교운동부지도교사·지도자관리",
+    "up": "AMPHE30002",
+    "page": "edu/sa/phe/phe/am/phe_pheam04_m00",
+    "desc": "[학교운동부지도교사·지도자관리] "
+  },
+  {
+    "id": "AMPHE30003",
+    "name": "학생선수관리",
+    "depth": "         ┕학생선수관리#학교",
+    "up": "AMPHE20001",
+    "page": "",
+    "desc": "[학생선수관리] "
+  },
+  {
+    "id": "AMPHE40003",
+    "name": "학생선수관리",
+    "depth": "             ┕학생선수관리",
+    "up": "AMPHE30003",
+    "page": "edu/sa/phe/phe/am/phe_pheam07_m00",
+    "desc": "[학생선수관리] "
+  },
+  {
+    "id": "AMPHE40004",
+    "name": "학생선수출결관리",
+    "depth": "             ┕학생선수출결관리",
+    "up": "AMPHE30003",
+    "page": "edu/sa/phe/phe/am/phe_pheam09_m00",
+    "desc": "[학생선수출결관리] "
+  },
+  {
+    "id": "AMPHE40005",
+    "name": "학교운동부훈련일지관리",
+    "depth": "             ┕학교운동부훈련일지관리",
+    "up": "AMPHE30003",
+    "page": "edu/sa/phe/phe/am/phe_pheam11_m00",
+    "desc": "[학교운동부훈련일지관리] "
+  },
+  {
+    "id": "AMPHE40070",
+    "name": "학교장확인서출력관리",
+    "depth": "             ┕학교장확인서출력관리",
+    "up": "AMPHE30003",
+    "page": "edu/sa/phe/phe/am/phe_pheam10_m00",
+    "desc": "[학교장확인서출력관리] "
+  },
+  {
+    "id": "AMPHE30004",
+    "name": "최저학력제관리",
+    "depth": "         ┕최저학력제관리#학교",
+    "up": "AMPHE20001",
+    "page": "",
+    "desc": "[최저학력제관리] "
+  },
+  {
+    "id": "AMPHE40008",
+    "name": "최저학력제평가",
+    "depth": "             ┕최저학력제평가#초등학교",
+    "up": "AMPHE30004",
+    "page": "edu/sa/phe/phe/am/phe_pheam18_m00",
+    "desc": "[최저학력제평가] "
+  },
+  {
+    "id": "AMPHE40009",
+    "name": "기초학력보장프로그램이수",
+    "depth": "             ┕기초학력보장프로그램이수#초등학교",
+    "up": "AMPHE30004",
+    "page": "edu/sa/phe/phe/am/phe_pheam19_m00",
+    "desc": "[기초학력보장프로그램이수] "
+  },
+  {
+    "id": "AMPHE30005",
+    "name": "기초자료",
+    "depth": "         ┕기초자료#학교",
+    "up": "AMPHE20001",
+    "page": "",
+    "desc": "[기초자료] "
+  },
+  {
+    "id": "AMPHE40059",
+    "name": "종목조회",
+    "depth": "             ┕종목조회",
+    "up": "AMPHE30005",
+    "page": "edu/sa/phe/phe/bm/phe_phebm28_m00",
+    "desc": "[종목조회] "
+  },
+  {
+    "id": "AMPHE40011",
+    "name": "세부종목조회",
+    "depth": "             ┕세부종목조회",
+    "up": "AMPHE30005",
+    "page": "edu/sa/phe/phe/bm/phe_phebm00_m00",
+    "desc": "[세부종목조회] "
+  },
+  {
+    "id": "AMPHE30006",
+    "name": "통계보고",
+    "depth": "         ┕통계보고#학교",
+    "up": "AMPHE20001",
+    "page": "",
+    "desc": "[통계보고] "
+  },
+  {
+    "id": "AMPHE40013",
+    "name": "학교운동부통계",
+    "depth": "             ┕학교운동부통계",
+    "up": "AMPHE30006",
+    "page": "edu/sa/phe/phe/ps/phe_pheps28_m00",
+    "desc": "[학교운동부통계] "
+  },
+  {
+    "id": "AMPHE40014",
+    "name": "학생선수통계",
+    "depth": "             ┕학생선수통계",
+    "up": "AMPHE30006",
+    "page": "edu/sa/phe/phe/ps/phe_pheps29_m00",
+    "desc": "[학생선수통계] "
+  },
+  {
+    "id": "AMPHE40060",
+    "name": "최저학력기준미도달학생선수통계",
+    "depth": "             ┕최저학력기준미도달학생선수통계",
+    "up": "AMPHE30006",
+    "page": "edu/sa/phe/phe/ps/phe_pheps31_m00",
+    "desc": "[최저학력기준미도달학생선수통계] "
+  },
+  {
+    "id": "AMPHE40061",
+    "name": "학생선수출결처리통계",
+    "depth": "             ┕학생선수출결처리통계",
+    "up": "AMPHE30006",
+    "page": "edu/sa/phe/phe/ps/phe_pheps35_m00",
+    "desc": "[학생선수출결처리통계] "
+  },
+  {
+    "id": "AMPHE20002",
+    "name": "{체육}학교스포츠클럽관리",
+    "depth": "     ┕{체육}학교스포츠클럽관리#학교",
+    "up": "105008",
+    "page": "",
+    "desc": "[{체육}학교스포츠클럽관리] "
+  },
+  {
+    "id": "AMPHE30007",
+    "name": "학교스포츠클럽관리",
+    "depth": "         ┕학교스포츠클럽관리#학교",
+    "up": "AMPHE20002",
+    "page": "",
+    "desc": "[학교스포츠클럽관리] "
+  },
+  {
+    "id": "AMPHE40015",
+    "name": "학교스포츠클럽종목조회",
+    "depth": "             ┕학교스포츠클럽종목조회",
+    "up": "AMPHE30007",
+    "page": "edu/sa/phe/phe/sm/phe_phesm00_m00",
+    "desc": "[학교스포츠클럽종목조회] "
+  },
+  {
+    "id": "AMPHE40020",
+    "name": "학교스포츠클럽지도교사관리",
+    "depth": "             ┕학교스포츠클럽지도교사관리",
+    "up": "AMPHE30007",
+    "page": "edu/sa/phe/phe/sm/phe_phesm05_m00",
+    "desc": "[학교스포츠클럽지도교사관리] "
+  },
+  {
+    "id": "AMPHE40016",
+    "name": "학교스포츠클럽관리",
+    "depth": "             ┕학교스포츠클럽관리",
+    "up": "AMPHE30007",
+    "page": "edu/sa/phe/phe/sm/phe_phesm01_m00",
+    "desc": "[학교스포츠클럽관리] "
+  },
+  {
+    "id": "AMPHE40018",
+    "name": "학교스포츠클럽지도교사별담당클럽조회",
+    "depth": "             ┕학교스포츠클럽지도교사별담당클럽조회",
+    "up": "AMPHE30007",
+    "page": "edu/sa/phe/phe/sm/phe_phesm03_m00",
+    "desc": "[학교스포츠클럽지도교사별담당클럽조회] "
+  },
+  {
+    "id": "AMPHE40017",
+    "name": "학교스포츠클럽활동내역관리",
+    "depth": "             ┕학교스포츠클럽활동내역관리",
+    "up": "AMPHE30007",
+    "page": "edu/sa/phe/phe/sm/phe_phesm02_m00",
+    "desc": "[학교스포츠클럽활동내역관리] "
+  },
+  {
+    "id": "AMPHE40019",
+    "name": "학교스포츠클럽특기사항관리",
+    "depth": "             ┕학교스포츠클럽특기사항관리",
+    "up": "AMPHE30007",
+    "page": "edu/sa/phe/phe/sm/phe_phesm04_m00",
+    "desc": "[학교스포츠클럽특기사항관리] "
+  },
+  {
+    "id": "AMPAP20001",
+    "name": "{학생건강체력평가}PAPS",
+    "depth": "     ┕{학생건강체력평가}PAPS#초등학교",
+    "up": "105008",
+    "page": "",
+    "desc": "[{학생건강체력평가}PAPS] "
+  },
+  {
+    "id": "AMPAP30001",
+    "name": "측정종목관리",
+    "depth": "         ┕측정종목관리",
+    "up": "AMPAP20001",
+    "page": "",
+    "desc": "[측정종목관리] "
+  },
+  {
+    "id": "AMPAP40001",
+    "name": "측정회차관리",
+    "depth": "             ┕측정회차관리",
+    "up": "AMPAP30001",
+    "page": "edu/sa/pap/els/ml/pap_elsml01_m00",
+    "desc": "[측정회차관리] "
+  },
+  {
+    "id": "AMPAP40002",
+    "name": "측정종목선택",
+    "depth": "             ┕측정종목선택",
+    "up": "AMPAP30001",
+    "page": "edu/sa/pap/els/ml/pap_elsml02_m00",
+    "desc": "[측정종목선택] "
+  },
+  {
+    "id": "AMPAP30002",
+    "name": "측정결과입력",
+    "depth": "         ┕측정결과입력",
+    "up": "AMPAP20001",
+    "page": "",
+    "desc": "[측정결과입력] "
+  },
+  {
+    "id": "AMPAP40003",
+    "name": "학급별필수평가입력",
+    "depth": "             ┕학급별필수평가입력",
+    "up": "AMPAP30002",
+    "page": "edu/sa/pap/els/mr/pap_elsmr00_m00",
+    "desc": "[학급별필수평가입력] "
+  },
+  {
+    "id": "AMPAP40004",
+    "name": "학급별선택평가입력",
+    "depth": "             ┕학급별선택평가입력",
+    "up": "AMPAP30002",
+    "page": "edu/sa/pap/els/mr/pap_elsmr01_m00",
+    "desc": "[학급별선택평가입력] "
+  },
+  {
+    "id": "AMPAP40005",
+    "name": "일괄입력",
+    "depth": "             ┕일괄입력",
+    "up": "AMPAP30002",
+    "page": "edu/sa/pap/els/mr/pap_elsmr02_m00",
+    "desc": "[일괄입력] "
+  },
+  {
+    "id": "AMPAP40006",
+    "name": "개인별평가입력",
+    "depth": "             ┕개인별평가입력",
+    "up": "AMPAP30002",
+    "page": "edu/sa/pap/els/mr/pap_elsmr03_m00",
+    "desc": "[개인별평가입력] "
+  },
+  {
+    "id": "AMPAP40007",
+    "name": "학급별일괄입력",
+    "depth": "             ┕학급별일괄입력",
+    "up": "AMPAP30002",
+    "page": "edu/sa/pap/els/mr/pap_elsmr04_m00",
+    "desc": "[학급별일괄입력] "
+  },
+  {
+    "id": "AMPAP40008",
+    "name": "입력누락학생조회",
+    "depth": "             ┕입력누락학생조회",
+    "up": "AMPAP30002",
+    "page": "edu/sa/pap/els/ps/pap_elsps02_m00",
+    "desc": "[입력누락학생조회] "
+  },
+  {
+    "id": "AMPAP40009",
+    "name": "전입생자료관리",
+    "depth": "             ┕전입생자료관리",
+    "up": "AMPAP30002",
+    "page": "edu/sa/pap/els/mr/pap_elsmr05_m00",
+    "desc": "[전입생자료관리] "
+  },
+  {
+    "id": "AMPAP40010",
+    "name": "측정결과삭제",
+    "depth": "             ┕측정결과삭제",
+    "up": "AMPAP30002",
+    "page": "edu/sa/pap/els/mr/pap_elsmr06_m00",
+    "desc": "[측정결과삭제] "
+  },
+  {
+    "id": "AMPAP30003",
+    "name": "마감관리",
+    "depth": "         ┕마감관리",
+    "up": "AMPAP20001",
+    "page": "",
+    "desc": "[마감관리] "
+  },
+  {
+    "id": "AMPAP40011",
+    "name": "입력마감",
+    "depth": "             ┕입력마감",
+    "up": "AMPAP30003",
+    "page": "edu/sa/pap/els/dm/pap_elsdm00_m00",
+    "desc": "[입력마감] "
+  },
+  {
+    "id": "AMPAP40012",
+    "name": "측정마감",
+    "depth": "             ┕측정마감",
+    "up": "AMPAP30003",
+    "page": "edu/sa/pap/els/dm/pap_elsdm01_m00",
+    "desc": "[측정마감] "
+  },
+  {
+    "id": "AMPAP30004",
+    "name": "평가결과조회",
+    "depth": "         ┕평가결과조회",
+    "up": "AMPAP20001",
+    "page": "",
+    "desc": "[평가결과조회] "
+  },
+  {
+    "id": "AMPAP40013",
+    "name": "학급별조회",
+    "depth": "             ┕학급별조회",
+    "up": "AMPAP30004",
+    "page": "edu/sa/pap/els/er/pap_elser00_m00",
+    "desc": "[학급별조회] "
+  },
+  {
+    "id": "AMPAP40014",
+    "name": "종목별조회",
+    "depth": "             ┕종목별조회",
+    "up": "AMPAP30004",
+    "page": "edu/sa/pap/els/er/pap_elser01_m00",
+    "desc": "[종목별조회] "
+  },
+  {
+    "id": "AMPAP40015",
+    "name": "개인별조회",
+    "depth": "             ┕개인별조회",
+    "up": "AMPAP30004",
+    "page": "edu/sa/pap/els/er/pap_elser02_m00",
+    "desc": "[개인별조회] "
+  },
+  {
+    "id": "AMPAP40016",
+    "name": "개인별이력조회",
+    "depth": "             ┕개인별이력조회",
+    "up": "AMPAP30004",
+    "page": "edu/sa/pap/els/er/pap_elser03_m00",
+    "desc": "[개인별이력조회] "
+  },
+  {
+    "id": "AMPAP40017",
+    "name": "PAPS지수조회 학년급",
+    "depth": "             ┕PAPS지수조회 학년급",
+    "up": "AMPAP30004",
+    "page": "edu/sa/pap/els/er/pap_elser04_m00",
+    "desc": "[PAPS지수조회 학년급] "
+  },
+  {
+    "id": "AMPAP40018",
+    "name": "PAPS지수조회 개인별",
+    "depth": "             ┕PAPS지수조회 개인별",
+    "up": "AMPAP30004",
+    "page": "edu/sa/pap/els/er/pap_elser05_m00",
+    "desc": "[PAPS지수조회 개인별] "
+  },
+  {
+    "id": "AMPAP30005",
+    "name": "신체활동관리",
+    "depth": "         ┕신체활동관리",
+    "up": "AMPAP20001",
+    "page": "",
+    "desc": "[신체활동관리] "
+  },
+  {
+    "id": "AMPAP40019",
+    "name": "신체활동처방",
+    "depth": "             ┕신체활동처방",
+    "up": "AMPAP30005",
+    "page": "edu/sa/pap/els/ba/pap_elsba00_m00",
+    "desc": "[신체활동처방] "
+  },
+  {
+    "id": "AMPAP30006",
+    "name": "관심학생조회",
+    "depth": "         ┕관심학생조회",
+    "up": "AMPAP20001",
+    "page": "",
+    "desc": "[관심학생조회] "
+  },
+  {
+    "id": "AMPAP40020",
+    "name": "측정제외학생관리",
+    "depth": "             ┕측정제외학생관리",
+    "up": "AMPAP30006",
+    "page": "edu/sa/pap/els/cs/pap_elscs00_m00",
+    "desc": "[측정제외학생관리] "
+  },
+  {
+    "id": "AMPAP40021",
+    "name": "측정제외학생조회",
+    "depth": "             ┕측정제외학생조회",
+    "up": "AMPAP30006",
+    "page": "edu/sa/pap/els/cs/pap_elscs01_m00",
+    "desc": "[측정제외학생조회] "
+  },
+  {
+    "id": "AMPAP40022",
+    "name": "체력우려학생조회",
+    "depth": "             ┕체력우려학생조회",
+    "up": "AMPAP30006",
+    "page": "edu/sa/pap/els/cs/pap_elscs02_m00",
+    "desc": "[체력우려학생조회] "
+  },
+  {
+    "id": "AMPAP40023",
+    "name": "체력우수학생조회",
+    "depth": "             ┕체력우수학생조회",
+    "up": "AMPAP30006",
+    "page": "edu/sa/pap/els/cs/pap_elscs03_m00",
+    "desc": "[체력우수학생조회] "
+  },
+  {
+    "id": "AMPAP40024",
+    "name": "체력향상우수학생조회",
+    "depth": "             ┕체력향상우수학생조회",
+    "up": "AMPAP30006",
+    "page": "edu/sa/pap/els/cs/pap_elscs05_m00",
+    "desc": "[체력향상우수학생조회] "
+  },
+  {
+    "id": "AMPAP40025",
+    "name": "측정종목별백분위조회",
+    "depth": "             ┕측정종목별백분위조회",
+    "up": "AMPAP30006",
+    "page": "edu/sa/pap/els/cs/pap_elscs06_m00",
+    "desc": "[측정종목별백분위조회] "
+  },
+  {
+    "id": "AMPAP30007",
+    "name": "통계및현황",
+    "depth": "         ┕통계및현황",
+    "up": "AMPAP20001",
+    "page": "",
+    "desc": "[통계및현황] "
+  },
+  {
+    "id": "AMPAP40026",
+    "name": "등급/점수통계",
+    "depth": "             ┕등급/점수통계",
+    "up": "AMPAP30007",
+    "page": "edu/sa/pap/els/ps/pap_elsps00_m00",
+    "desc": "[등급/점수통계] "
+  },
+  {
+    "id": "AMPAP40027",
+    "name": "측정기록통계",
+    "depth": "             ┕측정기록통계",
+    "up": "AMPAP30007",
+    "page": "edu/sa/pap/els/ps/pap_elsps01_m00",
+    "desc": "[측정기록통계] "
+  },
+  {
+    "id": "AMPAP40028",
+    "name": "측정현황",
+    "depth": "             ┕측정현황",
+    "up": "AMPAP30007",
+    "page": "edu/sa/pap/els/ps/pap_elsps03_m00",
+    "desc": "[측정현황] "
+  },
+  {
+    "id": "AMPAP40029",
+    "name": "등급별분포통계",
+    "depth": "             ┕등급별분포통계",
+    "up": "AMPAP30007",
+    "page": "edu/sa/pap/els/ps/pap_elsps04_m00",
+    "desc": "[등급별분포통계] "
+  },
+  {
+    "id": "AMPAP40030",
+    "name": "종목별평균기록통계",
+    "depth": "             ┕종목별평균기록통계",
+    "up": "AMPAP30007",
+    "page": "edu/sa/pap/els/ps/pap_elsps05_m00",
+    "desc": "[종목별평균기록통계] "
+  },
+  {
+    "id": "AMPAP40031",
+    "name": "PAPS통계/제출",
+    "depth": "             ┕PAPS통계/제출",
+    "up": "AMPAP30007",
+    "page": "edu/sa/pap/els/ps/pap_elsps06_m00",
+    "desc": "[PAPS통계/제출] "
+  },
+  {
+    "id": "AMPAP30008",
+    "name": "PAPS자료실",
+    "depth": "         ┕PAPS자료실",
+    "up": "AMPAP20001",
+    "page": "",
+    "desc": "[PAPS자료실] "
+  },
+  {
+    "id": "AMPAP40032",
+    "name": "용어사전",
+    "depth": "             ┕용어사전",
+    "up": "AMPAP30008",
+    "page": "edu/sa/pap/els/pr/pap_elspr00_m00",
+    "desc": "[용어사전] "
+  },
+  {
+    "id": "AMPAP40033",
+    "name": "평가기준조회",
+    "depth": "             ┕평가기준조회",
+    "up": "AMPAP30008",
+    "page": "edu/sa/pap/els/pr/pap_elspr01_m00",
+    "desc": "[평가기준조회] "
+  },
+  {
+    "id": "105014",
+    "name": "스포츠클럽",
+    "depth": " ┕스포츠클럽",
+    "up": "AMSWC00003",
+    "page": "",
+    "desc": "[스포츠클럽] "
+  },
+  {
+    "id": "AMPHE20002",
+    "name": "{체육}학교스포츠클럽관리",
+    "depth": "     ┕{체육}학교스포츠클럽관리#학교",
+    "up": "105014",
+    "page": "",
+    "desc": "[{체육}학교스포츠클럽관리] "
+  },
+  {
+    "id": "AMPHE30007",
+    "name": "학교스포츠클럽관리",
+    "depth": "         ┕학교스포츠클럽관리#학교",
+    "up": "AMPHE20002",
+    "page": "",
+    "desc": "[학교스포츠클럽관리] "
+  },
+  {
+    "id": "AMPHE40015",
+    "name": "학교스포츠클럽종목조회",
+    "depth": "             ┕학교스포츠클럽종목조회",
+    "up": "AMPHE30007",
+    "page": "edu/sa/phe/phe/sm/phe_phesm00_m00",
+    "desc": "[학교스포츠클럽종목조회] "
+  },
+  {
+    "id": "AMPHE40020",
+    "name": "학교스포츠클럽지도교사관리",
+    "depth": "             ┕학교스포츠클럽지도교사관리",
+    "up": "AMPHE30007",
+    "page": "edu/sa/phe/phe/sm/phe_phesm05_m00",
+    "desc": "[학교스포츠클럽지도교사관리] "
+  },
+  {
+    "id": "AMPHE40016",
+    "name": "학교스포츠클럽관리",
+    "depth": "             ┕학교스포츠클럽관리",
+    "up": "AMPHE30007",
+    "page": "edu/sa/phe/phe/sm/phe_phesm01_m00",
+    "desc": "[학교스포츠클럽관리] "
+  },
+  {
+    "id": "AMPHE40018",
+    "name": "학교스포츠클럽지도교사별담당클럽조회",
+    "depth": "             ┕학교스포츠클럽지도교사별담당클럽조회",
+    "up": "AMPHE30007",
+    "page": "edu/sa/phe/phe/sm/phe_phesm03_m00",
+    "desc": "[학교스포츠클럽지도교사별담당클럽조회] "
+  },
+  {
+    "id": "AMPHE40017",
+    "name": "학교스포츠클럽활동내역관리",
+    "depth": "             ┕학교스포츠클럽활동내역관리",
+    "up": "AMPHE30007",
+    "page": "edu/sa/phe/phe/sm/phe_phesm02_m00",
+    "desc": "[학교스포츠클럽활동내역관리] "
+  },
+  {
+    "id": "AMPHE40019",
+    "name": "학교스포츠클럽특기사항관리",
+    "depth": "             ┕학교스포츠클럽특기사항관리",
+    "up": "AMPHE30007",
+    "page": "edu/sa/phe/phe/sm/phe_phesm04_m00",
+    "desc": "[학교스포츠클럽특기사항관리] "
+  },
+  {
+    "id": "105015",
+    "name": "PAPS",
+    "depth": " ┕PAPS",
+    "up": "AMSWC00003",
+    "page": "",
+    "desc": "[PAPS] "
+  },
+  {
+    "id": "AMPAP20001",
+    "name": "{학생건강체력평가}PAPS",
+    "depth": "     ┕{학생건강체력평가}PAPS#초등학교",
+    "up": "105015",
+    "page": "",
+    "desc": "[{학생건강체력평가}PAPS] "
+  },
+  {
+    "id": "AMPAP30001",
+    "name": "측정종목관리",
+    "depth": "         ┕측정종목관리",
+    "up": "AMPAP20001",
+    "page": "",
+    "desc": "[측정종목관리] "
+  },
+  {
+    "id": "AMPAP40001",
+    "name": "측정회차관리",
+    "depth": "             ┕측정회차관리",
+    "up": "AMPAP30001",
+    "page": "edu/sa/pap/els/ml/pap_elsml01_m00",
+    "desc": "[측정회차관리] "
+  },
+  {
+    "id": "AMPAP40002",
+    "name": "측정종목선택",
+    "depth": "             ┕측정종목선택",
+    "up": "AMPAP30001",
+    "page": "edu/sa/pap/els/ml/pap_elsml02_m00",
+    "desc": "[측정종목선택] "
+  },
+  {
+    "id": "AMPAP30002",
+    "name": "측정결과입력",
+    "depth": "         ┕측정결과입력",
+    "up": "AMPAP20001",
+    "page": "",
+    "desc": "[측정결과입력] "
+  },
+  {
+    "id": "AMPAP40003",
+    "name": "학급별필수평가입력",
+    "depth": "             ┕학급별필수평가입력",
+    "up": "AMPAP30002",
+    "page": "edu/sa/pap/els/mr/pap_elsmr00_m00",
+    "desc": "[학급별필수평가입력] "
+  },
+  {
+    "id": "AMPAP40004",
+    "name": "학급별선택평가입력",
+    "depth": "             ┕학급별선택평가입력",
+    "up": "AMPAP30002",
+    "page": "edu/sa/pap/els/mr/pap_elsmr01_m00",
+    "desc": "[학급별선택평가입력] "
+  },
+  {
+    "id": "AMPAP40005",
+    "name": "일괄입력",
+    "depth": "             ┕일괄입력",
+    "up": "AMPAP30002",
+    "page": "edu/sa/pap/els/mr/pap_elsmr02_m00",
+    "desc": "[일괄입력] "
+  },
+  {
+    "id": "AMPAP40006",
+    "name": "개인별평가입력",
+    "depth": "             ┕개인별평가입력",
+    "up": "AMPAP30002",
+    "page": "edu/sa/pap/els/mr/pap_elsmr03_m00",
+    "desc": "[개인별평가입력] "
+  },
+  {
+    "id": "AMPAP40007",
+    "name": "학급별일괄입력",
+    "depth": "             ┕학급별일괄입력",
+    "up": "AMPAP30002",
+    "page": "edu/sa/pap/els/mr/pap_elsmr04_m00",
+    "desc": "[학급별일괄입력] "
+  },
+  {
+    "id": "AMPAP40008",
+    "name": "입력누락학생조회",
+    "depth": "             ┕입력누락학생조회",
+    "up": "AMPAP30002",
+    "page": "edu/sa/pap/els/ps/pap_elsps02_m00",
+    "desc": "[입력누락학생조회] "
+  },
+  {
+    "id": "AMPAP40009",
+    "name": "전입생자료관리",
+    "depth": "             ┕전입생자료관리",
+    "up": "AMPAP30002",
+    "page": "edu/sa/pap/els/mr/pap_elsmr05_m00",
+    "desc": "[전입생자료관리] "
+  },
+  {
+    "id": "AMPAP40010",
+    "name": "측정결과삭제",
+    "depth": "             ┕측정결과삭제",
+    "up": "AMPAP30002",
+    "page": "edu/sa/pap/els/mr/pap_elsmr06_m00",
+    "desc": "[측정결과삭제] "
+  },
+  {
+    "id": "AMPAP30003",
+    "name": "마감관리",
+    "depth": "         ┕마감관리",
+    "up": "AMPAP20001",
+    "page": "",
+    "desc": "[마감관리] "
+  },
+  {
+    "id": "AMPAP40011",
+    "name": "입력마감",
+    "depth": "             ┕입력마감",
+    "up": "AMPAP30003",
+    "page": "edu/sa/pap/els/dm/pap_elsdm00_m00",
+    "desc": "[입력마감] "
+  },
+  {
+    "id": "AMPAP40012",
+    "name": "측정마감",
+    "depth": "             ┕측정마감",
+    "up": "AMPAP30003",
+    "page": "edu/sa/pap/els/dm/pap_elsdm01_m00",
+    "desc": "[측정마감] "
+  },
+  {
+    "id": "AMPAP30004",
+    "name": "평가결과조회",
+    "depth": "         ┕평가결과조회",
+    "up": "AMPAP20001",
+    "page": "",
+    "desc": "[평가결과조회] "
+  },
+  {
+    "id": "AMPAP40013",
+    "name": "학급별조회",
+    "depth": "             ┕학급별조회",
+    "up": "AMPAP30004",
+    "page": "edu/sa/pap/els/er/pap_elser00_m00",
+    "desc": "[학급별조회] "
+  },
+  {
+    "id": "AMPAP40014",
+    "name": "종목별조회",
+    "depth": "             ┕종목별조회",
+    "up": "AMPAP30004",
+    "page": "edu/sa/pap/els/er/pap_elser01_m00",
+    "desc": "[종목별조회] "
+  },
+  {
+    "id": "AMPAP40015",
+    "name": "개인별조회",
+    "depth": "             ┕개인별조회",
+    "up": "AMPAP30004",
+    "page": "edu/sa/pap/els/er/pap_elser02_m00",
+    "desc": "[개인별조회] "
+  },
+  {
+    "id": "AMPAP40016",
+    "name": "개인별이력조회",
+    "depth": "             ┕개인별이력조회",
+    "up": "AMPAP30004",
+    "page": "edu/sa/pap/els/er/pap_elser03_m00",
+    "desc": "[개인별이력조회] "
+  },
+  {
+    "id": "AMPAP40017",
+    "name": "PAPS지수조회 학년급",
+    "depth": "             ┕PAPS지수조회 학년급",
+    "up": "AMPAP30004",
+    "page": "edu/sa/pap/els/er/pap_elser04_m00",
+    "desc": "[PAPS지수조회 학년급] "
+  },
+  {
+    "id": "AMPAP40018",
+    "name": "PAPS지수조회 개인별",
+    "depth": "             ┕PAPS지수조회 개인별",
+    "up": "AMPAP30004",
+    "page": "edu/sa/pap/els/er/pap_elser05_m00",
+    "desc": "[PAPS지수조회 개인별] "
+  },
+  {
+    "id": "AMPAP30005",
+    "name": "신체활동관리",
+    "depth": "         ┕신체활동관리",
+    "up": "AMPAP20001",
+    "page": "",
+    "desc": "[신체활동관리] "
+  },
+  {
+    "id": "AMPAP40019",
+    "name": "신체활동처방",
+    "depth": "             ┕신체활동처방",
+    "up": "AMPAP30005",
+    "page": "edu/sa/pap/els/ba/pap_elsba00_m00",
+    "desc": "[신체활동처방] "
+  },
+  {
+    "id": "AMPAP30006",
+    "name": "관심학생조회",
+    "depth": "         ┕관심학생조회",
+    "up": "AMPAP20001",
+    "page": "",
+    "desc": "[관심학생조회] "
+  },
+  {
+    "id": "AMPAP40020",
+    "name": "측정제외학생관리",
+    "depth": "             ┕측정제외학생관리",
+    "up": "AMPAP30006",
+    "page": "edu/sa/pap/els/cs/pap_elscs00_m00",
+    "desc": "[측정제외학생관리] "
+  },
+  {
+    "id": "AMPAP40021",
+    "name": "측정제외학생조회",
+    "depth": "             ┕측정제외학생조회",
+    "up": "AMPAP30006",
+    "page": "edu/sa/pap/els/cs/pap_elscs01_m00",
+    "desc": "[측정제외학생조회] "
+  },
+  {
+    "id": "AMPAP40022",
+    "name": "체력우려학생조회",
+    "depth": "             ┕체력우려학생조회",
+    "up": "AMPAP30006",
+    "page": "edu/sa/pap/els/cs/pap_elscs02_m00",
+    "desc": "[체력우려학생조회] "
+  },
+  {
+    "id": "AMPAP40023",
+    "name": "체력우수학생조회",
+    "depth": "             ┕체력우수학생조회",
+    "up": "AMPAP30006",
+    "page": "edu/sa/pap/els/cs/pap_elscs03_m00",
+    "desc": "[체력우수학생조회] "
+  },
+  {
+    "id": "AMPAP40024",
+    "name": "체력향상우수학생조회",
+    "depth": "             ┕체력향상우수학생조회",
+    "up": "AMPAP30006",
+    "page": "edu/sa/pap/els/cs/pap_elscs05_m00",
+    "desc": "[체력향상우수학생조회] "
+  },
+  {
+    "id": "AMPAP40025",
+    "name": "측정종목별백분위조회",
+    "depth": "             ┕측정종목별백분위조회",
+    "up": "AMPAP30006",
+    "page": "edu/sa/pap/els/cs/pap_elscs06_m00",
+    "desc": "[측정종목별백분위조회] "
+  },
+  {
+    "id": "AMPAP30007",
+    "name": "통계및현황",
+    "depth": "         ┕통계및현황",
+    "up": "AMPAP20001",
+    "page": "",
+    "desc": "[통계및현황] "
+  },
+  {
+    "id": "AMPAP40026",
+    "name": "등급/점수통계",
+    "depth": "             ┕등급/점수통계",
+    "up": "AMPAP30007",
+    "page": "edu/sa/pap/els/ps/pap_elsps00_m00",
+    "desc": "[등급/점수통계] "
+  },
+  {
+    "id": "AMPAP40027",
+    "name": "측정기록통계",
+    "depth": "             ┕측정기록통계",
+    "up": "AMPAP30007",
+    "page": "edu/sa/pap/els/ps/pap_elsps01_m00",
+    "desc": "[측정기록통계] "
+  },
+  {
+    "id": "AMPAP40028",
+    "name": "측정현황",
+    "depth": "             ┕측정현황",
+    "up": "AMPAP30007",
+    "page": "edu/sa/pap/els/ps/pap_elsps03_m00",
+    "desc": "[측정현황] "
+  },
+  {
+    "id": "AMPAP40029",
+    "name": "등급별분포통계",
+    "depth": "             ┕등급별분포통계",
+    "up": "AMPAP30007",
+    "page": "edu/sa/pap/els/ps/pap_elsps04_m00",
+    "desc": "[등급별분포통계] "
+  },
+  {
+    "id": "AMPAP40030",
+    "name": "종목별평균기록통계",
+    "depth": "             ┕종목별평균기록통계",
+    "up": "AMPAP30007",
+    "page": "edu/sa/pap/els/ps/pap_elsps05_m00",
+    "desc": "[종목별평균기록통계] "
+  },
+  {
+    "id": "AMPAP40031",
+    "name": "PAPS통계/제출",
+    "depth": "             ┕PAPS통계/제출",
+    "up": "AMPAP30007",
+    "page": "edu/sa/pap/els/ps/pap_elsps06_m00",
+    "desc": "[PAPS통계/제출] "
+  },
+  {
+    "id": "AMPAP30008",
+    "name": "PAPS자료실",
+    "depth": "         ┕PAPS자료실",
+    "up": "AMPAP20001",
+    "page": "",
+    "desc": "[PAPS자료실] "
+  },
+  {
+    "id": "AMPAP40032",
+    "name": "용어사전",
+    "depth": "             ┕용어사전",
+    "up": "AMPAP30008",
+    "page": "edu/sa/pap/els/pr/pap_elspr00_m00",
+    "desc": "[용어사전] "
+  },
+  {
+    "id": "AMPAP40033",
+    "name": "평가기준조회",
+    "depth": "             ┕평가기준조회",
+    "up": "AMPAP30008",
+    "page": "edu/sa/pap/els/pr/pap_elspr01_m00",
+    "desc": "[평가기준조회] "
+  }
+]

@@ -624,7 +624,7 @@ def serve_pdf_fragment(record_key):
         return "Record not found", 404
 
     raw_pdf_path = schedule._clean_text(record.get(schedule.COLUMN_PDF, ""))
-    pdf_path = os.path.expandvars(os.path.expanduser(raw_pdf_path))
+    pdf_path = schedule.resolve_pdf_path(raw_pdf_path)
 
     if not pdf_path or not os.path.exists(pdf_path):
         return f"PDF not found: {pdf_path}", 404

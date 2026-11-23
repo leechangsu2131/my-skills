@@ -101,11 +101,15 @@ def write_status(status: dict) -> None:
 
 
 def lesson_pdf(cfg: dict, record_key: str, dest: pathlib.Path) -> bool:
-    base = cfg.get("schedule_api", "http://127.0.0.1:5000").rstrip("/")
     try:
-        with urllib.request.urlopen(f"{base}/api/pdf/{urllib.parse.quote(record_key)}", timeout=90) as res:
-            data = res.read()
-    except (urllib.error.URLError, OSError):
+        if cfg.get("schedule_backend", "supabase") == "supabase":
+            import supabase_schedule
+            data = supabase_schedule.pdf_for_lesson(record_key)
+        else:
+            base = cfg.get("schedule_api", "http://127.0.0.1:5000").rstrip("/")
+            with urllib.request.urlopen(f"{base}/api/pdf/{urllib.parse.quote(record_key)}", timeout=90) as res:
+                data = res.read()
+    except (urllib.error.URLError, OSError, RuntimeError, ValueError):
         return False
     if data[:5] != b"%PDF-":
         return False

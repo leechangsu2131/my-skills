@@ -21,7 +21,7 @@ mapper/    groups.json·PDF → 진도표 행(generated_rows/) → 시트 업로
 
 ## 1. 받기 — `download/guide_download.py`
 
-`C:\Python313\python.exe download\guide_download.py 수학 사회 [--list] [--with-plan]` (selenium)
+`python download\guide_download.py 수학 사회 [--list] [--with-plan]` (selenium 설치된 Python)
 수업 비서(`teacherlesson-assistant`)의 크롬 프로필·포트·출판사 설정을 같이 쓴다. 출판사별 방법(아이스크림·미래엔 ZIP 부분 받기·천재 T셀파)은 [download/README.md](download/README.md).
 
 ## 2. 나누기 — `splitter/` ([README](splitter/README.md))
@@ -31,6 +31,21 @@ mapper/    groups.json·PDF → 진도표 행(generated_rows/) → 시트 업로
 - 쪽 범위는 맞는데 제목·묶음 차시가 틀릴 때(아이스크림 사회): `scripts/apply_annual_plan.py --groups … --plan 연간지도계획.pdf`
 - 천재 도덕 통합본: 차시 첫 쪽이 `1 4 … 차시 목표`. mapper 가 찾는 `도덕3_<단원>_<차시>_지도서.pdf` 이름으로 나눈다.
 - 결과: `<원본이름>/groups.json`, `<원본이름>/pdf_splits/`
+
+### 2-A. 수업 비서용 글 자료 정제 — `auto_split.py`
+
+분할본이 아니라 원본 PDF를 페이지별 Markdown으로 정리해 `teacherlesson-assistant`가 차시 단위로 가져오게 한다.
+
+```powershell
+python auto_split.py "D:\지도서\지도서.pdf" --subject 수학 --unit "6단원" `
+  --from-page 120 --to-page 168 --lesson-list-json lessons.json --publish-to-assistant
+```
+
+- Gemini에는 각 쪽 앞부분과 `차시`가 든 줄만 색인으로 보낸다. 전체 PDF는 보내지 않는다.
+- `units/<과목>__<단원>.json`이 있으면 그 진도표 차시 목록을 자동으로 쓴다. 없으면 먼저 `python ..\teacherlesson-assistant\build_units.py --all`을 실행하거나 `--lesson-list-json lessons.json`으로 `{"lessons":[{"from":1,"to":1,"title":"차시 제목"}]}` 형식의 목록을 준다. 목록이 없으면 Gemini 호출을 시작하지 않는다. 번호·제목·시작 쪽을 대조해 하나라도 어긋나면 Markdown을 만들거나 수업 비서 폴더에 쓰지 않는다.
+- 통과하면 `notebooklm/<과목>/<단원>.md`에 쪽 표시가 있는 차시별 글을 저장한다. 이미지뿐이거나 추출 글자가 적은 쪽은 OCR 대신 확인 표식을 붙인다.
+- `--publish-to-assistant`는 현재 PC의 `my-skills-data/teacherlesson-assistant`에 쓴다. 이 위치가 OneDrive 공유 폴더가 아니면 다른 PC와 동기화되지 않는다.
+- 우선 `--inspect-only`로 색인만 만들 수 있다. 분할·시트 업로드는 이 명령에서 하지 않는다.
 
 ## 3. 진도표 행 — `mapper/` ([README](mapper/README.md))
 

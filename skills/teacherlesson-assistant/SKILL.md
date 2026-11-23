@@ -10,7 +10,7 @@ metadata:
 
 # 수업 비서 (teacherlesson-assistant)
 
-- **수업 화면** (`assistant_server.py` + `web/index.html`, 파이썬 기본 기능만) — 교사가 수업 중에 직접 쓴다. 과목별 차시 자료 자동 열기 도우미는 `sites/`(음악 Douclass, 사회 아이스크림·Douclass, selenium). 실행 방법·화면 기능·저장 위치·지도서 받기는 [README.md](README.md).
+- **수업 화면** (`assistant_server.py` + `web/index.html`) — Supabase에서 시간표를 읽고 완료·연장·이동을 Supabase에 저장한다. 수업 기록은 로컬 데이터 폴더에 저장한다. Supabase 연결에 중앙 `.env`의 `SUPABASE_URL`(또는 `NEXT_PUBLIC_SUPABASE_URL`)과 `SUPABASE_SERVICE_ROLE_KEY`가 필요하다. 과목별 차시 자료 자동 열기 도우미는 `sites/`(음악 Douclass, 사회 아이스크림·Douclass, selenium). 실행 방법·화면 기능·저장 위치·지도서 받기는 [README.md](README.md).
 - **Claude 작업 절차** (아래) — 화면은 Claude가 만든 파일을 읽기만 한다.
 
 데이터 폴더: `내 문서\my-skills-data\teacherlesson-assistant\` (config, units, flows, sessions, publisher_notes). 학생 이름이 들어간 메모·녹음은 이 폴더에만 두고 기억(memory)·CLAUDE.md·깃·홈페이지에 옮기지 않는다.
@@ -29,8 +29,8 @@ metadata:
 
 아래 손 절차는 교사가 **그 차시를 콕 집어** Claude 에게 직접 만들어 달라고 할 때만 한다.
 
-1. `GET http://127.0.0.1:5180/api/state?date=YYYY-MM-DD`(꺼져 있으면 `teacherlesson-schedule`의 `/api/dashboard`)로 수업을 찾는다.
-2. `http://127.0.0.1:5000/api/pdf/<record_key>`(그 차시 쪽만 잘린 PDF)에서 텍스트를 뽑는다. 지도서 전체를 통째로 읽지 않는다.
+1. `GET http://127.0.0.1:5180/api/state?date=YYYY-MM-DD`로 Supabase 진도표의 수업을 찾는다.
+2. `http://127.0.0.1:5180/api/pdf/<record_key>`(그 차시 쪽만 잘린 PDF)에서 텍스트를 뽑는다. 지도서 전체를 통째로 읽지 않는다.
 3. `flows/<record_key>.json`을 쓴다. 지도서 문장은 수업 중 한눈에 보이게 줄인다.
 
 ```json
@@ -67,7 +67,7 @@ v0.1은 "복사하고 하이클래스 열기"까지만. 자동 게시는 ISSUES 
 
 ### D. 지도서 받기 — "지도서 받아줘"
 
-`teacherlesson-guide` 스킬로 옮겼다: `C:\Python313\python.exe ..\teacherlesson-guide\download\guide_download.py <과목…>` → 같은 스킬의 splitter → mapper.
+`teacherlesson-guide` 스킬로 옮겼다: `python ..\teacherlesson-guide\download\guide_download.py <과목…>` (selenium 설치된 Python) → 같은 스킬의 splitter → mapper.
 
 ## 연결되는 스킬
 

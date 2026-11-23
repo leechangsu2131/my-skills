@@ -1,5 +1,11 @@
 [
   {
+    "timestamp": "2026-11-23T13:30:15.120603",
+    "action": "catch_up_to_lesson",
+    "subject": "도덕",
+    "details": "bridge_row=None, record_key=lesson-0120"
+  },
+  {
     "timestamp": "2026-11-22T13:17:44.987603",
     "action": "catch_up_to_lesson",
     "subject": "국어",

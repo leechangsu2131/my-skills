@@ -212,6 +212,8 @@ class Neis:
 
     def open_screen(self, app_key: str, leaf: str):
         """[체육] > 학생선수관리 트리의 화면 열기. 이미 떠 있으면 하단 MDI 탭만 누른다."""
+        # 이전 실행이 남긴 내 팝업(결재요청·학생찾기)이 화면을 가리면 탭 전환이 안 됨 → 닫기
+        self.js("""for (const k of ['phe_pheam10_p00','phe_pheam07_p02']) { const a=__sa.app(k); if (a) { try { a.close(); } catch(e) { try { a.lookup('btnCancel').click(); } catch(e2) {} } } } await __sa.sleep(800); return 1;""")
         if self.running(app_key):
             self.click_text(leaf, ymin=880)  # 하단 MDI 탭
             time.sleep(1)
@@ -362,6 +364,14 @@ def cmd_case(a):
         sys.exit("읽을 공문 파일이 없습니다.")
     main_name = next((k for k in texts if "(본문)" in k), next(iter(texts)))
     info = parse_gongmun(texts[main_name])
+    # 스캔 PDF 등 글자를 못 읽을 때: --set contest=… place=… sender=… docno=… docdate=YYYY-MM-DD period=YYYY-MM-DD~YYYY-MM-DD
+    for kv in a.set or []:
+        k, _, v = kv.partition("=")
+        if k == "period":
+            ds = parse_dates(v.replace("~", " ~ "))
+            info["period"], info["period_text"] = [d.isoformat() for d in ds], v
+        else:
+            info[k] = v
     ath = load_athletes()
     allt = "\n".join(texts.values())
     if a.students:
@@ -650,11 +660,19 @@ def cmd_register(a):
     start = (a.start or dt.date.today().isoformat()).replace("-", "")
     # 개인운동선수 체크 → 전체 종목 콤보(cmbItemCd2), 아니면 학교운동부 종목 콤보(cmbItemCd3). 체크 먼저, 보이는 콤보에 종목.
     # 주의: 이벤트를 JS로 강제 발생시키면 콤보 항목이 두 번 붙어 "value of the item is duplicated" 오류 → 체크박스는 실제 마우스 클릭
-    cbx = n.js(f"""const m=__sa.app('{APP_ATHLETE}'); const cb=m.lookup('cbxSptsYn'); const r=document.getElementById('uuid-'+cb.uuid).getBoundingClientRect();
-      return {{v: cb.value, x: Math.round(r.x+10), y: Math.round(r.y+r.height/2)}};""")
-    if (cbx["v"] == "Y") != bool(a.personal):
+    for _ in range(4):
+        cbx = n.js(f"""const m=__sa.app('{APP_ATHLETE}'); const cb=m.lookup('cbxSptsYn'); const e=document.getElementById('uuid-'+cb.uuid);
+          const i=e.querySelector('.cl-checkbox-icon')||e; const r=i.getBoundingClientRect();
+          return {{v: cb.value, x: Math.round(r.x+r.width/2), y: Math.round(r.y+r.height/2), w: r.width}};""")
+        if (cbx["v"] == "Y") == bool(a.personal):
+            break
+        if not cbx["w"]:
+            time.sleep(1.5)  # 아직 화면에 안 그려짐
+            continue
         n.t.click(cbx["x"], cbx["y"])
         time.sleep(1.5)
+    else:
+        sys.exit("개인운동선수 체크를 바꾸지 못했습니다. 화면을 확인하세요.")
     form = n.js(f"""const m=__sa.app('{APP_ATHLETE}'); const it={json.dumps(a.item or '')}, dt={json.dumps(a.detail or '')};
       const cb=m.lookup('cbxSptsYn');
       const pick=(c,t)=>{{ if(!t) return c.getSelectionFirst? (c.getSelectionFirst()||{{}}).label : c.value; const items=c.getItems(); const hit=items.find(x=>x.label===t)||items.find(x=>x.label.includes(t));
@@ -664,8 +682,8 @@ def cmd_register(a):
       const detail=pick(m.lookup('cmbDtlItemCd'),dt);
       m.lookup('dti8').value='{start}';
       const ins=m.lookup('dsInsert'); return {{item, detail, stu: ins.getRowCount()? (ins.getValue(0,'grdCdNm')+' '+ins.getValue(0,'clsNm')+' '+ins.getValue(0,'stuNm')) : '', start: m.lookup('dti8').value, personal: cb.value}};""")
-    log(f"[register] {form['stu']} | 종목 {form['item']} / {form['detail']} | 개인운동선수 {form['personal']} | 운동시작 {form['start']}")
-    if str(form["item"]).startswith("X:") or not a.item:
+    log(f"[register] {form.get('stu')} | 종목 {form.get('item')} / {form.get('detail') or '-'} | 개인운동선수 {form.get('personal')} | 운동시작 {form.get('start')}")
+    if str(form.get("item")).startswith("X:") or not a.item:
         log("  ⚠ 종목을 못 골랐습니다(--item 확인). 화면에서 직접 고르세요.")
     log(f"  화면: {n.t.shot('register_form')}")
     if not a.apply:
@@ -709,6 +727,7 @@ def main():
         p.add_argument("--item", help="종목(기본: 학생 종목)")
         p.add_argument("--attach", help="붙임 이름(기본: 대회 공문)")
         p.add_argument("--no-cert", action="store_true", help="학교장 확인서 발급 문구 빼기")
+        p.add_argument("--set", nargs="*", help="못 읽은 항목 직접: contest= place= sender= docno= docdate= period=")
         if name == "run":
             p.add_argument("--no-neis", action="store_true", help="나이스 결재요청 체크 생략")
     p = sp.add_parser("draft")

@@ -15,12 +15,16 @@
 ### ISSUE-011: 학생선수 대회 참가 처리 자동화(neis_student_athlete.py) — 실제 승인요청·상신 미검증 (2026-11-23)
 - **상태**: 🔵 진행 중
 - **검증됨(2026-11-23)**: `status`(출결관리 조회·캐시), `case`/`draft`(지난 검도대회 공문으로 실제 기안 10211과 같은 본문 생성), `request` 체크까지, `register` 저장 직전까지.
-- **미검증**: `request --apply`(승인요청 → 기안창), `--sancr` 결재선 지정, `submit` 상신, `register --apply` 저장. 다음 실제 대회 때 사용자와 함께 한 단계씩 확인 후 여기 기록.
+- **검증됨(2026-11-23 추가)**: `register --apply` 실제 저장 2명(태권도 개인운동선수, 세부종목 격파). 저장 뒤 '해당 자료를 저장하시겠습니까?' → 내용 없는 알림 → `status`로 등록 확인.
+- **미검증**: `request --apply`(승인요청 → 기안창), `--sancr` 결재선 지정, `submit` 상신. 다음 실제 대회 때 사용자와 함께 한 단계씩 확인 후 여기 기록.
 - **함정·해결**:
   1. 메뉴 텍스트에 숨은 접근성 문구(`체육 0단계 메뉴항목`, `학생선수관리 2단계`) → innerText 첫 줄에서 `\s*\d단계.*$` 제거 후 비교. `offsetParent`는 fixed 요소에서 null이라 `getClientRects()`로 가시성 판단.
   2. 등록 입력폼에서 체크박스·콤보에 `dispatchEvent`로 이벤트를 강제하면 종목 콤보 항목이 중복 추가돼 "The value of the item is duplicated" → 체크박스는 CDP 마우스 클릭, 콤보는 `selectItemByValue`.
   3. 학생찾기 팝업(`phe_pheam07_p02`)은 학년 콤보가 필수(기본 1학년) → 학년 모르면 1~6학년 순회.
   4. 입력폼 [돌아가기] 뒤 "변경사항이 반영되지 않았습니다. 계속 하시겠습니까?" 확인창이 늦게 뜸 → 반복 확인.
+  6. 이전 실행이 남긴 결재요청 팝업이 화면을 가리면 MDI 탭 전환·체크박스 클릭이 안 됨(요소 rect 0) → `open_screen`이 내 팝업(pheam10_p00, pheam07_p02)을 먼저 닫음. 체크박스는 값이 바뀔 때까지 재클릭.
+  7. 협회 공문이 스캔 PDF(글자 없음)면 `case`가 못 읽음 → 쪽 이미지를 보고 `--set contest= place= sender= docno= docdate= period=` + `--students` + `--days`로 채움. 태권도장 ‘출석인정 요청’ 공문이 붙임 뒤쪽에 학생 학년·반·이름으로 들어 있는 경우가 많음.
+  8. JS가 undefined를 돌려주면 JSON에서 키가 빠짐 → 파이썬은 `dict.get`.
   5. 내가 연 NEIS 탭을 다른 세션(3-2 명렬표 작업)이 잡아 내 화면 인스턴스가 사라짐(ISSUE-004 재발) → 스크립트는 전용 탭 id를 `data_dir/student_athlete/tab.txt`에 고정, 없으면 `/json/new`로 새로 만듦. 세션 만료 시 업무포털 `a.menuBtn[id*="gbe.neis.go.kr/cmc_fcm"]`의 id(SSO URL)로 이동해 로그인.
 - **관련 파일**: `neis_student_athlete.py`, `references/student-athlete-workflow.md`
 

@@ -1,5 +1,71 @@
 [
   {
+    "timestamp": "2026-11-22T13:17:44.987603",
+    "action": "catch_up_to_lesson",
+    "subject": "국어",
+    "details": "bridge_row=None, record_key=lesson-0408"
+  },
+  {
+    "timestamp": "2026-11-22T13:14:39.822145",
+    "action": "catch_up_to_lesson",
+    "subject": "국어",
+    "details": "bridge_row=None, record_key=lesson-0408"
+  },
+  {
+    "timestamp": "2026-11-22T13:14:13.146914",
+    "action": "catch_up_to_lesson",
+    "subject": "국어",
+    "details": "bridge_row=None, record_key=lesson-0408"
+  },
+  {
+    "timestamp": "2026-11-22T13:07:06.055284",
+    "action": "catch_up_to_lesson",
+    "subject": "국어",
+    "details": "bridge_row=None, record_key=lesson-0410"
+  },
+  {
+    "timestamp": "2026-11-22T12:30:57.576861",
+    "action": "catch_up_to_lesson",
+    "subject": "도덕",
+    "details": "bridge_row=None, record_key=lesson-0121"
+  },
+  {
+    "timestamp": "2026-11-22T12:24:56.191647",
+    "action": "catch_up_to_lesson",
+    "subject": "도덕",
+    "details": "bridge_row=None, record_key=lesson-0117"
+  },
+  {
+    "timestamp": "2026-11-22T12:24:10.700521",
+    "action": "catch_up_to_lesson",
+    "subject": "도덕",
+    "details": "bridge_row=None, record_key=lesson-0117"
+  },
+  {
+    "timestamp": "2026-11-21T06:29:02.464139",
+    "action": "catch_up_to_lesson",
+    "subject": "수학",
+    "details": "bridge_row=None, record_key=lesson-0514"
+  },
+  {
+    "timestamp": "2026-11-21T06:21:54.635718",
+    "action": "lesson_done",
+    "subject": "수학",
+    "details": "target_date=2026-11-24"
+  },
+  {
+    "timestamp": "2026-11-21T06:21:00.986904",
+    "action": "lesson_done",
+    "subject": "수학",
+    "details": "target_date=2026-11-24"
+  },
+  {
+    "timestamp": "2026-11-21T06:20:59.963160",
+    "action": "lesson_done",
+    "subject": "수학",
+    "details": "target_date=2026-11-24"
+  },
+  {
     "timestamp": "2026-06-02T10:31:42.577662",
     "action": "catch_up_to_lesson",
     "subject": "도덕",

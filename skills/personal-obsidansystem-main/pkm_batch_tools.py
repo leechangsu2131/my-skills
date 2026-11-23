@@ -11,13 +11,12 @@ from typing import Dict, List, Optional, Tuple
 from pkm_core import (
     DOMAIN_VALUES,
     ENGINE_VALUES,
-    TYPE_VALUES,
     apply_props_to_file,
-    backup_file,
     get_current_props,
     match_index,
     read_text_file,
     remove_props_from_file,
+    DEFAULT_BACKUP_ROOT,
 )
 
 
@@ -57,13 +56,20 @@ ENGINE_ALIASES = {
 class ReviewItem:
     source_path: Path
     source_rel: str
+    current_title: str
     current_props: dict
     current_domain: Optional[str]
     current_engine: Optional[str]
-    current_type: Optional[str]
+    current_type: object
+    current_topic: List[str]
+    current_tags: List[str]
+    title_review: str
+    suggested_title: Optional[str]
     suggested_domain: Optional[str]
     suggested_engine: Optional[str]
-    suggested_type: Optional[str]
+    suggested_type: object
+    suggested_topic: List[str]
+    suggested_tags: List[str]
     suggested_destination: Path
     review_status: str
     reasons: List[str] = field(default_factory=list)
@@ -133,7 +139,8 @@ def normalize_engine(value: Optional[str]) -> Optional[str]:
 def normalize_type(value: Optional[str]) -> Optional[str]:
     if not value:
         return None
-    return str(value).strip()
+    cleaned = str(value).strip()
+    return TYPE_ALIASES.get(cleaned.lower(), cleaned)
 
 
 def relative_to_vault(path: Path, vault_path: Path) -> str:
@@ -147,6 +154,358 @@ def scalar_prop(props: dict, key: str) -> Optional[str]:
     if value is None:
         return None
     return str(value)
+
+
+def list_prop(props: dict, *keys: str) -> List[str]:
+    values: List[str] = []
+    for key in keys:
+        if key not in props:
+            continue
+        raw = props.get(key)
+        items = raw if isinstance(raw, list) else [raw]
+        for item in items:
+            if item is None:
+                continue
+            cleaned = str(item).strip()
+            if cleaned:
+                values.append(cleaned)
+    return values
+
+
+def unique_list(values: List[str]) -> List[str]:
+    seen = set()
+    result = []
+    for value in values:
+        cleaned = str(value).strip()
+        if not cleaned or cleaned in seen:
+            continue
+        seen.add(cleaned)
+        result.append(cleaned)
+    return result
+
+
+def compact_list_value(values: List[str]):
+    cleaned = unique_list(values)
+    if not cleaned:
+        return None
+    if len(cleaned) == 1:
+        return cleaned[0]
+    return cleaned
+
+
+def value_contains(value, target: str) -> bool:
+    if isinstance(value, list):
+        return target in value
+    return value == target
+
+
+TYPE_ALIASES = {
+    "resource": "리소스",
+    "자료": "리소스",
+}
+
+TYPE_HINTS = (
+    ("수업안", "수업안"),
+    ("지도안", "수업안"),
+    ("교수학습", "수업안"),
+    ("감상문", "감상문"),
+    ("거시예측", "거시예측"),
+    ("시장일지", "시장일지"),
+    ("자서전", "자서전"),
+    ("리소스", "리소스"),
+    ("resource", "리소스"),
+)
+
+TOPIC_STOPWORDS = {
+    "수업",
+    "학급",
+    "투자",
+    "자기",
+    "관계",
+    "생산성",
+    "횡단",
+    "DIY",
+    "idea",
+    "tip",
+    "계획",
+    "질문",
+    "리소스",
+    "감상문",
+    "수업안",
+    "concept",
+    "pattern",
+    "principle",
+    "experiment",
+}
+
+_TOPIC_VOCAB_CACHE: Dict[str, List[str]] = {}
+_TAG_VOCAB_CACHE: Dict[str, List[str]] = {}
+
+TITLE_GENERIC_EXACT = {
+    "생각",
+    "생각들",
+    "제목 없음",
+    "untitled",
+    "index",
+    "vault",
+    "agents",
+    "정리",
+    "메모",
+    "자료",
+    "리소스",
+    "tip",
+    "아이디어",
+    "idea",
+    "질문",
+    "계획",
+    "수업",
+    "투자",
+    "자기",
+    "관계",
+    "학급",
+    "교육",
+    "철학",
+    "생활",
+}
+
+TITLE_GENERIC_PARTS = (
+    "정리",
+    "메모",
+    "자료",
+    "리소스",
+    "아이디어",
+    "idea",
+    "tip",
+    "질문",
+    "계획",
+)
+
+TITLE_CLAIM_HINTS = (
+    "해야",
+    "필요",
+    "중요",
+    "낫다",
+    "좋다",
+    "막는다",
+    "줄인다",
+    "돕는다",
+    "만든다",
+    "바꾼다",
+    "위한",
+    "하려면",
+    "하는 법",
+    "원칙",
+    "전략",
+    "체크리스트",
+)
+
+
+def normalize_list_items(values: List[str], aliases: Optional[Dict[str, str]] = None) -> List[str]:
+    normalized = []
+    for value in values:
+        cleaned = str(value).strip()
+        if not cleaned:
+            continue
+        alias = aliases.get(cleaned.lower(), cleaned) if aliases else cleaned
+        normalized.append(alias)
+    return unique_list(normalized)
+
+
+def normalize_match_key(value: str) -> str:
+    return re.sub(r"[\s\-_#\+\[\]\(\)]+", "", str(value).strip().lower())
+
+
+def normalize_title_text(value: str) -> str:
+    text = str(value).replace("_", " ").strip()
+    return re.sub(r"\s+", " ", text)
+
+
+def strip_frontmatter(text: str) -> str:
+    if not text.startswith("---"):
+        return text
+    lines = text.splitlines()
+    for idx in range(1, len(lines)):
+        if lines[idx].strip() == "---":
+            return "\n".join(lines[idx + 1 :])
+    return text
+
+
+def split_candidate_sentences(line: str) -> List[str]:
+    parts = re.split(r"(?<=[.!?。])\s+", line)
+    return [normalize_title_text(part).strip("\"'“”‘’ ") for part in parts if part.strip()]
+
+
+def title_has_topic_hint(title: str, topics: List[str]) -> bool:
+    title_key = normalize_match_key(title)
+    for topic in topics:
+        topic_key = normalize_match_key(topic)
+        if len(topic_key) >= 2 and topic_key in title_key:
+            return True
+    return False
+
+
+def title_is_generic(title: str, topics: List[str]) -> Tuple[bool, List[str]]:
+    normalized = normalize_title_text(title)
+    lowered = normalized.lower()
+    title_key = normalize_match_key(normalized)
+    tokens = [token for token in re.split(r"[\s:/\-\(\)\[\],]+", normalized) if token]
+    topic_hit = title_has_topic_hint(normalized, topics)
+    reasons: List[str] = []
+
+    if lowered in TITLE_GENERIC_EXACT:
+        reasons.append("제목이 너무 추상적임")
+    if len(tokens) == 1 and len(title_key) <= 2 and not topic_hit:
+        reasons.append("제목만으로 대상을 짐작하기 어려움")
+    if any(lowered.endswith(part) for part in TITLE_GENERIC_PARTS) and not topic_hit:
+        reasons.append("형식어 중심의 임시 제목 가능성")
+    if not any(hint in normalized for hint in TITLE_CLAIM_HINTS) and not topic_hit:
+        if len(tokens) == 1 and len(title_key) <= 6:
+            reasons.append("주어+핵심 주장 구조가 아직 드러나지 않음")
+
+    return (bool(reasons), unique_list(reasons))
+
+
+def title_is_clear(title: str, topics: List[str]) -> bool:
+    is_generic, _ = title_is_generic(title, topics)
+    return not is_generic
+
+
+def extract_title_candidates(text: str) -> List[str]:
+    body = strip_frontmatter(text)
+    candidates: List[str] = []
+    seen = set()
+
+    def add_candidate(raw: str):
+        candidate = normalize_title_text(raw)
+        if (
+            not candidate
+            or candidate in seen
+            or len(candidate) < 6
+            or len(candidate) > 45
+            or candidate.startswith(("http://", "https://"))
+            or candidate.startswith(("**", "`"))
+            or ".md" in candidate.lower()
+            or re.match(r"^\d", candidate)
+        ):
+            return
+        seen.add(candidate)
+        candidates.append(candidate)
+
+    for line in body.splitlines():
+        stripped = line.strip()
+        if not stripped:
+            continue
+        if stripped.startswith(("```", "---", "|", ">")):
+            continue
+        if re.match(r"^[-*+]\s", stripped):
+            continue
+        if stripped.startswith("#"):
+            add_candidate(re.sub(r"^#+\s*", "", stripped))
+            if len(candidates) >= 5:
+                break
+            continue
+
+        for sentence in split_candidate_sentences(stripped):
+            if "?" not in sentence and not any(hint in sentence for hint in TITLE_CLAIM_HINTS):
+                continue
+            add_candidate(sentence)
+            if len(candidates) >= 5:
+                break
+        if len(candidates) >= 5:
+            break
+
+    return candidates
+
+
+def review_title(path: Path, text: str, topics: List[str]) -> Tuple[str, str, Optional[str], List[str]]:
+    current_title = normalize_title_text(path.stem)
+    is_generic, reasons = title_is_generic(current_title, topics)
+    if not is_generic:
+        return current_title, "clear", None, []
+
+    suggested_title = None
+    current_key = normalize_match_key(current_title)
+    for candidate in extract_title_candidates(text):
+        if normalize_match_key(candidate) == current_key:
+            continue
+        if title_is_clear(candidate, topics):
+            suggested_title = candidate
+            break
+
+    return current_title, "needs_review", suggested_title, reasons
+
+
+def load_existing_topics(vault_path: Path) -> List[str]:
+    cache_key = str(vault_path.resolve())
+    if cache_key in _TOPIC_VOCAB_CACHE:
+        return _TOPIC_VOCAB_CACHE[cache_key]
+
+    topics = set()
+    for path in vault_path.rglob("*.md"):
+        if "_PKM_BACKUP" in path.parts or "Clippings" in path.parts or "daily" in path.parts or "knowledge" in path.parts:
+            continue
+        props = get_current_props(path)
+        for item in list_prop(props, "topic"):
+            if item and item not in TOPIC_STOPWORDS and len(item) >= 2:
+                topics.add(item)
+
+    ordered = sorted(topics, key=lambda value: (-len(value), value))
+    _TOPIC_VOCAB_CACHE[cache_key] = ordered
+    return ordered
+
+
+def load_existing_tags(vault_path: Path) -> List[str]:
+    cache_key = str(vault_path.resolve())
+    if cache_key in _TAG_VOCAB_CACHE:
+        return _TAG_VOCAB_CACHE[cache_key]
+
+    tags = set()
+    tags_root = (vault_path / "Tags").resolve()
+    if tags_root.exists():
+        for candidate in tags_root.iterdir():
+            raw = candidate.name.strip()
+            cleaned = re.sub(r"^[#+]+", "", raw).strip()
+            if cleaned and cleaned.lower() not in {"moc", ".space"}:
+                tags.add(cleaned)
+
+    for path in vault_path.rglob("*.md"):
+        if "_PKM_BACKUP" in path.parts or "Clippings" in path.parts or "daily" in path.parts or "knowledge" in path.parts:
+            continue
+        props = get_current_props(path)
+        for item in list_prop(props, "tags", "tag"):
+            cleaned = str(item).strip()
+            if cleaned:
+                tags.add(cleaned)
+
+    ordered = sorted(tags, key=lambda value: (-len(value), value))
+    _TAG_VOCAB_CACHE[cache_key] = ordered
+    return ordered
+
+
+def match_vocab_in_title(title: str, vocab: List[str]) -> List[str]:
+    title_key = normalize_match_key(title)
+    matches: List[str] = []
+    for candidate in vocab:
+        if candidate in TOPIC_STOPWORDS:
+            continue
+        candidate_key = normalize_match_key(candidate)
+        if len(candidate_key) < 2:
+            continue
+        if candidate_key and candidate_key in title_key:
+            matches.append(candidate)
+    return unique_list(matches)
+
+
+def match_vocab_in_text(text: str, vocab: List[str]) -> List[str]:
+    sample = text[:800]
+    matches: List[str] = []
+    for candidate in vocab:
+        cleaned = candidate.strip()
+        if cleaned in TOPIC_STOPWORDS or len(cleaned) < 2:
+            continue
+        if cleaned in sample:
+            matches.append(cleaned)
+    return unique_list(matches)
 
 
 def mostly_links(text: str) -> bool:
@@ -190,7 +549,7 @@ def infer_domain(path: Path, text: str) -> Optional[str]:
     if "/diy/" in raw or "/DIY/" in raw:
         return "DIY"
     if "/생활 tip/" in raw:
-        return "생산성"
+        return None
     if "/육아/" in raw or "/음악/" in raw:
         return "자기"
     if "/모임운영/" in raw:
@@ -207,14 +566,9 @@ def infer_type(path: Path, text: str) -> Optional[str]:
     lowered_name = path.stem.lower()
     if mostly_links(text):
         return "리소스"
-    if "요약" in path.stem or "summary" in lowered_name:
-        return "감상문"
-    if "수업안" in path.stem or "지도안" in path.stem:
-        return "수업안"
-    if "시장일지" in path.stem:
-        return "시장일지"
-    if "거시" in path.stem and "예측" in path.stem:
-        return "거시예측"
+    for token, suggested in TYPE_HINTS:
+        if token.lower() in lowered_name:
+            return suggested
     return None
 
 
@@ -223,12 +577,6 @@ def infer_engine(path: Path, text: str, note_type: Optional[str]) -> Optional[st
 
     if note_type == "리소스":
         return None
-    if note_type == "수업안":
-        return "experiment"
-    if note_type == "시장일지":
-        return "experiment"
-    if note_type == "거시예측":
-        return "concept"
     if any(token in lowered for token in ("원칙", "체크리스트", "전략")):
         return "principle"
     if any(token in lowered for token in ("패턴", "반복", "습관")):
@@ -236,13 +584,28 @@ def infer_engine(path: Path, text: str, note_type: Optional[str]) -> Optional[st
     return "concept"
 
 
+def infer_topic(path: Path, text: str, vault_path: Path) -> List[str]:
+    vocab = load_existing_topics(vault_path)
+    return match_vocab_in_title(path.stem, vocab)[:4]
+
+
+def infer_tags(
+    path: Path,
+    text: str,
+    vault_path: Path,
+) -> List[str]:
+    vocab = load_existing_tags(vault_path)
+    title_matches = match_vocab_in_title(path.stem, vocab)
+    return unique_list(title_matches)[:6]
+
+
 def determine_destination(
     vault_path: Path,
     domain: Optional[str],
     engine: Optional[str],
-    note_type: Optional[str],
+    note_type,
 ) -> Path:
-    if domain and (engine in {"concept", "experiment"} or note_type == "리소스"):
+    if domain and (engine in {"concept", "experiment"} or value_contains(note_type, "리소스")):
         return (vault_path / "10_NOTE" / domain).resolve()
     if domain and engine == "pattern":
         return (vault_path / "20_THINKING" / domain).resolve()
@@ -334,7 +697,10 @@ def review_single_note(path: Path, vault_path: Path, all_vault_notes: List[Path]
 
     current_domain = normalize_domain(scalar_prop(current_props, "domain"))
     current_engine = normalize_engine(scalar_prop(current_props, "engine"))
-    current_type = normalize_type(scalar_prop(current_props, "type"))
+    current_type_values = normalize_list_items(list_prop(current_props, "type"), TYPE_ALIASES)
+    current_type = compact_list_value(current_type_values)
+    current_topic = normalize_list_items(list_prop(current_props, "topic"))
+    current_tags = normalize_list_items(list_prop(current_props, "tags", "tag"))
 
     mapping = match_index(path.stem)
     mapping_domain = normalize_domain(mapping.get("domain"))
@@ -347,25 +713,38 @@ def review_single_note(path: Path, vault_path: Path, all_vault_notes: List[Path]
     if current_engine and current_engine not in ENGINE_VALUES:
         reasons.append(f"현재 engine 보정 필요: {current_engine}")
         current_engine = None
-    if current_type and current_type not in TYPE_VALUES:
-        reasons.append(f"현재 type 보정 필요: {current_type}")
-        current_type = None
 
     inferred_domain = infer_domain(path, text)
     inferred_type = infer_type(path, text)
-    inferred_engine = infer_engine(path, text, choose(mapping_type, current_type, inferred_type))
+    inferred_engine = infer_engine(path, text, choose(mapping_type, current_type_values[0] if current_type_values else None, inferred_type))
+    inferred_topic = infer_topic(path, text, vault_path)
 
     suggested_domain = choose(mapping_domain, current_domain, inferred_domain)
     suggested_type = choose(mapping_type, current_type, inferred_type)
     suggested_engine = choose(mapping_engine, current_engine, inferred_engine)
+    suggested_topic = unique_list(current_topic + inferred_topic) if current_topic else inferred_topic
 
-    if suggested_type == "리소스" and mapping_engine is None and current_engine is None:
+    if value_contains(suggested_type, "리소스") and mapping_engine is None and current_engine is None:
         suggested_engine = None
+    suggested_tags = unique_list(current_tags + infer_tags(path, text, vault_path))
+
+    current_title, title_review, suggested_title, title_reasons = review_title(
+        path=path,
+        text=text,
+        topics=suggested_topic or current_topic,
+    )
+    if title_review != "clear":
+        title_note = "제목 보정 필요"
+        if suggested_title:
+            title_note += f" (제안: {suggested_title})"
+        if title_reasons:
+            title_note += " - " + ", ".join(title_reasons)
+        reasons.append(title_note)
 
     if not suggested_domain:
         reasons.append("추천 domain 없음")
 
-    if suggested_type != "리소스" and not suggested_engine:
+    if not value_contains(suggested_type, "리소스") and not suggested_engine:
         reasons.append("추천 engine 없음")
 
     destination_dir = determine_destination(
@@ -384,7 +763,7 @@ def review_single_note(path: Path, vault_path: Path, all_vault_notes: List[Path]
         if link_hits:
             reasons.append("경로 지정 링크 참조 존재: " + ", ".join(link_hits[:3]))
             status = "link_sensitive"
-        elif not suggested_domain or (suggested_type != "리소스" and not suggested_engine):
+        elif title_review != "clear" or not suggested_domain or (suggested_type != "리소스" and not suggested_engine):
             status = "needs_review"
         else:
             status = "ready"
@@ -392,13 +771,20 @@ def review_single_note(path: Path, vault_path: Path, all_vault_notes: List[Path]
     return ReviewItem(
         source_path=path.resolve(),
         source_rel=relative_to_vault(path, vault_path),
+        current_title=current_title,
         current_props=current_props,
         current_domain=normalize_domain(scalar_prop(current_props, "domain")),
         current_engine=normalize_engine(scalar_prop(current_props, "engine")),
-        current_type=normalize_type(scalar_prop(current_props, "type")),
+        current_type=current_type,
+        current_topic=current_topic,
+        current_tags=current_tags,
+        title_review=title_review,
+        suggested_title=suggested_title,
         suggested_domain=suggested_domain,
         suggested_engine=suggested_engine,
         suggested_type=suggested_type,
+        suggested_topic=suggested_topic,
+        suggested_tags=suggested_tags,
         suggested_destination=destination_dir,
         review_status=status,
         reasons=reasons,
@@ -418,8 +804,8 @@ def build_report(review: BatchReview) -> str:
         f"`link_sensitive {review.status_counts.get('link_sensitive', 0)}` / "
         f"`conflict {review.status_counts.get('conflict', 0)}`",
         "",
-        "| 현재 경로 | 현재 YAML | 추천 YAML | 추천 목적지 | 이동 가능 | 보류 사유 |",
-        "|---|---|---|---|---|---|",
+        "| 현재 경로 | 현재 제목 | 제목 검토 | 제안 제목 | 현재 YAML | 추천 YAML | 추천 목적지 | 이동 가능 | 보류 사유 |",
+        "|---|---|---|---|---|---|---|---|---|",
     ]
 
     for item in review.items:
@@ -429,6 +815,8 @@ def build_report(review: BatchReview) -> str:
                 f"domain={item.current_domain}" if item.current_domain else "",
                 f"engine={item.current_engine}" if item.current_engine else "",
                 f"type={item.current_type}" if item.current_type else "",
+                f"topic={item.current_topic}" if item.current_topic else "",
+                f"tags={item.current_tags}" if item.current_tags else "",
             ]
             if part
         ) or "-"
@@ -439,6 +827,8 @@ def build_report(review: BatchReview) -> str:
                 f"domain={item.suggested_domain}" if item.suggested_domain else "",
                 f"engine={item.suggested_engine}" if item.suggested_engine else "",
                 f"type={item.suggested_type}" if item.suggested_type else "",
+                f"topic={item.suggested_topic}" if item.suggested_topic else "",
+                f"tags={item.suggested_tags}" if item.suggested_tags else "",
             ]
             if part
         ) or "-"
@@ -446,8 +836,11 @@ def build_report(review: BatchReview) -> str:
         hold_reason = "; ".join(item.reasons) if item.reasons else "-"
         move_allowed = "예" if item.move_allowed else "아니오"
         lines.append(
-            "| `{path}` | {current} | {suggested} | `{destination}` | {allowed} | {reason} |".format(
+            "| `{path}` | {title} | `{title_review}` | {suggested_title} | {current} | {suggested} | `{destination}` | {allowed} | {reason} |".format(
                 path=item.source_rel,
+                title=item.current_title,
+                title_review=item.title_review,
+                suggested_title=f"`{item.suggested_title}`" if item.suggested_title else "-",
                 current=current_yaml,
                 suggested=suggested_yaml,
                 destination=item.suggested_destination.as_posix(),
@@ -460,7 +853,7 @@ def build_report(review: BatchReview) -> str:
 
 
 def write_report(vault_path: Path, review: BatchReview) -> Path:
-    report_dir = (vault_path / "reports" / "pkm-batches").resolve()
+    report_dir = (DEFAULT_BACKUP_ROOT / "reports" / "pkm-batches").resolve()
     report_dir.mkdir(parents=True, exist_ok=True)
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     slug = review.source_folder.replace("/", "__").replace(" ", "_")
@@ -522,8 +915,12 @@ def apply_stage1_yaml(items: List[ReviewItem]) -> Dict[str, int]:
             set_props["engine"] = item.suggested_engine
         if item.suggested_type:
             set_props["type"] = item.suggested_type
-            if item.suggested_type == "리소스" and item.current_engine and item.current_engine not in ENGINE_VALUES:
+            if value_contains(item.suggested_type, "리소스") and item.current_engine and item.current_engine not in ENGINE_VALUES:
                 remove_keys.append("engine")
+        if item.suggested_topic:
+            set_props["topic"] = compact_list_value(item.suggested_topic)
+        if item.suggested_tags:
+            set_props["tags"] = compact_list_value(item.suggested_tags)
 
         if remove_keys:
             remove_result = remove_props_from_file(item.source_path, remove_keys)
@@ -576,7 +973,7 @@ def move_stage2_items(vault_path: Path, items: List[ReviewItem]) -> Dict[str, in
             continue
 
         try:
-            backup_file(current_review.source_path)
+            backup_file(current_review.source_path, vault_path)
             shutil.copy2(current_review.source_path, destination_path)
             if destination_path.exists():
                 current_review.source_path.unlink()

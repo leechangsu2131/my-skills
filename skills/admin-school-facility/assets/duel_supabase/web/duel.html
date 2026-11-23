@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>퀴즈 듀얼</title>
+<style>
+  :root{--bg:#f4f6f9;--card:#ffffff;--text:#1f2430;--muted:#6b7280;--line:#d8dde6;--accent:#2f5597;--good:#2e9d4a;--bad:#d64545;--warn:#e8a317;color-scheme:light dark;
+    box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+  @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#14171c;--card:#1d2128;--text:#e6e8ec;--muted:#9aa3b2;--line:#323944;--accent:#6c97e0;--good:#4cc16a;--bad:#ef6a6a;--warn:#f0b940}}
+  :root[data-theme="dark"]{--bg:#14171c;--card:#1d2128;--text:#e6e8ec;--muted:#9aa3b2;--line:#323944;--accent:#6c97e0;--good:#4cc16a;--bad:#ef6a6a;--warn:#f0b940}
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,"Malgun Gothic","Apple SD Gothic Neo",sans-serif;font-size:16px}
+  #app{max-width:520px;margin:0 auto;padding:14px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:12px}
+  h1{font-size:22px;margin:4px 0 12px} h2{font-size:18px;margin:0 0 8px}
+  .small{font-size:13px;color:var(--muted)}
+  input{width:100%;font:inherit;padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--text);margin:5px 0}
+  button{font:inherit;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--text);cursor:pointer}
+  button.primary{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:bold}
+  button:disabled{opacity:.5;cursor:default}
+  .row{display:flex;gap:8px;align-items:center}
+  .row>*{flex:1}
+  .qrbox{display:flex;justify-content:center;padding:10px;background:#fff;border-radius:12px}
+  .qrbox svg,.qrbox img{width:200px;height:200px}
+  .code{font-size:34px;letter-spacing:6px;font-weight:bold;text-align:center;margin:6px 0}
+  .scoreline{display:flex;justify-content:space-between;align-items:center;font-weight:bold}
+  .pill{display:inline-block;padding:2px 10px;border-radius:999px;background:var(--bg);border:1px solid var(--line);font-size:13px}
+  .choice{display:block;width:100%;text-align:left;margin:8px 0;padding:14px}
+  .choice.mine{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent) inset}
+  .choice.right{background:rgba(46,157,74,.18);border-color:var(--good)}
+  .choice.wrong{background:rgba(214,69,69,.15);border-color:var(--bad)}
+  .bar{height:8px;background:var(--line);border-radius:6px;overflow:hidden;margin:8px 0}
+  .bar>div{height:100%;background:var(--accent);transition:width .25s linear}
+  .big{font-size:30px;text-align:center;margin:10px 0;font-weight:bold}
+  .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(18px + env(safe-area-inset-bottom,0px));background:#222;color:#fff;padding:10px 16px;border-radius:12px;font-size:14px;max-width:90%;z-index:5}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script>
+// ====== 설정: Supabase 프로젝트 주소와 공개(anon) 키를 넣으세요 (Project Settings > API) ======
+var SUPABASE_URL = 'https://YOUR-PROJECT.supabase.co';
+var SUPABASE_ANON_KEY = 'YOUR-ANON-KEY';
+// ===============================================================================================
+
+var sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+var $app = document.getElementById('app');
+var me = null, myCode = '', duelId = null, duel = null, offset = 0, timer = null, poll = null, chan = null, picked = null, shownRound = 0, lastResultShownFor = 0;
+
+function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+function toast(msg) { var t = document.createElement('div'); t.className = 'toast'; t.textContent = msg; document.body.appendChild(t); setTimeout(function () { t.remove(); }, 3200); }
+function ls(k, v) { try { if (v === undefined) return localStorage.getItem(k) || ''; localStorage.setItem(k, v); } catch (e) { return ''; } }
+function baseUrl() { return location.href.split('#')[0].split('?')[0]; }
+async function rpc(name, args) { var r = await sb.rpc(name, args || {}); if (r.error) throw new Error(r.error.message); return r.data; }
+
+// ---------- 시작 ----------
+async function boot() {
+  $app.innerHTML = '<div class="card">불러오는 중…</div>';
+  try {
+    var s = await sb.auth.getSession();
+    if (!s.data.session) { var a = await sb.auth.signInAnonymously(); if (a.error) throw a.error; }
+    me = (await sb.auth.getUser()).data.user;
+  } catch (e) { $app.innerHTML = '<div class="card"><b>접속하지 못했어요.</b><div class="small">' + esc(e.message) + '<br>선생님께 알려 주세요. (익명 로그인이 켜져 있는지 확인)</div></div>'; return; }
+  var params = new URLSearchParams(location.search), join = (params.get('join') || '').toUpperCase();
+  var nick = ls('dnick'), team = ls('dteam');
+  if (nick) { try { myCode = await rpc('ensure_player', { nick: nick, team_in: team || null }); } catch (e) { nick = ''; } }
+  if (!nick) return viewName(join);
+  if (join) { await startByCode(join); history.replaceState(null, '', baseUrl()); return; }
+  var active = await rpc('my_active_duel'); if (active) return openDuel(active);
+  viewLobby();
+}
+
+function viewName(join) {
+  $app.innerHTML = '<h1>퀴즈 듀얼</h1><div class="card"><h2>내 이름표 만들기</h2>' +
+    '<div class="small">실명 대신 별명을 써 주세요. (1~12글자)</div><input id="nick" maxlength="12" placeholder="별명 (예: 번개토끼)" value="' + esc(ls('dnick')) + '">' +
+    '<input id="team" maxlength="8" placeholder="우리 반 (예: 5-2) — 팀 순위에 쓰여요" value="' + esc(ls('dteam')) + '">' +
+    '<button class="primary" id="go" style="width:100%;margin-top:8px">시작하기</button></div>';
+  document.getElementById('go').onclick = async function () {
+    var n = document.getElementById('nick').value.trim(), t = document.getElementById('team').value.trim();
+    try { myCode = await rpc('ensure_player', { nick: n, team_in: t || null }); ls('dnick', n); ls('dteam', t); }
+    catch (e) { return toast(e.message); }
+    if (join) { await startByCode(join); history.replaceState(null, '', baseUrl()); } else viewLobby();
+  };
+}
+
+// ---------- 로비: 내 QR 보여 주기 / 상대 코드 입력 ----------
+async function viewLobby() {
+  stopAll(); duelId = null; duel = null;
+  var link = baseUrl() + '?join=' + myCode, qr = qrcode(0, 'M'); qr.addData(link); qr.make();
+  $app.innerHTML = '<h1>퀴즈 듀얼</h1>' +
+    '<div class="card"><h2>' + esc(ls('dnick')) + ' 의 QR</h2><div class="small">친구가 이 QR을 카메라로 찍으면 대결이 시작돼요.</div>' +
+    '<div class="qrbox" style="margin:10px 0">' + qr.createSvgTag(4, 0) + '</div><div class="code">' + esc(myCode) + '</div>' +
+    '<div class="small" style="text-align:center">QR이 안 찍히면 이 코드를 친구가 입력해도 돼요.</div></div>' +
+    '<div class="card"><h2>친구 코드 입력</h2><div class="row"><input id="oc" maxlength="6" placeholder="6자리 코드" style="text-transform:uppercase"><button class="primary" id="oc-go" style="flex:0 0 90px">대결!</button></div></div>' +
+    '<div class="card"><h2>우리 반 순위</h2><div id="lb" class="small">불러오는 중…</div></div>' +
+    '<div class="small" style="text-align:center"><button id="rename">별명 바꾸기</button></div>';
+  document.getElementById('oc-go').onclick = function () { startByCode(document.getElementById('oc').value); };
+  document.getElementById('rename').onclick = function () { viewName(''); };
+  rpc('team_leaderboard').then(function (rows) {
+    document.getElementById('lb').innerHTML = rows.length ? rows.map(function (r, i) { return (i + 1) + '. ' + esc(r.team) + ' — ' + r.wins + '승 / ' + r.games + '판'; }).join('<br>') : '아직 끝난 대결이 없어요.';
+  }).catch(function () {});
+  // 상대가 내 QR을 찍어서 대결이 만들어지면 자동으로 들어간다 (실시간 + 5초마다 확인)
+  chan = sb.channel('lobby-' + me.id).on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'duels', filter: 'p2=eq.' + me.id }, function (p) { openDuel(p.new.id); }).subscribe();
+  poll = setInterval(async function () { try { var a = await rpc('my_active_duel'); if (a) openDuel(a); } catch (e) {} }, 5000);
+}
+async function startByCode(code) {
+  try { var id = await rpc('join_duel_by_code', { opp_code: String(code || '').trim() }); openDuel(id); }
+  catch (e) { toast(e.message); if (!duelId) viewLobby(); }
+}
+
+// ---------- 대결 ----------
+function stopAll() { if (timer) clearInterval(timer); if (poll) clearInterval(poll); if (chan) { sb.removeChannel(chan); chan = null; } timer = poll = null; }
+async function openDuel(id) {
+  stopAll(); duelId = id; picked = null; shownRound = 0; lastResultShownFor = 0;
+  chan = sb.channel('duel-' + id).on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'duels', filter: 'id=eq.' + id }, function () { refreshDuel(); }).subscribe();
+  poll = setInterval(refreshDuel, 4000);
+  timer = setInterval(tickUi, 250);
+  await refreshDuel();
+}
+async function refreshDuel() {
+  if (!duelId) return;
+  try { applyState(await rpc('get_duel', { did: duelId })); } catch (e) { toast(e.message); }
+}
+function applyState(s) {
+  offset = new Date(s.server_now).getTime() - Date.now();
+  var newRound = !duel || duel.round !== s.round || duel.status !== s.status;
+  duel = s;
+  if (newRound) { if (!duel || s.round !== shownRound) picked = null; shownRound = s.round; }
+  render();
+}
+function secondsLeft() { var end = new Date(duel.round_started_at).getTime() + duel.round_seconds * 1000; return Math.max(0, (end - (Date.now() + offset)) / 1000); }
+function tickUi() {
+  if (!duel || duel.status !== 'playing') return;
+  var left = secondsLeft(), bar = document.getElementById('bar');
+  if (bar) bar.style.width = (left / duel.round_seconds * 100) + '%';
+  var t = document.getElementById('tleft'); if (t) t.textContent = Math.ceil(left) + '초';
+  if (left <= 0 && !duel._ticking) { duel._ticking = true; rpc('tick_duel', { did: duelId }).then(applyState).catch(function () {}); }
+}
+function render() {
+  var d = duel;
+  if (d.status === 'cancelled') { $app.innerHTML = '<div class="card"><h2>대결이 끝났어요</h2><div class="small">상대가 나갔거나 시간이 지났어요.</div><button class="primary" id="back" style="margin-top:10px">처음으로</button></div>'; document.getElementById('back').onclick = viewLobby; stopAll(); return; }
+  var head = '<div class="card"><div class="scoreline"><span>나 ' + d.my_score + '</span><span class="pill">' + (d.status === 'finished' ? '끝' : d.round + ' / ' + d.total_rounds + ' 라운드') + '</span><span>' + esc(d.opp_nickname) + ' ' + d.opp_score + '</span></div></div>';
+  if (d.status === 'finished') {
+    var lr = d.last_result, msg = d.result === 'win' ? '🎉 이겼어요!' : (d.result === 'lose' ? '아쉽게 졌어요' : '비겼어요');
+    $app.innerHTML = head + '<div class="card"><div class="big">' + msg + '</div><div class="small" style="text-align:center">' + d.my_score + ' : ' + d.opp_score + '</div></div>' + resultCard(lr, true) +
+      '<button class="primary" id="again" style="width:100%">다시 하기</button>';
+    document.getElementById('again').onclick = viewLobby; stopAll(); return;
+  }
+  var q = d.question, banner = '';
+  if (d.last_result && d.last_result.round === d.round - 1) banner = resultCard(d.last_result, false);
+  var html = head + banner + '<div class="card"><div class="row" style="justify-content:space-between"><span class="small">' + (d.my_done ? '답했어요. 상대를 기다려요…' : (d.opp_done ? '상대가 답했어요!' : '문제를 풀어요')) + '</span><span class="pill" id="tleft"></span></div><div class="bar"><div id="bar"></div></div>' +
+    '<h2>' + esc(q.body) + '</h2>';
+  q.choices.forEach(function (c, i) { html += '<button class="choice' + (picked === i ? ' mine' : '') + '" data-i="' + i + '"' + (d.my_done ? ' disabled' : '') + '>' + (i + 1) + '. ' + esc(c) + '</button>'; });
+  html += '</div><div class="small" style="text-align:center"><button id="quit">그만하기</button></div>';
+  $app.innerHTML = html;
+  Array.prototype.forEach.call($app.querySelectorAll('.choice'), function (b) {
+    b.onclick = async function () {
+      if (duel.my_done) return; picked = Number(b.getAttribute('data-i')); render();
+      try { applyState(await rpc('submit_answer', { did: duelId, ch: picked })); } catch (e) { toast(e.message); }
+    };
+  });
+  document.getElementById('quit').onclick = async function () { if (confirm('대결을 그만둘까요?')) { await rpc('cancel_duel', { did: duelId }); viewLobby(); } };
+  tickUi();
+}
+function resultCard(lr, final) {
+  if (!lr) return '';
+  var mine = duel.i_am_p1 ? lr.p1_choice : lr.p2_choice, theirs = duel.i_am_p1 ? lr.p2_choice : lr.p1_choice;
+  var myPts = duel.i_am_p1 ? lr.p1_points : lr.p2_points, opPts = duel.i_am_p1 ? lr.p2_points : lr.p1_points;
+  return '<div class="card"><div class="small">' + (final ? '마지막' : '지난') + ' 라운드 결과</div>' +
+    '<div>정답은 <b>' + (lr.correct + 1) + '번</b> · 나: ' + (mine == null ? '시간 초과' : (mine + 1) + '번') + ' (+' + myPts + ') · 상대: ' + (theirs == null ? '시간 초과' : (theirs + 1) + '번') + ' (+' + opPts + ')</div></div>';
+}
+boot();
+</script>
+</body>
+</html>

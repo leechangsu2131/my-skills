@@ -1,0 +1,50 @@
+{
+  "_안내": "처음 실행하면 이 파일이 내 문서\\my-skills-data\\teacherlesson-assistant\\config.json 으로 복사된다. 그 복사본을 고친다. 구글 로그인 사이트는 login: google (chrome_profile 에서 구글에 한 번 로그인해 두면 이어 씀). 아이디·비밀번호 로그인 사이트는 여기 적지 말고 중앙 .env 에 <secret_prefix>_ID, <secret_prefix>_PW 로 적는다.",
+  "port": 5180,
+  "schedule_api": "http://127.0.0.1:5000",
+  "left_ratio": 0.32,
+  "periods": [
+    {"no": 1, "start": "09:00", "end": "09:40"},
+    {"no": 2, "start": "09:50", "end": "10:30"},
+    {"no": 3, "start": "10:50", "end": "11:30"},
+    {"no": 4, "start": "11:40", "end": "12:20"},
+    {"no": 5, "start": "13:20", "end": "14:00"},
+    {"no": 6, "start": "14:10", "end": "14:50"}
+  ],
+  "phones": [
+    {"name": "교무실", "no": "000"},
+    {"name": "행정실", "no": "000"},
+    {"name": "보건실", "no": "000"}
+  ],
+  "links": [
+    {"name": "나이스", "url": "https://gbe.neis.go.kr"},
+    {"name": "하이클래스", "url": "https://www.hiclass.net"}
+  ],
+  "hiclass_url": "https://www.hiclass.net",
+  "ai_sites": [
+    {"name": "Claude", "url": "https://claude.ai/new"},
+    {"name": "Gemini", "url": "https://gemini.google.com/app"},
+    {"name": "ChatGPT", "url": "https://chatgpt.com/"},
+    {"name": "Grok", "url": "https://grok.com/"},
+    {"name": "NotebookLM", "url": "https://notebooklm.google.com/"}
+  ],
+  "chrome_profile": "%LOCALAPPDATA%\\MusicClassHelper\\chrome_profile",
+  "debug_port": 9233,
+  "google_account_hint": "",
+  "grade_term": "3-2",
+  "_notebooklm": "과목마다 NotebookLM 노트북 주소를 subjects.<과목>.notebooklm 에 적으면 NotebookLM 단추가 그 노트북을 연다. 소스는 notebook_sources.py 로 만든다. 그림만 PDF 로도 넣을 과목:",
+  "notebooklm_image_subjects": ["음악", "미술"],
+  "subjects": {
+    "수학": {"publisher": "아이스크림", "site": "https://www.i-scream.co.kr/user/subject/SubjectChasiList.do", "login": "google", "notebooklm": ""},
+    "음악": {"publisher": "두클래스", "site": "https://ele.douclass.com", "login": "google", "helper": "music_douclass"},
+    "사회": {"publisher": "아이스크림", "site": "https://www.i-scream.co.kr/user/subject/SubjectChasiList.do", "login": "google", "helper": "social_class"},
+    "도덕": {"publisher": "천재교육", "site": "https://www.tsherpa.co.kr", "secret_prefix": "TSHERPA"}
+  },
+  "fallback_timetable": {
+    "1": ["국어", "수학", "사회", "과학", "체육"],
+    "2": [],
+    "3": [],
+    "4": [],
+    "5": []
+  }
+}

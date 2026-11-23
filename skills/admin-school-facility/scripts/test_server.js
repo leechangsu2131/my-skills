@@ -1,0 +1,77 @@
+// Code.gs 서버 규칙 시험 (가짜 시트/서비스). 실행: node scripts/test_server.js  (저장소 루트에서)
+// 시험하는 것: PIN(해시·잠금), 기물 대여(수량·기간 겹침·상태·분류), 반납·취소, 내 신청, 공간 승인대기·반려·취소, 관리자.
+const fs=require('fs'), crypto=require('crypto'); let code=fs.readFileSync('assets/apps_script/Code.gs','utf8');
+class Sheet{constructor(r){this.rows=r;this.hidden=false}getLastRow(){return this.rows.length}appendRow(r){this.rows.push(r.slice())}hideSheet(){this.hidden=true}
+ getRange(r,c,nr=1,nc=1){const s=this;return{getValues:()=>Array.from({length:nr},(_,i)=>Array.from({length:nc},(_,j)=>{const row=s.rows[r-1+i]||[];return row[c-1+j]===undefined?'':row[c-1+j]})),
+  setValue:v=>{(s.rows[r-1]=s.rows[r-1]||[])[c-1]=v},setValues:vs=>{vs.forEach((vr,i)=>vr.forEach((v,j)=>{(s.rows[r-1+i]=s.rows[r-1+i]||[])[c-1+j]=v}))},setNumberFormat(){},clearContent(){for(let j=0;j<nc;j++)(s.rows[r-1]=s.rows[r-1]||[])[c-1+j]=''}}}}
+const RD=Date; const D=(y,m,d,h=0,mi=0)=>new RD(y,m-1,d,h,mi);
+const set=[['공간','교시','시간','분류','','','','신청자','','대여 가능 분류','승인 필요 공간']];
+const spaces=['강당','과학실1(204)'], people=['김교사','박교사','이교사'], cats=['전자기기','체육용품'], appr=['강당'];
+for(let i=0;i<4;i++) set.push([spaces[i]||'', ['1교시','2교시','3교시',''][i]||'', ['09:00-09:40','09:50-10:30','10:40-11:20',''][i]||'','','','','', people[i]||'','', cats[i]||'', appr[i]||'']);
+const items=[['관리번호'],['B-0001','빔프로젝터','전자기기','4K',3,'',0,'창고','과학실1(204)','김교사','양호',''],['B-0002','노트북 카트','전자기기','',1,'',0,'창고','창고','박교사','수리필요',''],['F-0001','접이식 책상','가구','',10,'',0,'창고','창고','홍','양호','']];
+const req=[['신청일','사용일']]; for(let i=0;i<30;i++) req.push(['','','','','','','','','','','']);
+const sheets={'설정':new Sheet(set),'기물대장':new Sheet(items),'사용신청':new Sheet(req),'배치':new Sheet([['공간']]),'고정시간표':new Sheet([['공간']])};
+let clock=D(2026,10,19,10,0);
+global.Date=class extends RD{constructor(...a){if(a.length===0)super(clock.getTime());else super(...a)} static now(){return clock.getTime()} static UTC(...a){return RD.UTC(...a)} static [Symbol.hasInstance](x){return x instanceof RD}};
+global.SpreadsheetApp={getActiveSpreadsheet:()=>({getSpreadsheetTimeZone:()=>'Asia/Seoul',getSheetByName:n=>sheets[n]||null,insertSheet:n=>sheets[n]=new Sheet([])})};
+const p2=n=>String(n).padStart(2,'0'); global.Utilities={formatDate:(d,tz,f)=>{const m={yyyy:d.getFullYear(),MM:p2(d.getMonth()+1),dd:p2(d.getDate()),H:d.getHours(),m:d.getMinutes(),u:d.getDay()===0?7:d.getDay()};return f.replace(/yyyy|MM|dd|H|m|u/g,k=>m[k]);},
+ computeDigest:(alg,s)=>Array.from(crypto.createHash('sha256').update(s,'utf8').digest()).map(b=>b>127?b-256:b), getUuid:()=>crypto.randomUUID(), DigestAlgorithm:{SHA_256:1}, Charset:{UTF_8:1}};
+global.LockService={getScriptLock:()=>({waitLock(){},releaseLock(){}})}; const cacheMap={}; global.CacheService={getScriptCache:()=>({get:k=>cacheMap[k]||null,put:(k,v)=>{cacheMap[k]=v},remove:k=>{delete cacheMap[k]}})};
+let props={}; global.PropertiesService={getScriptProperties:()=>({getProperty:k=>props[k]||null})}; global.HtmlService={};
+eval(code+';Object.assign(global,{setPin,hasPin,requestLoan,getItemLoans,returnLoan,cancelLoan,myRequests,cancelMySpace,adminSummary,adminSetStatus,adminResetPin,submitRequest,getData});');
+let pass=0,fail=0; const ck=(n,c,x)=>{c?(pass++,console.log('  OK ',n)):(fail++,console.log('  FAIL',n,x===undefined?'':JSON.stringify(x)))};
+const thr=f=>{try{f();return null}catch(e){return e.message}};
+console.log('PIN');
+ck('명단에 없는 이름 거절', setPin('','홍길동','1234').ok===false);
+ck('3자리 거절', setPin('','김교사','123').ok===false);
+ck('PIN 정하기', setPin('','김교사','1234').ok===true); ck('hasPin', hasPin('','김교사').has===true && hasPin('','박교사').has===false);
+ck('PIN 시트는 숨김, 해시만 저장', sheets['교직원PIN'].hidden && !JSON.stringify(sheets['교직원PIN'].rows).includes('1234'));
+ck('기존 PIN 틀리면 변경 거절', setPin('','김교사','5678','0000').ok===false); ck('기존 PIN 맞으면 변경', setPin('','김교사','5678','1234').ok===true);
+setPin('','박교사','4321');
+console.log('대여 신청');
+const base={id:'B-0001',qty:1,who:'김교사',pin:'5678',start:'2026-10-20',due:'2026-10-22',purpose:'수업'};
+ck('PIN 없는 사람 거절', requestLoan('',Object.assign({},base,{who:'이교사'})).ok===false);
+ck('틀린 PIN 거절', requestLoan('',Object.assign({},base,{pin:'0000'})).msg==='PIN이 맞지 않아요.');
+let r=requestLoan('',base); ck('정상 신청 → R0001 자동 승인', r.ok&&r.id==='R0001'&&r.status==='승인'&&r.left===2, r);
+ck('수리필요 물품 거절', requestLoan('',Object.assign({},base,{id:'B-0002'})).ok===false);
+ck('분류 비대상(가구) 거절', requestLoan('',Object.assign({},base,{id:'F-0001'})).msg.includes('대여 대상이 아니'));
+ck('수량 초과 거절(남은 2개, 3개 요청)', requestLoan('',Object.assign({},base,{qty:3,who:'박교사',pin:'4321'})).msg.includes('2개'));
+r=requestLoan('',Object.assign({},base,{qty:2,who:'박교사',pin:'4321',start:'2026-10-21',due:'2026-10-21'})); ck('겹치는 기간 남은 2개 신청 OK', r.ok&&r.left===0, r);
+ck('다 빌려가면 같은 기간 1개도 불가', requestLoan('',Object.assign({},base,{who:'박교사',pin:'4321',start:'2026-10-21',due:'2026-10-21'})).msg.includes('0개'));
+ck('겹치지 않는 기간은 가능', requestLoan('',Object.assign({},base,{who:'박교사',pin:'4321',start:'2026-10-23',due:'2026-10-24'})).ok===true);
+ck('지난 날짜 거절', requestLoan('',Object.assign({},base,{start:'2026-10-18',due:'2026-10-19'})).msg==='지난 날짜는 신청할 수 없어요.');
+ck('반납일 < 대여일 거절', requestLoan('',Object.assign({},base,{start:'2026-10-25',due:'2026-10-24'})).ok===false);
+ck('31일 초과 거절', requestLoan('',Object.assign({},base,{start:'2026-10-25',due:'2026-12-01'})).msg.includes('30일'));
+ck('수량 0 거절', requestLoan('',Object.assign({},base,{qty:0})).ok===false);
+let il=getItemLoans('','B-0001'); ck('물품 대여 현황', il.lendable&&il.total===3&&il.loans.length===3, il);
+ck('수리필요 물품 lendable=false', getItemLoans('','B-0002').lendable===false);
+console.log('잠금'); setPin('','이교사','1111'); for(let i=0;i<5;i++) requestLoan('',Object.assign({},base,{who:'이교사',pin:'0000'}));
+ck('틀린 시도 5번 후 잠김(올바른 PIN도 거절)', requestLoan('',Object.assign({},base,{who:'이교사',pin:'1111',start:'2026-11-01',due:'2026-11-01'})).msg.includes('잠겼'));
+console.log('내 신청/취소/반납');
+let my=myRequests('','김교사','5678'); ck('내 대여 1건', my.ok&&my.loans.length===1&&my.loans[0].id==='R0001', my);
+ck('남의 PIN으로 조회 거절', myRequests('','김교사','4321').ok===false);
+ck('남의 신청 취소 거절', cancelLoan('','R0002','김교사','5678').msg==='내 신청이 아니에요.');
+ck('시작 전 대여 취소', cancelLoan('','R0001','김교사','5678').ok===true); ck('취소 후 수량 회복', getItemLoans('','B-0001').loans.length===2);
+r=requestLoan('',Object.assign({},base,{start:'2026-10-19',due:'2026-10-20'})); ck('오늘 시작 대여 신청', r.ok, r);
+ck('시작된 대여는 취소 불가', cancelLoan('',r.id,'김교사','5678').ok===false);
+ck('반납 처리', returnLoan('',r.id,'김교사','5678').ok===true); ck('반납 후 다시 반납 불가', returnLoan('',r.id,'김교사','5678').ok===false);
+console.log('공간 승인/취소');
+const bk=(sp,who,per)=>submitRequest('',{date:'2026-10-21',period:per||'1교시',space:sp,who:who,purpose:'행사'});
+r=bk('강당','김교사'); ck('강당은 승인대기', r.ok&&r.pending===true, r);
+ck('승인대기도 자리를 막음', bk('강당','박교사').ok===false);
+r=bk('과학실1(204)','김교사','2교시'); ck('일반 공간은 바로 확정', r.ok&&!r.pending, r);
+my=myRequests('','김교사','5678'); ck('내 공간 신청 2건(대기·확정)', my.spaces.length===2 && my.spaces.some(s=>s.status==='승인대기'), my.spaces);
+const row=my.spaces.find(s=>s.space==='강당').row;
+ck('남의 공간 신청 취소 거절', cancelMySpace('','박교사','4321',row).ok===false);
+ck('내 공간 신청 취소', cancelMySpace('','김교사','5678',row).ok===true); ck('취소하면 그 자리 다시 신청 가능', bk('강당','박교사').ok===true);
+let gd=getData('','2026-10-21'); ck('교사 화면 사용 현황에 ⏳ 표시', gd.usage.some(u=>u.space==='강당'&&u.pending===true&&u.who.startsWith('⏳')), gd.usage); ck('getData에 승인 필요 공간·대여 분류', gd.approval.includes('강당')&&gd.lendable.includes('전자기기'));
+console.log('관리자');
+ck('ADMIN_CODE 없으면 거절', thr(()=>adminSummary('x')).includes('설정되지 않았어요'));
+props.ADMIN_CODE='0000'; ck('코드 틀리면 거절', thr(()=>adminSummary('1111')).includes('올바르지'));
+let sm=adminSummary('0000'); ck('대시보드: 승인 대기 공간 1건', sm.ok&&sm.pendingSpace.length===1&&sm.pendingSpace[0].space==='강당', sm.pendingSpace);
+ck('대시보드: 대여 중/오늘 반납/예정', Array.isArray(sm.active) && Array.isArray(sm.dueToday) && sm.upcoming.length>=1, {a:sm.active.length,u:sm.upcoming.length});
+ck('공간 신청 반려 → 자리 비움', adminSetStatus('0000','space',sm.pendingSpace[0].row,'반려').ok===true && bk('강당','이교사').ok===true);
+ck('대여 반납완료 처리', adminSetStatus('0000','loan',sm.upcoming[0].id,'반납완료').ok===true);
+ck('모르는 처리 거절', adminSetStatus('0000','loan','R0002','삭제').ok===false);
+ck('PIN 초기화', adminResetPin('0000','김교사').ok===true && hasPin('','김교사').has===false);
+console.log('\n통과',pass,'/ 실패',fail); process.exit(fail?1:0);

@@ -29,13 +29,21 @@ from pkm_core import (
     PROP_DESCRIPTIONS,
     TYPE_VALUES,
     apply_props_to_file,
+    build_note_folder_path_value,
+    generate_index_snapshot,
+    generate_relations_wiki,
     get_current_props,
+    list_backup_files,
     match_index,
+    move_note_to_path_prop,
+    move_backups_outside_vault,
     parse_obsidian_paths,
     read_text_file,
     remove_props_from_file,
     restore_backup,
     search_in_content,
+    sync_path_prop_for_file,
+    DEFAULT_BACKUP_ROOT,
 )
 
 
@@ -203,6 +211,10 @@ class PKMManager(tk.Tk):
         ttk.Button(bf2, text="📋 Obsidian 경로 붙여넣기",
                    command=self._paste_obsidian_paths,
                    style="Accent.TButton").pack(side="left", padx=2)
+        ttk.Button(bf2, text="📑 Index 스냅샷 생성",
+                   command=self._export_index_snapshot).pack(side="left", padx=2)
+        ttk.Button(bf2, text="🕸 관계 위키 생성",
+                   command=self._export_relations_wiki).pack(side="left", padx=2)
         ttk.Button(bf2, text="🔄 목록 초기화",
                    command=self._reset_list).pack(side="left", padx=4)
         ttk.Label(bf2,
@@ -220,28 +232,30 @@ class PKMManager(tk.Tk):
         # type
         self._prop_row(frame, 2, "type", TYPE_VALUES, combo=True)
         # topic
-        self._prop_row(frame, 3, "topic", [], combo=False)
+        self._prop_row(frame, 3, "topic", [], combo=False, hint="쉼표로 구분하면 [a, b]로 저장")
+        # tags
+        self._prop_row(frame, 4, "tags", [], combo=False, hint="쉼표로 구분하면 [a, b]로 저장")
         # status
-        self._prop_row(frame, 4, "status",
+        self._prop_row(frame, 5, "status",
                        ["완료", "초안", "진행중", "확인됨", "반증됨", "철회"], combo=True)
         # 관련종목 (리스트 입력 — 쉼표로 구분)
-        self._prop_row(frame, 5, "관련종목", [], combo=False,
+        self._prop_row(frame, 6, "관련종목", [], combo=False,
                        hint="쉼표로 구분 → [a, b] 리스트로 저장")
         # 상태 (거시예측용)
-        self._prop_row(frame, 6, "상태",
+        self._prop_row(frame, 7, "상태",
                        ["진행중", "확인됨", "반증됨", "철회"], combo=True)
         # 날짜 (시장일지용)
-        self._prop_row(frame, 7, "날짜", [], combo=False, hint="예: 2025-10")
+        self._prop_row(frame, 8, "날짜", [], combo=False, hint="예: 2025-10")
 
         # 덮어쓰기 옵션
         self.overwrite_var = tk.BooleanVar(value=False)
         ttk.Checkbutton(frame, text="기존 값 덮어쓰기 (체크 안 하면 빈 값만 채움)",
                          variable=self.overwrite_var).grid(
-            row=8, column=0, columnspan=2, sticky="w", pady=8)
+            row=9, column=0, columnspan=2, sticky="w", pady=8)
 
         # 속성 설명
         desc_frame = ttk.LabelFrame(frame, text="ℹ 속성 설명", padding=6)
-        desc_frame.grid(row=9, column=0, columnspan=2, sticky="ew", pady=4)
+        desc_frame.grid(row=10, column=0, columnspan=2, sticky="ew", pady=4)
         self.desc_label = tk.Label(desc_frame, text="속성을 선택하면 설명이 나타납니다.",
                                     bg="#1e1e2e", fg="#a6adc8", justify="left",
                                     wraplength=280, anchor="w")
@@ -249,29 +263,38 @@ class PKMManager(tk.Tk):
 
         # 액션 버튼들
         ttk.Separator(frame, orient="horizontal").grid(
-            row=10, column=0, columnspan=2, sticky="ew", pady=8)
+            row=11, column=0, columnspan=2, sticky="ew", pady=8)
         ttk.Button(frame, text="✅ 선택 파일에 속성 추가/수정",
                    style="Accent.TButton",
                    command=self._apply_props).grid(
-            row=11, column=0, columnspan=2, sticky="ew", pady=2)
+            row=12, column=0, columnspan=2, sticky="ew", pady=2)
         ttk.Button(frame, text="🗑 선택 파일에서 속성 제거",
                    command=self._remove_props).grid(
-            row=12, column=0, columnspan=2, sticky="ew", pady=2)
+            row=13, column=0, columnspan=2, sticky="ew", pady=2)
         ttk.Button(frame, text="⏪ 선택 파일 되돌리기 (최근 백업 복원)",
                    command=self._restore).grid(
-            row=13, column=0, columnspan=2, sticky="ew", pady=2)
+            row=14, column=0, columnspan=2, sticky="ew", pady=2)
         ttk.Button(frame, text="👁 선택 파일 현재 속성 보기",
                    command=self._show_current_props).grid(
-            row=14, column=0, columnspan=2, sticky="ew", pady=2)
+            row=15, column=0, columnspan=2, sticky="ew", pady=2)
+        ttk.Button(frame, text="🗂 선택 파일 path 추가/갱신",
+                   command=self._apply_path_prop).grid(
+            row=16, column=0, columnspan=2, sticky="ew", pady=2)
+        ttk.Button(frame, text="🧽 선택 파일 path 삭제",
+                   command=self._remove_path_prop).grid(
+            row=17, column=0, columnspan=2, sticky="ew", pady=2)
+        ttk.Button(frame, text="📦 백업 파일 외부로 이동",
+                   command=self._move_backups_outside_vault).grid(
+            row=18, column=0, columnspan=2, sticky="ew", pady=2)
         ttk.Button(frame, text="🧹 백업 파일 전체 삭제 (_PKM_BACKUP 폴더 비우기)",
                    command=self._delete_all_backups).grid(
-            row=15, column=0, columnspan=2, sticky="ew", pady=2)
+            row=19, column=0, columnspan=2, sticky="ew", pady=2)
 
         ttk.Separator(frame, orient="horizontal").grid(
-            row=16, column=0, columnspan=2, sticky="ew", pady=8)
+            row=20, column=0, columnspan=2, sticky="ew", pady=8)
 
         batch_frame = ttk.LabelFrame(frame, text="🚚 PARA 소배치 이관", padding=6)
-        batch_frame.grid(row=17, column=0, columnspan=2, sticky="ew", pady=4)
+        batch_frame.grid(row=21, column=0, columnspan=2, sticky="ew", pady=4)
         batch_frame.columnconfigure(1, weight=1)
 
         ttk.Label(batch_frame, text="source:").grid(row=0, column=0, sticky="w", pady=2)
@@ -332,6 +355,21 @@ class PKMManager(tk.Tk):
             justify="left",
         )
         self.batch_summary_label.grid(row=6, column=0, columnspan=2, sticky="w", pady=(4, 0))
+
+        path_move_frame = ttk.LabelFrame(frame, text="path 재배치", padding=6)
+        path_move_frame.grid(row=23, column=0, columnspan=2, sticky="ew", pady=4)
+        ttk.Button(
+            path_move_frame,
+            text="🧭 선택 파일을 path 기준으로 재배치",
+            command=self._rehome_to_path_prop,
+        ).pack(fill="x")
+        ttk.Label(
+            path_move_frame,
+            text="AI가 path를 수정한 뒤 이 버튼을 누르면 해당 폴더로 옮깁니다.",
+            foreground="#a6adc8",
+            wraplength=280,
+            justify="left",
+        ).pack(anchor="w", pady=(4, 0))
 
         frame.columnconfigure(1, weight=1)
 
@@ -810,6 +848,39 @@ class PKMManager(tk.Tk):
             pass
         txt.configure(state="disabled")
 
+    def _export_index_snapshot(self):
+        vault = self.vault_path.get().strip()
+        if not vault or not os.path.isdir(vault):
+            messagebox.showerror("오류", "Vault를 먼저 불러오세요.")
+            return
+
+        vault_path = Path(vault)
+        content = generate_index_snapshot(vault_path)
+        out_dir = Path("G:/내 드라이브/knowledge").resolve()
+        out_dir.mkdir(parents=True, exist_ok=True)
+        out_path = out_dir / "index.md"
+        if out_path.exists():
+            existing = read_text_file(out_path)
+            if "AI 연결 제안용 정적 인덱스" not in existing and "# PKM Index (" not in existing:
+                out_path = out_dir / "pkm_index.md"
+        out_path.write_text(content, encoding="utf-8")
+        self._log(f"📑 Index 스냅샷 저장: {out_path}")
+
+    def _export_relations_wiki(self):
+        vault = self.vault_path.get().strip()
+        if not vault or not os.path.isdir(vault):
+            messagebox.showerror("오류", "Vault를 먼저 불러오세요.")
+            return
+
+        result = generate_relations_wiki(Path(vault))
+        self._log(
+            "🕸 관계 위키 생성: {index} (notes {notes}, explicit links {links})".format(
+                index=result["index_path"],
+                notes=result["note_count"],
+                links=result["explicit_links"],
+            )
+        )
+
     def _show_desc(self, name):
         desc = PROP_DESCRIPTIONS.get(name, "")
         self.desc_label.config(text=desc or "설명 없음")
@@ -835,10 +906,15 @@ class PKMManager(tk.Tk):
 
     def _get_props_to_apply(self) -> dict:
         props = {}
-        for name in ["domain", "engine", "type", "topic", "status", "상태", "날짜"]:
+        for name in ["domain", "engine", "type", "status", "상태", "날짜"]:
             v = getattr(self, f"prop_{name}").get().strip()
             if v and v != "(설정 안 함)":
                 props[name] = v
+        for name in ["topic", "tags"]:
+            v = getattr(self, f"prop_{name}").get().strip()
+            if v and v != "(설정 안 함)":
+                items = [item.strip() for item in v.split(",") if item.strip()]
+                props[name] = items if len(items) > 1 else items[0] if items else v
         # 관련종목: 쉼표 구분 입력 → 리스트로 변환
         v = getattr(self, "prop_관련종목").get().strip()
         if v and v != "(설정 안 함)":
@@ -863,7 +939,8 @@ class PKMManager(tk.Tk):
                 self._log(f"⚠ [{f.stem}] 적용할 속성 없음")
                 skip += 1
                 continue
-            result = apply_props_to_file(f, props, overwrite=overwrite)
+            vault_p = Path(self.vault_path.get().strip())
+            result = apply_props_to_file(f, props, overwrite=overwrite, vault_path=vault_p)
             if result == "ok":
                 self._log(f"✅ [{f.stem}] {props}")
                 ok += 1
@@ -891,7 +968,7 @@ class PKMManager(tk.Tk):
             messagebox.showinfo("안내", "파일을 먼저 선택하세요.")
             return
         keys = []
-        for name in ["domain", "engine", "type", "topic", "status", "관련종목", "상태", "날짜"]:
+        for name in ["domain", "engine", "type", "topic", "tags", "status", "관련종목", "상태", "날짜"]:
             v = getattr(self, f"prop_{name}").get().strip()
             if v and v != "(설정 안 함)":
                 keys.append(name)
@@ -903,9 +980,10 @@ class PKMManager(tk.Tk):
             return
         ok = skip = err = 0
         remove_indices = []
+        vault_p = Path(self.vault_path.get().strip())
         for idx in sel:
             f = self.filtered_files[idx]
-            result = remove_props_from_file(f, keys)
+            result = remove_props_from_file(f, keys, vault_path=vault_p)
             if result == "ok":
                 self._log(f"🗑 [{f.stem}] {keys} 제거됨")
                 ok += 1
@@ -927,6 +1005,119 @@ class PKMManager(tk.Tk):
                                    if i not in remove_set]
             self._refresh_listbox()
 
+    def _apply_path_prop(self):
+        sel = self.listbox.curselection()
+        if not sel:
+            messagebox.showinfo("안내", "파일을 먼저 선택하세요.")
+            return
+
+        vault = self.vault_path.get().strip()
+        if not vault or not os.path.isdir(vault):
+            messagebox.showerror("오류", "먼저 Vault 폴더를 선택하세요.")
+            return
+
+        example_path = build_note_folder_path_value(Path(vault), self.filtered_files[sel[0]])
+        if not messagebox.askyesno(
+            "path 속성 추가/갱신",
+            f"선택한 {len(sel)}개 파일의 현재 폴더 위치를 path 속성으로 저장합니다.\n\n"
+            f"예시: {example_path}\n\n"
+            f"기존 path 값이 있어도 실제 현재 경로로 갱신합니다.\n"
+            f"(변경 전 백업이 자동 생성됩니다)",
+        ):
+            return
+
+        ok = skip = err = 0
+        vault_path = Path(vault)
+        for idx in sel:
+            note_path = self.filtered_files[idx]
+            result, path_value = sync_path_prop_for_file(note_path, vault_path)
+            if result == "ok":
+                self._log(f"🗂 [{note_path.stem}] path={path_value}")
+                ok += 1
+            elif result == "skipped":
+                self._log(f"➖ [{note_path.stem}] path 변경 없음")
+                skip += 1
+            else:
+                self._log(f"❌ [{note_path.stem}] {result}", error=True)
+                err += 1
+
+        self._log(f"── path 갱신 완료: 성공 {ok} / 스킵 {skip} / 오류 {err} ──")
+        self._refresh_listbox()
+
+    def _remove_path_prop(self):
+        sel = self.listbox.curselection()
+        if not sel:
+            messagebox.showinfo("안내", "파일을 먼저 선택하세요.")
+            return
+
+        if not messagebox.askyesno(
+            "path 속성 삭제",
+            f"선택한 {len(sel)}개 파일에서 path 속성을 제거합니다.\n"
+            f"(변경 전 백업이 자동 생성됩니다)",
+        ):
+            return
+
+        ok = skip = err = 0
+        vault_p = Path(self.vault_path.get().strip())
+        for idx in sel:
+            note_path = self.filtered_files[idx]
+            result = remove_props_from_file(note_path, ["path"], vault_path=vault_p)
+            if result == "ok":
+                self._log(f"🧽 [{note_path.stem}] path 제거됨")
+                ok += 1
+            elif result == "skipped":
+                self._log(f"➖ [{note_path.stem}] path 없음")
+                skip += 1
+            else:
+                self._log(f"❌ [{note_path.stem}] {result}", error=True)
+                err += 1
+
+        self._log(f"── path 제거 완료: 성공 {ok} / 스킵 {skip} / 오류 {err} ──")
+        self._refresh_listbox()
+
+    def _rehome_to_path_prop(self):
+        sel = self.listbox.curselection()
+        if not sel:
+            messagebox.showinfo("안내", "파일을 먼저 선택하세요.")
+            return
+
+        vault = self.vault_path.get().strip()
+        if not vault or not os.path.isdir(vault):
+            messagebox.showerror("오류", "먼저 Vault 폴더를 선택하세요.")
+            return
+
+        if not messagebox.askyesno(
+            "path 기준 재배치",
+            f"선택한 {len(sel)}개 파일을 각 파일의 path 속성 위치로 재배치합니다.\n"
+            "충돌 파일은 건너뛰고, 이동 전 원본 백업을 만듭니다.",
+        ):
+            return
+
+        vault_path = Path(vault)
+        moved = skipped = conflict = err = 0
+
+        for idx in sel:
+            note_path = self.filtered_files[idx]
+            status, destination, detail = move_note_to_path_prop(note_path, vault_path)
+            if status == "moved":
+                self._log(f"🧭 [{note_path.stem}] -> {destination}")
+                moved += 1
+            elif status == "skipped":
+                self._log(f"⏭ [{note_path.stem}] {detail}")
+                skipped += 1
+            elif status == "conflict":
+                self._log(f"⚠ [{note_path.stem}] {detail}", error=True)
+                conflict += 1
+            else:
+                self._log(f"❌ [{note_path.stem}] {detail}", error=True)
+                err += 1
+
+        self._log(
+            f"── path 재배치 완료: 이동 {moved} / 스킵 {skipped} / 충돌 {conflict} / 오류 {err} ──",
+            error=(conflict + err) > 0,
+        )
+        self._load_files()
+
     def _restore(self):
         sel = self.listbox.curselection()
         if not sel:
@@ -935,9 +1126,10 @@ class PKMManager(tk.Tk):
         if not messagebox.askyesno("확인",
             f"선택한 {len(sel)}개 파일을 최근 백업으로 복원합니다.\n현재 파일이 덮어써집니다."):
             return
+        vault_p = Path(self.vault_path.get().strip())
         for idx in sel:
             f = self.filtered_files[idx]
-            result = restore_backup(f)
+            result = restore_backup(f, vault_path=vault_p)
             if result.startswith("restored"):
                 self._log(f"⏪ [{f.stem}] {result}")
             else:
@@ -966,28 +1158,77 @@ class PKMManager(tk.Tk):
         txt.insert("end", "\n".join(lines))
         txt.configure(state="disabled")
 
+    def _move_backups_outside_vault(self):
+        vault = self.vault_path.get().strip()
+        if not vault or not os.path.isdir(vault):
+            messagebox.showerror("오류", "먼저 Vault 폴더를 선택하세요.")
+            return
+
+        vault_path = Path(vault).resolve()
+        backup_files = list_backup_files(vault_path)
+        if not backup_files:
+            messagebox.showinfo("안내", "옮길 백업 파일이 없습니다.")
+            return
+
+        archive_dir = filedialog.askdirectory(title="백업 파일을 옮길 외부 폴더 선택")
+        if not archive_dir:
+            return
+
+        archive_root = Path(archive_dir).resolve()
+        if archive_root == vault_path or vault_path in archive_root.parents:
+            messagebox.showerror("오류", "백업 이동 위치는 Vault 바깥 폴더여야 합니다.")
+            return
+
+        if not messagebox.askyesno(
+            "백업 외부 이동 확인",
+            f"백업 파일 {len(backup_files)}개를 아래 폴더로 이동합니다.\n\n{archive_root}\n\n"
+            f"Vault 안의 _PKM_BACKUP 폴더는 비워지고, 빈 폴더는 정리됩니다.",
+        ):
+            return
+
+        result = move_backups_outside_vault(vault_path, archive_root)
+        self._log(
+            "📦 백업 외부 이동 완료: {moved}개 / 빈 폴더 {removed}개 정리 / 오류 {errors}개 / 위치 {target}".format(
+                moved=result["moved"],
+                removed=result["removed_dirs"],
+                errors=result["error_count"],
+                target=result["export_dir"],
+            ),
+            error=result["error_count"] > 0,
+        )
+        for error_line in result["errors"][:10]:
+            self._log(f"⚠ {error_line}", error=True)
+
     def _delete_all_backups(self):
         """Vault 내 모든 _PKM_BACKUP 폴더의 백업 파일 삭제"""
         vault = self.vault_path.get().strip()
         if not vault or not os.path.isdir(vault):
             messagebox.showerror("오류", "먼저 Vault 폴더를 선택하세요.")
             return
+            
         bak_dirs = list(Path(vault).rglob("_PKM_BACKUP"))
+        if DEFAULT_BACKUP_ROOT.exists():
+            bak_dirs.append(DEFAULT_BACKUP_ROOT)
+            
         if not bak_dirs:
-            messagebox.showinfo("안내", "백업 폴더(_PKM_BACKUP)가 없습니다.")
+            messagebox.showinfo("안내", "백업 폴더(또는 외부 백업)가 없습니다.")
             return
-        total_files = sum(len(list(d.glob("*.bak"))) for d in bak_dirs)
+            
+        total_files = sum(len(list(d.rglob("*.bak"))) for d in bak_dirs)
         if total_files == 0:
             messagebox.showinfo("안내", "삭제할 백업 파일이 없습니다.")
             return
+            
         if not messagebox.askyesno("백업 삭제 확인",
-            f"모든 _PKM_BACKUP 폴더의 백업 파일 {total_files}개를 삭제합니다.\n"
+            f"Vault 내부/외부 백업 파일 {total_files}개를 삭제합니다.\n"
             f"이 작업은 되돌릴 수 없습니다. 계속하시겠습니까?"):
             return
         deleted = 0
         errors = 0
         for bak_dir in bak_dirs:
-            for bak_file in bak_dir.glob("*.bak"):
+            for bak_file in bak_dir.rglob("*.bak"):
+                if not bak_file.is_file():
+                    continue
                 try:
                     bak_file.unlink()
                     deleted += 1

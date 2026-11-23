@@ -170,6 +170,31 @@ def split_message(lines: list[str], limit: int = MAX_CHARS) -> list[str]:
     return [f"({i}/{n}) " + "\n".join(c) for i, c in enumerate(chunks, 1)]
 
 
+def friend_rows(rows: list[dict]) -> list[dict]:
+    """가족·동료에게 보여 줄 행: 선생님 개인 할 일(구분 '개인')은 뺀다."""
+    return [r for r in rows if (r.get("구분") or "").strip() != TASK_CATEGORY]
+
+
+MORE_TAIL = "👇 전체는 '자세히 보기'"
+
+
+def one_message(lines: list[str], tail: str = MORE_TAIL, limit: int = MAX_CHARS) -> str:
+    """한 통(limit자 이내)에 담는다. 넘치면 앞에서부터 들어가는 줄까지만 넣고 안내 꼬리를 붙인다.
+    친구 발송은 하루 한도(심사 전 30건)가 있어 사람당 하루 한 통으로 줄이기 위한 것."""
+    text = "\n".join(lines)
+    if len(text) <= limit:
+        return text
+    room = limit - len(tail) - 1
+    out: list[str] = []
+    for ln in lines:
+        if _size(out + [ln]) > room:
+            break
+        out.append(ln)
+    if not out:
+        out = [lines[0][: max(room - 1, 0)] + "…"]
+    return "\n".join(out + [tail])
+
+
 def build_weekly_trips(rows: list[dict], today: date, days: int = 7) -> tuple[list[str], int]:
     """구분이 '출장'인 행만 모은 주간 메시지(오늘부터 days일). 상태 칸이 비었고 내 대상인 행만. (줄 목록, 개수)"""
     end = today + timedelta(days=days - 1)

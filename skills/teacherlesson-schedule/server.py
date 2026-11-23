@@ -392,6 +392,43 @@ app = Flask(__name__)
 CORS(app)
 
 
+@app.route("/api/lessons")
+def subject_lessons():
+    """한 과목의 모든 차시(완료 포함)를 진도표 순서대로. 수업 비서의 '실제로 할 차시 고르기'가 쓴다."""
+    subject = schedule._clean_text(request.args.get("subject", ""))
+    if not subject:
+        return _action_error("subject 가 필요해요.")
+    try:
+        ws = schedule.connect()
+        records = schedule.load_all(ws)
+    except (ValueError, schedule.ScheduleError) as exc:
+        return _action_error(f"진도표를 읽지 못했어요: {exc}", 500)
+    # 계획 날짜·교시는 수업배치(bridge)의 '계획' 칸에서 읽는다(진도표 날짜 열은 머리글이 덮여 믿기 어려움)
+    slots = {}
+    bridge = schedule._load_bridge_support(ws)
+    for row in sorted((bridge or {}).get("rows", []), key=schedule._bridge_row_sort_key):
+        lesson_id = schedule._clean_text(row.get(schedule.COLUMN_LESSON_ID))
+        if lesson_id and schedule._is_bridge_planned(row) and lesson_id not in slots:
+            slots[lesson_id] = (schedule._clean_text(row.get("slot_date"))[:10], schedule._clean_text(row.get("slot_period")))
+    items = []
+    for record in sorted(records, key=lambda r: r.get("_row", 0)):
+        if schedule._clean_text(record.get(schedule.COLUMN_SUBJECT)) != subject:
+            continue
+        lesson_id = schedule._lesson_id_of(record)
+        done = bool(schedule._is_done(record))
+        slot_date, slot_period = slots.get(lesson_id, ("", "")) if not done else ("", "")
+        items.append({
+            "record_key": lesson_id or record.get("_record_key") or record.get("_row"),
+            "unit": schedule._clean_text(record.get(schedule.COLUMN_UNIT)),
+            "lesson": schedule._clean_text(record.get(schedule.COLUMN_LESSON)),
+            "title": schedule._clean_text(record.get(schedule.COLUMN_TITLE)),
+            "done": done,
+            "planned_date": slot_date,
+            "planned_period": slot_period,
+        })
+    return jsonify({"status": "success", "subject": subject, "items": items})
+
+
 @app.route("/api/dashboard")
 def dashboard():
     board_date_text = request.args.get("board_date")

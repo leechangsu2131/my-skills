@@ -1,0 +1,6 @@
+tmp*/
+generated_rows/
+_test_*/
+__pycache__/
+.pytest_cache/
+.cache/

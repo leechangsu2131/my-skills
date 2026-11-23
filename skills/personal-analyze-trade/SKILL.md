@@ -3,11 +3,13 @@ name: personal-analyze-trade
 description: "Use this skill when Codex needs to analyze or inspect the user's investment portfolio Google Sheet: portfolio summary, returns, weights, sector exposure, rebalancing or trade signals, recent trade journal entries, closed positions, strategy review, position retrospectives, price data, or correlation data. Prefer this skill for Google Sheets MCP/Connector read-focused investment analysis and sheet-range selection. For adding a new natural-language or screenshot-based trade entry, use $personal-record-trade instead."
 metadata:
   category: 개인·생활
-  status: 운영
+  status: 보관
   summary: Google Sheets 투자 기록을 읽어 포트폴리오, 수익, 비중, 섹터, 매매 신호와 전략을 분석한다. 신규 매매 입력은 `personal-record-trade` 담당이다.
 ---
 
 # Personal Analyze Trade
+
+> **보관 (2026-11-20)**: 투자시트 작업은 `personal-invest-sheet` 스킬을 쓴다(2026-11-22부터 이 저장소 밖, 비공개 GitLab 저장소 `invest-sheet`로 옮김. 이 PC에서는 `~/.claude/skills/personal-invest-sheet`로 연결). 이 문서의 시트 지도·`.env` 경로는 옛 구조다.
 
 ## Core Rules
 

@@ -69,6 +69,12 @@ h1{font-size:22px;line-height:1.3;margin:2px 0 4px;letter-spacing:-.01em}
 #heroTip{font-size:15px;color:var(--warn);margin:6px 0}
 #heroTimer{margin:12px 0 4px}
 #heroLabel{font-size:12px;color:var(--sub)}
+.remain-row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.adj{display:flex;gap:6px;flex:none}
+.adj button{padding:8px 12px;border-radius:10px;font-size:15px;background:rgba(0,0,0,.06)}
+#heroPace{font-size:14px;color:var(--sub);margin-top:8px}
+#heroPace.bad{color:var(--warn);font-weight:600}
+.hero.over #heroPace.bad{color:var(--red)}
 #heroRemain{font-size:46px;line-height:1.1;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
 .hero.warn #heroRemain{color:var(--warn)}
 .hero.over #heroRemain{color:var(--red)}
@@ -191,13 +197,15 @@ textarea:focus,input[type=text]:focus{outline:2px solid var(--acc-soft);border-c
     <div id="heroTip" hidden></div>
     <div id="heroTimer" hidden>
       <div id="heroLabel"></div>
-      <div id="heroRemain"></div>
+      <div class="remain-row"><div id="heroRemain"></div>
+        <div class="adj" id="heroAdj"><button id="adjMinus" title="이 단계 시간을 1분 줄여요 (− 키)">−1분</button><button id="adjPlus" title="이 단계 시간을 1분 늘려요 (+ 키)">+1분</button></div></div>
       <div class="bar"><i id="heroBar"></i></div>
+      <div id="heroPace" hidden></div>
     </div>
     <div id="heroNext" hidden></div>
     <button id="heroSuggest" hidden></button>
     <div class="hero-ctl"><button id="stepPrev" title="이전 단계 (←, PageUp)">◀</button><button id="stepNext" class="pri" title="다음 단계 (→, PageDown)">다음 단계 ▶</button></div>
-    <div class="keyhint">← → 키나 발표용 리모컨(PageUp·PageDown)으로도 넘길 수 있어요</div>
+    <div class="keyhint">← → 키나 발표용 리모컨(PageUp·PageDown)으로 단계를, + − 키로 이 단계 시간을 1분씩 바꿔요</div>
   </section>
 
   <!-- 수업 기록 -->
@@ -287,6 +295,7 @@ const $ = id => document.getElementById(id);
 const qDate = new URLSearchParams(location.search).get('date');
 let S = null, day = qDate ? new Date(qDate+'T09:00:00') : new Date(), cur = null, stepIdx = -1, stepAt = 0;
 let sess = null, rec = null, saveTimer = null;
+let stepAdj = {};   // 이번 수업에서 단계별로 늘리거나 줄인 분(흐름 파일은 안 바꿈). 기록(adj)으로 남겨 새로고침해도 이어짐
 
 const iso = d => new Date(d.getTime() - d.getTimezoneOffset()*6e4).toISOString().slice(0,10);
 const hm = s => { const [h,m] = s.split(':').map(Number); return h*60+m; };
@@ -334,7 +343,7 @@ function select(i){
   if (rec) { toast('녹음 중입니다. 먼저 수업을 마쳐 주세요'); return; }
   if (!leaveEdit()) return;
   flushSave();
-  cur = i>=0 ? S.lessons[i] : null; stepIdx = -1; stepAt = 0;
+  cur = i>=0 ? S.lessons[i] : null; stepIdx = -1; stepAt = 0; stepAdj = {};
   $('memoLog').open = false;   // 교시를 바꾸면 기록 목록은 다시 접음
   $('memoIn').value = ''; setMemoKind('note');   // 쓰던 메모가 다른 수업에 들어가지 않게
   renderTabs();
@@ -361,9 +370,13 @@ function select(i){
 
 /* 새로고침(F5)·창을 다시 열어도 수업 중이던 단계와 시간을 이어 간다: 오늘 수업이고, 마지막 단계 기록 뒤에 '수업 마침'이 없을 때 */
 function restoreStep(){
-  stepIdx = -1; stepAt = 0;
+  stepIdx = -1; stepAt = 0; stepAdj = {};
   const steps = (cur && cur.flow && cur.flow.steps) || [];
   if (!sess || !steps.length || S.date !== iso(new Date())) return;
+  for (const m of sess.memos) {   // 시간 조정 기록을 처음부터 더하고, '수업 마침'을 만나면 비움
+    if (m.kind === 'sys' && m.text === '수업 마침') stepAdj = {};
+    else if (m.kind === 'adj' && Number.isInteger(m.idx)) stepAdj[m.idx] = (stepAdj[m.idx] || 0) + (+m.delta || 0);
+  }
   for (let i = sess.memos.length-1; i >= 0; i--) {
     const m = sess.memos[i];
     if (m.kind === 'sys' && m.text === '수업 마침') return;
@@ -483,7 +496,26 @@ $('flowEdit').addEventListener('click', e => {
 
 /* ===== 지금 할 일 (수업 중 큰 화면) ===== */
 function setBlock(id, text){ const el = $(id); el.textContent = text || ''; el.hidden = !text; }
-function stepMin(s){ return s && s.minutes ? ` · ${s.minutes}분` : ''; }
+/* 단계의 '지금 적용되는' 분 = 흐름의 분 + 이번 수업에서 조정한 분(1~120). 분이 없는 단계는 0(시간 안 잼) */
+function effMin(i){
+  const base = (((cur && cur.flow && cur.flow.steps) || [])[i] || {}).minutes || 0;
+  return base ? Math.max(1, Math.min(120, base + (stepAdj[i] || 0))) : 0;
+}
+function stepMin(i){
+  const m = effMin(i), d = stepAdj[i] || 0;
+  return m ? ` · ${m}분${d ? ` (${d > 0 ? '+' : ''}${d})` : ''}` : '';
+}
+function adjStep(d){
+  const steps = (cur && cur.flow && cur.flow.steps) || [];
+  if (stepIdx < 0 || !steps[stepIdx] || !steps[stepIdx].minutes) return;
+  const before = effMin(stepIdx);
+  stepAdj[stepIdx] = (stepAdj[stepIdx] || 0) + d;
+  const diff = effMin(stepIdx) - before;
+  if (!diff) { stepAdj[stepIdx] -= d; return; }   // 1분·120분 한계
+  stepAdj[stepIdx] = (stepAdj[stepIdx] || 0) - d + diff;
+  addMemo('adj', `시간 조정: ${steps[stepIdx].name} ${diff > 0 ? '+' : ''}${diff}분 (→ ${effMin(stepIdx)}분)`, true, {idx: stepIdx, delta: diff});
+  renderHero();
+}
 
 function renderHero(){
   const steps = (cur && cur.flow && cur.flow.steps) || [];
@@ -509,16 +541,18 @@ function renderHero(){
     $('heroName').textContent = f.goal || '수업 준비가 됐어요';
     setBlock('heroSay', ''); setBlock('heroTip', ''); $('heroTimer').hidden = true;
     setBlock('heroDo', f.materials && f.materials.length ? '준비물: ' + f.materials.join(', ') : '');
-    setBlock('heroNext', `첫 단계 ▸ ${steps[0].name}${stepMin(steps[0])}`);
+    setBlock('heroNext', `첫 단계 ▸ ${steps[0].name}${stepMin(0)}`);
     next.textContent = '첫 단계 시작 ▶'; next.disabled = false; tickHero(); return;
   }
   const st = steps[stepIdx], nx = steps[stepIdx+1];
   $('heroStatus').textContent = `${stepIdx+1} / ${steps.length} 단계`;
-  $('heroName').textContent = st.name + stepMin(st);
+  $('heroName').textContent = st.name + stepMin(stepIdx);
   setBlock('heroSay', st.say ? '💬 ' + st.say : '');
   setBlock('heroDo', st.do); setBlock('heroTip', st.tip ? '💡 ' + st.tip : '');
-  setBlock('heroNext', nx ? `다음 ▸ ${nx.name}${stepMin(nx)}` : '마지막 단계예요. 정리하고 마무리!');
+  setBlock('heroNext', nx ? `다음 ▸ ${nx.name}${stepMin(stepIdx+1)}` : '마지막 단계예요. 정리하고 마무리!');
   $('heroTimer').hidden = false;
+  $('heroAdj').hidden = !effMin(stepIdx);
+  $('adjMinus').disabled = effMin(stepIdx) <= 1; $('adjPlus').disabled = effMin(stepIdx) >= 120;
   next.textContent = nx ? '다음 단계 ▶' : '마지막 단계'; next.disabled = !nx;
   tickHero();
 }
@@ -550,7 +584,7 @@ function tickHero(){
     else b.hidden = true;
     return;
   }
-  const st = steps[stepIdx], el = (Date.now() - stepAt) / 1000, total = (st.minutes || 0) * 60;
+  const st = steps[stepIdx], el = (Date.now() - stepAt) / 1000, total = effMin(stepIdx) * 60;
   if (total) {
     const left = total - el, state = left < 0 ? 'over' : left <= 60 ? 'warn' : 'run';
     hero.className = 'hero ' + state;
@@ -563,6 +597,29 @@ function tickHero(){
     $('heroRemain').textContent = mmss(el*1000);
     $('heroBar').style.width = '0';
   }
+  tickPace(steps);
+}
+
+/* 시간표 대비 진행: 현재 단계가 계획된 시작보다 얼마나 늦게 시작했는지, 남은 단계가 교시 끝까지 들어가는지.
+   오늘·해당 교시 시간 안이고 모든 단계에 분이 있을 때만 보여 준다(분 없는 단계가 있으면 계산이 틀려서 숨김). */
+function paceInfo(steps){
+  const w = periodWindow();
+  if (!w || stepIdx < 0 || !steps.every(s => s.minutes) || nowMin() > w.e) return null;
+  let before = 0; for (let i = 0; i < stepIdx; i++) before += effMin(i);
+  const midnight = new Date(); midnight.setHours(0, 0, 0, 0);
+  const late = Math.round((stepAt - (midnight.getTime() + (w.s + before) * 60000)) / 60000);
+  let need = Math.max(0, effMin(stepIdx) - (Date.now() - stepAt) / 60000);
+  for (let i = stepIdx + 1; i < steps.length; i++) need += effMin(i);
+  const short = Math.round(need - (w.e - nowMin()));
+  const parts = [Math.abs(late) >= 1 ? `계획보다 ${Math.abs(late)}분 ${late > 0 ? '늦음' : '빠름'}` : '시간표대로 진행 중'];
+  if (short >= 1) parts.push(`교시 끝까지 ${short}분 모자라요`);
+  else if (short <= -1) parts.push(`${-short}분 여유`);
+  return {text: parts.join(' · '), bad: late >= 3 || short >= 1};
+}
+function tickPace(steps){
+  const info = paceInfo(steps), el = $('heroPace');
+  el.hidden = !info;
+  if (info) { el.textContent = '⏱ ' + info.text; el.classList.toggle('bad', info.bad); }
 }
 
 function goStep(i){
@@ -575,20 +632,20 @@ function goStep(i){
 }
 
 function relTime(){ return rec && sess.started_ms ? mmss(Date.now()-sess.started_ms) : new Date().toTimeString().slice(0,5); }
-const KIND = {good:'👍', fix:'🔧', student:'🙋', star:'★', voice:'🎤', step:'▶', note:'📝', sys:'⏱'};
+const KIND = {good:'👍', fix:'🔧', student:'🙋', star:'★', voice:'🎤', step:'▶', adj:'⏱', note:'📝', sys:'⏱'};
 function addMemo(kind, text, quiet, extra){
   if (!sess) return;
   sess.memos.push({t:relTime(), at:new Date().toISOString(), kind, text, ...(extra||{})});
-  if (kind !== 'step' && kind !== 'sys') $('memoLog').open = true;   // 직접 적은 메모는 바로 확인할 수 있게 펼침
+  if (kind !== 'step' && kind !== 'sys' && kind !== 'adj') $('memoLog').open = true;   // 직접 적은 메모는 바로 확인할 수 있게 펼침
   renderMemos(); scheduleSave(quiet);
 }
 /* 기록 목록은 접어 두고, 단계를 넘길 때마다 쌓이는 '단계 이동' 줄은 따로 켜고 끈다 */
 let showStepLog = false;
 function renderMemos(){
-  const all = sess ? sess.memos : [], notes = all.filter(m => m.kind !== 'step'), moves = all.length - notes.length;
+  const all = sess ? sess.memos : [], notes = all.filter(m => m.kind !== 'step' && m.kind !== 'adj'), logs = all.length - notes.length, moves = all.filter(m => m.kind === 'step').length;
   $('memoSum').textContent = `📝 기록 ${notes.length}개` + (moves ? ` · 단계 이동 ${moves}번` : '');
-  $('stepLogBtn').hidden = !moves;
-  $('stepLogBtn').textContent = showStepLog ? '단계 이동 기록 숨기기' : '단계 이동 기록도 보기';
+  $('stepLogBtn').hidden = !logs;
+  $('stepLogBtn').textContent = showStepLog ? '단계 이동·시간 조정 기록 숨기기' : '단계 이동·시간 조정 기록도 보기';
   const shown = showStepLog ? all : notes;
   $('memoList').innerHTML = shown.length ? shown.slice().reverse().map(m=>`<div><code>${esc(m.t)}</code>${KIND[m.kind]||''} ${esc(m.text)}</div>`).join('')
     : '<div class="muted">아직 남긴 메모가 없어요</div>';
@@ -656,7 +713,7 @@ async function stopRec(){
   $('rdot').classList.remove('on'); $('mlev').style.width='0';
   $('recBtn').textContent='● 수업 시작'; $('recBtn').className='pri';
   sess.ended_at = new Date().toISOString();
-  stepIdx = -1; stepAt = 0; renderFlow();   // 수업이 끝나면 '지금 할 일' 도 처음 상태로
+  stepIdx = -1; stepAt = 0; stepAdj = {}; renderFlow();   // 수업이 끝나면 '지금 할 일' 도 처음 상태로
   scheduleSave(false);
   $('recMsg').textContent = '수업 기록을 저장했어요. Claude에게 "오늘 수업 정리해줘"라고 하면 메모를 분석해 다음 수업에 반영합니다.';
 }
@@ -689,7 +746,11 @@ document.addEventListener('keydown', e => {
   if (e.ctrlKey || e.metaKey || e.altKey || e.target.closest('input,textarea,select,[contenteditable]')) return;
   if (e.key === 'ArrowRight' || e.key === 'PageDown') { e.preventDefault(); goStep(stepIdx+1); }
   else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); goStep(stepIdx-1); }
+  else if (e.key === '+' || e.key === '=') { e.preventDefault(); adjStep(1); }
+  else if (e.key === '-' || e.key === '_') { e.preventDefault(); adjStep(-1); }
 });
+$('adjMinus').onclick = () => adjStep(-1);
+$('adjPlus').onclick = () => adjStep(1);
 $('recBtn').onclick = () => rec ? stopRec() : startRec();
 $('voiceBtn').onclick = voiceMemo;
 $('stepLogBtn').onclick = () => { showStepLog = !showStepLog; renderMemos(); };

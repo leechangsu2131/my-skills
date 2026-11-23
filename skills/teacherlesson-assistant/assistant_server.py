@@ -337,6 +337,87 @@ def screen_size() -> tuple[int, int]:
         return 1920, 1080
 
 
+# ── 새로 연 Chrome 창을 앞으로 가져오기 ──
+# 이미 떠 있는 Chrome 에 새 창을 만들게 하면, 백그라운드 프로그램(이 서버)이 시킨 창은 Windows 규칙상
+# 다른 창 뒤에 깔릴 수 있다("눌렀는데 창이 안 보여요"). 새로 생긴 창을 찾아 앞으로 올린다.
+# Windows 전용·실패해도 조용히 넘어간다(창 열기 자체에는 영향 없음).
+CHROME_WINDOW_CLASS = "Chrome_WidgetWin_1"
+
+
+def _is_windows() -> bool:
+    return os.name == "nt"
+
+
+def _win_api():
+    """user32 (인자 형식을 맞춰 둠). 창 핸들 -1(HWND_TOPMOST)이 64비트에서도 안 깨지게 argtypes 를 지정한다."""
+    import ctypes
+    from ctypes import wintypes
+    u = ctypes.windll.user32
+    enum_proc = ctypes.WINFUNCTYPE(wintypes.BOOL, wintypes.HWND, wintypes.LPARAM)
+    u.EnumWindows.argtypes = [enum_proc, wintypes.LPARAM]
+    u.IsWindowVisible.argtypes = u.IsIconic.argtypes = u.SetForegroundWindow.argtypes = u.GetWindowTextLengthW.argtypes = [wintypes.HWND]
+    u.GetClassNameW.argtypes = [wintypes.HWND, wintypes.LPWSTR, ctypes.c_int]
+    u.ShowWindow.argtypes = [wintypes.HWND, ctypes.c_int]
+    u.SetWindowPos.argtypes = [wintypes.HWND, wintypes.HWND, ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_int, wintypes.UINT]
+    u.keybd_event.argtypes = [wintypes.BYTE, wintypes.BYTE, wintypes.DWORD, ctypes.c_size_t]
+    u._enum_proc = enum_proc
+    return u
+
+
+def chrome_windows(user32) -> set[int]:
+    """지금 보이는 Chrome 창(제목 있는 것)의 핸들 모음."""
+    import ctypes
+    found: set[int] = set()
+    buf = ctypes.create_unicode_buffer(256)
+
+    def visit(hwnd, _):
+        if user32.IsWindowVisible(hwnd):
+            user32.GetClassNameW(hwnd, buf, 256)
+            if buf.value == CHROME_WINDOW_CLASS and user32.GetWindowTextLengthW(hwnd) > 0:
+                found.add(int(hwnd))
+        return True
+
+    user32.EnumWindows(user32._enum_proc(visit), 0)
+    return found
+
+
+def wait_for_new_window(list_windows, before: set[int], timeout: float = 6.0, interval: float = 0.2, sleep=None, clock=None):
+    """before 에 없던 창이 나타날 때까지 기다려 그 핸들을 돌려준다(시간 안에 안 나타나면 None)."""
+    import time as _time
+    sleep, clock = sleep or _time.sleep, clock or _time.monotonic
+    end = clock() + timeout
+    while True:
+        new = sorted(list_windows() - before)
+        if new:
+            return new[-1]
+        if clock() >= end:
+            return None
+        sleep(interval)
+
+
+def raise_window(user32, hwnd) -> None:
+    """창을 앞으로: 최소화 해제 → 잠깐 '항상 위'로 올렸다 풀기(포그라운드 권한 없이도 맨 위에 보임) → Alt 눌러 포그라운드 잠금 풀고 활성화."""
+    SW_RESTORE, SWP = 9, 0x0001 | 0x0002 | 0x0040      # SWP_NOSIZE | SWP_NOMOVE | SWP_SHOWWINDOW
+    HWND_TOPMOST, HWND_NOTOPMOST = -1, -2
+    if user32.IsIconic(hwnd):
+        user32.ShowWindow(hwnd, SW_RESTORE)
+    user32.SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP)
+    user32.SetWindowPos(hwnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP)
+    user32.keybd_event(0x12, 0, 0, 0)                  # VK_MENU(Alt) 누름
+    user32.keybd_event(0x12, 0, 0x0002, 0)             # 뗌(KEYEVENTF_KEYUP)
+    user32.SetForegroundWindow(hwnd)
+
+
+def _raise_new_window(before: set[int]) -> None:
+    try:
+        api = _win_api()
+        hwnd = wait_for_new_window(lambda: chrome_windows(api), before)
+        if hwnd:
+            raise_window(api, hwnd)
+    except Exception:
+        pass   # 앞으로 못 가져와도 창은 이미 열렸으니 넘어감
+
+
 def ai_sites(cfg: dict) -> list[dict]:
     return cfg.get("ai_sites") or DEFAULT_AI_SITES
 
@@ -378,7 +459,15 @@ def open_window(url: str, side: str, cfg: dict) -> str:
     if cfg.get("debug_port"):
         args.append(f"--remote-debugging-port={int(cfg['debug_port'])}")
     args += [f"--app={url}"] if side == "left" else ["--new-window", "--", url]
+    before = None
+    if _is_windows():
+        try:
+            before = chrome_windows(_win_api())   # 새 창을 알아볼 수 있게 열기 전 Chrome 창 목록을 기억
+        except Exception:
+            before = None
     subprocess.Popen(args, close_fds=True)
+    if before is not None:
+        threading.Thread(target=_raise_new_window, args=(before,), daemon=True).start()
     return "창을 열었어요."
 
 

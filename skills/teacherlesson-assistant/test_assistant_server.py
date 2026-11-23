@@ -193,5 +193,91 @@ class HttpTest(FlowTestBase):
         self.assertEqual(list(self.flows.iterdir()), [])
 
 
+
+
+class FakeUser32:
+    """Windows 창 API 흉내: 호출 순서만 기록한다."""
+    def __init__(self, iconic=False):
+        self.calls, self._iconic = [], iconic
+
+    def IsIconic(self, hwnd): self.calls.append(("IsIconic", hwnd)); return self._iconic
+    def ShowWindow(self, hwnd, cmd): self.calls.append(("ShowWindow", hwnd, cmd))
+    def SetWindowPos(self, hwnd, after, *rest): self.calls.append(("SetWindowPos", hwnd, after))
+    def keybd_event(self, vk, scan, flags, extra): self.calls.append(("keybd_event", vk, flags))
+    def SetForegroundWindow(self, hwnd): self.calls.append(("SetForegroundWindow", hwnd))
+
+
+class WaitForNewWindowTest(unittest.TestCase):
+    def test_returns_new_window_after_a_few_polls(self):
+        seen = iter([{1, 2}, {1, 2}, {1, 2, 7}])
+        sleeps = []
+        got = app.wait_for_new_window(lambda: next(seen), {1, 2}, timeout=5, interval=0.2, sleep=sleeps.append, clock=lambda: 0)
+        self.assertEqual(got, 7)
+        self.assertEqual(sleeps, [0.2, 0.2])
+
+    def test_gives_up_after_timeout(self):
+        t = [0.0]
+        def clock(): return t[0]
+        def sleep(sec): t[0] += sec
+        got = app.wait_for_new_window(lambda: {1, 2}, {1, 2}, timeout=1.0, interval=0.25, sleep=sleep, clock=clock)
+        self.assertIsNone(got)
+        self.assertGreaterEqual(t[0], 1.0)
+
+    def test_picks_last_when_several_new(self):
+        self.assertEqual(app.wait_for_new_window(lambda: {1, 5, 9}, {1}, sleep=lambda s: None, clock=lambda: 0), 9)
+
+
+class RaiseWindowTest(unittest.TestCase):
+    def test_order_normal_window(self):
+        u = FakeUser32()
+        app.raise_window(u, 42)
+        names = [c[0] for c in u.calls]
+        self.assertEqual(names, ["IsIconic", "SetWindowPos", "SetWindowPos", "keybd_event", "keybd_event", "SetForegroundWindow"])
+        self.assertEqual([c[2] for c in u.calls if c[0] == "SetWindowPos"], [-1, -2])    # 항상 위 → 해제
+        self.assertEqual([c[2] for c in u.calls if c[0] == "keybd_event"], [0, 2])       # 누름 → 뗌
+        self.assertEqual(u.calls[-1], ("SetForegroundWindow", 42))
+
+    def test_restores_minimized_window_first(self):
+        u = FakeUser32(iconic=True)
+        app.raise_window(u, 42)
+        self.assertEqual(u.calls[1], ("ShowWindow", 42, 9))
+
+
+class OpenWindowTest(unittest.TestCase):
+    """open_window 가 새 창을 앞으로 올리는 일을 시작하되, 실패해도 창 열기는 그대로 성공해야 한다."""
+    def setUp(self):
+        self._saved = (app.chrome_path, app.screen_size, app.subprocess.Popen, app._is_windows, app.chrome_windows, app._win_api, app._raise_new_window)
+        self.popen_calls, self.raised = [], threading.Event()
+        app.chrome_path = lambda: "chrome.exe"
+        app.screen_size = lambda: (1920, 1080)
+        app.subprocess.Popen = lambda args, **kw: self.popen_calls.append(args)
+        app._win_api = lambda: object()
+        app._raise_new_window = lambda before: (setattr(self, "before", before), self.raised.set())
+
+    def tearDown(self):
+        (app.chrome_path, app.screen_size, app.subprocess.Popen, app._is_windows, app.chrome_windows, app._win_api, app._raise_new_window) = self._saved
+
+    def test_windows_remembers_old_windows_and_raises_new_one(self):
+        app._is_windows = lambda: True
+        app.chrome_windows = lambda api: {11, 12}
+        self.assertEqual(app.open_window("https://x.example/", "right", {}), "창을 열었어요.")
+        self.assertEqual(len(self.popen_calls), 1)
+        self.assertTrue(self.raised.wait(2))
+        self.assertEqual(self.before, {11, 12})
+
+    def test_not_windows_does_not_try(self):
+        app._is_windows = lambda: False
+        self.assertEqual(app.open_window("https://x.example/", "right", {}), "창을 열었어요.")
+        self.assertFalse(self.raised.wait(0.3))
+
+    def test_window_listing_failure_does_not_block_opening(self):
+        app._is_windows = lambda: True
+        def boom(api): raise OSError("user32 없음")
+        app.chrome_windows = boom
+        self.assertEqual(app.open_window("https://x.example/", "right", {}), "창을 열었어요.")
+        self.assertEqual(len(self.popen_calls), 1)
+        self.assertFalse(self.raised.wait(0.3))
+
+
 if __name__ == "__main__":
     unittest.main()

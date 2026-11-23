@@ -1,0 +1,16 @@
+{
+  "generated_at": "2026-04-02T13:14:02",
+  "guide_dir": "D:\\지도서",
+  "subject_count": 1,
+  "total_row_count": 36,
+  "subjects": [
+    {
+      "subject_name": "사회",
+      "kind": "general",
+      "prefix": "사회",
+      "grade_str": "3-1",
+      "row_count": 36,
+      "snapshot_name": "social"
+    }
+  ]
+}

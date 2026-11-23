@@ -6,6 +6,20 @@
 
 ## 🔵 진행 중
 
+### ISSUE-010: 결재대기·공람대기 문서 본문·붙임을 웹에서 바로 내려받기 (2026-11-20)
+- **상태**: 🔵 진행 중 (다운로드는 검증됨, 일괄 공람완료·결재는 미검증)
+- **증상**: 제목 클릭은 WXSClient 네이티브 뷰어라 자동화로 못 읽음. 사용자는 "저장 버튼을 직접 눌러 받아 달라"고 함.
+- **해결/조치** (raw CDP `Runtime.evaluate`, 목록 화면 탭에서):
+  1. 목록 URL: 결재대기 `/bms/cz/cb/viw/retrieveSanctnWaitDocList.do?leftMenu=1`, 공람대기 `/bms/cz/cb/viw/retrieveCnrsWaitDocList.do?MENU_ID=A00AAB0103001&FILE_ID=AABCnrsWaitDocList&alimZon=alimZon`. 새 탭은 `PUT http://127.0.0.1:9222/json/new?https://klef.gbe.kr/keris_ui/main.do`(로그인 세션 공유).
+  2. 제목 링크 `onclick="doCallClientApp(0,'<APPRID>','<idx>',menuID)"`에서 APPRID·idx 추출 → `doCallDocInfoWnd(APPRID, idx, 3, '1,3,7,11')` → `#apprInfoWnd` 안에서 `showInfo('/cz/cb/viw/retrieveAtchmnfl.do','11')`.
+  3. 붙임 프레임(`apprInfoWnd` 안 iframe)의 `input[name=attachInfo]`(value=첨부 OBJID, title=파일명).
+  4. 그 프레임에서 `fetch('/bms/cz/cb/viw/retrieveViwAtchmnfl.do', POST URLSearchParams{USERID:g_userid, APPLID:g_applID, APPRDEPTID:g_userdeptid, DOCID:g_docId, OBJID, FILENAME, FTYPE, ORDER})`.
+     - 본문: `OBJID = g_docId.slice(0,-3)+'001'`, `FILENAME='결재문서본문.odt'`, `FTYPE='01'`, `ORDER='1'` (첨부 없는 문서도 동일).
+     - 붙임: `OBJID=attachInfo.value`, `FTYPE='100'`, `ORDER=순번`.
+  5. 응답 바이트를 base64로 돌려받아 `Downloads\공문\(화천초등학교-N (본문|첨부) 발신기관) 제목` 규칙으로 저장. ODT는 `content.xml`에서 텍스트 추출.
+- **공람 일괄 완료**: 공람대기 화면 [일괄처리] = `fncProcessBnde()` → `readPublicDoc()` → `manageCnrsBndeCompt.do?APPRIDLIST=…` (체크된 `input[name=docinfo]`, confirm 1회). 웹만으로 처리되는 구조. Claude Code 자동 모드에서는 권한 확인에 막힐 수 있어 사용자 허용 후 실행.
+- **결재(수신문서 담당자)**: 업무담당자 문서는 일괄결재 제외, WXSClient 결재기에서 서명 필요(위 2026-10-27 기록).
+
 ### 📄 기존 `ing.md` 내용
 
 ### K-에듀파인 행정 업무 실전 자동화 개발 및 트러블슈팅 일지 (ing.md)

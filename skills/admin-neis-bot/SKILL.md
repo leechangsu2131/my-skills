@@ -39,6 +39,7 @@ metadata:
 | **"시간표 최적화"** (편차 0) | 연간 수업시수표 | `neis_collect_semester_timetable.py` → `neis_execute_save_final.py` | 분석 후 승인 시 DB 반영 |
 | **"근무상황 신청해줘"**<br>**"조퇴/연가/외출/지각 신청"** | 신청 종류(조퇴 등), 시간, 사유 | `edu/ga/srv/mym/mm/srv_mymmm00_p00` (하이브리드 UI 제어) | 폼 입력 후 화면 확인 및 승인요청 |
 | **"나이스 로그인/상태 봐줘"** | Chrome 9222 포트 | `check_chrome.py`, `open_neis_sso.py` | 상태 진단 및 SSO 탭 복구 |
+| **"학생선수 대회 참가 처리"**<br>**"학교장확인서 결재요청"**<br>**"출석인정결석 처리 공문"**<br>**"학생선수 등록"** | 대회 공문(`Downloads\공문`의 본문·붙임) | `neis_student_athlete.py` ([절차](references/student-athlete-workflow.md)) | `run`(공문→기안문→결재요청 체크까지, 실행 없음) → 사용자 확인 후 `request --apply`, `submit` |
 | **"PAPS 마감/제출"**<br>**"건강체력평가 누락 확인"** | 없음 (나이스 조회) | [references/paps-submission-workflow.md](references/paps-submission-workflow.md) 절차 | 누락·마감 상태 조회까지만 자동, 마감·승인요청·제출은 사용자 확인 후 |
 
 ### 1. 연수 이수실적 등록 표준 워크플로우
@@ -145,6 +146,7 @@ NEIS 화면에서 데이터를 읽는 방식과 응답 구조를 참고할 때�
 
 | 주제 | 문서 | 포함 내용 |
 |---|---|---|
+| 학생선수 대회 참가 처리 | [references/student-athlete-workflow.md](references/student-athlete-workflow.md) | 학생선수관리·출결관리·학교장확인서출력관리 앱 ID와 컨트롤, 결재요청 흐름, 출석인정결석 처리 기안 양식, 콤보·숨은 메뉴 문구 함정. |
 | 복무 달력 확장 프로그램 | [references/duty-calendar-extension-analysis.md](references/duty-calendar-extension-analysis.md) | REA 정적 분석, `fetch`/XHR 관찰, `workYmd` 요청 템플릿 재사용, `dsMain` 필드·캐시, 다른 업무에 적용할 때의 제한과 설계 원칙. REA 원본 증거 파일 위치도 문서 안에 기록되어 있습니다. |
 | 주간학습·오늘의 수업 | [references/weekly-learning-live-analysis.md](references/weekly-learning-live-analysis.md) | m00/m02 메뉴와 화면 차이, 실제 `/002`·`/003` 읽기 요청·응답 구조, 날짜·교시 정규화, 월 단위 주차 조회·날짜 필터링 실측, 미저장 상태 보존 기록. |
 

@@ -46,5 +46,7 @@
 | 11월 하순 | PAPS 입력마감 → 측정마감 → 통계 생성 → 승인요청(결재) → 교육청 제출 | `admin-neis-bot/references/paps-submission-workflow.md` |
 | 11월 | 체력왕 선발대회 결과 안내, 상장 수령(출장), 도 단위 행사 인솔 | 출장은 `admin-neis-bot` 출장신청 |
 | 12월 초 | 건강체력교실 운영 현황 제출 | 대상: PAPS 4~5등급·비만 학생 등 |
+| 수시(대회마다) | 학생선수 대회 참가: 학교장확인서 결재요청 → 출석인정결석 처리 기안 → 담임 안내 | `admin-neis-bot/references/student-athlete-workflow.md` (`neis_student_athlete.py run`) |
+| 3월 초 | 학생선수 현황 조사 제출, 신규 학생선수 나이스 등록 | 같은 문서 `register` |
 
 새로운 반복 업무를 처리하면 이 표에 한 줄 추가한다.

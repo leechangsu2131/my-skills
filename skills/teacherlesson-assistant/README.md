@@ -9,7 +9,8 @@ Claude 작업 절차는 [SKILL.md](SKILL.md), 문제·할 일은 [ISSUES.md](ISS
 - "수업 사이트 열기"는 수업 도우미 공용 Chrome 프로필(config `chrome_profile`, 기본 `%LOCALAPPDATA%\MusicClassHelper\chrome_profile`, 원격 디버깅 포트 `debug_port` 9233)로 화면 오른쪽 2/3에 창을 연다. 열 수 있는 주소는 config 의 과목 사이트·바로가기·하이클래스·AI 사이트 주소뿐이다. 한 번 로그인하면 그 프로필에 로그인이 유지된다.
 - 9222 포트는 다른 자동화(에듀파인)가 쓰고 있을 수 있어 9233을 쓴다.
 - 서버는 Host 가 127.0.0.1/localhost 인 요청만 받는다(다른 사이트·DNS 리바인딩 차단). 클립보드로 복사한 비밀번호는 30초 뒤 지운다.
-- 최초 설정은 `python -m pip install -r requirements.txt`. 중앙 `.env`의 `SUPABASE_URL`(또는 `NEXT_PUBLIC_SUPABASE_URL`)과 `SUPABASE_SERVICE_ROLE_KEY`를 사용한다. 서비스 키는 로컬 Python 서버에서만 읽고 브라우저로 보내지 않는다.
+- 최초 설정은 `python -m pip install -r requirements.txt`. 서비스 키는 로컬 Python 서버에서만 읽고 브라우저로 보내지 않는다.
+- 수업 흐름 자동 준비: 화면의 🌙 단추, 아침 bat 이 오늘 것을 자동으로 돌린다. 손으로는 `python prepare_lessons.py --date today|tomorrow [--redo]`(`--redo` 는 자동으로 만든 흐름만 다시 만들고 사람이 고친 것은 그대로).
 
 ## 화면 기능 (v0.1)
 
@@ -17,11 +18,11 @@ Claude 작업 절차는 [SKILL.md](SKILL.md), 문제·할 일은 [ISSUES.md](ISS
 |---|---|
 | 위쪽 | 날짜 이동(달력·요일·'오늘'), 🌙 수업 준비(그날 흐름 없는 차시를 Gemini 로 자동 준비, `prepare_lessons.py`, 아침 bat 에서도 오늘 것 자동), 시계, 교시 탭(지금 교시 노란 테두리, 📋 흐름 준비됨, ✓ 기록 저장됨), 📞 내선번호 |
 | 수업 제목 | 과목·출판사·단원·차시, 수업 사이트 열기, 📂 차시 자료 바로 열기(`sites/` 도우미, config `subjects.<과목>.helper`), 아이디/비번 복사, 지도서 PDF(Supabase 차시 경로) |
-| **지금 할 일** | 수업 중 맨 위 큰 카드: 현재 단계·💬 핵심 발문·활동·💡 팁, 단계 남은 시간(1분 이하 주황 / 초과 빨강 `+mm:ss`), 교시 종료까지 남은 분, 다음 단계 미리보기. `다음 단계 ▶` 단추·← → 키·발표 리모컨(PageUp/PageDown)으로 넘김. `−1분`/`+1분` 단추·`+` `−` 키로 이 단계 시간만 이번 수업에서 조정(흐름 파일은 그대로). 시간표 대비 `계획보다 N분 늦음 · 교시 끝까지 N분 모자라요` 안내. 시작 전에는 시간표 시각으로 "지금쯤 어느 단계" 추천. 새로고침해도 단계·시간 유지. 흐름(`flows/*.json`)이 없으면 🌙 준비 안내 |
+| **지금 할 일** | 수업 중 맨 위 큰 카드: 현재 단계·💬 핵심 발문·활동·💡 팁, 단계 남은 시간(1분 이하 주황 / 초과 빨강 `+mm:ss`), 교시 종료까지 남은 분, 다음 단계 미리보기. `다음 단계 ▶` 단추·← → 키·발표 리모컨(PageUp/PageDown)으로 넘김. `−1분`/`+1분` 단추·`+` `−` 키로 이 단계 시간만 이번 수업에서 조정(흐름 파일은 그대로). 시간표 대비 `계획보다 N분 늦음 · 교시 끝까지 N분 모자라요` 안내. 시작 전에는 시간표 시각으로 "지금쯤 어느 단계" 추천. 새로고침해도 단계·시간 유지. 큰 숫자 옆 `−1분`/`+1분`(또는 `+` `−` 키)으로 그 단계 시간을 이번 수업에만 조정하고, `⏱ 계획보다 N분 늦음 · 교시 끝까지 N분 모자라요` 안내와 함께 시간이 모자라면 `✂ 줄여도 되는 단계`(단계 `flag: cut`)를 알려 준다. 흐름(`flows/*.json`)이 없으면 🌙 준비 안내 |
 | 🤖 AI와 수업 준비 | 단원 개관·차시 지도서 PDF(+NotebookLM 차시 노트)를 `ask/<날짜>/<교시>_<과목>/`에 모아 폴더 열기 + 질문 복사 + 고른 AI 사이트 열기. NotebookLM 은 과목 노트북을 열고 질문만 복사 |
 | 주의할 점 | 출판사별 주의점(`publisher_notes.json`) + 같은 과목 지난 수업 메모·고칠점 |
 | 📗 단원 개관 | `units/*.json`의 단원 흐름(지금 차시 ◀)·목표·유의점·평가, 단원 개관 PDF (접기/펴기) |
-| 수업 흐름 전체 (접이식) | `flows/*.json`의 목표·준비물·전체 단계(활동, 💬발문, 💡팁). 단계를 눌러 바로 이동 가능. 단계 이동 시 시각 기록(`sessions` 메모의 `step`, `idx` 포함). **✏ 흐름 고치기/직접 만들기**로 화면에서 편집·저장(`POST /api/flow`, 고친 흐름은 자동 준비가 덮어쓰지 않음) |
+| 수업 흐름 전체 (접이식) | `flows/*.json`의 목표·준비물·전체 단계(활동, 💬발문, 💡팁). 단계를 눌러 바로 이동 가능. 단계 이동 시 시각 기록(`sessions` 메모의 `step`, `idx` 포함). **✏ 흐름 고치기/직접 만들기**로 화면에서 편집(목표·준비물·단계 이름·분·활동·발문·팁·중요도 ⭐꼭 해야 함/✂ 줄여도 됨)·저장(`POST /api/flow`, 고친 흐름은 자동 준비가 덮어쓰지 않음) |
 | 수업 기록 | 녹음(10초마다 서버에 이어 저장), 👍좋았음 🔧고칠점 🙋학생 발표 ★표시 🎤음성 메모, 직접 입력 메모. 모두 녹음 기준 [mm:ss] |
 | 알림장 | 내용 작성 → 클립보드 복사 + 하이클래스 열기 (자동 게시는 아직 없음) |
 | 진도 조정 | ✅ 완료 / 📍 여기부터 다시 잡기 / 한 차시 더 / 며칠 미루기 → Supabase 수업 슬롯에 바로 반영. 단원·차시·제목 검색으로 진도를 찾는다. 실행 전 확인 창 |
@@ -32,7 +33,7 @@ Claude 작업 절차는 [SKILL.md](SKILL.md), 문제·할 일은 [ISSUES.md](ISS
 
 - `config.json` — 교시 시각, 내선번호, 바로가기, 과목별 출판사·사이트·`secret_prefix`, `schedule_backend`, `ai_sites`. 처음 실행 때 `config.example.json`을 복사해 만든다.
 - `units/<과목>__<대단원>.json`·`.pdf` — 단원 개관 (`build_units.py`가 만든다)
-- `flows/<record_key>.json` 또는 `flows/<과목>__<차시제목>.json` — 수업 흐름 (선택)
+- `flows/<record_key>.json` 또는 `flows/<과목>__<차시제목>.json` — 수업 흐름 (선택). Supabase 차시의 record_key 는 `lesson-0075` 같은 차시 번호(`lesson_lessons.legacy_lesson_id`)
 - `sessions/<날짜>/<교시>교시_<과목>.json` — 그 수업의 메모·알림장·시작/마침 시각
 - `sessions/<날짜>/<교시>교시_<과목>_<시각>.webm` — 녹음
 - `ask/<날짜>/<교시>_<과목>/` — 웹 AI에 끌어다 놓을 PDF와 질문.txt
@@ -62,6 +63,8 @@ Claude 작업 절차는 [SKILL.md](SKILL.md), 문제·할 일은 [ISSUES.md](ISS
 
 - 화면: `web/index.html` (한 파일)
 - 서버·저장 형식: `assistant_server.py`
+- 시간표 조회·진도 변경(Supabase): `supabase_schedule.py`. 수업 흐름 자동 준비: `prepare_lessons.py`
+- 자동 시험(표준 라이브러리만, 임시 폴더·가짜 서버라 실제 데이터·DB 를 안 건드림): 이 폴더에서 `python -m unittest test_assistant_server test_supabase_schedule`
 - 단원 개관 규칙: `build_units.py` (`LESSON_START`)
 - 과목별 차시 자료 도우미: `sites/music_douclass/`, `sites/social_class/` (각 README). 서버의 `SITE_HELPERS` 에 등록
 - NotebookLM 소스·노트: `notebook_sources.py`, `split_notes.py` (차시 표시 규칙 `lesson_tag` 은 `assistant_server.py`)

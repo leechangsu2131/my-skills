@@ -29,8 +29,8 @@
 
 | 번호 | 할 일 | 고칠 파일 | 끝난 기준 | 상태 |
 |---|---|---|---|---|
-| T20 | 학교 PC 점검 도구 | teacherlesson-assistant `check_setup.py`, `점검_PC.bat` | 가짜 시험 통과 | 검토 대기(작업자 1, `feature/school-pc-check`) |
-| T21 | 수업 메모 슈파베이스 동기화 부품 | teacherlesson-assistant `memo_sync.py`, `sql/lesson_memos.sql` | 가짜 HTTP 시험 통과 | 검토 대기(작업자 4, `feature/lesson-memo-sync`) |
+| T20 | 학교 PC 점검 도구 | teacherlesson-assistant `check_setup.py`, `점검_PC.bat` | 가짜 시험 통과 | 완료(2026-11-25 합침, 시험 47개) |
+| T21 | 수업 메모 슈파베이스 동기화 부품 | teacherlesson-assistant `memo_sync.py`, `sql/lesson_memos.sql` | 가짜 HTTP 시험 통과 | 완료(2026-11-25 합침, 시험 24개 — 서버 연결은 T49) |
 | T22 | **개인정보 검사 도구**: 커밋 전에 바뀐 줄에서 전화번호·주민번호 모양·이메일·`sk-`/`AIza` 같은 키 모양·`C:\Users\<이름>` 을 찾아 경고 | 새 `tools/check_privacy.py` + 시험 | `git diff --staged` 를 읽어 경고, 가짜 예시 시험 | 열림 |
 | T23 | **GitHub Actions**: PR 마다 `python tools/build_catalog.py --check` + 시험이 있는 스킬 pytest(비밀값 없이 도는 것만) + T22 | 새 `.github/workflows/check.yml` | PR 에서 초록불 | 열림 |
 | T24 | `build_catalog.py --check` 강화: SKILL.md 없는 폴더·`generated_rows`/`tmp*`/`*.pdf` 같은 결과물이 추적되면 경고 | `tools/build_catalog.py` | 기존 통과 유지 + 새 경고 시험 | 열림 |
@@ -40,6 +40,9 @@
 | T28 | teacherlesson-assistant `supabase_schedule.py` 진도 바꾸기 동시 요청 잠금 | `supabase_schedule.py` | 가짜 시험 | 열림 |
 | T29 | 수업 비서 서버 `/favicon.ico` 404 → 작은 아이콘 | `assistant_server.py`, `web/` | 404 없음 | 열림 |
 | T45 | **실패 중인 시험 4개 고치기**(teacherlesson-assistant ISSUE-030): `test_supabase_schedule.py` CatchUpTest 가 옛 동작(첫 예정 슬롯, `completed` 값)을 검사함. 2026-11-24 커밋 9d2591f 에서 '실제로 할 차시 고르기'가 **요청 날짜·교시 칸으로 옮기는** 동작으로 바뀜(ISSUE-029). 새 동작에 맞게 시험을 고치고, 고른 차시 **뒤 차시들이 차시 순서대로 남는지**(앞당겨진 칸과 겹치지 않는지) 시험을 더해 확인. 코드가 틀렸으면 고치지 말고 ISSUES 에 재현 시험과 함께 기록 | `test_supabase_schedule.py` | `pytest test_supabase_schedule.py` 모두 통과 또는 xfail+기록 | 열림 |
+| T46 | 학교 PC 점검 도구 보완(검토 🟡): ① 점검 bat 는 `py -3.13`, 수업비서 bat 는 `python` 이라 다른 Python 을 볼 수 있음 → 둘 다 검사하고 다르면 ⚠, `check_setup.py` 의 'py -3.13 을 먼저 찾아요' 안내 바로잡기 ② 5180 포트가 열려 있으면 `http://127.0.0.1:5180/` 에 실제로 물어 수업 비서인지 확인 ③ config 의 port 가 숫자가 아니어도 멈추지 않게 ④ `schedule_backend` 가 supabase 가 아닐 땐 Supabase 키 없음을 ⚠ 로 | `check_setup.py`, `점검_PC.bat`, `tests/test_check_setup.py` | 시험 추가·통과 | 열림 |
+| T47 | 메모 동기화 부품 보완(검토 🟡): ① 내려받은 메모에 서버 `memo_key` 를 그대로 저장해 중복 판정(지금은 `at` 없는 메모가 받을 때마다 늘어남) ② CLI 출력 utf-8 ③ README·SKILL.md 에 memo_sync 사용법 절 ④ (선택) 단계 기록 step·sys·adj 를 올리지 않는 설정 | `memo_sync.py`, `tests/test_memo_sync.py`, README·SKILL 의 memo_sync 절 | 중복 재현 시험 통과 | 열림 |
+| T49 | (교사 PC, Claude Code) 메모 동기화 연결: SQL 실행(진도와 같은 슈파베이스 프로젝트) → `save_session` 뒤 `push_session` 을 **백그라운드 스레드**로 → `실행_수업비서.bat` 에서 서버 켜기 **전에** `memo_sync.py pull --if-older 24` → 두 PC 에서 확인. **먼저 교사 결정**: 📝·🔧·🎤 같은 자유 글 메모에 학생 이름이 들어가면 그대로 슈파베이스에 올라감(🙋 학생 메모만 제외됨) | `assistant_server.py`, bat | 두 PC 메모 같음 | 교사 결정 대기 |
 
 ## C. 문서 정리 (R) — 정보는 빼지 말고 양식·쉬운 한국어로
 

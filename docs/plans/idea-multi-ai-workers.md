@@ -1,7 +1,7 @@
 # 아이디어: 여러 AI 작업자에게 일 나눠 맡기기
 
-> 상태: **아이디어 (아직 실행 안 함)** · 적은 날: 2026-11-25 · 출처: 교사와 Claude Code 대화
-> 실행하기로 하면 아래 "준비할 것" 두 가지부터 만든다.
+> 상태: **실행 시작 (2026-11-25)** — 준비물 완성: [docs/TASKS.md](../TASKS.md)(할 일 목록), [docs/WORKER_GUIDE.md](../WORKER_GUIDE.md)(공용 규칙), 루트 `AGENTS.md`·`GEMINI.md`. ChatGPT 무료 사용자(글만, T 등급)도 작업자에 추가
+> 출처: 교사와 Claude Code 대화
 
 ## 쓸 수 있는 작업자
 

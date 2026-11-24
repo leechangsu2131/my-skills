@@ -12,6 +12,16 @@ Claude 작업 절차는 [SKILL.md](SKILL.md), 문제·할 일은 [ISSUES.md](ISS
 - 최초 설정은 `python -m pip install -r requirements.txt`. 서비스 키는 로컬 Python 서버에서만 읽고 브라우저로 보내지 않는다.
 - 수업 흐름 자동 준비: 화면의 🌙 단추, 아침 bat 이 오늘 것을 자동으로 돌린다. 손으로는 `python prepare_lessons.py --date today|tomorrow [--redo]`(`--redo` 는 자동으로 만든 흐름만 다시 만들고 사람이 고친 것은 그대로).
 
+## 학교 PC 점검 (`점검_PC.bat`)
+
+처음 쓰는 PC(학교 PC 등)에서 수업 비서를 켜기 전에 한 번 돌려 빠진 것을 찾는다. `점검_PC.bat`을 더블클릭하거나 이 폴더에서 `python check_setup.py`.
+
+- 읽기만 한다: 설치·폴더 만들기·서버/크롬 켜기를 하지 않는다. 중앙 `.env`는 키 **이름**만 보고 값은 출력하지 않는다.
+- 항목마다 ✅ 괜찮음 / ⚠ 일부 기능만 안 됨·확인 필요 / ❌ 꼭 고쳐야 함, 그리고 고치는 방법 한 줄을 보여 준다. ❌ 가 있으면 종료 코드 1.
+- 보는 것: Python 버전·패키지(`requirements.txt` + selenium), Node.js·Gemini CLI, 크롬 실행 파일·`chrome_profile` 폴더, 중앙 `.env` 위치와 키 이름(Supabase 주소·서비스 키, Gemini 키), 데이터 폴더와 `flows/units/notebooklm`, OneDrive 폴더, 5180(수업 비서)·9233(수업용 크롬) 포트.
+- 포트가 닫혀 있는 것은 서버·크롬을 켜기 전이면 정상이다. 지도서 폴더(`D:\지도서`)는 집 PC 에만 있으면 되므로 없어도 ✅ 로 안내한다.
+- 시험: `python -m pytest tests -v` (가짜 환경으로 항목별 성공·실패 판단을 확인).
+
 ## 화면 기능 (v0.1)
 
 | 영역 | 내용 |

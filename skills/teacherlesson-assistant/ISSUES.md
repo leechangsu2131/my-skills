@@ -101,6 +101,20 @@
 
 ## 📌 백로그
 
+### ISSUE-032: `parse_flow` 가 JSON null 을 "None" 글자로 저장함 (2026-11-25, 시험으로 발견)
+- **상태**: 📌 백로그 (소스는 안 고침, 재현 시험은 `xfail`)
+- **증상**: Gemini 답에 `"goal": null` 이 있으면 흐름의 목표가 글자 `None` 이 되고, `"materials": ["분수 막대", null]` 이면 준비물에 `None` 이 들어가 수업 화면에 그대로 보인다. (`homework`·`pages`·단계 글은 `or ""` 로 막혀 있어 `goal`·`materials` 만 해당)
+- **원인**: `str(data.get("goal", ""))` 와 `[str(m) for m in materials]` 가 `None` 을 걸러내지 않음
+- **재현 시험**: `tests/test_prepare_lessons.py::test_parse_flow_null_values_do_not_become_the_word_none` (goal null / materials 안의 null)
+- **관련 파일**: `prepare_lessons.py`
+
+### ISSUE-031: `parse_flow` 가 설명 글의 중괄호에 걸림 (2026-11-25, 시험으로 발견)
+- **상태**: 📌 백로그 (소스는 안 고침, 재현 시험은 `xfail`)
+- **증상**: Gemini 답에서 JSON 앞이나 뒤 설명에 `{` `}` 가 있으면(예: "참고 {지도서 p.3} 입니다.") `JSONDecodeError`. `prepare_one` 은 한 번 더 묻고, 그래도 같으면 그 차시가 "Gemini 결과를 쓰지 못함" 으로 실패한다.
+- **원인**: `text.find("{")` ~ `text.rfind("}")` 구간을 그대로 `json.loads`. `teacherlesson-guide` 의 `auto_split.json_object` 도 같은 방식(그 스킬 ISSUE-005)
+- **재현 시험**: `tests/test_prepare_lessons.py::test_parse_flow_explanation_containing_braces_around_json` (앞 설명에 중괄호 / 뒤 설명에 중괄호)
+- **관련 파일**: `prepare_lessons.py`
+
 ### ISSUE-008: 처음에 요청한 기능 잊지 않기 (2026-11-20~, 우선순위 순)
 - **상태**: 📌 백로그
 1. **하이클래스 알림장 자동 게시** — `admin-hitalk-sender` 의 Chrome 9222 연결 방식을 알림장 쓰기 화면에 맞게 고쳐 `/api/notice/post` 추가. 게시 전 미리보기·확인 필수

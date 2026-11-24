@@ -16,7 +16,7 @@ from pathlib import Path
 
 sys.stdout.reconfigure(encoding='utf-8')
 
-LIBRARY_DIR = Path(r"C:\Users\lee21\.gemini\antigravity\scratch\my-skills\skills\personal-vba-book\서재")
+LIBRARY_DIR = Path(r"C:\Users\lee21\OneDrive - gyo6.net\8. 그림책과 서재\서재")
 BOOKS_DIR = LIBRARY_DIR / "books"
 COVERS_DIR = LIBRARY_DIR / "covers"
 
@@ -134,14 +134,14 @@ def build_library():
 
 ---
 
-## 🎨 그림책 목록 ({len(pic_books)}권)
+### 🎨 그림책 목록 ({len(pic_books)}권)
 | 번호 | 표지 | 서명 / 정보 | 연계 교과 | 주요 주제 | 수업 PPTX |
 |:---:|:---:|---|:---:|---|:---:|
 {make_table(pic_books)}
 
 ---
 
-## 📖 일반 도서 목록 ({len(gen_books)}권)
+### 📖 일반 도서 목록 ({len(gen_books)}권)
 | 번호 | 표지 | 서명 / 정보 | 연계 교과 | 주요 주제 | 비고 |
 |:---:|:---:|---|:---:|---|:---:|
 {make_table(gen_books)}

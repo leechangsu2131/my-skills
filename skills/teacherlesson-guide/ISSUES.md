@@ -11,7 +11,6 @@
 - **조치**: 100개(2026-04 3-1 시절 스냅샷)를 저장소에서 지우고 루트 `.gitignore`에 옛 폴더 이름을 넣어 다시 안 올라가게 함. 저장소 안에는 이 경로를 쓰는 코드·문서가 없었음. 지운 파일은 커밋 737f279에 남아 있어 `git show 737f279:<경로>`로 되살릴 수 있음. **학교 PC는 다음에 받을 때 이 옛 폴더가 지워짐** — 이관 프로그램(`semester_rollover`)이 이 경로를 쓰고 있었다면 새 지도서 처리(`teacherlesson-guide/mapper/generated_rows/`)로 다시 만들면 됨
 - **증상**: 커밋 737f279("1123", 학교 PC)에서 `skills/teacherlesson-guide-mapper/generated_rows/`(3.6MB, json 100개)가 저장소에 들어감 → 지운 스킬 이름의 폴더가 되살아나 `python tools/build_catalog.py --check` 가 "SKILL.md 없음"으로 실패
 - **원인**: 2026-11-22 합칠 때 `git mv` 는 추적 파일만 옮겨, 학교 PC 에는 추적 안 되던 옛 결과 폴더가 남음 → 전체 추가(add -A)로 다시 올라감
-- **고치는 방법(결정 필요)**: 저장소에서 빼면(`git rm -r --cached`) 학교 PC 가 다음에 받을 때 그 PC 의 파일도 지워짐. 학교 PC 의 `semester_rollover` 설정이 이 옛 경로의 결과 파일을 가리키는지 먼저 확인하고, 필요하면 `teacherlesson-guide/mapper/generated_rows/`(무시 목록)로 옮긴 뒤 빼기
 
 ### ISSUE-002: 저장소 기록에 출판사 지도서 분할 PDF 가 남아 있음 (2026-11-22)
 - **상태**: 🔵 진행 중 (사람 결정 필요)

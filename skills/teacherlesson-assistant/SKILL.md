@@ -1,6 +1,6 @@
 ---
 name: teacherlesson-assistant
-description: "수업 비서. 진도표(teacherlesson-schedule)의 그날 수업을 교시별로 넘겨 보며 왼쪽 창에 수업 흐름·주의점·메모, 오른쪽 창에 출판사 수업 사이트를 띄우고 녹음·메모·알림장 초안·진도 조정을 한 화면에서 한다. '내일 수업 준비해줘', '수업 흐름 만들어줘', '오늘 수업 정리해줘', '출판사 지도서 특징 정리', '수업 비서 켜줘', '지도서 받아줘' 같은 요청에 사용한다."
+description: "수업 비서. Supabase 진도(lesson_* 표)의 그날 수업을 교시별로 넘겨 보며 왼쪽 창에 수업 흐름·주의점·메모, 오른쪽 창에 출판사 수업 사이트를 띄우고 녹음·메모·알림장 초안·진도 조정을 한 화면에서 한다. '내일 수업 준비해줘', '수업 흐름 만들어줘', '오늘 수업 정리해줘', '출판사 지도서 특징 정리', '수업 비서 켜줘', '지도서 받아줘' 같은 요청에 사용한다."
 metadata:
   category: 수업·교사 도구
   status: 개발
@@ -10,8 +10,8 @@ metadata:
 
 # 수업 비서 (teacherlesson-assistant)
 
-- **수업 화면** (`assistant_server.py` + `web/index.html`) — Supabase에서 시간표를 읽고 완료·연장·이동을 Supabase에 저장한다. 수업 기록은 로컬 데이터 폴더에 저장한다. Supabase 연결에 중앙 `.env`의 `SUPABASE_URL`(또는 `NEXT_PUBLIC_SUPABASE_URL`)과 `SUPABASE_SERVICE_ROLE_KEY`가 필요하다. 과목별 차시 자료 자동 열기 도우미는 `sites/`(음악 Douclass, 사회 아이스크림·Douclass, Selenium)이며, 미술 아트앤컬쳐 도우미는 아직 구현 전이다. 실행 방법·화면 기능·저장 위치·지도서 받기는 [README.md](README.md).
-- **Claude 작업 절차** (아래) — 화면은 Claude가 만든 파일을 읽기만 한다.
+- **수업 화면** (`assistant_server.py` + `web/index.html`) — Supabase에서 시간표를 읽고 완료·연장·이동을 Supabase에 저장한다. 수업 기록은 로컬 데이터 폴더에 저장한다. Supabase 연결에 중앙 `.env`의 `SUPABASE_URL`(또는 `NEXT_PUBLIC_SUPABASE_URL`)과 `SUPABASE_SERVICE_ROLE_KEY`가 필요하다. 과목별 차시 자료 자동 열기 도우미는 `sites/`(음악 Douclass, 사회 아이스크림·Douclass, Selenium)이며, 미술 아트앤컬쳐 도우미는 아직 구현 전이다(ISSUES ISSUE-006). 실행 방법·화면 기능·저장 위치·지도서 받기는 [README.md](README.md).
+- **Claude 작업 절차** (아래) — 화면은 `flows/`·`units/` 를 읽고, 교사가 ✏ 로 고친 흐름은 저장한다(고친 흐름은 자동 준비가 덮어쓰지 않음).
 
 데이터 폴더: `내 문서\my-skills-data\teacherlesson-assistant\` (config, units, flows, sessions, publisher_notes). 학생 이름이 들어간 메모·녹음은 이 폴더에만 두고 기억(memory)·CLAUDE.md·깃·홈페이지에 옮기지 않는다.
 
@@ -25,7 +25,7 @@ metadata:
 
 ### A. 수업 흐름 — 자동 준비가 기본 (Claude 토큰 0)
 
-"내일 수업 준비해줘" → `python prepare_lessons.py --date tomorrow` (화면의 **🌙 수업 준비** 단추·아침 bat 와 같은 일). 흐름 없는 차시마다 NotebookLM 소스 md 의 그 차시 구간(없으면 진도 서버 차시 PDF)을 Gemini(util-notebooklm, 무료 flash, 붐비면 다른 모델)에 넘겨 `flows/<record_key>.json` 을 만든다. 결과 줄(성공·실패·이유)만 보고한다. 사람이 고친 흐름은 덮어쓰지 않는다(`--redo` 는 자동 흐름만).
+"내일 수업 준비해줘" → `python prepare_lessons.py --date tomorrow` (화면의 **🌙 수업 준비** 단추·아침 bat 와 같은 일). 흐름 없는 차시마다 NotebookLM 소스 md 의 그 차시 구간(없으면 Supabase 차시의 PDF 경로에서 발췌한 쪽)을 Gemini(util-notebooklm, 무료 flash, 붐비면 다른 모델)에 넘겨 `flows/<record_key>.json` 을 만든다. 결과 줄(성공·실패·이유)만 보고한다. 사람이 고친 흐름은 덮어쓰지 않는다(`--redo` 는 자동 흐름만).
 
 아래 손 절차는 교사가 **그 차시를 콕 집어** Claude 에게 직접 만들어 달라고 할 때만 한다.
 
@@ -37,7 +37,7 @@ metadata:
 {
   "record_key": "...", "subject": "수학", "title": "분수의 덧셈(2)", "publisher": "아이스크림",
   "source": "지도서 p.120-123", "goal": "학습 목표 한 줄", "materials": ["분수 막대"],
-  "steps": [{"name": "도입", "minutes": 5, "do": "할 활동", "say": "핵심 발문", "tip": "주의·보충할 점"}],
+  "steps": [{"name": "도입", "minutes": 5, "do": "할 활동", "say": "핵심 발문", "tip": "주의·보충할 점", "flag": "keep 또는 cut(선택)"}],
   "homework": ""
 }
 ```
@@ -55,14 +55,11 @@ metadata:
 
 차시 번호가 비어 있다고 해당 행을 버리거나 지도서 전체를 Gemini에 넘기지 않는다. `build_units.infer_lesson_numbers()`는 앞뒤 번호가 빈 행 수와 정확히 맞을 때만 번호를 추론한다. NotebookLM 소스 생성 뒤 `prepare_lessons.lesson_section()`이 그 차시 번호 범위 또는 번호 없는 단계 제목으로 올바른 구간을 가져오는지 확인한다.
 
-- 국어 3.5 매체 단원 현재 매핑: 1 다가가기, 2 이해하기 1, 3~4 이해하기 2, 5~6 실천하기, 7 배운 내용 적용하기(돌아보기).
-- 실천하기 5차시 `lesson-0410`은 지도서 PDF 쪽 23~26(책에 인쇄된 지도서 쪽 236~239)만 사용한다. 초상권 개념을 새로 설명하는 이해하기 수업이 아니라, 게시 글 살펴보기·매체 윤리 적용·글감과 계획·글쓰기와 댓글 활동이다.
+- 번호 없는 단계 제목 단원(국어 3.5 매체 등)의 매핑과 사례는 ISSUES ISSUE-025.
 
 ### B-0. 미술 아트앤컬쳐 사이트 — 도우미 구현 대기
 
-- 직접 확인한 경로: [미술3 웹 e-book](https://artandculture.kr/study/ebook3/) → 2학기 → 11단원 `전통 무늬로 꾸미기` → 활동 2 `자개 무늬로 생활용품 꾸미기` e-book. 이 활동은 5~6차시이며 교과서 56~57쪽에 펼쳐진다.
-- 2026-11-24 Supabase 오늘 수업에는 5·6교시 모두 `괴불주머니 만들기`로 적혀 있어 사이트 활동/차시와 불일치한다. 자동으로 진도를 고치지 말고 실제 진도부터 확인한다.
-- 수업 비서에는 미술 사이트 URL과 `SITE_HELPERS` 연결이 아직 없다. 도우미를 추가할 때 로그인 값은 코드/config에 넣지 말고 기존 공용 Chrome 프로필의 로그인 세션을 먼저 확인한다. 구현·검증 상태는 `ISSUES.md`와 `WORKLOG.md`를 갱신한다.
+경로·진도 불일치·할 일은 ISSUES ISSUE-006. 도우미를 추가할 때 로그인 값은 코드/config 에 넣지 말고 공용 Chrome 프로필 로그인 세션을 먼저 확인한다. 자동으로 진도를 고치지 말고 실제 진도부터 확인한다.
 
 ### C. 수업 정리 — "오늘 수업 정리해줘"
 
@@ -82,7 +79,7 @@ v0.1은 "복사하고 하이클래스 열기"까지만. 자동 게시는 ISSUES 
 
 ## 연결되는 스킬
 
-- `teacherlesson-schedule` — 진도표·수업배치, 진도 조정 API, 차시별 지도서 PDF
+- `teacherlesson-schedule` — 옛 Google Sheets 진도표·수업배치(진도 원본은 이제 Supabase, `supabase_schedule.py`. config `schedule_backend` 가 `supabase` 가 아닐 때만 옛 진도 서버 사용)
 - `teacherlesson-from-neis` — 나이스 주간학습안내(보결·시간표 변경)
 - `teacherlesson-guide` — 지도서 받기·분할·진도표 행 생성
 - `admin-hitalk-sender` — 하이클래스 자동 전송 참고

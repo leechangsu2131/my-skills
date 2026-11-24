@@ -809,6 +809,7 @@ document.querySelector('main').addEventListener('click', async e => {
   else if (!confirm({done:`${cur.subject} 「${cur.title}」을(를) 완료로 표시할까요?`, extend:`${cur.subject} 「${cur.title}」에 한 차시를 더 쓰고 뒤 진도를 밀까요?`}[p])) return;
   const j = await post('/api/progress/'+p, body);
   if (j.status==='success'){ addMemo('sys', `진도 조정: ${p}`, true); setTimeout(load, 600); }
+  else toast(j.message || '진도 조정에 실패했어요', 8000);
 });
 $('aiBtns').onclick = async e => {
   const b = e.target.closest('button'); if (!b || !cur) return;
@@ -874,13 +875,14 @@ $('catchList').onclick = async e => {
   toast('진도표에 반영하는 중…', 15000);
   let j = {};
   try {
-    j = await post('/api/progress/catch-up', {subject: cur.subject, record_key: it.record_key, slot_id: it.slot_id, target_date: S.date});
+    j = await post('/api/progress/catch-up', {subject: cur.subject, record_key: it.record_key, slot_id: it.slot_id, target_date: S.date, target_period: cur.period});
   } catch (err) {
     toast('수업 비서 서버에 연결하지 못했어요. 잠시 뒤 다시 해 주세요.', 8000);
   } finally {
     catchBusy = false; btns.forEach(x => x.disabled = false); $('catchList').style.opacity = '';
   }
   if (j.status === 'success') { addMemo('sys', `진도 맞춤: ${it.unit} ${name(it)}부터 — ${j.message || ''}`, true); $('catchBox').style.display = 'none'; setTimeout(load, 800); }
+  else toast(j.message || '진도 맞춤에 실패했어요', 10000);
 };
 let catchBusy = false;
 // ── 🌙 수업 준비: 흐름 없는 차시를 뒤에서 자동 준비, 진행 상황을 지켜봄 ──

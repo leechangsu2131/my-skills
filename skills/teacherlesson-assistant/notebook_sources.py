@@ -59,8 +59,7 @@ def pdf_of(row: dict) -> str:
 def lesson_groups(rows: list[dict]) -> list[dict]:
     """같은 수업내용·같은 PDF 가 이어지는 행을 한 차시 묶음으로."""
     out: list[dict] = []
-    for r in rows:
-        n = bu.lesson_no(r.get("차시"))
+    for r, n in zip(rows, bu.infer_lesson_numbers(rows)):
         if n is None:
             continue
         title, pdf, pages = str(r.get("수업내용", "")).strip(), pdf_of(r), page_range(r)

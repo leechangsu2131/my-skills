@@ -291,42 +291,77 @@ def progress(action: str, body: dict) -> dict:
         return {"status": "success", "updated": changed, "message": f"차시를 연장하고 {changed}개 시간표 슬롯을 조정했어요."}
 
     if action == "catch-up":
+        lesson = _lesson_by_key(key)
+        subject_rows = _get(SUBJECTS, name=f"eq.{subject}") if subject else []
+        if not lesson or not subject_rows or lesson.get("subject_id") != subject_rows[0].get("id"):
+            return {"status": "error", "message": "선택한 차시를 진도표에서 찾지 못했어요."}
+        try:
+            from_day = date.fromisoformat(day)
+        except (TypeError, ValueError):
+            return {"status": "error", "message": "오늘 날짜를 확인할 수 없어 차시를 옮기지 못했어요."}
+
         matches = [s for s in slots if target_matches(s) and subject_of(s) == subject]
-        target = next((s for s in matches if s.get("status") == "planned"), None) or (matches[0] if matches else None)
-        if not target:
-            lesson = _lesson_by_key(key)
-            planned_subject_slots = sorted(
-                [s for s in slots if subject_of(s) == subject and s.get("status") == "planned"],
+        target = next((s for s in matches if s.get("status") == "planned"), None)
+        if target is None and slot_id:
+            target = next((s for s in matches if s.get("id") == slot_id), None)
+        if target is None:
+            target = next((s for s in matches if s.get("status") == "done"), None)
+
+        # The UI promises to make the selected lesson today's lesson. Previously
+        # this used the chronologically first slot in the whole semester, so an
+        # out-of-date April slot kept today's lesson unchanged (and a repeat click
+        # became a no-op). Prefer an existing slot for today; otherwise use the
+        # first planned class on or after the requested date.
+        wanted_period = _period(body.get("target_period"))
+        today_slots = sorted(
+            [s for s in slots if subject_of(s) == subject and s.get("slot_date") == from_day.isoformat()
+             and (wanted_period is None or _period(s.get("slot_period")) == wanted_period)],
+            key=_slot_key,
+        )
+        if not today_slots and wanted_period is not None:
+            today_slots = sorted(
+                [s for s in slots if subject_of(s) == subject and s.get("slot_date") == from_day.isoformat()],
                 key=_slot_key,
             )
-            if not lesson or not planned_subject_slots:
-                return {"status": "error", "message": "선택한 차시나 앞당길 예정 슬롯을 찾지 못했어요."}
-            first = planned_subject_slots[0]
-            _patch(SLOTS, first["id"], {"status": "done"})
-            _post(SLOTS, [{
-                "lesson_id": lesson["id"], "slot_date": first.get("slot_date"),
-                "slot_period": first.get("slot_period"),
-                "slot_order": int(first.get("slot_order") or 1) + 1,
-                "status": "planned", "source": "manual_catch_up", "memo": "",
-            }])
-            return {"status": "success", "updated": 1, "completed": 1,
-                    "message": "선택한 미배정 차시를 가장 빠른 예정 슬롯으로 옮겼어요."}
-        ordered = sorted([s for s in slots if subject_of(s) == subject], key=_slot_key)
-        idx = next(i for i, s in enumerate(ordered) if s["id"] == target["id"])
-        earlier = [s for s in ordered[:idx] if s.get("status") == "planned"]
-        first_template = next((s for s in earlier if s.get("status") == "planned"), None)
-        _parallel(lambda row: _patch(SLOTS, row["id"], {"status": "done"}), earlier)
-        if target.get("status") != "planned":
-            _patch(SLOTS, target["id"], {"status": "planned", "source": "manual_catch_up"})
-        if first_template:
+        if today_slots:
+            destination = today_slots[0]
+        else:
+            future = sorted(
+                [s for s in slots if subject_of(s) == subject and s.get("status") == "planned"
+                 and s.get("slot_date", "") >= from_day.isoformat() and (not target or s.get("id") != target["id"])],
+                key=_slot_key,
+            )
+            destination = future[0] if future else None
+        if target is None and destination is None:
+            return {"status": "error", "message": "오늘 이후 옮길 예정 시간표 칸을 찾지 못했어요."}
+
+        # A catch-up means all earlier curriculum lessons are already covered,
+        # not all rows whose calendar dates happen to precede an old target slot.
+        earlier = [s for s in slots if subject_of(s) == subject and s.get("status") == "planned"
+                   and int((s.get("lesson") or {}).get("sort_order") or 0) < int(lesson.get("sort_order") or 0)]
+        if target:
+            dest_date = from_day.isoformat() if today_slots else destination.get("slot_date")
+            dest_period = (today_slots[0] if today_slots else destination).get("slot_period")
+            same_period = [s for s in slots if s.get("slot_date") == dest_date and s.get("slot_period") == dest_period]
+            dest_order = max((_period(s.get("slot_order")) or 0 for s in same_period if s.get("id") != target.get("id")), default=0) + 1
+            _parallel(lambda row: _patch(SLOTS, row["id"], {"status": "done"}), earlier)
             _patch(SLOTS, target["id"], {
-                "slot_date": first_template.get("slot_date"),
-                "slot_period": first_template.get("slot_period"),
-                "slot_order": first_template.get("slot_order") or 1,
+                "slot_date": dest_date, "slot_period": dest_period, "slot_order": dest_order,
                 "status": "planned", "source": "manual_catch_up",
             })
+        else:
+            dest_date = from_day.isoformat() if today_slots else destination.get("slot_date")
+            dest_period = (today_slots[0] if today_slots else destination).get("slot_period")
+            same_period = [s for s in slots if s.get("slot_date") == dest_date and s.get("slot_period") == dest_period]
+            dest_order = max((_period(s.get("slot_order")) or 0 for s in same_period), default=0) + 1
+            _parallel(lambda row: _patch(SLOTS, row["id"], {"status": "done"}), earlier)
+            _post(SLOTS, [{
+                "lesson_id": lesson["id"], "slot_date": dest_date,
+                "slot_period": dest_period, "slot_order": dest_order,
+                "status": "planned", "source": "manual_catch_up", "memo": "",
+            }])
         return {"status": "success", "updated": len(earlier), "completed": len(earlier),
-                "message": f"선택한 차시를 앞당기고 앞의 예정 슬롯 {len(earlier)}개를 완료 처리했어요."}
+                "message": f"선택한 차시를 {dest_date}에 배치하고 앞의 예정 차시 {len(earlier)}개를 완료 처리했어요."}
     return {"status": "error", "message": "지원하지 않는 진도 작업이에요."}
 
 

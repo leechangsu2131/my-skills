@@ -50,11 +50,36 @@ def lesson_no(value) -> int | None:
     return int(m.group()) if m else None
 
 
+def infer_lesson_numbers(rows: list[dict]) -> list[int | None]:
+    """Fill only blank numbers that are unambiguously bracketed by the rows around them.
+
+    Some curriculum units use named stages instead of printing a lesson number. When
+    known numbers on both sides leave exactly enough places for the missing rows,
+    infer those values so stage-based PDF splitting can still align each stage.
+    """
+    numbers = [lesson_no(r.get("차시")) for r in rows]
+    anchors = [(i, n) for i, n in enumerate(numbers) if n is not None]
+    if not anchors:
+        return numbers
+    first_i, first_n = anchors[0]
+    for i in range(first_i - 1, -1, -1):
+        candidate = first_n - (first_i - i)
+        if candidate >= 1:
+            numbers[i] = candidate
+    for (left_i, left_n), (right_i, right_n) in zip(anchors, anchors[1:]):
+        if right_n - left_n == right_i - left_i:
+            for i in range(left_i + 1, right_i):
+                numbers[i] = left_n + (i - left_i)
+    last_i, last_n = anchors[-1]
+    for i in range(last_i + 1, len(numbers)):
+        numbers[i] = last_n + (i - last_i)
+    return numbers
+
+
 def group_lessons(rows: list[dict]) -> list[dict]:
     """진도표 행을 같은 수업내용끼리 묶어 {from,to,title}."""
     out = []
-    for r in rows:
-        n = lesson_no(r.get("차시"))
+    for r, n in zip(rows, infer_lesson_numbers(rows)):
         title = str(r.get("수업내용", "")).strip()
         if n is None:
             continue

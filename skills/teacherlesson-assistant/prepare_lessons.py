@@ -127,12 +127,18 @@ def lesson_section(lesson: dict) -> str:
     nums = app.lesson_numbers(str(lesson.get("lesson", "")))
     unit = str(lesson.get("unit", ""))
     md = app.NOTEBOOKLM / app.safe_name(lesson["subject"]) / f"{app.safe_name(unit)}.md"
-    if not nums or not unit or not md.is_file():
+    if not unit or not md.is_file():
         return ""
-    n = nums[0]
     for m, head, body in nlm.split_text(md.read_text(encoding="utf-8"), r"^##\s*\[.*?\]\s*\d+(?:\s*~\s*\d+)?\s*차시"):
         r = SECTION_RANGE.search(head)
-        if r and int(r.group(1)) <= n <= int(r.group(2) or r.group(1)):
+        if nums and r and int(r.group(1)) <= nums[0] <= int(r.group(2) or r.group(1)):
+            return body if len(body) > 200 and "PDF가 없어" not in body[:300] else ""
+        # Named stages such as '실천하기' have no printed lesson number in the
+        # guide. Match their exact lesson title against the stage heading instead
+        # of falling back to the entire unit PDF.
+        title = re.sub(r"\s+", " ", str(lesson.get("title") or "")).strip()
+        heading_title = re.sub(r"\s+", " ", head).strip()
+        if not nums and title and title in heading_title:
             return body if len(body) > 200 and "PDF가 없어" not in body[:300] else ""
     return ""
 

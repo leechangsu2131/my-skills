@@ -39,12 +39,13 @@
 | T27 | teacherlesson-schedule `/api/catch-up` 동시 요청 잠금(겹치면 수업배치 전체 다시 쓰기가 덮임) | `server.py` | 두 요청 동시 시험 | 열림 |
 | T28 | teacherlesson-assistant `supabase_schedule.py` 진도 바꾸기 동시 요청 잠금 | `supabase_schedule.py` | 가짜 시험 | 열림 |
 | T29 | 수업 비서 서버 `/favicon.ico` 404 → 작은 아이콘 | `assistant_server.py`, `web/` | 404 없음 | 열림 |
+| T45 | **실패 중인 시험 4개 고치기**(teacherlesson-assistant ISSUE-030): `test_supabase_schedule.py` CatchUpTest 가 옛 동작(첫 예정 슬롯, `completed` 값)을 검사함. 2026-11-24 커밋 9d2591f 에서 '실제로 할 차시 고르기'가 **요청 날짜·교시 칸으로 옮기는** 동작으로 바뀜(ISSUE-029). 새 동작에 맞게 시험을 고치고, 고른 차시 **뒤 차시들이 차시 순서대로 남는지**(앞당겨진 칸과 겹치지 않는지) 시험을 더해 확인. 코드가 틀렸으면 고치지 말고 ISSUES 에 재현 시험과 함께 기록 | `test_supabase_schedule.py` | `pytest test_supabase_schedule.py` 모두 통과 또는 xfail+기록 | 열림 |
 
 ## C. 문서 정리 (R) — 정보는 빼지 말고 양식·쉬운 한국어로
 
 | 번호 | 할 일 | 상태 |
 |---|---|---|
-| T30 | teacherlesson-assistant ISSUES 표준 양식·WORKLOG 겹침·SKILL/README 최신화 | 검토 대기(작업자 3, `docs/teacherlesson-assistant-cleanup`) |
+| T30 | teacherlesson-assistant ISSUES 표준 양식·WORKLOG 겹침·SKILL/README 최신화 | 완료(2026-11-25 합침) |
 | T31 | 영어 제목·문장이 섞인 SKILL.md/README.md 를 한국어로: admin-s2b-buyer, classmanage-iscream-evaluate, classmanage-student-classifier, classmanage-student-eval-generator, classmanage-student-photo-organizer, personal-record-trade (스킬마다 브랜치 따로 가능) | 열림 |
 | T32 | teacherlesson-guide `splitter/README.md`(영어) → 한국어, 상위 SKILL.md 와 겹치는 부분 정리 | 열림 |
 | T33 | 열린 항목이 많은 ISSUES.md 표준 양식으로: admin-neis-bot, school-todo-kakao, homepage-school-board, personal-video-note, teacherlesson-from-neis (스킬마다 따로) | 열림 |

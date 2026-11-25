@@ -4,8 +4,9 @@
 `git diff --staged` 에서 **새로 추가된 줄**만 읽어, 아래처럼 생긴 것이 있으면 경고합니다.
   - 전화번호 모양 (휴대전화·지역번호)
   - 주민등록번호 모양 (앞 6자리-뒤 7자리)
-  - API 키·토큰 모양 (sk-, AIza, ghp_, github_pat_, xox*, AKIA, 비공개 키 머리말, JWT)
-  - 실제 사용자 폴더 경로 (C:\\Users\\<이름>\\…)
+  - API 키·토큰 모양 (sk-, AIza, ghp_, github_pat_, xox*, AKIA, ntn_, secret_, GOCSPX-, JWT, 데이터베이스 ID)
+  - 실제 사용자 폴더 경로 (Windows 경로, /c/Users/<이름>)
+  - .env 파일 자체 (예시용 .env.example 등은 제외)
 
 쓰는 법:
   python tools/check_privacy.py              # 커밋 올릴 변경(staged)을 검사
@@ -60,9 +61,9 @@ PHONE_RE = re.compile(
     r")(?![0-9A-Za-z])"
 )
 # 주민번호는 구분 기호가 있고 앞 6자리가 실제 달력 날짜인 경우만 찾는다.
-RRN_RE = re.compile(r"(?<![0-9A-Za-z])(\d{6})[- ]([1-4]\d{6})(?![0-9A-Za-z])")
-WIN_USER_RE = re.compile(r"(?i)\b[A-Z]:(?:\\\\|\\|/)Users(?:\\\\|\\|/)([^\\/\\s\"'<>|:*?%]+)")
-GIT_BASH_USER_RE = re.compile(r"(?i)(?<![A-Za-z0-9])/[a-z]/Users/([^/\\s\"'<>|:*?%]+)")
+RRN_RE = re.compile(r"(?<![0-9A-Za-z])(\d{6})[- ]([0-9]\d{6})(?![0-9A-Za-z])")
+WIN_USER_RE = re.compile(r"(?i)(?<![A-Za-z0-9])[A-Z]:[\\/]+Users[\\/]+([^\\/\s\"'<>|:*?%]+)")
+GIT_BASH_USER_RE = re.compile(r"(?i)(?<![A-Za-z0-9])/[a-z]/Users/([^/\s\"'<>|:*?%]+)")
 ENV_SAFE_NAMES = {".env.example", ".env.sample", ".env.template", ".env.dist"}
 
 # (이름, 정규식) — 키·토큰 모양
@@ -108,11 +109,20 @@ def _is_placeholder_digits(text: str) -> bool:
     return not digits or len(set(digits)) == 1
 
 
-def _valid_rrn_date(value: str) -> bool:
-    """주민번호 앞 6자리 YYMMDD가 실제 날짜인지 확인한다."""
+def _valid_rrn_date(value: str, code: str) -> bool:
+    """주민번호 앞 6자리 YYMMDD와 뒷자리 첫 숫자로 실제 생년월일인지 확인한다."""
     try:
         yy, mm, dd = int(value[:2]), int(value[2:4]), int(value[4:6])
-        return _valid_date(1900 + yy, mm, dd) or _valid_date(2000 + yy, mm, dd)
+        digit = int(code[0])
+        if digit in (1, 2, 5, 6):
+            year = 1900 + yy
+        elif digit in (3, 4, 7, 8):
+            year = 2000 + yy
+        elif digit in (0, 9):
+            year = 1800 + yy
+        else:
+            return False
+        return _valid_date(year, mm, dd)
     except (TypeError, ValueError):
         return False
 
@@ -155,7 +165,7 @@ def scan_line(text: str) -> list[tuple[str, str]]:
 
     valid_rrns = [
         m for m in RRN_RE.finditer(text)
-        if _valid_rrn_date(m.group(1)) and not _is_placeholder_digits(m.group(0))
+        if _valid_rrn_date(m.group(1), m.group(2)) and not _is_placeholder_digits(m.group(0))
     ]
     for m in valid_rrns:
         found.append(("주민등록번호 모양", m.group(0)))

@@ -61,7 +61,7 @@ def test_placeholder_rrn_is_ignored():
     assert kinds("000000-0000000") == []
 
 
-@pytest.mark.parametrize("text", ["991332-1234567", "9001011234567", "x900101-1234567y"])
+@pytest.mark.parametrize("text", ["991332-1234567", "9001011234567", "2026112512345", "x900101-1234567y"])
 def test_invalid_date_or_alphanumeric_rrn_boundary_is_ignored(text):
     assert kinds(text) == []
 

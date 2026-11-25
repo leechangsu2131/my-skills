@@ -1,3 +1,4 @@
 # claude-web-yi2131@naver 일지
 
 - 2026-11-25 19:29 T07 시작 (브랜치 task/T07-tests-storagemap)
+- 2026-11-25 19:31 T07 PR 올림 — skills/util-storagemap/tests/server_helpers.test.js (시험 51개: 통과 49·todo 2·실패 0, server.js 를 잠깐 바꿔 시험이 잡아내는지 확인 후 되돌림), 확인 필요 3건 ISSUES 기록

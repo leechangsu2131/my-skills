@@ -5,3 +5,4 @@
 - 2026-11-25 19:33 T08 시작 (브랜치 task/T08-tests-pdf-translator)
 - 2026-11-25 19:36 T08 PR 올림 — skills/util-pdf-translator/tests/test_scripts.py (시험 102개: 통과 97·xfail 5·실패 0, 소스를 잠깐 바꿔 시험이 잡아내는지 확인 후 되돌림), 버그 후보 4건 + 확인 필요 3건(저작물 포함 교사 결정) ISSUES 기록
 - 2026-11-26 04:34 T13 시작 — util-web-scraper 부분 (브랜치 task/T13-tests-web-scraper)
+- 2026-11-26 04:35 T13(util-web-scraper) PR 올림 — skills/util-web-scraper/tests/test_add_urls.py (시험 17개: 통과 14·xfail 3·실패 0, 소스를 잠깐 바꿔 시험이 잡아내는지 확인 후 되돌림), 버그 후보 3건 + 확인 필요 1건(EduSearch 경로 고정) ISSUES 기록. T13 의 workflow-hub-main 은 아직 안 함

@@ -13,6 +13,7 @@ import sys
 import tempfile
 import threading
 import unittest
+from concurrent.futures import ThreadPoolExecutor
 from datetime import date
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from unittest import mock
@@ -313,6 +314,63 @@ class DoneTest(FakeServerCase):
         res = sm.progress("done", {"subject": "수학", "record_key": "lesson-0003", "target_date": "2026-11-29"})
         self.assertEqual(res["status"], "error")
         self.assertEqual(self.writes(), [])
+
+    def test_concurrent_done_requests_do_not_write_from_the_same_snapshot(self):
+        row = {
+            "id": "slot-lock",
+            "status": "planned",
+            "slot_date": "2026-11-25",
+            "lesson": {"legacy_lesson_id": "lesson-0001", "subject": {"name": "수학"}},
+        }
+        first_read = threading.Event()
+        release_first = threading.Event()
+        second_started = threading.Event()
+        guard = threading.Lock()
+        read_count = 0
+        write_count = 0
+
+        def read_slots():
+            nonlocal read_count
+            with guard:
+                read_count += 1
+                number = read_count
+            if number == 1:
+                first_read.set()
+                if not release_first.wait(timeout=3):
+                    raise AssertionError("첫 요청 해제 대기 시간 초과")
+            return [{**row, "lesson": dict(row["lesson"], subject=dict(row["lesson"]["subject"]))}]
+
+        def write_slot(table, row_id, values):
+            nonlocal write_count
+            with guard:
+                write_count += 1
+                row.update(values)
+            return [dict(row)]
+
+        def send(is_second=False):
+            if is_second:
+                second_started.set()
+            return sm.progress("done", {"subject": "수학", "slot_id": "slot-lock"})
+
+        with (
+            mock.patch.object(sm, "_slots_joined", side_effect=read_slots),
+            mock.patch.object(sm, "_patch", side_effect=write_slot),
+            ThreadPoolExecutor(max_workers=2) as pool,
+        ):
+            first = pool.submit(send)
+            self.assertTrue(first_read.wait(timeout=2))
+            second = pool.submit(send, True)
+            self.assertTrue(second_started.wait(timeout=2))
+            self.assertEqual(read_count, 1, "첫 요청이 끝나기 전에 두 번째 요청이 자료를 읽으면 안 됨")
+            release_first.set()
+            first_result = first.result(timeout=2)
+            second_result = second.result(timeout=2)
+
+        self.assertEqual(first_result["status"], "success")
+        self.assertEqual(second_result["status"], "error")
+        self.assertEqual(read_count, 2)
+        self.assertEqual(write_count, 1)
+        self.assertEqual(row["status"], "done")
 
     def test_done_already_done_is_not_found(self):
         self.slot("sA")["status"] = "done"

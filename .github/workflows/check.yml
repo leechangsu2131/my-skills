@@ -53,14 +53,27 @@ jobs:
             echo "::notice::tools/check_privacy.py(T22)가 아직 없어 개인정보 검사를 건너뜁니다."
             exit 0
           fi
-          # 오탐이 많아(코드값·타임스탬프 등, T58) 고칠 때까지는 경고만 남기고 막지 않는다
+          # T58에서 오탐·누락을 보완했으므로 의심 항목이 있으면 PR 검사를 실패시킨다.
           if [ -n "$BASE_REF" ]; then
-            git diff "origin/${BASE_REF}...HEAD" | python tools/check_privacy.py --stdin --warn-only
+            git diff "origin/${BASE_REF}...HEAD" | python tools/check_privacy.py --stdin
           elif [ -n "$BEFORE" ] && [ "$BEFORE" != "0000000000000000000000000000000000000000" ]; then
-            git diff "$BEFORE...HEAD" | python tools/check_privacy.py --stdin --warn-only
+            git diff "$BEFORE...HEAD" | python tools/check_privacy.py --stdin
           else
             echo "::notice::비교할 기준이 없어(수동 실행) 개인정보 검사를 건너뜁니다."
           fi
+
+  privacy-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: 시험 도구 설치
+        run: pip install pytest
+      - name: 개인정보 검사 도구 시험
+        run: python -m pytest tests/test_check_privacy.py -q
 
   tests:
     runs-on: ubuntu-latest

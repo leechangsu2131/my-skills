@@ -17,3 +17,4 @@
 - 2026-11-25 23:12 T33(homepage-school-board) 시작 (브랜치 task/T33-homepage-school-board-issues)
 - 2026-11-25 23:14 T33(homepage-school-board) PR 올림 — ISSUES 상태·항목 양식 정리. PR #32
 - 2026-11-25 23:14 T33(personal-video-note) 시작 (브랜치 task/T33-personal-video-note-issues)
+- 2026-11-25 23:16 T33(personal-video-note) PR 올림 — 연수원 강의 이슈의 증상·원인·우회·남은 일 정리. PR #33

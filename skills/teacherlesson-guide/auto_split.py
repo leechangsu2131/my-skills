@@ -278,7 +278,9 @@ def main() -> int:
     report_path = out / "analysis.json"
     if a.reuse_analysis:
         try:
-            data = json.loads(report_path.read_text(encoding="utf-8"))["analysis"]
+            previous_report = json.loads(report_path.read_text(encoding="utf-8"))
+            data = previous_report["analysis"]
+            gemini_model = previous_report.get("gemini_model", "")
         except (OSError, ValueError, KeyError, TypeError) as exc:
             ap.error(f"기존 analysis.json을 읽을 수 없습니다: {exc}")
     else:

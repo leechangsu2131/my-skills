@@ -24,15 +24,27 @@ _없음_
 - **관련 파일**: `export.py` `export_to_excel`, `tests/test_export.py`
 
 ### ISSUE-003: 결과 엑셀 저장 위치와 `verify=False` (2026-11-25)
-- **상태**: 📌 백로그 (TASKS T25 에서 다루는 중)
-- **증상**: `student_records.xlsx` 가 스킬 폴더(저장소 안)에 만들어지고, 슈파베이스 요청에 `verify=False` 가 쓰임
-- **원인**: 저장 경로가 `Path(__file__).parent`, 요청에 인증서 확인을 끔
-- **해결/조치**: T25 가 `data_dir()` 저장과 `verify=False` 제거를 맡음. 이 시험은 저장 위치를 임시 폴더로 바꿔서 돌아가므로 T25 후 경로 시험은 그때 맞춰야 함.
-- **관련 파일**: `export.py`
+- **상태**: 🟢 해결 (2026-11-25)
+- **증상**: `student_records.xlsx` 가 스킬 폴더(저장소 안)에 만들어지고, 슈파베이스 요청에 `verify=False` 가 쓰임.
+- **원인**: 저장 경로가 `Path(__file__).parent`였고, 요청에서 인증서 확인을 껐음.
+- **해결/조치**: `data_dir() / "student_records.xlsx"`로 저장하고 `verify=False`를 제거해 requests 기본 TLS 인증서 검증을 사용함. 시험은 `data_dir()`를 임시 폴더로 바꿔 실제 개인정보 폴더에 쓰지 않도록 수정함.
+- **관련 파일**: `export.py`, `tests/test_export.py`
 
 ## 🟢 해결됨
 
-_없음_
+### ISSUE-004: SKILL.md의 결과 저장 위치 안내가 이전 상태임 (2026-11-25)
+- **상태**: 📌 백로그
+- **증상**: SKILL.md는 결과 파일이 현재 폴더에 생성된다고 설명하지만, T25 이후에는 공용 개인 데이터 폴더에 저장함.
+- **원인**: T25의 작업 범위가 `export.py`와 시험 파일로 한정되어 사용 설명서는 수정하지 않았음.
+- **해결/조치**: 문서 정리 작업에서 저장 위치 안내를 `data_dir()` 기준으로 바꾼다.
+- **관련 파일**: `SKILL.md`, `export.py`
+
+### ISSUE-003: 결과 엑셀 저장 위치와 TLS 인증서 확인 (2026-11-25)
+- **상태**: 🟢 해결 (2026-11-25)
+- **증상**: `student_records.xlsx` 가 스킬 폴더(저장소 안)에 만들어지고, Supabase 요청에 `verify=False` 가 쓰였음.
+- **원인**: 저장 경로가 `Path(__file__).parent`였고, 요청에서 인증서 확인을 껐음.
+- **해결/조치**: `data_dir() / "student_records.xlsx"`로 저장하고 `verify=False`를 제거해 requests 기본 TLS 인증서 검증을 사용함. 시험은 `data_dir()`를 임시 폴더로 바꿔 실제 개인정보 폴더에 쓰지 않도록 수정함.
+- **관련 파일**: `export.py`, `tests/test_export.py`
 
 <!--
 항목 양식 (복사해서 사용)

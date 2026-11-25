@@ -40,3 +40,4 @@
 - 2026-11-25 23:48 T58 PR 올림 — 개인정보 검사 오탐·누락·stdin·diff 인자·++ 줄 처리 보완, CI 검사 강제 적용. PR #42
 - 2026-11-25 23:51 T58 CI 확인 — privacy 통과, 개인정보 검사 시험 60개 통과, assistant·guide-splitter 시험 통과. catalog 는 PyYAML 미설치로 실패, known-failing 은 기존 ISSUE-003 1개 실패
 - 2026-11-25 23:52 T59 시작 (브랜치 task/T59-tracked-outputs-review)
+- 2026-11-25 23:53 T59 PR 올림 — 임시 PNG·PDF·VTT·인쇄 설정 PDF 추적 목록과 삭제 전 확인 사항 기록. 파일 내용 열기·삭제 없음. PR #43

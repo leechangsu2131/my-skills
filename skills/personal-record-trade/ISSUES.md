@@ -10,7 +10,12 @@ _없음_
 
 ## 📌 백로그
 
-_없음_
+### ISSUE-001: 증권사 리포트 PDF 26개가 공개 저장소에 올라가 있음 — 저작물 여부 확인 필요 (2026-11-25)
+- **상태**: 📌 백로그 (교사 확인 대기)
+- **증상**: `python tools/build_catalog.py --check` 의 새 경고(T24)가 `data/report/` 아래와 `docs/research/` 아래 PDF 26개가 git 에 추적된다고 알림.
+- **원인**: 추정 — 내려받은 리포트를 자료 폴더째 커밋함. 증권사 리포트는 **저작물일 수 있어** 공개 저장소에 두면 안 되는 종류(WORKER_GUIDE 3번 규칙)에 해당할 수 있음 — 확인 필요.
+- **해결/조치**: 하지 않음. 교사 확인 뒤 ① 저장소에서 빼고(`git rm --cached`) ② `.gitignore` 에 `data/report/`·`docs/research/*.pdf` 추가 ③ 리포트는 내 문서\my-skills-data 쪽(`data_dir()`)으로 옮김 ④ 예전 기록 정리 여부 결정.
+- **관련 파일**: `skills/personal-record-trade/data/report/`, `skills/personal-record-trade/docs/research/`
 
 ## 🟢 해결됨
 

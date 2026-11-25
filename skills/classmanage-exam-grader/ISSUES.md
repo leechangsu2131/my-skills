@@ -9,7 +9,12 @@ _없음_
 
 ## 📌 백로그
 
-_없음_
+### ISSUE-001: 임시 그림 파일 42개가 공개 저장소에 올라가 있음 — 학생 정보 확인 필요 (2026-11-25)
+- **상태**: 📌 백로그 (교사 확인 대기)
+- **증상**: `python tools/build_catalog.py --check` 의 새 경고(T24)가 `tmp_answer_key_pages/`, `tmp_answer_region_debug/`, `tmp_blank_layout_debug/`, `tmp_blank_layout_debug_120/` 폴더와 `tmp_*.png` 파일 3개, 모두 42개 파일이 git 에 추적된다고 알림.
+- **원인**: 추정 — 시험지 화면을 잘라 확인하던 임시 결과물이 `.gitignore` 에 없어 같이 커밋됨. **그림 안에 학생 이름·답안이 보이는지는 확인 필요**(은정은 파일을 열어 보지 않음).
+- **해결/조치**: 하지 않음. 교사 확인 뒤 ① 학생 정보가 보이는지 확인 ② 필요 없으면 `git rm --cached` 로 추적을 끊고 `.gitignore` 에 `tmp_*` 추가 ③ 학생 정보가 있었다면 예전 기록에 남으므로 정리 방법을 따로 정함.
+- **관련 파일**: `skills/classmanage-exam-grader/tmp_*`
 
 ## 🟢 해결됨
 

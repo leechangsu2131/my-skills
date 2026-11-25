@@ -9,6 +9,7 @@
 """
 from __future__ import annotations
 
+import http.client
 import importlib.util
 import json
 import os
@@ -18,6 +19,8 @@ import shutil
 import socket
 import subprocess
 import sys
+import urllib.error
+import urllib.request
 from dataclasses import dataclass
 
 SKILL_DIR = pathlib.Path(__file__).resolve().parent
@@ -29,9 +32,12 @@ OK, WARN, FAIL = "ok", "warn", "fail"
 MARK = {OK: "✅", WARN: "⚠", FAIL: "❌"}
 
 MIN_PYTHON = (3, 10)
-RECOMMENDED_PYTHON = (3, 13)          # 수업 비서 bat 가 py -3.13 으로 돌린다
+RECOMMENDED_PYTHON = (3, 13)          # 실행_수업비서.bat: 단원 개관은 py -3.13, 서버·수업 준비는 python
 DEFAULT_PORT = 5180
 DEFAULT_DEBUG_PORT = 9233
+ASSISTANT_SERVER_PREFIX = "LessonAssistant"   # assistant_server.py 의 Handler.server_version 과 같게 둔다
+PY_LAUNCHER = ["py", "-3.13"]                 # 실행_수업비서.bat 이 build_units.py 를 돌리는 명령
+PY_PLAIN = ["python"]                         # 실행_수업비서.bat 이 서버·prepare_lessons.py 를 돌리는 명령
 # pip 이름(소문자) → import 이름. requirements.txt 에 없는 이름은 import 이름을 그대로 쓴다.
 IMPORT_NAMES = {"pymupdf": "fitz", "selenium": "selenium"}
 EXTRA_PACKAGES = ("selenium", "PyMuPDF")       # requirements.txt 밖에서 더 필요한 것
@@ -63,6 +69,59 @@ def port_is_open(port: int, host: str = "127.0.0.1", timeout: float = 0.6) -> bo
             return True
     except OSError:
         return False
+
+
+def identify_assistant(port: int, host: str = "127.0.0.1", timeout: float = 2.0) -> str | None:
+    """포트에 실제로 HTTP 로 물어 서버가 밝힌 이름(Server 머리글)을 돌려준다.
+
+    HTTP 로 답하지 않거나 연결이 안 되면 None. 본문은 읽지 않고, 컴퓨터에 설정된 프록시는 쓰지 않는다.
+    """
+    opener = urllib.request.build_opener(urllib.request.ProxyHandler({}))
+    try:
+        with opener.open(f"http://{host}:{port}/", timeout=timeout) as resp:
+            return resp.headers.get("Server", "") or ""
+    except urllib.error.HTTPError as exc:          # 403·404 도 '답은 한' 것 — 머리글은 읽을 수 있다
+        try:
+            return exc.headers.get("Server", "") or ""
+        finally:
+            exc.close()
+    except (urllib.error.URLError, http.client.HTTPException, OSError, ValueError):
+        return None
+
+
+def read_python_version(cmd: list[str]) -> tuple[int, int, int] | None:
+    """cmd(예: ["py", "-3.13"], ["python"]) 로 Python 을 돌려 버전을 읽는다. 못 돌리면 None."""
+    try:
+        out = subprocess.run([*cmd, "-c", "import sys;print('.'.join(map(str,sys.version_info[:3])))"],
+                             capture_output=True, text=True, timeout=10)
+    except (OSError, subprocess.SubprocessError):
+        return None
+    if out.returncode != 0:
+        return None
+    m = re.fullmatch(r"(\d+)\.(\d+)\.(\d+)", (out.stdout or "").strip())     # 윈도우 스토어 안내 같은 엉뚱한 출력은 버린다
+    return (int(m.group(1)), int(m.group(2)), int(m.group(3))) if m else None
+
+
+def parse_port(cfg: dict, key: str, default: int, falsy_is_default: bool = False) -> tuple[int | None, Result | None]:
+    """config 의 포트 값을 서버와 같은 방식(int())으로 읽는다. (쓸 포트, 문제 결과)를 돌려준다.
+
+    키가 없으면 기본값. 값이 숫자로 읽히지 않거나 1~65535 밖이면 (None, ❌ 결과) — 서버가 그 값으로는 못 켜지기 때문.
+    falsy_is_default=True 면 null·0·"" 도 기본값으로 본다(서버가 그런 값을 건너뛰는 debug_port 용).
+    """
+    if key not in cfg or (falsy_is_default and not cfg[key]):
+        return default, None
+    raw = cfg[key]
+    try:
+        if isinstance(raw, bool):
+            raise ValueError("bool")
+        port = int(raw)
+    except (TypeError, ValueError, OverflowError):
+        port = None
+    if port is None or not 1 <= port <= 65535:
+        shown = repr(raw)[:30]
+        return None, Result(FAIL, f"설정 {key}", f"쓸 수 없는 값이에요: {shown}",
+                            f'config.json 의 "{key}" 를 {default} 처럼 1~65535 사이 숫자로 고치세요 (그 전에는 수업 비서가 켜지지 않아요)')
+    return port, None
 
 
 def read_node_version(node_path: str) -> str:
@@ -114,8 +173,32 @@ def check_python(version=None, executable: str | None = None) -> Result:
                       "https://www.python.org/downloads/ 에서 Python 3.13 을 설치하세요 (Add to PATH 체크)")
     if v[:2] < RECOMMENDED_PYTHON:
         return Result(WARN, "Python 버전", f"{text} (권장 3.13)",
-                      "실행_수업비서.bat 은 py -3.13 을 먼저 찾아요. 3.13 을 같이 설치해 두면 안전해요")
+                      "실행_수업비서.bat 은 서버를 python 명령으로 켜고 단원 개관만 py -3.13 으로 돌려요. "
+                      "3.13 을 설치하고 python 도 3.13 을 가리키는지는 바로 아래 'Python 실행기' 항목에서 봐요")
     return Result(OK, "Python 버전", text)
+
+
+def check_python_launchers(read_version=read_python_version) -> Result:
+    """실행_수업비서.bat 이 쓰는 두 명령(py -3.13, python)을 모두 돌려 보고, 없거나 서로 다른 Python 이면 ⚠.
+
+    점검_PC.bat 은 py -3.13 을 먼저 쓰지만 수업 비서 서버는 python 으로 켜지므로, 패키지가 한쪽에만 깔려 있을 수 있다.
+    """
+    via_py, via_plain = read_version(PY_LAUNCHER), read_version(PY_PLAIN)
+    show = lambda v: ".".join(str(n) for n in v)  # noqa: E731
+    title = "Python 실행기 (py -3.13 / python)"
+    if via_py is None and via_plain is None:
+        return Result(WARN, title, "py -3.13 도 python 도 못 돌렸어요 — 실행_수업비서.bat 이 안 켜져요",
+                      "https://www.python.org/downloads/ 에서 Python 3.13 을 설치하세요 (Add to PATH 체크)")
+    if via_plain is None:
+        return Result(WARN, title, f"py -3.13 은 {show(via_py)}, python 명령은 못 찾았어요 — 서버·수업 준비(python …)가 안 켜져요",
+                      "Python 설치 프로그램에서 Add to PATH 를 체크해 다시 설치하거나, 실행_수업비서.bat 의 python 을 py -3.13 으로 바꾸세요")
+    if via_py is None:
+        return Result(WARN, title, f"python 은 {show(via_plain)}, py -3.13 은 못 찾았어요 — 단원 개관 자동 갱신(build_units.py)을 건너뛰어요",
+                      "https://www.python.org/downloads/ 에서 Python 3.13 을 설치하세요 (py 실행기 포함)")
+    if via_py[:2] != via_plain[:2]:
+        return Result(WARN, title, f"서로 달라요 — py -3.13 은 {show(via_py)}, python 은 {show(via_plain)}",
+                      "패키지가 한쪽에만 깔렸을 수 있어요. python -m pip install -r requirements.txt 를 python 쪽에도 하거나, PATH 의 python 이 3.13 을 가리키게 하세요")
+    return Result(OK, title, f"둘 다 {show(via_py)}")
 
 
 def check_packages(requirements_text: str, find_spec=importlib.util.find_spec,
@@ -200,18 +283,23 @@ def check_central_env(env_path: pathlib.Path | None) -> Result:
     return Result(OK, "중앙 .env 위치", str(env_path))
 
 
-def check_env_keys(names: set[str], gemini_names: set[str]) -> list[Result]:
-    """키 이름이 있는지만 본다. names 는 이미 '값이 비어 있지 않은 이름'만 담은 집합."""
+def check_env_keys(names: set[str], gemini_names: set[str], supabase_required: bool = True) -> list[Result]:
+    """키 이름이 있는지만 본다. names 는 이미 '값이 비어 있지 않은 이름'만 담은 집합.
+
+    supabase_required=False(진도 저장소 schedule_backend 가 supabase 가 아님)면 슈파베이스 키가 없어도 ❌ 대신 ⚠.
+    """
     results: list[Result] = []
+    missing_status = FAIL if supabase_required else WARN
+    not_needed = "" if supabase_required else " (진도 저장소가 supabase 가 아니라 지금은 꼭 필요하진 않아요)"
     if names & set(SUPABASE_URL_KEYS):
         results.append(Result(OK, "키 이름 SUPABASE_URL", "있음 (" + ", ".join(k for k in SUPABASE_URL_KEYS if k in names) + ")"))
     else:
-        results.append(Result(FAIL, "키 이름 SUPABASE_URL", "SUPABASE_URL 도 NEXT_PUBLIC_SUPABASE_URL 도 없어요",
+        results.append(Result(missing_status, "키 이름 SUPABASE_URL", "SUPABASE_URL 도 NEXT_PUBLIC_SUPABASE_URL 도 없어요" + not_needed,
                               "중앙 .env 에 SUPABASE_URL=… 한 줄을 추가하세요(값은 슈파베이스 프로젝트 설정에서)"))
     if SUPABASE_SECRET_KEY in names:
         results.append(Result(OK, f"키 이름 {SUPABASE_SECRET_KEY}", "있음"))
     else:
-        results.append(Result(FAIL, f"키 이름 {SUPABASE_SECRET_KEY}", "없어요",
+        results.append(Result(missing_status, f"키 이름 {SUPABASE_SECRET_KEY}", "없어요" + not_needed,
                               f"중앙 .env 에 {SUPABASE_SECRET_KEY}=… 한 줄을 추가하세요(코드·메신저에 붙여넣지 마세요)"))
     have = [k for k in GEMINI_KEYS if k in names or k in gemini_names]
     if have:
@@ -270,6 +358,22 @@ def check_port(port: int, label: str, closed_note: str, probe=port_is_open) -> R
     return Result(WARN, title, "닫혀 있어요", closed_note)
 
 
+def check_assistant_port(port: int, closed_note: str, probe=None, identify=None) -> Result:
+    """수업 비서 포트: 닫혀 있으면 꺼진 것(⚠), 열려 있으면 정말 수업 비서가 답하는지 HTTP 로 물어 확인한다."""
+    probe = probe or port_is_open                 # 호출할 때 찾아 쓴다(시험에서 바꿔 끼울 수 있게)
+    identify = identify or identify_assistant
+    title = f"{port}번 포트 (수업 비서)"
+    if not probe(port):
+        return Result(WARN, title, "닫혀 있어요", closed_note)
+    server = identify(port)
+    if server and server.startswith(ASSISTANT_SERVER_PREFIX):
+        return Result(OK, title, "수업 비서가 켜져 있어요")
+    detail = "열려 있는데 HTTP 로 답하지 않아요 — 수업 비서가 아니에요" if server is None else \
+        f"열려 있는데 수업 비서가 아니에요 (서버 이름: {server[:40] or '없음'})"
+    return Result(WARN, title, detail,
+                  "다른 프로그램이 이 포트를 쓰고 있어요. 그 프로그램을 끄거나, 데이터 폴더의 config.json 에서 port 를 다른 숫자(예: 5181)로 바꾸세요")
+
+
 def check_guide_folder(root: pathlib.Path, is_dir=lambda p: pathlib.Path(p).is_dir()) -> Result:
     if is_dir(root):
         return Result(OK, "지도서 폴더", "있음 (집 PC 처럼 지도서 PDF 를 바로 쓸 수 있어요)")
@@ -284,7 +388,7 @@ def _present_names(values: dict, environ: dict) -> set[str]:
 
 def run_checks() -> list[Result]:
     env = dict(os.environ)
-    results: list[Result] = [check_python()]
+    results: list[Result] = [check_python(), check_python_launchers()]
     req = SKILL_DIR / "requirements.txt"
     results += check_packages(req.read_text(encoding="utf-8-sig") if req.is_file() else "")
     results += [check_node(), check_gemini_cli(), check_chrome_exe()]
@@ -298,16 +402,25 @@ def run_checks() -> list[Result]:
         main_values, gemini_values = skill_env.env_values(SKILL), skill_env.env_values("util-notebooklm")
     except Exception:  # noqa: BLE001  .env 를 못 읽어도 나머지 점검은 계속한다
         main_values, gemini_values = {}, {}
-    results += check_env_keys(_present_names(main_values, env), _present_names(gemini_values, env))
+    # 서버(assistant_server.py)와 똑같이 판단한다: 값이 없으면 supabase, 그 외 값이면 옛 진도 서버(schedule_api)를 쓴다
+    supabase_required = cfg.get("schedule_backend", "supabase") == "supabase"
+    results += check_env_keys(_present_names(main_values, env), _present_names(gemini_values, env), supabase_required)
 
     results.append(cfg_result)
     results += check_data_dir(data_path)
     results.append(check_onedrive(env))
 
-    port = int(cfg.get("port") or DEFAULT_PORT)
-    debug_port = int(cfg.get("debug_port") or DEFAULT_DEBUG_PORT)
-    results.append(check_port(port, "수업 비서", "서버가 꺼져 있어요(켜기 전이면 정상). 실행_수업비서.bat 을 실행하세요"))
-    results.append(check_port(debug_port, "수업용 크롬", "수업용 크롬이 안 떠 있어요(정상일 수 있음). 화면의 '수업 사이트 열기'를 누르면 이 포트로 열려요"))
+    # 포트 값이 숫자가 아니면 멈추지 않고 ❌ 로 알린다(그 값으로는 서버가 켜지지 않는다). 그 포트는 열어 보지 않는다.
+    port, port_problem = parse_port(cfg, "port", DEFAULT_PORT)
+    debug_port, debug_problem = parse_port(cfg, "debug_port", DEFAULT_DEBUG_PORT, falsy_is_default=True)
+    if port_problem:
+        results.append(port_problem)
+    else:
+        results.append(check_assistant_port(port, "서버가 꺼져 있어요(켜기 전이면 정상). 실행_수업비서.bat 을 실행하세요"))
+    if debug_problem:
+        results.append(debug_problem)
+    else:
+        results.append(check_port(debug_port, "수업용 크롬", "수업용 크롬이 안 떠 있어요(정상일 수 있음). 화면의 '수업 사이트 열기'를 누르면 이 포트로 열려요"))
     results.append(check_guide_folder(pathlib.Path(env.get("GUIDE_ROOT") or r"D:\지도서")))
     return results
 

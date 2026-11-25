@@ -44,7 +44,7 @@ CATALOG.md           → 자동 생성 목록 (직접 수정 금지)
 - 교사 PC 의 Claude Code(오케스트레이터)는 브랜치·PR 없이 `main`에 바로 올린다.
 - **다른 AI 작업자(웹 Claude, Gemini CLI, bizcoder, Codex 등)는 이 예외가 없다.** 반드시 `task/…` 브랜치 + PR 로 올린다([docs/WORKER_GUIDE.md](docs/WORKER_GUIDE.md)).
 - 대신 커밋 전에 반드시
-  1. `git diff --staged`로 개인정보·학교 정보(학생·교사 이름, 전화번호, 공문번호, 비밀값)가 없는지 확인한다. 저장소는 공개다.
+  1. `git diff --staged`로 학생·학부모 개인정보, 전화번호·집 주소, 비밀값이 없는지 확인한다. 저장소는 공개다(교사·교직원 이름, 이메일 주소, 학교 업무 정보는 막지 않음 — 2026-11-25 교사 결정).
   2. 내가 고친 파일만 `git add <파일>`로 고른다. 다른 도구·세션이 작업 중인 파일은 섞지 않는다(`git add -A` 금지).
   3. `python tools/build_catalog.py --check` 통과를 확인한다.
   4. 푸시 전 원격 변경을 받는다: `git pull --rebase` (다른 세션이 커밋 안 한 파일이 있어 막히면 `git fetch` 후 뒤처졌을 때만 `git pull --rebase --autostash`).

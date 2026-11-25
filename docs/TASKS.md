@@ -9,15 +9,15 @@
 
 | 번호 | 스킬 | 시험할 것 | 상태 |
 |---|---|---|---|
-| T01 | util-notebooklm | `nlm.py` split_text·page_refs·parse_pages·compact·write_source·gemini_ask 모델 바꾸기 | 진행 중(작업자 2) |
-| T02 | teacherlesson-assistant | `prepare_lessons.py` parse_flow·parse_day·lesson_section, `build_units.py` group_lessons | 진행 중(작업자 2) |
-| T03 | teacherlesson-guide | `auto_split.py` 검사·정규화 함수 | 진행 중(작업자 2) |
-| T04 | teacherlesson-schedule | `server.py` 의 `/api/lessons`·`/api/catch-up` (Flask test client, schedule 함수는 가짜) | 열림 |
+| T01 | util-notebooklm | `nlm.py` split_text·page_refs·parse_pages·compact·write_source·gemini_ask 모델 바꾸기 | 완료(2026-11-25 합침) |
+| T02 | teacherlesson-assistant | `prepare_lessons.py` parse_flow·parse_day·lesson_section, `build_units.py` group_lessons | 완료(2026-11-25 합침) |
+| T03 | teacherlesson-guide | `auto_split.py` 검사·정규화 함수 | 완료(2026-11-25 합침) |
+| T04 | teacherlesson-schedule | `server.py` 의 `/api/lessons`·`/api/catch-up` (Flask test client, schedule 함수는 가짜) | 완료(2026-11-25 합침) |
 | T05 | classmanage-supabase-export | `parse_names`(JSON 배열·쉼표·공백), 학생별 나누기 | 열림 |
 | T06 | personal-library-search | 순수 함수(검색어 정리·결과 파싱) | 열림 |
-| T07 | util-storagemap | 순수 함수 | 열림 |
-| T08 | util-pdf-translator | 쪽 나누기·글 정리 함수(번역 API 는 가짜) | 열림 |
-| T09 | personal-obsidansystem-main | 노트 묶음·파일 이름 규칙 함수 | 열림 |
+| T07 | util-storagemap | 순수 함수 | 완료(2026-11-25 합침) |
+| T08 | util-pdf-translator | 쪽 나누기·글 정리 함수(번역 API 는 가짜) | 완료(2026-11-25 합침) |
+| T09 | personal-obsidansystem-main | 노트 묶음·파일 이름 규칙 함수 | 완료(2026-11-25 합침) |
 | T10 | personal-youtube-gemini-kakao-automation | 자막 정리·메시지 만들기 함수(카카오·Gemini 는 가짜) | 열림 |
 | T11 | admin-gbetalk | 받은 쪽지 정리·파싱 함수(실제 발송 금지, 화면 조작 부분은 제외) | 열림 |
 | T12 | personal-carrot | 순수 함수 | 열림 |
@@ -39,7 +39,7 @@
 | T27 | teacherlesson-schedule `/api/catch-up` 동시 요청 잠금(겹치면 수업배치 전체 다시 쓰기가 덮임) | `server.py` | 두 요청 동시 시험 | 열림 |
 | T28 | teacherlesson-assistant `supabase_schedule.py` 진도 바꾸기 동시 요청 잠금 | `supabase_schedule.py` | 가짜 시험 | 열림 |
 | T29 | 수업 비서 서버 `/favicon.ico` 404 → 작은 아이콘 | `assistant_server.py`, `web/` | 404 없음 | 열림 |
-| T45 | **실패 중인 시험 4개 고치기**(teacherlesson-assistant ISSUE-030): `test_supabase_schedule.py` CatchUpTest 가 옛 동작(첫 예정 슬롯, `completed` 값)을 검사함. 2026-11-24 커밋 9d2591f 에서 '실제로 할 차시 고르기'가 **요청 날짜·교시 칸으로 옮기는** 동작으로 바뀜(ISSUE-029). 새 동작에 맞게 시험을 고치고, 고른 차시 **뒤 차시들이 차시 순서대로 남는지**(앞당겨진 칸과 겹치지 않는지) 시험을 더해 확인. 코드가 틀렸으면 고치지 말고 ISSUES 에 재현 시험과 함께 기록 | `test_supabase_schedule.py` | `pytest test_supabase_schedule.py` 모두 통과 또는 xfail+기록 | 열림 |
+| T45 | **실패 중인 시험 4개 고치기**(teacherlesson-assistant ISSUE-030): `test_supabase_schedule.py` CatchUpTest 가 옛 동작(첫 예정 슬롯, `completed` 값)을 검사함. 2026-11-24 커밋 9d2591f 에서 '실제로 할 차시 고르기'가 **요청 날짜·교시 칸으로 옮기는** 동작으로 바뀜(ISSUE-029). 새 동작에 맞게 시험을 고치고, 고른 차시 **뒤 차시들이 차시 순서대로 남는지**(앞당겨진 칸과 겹치지 않는지) 시험을 더해 확인. 코드가 틀렸으면 고치지 말고 ISSUES 에 재현 시험과 함께 기록 | `test_supabase_schedule.py` | `pytest test_supabase_schedule.py` 모두 통과 또는 xfail+기록 | 완료(2026-11-25 합침) |
 | T46 | 학교 PC 점검 도구 보완(검토 🟡): ① 점검 bat 는 `py -3.13`, 수업비서 bat 는 `python` 이라 다른 Python 을 볼 수 있음 → 둘 다 검사하고 다르면 ⚠, `check_setup.py` 의 'py -3.13 을 먼저 찾아요' 안내 바로잡기 ② 5180 포트가 열려 있으면 `http://127.0.0.1:5180/` 에 실제로 물어 수업 비서인지 확인 ③ config 의 port 가 숫자가 아니어도 멈추지 않게 ④ `schedule_backend` 가 supabase 가 아닐 땐 Supabase 키 없음을 ⚠ 로 | `check_setup.py`, `점검_PC.bat`, `tests/test_check_setup.py` | 시험 추가·통과 | 열림 |
 | T47 | 메모 동기화 부품 보완(검토 🟡): ① 내려받은 메모에 서버 `memo_key` 를 그대로 저장해 중복 판정(지금은 `at` 없는 메모가 받을 때마다 늘어남) ② CLI 출력 utf-8 ③ README·SKILL.md 에 memo_sync 사용법 절 ④ (선택) 단계 기록 step·sys·adj 를 올리지 않는 설정 | `memo_sync.py`, `tests/test_memo_sync.py`, README·SKILL 의 memo_sync 절 | 중복 재현 시험 통과 | 열림 |
 | T49 | (교사 PC, Claude Code) 메모 동기화 연결: SQL 실행(진도와 같은 슈파베이스 프로젝트) → `save_session` 뒤 `push_session` 을 **백그라운드 스레드**로 → `실행_수업비서.bat` 에서 서버 켜기 **전에** `memo_sync.py pull --if-older 24` → 두 PC 에서 확인. **먼저 교사 결정**: 📝·🔧·🎤 같은 자유 글 메모에 학생 이름이 들어가면 그대로 슈파베이스에 올라감(🙋 학생 메모만 제외됨) | `assistant_server.py`, bat | 두 PC 메모 같음 | 교사 결정 대기 |

@@ -68,14 +68,43 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        # 칸: name, dir, requirements(없으면 생략), extra(요구 파일에 빠진 패키지 — 공백으로 여러 개), target(기본 tests)
         include:
-          # 깨끗한 가상환경에 요구 파일만 설치해 통과를 확인한 것들 (2026-11-25)
+          # 깨끗한 가상환경에 요구 파일만 설치해 통과를 확인한 것들 (2026-11-25~26, docs/reviews/health-2026-11-26.md)
           - name: teacherlesson-assistant
             dir: skills/teacherlesson-assistant
             requirements: requirements.txt
+            # tests 폴더 밖에 있는 시험 2개(가짜 로컬 서버만 씀)도 함께 돌린다
+            target: tests test_assistant_server.py test_supabase_schedule.py
           - name: teacherlesson-guide-splitter
             dir: skills/teacherlesson-guide/splitter
             requirements: requirements-dev.txt
+          - name: personal-carrot
+            dir: skills/personal-carrot
+            requirements: requirements.txt
+          - name: personal-library-search
+            dir: skills/personal-library-search
+            requirements: requirements.txt
+          - name: util-pdf-translator
+            dir: skills/util-pdf-translator
+          - name: classmanage-exam-graderV2
+            dir: skills/classmanage-exam-graderV2
+            requirements: requirements.txt
+          # 아래 셋은 요구 파일에 패키지가 빠져 있어 extra 로 따로 설치한다(요구 파일은 교사 결정 뒤 정리)
+          - name: classmanage-supabase-export
+            dir: skills/classmanage-supabase-export
+            extra: openpyxl requests pandas
+          - name: personal-obsidansystem-main
+            dir: skills/personal-obsidansystem-main
+            extra: pyyaml
+          - name: personal-record-trade
+            dir: skills/personal-record-trade
+            requirements: requirements-valuation.txt
+            extra: gspread google-auth yfinance
+          # 저장소 맨 위 tests/ (nlm·prepare_lessons·auto_split·check_privacy·build_catalog)
+          - name: repo-root
+            dir: .
+            extra: pyyaml PyMuPDF
     name: tests (${{ matrix.name }})
     defaults:
       run:
@@ -86,9 +115,17 @@ jobs:
         with:
           python-version: "3.12"
       - name: 설치
-        run: pip install -r ${{ matrix.requirements }} pytest
+        env:
+          REQ: ${{ matrix.requirements }}
+          EXTRA: ${{ matrix.extra }}
+        run: |
+          args=""
+          if [ -n "$REQ" ]; then args="-r $REQ"; fi
+          pip install $args $EXTRA pytest
       - name: 시험
-        run: python -m pytest tests -q
+        env:
+          TARGET: ${{ matrix.target || 'tests' }}
+        run: python -m pytest $TARGET -q
 
   known:
     runs-on: ubuntu-latest

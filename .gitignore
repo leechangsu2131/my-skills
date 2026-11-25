@@ -130,3 +130,11 @@ CLAUDE.local.md
 
 # 합쳐서 지운 옛 스킬 폴더 (학교 PC 에 남은 결과 파일이 다시 올라가지 않게)
 skills/teacherlesson-guide-mapper/
+
+# 학생 시험지·증권사 리포트 같은 결과물·저작물은 저장소에 올리지 않는다 (결과물은 data_dir() 에 둔다)
+# 폴더째가 아니라 파일 모양으로만 막는다(같은 폴더의 코드·문서·설정은 계속 올라간다)
+skills/classmanage-exam-grader/tmp_*
+skills/classmanage-exam-graderV2/data/raw_pdfs/*.pdf
+skills/classmanage-exam-graderV2/data_test/artifacts/**/*.pdf
+skills/personal-record-trade/data/report/**/*.pdf
+skills/personal-record-trade/docs/research/*.pdf

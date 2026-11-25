@@ -10,14 +10,21 @@ _없음_
 
 ## 📌 백로그
 
-### ISSUE-001: 증권사 리포트 PDF 26개가 공개 저장소에 올라가 있음 — 저작물 여부 확인 필요 (2026-11-25)
-- **상태**: 📌 백로그 (교사 확인 대기)
-- **증상**: `python tools/build_catalog.py --check` 의 새 경고(T24)가 `data/report/` 아래와 `docs/research/` 아래 PDF 26개가 git 에 추적된다고 알림.
-- **원인**: 추정 — 내려받은 리포트를 자료 폴더째 커밋함. 증권사 리포트는 **저작물일 수 있어** 공개 저장소에 두면 안 되는 종류(WORKER_GUIDE 3번 규칙)에 해당할 수 있음 — 확인 필요.
-- **해결/조치**: 하지 않음. 교사 확인 뒤 ① 저장소에서 빼고(`git rm --cached`) ② `.gitignore` 에 `data/report/`·`docs/research/*.pdf` 추가 ③ 리포트는 내 문서\my-skills-data 쪽(`data_dir()`)으로 옮김 ④ 예전 기록 정리 여부 결정.
-- **관련 파일**: `skills/personal-record-trade/data/report/`, `skills/personal-record-trade/docs/research/`
+### ISSUE-002: 리포트 PDF 를 저장소 폴더 안에 받는 스크립트와 남은 관련 파일 (2026-11-26)
+- **상태**: 📌 백로그 (교사 확인·결정 대기)
+- **증상**: ① 뺀 PDF 는 예전 커밋에 남아 있어 내려받을 수 있음. ② PDF 에서 뽑은 글 사본이 아직 추적 중: `data/report/033500/extracted_metrics.txt`, `data/report_web/` 아래 `.txt` 들 — 저작물인지 **확인 필요**. ③ 내려받기 스크립트(`download_*.py`, `pipeline/` 등)가 리포트를 이 스킬 폴더 안 `data/report/`·`docs/research/` 에 저장하도록 되어 있고, 일부는 **실제 사용자 폴더 절대 경로**(`C:/Users/<이름>/…`)를 코드에 박아 둠(이 스킬 안 약 67개 파일이 그런 모양이라고 셈 — 예시 문구가 섞였을 수 있어 확인 필요).
+- **원인**: 결과물·저작물은 `data_dir()` 에 두고 절대 경로를 박지 않는다는 규칙(WORKER_GUIDE 3번) 이전에 만든 스크립트로 추정.
+- **해결/조치**: 하지 않음(맡은 범위 밖). 교사 확인 뒤 저장 위치를 `data_dir()` 로 바꾸는 일감을 따로 만들고, 절대 경로는 `%USERPROFILE%`·`data_dir()` 로 바꿈. 예전 기록 정리는 되돌리기 어려워 교사가 따로 정함.
+- **관련 파일**: `skills/personal-record-trade/download_*.py`, `skills/personal-record-trade/pipeline/`, `skills/personal-record-trade/data/report_web/`
 
 ## 🟢 해결됨
+
+### ISSUE-001: 증권사 리포트 PDF 26개가 공개 저장소에 올라가 있음 (2026-11-25)
+- **상태**: 🟢 해결 (2026-11-26, 교사 지시 "빼자" — 브랜치 fix/untrack-tracked-outputs)
+- **증상**: `python tools/build_catalog.py --check` 의 새 경고(T24)가 `data/report/` 아래 22개와 `docs/research/` 아래 4개, 모두 PDF 26개가 git 에 추적된다고 알림.
+- **원인**: 추정 — 내려받은 리포트를 자료 폴더째 커밋함. 증권사 리포트는 **저작물일 수 있어** 공개 저장소에 두면 안 되는 종류(WORKER_GUIDE 3번 규칙)에 해당할 수 있음.
+- **해결/조치**: PDF 26개를 저장소에서 빼고 `.gitignore` 에 `data/report/**/*.pdf`, `docs/research/*.pdf` 를 넣음(코드·문서·`.md` 는 그대로). 교사 PC 에 같은 이름 파일이 있으면 이 변경을 합칠 때 지워질 수 있으니, 필요하면 합치기 **전에** 다른 곳(`data_dir()`)에 복사해 둘 것. 리포트 보관 위치를 `data_dir()` 로 옮기는 코드 수정은 이번 범위 밖(ISSUE-002).
+- **관련 파일**: `.gitignore`
 
 ### 📄 기존 `TROUBLESHOOTING.md` 내용
 

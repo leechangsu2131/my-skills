@@ -9,7 +9,7 @@
 **원칙(토큰 아끼기, 2026-11-21 교사와 합의)**: 날마다 쓰는 기능은 Claude 토큰 0(스크립트·규칙), 수업 상담·많이 읽기는 웹 AI·NotebookLM·Gemini CLI. Claude Code 는 자동화·연결·검토.
 
 **된 것 (모두 main 에 푸시)**
-- 진도 원본이 **Supabase**(`lesson_*` 표)로 바뀜(2026-11-23). 시간표 조회·완료·연장·미루기·따라잡기는 `supabase_schedule.py`. 시험 `test_supabase_schedule.py`(35개)·`test_assistant_server.py`
+- 진도 원본이 **Supabase**(`lesson_*` 표)로 바뀜(2026-11-23). 시간표 조회·완료·연장·미루기·따라잡기는 `supabase_schedule.py`. 시험 `test_supabase_schedule.py`(41개: 통과 39·알려진 실패 1 → ISSUE-033·PyMuPDF 없으면 건너뛰는 PDF 시험 1)·`test_assistant_server.py`
 - 수업 비서 화면: 🌙 수업 준비(Gemini 자동 흐름, `prepare_lessons.py`), '지금 할 일' 카드(단계 시간 ±1분·"N분 늦음"·단계 flag `keep`/`cut`·늦으면 줄일 단계 안내), ✏ 흐름 고치기, 📍 실제로 할 차시 고르기, 📂 차시 자료 바로 열기(음악·사회 `sites/`), NotebookLM 단추·소스, 진도 조정 속도 개선
 - 새 스킬 `util-notebooklm`(긴 PDF 찾기·쪽 잘라내기·Gemini 호출 공용), `teacherlesson-guide`(지도서 받기·분할·진도표 행 — 옛 splitter·mapper 합침), 노션 진도표 스킬 삭제
 - 진도: 도덕 = 7단원 3차시(11/23)부터, 국어 = 매체 3차시(11/24)부터(이후 실제 위치는 화면의 📍로 맞춤)
@@ -21,7 +21,7 @@
 3. **차시 자료 도우미**: 사회 실제 실행·PPT 자동 열기 → ISSUE-005, **미술 아트앤컬쳐 도우미 구현** → ISSUE-006
 4. **진도·시간표 정리**: 날짜 없는 차시, 기초시간표, 음악 지도서 PDF, 공개 저장소 기록의 지도서 PDF 지우기 결정 → ISSUE-007
 5. **처음 요청한 기능**(하이클래스 알림장 자동 게시, 나이스 시간표 변경, 녹음 받아쓰기, 학생 발표 → 누가기록, 출판사 주의점 쌓기 …) → ISSUE-008
-6. 화면 작은 개선·검토 참고·홈페이지 연결·문서 설명 → ISSUE-009~011, 023, **지금 실패하는 시험 4개 → ISSUE-030**
+6. 화면 작은 개선·검토 참고·홈페이지 연결·문서 설명 → ISSUE-009~011, 023 (실패하던 시험 4개는 T45 에서 시험만 고침 → ISSUE-030, 그때 찾은 문제 → ISSUE-033)
 - 다른 스킬 남은 일: `util-notebooklm` ISSUES(노트북 실제 시험, 공문·투자 등 다른 스킬 연결), `teacherlesson-guide` ISSUES(새 지도서는 Gemini 쪽 번호 표 먼저, mapper 정리, ISSUE-001 분할 자동화·ISSUE-002 공개 기록 PDF)
 
 ## 🔵 진행 중
@@ -95,7 +95,7 @@
   - [ ] 50분 이상 녹음 파일이 이어 붙인 뒤 정상 재생되는지(webm 조각 이어 붙이기)
   - [ ] 단계 `flag`(ISSUE-013) — `python prepare_lessons.py --redo` 로 한 차시를 새로 만들어 Gemini 가 `keep`/`cut` 을 잘 붙이는지
   - [ ] 진도표 조정(ISSUE-022) 속도 — 미루기·한 차시 더·여기부터 다시 잡기를 눌러 몇 초 걸리는지. 아직 느리면 남은 후보: 진도 변경 때마다 전체 슬롯(약 370행)을 먼저 읽는 것, 변경 뒤 화면이 다시 읽는 것, 서버 지역 거리
-  - [ ] `extend`/`push` 가 Supabase 슬롯에 실제로 맞게 반영되는지(가짜 서버 시험 35개는 통과, 실제 DB 는 교실 PC 에서)
+  - [ ] `extend`/`push` 가 Supabase 슬롯에 실제로 맞게 반영되는지(가짜 서버 시험은 통과, 실제 DB 는 교실 PC 에서)
   - [ ] 시간 조정 ±1분·"N분 늦음" 안내가 실제 수업 중 잘 쓰이는지
 - **관련 파일**: `실행_수업비서.bat`, `web/index.html`, `assistant_server.py`
 
@@ -149,20 +149,28 @@
 - **내용**: 그 저장소를 못 봤고, '지금 할 일' 화면이 `flows/*.json` 을 직접 읽으므로 당장은 필요 없음. 연결하려면 그 화면의 단계 진행 방식과 맞출지 먼저 정할 것. 시험 스크립트(가짜 서버+헤드리스 Chrome)는 저장소에 안 넣었음(Playwright 필요) — 필요하면 `tests/` 로 옮길 수 있음
 - **관련 파일**: `web/index.html`
 
-### ISSUE-030: test_supabase_schedule.py 의 '여기부터 다시 잡기' 시험 4개가 실패함 (2026-11-25 발견)
-- **상태**: 📌 백로그 (코드 파일이라 이번 문서 정리 PR 에서는 안 고침)
-- **증상**: `python -m unittest test_assistant_server test_supabase_schedule` → 67개 중 `CatchUpTest` 4개 실패(`KeyError: 'completed'`, `'error' != 'success'`). 문서 정리 전(main 그대로)에도 같음
-- **원인**: 2026-11-24 학교 PC 커밋 9d2591f("1124")가 `supabase_schedule.progress` 의 `catch-up` 을 의도적으로 바꿈(ISSUE-029) — 요청 날짜(`target_date`)·`target_period` 를 받아 그날 슬롯(없으면 오늘 이후 첫 예정 칸)으로 옮기고, 앞 차시는 교육과정 순서(`sort_order`)로 완료 처리하며, 날짜가 없거나 과목·차시를 못 찾으면 오류를 돌려줌. 시험은 옛 동작(날짜 없이 호출, 가장 이른 슬롯 기준)을 가정해 작성됨
-- **해결 방향**: 시험 본문에 `target_date`(필요하면 `target_period`)를 넣고 새 동작(오늘 칸으로 이동·`sort_order` 로 앞 차시 완료)에 맞게 기대값을 고친 뒤, 변이 확인(코드를 일부러 틀리게 해 시험이 잡는지)을 다시 한다. 새 동작이 의도라는 것은 ISSUE-029 기록과 일치
-- **관련 파일**: `test_supabase_schedule.py`(`CatchUpTest`), `supabase_schedule.py`
-
 ### ISSUE-023: assistant_server.py 첫머리 설명이 옛 진도 서버 기준 (2026-11-25)
 - **상태**: 📌 백로그
 - **증상**: `assistant_server.py` 모듈 설명(docstring)의 "진도 서버(teacherlesson-schedule, 기본 5000번)에서 그날 수업을 받아 …" 가 현재 기본 경로(Supabase, config `schedule_backend`)와 안 맞음. 코드는 `schedule_backend` 가 `supabase`(기본)면 `supabase_schedule.py`, 아니면 옛 진도 서버(`schedule_api`, 5000번)를 씀
 - **해결 방향**: 이번 문서 정리에서는 코드 파일을 고치지 않았음 → 다음 코드 작업 때 설명 한 줄만 고치기
 - **관련 파일**: `assistant_server.py`
 
+### ISSUE-033: 더 앞 차시를 '오늘 할 차시'로 고르면 같은 칸의 뒤 차시가 화면에 계속 나옴 (2026-11-25, T45 시험으로 발견)
+- **상태**: 📌 백로그 (코드는 고치지 않음 — 어떻게 되어야 하는지 교사 확인 필요)
+- **증상**: 11/25 4교시에 수학 2차시(L2)가 예정일 때 1차시(L1)를 11/25 로 `catch-up` 하면 응답은 `success` 인데, `day_schedule` 은 11/25 4교시로 L2 를 돌려준다(L1 이 안 나옴). L2 를 L3 이 예정된 11/30 로 옮기는 경우도 같다. 코드 주석은 "선택한 차시를 오늘 수업으로 만든다"는 뜻이다
+- **원인(코드를 읽고 가짜 서버로 확인)**: ① `catch-up` 은 고른 차시를 그날 칸 **뒤**(같은 날·교시의 가장 큰 `slot_order` + 1)에 둔다. 그래서 L2 가 `slot_order` 1, L1 이 2 가 된다 ② `day_schedule` 은 같은 교시에 예정 차시가 둘이면 교육과정 순서가 **더 뒤인** 차시를 고른다(ISSUE-028 에서 완료된 앞 차시가 가리지 않게 만든 규칙). 두 규칙이 겹쳐, 앞 차시를 고르는 경우에만 어긋난다. 앞으로 당기는 경우(L3 을 11/25 로)는 앞 차시가 모두 완료 처리되어 문제 없음
+- **확인 필요(교사)**: 지나간 차시를 다시 오늘로 가져오는 일을 실제로 쓰는지. 쓴다면 이미 그 칸에 있던 뒤 차시(L2)를 다음 칸으로 밀어야 하는지, 화면이 방금 고른 차시를 우선해야 하는지 정해야 함 (추정: 둘 중 하나로 고쳐야 하지만 어느 쪽이 맞는지는 모름)
+- **재현 시험**: `test_supabase_schedule.py::CatchUpTest::test_catch_up_to_an_earlier_lesson_shows_it_on_the_requested_day` (`expectedFailure`). 고친 뒤 이 시험이 통과하면 `@unittest.expectedFailure` 를 지운다
+- **관련 파일**: `supabase_schedule.py`(`progress` 의 `catch-up`, `day_schedule`), `test_supabase_schedule.py`
+
 ## 🟢 해결됨
+
+### ISSUE-030: test_supabase_schedule.py 의 '여기부터 다시 잡기' 시험 4개가 실패함 (2026-11-25 발견)
+- **상태**: 🟢 해결 (2026-11-25, T45 claude-web-173 — 시험만 고쳤고 코드는 그대로)
+- **증상**: `python -m unittest test_assistant_server test_supabase_schedule` → 67개 중 `CatchUpTest` 4개 실패(`KeyError: 'completed'`, `'error' != 'success'`). 문서 정리 전(main 그대로)에도 같음
+- **원인**: 2026-11-24 학교 PC 커밋 9d2591f("1124")가 `supabase_schedule.progress` 의 `catch-up` 을 의도적으로 바꿈(ISSUE-029) — 요청 날짜(`target_date`)·`target_period` 를 받아 그날 슬롯(없으면 오늘 이후 첫 예정 칸)으로 옮기고, 앞 차시는 교육과정 순서(`sort_order`)로 완료 처리하며, 날짜가 없거나 과목·차시를 못 찾으면 오류를 돌려줌. 시험은 옛 동작(날짜 없이 호출, 가장 이른 슬롯 기준)을 가정해 작성됨
+- **해결**: `CatchUpTest` 를 새 동작(ISSUE-029)에 맞게 다시 썼다. 모든 호출에 `target_date` 를 넣고, 앞 차시를 순서값(`sort_order`) 기준으로 완료 처리하는지, 고른 차시가 요청 날짜의 칸으로 옮겨지는지(그날 칸이 없으면 그 뒤 첫 예정 칸), 오류 경우(날짜 없음·틀림, 없는 차시, 다른 과목, 옮길 칸 없음), 고른 차시 뒤 차시의 순서·칸 겹침 여부를 시험한다. `test_supabase_schedule.py` 41개 중 39 통과·1 건너뜀(PyMuPDF 없음)·1 알려진 실패(ISSUE-033). 변이 확인: 코드를 일부러 틀리게 한 9가지(앞 차시 기준, 요청 날짜 무시, 칸 번호 겹침, 달력 날짜 기준, 출처 값, 과목 구분 없음, 날짜 없을 때 계속 진행 등)를 모두 시험이 잡았다(소스는 원래대로 복원)
+- **관련 파일**: `test_supabase_schedule.py`(`CatchUpTest`), `supabase_schedule.py`(고치지 않음)
 
 ### ISSUE-022: 진도표 조정(Supabase)이 느림 (2026-11-24) — 코드 해결, 속도 확인은 ISSUE-001
 - **상태**: 🟢 해결 (2026-11-24, Claude Code)

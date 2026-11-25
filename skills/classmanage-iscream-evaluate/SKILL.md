@@ -69,7 +69,7 @@ launch_chrome_iscream.bat
 
 *크롬 창이 열리면 수동으로 i-scream 로그인 후, 과목별 평가 페이지(`SubjectEvaluation.do`)로 이동해 두세요. (이동 중 비밀번호를 요구하는 확인 페이지가 감지되면 `.env`에 설정된 비밀번호를 자동으로 입력하고 진입합니다.)*
 
-### 4. DOM 셀렉터 검증 및 진단
+### 4. 화면 요소 선택자 검증 및 진단
 
 i-scream 교과평가 페이지로 이동한 상태에서 아래 검증 스크립트를 실행하여 셀렉터 연결 상태를 자가 진단합니다:
 
@@ -82,7 +82,7 @@ python verify_selectors.py
 - 결과물로 `iscream_verification_screenshot.png`와 `iscream_verification_dom.html`을 생성해 주어 셀렉터 불일치 시 직접 점검 및 수정할 수 있게 돕습니다.
 - 만약 셀렉터 구조 파악이 필요하다면 `explore_dom.py`를 실행하여 정밀 DOM 덤프를 수행합니다.
 
-### 5. 웹 UI 사용 워크플로우
+### 5. 웹 화면 사용 절차
 
 1. 올인원 런처로 연 웹 UI 대시보드([http://localhost:5028](http://localhost:5028))에 접속합니다.
 2. Supabase에서 학생 기록이 자동으로 로드되어 좌측 목록에 보입니다.
@@ -98,7 +98,7 @@ python verify_selectors.py
 - **성취평가기준 2개 자동 클릭**: 우측 평가기준 테이블을 분석하여, 아직 해당 학생에게 선택되지 않은(부모 `tr`에 `highlight` 클래스가 없는) 평가기준 버튼(`button.al`)을 최대 2개 자동 클릭(토글 활성화)합니다.
 - **최종 평가문 기입**: 2개의 평가기준 선택으로 텍스트 영역이 활성화되면, Supabase 혹은 LLM 요약으로 가공된 커스텀 평가문(`eval_text`)을 textarea에 덮어써 최종 기록합니다.
 
-### 7. CLI 실행
+### 7. 명령줄 실행
 ```bash
 # 시뮬레이션 (실제 저장 안 함)
 python iscream_evaluate.py --dry-run

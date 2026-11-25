@@ -13,3 +13,6 @@
 - 2026-11-25 21:50 T09 는 다른 작업자가 잡음 → T10 선택(personal-youtube-gemini-kakao-automation 순수 함수 시험)
 - 2026-11-25 21:51 T10 시작 (브랜치 task/T10-tests-youtube-kakao, fix/library-sync-remove-db-id 브랜치 위에서 만듦)
 - 2026-11-26 04:15 T10 PR 올림 — personal-youtube-gemini-kakao-automation/v/tests/test_pure_functions.py 시험 109개(106 통과, 3 xfail), 소스 무변경, 문제 4건 ISSUES 기록. 다른 작업자 PR #45(task/T10-youtube-kakao-pure-tests)와 겹침: 내 브랜치가 먼저 만들어졌고 시험 파일 이름이 달라 같이 합쳐도 충돌 없음
+- 2026-11-26 04:34 T10 다음: T13 중 workflow-hub-main 선택(web-scraper·webtoguide 는 다른 작업자 브랜치 있음)
+- 2026-11-26 04:34 T13 workflow-hub-main 시작 (브랜치 task/T13-tests-workflow-hub, 최신 main 에서)
+- 2026-11-26 04:38 T13(workflow-hub-main) PR 올림 — doc-indexer/tests/test_doc_indexer.py 시험 63개(58 통과, 5 xfail), 소스 무변경, 문제 7건 ISSUES 기록(ISSUE-001~007). chromadb·sentence-transformers·rank-bm25·openai 는 가짜 모듈로 대신

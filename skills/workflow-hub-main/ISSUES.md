@@ -9,7 +9,49 @@ _없음_
 
 ## 📌 백로그
 
-_없음_
+### ISSUE-001: ODT 의 제목(text:h) 글자가 인덱싱에서 빠짐 (2026-11-26)
+- **상태**: 📌 백로그
+- **증상**: 제목 서식(`text:h`)으로 쓴 글이 검색 대상에 들어가지 않음(문단 `text:p`·표만 읽음). 실제 odfpy 로 제목+본문 ODT 를 만들어 재현: 읽힌 글은 `['본문']` 뿐
+- **원인**: `parse_odt_elements` 의 `walk` 가 `p`·`table` 만 글로 뽑고 `h` 는 자식으로 내려가기만 함
+- **해결/조치**: 미정(`h` 도 문단처럼 뽑기). 실제 공문 ODT 가 제목 서식을 쓰는지는 확인 필요. 시험은 xfail
+- **관련 파일**: `projects/school-agent/skills/doc-indexer/scripts/indexer.py`, `…/tests/test_doc_indexer.py`
+
+### ISSUE-002: `ask.py` 가 찾은 공문 본문을 외부 서비스(OpenRouter)로 보냄 (2026-11-26)
+- **상태**: 📌 백로그 (**교사 결정 필요**)
+- **증상**: 질문할 때마다 검색된 공문 조각(최대 `--top` 개)이 그대로 프롬프트에 들어가 `https://openrouter.ai` 로 전송됨. 시험으로 확인(`test_ask_prompt_includes_retrieved_text_so_it_leaves_the_pc`)
+- **원인**: 설계상 RAG 답변을 외부 모델로 만듦(모델 이름 `openrouter/hunter-alpha` 가 지금도 있는지, 입력을 저장·학습에 쓰는 모델인지는 확인 필요)
+- **해결/조치**: 미정. 공문에 학생·학부모 정보가 섞이는 폴더(예: 생활지도·상담·특수)는 `EXCLUDE_PATTERNS` 로 인덱싱에서 빼거나, 보내기 전에 교사에게 확인을 받는 방식을 권함. 어떤 폴더를 인덱싱하는지는 교사만 앎
+- **관련 파일**: `…/scripts/ask.py`
+
+### ISSUE-003: 연도·부서를 못 찾으면 프롬프트에 'None' 글자가 들어감 (2026-11-26)
+- **상태**: 📌 백로그
+- **증상**: 인덱서가 연도·부서를 못 찾으면 `None` 으로 저장하고, `ask.py` 는 `meta.get('year', '')` 라서 값이 `None` 이면 `(연도: None, 부서: None)` 이 프롬프트에 그대로 들어감
+- **해결/조치**: 미정(`meta.get('year') or ''`). 시험은 xfail. 실제 ChromaDB 가 `None` 메타데이터를 받는지도 확인 필요(받지 않으면 인덱싱 자체가 실패)
+- **관련 파일**: `…/scripts/ask.py`, `…/scripts/indexer.py` `index_file`
+
+### ISSUE-004: 연도·부서 추출이 거칠음 (2026-11-26)
+- **상태**: 📌 백로그
+- **증상**: ① 연도: 경로 어디서든 `20` 으로 시작하는 숫자 4개를 연도로 읽음(`교무-12023456.pdf` → 2023, 저장 폴더 이름의 숫자도 해당). ② 부서: 경로 순서가 아니라 `DEPT_KEYWORDS` 목록 순서로 처음 맞는 낱말을 씀(`체육/교무회의.odt` → 교무)
+- **해결/조치**: 미정. 연도·부서 필터(`--year`, `--dept`)가 얼마나 틀리는지는 실제 폴더로 확인 필요. 연도 시험은 xfail
+- **관련 파일**: `…/scripts/indexer.py` `extract_year_from_path`, `extract_dept_from_path`
+
+### ISSUE-005: 내용이 바뀐 파일을 다시 넣으면 옛 조각이 남음 (2026-11-26)
+- **상태**: 📌 백로그
+- **증상**: 파일 내용이 바뀌면 해시가 달라 새로 저장만 하고 이전 버전 조각은 DB 에 그대로 있어 옛 내용과 새 내용이 같이 검색됨. 반대로 같은 내용의 파일을 다른 폴더에 두면 두 번째는 건너뛰어 그 경로는 DB 에 남지 않음
+- **해결/조치**: 미정(같은 `file_path` 의 이전 조각 삭제 등). 실제 공문 폴더에서 파일이 고쳐지는 일이 있는지는 확인 필요(추정). 시험은 xfail
+- **관련 파일**: `…/scripts/indexer.py` `index_file`
+
+### ISSUE-006: 검색 화면의 유사도 퍼센트와 빈 DB 검색 (2026-11-26)
+- **상태**: 📌 백로그 (확인 필요)
+- **증상**: ① 유사도를 `(1 - 거리) × 100` 으로 계산하는데 컬렉션을 만들 때 거리 방식을 정하지 않아, 기본값(l2)이면 거리가 1을 넘어 `-40.0%` 같은 음수가 나올 수 있음(추정). ② 컬렉션이 비었을 때 `n_results=0` 으로 질의하게 되는데 ChromaDB 가 이를 오류로 보는지 확인 필요(추정)
+- **해결/조치**: 미정. 교사 PC 에서 `python search.py "아무 질의"` 로 실제 화면 확인 필요. ①은 시험 xfail
+- **관련 파일**: `…/scripts/search.py`, `…/scripts/ask.py` `retrieve`, `…/scripts/indexer.py`(컬렉션 만들기)
+
+### ISSUE-007: SKILL.md 의 설정 안내가 중앙 .env 규칙과 다름 (2026-11-26)
+- **상태**: 📌 백로그 (확인 필요)
+- **증상**: `doc-indexer/SKILL.md` 가 `cp .env.example .env` 로 스킬 폴더에 `.env` 를 만들라고 안내함. 저장소 규칙은 중앙 `OneDrive\96. 인증\.env` 한 곳(스킬 전용 키는 `스킬폴더명대문자__KEY`)이고, 코드는 이미 `load_env()` 로 중앙 .env 를 읽음
+- **해결/조치**: 미정. 현재 코드가 `WATCH_FOLDER`·`CHROMA_PATH`·`OPENROUTER_API_KEY` 를 접두사 없이 읽는지, 접두사 규칙에 맞출지는 교사 PC 의 .env 를 보고 결정(확인 필요)
+- **관련 파일**: `projects/school-agent/skills/doc-indexer/SKILL.md`
 
 ## 🟢 해결됨
 

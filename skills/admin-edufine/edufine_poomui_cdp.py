@@ -77,28 +77,38 @@ class Edufine:
             time.sleep(4)
             self.kill_popups()
 
-    def open_window(self, menu_id: str) -> str:
+    def open_window(self, menu_id: str, need: str) -> str:
+        """메뉴 창을 열고 id 를 돌려준다. need: 그 화면에만 있는 divWork 안 컴포넌트 이름(창 내용 확인용).
+        같은 메뉴 id 창의 내용이 다른 화면으로 바뀌어 있는 일이 있어(품의목록 창 안이 품의등록 화면) 내용으로 고른다."""
+        def ok_windows():
+            return [w for w in self.windows() if menu_id in w and self.run(self.W(w) + f"return !!f['{need}'];")]
         self.to_school_accounting()
-        before = set(self.windows())
+        before = set(ok_windows())
+        # 같은 메뉴 창이 있는데 내용이 다르면 그 창을 닫는다(gfnOpenMenu 는 기존 창을 앞으로 가져오기만 함)
+        for w in self.windows():
+            if menu_id in w and w not in before:
+                self.run("var wf=SH.WorkVFrameSet.WorkFrame;var c=wf['%s'];try{c.form.close()}catch(e){try{c.destroy()}catch(e2){}}return 1;" % w)
+                time.sleep(1.5)
         self.run(f"SH.LeftFrame.form.gfnOpenMenu('{menu_id}');return 1;")
         for _ in range(20):
             time.sleep(1)
-            ws = [w for w in self.windows() if menu_id in w]
-            new = [w for w in ws if w not in before]
-            if new or ws:
-                time.sleep(2)
+            ws = ok_windows()
+            if ws:
+                new = [w for w in ws if w not in before]
+                time.sleep(1.5)
                 return (new or ws)[-1]
-        raise RuntimeError("메뉴 창이 열리지 않음: " + menu_id)
+        raise RuntimeError(f"메뉴 창이 열리지 않음: {menu_id} (이미 열린 같은 메뉴 창을 닫고 다시 시도)")
 
     def windows(self) -> list[str]:
-        return self.run("var wf=SH.WorkVFrameSet.WorkFrame;var o=[];for(var k in wf){if(/^winId_/.test(k))o.push(k)}return o;") or []
+        """화면이 다 뜬(form.divWork 가 있는) MDI 창 id 목록."""
+        return self.run("var wf=SH.WorkVFrameSet.WorkFrame;var o=[];for(var k in wf){if(/^winId_/.test(k)&&wf[k]&&wf[k].form&&wf[k].form.divWork)o.push(k)}return o;") or []
 
     def W(self, win: str) -> str:
         return "var w=SH.WorkVFrameSet.WorkFrame['%s'];var f=w.form.divWork.form;" % win
 
     # ── 예산 잔액 ──
     def budgets(self) -> list[dict]:
-        win = self.open_window(MENU_REG)
+        win = self.open_window(MENU_REG, 'divMain')
         self.run(self.W(win) + "f.divAuth1.form.btnBgtDtl.click();return 1;")
         time.sleep(4)
         rows = self.run(r"""var p=nexacro.getPopupFrames()['FADMANGEXCN004P01'];if(!p)return null;var d=p.form.dsMain;var o=[];
@@ -111,7 +121,7 @@ class Edufine:
 
     # ── 품의 목록 ──
     def cnsul_list(self, begin: str) -> list[dict]:
-        win = self.open_window(MENU_LIST)
+        win = self.open_window(MENU_LIST, 'grdMain')
         self.run(self.W(win) + f"f.divSearch.form.calCnsulBeginDte.set_value('{begin}');f.divAuth.form.btnAuthS01.click();return 1;")
         time.sleep(4)
         return self.run(self.W(win) + r"""var d=f.grdMain.getBindDataset();var o=[];function v(x){return x&&x.hi!==undefined?x.hi:x}
@@ -120,7 +130,7 @@ class Edufine:
 
     # ── 품의 작성 ──
     def fill(self, plan: dict, save: bool = False) -> dict:
-        win = self.open_window(MENU_REG)
+        win = self.open_window(MENU_REG, 'divMain')
         W = self.W(win)
         # 1) 예산 선택
         self.run(W + "f.divAuth1.form.btnBgtDtl.click();return 1;")
@@ -144,9 +154,9 @@ class Edufine:
             d.setColumn(r,'prdlstCn',it.name);d.setColumn(r,'stndrd',it.spec||'');d.setColumn(r,'qty',it.qty);d.setColumn(r,'thngUnitSeCd',u);
             d.setColumn(r,'expectUntpc',it.price);d.setColumn(r,'expectAmt',it.qty*it.price);if(it.s2b)d.setColumn(r,'s2bThngNo',it.s2b);if(it.rm)d.setColumn(r,'rm',it.rm);
             log.push(names[it.budget]+' | '+it.name+' | '+it.qty+' x '+it.price);});
-          f.fnExpectAmtCreat();var m=f.divMain.form;m.edtCnsulSj.set_value(plan.title);m.txtareaCnsulSumrCn.set_value(plan.summary);
+          f.fnExpectAmtCreat();/* fnExpectAmtCreat 는 삭제 표시(RowType 8) 행까지 더한다 → 예산별 요구액을 다시 계산 */var fs1=d.filterstr;d.filter('');for(var i=0;i<b.rowcount;i++){if(b.getRowType(i)==8)continue;var sum=0;for(var r=0;r<d.rowcount;r++){if(d.getRowType(r)==8)continue;if(d.getColumn(r,'aebgtSn')==b.getColumn(i,'aebgtSn')&&d.getColumn(r,'detlBsnsCd')==b.getColumn(i,'detlBsnsCd')&&d.getColumn(r,'cptDtl')==b.getColumn(i,'cptDtl')){var a=d.getColumn(r,'expectAmt');sum+=(a&&a.hi!==undefined)?a.hi:Number(a)}}b.setColumn(i,'dmndAmt',sum)}d.filter(fs1);var m=f.divMain.form;m.edtCnsulSj.set_value(plan.title);m.txtareaCnsulSumrCn.set_value(plan.summary);
           function v(x){return x&&x.hi!==undefined?x.hi:Number(x)}var bg=[];var over=[];
-          for(var i=0;i<b.rowcount;i++){var dm=v(b.getColumn(i,'dmndAmt')),bl=v(b.getColumn(i,'bgtBlce'));bg.push(b.getColumn(i,'cptDtl')+': 요구 '+dm+' / 잔액 '+bl);if(dm>bl)over.push(b.getColumn(i,'cptDtl'))}
+          for(var i=0;i<b.rowcount;i++){if(b.getRowType(i)==8)continue;var dm=v(b.getColumn(i,'dmndAmt')),bl=v(b.getColumn(i,'bgtBlce'));bg.push(b.getColumn(i,'cptDtl')+': 요구 '+dm+' / 잔액 '+bl);if(dm>bl)over.push(b.getColumn(i,'cptDtl'))}
           return {log:log,budgets:bg,over:over};""" % json.dumps(plan, ensure_ascii=False))
         if res.get("over"):
             raise SystemExit(f"예산 잔액 초과: {res}")

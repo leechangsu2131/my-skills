@@ -532,6 +532,9 @@ _없음_
   6. 저장한 품의를 고칠 때: 같은 창에서 예산 행 `chk=1` + `divAuth1_btnDelRow_onclick` → 예산 행과 그 품목이 바로 빠지지 않고 **RowType 8(삭제 표시)** 로 남는다(`gfnDeleteRow`, uColumn 에 status). 새 행 추가 후 다시 저장하면 같은 품의번호로 반영되고 화면이 다시 불러와진다.
   7. 제목·개요를 `set_value` 로 넣으면 바이트 표시(`imgLenCoCnsulSj`)는 갱신되지 않는다. 개요 2000바이트는 직접 계산(UTF-8 기준 1,060바이트에서 문제없음).
   8. 품의저장 단계에서는 예산 잔액이 줄지 않는다(결재 뒤 반영).
+  9. **품목 행 삭제 후 요구액이 안 줄어드는 문제**: 저장한 품의에서 품목 3행을 `gfnDeleteRow` 로 지운 뒤 `fnExpectAmtCreat()` 를 불렀더니 예산 요구액이 그대로였다. 원인: 이 함수와 화면 [행삭제](`divAuth2_btnAuthRDelRow_onclick`) 모두 RowType 8(삭제 표시) 행의 `expectAmt` 까지 더한다. 조치: 남은 행 합계로 `dsBgtDtlList.dmndAmt`·`mskDmndAmt` 를 직접 맞춘 뒤 저장 → 품의목록 금액이 맞게 바뀜. `fill` 에도 예산별 재계산을 넣었다.
+  10. **창 내용이 바뀐 메뉴 창**: 품의목록 메뉴 id 창(`winId_A00FAA0104001002_*`) 안이 품의등록 화면으로 바뀌어 있었고, `gfnOpenMenu` 는 그 창을 앞으로 가져오기만 해서 조회가 실패했다. 조치: 화면에만 있는 컴포넌트(grdMain/divMain)로 창을 확인하고, 다르면 `form.close()` 후 다시 연다(`open_window(menu_id, need)`).
+  11. 같은 탭에서 저장을 여러 번 하면 `gfnAlert` 감싸기가 겹쳐 알림이 여러 번 기록된다(동작에는 영향 없음).
 - **관련 파일**: `edufine_poomui_cdp.py`, `../_shared/cdp_tab.py`, `../admin-s2b-buyer/s2b_cdp.py`
 
 ### 📄 기존 `troubleshooting.md` 내용

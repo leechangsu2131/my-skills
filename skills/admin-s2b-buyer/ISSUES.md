@@ -14,6 +14,22 @@ _없음_
 
 ## 🟢 해결됨
 
+### ISSUE-001: 사용자 Chrome으로 S2B 검색·비교·담기·에듀파인 엑셀 (2026-11-25)
+- **상태**: 🟢 해결 (2026-11-25)
+- **요청**: 체육교구 보관대 3종을 예산 안에서 S2B 최저가로 골라 품의까지. 다음에도 쓸 수 있게.
+- **증상/원인과 조치**
+  1. URL `searchQuery=` 로 한글 검색 → 결과 0건. 페이지가 EUC-KR 이라 UTF-8 퍼센트 인코딩이 깨진다 → 검색창(`#searchQuery`)에 값을 넣고 `s2bSearchForm.submit()`.
+  2. 결과가 모두 경북 업체 → 로그인 계정 기본이 "우리지역". `locationGbn=all` 라디오만으로는 안 되고 hidden `areaCode`(예: `4`)·`localAreaCode` 를 비우고 `areaEach_*` 체크를 풀어야 전국 검색이 된다.
+  3. 정렬은 `sortField=PCAC`(낮은 금액순). 결과 행 = `input[name=checkFlag]`(값=물품번호), 가격 `.lt_mulpumprice li:first-child`, 업체·지역 `td.obj_etc`.
+  4. 견적서 담기 `fnSave()` 는 confirm 후 `window.open` 팝업으로 폼을 보낸다 → confirm·window.open·form.submit 을 바꿔 `FormData` 를 fetch POST(`/S2BNCustomer/remc100.do`, `forwardName=reEstimateCart`, `f_data=<물품번호>#<수량>#00001#`).
+  5. 조건부 무료배송 "5만원 미만 4,000원" 은 **공급가(부가세 제외)** 기준이었다. 1,700원×30=51,000원에도 배송비가 붙어 제시금액 55,000원. 담은 뒤 cart 로 꼭 확인. 에듀파인 연계 엑셀에는 배송비가 빠져 있어 품의에 배송비 행을 따로 넣었다.
+  6. 견적서 목록 체크박스 값은 JSON(`rc_estimate_code`, `re_estimate_code`, `estimate_price`, `delivery_fee`, `estimate_validate_dt` 등). 선택삭제는 `estimateSelDelete()`(confirm 1회).
+  7. 에듀파인 연계 엑셀: `f_rc_estimate_code=<rc>,<rc>`, `f_sep=1`, `forwardName=estimateEdufine` POST → `.xls`(내용·규격·수량·예상단가·물품번호).
+  8. 작업 중 사용자 Chrome 이 두 번 재시작돼 target id 가 바뀌었다. 복원된 탭은 로드 전이라 `Runtime.enable` 이 응답하지 않음 → 저장된 id 로 못 붙으면 새 탭(`Tab.open_or_new`). S2B 로그인 세션은 재시작 뒤에도 살아 있었다.
+  9. 같은 모델이 판매처마다 값·납품기간이 다르다(제조사 직판 55만원·45영업일 vs 판매처 54만원·15영업일). 모델번호로 다시 검색해 비교한다. 견적서 유효기간이 판매처마다 달라(1주~1달) 짧은 것을 사용자에게 알린다.
+  10. 오픈마켓: 네이버 스마트스토어는 반복 접속 시 로그인 화면으로 막혔고, 사용자 말로는 학교 결제가 안 된다. G마켓은 상세 페이지 `select option` 에 옵션별 가격이 그대로 나온다.
+- **관련 파일**: `s2b_cdp.py`, `../_shared/cdp_tab.py`, `../admin-edufine/edufine_poomui_cdp.py`
+
 ### 📄 기존 `troubleshooting.md` 내용
 
 ### S2B 자동 견적 담기 문제 해결 기록

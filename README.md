@@ -13,7 +13,7 @@ my-skills/
 ├── CATALOG.md           ← 스킬 목록 (자동 생성 — 직접 고치지 않음)
 ├── CONTRIBUTING.md      ← AI 에이전트·작업 규칙
 ├── skills/
-│   ├── _shared/         ← 모든 스킬이 쓰는 공통 로더 (skill_env.py / skill_env.js)
+│   ├── _shared/         ← 공통 로더 (skill_env.py / skill_env.js), 사용자 Chrome 탭 CDP 도우미 (cdp_tab.py)
 │   └── <스킬>/          ← 스킬 하나 = 폴더 하나 (아래 표준 형식)
 ├── tools/
 │   └── build_catalog.py ← SKILL.md 들을 모아 CATALOG.md 생성·점검

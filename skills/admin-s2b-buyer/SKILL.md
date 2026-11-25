@@ -1,13 +1,44 @@
 ---
 name: S2B 학교장터 자동 구매 시스템
-description: S2B(학교장터)에 개인이용자로 로그인해 CSV 또는 견적서 양식 Excel의 품목을 견적서(장바구니)에 담는 과정을 자동화합니다
+description: S2B(학교장터)에서 물품을 전국 최저가로 검색·비교하고 견적서(장바구니)에 담은 뒤 에듀파인 연계 엑셀까지 받는다. 사용자 Chrome(9222)의 탭 하나로 하는 방식(s2b_cdp.py)과 CSV/Excel 일괄 담기(s2b_buyer.py)가 있다. "S2B에서 제일 싼 걸로 골라 품의까지" 같은 요청에 쓴다.
 metadata:
   category: 학교 행정
   status: 운영
-  summary: CSV/Excel 품목을 S2B에서 검색해 견적서(장바구니)에 담고 처리 결과 엑셀을 만든다. 실제 구매 확정은 범위에 포함되지 않는다.
+  summary: S2B에서 전국 최저가 검색·상세 비교·견적서 담기/삭제·에듀파인 연계 엑셀 받기를 사용자 Chrome으로 하고, 에듀파인 품의(admin-edufine)로 넘긴다. 실제 계약·구매 확정은 하지 않는다.
 ---
 
 # S2B 학교장터 자동 구매 시스템
+
+## 물품 구입 요청을 받았을 때 (예산 → 검색 → 견적서 → 품의)
+
+"○○ 예산으로 S2B에서 제일 싼 거 골라 품의까지" 같은 요청의 순서. 학교마다 다른 값(공문번호·예산명·금액)은 문서에 남기지 않고 업무폴더 `_업무기록`에 적는다.
+
+1. **예산과 관련 문서 확인** — `python ../admin-edufine/edufine_poomui_cdp.py budgets` 로 산출내역별 잔액을 읽는다. 관련 문서번호는 같은 예산으로 했던 지난 품의 개요에서 찾는다: `edufine_poomui_cdp.py list --kw <키워드>`. 확실하지 않으면 사용자에게 묻는다.
+2. **검색** — `python s2b_cdp.py search "<품명>" "<다른 이름>" ...` (전국, 낮은 금액순). 같은 물건도 이름이 여러 가지라(걸이대/거치대/보관대/정리대) 2~4개 검색어로 찾는다.
+3. **후보를 형태별로 나눠 사용자에게 고르게 한다** — 벽부착형 vs 이동식처럼 값이 10배 차이 나는 형태가 섞여 나온다. 금액·수량은 사용자가 정한다.
+4. **상세 확인** — `s2b_cdp.py detail <물품번호...>`: 배송비(조건부 무료 기준), 납품기간, 배송가능지역, 견적서 유효기간, 계약이행신뢰도.
+   - 같은 모델이 여러 판매처에 있다. 제조사 직판이 더 비싸고 납품이 30~45영업일인 경우가 많다 → 모델번호로 다시 검색해 최저가·빠른 납품 판매처를 고른다.
+   - 사용자가 내구성 좋은 제품을 원하면 모델번호로 같은 제품 최저가를 제시한다.
+5. **담기와 확인** — `s2b_cdp.py add <물품번호>:<수량> ...` → `s2b_cdp.py cart` 로 실제 제시금액(배송비 포함)을 확인한다. 잘못 담은 것은 `delete <견적접수코드>`.
+6. **S2B에 없는 물품**은 오픈마켓(G마켓 등)에서 찾는다. 네이버 스마트스토어는 학교 결제가 안 되는 경우가 있다(사용자 확인). 옵션별 값이 다르니 옵션까지 정해 적는다.
+7. **관리자 보고가 필요하면** 품목·판매처·가격·주소를 한 장으로 정리해 클립보드에 넣는다(업무폴더에 txt 저장).
+8. **에듀파인 품의** — `s2b_cdp.py edufine-xls <rc,...>` 로 연계 엑셀을 받고, admin-edufine 의 `edufine_poomui_cdp.py fill plan.json --save` 로 품의를 저장한다. [결재요청]은 사용자가 누른다.
+
+## s2b_cdp.py (사용자 Chrome 9222, 내 탭 하나)
+
+```bash
+python s2b_cdp.py login
+python s2b_cdp.py search "훌라후프 걸이대" "라켓 보관대" --top 15   # --local 이면 우리지역만
+python s2b_cdp.py detail <물품번호> ...
+python s2b_cdp.py add <물품번호>:<수량> ...
+python s2b_cdp.py cart
+python s2b_cdp.py delete <견적접수코드> ...
+python s2b_cdp.py edufine-xls <견적접수코드>,<견적접수코드> [출력.xls]
+```
+
+- Chrome 을 `--remote-debugging-port=9222` 로 띄워 둬야 한다(admin-edufine `launch_chrome_default.bat`).
+- 탭 id 는 `my-skills-data\admin-s2b-buyer\cdp_tab_id.txt` 에 저장하고 다시 붙는다. Chrome 이 재시작되면 새 탭을 연다.
+- 공통 CDP 도우미: `skills/_shared/cdp_tab.py`.
 
 이 스킬은 **S2B 학교장터(s2b.kr)**에서 개인이용자로 로그인한 뒤, 구매 품목을 견적서(장바구니)에 담는 자동화입니다.
 

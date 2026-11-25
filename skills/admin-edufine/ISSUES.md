@@ -520,6 +520,20 @@ _없음_
 
 ## 🟢 해결됨
 
+### ISSUE-012: 품의 작성·저장 CLI(`edufine_poomui_cdp.py`)와 예산 여러 개 품의 (2026-11-25)
+- **상태**: 🟢 해결 (2026-11-25)
+- **요청**: S2B 물품(+오픈마켓 1건) 6행을 예산 2개로 나눠 품의 저장. 뒤에 사용자가 예산 1개로 바꿔 다시 저장.
+- **확인된 것**
+  1. 품목 `dsPrdlstDtlList` 는 예산 그리드에서 선택한 행으로 `filter` 된다(`detlBsnsCd == … && aebgtSn == …`). 전체를 보려면 `filter('')` 뒤 원래 filterstr 로 되돌린다.
+  2. `dsBgtDtlList.set_rowposition(i)` → `divAuth2.form.btnRowAdit.click()` 하면 그 예산 코드(detlBsnsCd·detlIemCd·cptDtl·prmpcStatsExpitmCd·aebgtSn·bgtCrntam)가 든 행이 생긴다. 예산 필드를 손으로 채울 필요 없음.
+  3. 단위 `thngUnitSeCd` 코드는 `dsEAB0005200`(개 001, 대 002, 식 017, SET 030, 조 026, 벌 037 …).
+  4. `fnExpectAmtCreat()` → 예산 행마다 `dmndAmt` 가 그 예산 품목 합계로 맞춰진다.
+  5. 저장 `fnSaveExpdCnsulWrtgList()` 뒤 `gfnAlert('FAD0503', …, 'sanctnRequst')` 로 **"결재요청 하시겠습니까?" 팝업(popup 이름 `sanctnRequst`)** 이 뜬다 → `btnCancle.click()` 으로 닫아야 결재요청이 안 된다.
+  6. 저장한 품의를 고칠 때: 같은 창에서 예산 행 `chk=1` + `divAuth1_btnDelRow_onclick` → 예산 행과 그 품목이 바로 빠지지 않고 **RowType 8(삭제 표시)** 로 남는다(`gfnDeleteRow`, uColumn 에 status). 새 행 추가 후 다시 저장하면 같은 품의번호로 반영되고 화면이 다시 불러와진다.
+  7. 제목·개요를 `set_value` 로 넣으면 바이트 표시(`imgLenCoCnsulSj`)는 갱신되지 않는다. 개요 2000바이트는 직접 계산(UTF-8 기준 1,060바이트에서 문제없음).
+  8. 품의저장 단계에서는 예산 잔액이 줄지 않는다(결재 뒤 반영).
+- **관련 파일**: `edufine_poomui_cdp.py`, `../_shared/cdp_tab.py`, `../admin-s2b-buyer/s2b_cdp.py`
+
 ### 📄 기존 `troubleshooting.md` 내용
 
 ### K-Edufine Automation Bot - Comprehensive Troubleshooting Guide

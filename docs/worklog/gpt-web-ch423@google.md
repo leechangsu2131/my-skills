@@ -19,6 +19,7 @@
 - 2026-11-25 23:10 T28 시작 (브랜치 task/T28-supabase-schedule-lock)
 - 2026-11-25 23:12 T33(admin-neis-bot) PR 올림 — 이슈 상태별 재배치, 확인되지 않은 원인·파일 경로 표시. PR #31
 - 2026-11-25 23:12 T33(homepage-school-board) 시작 (브랜치 task/T33-homepage-school-board-issues)
+- 2026-11-25 23:12 T33(admin-neis-bot) PR 올림 — ISSUE 상태별 재배치, 미확인 원인·파일 경로 표시, 기존 기록 보존. PR #31
 - 2026-11-25 23:14 T33(homepage-school-board) PR 올림 — ISSUES 상태·항목 양식 정리. PR #32
 - 2026-11-25 23:14 T33(personal-video-note) 시작 (브랜치 task/T33-personal-video-note-issues)
 - 2026-11-25 23:15 T28 PR 올림 — progress() 읽기·변경 잠금과 동시 완료 시험 추가, 프로세스 간 잠금 한계 기록. PR #28
@@ -53,3 +54,4 @@
 - 2026-11-25 23:38 T31(personal-record-trade) PR 올림 — 보관 문서 한국어화, 현재 사용 중지 안내·절대 경로 정리. PR #41
 - 2026-11-25 23:40 T32 시작 (브랜치 task/T32-splitter-readme-korean)
 - 2026-11-25 23:50 T32 PR 올림 — splitter README 한국어화, 상위 SKILL 중복 줄이고 사용 설명 유지. PR #30
+- 2026-11-25 23:55 T33 시작 (브랜치 task/T33-admin-neis-bot-issues)

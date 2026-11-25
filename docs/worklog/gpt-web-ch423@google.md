@@ -33,3 +33,4 @@
 - 2026-11-25 23:32 T31(classmanage-student-photo-organizer) 시작 (브랜치 task/T31-student-photo-organizer-korean)
 - 2026-11-25 23:33 T31(classmanage-student-photo-organizer) PR 올림 — 영어 제목·단계 한국어화, 예시 이름 익명화. PR #39
 - 2026-11-25 23:34 T31(classmanage-iscream-evaluate) 시작 (브랜치 task/T31-iscream-evaluate-korean)
+- 2026-11-25 23:34 T31(classmanage-iscream-evaluate) PR 올림 — 영어 제목 한국어화, 예시 이름 익명화, 저장소에 없는 로컬 경로 제거. PR #40

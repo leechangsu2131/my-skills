@@ -44,3 +44,4 @@
 - 2026-11-25 23:54 T25 시작 (브랜치 task/T25-supabase-export-data-dir)
 - 2026-11-25 23:58 T25 PR 올림 — Supabase 결과 엑셀을 data_dir()에 저장하고 TLS 검증 복원, 가짜 저장·HTTP 시험 추가. 전체 pytest 미실행. PR #44
 - 2026-11-25 23:59 T10 시작 (브랜치 task/T10-youtube-kakao-pure-tests)
+- 2026-11-26 00:04 T10 PR 올림 — VTT 정리·메시지 분할·Gemini 프롬프트·가짜 Kakao 전송 시험 추가, CI 연결. PR #45

@@ -5,6 +5,10 @@
     python tools/build_catalog.py           # CATALOG.md 갱신
     python tools/build_catalog.py --check   # 형식 점검만 (SKILL.md·ISSUES.md 누락, 앞머리 항목 누락)
 
+점검은 두 가지로 나뉜다.
+  - 문제: 형식 위반. 있으면 종료값 1.
+  - 경고: git 이 추적 중인 tmp*·generated_rows*·*.pdf 같은 결과물. 알려 주기만 하고 종료값은 바꾸지 않는다.
+
 SKILL.md 앞머리 형식 (docs/templates/SKILL.md 참고):
     ---
     name: 스킬폴더명
@@ -19,6 +23,7 @@ SKILL.md 앞머리 형식 (docs/templates/SKILL.md 참고):
 from __future__ import annotations
 
 import re
+import subprocess
 import sys
 from datetime import date
 from pathlib import Path
@@ -35,6 +40,10 @@ CATEGORY_ICON = {"학교 행정": "🏫", "학생 기록·평가": "📝", "수�
 STATUS_ICON = {"운영": "✅ 운영", "개발": "🔧 개발", "보관": "📦 보관", "확인 필요": "❔ 확인 필요"}
 REQUIRED_META = ("category", "status", "summary")
 SKIP_DIRS = {"_shared"}
+
+# 저장소에 올라가 있으면 안 되는 결과물·임시 파일 (이름이 이걸로 시작하거나 끝나는 파일·폴더)
+ARTIFACT_PREFIXES = ("tmp", "generated_rows")
+ARTIFACT_SUFFIXES = (".pdf",)
 
 
 def read_frontmatter(path: Path) -> dict:
@@ -89,6 +98,43 @@ def collect() -> tuple[list[dict], list[str]]:
     return rows, problems
 
 
+def tracked_paths() -> list[str]:
+    """git 이 추적 중인 파일 경로(저장소 기준, / 로 구분). git 을 못 쓰면 빈 목록."""
+    try:
+        result = subprocess.run(["git", "ls-files", "-z"], cwd=ROOT, capture_output=True, check=True)
+    except (OSError, subprocess.CalledProcessError):
+        return []
+    return [p for p in result.stdout.decode("utf-8", "replace").split("\0") if p]
+
+
+def find_artifacts(paths: list[str]) -> list[str]:
+    """추적 중인 경로에서 결과물·임시 파일처럼 보이는 것을 묶어 경고 글로 돌려준다.
+
+    폴더 이름이 걸리면 그 폴더 하나로 묶어 파일 수를 센다(파일마다 한 줄씩 늘어놓지 않음).
+    """
+    groups: dict[str, int] = {}
+    for path in paths:
+        parts = path.split("/")
+        for i, part in enumerate(parts):
+            low = part.lower()
+            is_last = i == len(parts) - 1
+            if low.startswith(ARTIFACT_PREFIXES) or (is_last and low.endswith(ARTIFACT_SUFFIXES)):
+                key = "/".join(parts[: i + 1]) + ("" if is_last else "/")
+                groups[key] = groups.get(key, 0) + 1
+                break
+    return [
+        f"{key} — 결과물·임시 파일로 보이는데 git 이 추적 중" + (f" (파일 {n}개)" if key.endswith("/") else "")
+        for key, n in sorted(groups.items())
+    ]
+
+
+def print_warnings(warnings: list[str]) -> None:
+    if not warnings:
+        return
+    print("\n⚠ 경고 (점검은 통과하지만 확인이 필요해요):\n  " + "\n  ".join(warnings))
+    print("  → 필요 없는 결과물이면 교사 확인 뒤 `git rm --cached` 로 추적을 끊고 .gitignore 에 넣으세요. 학생 기록·저작물이 섞였는지도 보세요.")
+
+
 def cell(text: str) -> str:
     return re.sub(r"\s+", " ", text).replace("|", "\\|")
 
@@ -128,13 +174,16 @@ def render(rows: list[dict]) -> str:
 
 def main() -> int:
     rows, problems = collect()
+    warnings = find_artifacts(tracked_paths())
     if "--check" in sys.argv:
         print("\n".join(problems) or "문제 없음")
+        print_warnings(warnings)
         return 1 if problems else 0
     CATALOG.write_text(render(rows), encoding="utf-8")
     print(f"CATALOG.md 갱신: 스킬 {len(rows)}개")
     if problems:
         print("점검 필요:\n  " + "\n  ".join(problems))
+    print_warnings(warnings)
     return 0
 
 

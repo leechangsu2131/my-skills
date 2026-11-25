@@ -25,6 +25,7 @@ LESSON_REL = "id,lesson_id,slot_date,slot_period,slot_order,status,memo,lesson:l
 
 _sessions: dict = {}          # (url, key) → Session. 요청마다 새 연결(TLS 악수)을 맺던 것을 재사용해 빠르게 한다
 _sessions_lock = threading.Lock()
+_PROGRESS_LOCK = threading.Lock()  # 진도 읽기·변경을 한 요청씩 처리
 _truststore_done = False
 
 
@@ -216,6 +217,12 @@ def _lesson_by_key(key: str):
 
 
 def progress(action: str, body: dict) -> dict:
+    """진도 변경 요청을 한 번에 하나씩 처리해 같은 옛 자료로 덮어쓰지 않게 한다."""
+    with _PROGRESS_LOCK:
+        return _progress_unlocked(action, body)
+
+
+def _progress_unlocked(action: str, body: dict) -> dict:
     subject = str(body.get("subject") or "")
     key = str(body.get("record_key") or "")
     slot_id = str(body.get("slot_id") or "")

@@ -31,6 +31,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - name: 설치 (build_catalog.py 가 PyYAML 을 씀)
+        run: pip install pyyaml
       - name: 스킬 형식 점검
         run: python tools/build_catalog.py --check
 

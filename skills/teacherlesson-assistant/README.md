@@ -18,8 +18,9 @@ Claude 작업 절차는 [SKILL.md](SKILL.md), 문제·할 일은 [ISSUES.md](ISS
 
 - 읽기만 한다: 설치·폴더 만들기·서버/크롬 켜기를 하지 않는다. 중앙 `.env`는 키 **이름**만 보고 값은 출력하지 않는다.
 - 항목마다 ✅ 괜찮음 / ⚠ 일부 기능만 안 됨·확인 필요 / ❌ 꼭 고쳐야 함, 그리고 고치는 방법 한 줄을 보여 준다. ❌ 가 있으면 종료 코드 1.
-- 보는 것: Python 버전·패키지(`requirements.txt` + selenium), Node.js·Gemini CLI, 크롬 실행 파일·`chrome_profile` 폴더, 중앙 `.env` 위치와 키 이름(Supabase 주소·서비스 키, Gemini 키), 데이터 폴더와 `flows/units/notebooklm`, OneDrive 폴더, 5180(수업 비서)·9233(수업용 크롬) 포트.
-- 포트가 닫혀 있는 것은 서버·크롬을 켜기 전이면 정상이다. 지도서 폴더(`D:\지도서`)는 집 PC 에만 있으면 되므로 없어도 ✅ 로 안내한다.
+- 보는 것: Python 버전·패키지(`requirements.txt` + selenium), **Python 실행기**(`실행_수업비서.bat` 이 쓰는 `py -3.13` 과 `python` 을 둘 다 돌려 보고, 없거나 서로 다른 버전이면 ⚠ — 패키지가 한쪽에만 깔렸을 수 있다), Node.js·Gemini CLI, 크롬 실행 파일·`chrome_profile` 폴더, 중앙 `.env` 위치와 키 이름(Supabase 주소·서비스 키, Gemini 키), 데이터 폴더와 `flows/units/notebooklm`, OneDrive 폴더, 5180(수업 비서)·9233(수업용 크롬) 포트.
+- 진도 저장소(config 의 `schedule_backend`)가 `supabase` 가 아니면 Supabase 키가 없어도 ❌ 가 아니라 ⚠ 로 안내한다. config 의 `port`·`debug_port` 가 숫자가 아니거나 1~65535 밖이면 멈추지 않고 ❌ 로 알린다(그 값으로는 서버가 켜지지 않는다).
+- 포트가 닫혀 있는 것은 서버·크롬을 켜기 전이면 정상이다. 5180 이 열려 있으면 실제로 `http://127.0.0.1:5180/` 에 물어 수업 비서가 답하는지 확인하고, 다른 프로그램이면 ⚠ 로 알린다(컴퓨터에 설정된 프록시는 쓰지 않는다). 지도서 폴더(`D:\지도서`)는 집 PC 에만 있으면 되므로 없어도 ✅ 로 안내한다.
 - 시험: `python -m pytest tests -v` (가짜 환경으로 항목별 성공·실패 판단을 확인).
 
 ## 화면 기능 (v0.1)

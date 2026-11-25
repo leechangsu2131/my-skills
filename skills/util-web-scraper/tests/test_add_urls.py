@@ -2,9 +2,9 @@
 
 - 실제 EduSearch 폴더·scraper.py·indexer.py·네트워크 없이: 설정 파일은 tmp_path 의 가짜 config.json,
   subprocess.run 은 가짜로 바꾼다.
-- add_urls.py 는 EDUSEARCH_DIR/CONFIG_PATH 를 코드에 고정해 두었으므로(ISSUE-001) 시험에서는 그 값을 바꿔 끼운다.
-- 소스는 고치지 않는다. 버그로 보이는 것은 xfail(strict) 로 남기고 ISSUES.md 에 적었다.
-- 맨 아래 `if __name__ == "__main__":` 부분(argparse)은 고정 경로 때문에 불러서 시험할 수 없어 제외했다.
+- EDUSEARCH_DIR(EduSearch 위치)는 중앙 .env·환경변수 또는 my-skills 옆 폴더로 정해지므로, 시험에서는
+  환경변수로 임시 폴더를 가리키게 한다. 중앙 .env(load_env)는 시험에 섞이지 않게 꺼 둔다.
+- 버그로 보이는 것은 xfail(strict) 로 남기고 ISSUES.md 에 적었다.
 
 실행: python -m pytest skills/util-web-scraper/tests -q
 """
@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import runpy
 import sys
 from pathlib import Path
 from types import SimpleNamespace
@@ -20,17 +21,36 @@ from types import SimpleNamespace
 import pytest
 
 SCRIPT = Path(__file__).resolve().parents[1] / "scripts" / "add_urls.py"
+SKILLS_DIR = SCRIPT.parents[2]
+
+
+def _disable_central_env():
+    """중앙 .env(교사 PC 의 실제 설정)가 시험에 섞이지 않게 load_env 를 빈 함수로 바꾼다."""
+    sys.path.insert(0, str(SKILLS_DIR / "_shared"))
+    import skill_env
+
+    skill_env.load_env = lambda *args, **kwargs: None
+
+
+@pytest.fixture(autouse=True)
+def _isolated_env(monkeypatch):
+    _disable_central_env()
+    monkeypatch.delenv("EDUSEARCH_DIR", raising=False)
 
 
 @pytest.fixture()
 def mod(tmp_path, monkeypatch):
+    monkeypatch.setenv("EDUSEARCH_DIR", str(tmp_path))
     spec = importlib.util.spec_from_file_location("add_urls_under_test", SCRIPT)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
-    # 고정 경로(교사 PC)를 시험용 임시 폴더로 바꿔 끼운다
-    monkeypatch.setattr(module, "EDUSEARCH_DIR", str(tmp_path))
-    monkeypatch.setattr(module, "CONFIG_PATH", str(tmp_path / "config.json"))
     return module
+
+
+def run_as_main(monkeypatch, *argv):
+    """add_urls.py 를 `python add_urls.py <argv>` 처럼 실행한다(EDUSEARCH_DIR 환경변수는 호출 전에 정해 둔다)."""
+    monkeypatch.setattr(sys, "argv", ["add_urls.py", *argv])
+    runpy.run_path(str(SCRIPT), run_name="__main__")
 
 
 def write_config(tmp_path: Path, config: dict) -> Path:
@@ -190,3 +210,108 @@ def test_인덱서가_실패하면_완료라고_하지_않아야_한다(mod, mon
     monkeypatch.setattr(mod.subprocess, "run", fake_run_factory([0, 1], calls))
     mod.run_scraper_and_indexer()
     assert "완료" not in capsys.readouterr().out
+
+
+# ───────── EduSearch 위치 찾기 (ISSUE-001 해결) ─────────
+
+def test_환경변수로_위치를_정하면_그_폴더를_쓴다(mod, tmp_path):
+    assert mod.EDUSEARCH_DIR == str(tmp_path)
+    assert mod.CONFIG_PATH == str(tmp_path / "config.json")
+
+
+def test_환경변수가_없으면_my_skills_옆_edusearch_폴더(mod, monkeypatch):
+    monkeypatch.delenv("EDUSEARCH_DIR", raising=False)
+    repo_root = SCRIPT.parents[3]  # my-skills 저장소 폴더
+    assert mod.find_edusearch_dir() == str(repo_root.parent / "edusearch")
+
+
+def test_환경변수가_공백뿐이면_옆_폴더로_본다(mod, monkeypatch):
+    monkeypatch.setenv("EDUSEARCH_DIR", "   ")
+    assert mod.find_edusearch_dir() == str(SCRIPT.parents[3].parent / "edusearch")
+
+
+def test_위치에_홈_표시와_환경변수를_풀어서_쓴다(mod, monkeypatch, tmp_path):
+    monkeypatch.setenv("HOME", str(tmp_path))
+    monkeypatch.setenv("USERPROFILE", str(tmp_path))
+    monkeypatch.setenv("MY_GITHUB_DIR_FOR_TEST", str(tmp_path / "gh"))
+    monkeypatch.setenv("EDUSEARCH_DIR", "$MY_GITHUB_DIR_FOR_TEST/edusearch")
+    assert mod.find_edusearch_dir() == str(tmp_path / "gh" / "edusearch")
+    monkeypatch.setenv("EDUSEARCH_DIR", "~/edusearch")
+    assert mod.find_edusearch_dir() == str(tmp_path / "edusearch")
+
+
+def test_소스에_특정_PC의_절대_경로가_남아_있지_않다():
+    text = SCRIPT.read_text(encoding="utf-8") + (SCRIPT.parents[1] / "SKILL.md").read_text(encoding="utf-8")
+    assert "C:\\Users" not in text
+
+
+def test_EduSearch_폴더가_없으면_설치_방법을_알리고_종료(mod, monkeypatch, tmp_path, capsys):
+    monkeypatch.setattr(mod, "EDUSEARCH_DIR", str(tmp_path / "없는폴더"))
+    with pytest.raises(SystemExit) as exc:
+        mod.check_edusearch_dir()
+    assert exc.value.code == 1
+    out = capsys.readouterr().out
+    assert "찾을 수 없습니다" in out and "git clone" in out and "UTIL_WEB_SCRAPER__EDUSEARCH_DIR" in out
+
+
+def test_EduSearch_폴더가_있으면_조용히_통과(mod, capsys):
+    mod.check_edusearch_dir()
+    assert capsys.readouterr().out == ""
+
+
+# ───────── 명령줄 실행 (__main__) ─────────
+
+@pytest.fixture()
+def main_env(monkeypatch, tmp_path):
+    """명령줄 시험 공통: EduSearch 폴더 = tmp_path, subprocess.run 가짜(성공)."""
+    monkeypatch.setenv("EDUSEARCH_DIR", str(tmp_path))
+    write_config(tmp_path, {"target_sites": []})
+    calls = []
+    monkeypatch.setattr(subprocess_module(), "run", fake_run_factory([0, 0, 0, 0], calls))
+    return calls
+
+
+def subprocess_module():
+    import subprocess
+
+    return subprocess
+
+
+def test_명령줄_urls_는_추가하고_스크래핑_인덱싱까지_한다(main_env, monkeypatch, tmp_path):
+    run_as_main(monkeypatch, "--urls", "https://a.example.invalid", "https://b.example.invalid")
+    assert [s["url"] for s in read_config(tmp_path)["target_sites"]] == ["https://a.example.invalid", "https://b.example.invalid"]
+    assert [c["cmd"][1] for c in main_env] == ["scraper.py", "indexer.py"]
+    assert all(c["cwd"] == str(tmp_path) for c in main_env)
+
+
+def test_명령줄_selenium_옵션은_새_항목에_붙는다(main_env, monkeypatch, tmp_path):
+    run_as_main(monkeypatch, "--urls", "https://a.example.invalid", "--selenium")
+    assert read_config(tmp_path)["target_sites"] == [{"url": "https://a.example.invalid", "use_selenium": True}]
+
+
+def test_명령줄_no_run_은_추가만_하고_실행하지_않는다(main_env, monkeypatch, tmp_path):
+    run_as_main(monkeypatch, "--urls", "https://a.example.invalid", "--no-run")
+    assert len(read_config(tmp_path)["target_sites"]) == 1
+    assert main_env == []
+
+
+def test_명령줄_새로_추가된_것이_없으면_스크래핑도_하지_않는다(main_env, monkeypatch, tmp_path):
+    write_config(tmp_path, {"target_sites": [{"url": "https://a.example.invalid", "use_selenium": False}]})
+    run_as_main(monkeypatch, "--urls", "https://a.example.invalid")
+    assert main_env == []
+
+
+def test_명령줄_urls_가_없으면_사용법_오류(main_env, monkeypatch):
+    with pytest.raises(SystemExit) as exc:
+        run_as_main(monkeypatch)
+    assert exc.value.code == 2
+    assert main_env == []
+
+
+def test_명령줄_EduSearch_폴더가_없으면_설정을_건드리지_않고_종료(monkeypatch, tmp_path):
+    missing = tmp_path / "없는폴더"
+    monkeypatch.setenv("EDUSEARCH_DIR", str(missing))
+    with pytest.raises(SystemExit) as exc:
+        run_as_main(monkeypatch, "--urls", "https://a.example.invalid")
+    assert exc.value.code == 1
+    assert not missing.exists()

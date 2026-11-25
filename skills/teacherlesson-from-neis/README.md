@@ -47,3 +47,13 @@ NEIS의 `주간학습안내작성` 화면에서 조회한 수업 내용을 날�
 ## 요구 사항
 
 - Chrome 및 NEIS 로그인 세션
+
+## 자동 시험
+
+`extension/popup.js` 의 결재선 정리·결재 묶음 만들기·선택 요약 같은 함수는 가짜 화면과 가짜 `chrome` 으로 시험한다. 실제 NEIS·크롬·학생 정보는 쓰지 않는다. 이 폴더에서:
+
+```
+node --test tests/popup.test.js
+```
+
+NEIS 페이지에 주입되는 함수(`collectOnNeisPage`·`collectStudentStatusOnNeis`·`scanAbsenceWorkQueueOnNeis`, `absence-workflow.js`)는 크롬 주입 구조상 따로 불러올 수 없어 시험 대상이 아니다. 실제 NEIS 에서 접수·상신이 되는지는 교사 PC 에서 직접 확인한다.

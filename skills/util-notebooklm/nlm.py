@@ -288,7 +288,7 @@ def cmd_find(a) -> None:
     answer, used_model = gemini_find(pdf, a.query, a.model)
     ANSWERS.mkdir(parents=True, exist_ok=True)
     out = pathlib.Path(a.out) if a.out else ANSWERS / f"{time.strftime('%Y%m%d_%H%M%S')}_{pdf.stem[:40]}.md"
-    out.write_text(f"<!-- 원본: {pdf} | 찾을 내용: {a.query} | {a.model} -->\n{answer}\n", encoding="utf-8")
+    out.write_text(f"<!-- 원본: {pdf} | 찾을 내용: {a.query} | 사용 모델: {used_model} -->\n{answer}\n", encoding="utf-8")
     print(answer)
     print(f"\n[{time.time() - t0:.0f}초] 저장: {out} · 사용 모델: {used_model}\n관련 쪽: {page_refs(answer) or '없음'}"
           f"  → 잘라내기: python nlm.py pages \"{pdf}\" --from \"{out}\"")

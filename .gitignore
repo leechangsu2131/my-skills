@@ -138,3 +138,11 @@ skills/classmanage-exam-graderV2/data/raw_pdfs/*.pdf
 skills/classmanage-exam-graderV2/data_test/artifacts/**/*.pdf
 skills/personal-record-trade/data/report/**/*.pdf
 skills/personal-record-trade/docs/research/*.pdf
+
+# 남의 영상 자막 원문·뉴스·증권사 글 사본은 저작권이 있어 저장소에 올리지 않는다(필요하면 코드가 다시 받아 만든다)
+skills/personal-youtube-gemini-kakao-automation/v/.transcript_cache/
+skills/personal-youtube-gemini-kakao-automation/v/tmp_*
+skills/personal-youtube-gemini-kakao-automation/v/backlog_transcripts/
+skills/personal-youtube-gemini-kakao-automation/v/last_transcript_*.txt
+skills/personal-record-trade/data/report_web/
+skills/personal-record-trade/data/report/**/extracted_metrics.txt

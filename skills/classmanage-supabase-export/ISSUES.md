@@ -9,7 +9,26 @@ _없음_
 
 ## 📌 백로그
 
-_없음_
+### ISSUE-001: parse_names 가 이름 칸의 특이한 모양에서 틀리게 나눔 (2026-11-25)
+- **상태**: 📌 백로그
+- **증상**: ① `[학생A 학생B]`(대괄호는 있고 JSON 은 아님) → `['[학생A', '학생B]']` 로 대괄호가 이름에 붙음. ② JSON 배열 안에 숫자 등이 있으면 `AttributeError: 'int' object has no attribute 'strip'` 로 멈춤. ③ 쉼표 목록 `학생 A, 학생 B` 의 이름 안 공백까지 나눠 `['학생', 'A', '학생', 'B']` 가 됨(공백도 구분자로 쓰기 때문).
+- **원인**: `parse_names` 가 JSON 해석 실패 시 `[,\s]+` 로 그대로 나누고, JSON 결과를 문자열인지 확인하지 않고 `strip()` 함(추정 아님, 시험으로 재현).
+- **해결/조치**: 미정. 시험은 xfail 로 남김. 실제 이름 칸이 어떤 모양으로 들어오는지는 **확인 필요**(교사 PC 의 실제 자료).
+- **관련 파일**: `export.py` `parse_names`, `tests/test_export.py`
+
+### ISSUE-002: 이름이 하나도 없으면 export_to_excel 이 멈춤 (2026-11-25)
+- **상태**: 📌 백로그
+- **증상**: 모든 기록의 이름 칸이 비어 있으면 `IndexError: At least one sheet must be visible`
+- **원인**: 시트를 하나도 만들지 않은 채 엑셀 파일을 닫음
+- **해결/조치**: 미정(예: 학생이 없으면 파일을 만들지 않고 "기록 없음"을 알림). 시험은 xfail.
+- **관련 파일**: `export.py` `export_to_excel`, `tests/test_export.py`
+
+### ISSUE-003: 결과 엑셀 저장 위치와 `verify=False` (2026-11-25)
+- **상태**: 📌 백로그 (TASKS T25 에서 다루는 중)
+- **증상**: `student_records.xlsx` 가 스킬 폴더(저장소 안)에 만들어지고, 슈파베이스 요청에 `verify=False` 가 쓰임
+- **원인**: 저장 경로가 `Path(__file__).parent`, 요청에 인증서 확인을 끔
+- **해결/조치**: T25 가 `data_dir()` 저장과 `verify=False` 제거를 맡음. 이 시험은 저장 위치를 임시 폴더로 바꿔서 돌아가므로 T25 후 경로 시험은 그때 맞춰야 함.
+- **관련 파일**: `export.py`
 
 ## 🟢 해결됨
 

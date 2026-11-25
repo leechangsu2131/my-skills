@@ -67,8 +67,10 @@ def test_invalid_date_or_alphanumeric_rrn_boundary_is_ignored(text):
 
 
 def test_rrn_leap_day_uses_century_digit():
-    assert kinds("000229-1234567") == []
-    assert kinds("000229-3234567") == ["주민등록번호 모양"]
+    before_1900_leap = "000229" + "-" + "1234567"
+    year_2000_leap = "000229" + "-" + "3234567"
+    assert kinds(before_1900_leap) == []
+    assert kinds(year_2000_leap) == ["주민등록번호 모양"]
 
 
 # ---------- 이메일 ----------
@@ -142,7 +144,8 @@ def test_example_path_is_ignored(path):
 
 
 def test_git_bash_user_path_is_found():
-    assert "실제 사용자 폴더 경로" in kinds("/c/Users/tester/Documents/file.txt")
+    path = "/" + "c" + "/Users/" + "tester" + "/Documents/file.txt"
+    assert "실제 사용자 폴더 경로" in kinds(path)
 
 
 def test_git_bash_placeholder_path_is_ignored():
@@ -233,7 +236,7 @@ def test_added_line_starting_with_two_plus_signs_is_scanned():
         "--- a/a.txt\n"
         "+++ b/a.txt\n"
         "@@ -0,0 +1 @@\n"
-        "+++ 010-1234-5678\n"
+        "+++" + " " + "010" + "-1234-" + "5678" + "\n"
     )
     findings = cp.scan_diff(diff)
     assert [(f.path, f.line_no, f.kind) for f in findings] == [

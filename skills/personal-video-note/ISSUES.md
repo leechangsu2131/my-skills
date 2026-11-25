@@ -9,7 +9,7 @@
 - **상태**: 🔵 진행 중
 - **증상**: 연수원 강의 영상을 LectureCapture로 정리하려면 로그인한 강의 화면에서 영상·자막·강의자료를 따로 찾아 내려받아야 하며, 현재는 수집 절차가 별도 시험 스크립트에 남아 있음.
 - **원인**: 영상·자막·자료가 페이지의 별도 요청과 파일 경로로 제공되고, 이를 LectureCapture 명령으로 묶는 기능이 아직 없음.
-- **해결/조치**:
+- **해결/조치**: 현재는 로그인한 Playwright 창에서 확인한 MP4를 내려받아 `lecturecapture run`에 넣는 방식으로 우회한다. 자동화 명령으로 묶는 작업은 남아 있다.
 - **확인된 내용**: learning.neti.go.kr 마이크로러닝 강의는 video.js가 연수원 서버의 mp4 한 개를 재생한다(자막 `.vtt`는 404, MarkAny DRM은 화면 캡처를 막지 않음). 로그인한 Playwright 창에서 mp4를 받아 `lecturecapture run`에 넣으면 된다.
 - **함정**:
   - 강의 창 주소에 `playtmSs=<강의 길이(초)>`가 빠지면 "페이지를 찾을 수 없습니다"가 뜬다. 목록의 `$.openPlayer(event, cuiId, cntsId, '', operCntsId, playtmSs, ...)` 인자에서 값을 얻는다.

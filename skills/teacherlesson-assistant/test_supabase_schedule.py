@@ -13,6 +13,7 @@ import sys
 import tempfile
 import threading
 import unittest
+from datetime import date
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from unittest import mock
 from urllib.parse import parse_qs, urlparse
@@ -372,47 +373,125 @@ class ExtendTest(FakeServerCase):
 
 
 class CatchUpTest(FakeServerCase):
-    def test_catch_up_pulls_selected_lesson_to_first_planned_slot(self):
-        res = sm.progress("catch-up", {"subject": "수학", "record_key": "lesson-0003"})
+    """'여기부터 다시 잡기'(catch-up). 2026-11-24 부터의 동작(ISSUE-029):
+    - 교사가 고른 차시를 **요청 날짜(target_date)의 그 과목 칸**으로 옮긴다. 그날 칸이 없으면 그날 이후 첫 예정 칸.
+    - 교육과정 순서(sort_order)가 고른 차시보다 앞서는 예정 차시는 모두 완료 처리한다(달력 날짜가 아니라 차시 순서 기준).
+    - 요청에 target_date 가 없거나 날짜 모양이 틀리면 오류이고, 아무것도 쓰지 않는다.
+    기준 자료(fixture): 수학 L1~L4 가 11/23·25·30·12/2 의 4교시, L5 는 날짜 없음, 국어 L9 는 11/24 2교시."""
+
+    def catch_up(self, key, day, subject="수학", **extra):
+        return sm.progress("catch-up", {"subject": subject, "record_key": key, "target_date": day, **extra})
+
+    def math_slots(self):
+        return sorted((s for s in self.db.tables["lesson_slots"] if s["lesson_id"] != "L9"),
+                      key=lambda s: (s["slot_date"], s["slot_period"], s["slot_order"]))
+
+    def test_catch_up_moves_selected_lesson_to_the_requested_day(self):
+        # 국어 차시의 순서값을 수학 차시보다 작게 해 두어야, 코드가 과목을 가리지 않고 '앞 차시'를 완료 처리하는 잘못을 잡을 수 있다.
+        self.db.by_id("lesson_lessons", "L9")["sort_order"] = 0
+        res = self.catch_up("lesson-0003", "2026-11-25")
         self.assertEqual((res["status"], res["completed"]), ("success", 2))
-        self.assertEqual((self.slot("sA")["status"], self.slot("sB")["status"]), ("done", "done"))
+        self.assertEqual((self.slot("sA")["status"], self.slot("sB")["status"]), ("done", "done"))   # 앞 차시 L1·L2 완료
         c = self.slot("sC")
-        self.assertEqual((c["slot_date"], c["slot_period"], c["status"], c["source"]),
-                         ("2026-11-23", 4, "planned", "manual_catch_up"))
-        self.assertEqual(self.slot("sD")["slot_date"], "2026-12-02")        # 뒤 차시 날짜는 그대로(현재 동작)
+        self.assertEqual((c["slot_date"], c["slot_period"], c["slot_order"], c["status"], c["source"]),
+                         ("2026-11-25", 4, 2, "planned", "manual_catch_up"))     # 오늘(11/25) 4교시, 이미 있던 칸 뒤
+        self.assertEqual(self.slot("sD")["slot_date"], "2026-12-02")        # 뒤 차시 날짜는 그대로
+        k = self.slot("sK")                                                 # 다른 과목은 건드리지 않음
+        self.assertEqual((k["slot_date"], k["slot_period"], k["status"]), ("2026-11-24", 2, "planned"))
 
     def test_catch_up_first_lesson_completes_nothing(self):
-        res = sm.progress("catch-up", {"subject": "수학", "record_key": "lesson-0001"})
+        res = self.catch_up("lesson-0001", "2026-11-23")
         self.assertEqual((res["status"], res["completed"]), ("success", 0))
-        self.assertEqual([self.slot(s)["status"] for s in ("sA", "sB")], ["planned", "planned"])
+        self.assertEqual([self.slot(s)["status"] for s in ("sA", "sB", "sC", "sD")], ["planned"] * 4)
+        a = self.slot("sA")
+        self.assertEqual((a["slot_date"], a["slot_period"], a["slot_order"]), ("2026-11-23", 4, 1))
+        self.assertEqual([self.slot(s)["slot_date"] for s in ("sB", "sC", "sD")],
+                         ["2026-11-25", "2026-11-30", "2026-12-02"])
 
-    def test_catch_up_unscheduled_lesson_takes_first_planned_slot(self):
-        res = sm.progress("catch-up", {"subject": "수학", "record_key": "lesson-0005"})
-        self.assertEqual((res["status"], res["completed"]), ("success", 1))
-        self.assertEqual(self.slot("sA")["status"], "done")
-        new = next(s for s in self.db.tables["lesson_slots"] if s["id"].startswith("new-"))
-        self.assertEqual((new["lesson_id"], new["slot_date"], new["slot_period"], new["slot_order"], new["source"]),
-                         ("L5", "2026-11-23", 4, 2, "manual_catch_up"))
+    def test_catch_up_unscheduled_lesson_gets_a_new_slot_on_the_requested_day(self):
+        res = self.catch_up("lesson-0005", "2026-11-23")
+        self.assertEqual((res["status"], res["completed"]), ("success", 4))     # L1~L4 가 모두 앞 차시
+        self.assertEqual([self.slot(s)["status"] for s in ("sA", "sB", "sC", "sD")], ["done"] * 4)
+        new = [s for s in self.db.tables["lesson_slots"] if s["id"].startswith("new-")]
+        self.assertEqual(len(new), 1)
+        n = new[0]
+        self.assertEqual((n["lesson_id"], n["slot_date"], n["slot_period"], n["slot_order"], n["status"], n["source"]),
+                         ("L5", "2026-11-23", 4, 2, "planned", "manual_catch_up"))
 
     def test_catch_up_back_to_a_done_lesson_reopens_it(self):
         self.slot("sA")["status"] = "done"
-        res = sm.progress("catch-up", {"subject": "수학", "record_key": "lesson-0001"})
-        self.assertEqual(res["status"], "success")
+        res = self.catch_up("lesson-0001", "2026-11-23")
+        self.assertEqual((res["status"], res["completed"]), ("success", 0))
         a = self.slot("sA")
-        self.assertEqual((a["status"], a["source"]), ("planned", "manual_catch_up"))
+        self.assertEqual((a["status"], a["source"], a["slot_date"], a["slot_period"], a["slot_order"]),
+                         ("planned", "manual_catch_up", "2026-11-23", 4, 1))
+        self.assertEqual(self.slot("sB")["status"], "planned")
 
-    def test_catch_up_unknown_lesson_is_an_error_and_writes_nothing(self):
-        res = sm.progress("catch-up", {"subject": "수학", "record_key": "lesson-9999"})
+    def test_catch_up_day_without_a_slot_uses_the_first_planned_slot_after_it(self):
+        # 11/24 에는 수학 칸이 없다(국어만). 그날 이후 첫 예정 수학 칸은 11/25 4교시.
+        res = self.catch_up("lesson-0003", "2026-11-24")
+        self.assertEqual((res["status"], res["completed"]), ("success", 2))
+        c = self.slot("sC")
+        self.assertEqual((c["slot_date"], c["slot_period"], c["slot_order"], c["status"]),
+                         ("2026-11-25", 4, 2, "planned"))
+        self.assertEqual((self.slot("sK")["slot_date"], self.slot("sK")["status"]), ("2026-11-24", "planned"))
+
+    def test_catch_up_forward_keeps_later_lessons_in_curriculum_order(self):
+        # 고른 차시 L3 을 11/25 로 당긴 뒤: 남은 예정 차시는 L3 → L4 순서이고, 같은 날·교시·칸에 겹친 슬롯이 없다.
+        self.catch_up("lesson-0003", "2026-11-25")
+        planned = [s["lesson_id"] for s in self.math_slots() if s["status"] == "planned"]
+        self.assertEqual(planned, ["L3", "L4"])
+        places = [(s["slot_date"], s["slot_period"], s["slot_order"]) for s in self.math_slots()]
+        self.assertEqual(len(places), len(set(places)))
+
+    @unittest.expectedFailure
+    def test_catch_up_to_an_earlier_lesson_shows_it_on_the_requested_day(self):
+        """알려진 문제(ISSUE-031, 고치지 않고 기록만): 11/25 4교시에는 L2 가 이미 예정이다. 교사가 더 앞 차시 L1 을
+        '오늘 할 차시'로 고르면 L1 이 같은 칸의 뒤(slot_order 2)에 들어가고, day_schedule 은 같은 교시의 예정 차시 중
+        교육과정 순서가 더 뒤인 L2 를 보여 준다. 응답은 success 인데 화면에는 L1 이 나오지 않는다.
+        코드 주석의 의도('선택한 차시를 오늘 수업으로 만든다')대로 고쳐지면 이 시험이 통과하므로 expectedFailure 를 지운다."""
+        res = self.catch_up("lesson-0001", "2026-11-25")
+        self.assertEqual(res["status"], "success")
+        shown = {row["period"]: row["record_key"] for row in sm.day_schedule(date(2026, 11, 25))}
+        self.assertEqual(shown[4], "lesson-0001")
+
+    def test_catch_up_without_a_valid_date_is_an_error_and_writes_nothing(self):
+        for bad in ("", "11/25", "2026-13-45"):
+            res = self.catch_up("lesson-0003", bad)
+            self.assertEqual(res["status"], "error", bad)
+        res = sm.progress("catch-up", {"subject": "수학", "record_key": "lesson-0003"})    # target_date 자체가 없음
         self.assertEqual(res["status"], "error")
         self.assertEqual(self.writes(), [])
 
-    def test_catch_up_no_planned_slots_left_is_an_error(self):
+    def test_catch_up_unknown_lesson_is_an_error_and_writes_nothing(self):
+        res = self.catch_up("lesson-9999", "2026-11-25")
+        self.assertEqual(res["status"], "error")
+        self.assertEqual(self.writes(), [])
+
+    def test_catch_up_lesson_of_another_subject_is_an_error_and_writes_nothing(self):
+        for subject in ("국어", "영어", ""):        # 다른 과목·없는 과목·과목 빠짐
+            res = self.catch_up("lesson-0003", "2026-11-25", subject=subject)
+            self.assertEqual(res["status"], "error", subject)
+        self.assertEqual(self.writes(), [])
+
+    def test_catch_up_no_planned_slot_left_after_the_day_is_an_error(self):
         for s in self.db.tables["lesson_slots"]:
             if s["lesson_id"] != "L9":
                 s["status"] = "done"
-        res = sm.progress("catch-up", {"subject": "수학", "record_key": "lesson-0005"})
+        res = self.catch_up("lesson-0005", "2026-11-24")          # 그날 수학 칸도 없고, 그 뒤 예정 칸도 없음
         self.assertEqual(res["status"], "error")
         self.assertEqual(self.writes(), [])
+
+    def test_catch_up_uses_an_existing_slot_of_the_day_even_if_it_is_done(self):
+        # 모두 완료여도 그날(11/23) 수학 칸이 있으면 그 칸의 4교시 뒤에 새 칸을 만든다(오류가 아님).
+        for s in self.db.tables["lesson_slots"]:
+            if s["lesson_id"] != "L9":
+                s["status"] = "done"
+        res = self.catch_up("lesson-0005", "2026-11-23")
+        self.assertEqual((res["status"], res["completed"]), ("success", 0))
+        n = next(s for s in self.db.tables["lesson_slots"] if s["id"].startswith("new-"))
+        self.assertEqual((n["lesson_id"], n["slot_date"], n["slot_period"], n["slot_order"]),
+                         ("L5", "2026-11-23", 4, 2))
 
 
 class PdfTest(FakeServerCase):

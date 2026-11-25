@@ -20,6 +20,13 @@
 
 ## 📌 백로그
 
+### ISSUE-005: `auto_split.json_object` 가 설명 글의 중괄호에 걸림 (2026-11-25, 시험으로 발견)
+- **상태**: 📌 백로그 (소스는 안 고침, 재현 시험은 `xfail`)
+- **증상**: Gemini 답에서 JSON 앞이나 뒤 설명에 `{` `}` 가 있으면(예: "참고 {예시} 입니다.") 첫 `{` 부터 마지막 `}` 까지를 통째로 읽어 `JSONDecodeError` 가 난다. `main()` 이 `json_object` 호출을 감싸지 않아 "JSON을 찾지 못했습니다" 같은 안내 없이 파이썬 오류 출력으로 멈추고, 쪽 색인 분석(Gemini 호출)을 처음부터 다시 해야 한다(`--reuse-analysis` 는 저장된 `analysis.json` 이 있어야 쓸 수 있는데 이 경우는 저장 전에 멈춤).
+- **원인**: `text.find("{")` ~ `text.rfind("}")` 구간을 그대로 `json.loads`. `teacherlesson-assistant` 의 `prepare_lessons.parse_flow` 도 같은 방식(ISSUE-031)
+- **재현 시험**: `tests/test_auto_split.py::test_json_object_explanation_containing_braces_around_json` (앞 설명에 중괄호 / 뒤 설명에 중괄호)
+- **관련 파일**: `auto_split.py`
+
 ### ISSUE-003: 지도서 처리 남은 일 (수업 비서에서 옮김, 2026-11-22)
 - guide-mapper 대체 매칭: 3-1 국어를 다시 만들면 독서·매체 행이 3-2 PDF를 가리킴(이 PC에 3-1 PDF 없음). 학년·학기가 다르면 대체 매칭에서 빼기
 - `split_by_lesson_headers` 재실행 시 예전 `pdf_splits` 조각이 남음 / `apply_annual_plan` 의 `groups.orig.json` 이 첫 분할 것만 보관

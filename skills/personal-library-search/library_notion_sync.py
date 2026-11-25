@@ -5,10 +5,15 @@ import re
 import os
 import sys
 
-# === [사용자 설정 영역] ===
-# 환경변수에서 로드 (없는 경우 아래 기본값 또는 .env 파일 활용)
-NOTION_TOKEN = os.getenv('NOTION_TOKEN', 'YOUR_NOTION_INTEGRATION_TOKEN_HERE')
-DATABASE_ID = os.getenv('NOTION_DATABASE_ID', '313ddde1e1df80e9b161e2c5888f80d6')
+# === [설정] ===
+# 비밀값·ID 는 코드에 쓰지 않고 중앙 .env 에서 읽는다(skills/_shared/skill_env.py).
+import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(next(p / "_shared" for p in _pl.Path(__file__).resolve().parents if (p / "_shared" / "skill_env.py").is_file())))
+from skill_env import load_env  # 중앙 .env
+
+load_env()
+
+NOTION_TOKEN = os.environ.get('NOTION_TOKEN', '')
+DATABASE_ID = os.environ.get('NOTION_DATABASE_ID', '')
 
 # 노션 테이블의 속성(Column) 이름 세팅 (제공해주신 스크린샷 기준)
 COL_TITLE = "제목"       # 읽을 책 제목 (Title 유형)
@@ -128,8 +133,9 @@ def update_notion_multi_select(page_id, tags):
     call_notion_api('PATCH', f"pages/{page_id}", payload)
 
 def main():
-    if NOTION_TOKEN.startswith('YOUR'):
-        print("ERROR: 환경변수 또는 스크립트 상단의 NOTION_TOKEN을 실제 토큰 값으로 설정해주세요.")
+    if not NOTION_TOKEN or not DATABASE_ID:
+        print("ERROR: NOTION_TOKEN 또는 NOTION_DATABASE_ID 가 설정되지 않았습니다.")
+        print("중앙 .env 에 PERSONAL_LIBRARY_SEARCH__NOTION_TOKEN, PERSONAL_LIBRARY_SEARCH__NOTION_DATABASE_ID 를 적어 주세요.")
         sys.exit(1)
         
     print("노션 데이터베이스에서 책 목록을 불러옵니다...")

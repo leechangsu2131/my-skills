@@ -6,7 +6,7 @@ import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(next(p / "_shared" f
 from skill_env import load_env, data_dir
 
 def get_supabase_data():
-    # 상위 폴더(classmanage-notion-sync)의 .env 파일 로드 시도
+    # 공용 중앙 .env 파일에서 Supabase 설정을 불러온다.
     load_env()
     
     url = os.environ.get('SUPABASE_URL')

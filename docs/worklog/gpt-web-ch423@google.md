@@ -32,6 +32,7 @@
 - 2026-11-25 23:22 T35 시작 (브랜치 task/T35-skill-procedure-review)
 - 2026-11-25 23:24 T35 PR 올림 — 절차 중심 스킬 6개 점검 보고서 추가. PR #35
 - 2026-11-25 23:24 T35 PR 올림 — 절차 중심 스킬 6개 점검 보고서 추가. SKILL.md 직접 수정 없음. PR #35
+- 2026-11-25 23:24 T35 PR 올림 — 절차 중심 스킬 6개 점검 보고서 추가. SKILL.md·코드는 수정하지 않음. PR #35
 - 2026-11-25 23:25 T35 CI 확인 — assistant·guide-splitter 시험과 개인정보 검사 통과. catalog 는 PyYAML 미설치로 실패, known-failing 은 기존 ISSUE-003 1개 실패
 - 2026-11-25 23:25 T31(admin-s2b-buyer) 시작 (브랜치 task/T31-admin-s2b-buyer-korean)
 - 2026-11-25 23:25 T28 CI 확인 — teacherlesson-assistant 시험 130개 통과, 개인정보·guide splitter 통과. catalog 는 PyYAML 미설치로 실패, known-failing 은 기존 ISSUE-003 1개 실패

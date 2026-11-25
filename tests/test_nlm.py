@@ -269,7 +269,7 @@ def ask(tmp_path, monkeypatch):
 def test_gemini_ask_first_model_answers(ask):
     call, work = ask
     fake = FakeRun(done("  답입니다 \n"))
-    assert call(fake) == "답입니다"
+    assert call(fake) == ("답입니다", nlm.DEFAULT_MODEL)
     assert fake.models == [nlm.DEFAULT_MODEL] and nlm.LAST_MODEL == nlm.DEFAULT_MODEL
     cmd, kw = fake.calls[0]
     assert cmd[:5] == ["gemini", "-e", "none", "-m", nlm.DEFAULT_MODEL] and cmd[5] == "-p"
@@ -281,30 +281,28 @@ def test_gemini_ask_first_model_answers(ask):
 def test_gemini_ask_503_moves_to_next_model(ask):
     call, _ = ask
     fake = FakeRun(done(stderr="Error: 503 The model is overloaded", code=1), done("두 번째 모델 답"))
-    assert call(fake) == "두 번째 모델 답"
+    assert call(fake) == ("두 번째 모델 답", nlm.FALLBACK_MODELS[0])
     assert fake.models == [nlm.DEFAULT_MODEL, nlm.FALLBACK_MODELS[0]]
-    assert nlm.LAST_MODEL == nlm.FALLBACK_MODELS[0]
 
 
 def test_gemini_ask_timeouts_then_next_models_in_order(ask):
     call, _ = ask
     fake = FakeRun(timeout(), timeout(), done("셋째 모델 답"))
-    assert call(fake) == "셋째 모델 답"
+    assert call(fake) == ("셋째 모델 답", nlm.FALLBACK_MODELS[1])
     assert fake.models == [nlm.DEFAULT_MODEL, *nlm.FALLBACK_MODELS[:2]]
-    assert nlm.LAST_MODEL == nlm.FALLBACK_MODELS[1]
 
 
 def test_gemini_ask_503_then_timeout_then_success(ask):
     call, _ = ask
     fake = FakeRun(done(stderr="503", code=1), timeout(), done("답"))
-    assert call(fake) == "답"
+    assert call(fake) == ("답", nlm.FALLBACK_MODELS[1])
     assert fake.models == [nlm.DEFAULT_MODEL, *nlm.FALLBACK_MODELS[:2]]
 
 
 def test_gemini_ask_empty_stdout_counts_as_failure(ask):
     call, _ = ask
     fake = FakeRun(done("  \n", code=0), done("진짜 답"))
-    assert call(fake) == "진짜 답"
+    assert call(fake) == ("진짜 답", nlm.FALLBACK_MODELS[0])
     assert fake.models == [nlm.DEFAULT_MODEL, nlm.FALLBACK_MODELS[0]]
 
 
@@ -325,7 +323,7 @@ def test_gemini_ask_all_models_fail_lists_each_reason(ask):
 def test_gemini_ask_custom_model_goes_first_without_duplicates(ask):
     call, _ = ask
     fake = FakeRun(*[done(code=1)] * 3, done("답"))
-    assert call(fake, model="my-model") == "답"
+    assert call(fake, model="my-model") == ("답", nlm.FALLBACK_MODELS[-1])
     assert fake.models == ["my-model", *nlm.FALLBACK_MODELS]
     fake = FakeRun(done(code=1), done("답"))
     call(fake, model=nlm.FALLBACK_MODELS[0])
@@ -338,6 +336,14 @@ def test_gemini_ask_per_model_timeout_is_clamped_to_60_120(ask, asked, per_try):
     fake = FakeRun(done("답"))
     call(fake, timeout=asked)
     assert fake.calls[0][1]["timeout"] == per_try
+
+
+@pytest.mark.parametrize("seconds", [30, 45, 75])
+def test_gemini_ask_model_timeout_overrides_legacy_timeout(ask, seconds):
+    call, _ = ask
+    fake = FakeRun(done("답"))
+    assert call(fake, timeout=300, model_timeout=seconds) == ("답", nlm.DEFAULT_MODEL)
+    assert fake.calls[0][1]["timeout"] == seconds
 
 
 def test_gemini_ask_uses_key_only_for_the_child_process(ask, monkeypatch):
@@ -365,6 +371,6 @@ def test_gemini_find_puts_query_in_the_find_prompt(ask, monkeypatch):
     fake = FakeRun(done("[p.3] 원문"))
     monkeypatch.setattr(nlm.subprocess, "run", fake)
     src = work.parent / "자료 원본.pdf"
-    assert nlm.gemini_find(src, "분수의 덧셈") == "[p.3] 원문"   # work 를 안 주면 DATA/gemini_work 를 쓴다(임시 폴더)
+    assert nlm.gemini_find(src, "분수의 덧셈") == ("[p.3] 원문", nlm.DEFAULT_MODEL)   # work 를 안 주면 DATA/gemini_work 를 쓴다(임시 폴더)
     prompt = fake.calls[0][0][fake.calls[0][0].index("-p") + 1]
     assert "찾을 내용: 분수의 덧셈" in prompt and "@doc.pdf" in prompt and "{query}" not in prompt

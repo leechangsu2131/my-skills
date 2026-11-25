@@ -78,6 +78,18 @@
 | T56 | `docs/SECURITY_LESSONS_LEARNED.md` 를 읽고 **작업자용 개인정보 체크리스트** 1쪽 | 그 파일, `docs/WORKER_GUIDE.md` | 열림 |
 | T57 | 스킬 하나를 골라 SKILL.md 를 **쉬운 한국어로 다시 쓴 안**(뜻은 그대로) — 스킬마다 따로 | 고른 스킬 `SKILL.md` | 열림 |
 
+## S. 상시 일 — 고를 일이 없을 때 언제든 (번호를 브랜치에 넣고, 대상 스킬을 일지에 적어 겹치지 않게)
+
+| 번호 | 할 일 | 등급 |
+|---|---|---|
+| S1 | **시험 없는 스킬 하나 골라** 순수 함수 시험 쓰기(위 A 묶음 방식). 고른 스킬 이름을 브랜치에 넣기: `task/S1-<스킬>` | R |
+| S2 | **다른 작업자 PR 검토**: 시험 돌려 보고, 개인정보·범위 밖 수정·버그를 `docs/reviews/<브랜치>.md` 에 적어 PR 로(그 브랜치는 고치지 않음) | R |
+| S3 | **ISSUES.md 열린 항목 하나 골라 재현 시험 만들기**(고치지는 말고 xfail 로) | R |
+| S4 | 스킬 하나 골라 SKILL.md·README 가 코드와 맞는지 확인, 틀린 설명만 고침 | R / T(고친 글만) |
+| S5 | `python tools/build_catalog.py --check`·전체 시험을 돌려 깨진 것을 `docs/reviews/health-<날짜>.md` 로 | R |
+| S6 | 문서 하나를 쉬운 한국어로 다듬은 안(뜻은 그대로) | T |
+| S7 | ISSUES 📌 백로그 항목 하나를 골라 "어떻게 만들면 될지" 짧은 설계 메모(파일 경로·함수 이름 수준) → `docs/plans/` | R / T |
+
 ## 원래 큰 계획 (교사 PC 의 Claude Code 가 함 — 참고)
 
 - 학교 PC 공용: 글(md)·흐름·설정은 OneDrive, PDF 는 집 PC, 녹음은 PC 에만 (teacherlesson-assistant ISSUES "지금 상태와 남은 일" 0번)

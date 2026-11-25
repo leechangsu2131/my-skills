@@ -5,6 +5,9 @@ Flask test client 로 부르고, 시트 연결·읽기·수업배치(bridge)는 
 """
 
 import unittest
+import threading
+import time
+from concurrent.futures import ThreadPoolExecutor
 from unittest.mock import patch
 
 import schedule
@@ -341,6 +344,61 @@ class CatchUpEndpointTests(unittest.TestCase):
 
     def test_get_method_is_not_allowed(self):
         self.assertEqual(self.client.get("/api/catch-up").status_code, 405)
+
+    def test_concurrent_requests_are_serialized(self):
+        first_started = threading.Event()
+        release_first = threading.Event()
+        second_started = threading.Event()
+        guard = threading.Lock()
+        active = 0
+        max_active = 0
+        calls = 0
+
+        def fake_catch_up(*args, **kwargs):
+            nonlocal active, max_active, calls
+            with guard:
+                calls += 1
+                call_number = calls
+                active += 1
+                max_active = max(max_active, active)
+            try:
+                if call_number == 1:
+                    first_started.set()
+                    if not release_first.wait(timeout=3):
+                        raise AssertionError("첫 요청 해제 대기 시간 초과")
+                return {"message": f"요청 {call_number} 완료"}
+            finally:
+                with guard:
+                    active -= 1
+
+        def send_request(is_second=False):
+            if is_second:
+                second_started.set()
+            with server.app.test_client() as client:
+                return client.post("/api/catch-up", json={"subject": "수학"})
+
+        with (
+            patch.object(server.schedule, "connect", return_value=object()),
+            patch.object(server.schedule, "load_all", return_value=[]),
+            patch.object(server.schedule, "catch_up_to_lesson", side_effect=fake_catch_up),
+            patch.object(server, "log_action"),
+            patch.object(server, "_clear_dashboard_cache"),
+            ThreadPoolExecutor(max_workers=2) as pool,
+        ):
+            first = pool.submit(send_request)
+            self.assertTrue(first_started.wait(timeout=2))
+            second = pool.submit(send_request, True)
+            self.assertTrue(second_started.wait(timeout=2))
+            time.sleep(0.05)
+            self.assertFalse(second.done(), "첫 요청이 끝나기 전에 두 번째 요청이 처리되면 안 됨")
+            release_first.set()
+            first_response = first.result(timeout=2)
+            second_response = second.result(timeout=2)
+
+        self.assertEqual(first_response.status_code, 200)
+        self.assertEqual(second_response.status_code, 200)
+        self.assertEqual(calls, 2)
+        self.assertEqual(max_active, 1)
 
     @unittest.expectedFailure
     def test_schedule_error_returns_json_error_like_lessons_endpoint(self):

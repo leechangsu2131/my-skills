@@ -7,7 +7,7 @@
 ## 0. 시작 위치
 
 - Claude Code 는 **`my-skills` 폴더에서** 연다(그래야 저장소의 `CLAUDE.md` 와 `.claude/agents/reviewer.md` 를 읽음).
-- 먼저 `git pull --rebase --autostash` 로 다른 PC·작업자의 변경을 받는다.
+- 먼저 `git pull --rebase` 로 다른 PC·작업자의 변경을 받는다. 다른 세션이 커밋 안 한 파일 때문에 막히면 `git fetch` 후 **뒤처졌을 때만** `git pull --rebase --autostash`(그 파일을 넣었다 빼다 충돌이 날 수 있으므로 항상 붙이지 않는다).
 
 ## 1. 올라온 일 보기
 
@@ -55,10 +55,20 @@ git push origin --delete <브랜치>     # 합친 작업자 브랜치 정리(선
 | 중앙 `.env` | 실제 키가 필요한 확인 | 학교 OneDrive(`OneDrive - gyo6.net\96. 인증\.env`)로 이미 공유 |
 | Python·Node·Gemini CLI·크롬 로그인 | 시험·실제 실행 | `teacherlesson-assistant` 의 학교 PC 점검 도구(T20)로 빠진 것 확인 |
 | (선택) GitHub CLI `gh` + `gh auth login` | PR 목록·댓글 | 없어도 git 만으로 됨 |
-| (선택) Claude 기억(memory) 공유 | 집·학교 Claude 가 같은 배경지식 | 아래 |
+| Claude 기억(memory) 공유 | 집·학교 Claude 가 같은 배경지식 | 아래 (집 PC 는 2026-11-25 연결함) |
 
-### Claude 기억 공유 (선택)
-Claude Code 의 기억은 PC 의 `%USERPROFILE%\.claude\projects\<작업 폴더 이름>\memory\` 에 따로 쌓인다.
-저장소 관련 사실은 이미 저장소 문서(TASKS·ISSUES·이 문서)에 있으므로 꼭 필요하지는 않다.
-같이 쓰려면 두 PC 모두 그 `memory` 폴더를 OneDrive 의 한 폴더로 연결(junction)한다 — 교사 확인 뒤에 한다.
-기억에는 비밀번호·키·학생 개인정보를 적지 않는 규칙이 있으므로 OneDrive 에 두어도 된다(교사 판단).
+### Claude 기억 공유
+Claude Code 의 기억은 **연 폴더마다** `%USERPROFILE%\.claude\projects\<폴더 경로를 - 로 바꾼 이름>\memory\` 에 따로 쌓인다.
+그래서 `my-skills` 에서 열 때와 그 위 폴더에서 열 때 기억이 갈라지고, 집 PC 와 학교 PC 도 갈라진다.
+→ 기억 원본은 **OneDrive `95. 개인\claude-memory`** 한 곳에 두고, 각 PC 의 `memory` 폴더를 그곳으로 연결(junction)한다(교사 결정 2026-11-25).
+기억에는 비밀번호·키·학생 개인정보를 적지 않는다(비밀값은 `96. 인증` 의 `.env` 에만).
+
+학교 PC 에서 한 번 (PowerShell, Claude Code 를 끈 상태에서. `<이름>` 은 그 PC 에서 my-skills 를 연 뒤 `projects` 아래 생긴 폴더 이름):
+```powershell
+$dst = "$env:OneDriveCommercial\95. 개인\claude-memory"
+$m = "$env:USERPROFILE\.claude\projects\<이름>\memory"
+if (Test-Path $m) { Copy-Item "$m\*" $dst -Exclude MEMORY.md; Rename-Item $m "memory.bak" }   # 학교 PC 에만 있던 기억은 합친 뒤 MEMORY.md 목록에 손으로 추가
+New-Item -ItemType Directory -Force (Split-Path $m) | Out-Null
+New-Item -ItemType Junction -Path $m -Target $dst
+```
+두 PC 에서 동시에 같은 기억 파일을 고치면 OneDrive 가 '충돌 사본'을 만든다. 보이면 합치고 사본은 지운다.

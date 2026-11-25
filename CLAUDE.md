@@ -7,7 +7,7 @@
 
 ## Claude 작업 시 덧붙이는 규칙
 - `CONTRIBUTING.md`의 도구별 역할 표(Antigravity·Cursor·Codex)는 참고용이다. Claude Code는 기획·구현·검토를 모두 맡을 수 있다.
-- **(임시, 2026-11-20~) `main`에 바로 커밋·푸시한다.** 브랜치·PR은 만들지 않는다. 나중에 PR 방식으로 돌아갈 예정이다(`CONTRIBUTING.md` "커밋·푸시 방식" 참고).
+- **(임시, 2026-11-20~) 교사 PC 의 Claude Code 는 `main`에 바로 커밋·푸시한다.** 브랜치·PR은 만들지 않는다. **Claude Code 웹 등 다른 곳에서 작업자로 일하는 Claude 는 해당하지 않는다** — `docs/WORKER_GUIDE.md` 대로 `task/…` 브랜치 + PR. 나중에 PR 방식으로 돌아갈 예정이다(`CONTRIBUTING.md` "커밋·푸시 방식" 참고).
   - 커밋 전 `git diff --staged`로 학생·교사 이름, 전화번호, 공문번호 같은 개인정보·학교 정보가 없는지 확인한다(공개 저장소).
   - 내가 고친 파일만 골라 `git add <파일>` 한다. 다른 세션·도구가 고치는 중인 파일은 함께 올리지 않는다(`git add -A` 금지).
   - 푸시 전 `git pull --rebase`로 원격 변경을 먼저 받는다. 다른 세션의 미커밋 파일 때문에 막히면 `git fetch` 후 뒤처졌을 때만 `--autostash`를 붙인다.

@@ -40,8 +40,9 @@ CATALOG.md           → 자동 생성 목록 (직접 수정 금지)
 
 ## 커밋·푸시 방식
 
-**현재 (임시, 2026-11-20~): `main`에 바로 커밋·푸시**
-- 혼자 작은 작업을 하는 동안은 브랜치·PR 없이 `main`에 바로 올린다.
+**현재 (임시, 2026-11-20~): 교사 PC 의 Claude Code 만 `main`에 바로 커밋·푸시**
+- 교사 PC 의 Claude Code(오케스트레이터)는 브랜치·PR 없이 `main`에 바로 올린다.
+- **다른 AI 작업자(웹 Claude, Gemini CLI, bizcoder, Codex 등)는 이 예외가 없다.** 반드시 `task/…` 브랜치 + PR 로 올린다([docs/WORKER_GUIDE.md](docs/WORKER_GUIDE.md)).
 - 대신 커밋 전에 반드시
   1. `git diff --staged`로 개인정보·학교 정보(학생·교사 이름, 전화번호, 공문번호, 비밀값)가 없는지 확인한다. 저장소는 공개다.
   2. 내가 고친 파일만 `git add <파일>`로 고른다. 다른 도구·세션이 작업 중인 파일은 섞지 않는다(`git add -A` 금지).

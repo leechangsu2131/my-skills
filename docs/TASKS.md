@@ -23,7 +23,7 @@
 | T12 | personal-carrot | 순수 함수 | 열림 |
 | T13 | workflow-hub-main / util-webtoguide / util-web-scraper | 순수 함수(각각 따로 브랜치) | 열림 |
 | T14 | teacherlesson-workspace | `scripts/sync_semester2.py` 의 대조·변환 함수(Supabase 가짜) | 열림 |
-| T15 | teacherlesson-from-neis | 크롬 확장 JS 의 순수 함수(날짜·표 파싱) — Node 로 도는 시험 | 열림 |
+| T15 | teacherlesson-from-neis | `extension/popup.js` 최상위 순수 함수(`normalizeApproverNames`·`sanitizeApprovalProfiles`·`buildApprovalBatches` 등) — Node `vm` 으로 파일을 불러오되 `document`·`chrome` 은 가짜. **NEIS 페이지에 주입되는 함수(`absence-workflow.js`, popup.js 의 `…OnNeis`) 안쪽 함수는 따로 불러올 수 없으니 대상에서 뺀다**(크롬 주입 구조상 통째로여야 함) | 열림 |
 
 ## B. 작은 기능·정리 코드 (R) — 각자 적힌 파일만
 

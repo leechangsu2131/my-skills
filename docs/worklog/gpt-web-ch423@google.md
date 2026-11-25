@@ -11,3 +11,4 @@
 - 2026-11-25 23:30 T29 PR 올림 — favicon SVG·/favicon.ico 응답·화면 연결·가짜 HTTP 시험. PR #29
 - 2026-11-25 23:35 T29 CI 확인 — teacherlesson-assistant 시험 130개 통과, 개인정보·guide splitter 통과. catalog 는 PyYAML 미설치로 실패, known-failing 은 기존 ISSUE-003 1개 실패
 - 2026-11-25 23:40 T32 시작 (브랜치 task/T32-splitter-readme-korean)
+- 2026-11-25 23:50 T32 PR 올림 — splitter README 한국어화, 상위 SKILL 중복 줄이고 사용 설명 유지. PR #30

@@ -9,6 +9,13 @@ _없음_
 
 ## 📌 백로그
 
+
+### ISSUE-T14: `sync_semester2.safe_int(12.0)` 이 None (2026-11-26, 시험으로 발견)
+- **상태**: 📌 백로그
+- **증상**: 슈파베이스·시트에서 `12.0` 처럼 소수 꼴로 온 차시·교시 값을 정수로 못 바꿔 None 이 됨 (`int("12.0")` 이 실패)
+- **해결 방향**: `int(float(str(value).strip()))` 로 바꾸고, 시험 `tests/test_sync_semester2.py` 의 xfail 표시를 지운다
+- **관련 파일**: `scripts/sync_semester2.py`(`safe_int`)
+
 _없음_
 
 ## 🟢 해결됨

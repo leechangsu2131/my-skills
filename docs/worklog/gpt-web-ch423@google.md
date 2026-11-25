@@ -38,3 +38,4 @@
 - 2026-11-25 23:38 T31(personal-record-trade) PR 올림 — 보관 문서 한국어화, 현재 사용 중지 안내·절대 경로 정리. PR #41
 - 2026-11-25 23:39 T58 시작 (브랜치 task/T58-privacy-check-fixes)
 - 2026-11-25 23:48 T58 PR 올림 — 개인정보 검사 오탐·누락·stdin·diff 인자·++ 줄 처리 보완, CI 검사 강제 적용. PR #42
+- 2026-11-25 23:51 T58 CI 확인 — privacy 통과, 개인정보 검사 시험 60개 통과, assistant·guide-splitter 시험 통과. catalog 는 PyYAML 미설치로 실패, known-failing 은 기존 ISSUE-003 1개 실패

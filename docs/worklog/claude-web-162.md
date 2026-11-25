@@ -10,3 +10,5 @@
 - 2026-11-25 20:50 T12 PR 올림 — personal-carrot tests/test_pure_functions.py 시험 71개(65 통과, 6 xfail), 소스 무변경, 문제 4건 ISSUES 기록. appium·selenium 은 설치돼 있지 않아 가짜 모듈로 대신. T06 브랜치 위에 쌓임
 - 2026-11-25 21:05 (교사 요청) 노션 DB ID 노출 제거 시작 (브랜치 fix/library-sync-remove-db-id, T12 브랜치 위에서 만듦)
 - 2026-11-25 21:25 노션 DB ID 제거 PR 올림 — 코드·.env.example 에서 ID 삭제, load_env() 로 중앙 .env 읽기, 시험 28개 통과(2 xfail), 값은 기록에 쓰지 않음. T12 브랜치 위에 쌓임
+- 2026-11-26 04:34 T10 다음: T13 중 workflow-hub-main 선택(web-scraper·webtoguide 는 다른 작업자 브랜치 있음)
+- 2026-11-26 04:34 T13 workflow-hub-main 시작 (브랜치 task/T13-tests-workflow-hub, 최신 main 에서)

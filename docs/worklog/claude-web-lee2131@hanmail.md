@@ -7,3 +7,4 @@
 - 2026-11-25 21:10 T09 시작 (브랜치 task/T09-tests-obsidian-pkm)
 - 2026-11-25 22:10 T09 PR 올림 — skills/personal-obsidansystem-main/tests/test_pkm_core.py 시험 81개(77 통과, 4 xfail), 실제 볼트·백업 폴더 안 건드림(백업 위치를 임시 폴더로 바꿈). 확인: pytest 실행, 가려 보이는 xfail 4개는 표시를 떼고 의도한 이유로 실패하는지 확인. 버그 3개(쉼표 목록·큰따옴표 역슬래시 누적·Vault 폴더 이름)를 ISSUES(ISSUE-002~004)에 기록
 - 2026-11-26 04:55 S5 시작 (브랜치 task/S5-health-2026-11-26) — 카탈로그 점검·전체 스킬 시험을 깨끗한 환경에서 돌려 docs/reviews/health-2026-11-26.md 로 정리
+- 2026-11-26 06:10 S5 PR 올림 — docs/reviews/health-2026-11-26.md. 깨끗한 환경에서 스킬 시험 전부(통과 약 1,350개) 점검. 실패 5개(mapper 2·video-note 2·schedule 1), 요구 파일 빠짐, CI 가 안 도는 시험, exam-graderV2 시험이 저장소 폴더에 로그를 만듦(확인 필요)을 기록. 접속 스크립트(test_ 이름)는 실행하지 않음

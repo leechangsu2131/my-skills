@@ -34,7 +34,6 @@ ANSWERS = DATA / "answers"
 WORK = DATA / "gemini_work"
 DEFAULT_MODEL = "gemini-3.8-flash"   # 무료 키로 되는 모델 (pro 는 무료 한도 0, 2026-11-22 확인)
 FALLBACK_MODELS = ["gemini-3.7-flash", "gemini-flash-latest", "gemini-3.5-flash-lite"]  # 붐빌 때(503) 차례로
-LAST_MODEL = ""
 KEY_NAMES = ("UTIL_NOTEBOOKLM__GEMINI_API_KEY", "GEMINI_API_KEY", "GEMINI_API_KEY_FROM_VAULT_NOTE")
 
 CTL = re.compile(r"[\x00-\x08\x0b-\x1f​-‍﻿]")
@@ -230,13 +229,18 @@ def gemini_command() -> list[str]:
     raise RuntimeError("gemini CLI 를 찾지 못했어요 (npm i -g @google/gemini-cli).")
 
 
-def gemini_find(pdf: pathlib.Path, query: str, model: str = DEFAULT_MODEL, timeout: int = 300) -> str:
-    """PDF 에서 관련 원문과 [p.N] 만 찾게 한다(판단·요약 없음)."""
-    return gemini_ask(pdf, FIND_PROMPT.replace("{query}", query), model, timeout)
+def gemini_find(pdf: pathlib.Path, query: str, model: str = DEFAULT_MODEL, timeout: int = 300,
+                model_timeout: int | None = None) -> tuple[str, str]:
+    """PDF 에서 관련 원문과 [p.N] 만 찾게 한다(판단·요약 없음).
+
+    반환값은 (답변, 실제로 답한 모델)이다.
+    """
+    return gemini_ask(pdf, FIND_PROMPT.replace("{query}", query), model, timeout,
+                      model_timeout=model_timeout)
 
 
 def gemini_ask(pdf: pathlib.Path, prompt: str, model: str = DEFAULT_MODEL, timeout: int = 300,
-               work: pathlib.Path | None = None) -> str:
+               work: pathlib.Path | None = None, model_timeout: int | None = None) -> tuple[str, str]:
     """PDF 를 작업 폴더로 복사해 Gemini CLI 에 묻는다. prompt 안의 {file} 은 PDF 이름(@ 첨부)으로 바뀐다.
     - 키가 중앙 .env 에 있으면 작업 폴더에만 API 키 방식을 설정(전역 Gemini 설정은 건드리지 않음). 없으면 그 PC 의 구글 로그인 사용.
     - 이 PC 의 Gemini 확장은 끈다(-e none). work 를 다르게 주면 여러 개를 동시에 돌릴 수 있다."""
@@ -256,10 +260,9 @@ def gemini_ask(pdf: pathlib.Path, prompt: str, model: str = DEFAULT_MODEL, timeo
     elif settings.exists():
         settings.unlink()
     prompt = prompt.replace("{file}", local.name)
-    global LAST_MODEL
-    # 무료 모델은 자주 붐빈다(503). CLI 가 혼자 오래 재시도하므로 모델마다 시간을 짧게 주고 다음 모델로 넘어간다.
+    # 기본값은 기존 동작(60~120초)을 유지한다. 짧은 출력은 호출 쪽에서 30~45초로 줄일 수 있다.
     chain = [model] + [m for m in FALLBACK_MODELS if m != model]
-    per_try = max(60, min(timeout, 120))
+    per_try = max(1, int(model_timeout)) if model_timeout is not None else max(60, min(timeout, 120))
     errors = []
     for m in chain:
         try:
@@ -270,8 +273,7 @@ def gemini_ask(pdf: pathlib.Path, prompt: str, model: str = DEFAULT_MODEL, timeo
             errors.append(f"{m}: {per_try}초 넘음(붐빔)")
             continue
         if res.returncode == 0 and res.stdout.strip():
-            LAST_MODEL = m
-            return res.stdout.strip()
+            return res.stdout.strip(), m
         err = (res.stderr or "").strip().splitlines()
         hint = next((l for l in err if "quota" in l.lower() or "Error" in l), err[-1] if err else "")
         errors.append(f"{m}: 코드 {res.returncode} {hint[:150]}")
@@ -283,12 +285,12 @@ def gemini_ask(pdf: pathlib.Path, prompt: str, model: str = DEFAULT_MODEL, timeo
 def cmd_find(a) -> None:
     pdf = pathlib.Path(a.pdf)
     t0 = time.time()
-    answer = gemini_find(pdf, a.query, a.model)
+    answer, used_model = gemini_find(pdf, a.query, a.model)
     ANSWERS.mkdir(parents=True, exist_ok=True)
     out = pathlib.Path(a.out) if a.out else ANSWERS / f"{time.strftime('%Y%m%d_%H%M%S')}_{pdf.stem[:40]}.md"
     out.write_text(f"<!-- 원본: {pdf} | 찾을 내용: {a.query} | {a.model} -->\n{answer}\n", encoding="utf-8")
     print(answer)
-    print(f"\n[{time.time() - t0:.0f}초] 저장: {out}\n관련 쪽: {page_refs(answer) or '없음'}"
+    print(f"\n[{time.time() - t0:.0f}초] 저장: {out} · 사용 모델: {used_model}\n관련 쪽: {page_refs(answer) or '없음'}"
           f"  → 잘라내기: python nlm.py pages \"{pdf}\" --from \"{out}\"")
 
 

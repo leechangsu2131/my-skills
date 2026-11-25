@@ -89,7 +89,7 @@ This skill contains several sub-modules for data ingestion and deep investment a
 ## ⚠️ 실수 방지 규칙집 (반드시 먼저 읽을 것)
 
 **작업 시작 전에 반드시 아래 파일을 읽고 시작한다:**
-- [`docs/pipeline_rules.md`](file:///C:/Users/lee21/.gemini/antigravity/scratch/my-skills/skills/personal-record-trade/docs/pipeline_rules.md)
+- [`docs/pipeline_rules.md`](docs/pipeline_rules.md)
 
 이 파일에는 이전 대화에서 발생한 모든 실수를 9개 카테고리로 분류하여 기록해 두었다.
 핵심 원칙:

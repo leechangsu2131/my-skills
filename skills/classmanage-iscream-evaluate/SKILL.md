@@ -14,7 +14,7 @@ metadata:
 
 # i-scream 과목별 평가 자동 기록 (classmanage-iscream-evaluate)
 
-## Overview
+## 개요
 
 학기 동안 Supabase `class-manage` 테이블에 축적된 학생별 관찰 기록을 바탕으로,
 **i-scream 과목별 평가** 페이지(`SubjectEvaluation.do`)에 자동으로 평가 내용을 기록하는 스킬입니다.
@@ -22,7 +22,7 @@ metadata:
 기존 `classmanage-record-viewer`의 데이터를 활용하며,
 `classmanage-student-eval-generator`로 생성된 평가 문장도 입력으로 받을 수 있습니다.
 
-## When to Use This Skill
+## 사용 시점
 
 - 학기말에 i-scream 과목별 평가를 기록해야 할 때
 - "i-scream에 평가 기록해줘" 또는 "아이스크림에 과목별 평가 입력해줘"라고 요청할 때
@@ -69,7 +69,7 @@ launch_chrome_iscream.bat
 
 *크롬 창이 열리면 수동으로 i-scream 로그인 후, 과목별 평가 페이지(`SubjectEvaluation.do`)로 이동해 두세요. (이동 중 비밀번호를 요구하는 확인 페이지가 감지되면 `.env`에 설정된 비밀번호를 자동으로 입력하고 진입합니다.)*
 
-### 4. DOM 셀렉터 검증 및 진단
+### 4. 화면 요소 선택자 검증 및 진단
 
 i-scream 교과평가 페이지로 이동한 상태에서 아래 검증 스크립트를 실행하여 셀렉터 연결 상태를 자가 진단합니다:
 
@@ -82,7 +82,7 @@ python verify_selectors.py
 - 결과물로 `iscream_verification_screenshot.png`와 `iscream_verification_dom.html`을 생성해 주어 셀렉터 불일치 시 직접 점검 및 수정할 수 있게 돕습니다.
 - 만약 셀렉터 구조 파악이 필요하다면 `explore_dom.py`를 실행하여 정밀 DOM 덤프를 수행합니다.
 
-### 5. 웹 UI 사용 워크플로우
+### 5. 웹 화면 사용 절차
 
 1. 올인원 런처로 연 웹 UI 대시보드([http://localhost:5028](http://localhost:5028))에 접속합니다.
 2. Supabase에서 학생 기록이 자동으로 로드되어 좌측 목록에 보입니다.
@@ -98,7 +98,7 @@ python verify_selectors.py
 - **성취평가기준 2개 자동 클릭**: 우측 평가기준 테이블을 분석하여, 아직 해당 학생에게 선택되지 않은(부모 `tr`에 `highlight` 클래스가 없는) 평가기준 버튼(`button.al`)을 최대 2개 자동 클릭(토글 활성화)합니다.
 - **최종 평가문 기입**: 2개의 평가기준 선택으로 텍스트 영역이 활성화되면, Supabase 혹은 LLM 요약으로 가공된 커스텀 평가문(`eval_text`)을 textarea에 덮어써 최종 기록합니다.
 
-### 7. CLI 실행
+### 7. 명령줄 실행
 ```bash
 # 시뮬레이션 (실제 저장 안 함)
 python iscream_evaluate.py --dry-run
@@ -107,13 +107,13 @@ python iscream_evaluate.py --dry-run
 python iscream_evaluate.py --preview
 
 # 특정 학생만
-python iscream_evaluate.py --student 김민준
+python iscream_evaluate.py --student 학생A
 
 # 특정 과목만
 python iscream_evaluate.py --subject 수학
 
 # 특정 학생 + 특정 과목
-python iscream_evaluate.py --student 김민준 --subject 수학
+python iscream_evaluate.py --student 학생A --subject 수학
 ```
 
 ## 아키텍처
@@ -164,11 +164,12 @@ i-scream 과목별 평가 페이지에 자동 입력
 - 실제 저장 전 반드시 미리보기로 평가 내용을 확인하세요
 - CDP 연결을 위해 `launch_chrome_iscream.bat`으로 실행한 크롬만 사용합니다
 
-## 개발 및 디버깅 역사 (ing.md)
+## 개발 및 디버깅 기록
 
-- 이 스킬의 개발/디버깅 과정과 자가 진단 결과는 [ing.md](file:///C:/Users/user/.gemini/antigravity/scratch/repos/my-skills/skills/classmanage-iscream-evaluate/ing.md) 파일에 상세히 기록되어 있습니다. 오류 수정이 필요한 경우 이 문서를 확인하세요.
+- 상세한 과거 개발 기록은 현재 저장소에 포함되어 있지 않습니다. 최신 오류와 수정 내역은 이 문서와 `ISSUES.md`에서 확인합니다.
+- 새로 확인한 오류와 해결 과정은 개인정보와 비밀값을 제외해 `ISSUES.md`에 기록합니다.
 
-## Related Skills
+## 관련 스킬
 
 - `@classmanage-record-viewer` — 학생 기록 조회 뷰어 (데이터 원천)
 - `@classmanage-student-eval-generator` — LLM 기반 평가 문장 생성

@@ -23,6 +23,16 @@
 - 2026-11-25 23:21 T34 PR 올림 — 최상위 SKILL.md 58개 메타데이터 검토 보고서 추가. SKILL.md 직접 수정 없음. PR #34
 - 2026-11-25 23:22 T35 시작 (브랜치 task/T35-skill-procedure-review)
 - 2026-11-25 23:24 T35 PR 올림 — 절차 중심 스킬 6개 점검 보고서 추가. PR #35
+- 2026-11-25 23:24 T35 PR 올림 — 절차 중심 스킬 6개 점검 보고서 추가. SKILL.md 직접 수정 없음. PR #35
 - 2026-11-25 23:25 T35 CI 확인 — assistant·guide-splitter 시험과 개인정보 검사 통과. catalog 는 PyYAML 미설치로 실패, known-failing 은 기존 ISSUE-003 1개 실패
 - 2026-11-25 23:25 T31(admin-s2b-buyer) 시작 (브랜치 task/T31-admin-s2b-buyer-korean)
 - 2026-11-25 23:26 T31(admin-s2b-buyer) PR 올림 — 영어 제목 When to Use를 사용 시점으로 변경. PR #36
+- 2026-11-25 23:26 T31(admin-s2b-buyer) PR 올림 — 영어 제목을 한국어로 변경. PR #36
+- 2026-11-25 23:27 T31(classmanage-student-classifier) 시작 (브랜치 task/T31-student-classifier-korean)
+- 2026-11-25 23:29 T31(classmanage-student-classifier) PR 올림 — 영어 제목·단계 한국어화, 예시 이름 익명화. PR #37
+- 2026-11-25 23:30 T31(classmanage-student-eval-generator) 시작 (브랜치 task/T31-student-eval-generator-korean)
+- 2026-11-25 23:31 T31(classmanage-student-eval-generator) PR 올림 — 영어 제목·단계 한국어화, 예시 이름 익명화. PR #38
+- 2026-11-25 23:32 T31(classmanage-student-photo-organizer) 시작 (브랜치 task/T31-student-photo-organizer-korean)
+- 2026-11-25 23:33 T31(classmanage-student-photo-organizer) PR 올림 — 영어 제목·단계 한국어화, 예시 이름 익명화. PR #39
+- 2026-11-25 23:34 T31(classmanage-iscream-evaluate) 시작 (브랜치 task/T31-iscream-evaluate-korean)
+- 2026-11-25 23:34 T31(classmanage-iscream-evaluate) PR 올림 — 영어 제목 한국어화, 예시 이름 익명화, 저장소에 없는 로컬 경로 제거. PR #40

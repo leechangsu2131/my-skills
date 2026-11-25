@@ -13,3 +13,4 @@
 - 2026-11-25 23:40 T32 시작 (브랜치 task/T32-splitter-readme-korean)
 - 2026-11-25 23:50 T32 PR 올림 — splitter README 한국어화, 상위 SKILL 중복 줄이고 사용 설명 유지. PR #30
 - 2026-11-25 23:55 T33 시작 (브랜치 task/T33-admin-neis-bot-issues)
+- 2026-11-25 00:12 T33(admin-neis-bot) PR 올림 — ISSUE 상태별 재배치, 미확인 원인·파일 경로 표시, 기존 기록 보존. PR #31

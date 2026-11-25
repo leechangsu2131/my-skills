@@ -18,12 +18,12 @@
 | T07 | util-storagemap | 순수 함수 | 완료(2026-11-25 합침) |
 | T08 | util-pdf-translator | 쪽 나누기·글 정리 함수(번역 API 는 가짜) | 완료(2026-11-25 합침) |
 | T09 | personal-obsidansystem-main | 노트 묶음·파일 이름 규칙 함수 | 완료(2026-11-25 합침) |
-| T10 | personal-youtube-gemini-kakao-automation | 자막 정리·메시지 만들기 함수(카카오·Gemini 는 가짜) | 열림 |
-| T11 | admin-gbetalk | 받은 쪽지 정리·파싱 함수(실제 발송 금지, 화면 조작 부분은 제외) | 열림 |
+| T10 | personal-youtube-gemini-kakao-automation | 자막 정리·메시지 만들기 함수(카카오·Gemini 는 가짜) | 완료(2026-11-26 합침) |
+| T11 | admin-gbetalk | 받은 쪽지 정리·파싱 함수(실제 발송 금지, 화면 조작 부분은 제외) | 완료(2026-11-26 합침) |
 | T12 | personal-carrot | 순수 함수 | 완료(2026-11-25 합침) |
-| T13 | workflow-hub-main / util-webtoguide / util-web-scraper | 순수 함수(각각 따로 브랜치) | 열림 |
-| T14 | teacherlesson-workspace | `scripts/sync_semester2.py` 의 대조·변환 함수(Supabase 가짜) | 열림 |
-| T15 | teacherlesson-from-neis | `extension/popup.js` 최상위 순수 함수(`normalizeApproverNames`·`sanitizeApprovalProfiles`·`buildApprovalBatches` 등) — Node `vm` 으로 파일을 불러오되 `document`·`chrome` 은 가짜. **NEIS 페이지에 주입되는 함수(`absence-workflow.js`, popup.js 의 `…OnNeis`) 안쪽 함수는 따로 불러올 수 없으니 대상에서 뺀다**(크롬 주입 구조상 통째로여야 함) | 열림 |
+| T13 | workflow-hub-main / util-webtoguide / util-web-scraper | 순수 함수(각각 따로 브랜치) | 진행 중(workflow-hub 합침, web-scraper·webtoguide 검토 중) |
+| T14 | teacherlesson-workspace | `scripts/sync_semester2.py` 의 대조·변환 함수(Supabase 가짜) | 완료(2026-11-26 합침) |
+| T15 | teacherlesson-from-neis | `extension/popup.js` 최상위 순수 함수(`normalizeApproverNames`·`sanitizeApprovalProfiles`·`buildApprovalBatches` 등) — Node `vm` 으로 파일을 불러오되 `document`·`chrome` 은 가짜. **NEIS 페이지에 주입되는 함수(`absence-workflow.js`, popup.js 의 `…OnNeis`) 안쪽 함수는 따로 불러올 수 없으니 대상에서 뺀다**(크롬 주입 구조상 통째로여야 함) | 완료(2026-11-26 합침) |
 
 ## B. 작은 기능·정리 코드 (R) — 각자 적힌 파일만
 
@@ -44,18 +44,18 @@
 | T47 | 메모 동기화 부품 보완(검토 🟡): ① 내려받은 메모에 서버 `memo_key` 를 그대로 저장해 중복 판정(지금은 `at` 없는 메모가 받을 때마다 늘어남) ② CLI 출력 utf-8 ③ README·SKILL.md 에 memo_sync 사용법 절 ④ (선택) 단계 기록 step·sys·adj 를 올리지 않는 설정 | `memo_sync.py`, `tests/test_memo_sync.py`, README·SKILL 의 memo_sync 절 | 중복 재현 시험 통과 | 열림 |
 | T49 | (교사 PC, Claude Code) 메모 동기화 연결: SQL 실행(진도와 같은 슈파베이스 프로젝트) → `save_session` 뒤 `push_session` 을 **백그라운드 스레드**로 → `실행_수업비서.bat` 에서 서버 켜기 **전에** `memo_sync.py pull --if-older 24` → 두 PC 에서 확인. **먼저 교사 결정**: 📝·🔧·🎤 같은 자유 글 메모에 학생 이름이 들어가면 그대로 슈파베이스에 올라감(🙋 학생 메모만 제외됨) | `assistant_server.py`, bat | 두 PC 메모 같음 | 교사 결정 대기 |
 | T58 | 개인정보 검사 도구(`tools/check_privacy.py`) 다듬기(검토 🟡): ① 오탐 — 13자리 숫자(타임스탬프·견적번호·NEIS 코드)를 주민번호로, 영문자 붙은 숫자를 전화번호로, `setup-python@v5.1.0`·`lodash@4.17.21`·`git@github.com` 을 이메일로 잡음 — **이메일은 이제 괜찮으므로(2026-11-25 교사 결정) 이메일 검사는 뺀다** → 숫자 앞뒤 `[0-9A-Za-z]` 막기, 주민번호는 앞 6자리 날짜 확인 ② 미탐 — 노션 `ntn_`·`secret_`, 32자리 16진 DB ID, `GOCSPX-`, `/c/Users/<이름>`, `.env` 파일 자체 ③ `--stdin` 을 `sys.stdin.buffer` + `errors=replace` 로 ④ `--diff-args` 가 뒤 인자를 다 가져감, `++ ` 로 시작하는 추가 줄 빠짐. 다 되면 `.github/workflows/check.yml` 의 `--warn-only` 를 빼는 것을 PR 에 제안 | `tools/check_privacy.py`, `tests/test_check_privacy.py` | 오탐·미탐 예시 시험 통과 | 열림 |
-| T59 | 추적 중인 결과물 정리 목록(T24 경고 약 40건): exam-grader 임시 파일 42개, graderV2 PDF 2개(**학생 시험지일 수 있음**), record-trade 증권사 PDF 26개, youtube-kakao `tmp_*.vtt`, school-print `ParameterSetObject.pdf` → 스킬별로 무엇인지·지워도 되는지 표로(지우지 말 것, 교사 결정) | `docs/reviews/tracked-outputs.md` | 표 완성 | 열림 |
+| T59 | 추적 중인 결과물 정리 목록(T24 경고 약 40건): exam-grader 임시 파일 42개, graderV2 PDF 2개(**학생 시험지일 수 있음**), record-trade 증권사 PDF 26개, youtube-kakao `tmp_*.vtt`, school-print `ParameterSetObject.pdf` → 스킬별로 무엇인지·지워도 되는지 표로(지우지 말 것, 교사 결정) | `docs/reviews/tracked-outputs.md` | 표 완성 | 완료(2026-11-26 합침) |
 
 ## C. 문서 정리 (R) — 정보는 빼지 말고 양식·쉬운 한국어로
 
 | 번호 | 할 일 | 상태 |
 |---|---|---|
 | T30 | teacherlesson-assistant ISSUES 표준 양식·WORKLOG 겹침·SKILL/README 최신화 | 완료(2026-11-25 합침) |
-| T31 | 영어 제목·문장이 섞인 SKILL.md/README.md 를 한국어로: admin-s2b-buyer, classmanage-iscream-evaluate, classmanage-student-classifier, classmanage-student-eval-generator, classmanage-student-photo-organizer, personal-record-trade (스킬마다 브랜치 따로 가능) | 열림 |
-| T32 | teacherlesson-guide `splitter/README.md`(영어) → 한국어, 상위 SKILL.md 와 겹치는 부분 정리 | 열림 |
-| T33 | 열린 항목이 많은 ISSUES.md 표준 양식으로: admin-neis-bot, school-todo-kakao, homepage-school-board, personal-video-note, teacherlesson-from-neis (스킬마다 따로) | 열림 |
-| T34 | 스킬 58개 SKILL.md 앞머리 점검: description 이 "언제 쓰나"를 말하는지, summary 가 한두 문장인지, status 가 맞는지 → 고칠 목록을 `docs/reports/skill-meta-review.md` 로 (직접 고치지 말고 목록만) | 열림 |
-| T35 | 코드가 없는 스킬(admin-buying-product, personal-attach-files, personal-free-parents-app, teacherlesson-aiep/classtool/courseware-builder 등) SKILL.md 가 실제 절차 문서로 충분한지 점검 목록 | 열림 |
+| T31 | 영어 제목·문장이 섞인 SKILL.md/README.md 를 한국어로: admin-s2b-buyer, classmanage-iscream-evaluate, classmanage-student-classifier, classmanage-student-eval-generator, classmanage-student-photo-organizer, personal-record-trade (스킬마다 브랜치 따로 가능) | 완료(2026-11-26 합침) |
+| T32 | teacherlesson-guide `splitter/README.md`(영어) → 한국어, 상위 SKILL.md 와 겹치는 부분 정리 | 완료(2026-11-26 합침) |
+| T33 | 열린 항목이 많은 ISSUES.md 표준 양식으로: admin-neis-bot, school-todo-kakao, homepage-school-board, personal-video-note, teacherlesson-from-neis (스킬마다 따로) | 완료(2026-11-26 합침) |
+| T34 | 스킬 58개 SKILL.md 앞머리 점검: description 이 "언제 쓰나"를 말하는지, summary 가 한두 문장인지, status 가 맞는지 → 고칠 목록을 `docs/reports/skill-meta-review.md` 로 (직접 고치지 말고 목록만) | 완료(2026-11-26 합침) |
+| T35 | 코드가 없는 스킬(admin-buying-product, personal-attach-files, personal-free-parents-app, teacherlesson-aiep/classtool/courseware-builder 등) SKILL.md 가 실제 절차 문서로 충분한지 점검 목록 | 완료(2026-11-26 합침) |
 
 ## D. 교사 PC 에서만 (P) — Gemini CLI 작업자 등, 교사 PC 의 데이터를 씀
 
@@ -71,14 +71,43 @@
 
 | 번호 | 할 일 | 읽을 파일(원문 주소로) | 상태 |
 |---|---|---|---|
-| T50 | 수업 비서 **교사용 사용 설명서 한 장**(화면 순서대로: 날짜·교시 → 🌙 수업 준비 → 지금 할 일 → 메모 → 진도 조정). 그림 없이 쉬운 말 | teacherlesson-assistant `README.md`, `SKILL.md` | 열림 |
+| T50 | 수업 비서 **교사용 사용 설명서 한 장**(화면 순서대로: 날짜·교시 → 🌙 수업 준비 → 지금 할 일 → 메모 → 진도 조정). 그림 없이 쉬운 말 | teacherlesson-assistant `README.md`, `SKILL.md` | 완료(2026-11-26 합침) |
 | T51 | **학교 PC 처음 설치 안내서**(Python·Node·Gemini CLI·크롬 로그인·OneDrive, 순서·확인 방법) | teacherlesson-assistant `README.md`, T20 결과 | 열림 |
 | T52 | 🌙 자동 준비 질문문(PROMPT) 개선안: 좋은 발문 기준(열린 질문·학생 경험 연결), 3학년 수준 말, 시간 배분 원칙을 넣은 새 문안 + 이유 | teacherlesson-assistant `prepare_lessons.py` 의 `PROMPT` | 열림 |
 | T53 | 수업 비서 **손으로 확인하는 점검표**(새 기능마다: 무엇을 누르면 무엇이 보여야 하는지) | teacherlesson-assistant `README.md`, `ISSUES.md` | 열림 |
 | T54 | 학생 발표 메모를 누가기록으로 모을 때의 **기록 문장 원칙**(사실 위주, 평가어 피하기, 개인정보) 초안 | classmanage-student-eval-generator `SKILL.md` | 열림 |
-| T55 | 저장소 전체 **용어 사전**: 진도표·수업배치·차시·흐름·단원 개관·슬롯·record_key/lesson_id 등 쉬운 설명 한 줄씩 | `README.md`, teacherlesson-* SKILL.md | 열림 |
-| T56 | `docs/SECURITY_LESSONS_LEARNED.md` 를 읽고 **작업자용 개인정보 체크리스트** 1쪽 | 그 파일, `docs/WORKER_GUIDE.md` | 열림 |
+| T55 | 저장소 전체 **용어 사전**: 진도표·수업배치·차시·흐름·단원 개관·슬롯·record_key/lesson_id 등 쉬운 설명 한 줄씩 | `README.md`, teacherlesson-* SKILL.md | 완료(2026-11-26 합침) |
+| T56 | `docs/SECURITY_LESSONS_LEARNED.md` 를 읽고 **작업자용 개인정보 체크리스트** 1쪽 | 그 파일, `docs/WORKER_GUIDE.md` | 완료(2026-11-26 합침) |
 | T57 | 스킬 하나를 골라 SKILL.md 를 **쉬운 한국어로 다시 쓴 안**(뜻은 그대로) — 스킬마다 따로 | 고른 스킬 `SKILL.md` | 열림 |
+
+## F. 2026-11-26 채움 — 시험이 찾은 버그 고치기 (R) · 각 스킬 ISSUES 에 증상이 있고, 시험은 xfail 로 표시돼 있음
+
+> 방법: 그 스킬의 xfail 시험을 하나 골라 **소스를 고쳐** 통과시키고 xfail 표시를 지운다. 고친 범위는 그 함수만. ISSUES 항목을 🟢 로.
+
+| 번호 | 스킬 | 할 일 | 상태 |
+|---|---|---|---|
+| T60 | teacherlesson-workspace | `sync_semester2.safe_int(12.0)` 이 None → `int(float(...))` (ISSUE-T14) | 열림 |
+| T61 | classmanage-supabase-export | xfail 4개(ISSUES 참고) | 열림 |
+| T62 | personal-carrot | xfail 6개 | 열림 |
+| T63 | personal-library-search | xfail 2개 | 열림 |
+| T64 | util-pdf-translator | xfail 5개 | 열림 |
+| T65 | personal-obsidansystem-main | xfail 4개 | 열림 |
+| T66 | personal-youtube-gemini-kakao-automation | xfail 3개 | 열림 |
+| T67 | util-notebooklm / teacherlesson-assistant / teacherlesson-guide | 루트 `tests/` 의 xfail 6개(T01~T03) | 열림 |
+| T68 | teacherlesson-assistant | `prepare_lessons.parse_flow`: JSON null 을 "None" 글자로 저장(ISSUE-032), 설명 글의 중괄호에 걸림(ISSUE-031) | 열림 |
+| T69 | util-storagemap / workflow-hub-main / teacherlesson-schedule | 남은 todo·xfail(각 ISSUES) | 열림 |
+
+## G. 2026-11-26 채움 — 수업 비서 새 기능 (R, 비밀값 없이 만들 수 있는 것)
+
+| 번호 | 할 일 | 고칠 파일 | 끝난 기준 | 상태 |
+|---|---|---|---|---|
+| T70 | **교실 도구 묶음**: 타이머(분·초, 끝나면 화면 깜빡임), 발표자 뽑기(이번 반 번호 범위에서 무작위·중복 없이, 이름은 쓰지 않음), 소음 측정(마이크 크기 막대, 녹음·저장 안 함). 수업 비서 화면의 접는 칸 하나로 | `web/tools.js`(새), `web/index.html` 에는 칸 하나와 불러오기만 | 브라우저 없이 도는 순수 함수 시험(node) + 손 점검 순서를 README 에 | 열림 |
+| T71 | **녹음 받아쓰기 뼈대**: `transcribe.py` — 데이터 폴더의 수업 녹음(webm)을 로컬 받아쓰기(faster-whisper 가 있으면, 없으면 안내)로 글로, `[mm:ss]` 메모와 시간 맞춰 붙이기. 분석: 교사 말 비율(받아쓰기 화자 구분이 없으면 '확인 필요'), 단계별 시간, 물음표 문장 수 | `transcribe.py`(새), 시험 | 가짜 받아쓰기 결과로 시간 맞추기·분석 시험 | 열림 |
+| T72 | 시간이 모자랄 때 **뒤 단계를 한 번에 줄이는 단추** — 남은 단계의 분을 비례로 줄이되 '꼭 해야 함' 단계는 덜 줄임(ISSUE-009) | `web/index.html` 의 단계 시간 부분 | 줄이는 계산을 순수 함수로 빼서 시험 | 열림 |
+| T73 | 녹음 조각 하나가 저장에 실패하면 그 뒤 webm 이 재생 안 될 수 있음 → 조각 순번 확인·재전송(ISSUE-010) | `web/index.html`(녹음 부분), `assistant_server.py`(`save_audio`) | 순번 빠짐·재전송 시험 | 열림 |
+| T74 | `실행_수업비서.bat` 이 `py -3.13` 과 `python` 을 섞어 씀 → `py -3.13` 하나로, 없으면 `python`(ISSUE-034) | `실행_수업비서.bat`, `점검_PC.bat` | `check_setup.py` 실행기 항목 ✅ | 열림 |
+| T75 | `check_setup.py` — config.json 이 `{ }` 가 아니면 멈춤(ISSUE-035) | `check_setup.py`, 시험 | 시험 추가·통과 | 열림 |
+| T76 | 수업 메모·🙋 학생 발표 메모를 **주간 정리 글**로: sessions 에서 과목·출판사별 고칠점·좋았음 모으기(학생 이름은 학생별 절로만, 바깥에 보내지 않음) → `데이터 폴더/reports/week-<날짜>.md`. 출판사 주의점 후보를 따로 표시 | `weekly_report.py`(새), 시험 | 가짜 sessions 로 시험 | 열림 |
 
 ## S. 상시 일 — 고를 일이 없을 때 언제든 (번호를 브랜치에 넣고, 대상 스킬을 일지에 적어 겹치지 않게)
 

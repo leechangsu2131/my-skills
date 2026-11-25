@@ -4,7 +4,6 @@
 `git diff --staged` 에서 **새로 추가된 줄**만 읽어, 아래처럼 생긴 것이 있으면 경고합니다.
   - 전화번호 모양 (휴대전화·지역번호)
   - 주민등록번호 모양 (앞 6자리-뒤 7자리)
-  - 이메일 주소
   - API 키·토큰 모양 (sk-, AIza, ghp_, github_pat_, xox*, AKIA, 비공개 키 머리말, JWT)
   - 실제 사용자 폴더 경로 (C:\\Users\\<이름>\\…)
 
@@ -29,21 +28,11 @@ import argparse
 import re
 import subprocess
 import sys
+from datetime import date
 from dataclasses import dataclass
 from typing import Iterable, Iterator
 
 SKIP_MARK = "privacy-ok"
-
-# 예시·가짜 값으로 보고 통과시킬 이메일 주소 끝부분
-SAFE_EMAIL_DOMAINS = (
-    "example.com",
-    "example.org",
-    "example.net",
-    "users.noreply.github.com",
-    "localhost",
-    "test.com",
-    "anthropic.com",
-)
 
 # C:\Users\<여기> 자리에 이런 값이 있으면 예시로 본다
 SAFE_USER_DIRS = {
@@ -65,14 +54,16 @@ SAFE_USER_DIRS = {
 }
 
 PHONE_RE = re.compile(
-    r"(?<![\d-])("
+    r"(?<![0-9A-Za-z])("
     r"01[016789][-. ]?\d{3,4}[-. ]?\d{4}"  # 휴대전화
     r"|0(?:2|[3-6][1-5]|70)[-. ]?\d{3,4}[-. ]?\d{4}"  # 서울·지역·인터넷전화
-    r")(?![\d-])"
+    r")(?![0-9A-Za-z])"
 )
-RRN_RE = re.compile(r"(?<!\d)(\d{6})[- ]?([1-4]\d{6})(?!\d)")
-EMAIL_RE = re.compile(r"[A-Za-z0-9._%+-]+@([A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)+)")
-WIN_USER_RE = re.compile(r"(?i)\b[A-Z]:(?:\\\\|\\|/)Users(?:\\\\|\\|/)([^\\/\s\"'<>|:*?%]+)")
+# 주민번호는 구분 기호가 있고 앞 6자리가 실제 달력 날짜인 경우만 찾는다.
+RRN_RE = re.compile(r"(?<![0-9A-Za-z])(\d{6})[- ]([1-4]\d{6})(?![0-9A-Za-z])")
+WIN_USER_RE = re.compile(r"(?i)\b[A-Z]:(?:\\\\|\\|/)Users(?:\\\\|\\|/)([^\\/\\s\"'<>|:*?%]+)")
+GIT_BASH_USER_RE = re.compile(r"(?i)(?<![A-Za-z0-9])/[a-z]/Users/([^/\\s\"'<>|:*?%]+)")
+ENV_SAFE_NAMES = {".env.example", ".env.sample", ".env.template", ".env.dist"}
 
 # (이름, 정규식) — 키·토큰 모양
 SECRET_PATTERNS: list[tuple[str, re.Pattern[str]]] = [
@@ -84,6 +75,10 @@ SECRET_PATTERNS: list[tuple[str, re.Pattern[str]]] = [
     ("AWS 접근 키", re.compile(r"\bAKIA[0-9A-Z]{16}\b")),
     ("비공개 키 머리말", re.compile(r"-----BEGIN [A-Z ]*PRIVATE KEY-----")),
     ("JWT 토큰", re.compile(r"\beyJ[A-Za-z0-9_-]{10,}\.eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{5,}")),
+    ("Notion API 토큰(ntn_)", re.compile(r"\bntn_[A-Za-z0-9_-]{16,}\b")),
+    ("Notion 비밀 토큰(secret_)", re.compile(r"\bsecret_[A-Za-z0-9_-]{16,}\b")),
+    ("Google OAuth 클라이언트 비밀값", re.compile(r"\bGOCSPX-[A-Za-z0-9_-]{20,}\b")),
+    ("Notion 데이터베이스 ID", re.compile(r"(?i)\b(?:notion[_ -]?)?(?:database|db)[_ -]?id\s*[:=]\s*([0-9a-f]{32})\b")),
 ]
 
 
@@ -113,9 +108,38 @@ def _is_placeholder_digits(text: str) -> bool:
     return not digits or len(set(digits)) == 1
 
 
-def _email_is_safe(domain: str) -> bool:
-    domain = domain.lower()
-    return any(domain == d or domain.endswith("." + d) for d in SAFE_EMAIL_DOMAINS)
+def _valid_rrn_date(value: str) -> bool:
+    """주민번호 앞 6자리 YYMMDD가 실제 날짜인지 확인한다."""
+    try:
+        yy, mm, dd = int(value[:2]), int(value[2:4]), int(value[4:6])
+        return _valid_date(1900 + yy, mm, dd) or _valid_date(2000 + yy, mm, dd)
+    except (TypeError, ValueError):
+        return False
+
+
+def _valid_date(year: int, month: int, day: int) -> bool:
+    try:
+        date(year, month, day)
+        return True
+    except ValueError:
+        return False
+
+
+def _is_safe_user_dir(value: str) -> bool:
+    user = value.strip().lower()
+    return (
+        user in SAFE_USER_DIRS
+        or user.startswith("<")
+        or user.startswith("$")
+        or user.startswith("{")
+    )
+
+
+def _is_env_file(path: str) -> bool:
+    name = path.replace("\\", "/").rsplit("/", 1)[-1].lower()
+    return name.startswith(".env") and name not in ENV_SAFE_NAMES and not name.endswith(
+        (".example", ".sample", ".template", ".dist")
+    )
 
 
 def scan_line(text: str) -> list[tuple[str, str]]:
@@ -126,33 +150,48 @@ def scan_line(text: str) -> list[tuple[str, str]]:
 
     for name, pattern in SECRET_PATTERNS:
         for m in pattern.finditer(text):
-            found.append((name, m.group(0)))
+            value = m.group(1) if m.lastindex else m.group(0)
+            found.append((name, value))
 
-    for m in RRN_RE.finditer(text):
-        if not _is_placeholder_digits(m.group(0)):
-            found.append(("주민등록번호 모양", m.group(0)))
+    valid_rrns = [
+        m for m in RRN_RE.finditer(text)
+        if _valid_rrn_date(m.group(1)) and not _is_placeholder_digits(m.group(0))
+    ]
+    for m in valid_rrns:
+        found.append(("주민등록번호 모양", m.group(0)))
 
-    rrn_spans = [m.span() for m in RRN_RE.finditer(text) if not _is_placeholder_digits(m.group(0))]
+    rrn_spans = [m.span() for m in valid_rrns]
     for m in PHONE_RE.finditer(text):
-        # 010-0000-0000 처럼 끝 7자리가 같은 수뿐이면 자리표시용으로 본다
         if _is_placeholder_digits(re.sub(r"\D", "", m.group(0))[-7:]):
             continue
-        # 같은 자리가 주민번호 모양으로 이미 잡혔으면 중복으로 세지 않는다
-        if any(s <= m.start() and m.end() <= e for s, e in rrn_spans):
+        if any(start <= m.start() and m.end() <= end for start, end in rrn_spans):
             continue
         found.append(("전화번호 모양", m.group(0)))
 
-    for m in EMAIL_RE.finditer(text):
-        if not _email_is_safe(m.group(1)):
-            found.append(("이메일 주소", m.group(0)))
-
-    for m in WIN_USER_RE.finditer(text):
-        user = m.group(1).strip().lower()
-        if user in SAFE_USER_DIRS or user.startswith("<") or user.startswith("$") or user.startswith("{"):
-            continue
-        found.append(("실제 사용자 폴더 경로", m.group(0)))
+    for pattern in (WIN_USER_RE, GIT_BASH_USER_RE):
+        for m in pattern.finditer(text):
+            if _is_safe_user_dir(m.group(1)):
+                continue
+            found.append(("실제 사용자 폴더 경로", m.group(0)))
 
     return found
+
+
+def iter_changed_paths(diff_text: str) -> Iterator[str]:
+    """diff 에서 변경된 파일 경로를 돌려준다."""
+    in_hunk = False
+    for raw in diff_text.splitlines():
+        if raw.startswith("diff --git "):
+            in_hunk = False
+            continue
+        if raw.startswith("@@"):
+            in_hunk = True
+            continue
+        if not in_hunk and raw.startswith("+++ "):
+            target = raw[4:].strip()
+            if target == "/dev/null":
+                continue
+            yield target[2:] if target.startswith("b/") else target
 
 
 def iter_added_lines(diff_text: str) -> Iterator[tuple[str, int, str]]:
@@ -165,34 +204,33 @@ def iter_added_lines(diff_text: str) -> Iterator[tuple[str, int, str]]:
             in_hunk = False
             path = "(알 수 없음)"
             continue
-        if raw.startswith("+++ "):
-            target = raw[4:].strip()
-            if target == "/dev/null":
-                continue
-            path = target[2:] if target.startswith("b/") else target
-            continue
-        if raw.startswith("--- ") and not in_hunk:
-            continue
         hunk = re.match(r"^@@ -\d+(?:,\d+)? \+(\d+)(?:,\d+)? @@", raw)
         if hunk:
             new_line = int(hunk.group(1))
             in_hunk = True
             continue
-        if not in_hunk:
+        if in_hunk:
+            # hunk 안의 +++ 로 시작하는 실제 추가 줄도 파일 헤더로 오인하지 않는다.
+            if raw.startswith("+"):
+                yield path, new_line, raw[1:]
+                new_line += 1
+            elif raw.startswith("-") or raw.startswith("\\"):
+                continue
+            else:
+                new_line += 1
             continue
-        if raw.startswith("+"):
-            yield path, new_line, raw[1:]
-            new_line += 1
-        elif raw.startswith("-"):
-            continue
-        elif raw.startswith("\\"):  # "\ No newline at end of file"
-            continue
-        else:
-            new_line += 1
+        if raw.startswith("+++ "):
+            target = raw[4:].strip()
+            if target == "/dev/null":
+                continue
+            path = target[2:] if target.startswith("b/") else target
 
 
 def scan_diff(diff_text: str) -> list[Finding]:
     findings: list[Finding] = []
+    for path in iter_changed_paths(diff_text):
+        if _is_env_file(path):
+            findings.append(Finding(path, 0, "환경변수 파일", "파일 자체"))
     for path, line_no, text in iter_added_lines(diff_text):
         for kind, value in scan_line(text):
             findings.append(Finding(path, line_no, kind, mask(value)))
@@ -216,12 +254,17 @@ def main(argv: list[str] | None = None) -> int:
 
     parser = argparse.ArgumentParser(description="커밋 전 개인정보·비밀값 모양 검사")
     parser.add_argument("--stdin", action="store_true", help="git diff 결과를 표준 입력에서 읽기")
-    parser.add_argument("--diff-args", nargs=argparse.REMAINDER, default=[], help="git diff --staged 뒤에 붙일 인자")
+    parser.add_argument("--diff-args", nargs="*", default=[], metavar="ARG", help="git diff --staged 뒤에 붙일 인자")
     parser.add_argument("--warn-only", action="store_true", help="경고만 하고 항상 0 으로 끝냄")
-    args = parser.parse_args(argv)
+    args, unknown_args = parser.parse_known_args(argv)
+    diff_args = [*args.diff_args, *unknown_args]
 
     try:
-        diff_text = sys.stdin.read() if args.stdin else read_staged_diff(args.diff_args)
+        if args.stdin:
+            buffer = getattr(sys.stdin, "buffer", None)
+            diff_text = buffer.read().decode("utf-8", errors="replace") if buffer is not None else sys.stdin.read()
+        else:
+            diff_text = read_staged_diff(diff_args)
     except RuntimeError as exc:
         print(f"오류: {exc}", file=sys.stderr)
         return 2

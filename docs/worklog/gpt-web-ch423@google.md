@@ -20,3 +20,4 @@
 - 2026-11-25 23:16 T33(personal-video-note) PR 올림 — 연수원 강의 이슈 증상·원인·우회·남은 일 정리. PR #33
 - 2026-11-25 23:17 T33 확인 — school-todo-kakao와 teacherlesson-from-neis의 ISSUES는 이미 상태별 표준 구조라 수정하지 않음
 - 2026-11-25 23:18 T34 시작 (브랜치 task/T34-skill-meta-review)
+- 2026-11-25 23:21 T34 PR 올림 — 최상위 SKILL.md 58개 메타데이터 검토 보고서 추가. SKILL.md 직접 수정 없음. PR #34

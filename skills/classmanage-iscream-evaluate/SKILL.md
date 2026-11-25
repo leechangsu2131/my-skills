@@ -14,7 +14,7 @@ metadata:
 
 # i-scream 과목별 평가 자동 기록 (classmanage-iscream-evaluate)
 
-## Overview
+## 개요
 
 학기 동안 Supabase `class-manage` 테이블에 축적된 학생별 관찰 기록을 바탕으로,
 **i-scream 과목별 평가** 페이지(`SubjectEvaluation.do`)에 자동으로 평가 내용을 기록하는 스킬입니다.
@@ -22,7 +22,7 @@ metadata:
 기존 `classmanage-record-viewer`의 데이터를 활용하며,
 `classmanage-student-eval-generator`로 생성된 평가 문장도 입력으로 받을 수 있습니다.
 
-## When to Use This Skill
+## 사용 시점
 
 - 학기말에 i-scream 과목별 평가를 기록해야 할 때
 - "i-scream에 평가 기록해줘" 또는 "아이스크림에 과목별 평가 입력해줘"라고 요청할 때
@@ -107,13 +107,13 @@ python iscream_evaluate.py --dry-run
 python iscream_evaluate.py --preview
 
 # 특정 학생만
-python iscream_evaluate.py --student 김민준
+python iscream_evaluate.py --student 학생A
 
 # 특정 과목만
 python iscream_evaluate.py --subject 수학
 
 # 특정 학생 + 특정 과목
-python iscream_evaluate.py --student 김민준 --subject 수학
+python iscream_evaluate.py --student 학생A --subject 수학
 ```
 
 ## 아키텍처
@@ -166,9 +166,9 @@ i-scream 과목별 평가 페이지에 자동 입력
 
 ## 개발 및 디버깅 역사 (ing.md)
 
-- 이 스킬의 개발/디버깅 과정과 자가 진단 결과는 [ing.md](file:///C:/Users/user/.gemini/antigravity/scratch/repos/my-skills/skills/classmanage-iscream-evaluate/ing.md) 파일에 상세히 기록되어 있습니다. 오류 수정이 필요한 경우 이 문서를 확인하세요.
+- 이 스킬의 개발/디버깅 과정과 자가 진단 결과는 [ing.md](ing.md) 파일에 상세히 기록되어 있습니다. 오류 수정이 필요한 경우 이 문서를 확인하세요.
 
-## Related Skills
+## 관련 스킬
 
 - `@classmanage-record-viewer` — 학생 기록 조회 뷰어 (데이터 원천)
 - `@classmanage-student-eval-generator` — LLM 기반 평가 문장 생성

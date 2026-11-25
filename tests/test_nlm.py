@@ -258,7 +258,6 @@ def ask(tmp_path, monkeypatch):
     work = tmp_path / "work"
     monkeypatch.setattr(nlm, "gemini_command", lambda: ["gemini"])
     monkeypatch.setattr(nlm, "env_values", lambda *a, **k: {})
-    monkeypatch.setattr(nlm, "LAST_MODEL", "")
 
     def call(fake, prompt="질문 {file}", **kw):
         monkeypatch.setattr(nlm.subprocess, "run", fake)
@@ -270,7 +269,7 @@ def test_gemini_ask_first_model_answers(ask):
     call, work = ask
     fake = FakeRun(done("  답입니다 \n"))
     assert call(fake) == ("답입니다", nlm.DEFAULT_MODEL)
-    assert fake.models == [nlm.DEFAULT_MODEL] and nlm.LAST_MODEL == nlm.DEFAULT_MODEL
+    assert fake.models == [nlm.DEFAULT_MODEL]
     cmd, kw = fake.calls[0]
     assert cmd[:5] == ["gemini", "-e", "none", "-m", nlm.DEFAULT_MODEL] and cmd[5] == "-p"
     assert cmd[6] == "질문 doc.pdf"                      # {file} 은 고정 이름으로

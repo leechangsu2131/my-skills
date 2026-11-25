@@ -18,6 +18,17 @@
 5. TASKS 상태 정리(`완료`, `검토 대기`) 후 푸시. T 등급 작업자가 교사에게 넘긴 결과는 반영하고 그 작업자 일지(`docs/worklog/<이름>.md`)에 대신 한 줄 적는다
 6. 교사에게 짧게: 합친 것 · 막힌 것 · 교사 결정이 필요한 것 · 빈 작업자에게 줄 일
 
+## 0-2. 교사 PC 에서 작업자 켜기 (까만 창)
+
+```powershell
+cd $env:USERPROFILE\Documents\GitHub\my-skills
+powershell -ExecutionPolicy Bypass -File tools\start_worker.ps1 -Tool bizcoder -Name bizcoder-1
+```
+- 작업자마다 **자기 작업 폴더** `GitHub\my-skills-<이름>`(git worktree)를 처음 한 번 만들고, 거기서 도구를 켜고 첫 요청을 넣는다. 같은 폴더를 여러 작업자가 쓰면 브랜치가 뒤섞인다.
+- 여러 명이면 까만 창을 여러 개 열어 이름만 바꿔 실행(`bizcoder-2`, `gemini-1` …). 이어서 할 때도 같은 명령.
+- bizcoder 는 확인 없이 스스로 진행(`--auto`, 위험 명령·공개 배포만 물음). 사용량 `bizcoder usage`, 로그인 `bizcoder whoami`, 읽는 지침 `bizcoder compat`.
+- 다 쓴 작업 폴더 지우기: `git worktree remove ..\my-skills-<이름>` (안 합친 브랜치가 없을 때).
+
 ## 1. 올라온 일 보기
 
 ```powershell

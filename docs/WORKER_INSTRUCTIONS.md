@@ -12,7 +12,9 @@
 | Claude Code (웹·PC) | 저장소의 `CLAUDE.md` 를 스스로 읽음 — 처음 대화에 아래 **전체본**을 붙여도 됨 |
 | ChatGPT 무료 | 설정 → 맞춤 설정(Customize ChatGPT). 칸마다 글자 수 제한이 있어 아래 **짧은본** |
 | Gemini CLI | 저장소의 `GEMINI.md` 를 스스로 읽음. 다른 폴더에서 쓰면 `~/.gemini/GEMINI.md` 에 전체본 |
-| bizcoder·Codex | `AGENTS.md` 를 읽음. 시스템/프로젝트 지침 칸이 있으면 전체본 |
+| bizcoder | 교사 PC 에서 `tools\start_worker.ps1 -Tool bizcoder -Name bizcoder-1` — 자기 작업 폴더를 만들고 첫 요청까지 넣어 켬. `CLAUDE.md`·`AGENTS.md`·`reviewer` 에이전트를 스스로 읽음(`bizcoder compat` 로 확인) |
+| Codex | `AGENTS.md` 를 읽음. 시스템/프로젝트 지침 칸이 있으면 전체본 |
+| Gemini CLI·Claude Code (교사 PC) | 같은 스크립트로: `-Tool gemini` / `-Tool claude` |
 
 작업자 이름 예: `claude-web-1`, `claude-web-2`, `bizcoder-1`~`3`, `gemini-1`…, `chatgpt-1`… (사람 실명 쓰지 않기)
 

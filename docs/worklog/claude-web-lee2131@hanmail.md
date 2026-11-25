@@ -7,3 +7,4 @@
 - 2026-11-25 21:10 T09 시작 (브랜치 task/T09-tests-obsidian-pkm)
 - 2026-11-25 22:10 T09 PR 올림 — skills/personal-obsidansystem-main/tests/test_pkm_core.py 시험 81개(77 통과, 4 xfail), 실제 볼트·백업 폴더 안 건드림(백업 위치를 임시 폴더로 바꿈). 확인: pytest 실행, 가려 보이는 xfail 4개는 표시를 떼고 의도한 이유로 실패하는지 확인. 버그 3개(쉼표 목록·큰따옴표 역슬래시 누적·Vault 폴더 이름)를 ISSUES(ISSUE-002~004)에 기록
 - 2026-11-26 05:15 (교사 위임 "좋은 쪽으로") T23 후속 시작 (브랜치 task/T23-ci-more-tests) — S5 보고서에서 통과를 확인한 시험을 check.yml 에 추가(요구 파일 패키지는 matrix 의 extra 로), 실패하는 것은 known 쪽. 실제 GitHub 결과로 확인
+- 2026-11-26 05:40 T23 후속 PR 올림 (#61) — check.yml tests matrix 에 10곳 추가. 실제 Actions(Python 3.12): 추가한 10곳 모두 통과. catalog 빨간불은 PR #51(PyYAML 설치)이 아직 안 합쳐져서(main 에서도 같음). known(schedule)은 알려진 실패

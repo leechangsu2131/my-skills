@@ -130,3 +130,8 @@ CLAUDE.local.md
 
 # 합쳐서 지운 옛 스킬 폴더 (학교 PC 에 남은 결과 파일이 다시 올라가지 않게)
 skills/teacherlesson-guide-mapper/
+
+# util-webtoguide 변환 결과(다른 사람 블로그 그림·가이드) — 저장소에 올리지 않음(결과는 data_dir() 에 저장)
+skills/util-webtoguide/output/
+skills/util-webtoguide/images/
+skills/util-webtoguide/guide_output.md

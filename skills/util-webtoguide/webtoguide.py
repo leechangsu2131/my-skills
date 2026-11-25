@@ -2,7 +2,11 @@ import urllib.request
 import re
 import os
 import sys
+import pathlib
 from html.parser import HTMLParser
+
+sys.path.insert(0, str(next(p / "_shared" for p in pathlib.Path(__file__).resolve().parents if (p / "_shared" / "skill_env.py").is_file())))
+from skill_env import data_dir
 
 class NaverParser(HTMLParser):
     def __init__(self):
@@ -74,7 +78,9 @@ def main():
     if parser.current_text.strip():
         parser.record.append(('TEXT', parser.current_text.strip()))
 
-    os.makedirs('images', exist_ok=True)
+    # 결과(가이드 .md + 그림)는 저장소 밖 data_dir() 에만 저장한다 (다른 사람 블로그 그림·화면 덤프가 저장소에 올라가지 않게)
+    out_dir = data_dir("util-webtoguide", "output")
+    os.makedirs(out_dir / 'images', exist_ok=True)
     
     md_content = f"# 블로그 가이드 변환 결과\n\n> **원본 게시글 출처:** [{url}]({url})\n\n"
     
@@ -90,18 +96,18 @@ def main():
             if '.jpg' in src.lower(): ext = 'jpg'
             elif '.jpeg' in src.lower(): ext = 'jpeg'
             
-            filename = f"images/img_{idx}.{ext}"
+            filename = f"images/img_{idx}.{ext}"  # 가이드 .md 기준 상대 경로
             print(f"이미지 다운로드 중: {filename}")
             try:
-                urllib.request.urlretrieve(src, filename)
+                urllib.request.urlretrieve(src, str(out_dir / filename))
                 md_content += f"![참고 이미지 {idx}]({filename})\n\n"
             except Exception as e:
                 print(f"이미지 {idx} 다운로드 실패: {e}")
                 
-    with open('guide_output.md', 'w', encoding='utf-8') as f:
+    with open(out_dir / 'guide_output.md', 'w', encoding='utf-8') as f:
         f.write(md_content)
         
-    print("완료되었습니다! guide_output.md 파일과 images 폴더를 확인하세요.")
+    print(f"완료되었습니다! 이 폴더에서 guide_output.md 파일과 images 폴더를 확인하세요: {out_dir}")
 
 if __name__ == '__main__':
     main()

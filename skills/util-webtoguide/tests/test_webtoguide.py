@@ -158,9 +158,18 @@ class FakeResponse:
         return self._html.encode("utf-8")
 
 
+def out_dir(tmp_path: Path) -> Path:
+    """시험에서 결과(가이드 .md·images/)가 생기는 곳 = data_dir("util-webtoguide", "output")."""
+    return tmp_path / "data" / "util-webtoguide" / "output"
+
+
 def run_main(mod, monkeypatch, tmp_path, url: str, html: str, *, download_fail=()):
-    """main() 을 tmp_path 안에서 돌린다. 요청 주소와 내려받은 그림을 기록해 돌려준다."""
-    monkeypatch.chdir(tmp_path)
+    """main() 을 돌린다. 현재 폴더(작업 폴더)와 데이터 폴더는 모두 tmp_path 아래로 바꿔 둔다.
+    요청 주소와 내려받은 그림(저장 경로는 out_dir 기준 상대 경로로 바꿔서)을 기록해 돌려준다."""
+    work = tmp_path / "work"
+    work.mkdir(exist_ok=True)
+    monkeypatch.chdir(work)
+    monkeypatch.setenv("MY_SKILLS_DATA_DIR", str(tmp_path / "data"))
     monkeypatch.setattr(sys, "argv", ["webtoguide.py", url])
     requested = []
     downloaded = []
@@ -172,7 +181,7 @@ def run_main(mod, monkeypatch, tmp_path, url: str, html: str, *, download_fail=(
     def fake_urlretrieve(src, filename):
         if src in download_fail:
             raise OSError("가짜 다운로드 실패")
-        downloaded.append((src, filename))
+        downloaded.append((src, Path(filename).relative_to(out_dir(tmp_path)).as_posix()))
         Path(filename).write_bytes(b"fake")
 
     monkeypatch.setattr(mod.urllib.request, "urlopen", fake_urlopen)
@@ -235,7 +244,7 @@ def test_main_모바일_주소도_PC_PostView_주소로_바꿔_요청한다(mod,
 
 def test_main_출처_링크가_맨_위에_들어간다(mod, monkeypatch, tmp_path):
     run_main(mod, monkeypatch, tmp_path, FAKE_BLOG, post("<p>본문</p>"))
-    md = (tmp_path / "guide_output.md").read_text(encoding="utf-8")
+    md = (out_dir(tmp_path) / "guide_output.md").read_text(encoding="utf-8")
     source = "https://blog.naver.com/PostView.naver?blogId=exampleid&logNo=123456"
     lines = md.splitlines()
     assert lines[0] == "# 블로그 가이드 변환 결과"
@@ -245,11 +254,11 @@ def test_main_출처_링크가_맨_위에_들어간다(mod, monkeypatch, tmp_pat
 def test_main_글과_그림이_원래_순서로_마크다운에_들어간다(mod, monkeypatch, tmp_path):
     body = f'<p>1단계</p>{img(f"src={chr(34)}{FAKE_IMG}1.png{chr(34)}")}<p>2단계</p>{img(f"src={chr(34)}{FAKE_IMG}2.png{chr(34)}")}'
     _, downloaded = run_main(mod, monkeypatch, tmp_path, FAKE_BLOG, post(body))
-    md = (tmp_path / "guide_output.md").read_text(encoding="utf-8")
+    md = (out_dir(tmp_path) / "guide_output.md").read_text(encoding="utf-8")
     order = [md.index(t) for t in ("1단계", "![참고 이미지 1](images/img_1.png)", "2단계", "![참고 이미지 2](images/img_2.png)")]
     assert order == sorted(order)
     assert [name for _, name in downloaded] == ["images/img_1.png", "images/img_2.png"]
-    assert (tmp_path / "images" / "img_1.png").exists()
+    assert (out_dir(tmp_path) / "images" / "img_1.png").exists()
 
 
 @pytest.mark.parametrize("src, ext", [
@@ -267,7 +276,7 @@ def test_main_확장자는_주소에서_골라_저장한다(mod, monkeypatch, tm
 def test_main_그림_받기가_실패하면_그_그림만_빼고_계속한다(mod, monkeypatch, tmp_path, capsys):
     body = f'<p>앞</p>{img(f"src={chr(34)}{FAKE_IMG}/1.png{chr(34)}")}<p>뒤</p>{img(f"src={chr(34)}{FAKE_IMG}/2.png{chr(34)}")}'
     run_main(mod, monkeypatch, tmp_path, FAKE_BLOG, post(body), download_fail={f"{FAKE_IMG}/1.png"})
-    md = (tmp_path / "guide_output.md").read_text(encoding="utf-8")
+    md = (out_dir(tmp_path) / "guide_output.md").read_text(encoding="utf-8")
     assert "![참고 이미지 1]" not in md
     assert "![참고 이미지 2](images/img_2.png)" in md
     assert "앞" in md and "뒤" in md
@@ -275,13 +284,14 @@ def test_main_그림_받기가_실패하면_그_그림만_빼고_계속한다(mo
 
 
 def test_main_images_폴더가_이미_있어도_오류가_없다(mod, monkeypatch, tmp_path):
-    (tmp_path / "images").mkdir()
+    (out_dir(tmp_path) / "images").mkdir(parents=True)
     run_main(mod, monkeypatch, tmp_path, FAKE_BLOG, post("<p>본문</p>"))
-    assert (tmp_path / "guide_output.md").exists()
+    assert (out_dir(tmp_path) / "guide_output.md").exists()
 
 
 def test_main_웹페이지를_못_가져오면_파일을_만들지_않고_종료(mod, monkeypatch, tmp_path, capsys):
     monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("MY_SKILLS_DATA_DIR", str(tmp_path / "data"))
     monkeypatch.setattr(sys, "argv", ["webtoguide.py", FAKE_BLOG])
 
     def failing_urlopen(req):
@@ -292,14 +302,14 @@ def test_main_웹페이지를_못_가져오면_파일을_만들지_않고_종료
         mod.main()
     assert exc.value.code == 1
     assert "웹페이지를 가져오는 중 오류" in capsys.readouterr().out
-    assert not (tmp_path / "guide_output.md").exists()
-    assert not (tmp_path / "images").exists()
+    assert not (out_dir(tmp_path) / "guide_output.md").exists()
+    assert not (out_dir(tmp_path) / "images").exists()
 
 
 def test_main_본문을_못_찾아도_출처만_있는_빈_가이드를_만든다(mod, monkeypatch, tmp_path, capsys):
     """네이버 화면 구조가 바뀌면(se-main-container 없음) 조용히 빈 가이드가 된다 — 현재 동작."""
     run_main(mod, monkeypatch, tmp_path, FAKE_BLOG, "<html><body><p>다른 구조</p></body></html>")
-    md = (tmp_path / "guide_output.md").read_text(encoding="utf-8")
+    md = (out_dir(tmp_path) / "guide_output.md").read_text(encoding="utf-8")
     assert "다른 구조" not in md
     assert "원본 게시글 출처" in md
     assert "총 0개의 이미지를 찾았습니다" in capsys.readouterr().out
@@ -308,5 +318,16 @@ def test_main_본문을_못_찾아도_출처만_있는_빈_가이드를_만든�
 @pytest.mark.xfail(strict=True, reason="ISSUE-003: 본문을 하나도 못 찾아도 '완료되었습니다!' 라고만 알려 구조 변경(se-main-container 없음)을 눈치채기 어려움")
 def test_main_본문을_못_찾으면_경고해야_한다(mod, monkeypatch, tmp_path, capsys):
     run_main(mod, monkeypatch, tmp_path, FAKE_BLOG, "<html><body><p>다른 구조</p></body></html>")
-    out = capsys.readouterr().out
+    out = capsys.readouterr().out.replace(str(out_dir(tmp_path)), "")  # 시험 폴더 이름이 섞이지 않게 경로는 뺀다
     assert "찾지 못" in out or "경고" in out
+
+
+def test_main_결과는_작업_폴더가_아니라_데이터_폴더에만_저장한다(mod, monkeypatch, tmp_path, capsys):
+    """저장소 폴더에서 돌려도 images/·guide_output.md 가 현재 폴더에 생기지 않아야 한다(T13 교사 결정)."""
+    body = f'<p>글</p>{img(f"src={chr(34)}{FAKE_IMG}/1.png{chr(34)}")}'
+    run_main(mod, monkeypatch, tmp_path, FAKE_BLOG, post(body))
+    work = tmp_path / "work"
+    assert list(work.iterdir()) == []
+    assert (out_dir(tmp_path) / "guide_output.md").exists()
+    assert (out_dir(tmp_path) / "images" / "img_1.png").exists()
+    assert str(out_dir(tmp_path)) in capsys.readouterr().out

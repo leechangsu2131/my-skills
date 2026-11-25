@@ -178,6 +178,15 @@
 
 ## 🟢 해결됨
 
+### ISSUE-034: Supabase 진도 변경 동시 요청 잠금 (2026-11-25)
+- **상태**: 🟢 해결 (2026-11-25)
+- **증상**: 완료·미루기·연장·여기부터 다시 잡기 요청이 겹치면 두 요청이 같은 슬롯 목록을 읽고 서로의 변경을 덮을 수 있음
+- **원인**: `progress()`의 읽기와 쓰기 전체를 보호하는 잠금이 없음
+- **해결/조치**: `progress()` 전체를 프로세스 안의 `threading.Lock`으로 보호. 두 번째 요청은 첫 요청이 끝난 뒤 최신 슬롯을 다시 읽음. 같은 슬롯 완료 요청을 동시에 보내도 한 번만 갱신되는 가짜 시험 추가
+- **한계**: 잠금은 같은 Python 프로세스 안의 동시 요청에 적용됨. 여러 프로세스가 동시에 실행되는 환경까지 막는 DB 잠금은 포함하지 않음
+- **관련 파일**: `supabase_schedule.py`, `test_supabase_schedule.py`
+
+
 ### ISSUE-030: test_supabase_schedule.py 의 '여기부터 다시 잡기' 시험 4개가 실패함 (2026-11-25 발견)
 - **상태**: 🟢 해결 (2026-11-25, T45 claude-web-173 — 시험만 고쳤고 코드는 그대로)
 - **증상**: `python -m unittest test_assistant_server test_supabase_schedule` → 67개 중 `CatchUpTest` 4개 실패(`KeyError: 'completed'`, `'error' != 'success'`). 문서 정리 전(main 그대로)에도 같음

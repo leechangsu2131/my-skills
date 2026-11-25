@@ -31,3 +31,4 @@
 - 2026-11-25 23:30 T31(classmanage-student-eval-generator) 시작 (브랜치 task/T31-student-eval-generator-korean)
 - 2026-11-25 23:31 T31(classmanage-student-eval-generator) PR 올림 — 영어 제목·단계 한국어화, 예시 이름 익명화. PR #38
 - 2026-11-25 23:32 T31(classmanage-student-photo-organizer) 시작 (브랜치 task/T31-student-photo-organizer-korean)
+- 2026-11-25 23:32 T31(classmanage-student-photo-organizer) PR 올림 — 영어 제목·단계 한국어화, 예시 학생 이름 익명화. PR #39

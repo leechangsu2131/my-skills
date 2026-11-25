@@ -4,7 +4,6 @@ import requests
 import pandas as pd
 import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(next(p / "_shared" for p in _pl.Path(__file__).resolve().parents if (p / "_shared" / "skill_env.py").is_file())))
 from skill_env import load_env, data_dir
-from pathlib import Path
 
 def get_supabase_data():
     # 상위 폴더(classmanage-notion-sync)의 .env 파일 로드 시도

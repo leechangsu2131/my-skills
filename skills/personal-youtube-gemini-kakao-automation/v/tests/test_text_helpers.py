@@ -111,7 +111,7 @@ def test_kakao_message_uses_fake_http_and_utf8_payload(monkeypatch):
     assert response.status_code == 200
     assert captured["url"].endswith("/v2/api/talk/memo/default/send")
     assert captured["headers"]["Authorization"] == "Bearer fake-kakao-token"
-    assert payload["text"] == "가나다"
+    assert payload["text"] == "가나다라"
     assert captured["verify"] is True
 
 

@@ -283,3 +283,14 @@ python main.py
 2. `run.log` 확인  
 3. `HEADLESS=false`로 브라우저 화면 보며 Gem 동작 확인  
 4. `send_test_message.ps1`로 Discord만 먼저 테스트
+
+## 자동 시험 (실제 전송 없음)
+
+`v` 폴더에서 다음 명령으로 순수 함수 시험을 실행합니다.
+
+```powershell
+python -m pip install pytest
+python -m pytest tests -q
+```
+
+시험은 가짜 자막 파일과 가짜 HTTP 응답을 사용합니다. 실제 Gemini 로그인, 카카오 메시지 발송, Discord 전송, YouTube 접속은 하지 않습니다.

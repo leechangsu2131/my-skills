@@ -9,7 +9,33 @@ _없음_
 
 ## 📌 백로그
 
-_없음_
+### ISSUE-001: 자막(VTT) 정리가 되풀이된 실제 말까지 지움 (2026-11-26)
+- **상태**: 📌 백로그
+- **증상**: `_vtt_to_text` 는 같은 문장을 한 번만 남겨서, 영상에서 실제로 여러 번 한 말(`네`, `자 그러면` 등)도 두 번째부터 사라짐. 시험: `네 / 좋습니다 / 네` → `네 좋습니다`
+- **원인**: 자동 자막의 겹치는 줄을 없애려고 `seen` 집합으로 전체에서 중복을 제거함(바로 앞 줄과만 비교하지 않음)
+- **해결/조치**: 미정(바로 앞 줄과 같을 때만 건너뛰는 방식 등). 요약 품질에 얼마나 영향이 있는지는 확인 필요. 시험은 xfail
+- **관련 파일**: `v/main.py` `_vtt_to_text`, `v/tests/test_pure_functions.py`
+
+### ISSUE-002: 로그인 화면 판별이 낱말 하나만 있어도 걸림 (2026-11-26)
+- **상태**: 📌 백로그
+- **증상**: 정상적인 긴 요약에 `로그인`, `sign in`, `log in` 글자가 한 번만 있어도 로그인 화면으로 판단해 `GeminiLoginRequired` 로 멈춤. 영어 `catalog in stock` 처럼 글자가 겹치는 경우도 걸림(`log in` 이 들어 있어서)
+- **원인**: `looks_like_login_wall_text` 가 길이와 상관없이 부분 글자 포함만 검사함
+- **해결/조치**: 미정(짧은 응답일 때만 검사, 낱말 경계 확인 등). 은행·보안 소식을 다루는 날 요약이 실패하는지는 확인 필요. 시험은 xfail
+- **관련 파일**: `v/gemini_session.py` `looks_like_login_wall_text`, `v/main.py` `validate_gemini_response`
+
+### ISSUE-003: 인증서 확인을 끄는 설정이 기본값 (2026-11-26)
+- **상태**: 📌 백로그 (확인 필요)
+- **증상**: `DISABLE_SSL_VERIFY` 와 `YT_NO_CHECK_CERTIFICATES` 의 기본값이 `true` 라서, 환경변수를 안 적으면 디스코드·카카오 요청과 yt-dlp 가 인증서를 확인하지 않음
+- **원인**: 학교망 등에서 인증서 오류가 나서 기본값을 꺼 둔 것으로 추정(확인 필요)
+- **해결/조치**: 미정. 학교망에서만 필요하다면 기본값을 `false` 로 하고 필요한 PC 의 중앙 .env 에서만 `true` 로 두는 것을 권함. 교사 결정 필요
+- **관련 파일**: `v/main.py` `load_settings`, `_request_verify_ssl`
+
+### ISSUE-004: 처리 기록·요약·자막 파일이 스킬 폴더(저장소 안)에 만들어짐 (2026-11-26)
+- **상태**: 📌 백로그 (PR #47 `fix/untrack-tracked-outputs` 에서 다루는지 확인 필요)
+- **증상**: `PROCESSED_FILE`·`SUMMARY_SAVE_DIR`·프로필·로그인 세션 기본 위치가 `v/` 폴더 기준이고, `processed.json`, `run.log`, 자막 `.vtt`, 요약 `.md` 등 실행 결과 약 57개가 이미 저장소에 올라가 있음. README 규칙은 결과물을 `data_dir()` 아래에만 두라고 함
+- **원인**: 경로를 `SCRIPT_DIR` 기준으로 풀어 씀(`resolve_data_path`)
+- **해결/조치**: 미정. 올라간 파일의 내용(개인 정보 여부)은 이 작업에서 열어 보지 않음 → 확인 필요. 시험은 모두 임시 폴더를 써서 저장소에 파일을 만들지 않음
+- **관련 파일**: `v/main.py` `load_settings`, `v/gemini_session.py` `resolve_data_path`
 
 ## 🟢 해결됨
 

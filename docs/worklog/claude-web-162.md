@@ -7,3 +7,4 @@
 - 2026-11-25 20:05 T06 PR 올림 — tests/test_pure_functions.py 시험 27개(25 통과, 2 xfail), 소스 무변경, 문제 3건 ISSUES 기록(ISSUE-002~004). T05 브랜치 위에 쌓임
 - 2026-11-25 20:20 T06 다음: T12 선택(personal-carrot 순수 함수 시험)
 - 2026-11-25 20:21 T12 시작 (브랜치 task/T12-tests-carrot, T06 브랜치 위에서 만듦)
+- 2026-11-25 20:50 T12 PR 올림 — personal-carrot tests/test_pure_functions.py 시험 71개(65 통과, 6 xfail), 소스 무변경, 문제 4건 ISSUES 기록. appium·selenium 은 설치돼 있지 않아 가짜 모듈로 대신. T06 브랜치 위에 쌓임

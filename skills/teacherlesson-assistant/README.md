@@ -22,6 +22,22 @@ Claude 작업 절차는 [SKILL.md](SKILL.md), 문제·할 일은 [ISSUES.md](ISS
 - 포트가 닫혀 있는 것은 서버·크롬을 켜기 전이면 정상이다. 지도서 폴더(`D:\지도서`)는 집 PC 에만 있으면 되므로 없어도 ✅ 로 안내한다.
 - 시험: `python -m pytest tests -v` (가짜 환경으로 항목별 성공·실패 판단을 확인).
 
+## 수업 메모 동기화 (`memo_sync.py`)
+
+수업 메모를 Supabase(`lesson_memos` 표)에 올리고, 다른 PC 에서 받아 `sessions/` 파일에 합치는 부품이다. **아직 수업 비서 서버·아침 bat 에는 연결하지 않았다**(연결은 교사 PC 에서, TASKS T49). 필요한 표는 `sql/lesson_memos.sql`(Supabase 에서 실행), 키는 진도와 같은 중앙 `.env`(`SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`)에서 읽고 화면·출력에는 내보내지 않는다.
+
+| 하고 싶은 일 | 방법 |
+|---|---|
+| 올리기 | 코드에서 `from memo_sync import push_session; push_session(session)`. 실패해도 예외 없이 결과만 돌려주고, 못 올린 것은 데이터 폴더 `memo_queue/` 에 쌓아 두었다가 다음에 먼저 다시 올린다 |
+| 내려받기 | `python memo_sync.py pull --days 30` (또는 `--since 2026-11-01`, `--all`). 아침 bat 용: `pull --if-older 24` — 마지막 내려받기가 24시간 안이면 건너뜀 |
+| 못 올린 것만 다시 올리기 | `python memo_sync.py flush` |
+| 시험 | `python -m pytest tests/test_memo_sync.py` (가짜 서버라 진짜 DB 에 가지 않음) |
+
+- 같은 메모는 고유값(`memo_key`)으로 한 번만 들어간다. 받아 온 메모에는 서버의 `memo_key` 를 그대로 저장해, 다시 받아도 늘어나지 않고 이 PC 에서 다시 올려도 새 메모가 되지 않는다.
+- 🙋 학생 발표 메모(`student`)는 올리지도 받지도 않는다. 📝·🔧·🎤 같은 자유 글 메모는 **그대로 올라가므로, 학생 이름이 적혀 있으면 서버에도 올라간다**(교사 결정 대기, T49).
+- 단계 기록(`step`·`sys`·`adj`)은 다른 PC 에서 수업 단계를 이어 가려고 올린다. 올리고 싶지 않은 종류는 중앙 `.env` 에 `TEACHERLESSON_ASSISTANT__MEMO_SKIP_KINDS=step,sys,adj` 처럼 적는다(쉼표나 띄어쓰기로 구분). 안 적으면 학생 메모만 빠지고 나머지는 올라간다. 받는 쪽에는 영향이 없다.
+- 명령줄 출력은 UTF-8 이다. 직접 실행해서 한국어가 깨져 보이면 먼저 `chcp 65001` 을 실행한다(`실행_수업비서.bat`·`점검_PC.bat` 은 이미 한다).
+
 ## 화면 기능 (v0.1)
 
 | 영역 | 내용 |

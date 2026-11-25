@@ -1,0 +1,27 @@
+# gpt-web-ch423@google 일지
+
+- 2026-11-25 22:45 T26 시작 (브랜치 task/T26-notebooklm-model-timeout)
+- 2026-11-25 22:57 T26 PR 올림 — Gemini 모델별 대기 시간과 실제 사용 모델 반환, 호출부·가짜 시험 갱신. PR #26
+- 2026-11-25 22:58 T27 시작 (브랜치 task/T27-catch-up-request-lock)
+- 2026-11-25 22:59 T27 PR 올림 — /api/catch-up 읽기·변경 구간 잠금, 동시 요청 시험 추가. PR #27
+- 2026-11-25 23:00 T28 시작 (브랜치 task/T28-supabase-schedule-lock)
+- 2026-11-25 23:02 T28 PR 올림 — Supabase 진도 변경 잠금과 동시 완료 시험 추가. PR #28
+- 2026-11-25 23:03 T28 CI 확인 — teacherlesson-assistant 시험 130개 통과. catalog 는 PyYAML 미설치로 실패, known-failing 은 기존 ISSUE-003 1개 실패
+- 2026-11-25 23:03 T29 시작 (브랜치 task/T29-assistant-favicon)
+- 2026-11-25 23:04 T29 PR 올림 — favicon SVG·/favicon.ico 응답·화면 연결·가짜 HTTP 시험. PR #29
+- 2026-11-25 23:05 T29 CI 확인 — teacherlesson-assistant 시험 130개 통과. catalog 는 PyYAML 미설치로 실패, known-failing 은 기존 ISSUE-003 1개 실패
+- 2026-11-25 23:05 T32 시작 (브랜치 task/T32-splitter-readme-korean)
+- 2026-11-25 23:07 T32 PR 올림 — splitter README 한국어화, 상위 SKILL과 겹치는 전체 흐름 설명을 줄임. PR #30
+- 2026-11-25 23:08 T33(admin-neis-bot) 시작 (브랜치 task/T33-admin-neis-bot-issues)
+- 2026-11-25 23:12 T33(admin-neis-bot) PR 올림 — 이슈 상태별 재배치, 확인되지 않은 원인·파일 경로 표시. PR #31
+- 2026-11-25 23:12 T33(homepage-school-board) 시작 (브랜치 task/T33-homepage-school-board-issues)
+- 2026-11-25 23:14 T33(homepage-school-board) PR 올림 — ISSUES 상태·항목 양식 정리. PR #32
+- 2026-11-25 23:14 T33(personal-video-note) 시작 (브랜치 task/T33-personal-video-note-issues)
+- 2026-11-25 23:16 T33(personal-video-note) PR 올림 — 연수원 강의 이슈 증상·원인·우회·남은 일 정리. PR #33
+- 2026-11-25 23:17 T33 확인 — school-todo-kakao와 teacherlesson-from-neis의 ISSUES는 이미 상태별 표준 구조라 수정하지 않음
+- 2026-11-25 23:18 T34 시작 (브랜치 task/T34-skill-meta-review)
+- 2026-11-25 23:21 T34 PR 올림 — 최상위 SKILL.md 58개 메타데이터 검토 보고서 추가. SKILL.md 직접 수정 없음. PR #34
+- 2026-11-25 23:22 T35 시작 (브랜치 task/T35-skill-procedure-review)
+- 2026-11-25 23:24 T35 PR 올림 — 절차 중심 스킬 6개 점검 보고서 추가. PR #35
+- 2026-11-25 23:25 T35 CI 확인 — assistant·guide-splitter 시험과 개인정보 검사 통과. catalog 는 PyYAML 미설치로 실패, known-failing 은 기존 ISSUE-003 1개 실패
+- 2026-11-25 23:25 T31(admin-s2b-buyer) 시작 (브랜치 task/T31-admin-s2b-buyer-korean)

@@ -1,0 +1,46 @@
+# gpt-web-ch423@google 일지
+
+- 2026-11-25 22:45 T26 시작 (브랜치 task/T26-notebooklm-model-timeout)
+- 2026-11-25 22:57 T26 PR 올림 — Gemini 모델별 대기 시간과 실제 사용 모델 반환, 호출부·가짜 시험 갱신. PR #26
+- 2026-11-25 22:58 T27 시작 (브랜치 task/T27-catch-up-request-lock)
+- 2026-11-25 22:59 T27 PR 올림 — /api/catch-up 읽기·변경 구간 잠금, 동시 요청 시험 추가. PR #27
+- 2026-11-25 23:00 T28 시작 (브랜치 task/T28-supabase-schedule-lock)
+- 2026-11-25 23:02 T28 PR 올림 — Supabase 진도 변경 잠금과 동시 완료 시험 추가. PR #28
+- 2026-11-25 23:03 T28 CI 확인 — teacherlesson-assistant 시험 130개 통과. catalog 는 PyYAML 미설치로 실패, known-failing 은 기존 ISSUE-003 1개 실패
+- 2026-11-25 23:03 T29 시작 (브랜치 task/T29-assistant-favicon)
+- 2026-11-25 23:04 T29 PR 올림 — favicon SVG·/favicon.ico 응답·화면 연결·가짜 HTTP 시험. PR #29
+- 2026-11-25 23:05 T29 CI 확인 — teacherlesson-assistant 시험 130개 통과. catalog 는 PyYAML 미설치로 실패, known-failing 은 기존 ISSUE-003 1개 실패
+- 2026-11-25 23:05 T32 시작 (브랜치 task/T32-splitter-readme-korean)
+- 2026-11-25 23:07 T32 PR 올림 — splitter README 한국어화, 상위 SKILL과 겹치는 전체 흐름 설명을 줄임. PR #30
+- 2026-11-25 23:08 T33(admin-neis-bot) 시작 (브랜치 task/T33-admin-neis-bot-issues)
+- 2026-11-25 23:12 T33(admin-neis-bot) PR 올림 — 이슈 상태별 재배치, 확인되지 않은 원인·파일 경로 표시. PR #31
+- 2026-11-25 23:12 T33(homepage-school-board) 시작 (브랜치 task/T33-homepage-school-board-issues)
+- 2026-11-25 23:14 T33(homepage-school-board) PR 올림 — ISSUES 상태·항목 양식 정리. PR #32
+- 2026-11-25 23:14 T33(personal-video-note) 시작 (브랜치 task/T33-personal-video-note-issues)
+- 2026-11-25 23:16 T33(personal-video-note) PR 올림 — 연수원 강의 이슈 증상·원인·우회·남은 일 정리. PR #33
+- 2026-11-25 23:17 T33 확인 — school-todo-kakao와 teacherlesson-from-neis의 ISSUES는 이미 상태별 표준 구조라 수정하지 않음
+- 2026-11-25 23:18 T34 시작 (브랜치 task/T34-skill-meta-review)
+- 2026-11-25 23:21 T34 PR 올림 — 최상위 SKILL.md 58개 메타데이터 검토 보고서 추가. SKILL.md 직접 수정 없음. PR #34
+- 2026-11-25 23:22 T35 시작 (브랜치 task/T35-skill-procedure-review)
+- 2026-11-25 23:24 T35 PR 올림 — 절차 중심 스킬 6개 점검 보고서 추가. SKILL.md 직접 수정 없음. PR #35
+- 2026-11-25 23:25 T35 CI 확인 — assistant·guide-splitter 시험과 개인정보 검사 통과. catalog 는 PyYAML 미설치로 실패, known-failing 은 기존 ISSUE-003 1개 실패
+- 2026-11-25 23:25 T31(admin-s2b-buyer) 시작 (브랜치 task/T31-admin-s2b-buyer-korean)
+- 2026-11-25 23:26 T31(admin-s2b-buyer) PR 올림 — 영어 제목을 한국어로 변경. PR #36
+- 2026-11-25 23:27 T31(classmanage-student-classifier) 시작 (브랜치 task/T31-student-classifier-korean)
+- 2026-11-25 23:29 T31(classmanage-student-classifier) PR 올림 — 영어 제목·단계 한국어화, 예시 이름 익명화. PR #37
+- 2026-11-25 23:30 T31(classmanage-student-eval-generator) 시작 (브랜치 task/T31-student-eval-generator-korean)
+- 2026-11-25 23:31 T31(classmanage-student-eval-generator) PR 올림 — 영어 제목·단계 한국어화, 예시 이름 익명화. PR #38
+- 2026-11-25 23:32 T31(classmanage-student-photo-organizer) 시작 (브랜치 task/T31-student-photo-organizer-korean)
+- 2026-11-25 23:33 T31(classmanage-student-photo-organizer) PR 올림 — 영어 제목·단계 한국어화, 예시 이름 익명화. PR #39
+- 2026-11-25 23:34 T31(classmanage-iscream-evaluate) 시작 (브랜치 task/T31-iscream-evaluate-korean)
+- 2026-11-25 23:35 T31(classmanage-iscream-evaluate) PR 올림 — 영어 제목 한국어화, 예시 이름 익명화, 저장소에 없는 로컬 경로 제거. PR #40
+- 2026-11-25 23:36 T31(personal-record-trade) 시작 (브랜치 task/T31-personal-record-trade-korean)
+- 2026-11-25 23:38 T31(personal-record-trade) PR 올림 — 보관 문서 한국어화, 현재 사용 중지 안내·절대 경로 정리. PR #41
+- 2026-11-25 23:39 T58 시작 (브랜치 task/T58-privacy-check-fixes)
+- 2026-11-25 23:48 T58 PR 올림 — 개인정보 검사 오탐·누락·stdin·diff 인자·++ 줄 처리 보완, CI 검사 강제 적용. PR #42
+- 2026-11-25 23:51 T58 CI 확인 — privacy 통과, 개인정보 검사 시험 60개 통과, assistant·guide-splitter 시험 통과. catalog 는 PyYAML 미설치로 실패, known-failing 은 기존 ISSUE-003 1개 실패
+- 2026-11-25 23:52 T59 시작 (브랜치 task/T59-tracked-outputs-review)
+- 2026-11-25 23:53 T59 PR 올림 — 추적 파일 검토 목록과 삭제 전 확인 사항 기록. 파일 내용 열기·삭제 없음. PR #43
+- 2026-11-25 23:54 T25 시작 (브랜치 task/T25-supabase-export-data-dir)
+- 2026-11-25 23:58 T25 PR 올림 — Supabase 결과 엑셀을 data_dir()에 저장하고 TLS 검증 복원, 가짜 저장·HTTP 시험 추가. 전체 pytest 미실행. PR #44
+- 2026-11-25 23:59 T10 시작 (브랜치 task/T10-youtube-kakao-pure-tests)

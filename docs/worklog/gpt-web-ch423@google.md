@@ -45,3 +45,4 @@
 - 2026-11-25 23:58 T25 PR 올림 — Supabase 결과 엑셀을 data_dir()에 저장하고 TLS 검증 복원, 가짜 저장·HTTP 시험 추가. 전체 pytest 미실행. PR #44
 - 2026-11-25 23:59 T10 시작 (브랜치 task/T10-youtube-kakao-pure-tests)
 - 2026-11-26 00:04 T10 PR 올림 — VTT 정리·메시지 분할·Gemini 프롬프트·가짜 Kakao 전송 시험 추가, CI 연결. PR #45
+- 2026-11-26 00:06 T10 CI 확인 — YouTube 자동화 시험 9개 통과, privacy·guide-splitter 통과, 별도 test workflow 60개 통과. catalog 는 PyYAML 미설치로 실패, known-failing 은 기존 ISSUE-003 1개 실패

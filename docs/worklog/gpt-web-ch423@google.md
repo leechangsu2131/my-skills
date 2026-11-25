@@ -27,3 +27,4 @@
 - 2026-11-25 23:25 T31(admin-s2b-buyer) 시작 (브랜치 task/T31-admin-s2b-buyer-korean)
 - 2026-11-25 23:26 T31(admin-s2b-buyer) PR 올림 — 영어 제목을 한국어로 변경. PR #36
 - 2026-11-25 23:27 T31(classmanage-student-classifier) 시작 (브랜치 task/T31-student-classifier-korean)
+- 2026-11-25 23:29 T31(classmanage-student-classifier) PR 올림 — 영어 제목·단계 한국어화, 예시 학생 이름 익명화. PR #37

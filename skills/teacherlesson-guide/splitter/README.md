@@ -8,21 +8,21 @@
 
 일반 실행에 필요한 라이브러리를 설치합니다.
 
-\`\`\`bash
+```bash
 pip install -r requirements.txt
-\`\`\`
+```
 
 시험과 개발용 점검 도구까지 사용하려면 다음 파일도 설치합니다.
 
-\`\`\`bash
+```bash
 pip install -r requirements-dev.txt
-\`\`\`
+```
 
 ## 화면에서 나누기
 
-\`\`\`bash
+```bash
 python app.py
-\`\`\`
+```
 
 1. 나눌 지도서 PDF를 고릅니다.
 2. 결과를 저장할 폴더를 정합니다.
@@ -40,43 +40,43 @@ python app.py
 
 먼저 결과만 살펴보려면 --dry-run을 사용합니다. 이때 분할 PDF는 저장하지 않습니다.
 
-\`\`\`bash
+```bash
 python scripts/split_subunits_from_plan_table.py --pdf "teacher-guide.pdf" --out-dir "output" --dry-run
-\`\`\`
+```
 
 확인한 뒤 실제 파일을 만들려면 --save를 사용합니다.
 
-\`\`\`bash
+```bash
 python scripts/split_subunits_from_plan_table.py --pdf "teacher-guide.pdf" --out-dir "output" --save
-\`\`\`
+```
 
 같은 이름의 결과 폴더가 이미 있을 때는 다음 중 하나를 고릅니다.
 
-\`\`\`bash
+```bash
 # 기존 결과 폴더를 지우고 새로 만들기
 python scripts/split_subunits_from_plan_table.py --pdf "teacher-guide.pdf" --out-dir "output" --save --existing-run-dir replace
 
 # (1), (2)처럼 번호를 붙여 새 폴더에 저장하기
 python scripts/split_subunits_from_plan_table.py --pdf "teacher-guide.pdf" --out-dir "output" --save --existing-run-dir suffix
-\`\`\`
+```
 
 이전 구조 분석 결과를 다시 쓰려면 --use-cache를 지정합니다. 기본값은 새로 분석하는 것입니다.
 
-\`\`\`bash
+```bash
 python scripts/split_subunits_from_plan_table.py --pdf "teacher-guide.pdf" --out-dir "output" --use-cache --dry-run
-\`\`\`
+```
 
 차시나 세부 제재까지 더 자세히 나누려면 --split-level detail을 사용합니다.
 
-\`\`\`bash
+```bash
 python scripts/split_subunits_from_plan_table.py --pdf "teacher-guide.pdf" --out-dir "output" --split-level detail --dry-run
-\`\`\`
+```
 
 목차를 우선 기준으로 삼으려면 다음과 같이 실행합니다.
 
-\`\`\`bash
+```bash
 python scripts/split_subunits_from_plan_table.py --pdf "teacher-guide.pdf" --out-dir "output" --strategy toc --dry-run
-\`\`\`
+```
 
 ## 주요 선택 항목
 

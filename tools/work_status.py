@@ -34,10 +34,13 @@ def git_ok(*args: str) -> bool:
 
 def task_rows() -> dict[str, dict]:
     """docs/TASKS.md 표에서 번호·설명 앞부분·상태(마지막 칸)."""
-    try:
-        text = open(f"{ROOT}/docs/TASKS.md", encoding="utf-8").read()
-    except OSError:
-        return {}
+    # 지금 폴더가 다른 브랜치일 수 있으니(여러 세션이 같은 폴더를 씀) 원격 main 의 목록을 읽는다
+    text = git("show", "origin/main:docs/TASKS.md")
+    if not text:
+        try:
+            text = open(f"{ROOT}/docs/TASKS.md", encoding="utf-8").read()
+        except OSError:
+            return {}
     rows = {}
     for line in text.splitlines():
         cells = [c.strip() for c in line.strip().strip("|").split("|")]

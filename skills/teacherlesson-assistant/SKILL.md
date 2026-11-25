@@ -13,6 +13,8 @@ metadata:
 - **수업 화면** (`assistant_server.py` + `web/index.html`) — Supabase에서 시간표를 읽고 완료·연장·이동을 Supabase에 저장한다. 수업 기록은 로컬 데이터 폴더에 저장한다. Supabase 연결에 중앙 `.env`의 `SUPABASE_URL`(또는 `NEXT_PUBLIC_SUPABASE_URL`)과 `SUPABASE_SERVICE_ROLE_KEY`가 필요하다. 과목별 차시 자료 자동 열기 도우미는 `sites/`(음악 Douclass, 사회 아이스크림·Douclass, Selenium)이며, 미술 아트앤컬쳐 도우미는 아직 구현 전이다(ISSUES ISSUE-006). 실행 방법·화면 기능·저장 위치·지도서 받기는 [README.md](README.md).
 - **Claude 작업 절차** (아래) — 화면은 `flows/`·`units/` 를 읽고, 교사가 ✏ 로 고친 흐름은 저장한다(고친 흐름은 자동 준비가 덮어쓰지 않음).
 
+교사가 화면 쓰는 법을 물으면 [README.md](README.md)의 "교사용 사용 설명서 (한 장)"를 쉬운 말로 안내한다(순서: 날짜·교시 → 🌙 수업 준비 → 지금 할 일 → 메모 → 진도 조정).
+
 데이터 폴더: `내 문서\my-skills-data\teacherlesson-assistant\` (config, units, flows, sessions, publisher_notes). 학생 이름이 들어간 메모·녹음은 이 폴더에만 두고 기억(memory)·CLAUDE.md·깃·홈페이지에 옮기지 않는다.
 
 ## 역할 나눔 (토큰 아끼기)

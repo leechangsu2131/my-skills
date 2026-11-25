@@ -76,6 +76,9 @@ jobs:
           - name: teacherlesson-guide-splitter
             dir: skills/teacherlesson-guide/splitter
             requirements: requirements-dev.txt
+          - name: personal-youtube-gemini-kakao-automation
+            dir: skills/personal-youtube-gemini-kakao-automation/v
+            requirements: requirements.txt
     name: tests (${{ matrix.name }})
     defaults:
       run:

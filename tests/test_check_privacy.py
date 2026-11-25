@@ -42,6 +42,12 @@ def test_placeholder_phone_is_ignored(text):
 
 def test_dates_and_versions_are_not_phones():
     assert kinds("2026-11-25 에 v1.2.3 배포, 줄 번호 12345678") == []
+    assert kinds("setup-python@v5.1.0 lodash@4.17.21 git@github.com") == []
+
+
+@pytest.mark.parametrize("text", ["v010-1234-5678", "010-1234-5678x", "build010-1234-5678"])
+def test_phone_attached_to_letters_is_ignored(text):
+    assert kinds(text) == []
 
 
 # ---------- 주민등록번호 ----------
@@ -55,11 +61,21 @@ def test_placeholder_rrn_is_ignored():
     assert kinds("000000-0000000") == []
 
 
+@pytest.mark.parametrize("text", ["991332-1234567", "9001011234567", "x900101-1234567y"])
+def test_invalid_date_or_alphanumeric_rrn_boundary_is_ignored(text):
+    assert kinds(text) == []
+
+
+def test_rrn_leap_day_uses_century_digit():
+    assert kinds("000229-1234567") == []
+    assert kinds("000229-3234567") == ["주민등록번호 모양"]
+
+
 # ---------- 이메일 ----------
 
-def test_email_is_found():
+def test_email_is_not_scanned():
     fake = "student" + "@" + "school.go.kr"
-    assert kinds(f"문의 {fake}") == ["이메일 주소"]
+    assert kinds(f"문의 {fake}") == []
 
 
 @pytest.mark.parametrize(
@@ -83,6 +99,10 @@ def test_example_email_is_ignored(text):
         ("AKIA" + "E" * 16, "AWS 접근 키"),
         ("-----BEGIN " + "RSA PRIVATE KEY-----", "비공개 키 머리말"),
         ("eyJ" + "a" * 12 + ".eyJ" + "b" * 12 + "." + "c" * 8, "JWT 토큰"),
+        ("ntn_" + "f" * 24, "Notion API 토큰(ntn_)"),
+        ("secret_" + "g" * 24, "Notion 비밀 토큰(secret_)"),
+        ("GOCSPX-" + "h" * 24, "Google OAuth 클라이언트 비밀값"),
+        ("db_id=" + "a" * 32, "Notion 데이터베이스 ID"),
     ],
 )
 def test_secret_shapes_are_found(fake, label):
@@ -119,6 +139,14 @@ def test_real_user_path_is_found(path):
 )
 def test_example_path_is_ignored(path):
     assert kinds(path) == []
+
+
+def test_git_bash_user_path_is_found():
+    assert "실제 사용자 폴더 경로" in kinds("/c/Users/tester/Documents/file.txt")
+
+
+def test_git_bash_placeholder_path_is_ignored():
+    assert kinds("/c/Users/<이름>/Documents/file.txt") == []
 
 
 # ---------- 건너뛰기·가리기 ----------
@@ -169,12 +197,48 @@ def test_only_added_lines_are_checked_with_right_positions():
     findings = cp.scan_diff(SAMPLE_DIFF)
     assert [(f.path, f.line_no, f.kind) for f in findings] == [
         ("a.py", 12, "전화번호 모양"),
-        ("b.md", 2, "이메일 주소"),
     ]
 
 
 def test_empty_diff_has_no_findings():
     assert cp.scan_diff("") == []
+
+
+def test_env_file_is_flagged_by_path_even_without_added_content():
+    diff = (
+        "diff --git a/.env b/.env\n"
+        "new file mode 100644\n"
+        "--- /dev/null\n"
+        "+++ b/.env\n"
+    )
+    findings = cp.scan_diff(diff)
+    assert [(f.path, f.line_no, f.kind) for f in findings] == [
+        (".env", 0, "환경변수 파일")
+    ]
+
+
+def test_env_example_file_is_allowed():
+    diff = (
+        "diff --git a/.env.example b/.env.example\n"
+        "new file mode 100644\n"
+        "--- /dev/null\n"
+        "+++ b/.env.example\n"
+    )
+    assert cp.scan_diff(diff) == []
+
+
+def test_added_line_starting_with_two_plus_signs_is_scanned():
+    diff = (
+        "diff --git a/a.txt b/a.txt\n"
+        "--- a/a.txt\n"
+        "+++ b/a.txt\n"
+        "@@ -0,0 +1 @@\n"
+        "+++ 010-1234-5678\n"
+    )
+    findings = cp.scan_diff(diff)
+    assert [(f.path, f.line_no, f.kind) for f in findings] == [
+        ("a.txt", 1, "전화번호 모양")
+    ]
 
 
 def test_deleted_secret_is_not_reported():
@@ -197,11 +261,35 @@ def test_main_stdin_finding_returns_1_and_warn_only_returns_0(monkeypatch, capsy
     monkeypatch.setattr(sys, "stdin", io.StringIO(SAMPLE_DIFF))
     assert cp.main(["--stdin"]) == 1
     out = capsys.readouterr().out
-    assert "a.py:12" in out and "2곳" in out
+    assert "a.py:12" in out and "1곳" in out
 
     monkeypatch.setattr(sys, "stdin", io.StringIO(SAMPLE_DIFF))
     assert cp.main(["--stdin", "--warn-only"]) == 0
 
+
+
+
+def test_main_stdin_decodes_bytes_with_replacement(monkeypatch, capsys):
+    import io
+
+    class BinaryStdin:
+        buffer = io.BytesIO(SAMPLE_DIFF.encode("utf-8") + b"\xff")
+
+    monkeypatch.setattr(sys, "stdin", BinaryStdin())
+    assert cp.main(["--stdin"]) == 1
+    assert "a.py:12" in capsys.readouterr().out
+
+
+def test_diff_args_do_not_consume_script_flags(monkeypatch):
+    captured = []
+
+    def fake_read(extra_args):
+        captured.extend(extra_args)
+        return ""
+
+    monkeypatch.setattr(cp, "read_staged_diff", fake_read)
+    assert cp.main(["--diff-args", "HEAD~1", "--cached", "--warn-only"]) == 0
+    assert captured == ["HEAD~1", "--cached"]
 
 @pytest.mark.skipif(shutil.which("git") is None, reason="git 이 없음")
 def test_main_reads_staged_changes_from_a_real_repo(tmp_path, monkeypatch, capsys):

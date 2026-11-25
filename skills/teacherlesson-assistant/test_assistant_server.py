@@ -301,5 +301,25 @@ class OpenWindowTest(unittest.TestCase):
         self.assertFalse(self.raised.wait(0.3))
 
 
+class FaviconTest(unittest.TestCase):
+    def test_favicon_path_returns_small_svg_icon(self):
+        server = ThreadingHTTPServer(("127.0.0.1", 0), app.Handler)
+        thread = threading.Thread(target=server.serve_forever, daemon=True)
+        thread.start()
+        self.addCleanup(server.server_close)
+        self.addCleanup(server.shutdown)
+        conn = http.client.HTTPConnection("127.0.0.1", server.server_port, timeout=2)
+        self.addCleanup(conn.close)
+
+        conn.request("GET", "/favicon.ico")
+        response = conn.getresponse()
+        icon = response.read().decode("utf-8")
+
+        self.assertEqual(response.status, 200)
+        self.assertIn("image/svg+xml", response.getheader("Content-Type"))
+        self.assertIn("<svg", icon)
+        self.assertIn("</svg>", icon)
+
+
 if __name__ == "__main__":
     unittest.main()

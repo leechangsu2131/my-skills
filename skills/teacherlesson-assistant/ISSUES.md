@@ -163,6 +163,19 @@
 - **재현 시험**: `test_supabase_schedule.py::CatchUpTest::test_catch_up_to_an_earlier_lesson_shows_it_on_the_requested_day` (`expectedFailure`). 고친 뒤 이 시험이 통과하면 `@unittest.expectedFailure` 를 지운다
 - **관련 파일**: `supabase_schedule.py`(`progress` 의 `catch-up`, `day_schedule`), `test_supabase_schedule.py`
 
+### ISSUE-034: 실행_수업비서.bat 이 `py -3.13` 과 `python` 을 섞어 씀 (2026-11-25, T46 중 발견)
+- **상태**: 📌 백로그 (T46 은 점검 도구만 고침 — bat 는 윈도우에서 돌려 볼 수 없어 손대지 않음)
+- **증상**: bat 의 단원 개관 갱신(`build_units.py`)은 `py -3.13`, 서버(`assistant_server.py`)와 수업 준비(`prepare_lessons.py`)는 `python`. PC 에 Python 이 둘 이상이면 서로 다른 버전이 돌고, 패키지(requests·PyMuPDF 등)가 한쪽에만 깔려 있을 수 있음
+- **지금 대응**: `check_setup.py` 의 'Python 실행기' 항목이 두 명령을 모두 돌려 없거나 버전이 다르면 ⚠ 로 알림(T46)
+- **해결 방향**: 교사 PC 에서 `where python`·`py -0` 로 상황을 보고, bat 의 `python` 을 `py -3.13` 으로 통일할지 정한 뒤 학교 PC 에서 `실행_수업비서.bat` 을 실제로 켜 확인
+- **관련 파일**: `실행_수업비서.bat`, `점검_PC.bat`, `check_setup.py`
+
+### ISSUE-035: check_setup.py — config.json 이 `{ }` 모양이 아니면 멈춤 (2026-11-25, T46 중 발견)
+- **상태**: 📌 백로그 (T46 범위는 port 값만이라 따로 둠)
+- **증상**: `config.json` 이 `[]`·`5` 처럼 JSON 이긴 한데 객체가 아니면 `load_config` 는 그대로 돌려주고, 뒤에서 `cfg.get(...)` 이 `AttributeError` 로 멈춤(재현: 그런 파일로 `check_setup.py` 실행)
+- **해결 방향**: `load_config` 에서 `isinstance(cfg, dict)` 가 아니면 `{}` 와 ❌ 결과("config.json 은 { } 로 시작해야 해요")를 돌려주고, 그 시험 추가
+- **관련 파일**: `check_setup.py`(`load_config`), `tests/test_check_setup.py`
+
 ## 🟢 해결됨
 
 ### ISSUE-030: test_supabase_schedule.py 의 '여기부터 다시 잡기' 시험 4개가 실패함 (2026-11-25 발견)

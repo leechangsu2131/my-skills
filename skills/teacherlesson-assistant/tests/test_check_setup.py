@@ -26,6 +26,62 @@ def test_python_fail_has_fix():
     assert "python.org" in cs.check_python((3, 8, 0)).fix
 
 
+def test_python_warn_fix_matches_what_the_bat_really_does():
+    # 실행_수업비서.bat 은 서버를 python 으로 켠다 — 'py -3.13 을 먼저 찾는다'고 말하면 틀린 안내
+    fix = cs.check_python((3, 12, 4)).fix
+    assert "먼저 찾아요" not in fix
+    assert "python" in fix and "py -3.13" in fix
+
+
+# ── Python 실행기 (py -3.13 / python) ──
+
+def _versions(py, plain):
+    table = {tuple(cs.PY_LAUNCHER): py, tuple(cs.PY_PLAIN): plain}
+    return lambda cmd: table[tuple(cmd)]
+
+
+def test_launchers_same_minor_is_ok():
+    r = cs.check_python_launchers(_versions((3, 13, 1), (3, 13, 5)))
+    assert r.status == OK and "3.13.1" in r.detail
+
+
+def test_launchers_different_minor_is_warn_and_names_both():
+    r = cs.check_python_launchers(_versions((3, 13, 1), (3, 11, 4)))
+    assert r.status == WARN
+    assert "3.13.1" in r.detail and "3.11.4" in r.detail and "달라요" in r.detail
+    assert "pip install" in r.fix
+
+
+def test_launchers_python_missing_is_warn():
+    r = cs.check_python_launchers(_versions((3, 13, 1), None))
+    assert r.status == WARN and "python 명령" in r.detail and r.fix
+
+
+def test_launchers_py_launcher_missing_is_warn_about_build_units():
+    r = cs.check_python_launchers(_versions(None, (3, 13, 1)))
+    assert r.status == WARN and "build_units.py" in r.detail
+
+
+def test_launchers_neither_found_is_warn():
+    r = cs.check_python_launchers(_versions(None, None))
+    assert r.status == WARN and "python.org" in r.fix
+
+
+def test_read_python_version_real_interpreter_and_missing_command():
+    assert cs.read_python_version([sys.executable]) == tuple(sys.version_info[:3])
+    assert cs.read_python_version(["no-such-python-command-xyz"]) is None
+
+
+@pytest.mark.parametrize("returncode,stdout", [(9009, ""), (1, "3.13.1"), (0, "Python was not found; run without arguments"), (0, "")])
+def test_read_python_version_ignores_failures_and_odd_output(monkeypatch, returncode, stdout):
+    class Done:                                   # 윈도우 스토어 가짜 python 같은 경우를 흉내
+        pass
+    done = Done()
+    done.returncode, done.stdout = returncode, stdout
+    monkeypatch.setattr(cs.subprocess, "run", lambda *a, **k: done)
+    assert cs.read_python_version(["python"]) is None
+
+
 # ── 패키지 ──
 
 REQ = "requests>=2.31\ntruststore>=0.9\nPyMuPDF>=1.24\n# 주석\n"
@@ -176,6 +232,25 @@ def test_present_names_ignores_empty_values():
     assert cs._present_names({"A": "x", "B": ""}, {"C": "y", "D": ""}) == {"A", "C"}
 
 
+def test_env_keys_supabase_missing_is_warn_when_backend_is_not_supabase():
+    r = _by_title(cs.check_env_keys(set(), set(), supabase_required=False))
+    assert r["키 이름 SUPABASE_URL"].status == WARN
+    assert r["키 이름 SUPABASE_SERVICE_ROLE_KEY"].status == WARN
+    assert "supabase 가 아니라" in r["키 이름 SUPABASE_URL"].detail
+    assert r["키 이름 SUPABASE_URL"].fix                      # 고치는 방법은 그대로 안내
+
+
+def test_env_keys_supabase_present_is_ok_even_when_not_required():
+    r = _by_title(cs.check_env_keys({"SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY"}, set(), supabase_required=False))
+    assert r["키 이름 SUPABASE_URL"].status == OK
+    assert r["키 이름 SUPABASE_SERVICE_ROLE_KEY"].status == OK
+
+
+def test_env_keys_default_still_requires_supabase():
+    r = _by_title(cs.check_env_keys(set(), set()))
+    assert r["키 이름 SUPABASE_URL"].status == FAIL and "supabase 가 아니라" not in r["키 이름 SUPABASE_URL"].detail
+
+
 # ── 데이터 폴더·OneDrive ──
 
 def test_data_dir_missing_is_warn(tmp_path):
@@ -237,6 +312,146 @@ def test_port_is_open_against_real_local_socket():
     assert cs.port_is_open(1) is False                         # 아무도 안 듣는 포트
 
 
+# ── 포트에 실제로 물어서 수업 비서인지 확인 (진짜 로컬 서버로 시험) ──
+
+import contextlib  # noqa: E402
+import http.server  # noqa: E402
+import socket  # noqa: E402
+import threading  # noqa: E402
+
+
+@contextlib.contextmanager
+def local_http_server(server_version="LessonAssistant/1", status=200):
+    """127.0.0.1 의 빈 포트에 작은 HTTP 서버를 잠깐 띄운다. 실제 수업 비서처럼 Server 머리글에 이름을 싣는다."""
+    class H(http.server.BaseHTTPRequestHandler):
+        def do_GET(self):
+            self.send_response(status)
+            self.send_header("Content-Length", "2")
+            self.end_headers()
+            self.wfile.write(b"ok")
+
+        def log_message(self, *a):
+            pass
+    H.server_version = server_version
+    srv = http.server.ThreadingHTTPServer(("127.0.0.1", 0), H)
+    t = threading.Thread(target=srv.serve_forever, daemon=True)
+    t.start()
+    try:
+        yield srv.server_address[1]
+    finally:
+        srv.shutdown()
+        srv.server_close()
+        t.join(timeout=5)
+
+
+def test_identify_assistant_reads_server_name_of_real_assistant_style_server():
+    with local_http_server("LessonAssistant/1") as port:
+        assert cs.identify_assistant(port).startswith("LessonAssistant")
+
+
+def test_identify_assistant_reads_name_even_on_403_and_404():
+    for status in (403, 404):
+        with local_http_server("LessonAssistant/1", status=status) as port:
+            assert cs.identify_assistant(port).startswith("LessonAssistant")
+
+
+def test_identify_assistant_other_http_program_is_not_assistant():
+    with local_http_server("SomethingElse/9") as port:
+        name = cs.identify_assistant(port)
+    assert name is not None and not name.startswith("LessonAssistant")
+
+
+def test_identify_assistant_ignores_computer_proxy_settings(monkeypatch):
+    for var in ("http_proxy", "HTTP_PROXY", "https_proxy", "HTTPS_PROXY", "all_proxy", "ALL_PROXY"):
+        monkeypatch.setenv(var, "http://127.0.0.1:1")        # 아무도 안 듣는 프록시 — 거치면 실패해야 한다
+    monkeypatch.delenv("no_proxy", raising=False)
+    monkeypatch.delenv("NO_PROXY", raising=False)
+    with local_http_server("LessonAssistant/1") as port:
+        assert cs.identify_assistant(port).startswith("LessonAssistant")
+
+
+def test_identify_assistant_non_http_listener_returns_none():
+    with socket.socket() as srv:                               # 받자마자 HTTP 아닌 글을 보내고 닫는 프로그램
+        srv.bind(("127.0.0.1", 0))
+        srv.listen(1)
+        port = srv.getsockname()[1]
+
+        def talk():
+            conn, _ = srv.accept()
+            with conn:
+                conn.sendall(b"hello, I am not http\r\n")
+        t = threading.Thread(target=talk, daemon=True)
+        t.start()
+        assert cs.identify_assistant(port, timeout=3) is None
+        t.join(timeout=5)
+
+
+def test_identify_assistant_nothing_listening_returns_none():
+    with socket.socket() as s:                                 # 빈 포트 하나를 알아낸 뒤 닫아서 아무도 안 듣게 한다
+        s.bind(("127.0.0.1", 0))
+        free = s.getsockname()[1]
+    assert cs.identify_assistant(free, timeout=1) is None
+
+
+def _never_called(_port):
+    raise AssertionError("닫힌 포트에는 HTTP 로 묻지 않아야 해요")
+
+
+def test_assistant_port_closed_is_warn_and_does_not_ask_http():
+    r = cs.check_assistant_port(5180, "bat 를 실행하세요", probe=lambda p: False, identify=_never_called)
+    assert r.status == WARN and "5180" in r.title and r.fix == "bat 를 실행하세요"
+
+
+def test_assistant_port_open_and_is_assistant_is_ok():
+    r = cs.check_assistant_port(5180, "x", probe=lambda p: True, identify=lambda p: "LessonAssistant/1 Python/3.13.0")
+    assert r.status == OK and "수업 비서" in r.detail
+
+
+def test_assistant_port_open_but_other_program_is_warn():
+    r = cs.check_assistant_port(5180, "x", probe=lambda p: True, identify=lambda p: "nginx/1.25")
+    assert r.status == WARN and "수업 비서가 아니에요" in r.detail and "nginx/1.25" in r.detail
+    assert "config.json" in r.fix and "port" in r.fix
+
+
+def test_assistant_port_open_without_server_name_is_warn():
+    r = cs.check_assistant_port(5180, "x", probe=lambda p: True, identify=lambda p: "")
+    assert r.status == WARN and "수업 비서가 아니에요" in r.detail
+
+
+def test_assistant_port_open_but_not_http_is_warn():
+    r = cs.check_assistant_port(5180, "x", probe=lambda p: True, identify=lambda p: None)
+    assert r.status == WARN and "HTTP" in r.detail and r.fix
+
+
+def test_assistant_port_end_to_end_with_real_local_servers(monkeypatch):
+    with local_http_server("LessonAssistant/1") as port:
+        assert cs.check_assistant_port(port, "x").status == OK
+    with local_http_server("SomethingElse/9") as port:
+        assert cs.check_assistant_port(port, "x").status == WARN
+
+
+# ── config 포트 값 읽기 ──
+
+@pytest.mark.parametrize("cfg,expected", [
+    ({}, 5180), ({"port": 6000}, 6000), ({"port": "6001"}, 6001), ({"port": 6002.0}, 6002), ({"port": 65535}, 65535)])
+def test_parse_port_accepts_what_the_server_accepts(cfg, expected):
+    assert cs.parse_port(cfg, "port", 5180) == (expected, None)
+
+
+@pytest.mark.parametrize("bad", ["abc", "", None, [5180], {"a": 1}, True, 0, -1, 65536, "70000", float("inf"), float("nan")])
+def test_parse_port_rejects_unusable_values_with_fail(bad):
+    port, problem = cs.parse_port({"port": bad}, "port", 5180)
+    assert port is None and problem.status == FAIL
+    assert "port" in problem.title and "1~65535" in problem.fix
+
+
+def test_parse_port_debug_port_skips_falsy_like_the_server():
+    for falsy in (None, 0, ""):
+        assert cs.parse_port({"debug_port": falsy}, "debug_port", 9233, falsy_is_default=True) == (9233, None)
+    port, problem = cs.parse_port({"debug_port": "abc"}, "debug_port", 9233, falsy_is_default=True)
+    assert port is None and problem.status == FAIL and "debug_port" in problem.title
+
+
 # ── 지도서 폴더 ──
 
 def test_guide_folder_is_never_a_problem(tmp_path):
@@ -293,6 +508,9 @@ def fake_world(tmp_path, monkeypatch):
     monkeypatch.setattr(cs, "check_gemini_cli", lambda *a, **k: cs.Result(OK, "Gemini CLI", "ok"))
     monkeypatch.setattr(cs, "check_packages", lambda *a, **k: [cs.Result(OK, "패키지 requests", "설치됨")])
     monkeypatch.setattr(cs, "check_python", lambda *a, **k: cs.Result(OK, "Python 버전", "3.13.0"))
+    # T46: 새 점검 두 가지도 실제 python 실행·5180 포트 접속 없이 돌게 한다(검사 내용은 아래 전용 시험에서 따로 확인)
+    monkeypatch.setattr(cs, "check_python_launchers", lambda *a, **k: cs.Result(OK, "Python 실행기", "둘 다 3.13.0"))
+    monkeypatch.setattr(cs, "check_assistant_port", lambda port, note, probe=None, identify=None: cs.Result(OK, f"{port}번 포트 (수업 비서)", "켜짐"))
     return values
 
 
@@ -315,6 +533,63 @@ def test_main_exit_code_one_with_fail(fake_world, monkeypatch, capsys):
     assert cs.main() == 1
     out = capsys.readouterr().out
     assert "❌" in out and "고치기" in out
+
+
+def _with_config(monkeypatch, cfg):
+    monkeypatch.setattr(cs, "load_config", lambda data, example: (cfg, cs.Result(OK, "설정 파일 config.json", "읽음")))
+
+
+@pytest.mark.parametrize("bad", ["abc", None, [5180], True, 0, 70000])
+def test_run_checks_does_not_crash_on_unusable_port_and_reports_fail(fake_world, monkeypatch, capsys, bad):
+    _with_config(monkeypatch, {"port": bad})
+    results = cs.run_checks()                                  # 예전에는 int("abc") 에서 멈췄다
+    problems = [r for r in results if r.title == "설정 port"]
+    assert len(problems) == 1 and problems[0].status == FAIL
+    assert not any("수업 비서" in r.title and "번 포트" in r.title for r in results)   # 못 쓰는 포트는 열어 보지 않는다
+    assert cs.main() == 1
+    assert "설정 port" in capsys.readouterr().out
+
+
+def test_run_checks_does_not_crash_on_unusable_debug_port(fake_world, monkeypatch):
+    _with_config(monkeypatch, {"port": 5180, "debug_port": "abc"})
+    results = cs.run_checks()
+    assert [r.status for r in results if r.title == "설정 debug_port"] == [FAIL]
+    assert any("5180번 포트" in r.title for r in results)      # 멀쩡한 port 점검은 그대로 한다
+
+
+def test_run_checks_usable_ports_have_no_port_problem(fake_world, monkeypatch):
+    _with_config(monkeypatch, {"port": "5180", "debug_port": 9233})
+    assert not [r for r in cs.run_checks() if r.title in ("설정 port", "설정 debug_port")]
+
+
+def _without_supabase_keys(fake_world, monkeypatch):
+    monkeypatch.setattr(cs.skill_env, "env_values", lambda skill=None: {})
+    for name in ("SUPABASE_URL", "NEXT_PUBLIC_SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY"):
+        monkeypatch.delenv(name, raising=False)
+
+
+@pytest.mark.parametrize("backend", ["http", "schedule_api", None, ""])
+def test_run_checks_non_supabase_backend_makes_missing_keys_only_warn(fake_world, monkeypatch, backend):
+    _without_supabase_keys(fake_world, monkeypatch)
+    _with_config(monkeypatch, {"port": 5180, "schedule_backend": backend})
+    by = _by_title(cs.run_checks())
+    assert by["키 이름 SUPABASE_URL"].status == WARN
+    assert by["키 이름 SUPABASE_SERVICE_ROLE_KEY"].status == WARN
+    assert cs.main() == 0                                      # ❌ 가 없으니 종료 코드 0
+
+
+@pytest.mark.parametrize("cfg", [{"port": 5180}, {"port": 5180, "schedule_backend": "supabase"}])
+def test_run_checks_supabase_backend_or_unset_still_fails_without_keys(fake_world, monkeypatch, cfg):
+    _without_supabase_keys(fake_world, monkeypatch)
+    _with_config(monkeypatch, cfg)
+    by = _by_title(cs.run_checks())
+    assert by["키 이름 SUPABASE_URL"].status == FAIL
+    assert by["키 이름 SUPABASE_SERVICE_ROLE_KEY"].status == FAIL
+    assert cs.main() == 1
+
+
+def test_run_checks_includes_python_launcher_result(fake_world):
+    assert any(r.title.startswith("Python 실행기") for r in cs.run_checks())
 
 
 def test_render_shows_fix_only_for_non_ok():

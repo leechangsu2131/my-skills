@@ -17,6 +17,10 @@ param(
 )
 $ErrorActionPreference = "Stop"
 $repo = Split-Path -Parent $PSScriptRoot                  # 이 스크립트가 든 저장소(my-skills 또는 그 작업 폴더)
+if (-not (Test-Path -LiteralPath (Join-Path $repo ".git"))) {
+    $repo = git rev-parse --show-toplevel 2>$null          # 처음 실행할 때 TEMP 로 꺼낸 스크립트
+    if ($LASTEXITCODE -ne 0) { throw "my-skills 저장소 폴더에서 실행해 주세요." }
+}
 $main = (git -C $repo rev-parse --path-format=absolute --git-common-dir) | Split-Path -Parent   # 원래 my-skills
 $dir = Join-Path (Split-Path -Parent $main) ("my-skills-" + ($Name -replace '[\\/:*?"<>|\s]', '_'))
 

@@ -249,3 +249,32 @@ def test_get_books_to_request_title_filter_has_no_notion_filter(request_books, m
 def test_get_books_to_request_stops_when_api_returns_nothing(request_books, monkeypatch):
     monkeypatch.setattr(request_books, "call_notion_api", lambda *a, **k: None)
     assert request_books.get_books_to_request() == []
+
+
+# ── 비밀값·ID 가 코드에 박히지 않았는지 ────────────────────────
+
+def test_no_hardcoded_32hex_id_in_skill_files():
+    """노션 DB ID(32자리 16진수)가 스킬 폴더의 .py 와 .env.example 에 들어 있으면 안 된다."""
+    import re
+    pattern = re.compile(r"(?<![0-9A-Za-z])[0-9a-f]{32}(?![0-9A-Za-z])")
+    targets = list(SKILL_DIR.glob("*.py")) + [SKILL_DIR / ".env.example"]
+    hits = [t.name for t in targets if t.is_file() and pattern.search(t.read_text(encoding="utf-8"))]
+    assert hits == []
+
+
+def test_library_notion_sync_has_no_default_id_or_token(monkeypatch):
+    monkeypatch.delenv("NOTION_DATABASE_ID", raising=False)
+    monkeypatch.delenv("NOTION_TOKEN", raising=False)
+    mod = _load("t_library_notion_sync_noenv", "library_notion_sync.py", monkeypatch)
+    assert mod.DATABASE_ID == ""
+    assert mod.NOTION_TOKEN == ""
+
+
+def test_library_notion_sync_main_stops_without_settings(monkeypatch, capsys):
+    monkeypatch.delenv("NOTION_DATABASE_ID", raising=False)
+    monkeypatch.delenv("NOTION_TOKEN", raising=False)
+    mod = _load("t_library_notion_sync_stop", "library_notion_sync.py", monkeypatch)
+    with pytest.raises(SystemExit) as e:
+        mod.main()
+    assert e.value.code == 1
+    assert "NOTION_DATABASE_ID" in capsys.readouterr().out

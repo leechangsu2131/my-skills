@@ -8,3 +8,4 @@
 - 2026-11-25 20:20 T06 다음: T12 선택(personal-carrot 순수 함수 시험)
 - 2026-11-25 20:21 T12 시작 (브랜치 task/T12-tests-carrot, T06 브랜치 위에서 만듦)
 - 2026-11-25 20:50 T12 PR 올림 — personal-carrot tests/test_pure_functions.py 시험 71개(65 통과, 6 xfail), 소스 무변경, 문제 4건 ISSUES 기록. appium·selenium 은 설치돼 있지 않아 가짜 모듈로 대신. T06 브랜치 위에 쌓임
+- 2026-11-25 21:05 (교사 요청) 노션 DB ID 노출 제거 시작 (브랜치 fix/library-sync-remove-db-id, T12 브랜치 위에서 만듦)

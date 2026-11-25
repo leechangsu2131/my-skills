@@ -31,10 +31,10 @@ _없음_
 - **관련 파일**: `scripts/add_urls.py`(`add_urls`)
 
 ### ISSUE-001: EduSearch 경로가 코드·문서에 고정되어 있다 (2026-11-26)
-- **상태**: 📌 백로그 (**교사 확인 필요**: EduSearch 위치)
+- **상태**: 📌 백로그 (해결 방향 확정 — 교사 답: GitHub 폴더 위치는 PC 마다 다르고, EduSearch 는 그 GitHub 폴더 밑에 `my-skills` 와 나란히 있음)
 - **증상**: `scripts/add_urls.py` 의 `EDUSEARCH_DIR` 와 `SKILL.md` 에 특정 계정의 절대 경로(`C:\Users\…\Documents\GitHub\edusearch`)가 그대로 적혀 있다. 다른 PC·계정에서는 동작하지 않고, 저장소 규칙("절대 경로 하드코딩 금지")에도 어긋난다. 그래서 시험은 이 값을 바꿔 끼워서 돌린다.
 - **원인**: 처음 만든 PC 기준으로 적었다.
-- **해결/조치**: (미적용) 중앙 `.env` 에 `UTIL_WEB_SCRAPER__EDUSEARCH_DIR` 를 두고 `load_env()` 로 읽기. `__main__`(argparse) 부분도 이때 함께 시험 가능하게 된다.
+- **해결/조치**: (미적용) 기본값을 `my-skills` 저장소 폴더의 **옆 폴더 `edusearch`**(= `Path(__file__).resolve().parents[4] / "edusearch"`)로 계산하고, 다른 곳에 있으면 중앙 `.env` 의 `UTIL_WEB_SCRAPER__EDUSEARCH_DIR` 로 바꿀 수 있게 하기(`load_env()`). 폴더가 없으면 "edusearch 를 `git clone` 하세요" 안내. SKILL.md 의 경로 표기도 같이 고치기(예: `<GitHub 폴더>\edusearch`). `__main__`(argparse) 부분도 이때 함께 시험 가능하게 된다.
 - **관련 파일**: `scripts/add_urls.py`, `SKILL.md`
 
 ## 🟢 해결됨

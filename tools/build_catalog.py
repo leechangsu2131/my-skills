@@ -173,6 +173,12 @@ def render(rows: list[dict]) -> str:
 
 
 def main() -> int:
+    # 출력이 다른 프로그램으로 넘어가면 윈도우는 cp949 로 써서 '⚠' 에서 멈춘다(T24 검토 🔴) → utf-8 로
+    for stream in (sys.stdout, sys.stderr):
+        try:
+            stream.reconfigure(encoding="utf-8")
+        except (AttributeError, ValueError):
+            pass
     rows, problems = collect()
     warnings = find_artifacts(tracked_paths())
     if "--check" in sys.argv:

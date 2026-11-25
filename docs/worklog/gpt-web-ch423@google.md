@@ -35,3 +35,4 @@
 - 2026-11-25 23:34 T31(classmanage-iscream-evaluate) 시작 (브랜치 task/T31-iscream-evaluate-korean)
 - 2026-11-25 23:35 T31(classmanage-iscream-evaluate) PR 올림 — 영어 제목 한국어화, 예시 이름 익명화, 저장소에 없는 로컬 경로 제거. PR #40
 - 2026-11-25 23:36 T31(personal-record-trade) 시작 (브랜치 task/T31-personal-record-trade-korean)
+- 2026-11-25 23:38 T31(personal-record-trade) PR 올림 — 보관 문서 한국어화, 현재 사용 중지 안내·절대 경로 정리. PR #41

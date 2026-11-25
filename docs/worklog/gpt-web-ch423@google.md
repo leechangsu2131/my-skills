@@ -23,3 +23,4 @@
 - 2026-11-25 23:21 T34 PR 올림 — 최상위 SKILL.md 58개 메타데이터 검토 보고서 추가. SKILL.md 직접 수정 없음. PR #34
 - 2026-11-25 23:22 T35 시작 (브랜치 task/T35-skill-procedure-review)
 - 2026-11-25 23:24 T35 PR 올림 — 절차 중심 스킬 6개 점검 보고서 추가. SKILL.md·코드는 수정하지 않음. PR #35
+- 2026-11-25 23:25 T35 CI 확인 — assistant·guide-splitter 시험과 개인정보 검사 통과. catalog 는 PyYAML 미설치로 실패, known-failing 은 기존 ISSUE-003 1개 실패

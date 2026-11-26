@@ -1,4 +1,6 @@
 # ag-1 ì¼ì§€
 
 - 2026-11-26 13:46 T89 ì‹œì‘ (ë¸Œëœì¹˜ task/T89-classroom-tools-bundle)
-- 2026-11-26 13:51 T89 PR ¿Ã¸² ? web/tools.js ¼ø¼ö ÇÔ¼ö(Å¸ÀÌ¸Ó¡¤¹ßÇ¥ÀÚ »Ì±â¡¤¼ÒÀ½), index.html ±³½Ç µµ±¸ Ä­, assistant_server.py /tools.js °æ·Î, tests/test_tools.js 33°³ Åë°ú. È®ÀÎ: node tests/test_tools.js ¸ğµÎ ³ì»ö, pytest test_assistant_server.py 33°³ Åë°ú
+- 2026-11-26 13:51 T89 PR ï¿½Ã¸ï¿½ ? web/tools.js ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½(Å¸ï¿½Ì¸Ó¡ï¿½ï¿½ï¿½Ç¥ï¿½ï¿½ ï¿½Ì±â¡¤ï¿½ï¿½ï¿½ï¿½), index.html ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ä­, assistant_server.py /tools.js ï¿½ï¿½ï¿½, tests/test_tools.js 33ï¿½ï¿½ ï¿½ï¿½ï¿½. È®ï¿½ï¿½: node tests/test_tools.js ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½, pytest test_assistant_server.py 33ï¿½ï¿½ ï¿½ï¿½ï¿½
+- 2026-11-26 13:52 T53 ì‹œì‘ (ë¸Œëœì¹˜ task/T53-manual-checklist)
+- 2026-11-26 13:54 T53 PR ï¿½Ã¸ï¿½ ? docs/checklist-manual.md ï¿½Û¼ï¿½ (12ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½, ï¿½×¸ï¿½ 'ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½' Ã¼Å©ï¿½ï¿½ï¿½ï¿½Æ®). È®ï¿½ï¿½: ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã¼Å©

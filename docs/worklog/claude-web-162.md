@@ -26,3 +26,5 @@
 - 2026-11-26 16:21 T74 PR 올림 — 실행_수업비서.bat 이 점검_PC.bat 과 같은 방식으로 실행기를 하나만 고름(py -3.13 이 되면 그것, 아니면 python; build_units·prepare_lessons·서버 모두 %PY%). 점검_PC.bat 은 이미 같아 그대로. ISSUE-034 는 윈도우에서 켜 보기 전이라 백로그에 두고 한 일·남은 일만 갱신. 윈도우 bat 는 여기서 못 돌려 봄(확인 필요), check_setup.py 안내 문구는 T75 와 겹쳐 손대지 않음
 - 2026-11-26 16:22 T73 시작 (브랜치 task/T73-audio-chunk-order)
 - 2026-11-26 16:24 T73 PR 올림 — assistant_server.save_audio: 순번 건너뜀은 409 gap+expected 로 거절, 같은 조각 재전송은 duplicate 성공, 쓰다 실패하면 되돌림(_REC_STATE). web/index.html: sendRecChunks 가 받았다고 답할 때까지 조각을 들고 순번 순서로 재전송, 마칠 때 못 보낸 조각 알림. 시험 tests/test_save_audio.py 15개, 스킬 시험 전체 통과. 실제 크롬 녹음은 못 돌려 봄(확인 필요). ISSUE-010 첫 항목 체크
+- 2026-11-26 16:39 T52 시작 (브랜치 task/T52-prompt-improve)
+- 2026-11-26 16:42 T52 PR 올림 — skills/teacherlesson-assistant/docs/plans/T52-prompt.md 신규(코드 안 고침). 지금은 PROMPT 가 PLAN_PROMPT·DETAIL_PROMPT 둘이라 둘 다 새 문안+이유. 시간 배분(합계 40·도입/마무리 3~5분·한 단계 12분 이하)은 PLAN, 열린 질문·경험 연결 발문·3학년 말·분량 상한은 DETAIL. 경험 연결은 PERSONAL_STORY 필터 때문에 발문으로, 예상 반응은 관찰 문장으로. 자리표시자·JSON 구조 같음, 손으로 만든 답이 parse_plan·parse_flow 통과 확인. 실제 Gemini 반응은 못 봄(확인 필요)

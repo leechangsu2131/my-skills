@@ -22,5 +22,7 @@
 - 2026-11-26 10:54 T68 PR 올림 — prepare_lessons.parse_flow: 앞뒤 설명의 중괄호에 안 걸리게 _find_flow_json 추가(ISSUE-031), goal/materials 의 null 이 'None' 글자가 되지 않게(ISSUE-032). strict xfail 4개 제거·시험 4개 추가, tests/test_prepare_lessons.py + test_assistant_server.py 153개 통과(고치기 전 145 통과·4 xfail). 환경에 fitz 가 없어 tests/test_auto_split.py 는 수집 못 함(변경 전에도 같음)
 - 2026-11-26 10:54 T78 시작 (브랜치 task/T78-privacy-check-rest)
 - 2026-11-26 11:04 T78 PR 올림 — tools/check_privacy.py: 사용자 경로는 경고만(종료 값 제외)·…/.../xxx 는 예시, 전화번호 가운데 묶음 [1-9], 하이픈 없는 13자리 주민번호는 날짜+검증 숫자, .env 를 diff --git 줄에서도 찾기, secret_ 은 40자 이상. 시험 60→87개 통과. 열린 PR 14개 diff 모두 0건, 저장소 전체 표본에서 전화번호 모양 250→46건. check.yml 은 건드리지 않고 PR 설명에 --warn-only 제거 제안
+- 2026-11-26 11:05 T74 시작 (브랜치 task/T74-bat-python-launcher)
+- 2026-11-26 16:21 T74 PR 올림 — 실행_수업비서.bat 이 점검_PC.bat 과 같은 방식으로 실행기를 하나만 고름(py -3.13 이 되면 그것, 아니면 python; build_units·prepare_lessons·서버 모두 %PY%). 점검_PC.bat 은 이미 같아 그대로. ISSUE-034 는 윈도우에서 켜 보기 전이라 백로그에 두고 한 일·남은 일만 갱신. 윈도우 bat 는 여기서 못 돌려 봄(확인 필요), check_setup.py 안내 문구는 T75 와 겹쳐 손대지 않음
 - 2026-11-26 16:22 T73 시작 (브랜치 task/T73-audio-chunk-order)
 - 2026-11-26 16:24 T73 PR 올림 — assistant_server.save_audio: 순번 건너뜀은 409 gap+expected 로 거절, 같은 조각 재전송은 duplicate 성공, 쓰다 실패하면 되돌림(_REC_STATE). web/index.html: sendRecChunks 가 받았다고 답할 때까지 조각을 들고 순번 순서로 재전송, 마칠 때 못 보낸 조각 알림. 시험 tests/test_save_audio.py 15개, 스킬 시험 전체 통과. 실제 크롬 녹음은 못 돌려 봄(확인 필요). ISSUE-010 첫 항목 체크

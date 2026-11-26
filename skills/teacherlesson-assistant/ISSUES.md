@@ -239,10 +239,11 @@
 - **관련 파일**: `web/index.html`
 
 ### ISSUE-034: 실행_수업비서.bat 이 `py -3.13` 과 `python` 을 섞어 씀 (2026-11-25, T46 중 발견)
-- **상태**: 📌 백로그 (T46 은 점검 도구만 고침 — bat 는 윈도우에서 돌려 볼 수 없어 손대지 않음)
+- **상태**: 📌 백로그 — 🟡 bat 는 고침(2026-11-26, T74), **윈도우에서 켜 보기 전이라 해결로 옮기지 않음**. 켜 보고 이상 없으면 🟢 해결로 옮긴다
 - **증상**: bat 의 단원 개관 갱신(`build_units.py`)은 `py -3.13`, 서버(`assistant_server.py`)와 수업 준비(`prepare_lessons.py`)는 `python`. PC 에 Python 이 둘 이상이면 서로 다른 버전이 돌고, 패키지(requests·PyMuPDF 등)가 한쪽에만 깔려 있을 수 있음
 - **지금 대응**: `check_setup.py` 의 'Python 실행기' 항목이 두 명령을 모두 돌려 없거나 버전이 다르면 ⚠ 로 알림(T46)
-- **해결 방향**: 교사 PC 에서 `where python`·`py -0` 로 상황을 보고, bat 의 `python` 을 `py -3.13` 으로 통일할지 정한 뒤 학교 PC 에서 `실행_수업비서.bat` 을 실제로 켜 확인
+- **한 일(T74)**: `실행_수업비서.bat` 이 `점검_PC.bat` 과 같은 방식으로 실행기를 하나만 고르게 함 — `set "PY=python"` 으로 시작해 `py -3.13 -c "import sys"` 가 되면 `PY=py -3.13`. 단원 개관(`build_units.py`)·수업 준비(`prepare_lessons.py`, 뒤에서 켜는 창 포함)·서버(`assistant_server.py`)가 모두 `%PY%` 로 같은 Python 을 씀. `점검_PC.bat` 은 이미 같은 방식이라 그대로 둠. 줄바꿈(LF)·나머지 줄은 그대로
+- **남은 일**: ① 학교 PC 에서 `실행_수업비서.bat` 을 켜 서버·단원 개관·수업 준비 창이 모두 뜨는지 확인(여기서는 윈도우 bat 를 돌려 보지 못함 — 확인 필요) ② `check_setup.py` 의 안내 문구(`RECOMMENDED_PYTHON` 주석, 'Python 실행기' 항목의 "서버는 python 으로 켜고 단원 개관만 py -3.13" 설명, 시험 `test_python_warn_fix_matches_what_the_bat_really_does`)가 옛 동작을 설명함 — 같은 파일을 T75 가 고치는 중이라 이번엔 건드리지 않았고, T75 합친 뒤 따로 맞춘다
 - **관련 파일**: `실행_수업비서.bat`, `점검_PC.bat`, `check_setup.py`
 
 ## 🟢 해결됨

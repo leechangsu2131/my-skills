@@ -397,16 +397,23 @@ def test_vtt_to_text_empty_file(m, tmp_path):
     assert m._vtt_to_text(str(vtt)) == ""
 
 
-@pytest.mark.xfail(
-    reason="같은 문장은 한 번만 남기므로 영상에서 실제로 되풀이된 말('네', '자 그러면' 등)도 지워진다.",
-    strict=False,
-)
 def test_vtt_to_text_keeps_repeated_real_speech(m, tmp_path):
+    # ISSUE-001 해결: 떨어져서 되풀이된 말은 남긴다.
     vtt = tmp_path / "r.vtt"
     vtt.write_text(
         "WEBVTT\n\n00:00:01.000 --> 00:00:02.000\n네\n\n00:00:03.000 --> 00:00:04.000\n좋습니다\n\n"
         "00:00:05.000 --> 00:00:06.000\n네\n", encoding="utf-8")
     assert m._vtt_to_text(str(vtt)) == "네 좋습니다 네"
+
+
+def test_vtt_to_text_rolling_auto_caption_overlap_still_collapsed(m, tmp_path):
+    # 자동 자막: 앞 큐의 둘째 줄이 다음 큐의 첫째 줄로 겹쳐 나온다 → 한 번만 남는다.
+    vtt = tmp_path / "roll.vtt"
+    vtt.write_text(
+        "WEBVTT\n\n00:00:01.000 --> 00:00:03.000\n안녕하세요\n오늘은\n\n"
+        "00:00:03.000 --> 00:00:05.000\n오늘은\n시황입니다\n\n"
+        "00:00:05.000 --> 00:00:07.000\n시황입니다\n마칩니다\n", encoding="utf-8")
+    assert m._vtt_to_text(str(vtt)) == "안녕하세요 오늘은 시황입니다 마칩니다"
 
 
 # ── Gemini 응답 검사 · 프롬프트 ────────────────────────────────
@@ -470,17 +477,30 @@ def test_looks_like_login_wall_text_false_for_normal_summary():
     assert gs.looks_like_login_wall_text("## 오늘의 시황\n코스피는 상승 마감했습니다.") is False
 
 
-@pytest.mark.xfail(
-    reason="'로그인'·'log in' 같은 낱말이 하나만 들어 있어도 로그인 화면으로 판단한다. "
-    "영상 내용이 보안·로그인을 다루거나 'catalog in stock' 처럼 글자가 겹치면 정상 요약이 거부됨(추정: 실제 영향은 확인 필요).",
-    strict=False,
-)
 @pytest.mark.parametrize("text", [
     "오늘 영상은 은행 앱 로그인 보안 이슈와 시장 영향을 정리합니다. " * 10,
     "The catalog in stock rose sharply. " * 10,
 ])
 def test_looks_like_login_wall_text_normal_long_summary_is_not_wall(text):
+    # ISSUE-002 해결: 긴 글은 정상 요약으로 본다.
     assert gs.looks_like_login_wall_text(text) is False
+
+
+def test_looks_like_login_wall_text_short_catalog_in_is_not_wall():
+    # 낱말 경계: 'catalog in' 안의 'log in' 에는 걸리지 않는다.
+    assert gs.looks_like_login_wall_text("The catalog in stock rose.") is False
+
+
+@pytest.mark.parametrize("text", ["Please Log in to continue", "SIGN IN", "계정에 로그인하세요"])
+def test_looks_like_login_wall_text_short_wall_still_detected(text):
+    assert gs.looks_like_login_wall_text(text) is True
+
+
+def test_login_wall_max_chars_boundary():
+    at_limit = "로그인" + "가" * (gs.LOGIN_WALL_MAX_CHARS - 3)
+    over_limit = at_limit + "가"
+    assert gs.looks_like_login_wall_text(at_limit) is True
+    assert gs.looks_like_login_wall_text(over_limit) is False
 
 
 # ── 디스코드·카카오 보내기(requests.post 는 가짜) ───────────────

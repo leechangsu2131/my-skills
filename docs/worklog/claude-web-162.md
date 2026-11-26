@@ -16,3 +16,5 @@
 - 2026-11-26 04:34 T10 다음: T13 중 workflow-hub-main 선택(web-scraper·webtoguide 는 다른 작업자 브랜치 있음)
 - 2026-11-26 04:34 T13 workflow-hub-main 시작 (브랜치 task/T13-tests-workflow-hub, 최신 main 에서)
 - 2026-11-26 04:38 T13(workflow-hub-main) PR 올림 — doc-indexer/tests/test_doc_indexer.py 시험 63개(58 통과, 5 xfail), 소스 무변경, 문제 7건 ISSUES 기록(ISSUE-001~007). chromadb·sentence-transformers·rank-bm25·openai 는 가짜 모듈로 대신
+- 2026-11-26 10:50 T66 시작 (브랜치 task/T66-youtube-kakao-xfail)
+- 2026-11-26 10:51 T66 PR 올림 — _vtt_to_text 를 바로 앞 줄과만 비교(ISSUE-001), looks_like_login_wall_text 에 300자 상한·영어 낱말 경계(ISSUE-002) 고침. xfail 3개 제거·시험 6개 추가, v/tests 115개 모두 통과(고치기 전 106 통과·3 xfail). ISSUES 001·002 를 해결됨으로

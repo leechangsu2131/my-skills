@@ -512,7 +512,6 @@ def _vtt_to_text(path: str) -> str:
     import re
 
     lines: list[str] = []
-    seen: set[str] = set()
     tag_re = re.compile(r"<[^>]+>")
     with open(path, "r", encoding="utf-8", errors="ignore") as f:
         for raw in f:
@@ -531,9 +530,10 @@ def _vtt_to_text(path: str) -> str:
             cleaned = tag_re.sub("", line).strip()
             if not cleaned:
                 continue
-            if cleaned in seen:
+            # 자동 자막은 같은 줄이 바로 이어서 겹쳐 나온다. 바로 앞 줄과 같을 때만 건너뛰고,
+            # 떨어져서 되풀이된 실제 말('네', '자 그러면' 등)은 남긴다(ISSUE-001).
+            if lines and cleaned == lines[-1]:
                 continue
-            seen.add(cleaned)
             lines.append(cleaned)
     return " ".join(lines)
 

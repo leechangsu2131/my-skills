@@ -9,6 +9,8 @@
 - 2026-11-26 21:00 S2 (T82) 시작 (브랜치 task/S2-review-t82-sites-title-match)
 - 2026-11-26 21:01 S2 (T82) PR 올림 — docs/reviews/task-T82-sites-title-match.md. 🔴 PR #87 그대로 합치면 앞의 비슷한 차시가 정확한 차시보다 먼저 골라짐(가짜 목록 사례 A·B·C 를 합치기 전/후 코드로 비교해 재현). 확인: sites 49 통과·3 건너뜀, 도우미 시험 12개(가짜 selenium) 통과, 개인정보 검사 0. 대상 브랜치는 고치지 않음 (브랜치 task/S2-review-t82-sites-title-match)
 - 2026-11-27 06:34 S2 PR #87 고친 커밋(6b75290) 다시 검토 — 첫 재현 3건 해결, 남은 것 2개를 docs/reviews/…-recheck.md 에. 확인: PR 시험 44 통과(가짜 selenium)·pytest sites 63 통과 3 건너뜀·추가 사례 재현. 파일 이름은 main 의 같은 이름과 겹치지 않게 바꿈
+- 2026-11-27 06:38 S2 (t91) 시작 (브랜치 task/S2-review-t91-enter-default)
+- 2026-11-27 06:39 S2 (T91) PR 올림 — docs/reviews/task-T91-enter-default.md, 🟢 합치기 권함(🟡 2개). 확인: mapper 시험 main 26 통과 2 실패 → PR 34 통과 2 실패(가짜 모듈), 가짜 시트로 올리기 한 번, 개인정보 검사 (브랜치 task/S2-review-t91-enter-default)
 - 2026-11-27 06:44 S2 (T82) 교사 결정 기록 — 못 찾을 때는 띄어쓰기·기호만 다른 것만 자동, 나머지 확인(나). 검토 파일에 반영, PR #87 에 댓글. 참고(T92 용): 교사 계정의 진도표 파일 휴업일 탭 첫 열 제목은 '날짜'(첫 몇 줄 읽기만), 날짜 모양 '2026. 3. 2' 는 fetch_holidays 가 main 에서 읽음(가짜 시트). 코드가 쓰는 파일과 같은지는 추정
 - 2026-11-27 06:45 S2 (batch) 시작 (브랜치 task/S2-review-batch-1127)
 - 2026-11-27 06:47 S2 (batch) PR 올림 — #94·#95·#96·#97·#99·#100·#101 검토 7개, 모두 🟢(작은 의견 포함). 확인: 차례로 합쳐 일지 충돌만 확인, sites+ISSUE-043 시험 45 통과·2 건너뜀·1 xfail, #95 는 삭제 경로 차단·연락처 처리·남은 번호 모양·그림 일부 (브랜치 task/S2-review-batch-1127)

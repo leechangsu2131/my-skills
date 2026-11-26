@@ -1,4 +1,6 @@
 import urllib.request
+import urllib.parse
+import hashlib
 import re
 import os
 import sys
@@ -51,6 +53,20 @@ class NaverParser(HTMLParser):
             if data:
                 self.current_text += data + ' '
 
+def article_folder_name(url):
+    """글마다 따로 저장할 하위 폴더 이름. 네이버 글이면 '<블로그아이디>_<글번호>', 아니면 주소 해시.
+    파일 이름에 쓸 수 없는 글자는 '_' 로 바꿔 경로가 밖으로 새지 않게 한다."""
+    parsed = urllib.parse.urlparse(url)
+    query = urllib.parse.parse_qs(parsed.query)
+    blog_id = (query.get('blogId') or [''])[0]
+    log_no = (query.get('logNo') or [''])[0]
+    if blog_id and log_no:
+        name = re.sub(r'[^0-9A-Za-z_-]+', '_', f"{blog_id}_{log_no}").strip('_')
+        if name:
+            return name
+    return 'url_' + hashlib.sha1(url.encode('utf-8')).hexdigest()[:10]
+
+
 def main():
     if len(sys.argv) < 2:
         print("사용법: python webtoguide.py [네이버_블로그_URL]")
@@ -79,7 +95,8 @@ def main():
         parser.record.append(('TEXT', parser.current_text.strip()))
 
     # 결과(가이드 .md + 그림)는 저장소 밖 data_dir() 에만 저장한다 (다른 사람 블로그 그림·화면 덤프가 저장소에 올라가지 않게)
-    out_dir = data_dir("util-webtoguide", "output")
+    # 글마다 하위 폴더를 써서 다음 글이 앞 글의 가이드·그림을 덮어쓰지 않게 한다 (T80)
+    out_dir = data_dir("util-webtoguide", "output", article_folder_name(url))
     os.makedirs(out_dir / 'images', exist_ok=True)
     
     md_content = f"# 블로그 가이드 변환 결과\n\n> **원본 게시글 출처:** [{url}]({url})\n\n"

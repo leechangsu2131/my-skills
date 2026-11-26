@@ -76,8 +76,9 @@ jobs:
           - name: teacherlesson-assistant
             dir: skills/teacherlesson-assistant
             requirements: requirements.txt
-            # tests 폴더 밖에 있는 시험 2개(가짜 로컬 서버만 씀)도 함께 돌린다
-            target: tests test_assistant_server.py test_supabase_schedule.py
+            # tests 폴더 밖에 있는 시험 2개(가짜 로컬 서버만 씀)와 sites/(차시 자료 도우미) 시험도 함께 돌린다
+            # sites 시험 중 selenium 이 필요한 것은 요구 파일에 없어 건너뜀으로 나온다
+            target: tests sites test_assistant_server.py test_supabase_schedule.py
           - name: teacherlesson-guide-splitter
             dir: skills/teacherlesson-guide/splitter
             requirements: requirements-dev.txt

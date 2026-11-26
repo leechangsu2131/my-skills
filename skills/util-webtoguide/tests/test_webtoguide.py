@@ -159,8 +159,8 @@ class FakeResponse:
 
 
 def out_dir(tmp_path: Path) -> Path:
-    """시험에서 결과(가이드 .md·images/)가 생기는 곳 = data_dir("util-webtoguide", "output")."""
-    return tmp_path / "data" / "util-webtoguide" / "output"
+    """시험에서 FAKE_BLOG 결과(가이드 .md·images/)가 생기는 곳 = data_dir("util-webtoguide", "output", "<블로그아이디>_<글번호>")."""
+    return tmp_path / "data" / "util-webtoguide" / "output" / "exampleid_123456"
 
 
 def run_main(mod, monkeypatch, tmp_path, url: str, html: str, *, download_fail=()):
@@ -331,3 +331,38 @@ def test_main_결과는_작업_폴더가_아니라_데이터_폴더에만_저장
     assert (out_dir(tmp_path) / "guide_output.md").exists()
     assert (out_dir(tmp_path) / "images" / "img_1.png").exists()
     assert str(out_dir(tmp_path)) in capsys.readouterr().out
+
+
+# ───────── T80: 글마다 따로 저장 ─────────
+
+def test_두_글을_변환해도_서로_덮어쓰지_않는다(mod, monkeypatch, tmp_path):
+    run_main(mod, monkeypatch, tmp_path, FAKE_BLOG, post("<p>첫째 글</p>"))
+    other = "https://blog.naver.com/exampleid/777"
+    base = tmp_path / "data" / "util-webtoguide" / "output"
+    # 두 번째 글은 저장 경로 확인용 도우미(out_dir)가 첫 글 기준이라 직접 가짜를 건다
+    monkeypatch.setattr(sys, "argv", ["webtoguide.py", other])
+    monkeypatch.setattr(mod.urllib.request, "urlopen", lambda req: FakeResponse(post("<p>둘째 글</p>")))
+    mod.main()
+    first = (base / "exampleid_123456" / "guide_output.md").read_text(encoding="utf-8")
+    second = (base / "exampleid_777" / "guide_output.md").read_text(encoding="utf-8")
+    assert "첫째 글" in first and "둘째 글" not in first
+    assert "둘째 글" in second and "첫째 글" not in second
+
+
+def test_같은_글을_다시_변환하면_같은_폴더를_쓴다(mod, monkeypatch, tmp_path):
+    run_main(mod, monkeypatch, tmp_path, FAKE_BLOG, post("<p>본문</p>"))
+    run_main(mod, monkeypatch, tmp_path, FAKE_BLOG, post("<p>고친 본문</p>"))
+    folders = [p for p in (tmp_path / "data" / "util-webtoguide" / "output").iterdir()]
+    assert [p.name for p in folders] == ["exampleid_123456"]
+    assert "고친 본문" in (folders[0] / "guide_output.md").read_text(encoding="utf-8")
+
+
+def test_폴더_이름은_경로를_벗어나지_못한다(mod):
+    name = mod.article_folder_name("https://blog.naver.com/PostView.naver?blogId=../evil&logNo=1/../2")
+    assert "/" not in name and "\\" not in name and ".." not in name
+
+
+def test_네이버_글이_아니면_주소_해시_폴더를_쓴다(mod):
+    a = mod.article_folder_name("https://example.invalid/a")
+    b = mod.article_folder_name("https://example.invalid/b")
+    assert a.startswith("url_") and b.startswith("url_") and a != b

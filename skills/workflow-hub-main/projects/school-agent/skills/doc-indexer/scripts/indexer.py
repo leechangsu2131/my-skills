@@ -63,10 +63,29 @@ def should_exclude(path: Path) -> bool:
 
 
 # ── 메타데이터 추출 ───────────────────────────────────────────────────
+def _year_from_digit_run(run: str) -> str | None:
+    """숫자 덩어리 하나가 연도(2025) 또는 날짜로 시작하는 숫자(202503, 20250304, 시각 붙은 12·14자리)면 연도를 돌려준다.
+
+    문서번호 같은 긴 숫자 속의 20xx('12023456' 의 2023)는 연도로 읽지 않는다.
+    """
+    if not run.startswith("20"):
+        return None
+    if len(run) == 4:
+        return run
+    if len(run) in (6, 8, 12, 14) and 1 <= int(run[4:6]) <= 12:
+        if len(run) == 6 or 1 <= int(run[6:8]) <= 31:
+            return run[:4]
+    return None
+
+
 def extract_year_from_path(path: Path) -> str | None:
-    # 폴더명/파일명 어디든 20xx가 있으면 연도로 사용
-    m = re.search(r"(20\d{2})", str(path))
-    return m.group(1) if m else None
+    # 경로(폴더명·파일명)에서 앞에서부터 처음 나오는 연도를 쓴다.
+    # 숫자 덩어리 단위로 보므로 4자리 20xx, 또는 날짜 모양(202503, 20250304…)일 때만 연도로 인정.
+    for run in re.findall(r"[0-9]+", str(path)):
+        year = _year_from_digit_run(run)
+        if year:
+            return year
+    return None
 
 
 def extract_dept_from_path(path: Path) -> str | None:
@@ -79,14 +98,14 @@ def extract_dept_from_path(path: Path) -> str | None:
 
 # ── ODT 파싱 (구조 보존) ──────────────────────────────────────────────
 def parse_odt_elements(path: Path) -> list[dict]:
-    """ODT 파일에서 문단/표를 요소 단위로 추출합니다."""
+    """ODT 파일에서 문단/제목/표를 요소 단위로 추출합니다."""
     try:
         doc = load_odt(str(path))
         elements: list[dict] = []
 
         def walk(node):
-            # 문단
-            if getattr(node, "qname", None) and node.qname[1] == "p":
+            # 문단·제목(text:h) — 제목 서식으로 쓴 글도 검색 대상에 넣는다
+            if getattr(node, "qname", None) and node.qname[1] in ("p", "h"):
                 text = teletype.extractText(node).strip()
                 if text:
                     elements.append({"type": "paragraph", "text": text})

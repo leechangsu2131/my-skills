@@ -157,15 +157,37 @@ class LessonsEndpointTests(unittest.TestCase):
         self.assertEqual(item["planned_date"], "2026-12-01")
         self.assertEqual(item["planned_period"], "3")
 
-    @unittest.expectedFailure
     def test_bridge_date_with_time_suffix_is_cut_to_ten_chars(self):
-        # 기대(추정): 코드가 slot_date 를 [:10] 으로 자르므로 '날짜 시각' 글자도 받아줄 것.
-        # 지금은 그 앞의 정렬(_bridge_row_sort_key)이 날짜 형식 오류(ValueError)를 내고
-        # try 밖이라 오류가 그대로 올라온다 → teacherlesson-schedule ISSUES 기록 참고.
+        # slot_date 에 시각이 붙어 있어도(ISSUE-002 해결) 날짜 부분으로 정렬하고 날짜만 돌려준다.
         records = [record(2, "수학", 1, lesson_id="m-1")]
         rows = [bridge_row("m-1", "2026-12-01 00:00:00", "3")]
         item = self.get_lessons(records, rows).get_json()["items"][0]
         self.assertEqual(item["planned_date"], "2026-12-01")
+
+    def test_bridge_dates_with_and_without_time_sort_together(self):
+        records = [record(2, "수학", 1, lesson_id="m-1")]
+        rows = [
+            bridge_row("m-1", "2026-12-05", "1"),
+            bridge_row("m-1", "2026-12-03T09:30:00", "2"),
+            bridge_row("m-1", "2026-12-04 00:00:00", "1"),
+        ]
+        item = self.get_lessons(records, rows).get_json()["items"][0]
+        self.assertEqual((item["planned_date"], item["planned_period"]), ("2026-12-03", "2"))
+
+    def test_bridge_date_with_dots_still_sorts_as_before(self):
+        # 시각 처리가 '2026. 12. 1.' 같은 다른 날짜 모양을 건드리지 않는다(앞 10자 자르기를 정렬에 쓰면 깨지는 모양)
+        records = [record(2, "수학", 1, lesson_id="m-1")]
+        rows = [bridge_row("m-1", "2026. 12. 5.", "1"), bridge_row("m-1", "2026. 12. 2.", "4")]
+        response = self.get_lessons(records, rows)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.get_json()["items"][0]["planned_period"], "4")
+
+    def test_unreadable_bridge_date_returns_json_error_not_a_crash(self):
+        records = [record(2, "수학", 1, lesson_id="m-1")]
+        rows = [bridge_row("m-1", "내일쯤", "3")]
+        response = self.get_lessons(records, rows)
+        self.assertEqual(response.status_code, 500)
+        self.assertEqual(response.get_json()["status"], "error")
 
     def test_earliest_planned_slot_wins_when_lesson_has_several(self):
         records = [record(2, "수학", 1, lesson_id="m-1")]
@@ -400,10 +422,8 @@ class CatchUpEndpointTests(unittest.TestCase):
         self.assertEqual(calls, 2)
         self.assertEqual(max_active, 1)
 
-    @unittest.expectedFailure
     def test_schedule_error_returns_json_error_like_lessons_endpoint(self):
-        # 기대(추정): 시트 읽기 실패(ScheduleError)도 /api/lessons 처럼 JSON 오류로 돌려준다.
-        # 지금은 ValueError 만 잡아서 ScheduleError 가 그대로 올라온다 → teacherlesson-schedule ISSUES 기록 참고.
+        # 시트 읽기 실패(ScheduleError)도 /api/lessons 처럼 JSON 오류로 돌려준다(ISSUE-001 해결).
         with patch.object(
             server.schedule, "connect", side_effect=schedule.SheetFormatError("머리글 이상")
         ):
@@ -411,8 +431,27 @@ class CatchUpEndpointTests(unittest.TestCase):
                 response = self.post(json={"subject": "수학"})
             except schedule.ScheduleError:
                 self.fail("ScheduleError 가 JSON 오류로 바뀌지 않고 그대로 올라옴")
-        self.assertIn(response.status_code, (400, 500))
-        self.assertEqual(response.get_json()["status"], "error")
+        self.assertEqual(response.status_code, 500)
+        body = response.get_json()
+        self.assertEqual(body["status"], "error")
+        self.assertIn("머리글 이상", body["message"])
+
+    def test_schedule_error_while_reading_records_and_configuration_error(self):
+        for error in (schedule.ConfigurationError("설정 없음"), schedule.SheetFormatError("열 이름 틀림")):
+            with self.subTest(error=type(error).__name__), \
+                    patch.object(server.schedule, "connect", return_value=object()), \
+                    patch.object(server.schedule, "load_all", side_effect=error):
+                response = self.post(json={"subject": "수학"})
+                self.assertEqual(response.status_code, 500)
+                self.assertEqual(response.get_json()["status"], "error")
+
+    def test_value_error_from_catch_up_is_still_a_400(self):
+        with patch.object(server.schedule, "connect", return_value=object()), \
+                patch.object(server.schedule, "load_all", return_value=[]), \
+                patch.object(server.schedule, "catch_up_to_lesson", side_effect=ValueError("고를 차시가 없어요")):
+            response = self.post(json={"subject": "수학"})
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.get_json()["message"], "고를 차시가 없어요")
 
 
 if __name__ == "__main__":

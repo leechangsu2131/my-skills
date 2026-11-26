@@ -394,6 +394,21 @@ app = Flask(__name__)
 CORS(app)
 
 
+_ISO_DATE_WITH_TIME = re.compile(r"^(\d{4}-\d{1,2}-\d{1,2})[T ]\d")
+
+
+def _bridge_slot_sort_key(row):
+    """수업배치 정렬 키. slot_date 가 '2026-12-01 00:00:00' 처럼 시각이 붙어 있으면 날짜 부분만 쓴다.
+
+    schedule._bridge_row_sort_key 는 'YYYY-MM-DD' 처럼 날짜만 받아서, 시각이 붙으면 ValueError 가 난다.
+    """
+    text = schedule._clean_text(row.get("slot_date"))
+    matched = _ISO_DATE_WITH_TIME.match(text)
+    if matched:
+        row = {**row, "slot_date": matched.group(1)}
+    return schedule._bridge_row_sort_key(row)
+
+
 @app.route("/api/lessons")
 def subject_lessons():
     """한 과목의 모든 차시(완료 포함)를 진도표 순서대로. 수업 비서의 '실제로 할 차시 고르기'가 쓴다."""
@@ -408,7 +423,11 @@ def subject_lessons():
     # 계획 날짜·교시는 수업배치(bridge)의 '계획' 칸에서 읽는다(진도표 날짜 열은 머리글이 덮여 믿기 어려움)
     slots = {}
     bridge = schedule._load_bridge_support(ws)
-    for row in sorted((bridge or {}).get("rows", []), key=schedule._bridge_row_sort_key):
+    try:
+        bridge_rows = sorted((bridge or {}).get("rows", []), key=_bridge_slot_sort_key)
+    except ValueError as exc:  # 날짜를 도저히 못 읽는 줄: 파이썬 오류 대신 JSON 오류로
+        return _action_error(f"수업배치의 날짜를 읽지 못했어요: {exc}", 500)
+    for row in bridge_rows:
         lesson_id = schedule._clean_text(row.get(schedule.COLUMN_LESSON_ID))
         if lesson_id and schedule._is_bridge_planned(row) and lesson_id not in slots:
             slots[lesson_id] = (schedule._clean_text(row.get("slot_date"))[:10], schedule._clean_text(row.get("slot_period")))
@@ -569,6 +588,8 @@ def catch_up():
                 bridge_row_number=bridge_row,
                 record_key=record_key,
             )
+        except schedule.ScheduleError as exc:  # 시트 읽기·머리글 문제(ValueError 의 하위가 아님) → /api/lessons 처럼 JSON 오류
+            return _action_error(str(exc), 500)
         except ValueError as exc:
             return _action_error(str(exc))
 

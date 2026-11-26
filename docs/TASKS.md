@@ -148,7 +148,7 @@
 | T86 | `assistant_server.py` 첫머리 설명을 지금 기본(Supabase 진도, config `schedule_backend`)에 맞게(ISSUE-023). 설명만, 코드는 그대로 | `assistant_server.py` 첫 설명 | 시험 통과 | R · 열림 |
 | T87 | 미술 아트앤컬쳐 차시 자료 도우미(ISSUE-006): 교사 PC 크롬 9233 세션으로 e-book 단원·활동 열기. 로그인 값은 코드에 넣지 않음. 진도는 고치지 않음(T44 대조표 먼저) | 새 `sites/art_artandculture/`, `assistant_server.py` 의 `SITE_HELPERS`, `config.example.json` | 교사 PC 에서 단추로 그날 미술 차시 e-book 이 열림 | P · 열림 |
 | T88 | 사회(아이스크림) '📂 차시 자료 바로 열기'를 실제로 눌러 확인하고, Enter 기다림 없이 PPT 자동 열기·창 닫기(ISSUE-005 첫째·둘째) | `sites/social_class/` | 교사 PC 에서 단추 한 번으로 PPT 가 열림 | P · 열림 |
-| T89 | 🙋 학생 발표 메모를 **명단에서 이름 고르기**로(ISSUE-009 셋째), 같은 명단으로 주간 정리 글의 이름 가리기를 정확하게(ISSUE-038). **먼저 교사 결정: 명단 파일 위치**(데이터 폴더 안, 저장소에 올리지 않음) | `web/index.html`, `weekly_report.py`, 시험 | 가짜 명단 시험 통과 | P · 교사 결정 대기 |
+| T89 | 🙋 학생 발표 메모를 **명단에서 이름 고르기**로(ISSUE-009 셋째), 같은 명단으로 주간 정리 글의 이름 가리기를 정확하게(ISSUE-038). **명단 위치(교사 결정 2026-11-26)**: 학교 OneDrive `%OneDriveCommercial%\95. 개인\my-skills-data	eacherlesson-assistant\학생명단.csv` (UTF-8, 열 `번호,이름`, 교사가 엑셀로 고침) — 집·학교 PC 가 같은 파일을 봄. 경로는 중앙 .env `TEACHERLESSON_ASSISTANT__ROSTER_FILE` 이 있으면 그것, 없으면 이 기본값. 파일이 없으면 지금처럼 직접 입력. **명단 내용은 저장소·시험·일지·Supabase 밖으로 보내지 않음**(시험은 `학생A`…로) | `web/index.html`, `assistant_server.py`(명단 주는 API), `weekly_report.py`, 시험 | 가짜 명단 시험 통과, 교사 PC 에서 🙋 메모에 이름 목록이 뜸 | P · 열림 |
 
 ## S. 상시 일 — 고를 일이 없을 때 (★ 수업 비서 묶음 안에서만. 번호를 브랜치에 넣고, 대상 스킬은 `--skill` 로)
 

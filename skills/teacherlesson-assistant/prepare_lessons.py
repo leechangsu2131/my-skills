@@ -327,7 +327,7 @@ def parse_flow(text: str, plan: dict | None = None) -> dict:
         prompts = _text_list(s.get("teacher_prompts"), 5)
         expected = _text_list(s.get("expected_responses"), 5)
         if any(PERSONAL_STORY.search(item) for item in expected):
-            expected = ["학생마다 경험이 다를 수 있어요. 각자 떠올린 교통수단 이용 경험을 말할 수 있습니다."]
+            expected = ["학생마다 경험과 생각이 다를 수 있어요. 각자 생각을 정리하고 원하는 학생이 나눌 수 있습니다."]
         if not teacher or not students:
             raise ValueError(f"{outline['name']} 단계의 교사·학생 행동이 비어 있음")
         step = {"name": outline["name"], "minutes": outline["minutes"],

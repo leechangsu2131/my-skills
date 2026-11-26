@@ -106,6 +106,8 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--check", action="store_true", help="확인만")
     a = ap.parse_args(argv)
     number = a.number.upper()
+    if a.name:
+        a.name = re.sub(r"\s+", "", a.name).strip("[]")  # 지침 첫 줄 '[claude-web- 173]' 처럼 띄어쓰기·대괄호가 섞여도 같은 일지 파일로
     if not re.fullmatch(r"[TS]\d{1,3}", number):
         print(f"번호 모양이 아니에요: {a.number} (예: T77, S1)")
         return 2

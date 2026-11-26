@@ -74,6 +74,13 @@ def test_claim_pushes_branch_and_worklog_start_line(repos):
     assert "T77 시작 (브랜치 task/T77-write-lock)" in log
 
 
+def test_name_with_space_or_brackets_uses_same_worklog(repos):
+    r = claim(repos["a"], "T77", "write-lock", "--name", "[claude-web- 173]")
+    assert r.returncode == 0, r.stdout
+    log = g(repos["a"], "show", "origin/task/T77-write-lock:docs/worklog/claude-web-173.md")
+    assert "T77 시작" in log
+
+
 def test_other_clone_sees_claim_even_with_stale_refs(repos):
     """B 는 따로 받은 저장소라 아무것도 받지 않은 상태 — 도구가 먼저 fetch 해서 A 의 브랜치를 본다(11-25 겹침 사례)."""
     assert claim(repos["a"], "T77", "write-lock", "--name", "bizcoder-1").returncode == 0

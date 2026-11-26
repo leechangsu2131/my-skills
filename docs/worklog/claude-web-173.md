@@ -10,3 +10,4 @@
 - 2026-11-26 04:55 T45 PR 올림 — day_schedule 이 따라잡기로 고른 예정 차시(manual_catch_up)를 먼저 보여 줌, LESSON_REL 에 source 추가. 시험 7개 추가·expectedFailure 제거, test_supabase_schedule.py 47 통과·1 건너뜀, 스킬 전체 150 통과. 변이 4가지 모두 잡힘. PR #15 위에 쌓은 PR
 - 2026-11-26 05:05 T50 시작 (브랜치 task/T50-teacher-guide)
 - 2026-11-26 05:15 T50 PR 올림 — teacherlesson-assistant README.md 에 '교사용 사용 설명서 (한 장)' 추가(날짜·교시 → 🌙 수업 준비 → 지금 할 일 → 메모 → 진도 조정, 그림 없이 쉬운 말), SKILL.md 에 안내 한 줄. 단추 이름·확인 창은 web/index.html 과 대조. 옛 이름 '여기부터 다시 잡기'를 화면 이름으로 표시. build_catalog --check 문제 없음
+- 2026-11-26 11:00 T70 시작 (브랜치 task/T70-classroom-tools)

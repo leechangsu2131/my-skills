@@ -150,7 +150,9 @@ js_fill_two = """
 """
 
 time.sleep(1)
-js_fill_two = js_fill_two.replace('__CONTACT__', json.dumps(os.environ.get('NEIS_EMERGENCY_CONTACT', '')))  # 중앙 .env
+_sys.path.insert(0, str(_pl.Path(__file__).resolve().parent))
+from contact_info import my_phone  # 구글 드라이브 my-skills-개인자료/연락처.txt (없으면 예전 .env 값)
+js_fill_two = js_fill_two.replace('__CONTACT__', json.dumps(my_phone()))
 fill_info = driver.execute_script(js_fill_two)
 print('Fill info:')
 print(json.dumps(fill_info, ensure_ascii=False, indent=2))

@@ -315,14 +315,17 @@ def main():
     with open(data_file, "r", encoding="utf-8") as f:
         trip_data = json.load(f)
 
-    # 연락처(휴대전화)는 저장소에 두지 않는다: 데이터 파일이 비어 있으면 중앙 .env 에서 읽는다
+    # 연락처(휴대전화)는 저장소에 두지 않는다: 데이터 파일이 비어 있으면
+    # 구글 드라이브 my-skills-개인자료/연락처.txt 에서 읽는다(contact_info.py)
     if not trip_data.get("contact"):
         sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "_shared"))
+        sys.path.insert(0, str(Path(__file__).resolve().parent))
         from skill_env import load_env
+        from contact_info import my_phone
         load_env()
-        trip_data["contact"] = os.environ.get("TRIP_CONTACT", "")
+        trip_data["contact"] = my_phone()
     if not trip_data.get("contact") and not args.dry_run:
-        print("[오류] 연락처가 없습니다. 중앙 .env 에 ADMIN_NEIS_BOT__TRIP_CONTACT 를 적어 주세요.")
+        print("[오류] 연락처가 없습니다. 구글 드라이브 my-skills-개인자료/연락처.txt 에 '휴대전화: 010-…' 를 적어 주세요.")
         sys.exit(1)
 
     print("=" * 60)

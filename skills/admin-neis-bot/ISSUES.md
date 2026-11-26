@@ -65,9 +65,9 @@
 
 ### ISSUE-PRIVACY: 개인정보가 보이는 화면 캡처·답안지·연락처가 저장소에 있었음 (2026-11-27)
 - **증상**: 공개 저장소의 화면 캡처·답안지 사진·코드에 학생·학부모 정보와 휴대전화 번호가 들어 있었음(이 스킬과 admin-hitalk-sender, classmanage-iscream-evaluate, classmanage-exam-graderV2, admin-gbetalk).
-- **해결**: 파일 삭제, 이름은 학생A 식으로 바꿈, 번호 제거, `.gitignore` 에 같은 위치 추가. 출장 연락처는 중앙 `.env` 의 `ADMIN_NEIS_BOT__TRIP_CONTACT` 에서 읽음.
+- **해결**: 파일 삭제, 이름은 학생A 식으로 바꿈, 번호 제거, `.gitignore` 에 같은 위치 추가. 교사 연락처(출장신청·연가 비상연락처)는 `.env` 에 두지 않고 구글 드라이브 개인 공간 `my-skills-개인자료/연락처.txt`(`휴대전화: 010-…`)에서 `contact_info.py` 로 읽음(교사 결정 2026-11-27: `.env` 에는 비밀값만). 파일이 없는 PC 는 예전 `.env` 키(`NEIS_EMERGENCY_CONTACT`)를 봄.
 - **남은 일**: 예전 커밋에는 파일이 그대로 있음(기록 지우기는 교사 결정). 화면 캡처는 `data_dir()` 에 저장하도록 코드를 옮기는 것이 좋음.
-- **관련 파일**: `neis_business_trip.py`, `.env.example`, `.gitignore`
+- **관련 파일**: `neis_business_trip.py`, `apply_fresh_kwan_nae.py`, `contact_info.py`, `.gitignore`
 
 ### ISSUE-010: 3학년 2반 학생 생년월일 및 보호자명 자동 추출 봇 구축 (2026-11-23)
 - **상태**: 🟢 해결됨 (2026-11-23)

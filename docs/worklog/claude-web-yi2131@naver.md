@@ -11,3 +11,4 @@
 - 2026-11-26 04:35 T13(util-web-scraper) PR 올림 — skills/util-web-scraper/tests/test_add_urls.py (시험 17개: 통과 14·xfail 3·실패 0, 소스를 잠깐 바꿔 시험이 잡아내는지 확인 후 되돌림), 버그 후보 3건 + 확인 필요 1건(EduSearch 경로 고정) ISSUES 기록. T13 의 workflow-hub-main 은 아직 안 함
 - 2026-11-26 05:07 T13(util-web-scraper) 교사 요청 반영 — EduSearch 고정 경로를 my-skills 옆 폴더(또는 .env UTIL_WEB_SCRAPER__EDUSEARCH_DIR)로 찾게 고침, 명령줄 시험 추가 (시험 30개: 통과 27·xfail 3). 교사 PC 에서 폴더 배치 확인 필요
 - 2026-11-26 10:07 T75 시작 (브랜치 task/T75-check-setup-config)
+- 2026-11-26 10:08 T75 PR 올림 — teacherlesson-assistant `check_setup.load_config` 가 config.json 이 { } 모양이 아니면(`[]`·`5`·`null`) ❌ 로 알리고 멈추지 않게 (tests/test_check_setup.py 115개 통과, 옛 소스로 되돌리면 9개 실패 확인 후 복구, 폴더 전체 148개 통과), ISSUE-035 🟢

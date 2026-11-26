@@ -485,6 +485,23 @@ def test_load_config_broken_json_is_fail(tmp_path):
     assert cfg == {} and res.status == FAIL
 
 
+@pytest.mark.parametrize("text", ["[]", "5", '"글"', "null", "[1, 2]"])
+def test_load_config_not_an_object_is_fail(tmp_path, text):
+    (tmp_path / "config.json").write_text(text, encoding="utf-8")
+    cfg, res = cs.load_config(tmp_path, tmp_path / "x.json")
+    assert cfg == {} and res.status == FAIL and "{ }" in res.detail
+
+
+def test_load_config_example_not_an_object_is_fail(tmp_path):
+    example = tmp_path / "config.example.json"
+    example.write_text("[]", encoding="utf-8")
+    data = tmp_path / "data"
+    data.mkdir()
+    cfg, res = cs.load_config(data, example)
+    assert cfg == {} and res.status == FAIL
+
+
+
 # ── 전체 실행: 값 비출력, 종료 코드 ──
 
 SENTINEL = "SECRET-VALUE-MUST-NOT-APPEAR-123"
@@ -548,6 +565,16 @@ def test_run_checks_does_not_crash_on_unusable_port_and_reports_fail(fake_world,
     assert not any("수업 비서" in r.title and "번 포트" in r.title for r in results)   # 못 쓰는 포트는 열어 보지 않는다
     assert cs.main() == 1
     assert "설정 port" in capsys.readouterr().out
+
+
+@pytest.mark.parametrize("text", ["[]", "5", "null"])
+def test_run_checks_does_not_crash_when_config_is_not_an_object(fake_world, capsys, text):
+    (cs.skill_env.data_dir() / "config.json").write_text(text, encoding="utf-8")
+    results = cs.run_checks()                                  # 예전에는 AttributeError 로 멈췄다
+    bad = [r for r in results if r.title == "설정 파일 config.json"]
+    assert len(bad) == 1 and bad[0].status == FAIL
+    assert cs.main() == 1
+    assert "{ }" in capsys.readouterr().out
 
 
 def test_run_checks_does_not_crash_on_unusable_debug_port(fake_world, monkeypatch):

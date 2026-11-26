@@ -108,6 +108,7 @@ Claude 작업 절차는 [SKILL.md](SKILL.md), 문제·할 일은 [ISSUES.md](ISS
 - `sessions/<날짜>/<교시>교시_<과목>_<시각>.webm` — 녹음
 - `ask/<날짜>/<교시>_<과목>/` — 웹 AI에 끌어다 놓을 PDF와 질문.txt
 - `notebooklm/<과목>/` — NotebookLM 소스(`<대단원>.md`, `_그림.pdf`), `notes/` 차시별 노트, `목록.txt`
+- `reports/week-<월요일>.md` — 주간 정리 글 (`python weekly_report.py [--date YYYY-MM-DD]`). 과목·출판사별 고칠점·좋았음, 출판사 주의점 후보, 학생별 발표 메모. **학생 이름이 있으니 밖에 보내지 않는다**
 - `publisher_notes.json` — `{"출판사|과목": [{"text","date"}], "출판사|*": [...]}`
 
 아이디·비밀번호는 중앙 .env(`OneDrive\96. 인증\.env`)에 `<secret_prefix>_ID`, `<secret_prefix>_PW`로 적는다(예: `ISCREAM_ID`). 서버는 값을 화면에 보내지 않고 클립보드로만 넘긴다.

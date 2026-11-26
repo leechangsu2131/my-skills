@@ -20,7 +20,11 @@
 | `admin-class-buy` | ✅ 운영 | - | 학급운영비 개산급 정산 행을 준비하고 영수증별 증빙 DOCX를 만든다. 규정·에듀파인 절차 참고 문서가 포함되어 있다. | [SKILL](skills/admin-class-buy/SKILL.md) · [이슈](skills/admin-class-buy/ISSUES.md) |
 | `admin-edufine` | ✅ 운영 | - | K-에듀파인 물품 품의, 공문 기안, 결재/공람 대기 문서 확인과 관련한 RPA 및 웹 대시보드를 제공한다. | [SKILL](skills/admin-edufine/SKILL.md) · [이슈](skills/admin-edufine/ISSUES.md) 🔵4 · [README](skills/admin-edufine/README.md) |
 | `admin-gbetalk` | ✅ 운영 | - | 지비톡(경북교육청 업무 메신저)에서 받은 쪽지를 날짜·발신자와 함께 로컬 Markdown으로 보관·요약하고, 지비톡 문자(SMS) 창을 9222 Chrome에서 열어 문자를 채우고 확인 후 발송한다. 쪽지 답장은 하지 않는다. | [SKILL](skills/admin-gbetalk/SKILL.md) · [이슈](skills/admin-gbetalk/ISSUES.md) 🔵3 · [README](skills/admin-gbetalk/README.md) |
+<<<<<<< Updated upstream
 | `admin-google-wallpaper` | 🔧 개발 | v0.1.0 | 학생 계정별 Chrome 프로필을 분리하고, 다운로드한 이미지와 시작 사이트를 설정한다. | [SKILL](skills/admin-google-wallpaper/SKILL.md) · [이슈](skills/admin-google-wallpaper/ISSUES.md) 🔵1 |
+=======
+| `admin-google-profile-picture` | 🔧 개발 | v0.1.0 | 학생별 Chrome 프로필을 만들고 Google 계정 프로필 사진을 설정한다. | [SKILL](skills/admin-google-profile-picture/SKILL.md) · [이슈](skills/admin-google-profile-picture/ISSUES.md) |
+>>>>>>> Stashed changes
 | `admin-hitalk-sender` | ✅ 운영 | - | Google Sheets 명단과 템플릿으로 학생·학부모별 HiTalk 메시지를 작성한다. 미리보기·리허설 후 발송할 수 있다. | [SKILL](skills/admin-hitalk-sender/SKILL.md) · [이슈](skills/admin-hitalk-sender/ISSUES.md) |
 | `admin-neis-bot` | ✅ 운영 | - | NEIS 체험학습·결석 서류 접수, 출장·연수 등록, 창체/동아리 기록, 시간표 작업 등 교사 행정을 자동화한다. | [SKILL](skills/admin-neis-bot/SKILL.md) · [이슈](skills/admin-neis-bot/ISSUES.md) 🔵2 |
 | `admin-s2b-buyer` | ✅ 운영 | - | S2B에서 전국 최저가 검색·상세 비교·견적서 담기/삭제·에듀파인 연계 엑셀 받기를 사용자 Chrome으로 하고, 에듀파인 품의(admin-edufine)로 넘긴다. 실제 계약·구매 확정은 하지 않는다. | [SKILL](skills/admin-s2b-buyer/SKILL.md) · [이슈](skills/admin-s2b-buyer/ISSUES.md) |

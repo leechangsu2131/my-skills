@@ -236,12 +236,6 @@
 - **내용**: 그 저장소를 못 봤고, '지금 할 일' 화면이 `flows/*.json` 을 직접 읽으므로 당장은 필요 없음. 연결하려면 그 화면의 단계 진행 방식과 맞출지 먼저 정할 것. 시험 스크립트(가짜 서버+헤드리스 Chrome)는 저장소에 안 넣었음(Playwright 필요) — 필요하면 `tests/` 로 옮길 수 있음
 - **관련 파일**: `web/index.html`
 
-### ISSUE-023: assistant_server.py 첫머리 설명이 옛 진도 서버 기준 (2026-11-25)
-- **상태**: 📌 백로그
-- **증상**: `assistant_server.py` 모듈 설명(docstring)의 "진도 서버(teacherlesson-schedule, 기본 5000번)에서 그날 수업을 받아 …" 가 현재 기본 경로(Supabase, config `schedule_backend`)와 안 맞음. 코드는 `schedule_backend` 가 `supabase`(기본)면 `supabase_schedule.py`, 아니면 옛 진도 서버(`schedule_api`, 5000번)를 씀
-- **해결 방향**: 이번 문서 정리에서는 코드 파일을 고치지 않았음 → 다음 코드 작업 때 설명 한 줄만 고치기
-- **관련 파일**: `assistant_server.py`
-
 ### ISSUE-034: 실행_수업비서.bat 이 `py -3.13` 과 `python` 을 섞어 씀 (2026-11-25, T46 중 발견)
 - **상태**: 📌 백로그 (T46 은 점검 도구만 고침 — bat 는 윈도우에서 돌려 볼 수 없어 손대지 않음)
 - **증상**: bat 의 단원 개관 갱신(`build_units.py`)은 `py -3.13`, 서버(`assistant_server.py`)와 수업 준비(`prepare_lessons.py`)는 `python`. PC 에 Python 이 둘 이상이면 서로 다른 버전이 돌고, 패키지(requests·PyMuPDF 등)가 한쪽에만 깔려 있을 수 있음
@@ -250,6 +244,12 @@
 - **관련 파일**: `실행_수업비서.bat`, `점검_PC.bat`, `check_setup.py`
 
 ## 🟢 해결됨
+
+### ISSUE-023: assistant_server.py 첫머리 설명이 옛 진도 서버 기준 (2026-11-25)
+- **상태**: 🟢 해결 (2026-11-26, T86)
+- **증상**: `assistant_server.py` 모듈 설명(docstring)의 "진도 서버(teacherlesson-schedule, 기본 5000번)에서 그날 수업을 받아 …" 가 현재 기본 경로(Supabase, config `schedule_backend`)와 안 맞았음. 코드는 `schedule_backend` 가 `supabase`(기본)면 `supabase_schedule.py`, 아니면 옛 진도 서버(`schedule_api`, 기본 `http://127.0.0.1:5000`)를 씀
+- **해결**: 첫머리 설명을 "진도는 기본으로 Supabase, `schedule_backend` 가 다른 값이면 옛 진도 서버" 로 고치고, 맨 끝 줄의 완료·연장·미루기·따라잡기도 같은 진도 저장소를 갱신한다고 바로잡음. 설명(docstring)만 바꿨고 코드는 그대로
+- **관련 파일**: `assistant_server.py`
 
 ### ISSUE-032: `parse_flow` 가 JSON null 을 "None" 글자로 저장함 (2026-11-25, 시험으로 발견)
 - **상태**: 🟢 해결 (2026-11-26, T68)

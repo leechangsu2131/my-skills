@@ -1,16 +1,20 @@
 """수업 비서(teacherlesson-assistant) 로컬 서버.
 
-이 PC 안(127.0.0.1)에서만 열린다. 시간표·진도 변경은 Supabase에 연결한다.
+이 PC 안(127.0.0.1)에서만 열린다. 진도는 기본으로 Supabase 에서 읽고 바꾼다.
 
     python assistant_server.py          # 서버만 켜기
     python assistant_server.py --open   # 서버 + 왼쪽 수업 비서 창 열기
 
+진도 저장소 고르기 (config.json 의 schedule_backend)
+- supabase (기본): supabase_schedule.py 로 Supabase 진도표를 읽고 쓴다.
+- 그 밖의 값: 옛 진도 서버(teacherlesson-schedule, config 의 schedule_api, 기본 http://127.0.0.1:5000)를 쓴다.
+
 하는 일
-- 진도 서버(teacherlesson-schedule, 기본 5000번)에서 그날 수업을 받아 교시별로 보여 준다.
+- 진도 저장소(위)에서 그날 수업을 받아 교시별로 보여 준다.
 - 수업 흐름(flows/*.json), 출판사별 주의점, 지난 메모를 왼쪽 창에 붙여 준다.
 - 출판사 사이트를 오른쪽 창으로 연다. 아이디·비밀번호는 중앙 .env 에서 읽어 클립보드로만 넘긴다.
 - 녹음 조각과 수업 기록(메모·알림장 초안)을 내 문서\\my-skills-data\\teacherlesson-assistant 에 저장한다.
-- 완료·연장·미루기·따라잡기는 Supabase 진도 슬롯을 갱신한다.
+- 완료·연장·미루기·따라잡기는 같은 진도 저장소(기본 Supabase 진도 슬롯)를 갱신한다.
 """
 from __future__ import annotations
 

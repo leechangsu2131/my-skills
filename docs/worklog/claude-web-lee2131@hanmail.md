@@ -15,3 +15,5 @@
 - 2026-11-26 10:07 T81 시작 (브랜치 task/T81-merge-ready-skip-merged)
 - 2026-11-26 10:40 T80 PR 올림 — util-webtoguide 결과를 output/<블로그아이디>_<글번호>/ 로 글마다 따로 저장(주소 해시 대체 폴더, 경로 새지 않게 정리). 확인: pytest 36 통과·4 xfail(기존 ISSUE-001~003 그대로), 두 글 변환 시 안 덮음·같은 글은 같은 폴더 시험 추가, build_catalog --check·check_privacy 통과
 - 2026-11-26 11:10 T81 PR 올림 — tools/merge_ready.py 에 '건너뜀' 규칙 둘 추가: ① 브랜치가 더한 줄의 90% 이상이 main 파일에 이미 있으면(다른 판으로 합쳐짐) ② 브랜치 이름의 T 번호가 TASKS 에서 이미 완료면(S 번호 제외). 확인: 새 tests/test_merge_ready.py 6개 통과(가짜 bare 원격), 옛 코드로는 2개 실패 확인, test_claim_task 포함 15개 통과, build_catalog --check 통과. 주의: ②는 완료된 번호의 후속 보완 브랜치(예 T23-…)도 건너뜀 → 손으로 확인 필요
+- 2026-11-26 13:32 T86 시작 (브랜치 task/T86-assistant-server-docstring)
+- 2026-11-26 14:05 T86 PR 올림 — assistant_server.py 첫머리 설명을 지금 기본(Supabase, config schedule_backend)에 맞게: supabase(기본)면 supabase_schedule.py, 다른 값이면 옛 진도 서버(schedule_api, 기본 127.0.0.1:5000). ISSUES 의 ISSUE-023 을 🟢 해결됨으로 옮김. 확인: 코드는 그대로인지 AST 로 비교(설명만 다름), CI 대상 시험 235 통과, build_catalog --check·check_privacy 통과. 참고: 이 브랜치에는 T83(PR #78) 수정이 없어 sites 시험 모으기 3개는 그대로 실패(T83 이 합쳐지면 해결)

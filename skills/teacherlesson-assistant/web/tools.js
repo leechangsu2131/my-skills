@@ -117,11 +117,56 @@ function noiseLabel(level) {
   return { color: '#1d8a4a', label: '조용해요 🟢' };
 }
 
+/* ── 시간이 모자랄 때 뒤 단계 한 번에 줄이기 (ISSUE-009) ──────────────────── */
+
+/** 단계 표시(flag)별로 '얼마나 줄일지'의 무게. 클수록 더 줄인다. 표시가 없으면 1. */
+const COMPRESS_FACTOR = { cut: 1.5, keep: 0.4 };
+
+/**
+ * 교시 끝까지 shortMin 분이 모자랄 때, fromIdx 번째 단계부터 뒤쪽 단계들의 분을 얼마씩 줄일지 계산한다.
+ * - 줄이는 몫은 단계의 분에 비례한다. 단, '줄여도 됨'(cut)은 1.5배, '꼭 해야 함'(keep)은 0.4배로 센다.
+ * - 한 단계는 1분 밑으로 내려가지 않는다(분이 0 이하인 단계는 건드리지 않는다).
+ * - 줄일 수 있는 분이 모자라면 줄일 수 있는 만큼만 줄이고 나머지는 left 로 돌려준다.
+ * - 같은 몫이면 더 뒤쪽 단계를 먼저 줄인다.
+ * @param {Array<{flag?: string}>} steps  단계 목록(flag: 'cut' | 'keep' | '')
+ * @param {number[]} mins  단계별 지금 적용 중인 분(steps 와 같은 길이)
+ * @param {number} fromIdx  줄이기 시작할 첫 단계 번호(보통 지금 단계 + 1)
+ * @param {number} shortMin  모자란 분(소수는 반올림)
+ * @returns {{deltas: number[], cut: number, left: number}}
+ *   deltas: 단계별 바꿀 분(0 이하 정수, steps 와 같은 길이), cut: 실제로 줄인 합계(분), left: 못 줄인 분
+ */
+function compressStages(steps, mins, fromIdx, shortMin) {
+  const n = Array.isArray(steps) ? steps.length : 0;
+  const deltas = new Array(n).fill(0);
+  const need = Math.round(Number(shortMin));
+  if (!n || !Array.isArray(mins) || !(need >= 1)) return { deltas, cut: 0, left: need >= 1 ? need : 0 };
+  const start = Math.max(0, Math.floor(Number(fromIdx)) || 0);
+  const mm = (i) => { const v = Math.round(Number(mins[i])); return v > 0 ? v : 0; };
+  const cap = (i) => Math.max(0, mm(i) - 1);          // 1분 밑으로는 안 줄임
+  const weight = (i) => mm(i) * (COMPRESS_FACTOR[(steps[i] || {}).flag] || 1);
+  const idxs = [];
+  for (let i = start; i < n; i++) if (cap(i) > 0) idxs.push(i);
+  let left = need;
+  while (left > 0) {
+    let best = -1, bestScore = -1;
+    for (const i of idxs) {
+      if (-deltas[i] >= cap(i)) continue;
+      const score = weight(i) / (-deltas[i] + 1);     // 이미 많이 줄인 단계일수록 다음 몫이 줄어듦(비례 배분)
+      if (score >= bestScore) { best = i; bestScore = score; }   // 같으면 뒤쪽 단계가 이김(idxs 는 앞→뒤 순)
+    }
+    if (best < 0) break;
+    deltas[best] -= 1;
+    left -= 1;
+  }
+  return { deltas, cut: need - left, left };
+}
+
 /* ── 모듈 내보내기(Node 시험용) ──────────────────────── */
 if (typeof module !== 'undefined') {
   module.exports = {
     timerFormat, timerParse, timerState,
     shuffleRange, pickNext,
     calcNoiseLevel, noiseLabel,
+    compressStages, COMPRESS_FACTOR,
   };
 }

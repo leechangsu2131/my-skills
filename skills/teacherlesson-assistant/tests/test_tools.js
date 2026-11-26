@@ -14,6 +14,7 @@ const {
   timerFormat, timerParse, timerState,
   shuffleRange, pickNext,
   calcNoiseLevel, noiseLabel,
+  compressStages, COMPRESS_FACTOR,
 } = require(path.join(__dirname, '..', 'web', 'tools.js'));
 
 let passed = 0;
@@ -149,6 +150,94 @@ test('경계값 70 → 빨간색', () => {
 });
 test('경계값 45 → 노란색', () => {
   assert.strictEqual(noiseLabel(45).color, '#c77700');
+});
+
+/* ── compressStages (모자랄 때 뒤 단계 한 번에 줄이기, ISSUE-009) ─────── */
+console.log('\n[compressStages]');
+const sum = (a) => a.reduce((x, y) => x + y, 0);
+const plain = (n, flag) => Array.from({ length: n }, () => ({ flag: flag || '' }));
+
+test('모자란 분만큼 줄이고, 합이 정확히 맞는다', () => {
+  const steps = plain(4);
+  const r = compressStages(steps, [5, 10, 20, 5], 1, 6);
+  assert.strictEqual(r.cut, 6);
+  assert.strictEqual(r.left, 0);
+  assert.strictEqual(-sum(r.deltas), 6);
+});
+test('지금 단계(fromIdx 앞)는 절대 안 줄인다', () => {
+  const r = compressStages(plain(4), [10, 10, 10, 10], 2, 8);
+  assert.strictEqual(r.deltas[0], 0);
+  assert.strictEqual(r.deltas[1], 0);
+  assert.strictEqual(-sum(r.deltas), 8);
+});
+test('줄이는 몫은 단계의 분에 비례한다(긴 단계를 더 줄임)', () => {
+  const r = compressStages(plain(3), [5, 10, 25], 0, 8);
+  // 비례 몫 1 : 2 : 5
+  assert.deepStrictEqual(r.deltas, [-1, -2, -5]);
+});
+test("'꼭 해야 함'(keep)은 덜 줄이고 '줄여도 됨'(cut)은 더 줄인다", () => {
+  const steps = [{ flag: 'keep' }, { flag: '' }, { flag: 'cut' }];
+  const r = compressStages(steps, [10, 10, 10], 0, 9);
+  assert.ok(-r.deltas[0] < -r.deltas[1], `keep ${r.deltas[0]} < 보통 ${r.deltas[1]}`);
+  assert.ok(-r.deltas[1] < -r.deltas[2], `보통 ${r.deltas[1]} < cut ${r.deltas[2]}`);
+  assert.strictEqual(-sum(r.deltas), 9);
+});
+test('keep 단계도 다른 단계가 1분뿐이면 줄인다(꼭 해야 함이라도 1분까지는 양보)', () => {
+  const steps = [{ flag: 'keep' }, { flag: '' }];
+  const r = compressStages(steps, [10, 1], 0, 5);
+  assert.deepStrictEqual(r.deltas, [-5, 0]);
+});
+test('한 단계는 1분 밑으로 내려가지 않는다', () => {
+  const r = compressStages(plain(2), [3, 2], 0, 100);
+  assert.deepStrictEqual(r.deltas, [-2, -1]);
+  assert.strictEqual(r.cut, 3);
+  assert.strictEqual(r.left, 97);
+});
+test('분이 1 이하·0·없는 단계는 건드리지 않는다', () => {
+  const r = compressStages(plain(4), [1, 0, undefined, 6], 0, 4);
+  assert.deepStrictEqual(r.deltas, [0, 0, 0, -4]);
+});
+test('줄일 단계가 하나도 없으면 아무것도 안 줄이고 모자란 분을 그대로 돌려준다', () => {
+  const r = compressStages(plain(2), [1, 1], 0, 7);
+  assert.deepStrictEqual(r, { deltas: [0, 0], cut: 0, left: 7 });
+  const last = compressStages(plain(3), [5, 5, 5], 3, 4);   // 지금이 마지막 단계
+  assert.deepStrictEqual(last, { deltas: [0, 0, 0], cut: 0, left: 4 });
+});
+test('모자란 분이 0·음수·숫자 아님이면 안 줄인다', () => {
+  for (const bad of [0, -3, 0.4, NaN, undefined, null, '가']) {
+    const r = compressStages(plain(2), [10, 10], 0, bad);
+    assert.deepStrictEqual(r.deltas, [0, 0], `short=${bad}`);
+    assert.strictEqual(r.cut, 0, `short=${bad}`);
+  }
+});
+test('소수로 모자라면 반올림해서 줄인다', () => {
+  const r = compressStages(plain(2), [10, 10], 0, 2.6);
+  assert.strictEqual(r.cut, 3);
+});
+test('같은 몫이면 더 뒤쪽 단계를 먼저 줄인다', () => {
+  const r = compressStages(plain(3), [10, 10, 10], 0, 1);
+  assert.deepStrictEqual(r.deltas, [0, 0, -1]);
+});
+test('입력 배열을 바꾸지 않고, deltas 는 항상 steps 와 같은 길이의 0 이하 정수', () => {
+  const steps = [{ flag: 'cut' }, {}, { flag: 'keep' }, { flag: 'cut' }];
+  const mins = [4, 7, 12, 3];
+  const before = JSON.stringify([steps, mins]);
+  const r = compressStages(steps, mins, 1, 5);
+  assert.strictEqual(JSON.stringify([steps, mins]), before);
+  assert.strictEqual(r.deltas.length, steps.length);
+  r.deltas.forEach((d, i) => {
+    assert.ok(Number.isInteger(d) && d <= 0, `deltas[${i}]=${d}`);
+    assert.ok(mins[i] + d >= 1 || mins[i] < 1, `줄인 뒤 ${mins[i] + d}분`);
+  });
+});
+test('fromIdx 가 범위를 벗어나거나 steps 가 비어도 오류 없이 처리', () => {
+  assert.deepStrictEqual(compressStages([], [], 0, 3), { deltas: [], cut: 0, left: 3 });
+  assert.deepStrictEqual(compressStages(plain(2), [9, 9], 99, 3).deltas, [0, 0]);
+  assert.strictEqual(-sum(compressStages(plain(2), [9, 9], -5, 3).deltas), 3);   // 음수 → 처음부터
+  assert.deepStrictEqual(compressStages(null, null, 0, 3), { deltas: [], cut: 0, left: 3 });
+});
+test('가중치 상수가 시험 의도와 맞다(cut > 보통(1) > keep)', () => {
+  assert.ok(COMPRESS_FACTOR.cut > 1 && COMPRESS_FACTOR.keep > 0 && COMPRESS_FACTOR.keep < 1);
 });
 
 /* ── 결과 ─────────────────────────────── */

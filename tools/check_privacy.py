@@ -2,11 +2,11 @@
 """커밋 전 개인정보·비밀값 검사 도구.
 
 `git diff --staged` 에서 **새로 추가된 줄**만 읽어, 아래처럼 생긴 것이 있으면 경고합니다.
-  - 전화번호 모양 (휴대전화·지역번호)
-  - 주민등록번호 모양 (앞 6자리-뒤 7자리)
-  - API 키·토큰 모양 (sk-, AIza, ghp_, github_pat_, xox*, AKIA, ntn_, secret_, GOCSPX-, JWT, 데이터베이스 ID)
+  - 전화번호 모양 (휴대전화·지역번호. 가운데 묶음이 0 으로 시작하는 10자리 코드는 제외)
+  - 주민등록번호 모양 (앞 6자리-뒤 7자리. 하이픈 없는 13자리는 날짜와 검증 숫자가 모두 맞을 때만)
+  - API 키·토큰 모양 (sk-, AIza, ghp_, github_pat_, xox*, AKIA, ntn_, secret_(40자 이상), GOCSPX-, JWT, 데이터베이스 ID)
   - 실제 사용자 폴더 경로 (Windows 경로, /c/Users/<이름>)
-  - .env 파일 자체 (예시용 .env.example 등은 제외)
+  - .env 파일 자체 (예시용 .env.example 등은 제외. 내용이 빈 새 파일도 diff 머리 줄에서 찾음)
 
 쓰는 법:
   python tools/check_privacy.py              # 커밋 올릴 변경(staged)을 검사
@@ -14,11 +14,12 @@
   git diff --staged | python tools/check_privacy.py --stdin
   python tools/check_privacy.py --warn-only  # 경고만 하고 항상 0 으로 끝냄
 
-끝내는 값: 의심 줄이 없으면 0, 있으면 1 (--warn-only 면 항상 0).
+끝내는 값: 막아야 할 의심 줄이 없으면 0, 있으면 1 (--warn-only 면 항상 0).
+  - '실제 사용자 폴더 경로'는 경고로만 보여 주고 종료 값에는 넣지 않습니다(T78).
 
 알아 둘 점:
   - 찾은 값은 화면에 **가려서** 보여 줍니다(앞 2글자만). 경고 글이 또 다른 유출이 되지 않게.
-  - 예시용 값(000-0000, <이름>, %USERNAME% 등)은 통과시킵니다.
+  - 예시용 값(000-0000, <이름>, %USERNAME%, C:\\Users\\… 등)은 통과시킵니다.
   - 이메일 주소는 검사 대상에서 제외합니다(교사 결정).
   - 일부러 넣은 줄이면 그 줄 끝에 `privacy-ok` 를 적으면 건너뜁니다.
   - 학생·교사 **이름**은 모양만으로 알 수 없어 찾지 못합니다. diff 를 눈으로도 꼭 확인하세요.
@@ -55,14 +56,24 @@ SAFE_USER_DIRS = {
     "내이름",
 }
 
+# C:\Users\xxx, C:\Users\..., C:\Users\… 처럼 자리를 채워 둔 표시도 예시로 본다
+PLACEHOLDER_USER_RE = re.compile(r"(?:[xX]+|\.+|…+|\*+)")
+
+# 경고로만 보여 주고 종료 값(막기)에는 넣지 않는 종류
+WARN_ONLY_KINDS = frozenset({"실제 사용자 폴더 경로"})
+
+# 전화번호 가운데 묶음은 0 으로 시작하지 않는다(NEIS 10자리 기관 코드 같은 숫자 오탐을 줄임)
 PHONE_RE = re.compile(
     r"(?<![0-9A-Za-z])("
-    r"01[016789][-. ]?\d{3,4}[-. ]?\d{4}"  # 휴대전화
-    r"|0(?:2|[3-6][1-5]|70)[-. ]?\d{3,4}[-. ]?\d{4}"  # 서울·지역·인터넷전화
+    r"01[016789][-. ]?[1-9]\d{2,3}[-. ]?\d{4}"  # 휴대전화
+    r"|0(?:2|[3-6][1-5]|70)[-. ]?[1-9]\d{2,3}[-. ]?\d{4}"  # 서울·지역·인터넷전화
     r")(?![0-9A-Za-z])"
 )
 # 주민번호는 구분 기호가 있고 앞 6자리가 실제 달력 날짜인 경우만 찾는다.
 RRN_RE = re.compile(r"(?<![0-9A-Za-z])(\d{6})[- ]([0-9]\d{6})(?![0-9A-Za-z])")
+# 하이픈 없는 13자리는 숫자 길이만 같은 번호(타임스탬프 등)가 많아, 날짜와 검증 숫자가 모두 맞을 때만 찾는다.
+RRN_COMPACT_RE = re.compile(r"(?<![0-9A-Za-z])(\d{6})(\d{7})(?![0-9A-Za-z])")
+RRN_WEIGHTS = (2, 3, 4, 5, 6, 7, 8, 9, 2, 3, 4, 5)
 WIN_USER_RE = re.compile(r"(?i)(?<![A-Za-z0-9])[A-Z]:[\\/]+Users[\\/]+([^\\/\s\"'<>|:*?%]+)")
 GIT_BASH_USER_RE = re.compile(r"(?i)(?<![A-Za-z0-9])/[a-z]/Users/([^/\s\"'<>|:*?%]+)")
 ENV_SAFE_NAMES = {".env.example", ".env.sample", ".env.template", ".env.dist"}
@@ -78,7 +89,7 @@ SECRET_PATTERNS: list[tuple[str, re.Pattern[str]]] = [
     ("비공개 키 머리말", re.compile(r"-----BEGIN [A-Z ]*PRIVATE KEY-----")),
     ("JWT 토큰", re.compile(r"\beyJ[A-Za-z0-9_-]{10,}\.eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{5,}")),
     ("Notion API 토큰(ntn_)", re.compile(r"\bntn_[A-Za-z0-9_-]{16,}\b")),
-    ("Notion 비밀 토큰(secret_)", re.compile(r"\bsecret_[A-Za-z0-9_-]{16,}\b")),
+    ("Notion 비밀 토큰(secret_)", re.compile(r"\bsecret_[A-Za-z0-9]{40,}\b")),
     ("Google OAuth 클라이언트 비밀값", re.compile(r"\bGOCSPX-[A-Za-z0-9_-]{20,}\b")),
     ("Notion 데이터베이스 ID", re.compile(r"(?i)\b(?:notion[_ -]?)?(?:database|db)[_ -]?id\s*[:=]\s*([0-9a-f]{32})\b")),
 ]
@@ -90,6 +101,11 @@ class Finding:
     line_no: int
     kind: str
     masked: str
+
+    @property
+    def warn_only(self) -> bool:
+        """경고로만 보여 주는 종류인지(종료 값에 영향 없음)."""
+        return self.kind in WARN_ONLY_KINDS
 
     def render(self) -> str:
         where = f"{self.path}:{self.line_no}" if self.line_no else self.path
@@ -128,6 +144,14 @@ def _valid_rrn_date(value: str, code: str) -> bool:
         return False
 
 
+def _valid_rrn_checksum(digits: str) -> bool:
+    """주민번호 13자리의 마지막 검증 숫자가 맞는지."""
+    if len(digits) != 13 or not digits.isdigit():
+        return False
+    total = sum(int(d) * w for d, w in zip(digits[:12], RRN_WEIGHTS))
+    return (11 - total % 11) % 10 == int(digits[12])
+
+
 def _valid_date(year: int, month: int, day: int) -> bool:
     try:
         date(year, month, day)
@@ -140,6 +164,7 @@ def _is_safe_user_dir(value: str) -> bool:
     user = value.strip().lower()
     return (
         user in SAFE_USER_DIRS
+        or PLACEHOLDER_USER_RE.fullmatch(user.rstrip(",;)]}")) is not None
         or user.startswith("<")
         or user.startswith("$")
         or user.startswith("{")
@@ -171,6 +196,15 @@ def scan_line(text: str) -> list[tuple[str, str]]:
     for m in valid_rrns:
         found.append(("주민등록번호 모양", m.group(0)))
 
+    for m in RRN_COMPACT_RE.finditer(text):
+        digits = m.group(1) + m.group(2)
+        if (
+            _valid_rrn_date(m.group(1), m.group(2))
+            and _valid_rrn_checksum(digits)
+            and not _is_placeholder_digits(digits)
+        ):
+            found.append(("주민등록번호 모양", digits))
+
     rrn_spans = [m.span() for m in valid_rrns]
     for m in PHONE_RE.finditer(text):
         if _is_placeholder_digits(re.sub(r"\D", "", m.group(0))[-7:]):
@@ -188,21 +222,57 @@ def scan_line(text: str) -> list[tuple[str, str]]:
     return found
 
 
+# 이름이 바뀌지 않은 파일은 앞뒤 경로가 같다(공백이 든 이름도 맞게 읽힘). 바뀐 파일은 뒤 경로를 쓴다.
+DIFF_HEADER_SAME_RE = re.compile(r'^diff --git (?:"a/|a/)(.+?)"? (?:"b/|b/)\1"?$')
+DIFF_HEADER_RE = re.compile(r'^diff --git (?:"a/|a/)(.+?)"? (?:"b/|b/)(.+?)"?$')
+
+
+def _path_from_diff_header(line: str) -> str | None:
+    m = DIFF_HEADER_SAME_RE.match(line)
+    if m:
+        return m.group(1)
+    m = DIFF_HEADER_RE.match(line)
+    return m.group(2) if m else None
+
+
 def iter_changed_paths(diff_text: str) -> Iterator[str]:
-    """diff 에서 변경된 파일 경로를 돌려준다."""
+    """diff 에서 (지워지지 않은) 변경 파일 경로를 돌려준다.
+
+    내용이 빈 새 파일(빈 .env 등)은 `+++` 줄이 없으므로 `diff --git` 줄에서도 경로를 읽는다.
+    """
+    seen: set[str] = set()
+    path: str | None = None
+    deleted = False
     in_hunk = False
+
+    def flush() -> Iterator[str]:
+        nonlocal path
+        if path and not deleted and path not in seen:
+            seen.add(path)
+            yield path
+        path = None
+
     for raw in diff_text.splitlines():
         if raw.startswith("diff --git "):
+            yield from flush()
+            path = _path_from_diff_header(raw)
+            deleted = False
             in_hunk = False
             continue
         if raw.startswith("@@"):
             in_hunk = True
             continue
-        if not in_hunk and raw.startswith("+++ "):
+        if in_hunk:
+            continue
+        if raw.startswith("deleted file mode"):
+            deleted = True
+        elif raw.startswith("+++ "):
             target = raw[4:].strip()
             if target == "/dev/null":
-                continue
-            yield target[2:] if target.startswith("b/") else target
+                deleted = True
+            else:
+                path = target[2:] if target.startswith("b/") else target
+    yield from flush()
 
 
 def iter_added_lines(diff_text: str) -> Iterator[tuple[str, int, str]]:
@@ -281,15 +351,25 @@ def main(argv: list[str] | None = None) -> int:
         return 2
 
     findings = scan_diff(diff_text)
+    blocking = [f for f in findings if not f.warn_only]
+    warnings = [f for f in findings if f.warn_only]
     if not findings:
         print("✅ 개인정보·비밀값 모양을 찾지 못했어요. (이름은 못 찾으니 diff 를 눈으로도 확인하세요)")
         return 0
 
-    print(f"🚨 의심되는 줄 {len(findings)}곳 (찾은 값은 가려서 보여 줍니다):")
-    for f in findings:
-        print("  " + f.render())
-    print("\n진짜 값이면 지우고 '학생A', '000-0000', '<이름>' 같은 예시로 바꾸세요.")
-    print(f"예시·일부러 넣은 줄이면 줄 끝에 `{SKIP_MARK}` 를 적으면 건너뜁니다.")
+    if blocking:
+        print(f"🚨 의심되는 줄 {len(blocking)}곳 (찾은 값은 가려서 보여 줍니다):")
+        for f in blocking:
+            print("  " + f.render())
+        print("\n진짜 값이면 지우고 '학생A', '000-0000', '<이름>' 같은 예시로 바꾸세요.")
+        print(f"예시·일부러 넣은 줄이면 줄 끝에 `{SKIP_MARK}` 를 적으면 건너뜁니다.")
+    if warnings:
+        print(f"ℹ 확인해 볼 경고 {len(warnings)}곳 (막지는 않아요 — 실제 사용자 폴더 경로면 %USERPROFILE%·data_dir() 로 바꾸세요):")
+        for f in warnings:
+            print("  " + f.render())
+    if not blocking:
+        print("✅ 막아야 할 의심 줄은 없어요.")
+        return 0
     return 0 if args.warn_only else 1
 
 

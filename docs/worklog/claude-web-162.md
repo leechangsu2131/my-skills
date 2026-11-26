@@ -17,3 +17,4 @@
 - 2026-11-26 04:34 T13 workflow-hub-main 시작 (브랜치 task/T13-tests-workflow-hub, 최신 main 에서)
 - 2026-11-26 04:38 T13(workflow-hub-main) PR 올림 — doc-indexer/tests/test_doc_indexer.py 시험 63개(58 통과, 5 xfail), 소스 무변경, 문제 7건 ISSUES 기록(ISSUE-001~007). chromadb·sentence-transformers·rank-bm25·openai 는 가짜 모듈로 대신
 - 2026-11-26 10:54 T78 시작 (브랜치 task/T78-privacy-check-rest)
+- 2026-11-26 11:04 T78 PR 올림 — tools/check_privacy.py: 사용자 경로는 경고만(종료 값 제외)·…/.../xxx 는 예시, 전화번호 가운데 묶음 [1-9], 하이픈 없는 13자리 주민번호는 날짜+검증 숫자, .env 를 diff --git 줄에서도 찾기, secret_ 은 40자 이상. 시험 60→87개 통과. 열린 PR 14개 diff 모두 0건, 저장소 전체 표본에서 전화번호 모양 250→46건. check.yml 은 건드리지 않고 PR 설명에 --warn-only 제거 제안

@@ -252,16 +252,35 @@ def move_backups_outside_vault(vault_path: Path, archive_root: Path) -> dict:
     }
 
 
+# 목록 안의 한 칸: 따옴표로 감싼 글(안의 쉼표는 나누지 않음) 또는 쉼표 전까지
+_LIST_ITEM_RE = re.compile(r"""\s*("(?:\\.|[^"\\])*"|'[^']*'|[^,]*?)\s*(?:,|$)""")
+
+
+def _unquote_yaml(item: str) -> str:
+    item = item.strip()
+    if len(item) >= 2 and item[0] == item[-1] == '"':
+        return re.sub(r'\\(["\\])', r"\1", item[1:-1])  # \" 와 \\ 를 되돌림
+    return item.strip("'\"")
+
+
+def _quote_yaml(text: str) -> str:
+    return '"' + text.replace("\\", "\\\\").replace('"', '\\"') + '"'
+
+
 def parse_yaml_value(raw: str):
     v = raw.strip()
     if v.startswith("[") and v.endswith("]"):
         inner = v[1:-1]
         if not inner.strip():
             return []
-        items = [item.strip().strip("'\"") for item in inner.split(",")]
-        return items if len(items) > 1 else (items[0] if items else "")
+        matches = [m for m in _LIST_ITEM_RE.finditer(inner) if m.start() < len(inner)]
+        items = [_unquote_yaml(m.group(1)) for m in matches]
+        # 하나짜리 목록은 글로 읽되, 쉼표가 든 항목은 다시 저장해도 안 쪼개지게 목록으로 둔다.
+        if len(items) > 1 or (items and "," in items[0]):
+            return items
+        return items[0] if items else ""
     if (v.startswith('"') and v.endswith('"')) or (v.startswith("'") and v.endswith("'")):
-        return v[1:-1]
+        return _unquote_yaml(v) if v[0] == '"' else v[1:-1]
     return v
 
 
@@ -269,10 +288,14 @@ def format_yaml_value(val) -> str:
     if isinstance(val, list):
         if not val:
             return "[]"
-        return "[" + ", ".join(str(item) for item in val) + "]"
+        items = []
+        for item in map(str, val):
+            needs_quote = "," in item or '"' in item or item.startswith("'")
+            items.append(_quote_yaml(item) if needs_quote else item)
+        return "[" + ", ".join(items) + "]"
     s = str(val)
     if any(c in s for c in [":", "#", '"', "'", "[", "]", "{"]):
-        return '"' + s.replace('"', '\\"') + '"'
+        return _quote_yaml(s)
     return s
 
 
@@ -329,7 +352,7 @@ def read_frontmatter(text: str):
                 i += 1
                 while i < len(lines) and re.match(r"^\s+-\s?(.*)", lines[i]):
                     item_m = re.match(r"^\s+-\s?(.*)", lines[i])
-                    list_items.append(item_m.group(1).strip().strip("'\""))
+                    list_items.append(_unquote_yaml(item_m.group(1)))
                     block_lines.append(lines[i])
                     i += 1
                 props[key] = list_items if len(list_items) != 1 else list_items[0]
@@ -337,7 +360,8 @@ def read_frontmatter(text: str):
                 continue
 
             parsed = parse_yaml_value(value)
-            if isinstance(parsed, str) and "," in parsed and not re.match(r"^\d", parsed):
+            # [...] 로 적힌 목록은 이미 나눴으므로 항목 안의 쉼표를 다시 나누지 않는다.
+            if not value.startswith("[") and isinstance(parsed, str) and "," in parsed and not re.match(r"^\d", parsed):
                 items = [item.strip() for item in parsed.split(",") if item.strip()]
                 if len(items) > 1:
                     parsed = items
@@ -447,18 +471,15 @@ def parse_note_folder_path_value(path_value: str) -> Path:
     raw = str(path_value or "").strip().strip("\"'")
     if not raw:
         raise ValueError("path property is empty")
-    if raw.startswith("Vault ") and "/" not in raw:
+    # 'Vault 루트' 같은 정해진 표시만 볼트 루트로 본다('Vault Notes' 는 실제 폴더 이름).
+    root_markers = ("Vault 루트", "Vault 猷⑦듃", "Vault root", "Vault Root")
+    if raw in root_markers or raw in {"root", "/"}:
         return Path()
 
-    if raw in {"Vault 猷⑦듃", "Vault root", "Vault Root", "root", "/"}:
-        return Path()
-
-    normalized = raw.replace("\\", "/")
-    if normalized.startswith("Vault ") and "/" in normalized:
-        normalized = normalized.split("/", 1)[1]
-    for prefix in ("Vault 猷⑦듃 / ", "Vault root / ", "Vault Root / "):
-        if normalized.startswith(prefix):
-            normalized = normalized[len(prefix):]
+    normalized = re.sub(r"\s*/\s*", "/", raw.replace("\\", "/"))
+    for marker in root_markers:
+        if normalized.startswith(marker + "/"):
+            normalized = normalized[len(marker) + 1:]
             break
 
     normalized = re.sub(r"\s*/\s*", "/", normalized).strip().strip("/")

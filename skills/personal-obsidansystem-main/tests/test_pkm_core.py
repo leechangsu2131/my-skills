@@ -175,18 +175,40 @@ class FrontmatterTests(unittest.TestCase):
             out = pkm_core.write_frontmatter(dict(props), [], "B\n")
             self.assertEqual(pkm_core.read_frontmatter(out)[0], props, props)
 
-    # 아래 둘은 지금 동작이 데이터를 바꾸는 문제(ISSUES ISSUE-002·003)라 xfail 로 둔다.
-    @unittest.expectedFailure
+    # 값이 바뀌지 않고 다시 읽히는지(ISSUES ISSUE-002·003)
     def test_list_item_containing_comma_survives_round_trip(self):
         props = {"topic": ["a, b", "c"]}
         out = pkm_core.write_frontmatter(dict(props), [], "B\n")
         self.assertEqual(pkm_core.read_frontmatter(out)[0], props)
 
-    @unittest.expectedFailure
     def test_double_quote_in_value_survives_round_trip(self):
         props = {"title": 'say "hi"'}
         out = pkm_core.write_frontmatter(dict(props), [], "B\n")
         self.assertEqual(pkm_core.read_frontmatter(out)[0], props)
+
+
+    def test_quotes_commas_backslashes_survive_round_trip(self):
+        for props in ({"topic": ['say "x", y', "z"]}, {"title": 'C:\\temp "q"'}):
+            out = pkm_core.write_frontmatter(dict(props), [], "B\n")
+            self.assertEqual(pkm_core.read_frontmatter(out)[0], props)
+
+    def test_one_item_list_with_comma_stays_one_item_after_repeated_saves(self):
+        props = {"topic": ["a, b"]}
+        for _ in range(3):
+            out = pkm_core.write_frontmatter(dict(props), [], "B\n")
+            props = pkm_core.read_frontmatter(out)[0]
+        self.assertEqual(props, {"topic": ["a, b"]})
+
+    def test_reading_existing_list_styles_is_unchanged(self):
+        parse = pkm_core.parse_yaml_value
+        self.assertEqual(parse("[Bob's note, c]"), ["Bob's note", "c"])
+        self.assertEqual(parse("[[[x]], [[y]]]"), ["[[x]]", "[[y]]"])
+        self.assertEqual(parse("[a, b,]"), ["a", "b"])
+        self.assertEqual(parse('"C:\\temp"'), "C:\\temp")
+
+    def test_block_list_item_with_escaped_quote(self):
+        text = '---\ntopic:\n  - "say \\"hi\\""\n  - b\n---\nB\n'
+        self.assertEqual(pkm_core.read_frontmatter(text)[0]["topic"], ['say "hi"', "b"])
 
 
 # ---------------------------------------------------------------- 폴더 경로 속성
@@ -224,6 +246,12 @@ class PathPropTests(TempVaultCase):
         value = pkm_core.build_note_folder_path_value(self.vault, note)
         self.assertEqual(pkm_core.parse_note_folder_path_value(value), Path("00_Inbox/메모"))
 
+    def test_parse_value_root_marker_prefix_and_vault_like_folders(self):
+        parse = pkm_core.parse_note_folder_path_value
+        self.assertEqual(parse("Vault 루트 / A"), Path("A"))
+        self.assertEqual(parse("Vault root/A"), Path("A"))
+        self.assertEqual(parse("Vault Notes"), Path("Vault Notes"))
+
     def test_resolve_target_dir_stays_inside_vault(self):
         target = pkm_core.resolve_note_target_dir_from_path_value(self.vault, "A / B")
         self.assertEqual(target, (self.vault / "A" / "B").resolve())
@@ -236,10 +264,9 @@ class PathPropTests(TempVaultCase):
         with self.assertRaises(ValueError):
             pkm_core.resolve_note_target_dir_from_path_value(self.vault, "a/../../out")
 
-    @unittest.expectedFailure
     def test_folder_name_starting_with_vault_keeps_first_part(self):
         # 기대: "Vault Notes / x" 는 'Vault Notes' 라는 실제 폴더 아래 x.
-        # 지금은 'Vault ' 로 시작하면 첫 마디를 '볼트 루트' 표시로 보고 버린다 → ISSUES ISSUE-004.
+        # ISSUES ISSUE-004
         self.assertEqual(
             pkm_core.parse_note_folder_path_value("Vault Notes / x"), Path("Vault Notes/x")
         )
@@ -308,7 +335,6 @@ class UpdatePropsTests(TempVaultCase):
         self.assertEqual((result, value), ("ok", "A / B"))
         self.assertEqual(self.props_of(note)["path"], "A / B")
 
-    @unittest.expectedFailure
     def test_repeated_edits_do_not_pile_up_backslashes_before_quotes(self):
         # 따옴표가 든 값이 있는 노트에서 다른 속성을 고칠 때마다 역슬래시가 늘어난다 → ISSUES ISSUE-003.
         note = self.write("n.md", '---\ntitle: "say \\"hi\\""\n---\nB\n')

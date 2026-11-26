@@ -19,3 +19,4 @@
 - 2026-11-26 13:30 T71 시작 (브랜치 task/T71-transcribe-skeleton)
 - 2026-11-26 13:33 T71 PR 올림 — teacherlesson-assistant `transcribe.py`(새): 녹음(webm)을 faster-whisper 로 받아쓰고(없으면 설치 안내), '수업 시작' 메모의 `at` 로 메모와 시간 맞춰 `<녹음>.transcript.md` 생성 + 분석(단계별 시간·말소리 비율·물음표 문장 수, 교사 말 비율은 화자 구분 없으면 '확인 필요'). 시험 30개 통과(가짜 받아쓰기만, 소스를 잠깐 깨뜨려 4개 실패 확인 후 되돌림), 수업 비서 전체 183개 통과, build_catalog --check 통과, check_privacy 통과. 교사 PC 에서 할 일: faster-whisper 설치·실제 녹음으로 속도·정확도 확인
 - 2026-11-26 21:11 S3 (teacherlesson-assistant) 시작 (브랜치 task/S3-repro-open-issue)
+- 2026-11-26 21:12 S3(teacherlesson-assistant) PR 올림 — `tests/test_issue_repros.py`(새, 소스는 안 고침): ISSUE-043(날짜 지난 미완료 차시가 오늘 화면에 안 나옴) 재현 시험 3개(통과 2·xfail 1). 고친 상황을 흉내 내면 XPASS 로 알려 주는 것까지 확인 후 소스 되돌림. ISSUE-043 에 시험 위치 한 줄. 수업 비서 전체 시험 통과

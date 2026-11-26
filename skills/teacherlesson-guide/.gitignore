@@ -4,3 +4,13 @@ _test_*/
 __pycache__/
 .pytest_cache/
 .cache/
+
+# 지도서 PDF·분할 결과는 저작물이라 저장소에 올리지 않는다 (T90, ISSUE-32)
+# 분할기 기본 결과 폴더(--out-dir 기본값 output)와 그 안의 조각 PDF·groups.json
+output/
+pdf_splits/
+groups.json
+# 이 스킬 폴더 안의 지도서 PDF 와 내려받는 중인 임시 파일(다운로더는 .part 로 받음)
+*.pdf
+*.part
+# 꼭 올려야 하는 PDF(예: 설명용 그림)가 생기면 `git add -f <파일>` 로 한 개씩 올린다

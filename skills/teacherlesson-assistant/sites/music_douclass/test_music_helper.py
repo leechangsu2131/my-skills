@@ -3,7 +3,10 @@ from uuid import uuid4
 
 import unittest
 
-import music_helper
+try:
+    import music_helper
+except ImportError as exc:  # selenium 이 없는 곳(CI 등)에서는 건너뜀 — music_helper 가 selenium 을 바로 불러옴
+    raise unittest.SkipTest(f"music_helper 를 불러올 수 없어 건너뜀: {exc}")
 
 
 class MusicHelperLogicTests(unittest.TestCase):

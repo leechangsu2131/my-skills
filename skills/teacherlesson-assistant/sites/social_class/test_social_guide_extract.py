@@ -1,3 +1,4 @@
+import os
 import unittest
 from pathlib import Path
 from unittest.mock import patch
@@ -34,7 +35,7 @@ class SocialGuideExtractTests(unittest.TestCase):
 
     def test_build_output_filename(self):
         filename = social_guide_extract.build_output_filename(
-            r"C:\guides\social_guide.pdf",
+            os.path.join("guides", "social_guide.pdf"),  # 윈도우 경로 글자 대신 현재 OS 방식으로(리눅스에서도 통과)
             "[6~7차시] 우리가 사는 곳에 있는 여러 장소를 표현해 볼까요(사23~27p)",
             unit_text="1",
         )
@@ -45,7 +46,7 @@ class SocialGuideExtractTests(unittest.TestCase):
         )
 
     def test_build_unique_output_path_adds_number_suffix(self):
-        original = Path(r"C:\guides\guide_extract.pdf")
+        original = Path("guides") / "guide_extract.pdf"  # 윈도우 경로 글자 대신 현재 OS 방식으로
         existing_paths = {
             str(original),
             str(original.with_name("guide_extract (1).pdf")),

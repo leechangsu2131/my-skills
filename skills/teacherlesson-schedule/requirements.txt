@@ -3,3 +3,4 @@ google-auth==2.29.0
 python-dotenv==1.0.1
 flask
 flask-cors
+PyMuPDF>=1.24

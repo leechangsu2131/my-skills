@@ -25,3 +25,5 @@
 - 2026-11-27 06:48 S7 (teacherlesson-assistant) 시작 (브랜치 task/S7-clova-export-design)
 - 2026-11-27 06:51 S7(teacherlesson-assistant) PR 올림 — `docs/plans/clova-export.md`(새, 코드는 안 고침): ISSUE-039 녹음 WebM→클로바노트용 MP3 설계. 이 환경 ffmpeg 로 형식별 용량·변환 시간을 직접 잼(MP3 64kbps 모노 50분 약 23MB), 코드의 함수·줄 이름 대조 완료. 확인 필요: 클로바노트 용량·길이 제한(공식 안내가 이 환경에서 안 열림)·학교 PC ffmpeg·imageio-ffmpeg 윈도우 번들의 MP3 인코더·실제 수업 녹음 변환. 교사 결정: imageio-ffmpeg 를 requirements 에 넣을지
 - 2026-11-27 06:55 S7 PR #107 갱신 — 교사 답 반영: 클로바노트 제한 600분(파일 길이인지 월 사용 시간인지는 미확인), ffmpeg 없으면 교사가 설치(imageio-ffmpeg 안 넣음), 64kbps MP3 는 잘 알아듣는다고 들음. 메모 §0·§3·§7 과 ISSUE-039 줄 고침, 구현 가능 상태
+- 2026-11-27 06:17 T93 시작 (브랜치 task/T93-schedule-pymupdf-req)
+- 2026-11-27 06:18 T93 PR 올림 — `teacherlesson-schedule/requirements.txt` 에 `PyMuPDF>=1.24` 한 줄 추가, ISSUE-7 해결로 표시. 요구 파일만으로 만든 새 가상환경: 전엔 서버 시험 2개 파일이 `No module named 'fitz'` 로 못 모임 → 이제 91개 중 90개 통과(실패 1개는 ISSUE-003 의 원래부터 실패하던 시험). check.yml 은 안 고치고 PR 설명으로 제안

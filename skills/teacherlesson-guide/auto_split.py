@@ -278,12 +278,14 @@ def main() -> int:
     report_path = out / "analysis.json"
     if a.reuse_analysis:
         try:
-            data = json.loads(report_path.read_text(encoding="utf-8"))["analysis"]
+            previous_report = json.loads(report_path.read_text(encoding="utf-8"))
+            data = previous_report["analysis"]
+            gemini_model = previous_report.get("gemini_model", "")
         except (OSError, ValueError, KeyError, TypeError) as exc:
             ap.error(f"기존 analysis.json을 읽을 수 없습니다: {exc}")
     else:
-        answer = nlm.gemini_ask(index_path, prompt, model=a.model, timeout=a.timeout,
-                                work=out / "gemini_work")
+        answer, gemini_model = nlm.gemini_ask(index_path, prompt, model=a.model, timeout=a.timeout,
+                                              model_timeout=45, work=out / "gemini_work")
         data = json_object(answer)
     merge_lesson_map(data, lesson_map)
     expected_count = len(lesson_map) if lesson_map is not None else a.expected_lessons
@@ -291,7 +293,7 @@ def main() -> int:
     report = {"source_pdf": str(pdf), "subject": a.subject, "unit": a.unit,
               "page_range": [a.from_page, end_page],
               "page_count": len(pages), "text_page_count": text_pages,
-              "analysis": data, "validation_issues": issues, "gemini_model": nlm.LAST_MODEL}
+              "analysis": data, "validation_issues": issues, "gemini_model": gemini_model}
     report_path.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(f"분석 결과: {report_path}")
     if issues:

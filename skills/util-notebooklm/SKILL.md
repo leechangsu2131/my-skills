@@ -38,6 +38,7 @@ metadata:
 
 - Gemini CLI(`npm i -g @google/gemini-cli`). 키: 중앙 .env 의 `UTIL_NOTEBOOKLM__GEMINI_API_KEY` → `GEMINI_API_KEY` → `GEMINI_API_KEY_FROM_VAULT_NOTE` 순서. 키가 있으면 작업 폴더(`gemini_work/.gemini/settings.json`)에서만 API 키 방식을 쓰고, 전역 Gemini 설정·확장은 건드리지 않는다(`-e none` 로 확장 끔). 키가 없으면 그 PC 의 구글 로그인을 쓴다.
 - 기본 모델 `gemini-3.8-flash` (무료 키는 pro 모델 한도가 0).
+- `nlm.gemini_ask(..., model_timeout=45)`처럼 모델 하나의 최대 대기 시간을 따로 줄일 수 있다. 반환값은 `(답변, 실제 사용 모델)`이다.
 - 데이터 폴더 `내 문서\my-skills-data\util-notebooklm\`: `notebooks.json`, `answers/`, `pages/`, `sources/`, `notes/`.
 
 ## 주의

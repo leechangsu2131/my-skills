@@ -192,8 +192,8 @@ def prepare_one(cfg: dict, lesson: dict, cautions: list[str], model: str) -> tup
         last_error = ""
         for attempt in range(2):  # 형식이 틀리면 한 번 더
             try:
-                answer = nlm.gemini_ask(pdf, prompt, model=model, timeout=120, work=tmp / f"gemini{attempt}")
-                model = nlm.LAST_MODEL or model
+                answer, model = nlm.gemini_ask(pdf, prompt, model=model, timeout=120,
+                                                model_timeout=45, work=tmp / f"gemini{attempt}")
                 flow = parse_flow(answer)
                 break
             except (ValueError, RuntimeError, json.JSONDecodeError) as exc:

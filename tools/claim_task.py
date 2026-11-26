@@ -11,7 +11,7 @@
 
 보는 것 (모두 바로 앞에서 `git fetch --prune` 한 뒤)
 1. 원격 main 의 docs/TASKS.md 상태: `완료`·`교사 결정 대기` 면 잡지 않음
-2. 원격 브랜치 `task/<번호>-…`
+2. 원격 브랜치 `task/<번호>-…` — `git ls-remote` 로 원격에 직접 묻는다(main 만 받아 오는 복제본에서도 보이게)
 3. 이 저장소의 로컬 브랜치 `task/<번호>-…` — 같은 PC 의 다른 작업 폴더(git worktree, tools/start_worker.ps1)가
    아직 안 올린 것도 보인다(작업 폴더끼리 브랜치 목록을 같이 씀)
 --skill 을 주면 브랜치 이름에 그 스킬 이름이 든 것만 같은 일로 본다(T31·T33·S1 처럼 스킬마다 따로 잡는 일).
@@ -57,19 +57,26 @@ def blocked_reason(status: str | None) -> str | None:
 
 def same_task_branches(number: str, skill: str | None) -> list[str]:
     """같은 번호의 원격·로컬 브랜치 이름들(origin/ 은 붙여서)."""
-    refs = git("for-each-ref", "--format=%(refname)", "refs/remotes/origin/task/", "refs/heads/task/").splitlines()
-    out = []
     prefix = re.compile(r"^task/" + re.escape(number) + r"-", re.I)
-    for ref in refs:
-        if ref.startswith("refs/remotes/origin/"):
-            short, shown = ref[len("refs/remotes/origin/"):], "origin/" + ref[len("refs/remotes/origin/"):]
-        else:
-            short, shown = ref[len("refs/heads/"):], ref[len("refs/heads/"):]
-        if not prefix.match(short):
-            continue
-        if skill and skill.lower() not in short.lower():
-            continue
-        out.append(shown)
+
+    def wanted(short: str) -> bool:
+        return bool(prefix.match(short)) and (not skill or skill.lower() in short.lower())
+
+    out = []
+    # 원격은 git ls-remote 로 직접 묻는다. main 만 받아 오는 복제본(--single-branch, 웹 작업자 등)은
+    # fetch 해도 남의 task/… 브랜치가 refs/remotes 에 안 생겨서, 그것만 보면 겹침을 놓친다(2026-11-26 작업자 제보).
+    for line in git("ls-remote", "--heads", "origin").splitlines():
+        ref = line.split("\t")[-1]
+        short = ref[len("refs/heads/"):]
+        if ref.startswith("refs/heads/") and wanted(short):
+            # 내용(일지)을 볼 수 있게 그 브랜치만 받아 둔다
+            git("fetch", "--quiet", "origin", f"+{ref}:refs/remotes/origin/{short}", check=False)
+            out.append("origin/" + short)
+    # 로컬 브랜치: 같은 저장소의 다른 작업 폴더(git worktree)가 아직 안 올린 것도 여기 보인다
+    for ref in git("for-each-ref", "--format=%(refname)", "refs/heads/task/").splitlines():
+        short = ref[len("refs/heads/"):]
+        if wanted(short) and "origin/" + short not in out:
+            out.append(short)
     return out
 
 

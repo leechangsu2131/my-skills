@@ -83,6 +83,18 @@ def test_other_clone_sees_claim_even_with_stale_refs(repos):
     assert "task/T77-lock-all" not in g(repos["b"], "branch", "--list")
 
 
+def test_single_branch_clone_still_sees_other_branches(tmp_path, repos):
+    """main 만 받아 오는 복제본(--single-branch, 웹 작업자 등) — fetch 로는 남의 task 브랜치가 안 보여도 ls-remote 로 본다."""
+    assert claim(repos["a"], "T77", "write-lock", "--name", "bizcoder-1").returncode == 0
+    c = tmp_path / "c"
+    g(tmp_path, "clone", "-q", "--single-branch", "-b", "main", str(repos["origin"]), str(c))
+    g(c, "fetch", "-q", "--prune", "origin")
+    assert "task/T77" not in g(c, "branch", "-r")  # 이 복제본의 fetch 로는 안 보임(제보된 상황)
+    r = claim(c, "T77", "--check")
+    assert r.returncode == 1, r.stdout
+    assert "task/T77-write-lock" in r.stdout
+
+
 def test_unpushed_branch_in_another_worktree_counts(repos):
     """같은 PC 의 다른 작업 폴더가 아직 안 올린 브랜치도 보인다."""
     g(repos["a2"], "switch", "-q", "-c", "task/T77-local-only")

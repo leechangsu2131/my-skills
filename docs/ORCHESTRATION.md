@@ -24,8 +24,10 @@
 
 ```powershell
 cd $env:USERPROFILE\Documents\GitHub\my-skills
-powershell -ExecutionPolicy Bypass -File tools\start_worker.ps1 -Tool bizcoder -Name bizcoder-1
+powershell -ExecutionPolicy Bypass -File tools\start_worker.ps1 -Tool bizcoder -Name bizcoder-1 -Task T77
 ```
+- **로컬 CLI 작업자(bizcoder·로컬 Claude Code·Gemini CLI)의 일은 오케스트레이터가 정한다** → `-Task <번호>`. 스크립트가 도구를 켜기 전에 `tools/claim_task.py <번호> --check` 로 확인하고, 누가 하고 있거나 완료·결정 대기면 켜지 않는다. 작업자는 시작 직전에 `claim_task.py` 로 일을 잡는다. `-Task` 없이 켜면 스스로 고르되 역시 `claim_task.py` 로 잡는다.
+- **로컬 CLI 작업자는 이 스크립트가 만든 폴더에서만** 일한다. 따로 받은 저장소·다른 폴더에서 돌리면 원격 브랜치를 새로 받지 않아 남이 잡은 일을 못 본다(2026-11-25~26 T10·T11·T25 를 다른 폴더의 로컬 작업자가 다시 함). 같은 저장소의 작업 폴더끼리는 브랜치 목록을 같이 써서, 아직 안 올린 브랜치까지 `claim_task.py` 가 본다.
 - 작업자마다 **자기 작업 폴더** `GitHub\my-skills-<이름>`(git worktree)를 처음 한 번 만들고, 거기서 도구를 켜고 첫 요청을 넣는다. 같은 폴더를 여러 작업자가 쓰면 브랜치가 뒤섞인다.
 - 여러 명이면 까만 창을 여러 개 열어 이름만 바꿔 실행(`bizcoder-2`, `gemini-1` …). 이어서 할 때도 같은 명령.
 - bizcoder 는 확인 없이 스스로 진행(`--auto`, 위험 명령·공개 배포만 물음). 사용량 `bizcoder usage`, 로그인 `bizcoder whoami`, 읽는 지침 `bizcoder compat`.
@@ -67,6 +69,7 @@ git push origin --delete <브랜치>     # 합친 작업자 브랜치 정리(선
 - 교사가 "누가 비었다"고 하면, 그 작업자의 등급(R/P/T)에 맞는 `열림` 일을 골라 **붙여 넣을 프롬프트**를 만들어 준다.
   기본 틀은 [WORKER_GUIDE.md](WORKER_GUIDE.md) 의 "작업자 프로젝트에 넣을 지침 문구" + 그 일의 TASKS 줄.
 - 서로 같은 파일을 두 작업자에게 주지 않는다.
+- 일을 주기 전, 그리고 **오케스트레이터가 P 일을 직접 하기 전에도** `python tools/claim_task.py <번호> --check`. 2026-11-25 T23 은 작업자가 이미 PR 까지 올린 일을 교사 PC 가 main 에 따로 또 만들었다.
 
 ## 5. PC 마다 한 번 준비할 것
 

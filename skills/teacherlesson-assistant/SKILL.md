@@ -13,7 +13,7 @@ metadata:
 - **수업 화면** (`assistant_server.py` + `web/index.html`) — Supabase에서 시간표를 읽고 완료·연장·이동·오늘 교시의 과목 변경을 Supabase에 저장한다. 수업 비서는 왼쪽 모니터 약 1/3, 수업 사이트는 오른쪽 모니터 전체를 쓴다(오른쪽 화면이 없으면 왼쪽 화면의 나머지 영역). `🎯 수업 진행`은 수업 단계·발문·활동·남은 시간에 집중하는 모드이고, 오늘 저장된 녹음은 화면에서 찾아 재생·저장할 수 있다. 수업 기록은 차시 ID별로 로컬 데이터 폴더에 저장한다. Supabase 연결에 중앙 `.env`의 `SUPABASE_URL`(또는 `NEXT_PUBLIC_SUPABASE_URL`)과 `SUPABASE_SERVICE_ROLE_KEY`가 필요하다. 과목별 차시 자료 자동 열기 도우미는 `sites/`(음악 Douclass, 사회 아이스크림·Douclass, Selenium)이며, 미술 아트앤컬쳐 도우미는 아직 구현 전이다(ISSUES ISSUE-006). 실행 방법·화면 기능·저장 위치·지도서 받기는 [README.md](README.md).
 - **Claude 작업 절차** (아래) — 화면은 `flows/`·`units/` 를 읽고, 교사가 ✏ 로 고친 흐름은 저장한다(고친 흐름은 자동 준비가 덮어쓰지 않음).
 
-교사가 화면 쓰는 법을 물으면 [README.md](README.md)의 "교사용 사용 설명서 (한 장)"를 쉬운 말로 안내한다(순서: 날짜·교시 → 🌙 수업 준비 → 지금 할 일 → 메모 → 진도 조정).
+교사가 화면 쓰는 법을 물으면 [README.md](README.md)의 "교사용 사용 설명서 (한 장)"를 쉬운 말로 안내한다(순서: 날짜·교시 → ☀ 오늘 준비 또는 🌙 내일 준비 → 지금 할 일 → 메모 → 진도 조정). 연락처 안내는 로컬 `config.json`의 `phones`에 있는 내선만 보여 주며, 외부 번호나 개인 휴대전화는 코드·문서·저장소에 옮기지 않는다.
 
 데이터 폴더: `내 문서\my-skills-data\teacherlesson-assistant\` (config, units, flows, sessions, publisher_notes). 학생 이름이 들어간 메모·녹음은 이 폴더에만 두고 기억(memory)·CLAUDE.md·깃·홈페이지에 옮기지 않는다.
 

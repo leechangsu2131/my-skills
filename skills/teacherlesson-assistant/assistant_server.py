@@ -466,14 +466,19 @@ def wait_for_new_window(list_windows, before: set[int], timeout: float = 6.0, in
         sleep(interval)
 
 
-def raise_window(user32, hwnd, rect: tuple[int, int, int, int] | None = None) -> None:
-    """요청한 위치·크기로 배치하고 앞으로 가져온다."""
-    SW_RESTORE, SWP = 9, 0x0043  # SWP_NOSIZE | SWP_NOMOVE | SWP_SHOWWINDOW
+def raise_window(user32, hwnd, rect: tuple[int, int, int, int] | None = None,
+                 maximize: bool = False) -> None:
+    """요청한 모니터로 옮겨 최대화하고 앞으로 가져온다."""
+    SW_RESTORE, SW_MAXIMIZE, SWP = 9, 3, 0x0043  # SWP_NOSIZE | SWP_NOMOVE | SWP_SHOWWINDOW
     HWND_TOPMOST, HWND_NOTOPMOST = -1, -2
     if user32.IsIconic(hwnd) or rect:
         user32.ShowWindow(hwnd, SW_RESTORE)
     if rect:
         user32.SetWindowPos(hwnd, 0, *rect, 0x0040)  # SWP_SHOWWINDOW: 실제 위치·크기 적용
+        if maximize:
+            # Chrome 이 저장된 창 크기를 다시 적용할 수 있어, 목표 모니터로 옮긴 뒤
+            # 그 모니터의 작업 영역 기준으로 최대화한다.
+            user32.ShowWindow(hwnd, SW_MAXIMIZE)
     user32.SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP)
     user32.SetWindowPos(hwnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP)
     user32.keybd_event(0x12, 0, 0, 0)                  # VK_MENU(Alt) 누름
@@ -481,7 +486,8 @@ def raise_window(user32, hwnd, rect: tuple[int, int, int, int] | None = None) ->
     user32.SetForegroundWindow(hwnd)
 
 
-def _raise_new_window(before: set[int], rect: tuple[int, int, int, int] | None = None) -> None:
+def _raise_new_window(before: set[int], rect: tuple[int, int, int, int] | None = None,
+                      maximize: bool = False) -> None:
     try:
         api = _win_api()
         hwnd = wait_for_new_window(lambda: chrome_windows(api), before)
@@ -493,16 +499,19 @@ def _raise_new_window(before: set[int], rect: tuple[int, int, int, int] | None =
                     _fields_ = [("left", ctypes.c_long), ("top", ctypes.c_long),
                                 ("right", ctypes.c_long), ("bottom", ctypes.c_long)]
 
-                # Chrome applies its remembered bounds after the new HWND appears, so
-                # keep correcting the position until the startup resize has settled.
-                for _ in range(6):
+                # Chrome applies its remembered bounds after the new HWND appears.
+                # 일정 시간 재배치해도 최종적으로 요청한 모니터에 최대화되어 있는지 확인한다.
+                for _ in range(10):
                     _time.sleep(0.5)
-                    raise_window(api, hwnd, rect)
+                    raise_window(api, hwnd, rect, maximize)
                     bounds = RECT()
                     api.GetWindowRect(hwnd, ctypes.byref(bounds))
-                    actual = (bounds.left, bounds.top, bounds.right - bounds.left,
-                              bounds.bottom - bounds.top)
-                    if actual == rect:
+                    cx, cy = (bounds.left + bounds.right) // 2, (bounds.top + bounds.bottom) // 2
+                    x, y, width, height = rect
+                    placed = (api.IsZoomed(hwnd) and x <= cx < x + width and y <= cy < y + height) if maximize else (
+                        bounds.left == x and bounds.top == y and bounds.right - bounds.left == width
+                        and bounds.bottom - bounds.top == height)
+                    if placed:
                         break
             else:
                 _time.sleep(0.7)
@@ -550,14 +559,17 @@ def open_window(url: str, side: str, cfg: dict) -> str:
     if side == "left":
         rect = (px, py, left_w, h)
         app_args = [f"--app={url}"]
+        maximize = False
     elif side == "right":
         right_monitor = min((r for r in monitors if r[0] >= pr),
                             key=lambda r: r[0], default=None)
         if right_monitor:
             rx, ry, rr, rb, _ = right_monitor
             rect = (rx, ry, rr - rx, rb - ry)
+            maximize = True
         else:
             rect = (px + left_w, py, w - left_w, h)
+            maximize = False
         app_args = ["--new-window", "--", url]
     else:
         raise ValueError("창 위치 설정이 올바르지 않아요.")
@@ -578,7 +590,7 @@ def open_window(url: str, side: str, cfg: dict) -> str:
             before = None
     subprocess.Popen(args, close_fds=True)
     if before is not None:
-        threading.Thread(target=_raise_new_window, args=(before, rect), daemon=True).start()
+        threading.Thread(target=_raise_new_window, args=(before, rect, maximize), daemon=True).start()
     return "창을 열었어요."
 
 

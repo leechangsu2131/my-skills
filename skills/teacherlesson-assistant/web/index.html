@@ -21,6 +21,8 @@ body{margin:0;font:15px/1.55 "Malgun Gothic","Apple SD Gothic Neo",system-ui,san
 /* 위쪽 바 */
 header{position:sticky;top:0;z-index:5;background:rgba(255,255,255,.86);backdrop-filter:saturate(180%) blur(16px);-webkit-backdrop-filter:saturate(180%) blur(16px);border-bottom:1px solid var(--line);padding:8px 12px 8px}
 .bar-row{display:flex;gap:6px;align-items:center}
+.prep-actions{display:flex;gap:2px;align-items:center}
+.prep-actions button{font-size:13px;white-space:nowrap}
 .datenav{display:flex;gap:4px;align-items:center}
 #datePick{font:inherit;font-weight:600;border:0;background:transparent;color:var(--ink);padding:2px 2px;width:132px}
 #dow{font-weight:600;color:var(--sub);min-width:1.2em}
@@ -164,9 +166,11 @@ textarea:focus,input[type=text]:focus{outline:2px solid var(--acc-soft);border-c
 .pick small{color:var(--sub);margin-left:6px}
 
 #toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:rgba(29,29,31,.92);color:#fff;padding:10px 16px;border-radius:12px;display:none;max-width:90%;z-index:9;box-shadow:0 6px 20px rgba(0,0,0,.25)}
-#phones{display:none;position:absolute;right:10px;top:46px;background:#fff;color:var(--ink);border-radius:12px;padding:10px 14px;box-shadow:0 8px 28px rgba(0,0,0,.18);z-index:8}
-#phones div{display:flex;justify-content:space-between;gap:18px;font-size:15px}
-#phones b{font-size:17px}
+#phones{display:none;position:absolute;right:10px;top:46px;background:#fff;color:var(--ink);border-radius:12px;padding:10px 12px;box-shadow:0 8px 28px rgba(0,0,0,.18);z-index:8;width:min(320px,calc(100vw - 24px));max-height:min(70vh,560px);overflow:hidden}
+#phoneSearch{margin:7px 0;width:100%;font:inherit;border:1px solid var(--line);border-radius:8px;padding:7px 9px}
+#phoneResults{overflow:auto;max-height:calc(min(70vh,560px) - 100px)}
+#phoneResults .phone-row{display:flex;justify-content:space-between;gap:12px;font-size:14px;padding:5px 2px;border-top:1px solid var(--line)}
+#phoneResults b{font-size:16px;white-space:nowrap}
 
 /* 수업 중 한 단계에 집중하는 화면 */
 #focusProgress{display:none;max-width:1500px;margin:10px auto 0;grid-template-columns:repeat(var(--focus-step-count,1),1fr);gap:6px}
@@ -177,7 +181,7 @@ textarea:focus,input[type=text]:focus{outline:2px solid var(--acc-soft);border-c
 #focusToggle.on{background:#3b4da3;color:#fff}
 body.focus-mode{--bg:#f3f5fa;--card:#fff;--ink:#1d2340;--sub:#66708f;--line:#d8deed;--fill:#eaedf7;--acc:#3b4da3;--acc-soft:#e3e8fa;--warn:#805500;--warn-soft:#fff2d4}
 body.focus-mode header{padding:12px 26px 10px}
-body.focus-mode .datenav,body.focus-mode #prepMsg,body.focus-mode #prepBtn,body.focus-mode #clock,body.focus-mode #phoneBtn,body.focus-mode #tabs{display:none}
+body.focus-mode .datenav,body.focus-mode #prepMsg,body.focus-mode .prep-actions,body.focus-mode #clock,body.focus-mode #phoneBtn,body.focus-mode #tabs{display:none}
 body.focus-mode #focusProgress{display:grid}
 body.focus-mode main>.card,body.focus-mode main>details.fold{display:none}
 body.focus-mode main{max-width:none;width:100%;height:calc(100vh - 98px);min-height:620px;margin:0;padding:16px 26px 96px;display:grid;grid-template-columns:minmax(210px,250px) minmax(430px,1fr) minmax(260px,320px);grid-template-rows:auto minmax(0,1fr);gap:16px;align-items:stretch}
@@ -250,7 +254,10 @@ body.focus-mode> #toast{z-index:12}
     </div>
     <span class="grow"></span>
     <span id="prepMsg" class="muted"></span>
-    <button class="ghost" id="prepBtn" title="이 날 수업 중 흐름이 없는 차시를 지도서로 자동 준비 (Gemini, 차시당 30초~2분)">🌙 준비</button>
+    <div class="prep-actions" aria-label="수업 흐름 준비">
+      <button class="ghost" id="prepTodayBtn" title="오늘 수업 중 흐름이 없는 차시를 지도서로 준비">☀ 오늘 준비</button>
+      <button class="ghost" id="prepTomorrowBtn" title="내일 수업 중 흐름이 없는 차시를 미리 준비">🌙 내일 준비</button>
+    </div>
     <button class="ghost" id="focusToggle" title="수업 중 지금 할 단계에 집중하는 화면" disabled>🎯 수업 진행</button>
     <span id="clock"></span>
     <button class="ghost icon" id="phoneBtn" title="교실 내선번호">📞</button>
@@ -448,6 +455,21 @@ function nowPeriod(){
   return null;
 }
 
+const internalPhones=()=> (S?.phones||[]).filter(p=>/^\d{2,5}$/.test(String(p.no||'').trim()));
+function renderPhones(query=''){
+  const box=$('phones'), term=String(query).trim().toLocaleLowerCase('ko');
+  const rows=internalPhones().filter(p=>`${p.name||''} ${p.no||''}`.toLocaleLowerCase('ko').includes(term));
+  box.innerHTML=`<b>📞 교내 내선번호</b><div class="muted">외부 전화번호는 표시하지 않아요.</div><input id="phoneSearch" type="search" placeholder="부서·교실 이름으로 찾기" aria-label="내선번호 검색"><div id="phoneResults"></div>`;
+  $('phoneResults').innerHTML=rows.map(p=>`<div class="phone-row"><span>${esc(p.name)}</span><b>${esc(p.no)}</b></div>`).join('') || '<div class="muted">검색 결과가 없어요.</div>';
+  $('phoneSearch').value=query;
+  $('phoneSearch').oninput=e=>renderPhoneResults(e.target.value);
+}
+function renderPhoneResults(query=''){
+  const term=String(query).trim().toLocaleLowerCase('ko');
+  const rows=internalPhones().filter(p=>`${p.name||''} ${p.no||''}`.toLocaleLowerCase('ko').includes(term));
+  $('phoneResults').innerHTML=rows.map(p=>`<div class="phone-row"><span>${esc(p.name)}</span><b>${esc(p.no)}</b></div>`).join('') || '<div class="muted">검색 결과가 없어요.</div>';
+}
+
 async function load(){
   if (rec) { toast('녹음 중에는 날짜를 바꿀 수 없어요'); if (S) { day = new Date(S.date+'T09:00:00'); $('datePick').value = S.date; } return; }
   if (!leaveEdit()) { day = new Date(S.date+'T09:00:00'); $('datePick').value = S.date; return; }
@@ -456,7 +478,7 @@ async function load(){
   history.replaceState(null, '', iso(day) === iso(new Date()) ? location.pathname : '?date=' + iso(day));  // F5 해도 보던 날짜 유지
   S = await (await fetch('/api/state?date='+iso(day))).json();
   $('source').textContent = '출처: ' + S.source;
-  $('phones').innerHTML = S.phones.map(p=>`<div><span>${esc(p.name)}</span><b>${esc(p.no)}</b></div>`).join('') || '설정에 내선번호를 적어 주세요';
+  renderPhones();
   $('links').innerHTML = S.links.map((l,i)=>`<button data-l="${i}">${esc(l.name)}</button>`).join('');
   $('aiBtns').innerHTML = (S.ai_sites||[]).map((a,i)=>`<button data-ai="${i}">${esc(a.name)}</button>`).join('');
   renderTabs();
@@ -1007,7 +1029,7 @@ $('prevDay').onclick = () => { day.setDate(day.getDate()-1); load(); };
 $('nextDay').onclick = () => { day.setDate(day.getDate()+1); load(); };
 $('datePick').onchange = e => { if (e.target.value) { day = new Date(e.target.value + 'T09:00:00'); load(); } };
 $('todayBtn').onclick = () => { day = new Date(); load(); };
-$('phoneBtn').onclick = () => { const p=$('phones'); p.style.display = p.style.display==='block'?'none':'block'; };
+$('phoneBtn').onclick = () => { const p=$('phones'); p.style.display = p.style.display==='block'?'none':'block'; if(p.style.display==='block') $('phoneSearch')?.focus(); };
 $('steps').onclick = e => { const s=e.target.closest('.step'); if (s) goStep(+s.dataset.s); };
 $('stepPrev').onclick = () => goStep(stepIdx-1);
 $('stepNext').onclick = () => goStep(stepIdx+1);
@@ -1203,23 +1225,32 @@ async function prepPoll(){
   const items = (st.items || []).filter(i => i.status !== 'skip');
   const done = items.filter(i => ['ok','fail','have'].includes(i.status)).length;
   if (st.running) {
-    $('prepMsg').textContent = ` 준비 중 ${done}/${items.length || '?'} (${st.date?.slice(5)})`;
-    $('prepBtn').disabled = true;
+    const target = st.date === iso(new Date()) ? '오늘' : st.date === iso(new Date(Date.now()+86400000)) ? '내일' : st.date?.slice(5);
+    $('prepMsg').textContent = ` ${target} 준비 중 ${done}/${items.length || '?'}`;
+    $('prepTodayBtn').disabled = $('prepTomorrowBtn').disabled = true;
     return;
   }
-  clearInterval(prepTimer); prepTimer = null; $('prepBtn').disabled = false;
+  clearInterval(prepTimer); prepTimer = null; $('prepTodayBtn').disabled = $('prepTomorrowBtn').disabled = false;
   if (st.finished) {
     const fails = items.filter(i => i.status === 'fail');
-    $('prepMsg').textContent = fails.length ? ` ⚠ ${fails.length}개 실패 — 다시 누르면 빠진 것만 해요` : ` ✓ ${st.date?.slice(5)} 준비 끝`;
+    const target = st.date === iso(new Date()) ? '오늘' : st.date === iso(new Date(Date.now()+86400000)) ? '내일' : st.date?.slice(5);
+    $('prepMsg').textContent = fails.length ? ` ${target} ${fails.length}개 실패 — 다시 누르면 빠진 것만 해요` : ` ✓ ${target} 준비 끝`;
     if (fails.length) toast('준비 못 한 차시: ' + fails.map(i => `${i.period}교시 ${i.subject} (${i.msg})`).join(' / '), 12000);
     if (st.date === S.date) load();
   }
 }
-$('prepBtn').onclick = async () => {
-  const redo = false;
-  const j = await post('/api/prepare', {date: S.date, redo});
-  if (j.status === 'success' || /이미/.test(j.message || '')) { if (!prepTimer) prepTimer = setInterval(prepPoll, 4000); prepPoll(); }
-};
+async function startPrep(offset){
+  const targetDate=iso(new Date(Date.now()+offset*86400000));
+  const label=offset===0?'오늘':'내일';
+  const j=await post('/api/prepare',{date:targetDate,redo:false});
+  if(j.status==='success'||/이미/.test(j.message||'')){
+    $('prepTodayBtn').disabled=$('prepTomorrowBtn').disabled=true;
+    if(!prepTimer) prepTimer=setInterval(prepPoll,4000);
+    prepPoll();
+  } else toast(j.message||`${label} 수업 준비를 시작하지 못했어요`,8000);
+}
+$('prepTodayBtn').onclick=()=>startPrep(0);
+$('prepTomorrowBtn').onclick=()=>startPrep(1);
 fetch('/api/prepare-status').then(r => r.json()).then(st => { if (st.running && !prepTimer) { prepTimer = setInterval(prepPoll, 4000); prepPoll(); } }).catch(() => {});
 
 window.addEventListener('beforeunload', e => { if (rec){ e.preventDefault(); e.returnValue=''; } });

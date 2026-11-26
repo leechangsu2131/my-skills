@@ -23,7 +23,7 @@ def find_edusearch_dir():
     """
     configured = os.environ.get("EDUSEARCH_DIR", "").strip()
     if configured:
-        return os.path.expanduser(os.path.expandvars(configured))
+        return os.path.normpath(os.path.expanduser(os.path.expandvars(configured)))
     repo_root = pathlib.Path(__file__).resolve().parents[3]  # scripts → util-web-scraper → skills → my-skills
     return str(repo_root.parent / "edusearch")
 

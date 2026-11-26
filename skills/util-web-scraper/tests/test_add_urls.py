@@ -24,17 +24,17 @@ SCRIPT = Path(__file__).resolve().parents[1] / "scripts" / "add_urls.py"
 SKILLS_DIR = SCRIPT.parents[2]
 
 
-def _disable_central_env():
-    """중앙 .env(교사 PC 의 실제 설정)가 시험에 섞이지 않게 load_env 를 빈 함수로 바꾼다."""
+def _disable_central_env(monkeypatch):
+    """중앙 .env(교사 PC 의 실제 설정)가 시험에 섞이지 않게 load_env 를 빈 함수로 바꾼다(시험이 끝나면 되돌림)."""
     sys.path.insert(0, str(SKILLS_DIR / "_shared"))
     import skill_env
 
-    skill_env.load_env = lambda *args, **kwargs: None
+    monkeypatch.setattr(skill_env, "load_env", lambda *args, **kwargs: None)
 
 
 @pytest.fixture(autouse=True)
 def _isolated_env(monkeypatch):
-    _disable_central_env()
+    _disable_central_env(monkeypatch)
     monkeypatch.delenv("EDUSEARCH_DIR", raising=False)
 
 

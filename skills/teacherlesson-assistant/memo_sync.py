@@ -150,6 +150,24 @@ def memo_key(day, period, subject, memo: dict) -> str:
     return hashlib.sha1(basis.encode("utf-8")).hexdigest()
 
 
+def key_of(day, period, subject, memo: dict) -> str:
+    """이 메모의 서버 키. 내려받은 메모는 서버가 준 memo_key 를 그대로 달고 있으니 그것을 쓰고(다시 계산하면 적은 시각(at)이
+    서버 쪽과 달라 다른 값이 나온다), 이 PC 에서 쓴 메모는 계산한다. 문자열이 아니거나 빈 값이면 믿지 않고 계산한다."""
+    stored = memo.get("memo_key")
+    return stored if isinstance(stored, str) and stored else memo_key(day, period, subject, memo)
+
+
+def _skip_kinds() -> set[str]:
+    """서버에 올리지 않을 메모 종류. 학생 메모(student)는 언제나 뺀다. 더 빼려면 중앙 .env 에
+    TEACHERLESSON_ASSISTANT__MEMO_SKIP_KINDS=step,sys,adj 처럼 적는다(쉼표나 띄어쓰기로 구분). 안 적으면 지금까지와 같다."""
+    try:
+        load_env(skill=SKILL)            # 이미 환경변수에 있으면 그 값을 쓴다. .env 를 못 읽어도 올리기는 계속한다
+    except Exception:
+        pass
+    extra = {kind for kind in re.split(r"[,\s]+", os.getenv("MEMO_SKIP_KINDS") or "") if kind}
+    return SKIP_KINDS | extra
+
+
 def _pc_name() -> str:
     return (os.getenv("MEMO_PC") or platform.node() or "pc").strip()[:60]
 
@@ -161,12 +179,13 @@ def rows_for_session(session: dict, pc: str | None = None) -> list[dict]:
     period = _period_no(session.get("period"))
     subject = str(session.get("subject") or "")
     pc = pc if pc is not None else _pc_name()
+    skip = _skip_kinds()
     rows = []
     for memo in session.get("memos") or []:
         if not isinstance(memo, dict):
             continue
         kind = str(memo.get("kind") or "")
-        if not kind or kind in SKIP_KINDS:
+        if not kind or kind in skip:
             continue
         rows.append({
             "date": day, "period": period or None, "subject": subject,
@@ -174,7 +193,7 @@ def rows_for_session(session: dict, pc: str | None = None) -> list[dict]:
             "lesson": str(session.get("lesson") or ""), "title": str(session.get("title") or ""),
             "kind": kind, "text": str(memo.get("text") or ""), "t": str(memo.get("t") or ""), "pc": pc,
             "extra": {k: memo[k] for k in EXTRA_KEYS if memo.get(k) is not None},
-            "memo_key": memo_key(day, period, subject, memo),
+            "memo_key": key_of(day, period, subject, memo),
         })
     return rows
 
@@ -213,10 +232,11 @@ def flush_queue(data=None, *, timeout: float = PUSH_TIMEOUT) -> dict:
     folder = _queue_dir(_data(data))
     if not folder.is_dir():
         return result
+    skip = _skip_kinds()          # 설정을 바꾸기 전에 쌓인 대기열도 새 설정대로 거른다
     for path in sorted(folder.glob("*.json")):
         try:
             rows = json.loads(path.read_text(encoding="utf-8")).get("rows") or []
-            rows = [r for r in rows if isinstance(r, dict) and r.get("kind") not in SKIP_KINDS]
+            rows = [r for r in rows if isinstance(r, dict) and r.get("kind") not in skip]
         except (OSError, ValueError, AttributeError):
             result["failed"] += 1
             continue
@@ -322,6 +342,10 @@ def _memo_from_row(row: dict) -> dict:
     for key in ("idx", "delta"):
         if key in extra:
             memo[key] = extra[key]
+    # 서버가 준 memo_key 를 그대로 저장한다. 서버 쪽 키는 원래 PC 가 적은 시각(at) 없이 t 로 계산했을 수 있어,
+    # 여기서 다시 계산하면 다른 값이 나와 받을 때마다 같은 메모가 늘어나고 다시 올릴 때도 새 메모로 올라간다.
+    if isinstance(row.get("memo_key"), str) and row["memo_key"]:
+        memo["memo_key"] = row["memo_key"]
     return memo
 
 
@@ -353,7 +377,7 @@ def _merge_group(data: Path, day: str, period_no: int, subject: str, rows: list[
     memos = session.get("memos")
     if not isinstance(memos, list):
         memos = session["memos"] = []
-    have = {memo_key(day, period_no, subject, m) for m in memos if isinstance(m, dict)}
+    have = {key_of(day, period_no, subject, m) for m in memos if isinstance(m, dict)}
     added = skipped = 0
     for row in rows:
         key = row.get("memo_key") or ""
@@ -417,6 +441,16 @@ def _iso_date(text: str) -> str:
         raise argparse.ArgumentTypeError("날짜는 YYYY-MM-DD 로 적어 주세요.") from None
 
 
+def _utf8_output(streams=None) -> None:
+    """명령줄 출력을 UTF-8 로 맞춘다(한국어를 못 쓰는 콘솔이나 파일로 돌려도 멈추지 않게, 못 쓰는 글자는 ?로 바꿈).
+    이 파일을 직접 실행할 때만 부른다. 다른 파일이 가져다 쓸 때는 그 프로그램의 출력 설정을 건드리지 않는다."""
+    for stream in (streams if streams is not None else (sys.stdout, sys.stderr)):
+        try:
+            stream.reconfigure(encoding="utf-8", errors="replace")
+        except (AttributeError, ValueError):
+            pass
+
+
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description="수업 메모 Supabase 동기화")
     sub = parser.add_subparsers(dest="cmd", required=True)
@@ -451,4 +485,5 @@ def main(argv=None) -> int:
 
 
 if __name__ == "__main__":
+    _utf8_output()
     sys.exit(main())

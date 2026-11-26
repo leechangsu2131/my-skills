@@ -130,6 +130,7 @@
 - **증상**: 수업 비서 녹음은 브라우저에서 `.webm`(일부 환경 `.mp4`)으로 저장한다. 클로바노트 파일 업로드에는 `.m4a`, `.mp3`, `.aac`, `.amr`, `.wav`만 안내되어 있어 원본 WebM은 바로 올릴 수 없다.
 - **확인**: [클로바노트 공식 PC 업로드 안내](https://help.naver.com/service/24269/contents/12820?osType=PC). 현재 화면의 재생·저장 기능은 원본 보존과 청취용이며, 호환 형식 변환은 아직 하지 않는다.
 - **할 일**: 원본 녹음은 보존하고 클로바노트 호환 형식(예: 용량을 고려한 MP3 또는 WAV)으로 변환해 내려받는 동작을 추가한다. 긴 녹음의 파일 크기·음질·변환 도구 설치 여부를 고려해 구현한다.
+- **설계 메모(S7, 2026-11-27)**: [docs/plans/clova-export.md](docs/plans/clova-export.md) — ffmpeg 로 MP3 64 kbps 모노(50분 약 23 MB) 변환, `audio_export.py` 새 파일 + `GET /api/recording-export/…` + 화면 단추. 클로바노트 용량 제한·학교 PC 의 ffmpeg·`imageio-ffmpeg` 를 넣을지는 확인·교사 결정 필요.
 - **관련 파일**: `assistant_server.py`(저장·파일 API), `web/index.html`(녹음 재생·다운로드)
 
 ### ISSUE-040: 2학기 시간표 사진과 Supabase 내일 수업 슬롯 불일치 (2026-11-25)

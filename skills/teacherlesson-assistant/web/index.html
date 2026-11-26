@@ -80,6 +80,7 @@ h1{font-size:22px;line-height:1.3;margin:2px 0 4px;letter-spacing:-.01em}
 .remain-row{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .adj{display:flex;gap:6px;flex:none}
 .adj button{padding:8px 12px;border-radius:10px;font-size:15px;background:rgba(0,0,0,.06)}
+#heroCompress{margin-top:8px;padding:8px 14px;border-radius:10px;font-size:15px;background:rgba(0,0,0,.06)}
 #heroPace{font-size:14px;color:var(--sub);margin-top:8px}
 #heroPace.bad{color:var(--warn);font-weight:600}
 .hero.over #heroPace.bad{color:var(--red)}
@@ -299,6 +300,7 @@ body.focus-mode> #toast{z-index:12}
         <div class="adj" id="heroAdj"><button id="adjMinus" title="이 단계 시간을 1분 줄여요 (− 키)">−1분</button><button id="adjPlus" title="이 단계 시간을 1분 늘려요 (+ 키)">+1분</button></div></div>
       <div class="bar"><i id="heroBar"></i></div>
       <div id="heroPace" hidden></div>
+      <button id="heroCompress" hidden title="교시 끝까지 모자란 시간만큼 뒤 단계의 분을 한 번에 줄여요. ✂ 줄여도 됨 단계는 더, ⭐ 핵심 단계는 덜 줄이고, 한 단계는 1분 밑으로 안 줄어요. 잘못 줄이면 단계마다 +1분으로 되돌릴 수 있어요."></button>
     </div>
     <div id="heroNext" hidden></div>
     <button id="heroSuggest" hidden></button>
@@ -932,18 +934,38 @@ function paceInfo(steps){
   for (let i = stepIdx + 1; i < steps.length; i++) need += effMin(i);
   const short = Math.round(need - (w.e - nowMin()));
   const parts = [Math.abs(late) >= 1 ? `계획보다 ${Math.abs(late)}분 ${late > 0 ? '늦음' : '빠름'}` : '시간표대로 진행 중'];
+  // short = 교시 끝까지 모자란 분(0 이하면 여유). '뒤 단계 줄이기' 단추가 이 값을 씀
   if (short >= 1) {
     parts.push(`교시 끝까지 ${short}분 모자라요`);
     const cut = steps.slice(stepIdx + 1).filter(s => s.flag === 'cut').map(s => s.name);
     if (cut.length) parts.push(`✂ 줄여도 되는 단계: ${cut.join(', ')}`);
   }
   else if (short <= -1) parts.push(`${-short}분 여유`);
-  return {text: parts.join(' · '), bad: late >= 3 || short >= 1};
+  return {text: parts.join(' · '), bad: late >= 3 || short >= 1, short};
+}
+/* 모자랄 때 뒤 단계를 한 번에 줄이는 계산(순수 함수 compressStages, web/tools.js). 지금 단계는 그대로, 그 뒤 단계만 줄임 */
+function compressPlan(steps){
+  const info = paceInfo(steps);
+  if (!info || info.short < 1) return null;
+  const plan = compressStages(steps, steps.map((_, i) => effMin(i)), stepIdx + 1, info.short);
+  return plan.cut >= 1 ? {...plan, short: info.short} : null;
+}
+function compressRest(){
+  const steps = (cur && cur.flow && cur.flow.steps) || [], plan = compressPlan(steps);
+  if (!plan) return;
+  plan.deltas.forEach((d, i) => {
+    if (!d) return;
+    stepAdj[i] = (stepAdj[i] || 0) + d;   // effMin 은 1분 밑으로 안 내려가게 계산해 두었음
+    addMemo('adj', `시간 조정: ${steps[i].name} ${d}분 (→ ${effMin(i)}분)`, true, {idx: i, delta: d});
+  });
+  renderHero();
 }
 function tickPace(steps){
-  const info = paceInfo(steps), el = $('heroPace');
+  const info = paceInfo(steps), el = $('heroPace'), btn = $('heroCompress'), plan = compressPlan(steps);
   el.hidden = !info;
   if (info) { el.textContent = '⏱ ' + info.text; el.classList.toggle('bad', info.bad); }
+  btn.hidden = !plan;
+  if (plan) btn.textContent = `⏩ 뒤 단계 ${plan.cut}분 줄이기` + (plan.left ? ` (${plan.short}분 필요 — 더는 못 줄여요)` : '');
 }
 
 function goStep(i){
@@ -1103,6 +1125,7 @@ document.addEventListener('keydown', e => {
 });
 $('adjMinus').onclick = () => adjStep(-1);
 $('adjPlus').onclick = () => adjStep(1);
+$('heroCompress').onclick = compressRest;
 $('recBtn').onclick = () => rec ? stopRec() : startRec();
 $('voiceBtn').onclick = voiceMemo;
 $('stepLogBtn').onclick = () => { showStepLog = !showStepLog; renderMemos(); };

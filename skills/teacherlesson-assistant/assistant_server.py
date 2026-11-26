@@ -624,6 +624,8 @@ class Handler(BaseHTTPRequestHandler):
             return self._send(200, (WEB / "favicon.svg").read_bytes(), "image/svg+xml; charset=utf-8")
         if url.path in ("/", "/index.html"):
             return self._send(200, (WEB / "index.html").read_bytes(), "text/html; charset=utf-8")
+        if url.path == "/tools.js":
+            return self._send(200, (WEB / "tools.js").read_bytes(), "application/javascript; charset=utf-8")
         if url.path == "/api/state":
             try:
                 day = date.fromisoformat(q.get("date", [date.today().isoformat()])[0])

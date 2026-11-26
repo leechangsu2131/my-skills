@@ -288,6 +288,64 @@ textarea:focus,input[type=text]:focus{outline:2px solid var(--acc-soft);border-c
     <summary>🔗 바로가기</summary>
     <div class="fold-body"><div class="row" id="links"></div></div>
   </details>
+
+  <!-- ── 교실 도구 묶음 ───────────────────────────────── -->
+  <details class="fold" id="classToolsBox">
+    <summary>🛠 교실 도구</summary>
+    <div class="fold-body">
+
+      <!-- 타이머 -->
+      <div style="margin-bottom:16px">
+        <div class="row" style="margin-bottom:6px">
+          <span style="font-weight:600">⏱ 타이머</span>
+          <input id="timerInput" type="text" value="5:00"
+            style="width:70px;text-align:center;font:inherit;border:1px solid var(--line);border-radius:8px;padding:4px 6px">
+          <button id="timerStart" class="pri" style="min-width:60px">시작</button>
+          <button id="timerReset">초기화</button>
+        </div>
+        <div id="timerDisplay" style="font-size:48px;font-weight:700;font-variant-numeric:tabular-nums;
+          letter-spacing:-.02em;min-width:5ch;transition:color .3s">5:00</div>
+      </div>
+
+      <!-- 발표자 뽑기 -->
+      <div style="margin-bottom:16px">
+        <div class="row" style="margin-bottom:6px">
+          <span style="font-weight:600">🙋 발표자 뽑기</span>
+          <label style="font-size:13px">번호 범위</label>
+          <input id="pickStart" type="number" min="1" max="99" value="1"
+            style="width:52px;text-align:center;font:inherit;border:1px solid var(--line);border-radius:8px;padding:4px 6px">
+          <span>~</span>
+          <input id="pickEnd" type="number" min="1" max="99" value="27"
+            style="width:52px;text-align:center;font:inherit;border:1px solid var(--line);border-radius:8px;padding:4px 6px">
+          <button id="pickBtn" class="pri">뽑기</button>
+          <button id="pickReset">새로 섞기</button>
+        </div>
+        <div class="row" style="gap:12px">
+          <div id="pickResult" style="font-size:40px;font-weight:700;min-width:3ch;text-align:center">—</div>
+          <div id="pickRemain" class="muted" style="font-size:13px"></div>
+        </div>
+      </div>
+
+      <!-- 소음 측정 -->
+      <div>
+        <div class="row" style="margin-bottom:6px">
+          <span style="font-weight:600">🎙 소음 측정</span>
+          <button id="noiseStart">마이크 켜기</button>
+          <button id="noiseStop" disabled>끄기</button>
+        </div>
+        <div class="row" style="gap:10px;align-items:center">
+          <div id="noiseMeter" style="height:18px;border-radius:9px;background:var(--fill);flex:1;overflow:hidden;position:relative">
+            <div id="noiseBar" style="height:100%;width:0%;border-radius:9px;background:var(--ok);transition:width .15s,background .15s"></div>
+          </div>
+          <span id="noiseLabel" class="muted" style="font-size:13px;min-width:7em">대기 중</span>
+        </div>
+        <div class="muted" style="font-size:12px;margin-top:4px">녹음·저장 없이 실시간 크기만 표시해요</div>
+      </div>
+
+    </div>
+  </details>
+  <!-- ── /교실 도구 묶음 ──────────────────────────────── -->
+
 </main>
 <div id="toast"></div>
 
@@ -919,6 +977,119 @@ setInterval(()=>{ const n=new Date(); $('clock').textContent=n.toTimeString().sl
   if (rec && sess.started_ms) $('rtime').textContent='● '+mmss(Date.now()-sess.started_ms);
 }, 1000);
 load();
+</script>
+<script src="/tools.js"></script>
+<script>
+/* ── 교실 도구 묶음 UI 연결 ─────────────────────────── */
+(function () {
+  /* 타이머 */
+  let timerSec = 0, timerTotal = 0, timerTick = null;
+  const disp = document.getElementById('timerDisplay');
+  const inp  = document.getElementById('timerInput');
+
+  function timerDraw() {
+    const st = timerState(timerSec, timerTotal);
+    disp.textContent = st.text;
+    disp.style.color = st.phase === 'done' ? 'var(--red)'
+                     : st.phase === 'warn' ? 'var(--warn)' : 'var(--ink)';
+    if (st.phase === 'done' && timerTick) {
+      clearInterval(timerTick); timerTick = null;
+      /* 화면 깜빡임(3회) */
+      let n = 0;
+      const blink = setInterval(() => {
+        document.body.style.background = (n % 2 === 0) ? '#fdecea' : '';
+        if (++n >= 6) { clearInterval(blink); document.body.style.background = ''; }
+      }, 300);
+    }
+  }
+
+  document.getElementById('timerStart').onclick = function () {
+    if (timerTick) { clearInterval(timerTick); timerTick = null; this.textContent = '시작'; return; }
+    const parsed = timerParse(inp.value);
+    if (parsed === null || parsed <= 0) { alert('MM:SS 형식으로 입력하세요 (예: 5:00)'); return; }
+    timerSec = parsed; timerTotal = parsed;
+    timerDraw();
+    this.textContent = '일시정지';
+    timerTick = setInterval(() => { timerSec--; timerDraw(); }, 1000);
+  };
+  document.getElementById('timerReset').onclick = function () {
+    clearInterval(timerTick); timerTick = null;
+    document.getElementById('timerStart').textContent = '시작';
+    timerSec = 0; timerTotal = 0;
+    disp.textContent = inp.value || '0:00';
+    disp.style.color = '';
+  };
+  inp.oninput = function () {
+    if (!timerTick) { const v = timerParse(this.value); disp.textContent = v ? timerFormat(v) : this.value; }
+  };
+
+  /* 발표자 뽑기 */
+  let pickQueue = [];
+  const pickRes  = document.getElementById('pickResult');
+  const pickRem  = document.getElementById('pickRemain');
+
+  function getRange() {
+    return {
+      start: parseInt(document.getElementById('pickStart').value, 10) || 1,
+      end:   parseInt(document.getElementById('pickEnd').value, 10)   || 27,
+    };
+  }
+  document.getElementById('pickBtn').onclick = function () {
+    const { start, end } = getRange();
+    if (start > end) { alert('시작 번호가 끝 번호보다 클 수 없어요'); return; }
+    const n = pickNext(pickQueue, start, end);
+    pickRes.textContent = String(n);
+    const rem = pickQueue.length;
+    pickRem.textContent = rem > 0 ? `남은 번호 ${rem}개` : '전원 한 번씩 완료 — 다시 섞을게요';
+  };
+  document.getElementById('pickReset').onclick = function () {
+    pickQueue = [];
+    pickRes.textContent = '—';
+    pickRem.textContent = '';
+  };
+
+  /* 소음 측정 */
+  let noiseCtx = null, noiseAnalyser = null, noiseStream = null, noiseRaf = null;
+  const noiseBar   = document.getElementById('noiseBar');
+  const noiseLbl   = document.getElementById('noiseLabel');
+  const noiseStart = document.getElementById('noiseStart');
+  const noiseStop  = document.getElementById('noiseStop');
+
+  noiseStart.onclick = async function () {
+    try {
+      noiseStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+    } catch (e) {
+      alert('마이크 권한이 필요해요: ' + e.message);
+      return;
+    }
+    noiseCtx = new (window.AudioContext || window.webkitAudioContext)();
+    noiseAnalyser = noiseCtx.createAnalyser();
+    noiseAnalyser.fftSize = 256;
+    noiseCtx.createMediaStreamSource(noiseStream).connect(noiseAnalyser);
+    noiseStart.disabled = true; noiseStop.disabled = false;
+
+    const data = new Uint8Array(noiseAnalyser.frequencyBinCount);
+    function loop() {
+      noiseAnalyser.getByteFrequencyData(data);
+      const level = calcNoiseLevel(data);
+      const info  = noiseLabel(level);
+      noiseBar.style.width    = level + '%';
+      noiseBar.style.background = info.color;
+      noiseLbl.textContent    = info.label;
+      noiseRaf = requestAnimationFrame(loop);
+    }
+    loop();
+  };
+  noiseStop.onclick = function () {
+    cancelAnimationFrame(noiseRaf);
+    noiseStream?.getTracks().forEach(t => t.stop());
+    noiseCtx?.close();
+    noiseCtx = noiseAnalyser = noiseStream = null;
+    noiseBar.style.width = '0%'; noiseBar.style.background = 'var(--ok)';
+    noiseLbl.textContent = '대기 중';
+    noiseStart.disabled = false; noiseStop.disabled = true;
+  };
+})();
 </script>
 </body>
 </html>

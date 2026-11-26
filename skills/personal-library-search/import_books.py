@@ -93,6 +93,10 @@ def parse_text_file(filepath):
         match = url_pattern.search(line)
         if match:
             url = match.group(1)
+            # '책 제목 https://…' 처럼 URL 앞에 글이 있는 줄은 그 앞 글도 제목에 합친다
+            prefix = line[:match.start()].strip()
+            if prefix:
+                current_title_author = (current_title_author + " " + prefix).strip()
             # URL을 찾으면 그 이전까지 수집한 텍스트를 제목/저자로 사용 (재고 한정 같은 불필요한 단어 제거)
             text_info = current_title_author.replace("재고 한정", "").strip()
             

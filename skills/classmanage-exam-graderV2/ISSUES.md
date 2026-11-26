@@ -9,16 +9,23 @@ _없음_
 
 ## 📌 백로그
 
-### ISSUE-001: 시험지로 보이는 PDF 2개가 공개 저장소에 올라가 있음 — 학생 정보 확인 필요 (2026-11-25)
+### ISSUE-002: 뺀 시험지 PDF 가 예전 Git 기록에 남아 있음 (2026-11-26)
 - **상태**: 📌 백로그 (교사 확인 대기)
-- **증상**: `python tools/build_catalog.py --check` 의 새 경고(T24)가 `data/raw_pdfs/` 아래 PDF 1개와 `data_test/artifacts/gemini_review_packets/` 아래 PDF 1개가 git 에 추적된다고 알림.
-- **원인**: 추정 — 시험용·검토용 자료가 `.gitignore` 에 없어 같이 커밋됨. **학생 시험지(이름·답안)인지는 확인 필요**(은정은 파일을 열어 보지 않음). 학생 기록은 저장소에 두지 않는 규칙이 있음.
-- **해결/조치**: 하지 않음. 교사 확인 뒤 학생 정보가 있으면 `git rm --cached` 와 `.gitignore`(`data/`, `data_test/artifacts/`) 정리, 기록 정리 방법을 따로 정함. 학생 정보가 없는 가짜 시험지라면 그대로 두고 이 항목을 닫음.
-- **관련 파일**: `skills/classmanage-exam-graderV2/data/raw_pdfs/`, `skills/classmanage-exam-graderV2/data_test/artifacts/`
+- **증상**: ISSUE-001 로 뺀 PDF 2개는 예전 커밋에 남아 있어 내려받을 수 있음. **은정은 PDF 안을 열지 않아 학생 이름·답안이 있었는지 모름 — 확인 필요.**
+- **원인**: Git 은 파일을 빼도 예전 기록을 보관함.
+- **해결/조치**: 하지 않음. 교사 PC 에서 학생 정보가 있었는지 확인해, 있으면 기록 정리(강제 푸시 등)를 교사가 따로 정함(되돌리기 어려운 일). 없으면 이 항목을 닫음.
+- **참고(확인 끝남, 2026-11-26)**: 같이 의심했던 `logs/` 의 기록 파일 7개와 검토 꾸러미 `.json`(302바이트)은 직접 읽어 봄 — "학생"이 나오는 곳은 모두 **파일 이름**(`학생시험지 N번까지`)뿐이고 학생 이름·답안·점수는 없었음. 그대로 둠.
+- **관련 파일**: 없음(기록)
 
 ## 🟢 해결됨
 
-_없음_
+### ISSUE-001: 시험지로 보이는 PDF 2개가 공개 저장소에 올라가 있음 (2026-11-25)
+- **상태**: 🟢 해결 (2026-11-26, 교사 지시 "빼자" — 브랜치 fix/untrack-tracked-outputs)
+- **증상**: `python tools/build_catalog.py --check` 의 새 경고(T24)가 `data/raw_pdfs/` 아래 PDF 1개와 `data_test/artifacts/gemini_review_packets/` 아래 PDF 1개가 git 에 추적된다고 알림.
+- **원인**: 추정 — 시험용·검토용 자료가 `.gitignore` 에 없어 같이 커밋됨.
+- **해결/조치**: PDF 2개를 저장소에서 빼고 `.gitignore` 에 `data/raw_pdfs/*.pdf`, `data_test/artifacts/**/*.pdf` 를 넣음(같은 폴더의 `dummy.png`·`.json` 등은 그대로 둠). 교사 PC 에 같은 이름 파일이 있으면 이 변경을 합칠 때 지워질 수 있으니, 필요하면 합치기 **전에** 다른 곳(`data_dir()`)에 복사해 둘 것. 예전 기록과 남은 파일은 ISSUE-002.
+- **관련 파일**: `.gitignore`
+
 
 <!--
 항목 양식 (복사해서 사용)

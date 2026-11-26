@@ -135,3 +135,19 @@ skills/teacherlesson-guide-mapper/
 skills/util-webtoguide/output/
 skills/util-webtoguide/images/
 skills/util-webtoguide/guide_output.md
+
+# 학생 시험지·증권사 리포트 같은 결과물·저작물은 저장소에 올리지 않는다 (결과물은 data_dir() 에 둔다)
+# 폴더째가 아니라 파일 모양으로만 막는다(같은 폴더의 코드·문서·설정은 계속 올라간다)
+skills/classmanage-exam-grader/tmp_*
+skills/classmanage-exam-graderV2/data/raw_pdfs/*.pdf
+skills/classmanage-exam-graderV2/data_test/artifacts/**/*.pdf
+skills/personal-record-trade/data/report/**/*.pdf
+skills/personal-record-trade/docs/research/*.pdf
+
+# 남의 영상 자막 원문·뉴스·증권사 글 사본은 저작권이 있어 저장소에 올리지 않는다(필요하면 코드가 다시 받아 만든다)
+skills/personal-youtube-gemini-kakao-automation/v/.transcript_cache/
+skills/personal-youtube-gemini-kakao-automation/v/tmp_*
+skills/personal-youtube-gemini-kakao-automation/v/backlog_transcripts/
+skills/personal-youtube-gemini-kakao-automation/v/last_transcript_*.txt
+skills/personal-record-trade/data/report_web/
+skills/personal-record-trade/data/report/**/extracted_metrics.txt

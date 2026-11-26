@@ -143,12 +143,35 @@ def lesson_section(lesson: dict) -> str:
     return ""
 
 
-def parse_flow(text: str) -> dict:
-    """Gemini 답에서 JSON 을 꺼내 형식을 맞춘다. 잘못되면 ValueError."""
+def _find_flow_json(text: str):
+    """답 글에서 흐름 JSON 객체를 찾는다. 앞뒤 설명에 `{ }` 가 있어도(ISSUE-031) 걸리지 않게
+    각 `{` 위치에서 JSON 을 읽어 보고, `steps` 가 있는 첫 객체를 돌려준다.
+    steps 가 있는 것이 없으면 처음 읽힌 객체(없으면 처음 `{` 의 오류)를 돌려줘 호출한 쪽이 알맞은 오류를 내게 한다."""
     start, end = text.find("{"), text.rfind("}")
     if start < 0 or end <= start:
         raise ValueError("JSON 을 찾지 못함")
-    data = json.loads(text[start:end + 1])
+    decoder = json.JSONDecoder()
+    first_obj, first_error = None, None
+    pos = start
+    while 0 <= pos <= end:
+        try:
+            obj, _ = decoder.raw_decode(text, pos)
+        except json.JSONDecodeError as exc:
+            first_error = first_error or exc
+        else:
+            if isinstance(obj, dict):
+                if "steps" in obj:
+                    return obj
+                first_obj = first_obj if first_obj is not None else obj
+        pos = text.find("{", pos + 1)
+    if first_obj is not None:
+        return first_obj
+    raise first_error
+
+
+def parse_flow(text: str) -> dict:
+    """Gemini 답에서 JSON 을 꺼내 형식을 맞춘다. 잘못되면 ValueError."""
+    data = _find_flow_json(text)
     steps = data.get("steps")
     if not isinstance(steps, list) or not steps:
         raise ValueError("단계(steps)가 없음")
@@ -167,7 +190,9 @@ def parse_flow(text: str) -> dict:
     materials = data.get("materials") or []
     if isinstance(materials, str):
         materials = [m.strip() for m in re.split(r"[,、·]", materials) if m.strip()]
-    return {"goal": str(data.get("goal", "")).strip(), "materials": [str(m) for m in materials][:12],
+    # JSON null 이 'None' 글자로 저장되지 않게(ISSUE-032)
+    materials = [str(m).strip() for m in materials if m is not None and str(m).strip()]
+    return {"goal": str(data.get("goal", "") or "").strip(), "materials": materials[:12],
             "steps": clean_steps, "homework": str(data.get("homework", "") or "").strip(),
             "pages": str(data.get("pages", "") or "").strip()}
 

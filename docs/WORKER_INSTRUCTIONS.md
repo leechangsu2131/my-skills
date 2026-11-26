@@ -13,8 +13,8 @@
 | Claude Code (웹·PC) | 저장소의 `CLAUDE.md` 를 스스로 읽음 — 처음 대화에 아래 **전체본**을 붙여도 됨 |
 | Gemini CLI | 저장소의 `GEMINI.md` 를 스스로 읽음. 다른 폴더에서 쓰면 `~/.gemini/GEMINI.md` 에 전체본 |
 | bizcoder | 교사 PC 에서 `tools\start_worker.ps1 -Tool bizcoder -Name bizcoder-1` — 자기 작업 폴더를 만들고 첫 요청까지 넣어 켬. `CLAUDE.md`·`AGENTS.md`·`reviewer` 에이전트를 스스로 읽음(`bizcoder compat` 로 확인) |
-| Codex (여럿, 매달 새로 참) | `AGENTS.md` 를 스스로 읽음. 웹 Codex 는 지침 칸이 있으면 전체본, 대화창에 ⓪ + '이번 일'. CLI 는 `tools\start_worker.ps1 -Tool codex -Name codex-1 -Task T<번호>` |
-| Antigravity (여럿, 매주 새로 참) | 교사 PC 에서 `tools\start_worker.ps1 -Tool antigravity -Name ag-1` → 에이전트마다 자기 폴더(`my-skills-ag-1`)를 만들어 열고, 첫 요청 글을 클립보드에 넣어 줌(에이전트 창에 붙여 넣기). `GEMINI.md`·`AGENTS.md` 를 읽음. 규칙(Rules) 칸이 있으면 전체본 |
+| Codex (2명: codex-1·codex-2) | `AGENTS.md` 를 스스로 읽음. 웹 Codex 는 지침 칸이 있으면 전체본, 대화창에 ⓪ + '이번 일'. CLI 는 `tools\start_worker.ps1 -Tool codex -Name codex-1 -Task T<번호>` |
+| Antigravity (2명: ag-1·ag-2) | 교사 PC 에서 `tools\start_worker.ps1 -Tool antigravity -Name ag-1` → 에이전트마다 자기 폴더(`my-skills-ag-1`)를 만들어 열고, 첫 요청 글을 클립보드에 넣어 줌(에이전트 창에 붙여 넣기). `GEMINI.md`·`AGENTS.md` 를 읽음. 규칙(Rules) 칸이 있으면 전체본 |
 | Gemini CLI·Claude Code (교사 PC) | 같은 스크립트로: `-Tool gemini` / `-Tool claude` |
 
 작업자 이름 예: `codex-1`…, `ag-1`…(Antigravity), `claude-web-173`, `bizcoder-1`~`3` — 모양은 자유(계정·이메일처럼 생긴 `claude-web-lee2131@hanmail` 도 그대로 이름), 띄어쓰기만 넣지 않는다. 일지 파일 이름(`docs/worklog/<이름>.md`)이 되므로 한 작업자는 늘 같은 이름.
@@ -46,7 +46,7 @@
   도구를 쓸 수 없으면: git fetch --prune 뒤 git branch -r --list "origin/task/<번호>-*" 가 비어 있을 때만, 브랜치 task/<번호>-<짧은-영어> 와 일지 '시작' 줄을 바로 푸시.
   claim_task 가 푸시를 못 하는 곳(인터넷이 막힌 웹 Codex 등)이면 교사가 준 '이번 일'만 한다(교사 PC 가 미리 잡아 둠). 스스로 고르지 않는다.
 - 교사 PC 의 로컬 작업자(Antigravity·bizcoder·Claude Code·Gemini CLI)는 tools/start_worker.ps1 이 만든 my-skills-<이름> 폴더에서만 일한다. 다른 폴더·따로 받은 저장소에서 일하지 않는다.
-- 사용량이 거의 끝나면 일지에 '그만둠 — 어디까지, 다음에 할 것'을 푸시하고 멈춘다(Antigravity 는 매주, Codex 는 매달 새로 참).
+- 사용량이 거의 끝나면 일지에 '그만둠 — 어디까지, 다음에 할 것'을 푸시하고 멈춘다.
 
 ■ R 등급 올리기
 - main 에 직접 올리지 않는다. 강제 푸시·브랜치 삭제·남의 브랜치 수정 금지. 한 일에 브랜치 하나.

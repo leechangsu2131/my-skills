@@ -7,12 +7,12 @@
 ## 0-0. 지금 방침 (교사 결정 2026-11-26)
 
 - **수업 비서 위주.** 일을 만들고 나눠 줄 때 [TASKS.md 맨 위 ★ 묶음](TASKS.md) 스킬만. 묶음 밖 스킬에는 새 일을 만들지 않는다(이미 올라온 브랜치는 시험이 통과하면 합치되 다음 일은 안 만듦).
-- **도구별 사용량에 맞춰 맡긴다.**
+- **작업자 구성과 맡기는 법** (2026-11-26 교사 확인: Codex·Antigravity 각 2명, 토큰 넉넉 — 아끼지 말고 '이번 일' 뒤에도 스스로 이어서 하게).
 
 | 도구 | 사용량 | 어디서 | 맡기는 일 |
 |---|---|---|---|
-| Antigravity (여럿) | 매주 새로 참 → 그 주에 다 씀 | 교사 PC, `start_worker.ps1 -Tool antigravity` 폴더(에이전트마다 하나) | P 일(D·I 의 P), 큰 기능(G·I). 주 초에 넉넉히 줌 |
-| Codex (여럿) | 매달 새로 참 → 고르게 | 웹 또는 CLI | 시험으로 확인되는 R 일을 하나씩 '이번 일'로. 웹 Codex 가 푸시를 못 하면 오케스트레이터가 먼저 `python tools/claim_task.py <번호> <설명> --name codex-N` 으로 잡아 준 뒤 넘김 |
+| Antigravity (2명: ag-1·ag-2) | 넉넉함 — 쉬지 않고 씀 | 교사 PC, `start_worker.ps1 -Tool antigravity` 폴더(에이전트마다 하나) | P 일(D·I 의 P)·큰 기능(G·I). 크롬(9233)을 쓰는 일은 한 명에게만 |
+| Codex (2명: codex-1·codex-2) | 넉넉함 — 쉬지 않고 씀 | 교사 PC 폴더(`-Tool codex`) 또는 웹 | R 일·mock 시험으로 확인되는 핵심 코드. 같은 파일을 고치는 일은 한 명에게 이어서 줌. 웹 Codex 가 푸시를 못 하면 오케스트레이터가 먼저 `python tools/claim_task.py <번호> <설명> --name codex-N` 으로 잡아 준 뒤 넘김 |
 | Claude 웹·bizcoder | — | 웹·교사 PC | R 일 |
 | ChatGPT 웹 | — | — | 맡기지 않음(저장소를 못 바꿈) |
 

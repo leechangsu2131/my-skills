@@ -55,7 +55,7 @@ jobs:
             echo "::notice::tools/check_privacy.py(T22)가 아직 없어 개인정보 검사를 건너뜁니다."
             exit 0
           fi
-          # 오탐이 많아(코드값·타임스탬프 등, T58) 고칠 때까지는 경고만 남기고 막지 않는다
+          # T58 로 많이 줄었지만 사용자 경로·NEIS 10자리 코드 오탐이 남아(T78) 아직은 경고만 남기고 막지 않는다
           if [ -n "$BASE_REF" ]; then
             git diff "origin/${BASE_REF}...HEAD" | python tools/check_privacy.py --stdin --warn-only
           elif [ -n "$BEFORE" ] && [ "$BEFORE" != "0000000000000000000000000000000000000000" ]; then

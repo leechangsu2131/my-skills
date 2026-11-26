@@ -622,7 +622,11 @@ function restoreStep(){
   for (let i = sess.memos.length-1; i >= 0; i--) {
     const m = sess.memos[i];
     if (m.kind === 'sys' && m.text === '수업 마침') return;
-    if (m.kind === 'step' && Number.isInteger(m.idx) && m.idx >= 0 && m.idx < steps.length) { stepIdx = m.idx; stepAt = Date.parse(m.at) || Date.now(); return; }
+    if (m.kind === 'step' && Number.isInteger(m.idx) && m.idx >= 0 && m.idx < steps.length) {
+      const at = Date.parse(m.at);
+      if (!Number.isFinite(at) || iso(new Date(at)) !== S.date) continue;
+      stepIdx = m.idx; stepAt = at; return;
+    }
   }
 }
 

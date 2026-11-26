@@ -11,8 +11,7 @@
     row-gap: 2px;
   }
 
-  .bar-row > .grow,
-  #prepMsg {
+  .bar-row > .grow {
     display: none;
   }
 
@@ -79,6 +78,20 @@
     padding-right: 8px;
     padding-left: 8px;
     white-space: nowrap;
+  }
+
+  #prepMsg {
+    grid-column: 1 / -1;
+    grid-row: 3;
+    display: block;
+    min-height: 0;
+    padding: 0 6px 2px;
+    font-size: 12px;
+    line-height: 1.35;
+  }
+
+  #prepMsg:empty {
+    display: none;
   }
 
   #tabs {

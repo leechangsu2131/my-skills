@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+import re
 import time
 from typing import TYPE_CHECKING, Any, Callable, Optional
 
@@ -59,14 +60,21 @@ async def has_gemini_chat_input(page: Page, timeout_ms: int = 8000) -> bool:
     return False
 
 
+# 로그인·동의 화면의 글은 짧다. 이보다 긴 글은 정상 요약으로 보고 낱말 검사를 하지 않는다(ISSUE-002).
+LOGIN_WALL_MAX_CHARS = 300
+
+
 def looks_like_login_wall_text(text: str) -> bool:
     stripped = text.strip()
     if not stripped:
         return True
+    if len(stripped) > LOGIN_WALL_MAX_CHARS:
+        return False
     lower = stripped.lower()
+    # 영어 낱말은 낱말 경계로 본다: 'catalog in stock' 안의 'log in' 에는 걸리지 않게.
+    if re.search(r"\b(?:sign in|log in)\b", lower):
+        return True
     markers = (
-        "sign in",
-        "log in",
         "accounts.google.com",
         "로그인",
         "계정에 로그인",

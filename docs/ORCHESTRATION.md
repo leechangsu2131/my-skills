@@ -6,14 +6,14 @@
 
 ## 0-0. 지금 방침 (교사 결정 2026-11-26)
 
-- **Codex·Antigravity 는 큰 프로젝트(TASKS '★ 큰 프로젝트' P1…)를 맡고, 작은 T 번호 일은 Claude 웹 작업자에게.** 오케스트레이터는 ① 프로젝트 표(맡은 이·영역 파일·흡수한 T 번호) 관리 ② `합칠 준비` 가 오면 그때그때 합치기(`--no-ff`) ③ `막힘` 도움(작업자 브랜치에 직접 커밋하지 않고 `help/` 브랜치나 설명으로) ④ 같은 공용 파일(`web/index.html`·`assistant_server.py`)을 두 프로젝트가 고치면 먼저 합친 뒤 다른 쪽에 main 받기를 알림.
+- **Codex·Antigravity 는 큰 프로젝트(TASKS '★ 큰 프로젝트' P1…)를 맡고, 작은 T 번호 일은 Claude 웹 작업자에게.** 오케스트레이터는 ① 프로젝트 표(맡은 이·영역 파일·흡수한 T 번호) 관리 ② `합칠 준비` 가 오면 그때그때 합치기(`--no-ff`) ③ `막힘` 도움(작업자 브랜치에 직접 커밋하지 않고 `help/` 브랜치나 설명으로) ④ 같은 공용 파일(`web/index.html`·`assistant_server.py`)을 두 프로젝트가 고치면 먼저 합친 뒤 다른 쪽에 main 받기를 알림 ⑤ 로컬 IDE 를 바꿀 때 앞 IDE 가 `python tools/sync_work.py end` 로 끝냈는지(원래 my-skills 폴더에 커밋 안 한 변경·브랜치가 남지 않았는지) 확인.
 - **수업 비서 위주.** 일을 만들고 나눠 줄 때 [TASKS.md 맨 위 ★ 묶음](TASKS.md) 스킬만. 묶음 밖 스킬에는 새 일을 만들지 않는다(이미 올라온 브랜치는 시험이 통과하면 합치되 다음 일은 안 만듦).
-- **작업자 구성과 맡기는 법** (2026-11-26 교사 확인: Codex·Antigravity 각 2명, 토큰 넉넉 — 아끼지 말고 '이번 일' 뒤에도 스스로 이어서 하게).
+- **작업자 구성과 맡기는 법** (2026-11-26 교사 확인: Codex·Antigravity 계정 각 2개, 토큰 넉넉. **로컬 IDE 는 교사 PC 의 원래 `my-skills` 폴더에서 한 번에 하나**(Codex 를 안 쓸 때 Antigravity), 받고 올리기는 `tools/sync_work.py start/save/end`).
 
 | 도구 | 사용량 | 어디서 | 맡기는 일 |
 |---|---|---|---|
-| Antigravity (2명: ag-1·ag-2) | 넉넉함 — 쉬지 않고 씀 | 교사 PC, `start_worker.ps1 -Tool antigravity` 폴더(에이전트마다 하나) | P 일(D·I 의 P)·큰 기능(G·I). 크롬(9233)을 쓰는 일은 한 명에게만 |
-| Codex (2명: codex-1·codex-2) | 넉넉함 — 쉬지 않고 씀 | 교사 PC 폴더(`-Tool codex`) 또는 웹 | R 일·mock 시험으로 확인되는 핵심 코드. 같은 파일을 고치는 일은 한 명에게 이어서 줌. 웹 Codex 가 푸시를 못 하면 오케스트레이터가 먼저 `python tools/claim_task.py <번호> <설명> --name codex-N` 으로 잡아 준 뒤 넘김 |
+| Antigravity (계정 2개) | 넉넉함 — 쉬지 않고 씀 | 교사 PC 원래 `my-skills` 폴더(로컬 IDE 는 한 번에 하나) | Codex 를 안 쓸 때. P 일(D·I 의 P)·큰 프로젝트 |
+| Codex (계정 2개) | 넉넉함 — 쉬지 않고 씀 | 교사 PC 원래 `my-skills` 폴더(한 번에 하나) 또는 클라우드 | 교사와 함께 큰 프로젝트. 클라우드 Codex 는 GitHub 에서 바로 일해 로컬 IDE 와 동시에 돌려도 됨. 클라우드가 푸시를 못 하면 오케스트레이터가 `claim_task.py` 로 미리 잡아 줌 |
 | Claude 웹·bizcoder | — | 웹·교사 PC | R 일 |
 | ChatGPT 웹 | — | — | 맡기지 않음(저장소를 못 바꿈) |
 
@@ -39,8 +39,8 @@
 cd $env:USERPROFILE\Documents\GitHub\my-skills
 powershell -ExecutionPolicy Bypass -File tools\start_worker.ps1 -Tool bizcoder -Name bizcoder-1 -Task T77
 ```
-- `-Tool` 은 antigravity / codex / bizcoder / claude / gemini. Antigravity 는 폴더를 만들어 열고 첫 요청을 클립보드에 넣어 준다(에이전트 창에 붙여 넣기).
-- **로컬 작업자(Antigravity·Codex CLI·bizcoder·로컬 Claude Code·Gemini CLI)의 일은 오케스트레이터가 정한다** → `-Task <번호>`. 스크립트가 도구를 켜기 전에 `tools/claim_task.py <번호> --check` 로 확인하고, 누가 하고 있거나 완료·결정 대기면 켜지 않는다. 작업자는 시작 직전에 `claim_task.py` 로 일을 잡는다. `-Task` 없이 켜면 스스로 고르되 역시 `claim_task.py` 로 잡는다.
+- `-Tool` 은 bizcoder / claude / gemini / codex(CLI). 로컬 IDE(Codex 앱·Antigravity)는 이 스크립트를 쓰지 않고 원래 `my-skills` 폴더에서 한 번에 하나(WORKER_GUIDE 2-2).
+- **까만 창 CLI 작업자(bizcoder·로컬 Claude Code·Gemini CLI·Codex CLI)의 일은 오케스트레이터가 정한다** → `-Task <번호>`. 스크립트가 도구를 켜기 전에 `tools/claim_task.py <번호> --check` 로 확인하고, 누가 하고 있거나 완료·결정 대기면 켜지 않는다. 작업자는 시작 직전에 `claim_task.py` 로 일을 잡는다. `-Task` 없이 켜면 스스로 고르되 역시 `claim_task.py` 로 잡는다.
 - **로컬 CLI 작업자는 이 스크립트가 만든 폴더에서만** 일한다. 따로 받은 저장소·다른 폴더에서 돌리면 원격 브랜치를 새로 받지 않아 남이 잡은 일을 못 본다(2026-11-25~26 T10·T11·T25 를 다른 폴더의 로컬 작업자가 다시 함). 같은 저장소의 작업 폴더끼리는 브랜치 목록을 같이 써서, 아직 안 올린 브랜치까지 `claim_task.py` 가 본다.
 - 작업자마다 **자기 작업 폴더** `GitHub\my-skills-<이름>`(git worktree)를 처음 한 번 만들고, 거기서 도구를 켜고 첫 요청을 넣는다. 같은 폴더를 여러 작업자가 쓰면 브랜치가 뒤섞인다.
 - 여러 명이면 까만 창을 여러 개 열어 이름만 바꿔 실행(`bizcoder-2`, `gemini-1` …). 이어서 할 때도 같은 명령.

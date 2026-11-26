@@ -31,12 +31,13 @@ Codex·Antigravity 는 토큰이 넉넉하고 교사와 길게 이야기하며 �
 
 | 프로젝트 | 맡은 이 | 목표 | 흡수한 일 | 주로 고치는 파일(이 프로젝트 영역) | 상태 |
 |---|---|---|---|---|---|
-| P1 | Antigravity 1 (ag-1) | 교실 도구·학생 명단: 타이머·발표자 뽑기·소음 측정, 명단에서 🙋 학생 고르기, 주간 정리 이름 가리기 | T70, T89 (+ T53 점검표) | 새 `web/tools.js`·`tests/test_tools.js`, 명단 읽기, `weekly_report.py` | 진행 중(브랜치 `task/T89-classroom-tools-bundle`) |
-| P2 | Codex (교사와 함께) | 휴대폰(전화)에서 쓰는 기능·화면 개선 | — | 화면 배치·스타일(가능하면 새 `web/*.css`·`web/*.js`) | 진행 중 |
-| P3 | (비어 있음 — Antigravity 2 후보) | 차시 자료 바로 열기 완성: 이름 맞추기, 미술·사회 도우미 | T82, T87, T88 | `sites/` | 열림 |
-| P4 | (비어 있음 — Codex 2 후보) | 진도 안정화: 따라잡기 뒤 뒤 차시 밀기, 쓰기 잠금 | T79, T77 | `supabase_schedule.py`, `teacherlesson-schedule/server.py` | 열림 |
+| P1 | 로컬 IDE — Antigravity (ag-1) | 교실 도구·학생 명단: 타이머·발표자 뽑기·소음 측정, 명단에서 🙋 학생 고르기, 주간 정리 이름 가리기 | T70, T89 (+ T53 점검표) | 새 `web/tools.js`·`tests/test_tools.js`, 명단 읽기, `weekly_report.py` | 진행 중(브랜치 `task/T89-classroom-tools-bundle`) |
+| P2 | 로컬 IDE — Codex (교사와 함께) | 휴대폰(전화)에서 쓰는 기능·화면 개선 | — | 화면 배치·스타일(가능하면 새 `web/*.css`·`web/*.js`) | 진행 중 |
+| P3 | (비어 있음) | 차시 자료 바로 열기 완성: 이름 맞추기, 미술·사회 도우미 | T82, T87, T88 | `sites/` | 열림 |
+| P4 | (비어 있음) | 진도 안정화: 따라잡기 뒤 뒤 차시 밀기, 쓰기 잠금 | T79, T77 | `supabase_schedule.py`, `teacherlesson-schedule/server.py` | 열림 |
 | P5 | (비어 있음) | 녹음·받아쓰기: 조각 재전송, 받아쓰기·수업 분석 연결 | T71(진행 중 브랜치 이어받기), T73 | `transcribe.py`, 녹음 부분 | 열림 |
 
+- **로컬 IDE(Codex·Antigravity)는 교사 PC 의 원래 `my-skills` 폴더에서 한 번에 하나**(교대). 받고 올리기는 `python tools/sync_work.py start/save/end`([WORKER_GUIDE 2-2](WORKER_GUIDE.md)). 클라우드 Codex·Claude 웹은 GitHub 에서 따로 일하므로 함께 돌아도 됨.
 - **`web/index.html`·`assistant_server.py` 는 P1·P2 가 같이 건드린다** → 새 기능은 새 파일로, 큰 파일에는 불러오는 몇 줄만. 먼저 합쳐진 쪽 뒤에 다른 쪽이 바로 main 을 받아 맞춘다.
 
 ## A. 자동 시험 쓰기 (R) — 소스는 고치지 말고 `tests/` 만. 네트워크·비밀값·실제 사이트 없이 가짜(mock)로. 버그는 그 스킬 ISSUES.md 에 기록하고 시험은 xfail

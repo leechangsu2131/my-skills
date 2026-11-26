@@ -48,7 +48,13 @@ class SaveFlowTest(FlowTestBase):
         self.assertEqual(saved["goal"], "분수를 더한다")
         self.assertEqual(saved["materials"], ["분수 막대", "딱지"])
         self.assertEqual([s["name"] for s in saved["steps"]], ["도입", "정리"])
-        self.assertEqual(saved["steps"][1], {"name": "정리", "minutes": 5, "do": "", "say": "", "tip": ""})
+        saved_step = saved["steps"][1]
+        self.assertEqual({key: saved_step[key] for key in ("name", "minutes", "do", "say", "tip")},
+                         {"name": "정리", "minutes": 5, "do": "", "say": "", "tip": ""})
+        self.assertEqual(saved_step["teacher_actions"], [])
+        self.assertEqual(saved_step["teacher_prompts"], [])
+        self.assertEqual(saved_step["student_actions"], [])
+        self.assertEqual(saved_step["expected_responses"], [])
         self.assertEqual(saved["publisher"], "아이스크림")
         self.assertEqual(saved["edited"]["by"], "teacher")
 
@@ -99,7 +105,7 @@ class SaveFlowTest(FlowTestBase):
         b = body()
         b["flow"]["steps"][0]["do"] = "가" * 5000
         app.save_flow(b)
-        self.assertEqual(len(json.loads((self.flows / "K1.json").read_text(encoding="utf-8"))["steps"][0]["do"]), 600)
+        self.assertEqual(len(json.loads((self.flows / "K1.json").read_text(encoding="utf-8"))["steps"][0]["do"]), 1000)
 
     def test_flag_keep_cut_saved_and_other_values_dropped(self):
         b = body(); b["flow"]["steps"][0]["flag"] = "keep"; b["flow"]["steps"][1]["flag"] = "아무거나"
@@ -274,7 +280,7 @@ class OpenWindowTest(unittest.TestCase):
         app.screen_size = lambda: (1920, 1080)
         app.subprocess.Popen = lambda args, **kw: self.popen_calls.append(args)
         app._win_api = lambda: object()
-        app._raise_new_window = lambda before: (setattr(self, "before", before), self.raised.set())
+        app._raise_new_window = lambda before, *_args: (setattr(self, "before", before), self.raised.set())
 
     def tearDown(self):
         (app.chrome_path, app.screen_size, app.subprocess.Popen, app._is_windows, app.chrome_windows, app._win_api, app._raise_new_window) = self._saved

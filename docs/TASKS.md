@@ -5,7 +5,7 @@
 > 브랜치 이름: `task/<번호>-<짧은-설명>`. 같은 번호의 원격 브랜치가 있으면 이미 누가 하는 중입니다.
 > **맡기는 기준(2026-11-26)**: 양이 많고 시험으로 확인되는 일(시험·문서·번역·버그 하나 고치기)은 작업자에게. 핵심 파일을 조금 고치는 일(진도 계산·잠금·서버 경로)과 교사 판단이 필요한 일은 **P(교사 PC 의 Claude Code)** — 검토 비용이 직접 하는 비용보다 커서.
 > **공용 파일 주인**: `.github/workflows/check.yml` 은 한 번에 한 작업자만(브랜치 이름에 `ci`). 다른 작업자는 고칠 내용을 자기 PR 설명에 적는다.
-> 마지막 정리: 2026-11-25
+> 마지막 정리: 2026-11-26
 
 ## A. 자동 시험 쓰기 (R) — 소스는 고치지 말고 `tests/` 만. 네트워크·비밀값·실제 사이트 없이 가짜(mock)로. 버그는 그 스킬 ISSUES.md 에 기록하고 시험은 xfail
 
@@ -23,7 +23,7 @@
 | T10 | personal-youtube-gemini-kakao-automation | 자막 정리·메시지 만들기 함수(카카오·Gemini 는 가짜) | 완료(2026-11-26 합침) |
 | T11 | admin-gbetalk | 받은 쪽지 정리·파싱 함수(실제 발송 금지, 화면 조작 부분은 제외) | 완료(2026-11-26 합침) |
 | T12 | personal-carrot | 순수 함수 | 완료(2026-11-25 합침) |
-| T13 | workflow-hub-main / util-webtoguide / util-web-scraper | 순수 함수(각각 따로 브랜치) | 진행 중(workflow-hub 합침, web-scraper·webtoguide 검토 중) |
+| T13 | workflow-hub-main / util-webtoguide / util-web-scraper | 순수 함수(각각 따로 브랜치) | 완료(2026-11-26 합침) — web-scraper 윈도우 경로·webtoguide 결과를 data_dir 로(각 PC output 백업 필요, ISSUE-004) |
 | T14 | teacherlesson-workspace | `scripts/sync_semester2.py` 의 대조·변환 함수(Supabase 가짜) | 완료(2026-11-26 합침) |
 | T15 | teacherlesson-from-neis | `extension/popup.js` 최상위 순수 함수(`normalizeApproverNames`·`sanitizeApprovalProfiles`·`buildApprovalBatches` 등) — Node `vm` 으로 파일을 불러오되 `document`·`chrome` 은 가짜. **NEIS 페이지에 주입되는 함수(`absence-workflow.js`, popup.js 의 `…OnNeis`) 안쪽 함수는 따로 불러올 수 없으니 대상에서 뺀다**(크롬 주입 구조상 통째로여야 함) | 완료(2026-11-26 합침) |
 
@@ -36,16 +36,16 @@
 | T22 | **개인정보 검사 도구**: 커밋 전에 바뀐 줄에서 전화번호·주민번호 모양·이메일·`sk-`/`AIza` 같은 키 모양·`C:\Users\<이름>` 을 찾아 경고 | 새 `tools/check_privacy.py` + 시험 | `git diff --staged` 를 읽어 경고, 가짜 예시 시험 | 완료(2026-11-25 합침) |
 | T23 | **GitHub Actions**: PR 마다 `python tools/build_catalog.py --check` + 시험이 있는 스킬 pytest(비밀값 없이 도는 것만) + T22 | 새 `.github/workflows/check.yml` | PR 에서 초록불 | 완료(2026-11-25 합침) |
 | T24 | `build_catalog.py --check` 강화: SKILL.md 없는 폴더·`generated_rows`/`tmp*`/`*.pdf` 같은 결과물이 추적되면 경고 | `tools/build_catalog.py` | 기존 통과 유지 + 새 경고 시험 | 완료(2026-11-25 합침) |
-| T25 | classmanage-supabase-export: 결과 엑셀을 스킬 폴더가 아니라 `data_dir()` 에 저장, `verify=False` 없애기(학생 기록이 저장소 폴더에 생김) | `export.py` | 결과 경로 시험 | 열림 |
-| T26 | util-notebooklm `gemini_ask` 에 모델별 대기 시간 인자(작은 글은 30~45초), 결과에 쓴 모델 돌려주기(전역 `LAST_MODEL` 대신) | `nlm.py` (+ 부르는 곳 `prepare_lessons.py`, `auto_split.py` 는 인자만) | 가짜 subprocess 시험 | 열림 (T01 끝난 뒤) |
-| T27 | teacherlesson-schedule `/api/catch-up` 동시 요청 잠금(겹치면 수업배치 전체 다시 쓰기가 덮임) | `server.py` | 두 요청 동시 시험 | 열림 |
-| T28 | teacherlesson-assistant `supabase_schedule.py` 진도 바꾸기 동시 요청 잠금 | `supabase_schedule.py` | 가짜 시험 | 열림 |
-| T29 | 수업 비서 서버 `/favicon.ico` 404 → 작은 아이콘 | `assistant_server.py`, `web/` | 404 없음 | 열림 |
+| T25 | classmanage-supabase-export: 결과 엑셀을 스킬 폴더가 아니라 `data_dir()` 에 저장, `verify=False` 없애기(학생 기록이 저장소 폴더에 생김) | `export.py` | 결과 경로 시험 | 완료(2026-11-26 합침) |
+| T26 | util-notebooklm `gemini_ask` 에 모델별 대기 시간 인자(작은 글은 30~45초), 결과에 쓴 모델 돌려주기(전역 `LAST_MODEL` 대신) | `nlm.py` (+ 부르는 곳 `prepare_lessons.py`, `auto_split.py` 는 인자만) | 가짜 subprocess 시험 | 완료(2026-11-26 합침) |
+| T27 | teacherlesson-schedule `/api/catch-up` 동시 요청 잠금(겹치면 수업배치 전체 다시 쓰기가 덮임) | `server.py` | 두 요청 동시 시험 | 완료(2026-11-26 합침) |
+| T28 | teacherlesson-assistant `supabase_schedule.py` 진도 바꾸기 동시 요청 잠금 | `supabase_schedule.py` | 가짜 시험 | 완료(2026-11-26 합침) |
+| T29 | 수업 비서 서버 `/favicon.ico` 404 → 작은 아이콘 | `assistant_server.py`, `web/` | 404 없음 | 완료(2026-11-26 합침) |
 | T45 | **실패 중인 시험 4개 고치기**(teacherlesson-assistant ISSUE-030): `test_supabase_schedule.py` CatchUpTest 가 옛 동작(첫 예정 슬롯, `completed` 값)을 검사함. 2026-11-24 커밋 9d2591f 에서 '실제로 할 차시 고르기'가 **요청 날짜·교시 칸으로 옮기는** 동작으로 바뀜(ISSUE-029). 새 동작에 맞게 시험을 고치고, 고른 차시 **뒤 차시들이 차시 순서대로 남는지**(앞당겨진 칸과 겹치지 않는지) 시험을 더해 확인. 코드가 틀렸으면 고치지 말고 ISSUES 에 재현 시험과 함께 기록 | `test_supabase_schedule.py` | `pytest test_supabase_schedule.py` 모두 통과 또는 xfail+기록 | 완료(2026-11-25 합침) |
 | T46 | 학교 PC 점검 도구 보완(검토 🟡): ① 점검 bat 는 `py -3.13`, 수업비서 bat 는 `python` 이라 다른 Python 을 볼 수 있음 → 둘 다 검사하고 다르면 ⚠, `check_setup.py` 의 'py -3.13 을 먼저 찾아요' 안내 바로잡기 ② 5180 포트가 열려 있으면 `http://127.0.0.1:5180/` 에 실제로 물어 수업 비서인지 확인 ③ config 의 port 가 숫자가 아니어도 멈추지 않게 ④ `schedule_backend` 가 supabase 가 아닐 땐 Supabase 키 없음을 ⚠ 로 | `check_setup.py`, `점검_PC.bat`, `tests/test_check_setup.py` | 시험 추가·통과 | 완료(2026-11-25 합침) |
-| T47 | 메모 동기화 부품 보완(검토 🟡): ① 내려받은 메모에 서버 `memo_key` 를 그대로 저장해 중복 판정(지금은 `at` 없는 메모가 받을 때마다 늘어남) ② CLI 출력 utf-8 ③ README·SKILL.md 에 memo_sync 사용법 절 ④ (선택) 단계 기록 step·sys·adj 를 올리지 않는 설정 | `memo_sync.py`, `tests/test_memo_sync.py`, README·SKILL 의 memo_sync 절 | 중복 재현 시험 통과 | 열림 |
+| T47 | 메모 동기화 부품 보완(검토 🟡): ① 내려받은 메모에 서버 `memo_key` 를 그대로 저장해 중복 판정(지금은 `at` 없는 메모가 받을 때마다 늘어남) ② CLI 출력 utf-8 ③ README·SKILL.md 에 memo_sync 사용법 절 ④ (선택) 단계 기록 step·sys·adj 를 올리지 않는 설정 | `memo_sync.py`, `tests/test_memo_sync.py`, README·SKILL 의 memo_sync 절 | 중복 재현 시험 통과 | 완료(2026-11-26 합침) |
 | T49 | (교사 PC, Claude Code) 메모 동기화 연결: SQL 실행(진도와 같은 슈파베이스 프로젝트) → `save_session` 뒤 `push_session` 을 **백그라운드 스레드**로 → `실행_수업비서.bat` 에서 서버 켜기 **전에** `memo_sync.py pull --if-older 24` → 두 PC 에서 확인. **먼저 교사 결정**: 📝·🔧·🎤 같은 자유 글 메모에 학생 이름이 들어가면 그대로 슈파베이스에 올라감(🙋 학생 메모만 제외됨) | `assistant_server.py`, bat | 두 PC 메모 같음 | 교사 결정 대기 |
-| T58 | 개인정보 검사 도구(`tools/check_privacy.py`) 다듬기(검토 🟡): ① 오탐 — 13자리 숫자(타임스탬프·견적번호·NEIS 코드)를 주민번호로, 영문자 붙은 숫자를 전화번호로, `setup-python@v5.1.0`·`lodash@4.17.21`·`git@github.com` 을 이메일로 잡음 — **이메일은 이제 괜찮으므로(2026-11-25 교사 결정) 이메일 검사는 뺀다** → 숫자 앞뒤 `[0-9A-Za-z]` 막기, 주민번호는 앞 6자리 날짜 확인 ② 미탐 — 노션 `ntn_`·`secret_`, 32자리 16진 DB ID, `GOCSPX-`, `/c/Users/<이름>`, `.env` 파일 자체 ③ `--stdin` 을 `sys.stdin.buffer` + `errors=replace` 로 ④ `--diff-args` 가 뒤 인자를 다 가져감, `++ ` 로 시작하는 추가 줄 빠짐. 다 되면 `.github/workflows/check.yml` 의 `--warn-only` 를 빼는 것을 PR 에 제안 | `tools/check_privacy.py`, `tests/test_check_privacy.py` | 오탐·미탐 예시 시험 통과 | 열림 |
+| T58 | 개인정보 검사 도구(`tools/check_privacy.py`) 다듬기(검토 🟡): ① 오탐 — 13자리 숫자(타임스탬프·견적번호·NEIS 코드)를 주민번호로, 영문자 붙은 숫자를 전화번호로, `setup-python@v5.1.0`·`lodash@4.17.21`·`git@github.com` 을 이메일로 잡음 — **이메일은 이제 괜찮으므로(2026-11-25 교사 결정) 이메일 검사는 뺀다** → 숫자 앞뒤 `[0-9A-Za-z]` 막기, 주민번호는 앞 6자리 날짜 확인 ② 미탐 — 노션 `ntn_`·`secret_`, 32자리 16진 DB ID, `GOCSPX-`, `/c/Users/<이름>`, `.env` 파일 자체 ③ `--stdin` 을 `sys.stdin.buffer` + `errors=replace` 로 ④ `--diff-args` 가 뒤 인자를 다 가져감, `++ ` 로 시작하는 추가 줄 빠짐. 다 되면 `.github/workflows/check.yml` 의 `--warn-only` 를 빼는 것을 PR 에 제안 | `tools/check_privacy.py`, `tests/test_check_privacy.py` | 오탐·미탐 예시 시험 통과 | 완료(2026-11-26 합침) — PR 차단 전환은 T78 뒤로 |
 | T59 | 추적 중인 결과물 정리 목록(T24 경고 약 40건): exam-grader 임시 파일 42개, graderV2 PDF 2개(**학생 시험지일 수 있음**), record-trade 증권사 PDF 26개, youtube-kakao `tmp_*.vtt`, school-print `ParameterSetObject.pdf` → 스킬별로 무엇인지·지워도 되는지 표로(지우지 말 것, 교사 결정) | `docs/reviews/tracked-outputs.md` | 표 완성 | 완료(2026-11-26 합침) |
 
 ## C. 문서 정리 (R) — 정보는 빼지 말고 양식·쉬운 한국어로
@@ -110,6 +110,15 @@
 | T74 | `실행_수업비서.bat` 이 `py -3.13` 과 `python` 을 섞어 씀 → `py -3.13` 하나로, 없으면 `python`(ISSUE-034) | `실행_수업비서.bat`, `점검_PC.bat` | `check_setup.py` 실행기 항목 ✅ | 열림 |
 | T75 | `check_setup.py` — config.json 이 `{ }` 가 아니면 멈춤(ISSUE-035) | `check_setup.py`, 시험 | 시험 추가·통과 | 열림 |
 | T76 | 수업 메모·🙋 학생 발표 메모를 **주간 정리 글**로: sessions 에서 과목·출판사별 고칠점·좋았음 모으기(학생 이름은 학생별 절로만, 바깥에 보내지 않음) → `데이터 폴더/reports/week-<날짜>.md`. 출판사 주의점 후보를 따로 표시 | `weekly_report.py`(새), 시험 | 가짜 sessions 로 시험 | 열림 |
+
+## H. 2026-11-26 검토에서 나온 후속 일
+
+| 번호 | 할 일 | 고칠 파일 | 끝난 기준 | 등급·상태 |
+|---|---|---|---|---|
+| T77 | teacherlesson-schedule: 수업배치 전체를 다시 쓰는 쓰기 경로 7개(`/api/catch-up`·`done`·push·extend·pull·move·swap)를 잠금 하나로 감싸기(지금은 catch-up 만, ISSUE-004 한계) | `server.py`, 시험 | catch-up 과 push 동시 요청 시험 | P · 열림 |
+| T78 | `tools/check_privacy.py` 남은 것: ① 사용자 경로(`C:\Users\<이름>`)는 경고만, 종료 코드에서 빼기 + `…`·`...`·`xxx` 는 예시로 보기 ② 전화번호 가운데 묶음 첫 자리 `[1-9]`(NEIS 10자리 기관 코드 오탐) ③ 하이픈 없는 13자리 주민번호는 날짜 + 검증 숫자가 맞을 때만 ④ `.env` 를 `diff --git` 줄에서도 찾기, `secret_` 은 `secret_[A-Za-z0-9]{40,}` 로 좁히기. 다 되면 PR 설명에 check.yml `--warn-only` 빼기 제안(공용 파일이라 직접 고치지 말 것) | `tools/check_privacy.py`, `tests/test_check_privacy.py` | 오탐·미탐 시험 통과, 열린 브랜치 diff 에서 오탐 0 | R · 열림 |
+| T79 | teacherlesson-assistant ISSUE-033 남은 점: 앞 차시로 따라잡아 마치면 원래 칸의 뒤 차시가 지난 날에 '예정'으로 남음 → 다음 칸으로 밀지 **교사 결정** 뒤 고치기 | `supabase_schedule.py`, `test_supabase_schedule.py` | 재현 시험 통과 | P · 교사 결정 대기 |
+| T80 | util-webtoguide: 결과가 늘 같은 `guide_output.md`·`images/` 에 저장돼 다음 글이 덮어씀 → 글마다 하위 폴더(`data_dir(..., "output", <글 번호>)`) | `webtoguide.py`, 시험 | 두 글 변환 시험에서 서로 안 덮음 | R · 열림 |
 
 ## S. 상시 일 — 고를 일이 없을 때 언제든 (번호를 브랜치에 넣고, 대상 스킬을 일지에 적어 겹치지 않게)
 

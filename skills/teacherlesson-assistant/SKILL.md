@@ -27,7 +27,7 @@ metadata:
 
 ### A. 수업 흐름 — 자동 준비가 기본 (Claude 토큰 0)
 
-"내일 수업 준비해줘" → `python prepare_lessons.py --date tomorrow` (화면의 **🌙 수업 준비** 단추·아침 bat 와 같은 일). 흐름 없는 차시마다 NotebookLM 소스 md 의 그 차시 구간(없으면 Supabase 차시의 PDF 경로에서 발췌한 쪽)을 Gemini(util-notebooklm, 무료 flash, 붐비면 다른 모델)에 넘겨 `flows/<record_key>.json` 을 만든다. 결과 줄(성공·실패·이유)만 보고한다. 사람이 고친 흐름은 덮어쓰지 않는다(`--redo` 는 자동 흐름만).
+"내일 수업 준비해줘" → `python prepare_lessons.py --date tomorrow` (화면의 **🌙 수업 준비** 단추·아침 bat 와 같은 일). 흐름 없는 차시마다 지도서에서 그 차시 구간을 가져와 Gemini가 먼저 수업 형태·단계·시간을 정하고, 두 번째 요청에서 각 단계를 교사 행동·발문·학생 활동·예상 반응·지원·확인점으로 채운다. 수업 활동에 맞게 4~8개 단계로 구성하고 합계는 40분으로 잡는다. 지도서에 없는 내용은 "운영 제안"으로 구분하며 학생의 구체적인 개인 경험을 지어내지 않는다. 결과 줄(성공·실패·이유)만 보고한다. 사람이 고친 흐름은 덮어쓰지 않는다(`--redo` 는 자동 흐름만).
 
 아래 손 절차는 교사가 **그 차시를 콕 집어** Claude 에게 직접 만들어 달라고 할 때만 한다.
 
@@ -38,8 +38,8 @@ metadata:
 ```json
 {
   "record_key": "...", "subject": "수학", "title": "분수의 덧셈(2)", "publisher": "아이스크림",
-  "source": "지도서 p.120-123", "goal": "학습 목표 한 줄", "materials": ["분수 막대"],
-  "steps": [{"name": "도입", "minutes": 5, "do": "할 활동", "say": "핵심 발문", "tip": "주의·보충할 점", "flag": "keep 또는 cut(선택)"}],
+  "source": "지도서 p.120-123", "lesson_type": "모둠 탐구", "goal": "학습 목표 한 줄", "materials": ["분수 막대"],
+  "steps": [{"name": "관찰하기", "minutes": 5, "teacher_actions": ["자료를 나눠 준다"], "teacher_prompts": ["무엇이 보이나요?"], "student_actions": ["자료를 살펴보고 말한다"], "expected_responses": ["학생마다 다른 관찰 내용을 말할 수 있어요"], "teacher_support": "잘 보이지 않으면 일부를 가려 비교하게 한다", "check": "근거를 들어 말하는지", "tip": "주의점", "flag": "keep 또는 cut(선택)"}],
   "homework": ""
 }
 ```

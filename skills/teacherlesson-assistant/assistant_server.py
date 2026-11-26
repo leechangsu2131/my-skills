@@ -207,6 +207,14 @@ def _clean(value, limit: int = 600) -> str:
     return _CTRL.sub(" ", str(value if value is not None else "")).strip()[:limit]
 
 
+def _clean_list(value, limit: int = 5, text_limit: int = 500) -> list[str]:
+    if isinstance(value, str):
+        value = value.splitlines()
+    if not isinstance(value, list):
+        return []
+    return [text for item in value if (text := _clean(item, text_limit))][:limit]
+
+
 def save_flow(body: dict) -> dict:
     """화면에서 고친 수업 흐름을 flows/ 에 저장한다. 값은 서버에서 다시 검사하고,
     직접 고친 흐름이 되도록 자동 준비 표시(auto)는 지운다(prepare_lessons 가 덮어쓰지 않음)."""
@@ -232,7 +240,16 @@ def save_flow(body: dict) -> dict:
             raise ValueError(f"{n}번째 단계의 시간(분)이 숫자가 아니에요.") from None
         if not 0 <= minutes <= 120:
             raise ValueError(f"{n}번째 단계의 시간은 0~120분 사이로 적어 주세요.")
-        step = {"name": name, "minutes": minutes, **{k: _clean(item.get(k)) for k in ("do", "say", "tip")}}
+        step = {"name": name, "minutes": minutes,
+                "purpose": _clean(item.get("purpose"), 300),
+                **{k: _clean(item.get(k), 1000 if k in ("do", "say") else 600)
+                   for k in ("do", "say", "tip")},
+                "teacher_actions": _clean_list(item.get("teacher_actions")),
+                "teacher_prompts": _clean_list(item.get("teacher_prompts")),
+                "student_actions": _clean_list(item.get("student_actions")),
+                "expected_responses": _clean_list(item.get("expected_responses")),
+                "teacher_support": _clean(item.get("teacher_support"), 800),
+                "check": _clean(item.get("check"), 500)}
         if item.get("flag") in ("keep", "cut"):  # 'keep'=꼭 해야 함, 'cut'=시간이 모자라면 줄여도 되는 단계 (없으면 키 자체를 안 둠 → 옛 흐름과 같은 모양)
             step["flag"] = item["flag"]
         steps.append(step)
@@ -250,6 +267,7 @@ def save_flow(body: dict) -> dict:
     base = read_json(path, {}) if path.is_file() else {}
     flow = {k: v for k, v in (base if isinstance(base, dict) else {}).items() if k != "auto"}
     flow.update(record_key=lesson["record_key"], subject=lesson["subject"], title=lesson["title"],
+                lesson_type=_clean(raw.get("lesson_type", flow.get("lesson_type", "")), 80),
                 goal=_clean(raw.get("goal"), 300), materials=materials, steps=steps,
                 edited={"by": "teacher", "at": datetime.now().strftime("%Y-%m-%d %H:%M")})
     flow.setdefault("publisher", load_config().get("subjects", {}).get(lesson["subject"], {}).get("publisher", ""))

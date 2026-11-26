@@ -192,8 +192,9 @@ def prepare_one(cfg: dict, lesson: dict, cautions: list[str], model: str) -> tup
         last_error = ""
         for attempt in range(2):  # 형식이 틀리면 한 번 더
             try:
+                # 차시 구간 글(md)은 작아 모델마다 45초면 됨. PDF 발췌는 예전처럼 모델마다 최대 120초
                 answer, model = nlm.gemini_ask(pdf, prompt, model=model, timeout=120,
-                                                model_timeout=45, work=tmp / f"gemini{attempt}")
+                                                model_timeout=45 if section else None, work=tmp / f"gemini{attempt}")
                 flow = parse_flow(answer)
                 break
             except (ValueError, RuntimeError, json.JSONDecodeError) as exc:

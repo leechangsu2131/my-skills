@@ -64,7 +64,7 @@ def export_to_excel(records):
             sheet_name = student[:31].replace('/', '_').replace('\\', '_')
             df.to_excel(writer, sheet_name=sheet_name, index=False)
             
-    print(f"✅ 엑셀 추출 완료: 총 {len(student_records)}명의 시트가 개인 데이터 폴더의 '{output_file.name}'에 생성되었습니다!")
+    print(f"✅ 엑셀 추출 완료: 총 {len(student_records)}명의 시트가 개인 데이터 폴더에 생성되었습니다: {output_file}")
 
 if __name__ == "__main__":
     records = get_supabase_data()

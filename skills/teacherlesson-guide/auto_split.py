@@ -240,6 +240,8 @@ def main() -> int:
     ap.add_argument("--reuse-analysis", action="store_true", help="기존 analysis.json을 다시 검증해 Gemini 재호출을 피합니다.")
     ap.add_argument("--model", default=nlm.DEFAULT_MODEL, help="Gemini 모델")
     ap.add_argument("--timeout", type=int, default=300, help="Gemini 제한 시간(초)")
+    ap.add_argument("--model-timeout", type=int, default=45,
+                    help="모델 하나를 기다리는 시간(초, 기본 45). 붐벼서 모델마다 시간이 넘치면 늘려 다시 실행")
     a = ap.parse_args()
     pdf = a.pdf.expanduser().resolve()
     if not pdf.is_file():
@@ -285,7 +287,7 @@ def main() -> int:
             ap.error(f"기존 analysis.json을 읽을 수 없습니다: {exc}")
     else:
         answer, gemini_model = nlm.gemini_ask(index_path, prompt, model=a.model, timeout=a.timeout,
-                                              model_timeout=45, work=out / "gemini_work")
+                                              model_timeout=a.model_timeout, work=out / "gemini_work")
         data = json_object(answer)
     merge_lesson_map(data, lesson_map)
     expected_count = len(lesson_map) if lesson_map is not None else a.expected_lessons

@@ -74,10 +74,13 @@ def test_claim_pushes_branch_and_worklog_start_line(repos):
     assert "T77 시작 (브랜치 task/T77-write-lock)" in log
 
 
-def test_name_with_space_or_brackets_uses_same_worklog(repos):
-    r = claim(repos["a"], "T77", "write-lock", "--name", "[claude-web- 173]")
+@pytest.mark.parametrize("given, file", [("[claude-web- 173]", "claude-web-173"),
+                                         ("[claude-web-lee2131@hanmail]", "claude-web-lee2131@hanmail")])
+def test_name_with_space_or_brackets_uses_same_worklog(repos, given, file):
+    """지침 첫 줄 대괄호 안 글자는 모양이 어떻든 이름 — 띄어쓰기·대괄호만 뺀다."""
+    r = claim(repos["a"], "T77", "write-lock", "--name", given)
     assert r.returncode == 0, r.stdout
-    log = g(repos["a"], "show", "origin/task/T77-write-lock:docs/worklog/claude-web-173.md")
+    log = g(repos["a"], "show", f"origin/task/T77-write-lock:docs/worklog/{file}.md")
     assert "T77 시작" in log
 
 

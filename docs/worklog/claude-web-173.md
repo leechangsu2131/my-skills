@@ -11,3 +11,4 @@
 - 2026-11-26 05:05 T50 시작 (브랜치 task/T50-teacher-guide)
 - 2026-11-26 05:15 T50 PR 올림 — teacherlesson-assistant README.md 에 '교사용 사용 설명서 (한 장)' 추가(날짜·교시 → 🌙 수업 준비 → 지금 할 일 → 메모 → 진도 조정, 그림 없이 쉬운 말), SKILL.md 에 안내 한 줄. 단추 이름·확인 창은 web/index.html 과 대조. 옛 이름 '여기부터 다시 잡기'를 화면 이름으로 표시. build_catalog --check 문제 없음
 - 2026-11-26 10:53 T67 시작 (브랜치 task/T67-root-tests-xfail)
+- 2026-11-26 10:54 T67 PR 올림 — teacherlesson-guide auto_split.json_object 가 설명 글의 중괄호에 걸리던 것을 고침(ISSUE-005 🟢). { 마다 raw_decode 로 읽어 lessons 목록 있는 첫 덩어리 사용. 루트 tests xfail 6개 중 이 2개의 xfail 을 지우고 시험 4개 추가(앞뒤 설명·문자열 속 중괄호·lessons 없는 덩어리 건너뛰기·안쪽 객체 거부). 변이 3가지 모두 잡힘, build_catalog --check 문제 없음. 이 PC 에 PyMuPDF 가 없어 json_object 시험만 가짜 fitz 로 돌림(10 통과) — 교사 PC·CI 에서 전체 확인 필요. 나머지 xfail 4개는 parse_flow(ISSUE-031·032)라 T68 이 맡고 있어 건드리지 않음

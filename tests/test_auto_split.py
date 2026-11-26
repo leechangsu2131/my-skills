@@ -144,13 +144,36 @@ def test_json_object_errors():
         az.json_object('{"lessons": [')
 
 
-@pytest.mark.xfail(strict=True, reason="teacherlesson-guide ISSUES.md: json_object 가 설명 글의 중괄호에 걸림")
 @pytest.mark.parametrize("text", [
     '참고 {예시} 입니다.\n{"lessons": [{"start_page": 3}]}',
     '{"lessons": [{"start_page": 3}]}\n(설명 {끝})',
-], ids=["앞 설명에 중괄호", "뒤 설명에 중괄호"])
+    '앞 {가} 설명\n```json\n{"lessons": [{"start_page": 3}]}\n```\n뒤 {나} 설명',
+    '{메모}{"lessons": [{"start_page": 3}]}{끝}',
+], ids=["앞 설명에 중괄호", "뒤 설명에 중괄호", "앞뒤 설명에 중괄호", "붙어 있는 중괄호"])
 def test_json_object_explanation_containing_braces_around_json(text):
     assert az.json_object(text)["lessons"][0]["start_page"] == 3
+
+
+def test_json_object_braces_inside_string_values_are_kept():
+    text = '설명 {x}\n{"overview": "{개관}", "lessons": [{"title": "분수 {덧셈}", "start_page": 3}]}'
+    data = az.json_object(text)
+    assert data["overview"] == "{개관}" and data["lessons"][0]["title"] == "분수 {덧셈}"
+
+
+def test_json_object_skips_valid_json_without_lessons_and_takes_the_next():
+    text = '참고: {"note": "예시"}\n{"lessons": [{"start_page": 3}]}'
+    assert az.json_object(text)["lessons"][0]["start_page"] == 3
+
+
+def test_json_object_does_not_take_a_nested_object_as_the_answer():
+    # 겉 객체가 lessons 가 없으면, 그 안쪽 객체의 lessons 를 대신 쓰지 않고 오류
+    with pytest.raises(ValueError, match="lessons 목록이 없습니다"):
+        az.json_object('{"overview": {"lessons": [{"start_page": 3}]}}')
+
+
+def test_json_object_only_broken_json_between_braces_raises_decode_error():
+    with pytest.raises(ValueError):
+        az.json_object('참고 {예시} 입니다. {"lessons": [')
 
 
 # ──────────────────────────── title_matches ────────────────────────────

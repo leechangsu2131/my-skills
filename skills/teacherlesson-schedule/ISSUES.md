@@ -36,6 +36,12 @@ _없음_
 - **해결/조치**: 미적용. 같은 방식으로 `except schedule.ScheduleError as exc: return _action_error(str(exc), 500)` 를 `ValueError` 앞에 더하면 됨. 이 함수들은 T77(수업배치 쓰기 잠금)도 고치므로 겹치지 않게 함께
 - **관련 파일**: `server.py`(`done`·`push`·`extend`·`pull`·`move`·`swap`)
 
+### ISSUE-8: `semester_rollover.py` 의 완료 기준(규칙)에 `unit`·`title` 이 하나도 없으면 모든 행이 완료로 칠해짐 (2026-11-27)
+- **상태**: 📌 백로그 (S1 시험 `tests/test_semester_rollover.py` 를 쓰다 발견. 고치지는 않음)
+- **증상**: `matches(row, rule)` 은 규칙의 `unit`·`title` 만 보고, 없으면 빈 글자로 비교해 **모든 행에 맞는다**. 설정 JSON 의 `done_until_new`·`done_until_existing` 규칙에서 `title` 을 `tilte` 처럼 오타 내거나 빠뜨리면 `mark_until` 이 그 과목 **전 행을 완료로 칠하고**, "다음 수업: 없음(모두 완료)"로 나옴. 확인: `mark_until(rows, {"tilte": "a"})` → 3개 모두 완료. `--apply` 없이 돌리면 미리보기에 개수가 나와 알아챌 수 있지만, 그대로 `--apply` 하면 진도표에 반영됨(반영 전 백업은 저장됨)
+- **해결 방향**: `matches`/`mark_until` 이 `unit`·`title` 둘 다 비어 있는 규칙을 `ValueError` 로 거절(못 찾았을 때와 같은 방식) + 모르는 키(오타)도 거절. 지금 동작은 시험(`test_missing_keys_in_rule_match_everything`)에 남겨 두었으니 고칠 때 그 시험을 새 동작으로 바꾸기
+- **관련 파일**: `semester_rollover.py`(`matches`·`mark_until`·`main` 의 3)·4)), `tests/test_semester_rollover.py`
+
 
 ## 🟢 해결됨
 

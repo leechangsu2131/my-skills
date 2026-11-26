@@ -9,18 +9,16 @@ _없음_
 
 ## 📌 백로그
 
-
-### ISSUE-T14: `sync_semester2.safe_int(12.0)` 이 None (2026-11-26, 시험으로 발견)
-- **상태**: 📌 백로그
-- **증상**: 슈파베이스·시트에서 `12.0` 처럼 소수 꼴로 온 차시·교시 값을 정수로 못 바꿔 None 이 됨 (`int("12.0")` 이 실패)
-- **해결 방향**: `int(float(str(value).strip()))` 로 바꾸고, 시험 `tests/test_sync_semester2.py` 의 xfail 표시를 지운다
-- **관련 파일**: `scripts/sync_semester2.py`(`safe_int`)
-
 _없음_
 
 ## 🟢 해결됨
 
-_없음_
+### ISSUE-T14: `sync_semester2.safe_int(12.0)` 이 None (2026-11-26, 시험으로 발견)
+- **상태**: 🟢 해결 (2026-11-26)
+- **증상**: 슈파베이스·시트에서 `12.0` 처럼 소수 꼴로 온 차시·교시 값을 정수로 못 바꿔 None 이 됨 (`int("12.0")` 이 실패)
+- **해결/조치**: 먼저 `int(글자)` 로 읽고, 실패하면 `int(float(글자))` 로 읽게 함(큰 정수는 정밀도를 잃지 않게 int 를 먼저). `nan`·`inf` 는 기본값. 시험의 xfail 표시를 지우고 `"12.0"`·`" 3.0 "`·큰 정수·nan·inf 시험을 더함
+- **관련 파일**: `scripts/sync_semester2.py`(`safe_int`), `tests/test_sync_semester2.py`
+- **남은 점(범위 밖)**: `scripts/extract_from_sheets.py`·`migrate_from_sheets.py` 의 `_safe_int` 도 `int(str(val).strip())` 뿐이라 `"12.0"` 이면 기본값이 됨(같은 문제). 이번 일에서는 고치지 않음 — 옛 시트 이전용 스크립트라 지금도 쓰는지 교사 확인 필요
 
 <!--
 항목 양식 (복사해서 사용)

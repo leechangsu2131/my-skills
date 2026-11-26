@@ -36,7 +36,7 @@ _없음_
 - **상태**: 🟢 해결 (2026-11-26, 교사 결정: "결과물은 저장소에 저장되면 안 됨")
 - **증상**: `output/나이스_스포츠클럽_가이드/` 의 그림 17장·문서 3개(.docx 2·.md 1)가 추적되고 있었고, 스크립트는 현재 폴더에 `images/`·`guide_output.md` 를 만들어 스킬 폴더에서 돌리면 결과가 저장소 안에 생겼다. 다른 사람 블로그 그림이라 저작권, 화면의 개인정보 여부는 열어 보지 않아 확인 필요였다.
 - **원인**: 결과를 현재 폴더에 저장하는 코드.
-- **해결/조치**: ① `webtoguide.py` 가 `data_dir("util-webtoguide", "output")` 에 저장(끝나면 위치 출력) ② 올라가 있던 파일 20개 추적 해제(`git rm --cached`) ③ `.gitignore` 에 `output/`·`images/`·`guide_output.md` 추가 ④ SKILL.md 안내 수정 ⑤ 시험 추가(작업 폴더에는 아무것도 생기지 않음). **이미 올라간 기록(히스토리)에는 그림이 남아 있다** — 지울지는 별도 결정(ISSUE-006 과 같은 문제).
+- **해결/조치**: ① `webtoguide.py` 가 `data_dir("util-webtoguide", "output")` 에 저장(끝나면 위치 출력) ② 올라가 있던 파일 20개 추적 해제(`git rm --cached`) ③ `.gitignore` 에 `output/`·`images/`·`guide_output.md` 추가 ④ SKILL.md 안내 수정 ⑤ 시험 추가(작업 폴더에는 아무것도 생기지 않음). **이미 올라간 기록(히스토리)에는 그림이 남아 있다** — 지울지는 별도 결정(저장소 전체의 추적 결과물 문제와 같음 — `docs/reviews/tracked-outputs.md`). **합친 main 을 받으면 각 PC 의 `output/나이스_스포츠클럽_가이드/`(교사가 손본 md·docx 포함)가 디스크에서 지워진다** → 받기 전에 `내 문서/my-skills-data/util-webtoguide/output/` 로 복사(오케스트레이터 PC 는 2026-11-26 복사함, 다른 PC 는 받기 전에 직접). 이미 지워졌으면 `git checkout 88ba459 -- skills/util-webtoguide/output` 로 되살려 옮긴다.
 - **관련 파일**: `webtoguide.py`, `.gitignore`, `SKILL.md`, `tests/test_webtoguide.py`
 
 <!--

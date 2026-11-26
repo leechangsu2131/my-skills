@@ -16,6 +16,9 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 import class_manager
 
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))  # sites/ 의 공용 title_match (T82)
+import title_match
+
 
 # 9222 는 에듀파인 자동화 크롬이 쓸 수 있어 수업 도우미 공용 포트 9233 (수업 비서가 MUSIC_CLASS_REMOTE_PORT 로 넘김)
 REMOTE_PORT = int(os.environ.get("MUSIC_CLASS_REMOTE_PORT") or 9233)
@@ -501,10 +504,11 @@ def unit_matches(unit_title, unit_text):
     query_numbers = extract_numbers(normalized_query)
     if title_numbers and query_numbers:
         return title_numbers[0] == query_numbers[0]
-    return False
+    # 번호로 못 가를 때(한쪽에 번호가 없을 때): 쉼표·띄어쓰기가 달라도 같은 이름이면 찾는다 (T82)
+    return title_match.titles_match(normalized_title, normalized_query)
 
 
-def lesson_matches(title_text, lesson_text):
+def _lesson_matches_by_rule(title_text, lesson_text):
     normalized_title = " ".join((title_text or "").split())
     normalized_lesson = " ".join((lesson_text or "").split())
     if normalized_lesson and normalized_title == normalized_lesson:
@@ -525,6 +529,16 @@ def lesson_matches(title_text, lesson_text):
         return lesson_text in title_text
 
     return lesson_text in title_text
+
+
+def lesson_matches(title_text, lesson_text):
+    if _lesson_matches_by_rule(title_text, lesson_text):
+        return True
+    # 양쪽에 차시 번호가 있으면 번호가 가른다(같은 이름이 다른 차시에 있어도 섞이지 않게).
+    # 한쪽에 번호가 없을 때만 이름이 같거나 비슷한지 본다 (T82)
+    if title_match.numbers_can_decide(title_text, lesson_text):
+        return False
+    return title_match.titles_match(title_text, lesson_text)
 
 
 def lesson_reference_candidates(lesson_text, exact_title=None):

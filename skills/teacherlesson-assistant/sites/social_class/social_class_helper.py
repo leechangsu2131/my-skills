@@ -33,6 +33,9 @@ except ImportError:
 import social_class_store
 import social_guide_extract
 
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))  # sites/ 의 공용 title_match (T82)
+import title_match
+
 
 import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(next(p / "_shared" for p in _pl.Path(__file__).resolve().parents if (p / "_shared" / "skill_env.py").is_file())))
 from skill_env import env_values as _central_env_values, central_env_path
@@ -691,10 +694,11 @@ def unit_matches(unit_title: str, unit_text: str) -> bool:
     query_numbers = extract_numbers(normalized_query)
     if title_numbers and query_numbers:
         return title_numbers[0] == query_numbers[0]
-    return False
+    # 번호로 못 가를 때(한쪽에 번호가 없을 때): 쉼표·띄어쓰기가 달라도 같은 이름이면 찾는다 (T82)
+    return title_match.titles_match(normalized_title, normalized_query)
 
 
-def lesson_matches(title_text: str, lesson_text: str) -> bool:
+def _lesson_matches_by_rule(title_text: str, lesson_text: str) -> bool:
     normalized_title = normalize_space(title_text)
     normalized_lesson = normalize_space(lesson_text)
     if normalized_lesson and normalized_title == normalized_lesson:
@@ -713,6 +717,16 @@ def lesson_matches(title_text: str, lesson_text: str) -> bool:
             return True
 
     return normalized_lesson in normalized_title if normalized_lesson else False
+
+
+def lesson_matches(title_text: str, lesson_text: str) -> bool:
+    if _lesson_matches_by_rule(title_text, lesson_text):
+        return True
+    # 양쪽에 차시 번호가 있으면 번호가 가른다(같은 이름이 다른 차시에 있어도 섞이지 않게).
+    # 한쪽에 번호가 없을 때만 이름이 같거나 비슷한지 본다 (T82)
+    if title_match.numbers_can_decide(title_text, lesson_text):
+        return False
+    return title_match.titles_match(title_text, lesson_text)
 
 
 def normalize_match_text(text: str) -> str:

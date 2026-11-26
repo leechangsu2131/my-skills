@@ -116,12 +116,27 @@ def resolve_pdf_path(value):
     if "pdf_splits" not in {part.casefold() for part in path.parts}:
         return raw_path
 
+    unit_folder = path.parent.parent
+
+    # The split filename's subunit index is not necessarily the textbook
+    # unit number (e.g. subunit_10_... inside the 2단원 folder). Prefer the
+    # unit number in the containing folder and look for the original guide
+    # both there and one level up, where publisher downloads are often kept.
+    unit_match = re.search(r"(\d+)\s*단원", unit_folder.name)
+    if unit_match:
+        unit_no = unit_match.group(1)
+        for folder in (unit_folder, unit_folder.parent):
+            if not folder.is_dir():
+                continue
+            candidates = sorted(folder.glob(f"*지도서*{unit_no}단원*.pdf"))
+            if len(candidates) == 1:
+                return str(candidates[0])
+
+    # Older exports encoded the unit number in the split filename itself.
+    if not unit_folder.is_dir():
+        return raw_path
     match = re.search(r"subunit_\d+_(\d+)\.", path.name, re.IGNORECASE)
     if not match:
-        return raw_path
-
-    unit_folder = path.parent.parent
-    if not unit_folder.is_dir():
         return raw_path
     unit_no = match.group(1)
     candidates = sorted(unit_folder.glob(f"*{unit_no}단원*.pdf"))

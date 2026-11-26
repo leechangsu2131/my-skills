@@ -48,7 +48,7 @@ DEFAULT_AI_SITES = [
     {"name": "Grok", "url": "https://grok.com/"},
     {"name": "NotebookLM", "url": "https://notebooklm.google.com/"},
 ]
-PROGRESS_ACTIONS = {"done", "extend", "push", "catch-up"}
+PROGRESS_ACTIONS = {"done", "extend", "push", "catch-up", "replace-subject"}
 _lock = threading.Lock()
 
 
@@ -207,6 +207,14 @@ def _clean(value, limit: int = 600) -> str:
     return _CTRL.sub(" ", str(value if value is not None else "")).strip()[:limit]
 
 
+def _clean_list(value, limit: int = 5, text_limit: int = 500) -> list[str]:
+    if isinstance(value, str):
+        value = value.splitlines()
+    if not isinstance(value, list):
+        return []
+    return [text for item in value if (text := _clean(item, text_limit))][:limit]
+
+
 def save_flow(body: dict) -> dict:
     """화면에서 고친 수업 흐름을 flows/ 에 저장한다. 값은 서버에서 다시 검사하고,
     직접 고친 흐름이 되도록 자동 준비 표시(auto)는 지운다(prepare_lessons 가 덮어쓰지 않음)."""
@@ -232,7 +240,16 @@ def save_flow(body: dict) -> dict:
             raise ValueError(f"{n}번째 단계의 시간(분)이 숫자가 아니에요.") from None
         if not 0 <= minutes <= 120:
             raise ValueError(f"{n}번째 단계의 시간은 0~120분 사이로 적어 주세요.")
-        step = {"name": name, "minutes": minutes, **{k: _clean(item.get(k)) for k in ("do", "say", "tip")}}
+        step = {"name": name, "minutes": minutes,
+                "purpose": _clean(item.get("purpose"), 300),
+                **{k: _clean(item.get(k), 1000 if k in ("do", "say") else 600)
+                   for k in ("do", "say", "tip")},
+                "teacher_actions": _clean_list(item.get("teacher_actions")),
+                "teacher_prompts": _clean_list(item.get("teacher_prompts")),
+                "student_actions": _clean_list(item.get("student_actions")),
+                "expected_responses": _clean_list(item.get("expected_responses")),
+                "teacher_support": _clean(item.get("teacher_support"), 800),
+                "check": _clean(item.get("check"), 500)}
         if item.get("flag") in ("keep", "cut"):  # 'keep'=꼭 해야 함, 'cut'=시간이 모자라면 줄여도 되는 단계 (없으면 키 자체를 안 둠 → 옛 흐름과 같은 모양)
             step["flag"] = item["flag"]
         steps.append(step)
@@ -250,6 +267,7 @@ def save_flow(body: dict) -> dict:
     base = read_json(path, {}) if path.is_file() else {}
     flow = {k: v for k, v in (base if isinstance(base, dict) else {}).items() if k != "auto"}
     flow.update(record_key=lesson["record_key"], subject=lesson["subject"], title=lesson["title"],
+                lesson_type=_clean(raw.get("lesson_type", flow.get("lesson_type", "")), 80),
                 goal=_clean(raw.get("goal"), 300), materials=materials, steps=steps,
                 edited={"by": "teacher", "at": datetime.now().strftime("%Y-%m-%d %H:%M")})
     flow.setdefault("publisher", load_config().get("subjects", {}).get(lesson["subject"], {}).get("publisher", ""))
@@ -269,8 +287,10 @@ def find_unit(lesson: dict) -> dict | None:
 def recent_memos(subject: str, limit: int = 6) -> list[dict]:
     """같은 과목의 지난 수업에서 남긴 '고칠점'·'좋았음' 메모 (최근 것부터)."""
     found = []
-    for path in sorted(SESSIONS.glob(f"*/*_{safe_name(subject)}.json"), reverse=True):
+    for path in sorted(SESSIONS.glob(f"*/*_{safe_name(subject)}*.json"), reverse=True):
         rec = read_json(path, {})
+        if rec.get("subject") != subject:
+            continue
         for memo in rec.get("memos", []):
             if memo.get("kind") in ("fix", "good", "voice", "note"):
                 found.append({"date": rec.get("date"), "title": rec.get("title", ""),
@@ -296,7 +316,21 @@ def state(day: date) -> dict:
         key = f"{lesson['publisher']}|{lesson['subject']}"
         lesson["cautions"] = cautions.get(key, []) + cautions.get(f"{lesson['publisher']}|*", [])
         lesson["recent_memos"] = recent_memos(lesson["subject"])
-        lesson["saved"] = read_json(session_path(day.isoformat(), lesson["period"], lesson["subject"]), None)
+        old_session = read_json(session_path(day.isoformat(), lesson["period"], lesson["subject"]), None)
+        if lesson.get("record_key"):
+            lesson["saved"] = read_json(session_path(day.isoformat(), lesson["period"], lesson["subject"],
+                                                        lesson["record_key"]), None)
+            if lesson["saved"] is None and old_session:
+                if not old_session.get("record_key") or old_session.get("record_key") == lesson["record_key"]:
+                    lesson["saved"] = old_session
+                else:
+                    lesson["saved_mismatch"] = {
+                        "record_key": old_session.get("record_key", ""),
+                        "lesson": old_session.get("lesson", ""),
+                        "title": old_session.get("title", ""),
+                    }
+        else:
+            lesson["saved"] = old_session
     return {
         "date": day.isoformat(),
         "source": source,
@@ -310,12 +344,13 @@ def state(day: date) -> dict:
     }
 
 
-def session_path(day: str, period, subject: str) -> pathlib.Path:
+def session_path(day: str, period, subject: str, record_key: str = "") -> pathlib.Path:
     try:
         period_no = int(period or 0)
     except (TypeError, ValueError):
         period_no = 0
-    path = SESSIONS / day / f"{period_no}교시_{safe_name(subject)}.json"
+    lesson_suffix = f"_{safe_name(record_key)}" if record_key else ""
+    path = SESSIONS / day / f"{period_no}교시_{safe_name(subject)}{lesson_suffix}.json"
     if not path.resolve().is_relative_to(SESSIONS.resolve()):
         raise ValueError("저장 위치가 올바르지 않아요.")
     return path
@@ -331,13 +366,46 @@ def chrome_path() -> str | None:
     return shutil.which("chrome")
 
 
-def screen_size() -> tuple[int, int]:
+def monitor_rects() -> list[tuple[int, int, int, int, bool]]:
+    """Return monitor rectangles and primary flags in desktop coordinates."""
     try:
         import ctypes
-        ctypes.windll.user32.SetProcessDPIAware()
-        return ctypes.windll.user32.GetSystemMetrics(0), ctypes.windll.user32.GetSystemMetrics(1)
+        from ctypes import wintypes
+
+        class RECT(ctypes.Structure):
+            _fields_ = [("left", wintypes.LONG), ("top", wintypes.LONG),
+                        ("right", wintypes.LONG), ("bottom", wintypes.LONG)]
+
+        class MONITORINFO(ctypes.Structure):
+            _fields_ = [("cbSize", wintypes.DWORD), ("rcMonitor", RECT),
+                        ("rcWork", RECT), ("dwFlags", wintypes.DWORD)]
+
+        user32 = ctypes.windll.user32
+        user32.SetProcessDPIAware()
+        callback_type = ctypes.WINFUNCTYPE(wintypes.BOOL, wintypes.HMONITOR, wintypes.HDC,
+                                           ctypes.POINTER(RECT), wintypes.LPARAM)
+        found = []
+
+        def visit(handle, _dc, _rect, _data):
+            info = MONITORINFO()
+            info.cbSize = ctypes.sizeof(info)
+            if user32.GetMonitorInfoW(handle, ctypes.byref(info)):
+                r = info.rcMonitor
+                found.append((r.left, r.top, r.right, r.bottom, bool(info.dwFlags & 1)))
+            return True
+
+        callback = callback_type(visit)
+        user32.EnumDisplayMonitors(0, None, callback, 0)
+        if found:
+            return found
     except Exception:
-        return 1920, 1080
+        pass
+    return [(0, 0, 1920, 1080, True)]
+
+
+def screen_size() -> tuple[int, int]:
+    primary = next((r for r in monitor_rects() if r[4]), monitor_rects()[0])
+    return primary[2] - primary[0], primary[3] - primary[1]
 
 
 # ── 새로 연 Chrome 창을 앞으로 가져오기 ──
@@ -358,10 +426,22 @@ def _win_api():
     u = ctypes.windll.user32
     enum_proc = ctypes.WINFUNCTYPE(wintypes.BOOL, wintypes.HWND, wintypes.LPARAM)
     u.EnumWindows.argtypes = [enum_proc, wintypes.LPARAM]
+    u.EnumWindows.restype = wintypes.BOOL
     u.IsWindowVisible.argtypes = u.IsIconic.argtypes = u.SetForegroundWindow.argtypes = u.GetWindowTextLengthW.argtypes = [wintypes.HWND]
+    u.IsWindowVisible.restype = u.IsIconic.restype = u.SetForegroundWindow.restype = wintypes.BOOL
+    u.GetWindowTextLengthW.restype = ctypes.c_int
     u.GetClassNameW.argtypes = [wintypes.HWND, wintypes.LPWSTR, ctypes.c_int]
+    u.GetClassNameW.restype = ctypes.c_int
     u.ShowWindow.argtypes = [wintypes.HWND, ctypes.c_int]
+    u.ShowWindow.restype = wintypes.BOOL
     u.SetWindowPos.argtypes = [wintypes.HWND, wintypes.HWND, ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_int, wintypes.UINT]
+    u.SetWindowPos.restype = wintypes.BOOL
+    # HWND 는 64비트 포인터다. 창 위치 함수도 기본 c_int 변환을 쓰지 않도록
+    # 인자와 BOOL 반환형을 명시한다. 두 번째 인자는 RECT 구조체 포인터다.
+    u.GetWindowRect.argtypes = [wintypes.HWND, ctypes.c_void_p]
+    u.GetWindowRect.restype = wintypes.BOOL
+    u.IsZoomed.argtypes = [wintypes.HWND]
+    u.IsZoomed.restype = wintypes.BOOL
     u.keybd_event.argtypes = [wintypes.BYTE, wintypes.BYTE, wintypes.DWORD, ctypes.c_size_t]
     u._enum_proc = enum_proc
     return u
@@ -398,12 +478,19 @@ def wait_for_new_window(list_windows, before: set[int], timeout: float = 6.0, in
         sleep(interval)
 
 
-def raise_window(user32, hwnd) -> None:
-    """창을 앞으로: 최소화 해제 → 잠깐 '항상 위'로 올렸다 풀기(포그라운드 권한 없이도 맨 위에 보임) → Alt 눌러 포그라운드 잠금 풀고 활성화."""
-    SW_RESTORE, SWP = 9, 0x0001 | 0x0002 | 0x0040      # SWP_NOSIZE | SWP_NOMOVE | SWP_SHOWWINDOW
+def raise_window(user32, hwnd, rect: tuple[int, int, int, int] | None = None,
+                 maximize: bool = False) -> None:
+    """요청한 모니터로 옮겨 최대화하고 앞으로 가져온다."""
+    SW_RESTORE, SW_MAXIMIZE, SWP = 9, 3, 0x0043  # SWP_NOSIZE | SWP_NOMOVE | SWP_SHOWWINDOW
     HWND_TOPMOST, HWND_NOTOPMOST = -1, -2
-    if user32.IsIconic(hwnd):
+    if user32.IsIconic(hwnd) or rect:
         user32.ShowWindow(hwnd, SW_RESTORE)
+    if rect:
+        user32.SetWindowPos(hwnd, 0, *rect, 0x0040)  # SWP_SHOWWINDOW: 실제 위치·크기 적용
+        if maximize:
+            # Chrome 이 저장된 창 크기를 다시 적용할 수 있어, 목표 모니터로 옮긴 뒤
+            # 그 모니터의 작업 영역 기준으로 최대화한다.
+            user32.ShowWindow(hwnd, SW_MAXIMIZE)
     user32.SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP)
     user32.SetWindowPos(hwnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP)
     user32.keybd_event(0x12, 0, 0, 0)                  # VK_MENU(Alt) 누름
@@ -411,14 +498,38 @@ def raise_window(user32, hwnd) -> None:
     user32.SetForegroundWindow(hwnd)
 
 
-def _raise_new_window(before: set[int]) -> None:
+def _raise_new_window(before: set[int], rect: tuple[int, int, int, int] | None = None,
+                      maximize: bool = False) -> None:
     try:
         api = _win_api()
         hwnd = wait_for_new_window(lambda: chrome_windows(api), before)
         if hwnd:
-            raise_window(api, hwnd)
-    except Exception:
-        pass   # 앞으로 못 가져와도 창은 이미 열렸으니 넘어감
+            import time as _time
+            if rect:
+                import ctypes
+                class RECT(ctypes.Structure):
+                    _fields_ = [("left", ctypes.c_long), ("top", ctypes.c_long),
+                                ("right", ctypes.c_long), ("bottom", ctypes.c_long)]
+
+                # Chrome applies its remembered bounds after the new HWND appears.
+                # 일정 시간 재배치해도 최종적으로 요청한 모니터에 최대화되어 있는지 확인한다.
+                for _ in range(10):
+                    _time.sleep(0.5)
+                    raise_window(api, hwnd, rect, maximize)
+                    bounds = RECT()
+                    api.GetWindowRect(hwnd, ctypes.byref(bounds))
+                    cx, cy = (bounds.left + bounds.right) // 2, (bounds.top + bounds.bottom) // 2
+                    x, y, width, height = rect
+                    placed = (api.IsZoomed(hwnd) and x <= cx < x + width and y <= cy < y + height) if maximize else (
+                        bounds.left == x and bounds.top == y and bounds.right - bounds.left == width
+                        and bounds.bottom - bounds.top == height)
+                    if placed:
+                        break
+            else:
+                _time.sleep(0.7)
+                raise_window(api, hwnd, rect)
+    except Exception as exc:
+        print(f"[window] 새 Chrome 창 배치 실패: {type(exc).__name__}: {exc}", file=sys.stderr)
 
 
 def ai_sites(cfg: dict) -> list[dict]:
@@ -446,22 +557,43 @@ def check_site_url(url: str, cfg: dict) -> str:
 
 
 def open_window(url: str, side: str, cfg: dict) -> str:
-    """수업 전용 Chrome 프로필로 창을 연다. side=left(수업 비서) / right(수업 사이트)."""
+    """수업 비서는 왼쪽 화면 1/3, 수업 사이트는 오른쪽 화면 전체에 연다."""
     exe = chrome_path()
     if not exe:
         import webbrowser
         webbrowser.open(url)
         return "Chrome 을 찾지 못해 기본 브라우저로 열었어요."
-    w, h = screen_size()
-    left_w = int(w * float(cfg.get("left_ratio", 0.32)))
-    x, width = (0, left_w) if side == "left" else (left_w, w - left_w)
+    monitors = monitor_rects()
+    primary = next((r for r in monitors if r[4]), monitors[0])
+    px, py, pr, pb, _ = primary
+    w, h = pr - px, pb - py
+    left_w = max(280, min(w - 360, int(w * float(cfg.get("left_ratio", 0.32)))))
+    if side == "left":
+        rect = (px, py, left_w, h)
+        app_args = [f"--app={url}"]
+        maximize = False
+    elif side == "right":
+        right_monitor = min((r for r in monitors if r[0] >= pr),
+                            key=lambda r: r[0], default=None)
+        if right_monitor:
+            rx, ry, rr, rb, _ = right_monitor
+            rect = (rx, ry, rr - rx, rb - ry)
+            maximize = True
+        else:
+            rect = (px + left_w, py, w - left_w, h)
+            maximize = False
+        app_args = ["--new-window", "--", url]
+    else:
+        raise ValueError("창 위치 설정이 올바르지 않아요.")
+    x, y, width, height = rect
     # 음악·사회 도우미와 같은 프로필·포트를 써서 구글 로그인을 한 번만 하면 되게 한다.
     profile = cfg.get("chrome_profile") or str(
         pathlib.Path(os.environ.get("LOCALAPPDATA", str(pathlib.Path.home()))) / "MusicClassHelper" / "chrome_profile")
-    args = [exe, f"--user-data-dir={os.path.expandvars(profile)}", f"--window-position={x},0", f"--window-size={width},{h - 40}"]
+    args = [exe, f"--user-data-dir={os.path.expandvars(profile)}", f"--window-position={x},{y}",
+            f"--window-size={width},{height}"]
     if cfg.get("debug_port"):
         args.append(f"--remote-debugging-port={int(cfg['debug_port'])}")
-    args += [f"--app={url}"] if side == "left" else ["--new-window", "--", url]
+    args += app_args
     before = None
     if _is_windows():
         try:
@@ -470,7 +602,7 @@ def open_window(url: str, side: str, cfg: dict) -> str:
             before = None
     subprocess.Popen(args, close_fds=True)
     if before is not None:
-        threading.Thread(target=_raise_new_window, args=(before,), daemon=True).start()
+        threading.Thread(target=_raise_new_window, args=(before, rect, maximize), daemon=True).start()
     return "창을 열었어요."
 
 
@@ -571,6 +703,8 @@ def progress(action: str, body: dict) -> dict:
     if cfg.get("schedule_backend", "supabase") == "supabase":
         import supabase_schedule
         return supabase_schedule.progress(action, body)
+    if action == "replace-subject":
+        return {"status": "error", "message": "과목 바꾸기는 Supabase 진도표에서만 사용할 수 있어요."}
     base = cfg.get("schedule_api", "http://127.0.0.1:5000").rstrip("/")
     req = urllib.request.Request(f"{base}/api/{action}", data=json.dumps(body).encode("utf-8"),
                                  headers={"Content-Type": "application/json"}, method="POST")
@@ -606,6 +740,42 @@ class Handler(BaseHTTPRequestHandler):
     def _json(self, value, code: int = 200) -> None:
         self._send(code, json.dumps(value, ensure_ascii=False).encode("utf-8"), "application/json; charset=utf-8")
 
+    def _send_audio(self, path: pathlib.Path) -> None:
+        size = path.stat().st_size
+        content_type = "audio/mp4" if path.suffix.lower() == ".mp4" else "audio/webm"
+        start, end, status = 0, size - 1, 200
+        range_header = self.headers.get("Range", "")
+        if range_header.startswith("bytes="):
+            try:
+                first, last = range_header[6:].split("-", 1)
+                start = int(first) if first else max(0, size - int(last))
+                end = min(size - 1, int(last)) if first and last else size - 1
+                if start > end or start >= size:
+                    raise ValueError
+                status = 206
+            except (ValueError, TypeError):
+                self.send_response(416)
+                self.send_header("Content-Range", f"bytes */{size}")
+                self.end_headers()
+                return
+        self.send_response(status)
+        self.send_header("Content-Type", content_type)
+        self.send_header("Content-Length", str(end - start + 1))
+        self.send_header("Accept-Ranges", "bytes")
+        self.send_header("Cache-Control", "no-store")
+        if status == 206:
+            self.send_header("Content-Range", f"bytes {start}-{end}/{size}")
+        self.end_headers()
+        with path.open("rb") as audio:
+            audio.seek(start)
+            remaining = end - start + 1
+            while remaining:
+                chunk = audio.read(min(64 * 1024, remaining))
+                if not chunk:
+                    break
+                self.wfile.write(chunk)
+                remaining -= len(chunk)
+
     def _trusted(self) -> bool:
         """DNS 리바인딩·다른 사이트 요청 막기: Host 는 127.0.0.1/localhost 만, Origin 은 없거나 그 둘만."""
         port = self.server.server_port
@@ -639,6 +809,36 @@ class Handler(BaseHTTPRequestHandler):
                 return self._json({"status": "error", "message": "진도 서버(teacherlesson-schedule)가 꺼져 있어요."}, 502)
             except RuntimeError as exc:
                 return self._json({"status": "error", "message": str(exc)}, 502)
+        if url.path == "/api/recordings":
+            try:
+                day = date.fromisoformat(q.get("date", [date.today().isoformat()])[0]).isoformat()
+            except ValueError:
+                return self._json({"status": "error", "message": "날짜 형식이 잘못됐어요."}, 400)
+            return self._json({"status": "success", "items": recordings_for_day(day)})
+        if url.path.startswith("/api/recording/"):
+            parts = [urllib.parse.unquote(part) for part in url.path.split("/") if part]
+            if len(parts) != 4 or parts[1] != "recording":
+                return self._json({"status": "error", "message": "녹음 파일 주소가 올바르지 않아요."}, 404)
+            try:
+                day = date.fromisoformat(parts[2]).isoformat()
+            except ValueError:
+                return self._json({"status": "error", "message": "날짜 형식이 잘못됐어요."}, 400)
+            name = parts[3]
+            stem, suffix = os.path.splitext(name)
+            if safe_name(stem) != stem or pathlib.Path(name).name != name or suffix.lower() not in {".webm", ".mp4"}:
+                return self._json({"status": "error", "message": "녹음 파일 이름이 올바르지 않아요."}, 404)
+            path = (SESSIONS / day / name).resolve()
+            if not path.is_relative_to(SESSIONS.resolve()) or not path.is_file():
+                return self._json({"status": "error", "message": "녹음 파일을 찾지 못했어요."}, 404)
+            return self._send_audio(path)
+        if url.path == "/api/subjects":
+            try:
+                import supabase_schedule
+                if load_config().get("schedule_backend", "supabase") != "supabase":
+                    return self._json({"status": "error", "message": "과목 바꾸기는 Supabase 진도표에서만 사용할 수 있어요."}, 400)
+                return self._json({"status": "success", "items": supabase_schedule.subject_names()})
+            except (ValueError, RuntimeError, urllib.error.URLError, OSError) as exc:
+                return self._json({"status": "error", "message": str(exc) or "과목 목록을 불러오지 못했어요."}, 502)
         if url.path == "/api/prepare-status":
             return self._json(prepare_status())
         if url.path.startswith("/api/unit-pdf/"):
@@ -837,10 +1037,40 @@ def save_audio(q: dict, raw: bytes) -> dict:
     return {"status": "success", "bytes": path.stat().st_size, "file": path.name}
 
 
+def recordings_for_day(day: str) -> list[dict]:
+    """수업 기록 JSON에 연결된 그날의 실제 음성 파일 목록."""
+    date.fromisoformat(day)
+    folder = SESSIONS / day
+    if not folder.is_dir():
+        return []
+    sessions_by_file = {}
+    for session_file in folder.glob("*.json"):
+        record = read_json(session_file, {})
+        for name in record.get("rec_files", []):
+            sessions_by_file[pathlib.Path(str(name)).name] = record
+    items = []
+    for audio in folder.iterdir():
+        if not audio.is_file() or audio.suffix.lower() not in {".webm", ".mp4"}:
+            continue
+        record = sessions_by_file.get(audio.name, {})
+        period_match = re.match(r"(\d+)교시_", audio.name)
+        items.append({
+            "file": audio.name,
+            "url": f"/api/recording/{day}/{urllib.parse.quote(audio.name)}",
+            "period": record.get("period") or (int(period_match.group(1)) if period_match else None),
+            "subject": record.get("subject", ""),
+            "lesson": record.get("lesson", ""),
+            "title": record.get("title", ""),
+            "record_key": record.get("record_key", ""),
+            "size": audio.stat().st_size,
+        })
+    return sorted(items, key=lambda item: (item.get("period") or 99, item["file"]))
+
+
 def save_session(body: dict) -> dict:
     day = body.get("date", "")
     date.fromisoformat(day)
-    path = session_path(day, body.get("period"), body.get("subject", ""))
+    path = session_path(day, body.get("period"), body.get("subject", ""), body.get("record_key", ""))
     body["saved_at"] = datetime.now().isoformat(timespec="seconds")
     with _lock:
         write_json(path, body)

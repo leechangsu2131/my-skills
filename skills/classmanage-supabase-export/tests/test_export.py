@@ -2,7 +2,6 @@
 
 - parse_names: 이름 칸 글(JSON 배열·쉼표·공백)을 이름 목록으로
 - export_to_excel: 학생별로 나눠 시트를 만드는 부분 (저장 위치는 임시 폴더로 바꿔서 시험)
-소스는 고치지 않는다. 현재 동작과 다르게 기대하는 것은 xfail 로 표시하고 이유를 적었다.
 """
 import sys
 from pathlib import Path
@@ -66,30 +65,29 @@ def test_parse_names_broken_json_falls_back_to_split():
     assert "학생A" in result[0] and "학생B" in result[1]
 
 
-@pytest.mark.xfail(
-    reason="대괄호는 있지만 JSON 이 아닌 글('[학생A 학생B]')은 대괄호가 이름에 붙는다 "
-    "(현재 동작: ['[학생A', '학생B]']). 대괄호를 떼는 것이 바람직해 보임(추정).",
-    strict=False,
-)
 def test_parse_names_brackets_without_json_are_removed():
     assert export.parse_names("[학생A 학생B]") == ["학생A", "학생B"]
 
 
-@pytest.mark.xfail(
-    reason="JSON 배열 안에 문자열이 아닌 값(숫자 등)이 있으면 p.strip() 에서 AttributeError 로 멈춘다.",
-    strict=False,
-)
 def test_parse_names_json_array_with_non_string_items_does_not_crash():
     result = export.parse_names('["학생A", 3]')
     assert "학생A" in result
 
 
-@pytest.mark.xfail(
-    reason="공백으로도 나누므로 이름 안에 공백이 있는 값('학생 A')이 둘로 쪼개진다(JSON 배열이 아닐 때).",
-    strict=False,
-)
 def test_parse_names_comma_list_keeps_names_with_inner_space():
     assert export.parse_names("학생 A, 학생 B") == ["학생 A", "학생 B"]
+
+
+def test_parse_names_comma_list_still_splits_space_separated_full_names():
+    assert export.parse_names("학생A 학생B, 학생C") == ["학생A", "학생B", "학생C"]
+
+
+def test_parse_names_comma_list_keeps_one_char_surname_together():
+    assert export.parse_names("김 철수, 학생A") == ["김 철수", "학생A"]
+
+
+def test_parse_names_json_array_drops_null():
+    assert export.parse_names('["학생A", null]') == ["학생A"]
 
 
 # ── export_to_excel ────────────────────────────────────────────
@@ -196,10 +194,6 @@ def test_export_writes_into_data_dir(out_dir):
     assert (out_dir / "student_records.xlsx").is_file()
 
 
-@pytest.mark.xfail(
-    reason="모든 기록의 이름 칸이 비면 시트가 하나도 없어 openpyxl 이 IndexError 로 멈춘다. "
-    "'기록 없음'으로 끝나는 것이 바람직해 보임(추정).",
-    strict=False,
-)
 def test_export_all_records_without_names_does_not_crash(out_dir):
     export.export_to_excel([{"id": 1, "내용": "이름 없음"}])
+    assert not (out_dir / "student_records.xlsx").exists()

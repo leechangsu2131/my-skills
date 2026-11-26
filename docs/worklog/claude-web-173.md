@@ -11,3 +11,4 @@
 - 2026-11-26 05:05 T50 시작 (브랜치 task/T50-teacher-guide)
 - 2026-11-26 05:15 T50 PR 올림 — teacherlesson-assistant README.md 에 '교사용 사용 설명서 (한 장)' 추가(날짜·교시 → 🌙 수업 준비 → 지금 할 일 → 메모 → 진도 조정, 그림 없이 쉬운 말), SKILL.md 에 안내 한 줄. 단추 이름·확인 창은 web/index.html 과 대조. 옛 이름 '여기부터 다시 잡기'를 화면 이름으로 표시. build_catalog --check 문제 없음
 - 2026-11-26 11:00 T70 시작 (브랜치 task/T70-classroom-tools)
+- 2026-11-26 16:22 T70 그만둠 — 시작 직후 TASKS 를 다시 확인하니 T70 은 ag-1 이 task/T89-classroom-tools-bundle 로 이미 완료·합침. 고친 파일 없음(브랜치에는 '시작' 줄만 있음, 지워도 됨). 다음엔 시작 전에 claim_task 로 다시 확인하고 다른 일(T71·T72·T73·T74·T76 중 빈 것)을 잡음

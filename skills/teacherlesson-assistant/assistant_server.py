@@ -426,10 +426,22 @@ def _win_api():
     u = ctypes.windll.user32
     enum_proc = ctypes.WINFUNCTYPE(wintypes.BOOL, wintypes.HWND, wintypes.LPARAM)
     u.EnumWindows.argtypes = [enum_proc, wintypes.LPARAM]
+    u.EnumWindows.restype = wintypes.BOOL
     u.IsWindowVisible.argtypes = u.IsIconic.argtypes = u.SetForegroundWindow.argtypes = u.GetWindowTextLengthW.argtypes = [wintypes.HWND]
+    u.IsWindowVisible.restype = u.IsIconic.restype = u.SetForegroundWindow.restype = wintypes.BOOL
+    u.GetWindowTextLengthW.restype = ctypes.c_int
     u.GetClassNameW.argtypes = [wintypes.HWND, wintypes.LPWSTR, ctypes.c_int]
+    u.GetClassNameW.restype = ctypes.c_int
     u.ShowWindow.argtypes = [wintypes.HWND, ctypes.c_int]
+    u.ShowWindow.restype = wintypes.BOOL
     u.SetWindowPos.argtypes = [wintypes.HWND, wintypes.HWND, ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_int, wintypes.UINT]
+    u.SetWindowPos.restype = wintypes.BOOL
+    # HWND 는 64비트 포인터다. 창 위치 함수도 기본 c_int 변환을 쓰지 않도록
+    # 인자와 BOOL 반환형을 명시한다. 두 번째 인자는 RECT 구조체 포인터다.
+    u.GetWindowRect.argtypes = [wintypes.HWND, ctypes.c_void_p]
+    u.GetWindowRect.restype = wintypes.BOOL
+    u.IsZoomed.argtypes = [wintypes.HWND]
+    u.IsZoomed.restype = wintypes.BOOL
     u.keybd_event.argtypes = [wintypes.BYTE, wintypes.BYTE, wintypes.DWORD, ctypes.c_size_t]
     u._enum_proc = enum_proc
     return u

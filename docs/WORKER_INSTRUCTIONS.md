@@ -94,6 +94,22 @@
 이번 일: 없음
 ```
 
+**⑤ 큰 프로젝트 맡기기 (Codex·Antigravity)** — 그 도구의 작업 폴더(`my-skills-<이름>`)를 연 뒤
+```
+너의 작업자 이름은 <이름>이야(일지 docs/worklog/<이름>.md). 지금 연 폴더는 너만 쓰는 작업 폴더야. 다른 폴더는 고치지 마.
+너는 큰 프로젝트 P<번호> 를 맡았어. AGENTS.md → docs/WORKER_GUIDE.md(특히 2-2) → docs/TASKS.md 의 '★ 큰 프로젝트' 표를 읽어.
+1. 프로젝트 목표·흡수한 일·영역 파일을 읽고, 어떤 순서로 할지 단계 3~6개 계획을 나에게 먼저 보여 줘. 내가 좋다고 하면 시작.
+2. 브랜치는 proj/P<번호>-<짧은-영어> 하나(이미 시작한 브랜치가 있으면 그대로). 일지에 '시작' 줄을 바로 푸시.
+3. 너는 이 PC 에서 일하니 직접 받고 올려야 다른 사람이 볼 수 있어(WORKER_GUIDE 2-2 의 표대로):
+   - 대화를 새로 열 때: git status → git fetch origin → git merge origin/main
+   - 한 단계가 시험까지 통과하면: 고친 파일만 git add → commit → git push, 일지에 '합칠 준비 — 무엇, 시험 결과' 도 푸시
+   - 단계가 길면 1~2시간마다 중간 커밋·푸시. 내가 "합쳤다"고 하면 git fetch origin → git merge origin/main
+   - 끝낼 때는 커밋 안 한 변경 없이 푸시하고 일지 '그만둠'. rebase·--force·다른 폴더에서 git switch 는 하지 마.
+4. 큰 공용 파일(web/index.html, assistant_server.py)은 불러오는 몇 줄만, 새 기능은 새 파일로. 영역 밖 파일을 고쳐야 하면 일지·PR 에 적어.
+5. 막히면 일지 '막힘 — 무엇, 해 본 것, 필요한 것' 을 푸시하고 나에게 말해(교사 PC 의 Claude Code 가 도움).
+막는 것: 학생 개인정보(시험은 학생A), 전화번호·주소, 키·비밀번호, 지도서 PDF, 실제 제출·발송·결제·삭제. 모르는 건 '확인 필요'.
+```
+
 **① 처음·이어서 (스스로 고르기, R 등급)**
 ```
 너는 <이름>이야. docs/WORKER_GUIDE.md 와 docs/TASKS.md 를 읽고, 네 일지(docs/worklog/<이름>.md)가 있으면 마지막 줄부터 이어 가.

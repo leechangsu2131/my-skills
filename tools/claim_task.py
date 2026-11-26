@@ -10,7 +10,7 @@
 원격 브랜치를 새로 받지 않아 남이 잡은 일을 못 본다. 2026-11-25~26 T10·T11·T23·T25 가 그렇게 두 번씩 만들어졌다.
 
 보는 것 (모두 바로 앞에서 `git fetch --prune` 한 뒤)
-1. 원격 main 의 docs/TASKS.md 상태: `완료`·`교사 결정 대기`·`보류` 면 잡지 않음
+1. 원격 main 의 docs/TASKS.md 상태: `완료`·`교사 결정 대기`·`보류`·`프로젝트 P<n>` 이면 잡지 않음
 2. 원격 브랜치 `task/<번호>-…` — `git ls-remote` 로 원격에 직접 묻는다(main 만 받아 오는 복제본에서도 보이게)
 3. 이 저장소의 로컬 브랜치 `task/<번호>-…` — 같은 PC 의 다른 작업 폴더(git worktree, tools/start_worker.ps1)가
    아직 안 올린 것도 보인다(작업 폴더끼리 브랜치 목록을 같이 씀)
@@ -52,6 +52,8 @@ def blocked_reason(status: str | None) -> str | None:
         return f"TASKS 상태가 '{status}'"
     if "결정 대기" in status:
         return f"TASKS 상태가 '{status}' — 교사 결정이 먼저"
+    if "프로젝트" in status:
+        return f"TASKS 상태가 '{status}' — 큰 프로젝트를 맡은 작업자가 함"
     if "보류" in status:
         return f"TASKS 상태가 '{status}' — 지금은 하지 않는 일(수업 비서 묶음 밖 등)"
     return None

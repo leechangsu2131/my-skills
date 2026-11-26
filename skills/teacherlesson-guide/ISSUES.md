@@ -20,13 +20,6 @@
 
 ## 📌 백로그
 
-### ISSUE-32: `.gitignore` 가 분할기 기본 결과 폴더(`output/`)의 지도서 PDF 를 막지 않음 (2026-11-26)
-- **상태**: 📌 백로그
-- **증상**: `split_subunits_from_plan_table.py` 의 `--out-dir` 기본값은 `output`. 저장소 안에서 실행하면 `splitter/output/…/pdf_splits/*.pdf` 와 `groups.json` 이 생기는데 `git check-ignore` 로 확인하니 막히지 않음(저작물이 올라갈 수 있음 — ISSUE-002 와 같은 종류)
-- **원인**: `.gitignore` 는 `tmp*/`·`generated_rows/`·`.cache/` 등 정해진 이름만 막음
-- **해결/조치**: 아직 안 함(T57 문서 작업 범위 밖). 이 폴더 `.gitignore` 에 `output/`·`pdf_splits/` 추가를 권함. SKILL.md 에는 "결과는 저장소 밖에 둔다"고 적음
-- **관련 파일**: `.gitignore`, `splitter/scripts/split_subunits_from_plan_table.py`
-
 ### ISSUE-33: 진도표 행 올리기에서 Enter 두 번이면 그 과목의 기존 행이 지워짐 (2026-11-26)
 - **상태**: 📌 백로그 (바꿀지 교사 결정 필요)
 - **증상**: `map_general_guides_to_sheet.py` 를 터미널에서 옵션 없이 실행하면 "업로드할까요? [Y/n]"(Enter=올리기) 다음 업로드 방식 질문의 Enter 기본값이 2번(만든 과목의 기존 행을 지우고 업로드). 지워지는 행에는 완료 표시한 지난 행도 들어갈 것(추정). 코드를 읽어 확인했고 실제 시트에서는 실행하지 않음
@@ -64,6 +57,14 @@
 - 무료 Gemini 붐빔 대비: 학기 초 한 번 뒤에서 돌리면 되므로 시간은 중요하지 않음. `gemini_ask` 에 모델별 대기 시간 인자 추가
 
 ## 🟢 해결됨
+
+### ISSUE-32: `.gitignore` 가 분할기 기본 결과 폴더(`output/`)의 지도서 PDF 를 막지 않음 (2026-11-26, 2026-11-27 해결)
+- **상태**: 🟢 해결됨 (T90)
+- **증상**: `split_subunits_from_plan_table.py` 의 `--out-dir` 기본값은 `output`. 저장소 안에서 실행하면 `splitter/output/…/pdf_splits/*.pdf` 와 `groups.json` 이 생기는데 막히지 않았다(저작물이 올라갈 수 있음 — ISSUE-002 와 같은 종류).
+- **원인**: `.gitignore` 는 `tmp*/`·`generated_rows/`·`.cache/` 등 정해진 이름만 막았다.
+- **해결**: 이 폴더 `.gitignore` 에 `output/`·`pdf_splits/`·`groups.json`·`*.pdf`·`*.part` 추가(요청보다 넓게: 이 폴더 안의 지도서 PDF 와 받는 중 임시 파일도 막음). 꼭 올려야 하는 PDF 는 `git add -f <파일>` 로 한 개씩 올린다.
+- **확인**: `git check-ignore -v` 로 막혀야 할 11개 경로는 막히고 코드·문서 8개는 안 막힘. 이미 추적 중인 파일 중 새로 걸리는 것 없음(`git ls-files -ci --exclude-standard`). 다른 스킬 폴더는 영향 없음.
+- **관련 파일**: `.gitignore`, `splitter/scripts/split_subunits_from_plan_table.py`
 
 ### ISSUE-005: `auto_split.json_object` 가 설명 글의 중괄호에 걸림 (2026-11-25 시험으로 발견, 2026-11-26 해결)
 - **상태**: 🟢 해결됨 (T67)

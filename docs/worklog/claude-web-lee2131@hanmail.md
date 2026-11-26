@@ -22,3 +22,4 @@
 - 2026-11-26 20:28 S5 (teacherlesson-assistant) 시작 (브랜치 task/S5-health-check)
 - 2026-11-26 20:50 S5 (teacherlesson-assistant) PR 올림 — 낮 점검(health-2026-11-26.md)에 없던 sites/ 를 요구 파일만 설치한 새 가상환경에서 재서 갱신 보고(docs/reviews/health-assistant-2026-11-26-pm.md): sites 32 통과·1 건너뜀(selenium 추가 시 37), CI 대상 281 통과, build_catalog --check 통과. 핵심: CI check.yml target 에 sites 가 아직 없음(공용 파일이라 제안만). 다른 스킬은 다시 안 돌림
 - 2026-11-27 06:50 S1 (teacherlesson-schedule) 시작 (브랜치 task/S1-semester-rollover-tests)
+- 2026-11-27 06:52 S1 (teacherlesson-schedule) PR 올림 — 시험이 하나도 없던 semester_rollover.py 의 순수 함수(norm·matches·mark_until·load_new_rows)에 시험 23개(tests/test_semester_rollover.py, 시트 연결 없이 JSON·딕셔너리만). 확인: 코드를 일부러 망가뜨린 9가지(마지막→첫 행, exclusive 무시, 이미 완료도 셈, 못 찾아도 안 던짐, 정렬 뒤집기, 완료 초기화 안 함, 비고·단원 이름 안 바꿈, 공백 안 지움)를 모두 시험이 잡음. main 기준 46 통과·1 실패(ISSUE-003)·수집 오류 2(PyMuPDF, T93) → 내 시험 더해 69 통과, 나머지 같음. 발견: 규칙에 unit·title 이 없으면(오타) mark_until 이 전 행을 완료로 칠함 → ISSUES ISSUE-8 백로그(고치지 않음)

@@ -22,3 +22,4 @@
 - 2026-11-26 20:28 S1(teacherlesson-assistant) PR 올림 — `tests/test_notebook_notes.py`(새, 소스는 안 고침): split_notes.py·notebook_sources.py 시험 45개(통과 45·실패 0). 가짜 fitz 로 쪽 글만 돌려줌, 소스를 13군데 잠깐 깨뜨려 보니 처음엔 2군데(폴더 밖 쓰기 막는 검사·같은 PDF 차시 묶기)를 놓쳐서 시험 3개를 더한 뒤 13군데 모두 잡히는 것 확인, 소스는 되돌림. 수업 비서 전체 243개 통과. 버그 후보 없음
 - 2026-11-27 06:48 S7 (teacherlesson-assistant) 시작 (브랜치 task/S7-clova-export-design)
 - 2026-11-27 06:51 S7(teacherlesson-assistant) PR 올림 — `docs/plans/clova-export.md`(새, 코드는 안 고침): ISSUE-039 녹음 WebM→클로바노트용 MP3 설계. 이 환경 ffmpeg 로 형식별 용량·변환 시간을 직접 잼(MP3 64kbps 모노 50분 약 23MB), 코드의 함수·줄 이름 대조 완료. 확인 필요: 클로바노트 용량·길이 제한(공식 안내가 이 환경에서 안 열림)·학교 PC ffmpeg·imageio-ffmpeg 윈도우 번들의 MP3 인코더·실제 수업 녹음 변환. 교사 결정: imageio-ffmpeg 를 requirements 에 넣을지
+- 2026-11-27 06:55 S7 PR #107 갱신 — 교사 답 반영: 클로바노트 제한 600분(파일 길이인지 월 사용 시간인지는 미확인), ffmpeg 없으면 교사가 설치(imageio-ffmpeg 안 넣음), 64kbps MP3 는 잘 알아듣는다고 들음. 메모 §0·§3·§7 과 ISSUE-039 줄 고침, 구현 가능 상태

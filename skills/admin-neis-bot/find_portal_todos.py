@@ -16,7 +16,7 @@ def main():
             id: a.id,
             text: a.innerText.trim()
         }));
-        return links.filter(l => l.text.includes('이서우') || l.text.includes('오지윤') || l.text.includes('백다온') || l.text.includes('이예나') || l.text.includes('천선율'));
+        return links.filter(l => l.text.includes('학생C') || l.text.includes('학생B') || l.text.includes('학생A') || l.text.includes('학생D') || l.text.includes('학생E'));
     })()
     """
     ws.send(json.dumps({'id': 1, 'method': 'Runtime.evaluate', 'params': {'expression': js, 'returnByValue': True}}))

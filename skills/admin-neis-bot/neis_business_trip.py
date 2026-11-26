@@ -139,7 +139,7 @@ return (function(data) {
   setCtrlVal("cmbBsrpScCd", data.trip_type || "10");
 
   // 3. 연락처
-  var cleanPhone = (data.contact || "010-4233-0844").replace(/[^0-9]/g, "");
+  var cleanPhone = (data.contact || "").replace(/[^0-9]/g, "");
   setCtrlVal("mse1", cleanPhone);
 
   // 4. 출장지
@@ -315,6 +315,16 @@ def main():
     with open(data_file, "r", encoding="utf-8") as f:
         trip_data = json.load(f)
 
+    # 연락처(휴대전화)는 저장소에 두지 않는다: 데이터 파일이 비어 있으면 중앙 .env 에서 읽는다
+    if not trip_data.get("contact"):
+        sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "_shared"))
+        from skill_env import load_env
+        load_env()
+        trip_data["contact"] = os.environ.get("TRIP_CONTACT", "")
+    if not trip_data.get("contact") and not args.dry_run:
+        print("[오류] 연락처가 없습니다. 중앙 .env 에 ADMIN_NEIS_BOT__TRIP_CONTACT 를 적어 주세요.")
+        sys.exit(1)
+
     print("=" * 60)
     print(" [NEIS] 출장신청 자동화 프로세스 시작")
     print(f" - 출장목적: {trip_data.get('purpose')}")
@@ -324,7 +334,7 @@ def main():
         print(f"   {idx}) {period.get('start_date')} {period.get('start_hour')}:{period.get('start_minute')} ~ {period.get('end_date', period.get('start_date'))} {period.get('end_hour')}:{period.get('end_minute')}")
     print(f" - 출장지: {trip_data.get('destination')}")
     print(f" - 출장종류: {trip_data.get('trip_type_name')} ({trip_data.get('trip_type')})")
-    print(f" - 연락처: {trip_data.get('contact')}")
+    print(f" - 연락처: {'설정됨' if trip_data.get('contact') else '없음'}")
     print(f" - 이동사항: {trip_data.get('transportation')}")
     print("=" * 60)
 

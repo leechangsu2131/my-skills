@@ -27,3 +27,5 @@
 - 2026-11-27 06:55 S7 PR #107 갱신 — 교사 답 반영: 클로바노트 제한 600분(파일 길이인지 월 사용 시간인지는 미확인), ffmpeg 없으면 교사가 설치(imageio-ffmpeg 안 넣음), 64kbps MP3 는 잘 알아듣는다고 들음. 메모 §0·§3·§7 과 ISSUE-039 줄 고침, 구현 가능 상태
 - 2026-11-27 06:17 T93 시작 (브랜치 task/T93-schedule-pymupdf-req)
 - 2026-11-27 06:18 T93 PR 올림 — `teacherlesson-schedule/requirements.txt` 에 `PyMuPDF>=1.24` 한 줄 추가, ISSUE-7 해결로 표시. 요구 파일만으로 만든 새 가상환경: 전엔 서버 시험 2개 파일이 `No module named 'fitz'` 로 못 모임 → 이제 91개 중 90개 통과(실패 1개는 ISSUE-003 의 원래부터 실패하던 시험). check.yml 은 안 고치고 PR 설명으로 제안
+- 2026-11-27 06:18 T95 시작 (브랜치 task/T95-douclass-cli-args)
+- 2026-11-27 06:20 T95 PR 올림 — `scan_music_pdf_header.py`: 하드코딩 `C:\Users\user\Downloads\music.pdf` → 명령줄 인자(없거나 파일 없으면 안내 후 종료 코드 2, `--help`·`--target` 지원, 쪽 머리 판정은 함수로 뺌). `douclass_probe.py`: 사용자 경로는 원래 없었음 — `--help` 가 되게 selenium 을 뒤로 미루고 `--port`·`--lesson`(기본값은 예전과 같음) 추가. 새 시험 `test_douclass_scripts.py` 13개, 소스를 8군데 깨뜨려 모두 잡힘 확인. 수업 비서 시험(sites 포함) 371 통과·1 건너뜀. 남은 사용자 경로: `PDF_EXTRACTION.md`(작업 기록이라 안 고침)

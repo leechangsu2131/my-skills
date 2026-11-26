@@ -449,6 +449,14 @@ def collect_unit_titles(driver):
 
 def ensure_unit_loaded(driver, unit_text):
     folding_boxes = driver.find_elements(By.CLASS_NAME, "folding-box")
+    # 엄격한 규칙으로 맞는 단원이 없을 때만 가장 비슷한 단원 하나로 바로잡는다 (T82)
+    subjects = []
+    for folding_box in folding_boxes:
+        try:
+            subjects.append(folding_box.find_element(By.CLASS_NAME, "txbd-fold-subject").text.strip())
+        except Exception:
+            continue
+    unit_text = title_match.resolve_query(unit_text, subjects, unit_matches)
     for folding_box in folding_boxes:
         try:
             subject_el = folding_box.find_element(By.CLASS_NAME, "txbd-fold-subject")
@@ -504,11 +512,10 @@ def unit_matches(unit_title, unit_text):
     query_numbers = extract_numbers(normalized_query)
     if title_numbers and query_numbers:
         return title_numbers[0] == query_numbers[0]
-    # 번호로 못 가를 때(한쪽에 번호가 없을 때): 쉼표·띄어쓰기가 달라도 같은 이름이면 찾는다 (T82)
-    return title_match.titles_match(normalized_title, normalized_query)
+    return False
 
 
-def _lesson_matches_by_rule(title_text, lesson_text):
+def lesson_matches(title_text, lesson_text):
     normalized_title = " ".join((title_text or "").split())
     normalized_lesson = " ".join((lesson_text or "").split())
     if normalized_lesson and normalized_title == normalized_lesson:
@@ -529,16 +536,6 @@ def _lesson_matches_by_rule(title_text, lesson_text):
         return lesson_text in title_text
 
     return lesson_text in title_text
-
-
-def lesson_matches(title_text, lesson_text):
-    if _lesson_matches_by_rule(title_text, lesson_text):
-        return True
-    # 양쪽에 차시 번호가 있으면 번호가 가른다(같은 이름이 다른 차시에 있어도 섞이지 않게).
-    # 한쪽에 번호가 없을 때만 이름이 같거나 비슷한지 본다 (T82)
-    if title_match.numbers_can_decide(title_text, lesson_text):
-        return False
-    return title_match.titles_match(title_text, lesson_text)
 
 
 def lesson_reference_candidates(lesson_text, exact_title=None):
@@ -568,6 +565,10 @@ def click_ppt_for_lesson(driver, unit_text, lesson_text, manual_click=False):
     prepare_lesson_page(driver, unit_text=unit_text)
     lessons = collect_lessons(driver)
     print(f"  -> 총 {len(lessons)}개의 차시 블록을 확인합니다.")
+    # 엄격한 규칙으로 맞는 것이 없을 때만 가장 비슷한 이름 하나로 바로잡는다 (T82)
+    unit_text, (lesson_text,) = title_match.resolve_search_texts(
+        lessons, unit_text, [lesson_text], unit_matches, lesson_matches
+    )
     unit_lesson_list = lessons_in_unit(lessons, unit_text)
 
     extracted_title = None
@@ -657,6 +658,9 @@ def find_lesson_position(driver, unit_text, lesson_text):
     prepare_lesson_page(driver, unit_text=unit_text)
     lessons = collect_lessons(driver)
     print(f"  -> 총 {len(lessons)}개의 차시 블록을 확인합니다.")
+    unit_text, (lesson_text,) = title_match.resolve_search_texts(
+        lessons, unit_text, [lesson_text], unit_matches, lesson_matches
+    )
 
     for index, item in enumerate(lessons):
         if unit_matches(item["unit_title"], unit_text) and lesson_matches(item["title"], lesson_text):
@@ -669,6 +673,9 @@ def find_lesson_position_from_candidates(driver, unit_text, references):
     prepare_lesson_page(driver, unit_text=unit_text)
     lessons = collect_lessons(driver)
     print(f"  -> 총 {len(lessons)}개의 차시 블록을 확인합니다.")
+    unit_text, references = title_match.resolve_search_texts(
+        lessons, unit_text, references, unit_matches, lesson_matches
+    )
 
     for reference in references:
         for index, item in enumerate(lessons):
@@ -798,6 +805,9 @@ def run_lesson(unit_text, lesson_text, pdf_path=None, save_name=None, source_nam
 
 
 def find_adjacent_lesson(lessons, unit_text, references, offset):
+    unit_text, references = title_match.resolve_search_texts(
+        lessons, unit_text, references, unit_matches, lesson_matches
+    )
     current_index = -1
     for index, item in enumerate(lessons):
         if not unit_matches(item["unit_title"], unit_text):

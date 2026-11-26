@@ -645,6 +645,14 @@ def collect_lessons(driver: Any, config: HelperConfig) -> List[Dict[str, Any]]:
 
 def ensure_unit_loaded(driver: Any, unit_text: str) -> None:
     folding_boxes = driver.find_elements(By.CLASS_NAME, "folding-box")
+    # 엄격한 규칙으로 맞는 단원이 없을 때만 가장 비슷한 단원 하나로 바로잡는다 (T82)
+    subjects: List[str] = []
+    for folding_box in folding_boxes:
+        try:
+            subjects.append(folding_box.find_element(By.CLASS_NAME, "txbd-fold-subject").text.strip())
+        except Exception:
+            continue
+    unit_text = title_match.resolve_query(unit_text, subjects, unit_matches)
     for folding_box in folding_boxes:
         try:
             subject_el = folding_box.find_element(By.CLASS_NAME, "txbd-fold-subject")
@@ -694,11 +702,10 @@ def unit_matches(unit_title: str, unit_text: str) -> bool:
     query_numbers = extract_numbers(normalized_query)
     if title_numbers and query_numbers:
         return title_numbers[0] == query_numbers[0]
-    # 번호로 못 가를 때(한쪽에 번호가 없을 때): 쉼표·띄어쓰기가 달라도 같은 이름이면 찾는다 (T82)
-    return title_match.titles_match(normalized_title, normalized_query)
+    return False
 
 
-def _lesson_matches_by_rule(title_text: str, lesson_text: str) -> bool:
+def lesson_matches(title_text: str, lesson_text: str) -> bool:
     normalized_title = normalize_space(title_text)
     normalized_lesson = normalize_space(lesson_text)
     if normalized_lesson and normalized_title == normalized_lesson:
@@ -719,14 +726,15 @@ def _lesson_matches_by_rule(title_text: str, lesson_text: str) -> bool:
     return normalized_lesson in normalized_title if normalized_lesson else False
 
 
-def lesson_matches(title_text: str, lesson_text: str) -> bool:
-    if _lesson_matches_by_rule(title_text, lesson_text):
-        return True
-    # 양쪽에 차시 번호가 있으면 번호가 가른다(같은 이름이 다른 차시에 있어도 섞이지 않게).
-    # 한쪽에 번호가 없을 때만 이름이 같거나 비슷한지 본다 (T82)
-    if title_match.numbers_can_decide(title_text, lesson_text):
-        return False
-    return title_match.titles_match(title_text, lesson_text)
+def find_lesson_item(lessons: List[Dict[str, Any]], unit_text: str, lesson_text: str) -> Optional[Dict[str, Any]]:
+    """차시 목록에서 찾는 차시 하나. 엄격한 규칙으로 먼저 찾고, 하나도 없을 때만 가장 비슷한 이름 하나로 바로잡는다 (T82)."""
+    unit_text, (lesson_text,) = title_match.resolve_search_texts(
+        lessons, unit_text, [lesson_text], unit_matches, lesson_matches
+    )
+    for item in lessons:
+        if unit_matches(item["unit_title"], unit_text) and lesson_matches(item["title"], lesson_text):
+            return item
+    return None
 
 
 def normalize_match_text(text: str) -> str:
@@ -843,15 +851,12 @@ def open_resource_for_lesson(
     prepare_lesson_page(driver, config, unit_text=unit_text)
     lessons = collect_lessons(driver, config)
     print(f"  -> 총 {len(lessons)}개의 차시 블록을 확인했습니다.")
+    target = find_lesson_item(lessons, unit_text, lesson_text)
 
-    for item in lessons:
+    for item in ([target] if target is not None else []):
         title_text = item["title"]
         chapter = item["chapter"]
         current_unit_title = item["unit_title"]
-        if not unit_matches(current_unit_title, unit_text):
-            continue
-        if not lesson_matches(title_text, lesson_text):
-            continue
 
         print(f"  -> 대상 차시를 찾았습니다: [{current_unit_title}] {title_text}")
         highlight_lesson(driver, chapter)

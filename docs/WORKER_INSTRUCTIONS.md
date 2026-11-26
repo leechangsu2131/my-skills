@@ -13,8 +13,8 @@
 | Claude Code (웹·PC) | 저장소의 `CLAUDE.md` 를 스스로 읽음 — 처음 대화에 아래 **전체본**을 붙여도 됨 |
 | Gemini CLI | 저장소의 `GEMINI.md` 를 스스로 읽음. 다른 폴더에서 쓰면 `~/.gemini/GEMINI.md` 에 전체본 |
 | bizcoder | 교사 PC 에서 `tools\start_worker.ps1 -Tool bizcoder -Name bizcoder-1` — 자기 작업 폴더를 만들고 첫 요청까지 넣어 켬. `CLAUDE.md`·`AGENTS.md`·`reviewer` 에이전트를 스스로 읽음(`bizcoder compat` 로 확인) |
-| Codex (2명: codex-1·codex-2) | `AGENTS.md` 를 스스로 읽음. 웹 Codex 는 지침 칸이 있으면 전체본, 대화창에 ⓪ + '이번 일'. CLI 는 `tools\start_worker.ps1 -Tool codex -Name codex-1 -Task T<번호>` |
-| Antigravity (2명: ag-1·ag-2) | 교사 PC 에서 `tools\start_worker.ps1 -Tool antigravity -Name ag-1` → 에이전트마다 자기 폴더(`my-skills-ag-1`)를 만들어 열고, 첫 요청 글을 클립보드에 넣어 줌(에이전트 창에 붙여 넣기). `GEMINI.md`·`AGENTS.md` 를 읽음. 규칙(Rules) 칸이 있으면 전체본 |
+| Codex (계정 2개) | `AGENTS.md` 를 스스로 읽음. 로컬(앱·IDE)은 교사 PC 의 원래 `my-skills` 폴더를 열고 아래 ⑤(로컬 IDE 는 한 번에 하나). 클라우드 Codex 는 저장소를 연결하고 ⓪ 또는 ⑤ |
+| Antigravity (계정 2개) | 교사 PC 의 원래 `my-skills` 폴더를 열고 아래 ⑤. `GEMINI.md`·`AGENTS.md` 를 읽음. 로컬 IDE 는 한 번에 하나(Codex 를 안 쓸 때) |
 | Gemini CLI·Claude Code (교사 PC) | 같은 스크립트로: `-Tool gemini` / `-Tool claude` |
 
 작업자 이름 예: `codex-1`…, `ag-1`…(Antigravity), `claude-web-173`, `bizcoder-1`~`3` — 모양은 자유(계정·이메일처럼 생긴 `claude-web-lee2131@hanmail` 도 그대로 이름), 띄어쓰기만 넣지 않는다. 일지 파일 이름(`docs/worklog/<이름>.md`)이 되므로 한 작업자는 늘 같은 이름.
@@ -34,7 +34,7 @@
 1) 처음과 새 일을 시작할 때 docs/WORKER_GUIDE.md 를 읽는다. 맡은 스킬은 그 폴더의 SKILL.md → ISSUES.md 부터. 큰 파일은 필요한 부분만.
 2) 일의 순서: ① 교사(오케스트레이터)가 정해 준 일 ② 내 일지(docs/worklog/<내 이름>.md)의 '막힘'·'그만둠' ③ docs/TASKS.md 의 내 등급 '열림' 일 ④ 맨 아래 '상시 일(S)'.
    지금은 수업 비서 묶음만 고친다(docs/TASKS.md 맨 위 ★). 묶음 밖 스킬은 고치지 않고 그 스킬 ISSUES.md 에 한 줄만.
-3) 등급: 브랜치를 푸시할 수 있으면 R. 교사 PC 의 my-skills-<이름> 폴더에서 돌면(Antigravity·bizcoder·로컬 CLI) P 일도 한다. 브랜치를 못 올리는 도구면 일하지 말고 교사에게 알린다.
+3) 등급: 브랜치를 푸시할 수 있으면 R. 교사 PC 에서 돌면(로컬 IDE·bizcoder·로컬 CLI) P 일도 한다. 브랜치를 못 올리는 도구면 일하지 말고 교사에게 알린다.
 4) 쉬지 않는다. 하나 끝내면 다음 일. 사용량이 거의 끝나면 어디까지 했는지 일지에 남기고 멈춘다.
 
 ■ 일 잡기 — 겹치지 않게 (가장 중요)
@@ -45,7 +45,7 @@
   ✅ 면 브랜치·일지 '시작' 줄이 올라가 잡힌 것. ❌ 면 아무것도 고치지 말고 교사에게 "T<번호> 는 <누가> 하는 중 / 완료 / 결정 대기"라고 한 줄 알린 뒤 다른 일.
   도구를 쓸 수 없으면: git fetch --prune 뒤 git branch -r --list "origin/task/<번호>-*" 가 비어 있을 때만, 브랜치 task/<번호>-<짧은-영어> 와 일지 '시작' 줄을 바로 푸시.
   claim_task 가 푸시를 못 하는 곳(인터넷이 막힌 웹 Codex 등)이면 교사가 준 '이번 일'만 한다(교사 PC 가 미리 잡아 둠). 스스로 고르지 않는다.
-- 교사 PC 의 로컬 작업자(Antigravity·bizcoder·Claude Code·Gemini CLI)는 tools/start_worker.ps1 이 만든 my-skills-<이름> 폴더에서만 일한다. 다른 폴더·따로 받은 저장소에서 일하지 않는다.
+- 교사 PC 의 로컬 IDE(Codex·Antigravity)는 원래 my-skills 폴더에서 한 번에 하나만, 시작·중간·끝에 python tools/sync_work.py start <브랜치> / save / end. 까만 창 CLI 작업자(bizcoder 등)는 tools/start_worker.ps1 이 만든 my-skills-<이름> 폴더에서만.
 - 사용량이 거의 끝나면 일지에 '그만둠 — 어디까지, 다음에 할 것'을 푸시하고 멈춘다.
 
 ■ R 등급 올리기
@@ -80,7 +80,7 @@
 그게 이름이니 의심하거나 묻지 말고 띄어쓰기만 빼고 써([claude-web- 173] → claude-web-173, [claude-web-lee2131@hanmail] → claude-web-lee2131@hanmail).
 첫 줄에 대괄호가 아예 없을 때만 시작하지 말고 이름을 물어봐.
 1. 공용 저장소의 docs/WORKER_GUIDE.md 와 docs/TASKS.md 를 읽어(못 열면 원문 주소로, 그것도 안 되면 나에게 내용을 달라고 해).
-2. 네 등급을 정해: 저장소에 브랜치를 푸시할 수 있으면 R. 교사 PC 의 my-skills-<이름> 폴더에서 돌고 있으면 P 일도 해도 돼.
+2. 네 등급을 정해: 저장소에 브랜치를 푸시할 수 있으면 R. 교사 PC 에서 돌고 있으면(로컬 IDE·CLI) P 일도 해도 돼.
    브랜치를 못 올리는 도구면 시작하지 말고 그렇다고 알려 줘.
 3. 할 일 순서: ① 맨 끝 '이번 일'(적혀 있으면 그 일만) ② 네 일지(docs/worklog/<이름>.md)의 마지막 '막힘'·'그만둠' ③ TASKS 의 네 등급 '열림' 일 ④ 맨 아래 '상시 일(S)'.
    지금은 TASKS 맨 위 ★ 수업 비서 묶음 안의 일만 해. 묶음 밖 스킬은 고치지 마.
@@ -94,19 +94,19 @@
 이번 일: 없음
 ```
 
-**⑤ 큰 프로젝트 맡기기 (Codex·Antigravity)** — 그 도구의 작업 폴더(`my-skills-<이름>`)를 연 뒤
+**⑤ 큰 프로젝트 맡기기 (로컬 Codex·Antigravity)** — 교사 PC 의 원래 `my-skills` 폴더를 연 뒤(로컬 IDE 는 한 번에 하나)
 ```
-너의 작업자 이름은 <이름>이야(일지 docs/worklog/<이름>.md). 지금 연 폴더는 너만 쓰는 작업 폴더야. 다른 폴더는 고치지 마.
+너의 작업자 이름은 <이름>이야(일지 docs/worklog/<이름>.md). 너는 교사 PC 의 my-skills 폴더에서 일하는 로컬 IDE 야. 지금 이 PC 에서 다른 IDE 는 안 돌아.
 너는 큰 프로젝트 P<번호> 를 맡았어. AGENTS.md → docs/WORKER_GUIDE.md(특히 2-2) → docs/TASKS.md 의 '★ 큰 프로젝트' 표를 읽어.
-1. 프로젝트 목표·흡수한 일·영역 파일을 읽고, 어떤 순서로 할지 단계 3~6개 계획을 나에게 먼저 보여 줘. 내가 좋다고 하면 시작.
-2. 브랜치는 proj/P<번호>-<짧은-영어> 하나(이미 시작한 브랜치가 있으면 그대로). 일지에 '시작' 줄을 바로 푸시.
-3. 너는 이 PC 에서 일하니 직접 받고 올려야 다른 사람이 볼 수 있어(WORKER_GUIDE 2-2 의 표대로):
-   - 대화를 새로 열 때: git status → git fetch origin → git merge origin/main
-   - 한 단계가 시험까지 통과하면: 고친 파일만 git add → commit → git push, 일지에 '합칠 준비 — 무엇, 시험 결과' 도 푸시
-   - 단계가 길면 1~2시간마다 중간 커밋·푸시. 내가 "합쳤다"고 하면 git fetch origin → git merge origin/main
-   - 끝낼 때는 커밋 안 한 변경 없이 푸시하고 일지 '그만둠'. rebase·--force·다른 폴더에서 git switch 는 하지 마.
-4. 큰 공용 파일(web/index.html, assistant_server.py)은 불러오는 몇 줄만, 새 기능은 새 파일로. 영역 밖 파일을 고쳐야 하면 일지·PR 에 적어.
-5. 막히면 일지 '막힘 — 무엇, 해 본 것, 필요한 것' 을 푸시하고 나에게 말해(교사 PC 의 Claude Code 가 도움).
+0. 맨 먼저 python tools/sync_work.py start proj/P<번호>-<짧은-영어> (이미 시작한 브랜치가 있으면 그 이름).
+   ❌ 가 나오면 안내대로 하되, 앞 IDE 가 남긴 변경이면 고치지 말고 나에게 알려.
+1. 프로젝트 목표·흡수한 일·영역 파일을 읽고 단계 3~6개 계획을 나에게 먼저 보여 줘. 내가 좋다고 하면 시작. 일지에 '시작' 줄.
+2. 한 단계가 시험까지 통과하면: 고친 파일만 git add → commit → 일지 '합칠 준비 — 무엇, 시험 결과' 커밋 → python tools/sync_work.py save.
+   단계가 길면 1~2시간마다 중간 커밋 + save. 내가 "합쳤다"고 하면 save. '⚠ 같은 파일을 고치는 다른 브랜치' 가 나오면 나에게 알려.
+3. 큰 공용 파일(web/index.html, assistant_server.py)은 불러오는 몇 줄만, 새 기능은 새 파일로. 영역 밖 파일을 고쳐야 하면 일지·PR 에 적어.
+4. 끝낼 때(내가 다른 IDE 로 바꾸거나 창을 닫기 전): 커밋 → 일지 '그만둠 — 어디까지, 다음에 할 것' 커밋 → python tools/sync_work.py end.
+   커밋 안 한 변경을 남기지 마.
+5. 막히면 일지 '막힘 — 무엇, 해 본 것, 필요한 것' 을 커밋·save 하고 나에게 말해(교사 PC 의 Claude Code 가 도움). rebase·--force·main 직접 푸시 금지.
 막는 것: 학생 개인정보(시험은 학생A), 전화번호·주소, 키·비밀번호, 지도서 PDF, 실제 제출·발송·결제·삭제. 모르는 건 '확인 필요'.
 ```
 
@@ -128,10 +128,10 @@
 해. 단 시작 직전에 claim_task.py 로 다시 확인하며 잡고, ❌면 하지 말고 알려 줘.
 ```
 
-**④ 교사 PC 의 로컬 작업자 (Antigravity·Codex CLI·bizcoder·Claude Code·Gemini CLI) — 대화창이 아니라 까만 창(PowerShell)**
+**④ 교사 PC 의 까만 창 CLI 작업자 (bizcoder·Claude Code·Gemini CLI·Codex CLI) — 대화창이 아니라 까만 창(PowerShell)**
 ```powershell
 cd $env:USERPROFILE\Documents\GitHub\my-skills
 powershell -ExecutionPolicy Bypass -File tools\start_worker.ps1 -Tool bizcoder -Name bizcoder-1 -Task T<번호>
 ```
 `-Tool` 은 antigravity / codex / bizcoder / claude / gemini. `-Task` 를 빼면 스스로 고른다. 이미 누가 하는 일이면 작업자를 켜지 않고 알려 준다.
-antigravity 는 폴더를 만들어 Antigravity 로 열고(명령이 없으면 직접 열라고 안내), 첫 요청 글을 클립보드에 넣어 준다 — 에이전트 창에 붙여 넣기. 에이전트 하나에 이름·폴더 하나.
+로컬 IDE(Codex 앱·Antigravity)는 이 스크립트를 쓰지 않고 원래 `my-skills` 폴더를 열어 ⑤ 로 시작한다(한 번에 하나).

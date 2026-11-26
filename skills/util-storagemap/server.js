@@ -141,14 +141,16 @@ const systemCaFetch = async (input, init = {}) => {
 };
 
 function parseTags(value) {
-  if (Array.isArray(value)) return value.map(String).filter(Boolean);
+  // null·undefined 는 글자로 바꾸기 전에 거른다(안 거르면 'null' 이름표가 생김)
+  const cleanTags = (list) => list.filter((tag) => tag !== null && tag !== undefined).map(String).filter(Boolean);
+  if (Array.isArray(value)) return cleanTags(value);
   if (typeof value !== 'string') return [];
   const trimmed = value.trim();
   if (!trimmed) return [];
   if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
     try {
       const parsed = JSON.parse(trimmed);
-      if (Array.isArray(parsed)) return parsed.map(String).filter(Boolean);
+      if (Array.isArray(parsed)) return cleanTags(parsed);
     } catch (_error) {}
   }
   return trimmed.split(',').map((tag) => tag.trim()).filter(Boolean);

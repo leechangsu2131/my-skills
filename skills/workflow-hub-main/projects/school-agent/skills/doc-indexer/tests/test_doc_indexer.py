@@ -201,13 +201,36 @@ def test_extract_year_from_path(idx):
     assert idx.extract_year_from_path(Path("19990101_x.pdf")) is None
 
 
-@pytest.mark.xfail(
-    reason="경로 어디서든 '20' 으로 시작하는 숫자 4개를 연도로 읽어서, 문서번호·날짜 속 숫자('교무-12023456.pdf' → 2023)나 "
-    "저장 폴더 이름의 숫자도 연도가 된다(추정: 실제 문서 이름에서 얼마나 틀리는지는 확인 필요).",
-    strict=False,
-)
 def test_extract_year_ignores_digits_inside_longer_numbers(idx):
+    # 문서번호 같은 긴 숫자 속의 20xx 는 연도가 아니다(ISSUE-004 ① 해결)
     assert idx.extract_year_from_path(Path("공문/교무-12023456.pdf")) is None
+    assert idx.extract_year_from_path(Path("공문/교무-2023456.pdf")) is None          # 7자리
+    assert idx.extract_year_from_path(Path("공문/교무-120234.pdf")) is None            # 앞이 '20' 이 아님
+
+
+@pytest.mark.parametrize("name, expected", [
+    ("20250304_공문.pdf", "2025"),            # 날짜 붙임(YYYYMMDD)
+    ("202503_보고.odt", "2025"),              # 연월(YYYYMM)
+    ("20250304153012_scan.pdf", "2025"),      # 날짜+시각 14자리
+    ("2025-03-04 계획.odt", "2025"),           # 구분 기호가 있는 날짜
+    ("2025.3.4 계획.odt", "2025"),
+    ("계획2025학년도.odt", "2025"),            # 글자에 붙은 4자리
+    ("문서12023456_2024 계획.pdf", "2024"),    # 긴 숫자는 건너뛰고 뒤의 진짜 연도를 쓴다
+    ("20251399.pdf", None),                   # 13월 99일 → 날짜가 아님
+    ("20251315.pdf", None),                   # 13월 15일: 달만 틀려도 날짜가 아님
+    ("202513_보고.odt", None),                # 연월 13월
+    ("20250015.pdf", None),                   # 0월
+    ("20250100.pdf", None),                   # 0일 → 날짜가 아님
+    ("2099.pdf", "2099"),                     # 4자리 20xx 는 그대로 연도
+    ("1999.pdf", None),
+    ("19990304.pdf", None),                   # 날짜 모양이어도 20xx 가 아니면 연도로 안 침
+])
+def test_extract_year_digit_runs(idx, name, expected):
+    assert idx.extract_year_from_path(Path("공문") / name) == expected
+
+
+def test_extract_year_takes_the_first_valid_year_in_path_order(idx):
+    assert idx.extract_year_from_path(Path("2024학년도/20250304_공문.pdf")) == "2024"
 
 
 def test_extract_dept_from_path(idx):
@@ -344,12 +367,8 @@ def test_parse_odt_elements_paragraphs_and_table(idx, tmp_path):
     ]
 
 
-@pytest.mark.xfail(
-    reason="제목(text:h) 요소는 문단(p)도 표도 아니어서 건너뛴다 → 제목 글자가 검색 대상에서 빠진다"
-    "(추정: 실제 공문 ODT 가 제목 서식을 쓰는지는 확인 필요).",
-    strict=False,
-)
 def test_parse_odt_elements_keeps_heading_text(idx, tmp_path):
+    # 제목(text:h) 글도 문단처럼 뽑는다(ISSUE-001 해결)
     from odf.text import H, P
 
     def build(doc):
@@ -360,6 +379,26 @@ def test_parse_odt_elements_keeps_heading_text(idx, tmp_path):
     make_odt(f, build)
     texts = [e["text"] for e in idx.parse_odt_elements(f)]
     assert "과학의 달 계획" in texts
+
+
+def test_parse_odt_elements_keeps_heading_order_and_skips_empty_headings(idx, tmp_path):
+    from odf.text import H, P
+
+    def build(doc):
+        doc.text.addElement(H(outlinelevel=1, text="1. 목적"))
+        doc.text.addElement(P(text="본문 하나"))
+        doc.text.addElement(H(outlinelevel=2, text="   "))     # 빈 제목은 뺀다
+        doc.text.addElement(H(outlinelevel=2, text="2. 일정"))
+        doc.text.addElement(P(text="본문 둘"))
+
+    f = tmp_path / "h2.odt"
+    make_odt(f, build)
+    assert idx.parse_odt_elements(f) == [
+        {"type": "paragraph", "text": "1. 목적"},
+        {"type": "paragraph", "text": "본문 하나"},
+        {"type": "paragraph", "text": "2. 일정"},
+        {"type": "paragraph", "text": "본문 둘"},
+    ]
 
 
 def test_parse_odt_elements_broken_file_returns_empty(idx, tmp_path, capsys):
@@ -799,14 +838,19 @@ def test_ask_prompt_includes_retrieved_text_so_it_leaves_the_pc(ask, chroma, env
     assert "민감할 수 있는 공문 본문" in rec["create"]["messages"][0]["content"]
 
 
-@pytest.mark.xfail(
-    reason="인덱서가 연도·부서를 못 찾으면 None 으로 저장하고, ask.py 는 meta.get('year','') 라서 값이 None 이면 "
-    "프롬프트에 '연도: None, 부서: None' 이 그대로 들어간다.",
-    strict=False,
-)
 def test_ask_prompt_has_no_literal_none(ask, chroma, env, monkeypatch):
+    # 연도·부서를 못 찾아 None 으로 저장돼도 프롬프트에 'None' 글자가 들어가지 않는다(ISSUE-003 해결)
     monkeypatch.setenv("OPENROUTER_API_KEY", "KEY_FAKE")
     fill(chroma, env, [("x", "본문", {"file_name": "x.odt", "year": None, "dept": None})])
     rec = fake_openai(monkeypatch, ask, chunks=[chunk("답")])
     ask.ask_bot("질의")
     assert "None" not in rec["create"]["messages"][0]["content"]
+
+
+def test_ask_prompt_keeps_a_found_year_when_only_dept_is_missing(ask, chroma, env, monkeypatch):
+    monkeypatch.setenv("OPENROUTER_API_KEY", "KEY_FAKE")
+    fill(chroma, env, [("x", "본문", {"file_name": "x.odt", "year": "2025", "dept": None})])
+    rec = fake_openai(monkeypatch, ask, chunks=[chunk("답")])
+    ask.ask_bot("질의")
+    content = rec["create"]["messages"][0]["content"]
+    assert "(연도: 2025, 부서: )" in content and "None" not in content

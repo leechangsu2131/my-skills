@@ -231,9 +231,14 @@ test('parseTags: 빈 글·글이 아닌 값은 빈 목록', () => {
   }
 });
 
-// 확인 필요: 배열 안의 null 이 'null' 이라는 이름표가 된다(String(null)).
-test('parseTags: 배열 안의 null·undefined 는 이름표로 만들지 않는 것이 맞다면 (확인 전까지 todo)', { todo: "배열 안 null 이 'null' 태그가 됨 (ISSUES 참고)" }, () => {
+// 배열 안의 null·undefined 는 'null'·'undefined' 이름표가 되지 않는다(ISSUE-002 해결).
+test('parseTags: 배열 안의 null·undefined 는 이름표로 만들지 않는다', () => {
   assert.deepEqual(plain(lib.parseTags(['a', null, undefined])), ['a']);
+});
+
+test('parseTags: JSON 배열 글 안의 null 도 이름표로 만들지 않고, 글자 "null" 은 그대로 둔다', () => {
+  assert.deepEqual(plain(lib.parseTags('["a", null, "b"]')), ['a', 'b']);
+  assert.deepEqual(plain(lib.parseTags(['null', 0, false])), ['null', '0', 'false']);
 });
 
 // ───────── NORMALIZE ─────────

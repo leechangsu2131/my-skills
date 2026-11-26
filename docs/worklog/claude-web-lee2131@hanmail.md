@@ -21,3 +21,4 @@
 - 2026-11-26 14:05 T86 PR 올림 — assistant_server.py 첫머리 설명을 지금 기본(Supabase, config schedule_backend)에 맞게: supabase(기본)면 supabase_schedule.py, 다른 값이면 옛 진도 서버(schedule_api, 기본 127.0.0.1:5000). ISSUES 의 ISSUE-023 을 🟢 해결됨으로 옮김. 확인: 코드는 그대로인지 AST 로 비교(설명만 다름), CI 대상 시험 235 통과, build_catalog --check·check_privacy 통과. 참고: 이 브랜치에는 T83(PR #78) 수정이 없어 sites 시험 모으기 3개는 그대로 실패(T83 이 합쳐지면 해결)
 - 2026-11-26 20:28 S5 (teacherlesson-assistant) 시작 (브랜치 task/S5-health-check)
 - 2026-11-26 20:50 S5 (teacherlesson-assistant) PR 올림 — 낮 점검(health-2026-11-26.md)에 없던 sites/ 를 요구 파일만 설치한 새 가상환경에서 재서 갱신 보고(docs/reviews/health-assistant-2026-11-26-pm.md): sites 32 통과·1 건너뜀(selenium 추가 시 37), CI 대상 281 통과, build_catalog --check 통과. 핵심: CI check.yml target 에 sites 가 아직 없음(공용 파일이라 제안만). 다른 스킬은 다시 안 돌림
+- 2026-11-27 06:50 S1 (teacherlesson-schedule) 시작 (브랜치 task/S1-semester-rollover-tests)

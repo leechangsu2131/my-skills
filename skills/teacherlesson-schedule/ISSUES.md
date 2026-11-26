@@ -9,14 +9,14 @@ _없음_
 
 ## 📌 백로그
 
-### ISSUE-새: `auto_planner.py`·`server.py` 에 깨진 한글이 코드에 그대로 들어 있음 (2026-11-26)
+### ISSUE-6: `auto_planner.py`·`server.py` 에 깨진 한글이 코드에 그대로 들어 있음 (2026-11-26)
 - **상태**: 📌 백로그
 - **증상**: 안내·오류 문구가 `珥덇린 …` 처럼 읽을 수 없게 나옴. 문구뿐 아니라 동작에 쓰는 이름도 깨져 있음 — ① `auto_planner.py` 의 기본 진도표 시트 이름(`SHEET_NAME` 이 없을 때, 원래 "시트1" 로 보임 — ISSUE-003) ② `fetch_holidays` 의 날짜 칸 이름: 못 찾으면 첫 칸을 읽으므로, 날짜가 둘째 칸이면 휴업일이 0개로 읽힘(가짜 시트로 확인) ③ `server.py` `_serialize_lesson_item` 의 `계획교시` 대신 쓰는 이름(수업배치가 없을 때 교시가 빌 수 있음 — 추정)
 - **원인**: UTF-8 한글이 다른 인코딩으로 잘못 읽힌 채 저장된 것으로 보임(추정). `auto_planner.py` 51줄, `schedule.py` 8줄, `server.py` 1줄에 한자 섞인 글자가 있음
 - **해결/조치**: 아직 안 함(T57 문서 작업 범위 밖). 고칠 때는 휴업일·시트 이름 시험을 먼저 만들 것. 실제 시트에서 날짜 칸이 몇 번째인지는 확인 필요(교사 PC)
 - **관련 파일**: `auto_planner.py`, `server.py`, `schedule.py`
 
-### ISSUE-새: `requirements.txt` 에 PyMuPDF 가 없음 (2026-11-26)
+### ISSUE-7: `requirements.txt` 에 PyMuPDF 가 없음 (2026-11-26)
 - **상태**: 📌 백로그
 - **증상**: `server.py` 는 첫머리에서 `import fitz`(PyMuPDF)를 하는데 `requirements.txt` 에 없음. `fitz` 가 없는 곳에서 서버 시험 2개 파일이 `ModuleNotFoundError: No module named 'fitz'` 로 시작도 못 함 → 새 PC 에서 `pip install -r requirements.txt` 만 하면 서버가 안 켜질 것(추정)
 - **원인**: 목록 빠뜨림

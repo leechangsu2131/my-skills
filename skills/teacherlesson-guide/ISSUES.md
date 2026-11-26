@@ -20,14 +20,14 @@
 
 ## 📌 백로그
 
-### ISSUE-새: `.gitignore` 가 분할기 기본 결과 폴더(`output/`)의 지도서 PDF 를 막지 않음 (2026-11-26)
+### ISSUE-32: `.gitignore` 가 분할기 기본 결과 폴더(`output/`)의 지도서 PDF 를 막지 않음 (2026-11-26)
 - **상태**: 📌 백로그
 - **증상**: `split_subunits_from_plan_table.py` 의 `--out-dir` 기본값은 `output`. 저장소 안에서 실행하면 `splitter/output/…/pdf_splits/*.pdf` 와 `groups.json` 이 생기는데 `git check-ignore` 로 확인하니 막히지 않음(저작물이 올라갈 수 있음 — ISSUE-002 와 같은 종류)
 - **원인**: `.gitignore` 는 `tmp*/`·`generated_rows/`·`.cache/` 등 정해진 이름만 막음
 - **해결/조치**: 아직 안 함(T57 문서 작업 범위 밖). 이 폴더 `.gitignore` 에 `output/`·`pdf_splits/` 추가를 권함. SKILL.md 에는 "결과는 저장소 밖에 둔다"고 적음
 - **관련 파일**: `.gitignore`, `splitter/scripts/split_subunits_from_plan_table.py`
 
-### ISSUE-새: 진도표 행 올리기에서 Enter 두 번이면 그 과목의 기존 행이 지워짐 (2026-11-26)
+### ISSUE-33: 진도표 행 올리기에서 Enter 두 번이면 그 과목의 기존 행이 지워짐 (2026-11-26)
 - **상태**: 📌 백로그 (바꿀지 교사 결정 필요)
 - **증상**: `map_general_guides_to_sheet.py` 를 터미널에서 옵션 없이 실행하면 "업로드할까요? [Y/n]"(Enter=올리기) 다음 업로드 방식 질문의 Enter 기본값이 2번(만든 과목의 기존 행을 지우고 업로드). 지워지는 행에는 완료 표시한 지난 행도 들어갈 것(추정). 코드를 읽어 확인했고 실제 시트에서는 실행하지 않음
 - **원인**: `confirm_upload_action` 의 기본값이 올리기·교체. 또 `upload_rows_to_sheet` 는 먼저 지우고 나서 붙이므로, 붙이기가 실패하면 지운 채로 남을 수 있음(추정)

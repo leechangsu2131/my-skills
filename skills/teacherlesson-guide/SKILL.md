@@ -82,7 +82,7 @@ python mapper\map_general_guides_to_sheet.py --subject 국어 --grade 3-2   # �
 ```
 
 > ⚠ **구글 시트를 바꿀 수 있다.** `map_general_guides_to_sheet.py`(`mapper\실행.bat` 도 이것)는 `--upload` 없이 실행해도 터미널에서 미리보기 뒤에 "업로드할까요?"를 묻는다.
-> **Enter 를 누르면 올리기로 넘어가고, 다음 질문에서 또 Enter 를 누르면 이번에 만든 과목의 기존 행을 지우고 올린다.** 미리보기만 하려면 첫 질문에 `n`.
+> **Enter 만 치면 아무것도 올리지 않는다**(기본값 [y/N], T91). 올리려면 `y` 를 입력하고, 다음 질문의 Enter 는 "그대로 추가"(기존 행을 지우지 않음)다. 기존 행을 지우고 올리는 방식(2·3번)은 번호를 직접 쳐야 하며 완료 표시한 지난 행도 지워질 수 있다.
 > 두 mapper 스크립트 모두 `--cleanup` 을 붙이면 `--upload` 가 없어도 시트에 올린다.
 
 - 만든 결과는 `mapper/generated_rows/<시각>/` 에 남는다.

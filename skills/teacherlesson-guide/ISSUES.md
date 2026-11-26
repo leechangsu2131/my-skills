@@ -27,13 +27,6 @@
 - **해결/조치**: 아직 안 함(T57 문서 작업 범위 밖). 이 폴더 `.gitignore` 에 `output/`·`pdf_splits/` 추가를 권함. SKILL.md 에는 "결과는 저장소 밖에 둔다"고 적음
 - **관련 파일**: `.gitignore`, `splitter/scripts/split_subunits_from_plan_table.py`
 
-### ISSUE-33: 진도표 행 올리기에서 Enter 두 번이면 그 과목의 기존 행이 지워짐 (2026-11-26)
-- **상태**: 📌 백로그 (바꿀지 교사 결정 필요)
-- **증상**: `map_general_guides_to_sheet.py` 를 터미널에서 옵션 없이 실행하면 "업로드할까요? [Y/n]"(Enter=올리기) 다음 업로드 방식 질문의 Enter 기본값이 2번(만든 과목의 기존 행을 지우고 업로드). 지워지는 행에는 완료 표시한 지난 행도 들어갈 것(추정). 코드를 읽어 확인했고 실제 시트에서는 실행하지 않음
-- **원인**: `confirm_upload_action` 의 기본값이 올리기·교체. 또 `upload_rows_to_sheet` 는 먼저 지우고 나서 붙이므로, 붙이기가 실패하면 지운 채로 남을 수 있음(추정)
-- **해결/조치**: SKILL.md 에 경고만 추가. 기본값을 '올리지 않기'로 바꾸는 것을 권함
-- **관련 파일**: `mapper/map_general_guides_to_sheet.py`(`confirm_upload_action`), `mapper/sheet_uploader/core.py`(`upload_rows_to_sheet`)
-
 ### ISSUE-003: 지도서 처리 남은 일 (수업 비서에서 옮김, 2026-11-22)
 - guide-mapper 대체 매칭: 3-1 국어를 다시 만들면 독서·매체 행이 3-2 PDF를 가리킴(이 PC에 3-1 PDF 없음). 학년·학기가 다르면 대체 매칭에서 빼기
 - `split_by_lesson_headers` 재실행 시 예전 `pdf_splits` 조각이 남음 / `apply_annual_plan` 의 `groups.orig.json` 이 첫 분할 것만 보관
@@ -64,6 +57,15 @@
 - 무료 Gemini 붐빔 대비: 학기 초 한 번 뒤에서 돌리면 되므로 시간은 중요하지 않음. `gemini_ask` 에 모델별 대기 시간 인자 추가
 
 ## 🟢 해결됨
+
+### ISSUE-33: 진도표 행 올리기에서 Enter 두 번이면 그 과목의 기존 행이 지워짐 (2026-11-26, 2026-11-27 해결)
+- **상태**: 🟢 해결됨 (T91, 교사 결정 2026-11-26: 기본값을 '올리지 않기'로)
+- **증상**: `map_general_guides_to_sheet.py` 를 터미널에서 옵션 없이 실행하면 "업로드할까요? [Y/n]"(Enter=올리기) 다음 업로드 방식 질문의 Enter 기본값이 2번(만든 과목의 기존 행을 지우고 업로드)이었다. 지워지는 행에는 완료 표시한 지난 행도 들어갈 것(추정).
+- **원인**: `confirm_upload_action` 의 기본값이 올리기·교체.
+- **해결**: 첫 질문을 `[y/N]`(Enter=올리지 않기, 방식 질문까지 가지 않음)으로, 방식 질문의 Enter 를 1번 "그대로 추가"(지우지 않음)로 바꿈. 2·3번(지우고 올리기)은 번호를 직접 쳐야 하고 안내 문구에 지난 행이 지워질 수 있다고 적음. 중복 삭제 질문은 원래 `[y/N]`. SKILL.md 경고·mapper/README.md 도 새 기본값으로 고침
+- **시험**: `mapper/tests/test_map_general_guides_to_sheet.py` — 가짜 input 으로 Enter 만(여러 번 포함)·n 계열 답이 아무것도 안 올림, y 뒤 Enter 는 그대로 추가, 2·3 은 명시해야 교체, 잘못된 입력은 다시 물음. 소스를 일부러 틀리게 한 변이 3가지(첫 Enter=올리기, 방식 Enter=2, 방식 Enter 거부) 모두 시험이 잡음. mapper 시험 전체에서 남는 실패 2개(`test_map_guides_to_sheet` 의 find_best_pdf 두 개)는 내 변경 전에도 똑같이 실패(Windows 경로 때문으로 추정, 확인 필요)
+- **남은 것**: `upload_rows_to_sheet` 가 먼저 지우고 나서 붙여서, 붙이기가 실패하면 지운 채로 남을 수 있음(추정) — 아직 안 고침. 실제 시트에서는 실행하지 않음
+- **관련 파일**: `mapper/map_general_guides_to_sheet.py`(`confirm_upload_action`), `mapper/sheet_uploader/core.py`(`upload_rows_to_sheet`)
 
 ### ISSUE-005: `auto_split.json_object` 가 설명 글의 중괄호에 걸림 (2026-11-25 시험으로 발견, 2026-11-26 해결)
 - **상태**: 🟢 해결됨 (T67)

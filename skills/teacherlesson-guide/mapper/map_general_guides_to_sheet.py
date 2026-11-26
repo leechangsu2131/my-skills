@@ -222,28 +222,29 @@ def preview_generated_rows(summaries):
 
 
 def confirm_upload_action(input_fn=input, print_fn=print):
-    print_fn("\n[확인] Enter를 누르면 바로 업로드합니다. 미리보기만 하고 끝내려면 n 을 입력하세요.")
+    # 기본값(Enter)은 항상 '올리지 않기'·'지우지 않기'. 시트의 기존 행을 지우는 선택은 번호를 직접 쳐야 한다(ISSUE-33).
+    print_fn("\n[확인] Enter를 누르면 업로드하지 않고 미리보기만 하고 끝냅니다. 업로드하려면 y 를 입력하세요.")
 
     while True:
-        choice = input_fn("업로드할까요? [Y/n]: ").strip().lower()
-        if choice in YES_ANSWERS:
-            break
-        if choice in NO_ANSWERS:
+        choice = input_fn("업로드할까요? [y/N]: ").strip().lower()
+        if choice in {"", *NO_ANSWERS}:
             return False, False, REPLACE_APPEND
+        if choice in YES_ANSWERS - {""}:
+            break
         print_fn("  Enter, y, n 중 하나로 입력해 주세요.")
 
     print_fn("\n  업로드 방식을 선택하세요.")
-    print_fn("    1. 그대로 추가")
-    print_fn("    2. 이번에 생성한 과목 기존 행을 지우고 업로드 (Enter=2, Recommended)")
-    print_fn("    3. 진도표 전체 기존 행을 지우고 업로드")
+    print_fn("    1. 그대로 추가 (Enter=1, 기존 행을 지우지 않음)")
+    print_fn("    2. 이번에 생성한 과목 기존 행을 지우고 업로드 (완료 표시한 지난 행도 지워질 수 있음)")
+    print_fn("    3. 진도표 전체 기존 행을 지우고 업로드 (완료 표시한 지난 행도 지워질 수 있음)")
 
     while True:
         choice = input_fn("  선택: ").strip().lower()
-        if choice in {"", "2"}:
+        if choice == "2":
             return True, False, REPLACE_SUBJECTS
         if choice in {"3", "all", "replace-all"}:
             return True, False, REPLACE_ALL
-        if choice in {"1", "append"}:
+        if choice in {"", "1", "append"}:
             break
         print_fn("  1, 2, 3 중 하나로 입력해 주세요.")
 

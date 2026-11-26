@@ -21,3 +21,4 @@
 - 2026-11-26 20:26 S1 (teacherlesson-assistant) 시작 (브랜치 task/S1-tests-split-notes)
 - 2026-11-26 20:28 S1(teacherlesson-assistant) PR 올림 — `tests/test_notebook_notes.py`(새, 소스는 안 고침): split_notes.py·notebook_sources.py 시험 45개(통과 45·실패 0). 가짜 fitz 로 쪽 글만 돌려줌, 소스를 13군데 잠깐 깨뜨려 보니 처음엔 2군데(폴더 밖 쓰기 막는 검사·같은 PDF 차시 묶기)를 놓쳐서 시험 3개를 더한 뒤 13군데 모두 잡히는 것 확인, 소스는 되돌림. 수업 비서 전체 243개 통과. 버그 후보 없음
 - 2026-11-27 06:17 T93 시작 (브랜치 task/T93-schedule-pymupdf-req)
+- 2026-11-27 06:18 T93 PR 올림 — `teacherlesson-schedule/requirements.txt` 에 `PyMuPDF>=1.24` 한 줄 추가, ISSUE-7 해결로 표시. 요구 파일만으로 만든 새 가상환경: 전엔 서버 시험 2개 파일이 `No module named 'fitz'` 로 못 모임 → 이제 91개 중 90개 통과(실패 1개는 ISSUE-003 의 원래부터 실패하던 시험). check.yml 은 안 고치고 PR 설명으로 제안

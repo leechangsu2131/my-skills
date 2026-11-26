@@ -800,6 +800,8 @@ class Handler(BaseHTTPRequestHandler):
             return self._send(200, (WEB / "index.html").read_bytes(), "text/html; charset=utf-8")
         if url.path == "/tools.js":
             return self._send(200, (WEB / "tools.js").read_bytes(), "application/javascript; charset=utf-8")
+        if url.path == "/mobile.css":
+            return self._send(200, (WEB / "mobile.css").read_bytes(), "text/css; charset=utf-8")
         if url.path == "/api/state":
             try:
                 day = date.fromisoformat(q.get("date", [date.today().isoformat()])[0])

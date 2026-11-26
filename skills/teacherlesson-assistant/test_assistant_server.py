@@ -326,6 +326,23 @@ class FaviconTest(unittest.TestCase):
         self.assertIn("<svg", icon)
         self.assertIn("</svg>", icon)
 
+    def test_mobile_stylesheet_is_served(self):
+        server = ThreadingHTTPServer(("127.0.0.1", 0), app.Handler)
+        thread = threading.Thread(target=server.serve_forever, daemon=True)
+        thread.start()
+        self.addCleanup(server.server_close)
+        self.addCleanup(server.shutdown)
+        conn = http.client.HTTPConnection("127.0.0.1", server.server_port, timeout=2)
+        self.addCleanup(conn.close)
+
+        conn.request("GET", "/mobile.css")
+        response = conn.getresponse()
+        css = response.read().decode("utf-8")
+
+        self.assertEqual(response.status, 200)
+        self.assertIn("text/css", response.getheader("Content-Type"))
+        self.assertIn("@media (max-width: 720px)", css)
+
 
 if __name__ == "__main__":
     unittest.main()

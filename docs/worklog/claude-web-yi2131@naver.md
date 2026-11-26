@@ -21,3 +21,4 @@
 - 2026-11-26 20:26 S1 (teacherlesson-assistant) 시작 (브랜치 task/S1-tests-split-notes)
 - 2026-11-26 20:28 S1(teacherlesson-assistant) PR 올림 — `tests/test_notebook_notes.py`(새, 소스는 안 고침): split_notes.py·notebook_sources.py 시험 45개(통과 45·실패 0). 가짜 fitz 로 쪽 글만 돌려줌, 소스를 13군데 잠깐 깨뜨려 보니 처음엔 2군데(폴더 밖 쓰기 막는 검사·같은 PDF 차시 묶기)를 놓쳐서 시험 3개를 더한 뒤 13군데 모두 잡히는 것 확인, 소스는 되돌림. 수업 비서 전체 243개 통과. 버그 후보 없음
 - 2026-11-27 06:18 T95 시작 (브랜치 task/T95-douclass-cli-args)
+- 2026-11-27 06:20 T95 PR 올림 — `scan_music_pdf_header.py`: 하드코딩 `C:\Users\user\Downloads\music.pdf` → 명령줄 인자(없거나 파일 없으면 안내 후 종료 코드 2, `--help`·`--target` 지원, 쪽 머리 판정은 함수로 뺌). `douclass_probe.py`: 사용자 경로는 원래 없었음 — `--help` 가 되게 selenium 을 뒤로 미루고 `--port`·`--lesson`(기본값은 예전과 같음) 추가. 새 시험 `test_douclass_scripts.py` 13개, 소스를 8군데 깨뜨려 모두 잡힘 확인. 수업 비서 시험(sites 포함) 371 통과·1 건너뜀. 남은 사용자 경로: `PDF_EXTRACTION.md`(작업 기록이라 안 고침)

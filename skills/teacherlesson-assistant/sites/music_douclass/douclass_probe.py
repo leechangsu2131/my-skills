@@ -1,29 +1,43 @@
-import time
+"""이미 떠 있는 크롬(원격 디버깅 포트)에 붙어 동아 에듀 수업 자료 페이지에서 차시와 PPT 단추를 찾아 본다(누르지는 않음).
+
+    python douclass_probe.py [--port 9222] [--lesson 1~2차시]
+
+크롬을 --remote-debugging-port=<포트> 로 띄우고 해당 교과서 페이지를 열어 둔 뒤 실행한다. selenium 이 필요하다.
+"""
+import argparse
 import sys
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 
 REMOTE_PORT = 9222
 TARGET_URL = "https://ele.douclass.com/textbooks/30050/518?arch_id=12553"
+TARGET_LESSON = "1~2차시"
 
-def attach():
+
+def attach(port=REMOTE_PORT):
+    from selenium import webdriver
+    from selenium.webdriver.chrome.options import Options
     opts = Options()
-    opts.add_experimental_option("debuggerAddress", f"localhost:{REMOTE_PORT}")
+    opts.add_experimental_option("debuggerAddress", f"localhost:{port}")
     try:
         driver = webdriver.Chrome(options=opts)
         print(f"[OK] Chrome connected: {driver.title}")
         return driver
     except Exception as e:
-        print(f"[!] Failed to connect to Chrome on port {REMOTE_PORT}.")
+        print(f"[!] Failed to connect to Chrome on port {port}.")
         return None
 
-def main():
-    driver = attach()
+def main(argv=None):
+    ap = argparse.ArgumentParser(description="떠 있는 크롬에 붙어 동아 에듀 차시·PPT 단추를 찾아 본다(누르지 않음)")
+    ap.add_argument("--port", type=int, default=REMOTE_PORT, help="크롬 원격 디버깅 포트(기본 %(default)s)")
+    ap.add_argument("--lesson", default=TARGET_LESSON, help="찾을 차시 글(기본 %(default)s)")
+    args = ap.parse_args(argv)
+    try:
+        from selenium.webdriver.common.by import By
+    except ImportError:
+        print("selenium 이 없어요. pip install selenium", file=sys.stderr)
+        return 2
+    driver = attach(args.port)
     if not driver:
-        return
+        return 1
         
     print("\n--- Identifying Login URL ---")
     
@@ -49,7 +63,7 @@ def main():
     chapters = driver.find_elements(By.CLASS_NAME, "textbook-chapter")
     print(f"Found {len(chapters)} chapters in the DOM.")
     
-    target_lesson = "1~2차시"
+    target_lesson = args.lesson
     
     for chapter in chapters:
         try:
@@ -72,5 +86,8 @@ def main():
             pass
             
 
+    return 0
+
+
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

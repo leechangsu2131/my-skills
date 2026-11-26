@@ -9,7 +9,7 @@
 **원칙(토큰 아끼기, 2026-11-21 교사와 합의)**: 날마다 쓰는 기능은 Claude 토큰 0(스크립트·규칙), 수업 상담·많이 읽기는 웹 AI·NotebookLM·Gemini CLI. Claude Code 는 자동화·연결·검토.
 
 **된 것 (모두 main 에 푸시)**
-- 진도 원본이 **Supabase**(`lesson_*` 표)로 바뀜(2026-11-23). 시간표 조회·완료·연장·미루기·따라잡기는 `supabase_schedule.py`. 시험 `test_supabase_schedule.py`(41개: 통과 39·알려진 실패 1 → ISSUE-033·PyMuPDF 없으면 건너뛰는 PDF 시험 1)·`test_assistant_server.py`
+- 진도 원본이 **Supabase**(`lesson_*` 표)로 바뀜(2026-11-23). 시간표 조회·완료·연장·미루기·따라잡기는 `supabase_schedule.py`. 시험 `test_supabase_schedule.py`(48개: 모두 통과·PyMuPDF 없으면 건너뛰는 PDF 시험 1)·`test_assistant_server.py`
 - 수업 비서 화면: 🌙 수업 준비(Gemini 자동 흐름, `prepare_lessons.py`), '지금 할 일' 카드(단계 시간 ±1분·"N분 늦음"·단계 flag `keep`/`cut`·늦으면 줄일 단계 안내), ✏ 흐름 고치기, 📍 실제로 할 차시 고르기, 📂 차시 자료 바로 열기(음악·사회 `sites/`), NotebookLM 단추·소스, 진도 조정 속도 개선
 - 새 스킬 `util-notebooklm`(긴 PDF 찾기·쪽 잘라내기·Gemini 호출 공용), `teacherlesson-guide`(지도서 받기·분할·진도표 행 — 옛 splitter·mapper 합침), 노션 진도표 스킬 삭제
 - 진도: 도덕 = 7단원 3차시(11/23)부터, 국어 = 매체 3차시(11/24)부터(이후 실제 위치는 화면의 📍로 맞춤)
@@ -21,7 +21,7 @@
 3. **차시 자료 도우미**: 사회 실제 실행·PPT 자동 열기 → ISSUE-005, **미술 아트앤컬쳐 도우미 구현** → ISSUE-006
 4. **진도·시간표 정리**: 날짜 없는 차시, 기초시간표, 음악 지도서 PDF, 공개 저장소 기록의 지도서 PDF 지우기 결정 → ISSUE-007
 5. **처음 요청한 기능**(하이클래스 알림장 자동 게시, 나이스 시간표 변경, 녹음 받아쓰기, 학생 발표 → 누가기록, 출판사 주의점 쌓기 …) → ISSUE-008
-6. 화면 작은 개선·검토 참고·홈페이지 연결·문서 설명 → ISSUE-009~011, 023 (실패하던 시험 4개는 T45 에서 시험만 고침 → ISSUE-030, 그때 찾은 문제 → ISSUE-033)
+6. 화면 작은 개선·검토 참고·홈페이지 연결·문서 설명 → ISSUE-009~011, 023 (실패하던 시험 4개는 T45 에서 시험만 고침 → ISSUE-030, 그때 찾은 문제 → ISSUE-033, 2026-11-26 해결)
 - 다른 스킬 남은 일: `util-notebooklm` ISSUES(노트북 실제 시험, 공문·투자 등 다른 스킬 연결), `teacherlesson-guide` ISSUES(새 지도서는 Gemini 쪽 번호 표 먼저, mapper 정리, ISSUE-001 분할 자동화·ISSUE-002 공개 기록 PDF)
 
 ## 🔵 진행 중
@@ -30,7 +30,7 @@
 - **상태**: 🔵 코드·자동 점검 완료, 실제 교실 PC 확인 대기
 - **요청**: 아침에 누르는 오늘 준비와 방과 후 누르는 내일 준비를 별도 단추로 나누고, 첨부 비상연락망은 내선번호 위주로 안내. 교과 사이트 창은 오른쪽 모니터 전체로 열어야 함.
 - **구현**: 화면에 `☀ 오늘 준비`와 `🌙 내일 준비`를 만들고 각각 실제 오늘·내일 날짜로 요청. 내선 찾기 창에 검색을 추가하고 로컬 `my-skills-data/teacherlesson-assistant/config.json`에는 첨부 파일의 `내선번호` 열만 가져옴(역할 이름과 내선만, 외부번호·개인 이름 제외). 연락처 값은 공개 저장소에 넣지 않음. 교과 사이트 창은 목표 모니터로 옮긴 뒤 최대화하고, Chrome 이 저장된 크기를 다시 적용하는 동안 재배치. 64비트 Windows 창 핸들 함수의 인자·반환 형식도 명시함.
-- **자동 확인**: teacherlesson-assistant 시험 130개 통과, 개인정보 검사에서 의심 값 없음, 깨끗한 별도 worktree 의 카탈로그 검사 통과, GitHub Actions pytest 통과.
+- **자동 확인**: 최신 main 반영 뒤 teacherlesson-assistant 시험 153개 통과, 개인정보 검사에서 의심 값 없음, 카탈로그 형식 점검 통과. 현재 교실 PC 창 배치는 아직 확인 전.
 - **남은 확인**: PR 병합 뒤 수업 비서 서버를 다시 켜고 `☀ 오늘 준비`, `🌙 내일 준비`, 📞 검색, 교과 사이트 오른쪽 모니터 배치를 교실 PC에서 확인.
 - **관련 파일**: `web/index.html`, `assistant_server.py`, `README.md`, `SKILL.md`
 
@@ -195,19 +195,12 @@
 
 ## 📌 백로그
 
-### ISSUE-032: `parse_flow` 가 JSON null 을 "None" 글자로 저장함 (2026-11-25, 시험으로 발견)
-- **상태**: 📌 백로그 (소스는 안 고침, 재현 시험은 `xfail`)
-- **증상**: Gemini 답에 `"goal": null` 이 있으면 흐름의 목표가 글자 `None` 이 되고, `"materials": ["분수 막대", null]` 이면 준비물에 `None` 이 들어가 수업 화면에 그대로 보인다. (`homework`·`pages`·단계 글은 `or ""` 로 막혀 있어 `goal`·`materials` 만 해당)
-- **원인**: `str(data.get("goal", ""))` 와 `[str(m) for m in materials]` 가 `None` 을 걸러내지 않음
-- **재현 시험**: `tests/test_prepare_lessons.py::test_parse_flow_null_values_do_not_become_the_word_none` (goal null / materials 안의 null)
-- **관련 파일**: `prepare_lessons.py`
-
-### ISSUE-031: `parse_flow` 가 설명 글의 중괄호에 걸림 (2026-11-25, 시험으로 발견)
-- **상태**: 📌 백로그 (소스는 안 고침, 재현 시험은 `xfail`)
-- **증상**: Gemini 답에서 JSON 앞이나 뒤 설명에 `{` `}` 가 있으면(예: "참고 {지도서 p.3} 입니다.") `JSONDecodeError`. `prepare_one` 은 한 번 더 묻고, 그래도 같으면 그 차시가 "Gemini 결과를 쓰지 못함" 으로 실패한다.
-- **원인**: `text.find("{")` ~ `text.rfind("}")` 구간을 그대로 `json.loads`. `teacherlesson-guide` 의 `auto_split.json_object` 도 같은 방식(그 스킬 ISSUE-005)
-- **재현 시험**: `tests/test_prepare_lessons.py::test_parse_flow_explanation_containing_braces_around_json` (앞 설명에 중괄호 / 뒤 설명에 중괄호)
-- **관련 파일**: `prepare_lessons.py`
+### ISSUE-038: 주간 정리 글의 학생 이름 가리기 한계 (2026-11-26)
+- **상태**: 📌 백로그
+- **증상**: `weekly_report.py` 는 🙋 메모의 첫 낱말을 이름으로 봄. ① 🙋 에 한 번도 안 적힌 이름은 다른 절·후보에 남음. ② 첫 낱말이 이름이 아니면 그 낱말이 가려짐. ③ '학생A가'·'학생A는' 은 학생별 절에서 따로 묶임. ④ 띄어 쓴 이름은 첫 토막만 이름으로 봄.
+- **원인**: 메모가 자유 글이고 반 명단을 읽지 않음.
+- **해결/조치**: 미정. 데이터 폴더의 명단을 읽을 수 있게 하면 줄일 수 있음(명단 위치 **확인 필요**).
+- **관련 파일**: `weekly_report.py`, `tests/test_weekly_report.py`
 
 ### ISSUE-008: 처음에 요청한 기능 잊지 않기 (2026-11-20~, 우선순위 순)
 - **상태**: 📌 백로그
@@ -226,7 +219,7 @@
 - [ ] 모자랄 때 뒤 단계를 한 번에 줄여 주는 단추(지금은 단계마다 `−1분`을 눌러야 함) — 어떻게 줄일지(뒤쪽 단계 비례? 정리 단계 우선?) 교사에게 물어보고
 - [ ] 시간 초과 때 소리·화면 깜빡임을 원하는지 교사에게 물어보기(지금은 색만. 소리는 수업 방해라 안 넣음)
 - [ ] 🙋 학생 발표 메모는 ISSUE-004 설계대로 **명단에서 이름 고르기**로 바꿀 때 `setMemoKind('student')` 쪽에 이어 붙이면 됨(지금은 입력칸에 이름을 직접 적음)
-- [ ] (참고) 서버가 `/favicon.ico` 에 404 를 돌려줌 — 화면엔 영향 없음
+- [x] (참고) 서버가 `/favicon.ico` 에 404 를 돌려줌 → ISSUE-036 에서 해결
 - **관련 파일**: `web/index.html`, `assistant_server.py`
 
 ### ISSUE-010: 독립 검토에서 남은 항목 (reviewer, 커밋 59f59b3 → d97d432)
@@ -249,14 +242,6 @@
 - **해결 방향**: 이번 문서 정리에서는 코드 파일을 고치지 않았음 → 다음 코드 작업 때 설명 한 줄만 고치기
 - **관련 파일**: `assistant_server.py`
 
-### ISSUE-033: 더 앞 차시를 '오늘 할 차시'로 고르면 같은 칸의 뒤 차시가 화면에 계속 나옴 (2026-11-25, T45 시험으로 발견)
-- **상태**: 📌 백로그 (코드는 고치지 않음 — 어떻게 되어야 하는지 교사 확인 필요)
-- **증상**: 11/25 4교시에 수학 2차시(L2)가 예정일 때 1차시(L1)를 11/25 로 `catch-up` 하면 응답은 `success` 인데, `day_schedule` 은 11/25 4교시로 L2 를 돌려준다(L1 이 안 나옴). L2 를 L3 이 예정된 11/30 로 옮기는 경우도 같다. 코드 주석은 "선택한 차시를 오늘 수업으로 만든다"는 뜻이다
-- **원인(코드를 읽고 가짜 서버로 확인)**: ① `catch-up` 은 고른 차시를 그날 칸 **뒤**(같은 날·교시의 가장 큰 `slot_order` + 1)에 둔다. 그래서 L2 가 `slot_order` 1, L1 이 2 가 된다 ② `day_schedule` 은 같은 교시에 예정 차시가 둘이면 교육과정 순서가 **더 뒤인** 차시를 고른다(ISSUE-028 에서 완료된 앞 차시가 가리지 않게 만든 규칙). 두 규칙이 겹쳐, 앞 차시를 고르는 경우에만 어긋난다. 앞으로 당기는 경우(L3 을 11/25 로)는 앞 차시가 모두 완료 처리되어 문제 없음
-- **확인 필요(교사)**: 지나간 차시를 다시 오늘로 가져오는 일을 실제로 쓰는지. 쓴다면 이미 그 칸에 있던 뒤 차시(L2)를 다음 칸으로 밀어야 하는지, 화면이 방금 고른 차시를 우선해야 하는지 정해야 함 (추정: 둘 중 하나로 고쳐야 하지만 어느 쪽이 맞는지는 모름)
-- **재현 시험**: `test_supabase_schedule.py::CatchUpTest::test_catch_up_to_an_earlier_lesson_shows_it_on_the_requested_day` (`expectedFailure`). 고친 뒤 이 시험이 통과하면 `@unittest.expectedFailure` 를 지운다
-- **관련 파일**: `supabase_schedule.py`(`progress` 의 `catch-up`, `day_schedule`), `test_supabase_schedule.py`
-
 ### ISSUE-034: 실행_수업비서.bat 이 `py -3.13` 과 `python` 을 섞어 씀 (2026-11-25, T46 중 발견)
 - **상태**: 📌 백로그 (T46 은 점검 도구만 고침 — bat 는 윈도우에서 돌려 볼 수 없어 손대지 않음)
 - **증상**: bat 의 단원 개관 갱신(`build_units.py`)은 `py -3.13`, 서버(`assistant_server.py`)와 수업 준비(`prepare_lessons.py`)는 `python`. PC 에 Python 이 둘 이상이면 서로 다른 버전이 돌고, 패키지(requests·PyMuPDF 등)가 한쪽에만 깔려 있을 수 있음
@@ -264,13 +249,52 @@
 - **해결 방향**: 교사 PC 에서 `where python`·`py -0` 로 상황을 보고, bat 의 `python` 을 `py -3.13` 으로 통일할지 정한 뒤 학교 PC 에서 `실행_수업비서.bat` 을 실제로 켜 확인
 - **관련 파일**: `실행_수업비서.bat`, `점검_PC.bat`, `check_setup.py`
 
+## 🟢 해결됨
+
+### ISSUE-032: `parse_flow` 가 JSON null 을 "None" 글자로 저장함 (2026-11-25, 시험으로 발견)
+- **상태**: 🟢 해결 (2026-11-26, T68)
+- **증상**: Gemini 답에 `"goal": null` 이 있으면 흐름의 목표가 글자 `None` 이 되고, `"materials": ["분수 막대", null]` 이면 준비물에 `None` 이 들어가 수업 화면에 그대로 보였다.
+- **원인**: `str(data.get("goal", ""))` 와 `[str(m) for m in materials]` 가 `None` 을 걸러내지 않음
+- **해결**: `goal` 은 `or ""` 로 빈 글, 준비물은 `None`·빈 글을 빼고 앞뒤 공백을 지움. 시험: `tests/test_prepare_lessons.py` (xfail 표시 제거, 시험 1개 추가)
+- **관련 파일**: `prepare_lessons.py`
+
+### ISSUE-031: `parse_flow` 가 설명 글의 중괄호에 걸림 (2026-11-25, 시험으로 발견)
+- **상태**: 🟢 해결 (2026-11-26, T68) — `teacherlesson-guide` 의 `auto_split.json_object` 는 같은 방식이라 그 스킬 ISSUE-005 로 남아 있음(이번 범위 밖)
+- **증상**: Gemini 답에서 JSON 앞이나 뒤 설명에 `{` `}` 가 있으면(예: "참고 {지도서 p.3} 입니다.") `JSONDecodeError` 로 그 차시가 "Gemini 결과를 쓰지 못함" 으로 실패했다.
+- **원인**: `text.find("{")` ~ `text.rfind("}")` 구간을 그대로 `json.loads`
+- **해결**: 새 `_find_flow_json` 이 각 `{` 위치에서 `JSONDecoder.raw_decode` 로 읽어 보고 `steps` 가 있는 첫 객체를 고름. 아무것도 못 읽으면 예전과 같은 오류(`JSON 을 찾지 못함` / `JSONDecodeError`)를 냄. 시험: 앞뒤 설명 중괄호, JSON 안의 중괄호 글자, 앞의 빈 `{}`, JSON 없이 중괄호만 있는 경우(시험 3개 추가)
+- **관련 파일**: `prepare_lessons.py`
 ### ISSUE-035: check_setup.py — config.json 이 `{ }` 모양이 아니면 멈춤 (2026-11-25, T46 중 발견)
-- **상태**: 📌 백로그 (T46 범위는 port 값만이라 따로 둠)
-- **증상**: `config.json` 이 `[]`·`5` 처럼 JSON 이긴 한데 객체가 아니면 `load_config` 는 그대로 돌려주고, 뒤에서 `cfg.get(...)` 이 `AttributeError` 로 멈춤(재현: 그런 파일로 `check_setup.py` 실행)
-- **해결 방향**: `load_config` 에서 `isinstance(cfg, dict)` 가 아니면 `{}` 와 ❌ 결과("config.json 은 { } 로 시작해야 해요")를 돌려주고, 그 시험 추가
+- **상태**: 🟢 해결 (2026-11-26, T75)
+- **증상**: `config.json` 이 `[]`·`5`·`null` 처럼 JSON 이긴 한데 객체가 아니면 `load_config` 는 그대로 돌려주고, 뒤에서 `cfg.get(...)` 이 `AttributeError` 로 멈춤
+- **해결/조치**: `load_config` 가 읽은 값이 객체(dict)가 아니면 `{}` 와 ❌("{ } 모양이 아니에요")를 돌려줌(config.example.json 도 같음). 전체 실행(`run_checks`·`main`)이 멈추지 않고 종료 코드 1. 시험 추가
 - **관련 파일**: `check_setup.py`(`load_config`), `tests/test_check_setup.py`
 
-## 🟢 해결됨
+### ISSUE-033: 더 앞 차시를 '오늘 할 차시'로 고르면 같은 칸의 뒤 차시가 화면에 계속 나옴 (2026-11-25 발견)
+- **상태**: 🟢 해결 (2026-11-26, T45 claude-web-173 — 교사가 "쓴다, 화면도 바뀌면 좋겠다"고 정함)
+- **증상**: 11/25 4교시에 수학 2차시(L2)가 예정일 때 1차시(L1)를 11/25 로 `catch-up` 하면 응답은 `success` 인데 `day_schedule` 은 L2 를 돌려줬다
+- **원인**: `catch-up` 은 고른 차시를 그 칸 뒤(`slot_order` 최대+1)에 두는데, `day_schedule` 은 같은 교시의 예정 차시 중 교육과정 순서가 더 뒤인 차시를 골랐다(ISSUE-028 규칙). 두 규칙이 겹쳐 앞 차시를 고른 경우만 어긋났다
+- **해결**: `day_schedule` 이 같은 교시에서 **교사가 따라잡기로 고른 예정 차시**(`source = manual_catch_up`, 상태 예정)를 먼저 보여 준다. 그런 차시가 여럿이면 나중에 고른 것(`slot_order` 큰 것)이 먼저다. 고른 차시를 마치면(완료) 같은 칸에 남아 있던 뒤 차시가 다시 나온다. 따라잡기가 없는 칸은 기존 규칙 그대로다. 실제 DB 조회 칸 목록(`LESSON_REL`)에 `source` 를 추가했다. 밀려난 뒤 차시는 지워지지 않고 그 칸에 예정으로 남는다
+- **시험**: `CatchUpTest` 의 `expectedFailure` 를 지우고 7개를 더했다(앞 차시 고르기·뒤 날짜로 옮기기·완료 뒤 뒤 차시 복귀·나중에 고른 것 우선·앞으로 당기기·완료된 고른 차시는 우선 아님·일반 칸은 기존 규칙·`source` 칸 요청). 변이 확인: 우선 규칙 제거, 오래된 것 우선, 상태 무시, `source` 판정 제거를 모두 시험이 잡았다(소스는 복원)
+- **남은 점(확인 필요)**: 이 스킬 밖에서 `lesson_slots` 를 직접 읽는 도구(예: teacherlesson-schedule)가 같은 칸의 두 차시를 어떻게 보여 주는지는 살펴보지 않았다
+- **남은 점(검토 2026-11-26, 교사 결정 필요)**: L1 을 11/25 로 따라잡아 마치면, 원래 그 칸의 L2 는 지난 날(11/25)에 '예정'으로 남고 다음 수업일에는 L3 가 나온다(가짜 서버로 재현). 뒤 차시를 다음 칸으로 밀지 정해야 함 — TASKS 후속 일
+- **관련 파일**: `supabase_schedule.py`(`LESSON_REL`, `day_schedule`), `test_supabase_schedule.py`(`CatchUpTest`)
+
+### ISSUE-037: Supabase 진도 변경 동시 요청 잠금 (2026-11-25)
+- **상태**: 🟢 해결 (2026-11-25)
+- **증상**: 완료·미루기·연장·여기부터 다시 잡기 요청이 겹치면 두 요청이 같은 슬롯 목록을 읽고 서로의 변경을 덮을 수 있음
+- **원인**: `progress()`의 읽기와 쓰기 전체를 보호하는 잠금이 없음
+- **해결/조치**: `progress()` 전체를 프로세스 안의 `threading.Lock`으로 보호. 두 번째 요청은 첫 요청이 끝난 뒤 최신 슬롯을 다시 읽음. 같은 슬롯 완료 요청을 동시에 보내도 한 번만 갱신되는 가짜 시험 추가
+- **한계**: 잠금은 같은 Python 프로세스 안의 동시 요청에 적용됨. 여러 프로세스가 동시에 실행되는 환경까지 막는 DB 잠금은 포함하지 않음
+- **관련 파일**: `supabase_schedule.py`, `test_supabase_schedule.py`
+
+### ISSUE-036: 수업 비서 favicon.ico 404 (2026-11-25)
+- **상태**: 🟢 해결 (2026-11-25)
+- **증상**: 브라우저가 `/favicon.ico`를 요청하지만 서버에 경로가 없어 404 응답
+- **원인**: `Handler.do_GET()`에 파비콘 경로가 없음
+- **해결/조치**: 작은 SVG 책 아이콘을 `web/favicon.svg`로 추가하고 `/favicon.ico` 요청에 SVG 이미지로 응답. 화면 HTML에도 파비콘 연결
+- **관련 파일**: `assistant_server.py`, `web/index.html`, `web/favicon.svg`, `test_assistant_server.py`
+
 
 ### ISSUE-030: test_supabase_schedule.py 의 '여기부터 다시 잡기' 시험 4개가 실패함 (2026-11-25 발견)
 - **상태**: 🟢 해결 (2026-11-25, T45 claude-web-173 — 시험만 고쳤고 코드는 그대로)

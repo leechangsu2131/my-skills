@@ -20,11 +20,12 @@ SUBJECTS = "lesson_subjects"
 UNITS = "lesson_units"
 LESSONS = "lesson_lessons"
 SLOTS = "lesson_slots"
-LESSON_REL = "id,lesson_id,slot_date,slot_period,slot_order,status,memo,lesson:lesson_lessons(id,legacy_lesson_id,subject_id,lesson_number,title,pdf_path,start_page,end_page,note,sort_order,subject:lesson_subjects(id,name,color),unit:lesson_units(name))"
+LESSON_REL = "id,lesson_id,slot_date,slot_period,slot_order,status,source,memo,lesson:lesson_lessons(id,legacy_lesson_id,subject_id,lesson_number,title,pdf_path,start_page,end_page,note,sort_order,subject:lesson_subjects(id,name,color),unit:lesson_units(name))"
 
 
 _sessions: dict = {}          # (url, key) → Session. 요청마다 새 연결(TLS 악수)을 맺던 것을 재사용해 빠르게 한다
 _sessions_lock = threading.Lock()
+_PROGRESS_LOCK = threading.Lock()  # 진도 읽기·변경을 한 요청씩 처리
 _truststore_done = False
 
 
@@ -119,31 +120,37 @@ def day_schedule(day: date) -> list[dict]:
             "has_pdf": bool(lesson.get("pdf_path")),
             "_lesson_sort": int(lesson.get("sort_order") or 0),
             "_slot_order": slot.get("slot_order") or 0,
+            "_manual_catch_up": slot.get("source") == "manual_catch_up" and slot.get("status", "planned") == "planned",
         })
     # A completed previous lesson can share a period with the current planned
     # lesson. Prefer planned rows. If every row is complete, show the latest
     # lesson in curriculum order rather than whichever duplicate PostgREST
     # happened to return first (e.g. lesson 1 masking lesson 4 on the same day).
+    # Among planned rows, a lesson the teacher just chose with "여기부터 다시 잡기"
+    # (catch-up, still planned) comes first, newest choice first. Otherwise an
+    # earlier lesson chosen for a period that already holds a later planned lesson
+    # would never show (ISSUE-033). When it is done, the later lesson shows again.
+    def rank(row):
+        manual = row["_manual_catch_up"]
+        return (
+            row["status"] != "planned",
+            not manual,
+            -row["_slot_order"] if manual else 0,
+            -row["_lesson_sort"],
+            -row["_slot_order"],
+        )
+
     by_period = {}
     for row in rows:
         key = row["period"] if row["period"] is not None else row["slot_id"]
         previous = by_period.get(key)
-        row_rank = (
-            row["status"] != "planned",
-            -row["_lesson_sort"],
-            -row["_slot_order"],
-        )
-        previous_rank = (
-            previous["status"] != "planned",
-            -previous["_lesson_sort"],
-            -previous["_slot_order"],
-        ) if previous else None
-        if previous is None or row_rank < previous_rank:
+        if previous is None or rank(row) < rank(previous):
             by_period[key] = row
     selected = list(by_period.values())
     for row in selected:
         row.pop("_lesson_sort", None)
         row.pop("_slot_order", None)
+        row.pop("_manual_catch_up", None)
     return sorted(selected, key=lambda x: x["period"] or 99)
 
 
@@ -222,6 +229,12 @@ def _lesson_by_key(key: str):
 
 
 def progress(action: str, body: dict) -> dict:
+    """진도 변경 요청을 한 번에 하나씩 처리해 같은 옛 자료로 덮어쓰지 않게 한다."""
+    with _PROGRESS_LOCK:
+        return _progress_unlocked(action, body)
+
+
+def _progress_unlocked(action: str, body: dict) -> dict:
     subject = str(body.get("subject") or "")
     key = str(body.get("record_key") or "")
     slot_id = str(body.get("slot_id") or "")

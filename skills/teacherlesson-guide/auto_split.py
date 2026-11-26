@@ -76,10 +76,26 @@ def json_object(text: str) -> dict:
     start, end = text.find("{"), text.rfind("}")
     if start < 0 or end <= start:
         raise ValueError("Gemini 응답에서 JSON을 찾지 못했습니다.")
-    data = json.loads(text[start:end + 1])
-    if not isinstance(data, dict) or not isinstance(data.get("lessons"), list):
+    # JSON 앞뒤 설명 글에 {…} 가 있어도 걸리지 않게, `{` 마다 JSON 한 덩어리씩 읽어 보고
+    # lessons 목록이 있는 첫 덩어리를 쓴다(읽은 덩어리 안쪽의 `{` 는 건너뜀).
+    decoder = json.JSONDecoder()
+    first_error: ValueError | None = None
+    parsed_without_lessons = False
+    pos = start
+    while pos >= 0:
+        try:
+            data, stop = decoder.raw_decode(text, pos)
+        except ValueError as exc:
+            first_error = first_error or exc
+            pos = text.find("{", pos + 1)
+            continue
+        if isinstance(data, dict) and isinstance(data.get("lessons"), list):
+            return data
+        parsed_without_lessons = True
+        pos = text.find("{", stop)
+    if parsed_without_lessons:
         raise ValueError("응답에 lessons 목록이 없습니다.")
-    return data
+    raise first_error
 
 
 def merge_lesson_map(data: dict, lesson_map: list[dict] | None) -> None:
@@ -240,6 +256,8 @@ def main() -> int:
     ap.add_argument("--reuse-analysis", action="store_true", help="기존 analysis.json을 다시 검증해 Gemini 재호출을 피합니다.")
     ap.add_argument("--model", default=nlm.DEFAULT_MODEL, help="Gemini 모델")
     ap.add_argument("--timeout", type=int, default=300, help="Gemini 제한 시간(초)")
+    ap.add_argument("--model-timeout", type=int, default=45,
+                    help="모델 하나를 기다리는 시간(초, 기본 45). 붐벼서 모델마다 시간이 넘치면 늘려 다시 실행")
     a = ap.parse_args()
     pdf = a.pdf.expanduser().resolve()
     if not pdf.is_file():
@@ -278,12 +296,14 @@ def main() -> int:
     report_path = out / "analysis.json"
     if a.reuse_analysis:
         try:
-            data = json.loads(report_path.read_text(encoding="utf-8"))["analysis"]
+            previous_report = json.loads(report_path.read_text(encoding="utf-8"))
+            data = previous_report["analysis"]
+            gemini_model = previous_report.get("gemini_model", "")
         except (OSError, ValueError, KeyError, TypeError) as exc:
             ap.error(f"기존 analysis.json을 읽을 수 없습니다: {exc}")
     else:
-        answer = nlm.gemini_ask(index_path, prompt, model=a.model, timeout=a.timeout,
-                                work=out / "gemini_work")
+        answer, gemini_model = nlm.gemini_ask(index_path, prompt, model=a.model, timeout=a.timeout,
+                                              model_timeout=a.model_timeout, work=out / "gemini_work")
         data = json_object(answer)
     merge_lesson_map(data, lesson_map)
     expected_count = len(lesson_map) if lesson_map is not None else a.expected_lessons
@@ -291,7 +311,7 @@ def main() -> int:
     report = {"source_pdf": str(pdf), "subject": a.subject, "unit": a.unit,
               "page_range": [a.from_page, end_page],
               "page_count": len(pages), "text_page_count": text_pages,
-              "analysis": data, "validation_issues": issues, "gemini_model": nlm.LAST_MODEL}
+              "analysis": data, "validation_issues": issues, "gemini_model": gemini_model}
     report_path.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(f"분석 결과: {report_path}")
     if issues:

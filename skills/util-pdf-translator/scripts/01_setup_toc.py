@@ -101,7 +101,7 @@ def show_toc() -> None:
     print(f"{'번호':>4}  {'제목':<35} {'시작':>6} {'끝':>6}")
     print("-" * 60)
     for ch in toc:
-        end = ch.get("end_page", "?")
+        end = ch.get("end_page") or "?"
         print(f"{ch['chapter']:>4}  {ch['title']:<35} {ch['start_page']:>6} {str(end):>6}")
 
 
@@ -138,6 +138,10 @@ def auto_mode(pdf_path: str) -> None:
         except ValueError:
             print("❌ 올바른 번호를 입력해주세요.")
             return
+
+    if not selected:
+        print("⚠️  선택된 항목이 없어 저장하지 않았습니다.")
+        return
 
     # end_page 계산 (다음 챕터 시작 - 1)
     import fitz
@@ -182,12 +186,13 @@ def manual_mode() -> None:
     if existing:
         print(f"기존 toc.json이 있습니다 ({len(existing)}개 챕터).")
         ans = input("이어서 추가하겠습니까? (y/n): ").strip().lower()
-        chapters = existing if ans == "y" else []
+        chapters = list(existing) if ans == "y" else []
         start_num = (chapters[-1]["chapter"] + 1) if chapters else 1
     else:
         chapters = []
         start_num = 1
 
+    kept_count = len(chapters)  # 새로 입력하기 전의 개수
     chapter_num = start_num
     while True:
         print(f"\n--- 챕터 {chapter_num} ---")
@@ -215,7 +220,7 @@ def manual_mode() -> None:
         })
         chapter_num += 1
 
-    if len(chapters) > len(existing if existing else []):
+    if len(chapters) > kept_count:
         # 끝 페이지 없는 항목 자동 계산
         for i in range(len(chapters)):
             if chapters[i].get("end_page") is None:

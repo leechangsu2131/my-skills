@@ -8,7 +8,9 @@
   git -c core.longpaths=true worktree add -b orch-<날짜> <짧은 경로> origin/main  →  그 폴더에서 이 도구 실행
 - 충돌 처리: docs/worklog/*.md 는 두 쪽 줄을 시간순으로 모으고, 다른 .md 는 두 쪽 내용을 모두 남긴다.
   코드 파일 충돌이면 그 브랜치는 합치지 않고 '보류'.
-- 건너뜀: 이미 내용이 main 에 있음(cherry), 7일 넘게 새 커밋 없음, 일지 한 파일만 바꿈('시작'만 한 것).
+- 건너뜀: 이미 내용이 main 에 있음(cherry), 브랜치가 더한 줄이 main 파일에 이미 거의 다 있음(다른 판으로 합쳐짐),
+  브랜치 이름의 TASKS 번호가 docs/TASKS.md 에서 이미 '완료'(후속 보완 브랜치면 손으로 확인),
+  7일 넘게 새 커밋 없음, 일지 한 파일만 바꿈('시작'만 한 것).
 - 코드 바뀜 브랜치는 합치지 않는다 → reviewer 에이전트 검토 뒤 손으로.
 """
 from __future__ import annotations
@@ -19,6 +21,8 @@ import subprocess
 import sys
 from pathlib import Path
 
+ALREADY_RATIO = 0.9   # 브랜치가 더한 줄 중 main 에 이미 있는 비율이 이만큼이면 '다른 판으로 합쳐짐'
+TASK_BRANCH = re.compile(r"^task/([TS]\d+)(?:-|$)")
 TEST_FILE = re.compile(r"(^|/)(tests?/|test_[^/]*\.py$|[^/]*\.test\.js$|conftest\.py$)")
 
 
@@ -34,7 +38,33 @@ def out(*a: str) -> str:
     return git(*a).stdout.strip()
 
 
+def already_in_main_ratio(ref: str, files: list[str]) -> tuple[int, int]:
+    """브랜치(merge-base 이후)가 더한 빈 줄 아닌 줄 중 main 의 같은 파일에 이미 있는 줄 수. (있는 줄, 더한 줄)"""
+    present = added = 0
+    for f in files:
+        diff = out("diff", "--unified=0", f"origin/main...{ref}", "--", f)
+        lines = {l[1:].strip() for l in diff.splitlines() if l.startswith("+") and not l.startswith("+++") and l[1:].strip()}
+        if not lines:
+            continue
+        shown = git("show", f"origin/main:{f}")
+        main_lines = {l.strip() for l in shown.stdout.splitlines()} if shown.returncode == 0 else set()
+        added += len(lines)
+        present += len(lines & main_lines)
+    return present, added
+
+
+def done_tasks() -> set[str]:
+    """origin/main 의 docs/TASKS.md 표에서 상태가 '완료' 로 시작하는 번호(T80 같은)."""
+    done = set()
+    for line in git("show", "origin/main:docs/TASKS.md").stdout.splitlines():
+        cells = [c.strip() for c in line.strip().strip("|").split("|")]
+        if len(cells) >= 2 and re.fullmatch(r"[TS]\d+", cells[0]) and cells[-1].startswith("완료"):
+            done.add(cells[0])
+    return done
+
+
 def classify() -> list[dict]:
+    done = done_tasks()
     rows = []
     refs = out("for-each-ref", "--format=%(refname:short)", "refs/remotes/origin").split()
     for ref in refs:
@@ -50,6 +80,10 @@ def classify() -> list[dict]:
         code = [f for f in files if not (f.endswith(".md") or TEST_FILE.search(f))]
         if cherry and all(l.startswith("-") for l in cherry):
             kind, why = "건너뜀", "내용이 이미 main 에 있음"
+        elif (m := TASK_BRANCH.match(name)) and m.group(1) in done and not m.group(1).startswith("S"):
+            kind, why = "건너뜀", f"{m.group(1)} 는 TASKS 에서 이미 완료(후속 보완이면 손으로 확인)"
+        elif (r := already_in_main_ratio(ref, files)) and r[1] and r[0] / r[1] >= ALREADY_RATIO:
+            kind, why = "건너뜀", f"더한 줄 {r[0]}/{r[1]} 이 main 에 이미 있음(다른 판으로 합쳐짐)"
         elif age_days > 7:
             kind, why = "건너뜀", f"{age_days:.0f}일째 새 커밋 없음(오래됨)"
         elif len(files) == 1 and files[0].startswith("docs/worklog/"):

@@ -16,24 +16,39 @@ _없음_
 - **해결/조치**: 아직 안 함(T04 범위 밖). 시험 파일 인코딩과 `auto_planner.py` 의 후보 이름 비교를 확인할 것
 - **관련 파일**: `tests/test_auto_planner.py`, `auto_planner.py`
 
-### ISSUE-002: `/api/lessons` 가 '날짜 시각' 모양의 slot_date 에서 죽음 (2026-11-25)
-- **상태**: 📌 백로그
-- **증상**: 수업배치 시트의 `slot_date` 가 `2026-12-01 00:00:00` 처럼 시각이 붙어 있으면 `ValueError: 계획일 날짜 형식이 올바르지 않습니다` 가 `try` 밖에서 올라와 JSON 이 아닌 500 응답이 됨
-- **원인**: `server.py` 는 `slot_date` 를 `[:10]` 으로 잘라 쓰려고 하지만, 그 앞의 정렬(`schedule._bridge_row_sort_key` → `_parse_date`)이 `YYYY-MM-DD` 만 받음. 실제 시트에 시각이 붙는지는 확인 필요(추정: 붙으면 문제)
-- **해결/조치**: 아직 안 함. 재현 시험 `test_bridge_date_with_time_suffix_is_cut_to_ten_chars` 를 xfail 로 둠(고쳐지면 xfail 표시를 지울 것). 고치는 방향 후보 — 정렬 전에 날짜를 먼저 잘라 주기, 또는 정렬 오류도 JSON 오류로 돌려주기
-- **관련 파일**: `server.py`(`subject_lessons`), `schedule.py`(`_bridge_row_sort_key`, `_parse_date`), `tests/test_server_lessons_catchup.py`
-
-### ISSUE-001: `/api/catch-up` 가 시트 읽기 실패(ScheduleError)를 JSON 오류로 안 바꿈 (2026-11-25)
-- **상태**: 📌 백로그
-- **증상**: `schedule.connect()`·`load_all()` 이 `ScheduleError`(`SheetFormatError`·`ConfigurationError` 등)를 내면 `/api/catch-up` 은 처리하지 못하고 오류가 그대로 올라옴(서버 500). 같은 서버의 `/api/lessons` 는 `(ValueError, ScheduleError)` 둘 다 잡아 JSON 오류를 돌려줌
-- **원인**: `catch_up`(그리고 `done`·`push`·`extend`·`pull`·`move`·`swap` 도 `except ValueError` 만 있음 — 시험으로는 `catch_up` 만 확인)이 `except ValueError` 만 씀. `ScheduleError` 는 `ValueError` 의 하위 클래스가 아님. 화면이 JSON 오류를 기대하는지는 확인 필요
-- **해결/조치**: 아직 안 함. 재현 시험 `test_schedule_error_returns_json_error_like_lessons_endpoint` 를 xfail 로 둠. 고치는 방향 후보 — `except (ValueError, schedule.ScheduleError)`
-- **관련 파일**: `server.py`(`catch_up` 외), `tests/test_server_lessons_catchup.py`
+### ISSUE-005: `/api/catch-up` 밖의 쓰기 경로 6개도 ScheduleError 를 JSON 오류로 안 바꿈 (2026-11-26)
+- **상태**: 📌 백로그 (T77 과 같은 함수들이라 T77 을 하는 교사 PC 작업자가 함께 고치는 것을 권함)
+- **증상**: `/api/done`·`push`·`extend`·`pull`·`move`·`swap` 은 `except ValueError` 만 있어, 시트 읽기·머리글 문제(`ScheduleError`)가 나면 JSON 이 아닌 서버 오류 화면으로 올라옴(`/api/catch-up`·`/api/lessons` 는 ISSUE-001·002 로 고쳐짐). 시험은 아직 없음(추정: `catch_up` 과 같은 증상)
+- **해결/조치**: 미적용. 같은 방식으로 `except schedule.ScheduleError as exc: return _action_error(str(exc), 500)` 를 `ValueError` 앞에 더하면 됨. 이 함수들은 T77(수업배치 쓰기 잠금)도 고치므로 겹치지 않게 함께
+- **관련 파일**: `server.py`(`done`·`push`·`extend`·`pull`·`move`·`swap`)
 
 
 ## 🟢 해결됨
 
-_없음_
+### ISSUE-002: `/api/lessons` 가 '날짜 시각' 모양의 slot_date 에서 죽음 (2026-11-25, 2026-11-26 해결)
+- **상태**: 🟢 해결됨 (T69)
+- **증상**: 수업배치 시트의 `slot_date` 가 `2026-12-01 00:00:00` 처럼 시각이 붙어 있으면 `ValueError: 계획일 날짜 형식이 올바르지 않습니다` 가 `try` 밖에서 올라와 JSON 이 아닌 500 응답이 됐다.
+- **원인**: `server.py` 는 `slot_date` 를 `[:10]` 으로 잘라 쓰려고 하지만, 그 앞의 정렬(`schedule._bridge_row_sort_key` → `_parse_date`)이 `YYYY-MM-DD` 만 받았다.
+- **해결**: `server.py` 에 `_bridge_slot_sort_key` 를 두어 `YYYY-MM-DD` 뒤에 `공백·T + 숫자`(시각)가 붙은 모양만 날짜 부분으로 줄여 정렬한다. `2026. 12. 1.` 같은 다른 모양은 그대로 `schedule` 의 정렬이 읽는다(앞 10자를 무조건 자르면 깨지는 모양). 정렬 중 날짜를 도저히 못 읽으면 파이썬 오류 대신 JSON 오류(500)를 돌려준다. `schedule.py` 는 고치지 않음
+- **시험**: `tests/test_server_lessons_catchup.py` — expectedFailure 표시를 지우고 시각 붙은 날짜·섞인 날짜 정렬·점 찍힌 날짜·읽을 수 없는 날짜 시험 추가. 소스를 일부러 틀리게 한 변이 3가지를 모두 시험이 잡음
+- **남은 것**: 실제 시트에 시각이 붙는지는 확인 필요(교사 PC)
+- **관련 파일**: `server.py`(`subject_lessons`, `_bridge_slot_sort_key`), `tests/test_server_lessons_catchup.py`
+
+### ISSUE-001: `/api/catch-up` 가 시트 읽기 실패(ScheduleError)를 JSON 오류로 안 바꿈 (2026-11-25, 2026-11-26 해결)
+- **상태**: 🟢 해결됨 (T69, `/api/catch-up` 만 — 나머지 경로는 ISSUE-005)
+- **증상**: `schedule.connect()`·`load_all()` 이 `ScheduleError`(`SheetFormatError`·`ConfigurationError` 등)를 내면 `/api/catch-up` 은 처리하지 못하고 오류가 그대로 올라왔다(서버 500). 같은 서버의 `/api/lessons` 는 둘 다 잡아 JSON 오류를 돌려줬다.
+- **원인**: `catch_up` 이 `except ValueError` 만 썼다. `ScheduleError` 는 `ValueError` 의 하위 클래스가 아니다.
+- **해결**: `except schedule.ScheduleError` 를 `ValueError` 앞에 더해 JSON 오류(상태 500, 메시지는 오류 내용)로 돌려준다. `ValueError`(사용자가 고른 값 문제)는 그대로 400. 잠금(`_CATCH_UP_LOCK`) 안에서 일어나므로 잠금도 정상 해제됨
+- **시험**: `tests/test_server_lessons_catchup.py` — expectedFailure 표시를 지우고 `connect`·`load_all` 에서 `SheetFormatError`·`ConfigurationError` 가 나는 경우, `ValueError` 는 여전히 400 인 시험 추가. 변이 2가지(안 잡기·400 으로 바꾸기) 모두 잡힘
+- **관련 파일**: `server.py`(`catch_up`), `tests/test_server_lessons_catchup.py`
+
+### ISSUE-004: /api/catch-up 동시 요청이 수업배치 갱신을 덮지 않도록 잠금 (2026-11-25)
+- **상태**: 🟢 해결 (2026-11-25)
+- **증상**: 동시에 들어온 두 요청이 같은 시트 내용을 읽고 각각 전체 수업배치를 다시 쓰면, 나중 저장이 먼저 저장한 변경을 덮을 수 있음
+- **원인**: 읽기와 변경 작업을 묶어 보호하는 잠금이 없음
+- **해결/조치**: `/api/catch-up` 의 시트 연결·읽기·변경 구간을 `threading.Lock` 으로 보호. 두 번째 요청은 첫 번째 작업이 끝난 뒤 최신 내용을 읽음. 두 요청을 동시에 보내도 작업 구간이 겹치지 않는 가짜 시험 추가
+- **한계(검토 2026-11-26)**: 잠금은 `/api/catch-up` 에만 걸림. `/api/done`·push·extend·pull·move·swap 도 `_rewrite_bridge_sheet` → `write_bridge_sheet` 로 수업배치 전체를 다시 쓰므로, catch-up 과 미루기가 동시에 오면 여전히 덮일 수 있음 → 쓰기 경로 7개를 잠금 하나로 감싸는 후속 일(TASKS T77)
+- **관련 파일**: `server.py`, `tests/test_server_lessons_catchup.py`
 
 <!--
 항목 양식 (복사해서 사용)

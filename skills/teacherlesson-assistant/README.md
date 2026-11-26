@@ -66,6 +66,22 @@ Claude 작업 절차는 [SKILL.md](SKILL.md), 문제·할 일은 [ISSUES.md](ISS
 
 **막히면**: 화면이 비었으면 `점검_PC.bat` 결과를 보고, 진도가 안 바뀌면 중앙 `.env` 의 Supabase 설정부터 확인해요.
 
+## 수업 메모 동기화 (`memo_sync.py`)
+
+수업 메모를 Supabase(`lesson_memos` 표)에 올리고, 다른 PC 에서 받아 `sessions/` 파일에 합치는 부품이다. **아직 수업 비서 서버·아침 bat 에는 연결하지 않았다**(연결은 교사 PC 에서, TASKS T49). 필요한 표는 `sql/lesson_memos.sql`(Supabase 에서 실행), 키는 진도와 같은 중앙 `.env`(`SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`)에서 읽고 화면·출력에는 내보내지 않는다.
+
+| 하고 싶은 일 | 방법 |
+|---|---|
+| 올리기 | 코드에서 `from memo_sync import push_session; push_session(session)`. 실패해도 예외 없이 결과만 돌려주고, 못 올린 것은 데이터 폴더 `memo_queue/` 에 쌓아 두었다가 다음에 먼저 다시 올린다 |
+| 내려받기 | `python memo_sync.py pull --days 30` (또는 `--since 2026-11-01`, `--all`). 아침 bat 용: `pull --if-older 24` — 마지막 내려받기가 24시간 안이면 건너뜀 |
+| 못 올린 것만 다시 올리기 | `python memo_sync.py flush` |
+| 시험 | `python -m pytest tests/test_memo_sync.py` (가짜 서버라 진짜 DB 에 가지 않음) |
+
+- 같은 메모는 고유값(`memo_key`)으로 한 번만 들어간다. 받아 온 메모에는 서버의 `memo_key` 를 그대로 저장해, 다시 받아도 늘어나지 않고 이 PC 에서 다시 올려도 새 메모가 되지 않는다.
+- 🙋 학생 발표 메모(`student`)는 올리지도 받지도 않는다. 📝·🔧·🎤 같은 자유 글 메모는 **그대로 올라가므로, 학생 이름이 적혀 있으면 서버에도 올라간다**(교사 결정 대기, T49).
+- 단계 기록(`step`·`sys`·`adj`)은 다른 PC 에서 수업 단계를 이어 가려고 올린다. 올리고 싶지 않은 종류는 중앙 `.env` 에 `TEACHERLESSON_ASSISTANT__MEMO_SKIP_KINDS=step,sys,adj` 처럼 적는다(쉼표나 띄어쓰기로 구분). 안 적으면 학생 메모만 빠지고 나머지는 올라간다. 받는 쪽에는 영향이 없다.
+- 명령줄 출력은 UTF-8 이다. 직접 실행해서 한국어가 깨져 보이면 먼저 `chcp 65001` 을 실행한다(`실행_수업비서.bat`·`점검_PC.bat` 은 이미 한다).
+
 ## 화면 기능 (v0.1)
 
 수업 중에는 상단의 **🎯 수업 진행**을 눌러 집중 화면으로 바꾼다. 왼쪽에서 단계를 고르고, 가운데 발문·활동·팁을 보며, 오른쪽에서 시간·다음 단계·준비물과 녹음·빠른 메모를 쓴다. 아래 고정 버튼과 방향키·발표 리모컨으로 단계를 이동한다. **↩ 준비 화면**으로 날짜·진도·자료 메뉴에 돌아간다.
@@ -94,6 +110,7 @@ Claude 작업 절차는 [SKILL.md](SKILL.md), 문제·할 일은 [ISSUES.md](ISS
 - `sessions/<날짜>/<교시>교시_<과목>_<시각>.webm` — 녹음
 - `ask/<날짜>/<교시>_<과목>/` — 웹 AI에 끌어다 놓을 PDF와 질문.txt
 - `notebooklm/<과목>/` — NotebookLM 소스(`<대단원>.md`, `_그림.pdf`), `notes/` 차시별 노트, `목록.txt`
+- `reports/week-<월요일>.md` — 주간 정리 글 (`python weekly_report.py [--date YYYY-MM-DD]`). 과목·출판사별 고칠점·좋았음, 출판사 주의점 후보, 학생별 발표 메모. **학생 이름이 있으니 밖에 보내지 않는다**
 - `publisher_notes.json` — `{"출판사|과목": [{"text","date"}], "출판사|*": [...]}`
 
 아이디·비밀번호는 중앙 .env(`OneDrive\96. 인증\.env`)에 `<secret_prefix>_ID`, `<secret_prefix>_PW`로 적는다(예: `ISCREAM_ID`). 서버는 값을 화면에 보내지 않고 클립보드로만 넘긴다.

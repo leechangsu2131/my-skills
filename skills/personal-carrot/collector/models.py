@@ -72,10 +72,14 @@ def parse_price(text: str) -> int:
     if "나눔" in cleaned or "무료" in cleaned:
         return 0
 
-    # "15만원", "1.5만원"
-    m = re.match(r"([\d.]+)\s*만\s*원?", cleaned)
-    if m:
-        return int(float(m.group(1)) * 10_000)
+    # "15만원", "1.5만원", "3천원", "10만5천원", "1만5000원"
+    m = re.match(r"(?:([\d.]+)만)?(?:([\d.]+)천)?(?:(\d+)(?=원))?", cleaned)
+    man, cheon, rest = m.groups()
+    if man or cheon:
+        try:
+            return round(float(man or 0) * 10_000 + float(cheon or 0) * 1_000) + int(rest or 0)
+        except ValueError:  # "1.2.3만원"
+            return -1
 
     # "150000원", "150000"
     digits = re.sub(r"[^\d]", "", cleaned)

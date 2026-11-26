@@ -53,7 +53,16 @@ def send_to_discord(webhook_url: str, content: str) -> bool:
 def split_message(text: str, max_len: int = DISCORD_MAX_LEN) -> list[str]:
     """긴 텍스트를 Discord 한도에 맞게 분할합니다."""
     chunks = []
-    lines = text.split("\n")
+    lines = []
+    for line in text.split("\n"):
+        # 한 줄이 한도보다 길면 한도 안의 마지막 공백에서, 공백이 없으면 글자 수로 자른다.
+        while len(line) > max_len:
+            cut = line.rfind(" ", 1, max_len + 1)
+            if cut == -1:
+                cut = max_len
+            lines.append(line[:cut])
+            line = line[cut:].lstrip(" ")
+        lines.append(line)
     current = ""
 
     for line in lines:

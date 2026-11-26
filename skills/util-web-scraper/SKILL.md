@@ -11,7 +11,7 @@ metadata:
 
 URL을 제공하면 **자동으로 수집 → 인덱싱**하여 `http://localhost:5000`에서 검색 가능하게 만들어줍니다.
 
-> **전제 조건**: `C:\Users\lee21\Documents\GitHub\edusearch\` 폴더에 EduSearch가 설치되어 있어야 합니다.
+> **전제 조건**: EduSearch 가 `my-skills` 와 **같은 GitHub 폴더 안에 나란히**(`<GitHub 폴더>\edusearch\`) 설치되어 있어야 합니다. (GitHub 폴더 위치는 PC 마다 달라도 됩니다. 다른 곳에 있으면 중앙 `.env` 에 `UTIL_WEB_SCRAPER__EDUSEARCH_DIR=<폴더 경로>` 를 적습니다.)
 > 없다면 `git clone https://github.com/leechangsu2131/edusearch` 후 `pip install -r requirements.txt`
 
 ---
@@ -23,7 +23,7 @@ URL을 제공하면 **자동으로 수집 → 인덱싱**하여 `http://localhos
 1. **URL 확인** — 수집 대상 URL을 파악
 2. **스크래핑 실행**
    ```powershell
-   cd C:\Users\lee21\Documents\GitHub\edusearch
+   cd <GitHub 폴더>\edusearch
    python scraper.py --url <URL>
    ```
 3. **인덱스 재생성**

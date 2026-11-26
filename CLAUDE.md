@@ -14,5 +14,5 @@
 - 스킬 하나를 고칠 때는 그 폴더의 `SKILL.md`와 `ISSUES.md`부터 읽는다. 다른 스킬 폴더는 필요할 때만 연다.
 - `CATALOG.md`는 직접 고치지 않는다. 메타데이터를 고친 뒤 `python tools/build_catalog.py`, 마무리 전 `python tools/build_catalog.py --check`.
 - 비밀값은 중앙 `.env`, 결과물·개인정보는 `data_dir()` — 코드·문서·커밋 메시지에 비밀값·학생 정보·전화번호를 쓰지 않는다.
-- **다른 AI 작업자 관리(오케스트레이션)**: 작업자 브랜치·PR 검토·합치기, `docs/TASKS.md` 상태 정리, 빈 작업자에게 줄 프롬프트 만들기는 `docs/ORCHESTRATION.md` 절차대로 한다(집·학교 PC 공통). 검토 에이전트는 저장소의 `.claude/agents/reviewer.md`. 작업자 규칙은 `docs/WORKER_GUIDE.md`. Claude Code 는 `my-skills` 폴더에서 연다. 교사가 "현황", "작업자들 어때"라고 하면 `python tools/work_status.py --fetch --md` 로 시작하는 `docs/ORCHESTRATION.md` 0-1 순서를 돈다.
+- **다른 AI 작업자 관리(오케스트레이션)**: 작업자 브랜치·PR 검토·합치기, `docs/TASKS.md` 상태 정리, 빈 작업자에게 줄 프롬프트 만들기는 `docs/ORCHESTRATION.md` 절차대로 한다(집·학교 PC 공통). 검토 에이전트는 저장소의 `.claude/agents/reviewer.md`. 작업자 규칙은 `docs/WORKER_GUIDE.md`. Claude Code 는 `my-skills` 폴더에서 연다. 작업자에게 일을 주거나 P 일을 직접 하기 전에는 `python tools/claim_task.py <번호> --check`(로컬 CLI 작업자는 `start_worker.ps1 -Task <번호>`). 지금은 **수업 비서 묶음만** 일을 만들고 나눠 준다(docs/TASKS.md 맨 위 ★, ORCHESTRATION 0-0 — Antigravity 는 매주·Codex 는 매달 사용량이 새로 참, ChatGPT 웹은 맡기지 않음). 교사가 "현황", "작업자들 어때"라고 하면 `python tools/work_status.py --fetch --md` 로 시작하는 `docs/ORCHESTRATION.md` 0-1 순서를 돈다.
 - NEIS·에듀파인·메신저 발송·구매처럼 **실제로 바깥에 영향을 주는 실행**(제출, 발송, 결제, 삭제)은 사용자에게 먼저 묻는다. 시험은 `DRY_RUN` 류 설정이 있으면 그것부터 쓴다.

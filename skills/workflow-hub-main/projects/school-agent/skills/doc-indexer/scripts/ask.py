@@ -123,8 +123,8 @@ def ask_bot(query: str, top_k: int = 5):
     context_text = ""
     for idx, (meta, doc) in enumerate(results, 1):
         file_name = meta.get("file_name", "알 수 없음")
-        year = meta.get("year", "")
-        dept = meta.get("dept", "")
+        year = meta.get("year") or ""   # 못 찾아 None 으로 저장된 경우 'None' 글자가 프롬프트에 들어가지 않게
+        dept = meta.get("dept") or ""
         clean_doc = doc.replace('\n', ' ').strip()
         context_text += f"[문서 {idx}] {file_name} (연도: {year}, 부서: {dept})\n{clean_doc}\n\n"
 

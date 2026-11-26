@@ -31,6 +31,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - name: 설치 (build_catalog.py 가 PyYAML 을 씀)
+        run: pip install pyyaml
       - name: 스킬 형식 점검
         run: python tools/build_catalog.py --check
 
@@ -53,7 +55,7 @@ jobs:
             echo "::notice::tools/check_privacy.py(T22)가 아직 없어 개인정보 검사를 건너뜁니다."
             exit 0
           fi
-          # 오탐이 많아(코드값·타임스탬프 등, T58) 고칠 때까지는 경고만 남기고 막지 않는다
+          # T58 로 많이 줄었지만 사용자 경로·NEIS 10자리 코드 오탐이 남아(T78) 아직은 경고만 남기고 막지 않는다
           if [ -n "$BASE_REF" ]; then
             git diff "origin/${BASE_REF}...HEAD" | python tools/check_privacy.py --stdin --warn-only
           elif [ -n "$BEFORE" ] && [ "$BEFORE" != "0000000000000000000000000000000000000000" ]; then
@@ -68,14 +70,47 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        # 칸: name, dir, requirements(없으면 생략), extra(요구 파일에 빠진 패키지 — 공백으로 여러 개), target(기본 tests)
         include:
-          # 깨끗한 가상환경에 요구 파일만 설치해 통과를 확인한 것들 (2026-11-25)
+          # 깨끗한 가상환경에 요구 파일만 설치해 통과를 확인한 것들 (2026-11-25~26, docs/reviews/health-2026-11-26.md)
           - name: teacherlesson-assistant
             dir: skills/teacherlesson-assistant
             requirements: requirements.txt
+            # tests 폴더 밖에 있는 시험 2개(가짜 로컬 서버만 씀)도 함께 돌린다
+            target: tests test_assistant_server.py test_supabase_schedule.py
           - name: teacherlesson-guide-splitter
             dir: skills/teacherlesson-guide/splitter
             requirements: requirements-dev.txt
+          - name: personal-carrot
+            dir: skills/personal-carrot
+            requirements: requirements.txt
+          - name: personal-library-search
+            dir: skills/personal-library-search
+            requirements: requirements.txt
+          - name: util-pdf-translator
+            dir: skills/util-pdf-translator
+          - name: classmanage-exam-graderV2
+            dir: skills/classmanage-exam-graderV2
+            requirements: requirements.txt
+            extra: httpx # starlette TestClient 가 쓰는데 요구 파일에 없음
+          - name: personal-youtube-gemini-kakao-automation
+            dir: skills/personal-youtube-gemini-kakao-automation/v
+            requirements: requirements.txt
+          # 아래 셋은 요구 파일에 패키지가 빠져 있어 extra 로 따로 설치한다(요구 파일은 교사 결정 뒤 정리)
+          - name: classmanage-supabase-export
+            dir: skills/classmanage-supabase-export
+            extra: openpyxl requests pandas
+          - name: personal-obsidansystem-main
+            dir: skills/personal-obsidansystem-main
+            extra: pyyaml
+          - name: personal-record-trade
+            dir: skills/personal-record-trade
+            requirements: requirements-valuation.txt
+            extra: gspread google-auth yfinance
+          # 저장소 맨 위 tests/ (nlm·prepare_lessons·auto_split·check_privacy·build_catalog)
+          - name: repo-root
+            dir: .
+            extra: pyyaml PyMuPDF
     name: tests (${{ matrix.name }})
     defaults:
       run:
@@ -86,9 +121,17 @@ jobs:
         with:
           python-version: "3.12"
       - name: 설치
-        run: pip install -r ${{ matrix.requirements }} pytest
+        env:
+          REQ: ${{ matrix.requirements }}
+          EXTRA: ${{ matrix.extra }}
+        run: |
+          args=""
+          if [ -n "$REQ" ]; then args="-r $REQ"; fi
+          pip install $args $EXTRA pytest
       - name: 시험
-        run: python -m pytest tests -q
+        env:
+          TARGET: ${{ matrix.target || 'tests' }}
+        run: python -m pytest $TARGET -q
 
   known:
     runs-on: ubuntu-latest

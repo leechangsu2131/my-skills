@@ -1,11 +1,11 @@
 # 스킬 카탈로그
 
 > 이 파일은 `python tools/build_catalog.py`로 자동 생성된다. 직접 고치지 말고 각 스킬의 `SKILL.md` 앞머리(`metadata`)를 고친 뒤 다시 실행한다.
-> 생성일: 2026-11-26 · 스킬 58개
+> 생성일: 2026-11-26 · 스킬 59개
 
 ## 빠른 찾기
 
-- [🏫 학교 행정](#학교-행정) — 9개
+- [🏫 학교 행정](#학교-행정) — 10개
 - [📝 학생 기록·평가](#학생-기록평가) — 11개
 - [📚 수업·교사 도구](#수업교사-도구) — 11개
 - [🌐 홈페이지](#홈페이지) — 1개
@@ -20,6 +20,7 @@
 | `admin-class-buy` | ✅ 운영 | - | 학급운영비 개산급 정산 행을 준비하고 영수증별 증빙 DOCX를 만든다. 규정·에듀파인 절차 참고 문서가 포함되어 있다. | [SKILL](skills/admin-class-buy/SKILL.md) · [이슈](skills/admin-class-buy/ISSUES.md) |
 | `admin-edufine` | ✅ 운영 | - | K-에듀파인 물품 품의, 공문 기안, 결재/공람 대기 문서 확인과 관련한 RPA 및 웹 대시보드를 제공한다. | [SKILL](skills/admin-edufine/SKILL.md) · [이슈](skills/admin-edufine/ISSUES.md) 🔵4 · [README](skills/admin-edufine/README.md) |
 | `admin-gbetalk` | ✅ 운영 | - | 지비톡(경북교육청 업무 메신저)에서 받은 쪽지를 날짜·발신자와 함께 로컬 Markdown으로 보관·요약하고, 지비톡 문자(SMS) 창을 9222 Chrome에서 열어 문자를 채우고 확인 후 발송한다. 쪽지 답장은 하지 않는다. | [SKILL](skills/admin-gbetalk/SKILL.md) · [이슈](skills/admin-gbetalk/ISSUES.md) 🔵3 · [README](skills/admin-gbetalk/README.md) |
+| `admin-google-wallpaper` | 🔧 개발 | v0.1.0 | 학생 계정별 Chrome 프로필을 분리하고, 다운로드한 이미지와 시작 사이트를 설정한다. | [SKILL](skills/admin-google-wallpaper/SKILL.md) · [이슈](skills/admin-google-wallpaper/ISSUES.md) 🔵1 |
 | `admin-hitalk-sender` | ✅ 운영 | - | Google Sheets 명단과 템플릿으로 학생·학부모별 HiTalk 메시지를 작성한다. 미리보기·리허설 후 발송할 수 있다. | [SKILL](skills/admin-hitalk-sender/SKILL.md) · [이슈](skills/admin-hitalk-sender/ISSUES.md) |
 | `admin-neis-bot` | ✅ 운영 | - | NEIS 체험학습·결석 서류 접수, 출장·연수 등록, 창체/동아리 기록, 시간표 작업 등 교사 행정을 자동화한다. | [SKILL](skills/admin-neis-bot/SKILL.md) · [이슈](skills/admin-neis-bot/ISSUES.md) 🔵2 |
 | `admin-s2b-buyer` | ✅ 운영 | - | S2B에서 전국 최저가 검색·상세 비교·견적서 담기/삭제·에듀파인 연계 엑셀 받기를 사용자 Chrome으로 하고, 에듀파인 품의(admin-edufine)로 넘긴다. 실제 계약·구매 확정은 하지 않는다. | [SKILL](skills/admin-s2b-buyer/SKILL.md) · [이슈](skills/admin-s2b-buyer/ISSUES.md) |
@@ -49,7 +50,7 @@
 | `picture-book-library` | ✅ 운영 | - | 초등 그림책 수업 자료와 개인 서재를 연계하여 도서 추천, 카드 작성, 검색 색인 및 HTML 목록을 관리한다. | [SKILL](skills/picture-book-library/SKILL.md) · [이슈](skills/picture-book-library/ISSUES.md) |
 | `teacher-3dprint` | 🔧 개발 | - | 수업 아이디어·물체·지형을 실제 출력 가능한 STL로 설계한다. 실측 지형, 기능 부품, 식품 몰드 참고 절차와 독도 지형 예제가 있다. | [SKILL](skills/teacher-3dprint/SKILL.md) · [이슈](skills/teacher-3dprint/ISSUES.md) |
 | `teacherlesson-aiep-courseware` | ✅ 운영 | - | 상위 공통 수업꾸러미의 AIEP 어댑터. 경북 AIEP의 성취기준, LCMS·파일/링크 배치, 공개 범위와 학습 순서를 반영해 꾸러미를 만들고 학습자 미리보기를 점검한다. | [SKILL](skills/teacherlesson-aiep-courseware/SKILL.md) · [이슈](skills/teacherlesson-aiep-courseware/ISSUES.md) · [README](skills/teacherlesson-aiep-courseware/README.md) |
-| `teacherlesson-assistant` | 🔧 개발 | v0.1.0 | 진도표·지도서·출판사 사이트·녹음·메모를 묶은 교시별 수업 진행 화면과, 수업 뒤 메모를 정리해 다음 수업에 반영하는 Claude 작업 절차. | [SKILL](skills/teacherlesson-assistant/SKILL.md) · [이슈](skills/teacherlesson-assistant/ISSUES.md) 🔵18 · [README](skills/teacherlesson-assistant/README.md) |
+| `teacherlesson-assistant` | 🔧 개발 | v0.1.0 | 진도표·지도서·출판사 사이트·녹음·메모를 묶은 교시별 수업 진행 화면과, 수업 뒤 메모를 정리해 다음 수업에 반영하는 Claude 작업 절차. | [SKILL](skills/teacherlesson-assistant/SKILL.md) · [이슈](skills/teacherlesson-assistant/ISSUES.md) 🔵19 · [README](skills/teacherlesson-assistant/README.md) |
 | `teacherlesson-classtool-courseware` | ✅ 운영 | - | 클래스툴의 내 수업 보관함에서 수업자료를 설계하고, 링크·콘텐츠·OX·객관식·주관식·화이트보드 활동을 구성한다. 교사 자료실 공개와 학생 클래스 배포, 실시간 응답 흐름을 구분한다. | [SKILL](skills/teacherlesson-classtool-courseware/SKILL.md) · [이슈](skills/teacherlesson-classtool-courseware/ISSUES.md) |
 | `teacherlesson-courseware-builder` | ✅ 운영 | - | 플랫폼 공통 수업 패키지와 자료를 설계하고, AIEP·클래스툴 등 사이트별 어댑터로 콘텐츠 배치, 학생 응답 방식, 공개/배포 범위를 구분해 제작한다. 새 플랫폼은 어댑터와 카탈로그 항목으로 확장한다. | [SKILL](skills/teacherlesson-courseware-builder/SKILL.md) · [이슈](skills/teacherlesson-courseware-builder/ISSUES.md) |
 | `teacherlesson-from-neis` | ✅ 운영 | Chrome 확장 v1.7.2 | NEIS 수업내용과 학생 출결·신청 현황을 조회해 뷰어에 표시하고, 신청 내용을 확인해 선택한 결석신고서만 결석 구분과 Chrome에 저장한 유형별 결재선을 적용해 접수·승인요청한다. 최종 결재는 하지 않는다. | [SKILL](skills/teacherlesson-from-neis/SKILL.md) · [이슈](skills/teacherlesson-from-neis/ISSUES.md) 🔵2 · [README](skills/teacherlesson-from-neis/README.md) |

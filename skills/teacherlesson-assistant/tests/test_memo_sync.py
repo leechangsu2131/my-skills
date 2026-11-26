@@ -10,6 +10,7 @@ import json
 import os
 import pathlib
 import socket
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -136,6 +137,53 @@ class PushTests(Base):
         self.assertEqual(ms.memo_key("2026-11-25", 3, "수학", a), ms.memo_key("2026-11-25", "3", "수학", dict(a)))
         self.assertNotEqual(ms.memo_key("2026-11-25", 3, "수학", a), ms.memo_key("2026-11-25", 4, "수학", a))
         self.assertNotEqual(ms.memo_key("2026-11-25", 3, "수학", a), ms.memo_key("2026-11-25", 3, "수학", {**a, "text": "다른 글"}))
+
+    def test_a_stored_server_key_is_reused_and_a_junk_one_is_ignored(self):
+        # 내려받은 메모는 서버의 memo_key 를 달고 있다. 다시 올릴 때 그 키를 그대로 써야 서버가 같은 메모로 알아본다.
+        base = {"t": "01:00", "at": "2026-11-25T01:00:00.000Z", "kind": "note", "text": "내려받은 메모"}
+        row = ms.rows_for_session(session(memos=[{**base, "memo_key": "server-key-1"}]), pc="x")[0]
+        self.assertEqual(row["memo_key"], "server-key-1")
+        for junk in (None, "", 123, ["k"]):               # 문자열이 아니거나 빈 값이면 믿지 않고 계산한다
+            row = ms.rows_for_session(session(memos=[{**base, "memo_key": junk}]), pc="x")[0]
+            self.assertEqual(row["memo_key"], ms.memo_key("2026-11-25", 3, "수학", base), repr(junk))
+
+    def test_skip_kinds_setting_keeps_chosen_kinds_off_the_server(self):
+        s = session(memos=[
+            memo("good", "좋음", "2026-11-25T01:00:00.000Z"),
+            memo("step", "단계", "2026-11-25T01:01:00.000Z", idx=0),
+            memo("sys", "시스템", "2026-11-25T01:02:00.000Z"),
+            memo("adj", "조정", "2026-11-25T01:03:00.000Z", idx=0, delta=1),
+            memo("student", "학생 발표", "2026-11-25T01:04:00.000Z"),
+        ])
+        with mock.patch.dict(os.environ, {"MEMO_SKIP_KINDS": "step, sys,adj"}):
+            result = ms.push_session(s, data=self.data)
+        self.assertEqual((result["status"], result["sent"]), ("success", 1))
+        self.assertEqual([r["kind"] for r in self.net.requests[0]["body"]], ["good"])
+
+    def test_skip_kinds_setting_never_lets_student_memos_through(self):
+        s = session(memos=[memo("good", "좋음", "2026-11-25T01:00:00.000Z"),
+                           memo("student", "학생 발표", "2026-11-25T01:04:00.000Z")])
+        for setting in ("", "good", "student", " , "):
+            ms._pushed.clear()
+            self.net.requests.clear()
+            with mock.patch.dict(os.environ, {"MEMO_SKIP_KINDS": setting}):
+                ms.push_session(s, data=self.data)
+            sent = [r["kind"] for rec in self.net.requests for r in rec["body"]]
+            self.assertNotIn("student", sent, repr(setting))
+
+    def test_skip_kinds_setting_also_drops_rows_already_in_the_queue(self):
+        s = session(memos=[memo("good", "좋음", "2026-11-25T01:00:00.000Z"),
+                           memo("step", "단계", "2026-11-25T01:01:00.000Z", idx=0)])
+        self.net.handler = lambda rec: (_ for _ in ()).throw(urllib.error.URLError("offline"))
+        ms.push_session(s, data=self.data)                       # 못 올려서 대기열에 두 행이 쌓임
+        self.assertEqual(len(self.queue_files()), 1)
+        self.net.handler = lambda rec: None
+        self.net.requests.clear()
+        with mock.patch.dict(os.environ, {"MEMO_SKIP_KINDS": "step"}):
+            result = ms.flush_queue(self.data)
+        self.assertEqual(result["sent"], 1)
+        self.assertEqual([r["kind"] for r in self.net.requests[0]["body"]], ["good"])
+        self.assertEqual(self.queue_files(), [])
 
     def test_second_save_does_not_resend_known_memos(self):
         s = session(memos=[memo("note", "하나", "2026-11-25T01:00:00.000Z")])
@@ -317,7 +365,46 @@ class PullTests(Base):
         self.assertEqual((made["date"], made["period"], made["subject"], made["title"], made["record_key"]),
                          ("2026-11-24", 5, "도덕", "바른 생활", "lesson-0001"))
         self.assertEqual([m["text"] for m in made["memos"]], ["학교에서만 있는 수업"])
-        self.assertEqual(set(made["memos"][0]), {"t", "at", "kind", "text"})
+        self.assertEqual(set(made["memos"][0]), {"t", "at", "kind", "text", "memo_key"})
+        self.assertEqual(made["memos"][0]["memo_key"], self.rows[0]["memo_key"])        # 서버 키를 그대로 저장
+
+    def server_row_without_at(self, text="적은 시각 없는 메모", t="05:00"):
+        """적은 시각(at) 없이 저장된 메모가 서버에 올라가 있는 경우. 서버 키는 at 대신 t 로 계산돼 있다."""
+        raw = {"t": t, "kind": "note", "text": text}
+        row = ms.rows_for_session(session(memos=[raw]), pc="학교")[0]
+        row.update({"id": len(self.rows) + 1, "created_at": "2026-11-25T03:00:00+00:00"})
+        self.rows.append(row)
+        return row
+
+    def test_memo_without_at_is_not_added_again_on_every_pull(self):
+        row = self.server_row_without_at()
+        first = ms.pull(None, data=self.data)
+        self.assertEqual((first["added"], first["skipped"]), (1, 0))
+        again = ms.pull(None, data=self.data)
+        self.assertEqual((again["added"], again["skipped"]), (0, 1))
+        memos = json.loads(self.session_file().read_text(encoding="utf-8"))["memos"]
+        self.assertEqual(len(memos), 1)
+        self.assertEqual(memos[0]["memo_key"], row["memo_key"])
+
+    def test_pulled_memo_is_sent_back_under_the_same_key_not_a_new_one(self):
+        row = self.server_row_without_at()
+        ms.pull(None, data=self.data)
+        local = json.loads(self.session_file().read_text(encoding="utf-8"))
+        self.net.requests.clear()
+        ms.push_session(local, data=self.data)                    # 이 PC 에서 수업 메모를 저장할 때 전체를 다시 올림
+        sent = [r["memo_key"] for rec in self.net.requests if rec["method"] == "POST" for r in rec["body"]]
+        self.assertTrue(set(sent) <= {row["memo_key"]}, "내려받은 메모가 새 키로 서버에 또 올라감")
+
+    def test_local_memos_are_still_recognised_without_a_stored_key(self):
+        # 이 PC 에서 쓴 메모에는 서버 키가 없다. 올라간 뒤 받아도 같은 메모로 알아봐야 한다(기존 동작 유지).
+        mine = memo("note", "내가 쓴 것", "2026-11-25T01:00:00.000Z")
+        path = self.session_file()
+        path.parent.mkdir(parents=True)
+        path.write_text(json.dumps(session(memos=[mine]), ensure_ascii=False), encoding="utf-8")
+        self.rows.append({**ms.rows_for_session(session(memos=[mine]), pc="집")[0], "id": 1, "created_at": "2026-11-25T03:00:00+00:00"})
+        result = ms.pull(None, data=self.data)
+        self.assertEqual((result["added"], result["skipped"]), (0, 1))
+        self.assertEqual(json.loads(path.read_text(encoding="utf-8"))["memos"], [mine])
 
     def test_pagination_reads_every_page(self):
         for i in range(5):
@@ -388,6 +475,27 @@ class PullTests(Base):
             ms.main(["pull", "--all"])
         self.assertEqual([r["method"] for r in self.net.requests][:2], ["POST", "GET"])
         self.assertEqual(self.queue_files(), [])
+
+
+class CommandLineTests(Base):
+    """`python memo_sync.py ...` 를 진짜로 실행한다. 데이터 폴더는 임시 폴더로 바꾸고, 주소·키는 지워 인터넷에 나가지 않는다."""
+    SCRIPT = pathlib.Path(__file__).resolve().parents[1] / "memo_sync.py"
+
+    def run_cli(self, *args, console="ascii"):
+        env = {**os.environ, "PYTHONIOENCODING": console, "MY_SKILLS_DATA_DIR": self.tmp.name}
+        for name in ("SUPABASE_URL", "NEXT_PUBLIC_SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY"):
+            env.pop(name, None)
+        return subprocess.run([sys.executable, str(self.SCRIPT), *args], env=env, capture_output=True, timeout=60)
+
+    def test_output_is_utf8_even_when_the_console_cannot_show_korean(self):
+        done = self.run_cli("flush", console="ascii")             # 한국어를 못 쓰는 콘솔을 흉내 낸다
+        self.assertEqual(done.returncode, 0, done.stderr.decode("utf-8", "replace"))
+        self.assertIn("대기열", done.stdout.decode("utf-8"))
+
+    def test_utf8_helper_ignores_streams_that_cannot_be_reconfigured(self):
+        class Plain:
+            pass
+        ms._utf8_output((Plain(), None))                          # 예외 없이 지나가야 한다
 
 
 class SecretTests(Base):

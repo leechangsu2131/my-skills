@@ -146,7 +146,6 @@ def test_parse_flow_braces_inside_string_values_are_fine():
     assert flow["goal"] == "{x}" and flow["steps"][0]["say"] == "}"
 
 
-@pytest.mark.xfail(strict=True, reason="teacherlesson-assistant ISSUES.md: parse_flow 가 설명 글의 중괄호에 걸림")
 @pytest.mark.parametrize("text", [
     "참고로 {지도서 p.3} 기준입니다.\n" + as_text(flow_data()),
     as_text(flow_data()) + "\n(활동 {모둠} 은 상황에 맞게 바꾸세요)",
@@ -155,13 +154,37 @@ def test_parse_flow_explanation_containing_braces_around_json(text):
     assert pl.parse_flow(text)["goal"] == "분수의 덧셈을 이해한다"
 
 
-@pytest.mark.xfail(strict=True, reason="teacherlesson-assistant ISSUES.md: JSON null 이 'None' 글자로 저장됨")
 @pytest.mark.parametrize("data, texts", [
     ({"goal": None, "steps": [{"name": "도입"}]}, lambda f: [f["goal"]]),
     ({"materials": ["분수 막대", None], "steps": [{"name": "도입"}]}, lambda f: f["materials"]),
 ], ids=["goal null", "materials 안의 null"])
 def test_parse_flow_null_values_do_not_become_the_word_none(data, texts):
     assert "None" not in texts(pl.parse_flow(as_text(data)))
+
+
+def test_parse_flow_null_material_is_dropped_and_goal_becomes_empty():
+    # ISSUE-032 해결: null 은 빈 글·빠짐으로, 나머지 준비물은 그대로
+    flow = pl.parse_flow(as_text({"goal": None, "materials": ["분수 막대", None, "  ", "딱지"],
+                                  "steps": [{"name": "도입"}]}))
+    assert flow["goal"] == ""
+    assert flow["materials"] == ["분수 막대", "딱지"]
+
+
+def test_parse_flow_braces_in_both_explanations_and_nested_json():
+    # ISSUE-031 해결: 앞뒤 설명에 중괄호가 있고, JSON 안에도 중괄호 글자가 있어도 읽힌다
+    data = flow_data(goal="모둠 {짝} 활동")
+    text = "참고 {지도서 p.3}\n" + as_text(data) + "\n(끝 {모둠})"
+    assert pl.parse_flow(text)["goal"] == "모둠 {짝} 활동"
+
+
+def test_parse_flow_skips_empty_object_before_real_flow():
+    text = "예시 {} 는 비웠습니다.\n" + as_text(flow_data())
+    assert pl.parse_flow(text)["steps"][0]["name"] == "도입"
+
+
+def test_parse_flow_braces_only_in_explanation_still_an_error():
+    with pytest.raises(ValueError):
+        pl.parse_flow("참고 {지도서 p.3} 만 있고 JSON 은 없습니다. {끝}")
 
 
 # ──────────────────────────── parse_day ────────────────────────────

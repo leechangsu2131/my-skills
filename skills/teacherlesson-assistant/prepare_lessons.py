@@ -192,13 +192,27 @@ def lesson_section(lesson: dict) -> str:
 
 
 def _json_object(text: str) -> dict:
+    """응답 설명문 앞뒤에서 JSON 객체를 찾아 흐름 단계가 있는 것을 고른다."""
     start, end = text.find("{"), text.rfind("}")
     if start < 0 or end <= start:
         raise ValueError("JSON 을 찾지 못함")
-    data = json.loads(text[start:end + 1])
-    if not isinstance(data, dict):
-        raise ValueError("JSON 객체가 아님")
-    return data
+    decoder = json.JSONDecoder()
+    first_obj, first_error = None, None
+    pos = start
+    while 0 <= pos <= end:
+        try:
+            obj, _ = decoder.raw_decode(text, pos)
+        except json.JSONDecodeError as exc:
+            first_error = first_error or exc
+        else:
+            if isinstance(obj, dict):
+                if "steps" in obj:
+                    return obj
+                first_obj = first_obj if first_obj is not None else obj
+        pos = text.find("{", pos + 1)
+    if first_obj is not None:
+        return first_obj
+    raise first_error
 
 
 def _text_list(value, limit: int = 5) -> list[str]:
@@ -207,6 +221,12 @@ def _text_list(value, limit: int = 5) -> list[str]:
     if not isinstance(value, list):
         return []
     return [str(item).strip()[:500] for item in value if item is not None and str(item).strip()][:limit]
+
+
+def _material_list(value, limit: int) -> list[str]:
+    if isinstance(value, str):
+        value = re.split(r"[,、·\n]+", value)
+    return _text_list(value, limit)
 
 
 def parse_plan(text: str) -> dict:
@@ -269,7 +289,7 @@ def parse_plan(text: str) -> dict:
         raise ValueError("세부 단계가 12개를 넘음; 합칠 단계와 분 배분을 다시 정해야 함")
     return {"lesson_type": str(data.get("lesson_type") or "").strip()[:80],
             "goal": str(data.get("goal") or "").strip()[:300],
-            "materials": _text_list(data.get("materials"), 20), "steps": clean_steps,
+            "materials": _material_list(data.get("materials"), 20), "steps": clean_steps,
             "homework": str(data.get("homework") or "").strip()[:300],
             "pages": str(data.get("pages") or "").strip()[:100]}
 
@@ -293,7 +313,7 @@ def parse_flow(text: str, plan: dict | None = None) -> dict:
             if str(s.get("flag", "")).strip().lower() in ("keep", "cut"):
                 step["flag"] = str(s["flag"]).strip().lower()
             clean_steps.append(step)
-        return {"goal": str(data.get("goal") or "").strip(), "materials": _text_list(data.get("materials"), 12),
+        return {"goal": str(data.get("goal") or "").strip(), "materials": _material_list(data.get("materials"), 12),
                 "steps": clean_steps, "homework": str(data.get("homework") or "").strip(),
                 "pages": str(data.get("pages") or "").strip()}
     if not isinstance(steps, list) or len(steps) != len(plan["steps"]):
@@ -358,16 +378,18 @@ def prepare_one(cfg: dict, lesson: dict, cautions: list[str], model: str) -> tup
                 if plan is None:
                     failed_stage = "plan"
                     plan_prompt = PLAN_PROMPT.format(**prompt_values)
-                    plan_answer = nlm.gemini_ask(pdf, plan_prompt, model=model, timeout=120,
-                                                 work=tmp / f"gemini_plan{attempt}")
-                    model = nlm.LAST_MODEL or model
+                    plan_answer, model = nlm.gemini_ask(
+                        pdf, plan_prompt, model=model, timeout=120,
+                        model_timeout=45 if section else None,
+                        work=tmp / f"gemini_plan{attempt}")
                     plan = parse_plan(plan_answer)
                 failed_stage = "detail"
                 detail_values = dict(prompt_values, plan=json.dumps(plan, ensure_ascii=False, indent=2))
                 detail_prompt = DETAIL_PROMPT.format(**detail_values)
-                answer = nlm.gemini_ask(pdf, detail_prompt, model=model, timeout=120,
-                                        work=tmp / f"gemini_steps{attempt}")
-                model = nlm.LAST_MODEL or model
+                answer, model = nlm.gemini_ask(
+                    pdf, detail_prompt, model=model, timeout=120,
+                    model_timeout=45 if section else None,
+                    work=tmp / f"gemini_steps{attempt}")
                 flow = parse_flow(answer, plan)
                 break
             except RuntimeError as exc:

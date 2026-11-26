@@ -43,9 +43,15 @@ LESSON_FIELDS = (
 def safe_int(value, default=None):
     if value in (None, ""):
         return default
+    text = str(value).strip()
     try:
-        return int(str(value).strip())
+        return int(text)
     except (TypeError, ValueError):
+        pass
+    try:
+        # 시트·슈파베이스가 12.0 처럼 소수 꼴로 줄 때. 먼저 int 로 읽어 큰 정수는 그대로 둔다.
+        return int(float(text))
+    except (TypeError, ValueError, OverflowError):
         return default
 
 

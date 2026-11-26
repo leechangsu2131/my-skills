@@ -1,16 +1,12 @@
 import os
-import re
-import urllib3
+import json
 import requests
 import pandas as pd
 import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(next(p / "_shared" for p in _pl.Path(__file__).resolve().parents if (p / "_shared" / "skill_env.py").is_file())))
-from skill_env import load_env
-from pathlib import Path
-
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+from skill_env import load_env, data_dir
 
 def get_supabase_data():
-    # 상위 폴더(classmanage-notion-sync)의 .env 파일 로드 시도
+    # 공용 중앙 .env 파일에서 Supabase 설정을 불러온다.
     load_env()
     
     url = os.environ.get('SUPABASE_URL')
@@ -22,22 +18,40 @@ def get_supabase_data():
         return []
     
     headers = {'apikey': key, 'Authorization': f'Bearer {key}'}
-    res = requests.get(f'{url}/rest/v1/{table}?select=*', headers=headers, verify=False)
+    res = requests.get(f'{url}/rest/v1/{table}?select=*', headers=headers)
     if not res.ok:
         print("❌ Failed to fetch data:", res.status_code, res.text)
         return []
     return res.json()
 
+def _split_name_text(text):
+    """JSON 이 아닌 이름 글을 나눈다.
+
+    쉼표가 없으면 공백으로 나눈다. 쉼표가 있으면 쉼표로 먼저 나누고, 한 칸 안에
+    한 글자짜리 토막이 있으면('학생 A', '김 철수') 한 이름 안의 공백으로 본다.
+    토막이 모두 두 글자 이상이면('학생A 학생B') 여러 이름으로 나눈다.
+    """
+    if ',' not in text:
+        return text.split()
+    names = []
+    for part in text.split(','):
+        tokens = part.split()
+        if any(len(t) == 1 for t in tokens):
+            names.append(' '.join(tokens))
+        else:
+            names.extend(tokens)
+    return names
+
 def parse_names(raw_name):
     if not raw_name: return []
-    try:
-        if raw_name.strip().startswith('[') and raw_name.strip().endswith(']'):
-            import json
-            parsed = json.loads(raw_name)
-        else:
-            parsed = re.split(r'[,\s]+', raw_name)
-    except:
-        parsed = re.split(r'[,\s]+', raw_name)
+    text = raw_name.strip()
+    if text.startswith('[') and text.endswith(']'):
+        try:
+            parsed = [str(p) for p in json.loads(text) if p is not None]
+        except ValueError:
+            parsed = _split_name_text(text[1:-1])
+    else:
+        parsed = _split_name_text(text)
     return [p.strip() for p in parsed if p.strip()]
 
 def export_to_excel(records):
@@ -57,8 +71,13 @@ def export_to_excel(records):
             
             student_records[name].append(rec_copy)
             
+    # 이름이 하나도 없으면 시트 없는 엑셀은 만들 수 없으므로 알리고 끝낸다.
+    if not student_records:
+        print("⚠️ 이름이 적힌 기록이 없어 엑셀 파일을 새로 만들지 않았습니다.")
+        return
+
     # 2. 엑셀 파일 생성
-    output_file = Path(__file__).parent / "student_records.xlsx"
+    output_file = data_dir() / "student_records.xlsx"
     with pd.ExcelWriter(output_file, engine='openpyxl') as writer:
         for student, rows in sorted(student_records.items()):
             df = pd.DataFrame(rows)
@@ -68,7 +87,7 @@ def export_to_excel(records):
             sheet_name = student[:31].replace('/', '_').replace('\\', '_')
             df.to_excel(writer, sheet_name=sheet_name, index=False)
             
-    print(f"✅ 엑셀 추출 완료: 총 {len(student_records)}명의 시트가 '{output_file.name}'에 생성되었습니다!")
+    print(f"✅ 엑셀 추출 완료: 총 {len(student_records)}명의 시트가 개인 데이터 폴더에 생성되었습니다: {output_file}")
 
 if __name__ == "__main__":
     records = get_supabase_data()

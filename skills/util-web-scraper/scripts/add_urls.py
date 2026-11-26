@@ -6,11 +6,39 @@ add_urls.py - URL을 config.json에 추가하고 즉시 스크래핑 + 인덱싱
 import argparse
 import json
 import os
+import pathlib
 import subprocess
 import sys
 
-EDUSEARCH_DIR = r"C:\Users\lee21\Documents\GitHub\edusearch"
+sys.path.insert(0, str(next(p / "_shared" for p in pathlib.Path(__file__).resolve().parents if (p / "_shared" / "skill_env.py").is_file())))
+from skill_env import load_env
+
+load_env()  # 중앙 .env 의 UTIL_WEB_SCRAPER__EDUSEARCH_DIR 가 있으면 EDUSEARCH_DIR 로 읽힘
+
+
+def find_edusearch_dir():
+    """EduSearch 폴더 위치.
+    1) 중앙 .env 의 UTIL_WEB_SCRAPER__EDUSEARCH_DIR (또는 환경변수 EDUSEARCH_DIR)
+    2) 없으면 my-skills 저장소 폴더의 옆 폴더 `edusearch` (GitHub 폴더 위치가 PC 마다 달라도 같은 GitHub 폴더 밑에 나란히 있으므로)
+    """
+    configured = os.environ.get("EDUSEARCH_DIR", "").strip()
+    if configured:
+        return os.path.normpath(os.path.expanduser(os.path.expandvars(configured)))
+    repo_root = pathlib.Path(__file__).resolve().parents[3]  # scripts → util-web-scraper → skills → my-skills
+    return str(repo_root.parent / "edusearch")
+
+
+EDUSEARCH_DIR = find_edusearch_dir()
 CONFIG_PATH = os.path.join(EDUSEARCH_DIR, "config.json")
+
+
+def check_edusearch_dir():
+    """EduSearch 폴더가 없으면 설치 방법을 알리고 종료한다."""
+    if not os.path.isdir(EDUSEARCH_DIR):
+        print(f"[ERROR] EduSearch 폴더를 찾을 수 없습니다: {EDUSEARCH_DIR}")
+        print("  → my-skills 와 같은 GitHub 폴더 안에 받아 두세요: git clone https://github.com/leechangsu2131/edusearch")
+        print("  → 다른 곳에 있으면 중앙 .env 에 UTIL_WEB_SCRAPER__EDUSEARCH_DIR=<폴더 경로> 를 적으세요.")
+        sys.exit(1)
 
 
 def load_config():
@@ -71,6 +99,7 @@ if __name__ == "__main__":
     parser.add_argument("--no-run", action="store_true", help="추가만 하고 스크래핑은 하지 않음")
     args = parser.parse_args()
 
+    check_edusearch_dir()
     added = add_urls(args.urls, use_selenium=args.selenium)
 
     if added and not args.no_run:

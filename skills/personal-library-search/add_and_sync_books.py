@@ -89,9 +89,22 @@ def _title_score(search_title, result_title):
     # 한쪽이 다른 쪽을 포함
     if a in b or b in a:
         return 0.8
-    # 공통 글자 비율
-    common = sum(1 for c in a if c in b)
-    return common / max(len(a), len(b))
+    # 공통 글자 비율 — 글자 순서를 지키며 겹치는 최대 길이(LCS)로 센다.
+    # (순서·개수를 안 보면 'abcabc' 와 'cbacba' 가 완전 일치가 된다)
+    return _lcs_length(a, b) / max(len(a), len(b))
+
+
+def _lcs_length(a, b):
+    """두 글에서 순서를 지키며 겹치는 글자 수의 최댓값(가장 긴 공통 부분 수열)."""
+    if len(a) < len(b):
+        a, b = b, a
+    prev = [0] * (len(b) + 1)
+    for ca in a:
+        cur = [0]
+        for j, cb in enumerate(b, 1):
+            cur.append(prev[j - 1] + 1 if ca == cb else max(prev[j], cur[j - 1]))
+        prev = cur
+    return prev[-1]
 
 
 def search_bookstore(title, author):

@@ -2,7 +2,7 @@
 
 각 스크립트는 불러올 때 중앙 .env 를 읽고 requests 를 바꿔 놓는다(verify=False).
 시험에서는 가짜 skill_env 로 .env 읽기를 막고, 시험이 끝나면 requests 를 되돌린다.
-소스는 고치지 않는다. 현재 동작과 다르게 기대하는 것은 xfail 로 표시하고 이유를 적었다.
+소스는 고치지 않는다(T63 에서 xfail 2개는 소스를 고쳐 풀었다). 현재 동작과 다르게 기대하는 것은 xfail 로 표시하고 이유를 적었다.
 """
 import importlib.util
 import sys
@@ -83,13 +83,23 @@ def test_title_score_in_range(sync_books):
     assert 0.0 <= s <= 1.0
 
 
-@pytest.mark.xfail(
-    reason="공통 글자 비율이 순서·개수를 보지 않아 글자만 같고 순서가 다른 제목('abcabc' 와 'cbacba')도 1.0 이 된다. "
-    "낱글자 비교 방식의 한계.",
-    strict=False,
-)
 def test_title_score_same_letters_different_order_is_not_perfect(sync_books):
     assert sync_books._title_score("abcabc", "cbacba") < 1.0
+
+
+def test_title_score_counts_repeated_letters_once_each(sync_books):
+    # 'aaaa' 와 'abxyz' 는 a 가 하나뿐이라 겹치는 글자는 1개 → 1/5 (예전 방식은 4/5 로 셌다)
+    assert sync_books._title_score("aaaa", "abxyz") == pytest.approx(0.2)
+
+
+def test_title_score_similar_order_stays_high(sync_books):
+    assert sync_books._title_score("abcdef", "abcxef") == pytest.approx(5 / 6)
+
+
+def test_lcs_length_basic(sync_books):
+    assert sync_books._lcs_length("abcde", "ace") == 3
+    assert sync_books._lcs_length("ace", "abcde") == 3
+    assert sync_books._lcs_length("abc", "xyz") == 0
 
 
 # ── extract_text_from_property (add_and_sync_books / request_books) ──
@@ -173,14 +183,17 @@ def test_parse_text_file_empty_file(import_books, tmp_path):
     assert import_books.parse_text_file(str(_write(tmp_path, ""))) == []
 
 
-@pytest.mark.xfail(
-    reason="줄 안에 '제목 + URL' 이 같이 있으면 그 앞 글은 버려지고 이전에 모은 글만 제목이 된다(제목이 비어 나옴).",
-    strict=False,
-)
 def test_parse_text_file_title_and_url_on_same_line(import_books, tmp_path):
     p = _write(tmp_path, "책 제목 https://example.com/c\n")
     books = import_books.parse_text_file(str(p))
     assert books and "책 제목" in books[0]["raw_text"]
+
+
+def test_parse_text_file_title_and_url_same_line_keeps_earlier_lines(import_books, tmp_path):
+    p = _write(tmp_path, "앞줄 제목\n책 제목 https://example.com/c\n다음 책\nhttps://example.com/d\n")
+    books = import_books.parse_text_file(str(p))
+    assert [b["raw_text"] for b in books] == ["앞줄 제목 책 제목", "다음 책"]
+    assert [b["url"] for b in books] == ["https://example.com/c", "https://example.com/d"]
 
 
 # ── request_books.load_library_accounts / get_books_to_request ──

@@ -83,6 +83,15 @@ v0.1은 "복사하고 하이클래스 열기"까지만. 자동 게시는 ISSUES 
 
 `teacherlesson-guide` 스킬로 옮겼다: `python ..\teacherlesson-guide\download\guide_download.py <과목…>` (selenium 설치된 Python) → 같은 스킬의 splitter → mapper.
 
+### F. 수업 메모 동기화 — 부품만 있고 아직 연결 전
+
+`memo_sync.py` 가 수업 메모를 Supabase `lesson_memos` 표에 올리고(`push_session`) 다른 PC 의 것을 받아 `sessions/` 파일에 합친다(`pull`). 서버(`assistant_server.py`)·아침 bat 에는 **아직 연결하지 않았다**. 연결 전에 교사 결정이 필요하다(TASKS T49: 📝·🔧·🎤 자유 글 메모에 학생 이름이 있으면 그대로 올라감).
+
+- 명령: `python memo_sync.py pull [--days N | --since YYYY-MM-DD | --all] [--if-older 시간]`, `python memo_sync.py flush`. 주소·키는 중앙 `.env` 에서 읽고 출력하지 않는다.
+- 🙋 학생 메모(`student`)는 절대 올리지도 받지도 않는다. 다른 종류를 더 빼려면 `.env` 의 `TEACHERLESSON_ASSISTANT__MEMO_SKIP_KINDS=step,sys,adj`(올리기만 막음).
+- 같은 메모는 `memo_key` 로 한 번만 들어간다. 받은 메모에는 서버의 키를 그대로 저장해 둔다. 키를 다시 계산하면 적은 시각(`at`)이 달라 다른 값이 나와 중복이 생기므로, 저장된 키가 있으면 그것을 쓴다.
+- 실제 DB 로 올리기·받기는 교사 확인 뒤에만 한다. 시험은 가짜 서버(`tests/test_memo_sync.py`).
+
 ## 연결되는 스킬
 
 - `teacherlesson-schedule` — 옛 Google Sheets 진도표·수업배치(진도 원본은 이제 Supabase, `supabase_schedule.py`. config `schedule_backend` 가 `supabase` 가 아닐 때만 옛 진도 서버 사용)

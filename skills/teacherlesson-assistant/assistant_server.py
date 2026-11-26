@@ -790,6 +790,8 @@ class Handler(BaseHTTPRequestHandler):
             return self._json({"status": "error", "message": "이 PC의 수업 비서 화면에서만 열 수 있어요."}, 403)
         url = urllib.parse.urlparse(self.path)
         q = urllib.parse.parse_qs(url.query)
+        if url.path == "/favicon.ico":
+            return self._send(200, (WEB / "favicon.svg").read_bytes(), "image/svg+xml; charset=utf-8")
         if url.path in ("/", "/index.html"):
             return self._send(200, (WEB / "index.html").read_bytes(), "text/html; charset=utf-8")
         if url.path == "/api/state":

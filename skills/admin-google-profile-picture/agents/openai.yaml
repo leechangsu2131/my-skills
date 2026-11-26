@@ -1,0 +1,4 @@
+interface:
+  display_name: Google 계정 사진 관리
+  short_description: 학생별 계정 사진과 Chrome 프로필 관리
+  default_prompt: 학생 Google 계정의 프로필 사진을 지정한 폴더의 사진으로 바꾸고 Chrome 프로필을 만들어 줘

@@ -10,32 +10,55 @@ metadata:
 
 # 수업 비서 (teacherlesson-assistant)
 
-- **수업 화면** (`assistant_server.py` + `web/index.html`) — Supabase에서 시간표를 읽고 완료·연장·이동·오늘 교시의 과목 변경을 Supabase에 저장한다. 수업 비서는 왼쪽 모니터 약 1/3, 수업 사이트는 오른쪽 모니터 전체를 쓴다(오른쪽 화면이 없으면 왼쪽 화면의 나머지 영역). `🎯 수업 진행`은 수업 단계·발문·활동·남은 시간에 집중하는 모드이고, 오늘 저장된 녹음은 화면에서 찾아 재생·저장할 수 있다. 수업 기록은 차시 ID별로 로컬 데이터 폴더에 저장한다. Supabase 연결에 중앙 `.env`의 `SUPABASE_URL`(또는 `NEXT_PUBLIC_SUPABASE_URL`)과 `SUPABASE_SERVICE_ROLE_KEY`가 필요하다. 과목별 차시 자료 자동 열기 도우미는 `sites/`(음악 Douclass, 사회 아이스크림·Douclass, Selenium)이며, 미술 아트앤컬쳐 도우미는 아직 구현 전이다(ISSUES ISSUE-006). 실행 방법·화면 기능·저장 위치·지도서 받기는 [README.md](README.md).
-- **Claude 작업 절차** (아래) — 화면은 `flows/`·`units/` 를 읽고, 교사가 ✏ 로 고친 흐름은 저장한다(고친 흐름은 자동 준비가 덮어쓰지 않음).
+- **수업 화면** (`assistant_server.py` + `web/index.html`)
+  - Supabase에서 시간표를 읽는다. 완료·연장·이동, 그리고 오늘 교시의 과목 바꾸기를 Supabase에 저장한다.
+  - 화면 배치: 수업 비서는 왼쪽 모니터의 약 1/3, 수업 사이트는 오른쪽 모니터 전체를 쓴다. 오른쪽 모니터가 없으면 왼쪽 화면의 남는 자리에 놓는다.
+  - `🎯 수업 진행`은 수업 단계·발문·활동·남은 시간만 크게 보여 주는 모드다. 오늘 저장된 녹음은 화면에서 찾아 재생하고 저장할 수 있다.
+  - 수업 기록은 차시 ID별로 내 컴퓨터의 데이터 폴더에 저장한다.
+  - Supabase에 연결하려면 중앙 `.env`에 `SUPABASE_URL`(또는 `NEXT_PUBLIC_SUPABASE_URL`)과 `SUPABASE_SERVICE_ROLE_KEY`가 있어야 한다.
+  - 과목별로 차시 자료를 자동으로 열어 주는 도우미는 `sites/`에 있다(음악 Douclass, 사회 아이스크림·Douclass, Selenium). 미술 아트앤컬쳐 도우미는 아직 만들지 않았다(ISSUES ISSUE-006).
+  - 실행 방법·화면 기능·저장 위치·지도서 받기는 [README.md](README.md)에 있다.
+- **Claude 작업 절차** (아래) — 화면은 `flows/`·`units/` 폴더를 읽는다. 교사가 ✏로 고친 흐름은 따로 저장하며, 자동 준비가 그것을 덮어쓰지 않는다.
 
-교사가 화면 쓰는 법을 물으면 [README.md](README.md)의 "교사용 사용 설명서 (한 장)"를 쉬운 말로 안내한다(순서: 날짜·교시 → ☀ 오늘 준비 또는 🌙 내일 준비 → 지금 할 일 → 메모 → 진도 조정). 연락처 안내는 로컬 `config.json`의 `phones`에 있는 내선만 보여 주며, 외부 번호나 개인 휴대전화는 코드·문서·저장소에 옮기지 않는다.
+교사가 화면 쓰는 법을 물으면 [README.md](README.md)의 "교사용 사용 설명서 (한 장)"를 쉬운 말로 알려 준다. 순서는 이렇다: 날짜·교시 고르기 → ☀ 오늘 준비 또는 🌙 내일 준비 → 지금 할 일 → 메모 → 진도 조정. 연락처 안내는 내 컴퓨터의 `config.json` 안 `phones`에 적힌 내선번호만 보여 준다. 외부 번호나 개인 휴대전화 번호는 코드·문서·저장소에 옮기지 않는다.
 
-데이터 폴더: `내 문서\my-skills-data\teacherlesson-assistant\` (config, units, flows, sessions, publisher_notes). 학생 이름이 들어간 메모·녹음은 이 폴더에만 두고 기억(memory)·CLAUDE.md·깃·홈페이지에 옮기지 않는다.
+데이터 폴더: `내 문서\my-skills-data\teacherlesson-assistant\` (config, units, flows, sessions, publisher_notes). 학생 이름이 들어간 메모·녹음은 이 폴더에만 둔다. 기억(memory)·CLAUDE.md·깃·홈페이지에는 옮기지 않는다.
 
 ## 역할 나눔 (토큰 아끼기)
 
-- **날마다 쓰는 기능은 Claude 토큰 0**: 단원 개관(`build_units.py`), 진도 조정, AI 준비 자료 모으기는 규칙·스크립트로 돈다.
-- **수업 상담·많이 읽기는 웹 AI**(Claude·Gemini·ChatGPT·NotebookLM): 화면의 **🤖 AI와 수업 준비** 단추가 지도서 PDF를 모으고 질문을 복사해 AI 사이트를 연다. 학생 메모·녹음은 넣지 않는다.
-- **Claude Code(이 스킬)**: 자동화·연결·검토 — 지도서 받기·나누기, 진도표 연결, 화면 기능 고치기, 수업 정리.
+- **날마다 쓰는 기능은 Claude 토큰을 쓰지 않는다.** 단원 개관(`build_units.py`), 진도 조정, AI 준비 자료 모으기는 규칙과 스크립트가 처리한다.
+- **수업 상담이나 긴 글 읽기는 웹 AI**(Claude·Gemini·ChatGPT·NotebookLM)가 한다. 화면의 **🤖 AI와 수업 준비** 단추가 지도서 PDF를 모으고 질문을 복사한 뒤 AI 사이트를 열어 준다. 학생 메모·녹음은 넣지 않는다.
+- **Claude Code(이 스킬)**는 자동화·연결·검토를 맡는다: 지도서 받기·나누기, 진도표 연결, 화면 기능 고치기, 수업 정리.
 
 ## Claude 작업 절차
 
 ### A. 수업 흐름 — 자동 준비가 기본 (Claude 토큰 0)
 
-"내일 수업 준비해줘" → `python prepare_lessons.py --date tomorrow` (화면의 **🌙 수업 준비** 단추·아침 bat 와 같은 일). 흐름 없는 차시마다 지도서에서 그 차시 구간을 가져와 Gemini가 먼저 수업 형태·단계·시간을 정하고, 두 번째 요청에서 각 단계를 교사 행동·발문·학생 활동·예상 반응·지원·확인점으로 채운다. 수업 활동에 맞게 4~8개 단계로 구성하고 합계는 40분으로 잡는다. 지도서에 없는 내용은 "운영 제안"으로 구분하며 학생의 구체적인 개인 경험을 지어내지 않는다. 결과 줄(성공·실패·이유)만 보고한다. 사람이 고친 흐름은 덮어쓰지 않는다(`--redo` 는 자동 흐름만).
+"내일 수업 준비해줘"라고 하면 `python prepare_lessons.py --date tomorrow`를 돌린다. 화면의 **🌙 수업 준비** 단추, 아침 bat와 같은 일이다.
 
-자동 준비가 `Gemini 연결 실패`로 끝나면 같은 요청을 곧바로 반복하지 않는다. 수업 화면에서 해당 차시를 고른 뒤 **🤖 AI와 수업 준비 → NotebookLM**을 열어 질문을 붙여 넣는다. 과목 노트북에 해당 단원·차시 지도서가 있는지 확인하고, 맞는 소스만 선택해 답을 받는다. NotebookLM 답을 `flows/<record_key>.json`에 저장할 때는 지도서 쪽수·실제 활동 순서·40분 합계·각 단계의 교사 행동과 발문·학생 행동·예상 반응·도움·확인을 확인한다. 소스가 없거나 차시가 다르면 흐름을 만들지 말고 실패 이유를 보고한다. 이 대체 절차는 사람이 확인해 저장하며 자동 대체는 아니다.
+- 흐름이 없는 차시마다 지도서에서 그 차시 부분을 가져온다.
+- Gemini에게 두 번 묻는다. 첫 번째 요청에서 수업 형태·단계·시간을 정한다. 두 번째 요청에서 각 단계를 교사 행동·발문·학생 활동·예상 반응·지원·확인점으로 채운다.
+- 수업 활동에 맞게 4~8개 단계로 나누고, 시간 합계는 40분으로 한다.
+- 지도서에 없는 내용은 "운영 제안"이라고 따로 표시한다. 학생의 구체적인 개인 경험은 지어내지 않는다.
+- 보고는 결과 줄(성공·실패·이유)만 한다.
+- 사람이 고친 흐름은 덮어쓰지 않는다. `--redo`는 자동으로 만든 흐름만 다시 만든다.
 
-아래 손 절차는 교사가 **그 차시를 콕 집어** Claude 에게 직접 만들어 달라고 할 때만 한다.
+자동 준비가 `Gemini 연결 실패`로 끝나면 같은 요청을 바로 되풀이하지 않는다. 대신 이렇게 한다.
 
-1. `GET http://127.0.0.1:5180/api/state?date=YYYY-MM-DD`로 Supabase 진도표의 수업을 찾는다.
-2. `http://127.0.0.1:5180/api/pdf/<record_key>`(그 차시 쪽만 잘린 PDF)에서 텍스트를 뽑는다. Supabase 경로가 다른 PC의 `pdf_splits`를 가리키면 `teacherlesson-schedule.schedule.resolve_pdf_path()`가 경로의 `N단원`을 이용해 같은 단원 폴더 또는 한 단계 위 학년 폴더의 원본 지도서를 찾는다. 지도서 전체를 통째로 읽지 않는다.
-3. `flows/<record_key>.json`을 쓴다. 지도서 문장은 수업 중 한눈에 보이게 줄인다.
+1. 수업 화면에서 그 차시를 고르고 **🤖 AI와 수업 준비 → NotebookLM**을 열어 질문을 붙여 넣는다.
+2. 과목 노트북에 그 단원·차시 지도서가 들어 있는지 보고, 맞는 소스만 골라 답을 받는다.
+3. 받은 답을 `flows/<record_key>.json`에 저장하기 전에 다음을 확인한다: 지도서 쪽수, 실제 활동 순서, 40분 합계, 단계마다 교사 행동·발문·학생 행동·예상 반응·도움·확인이 있는지.
+4. 소스가 없거나 차시가 다르면 흐름을 만들지 않는다. 실패한 이유를 보고한다.
+
+이 대체 방법은 사람이 확인하고 저장하는 것이다. 자동으로 바뀌지 않는다.
+
+아래 손 절차는 교사가 **그 차시를 콕 집어** Claude에게 직접 만들어 달라고 할 때만 한다.
+
+1. `GET http://127.0.0.1:5180/api/state?date=YYYY-MM-DD`로 Supabase 진도표에서 그날 수업을 찾는다.
+2. `http://127.0.0.1:5180/api/pdf/<record_key>`(그 차시 쪽만 잘라 낸 PDF)에서 글을 뽑는다.
+   - Supabase에 적힌 경로가 다른 PC의 `pdf_splits`를 가리키면 `teacherlesson-schedule.schedule.resolve_pdf_path()`가 경로의 `N단원`을 보고 같은 단원 폴더, 또는 한 단계 위 학년 폴더에서 원본 지도서를 찾아 준다.
+   - 지도서 전체를 통째로 읽지 않는다.
+3. `flows/<record_key>.json`을 쓴다. 수업 중 한눈에 보이도록 지도서 문장을 줄여 쓴다.
 
 ```json
 {
@@ -46,58 +69,71 @@ metadata:
 }
 ```
 
-4. `tip`에는 그 수업의 `cautions`(출판사 주의점)와 `recent_memos`(같은 과목 지난 고칠점)를 실제로 적용한다.
-5. 지도서에서 확인이 안 된 부분(쪽 누락, 스캔 PDF 등)을 보고한다.
+4. `tip`에는 그 수업의 `cautions`(출판사 주의점)와 `recent_memos`(같은 과목에서 지난번에 고칠 점으로 적은 것)를 실제로 반영한다.
+5. 지도서에서 확인하지 못한 부분(빠진 쪽, 스캔 PDF 등)은 보고한다.
 
 ### A-1. 오늘 교시 과목 바꾸기
 
-실제로 수업하지 않는 과목이 오늘 예정 슬롯에 있으면 **진도 조정 → 과목·차시 바꾸기**에서 다른 과목의 미완료 차시를 고른다. Supabase 예정 슬롯에서만 동작한다. 확인 뒤 선택한 차시를 오늘 슬롯으로 옮기며, 기존 과목 차시는 완료 처리하지 않고 다음 같은 과목 시간으로 넘긴다. 기존 과목의 뒤 차시도 각 다음 같은 과목 슬롯으로 이동하고, 현재 계획 끝을 넘는 마지막 차시는 날짜 없는 `planned` 슬롯으로 남긴다. 선택 과목에서 선택한 차시보다 앞선 미완료 차시는 완료 처리하고, 선택 뒤 차시는 그 과목의 기존 예정 슬롯에 순서대로 배치한다. 날짜 지난 슬롯이나 실제 수업 여부가 불확실할 때는 자동으로 바꾸지 말고 교사가 차시를 확인하게 한다. 구현 기록은 ISSUES ISSUE-044.
+오늘 예정 시간에 실제로는 하지 않는 과목이 들어 있으면, **진도 조정 → 과목·차시 바꾸기**에서 다른 과목의 아직 안 한 차시를 고른다. Supabase에 있는 예정 슬롯에서만 동작한다. 확인을 누르면 이렇게 움직인다.
 
-### A-2. 단원 개관 — 자동 (Claude 판단 없음)
+- 고른 차시를 오늘 슬롯으로 옮긴다.
+- 원래 있던 과목의 차시는 완료로 바꾸지 않고, 그 과목의 다음 수업 시간으로 넘긴다. 그 뒤 차시들도 각각 다음 같은 과목 슬롯으로 한 칸씩 밀린다. 현재 계획의 끝을 넘는 마지막 차시는 날짜 없는 `planned` 슬롯으로 남긴다.
+- 고른 과목에서 고른 차시보다 앞에 있는 안 한 차시는 완료 처리한다. 고른 차시 뒤의 차시는 그 과목의 기존 예정 슬롯에 순서대로 놓는다.
 
-`py -3.13 build_units.py` (bat 가 12시간마다 실행). 단원 흐름은 진도표 행을 그대로 묶고, 단원 개관 PDF는 1차시 지도서에서 첫 차시 앞쪽을 규칙(`LESSON_START`)으로 자른다. 수학처럼 분할 결과에 plan 묶음이 있으면 그것을 쓴다. `summary`·`goals`·`cautions`·`assessment` 칸은 있으면 보여 주고 지우지 않지만, Claude가 새로 쓰지 않는다.
+날짜가 이미 지난 슬롯이거나 실제로 수업했는지 확실하지 않으면 자동으로 바꾸지 않는다. 교사가 차시를 확인하게 한다. 만든 과정은 ISSUES ISSUE-044에 있다.
 
-### A-3. NotebookLM 소스 — "NotebookLM 소스 만들어줘" (학기 초·새 지도서 받은 뒤)
+### A-2. 단원 개관 — 자동 (Claude가 판단하지 않음)
 
-`py -3.13 notebook_sources.py [과목…] [--all]` 를 돌리고 출력 줄(구간 수·단어 수·PDF 없음·⚠ 한도)을 그대로 보고한다. 소스 내용을 Claude가 읽거나 요약하지 않는다. "구간 1개"인 단원은 차시 표시를 못 찾은 것이므로 그 PDF의 차시 머리 모양을 확인해 `KOREAN_LESSON`/`STAGE` 규칙을 고친다. 업로드·노트북 주소 등록은 교사가 한다(README).
+`py -3.13 build_units.py`를 돌린다(bat가 12시간마다 실행한다).
 
-차시 번호가 비어 있다고 해당 행을 버리거나 지도서 전체를 Gemini에 넘기지 않는다. `build_units.infer_lesson_numbers()`는 앞뒤 번호가 빈 행 수와 정확히 맞을 때만 번호를 추론한다. NotebookLM 소스 생성 뒤 `prepare_lessons.lesson_section()`이 그 차시 번호 범위 또는 번호 없는 단계 제목으로 올바른 구간을 가져오는지 확인한다.
+- 단원 흐름은 진도표 행을 그대로 묶어 만든다.
+- 단원 개관 PDF는 1차시 지도서에서 첫 차시 앞부분을 규칙(`LESSON_START`)으로 잘라 만든다. 수학처럼 나눈 결과에 plan 묶음이 있으면 그것을 쓴다.
+- `summary`·`goals`·`cautions`·`assessment` 칸에 내용이 있으면 보여 주고 지우지 않는다. 하지만 Claude가 새로 쓰지는 않는다.
 
-- 번호 없는 단계 제목 단원(국어 3.5 매체 등)의 매핑과 사례는 ISSUES ISSUE-025.
+### A-3. NotebookLM 소스 — "NotebookLM 소스 만들어줘" (학기 초·새 지도서를 받은 뒤)
 
-### B-0. 미술 아트앤컬쳐 사이트 — 도우미 구현 대기
+`py -3.13 notebook_sources.py [과목…] [--all]`을 돌리고, 출력 줄(구간 수·단어 수·PDF 없음·⚠ 한도)을 그대로 보고한다. Claude가 소스 내용을 읽거나 요약하지 않는다.
 
-경로·진도 불일치·할 일은 ISSUES ISSUE-006. 도우미를 추가할 때 로그인 값은 코드/config 에 넣지 말고 공용 Chrome 프로필 로그인 세션을 먼저 확인한다. 자동으로 진도를 고치지 말고 실제 진도부터 확인한다.
+- "구간 1개"로 나온 단원은 차시 표시를 찾지 못한 것이다. 그 PDF에서 차시 머리 모양을 확인하고 `KOREAN_LESSON`/`STAGE` 규칙을 고친다.
+- 업로드와 노트북 주소 등록은 교사가 한다(README).
+
+차시 번호가 비어 있다고 그 행을 버리거나, 지도서 전체를 Gemini에 넘기지 않는다. `build_units.infer_lesson_numbers()`는 앞뒤 번호 사이에 빈 행 수가 정확히 맞을 때만 번호를 짐작해 채운다. NotebookLM 소스를 만든 뒤에는 `prepare_lessons.lesson_section()`이 그 차시 번호 범위, 또는 번호 없는 단계 제목으로 맞는 구간을 가져오는지 확인한다.
+
+- 번호 없는 단계 제목 단원(국어 3.5 매체 등)의 연결 방법과 사례는 ISSUES ISSUE-025에 있다.
+
+### B-0. 미술 아트앤컬쳐 사이트 — 도우미 만들기 기다리는 중
+
+경로, 진도가 어긋난 곳, 할 일은 ISSUES ISSUE-006에 있다. 도우미를 추가할 때는 로그인 값을 코드나 config에 넣지 않는다. 먼저 공용 Chrome 프로필에 로그인되어 있는지 확인한다. 진도를 자동으로 고치지 말고, 실제 진도부터 확인한다.
 
 ### C. 수업 정리 — "오늘 수업 정리해줘"
 
-1. `sessions/<날짜>/*.json`을 읽고 과목별 잘된 점·고칠 점을 요약한다.
-2. 같은 출판사에서 반복되는 특징(예: "아이스크림: 활동은 재밌지만 개념 설명이 단순")은 `publisher_notes.json` 추가 후보로 제시하고, **교사가 동의한 것만** 넣는다.
-3. 🙋 학생 발표 메모는 `observations/<학기>.csv`(날짜, 과목, 차시, 학생, 내용)에 모은다. 평가 문구로 자동 변환하지 않는다(`classmanage-student-eval-generator`의 일).
-4. 진도가 실제와 어긋났으면 화면의 진도 조정 단추를 안내한다. 시트 변경은 교사 확인 뒤에만.
-5. 녹음은 지금은 클로바노트 등으로 받아쓰고, 받아쓴 텍스트가 있으면 함께 분석한다.
+1. `sessions/<날짜>/*.json`을 읽고 과목별로 잘된 점·고칠 점을 요약한다.
+2. 같은 출판사에서 되풀이되는 특징(예: "아이스크림: 활동은 재밌지만 개념 설명이 단순")은 `publisher_notes.json`에 넣을 후보로 보여 준다. **교사가 동의한 것만** 넣는다.
+3. 🙋 학생 발표 메모는 `observations/<학기>.csv`(날짜, 과목, 차시, 학생, 내용)에 모은다. 평가 문구로 자동 변환하지 않는다. 그것은 `classmanage-student-eval-generator`가 하는 일이다.
+4. 진도가 실제와 다르면 화면의 진도 조정 단추를 안내한다. 시트를 바꾸는 일은 교사가 확인한 뒤에만 한다.
+5. 녹음은 지금은 클로바노트 등으로 받아쓴다. 받아쓴 글이 있으면 함께 분석한다.
 
 ### D. 알림장 — "알림장 올려줘"
 
-v0.1은 "복사하고 하이클래스 열기"까지만. 자동 게시는 ISSUES 다음 단계 1번. 게시 전에는 반드시 교사 확인.
+v0.1은 "복사하고 하이클래스 열기"까지만 한다. 자동으로 올리는 기능은 ISSUES 다음 단계 1번에 있다. 올리기 전에는 반드시 교사에게 확인한다.
 
 ### E. 지도서 받기 — "지도서 받아줘"
 
-`teacherlesson-guide` 스킬로 옮겼다: `python ..\teacherlesson-guide\download\guide_download.py <과목…>` (selenium 설치된 Python) → 같은 스킬의 splitter → mapper.
+`teacherlesson-guide` 스킬로 옮겼다. `python ..\teacherlesson-guide\download\guide_download.py <과목…>`을 돌린다(selenium이 설치된 Python). 이어서 같은 스킬의 splitter, 그다음 mapper 순서로 한다.
 
 ### F. 수업 메모 동기화 — 부품만 있고 아직 연결 전
 
-`memo_sync.py` 가 수업 메모를 Supabase `lesson_memos` 표에 올리고(`push_session`) 다른 PC 의 것을 받아 `sessions/` 파일에 합친다(`pull`). 서버(`assistant_server.py`)·아침 bat 에는 **아직 연결하지 않았다**. 연결 전에 교사 결정이 필요하다(TASKS T49: 📝·🔧·🎤 자유 글 메모에 학생 이름이 있으면 그대로 올라감).
+`memo_sync.py`는 수업 메모를 Supabase `lesson_memos` 표에 올리고(`push_session`), 다른 PC에서 올린 메모를 받아 `sessions/` 파일에 합친다(`pull`). 서버(`assistant_server.py`)와 아침 bat에는 **아직 연결하지 않았다**. 연결하기 전에 교사가 결정해야 한다(TASKS T49: 📝·🔧·🎤 자유 글 메모에 학생 이름이 있으면 그대로 올라간다).
 
-- 명령: `python memo_sync.py pull [--days N | --since YYYY-MM-DD | --all] [--if-older 시간]`, `python memo_sync.py flush`. 주소·키는 중앙 `.env` 에서 읽고 출력하지 않는다.
-- 🙋 학생 메모(`student`)는 절대 올리지도 받지도 않는다. 다른 종류를 더 빼려면 `.env` 의 `TEACHERLESSON_ASSISTANT__MEMO_SKIP_KINDS=step,sys,adj`(올리기만 막음).
-- 같은 메모는 `memo_key` 로 한 번만 들어간다. 받은 메모에는 서버의 키를 그대로 저장해 둔다. 키를 다시 계산하면 적은 시각(`at`)이 달라 다른 값이 나와 중복이 생기므로, 저장된 키가 있으면 그것을 쓴다.
-- 실제 DB 로 올리기·받기는 교사 확인 뒤에만 한다. 시험은 가짜 서버(`tests/test_memo_sync.py`).
+- 명령: `python memo_sync.py pull [--days N | --since YYYY-MM-DD | --all] [--if-older 시간]`, `python memo_sync.py flush`. 주소와 키는 중앙 `.env`에서 읽으며 화면에 출력하지 않는다.
+- 🙋 학생 메모(`student`)는 절대 올리지도 받지도 않는다. 다른 종류도 빼고 싶으면 `.env`에 `TEACHERLESSON_ASSISTANT__MEMO_SKIP_KINDS=step,sys,adj`를 적는다(올리기만 막는다).
+- 같은 메모는 `memo_key`로 한 번만 들어간다. 받은 메모에는 서버가 준 키를 그대로 저장해 둔다. 키를 다시 계산하면 적은 시각(`at`)이 달라 다른 값이 나오고 중복이 생긴다. 그래서 저장된 키가 있으면 그것을 쓴다.
+- 실제 DB로 올리거나 받는 일은 교사가 확인한 뒤에만 한다. 시험은 가짜 서버(`tests/test_memo_sync.py`)로 한다.
 
 ## 연결되는 스킬
 
-- `teacherlesson-schedule` — 옛 Google Sheets 진도표·수업배치(진도 원본은 이제 Supabase, `supabase_schedule.py`. config `schedule_backend` 가 `supabase` 가 아닐 때만 옛 진도 서버 사용)
+- `teacherlesson-schedule` — 옛 Google Sheets 진도표·수업배치. 진도 원본은 이제 Supabase(`supabase_schedule.py`)다. config의 `schedule_backend`가 `supabase`가 아닐 때만 옛 진도 서버를 쓴다.
 - `teacherlesson-from-neis` — 나이스 주간학습안내(보결·시간표 변경)
-- `teacherlesson-guide` — 지도서 받기·분할·진도표 행 생성
+- `teacherlesson-guide` — 지도서 받기·나누기·진도표 행 만들기
 - `admin-hitalk-sender` — 하이클래스 자동 전송 참고
-- `util-notebooklm` — 긴 지도서에서 찾기(Gemini CLI)·쪽 잘라내기·NotebookLM 소스·노트북 목록. 지도서를 통째로 읽어야 할 것 같으면 먼저 `nlm.py find`
+- `util-notebooklm` — 긴 지도서에서 찾기(Gemini CLI), 쪽 잘라내기, NotebookLM 소스, 노트북 목록. 지도서를 통째로 읽어야 할 것 같으면 먼저 `nlm.py find`를 쓴다.

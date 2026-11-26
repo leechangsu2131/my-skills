@@ -29,3 +29,4 @@
 - 2026-11-26 16:39 T52 시작 (브랜치 task/T52-prompt-improve)
 - 2026-11-26 16:42 T52 PR 올림 — skills/teacherlesson-assistant/docs/plans/T52-prompt.md 신규(코드 안 고침). 지금은 PROMPT 가 PLAN_PROMPT·DETAIL_PROMPT 둘이라 둘 다 새 문안+이유. 시간 배분(합계 40·도입/마무리 3~5분·한 단계 12분 이하)은 PLAN, 열린 질문·경험 연결 발문·3학년 말·분량 상한은 DETAIL. 경험 연결은 PERSONAL_STORY 필터 때문에 발문으로, 예상 반응은 관찰 문장으로. 자리표시자·JSON 구조 같음, 손으로 만든 답이 parse_plan·parse_flow 통과 확인. 실제 Gemini 반응은 못 봄(확인 필요)
 - 2026-11-27 06:07 T57 (teacherlesson-assistant) 시작 (브랜치 task/T57-easy-korean-assistant)
+- 2026-11-27 06:08 T57 (teacherlesson-assistant) PR 올림 — SKILL.md 를 쉬운 한국어로 다시 씀(긴 문장을 목록·짧은 문장으로, 뜻·명령·JSON 예시·metadata 그대로). 확인: build_catalog --check 통과, 개인정보 검사 통과. 못 한 것: 문장이 교사에게 더 쉬운지는 교사 확인 필요

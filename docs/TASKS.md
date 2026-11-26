@@ -117,8 +117,9 @@
 |---|---|---|---|---|
 | T77 | teacherlesson-schedule: 수업배치 전체를 다시 쓰는 쓰기 경로 7개(`/api/catch-up`·`done`·push·extend·pull·move·swap)를 잠금 하나로 감싸기(지금은 catch-up 만, ISSUE-004 한계) | `server.py`, 시험 | catch-up 과 push 동시 요청 시험 | P · 열림 |
 | T78 | `tools/check_privacy.py` 남은 것: ① 사용자 경로(`C:\Users\<이름>`)는 경고만, 종료 코드에서 빼기 + `…`·`...`·`xxx` 는 예시로 보기 ② 전화번호 가운데 묶음 첫 자리 `[1-9]`(NEIS 10자리 기관 코드 오탐) ③ 하이픈 없는 13자리 주민번호는 날짜 + 검증 숫자가 맞을 때만 ④ `.env` 를 `diff --git` 줄에서도 찾기, `secret_` 은 `secret_[A-Za-z0-9]{40,}` 로 좁히기. 다 되면 PR 설명에 check.yml `--warn-only` 빼기 제안(공용 파일이라 직접 고치지 말 것) | `tools/check_privacy.py`, `tests/test_check_privacy.py` | 오탐·미탐 시험 통과, 열린 브랜치 diff 에서 오탐 0 | R · 열림 |
-| T79 | teacherlesson-assistant ISSUE-033 남은 점: 앞 차시로 따라잡아 마치면 원래 칸의 뒤 차시가 지난 날에 '예정'으로 남음 → 다음 칸으로 밀지 **교사 결정** 뒤 고치기 | `supabase_schedule.py`, `test_supabase_schedule.py` | 재현 시험 통과 | P · 교사 결정 대기 |
+| T79 | teacherlesson-assistant ISSUE-033 남은 점: 앞 차시로 따라잡아 마치면 원래 칸의 뒤 차시가 지난 날에 '예정'으로 남음. **교사 결정(2026-11-26): 뒤 차시들을 다음 칸으로 민다. 또는 따라잡기 확인 창에서 "뒤 차시를 다음 칸으로 밀까요?" 물어서 고르게** (기본은 밀기, 묻는 쪽이 쉬우면 그렇게) | `supabase_schedule.py`, `web/index.html`(확인 창), `test_supabase_schedule.py` | L1 따라잡기·완료 뒤 L2 가 다음 수업일에 나오는 시험 통과 | P · 열림 |
 | T80 | util-webtoguide: 결과가 늘 같은 `guide_output.md`·`images/` 에 저장돼 다음 글이 덮어씀 → 글마다 하위 폴더(`data_dir(..., "output", <글 번호>)`) | `webtoguide.py`, 시험 | 두 글 변환 시험에서 서로 안 덮음 | R · 열림 |
+| T81 | `tools/merge_ready.py`: 이미 다른 판으로 main 에 들어간 브랜치를 '문서·시험만'으로 보고 다시 합치려 함(2026-11-26 `feature/pure-function-tests` — ISSUES 내용이 두 번 들어갈 뻔함). 바뀐 파일마다 브랜치가 더한 줄이 main 에 이미 거의 있으면, 또는 그 TASKS 번호가 이미 `완료`면 '건너뜀(다른 판으로 합쳐짐)'으로 | `tools/merge_ready.py`, 시험 | 가짜 저장소 시험 | R · 열림 |
 
 ## S. 상시 일 — 고를 일이 없을 때 언제든 (번호를 브랜치에 넣고, 대상 스킬을 일지에 적어 겹치지 않게)
 

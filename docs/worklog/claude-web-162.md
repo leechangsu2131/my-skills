@@ -23,3 +23,4 @@
 - 2026-11-26 10:54 T78 시작 (브랜치 task/T78-privacy-check-rest)
 - 2026-11-26 11:04 T78 PR 올림 — tools/check_privacy.py: 사용자 경로는 경고만(종료 값 제외)·…/.../xxx 는 예시, 전화번호 가운데 묶음 [1-9], 하이픈 없는 13자리 주민번호는 날짜+검증 숫자, .env 를 diff --git 줄에서도 찾기, secret_ 은 40자 이상. 시험 60→87개 통과. 열린 PR 14개 diff 모두 0건, 저장소 전체 표본에서 전화번호 모양 250→46건. check.yml 은 건드리지 않고 PR 설명에 --warn-only 제거 제안
 - 2026-11-26 16:39 T52 시작 (브랜치 task/T52-prompt-improve)
+- 2026-11-26 16:42 T52 PR 올림 — skills/teacherlesson-assistant/docs/plans/T52-prompt.md 신규(코드 안 고침). 지금은 PROMPT 가 PLAN_PROMPT·DETAIL_PROMPT 둘이라 둘 다 새 문안+이유. 시간 배분(합계 40·도입/마무리 3~5분·한 단계 12분 이하)은 PLAN, 열린 질문·경험 연결 발문·3학년 말·분량 상한은 DETAIL. 경험 연결은 PERSONAL_STORY 필터 때문에 발문으로, 예상 반응은 관찰 문장으로. 자리표시자·JSON 구조 같음, 손으로 만든 답이 parse_plan·parse_flow 통과 확인. 실제 Gemini 반응은 못 봄(확인 필요)

@@ -74,7 +74,7 @@ git push
 git push origin --delete <브랜치>     # 합친 작업자 브랜치 정리(선택)
 ```
 - 합친 뒤 곧바로 `git push`. 그사이 원격이 바뀌어 푸시가 거절되면 `git pull --rebase=merges` 로 받는다(그냥 `--rebase` 는 합치기 커밋을 풀어 커밋 번호가 바뀌어, GitHub 가 그 PR·브랜치를 '안 합쳐짐'으로 보여 줌 — 2026-11-25 실제로 생김. 그때는 PR 을 손으로 닫으면 됨).
-- 충돌이 나면 작업자에게 되돌려 보내기보다, 작으면 여기서 고치고 크면 PR 에 이유를 적어 돌려보낸다.
+- 충돌이 나면 작업자에게 되돌려 보내기보다, 작으면 여기서 고치고 크면 PR 에 이유를 적어 돌려보낸다. 일지·문서 충돌은 `python tools/resolve_conflicts.py`(아래 4-1).
 - 고칠 점이 있으면 합치지 말고 작업자에게 넘길 **고칠 목록**을 만들어 교사에게 준다(작업자에게 그대로 붙여 넣을 수 있게).
 
 ## 4. 목록 정리와 다음 일 나눠 주기
@@ -84,6 +84,43 @@ git push origin --delete <브랜치>     # 합친 작업자 브랜치 정리(선
   기본 틀은 [WORKER_GUIDE.md](WORKER_GUIDE.md) 의 "작업자 프로젝트에 넣을 지침 문구" + 그 일의 TASKS 줄.
 - 서로 같은 파일을 두 작업자에게 주지 않는다.
 - 일을 주기 전, 그리고 **오케스트레이터가 P 일을 직접 하기 전에도** `python tools/claim_task.py <번호> --check`. 2026-11-25 T23 은 작업자가 이미 PR 까지 올린 일을 교사 PC 가 main 에 따로 또 만들었다.
+
+## 4-1. 오케스트레이터 노하우 (2026-11-25~26 실제로 겪은 것 — 다른 PC 의 Claude Code 도 같은 수준으로)
+
+**일하는 곳**
+- 합치기는 원래 `my-skills` 폴더가 아니라 **임시 작업 폴더**에서: `git worktree add --detach <임시경로>\orch origin/main`, 합칠 때마다 `git switch -C orch-<이름> origin/main`. 원래 폴더는 로컬 IDE(Codex·Antigravity)가 쓰는 중일 때가 많다. 끝나면 `git worktree remove`.
+- 로컬 IDE 의 작업은 원격에 없을 수 있다 → `git worktree list`·`git -C <폴더> status`·`git stash list` 로 어디 있는지부터. 커밋 안 한 변경이면 그 IDE 에서 커밋·`sync_work.py save` 부터.
+
+**합치기 전에 볼 것**
+1. 같은 일이 이미 다른 판으로 들어갔나: TASKS 상태·`tools/merge_ready.py`(T81 뒤로 다른 판 합침은 건너뜀).
+2. 충돌 미리 보기: `git merge-tree --write-tree --name-only origin/main origin/<브랜치>` (0 이면 깨끗).
+3. 개인정보: `git diff --no-textconv origin/main...<브랜치> | python tools/check_privacy.py --stdin`. **학생 이름은 검사기가 못 찾는다** → 데이터 폴더(OneDrive)의 학생 명단과 대조해 **건수만** 본다(이름을 화면에 내지 않음). `--no-textconv` 를 빼면 PDF 가 낀 diff 가 잘린다.
+4. 코드가 바뀐 브랜치는 진도·쓰기 경로(`supabase_schedule.py` 등)에 시험이 있는지 본다. 없으면 합치되 TASKS 에 시험 일을 남긴다.
+
+**여러 브랜치를 한 번에 합칠 때**
+- 통합 브랜치에서 하나씩 `git merge --no-ff`. 충돌은 `python tools/resolve_conflicts.py` (일지는 시간순으로 자동, `--keep-both docs/...ISSUES.md` 는 두 쪽 다 남김). 코드 충돌은 직접 판단하거나 작업자에게.
+- ISSUES 충돌에서 한쪽이 **옛 백로그판**(이미 🟢 해결로 옮겨진 항목)을 들고 오면 새 항목만 남긴다. ISSUE 번호가 겹치면 합칠 때 다시 매긴다.
+- 지운 원격 브랜치는 커밋 번호를 커밋 메시지에 남긴다(되살리기 `git push origin <커밋>:refs/heads/<브랜치>`).
+
+**시험**
+- 시험 돌리는 Python 을 고정한다(교사 PC: Python 3.11 — 기본 `python` 에는 fitz 등 몇 패키지가 없음). CI 와 같은 대상(.github/workflows/check.yml 의 matrix)을 돌린다.
+- 이번에 안 바뀐 스킬이 실패하면 그 PC 의 패키지 문제일 수 있다: `git diff --stat origin/main HEAD -- skills/<스킬>` 이 비면 이번 합치기 탓이 아니다.
+- node 시험은 파일을 직접: `node --test tests/<파일>.test.js` (폴더만 주면 '모듈 없음'으로 실패처럼 보임).
+
+**올리기**
+- main 직접 푸시는 교사가 "합쳐줘·푸시해" 한 뒤. 올리기 직전 `git fetch` 로 뒤처졌는지 보고, 뒤처졌으면 `git pull --rebase=merges`(그냥 `--rebase` 금지).
+- 받는 PC 에서 파일이 지워지는 합치기(추적 해제 등)는 그 PC 에서 먼저 백업하라고 교사에게 알린다.
+
+**윈도우에서 문서·스크립트 고칠 때의 함정**
+- 한글이 든 파이썬을 bash 로 바로 넘기면(heredoc·`python -c`) cp949·이스케이프 문제가 난다(`"\t…"` 가 탭이 됨) → 파일로 써서 `python -X utf8 파일.py`, 경로 문자열은 raw string.
+- 저장소 파일은 CRLF 가 섞여 있다(autocrlf). 고칠 때 `open(…, newline="")` 로 읽고 써서 줄 끝을 그대로 둔다. 표의 상태 칸을 정규식으로 바꿀 때 `\s*$` 가 `\r` 을 먹지 않게.
+- PowerShell 은 변수 이름 대소문자를 구분하지 않는다(`$tool` = 매개변수 `$Tool`). PowerShell 5.1 스크립트(`.ps1`)는 BOM 을 유지해야 한글이 안 깨진다 — 고친 뒤 `[Parser]::ParseFile` 로 문법 확인.
+
+**작업자 관리에서 배운 것**
+- 같은 일 겹침은 거의 '다른 폴더에서 일함'·'잡았다는 표시를 바로 안 올림'에서 생긴다 → `claim_task.py`(작은 일), `sync_work.py`(로컬 IDE), 큰 프로젝트 표(영역 파일).
+- 큰 프로젝트끼리는 `web/index.html` 같은 큰 공용 파일에서 제일 많이 부딪힌다 → 먼저 끝난 쪽을 그날 합치고, 다른 쪽에 "합쳤다 → `sync_work.py save`".
+- 작업자에게 주는 규칙은 예외 없이 쓴다. "보통 ○○ 모양"처럼 쓰면 작업자가 그 모양이 아닐 때 의심하고 멈춘다(이름 규칙 사례).
+- 교사에게는 짧은 한국어로: 한 일 → 확인한 것 → 교사가 할 일·결정할 것. 작업자에게 붙여 넣을 말은 코드 블록으로.
 
 ## 5. PC 마다 한 번 준비할 것
 

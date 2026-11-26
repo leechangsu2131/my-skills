@@ -259,7 +259,6 @@ def test_show_toc_끝쪽_항목이_없으면_물음표(toc_mod, monkeypatch, tmp
     assert out.count("?") == 1
 
 
-@pytest.mark.xfail(strict=True, reason="ISSUE-004: 끝쪽이 null(None)이면 '?' 가 아니라 'None' 으로 보임(수동 입력으로 끝쪽을 비우면 null 로 저장됨)")
 def test_show_toc_끝쪽이_null_이어도_물음표로_보여야_한다(toc_mod, monkeypatch, tmp_path, capsys):
     monkeypatch.setattr(toc_mod, "TOC_PATH", tmp_path / "toc.json")
     toc_mod.save_toc([{"chapter": 2, "title": "둘째", "start_page": 10, "end_page": None}])
@@ -323,7 +322,6 @@ def test_auto_mode_취소하거나_잘못된_입력이면_저장하지_않는다
     assert not (tmp_path / "toc.json").exists()
 
 
-@pytest.mark.xfail(strict=True, reason="ISSUE-001: 범위 밖 번호만 고르면 빈 목록으로 기존 toc.json 을 덮어씀")
 def test_auto_mode_범위_밖_번호만_골라도_기존_목차를_지우지_않아야_한다(toc_mod, monkeypatch, tmp_path):
     toc_path = tmp_path / "toc.json"
     monkeypatch.setattr(toc_mod, "TOC_PATH", toc_path)
@@ -381,7 +379,6 @@ def _existing_two_chapters(toc_mod, tmp_path):
     return toc_path, existing
 
 
-@pytest.mark.xfail(strict=True, reason="ISSUE-002: '이어서 추가(y)' 는 chapters 가 기존 목록과 같은 리스트라 새 챕터를 넣어도 '변경사항 없음'이 되어 저장되지 않음")
 def test_manual_mode_이어서_추가하면_번호가_이어진다(toc_mod, monkeypatch, tmp_path):
     toc_path, existing = _existing_two_chapters(toc_mod, tmp_path)
     monkeypatch.setattr(toc_mod, "TOC_PATH", toc_path)
@@ -412,7 +409,6 @@ def test_manual_mode_처음부터_다시_입력하면_새_목차로_바뀐다(to
     assert [c["chapter"] for c in saved] == [1, 2, 3]
 
 
-@pytest.mark.xfail(strict=True, reason="ISSUE-002: '처음부터 다시' 를 골랐는데 새 챕터 수가 기존 이하이면 입력이 저장되지 않고 사라짐")
 def test_manual_mode_처음부터_다시_입력한_챕터가_기존보다_적어도_저장되어야_한다(toc_mod, monkeypatch, tmp_path):
     toc_path, _ = _existing_two_chapters(toc_mod, tmp_path)
     monkeypatch.setattr(toc_mod, "TOC_PATH", toc_path)
@@ -630,10 +626,16 @@ def test_split_message_한도와_딱_맞는_한_줄(discord_mod):
     assert chunks == ["b" * 1900]
 
 
-@pytest.mark.xfail(strict=True, reason="ISSUE-003: 한도보다 긴 한 줄(문단)은 나뉘지 않아 Discord 한도(2000자)를 넘겨 전송 실패")
 def test_split_message_한도보다_긴_한_줄도_나눠야_한다(discord_mod):
     chunks = discord_mod.split_message("c" * 50, max_len=20)
     assert all(len(c) <= 20 for c in chunks)
+
+
+def test_split_message_긴_줄은_낱말_사이에서_자르고_내용을_보존한다(discord_mod):
+    line = " ".join(["가나다라"] * 30)
+    chunks = discord_mod.split_message("머리\n" + line + "\n꼬리", max_len=23)
+    assert all(0 < len(c) <= 23 for c in chunks)
+    assert " ".join(chunks).split() == ["머리", *line.split(), "꼬리"]
 
 
 class FakeResponse:

@@ -178,6 +178,14 @@
 
 ## 🟢 해결됨
 
+### ISSUE-035: 수업 비서 favicon.ico 404 (2026-11-25)
+- **상태**: 🟢 해결 (2026-11-25)
+- **증상**: 브라우저가 `/favicon.ico`를 요청하지만 서버에 경로가 없어 404 응답
+- **원인**: `Handler.do_GET()`에 파비콘 경로가 없음
+- **해결/조치**: 작은 SVG 책 아이콘을 `web/favicon.svg`로 추가하고 `/favicon.ico` 요청에 SVG 이미지로 응답. 화면 HTML에도 파비콘 연결
+- **관련 파일**: `assistant_server.py`, `web/index.html`, `web/favicon.svg`, `test_assistant_server.py`
+
+
 ### ISSUE-030: test_supabase_schedule.py 의 '여기부터 다시 잡기' 시험 4개가 실패함 (2026-11-25 발견)
 - **상태**: 🟢 해결 (2026-11-25, T45 claude-web-173 — 시험만 고쳤고 코드는 그대로)
 - **증상**: `python -m unittest test_assistant_server test_supabase_schedule` → 67개 중 `CatchUpTest` 4개 실패(`KeyError: 'completed'`, `'error' != 'success'`). 문서 정리 전(main 그대로)에도 같음

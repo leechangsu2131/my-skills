@@ -18,6 +18,7 @@
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import pathlib
@@ -54,6 +55,8 @@ DEFAULT_AI_SITES = [
 ]
 PROGRESS_ACTIONS = {"done", "extend", "push", "catch-up", "replace-subject"}
 _lock = threading.Lock()
+# 녹음 조각 순번 기록: 파일 경로 → {"next": 다음에 받을 순번, "hashes": 조각마다 sha1(재전송 구분용)}. 서버를 끄면 사라진다.
+_REC_STATE: dict[str, dict] = {}
 
 
 # ──────────────────────────── 설정 ────────────────────────────
@@ -880,7 +883,8 @@ class Handler(BaseHTTPRequestHandler):
         raw = self.rfile.read(length) if length else b""
         try:
             if url.path == "/api/rec":
-                return self._json(save_audio(q, raw))
+                result = save_audio(q, raw)
+                return self._json(result, 409 if result.get("code") == "gap" else 200)
             body = json.loads(raw.decode("utf-8") or "{}")
             if url.path == "/api/open-site":
                 cfg = load_config()
@@ -1026,23 +1030,79 @@ def ask_prepare(body: dict) -> dict:
                        + (f" (없음: {', '.join(missing)})" if missing else "")}
 
 
+def _rec_gap(path: pathlib.Path, expected: int, got: int) -> dict:
+    """순번이 건너뛰어 온 조각은 받지 않고, 먼저 보내야 할 순번을 알려 준다(클라이언트가 다시 보냄)."""
+    return {"status": "error", "code": "gap", "expected": expected, "got": got, "file": path.name,
+            "message": f"앞 조각이 빠졌어요. {expected}번 조각부터 다시 보내 주세요."}
+
+
 def save_audio(q: dict, raw: bytes) -> dict:
+    """녹음 조각(seq 0, 1, 2, …)을 순서대로 이어 붙인다(ISSUE-010).
+
+    - 이미 받은 순번이 같은 내용으로 다시 오면(응답을 못 받고 재전송) 쓰지 않고 성공으로 답한다.
+    - 순번이 건너뛰면 쓰지 않고 code='gap' 오류로 먼저 필요한 순번(expected)을 알려 준다.
+    - 쓰다 실패하면 반쯤 쓴 조각이 남지 않게 되돌린다.
+    """
     day = q.get("date", [""])[0]
     date.fromisoformat(day)  # 날짜 형식 검사
     name = safe_name(q.get("name", ["rec"])[0])
     seq = int(q.get("seq", ["0"])[0])
+    if seq < 0:
+        raise ValueError("조각 순번이 올바르지 않아요.")
     ext = "mp4" if q.get("ext", ["webm"])[0] == "mp4" else "webm"
     path = SESSIONS / day / f"{name}.{ext}"
     path.parent.mkdir(parents=True, exist_ok=True)
+    key = str(path)
+    digest = hashlib.sha1(raw).hexdigest()
     with _lock:
-        if seq == 0 and path.exists():  # 앞 녹음을 덮어쓰지 않는다
-            n = 2
-            while (SESSIONS / day / f"{name}_{n}.{ext}").exists():
-                n += 1
-            raise ValueError(f"같은 이름 녹음이 있어요. 이름: {name}_{n}")
-        with open(path, "wb" if seq == 0 else "ab") as fh:
-            fh.write(raw)
-    return {"status": "success", "bytes": path.stat().st_size, "file": path.name}
+        state = _REC_STATE.get(key)
+
+        def ok(**extra) -> dict:
+            size = path.stat().st_size if path.exists() else 0
+            return {"status": "success", "bytes": size, "file": path.name,
+                    "next": _REC_STATE[key]["next"], **extra}
+
+        if state is not None and seq < state["next"]:
+            known = state["hashes"][seq]
+            if known is None or known == digest:  # 응답을 못 받아 다시 보낸 같은 조각
+                return ok(duplicate=True)
+            if seq == 0:
+                pass  # 같은 이름의 새 녹음 — 아래에서 이름 겹침 오류
+            else:
+                raise ValueError(f"{seq}번 조각이 이미 있는데 내용이 달라요. 새 녹음으로 시작해 주세요.")
+        if seq == 0:
+            if path.exists():  # 앞 녹음을 덮어쓰지 않는다
+                n = 2
+                while (SESSIONS / day / f"{name}_{n}.{ext}").exists():
+                    n += 1
+                raise ValueError(f"같은 이름 녹음이 있어요. 이름: {name}_{n}")
+            before = 0
+            new_state = {"next": 1, "hashes": [digest]}
+        else:
+            if state is None:
+                if not path.exists():  # 첫 조각(머리 정보) 없이는 재생이 안 되므로 받지 않는다
+                    return _rec_gap(path, 0, seq)
+                # 서버를 다시 켠 뒤 이어서 오는 조각: 순번을 알 수 없으니 이 조각부터 이어 붙인다
+                state = {"next": seq, "hashes": [None] * seq}
+            if seq > state["next"]:
+                return _rec_gap(path, state["next"], seq)
+            before = path.stat().st_size
+            new_state = {"next": seq + 1, "hashes": state["hashes"][:seq] + [digest]}
+        try:
+            with open(path, "wb" if seq == 0 else "ab") as fh:
+                fh.write(raw)
+        except OSError:
+            try:  # 반쯤 쓴 조각이 남아 다음에 이어 붙을 때 깨지지 않게 되돌린다
+                if seq == 0:
+                    path.unlink(missing_ok=True)
+                else:
+                    with open(path, "r+b") as fh:
+                        fh.truncate(before)
+            except OSError:
+                pass
+            raise
+        _REC_STATE[key] = new_state
+        return ok()
 
 
 def recordings_for_day(day: str) -> list[dict]:

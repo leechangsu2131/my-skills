@@ -226,7 +226,7 @@
 
 ### ISSUE-010: 독립 검토에서 남은 항목 (reviewer, 커밋 59f59b3 → d97d432)
 - **상태**: 📌 백로그
-- [ ] 녹음 조각 하나가 저장 실패하면 그 뒤 webm 이 재생 안 될 수 있음(추정) → 순번 확인·재전송
+- [x] 녹음 조각 하나가 저장 실패하면 그 뒤 webm 이 재생 안 될 수 있음(추정) → 순번 확인·재전송 — **고침(2026-11-26, T73)**: 서버(`save_audio`)는 순번이 건너뛰면 받지 않고 409 `code:"gap"` 과 `expected` 를 돌려주고, 같은 조각이 다시 오면 쓰지 않고 성공(`duplicate`)으로 답하며, 쓰다 실패하면 반쯤 쓴 조각을 되돌린다. 웹(`sendRecChunks`)은 서버가 받았다고 답할 때까지 조각을 들고 있다가 순번 순서로 다시 보내고, 수업을 마칠 때 못 보낸 조각이 있으면 알린다. 시험 `tests/test_save_audio.py`. 한계: 서버를 껐다 켜면 순번 기록이 사라져 이어 오는 조각을 그대로 붙이고(이전과 같음), 실제 크롬에서 끊겼다 이어지는 녹음은 확인하지 못함(확인 필요)
 - [ ] semester_rollover 백업은 표시값(get_all_values)이라 수식·체크박스 설정은 복원 불가
 - [ ] 새 스크립트(비서 서버, semester_rollover, splitter 추가분)에 자동 테스트 없음 — 2026-11-24 비서 서버·`supabase_schedule.py` 는 시험 추가(`test_assistant_server.py`, `test_supabase_schedule.py`), semester_rollover·splitter 는 아직
 - [ ] (옛 Google Sheets 진도 서버 기준) 진도 서버 `/api/catch-up` 에 잠금 없음 — 다른 요청이 겹치면 수업배치 전체 다시 쓰기가 덮일 수 있음(원래 있던 문제)

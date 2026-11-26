@@ -76,10 +76,26 @@ def json_object(text: str) -> dict:
     start, end = text.find("{"), text.rfind("}")
     if start < 0 or end <= start:
         raise ValueError("Gemini 응답에서 JSON을 찾지 못했습니다.")
-    data = json.loads(text[start:end + 1])
-    if not isinstance(data, dict) or not isinstance(data.get("lessons"), list):
+    # JSON 앞뒤 설명 글에 {…} 가 있어도 걸리지 않게, `{` 마다 JSON 한 덩어리씩 읽어 보고
+    # lessons 목록이 있는 첫 덩어리를 쓴다(읽은 덩어리 안쪽의 `{` 는 건너뜀).
+    decoder = json.JSONDecoder()
+    first_error: ValueError | None = None
+    parsed_without_lessons = False
+    pos = start
+    while pos >= 0:
+        try:
+            data, stop = decoder.raw_decode(text, pos)
+        except ValueError as exc:
+            first_error = first_error or exc
+            pos = text.find("{", pos + 1)
+            continue
+        if isinstance(data, dict) and isinstance(data.get("lessons"), list):
+            return data
+        parsed_without_lessons = True
+        pos = text.find("{", stop)
+    if parsed_without_lessons:
         raise ValueError("응답에 lessons 목록이 없습니다.")
-    return data
+    raise first_error
 
 
 def merge_lesson_map(data: dict, lesson_map: list[dict] | None) -> None:

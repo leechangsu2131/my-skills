@@ -18,6 +18,7 @@ TASKS = """# 할 일
 | T78 | 검사 | 완료(2026-11-26 합침) |
 | T79 | 진도 | 교사 결정 대기 |
 | T31 | 한국어로 | 열림 |
+| T54 | 기록 문장 | 보류(묶음 밖) |
 """
 
 ENV = {**os.environ, "GIT_AUTHOR_NAME": "시험", "GIT_AUTHOR_EMAIL": "t@example.invalid",
@@ -117,6 +118,8 @@ def test_done_or_waiting_for_teacher_is_not_claimed(repos):
     assert claim(repos["a"], "T78", "x", "--name", "w").returncode == 1
     r = claim(repos["a"], "T79", "x", "--name", "w")
     assert r.returncode == 1 and "결정" in r.stdout
+    r = claim(repos["a"], "T54", "x", "--name", "w")
+    assert r.returncode == 1 and "보류" in r.stdout
 
 
 def test_same_worker_rerun_continues(repos):

@@ -92,6 +92,10 @@ jobs:
           - name: classmanage-exam-graderV2
             dir: skills/classmanage-exam-graderV2
             requirements: requirements.txt
+            extra: httpx # starlette TestClient 가 쓰는데 요구 파일에 없음
+          - name: personal-youtube-gemini-kakao-automation
+            dir: skills/personal-youtube-gemini-kakao-automation/v
+            requirements: requirements.txt
           # 아래 셋은 요구 파일에 패키지가 빠져 있어 extra 로 따로 설치한다(요구 파일은 교사 결정 뒤 정리)
           - name: classmanage-supabase-export
             dir: skills/classmanage-supabase-export

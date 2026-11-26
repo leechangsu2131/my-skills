@@ -22,3 +22,4 @@
 - 2026-11-26 10:54 T68 PR 올림 — prepare_lessons.parse_flow: 앞뒤 설명의 중괄호에 안 걸리게 _find_flow_json 추가(ISSUE-031), goal/materials 의 null 이 'None' 글자가 되지 않게(ISSUE-032). strict xfail 4개 제거·시험 4개 추가, tests/test_prepare_lessons.py + test_assistant_server.py 153개 통과(고치기 전 145 통과·4 xfail). 환경에 fitz 가 없어 tests/test_auto_split.py 는 수집 못 함(변경 전에도 같음)
 - 2026-11-26 10:54 T78 시작 (브랜치 task/T78-privacy-check-rest)
 - 2026-11-26 11:04 T78 PR 올림 — tools/check_privacy.py: 사용자 경로는 경고만(종료 값 제외)·…/.../xxx 는 예시, 전화번호 가운데 묶음 [1-9], 하이픈 없는 13자리 주민번호는 날짜+검증 숫자, .env 를 diff --git 줄에서도 찾기, secret_ 은 40자 이상. 시험 60→87개 통과. 열린 PR 14개 diff 모두 0건, 저장소 전체 표본에서 전화번호 모양 250→46건. check.yml 은 건드리지 않고 PR 설명에 --warn-only 제거 제안
+- 2026-11-26 16:39 T52 시작 (브랜치 task/T52-prompt-improve)

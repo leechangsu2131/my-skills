@@ -8,3 +8,4 @@
 - 2026-11-26 20:33 T57 (util-notebooklm) PR 올림 — SKILL.md 를 쉬운 한국어로 정리, 명령별 저장 위치·윈도우 전용·글자 적은 쪽 설명을 코드에 맞춤. 확인: 코드 대조, build_catalog --check, 개인정보 검사(tests/test_nlm.py 는 라이브러리가 없어 건너뜀) (브랜치 task/T57-util-notebooklm-easy-korean). 앞 PR #91 정정: 'pytest 못 돌림' 중 splitter 시험 10개는 splitter 폴더에서 통과함. 다음: T57 남은 묶음 스킬은 teacherlesson-assistant(다른 작업이 고치는 중일 수 있어 확인 필요) — 이후 상시 일(S) 또는 PR 검토(S2)
 - 2026-11-27 06:35 T94 시작 (브랜치 task/T94-ci-sites-tests)
 - 2026-11-27 06:36 T94 PR 올림 — check.yml 의 teacherlesson-assistant 시험 대상에 sites 추가. 확인: 이 환경에서 pytest sites 30 통과·2 건너뜀(selenium 없음), 전체 묶음은 fitz 가 없어 여기서 못 돌림 → PR 자동 검사 결과로 확인 (브랜치 task/T94-ci-sites-tests)
+- 2026-11-27 06:37 T94 확인 — PR #102 자동 점검 teacherlesson-assistant 초록불, main 326 통과 → 358 통과·1 건너뜀

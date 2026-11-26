@@ -1,0 +1,395 @@
+/* 휴대폰에서 수업 비서의 준비·기록·진행 화면을 편하게 쓰도록 조정합니다. */
+@media (max-width: 720px) {
+  header {
+    padding: max(6px, env(safe-area-inset-top)) 8px 6px;
+  }
+
+  .bar-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    column-gap: 4px;
+    row-gap: 2px;
+  }
+
+  .bar-row > .grow,
+  #prepMsg {
+    display: none;
+  }
+
+  .datenav {
+    grid-column: 1;
+    min-width: 0;
+    gap: 0;
+  }
+
+  .datenav button {
+    min-width: 38px;
+    min-height: 44px;
+    padding-right: 5px;
+    padding-left: 5px;
+  }
+
+  #datePick {
+    width: min(126px, 31vw);
+    min-width: 102px;
+    font-size: 16px;
+  }
+
+  #dow {
+    min-width: 0;
+    font-size: 12px;
+  }
+
+  #clock {
+    grid-column: 2;
+    grid-row: 1;
+    font-size: 15px;
+    padding: 0 2px;
+  }
+
+  #phoneBtn {
+    grid-column: 3;
+    grid-row: 1;
+    min-width: 42px;
+    min-height: 44px;
+  }
+
+  .prep-actions {
+    grid-column: 1 / 3;
+    grid-row: 2;
+    min-width: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .prep-actions::-webkit-scrollbar {
+    display: none;
+  }
+
+  .prep-actions button {
+    min-height: 44px;
+    padding-right: 8px;
+    padding-left: 8px;
+  }
+
+  #focusToggle {
+    grid-column: 3;
+    grid-row: 2;
+    min-height: 44px;
+    padding-right: 8px;
+    padding-left: 8px;
+    white-space: nowrap;
+  }
+
+  #tabs {
+    gap: 3px;
+    margin-top: 5px;
+    padding: 3px;
+    overscroll-behavior-x: contain;
+  }
+
+  #tabs button {
+    flex: 0 0 58px;
+    min-height: 44px;
+    padding: 5px 3px;
+  }
+
+  #tabs small {
+    font-size: 10px;
+  }
+
+  main {
+    width: 100%;
+    padding: 10px 10px calc(24px + env(safe-area-inset-bottom));
+  }
+
+  #titleBlock {
+    margin: 2px 1px 10px;
+  }
+
+  h1 {
+    font-size: 20px;
+    overflow-wrap: anywhere;
+  }
+
+  #lMeta {
+    font-size: 12px;
+  }
+
+  #siteBtns {
+    gap: 6px;
+  }
+
+  button {
+    min-height: 44px;
+    padding: 8px 10px;
+    touch-action: manipulation;
+  }
+
+  button.ghost {
+    padding: 7px 8px;
+  }
+
+  button.icon {
+    min-width: 42px;
+    min-height: 44px;
+  }
+
+  .hero {
+    padding: 14px 13px;
+    border-radius: 18px;
+  }
+
+  #heroName {
+    font-size: 25px;
+    overflow-wrap: anywhere;
+  }
+
+  #heroSay {
+    font-size: 20px;
+    overflow-wrap: anywhere;
+  }
+
+  #heroDo,
+  .hero-detail {
+    font-size: 15px;
+  }
+
+  .hero-detail {
+    padding: 9px 10px;
+  }
+
+  #heroRemain {
+    font-size: 40px;
+  }
+
+  .adj {
+    gap: 4px;
+  }
+
+  .adj button {
+    padding: 7px 8px;
+    font-size: 14px;
+  }
+
+  .hero-ctl {
+    grid-template-columns: 58px minmax(0, 1fr);
+    gap: 7px;
+  }
+
+  #stepPrev,
+  #stepNext {
+    min-height: 54px;
+    height: auto;
+    padding: 8px;
+    font-size: 17px;
+  }
+
+  .card {
+    padding: 12px;
+  }
+
+  details.fold > summary {
+    min-height: 48px;
+    padding: 11px 12px;
+  }
+
+  .fold-body {
+    padding: 0 12px 12px;
+  }
+
+  .row {
+    gap: 6px;
+  }
+
+  #recbar {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 6px 8px;
+  }
+
+  #rtime {
+    min-width: 0;
+  }
+
+  #meter {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    width: 100%;
+  }
+
+  #recBtn {
+    grid-column: 1 / -1;
+    grid-row: 3;
+    width: 100%;
+  }
+
+  #memoBtns {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px;
+  }
+
+  #memoBtns button {
+    min-width: 0;
+    min-height: 44px;
+    padding: 7px 5px;
+  }
+
+  input[type="text"],
+  input[type="search"],
+  input[type="date"],
+  input[type="number"],
+  select,
+  textarea {
+    min-height: 44px;
+    font-size: 16px;
+  }
+
+  textarea {
+    min-height: 90px;
+  }
+
+  .pick {
+    max-height: min(48vh, 340px);
+  }
+
+  .pick button {
+    min-height: 48px;
+    padding: 10px;
+    overflow-wrap: anywhere;
+  }
+
+  #phones {
+    position: fixed;
+    top: max(54px, calc(env(safe-area-inset-top) + 48px));
+    right: 8px;
+    max-height: 72dvh;
+  }
+
+  #phoneResults {
+    max-height: calc(72dvh - 100px);
+  }
+
+  body.focus-mode header {
+    padding: max(6px, env(safe-area-inset-top)) 8px 6px;
+  }
+
+  body.focus-mode main {
+    min-height: 0;
+    height: auto;
+    padding: 8px 8px calc(98px + env(safe-area-inset-bottom));
+    gap: 8px;
+  }
+
+  body.focus-mode #titleBlock {
+    gap: 4px 7px;
+  }
+
+  body.focus-mode #lTitle {
+    font-size: 16px;
+  }
+
+  body.focus-mode #lMeta {
+    flex: 1 1 100%;
+    font-size: 11px;
+  }
+
+  body.focus-mode #hero {
+    min-height: min(60dvh, 460px);
+    padding: 16px 13px;
+  }
+
+  body.focus-mode #heroName {
+    font-size: 27px;
+  }
+
+  body.focus-mode #heroSay {
+    margin: 12px 0 8px;
+    padding: 14px;
+    font-size: 22px;
+  }
+
+  body.focus-mode #focusRail {
+    padding: 8px;
+  }
+
+  body.focus-mode #focusRail #focusStages {
+    gap: 3px;
+    padding-bottom: 3px;
+    overscroll-behavior-x: contain;
+  }
+
+  .focus-stage {
+    min-width: 76px;
+    min-height: 48px;
+    padding: 6px;
+  }
+
+  body.focus-mode #focusAssist {
+    padding: 10px;
+  }
+
+  .focus-memos {
+    gap: 4px;
+  }
+
+  .focus-memos button {
+    min-height: 44px;
+    padding: 6px 3px;
+    font-size: 11px;
+  }
+
+  #focusFooter {
+    padding: 7px 7px calc(7px + env(safe-area-inset-bottom));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 5px;
+  }
+
+  .focus-ctl {
+    min-width: 0;
+    min-height: 52px;
+    height: auto;
+    padding: 6px 3px;
+    font-size: 12px;
+    line-height: 1.2;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+}
+
+@media (max-width: 380px) {
+  #datePick {
+    width: 100px;
+    min-width: 96px;
+  }
+
+  #dow {
+    display: none;
+  }
+
+  .prep-actions button {
+    font-size: 12px;
+  }
+
+  #focusToggle {
+    font-size: 12px;
+  }
+
+  .adj button {
+    padding-right: 6px;
+    padding-left: 6px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  button,
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}

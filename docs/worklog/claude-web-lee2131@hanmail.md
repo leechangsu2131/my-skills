@@ -11,3 +11,4 @@
 - 2026-11-26 05:15 (교사 위임 "좋은 쪽으로") T23 후속 시작 (브랜치 task/T23-ci-more-tests) — S5 보고서에서 통과를 확인한 시험을 check.yml 에 추가(요구 파일 패키지는 matrix 의 extra 로), 실패하는 것은 known 쪽. 실제 GitHub 결과로 확인
 - 2026-11-26 05:40 T23 후속 PR 올림 (#61) — check.yml tests matrix 에 10곳 추가. 실제 Actions(Python 3.12): 추가한 10곳 모두 통과. catalog 빨간불은 PR #51(PyYAML 설치)이 아직 안 합쳐져서(main 에서도 같음). known(schedule)은 알려진 실패
 - 2026-11-26 06:10 S5 PR 올림 — docs/reviews/health-2026-11-26.md. 깨끗한 환경에서 스킬 시험 전부(통과 약 1,350개) 점검. 실패 5개(mapper 2·video-note 2·schedule 1), 요구 파일 빠짐, CI 가 안 도는 시험, exam-graderV2 시험이 저장소 폴더에 로그를 만듦(확인 필요)을 기록. 접속 스크립트(test_ 이름)는 실행하지 않음
+- 2026-11-26 10:06 T80 시작 (브랜치 task/T80-webtoguide-per-article-dir)

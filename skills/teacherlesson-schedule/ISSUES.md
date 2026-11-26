@@ -38,6 +38,7 @@ _없음_
 - **증상**: 동시에 들어온 두 요청이 같은 시트 내용을 읽고 각각 전체 수업배치를 다시 쓰면, 나중 저장이 먼저 저장한 변경을 덮을 수 있음
 - **원인**: 읽기와 변경 작업을 묶어 보호하는 잠금이 없음
 - **해결/조치**: `/api/catch-up` 의 시트 연결·읽기·변경 구간을 `threading.Lock` 으로 보호. 두 번째 요청은 첫 번째 작업이 끝난 뒤 최신 내용을 읽음. 두 요청을 동시에 보내도 작업 구간이 겹치지 않는 가짜 시험 추가
+- **한계(검토 2026-11-26)**: 잠금은 `/api/catch-up` 에만 걸림. `/api/done`·push·extend·pull·move·swap 도 `_rewrite_bridge_sheet` → `write_bridge_sheet` 로 수업배치 전체를 다시 쓰므로, catch-up 과 미루기가 동시에 오면 여전히 덮일 수 있음 → 쓰기 경로 7개를 잠금 하나로 감싸는 후속 일(TASKS T77)
 - **관련 파일**: `server.py`, `tests/test_server_lessons_catchup.py`
 
 <!--

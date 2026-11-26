@@ -12,7 +12,7 @@
 | Claude (claude.ai) | 프로젝트 → "프로젝트 지침" (프로젝트가 없으면 설정 → 개인 맞춤 지침) |
 | Claude Code (웹·PC) | 저장소의 `CLAUDE.md` 를 스스로 읽음 — 처음 대화에 아래 **전체본**을 붙여도 됨 |
 | Gemini CLI | 저장소의 `GEMINI.md` 를 스스로 읽음. 다른 폴더에서 쓰면 `~/.gemini/GEMINI.md` 에 전체본 |
-| bizcoder | 교사 PC 에서 `tools\start_worker.ps1 -Tool bizcoder -Name bizcoder-1` — 자기 작업 폴더를 만들고 첫 요청까지 넣어 켬. `CLAUDE.md`·`AGENTS.md`·`reviewer` 에이전트를 스스로 읽음(`bizcoder compat` 로 확인) |
+| bizcoder | 교사 PC 에서 `tools\start_worker.ps1 -Tool bizcoder -Name bizcoder-1` — **원래 `my-skills` 폴더**에서(Codex·Antigravity 와 교대로, 따로 폴더 안 만듦 — 2026-11-27) 첫 요청까지 넣어 켬. 폴더가 비어 있지 않으면(앞 작업자가 `sync_work.py end` 안 함) 켜지 않음. `CLAUDE.md`·`AGENTS.md`·`reviewer` 에이전트를 스스로 읽음(`bizcoder compat` 로 확인) |
 | Codex (계정 2개) | `AGENTS.md` 를 스스로 읽음. 로컬(앱·IDE)은 교사 PC 의 원래 `my-skills` 폴더를 열고 아래 ⑤(로컬 IDE 는 한 번에 하나). 클라우드 Codex 는 저장소를 연결하고 ⓪ 또는 ⑤ |
 | Antigravity (계정 2개) | 교사 PC 의 원래 `my-skills` 폴더를 열고 아래 ⑤. `GEMINI.md`·`AGENTS.md` 를 읽음. 로컬 IDE 는 한 번에 하나(Codex 를 안 쓸 때) |
 | Gemini CLI·Claude Code (교사 PC) | 같은 스크립트로: `-Tool gemini` / `-Tool claude` |
@@ -45,7 +45,7 @@
   ✅ 면 브랜치·일지 '시작' 줄이 올라가 잡힌 것. ❌ 면 아무것도 고치지 말고 교사에게 "T<번호> 는 <누가> 하는 중 / 완료 / 결정 대기"라고 한 줄 알린 뒤 다른 일.
   도구를 쓸 수 없으면: git fetch --prune 뒤 git branch -r --list "origin/task/<번호>-*" 가 비어 있을 때만, 브랜치 task/<번호>-<짧은-영어> 와 일지 '시작' 줄을 바로 푸시.
   claim_task 가 푸시를 못 하는 곳(인터넷이 막힌 웹 Codex 등)이면 교사가 준 '이번 일'만 한다(교사 PC 가 미리 잡아 둠). 스스로 고르지 않는다.
-- 교사 PC 의 로컬 IDE(Codex·Antigravity)는 원래 my-skills 폴더에서 한 번에 하나만, 시작·중간·끝에 python tools/sync_work.py start <브랜치> / save / end. 까만 창 CLI 작업자(bizcoder 등)는 tools/start_worker.ps1 이 만든 my-skills-<이름> 폴더에서만.
+- 교사 PC 의 로컬 IDE(Codex·Antigravity)는 원래 my-skills 폴더에서 한 번에 하나만, 시작·중간·끝에 python tools/sync_work.py start <브랜치> / save / end. bizcoder 도 원래 my-skills 폴더에서 이들과 교대로(일 하나 끝날 때마다 sync_work.py end). 그 밖의 까만 창 CLI 작업자는 tools/start_worker.ps1 이 만든 my-skills-<이름> 폴더에서만.
 - 사용량이 거의 끝나면 일지에 '그만둠 — 어디까지, 다음에 할 것'을 푸시하고 멈춘다.
 
 ■ R 등급 올리기
@@ -134,4 +134,5 @@ cd $env:USERPROFILE\Documents\GitHub\my-skills
 powershell -ExecutionPolicy Bypass -File tools\start_worker.ps1 -Tool bizcoder -Name bizcoder-1 -Task T<번호>
 ```
 `-Tool` 은 antigravity / codex / bizcoder / claude / gemini. `-Task` 를 빼면 스스로 고른다. 이미 누가 하는 일이면 작업자를 켜지 않고 알려 준다.
+**bizcoder 는 원래 `my-skills` 폴더에서** Codex·Antigravity 와 교대로 일한다(한 번에 하나 — 그쪽을 `sync_work.py end` 로 끝낸 뒤 켬). 여럿을 동시에 돌려야 할 때만 `-Separate` 로 따로 폴더.
 로컬 IDE(Codex 앱·Antigravity)는 이 스크립트를 쓰지 않고 원래 `my-skills` 폴더를 열어 ⑤ 로 시작한다(한 번에 하나).

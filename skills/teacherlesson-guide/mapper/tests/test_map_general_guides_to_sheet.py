@@ -5,7 +5,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 import map_general_guides_to_sheet
-from sheet_uploader.core import REPLACE_APPEND, REPLACE_SUBJECTS
+from sheet_uploader.core import REPLACE_ALL, REPLACE_APPEND, REPLACE_SUBJECTS
 
 
 class MapGeneralGuidesToSheetTests(unittest.TestCase):
@@ -73,25 +73,74 @@ class MapGeneralGuidesToSheetTests(unittest.TestCase):
 
         self.assertEqual(configs, fake_configs)
 
-    def test_confirm_upload_action_defaults_to_replace_subjects(self):
-        answers = iter(["", ""])
+    def _confirm(self, answers):
+        it = iter(answers)
+        asked = []
 
+        def fake_input(prompt):
+            asked.append(prompt)
+            return next(it)
+
+        out = []
         result = map_general_guides_to_sheet.confirm_upload_action(
-            input_fn=lambda _prompt: next(answers),
-            print_fn=lambda *_args, **_kwargs: None,
+            input_fn=fake_input,
+            print_fn=lambda *args, **_kwargs: out.append(" ".join(str(a) for a in args)),
         )
+        return result, asked, out
 
+    def test_confirm_upload_action_enter_uploads_nothing(self):
+        # Enter 만 쳐도 아무것도 올리지 않고, 두 번째 질문까지 가지도 않는다.
+        result, asked, _ = self._confirm([""])
+        self.assertEqual(result, (False, False, REPLACE_APPEND))
+        self.assertEqual(len(asked), 1)
+
+    def test_confirm_upload_action_repeated_enter_never_deletes(self):
+        # 여러 번 Enter 를 쳐도 첫 질문에서 끝난다(남는 Enter 는 쓰이지 않음).
+        result, asked, _ = self._confirm(["", "", "", ""])
+        self.assertEqual(result, (False, False, REPLACE_APPEND))
+        self.assertEqual(len(asked), 1)
+
+    def test_confirm_upload_action_no_answers_upload_nothing(self):
+        for answer in ["n", "N", "no", "ㄴ", "아니오", "  n  "]:
+            with self.subTest(answer=answer):
+                result, _, _ = self._confirm([answer])
+                self.assertEqual(result, (False, False, REPLACE_APPEND))
+
+    def test_confirm_upload_action_yes_then_enter_appends_without_delete(self):
+        result, asked, _ = self._confirm(["y", "", ""])
+        self.assertEqual(result, (True, False, REPLACE_APPEND))
+        self.assertEqual(len(asked), 3)
+
+    def test_confirm_upload_action_yes_answers(self):
+        for answer in ["y", "Y", "yes", "ㅇ", "예"]:
+            with self.subTest(answer=answer):
+                result, _, _ = self._confirm([answer, "1", ""])
+                self.assertEqual(result, (True, False, REPLACE_APPEND))
+
+    def test_confirm_upload_action_replace_subjects_needs_explicit_2(self):
+        result, _, _ = self._confirm(["y", "2"])
         self.assertEqual(result, (True, False, REPLACE_SUBJECTS))
 
+    def test_confirm_upload_action_replace_all_needs_explicit_3(self):
+        for answer in ["3", "all", "replace-all"]:
+            with self.subTest(answer=answer):
+                result, _, _ = self._confirm(["y", answer])
+                self.assertEqual(result, (True, False, REPLACE_ALL))
+
     def test_confirm_upload_action_supports_append_with_cleanup(self):
-        answers = iter(["", "1", "y"])
-
-        result = map_general_guides_to_sheet.confirm_upload_action(
-            input_fn=lambda _prompt: next(answers),
-            print_fn=lambda *_args, **_kwargs: None,
-        )
-
+        result, _, _ = self._confirm(["y", "1", "y"])
         self.assertEqual(result, (True, True, REPLACE_APPEND))
+
+    def test_confirm_upload_action_invalid_input_asks_again(self):
+        result, asked, out = self._confirm(["x", "y", "9", "", ""])
+        self.assertEqual(result, (True, False, REPLACE_APPEND))
+        self.assertEqual(len(asked), 5)
+        self.assertTrue(any("중 하나로" in line for line in out))
+
+    def test_confirm_upload_action_prompt_says_default_is_no(self):
+        _, asked, out = self._confirm([""])
+        self.assertIn("[y/N]", asked[0])
+        self.assertTrue(any("업로드하지 않고" in line for line in out))
 
     def test_detect_available_subject_configs_keeps_subject_order(self):
         def fake_has_material(config):

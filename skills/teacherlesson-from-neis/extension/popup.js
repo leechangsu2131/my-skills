@@ -31,6 +31,7 @@ let selectedWorkApplicationIds = new Set();
 let approvalProfiles = {};
 let approvalProfilesReady = Promise.resolve();
 let absenceUiExecutionInFlight = false;
+let attachmentDownloadInFlight = false;
 
 function normalizeProfileKind(value) {
     return String(value || "").trim().replace(/\s+/g, " ").slice(0, 40);
@@ -883,6 +884,142 @@ function updateAbsenceSelection() {
     actionExecuteButton.disabled = selected.length === 0 || absenceUiExecutionInFlight;
 }
 
+async function downloadAbsenceAttachmentsOnNeis({ applicationId }) {
+    const platform = window.cpr?.core?.Platform?.INSTANCE;
+    if (!platform) return { ok: false, error: "NEIS 업무 화면을 찾지 못했습니다." };
+    const running = () => platform.getAllRunningAppInstances();
+    const listId = "edu/sa/eds/eaa/ae/eds_eaaae03_m01";
+    const detailId = "edu/sa/eds/eaa/ae/eds_eaaae03_p01";
+    const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+    const lists = running().filter((app) => app?.app?.id === listId);
+    if (lists.length !== 1) return { ok: false, error: "결석신고서 목록을 하나만 열고 다시 시도해 주세요." };
+    if (running().some((app) => app?.app?.id === detailId)) {
+        return { ok: false, error: "결석신고서 상세창을 먼저 닫은 뒤 다시 시도해 주세요." };
+    }
+    const list = lists[0];
+    const dataset = list.lookup("dsStdntListForAbe");
+    if (!dataset?.getRowCount) return { ok: false, error: "결석신고서 목록을 다시 조회해 주세요." };
+    const matches = [];
+    for (let row = 0; row < dataset.getRowCount(); row += 1) {
+        if (String(dataset.getValue(row, "abeDclrId") ?? "").trim() === applicationId) matches.push(row);
+    }
+    if (matches.length !== 1) return { ok: false, error: "목록이 바뀌었거나 신청을 하나로 확인할 수 없습니다. 대상 목록을 다시 조회해 주세요." };
+
+    const grid = list.lookup("grdMain");
+    if (!grid?.selectRows) return { ok: false, error: "결석신고서 목록 행을 선택할 수 없습니다." };
+    grid.selectRows([matches[0]]);
+    grid.dispatchEvent(new cpr.events.CGridMouseEvent("cell-click", {
+        rowIndex: matches[0], viewRowIndex: matches[0], cellIndex: 8, columnName: "stuFlnm", control: grid,
+    }));
+
+    const until = Date.now() + 10000;
+    let detail = null;
+    while (Date.now() < until) {
+        const opened = running().filter((app) => app?.app?.id === detailId);
+        if (opened.length > 1) return { ok: false, error: "상세창이 여러 개 열려 작업을 멈췄습니다. NEIS에서 창을 정리해 주세요." };
+        if (opened.length === 1 && opened[0].lookup("dsStdntListForAbe")?.getRowCount?.()) {
+            detail = opened[0];
+            break;
+        }
+        await sleep(150);
+    }
+    if (!detail) return { ok: false, error: "선택한 신청의 상세창을 열지 못했습니다." };
+    if (String(detail.lookup("dsStdntListForAbe")?.getValue?.(0, "abeDclrId") ?? "").trim() !== applicationId) {
+        return { ok: false, error: "상세창의 신청이 선택 목록과 달라 다운로드를 멈췄습니다." };
+    }
+
+    let expectedCount = 0;
+    const fileDataReadyUntil = Date.now() + 7000;
+    while (Date.now() < fileDataReadyUntil) {
+        const first = detail.lookup("dsMultiFileList");
+        const second = detail.lookup("dsMultiFileList2");
+        if (first?.getRowCount && second?.getRowCount) {
+            expectedCount = first.getRowCount() + second.getRowCount();
+            if (expectedCount > 0) break;
+            await sleep(250);
+            // A completed detail search with two empty datasets means no attachment.
+            if (Date.now() + 250 >= fileDataReadyUntil) break;
+        } else {
+            await sleep(150);
+        }
+    }
+    if (expectedCount === 0) {
+        return { ok: true, fileCount: 0, downloaded: false };
+    }
+
+    const findUploaders = () => [...document.querySelectorAll('iframe[id^="raonkuploader_frame_udcRaonkUpload_"]')]
+        .map((frame) => {
+            try {
+                const win = frame.contentWindow;
+                const files = [...(win.RESULTFILELIST || [])].filter((file) => file?.isWebFile === "y" && file?.isDelete === "n" && file?.originName);
+                return { win, doc: win.document, files };
+            } catch (_) { return null; }
+        })
+        .filter((item) => item?.files?.length);
+    let uploaders = [];
+    const iframeUntil = Date.now() + 5000;
+    while (Date.now() < iframeUntil) {
+        uploaders = findUploaders();
+        if (uploaders.reduce((sum, item) => sum + item.files.length, 0) === expectedCount) break;
+        await sleep(200);
+    }
+    const totalInFrames = uploaders.reduce((sum, item) => sum + item.files.length, 0);
+    if (!uploaders.length || totalInFrames !== expectedCount) {
+        return { ok: false, error: "NEIS 상세의 첨부 목록과 다운로드 창이 일치하지 않아 안전을 위해 멈췄습니다." };
+    }
+    for (const uploader of uploaders) {
+        const groupCount = uploader.files.length;
+        const checkboxes = [...uploader.doc.querySelectorAll('input[id^="chk_file_"]')];
+        if (checkboxes.length !== groupCount) return { ok: false, error: "NEIS 첨부 선택 항목 수를 확인하지 못했습니다." };
+        for (const checkbox of checkboxes) if (!checkbox.checked) checkbox.click();
+        if (uploader.win.getSelectedFileCount?.() !== groupCount) {
+            return { ok: false, error: "NEIS 첨부 선택 상태를 확인하지 못했습니다." };
+        }
+        const button = uploader.doc.querySelector(groupCount === 1 ? "#button_download" : "#button_download_all");
+        if (!button || button.disabled) return { ok: false, error: "NEIS 첨부 다운로드 버튼을 찾지 못했습니다." };
+        button.click();
+    }
+    return { ok: true, fileCount: expectedCount, downloaded: true };
+}
+
+async function downloadAbsenceAttachments(item, button) {
+    if (absenceUiExecutionInFlight) {
+        actionStatus.textContent = "접수·상신 작업이 끝난 뒤 첨부를 확인해 주세요.";
+        return;
+    }
+    if (attachmentDownloadInFlight) return;
+    attachmentDownloadInFlight = true;
+    button.disabled = true;
+    const originalText = button.textContent;
+    button.textContent = "첨부 확인 중…";
+    try {
+        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        if (!tab?.id || !/^https:\/\/.+\.neis\.go\.kr\//.test(tab.url || "")) {
+            throw new Error("로그인된 NEIS 탭을 활성화한 뒤 다시 시도해 주세요.");
+        }
+        const [{ result }] = await chrome.scripting.executeScript({
+            target: { tabId: tab.id },
+            world: "MAIN",
+            func: downloadAbsenceAttachmentsOnNeis,
+            args: [{ applicationId: item.application_id }],
+        });
+        if (!result?.ok) throw new Error(result?.error || "첨부 파일을 확인하지 못했습니다.");
+        if (!result.fileCount) {
+            button.textContent = "첨부 없음";
+            actionStatus.textContent = "선택한 결석신고서에는 다운로드할 첨부파일이 없습니다. NEIS 상세창을 확인한 뒤 직접 닫아 주세요.";
+        } else {
+            button.textContent = `${result.fileCount}개 다운로드 요청`;
+            actionStatus.textContent = `첨부파일 ${result.fileCount}개 다운로드를 NEIS에 요청했습니다. NEIS 상세창은 화면 확인을 위해 열어 두었습니다. 파일 확인 후 직접 닫아 주세요.`;
+        }
+    } catch (error) {
+        button.textContent = originalText;
+        actionStatus.textContent = error.message || "첨부 파일을 확인하지 못했습니다.";
+    } finally {
+        attachmentDownloadInFlight = false;
+        button.disabled = false;
+    }
+}
+
 function renderAbsenceWorkCandidates(items) {
     absenceWorkCandidates = items;
     selectedWorkApplicationIds = new Set();
@@ -963,6 +1100,13 @@ function renderAbsenceWorkCandidates(items) {
             reason.textContent = `${item.kind === "결석신고" ? "신청 내용" : "장소"} · ${item.reason || "기재 없음"}`;
             body.append(reason);
             if (item.kind === "결석신고") {
+            const attachmentButton = document.createElement("button");
+            attachmentButton.type = "button";
+            attachmentButton.className = "attachment-download-button";
+            attachmentButton.textContent = "첨부 확인 · 다운로드";
+            attachmentButton.disabled = !item.selectable;
+            attachmentButton.addEventListener("click", () => downloadAbsenceAttachments(item, attachmentButton));
+            body.append(attachmentButton);
             const teacherReasonLabel = document.createElement("label");
             teacherReasonLabel.className = "teacher-reason-label";
             teacherReasonLabel.textContent = "담임/교사 결석 사유 · 필요할 때만 추가";
@@ -1019,7 +1163,7 @@ function renderAbsenceWorkCandidates(items) {
             actionCandidatesNode.append(label);
         }
     }
-    actionStatus.textContent = `학생·날짜·신청 내용(결석신고는 결석 구분)을 확인하고 처리할 건을 선택하세요. 선택 건 접수와 결재 상신은 아래 버튼 한 번으로 시작합니다.${items.some((item) => !item.selectable) ? " 중복 식별값은 처리 대상에서 제외했습니다." : ""}`;
+    actionStatus.textContent = `학생·날짜·신청 내용(결석신고는 결석 구분)을 확인하세요. 결석신고서의 첨부는 각 신청 아래 버튼으로 내려받을 수 있습니다. 접수·결재 상신은 별도 실행 버튼을 눌러야 시작합니다.${items.some((item) => !item.selectable) ? " 중복 식별값은 처리 대상에서 제외했습니다." : ""}`;
     actionPreview.hidden = false;
     updateAbsenceSelection();
 }
@@ -1119,7 +1263,7 @@ async function restoreLastAbsenceActionStatus() {
 }
 
 async function executeSelectedAbsenceWork() {
-    if (absenceUiExecutionInFlight) return;
+    if (absenceUiExecutionInFlight || attachmentDownloadInFlight) return;
     absenceUiExecutionInFlight = true;
     setNeisButtonsDisabled(true);
     actionExecuteButton.disabled = true;

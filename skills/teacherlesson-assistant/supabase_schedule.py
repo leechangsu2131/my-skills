@@ -176,6 +176,12 @@ def upcoming(subject: str) -> list[dict]:
     return out
 
 
+def subject_names() -> list[str]:
+    """Subjects registered in Supabase, in the teacher's configured order."""
+    return [row.get("name", "") for row in _get(SUBJECTS, order="sort_order", select="id,name,sort_order")
+            if row.get("name")]
+
+
 def records() -> list[dict]:
     """Return schedule rows in the legacy column shape for content builders."""
     lessons = _get(LESSONS, order="sort_order", select=(
@@ -228,6 +234,9 @@ def progress(action: str, body: dict) -> dict:
     def target_matches(slot):
         lesson = lesson_of(slot)
         return (slot.get("id") == slot_id if slot_id else lesson.get("legacy_lesson_id") == key)
+
+    if action == "replace-subject":
+        return replace_subject_period(slots, body)
 
     if action == "done":
         candidates = [s for s in slots if target_matches(s) and s.get("status") == "planned"
@@ -363,6 +372,145 @@ def progress(action: str, body: dict) -> dict:
         return {"status": "success", "updated": len(earlier), "completed": len(earlier),
                 "message": f"선택한 차시를 {dest_date}에 배치하고 앞의 예정 차시 {len(earlier)}개를 완료 처리했어요."}
     return {"status": "error", "message": "지원하지 않는 진도 작업이에요."}
+
+
+def replace_subject_period(slots: list[dict], body: dict) -> dict:
+    """Replace today's planned class with another subject's selected lesson.
+
+    The displaced class is moved into the next slots of its own subject. The
+    selected subject's lesson sequence is advanced into its now-vacant slots.
+    The final displaced lesson can remain without a dated slot at the end of
+    the existing plan.
+    """
+    subject = str(body.get("subject") or "").strip()
+    slot_id = str(body.get("slot_id") or "")
+    target_key = str(body.get("target_record_key") or "")
+    day = str(body.get("target_date") or "")
+    period = _period(body.get("target_period"))
+    if not subject or not slot_id or not target_key or not day or period is None:
+        return {"status": "error", "message": "현재 교시와 바꿀 과목·차시 정보가 필요해요."}
+    try:
+        date.fromisoformat(day)
+    except ValueError:
+        return {"status": "error", "message": "수업 날짜를 확인해 주세요."}
+
+    current = next((row for row in slots if row.get("id") == slot_id), None)
+    if not current or current.get("status") != "planned":
+        return {"status": "error", "message": "바꿀 현재 교시의 예정 슬롯을 찾지 못했어요."}
+    if current.get("slot_date") != day or _period(current.get("slot_period")) != period:
+        return {"status": "error", "message": "현재 화면의 날짜·교시와 진도표가 달라요. 화면을 새로고침해 주세요."}
+    old_lesson = current.get("lesson") or {}
+    old_subject = (old_lesson.get("subject") or {}).get("name", "")
+    old_lesson_id = current.get("lesson_id")
+    if not old_subject or not old_lesson_id:
+        return {"status": "error", "message": "현재 교시의 과목 정보를 읽지 못했어요."}
+
+    selected = _lesson_by_key(target_key)
+    if not selected:
+        return {"status": "error", "message": "선택한 차시를 진도표에서 찾지 못했어요."}
+    subject_rows = _get(SUBJECTS, id=f"eq.{selected.get('subject_id')}")
+    new_subject = subject_rows[0].get("name", "") if subject_rows else ""
+    if not new_subject:
+        return {"status": "error", "message": "선택한 차시의 과목을 찾지 못했어요."}
+    if new_subject == old_subject:
+        return {"status": "error", "message": "같은 과목 안의 차시는 ‘실제로 할 차시 고르기’를 사용해 주세요."}
+    if selected.get("id") == old_lesson_id:
+        return {"status": "error", "message": "현재 차시와 같은 차시는 선택할 수 없어요."}
+
+    subject_lessons = _get(LESSONS, subject_id=f"eq.{selected['subject_id']}", order="sort_order",
+                           select="id,legacy_lesson_id,lesson_number,title,sort_order")
+    selected_sort = int(selected.get("sort_order") or 0)
+    selected_planned = sorted(
+        [row for row in slots if (row.get("lesson") or {}).get("id") == selected.get("id")
+         and row.get("status") == "planned"],
+        key=_slot_key,
+    )
+    cutoff = _slot_key(current)
+    # The slot formerly assigned to the selected lesson, followed by all
+    # upcoming slots of that subject, becomes the runway for later lessons.
+    target_slots = sorted(
+        [row for row in slots if row.get("status") == "planned"
+         and ((row.get("lesson") or {}).get("subject") or {}).get("name") == new_subject
+         and int((row.get("lesson") or {}).get("sort_order") or 0) >= selected_sort
+         and _slot_key(row) > cutoff],
+        key=_slot_key,
+    )
+
+    # Previously uncompleted lessons before the selected class are treated as
+    # covered, matching the existing catch-up action.
+    earlier = [row for row in slots if row.get("status") == "planned"
+               and ((row.get("lesson") or {}).get("subject") or {}).get("name") == new_subject
+               and int((row.get("lesson") or {}).get("sort_order") or 0) < selected_sort]
+
+    by_lesson = {}
+    for row in slots:
+        by_lesson.setdefault((row.get("lesson") or {}).get("id"), []).append(row)
+    later_lessons = []
+    for lesson in subject_lessons:
+        if int(lesson.get("sort_order") or 0) <= selected_sort:
+            continue
+        occurrences = by_lesson.get(lesson.get("id"), [])
+        if occurrences and not any(row.get("status") == "planned" for row in occurrences):
+            continue  # keep later lessons already recorded as completed
+        later_lessons.append(lesson)
+
+    # Move the displaced lesson and its following sequence one existing
+    # subject slot later. The final lesson stays in the lesson table without a
+    # date, so it is still available to schedule after the current plan ends.
+    old_future = sorted(
+        [row for row in slots if row.get("status") == "planned"
+         and ((row.get("lesson") or {}).get("subject") or {}).get("name") == old_subject
+         and _slot_key(row) > cutoff],
+        key=_slot_key,
+    )
+    old_sequence = [old_lesson_id] + [(row.get("lesson") or {}).get("id") for row in old_future]
+    displaced_tail = old_sequence[-1]
+
+    jobs = []
+    for row in earlier:
+        jobs.append((row, {"status": "done"}))
+    for index, row in enumerate(old_future):
+        jobs.append((row, {"lesson_id": old_sequence[index], "source": "manual_subject_change"}))
+    for index, row in enumerate(target_slots):
+        if index < len(later_lessons):
+            jobs.append((row, {"lesson_id": later_lessons[index]["id"], "status": "planned",
+                               "source": "manual_subject_change"}))
+        else:
+            # A slot left at the end of the selected subject's plan has no
+            # class assigned; clear its date so it does not appear as a blank
+            # period in the schedule.
+            jobs.append((row, {"lesson_id": None, "slot_date": None, "slot_period": None,
+                               "status": "planned", "source": "manual_subject_change"}))
+
+    _parallel(lambda job: _patch(SLOTS, job[0]["id"], job[1]), jobs)
+
+    # If the selected lesson was already planned in an earlier calendar slot,
+    # clear that old row so it does not remain as a duplicate planned class.
+    target_future_ids = {row.get("id") for row in target_slots}
+    for row in selected_planned:
+        if row.get("id") not in target_future_ids and _slot_key(row) <= cutoff:
+            _patch(SLOTS, row["id"], {"lesson_id": None, "slot_date": None, "slot_period": None,
+                                       "status": "planned", "source": "manual_subject_change"})
+
+    # If the tail lesson has no remaining planned slot, preserve it as a
+    # date-less lesson instead of marking it complete or dropping it.
+    tail_has_plan_elsewhere = any(
+        row.get("status") == "planned" and (row.get("lesson") or {}).get("id") == displaced_tail
+        and row.get("id") != current.get("id") and row.get("id") not in {x.get("id") for x in old_future}
+        for row in slots
+    )
+    if displaced_tail and not tail_has_plan_elsewhere:
+        _post(SLOTS, {"lesson_id": displaced_tail, "slot_date": None, "slot_period": None,
+                      "slot_order": 1, "status": "planned", "source": "manual_subject_change",
+                      "memo": "다음 같은 과목 수업으로 이월"})
+
+    _patch(SLOTS, current["id"], {"lesson_id": selected["id"], "status": "planned",
+                                   "source": "manual_subject_change", "memo": "교시 과목 변경"})
+    updated = len(jobs) + 1
+    return {"status": "success", "updated": updated,
+            "message": f"{day} {period}교시를 {new_subject} 「{selected.get('title') or ''}」로 바꿨어요. "
+                       f"기존 {old_subject} 차시는 다음 {old_subject} 시간으로 넘기고, 뒤 차시를 재배치했어요. "
+                       "현재 계획 끝의 마지막 차시는 날짜 없이 남아 있어요."}
 
 
 def _slot_key(slot):

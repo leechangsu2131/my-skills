@@ -1,6 +1,6 @@
 ---
 name: teacherlesson-assistant
-description: "수업 비서. Supabase 진도(lesson_* 표)의 그날 수업을 교시별로 넘겨 보며 왼쪽 창에 수업 흐름·주의점·메모, 오른쪽 창에 출판사 수업 사이트를 띄우고 녹음·메모·알림장 초안·진도 조정을 한 화면에서 한다. '내일 수업 준비해줘', '수업 흐름 만들어줘', '오늘 수업 정리해줘', '출판사 지도서 특징 정리', '수업 비서 켜줘', '지도서 받아줘' 같은 요청에 사용한다."
+description: "수업 비서. Supabase 진도(lesson_* 표)의 그날 수업을 교시별로 넘겨 보며 화면 왼쪽에 수업 흐름·주의점·메모를 띄우고 오른쪽에는 출판사 수업 사이트를 배치한다. 녹음·메모·알림장 초안·진도 조정을 한 화면에서 한다. '내일 수업 준비해줘', '수업 흐름 만들어줘', '오늘 수업 정리해줘', '출판사 지도서 특징 정리', '수업 비서 켜줘', '지도서 받아줘' 같은 요청에 사용한다."
 metadata:
   category: 수업·교사 도구
   status: 개발
@@ -10,7 +10,7 @@ metadata:
 
 # 수업 비서 (teacherlesson-assistant)
 
-- **수업 화면** (`assistant_server.py` + `web/index.html`) — Supabase에서 시간표를 읽고 완료·연장·이동을 Supabase에 저장한다. 수업 기록은 로컬 데이터 폴더에 저장한다. Supabase 연결에 중앙 `.env`의 `SUPABASE_URL`(또는 `NEXT_PUBLIC_SUPABASE_URL`)과 `SUPABASE_SERVICE_ROLE_KEY`가 필요하다. 과목별 차시 자료 자동 열기 도우미는 `sites/`(음악 Douclass, 사회 아이스크림·Douclass, Selenium)이며, 미술 아트앤컬쳐 도우미는 아직 구현 전이다(ISSUES ISSUE-006). 실행 방법·화면 기능·저장 위치·지도서 받기는 [README.md](README.md).
+- **수업 화면** (`assistant_server.py` + `web/index.html`) — Supabase에서 시간표를 읽고 완료·연장·이동·오늘 교시의 과목 변경을 Supabase에 저장한다. 수업 비서는 왼쪽 모니터 약 1/3, 수업 사이트는 오른쪽 모니터 전체를 쓴다(오른쪽 화면이 없으면 왼쪽 화면의 나머지 영역). `🎯 수업 진행`은 수업 단계·발문·활동·남은 시간에 집중하는 모드이고, 오늘 저장된 녹음은 화면에서 찾아 재생·저장할 수 있다. 수업 기록은 차시 ID별로 로컬 데이터 폴더에 저장한다. Supabase 연결에 중앙 `.env`의 `SUPABASE_URL`(또는 `NEXT_PUBLIC_SUPABASE_URL`)과 `SUPABASE_SERVICE_ROLE_KEY`가 필요하다. 과목별 차시 자료 자동 열기 도우미는 `sites/`(음악 Douclass, 사회 아이스크림·Douclass, Selenium)이며, 미술 아트앤컬쳐 도우미는 아직 구현 전이다(ISSUES ISSUE-006). 실행 방법·화면 기능·저장 위치·지도서 받기는 [README.md](README.md).
 - **Claude 작업 절차** (아래) — 화면은 `flows/`·`units/` 를 읽고, 교사가 ✏ 로 고친 흐름은 저장한다(고친 흐름은 자동 준비가 덮어쓰지 않음).
 
 교사가 화면 쓰는 법을 물으면 [README.md](README.md)의 "교사용 사용 설명서 (한 장)"를 쉬운 말로 안내한다(순서: 날짜·교시 → 🌙 수업 준비 → 지금 할 일 → 메모 → 진도 조정).
@@ -32,7 +32,7 @@ metadata:
 아래 손 절차는 교사가 **그 차시를 콕 집어** Claude 에게 직접 만들어 달라고 할 때만 한다.
 
 1. `GET http://127.0.0.1:5180/api/state?date=YYYY-MM-DD`로 Supabase 진도표의 수업을 찾는다.
-2. `http://127.0.0.1:5180/api/pdf/<record_key>`(그 차시 쪽만 잘린 PDF)에서 텍스트를 뽑는다. 지도서 전체를 통째로 읽지 않는다.
+2. `http://127.0.0.1:5180/api/pdf/<record_key>`(그 차시 쪽만 잘린 PDF)에서 텍스트를 뽑는다. Supabase 경로가 다른 PC의 `pdf_splits`를 가리키면 `teacherlesson-schedule.schedule.resolve_pdf_path()`가 경로의 `N단원`을 이용해 같은 단원 폴더 또는 한 단계 위 학년 폴더의 원본 지도서를 찾는다. 지도서 전체를 통째로 읽지 않는다.
 3. `flows/<record_key>.json`을 쓴다. 지도서 문장은 수업 중 한눈에 보이게 줄인다.
 
 ```json
@@ -46,6 +46,10 @@ metadata:
 
 4. `tip`에는 그 수업의 `cautions`(출판사 주의점)와 `recent_memos`(같은 과목 지난 고칠점)를 실제로 적용한다.
 5. 지도서에서 확인이 안 된 부분(쪽 누락, 스캔 PDF 등)을 보고한다.
+
+### A-1. 오늘 교시 과목 바꾸기
+
+실제로 수업하지 않는 과목이 오늘 예정 슬롯에 있으면 **진도 조정 → 과목·차시 바꾸기**에서 다른 과목의 미완료 차시를 고른다. Supabase 예정 슬롯에서만 동작한다. 확인 뒤 선택한 차시를 오늘 슬롯으로 옮기며, 기존 과목 차시는 완료 처리하지 않고 다음 같은 과목 시간으로 넘긴다. 기존 과목의 뒤 차시도 각 다음 같은 과목 슬롯으로 이동하고, 현재 계획 끝을 넘는 마지막 차시는 날짜 없는 `planned` 슬롯으로 남긴다. 선택 과목에서 선택한 차시보다 앞선 미완료 차시는 완료 처리하고, 선택 뒤 차시는 그 과목의 기존 예정 슬롯에 순서대로 배치한다. 날짜 지난 슬롯이나 실제 수업 여부가 불확실할 때는 자동으로 바꾸지 말고 교사가 차시를 확인하게 한다. 구현 기록은 ISSUES ISSUE-032.
 
 ### A-2. 단원 개관 — 자동 (Claude 판단 없음)
 

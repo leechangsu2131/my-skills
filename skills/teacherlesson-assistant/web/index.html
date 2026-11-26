@@ -162,6 +162,77 @@ textarea:focus,input[type=text]:focus{outline:2px solid var(--acc-soft);border-c
 #phones{display:none;position:absolute;right:10px;top:46px;background:#fff;color:var(--ink);border-radius:12px;padding:10px 14px;box-shadow:0 8px 28px rgba(0,0,0,.18);z-index:8}
 #phones div{display:flex;justify-content:space-between;gap:18px;font-size:15px}
 #phones b{font-size:17px}
+
+/* 수업 중 한 단계에 집중하는 화면 */
+#focusProgress{display:none;max-width:1500px;margin:10px auto 0;grid-template-columns:repeat(var(--focus-step-count,1),1fr);gap:6px}
+.focus-seg{height:8px;border-radius:999px;background:#dfe3ef;position:relative}
+.focus-seg.past{background:#9ba8e1}.focus-seg.now{background:#3b4da3}
+.focus-seg.now:after{content:"";position:absolute;inset:0 auto 0 0;width:48%;background:#fff8;border-radius:999px}
+#focusToggle{background:var(--acc);color:#fff;font-weight:700}
+#focusToggle.on{background:#3b4da3;color:#fff}
+body.focus-mode{--bg:#f3f5fa;--card:#fff;--ink:#1d2340;--sub:#66708f;--line:#d8deed;--fill:#eaedf7;--acc:#3b4da3;--acc-soft:#e3e8fa;--warn:#805500;--warn-soft:#fff2d4}
+body.focus-mode header{padding:12px 26px 10px}
+body.focus-mode .datenav,body.focus-mode #prepMsg,body.focus-mode #prepBtn,body.focus-mode #clock,body.focus-mode #phoneBtn,body.focus-mode #tabs{display:none}
+body.focus-mode #focusProgress{display:grid}
+body.focus-mode main>.card,body.focus-mode main>details.fold{display:none}
+body.focus-mode main{max-width:none;width:100%;height:calc(100vh - 98px);min-height:620px;margin:0;padding:16px 26px 96px;display:grid;grid-template-columns:minmax(210px,250px) minmax(430px,1fr) minmax(260px,320px);grid-template-rows:auto minmax(0,1fr);gap:16px;align-items:stretch}
+body.focus-mode #titleBlock{grid-column:1/-1;margin:0;align-self:center;display:flex;align-items:center;gap:12px;min-width:0}
+body.focus-mode #source,body.focus-mode #siteBtns{display:none}
+body.focus-mode #lTitle{font-size:22px;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+body.focus-mode #lMeta{flex:none}
+#focusRail,#focusAssist{display:none;background:#fff;border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);min-height:0}
+body.focus-mode #focusRail,body.focus-mode #focusAssist{display:block}
+body.focus-mode #focusRail{grid-column:1;grid-row:2;padding:16px;overflow:auto}
+.focus-head{margin:0 0 10px;font-size:12px;color:var(--sub);font-weight:800;letter-spacing:.04em}
+.focus-stage{width:100%;display:grid;grid-template-columns:32px minmax(0,1fr) auto;align-items:center;gap:8px;text-align:left;padding:10px 8px;background:transparent;border:0;border-radius:13px;margin:3px 0}
+.focus-stage:hover{background:#f6f7fb;filter:none}
+.focus-stage.on{background:var(--acc-soft);color:var(--acc)}
+.focus-stage.past{color:var(--sub)}
+.focus-num{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--fill);font-size:12px;font-weight:800}
+.focus-stage.on .focus-num{background:var(--acc);color:#fff}.focus-stage.past .focus-num{background:#e1f2e9;color:#34785c}
+.focus-stage-name{font-weight:700;min-width:0;overflow-wrap:anywhere}.focus-stage-time{font-size:11px;color:var(--sub);white-space:nowrap}
+.focus-rail-note{border-top:1px solid var(--line);margin-top:12px;padding-top:10px;color:var(--sub);font-size:12px}
+body.focus-mode #hero{grid-column:2;grid-row:2;margin:0;min-height:0;padding:clamp(24px,3.2vw,48px);border-radius:22px;display:flex;flex-direction:column;justify-content:center}
+body.focus-mode #heroName{font-size:clamp(30px,3vw,42px);margin:16px 0 12px}
+body.focus-mode #heroDo{font-size:clamp(18px,1.7vw,22px);line-height:1.6;color:#4c5573}
+body.focus-mode #heroSay{font-size:clamp(23px,2.4vw,34px);line-height:1.4;background:var(--acc-soft);border-radius:18px;padding:20px 24px;margin:24px 0 12px}
+body.focus-mode #heroTip{font-size:16px;background:var(--warn-soft);border:1px dashed #e8cc8c;border-radius:14px;padding:12px 14px;margin-top:16px}
+body.focus-mode #heroTimer{margin-top:20px}
+body.focus-mode #heroRemain{font-size:clamp(40px,4vw,56px)}
+body.focus-mode .hero-ctl,body.focus-mode .keyhint{display:none}
+body.focus-mode #focusAssist{grid-column:3;grid-row:2;padding:16px;overflow:auto}
+.focus-box{background:#f0f2fa;border-radius:16px;padding:14px;margin-bottom:12px}
+.focus-label{font-size:12px;color:var(--sub);font-weight:700}
+.focus-time{font-size:34px;font-weight:800;letter-spacing:-.03em;font-variant-numeric:tabular-nums;margin:3px 0}
+.focus-bar{height:7px;border-radius:8px;background:#d7dced;overflow:hidden}.focus-bar i{display:block;height:100%;width:0;background:var(--acc);border-radius:8px;transition:width .4s}
+.focus-panel-title{font-size:12px;color:var(--sub);font-weight:800;margin:16px 0 7px}
+.focus-card{background:#f7f8fc;border-radius:13px;padding:12px;font-size:14px}
+.focus-card b{display:block;margin-bottom:3px}
+#focusRecord{width:100%;margin-top:14px;padding:12px;border:1px solid #efc9cd;background:#fff4f4;color:#a93740;border-radius:13px;font-weight:700}
+#focusRecord.on{background:#a93740;border-color:#a93740;color:#fff}
+.focus-memos{display:flex;gap:6px;margin-top:10px}.focus-memos button{flex:1;padding:6px 4px;font-size:12px;border-radius:999px}
+.focus-memos button.on{background:var(--acc);color:#fff}
+#focusMemoIn{margin-top:8px;font-size:13px}
+#focusPrepare{width:100%;margin-top:10px;background:#fff;border:1px solid var(--line);font-size:13px}
+.recording-entry{padding:10px 0;border-top:1px solid var(--line)}
+.recording-entry:first-child{border-top:0}
+.recording-title{font-weight:700;font-size:13px}
+.recording-meta{font-size:11px;color:var(--sub);margin:2px 0 6px}
+.recording-entry audio{width:100%;height:34px}
+.recording-entry a{font-size:12px;color:var(--acc)}
+#savedRecordings,#focusSavedRecordings{max-height:240px;overflow:auto;margin-top:8px;padding:0 10px;background:#fff;border:1px solid var(--line);border-radius:12px}
+#focusSavedRecordings{background:#f7f8fc}
+#focusFooter{display:none}
+body.focus-mode #focusFooter{position:fixed;left:0;right:0;bottom:0;z-index:8;display:grid;grid-template-columns:minmax(120px,1fr) minmax(200px,1.35fr) minmax(120px,1fr);gap:10px;padding:11px max(22px,calc((100vw - 1200px)/2));background:#ffffffed;backdrop-filter:blur(14px);border-top:1px solid var(--line)}
+.focus-ctl{height:58px;border:1px solid var(--line);border-radius:15px;background:#fff;font-size:18px;font-weight:700}
+.focus-ctl.primary{background:var(--acc);border-color:var(--acc);color:#fff}
+.focus-ctl.start{background:#f0f2fa;color:var(--acc)}
+.focus-ctl.on{background:#a93740;border-color:#a93740;color:#fff}
+body.focus-mode> #toast{z-index:12}
+@media(max-width:1100px){body.focus-mode main{grid-template-columns:minmax(175px,210px) minmax(350px,1fr);grid-template-rows:auto 1fr;gap:12px;padding:12px 16px 88px}body.focus-mode #focusAssist{grid-column:1/-1;grid-row:3;display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;align-items:start}body.focus-mode #focusRail{grid-column:1;grid-row:2}body.focus-mode #hero{grid-column:2;grid-row:2}.focus-box{margin:0}.focus-memos{grid-column:1/-1}#focusMemoIn{grid-column:1/-1}}
+@media(max-width:1100px){body.focus-mode #lTitle{flex:1;min-width:0}body.focus-mode #focusAssist{display:block}.focus-box{margin-bottom:12px}}
+@media(max-width:1100px) and (min-width:721px){body.focus-mode main{grid-template-columns:minmax(150px,180px) minmax(0,1fr) minmax(215px,250px);grid-template-rows:auto minmax(0,1fr);height:calc(100vh - 98px);min-height:620px;padding:12px 16px 90px;gap:12px}body.focus-mode #focusRail{grid-column:1;grid-row:2}body.focus-mode #hero{grid-column:2;grid-row:2}body.focus-mode #focusAssist{grid-column:3;grid-row:2;display:block}body.focus-mode #titleBlock{min-width:0}body.focus-mode #lTitle{flex:1;min-width:0}body.focus-mode #lMeta{min-width:0;overflow:hidden;font-size:12px}.focus-box{margin-bottom:12px}}
+@media(max-width:720px){body.focus-mode header{padding:8px 12px}body.focus-mode main{height:auto;min-height:0;display:flex;flex-direction:column;padding:10px 12px 86px;gap:10px}body.focus-mode #titleBlock{flex-wrap:wrap;gap:6px}body.focus-mode #lTitle{font-size:17px;flex:1}body.focus-mode #lMeta{font-size:11px}body.focus-mode #focusProgress{margin-top:6px}body.focus-mode #hero{min-height:54vh;padding:20px}body.focus-mode #focusRail{order:2;padding:10px}.focus-stage{display:flex;flex-direction:column;min-width:82px;text-align:center}.focus-stage-time,.focus-rail-note{display:none}body.focus-mode #focusRail .focus-head{margin-bottom:4px}body.focus-mode #focusRail #focusStages{display:flex;overflow:auto;gap:4px}body.focus-mode #focusAssist{order:3;display:block;padding:12px}body.focus-mode #focusFooter{grid-template-columns:1fr 1.2fr 1fr;gap:6px;padding:8px 10px}.focus-ctl{height:52px;font-size:14px}}
 </style>
 </head>
 <body>
@@ -173,10 +244,12 @@ textarea:focus,input[type=text]:focus{outline:2px solid var(--acc-soft);border-c
     <span class="grow"></span>
     <span id="prepMsg" class="muted"></span>
     <button class="ghost" id="prepBtn" title="이 날 수업 중 흐름이 없는 차시를 지도서로 자동 준비 (Gemini, 차시당 30초~2분)">🌙 준비</button>
+    <button class="ghost" id="focusToggle" title="수업 중 지금 할 단계에 집중하는 화면" disabled>🎯 수업 진행</button>
     <span id="clock"></span>
     <button class="ghost icon" id="phoneBtn" title="교실 내선번호">📞</button>
   </div>
   <div id="tabs"></div>
+  <div id="focusProgress" aria-label="수업 단계 진행"></div>
   <div id="phones"></div>
 </header>
 
@@ -187,6 +260,12 @@ textarea:focus,input[type=text]:focus{outline:2px solid var(--acc-soft);border-c
     <div id="lMeta" class="muted"></div>
     <div class="row" id="siteBtns"></div>
   </div>
+
+  <aside id="focusRail" hidden>
+    <h2 class="focus-head">오늘의 수업 흐름</h2>
+    <div id="focusStages"></div>
+    <div class="focus-rail-note">진행 단계를 누르면 해당 단계로 이동해요.</div>
+  </aside>
 
   <!-- 지금 할 일 -->
   <section class="hero idle" id="hero">
@@ -208,12 +287,39 @@ textarea:focus,input[type=text]:focus{outline:2px solid var(--acc-soft);border-c
     <div class="keyhint">← → 키나 발표용 리모컨(PageUp·PageDown)으로 단계를, + − 키로 이 단계 시간을 1분씩 바꿔요</div>
   </section>
 
+  <aside id="focusAssist" hidden>
+    <div class="focus-box">
+      <div class="focus-label" id="focusPeriodLabel">교시 시간</div>
+      <div class="focus-time" id="focusPeriodRemain">--분</div>
+      <div class="focus-bar"><i id="focusPeriodBar"></i></div>
+      <div class="focus-label" style="margin-top:8px">현재 단계 시간 <span id="focusStepRemain" style="float:right"></span></div>
+    </div>
+    <div class="focus-panel-title">다음 단계</div>
+    <div class="focus-card"><b id="focusNextTitle">수업 흐름을 불러오는 중</b><span id="focusNextDesc"></span></div>
+    <div class="focus-panel-title">오늘의 목표</div>
+    <div class="focus-card" id="focusGoal"></div>
+    <div class="focus-panel-title">준비물 · 자료</div>
+    <div class="focus-card" id="focusMaterials"></div>
+    <button id="focusRecord">● 수업 시작</button>
+    <button id="focusLoadRecordings">🎧 오늘 저장된 녹음 보기</button>
+    <div id="focusSavedRecordings" hidden></div>
+    <div class="focus-memos" id="focusMemoKinds">
+      <button type="button" data-kind="note" class="on">📝 메모</button>
+      <button type="button" data-kind="good">👍 좋았음</button>
+      <button type="button" data-kind="fix">🔧 고칠점</button>
+    </div>
+    <input id="focusMemoIn" type="text" placeholder="수업 중 짧은 메모 · Enter 저장">
+    <button id="focusPrepare">📚 준비·자료 화면으로</button>
+  </aside>
+
   <!-- 수업 기록 -->
   <section class="card">
     <h2>🎙 수업 기록</h2>
     <div id="recbar"><span id="rdot"></span><span id="rtime">녹음 대기</span><span id="meter"><i id="mlev"></i></span>
       <button id="recBtn" class="pri">● 수업 시작</button></div>
     <div class="muted" id="recMsg" style="margin-top:6px">녹음은 이 PC의 내 문서\my-skills-data 에만 저장됩니다. 학생 목소리가 담기니 학교 지침을 따르세요.</div>
+    <div class="row" style="margin-top:8px"><button id="loadRecordings">🎧 저장된 녹음 불러오기</button><span class="muted" id="recordingCount"></span></div>
+    <div id="savedRecordings" hidden></div>
     <div class="row" id="memoBtns">
       <button data-k="good">👍 좋았음</button><button data-k="fix">🔧 고칠점</button>
       <button data-k="student">🙋 학생 발표</button><button data-k="star" title="그냥 누르면 지금 순간에 ★ 표시만 남겨요. 이유를 입력칸에 먼저 적고 누르면 함께 기록돼요">★ 표시</button>
@@ -280,6 +386,14 @@ textarea:focus,input[type=text]:focus{outline:2px solid var(--acc-soft);border-c
         <div id="catchList" class="pick"></div>
         <div class="row" style="margin-top:8px"><button id="catchCancel">닫기</button><span class="muted">회색 '✓ 함' 차시를 누르면 거기로 되돌려요</span></div>
       </div>
+      <div class="row" style="margin-top:8px"><button id="replaceBtn">🏫 과목·차시 바꾸기</button><span class="muted">실제 수업에 맞춰 이 교시를 바꿔요</span></div>
+      <div id="replaceBox" style="display:none;margin-top:8px">
+        <div class="muted" style="margin-bottom:6px">과목과 실제 할 차시를 고르세요. 현재 과목 차시는 다음 같은 과목 시간으로 이동해요.</div>
+        <select id="replaceSubject" style="width:100%;margin:4px 0"></select>
+        <input id="replaceSearch" type="search" placeholder="단원·차시·제목 검색" style="width:100%;margin:6px 0">
+        <div id="replaceList" class="pick"></div>
+        <div class="row" style="margin-top:8px"><button id="replaceCancel">닫기</button></div>
+      </div>
     </div>
   </details>
 
@@ -288,6 +402,11 @@ textarea:focus,input[type=text]:focus{outline:2px solid var(--acc-soft);border-c
     <div class="fold-body"><div class="row" id="links"></div></div>
   </details>
 </main>
+<div id="focusFooter" aria-label="수업 진행 조작">
+  <button class="focus-ctl" id="focusPrev">◀ 이전 단계</button>
+  <button class="focus-ctl start" id="focusStart">● 수업 시작 · 녹음</button>
+  <button class="focus-ctl primary" id="focusNext">다음 단계 ▶</button>
+</div>
 <div id="toast"></div>
 
 <script>
@@ -295,6 +414,7 @@ const $ = id => document.getElementById(id);
 const qDate = new URLSearchParams(location.search).get('date');
 let S = null, day = qDate ? new Date(qDate+'T09:00:00') : new Date(), cur = null, stepIdx = -1, stepAt = 0;
 let sess = null, rec = null, saveTimer = null;
+let focusMemoKind = 'note';
 let stepAdj = {};   // 이번 수업에서 단계별로 늘리거나 줄인 분(흐름 파일은 안 바꿈). 기록(adj)으로 남겨 새로고침해도 이어짐
 
 const iso = d => new Date(d.getTime() - d.getTimezoneOffset()*6e4).toISOString().slice(0,10);
@@ -332,11 +452,36 @@ async function load(){
   const np = nowPeriod();
   const first = S.lessons.find(l=>l.period===np) || S.lessons[0];
   select(first ? S.lessons.indexOf(first) : -1);
+  refreshRecordings(false);
+}
+
+let savedRecordings = [];
+function recordingMarkup(items){
+  if (!items.length) return '<div class="muted" style="padding:10px">이 날짜에 저장된 녹음이 없어요.</div>';
+  return items.map(item=>{
+    const size = `${(item.size/1048576).toFixed(1)}MB`, label = `${item.period ? item.period+'교시 · ' : ''}${item.subject || '수업'}${item.lesson ? ' · '+item.lesson+'차시' : ''}`;
+    const title = item.title || item.file;
+    return `<div class="recording-entry"><div class="recording-title">${esc(label)}</div><div class="recording-meta">${esc(title)} · ${size}</div><audio controls preload="none" src="${esc(item.url)}"></audio><div><a href="${esc(item.url)}" download="${esc(item.file)}">파일 저장</a></div></div>`;
+  }).join('');
+}
+async function refreshRecordings(show=true){
+  if (!S) return;
+  const j = await (await fetch('/api/recordings?date='+encodeURIComponent(S.date))).json().catch(()=>({items:[]}));
+  savedRecordings = j.items || [];
+  $('recordingCount').textContent = savedRecordings.length ? `${savedRecordings.length}건 · MP3 변환 전 원본` : '아직 저장된 녹음이 없어요';
+  $('loadRecordings').textContent = `🎧 저장된 녹음 ${savedRecordings.length}건 보기`;
+  $('focusLoadRecordings').textContent = `🎧 저장된 녹음 ${savedRecordings.length}건 보기`;
+  if (show) {
+    $('savedRecordings').hidden = false; $('focusSavedRecordings').hidden = false;
+    $('savedRecordings').innerHTML = recordingMarkup(savedRecordings);
+    $('focusSavedRecordings').innerHTML = recordingMarkup(savedRecordings);
+  }
 }
 
 function renderTabs(){
   const np = nowPeriod();
   $('tabs').innerHTML = S.lessons.map((l,i)=>`<button data-i="${i}" class="${cur===l?'on':''} ${l.period===np?'now':''}">${l.period??'-'}교시<small>${esc(l.subject)}${l.flow?' 📋':''}${l.saved?' ✓':''}</small></button>`).join('') || '<span class="muted" style="padding:6px 10px">이 날은 수업이 없어요</span>';
+  $('focusToggle').disabled = !S.lessons.length;
 }
 
 function select(i){
@@ -347,19 +492,21 @@ function select(i){
   $('memoLog').open = false;   // 교시를 바꾸면 기록 목록은 다시 접음
   $('memoIn').value = ''; setMemoKind('note');   // 쓰던 메모가 다른 수업에 들어가지 않게
   renderTabs();
-  if (!cur){ $('flowEditBtn').hidden = true; $('lTitle').textContent='수업 없음'; $('lMeta').textContent=''; $('siteBtns').innerHTML=''; $('cautions').innerHTML=''; $('steps').innerHTML=''; $('goal').innerHTML=''; sess=null; renderMemos(); renderHero(); return; }
+  if (!cur){ $('flowEditBtn').hidden = true; $('lTitle').textContent='수업 없음'; $('lMeta').textContent=''; $('siteBtns').innerHTML=''; $('cautions').innerHTML=''; $('steps').innerHTML=''; $('goal').innerHTML=''; sess=null; renderMemos(); renderHero(); renderFocusRail(); renderFocusSupport(); return; }
   const saved = cur.saved;
   sess = saved || {date:S.date, period:cur.period, subject:cur.subject, publisher:cur.publisher, title:cur.title, unit:cur.unit, lesson:cur.lesson, record_key:cur.record_key, memos:[], notice:''};
   $('lTitle').textContent = `${cur.subject} · ${cur.title || cur.lesson || '차시 정보 없음'}`;
   $('lMeta').innerHTML = [cur.publisher && `<span class="tag">${esc(cur.publisher)}</span>`, cur.unit && esc(cur.unit), cur.lesson && `${esc(cur.lesson)}차시`,
     cur.status === 'done' ? '<span class="tag" style="background:#e6f4ea;color:var(--ok)">✅ 완료됨</span>' : (cur.status && `상태: ${esc({planned:'예정', pending:'예정'}[cur.status] || cur.status)}`)].filter(Boolean).join(' · ');
   $('catchBox').style.display = 'none';
+  $('replaceBox').style.display = 'none';
   $('siteBtns').innerHTML = [
     cur.site && `<button class="pri" id="openSite">🖥 수업 사이트 열기</button>`,
     cur.has_helper && cur.title && `<button id="openLesson">📂 차시 자료 바로 열기</button>`,
     cur.has_login && `<button id="cpId">아이디 복사</button><button id="cpPw">비번 복사</button>`,
     cur.has_pdf && cur.record_key && `<button id="openPdf">📄 지도서</button>`].filter(Boolean).join('');
   const cs = [...cur.cautions.map(c=>`<li>${esc(c.text)} <span class="muted">(${esc(cur.publisher)})</span></li>`),
+              cur.saved_mismatch && `<li style="color:#9a6700">⚠ 저장된 수업 기록은 ${esc(cur.saved_mismatch.lesson)}차시 ${esc(cur.saved_mismatch.title)} 기록이에요. 현재 차시 기록과 섞지 않았으며 이전 기록은 보존했어요.</li>`,
               ...cur.recent_memos.filter(m=>m.kind!=='good').map(m=>`<li>${esc(m.text)} <span class="muted">(${esc(m.date)} ${esc(m.title)})</span></li>`),
               ...cur.recent_memos.filter(m=>m.kind==='good').map(m=>`<li style="color:var(--ok)">👍 ${esc(m.text)} <span class="muted">(${esc(m.date)})</span></li>`)];
   $('cautions').innerHTML = cs.join('') || '<li class="muted" style="color:var(--sub)">아직 쌓인 메모가 없어요</li>';
@@ -409,13 +556,13 @@ function renderUnit(){
 function renderFlow(){
   const f = cur && cur.flow;
   $('flowEditBtn').hidden = !cur; $('flowEditBtn').textContent = f ? '✏ 흐름 고치기' : '✏ 직접 만들기';
-  if (!f){ $('flowSrc').textContent=''; $('goal').innerHTML='<div class="muted">아직 수업 흐름이 없어요. 위의 <b>🌙 준비</b>를 누르면 지도서로 자동으로 만들어요(수업 끝난 뒤나 아침에 미리). 직접 적어도 돼요.</div>'; $('steps').innerHTML=''; renderHero(); return; }
+  if (!f){ $('flowSrc').textContent=''; $('goal').innerHTML='<div class="muted">아직 수업 흐름이 없어요. 위의 <b>🌙 준비</b>를 누르면 지도서로 자동으로 만들어요(수업 끝난 뒤나 아침에 미리). 직접 적어도 돼요.</div>'; $('steps').innerHTML=''; renderHero(); renderFocusRail(); renderFocusSupport(); return; }
   $('flowSrc').textContent = [f.source, f.edited && '직접 고침'].filter(Boolean).map(t => `(${t})`).join(' ');
   $('goal').innerHTML = (f.goal?`<div><b>🎯 ${esc(f.goal)}</b></div>`:'') + (f.materials&&f.materials.length?`<div class="muted">준비물: ${esc(f.materials.join(', '))}</div>`:'');
   $('steps').innerHTML = (f.steps||[]).map((s,i)=>`<div class="step ${i===stepIdx?'cur':''}" data-s="${i}">
       <b>${esc(s.name)}</b> <span class="muted">${s.minutes?s.minutes+'분':''}</span>${s.flag==='cut'?' <span class="muted" title="시간이 모자라면 줄여도 되는 단계">✂ 줄여도 됨</span>':''}${s.flag==='keep'?' <span class="muted" title="꼭 해야 하는 단계">⭐ 핵심</span>':''}
       ${s.do?`<div>${esc(s.do)}</div>`:''}${s.say?`<div class="say">💬 ${esc(s.say)}</div>`:''}${s.tip?`<div class="tip">💡 ${esc(s.tip)}</div>`:''}</div>`).join('');
-  renderHero();
+  renderHero(); renderFocusRail(); renderFocusSupport();
 }
 
 /* ===== 수업 흐름 고치기: 저장하면 flows/ 에 직접 고친 흐름으로 남아 자동 준비가 덮어쓰지 않는다 ===== */
@@ -556,6 +703,50 @@ function renderHero(){
   $('adjMinus').disabled = effMin(stepIdx) <= 1; $('adjPlus').disabled = effMin(stepIdx) >= 120;
   next.textContent = nx ? '다음 단계 ▶' : '마지막 단계'; next.disabled = !nx;
   tickHero();
+}
+
+function renderFocusRail(){
+  const steps = (cur && cur.flow && cur.flow.steps) || [];
+  $('focusProgress').style.setProperty('--focus-step-count', Math.max(1, steps.length));
+  $('focusProgress').innerHTML = steps.map((_,i)=>`<div class="focus-seg ${i<stepIdx?'past':i===Math.max(0,stepIdx)?'now':''}"></div>`).join('');
+  $('focusStages').innerHTML = steps.length ? steps.map((s,i)=>`<button class="focus-stage ${i===Math.max(0,stepIdx)?'on':i<stepIdx?'past':''}" data-focus-step="${i}">
+    <span class="focus-num">${i<stepIdx?'✓':i+1}</span><span class="focus-stage-name">${esc(s.name || `단계 ${i+1}`)}</span><span class="focus-stage-time">${effMin(i) ? effMin(i)+'분' : ''}</span></button>`).join('')
+    : '<div class="muted">수업 흐름을 준비하면 단계가 여기에 보여요.</div>';
+}
+
+function renderFocusSupport(){
+  const steps = (cur && cur.flow && cur.flow.steps) || [], nextIndex = stepIdx < 0 ? 0 : stepIdx + 1;
+  const next = steps[nextIndex];
+  const p = S && cur && (S.periods || []).find(x => x.no === cur.period);
+  if (p) {
+    const start = hm(p.start), end = hm(p.end), now = nowMin(), length = Math.max(1, end-start);
+    $('focusPeriodLabel').textContent = `${cur.period}교시 · ${p.start}–${p.end}`;
+    $('focusPeriodRemain').textContent = now < start ? `${Math.ceil(start-now)}분 뒤` : now < end ? `${Math.ceil(end-now)}분 남음` : '교시 종료';
+    $('focusPeriodBar').style.width = `${Math.max(0,Math.min(100,(now-start)/length*100))}%`;
+  } else {
+    $('focusPeriodLabel').textContent = cur ? `${cur.period || '-'}교시` : '교시 시간';
+    $('focusPeriodRemain').textContent = '시간표 없음'; $('focusPeriodBar').style.width = '0';
+  }
+  $('focusStepRemain').textContent = stepIdx >= 0 ? $('heroRemain').textContent : (steps[0] && effMin(0) ? `${effMin(0)}분 예정` : '시작 전');
+  $('focusNextTitle').textContent = next ? `${next.name}${effMin(nextIndex) ? ` · ${effMin(nextIndex)}분` : ''}` : (steps.length ? '마지막 단계예요' : '수업 흐름 없음');
+  $('focusNextDesc').textContent = next ? (next.do || next.say || '') : (steps.length ? '수업을 정리하고 마쳐 주세요.' : '🌙 준비를 누르거나 흐름을 직접 만들어 주세요.');
+  $('focusGoal').textContent = cur && cur.flow && cur.flow.goal || '수업 흐름을 준비하면 목표가 여기에 보여요.';
+  $('focusMaterials').textContent = cur && cur.flow && cur.flow.materials && cur.flow.materials.length ? cur.flow.materials.join(' · ') : '준비물이 따로 없어요.';
+  const label = rec ? '■ 수업 마침' : '● 수업 시작 · 녹음';
+  $('focusRecord').textContent = label; $('focusRecord').classList.toggle('on', !!rec);
+  $('focusStart').textContent = label; $('focusStart').classList.toggle('on', !!rec);
+  $('focusStart').classList.toggle('start', !rec);
+  $('focusPrev').disabled = !steps.length || stepIdx <= 0;
+  $('focusNext').textContent = stepIdx >= steps.length-1 && steps.length ? (rec ? '수업 마침' : '마지막 단계') : (stepIdx < 0 ? '첫 단계 시작 ▶' : '다음 단계 ▶');
+  $('focusNext').disabled = !steps.length || (stepIdx >= steps.length-1 && !rec);
+}
+
+function setFocusMode(on){
+  document.body.classList.toggle('focus-mode', !!on);
+  $('focusRail').hidden = !on; $('focusAssist').hidden = !on;
+  $('focusToggle').classList.toggle('on', !!on);
+  $('focusToggle').textContent = on ? '↩ 준비 화면' : '🎯 수업 진행';
+  if (on) { renderFocusRail(); renderFocusSupport(); }
 }
 
 /* 오늘 수업이 지금 진행 중이면 시간표 시각으로 '지금쯤 어느 단계인지' 짚어 준다 */
@@ -737,6 +928,34 @@ function voiceMemo(){
 
 /* ===== 이벤트 ===== */
 $('tabs').onclick = e => { const b=e.target.closest('button'); if (b) select(+b.dataset.i); };
+$('focusToggle').onclick = () => setFocusMode(!document.body.classList.contains('focus-mode'));
+$('focusPrepare').onclick = () => setFocusMode(false);
+$('loadRecordings').onclick = () => refreshRecordings(true);
+$('focusLoadRecordings').onclick = () => refreshRecordings(true);
+$('focusStages').onclick = e => { const b=e.target.closest('[data-focus-step]'); if (b) goStep(+b.dataset.focusStep); };
+$('focusPrev').onclick = () => $('stepPrev').click();
+$('focusStart').onclick = () => $('recBtn').click();
+$('focusRecord').onclick = () => $('recBtn').click();
+$('focusNext').onclick = () => {
+  const steps = (cur && cur.flow && cur.flow.steps) || [];
+  if (steps.length && stepIdx >= steps.length-1) { if (rec) stopRec(); return; }
+  $('stepNext').click();
+};
+$('focusMemoKinds').onclick = e => {
+  const b=e.target.closest('button[data-kind]'); if (!b) return;
+  focusMemoKind=b.dataset.kind;
+  $('focusMemoKinds').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));
+  $('focusMemoIn').placeholder = {note:'수업 중 짧은 메모 · Enter 저장',good:'좋았던 점을 적고 Enter',fix:'고칠 점을 적고 Enter'}[focusMemoKind];
+  $('focusMemoIn').focus();
+};
+$('focusMemoIn').onkeydown = e => {
+  if (e.key==='Escape') { e.target.value=''; focusMemoKind='note'; return; }
+  if (e.key==='Enter' && !e.isComposing && e.target.value.trim()) {
+    addMemo(focusMemoKind, e.target.value.trim()); e.target.value=''; focusMemoKind='note';
+    $('focusMemoKinds').querySelectorAll('button').forEach((x,i)=>x.classList.toggle('on',i===0));
+    e.target.placeholder='수업 중 짧은 메모 · Enter 저장';
+  }
+};
 $('prevDay').onclick = () => { day.setDate(day.getDate()-1); load(); };
 $('nextDay').onclick = () => { day.setDate(day.getDate()+1); load(); };
 $('datePick').onchange = e => { if (e.target.value) { day = new Date(e.target.value + 'T09:00:00'); load(); } };
@@ -885,6 +1104,51 @@ $('catchList').onclick = async e => {
   else toast(j.message || '진도 맞춤에 실패했어요', 10000);
 };
 let catchBusy = false;
+let replaceSubjects = [], replaceItems = [];
+function renderReplaceList(query = '') {
+  const needle = query.trim().toLocaleLowerCase();
+  const matches = replaceItems.filter(i => !i.done && i.record_key && (!needle || `${i.unit} ${i.lesson} ${i.title}`.toLocaleLowerCase().includes(needle)));
+  if (!matches.length) { $('replaceList').innerHTML = '<div class="muted" style="padding:8px">선택할 미완료 차시가 없어요.</div>'; return; }
+  let html = '', unit = null;
+  matches.forEach(i => {
+    if (i.unit !== unit) { unit = i.unit; html += `<h4>${esc(unit || '단원 없음')}</h4>`; }
+    const plan = i.planned_date ? `계획 ${i.planned_date.slice(5).replace('-', '/')} ${esc(i.planned_period)}교시` : '날짜 없음';
+    html += `<button data-key="${esc(i.record_key)}">${esc(i.lesson)}차시 · ${esc(i.title)}<small>${plan}</small></button>`;
+  });
+  $('replaceList').innerHTML = html;
+}
+$('replaceBtn').onclick = async () => {
+  if (!cur) return;
+  if (!cur.record_key || !cur.slot_id || cur.status !== 'planned') { toast('예정된 Supabase 교시에서만 과목을 바꿀 수 있어요.'); return; }
+  $('replaceBox').style.display = 'block'; $('replaceList').innerHTML = '<div class="muted" style="padding:8px">과목을 불러오는 중…</div>';
+  const j = await (await fetch('/api/subjects')).json().catch(() => ({items: []}));
+  replaceSubjects = (j.items || []).filter(s => s && s !== cur.subject);
+  if (!replaceSubjects.length) { $('replaceList').innerHTML = `<div class="muted" style="padding:8px">${esc(j.message || '다른 과목을 불러오지 못했어요')}</div>`; return; }
+  $('replaceSubject').innerHTML = replaceSubjects.map(s => `<option value="${esc(s)}">${esc(s)}</option>`).join('');
+  await loadReplaceItems();
+};
+async function loadReplaceItems() {
+  const subject = $('replaceSubject').value;
+  $('replaceList').innerHTML = '<div class="muted" style="padding:8px">차시를 불러오는 중…</div>';
+  const j = await (await fetch('/api/upcoming?subject=' + encodeURIComponent(subject))).json().catch(() => ({items: []}));
+  replaceItems = j.items || []; $('replaceSearch').value = ''; renderReplaceList();
+}
+$('replaceSubject').onchange = loadReplaceItems;
+$('replaceSearch').oninput = e => renderReplaceList(e.target.value);
+$('replaceCancel').onclick = () => { $('replaceBox').style.display = 'none'; };
+$('replaceList').onclick = async e => {
+  const b = e.target.closest('button[data-key]'); if (!b || !cur) return;
+  const it = replaceItems.find(i => i.record_key === b.dataset.key); if (!it) return;
+  const msg = [`[${S.date} ${cur.period}교시] ${cur.subject}에서 ${$('replaceSubject').value}로 바꿀까요?`,
+    `• 선택한 차시: ${it.lesson}차시 ${it.title}`,
+    `• 원래 ${cur.subject} 차시는 완료 처리하지 않고 다음 ${cur.subject} 시간으로 넘겨요. 뒤 차시도 순서대로 한 칸씩 이동해요.`,
+    `• 현재 계획에 남는 ${cur.subject} 차시는 날짜 없이 남겨요.`,
+    `• 선택한 과목의 앞 미완료 차시는 완료로 표시되고, 그 뒤 차시는 기존 예정 칸에 이어서 배치돼요.`].join('\n');
+  if (!confirm(msg)) return;
+  const j = await post('/api/progress/replace-subject', {subject: cur.subject, slot_id: cur.slot_id, target_record_key: it.record_key, target_date: S.date, target_period: cur.period});
+  if (j.status === 'success') { addMemo('sys', `과목 변경: ${j.message}`, true); $('replaceBox').style.display = 'none'; setTimeout(load, 800); }
+  else toast(j.message || '과목 변경에 실패했어요', 10000);
+};
 // ── 🌙 수업 준비: 흐름 없는 차시를 뒤에서 자동 준비, 진행 상황을 지켜봄 ──
 let prepTimer = null;
 async function prepPoll(){
@@ -915,6 +1179,7 @@ window.addEventListener('beforeunload', e => { if (rec){ e.preventDefault(); e.r
 
 setInterval(()=>{ const n=new Date(); $('clock').textContent=n.toTimeString().slice(0,5);
   tickHero();
+  renderFocusSupport();
   if (rec && sess.started_ms) $('rtime').textContent='● '+mmss(Date.now()-sess.started_ms);
 }, 1000);
 load();

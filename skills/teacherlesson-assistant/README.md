@@ -4,9 +4,9 @@ Claude 작업 절차는 [SKILL.md](SKILL.md), 문제·할 일은 [ISSUES.md](ISS
 
 ## 실행
 
-- `실행_수업비서.bat` → 서버(127.0.0.1:5180)가 켜지고 화면 왼쪽 1/3에 수업 비서 창이 열린다. 12시간에 한 번 `build_units.py`(단원 개관)도 돌린다.
+- 바탕화면 `수업 준비 비서` → `실행_수업비서.bat`을 켠다. 수업 비서는 왼쪽 모니터의 약 1/3, 교과 사이트는 오른쪽 모니터 전체에 열린다. 오른쪽 모니터가 없으면 왼쪽 화면의 나머지 영역을 쓴다. 12시간에 한 번 `build_units.py`(단원 개관)도 돌린다.
 - 시간표·완료·연장·미루기·따라잡기는 Supabase를 읽고 쓴다. 중앙 `.env`에 `SUPABASE_URL`(또는 `NEXT_PUBLIC_SUPABASE_URL`)과 `SUPABASE_SERVICE_ROLE_KEY`가 있어야 한다. 진도 서버(5000번)는 이전 Google Sheets 기능을 사용할 때만 필요하다.
-- "수업 사이트 열기"는 수업 도우미 공용 Chrome 프로필(config `chrome_profile`, 기본 `%LOCALAPPDATA%\MusicClassHelper\chrome_profile`, 원격 디버깅 포트 `debug_port` 9233)로 화면 오른쪽 2/3에 창을 연다. 열 수 있는 주소는 config 의 과목 사이트·바로가기·하이클래스·AI 사이트 주소뿐이다. 한 번 로그인하면 그 프로필에 로그인이 유지된다.
+- "수업 사이트 열기"는 수업 도우미 공용 Chrome 프로필(config `chrome_profile`, 기본 `%LOCALAPPDATA%\MusicClassHelper\chrome_profile`, 원격 디버깅 포트 `debug_port` 9233)로 오른쪽 모니터 전체에 창을 연다. Chrome 이 이미 실행 중이어도 새 창을 다시 배치한다. 열 수 있는 주소는 config 의 과목 사이트·바로가기·하이클래스·AI 사이트 주소뿐이다. 한 번 로그인하면 그 프로필에 로그인이 유지된다.
 - 9222 포트는 다른 자동화(에듀파인)가 쓰고 있을 수 있어 9233을 쓴다.
 - 서버는 Host 가 127.0.0.1/localhost 인 요청만 받는다(다른 사이트·DNS 리바인딩 차단). 클립보드로 복사한 비밀번호는 30초 뒤 지운다.
 - 최초 설정은 `python -m pip install -r requirements.txt`. 서비스 키는 로컬 Python 서버에서만 읽고 브라우저로 보내지 않는다.
@@ -68,6 +68,8 @@ Claude 작업 절차는 [SKILL.md](SKILL.md), 문제·할 일은 [ISSUES.md](ISS
 
 ## 화면 기능 (v0.1)
 
+수업 중에는 상단의 **🎯 수업 진행**을 눌러 집중 화면으로 바꾼다. 왼쪽에서 단계를 고르고, 가운데 발문·활동·팁을 보며, 오른쪽에서 시간·다음 단계·준비물과 녹음·빠른 메모를 쓴다. 아래 고정 버튼과 방향키·발표 리모컨으로 단계를 이동한다. **↩ 준비 화면**으로 날짜·진도·자료 메뉴에 돌아간다.
+
 | 영역 | 내용 |
 |---|---|
 | 위쪽 | 날짜 이동(달력·요일·'오늘'), 🌙 수업 준비(그날 흐름 없는 차시를 Gemini 로 자동 준비, `prepare_lessons.py`, 아침 bat 에서도 오늘 것 자동), 시계, 교시 탭(지금 교시 노란 테두리, 📋 흐름 준비됨, ✓ 기록 저장됨), 📞 내선번호 |
@@ -88,7 +90,7 @@ Claude 작업 절차는 [SKILL.md](SKILL.md), 문제·할 일은 [ISSUES.md](ISS
 - `config.json` — 교시 시각, 내선번호, 바로가기, 과목별 출판사·사이트·`secret_prefix`, `schedule_backend`, `ai_sites`. 처음 실행 때 `config.example.json`을 복사해 만든다.
 - `units/<과목>__<대단원>.json`·`.pdf` — 단원 개관 (`build_units.py`가 만든다)
 - `flows/<record_key>.json` 또는 `flows/<과목>__<차시제목>.json` — 수업 흐름 (선택). Supabase 차시의 record_key 는 `lesson-0075` 같은 차시 번호(`lesson_lessons.legacy_lesson_id`)
-- `sessions/<날짜>/<교시>교시_<과목>.json` — 그 수업의 메모·알림장·시작/마침 시각
+- `sessions/<날짜>/<교시>교시_<과목>_<차시ID>.json` — 차시별 메모·알림장·시작/마침 시각. 예전 ID 없는 파일도 읽고, 다른 차시 기록은 현재 차시에 잘못 붙이지 않는다.
 - `sessions/<날짜>/<교시>교시_<과목>_<시각>.webm` — 녹음
 - `ask/<날짜>/<교시>_<과목>/` — 웹 AI에 끌어다 놓을 PDF와 질문.txt
 - `notebooklm/<과목>/` — NotebookLM 소스(`<대단원>.md`, `_그림.pdf`), `notes/` 차시별 노트, `목록.txt`

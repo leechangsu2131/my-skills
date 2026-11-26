@@ -704,14 +704,16 @@ async function processSelectedAbsenceWorkOnNeis({ monthStart, monthEnd, batches 
                     items.push({
                         name: text(valueAt(selectedApproverDataset, row, "userNm"), 40),
                         roleName: text(valueAt(selectedApproverDataset, row, "atrzScNm"), 20),
+                        sequence: Number(valueAt(selectedApproverDataset, row, "atrzSeqSn")),
                     });
                 }
                 return items;
             };
             const matchesPlan = (items, count = approverPlan.length) => items.length === count
                 && items.every((item, index) => item.name === approverPlan[index].name
-                    && (!item.roleName || item.roleName === approverPlan[index].roleName));
-            const describe = (items) => items.map((item) => `${item.name}${item.roleName ? `(${item.roleName})` : ""}`).join(" → ") || "없음";
+                    && item.roleName === approverPlan[index].roleName
+                    && item.sequence === index + 1);
+            const describe = (items) => items.map((item) => `${item.name}${item.roleName ? `(${item.roleName})` : "(구분 없음)"}#${item.sequence}`).join(" → ") || "없음";
 
             // 2-1) 미리 들어 있는 결재자가 저장 결재선과 다르면 기안자 행만 남기고 지운다.
             const currentApprovers = readSelectedApprovers();
@@ -733,7 +735,7 @@ async function processSelectedAbsenceWorkOnNeis({ monthStart, monthEnd, batches 
                 if (readSelectedApprovers().length) throw new Error("기존 결재자를 지우지 못해 저장된 결재선을 추가하지 않았습니다.");
             }
 
-            // 2-2) 사람마다: 구분(rdbCn)을 먼저 고르고 → 행 선택 → [추가]. 추가되지 않았을 때만 더블클릭으로 한 번 더 시도.
+            // 2-2) 사람마다: 구분(rdbCn)을 먼저 고르고 → 행 선택 → [추가]를 한 번만 누른다.
             if (!alreadyExact) {
                 for (let index = 0; index < approverPlan.length; index += 1) {
                     const plan = approverPlan[index];
@@ -781,26 +783,12 @@ async function processSelectedAbsenceWorkOnNeis({ monthStart, monthEnd, batches 
                     await sleep(150);
                     approverGrid.selectRows([row]);
                     addButton.click();
-                    const added = async () => {
-                        const until = Date.now() + 2500;
-                        while (Date.now() < until) {
-                            if (readSelectedApprovers().length > index) return true;
-                            await sleep(150);
-                        }
-                        return false;
-                    };
-                    if (!(await added())) {
-                        const listElement = document.getElementById(`uuid-${approverGrid.uuid}`);
-                        const rowElement = listElement?.querySelector(`[data-rowindex="${row}"]`);
-                        const nameElement = [...(rowElement?.querySelectorAll("span,div,td,a") || [])]
-                            .find((element) => text(element.innerText || element.textContent, 40) === plan.name);
-                        if (!nameElement) throw new Error(`결재자 '${plan.name}' 행을 선택하지 못했습니다.`);
-                        nameElement.click();
-                        nameElement.dispatchEvent(new MouseEvent("dblclick", { bubbles: true, cancelable: true, view: window }));
-                        if (!(await added())) throw new Error(`결재자 '${plan.name}'을(를) 결재선에 추가하지 못했습니다.`);
+                    const addUntil = Date.now() + 5000;
+                    let sofar = readSelectedApprovers();
+                    while (sofar.length <= index && Date.now() < addUntil) {
+                        await sleep(150);
+                        sofar = readSelectedApprovers();
                     }
-                    await sleep(200);
-                    const sofar = readSelectedApprovers();
                     if (!matchesPlan(sofar, index + 1)) {
                         throw new Error(`결재선이 예상과 다르게 추가되어 상신하지 않았습니다. (현재: ${describe(sofar)})`);
                     }
@@ -839,6 +827,7 @@ async function processSelectedAbsenceWorkOnNeis({ monthStart, monthEnd, batches 
                     draftApprovers.push({
                         name: text(valueAt(draftApproverDataset, row, "userNm"), 40),
                         roleName: text(valueAt(draftApproverDataset, row, "atrzScNm"), 20),
+                        sequence: Number(valueAt(draftApproverDataset, row, "atrzSeqSn")),
                     });
                 }
                 if (matchesPlan(draftApprovers)) break;

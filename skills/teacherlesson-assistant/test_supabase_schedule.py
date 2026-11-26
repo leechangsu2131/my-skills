@@ -502,16 +502,53 @@ class CatchUpTest(FakeServerCase):
         places = [(s["slot_date"], s["slot_period"], s["slot_order"]) for s in self.math_slots()]
         self.assertEqual(len(places), len(set(places)))
 
-    @unittest.expectedFailure
+    # ---- ISSUE-033: 더 앞 차시를 '오늘 할 차시'로 고르면 화면에도 그 차시가 나온다 ----
+
+    def shown(self, day, period=4):
+        return {row["period"]: row["record_key"] for row in sm.day_schedule(day)}.get(period)
+
     def test_catch_up_to_an_earlier_lesson_shows_it_on_the_requested_day(self):
-        """알려진 문제(ISSUE-031, 고치지 않고 기록만): 11/25 4교시에는 L2 가 이미 예정이다. 교사가 더 앞 차시 L1 을
-        '오늘 할 차시'로 고르면 L1 이 같은 칸의 뒤(slot_order 2)에 들어가고, day_schedule 은 같은 교시의 예정 차시 중
-        교육과정 순서가 더 뒤인 L2 를 보여 준다. 응답은 success 인데 화면에는 L1 이 나오지 않는다.
-        코드 주석의 의도('선택한 차시를 오늘 수업으로 만든다')대로 고쳐지면 이 시험이 통과하므로 expectedFailure 를 지운다."""
+        # 11/25 4교시에는 L2 가 이미 예정이다. 더 앞 차시 L1 을 고르면 화면에 L1 이 나온다(L2 는 그 칸에 예정으로 남음).
         res = self.catch_up("lesson-0001", "2026-11-25")
         self.assertEqual(res["status"], "success")
-        shown = {row["period"]: row["record_key"] for row in sm.day_schedule(date(2026, 11, 25))}
-        self.assertEqual(shown[4], "lesson-0001")
+        self.assertEqual(self.shown(date(2026, 11, 25)), "lesson-0001")
+        self.assertEqual(self.slot("sB")["status"], "planned")                  # 밀려난 L2 는 지워지지 않음
+
+    def test_catch_up_earlier_lesson_onto_a_later_day_shows_it_there(self):
+        res = self.catch_up("lesson-0002", "2026-11-30")                        # 11/30 4교시에는 L3 이 예정
+        self.assertEqual(res["status"], "success")
+        self.assertEqual(self.shown(date(2026, 11, 30)), "lesson-0002")
+
+    def test_after_the_chosen_earlier_lesson_is_done_the_later_one_shows_again(self):
+        self.catch_up("lesson-0001", "2026-11-25")
+        self.slot("sA")["status"] = "done"                                      # 고른 L1 수업을 마침
+        self.assertEqual(self.shown(date(2026, 11, 25)), "lesson-0002")         # 같은 칸에 남아 있던 L2 가 이어서 나옴
+
+    def test_newest_catch_up_wins_when_a_period_holds_two_chosen_lessons(self):
+        self.catch_up("lesson-0003", "2026-11-25")                              # 앞 차시 L1·L2 완료, L3 이 11/25 로
+        self.assertEqual(self.shown(date(2026, 11, 25)), "lesson-0003")
+        self.catch_up("lesson-0001", "2026-11-25")                              # 다시 L1 로 돌아감(완료였던 L1 을 다시 염)
+        self.assertEqual(self.shown(date(2026, 11, 25)), "lesson-0001")         # 나중에 고른 L1 이 먼저(뒤 차시 L3 이 아님)
+
+    def test_pulling_a_later_lesson_forward_still_shows_it(self):
+        self.catch_up("lesson-0003", "2026-11-25")
+        self.assertEqual(self.shown(date(2026, 11, 25)), "lesson-0003")
+
+    def test_chosen_lesson_that_is_already_done_does_not_take_priority(self):
+        self.catch_up("lesson-0001", "2026-11-25")
+        self.slot("sA")["status"] = "done"
+        self.slot("sB")["status"] = "done"                                      # 그 칸이 모두 완료면 기존대로 가장 뒤 차시
+        self.assertEqual(self.shown(date(2026, 11, 25)), "lesson-0002")
+
+    def test_a_planned_period_without_any_catch_up_keeps_showing_the_later_lesson(self):
+        # catch-up 이 아닌 일반 예정 두 개가 한 교시에 있으면 기존 규칙 그대로(교육과정 순서가 더 뒤인 차시)
+        self.db.tables["lesson_slots"].append({"id": "extra", "lesson_id": "L1", "slot_date": "2026-11-25", "slot_period": 4,
+                                               "slot_order": 2, "status": "planned", "source": "progress_sync", "memo": None})
+        self.assertEqual(self.shown(date(2026, 11, 25)), "lesson-0002")
+
+    def test_the_real_select_list_asks_for_the_source_column(self):
+        # 가짜 서버는 select 를 가리지 않고 모든 칸을 돌려주므로, 실제 DB 에 보내는 칸 목록에 source 가 있는지 따로 확인한다.
+        self.assertIn("source", sm.LESSON_REL.split("lesson:")[0].split(","))
 
     def test_catch_up_without_a_valid_date_is_an_error_and_writes_nothing(self):
         for bad in ("", "11/25", "2026-13-45"):

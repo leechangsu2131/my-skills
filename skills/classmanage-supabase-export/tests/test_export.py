@@ -96,13 +96,36 @@ def test_parse_names_comma_list_keeps_names_with_inner_space():
 
 @pytest.fixture
 def out_dir(tmp_path, monkeypatch):
-    """결과 엑셀이 스킬 폴더가 아니라 임시 폴더에 생기도록 export.__file__ 을 바꾼다."""
-    monkeypatch.setattr(export, "__file__", str(tmp_path / "export.py"))
+    """data_dir() 결과를 임시 폴더로 바꿔 개인정보가 실제 폴더에 쓰이지 않게 한다."""
+    monkeypatch.setattr(export, "data_dir", lambda: tmp_path)
     return tmp_path
 
 
 def _open(out_dir):
     return load_workbook(out_dir / "student_records.xlsx")
+
+
+def test_get_supabase_data_keeps_tls_verification_enabled(monkeypatch):
+    monkeypatch.setenv("SUPABASE_URL", "https://example.invalid")
+    monkeypatch.setenv("SUPABASE_KEY", "fake-test-key")
+    monkeypatch.setenv("SUPABASE_TABLE_NAME", "fake_table")
+    monkeypatch.setattr(export, "load_env", lambda: None)
+    captured = {}
+
+    class FakeResponse:
+        ok = True
+        def json(self):
+            return [{"id": 1}]
+
+    def fake_get(url, **kwargs):
+        captured["url"] = url
+        captured.update(kwargs)
+        return FakeResponse()
+
+    monkeypatch.setattr(export.requests, "get", fake_get)
+    assert export.get_supabase_data() == [{"id": 1}]
+    assert captured["url"] == "https://example.invalid/rest/v1/fake_table?select=*"
+    assert captured.get("verify", True) is not False
 
 
 def test_export_splits_multi_student_record_into_each_sheet(out_dir):
@@ -168,7 +191,7 @@ def test_export_record_without_name_column_is_skipped(out_dir):
     assert _open(out_dir).sheetnames == ["학생A"]
 
 
-def test_export_writes_into_dir_next_to_module_file(out_dir):
+def test_export_writes_into_data_dir(out_dir):
     export.export_to_excel([{"id": 1, NAME_COL: "학생A", "내용": "x"}])
     assert (out_dir / "student_records.xlsx").is_file()
 

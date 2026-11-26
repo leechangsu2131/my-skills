@@ -1,16 +1,12 @@
 import os
 import re
-import urllib3
 import requests
 import pandas as pd
 import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(next(p / "_shared" for p in _pl.Path(__file__).resolve().parents if (p / "_shared" / "skill_env.py").is_file())))
-from skill_env import load_env
-from pathlib import Path
-
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+from skill_env import load_env, data_dir
 
 def get_supabase_data():
-    # 상위 폴더(classmanage-notion-sync)의 .env 파일 로드 시도
+    # 공용 중앙 .env 파일에서 Supabase 설정을 불러온다.
     load_env()
     
     url = os.environ.get('SUPABASE_URL')
@@ -22,7 +18,7 @@ def get_supabase_data():
         return []
     
     headers = {'apikey': key, 'Authorization': f'Bearer {key}'}
-    res = requests.get(f'{url}/rest/v1/{table}?select=*', headers=headers, verify=False)
+    res = requests.get(f'{url}/rest/v1/{table}?select=*', headers=headers)
     if not res.ok:
         print("❌ Failed to fetch data:", res.status_code, res.text)
         return []
@@ -58,7 +54,7 @@ def export_to_excel(records):
             student_records[name].append(rec_copy)
             
     # 2. 엑셀 파일 생성
-    output_file = Path(__file__).parent / "student_records.xlsx"
+    output_file = data_dir() / "student_records.xlsx"
     with pd.ExcelWriter(output_file, engine='openpyxl') as writer:
         for student, rows in sorted(student_records.items()):
             df = pd.DataFrame(rows)
@@ -68,7 +64,7 @@ def export_to_excel(records):
             sheet_name = student[:31].replace('/', '_').replace('\\', '_')
             df.to_excel(writer, sheet_name=sheet_name, index=False)
             
-    print(f"✅ 엑셀 추출 완료: 총 {len(student_records)}명의 시트가 '{output_file.name}'에 생성되었습니다!")
+    print(f"✅ 엑셀 추출 완료: 총 {len(student_records)}명의 시트가 개인 데이터 폴더의 '{output_file.name}'에 생성되었습니다!")
 
 if __name__ == "__main__":
     records = get_supabase_data()

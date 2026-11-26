@@ -148,12 +148,6 @@
 - **해결 방향**: 교사 PC 에서 `where python`·`py -0` 로 상황을 보고, bat 의 `python` 을 `py -3.13` 으로 통일할지 정한 뒤 학교 PC 에서 `실행_수업비서.bat` 을 실제로 켜 확인
 - **관련 파일**: `실행_수업비서.bat`, `점검_PC.bat`, `check_setup.py`
 
-### ISSUE-035: check_setup.py — config.json 이 `{ }` 모양이 아니면 멈춤 (2026-11-25, T46 중 발견)
-- **상태**: 📌 백로그 (T46 범위는 port 값만이라 따로 둠)
-- **증상**: `config.json` 이 `[]`·`5` 처럼 JSON 이긴 한데 객체가 아니면 `load_config` 는 그대로 돌려주고, 뒤에서 `cfg.get(...)` 이 `AttributeError` 로 멈춤(재현: 그런 파일로 `check_setup.py` 실행)
-- **해결 방향**: `load_config` 에서 `isinstance(cfg, dict)` 가 아니면 `{}` 와 ❌ 결과("config.json 은 { } 로 시작해야 해요")를 돌려주고, 그 시험 추가
-- **관련 파일**: `check_setup.py`(`load_config`), `tests/test_check_setup.py`
-
 ## 🟢 해결됨
 
 ### ISSUE-032: `parse_flow` 가 JSON null 을 "None" 글자로 저장함 (2026-11-25, 시험으로 발견)
@@ -169,6 +163,11 @@
 - **원인**: `text.find("{")` ~ `text.rfind("}")` 구간을 그대로 `json.loads`
 - **해결**: 새 `_find_flow_json` 이 각 `{` 위치에서 `JSONDecoder.raw_decode` 로 읽어 보고 `steps` 가 있는 첫 객체를 고름. 아무것도 못 읽으면 예전과 같은 오류(`JSON 을 찾지 못함` / `JSONDecodeError`)를 냄. 시험: 앞뒤 설명 중괄호, JSON 안의 중괄호 글자, 앞의 빈 `{}`, JSON 없이 중괄호만 있는 경우(시험 3개 추가)
 - **관련 파일**: `prepare_lessons.py`
+### ISSUE-035: check_setup.py — config.json 이 `{ }` 모양이 아니면 멈춤 (2026-11-25, T46 중 발견)
+- **상태**: 🟢 해결 (2026-11-26, T75)
+- **증상**: `config.json` 이 `[]`·`5`·`null` 처럼 JSON 이긴 한데 객체가 아니면 `load_config` 는 그대로 돌려주고, 뒤에서 `cfg.get(...)` 이 `AttributeError` 로 멈춤
+- **해결/조치**: `load_config` 가 읽은 값이 객체(dict)가 아니면 `{}` 와 ❌("{ } 모양이 아니에요")를 돌려줌(config.example.json 도 같음). 전체 실행(`run_checks`·`main`)이 멈추지 않고 종료 코드 1. 시험 추가
+- **관련 파일**: `check_setup.py`(`load_config`), `tests/test_check_setup.py`
 
 ### ISSUE-033: 더 앞 차시를 '오늘 할 차시'로 고르면 같은 칸의 뒤 차시가 화면에 계속 나옴 (2026-11-25 발견)
 - **상태**: 🟢 해결 (2026-11-26, T45 claude-web-173 — 교사가 "쓴다, 화면도 바뀌면 좋겠다"고 정함)

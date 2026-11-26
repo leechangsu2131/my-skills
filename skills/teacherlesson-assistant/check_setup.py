@@ -152,10 +152,17 @@ def import_name_for(pip_name: str) -> str:
 def load_config(data_path: pathlib.Path, example_path: pathlib.Path) -> tuple[dict, Result]:
     """데이터 폴더의 config.json (없으면 config.example.json 기본값)을 읽는다. 쓰지는 않는다."""
     real = data_path / "config.json"
+    not_object = Result(FAIL, "설정 파일 config.json", "{ } 모양이 아니에요",
+                        "config.json 은 { 로 시작해 } 로 끝나야 해요 — 고치거나 지우고 서버를 한 번 켜면 예시로 다시 만들어져요")
     try:
         if real.is_file():
-            return json.loads(real.read_text(encoding="utf-8-sig")), Result(OK, "설정 파일 config.json", "읽음")
+            cfg = json.loads(real.read_text(encoding="utf-8-sig"))
+            if not isinstance(cfg, dict):          # [] · 5 · "글" 처럼 JSON 이긴 한데 객체가 아닐 때
+                return {}, not_object
+            return cfg, Result(OK, "설정 파일 config.json", "읽음")
         cfg = json.loads(example_path.read_text(encoding="utf-8-sig")) if example_path.is_file() else {}
+        if not isinstance(cfg, dict):
+            return {}, not_object
     except (OSError, ValueError) as exc:
         return {}, Result(FAIL, "설정 파일 config.json", f"읽지 못했어요 ({type(exc).__name__})",
                           "config.json 의 쉼표·따옴표를 확인하거나 지우고 서버를 한 번 켜면 예시로 다시 만들어져요")

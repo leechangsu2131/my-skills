@@ -14,3 +14,5 @@
 - 2026-11-26 10:06 T60 PR 올림 — teacherlesson-workspace `sync_semester2.safe_int` 이 `12.0` 을 정수로 읽게 고침, xfail 해제 + 시험 추가 (tests/test_sync_semester2.py 23개 통과, 옛 소스로 되돌리면 3개 실패 확인 후 복구), ISSUE-T14 🟢. 범위 밖 같은 모양 `_safe_int` 2곳은 ISSUES 에 기록
 - 2026-11-26 10:06 T63 시작 (브랜치 task/T63-library-xfail)
 - 2026-11-26 10:07 T63 PR 올림 — personal-library-search xfail 2개를 소스를 고쳐 풀음: `_title_score` 를 순서를 보는 LCS 방식으로, `parse_text_file` 이 URL 앞 글을 제목에 합치게 (tests 34개 통과, 옛 소스로 되돌리면 5개 실패 확인 후 복구), ISSUE-002·003 🟢. 교사 PC 에서 books.txt 모양·교보 검색 결과 확인 필요
+- 2026-11-26 10:07 T75 시작 (브랜치 task/T75-check-setup-config)
+- 2026-11-26 10:08 T75 PR 올림 — teacherlesson-assistant `check_setup.load_config` 가 config.json 이 { } 모양이 아니면(`[]`·`5`·`null`) ❌ 로 알리고 멈추지 않게 (tests/test_check_setup.py 115개 통과, 옛 소스로 되돌리면 9개 실패 확인 후 복구, 폴더 전체 148개 통과), ISSUE-035 🟢

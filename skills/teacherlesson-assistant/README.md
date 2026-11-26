@@ -14,7 +14,7 @@ Claude 작업 절차는 [SKILL.md](SKILL.md), 문제·할 일은 [ISSUES.md](ISS
 
 ## 학교 PC 점검 (`점검_PC.bat`)
 
-처음 쓰는 PC(학교 PC 등)에서 수업 비서를 켜기 전에 한 번 돌려 빠진 것을 찾는다. `점검_PC.bat`을 더블클릭하거나 이 폴더에서 `python check_setup.py`.
+처음 쓰는 PC(학교 PC 등)에서 수업 비서를 켜기 전에 한 번 돌려 빠진 것을 찾는다. `점검_PC.bat`을 더블클릭하거나 이 폴더에서 `python check_setup.py`. 설치 순서(Python·부품·Node·Gemini CLI·Chrome 로그인·OneDrive)는 [docs/INSTALL_SCHOOL_PC.md](docs/INSTALL_SCHOOL_PC.md) 에 차례대로 적어 두었다.
 
 - 읽기만 한다: 설치·폴더 만들기·서버/크롬 켜기를 하지 않는다. 중앙 `.env`는 키 **이름**만 보고 값은 출력하지 않는다.
 - 항목마다 ✅ 괜찮음 / ⚠ 일부 기능만 안 됨·확인 필요 / ❌ 꼭 고쳐야 함, 그리고 고치는 방법 한 줄을 보여 준다. ❌ 가 있으면 종료 코드 1.

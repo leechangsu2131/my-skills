@@ -2,6 +2,7 @@ import json
 import os
 import re
 import time
+import threading
 from datetime import date, datetime, timedelta
 from io import BytesIO
 
@@ -16,6 +17,7 @@ LOG_FILE = "activity_log.json"
 SPLIT_PDF_FILENAME_PATTERN = re.compile(r"_p\d+(?:-\d+)?\.pdf$", re.IGNORECASE)
 DASHBOARD_CACHE_TTL_SECONDS = max(0.0, float(os.getenv("DASHBOARD_CACHE_TTL_SECONDS", "3")))
 _DASHBOARD_CACHE = {}
+_CATCH_UP_LOCK = threading.Lock()
 
 
 def log_action(action, subject, details=""):
@@ -554,18 +556,21 @@ def catch_up():
     bridge_row = data.get("bridge_row")
     record_key = data.get("record_key")
 
-    try:
-        ws = schedule.connect()
-        records = schedule.load_all(ws)
-        result = schedule.catch_up_to_lesson(
-            ws,
-            records,
-            subject,
-            bridge_row_number=bridge_row,
-            record_key=record_key,
-        )
-    except ValueError as exc:
-        return _action_error(str(exc))
+    # 진도표·수업배치 전체를 다시 쓰는 작업이므로 읽기부터 변경까지 한 번에 잠근다.
+    # 두 번째 요청은 첫 번째 요청이 끝난 뒤 최신 시트 내용을 다시 읽는다.
+    with _CATCH_UP_LOCK:
+        try:
+            ws = schedule.connect()
+            records = schedule.load_all(ws)
+            result = schedule.catch_up_to_lesson(
+                ws,
+                records,
+                subject,
+                bridge_row_number=bridge_row,
+                record_key=record_key,
+            )
+        except ValueError as exc:
+            return _action_error(str(exc))
 
     log_action("catch_up_to_lesson", subject, f"bridge_row={bridge_row}, record_key={record_key or ''}")
     _clear_dashboard_cache()

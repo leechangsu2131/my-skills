@@ -18,17 +18,18 @@ from .models import Product
 
 def products_to_dataframe(products: list[Product]) -> pd.DataFrame:
     """Product 리스트를 pandas DataFrame으로 변환한다."""
+    # 컬럼 순서 (빈 목록도 같은 열 이름을 쓴다)
+    col_order = [
+        "collected_at", "keyword", "title", "price",
+        "price_text", "location", "time_text", "url", "status",
+    ]
     if not products:
-        return pd.DataFrame(columns=Product.sheet_header())
+        return pd.DataFrame(columns=col_order)
 
     rows = [p.to_dict() for p in products]
     df = pd.DataFrame(rows)
 
     # 컬럼 순서 정리
-    col_order = [
-        "collected_at", "keyword", "title", "price",
-        "price_text", "location", "time_text", "url", "status",
-    ]
     existing = [c for c in col_order if c in df.columns]
     df = df[existing]
 

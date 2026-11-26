@@ -6,7 +6,6 @@
 - collector/daangn_app.py: 화면 글 → 상품 만들기, 걸러내기 (appium·selenium 은 가짜 모듈로 대신)
 - main.py: get_keywords, parse_args
 
-소스는 고치지 않는다. 현재 동작과 다르게 기대하는 것은 xfail 로 표시하고 이유를 적었다.
 """
 import importlib
 import importlib.util
@@ -66,19 +65,24 @@ def test_parse_price(text, expected):
     assert parse_price(text) == expected
 
 
-@pytest.mark.xfail(reason="'10만5천원' 에서 '10만' 만 읽어 100000 이 된다(5천을 놓침).", strict=False)
 def test_parse_price_man_and_cheon():
     assert parse_price("10만5천원") == 105000
 
 
-@pytest.mark.xfail(reason="'3천원' 은 숫자만 모아 3 이 된다(천 단위를 못 읽음).", strict=False)
 def test_parse_price_cheon():
     assert parse_price("3천원") == 3000
 
 
-@pytest.mark.xfail(reason="'1.2.3만원' 처럼 점이 여러 개면 float() 에서 ValueError 로 멈춘다.", strict=False)
 def test_parse_price_malformed_number_does_not_crash():
     assert isinstance(parse_price("1.2.3만원"), int)  # 멈추지만 않으면 됨
+
+
+@pytest.mark.parametrize(
+    "text, expected",
+    [("1만5000원", 15000), ("1만 5천 원", 15000), ("5천", 5000), ("1.5천원", 1500)],
+)
+def test_parse_price_mixed_units(text, expected):
+    assert parse_price(text) == expected
 
 
 # ── Product ────────────────────────────────────────────────────
@@ -128,10 +132,6 @@ def test_products_to_dataframe_empty_has_no_rows():
     assert len(extractor.products_to_dataframe([])) == 0
 
 
-@pytest.mark.xfail(
-    reason="빈 목록의 열 이름은 한글 머리글(Product.sheet_header), 값이 있을 때는 영어 열 이름이라 서로 다르다.",
-    strict=False,
-)
 def test_products_to_dataframe_empty_and_nonempty_columns_match():
     empty = extractor.products_to_dataframe([])
     full = extractor.products_to_dataframe([make_product()])
@@ -403,13 +403,18 @@ def test_looks_like_price(app_cls, text, expected):
     assert app_cls._looks_like_price(text) is expected
 
 
-@pytest.mark.xfail(
-    reason="'원' 한 글자만 보므로 '수원시 · 3시간 전' 이나 '원피스 팝니다' 처럼 '원'이 든 지역·제목도 가격으로 읽는다.",
-    strict=False,
-)
 @pytest.mark.parametrize("text", ["수원시 · 3시간 전", "원피스 팝니다"])
 def test_looks_like_price_word_containing_won_is_not_price(app_cls, text):
     assert app_cls._looks_like_price(text) is False
+
+
+@pytest.mark.parametrize(
+    "text, expected",
+    [("3천원", True), ("10만5천원", True), ("1만 원", True), ("만원", True),
+     ("부천 원미구 · 1시간 전", False), ("공원 앞 의자", False)],
+)
+def test_looks_like_price_units_and_place_names(app_cls, text, expected):
+    assert app_cls._looks_like_price(text) is expected
 
 
 def test_parse_product_texts_two_products(app_cls):

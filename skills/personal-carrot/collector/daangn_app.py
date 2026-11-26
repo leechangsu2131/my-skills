@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import time
 import random
+import re
 from typing import Optional
 
 from appium.webdriver import Remote as AppiumDriver
@@ -375,8 +376,10 @@ class DaangnApp:
         """텍스트가 가격처럼 보이는지 판단한다."""
         if not text:
             return False
-        indicators = ["원", "만원", "나눔", "무료", "가격미정"]
-        if any(ind in text for ind in indicators):
+        if any(ind in text for ind in ["나눔", "무료", "가격미정"]):
+            return True
+        # '원' 은 금액 뒤에 붙은 것만('수원시', '원피스' 는 가격이 아님)
+        if re.search(r"\d\s*[만천백]?\s*원|^\s*만\s*원", text):
             return True
         # 순수 숫자 (콤마 포함)
         cleaned = text.replace(",", "").replace(" ", "")

@@ -12,3 +12,4 @@
 - 2026-11-26 05:40 T23 후속 PR 올림 (#61) — check.yml tests matrix 에 10곳 추가. 실제 Actions(Python 3.12): 추가한 10곳 모두 통과. catalog 빨간불은 PR #51(PyYAML 설치)이 아직 안 합쳐져서(main 에서도 같음). known(schedule)은 알려진 실패
 - 2026-11-26 06:10 S5 PR 올림 — docs/reviews/health-2026-11-26.md. 깨끗한 환경에서 스킬 시험 전부(통과 약 1,350개) 점검. 실패 5개(mapper 2·video-note 2·schedule 1), 요구 파일 빠짐, CI 가 안 도는 시험, exam-graderV2 시험이 저장소 폴더에 로그를 만듦(확인 필요)을 기록. 접속 스크립트(test_ 이름)는 실행하지 않음
 - 2026-11-26 10:07 T81 시작 (브랜치 task/T81-merge-ready-skip-merged)
+- 2026-11-26 11:10 T81 PR 올림 — tools/merge_ready.py 에 '건너뜀' 규칙 둘 추가: ① 브랜치가 더한 줄의 90% 이상이 main 파일에 이미 있으면(다른 판으로 합쳐짐) ② 브랜치 이름의 T 번호가 TASKS 에서 이미 완료면(S 번호 제외). 확인: 새 tests/test_merge_ready.py 6개 통과(가짜 bare 원격), 옛 코드로는 2개 실패 확인, test_claim_task 포함 15개 통과, build_catalog --check 통과. 주의: ②는 완료된 번호의 후속 보완 브랜치(예 T23-…)도 건너뜀 → 손으로 확인 필요

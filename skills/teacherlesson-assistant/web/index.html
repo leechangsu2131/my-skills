@@ -996,25 +996,45 @@ function flushSave(){
 }
 
 /* ===== 녹음: 10초마다 조각을 서버로 보내 이어 붙인다 ===== */
+/* 아직 서버가 받았다고 답하지 않은 조각을 순번 순서로 보낸다. 하나라도 실패하면 멈추고 들고 있다가
+   다음 조각이 올 때(또는 수업을 마칠 때) 그 조각부터 다시 보낸다 — 서버는 순번이 빠진 조각을 받지 않는다. */
+async function sendRecChunks(r){
+  if (!r || !r.upload) return true;
+  const {date, name, ext} = r.upload;
+  for (const seq of [...r.unsent.keys()].sort((a,b)=>a-b)){
+    let j = null;
+    try {
+      const res = await fetch(`/api/rec?date=${date}&name=${encodeURIComponent(name)}&seq=${seq}&ext=${ext}`, {method:'POST', body:r.unsent.get(seq)});
+      j = await res.json();
+    } catch(e){ j = null; }
+    if (!j || j.status !== 'success'){
+      const why = j && j.message ? ` — ${j.message}` : ' (서버 확인)';
+      $('recMsg').textContent = `⚠ 녹음 조각 ${r.unsent.size}개를 아직 못 보냈어요${why}`;
+      return false;
+    }
+    r.unsent.delete(seq);
+    $('recMsg').textContent = `저장 중 · ${(j.bytes/1048576).toFixed(1)}MB`;
+  }
+  return true;
+}
 async function startRec(){
   if (!cur) return;
   let stream;
   try { stream = await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false, noiseSuppression:false}}); }
   catch(e){ $('recMsg').textContent='마이크를 쓸 수 없어요. 녹음 없이 기록만 합니다.'; }
   sess.started_ms = Date.now(); sess.started_at = new Date().toISOString();
-  rec = {seq:0, chain:Promise.resolve(), stream};
+  rec = {seq:0, chain:Promise.resolve(), stream, unsent:new Map(), ack:0};
   if (stream){
     const mt = ['audio/webm;codecs=opus','audio/webm','audio/mp4'].find(t=>MediaRecorder.isTypeSupported(t)) || '';
     const ext = mt.includes('mp4') ? 'mp4' : 'webm';
     const name = `${cur.period??0}교시_${cur.subject}_${new Date().toTimeString().slice(0,8).replace(/:/g,'')}`;
     sess.rec_files = (sess.rec_files || []).concat(`${name}.${ext}`);
     const mr = new MediaRecorder(stream, mt?{mimeType:mt, audioBitsPerSecond:48000}:{});
+    rec.upload = {date:S.date, name, ext};
     mr.ondataavailable = e => {
       if (!e.data.size) return;
-      const seq = rec.seq++;
-      rec.chain = rec.chain.then(()=>fetch(`/api/rec?date=${S.date}&name=${encodeURIComponent(name)}&seq=${seq}&ext=${ext}`, {method:'POST', body:e.data}))
-        .then(r=>r.json()).then(j=>{ $('recMsg').textContent = `저장 중 · ${(j.bytes/1048576).toFixed(1)}MB`; })
-        .catch(()=>{ $('recMsg').textContent='⚠ 녹음 조각 저장 실패 (서버 확인)'; });
+      rec.unsent.set(rec.seq++, e.data);   // 서버가 받았다고 답할 때까지 조각을 들고 있는다(ISSUE-010)
+      rec.chain = rec.chain.then(()=>sendRecChunks(rec));
     };
     mr.start(10000); rec.mr = mr;
     const ac = new AudioContext(), an = ac.createAnalyser(); ac.createMediaStreamSource(stream).connect(an);
@@ -1031,6 +1051,12 @@ async function stopRec(){
   addMemo('sys', '수업 마침', true);
   if (rec.mr && rec.mr.state !== 'inactive'){ await new Promise(r=>{ rec.mr.onstop=r; rec.mr.stop(); }); }
   await rec.chain;
+  let recLeft = 0;
+  for (let k=0; k<3 && rec.unsent.size; k++){   // 못 보낸 조각이 남았으면 마치기 전에 몇 번 더 보낸다
+    if (await sendRecChunks(rec)) break;
+    await new Promise(r=>setTimeout(r, 1500));
+  }
+  recLeft = rec.unsent.size;
   if (rec.stream) rec.stream.getTracks().forEach(t=>t.stop());
   if (rec.ac) rec.ac.close(); if (rec.wake) rec.wake.release();
   rec = null;
@@ -1039,7 +1065,9 @@ async function stopRec(){
   sess.ended_at = new Date().toISOString();
   stepIdx = -1; stepAt = 0; stepAdj = {}; renderFlow();   // 수업이 끝나면 '지금 할 일' 도 처음 상태로
   scheduleSave(false);
-  $('recMsg').textContent = '수업 기록을 저장했어요. Claude에게 "오늘 수업 정리해줘"라고 하면 메모를 분석해 다음 수업에 반영합니다.';
+  $('recMsg').textContent = recLeft
+    ? `⚠ 수업 기록은 저장했지만 녹음 조각 ${recLeft}개를 서버에 못 보냈어요. 녹음 파일이 중간에서 끊겼을 수 있어요.`
+    : '수업 기록을 저장했어요. Claude에게 "오늘 수업 정리해줘"라고 하면 메모를 분석해 다음 수업에 반영합니다.';
 }
 
 /* ===== 음성 메모 (크롬 음성 인식) ===== */

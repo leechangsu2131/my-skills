@@ -17,3 +17,4 @@
 - 2026-11-26 04:34 T13 workflow-hub-main 시작 (브랜치 task/T13-tests-workflow-hub, 최신 main 에서)
 - 2026-11-26 04:38 T13(workflow-hub-main) PR 올림 — doc-indexer/tests/test_doc_indexer.py 시험 63개(58 통과, 5 xfail), 소스 무변경, 문제 7건 ISSUES 기록(ISSUE-001~007). chromadb·sentence-transformers·rank-bm25·openai 는 가짜 모듈로 대신
 - 2026-11-26 11:05 T74 시작 (브랜치 task/T74-bat-python-launcher)
+- 2026-11-26 16:21 T74 PR 올림 — 실행_수업비서.bat 이 점검_PC.bat 과 같은 방식으로 실행기를 하나만 고름(py -3.13 이 되면 그것, 아니면 python; build_units·prepare_lessons·서버 모두 %PY%). 점검_PC.bat 은 이미 같아 그대로. ISSUE-034 는 윈도우에서 켜 보기 전이라 백로그에 두고 한 일·남은 일만 갱신. 윈도우 bat 는 여기서 못 돌려 봄(확인 필요), check_setup.py 안내 문구는 T75 와 겹쳐 손대지 않음

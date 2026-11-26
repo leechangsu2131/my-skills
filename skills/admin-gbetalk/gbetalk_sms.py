@@ -7,7 +7,7 @@
 사용법
   python gbetalk_sms.py capture [--seconds 180]
       실행 후 지비톡에서 [문자]를 한 번 누르면, 브라우저 실행 주소를 잡아 data_dir/sms_url.txt 에 저장
-  python gbetalk_sms.py send --to 01012345678,01098765432 (--text "내용" | --text-file 파일) [--from 010-xxxx-xxxx]
+  python gbetalk_sms.py send --to 010-0000-0000,010-0000-0000 (--text "내용" | --text-file 파일) [--from 010-xxxx-xxxx]
       문자 창을 열어 내용·발신번호·수신번호를 채우고 [전송] 직전에 멈춤(화면 캡처 저장)
   python gbetalk_sms.py send ... --confirm SEND_SMS
       실제 전송. "문자 전송 완료!!" 확인 후 결과 기록(data_dir/sent_log.jsonl)

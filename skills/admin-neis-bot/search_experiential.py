@@ -35,7 +35,7 @@ def main():
         for ds in data:
             print(f"DataSet {ds['id']} ({ds['count']} rows)")
             for r in ds.get('rows', []):
-                for name in ['백다온', '오지윤', '이서우', '이예나', '천선율']:
+                for name in ['학생A', '학생B', '학생C', '학생D', '학생E']:
                     if name in str(r):
                         print(f"  FOUND {name} in {ds['id']}:", {k: v for k, v in r.items() if v and not k.startswith('_')})
     else:

@@ -22,6 +22,7 @@ import re
 import subprocess
 import sys
 import time
+from datetime import datetime
 from pathlib import Path
 
 sys.path.insert(0, str(next(p / "_shared" for p in pathlib.Path(__file__).resolve().parents
@@ -336,6 +337,82 @@ def close_tabs(targets: list[dict]) -> tuple[int, int]:
     return closed, failed
 
 
+# ───── 웹 페이지 글 읽기·문구 찾아 누르기 (UIA. 지금 보이는 탭의 페이지만) ─────
+CLICKABLE_TYPES = ("ButtonControl", "HyperlinkControl", "MenuItemControl", "TabItemControl",
+                   "ListItemControl", "CheckBoxControl", "RadioButtonControl", "SplitButtonControl")
+PAUSE_LINE = re.compile(
+    r"일시\s*중지|다시\s*제공|이후\s*다시|사용량.{0,30}(한도|제한|초과|다시)|한도.{0,20}(도달|초과)"
+    r"|usage\s*limit|limit.{0,40}(reset|again)|resets?\s+(at|in)|try\s+again\s+(after|at|in)", re.I)
+PAUSE_TAIL_LINES = 30   # 일시 중지 안내는 보통 페이지 맨 아래(입력칸 근처)에 뜬다. 대화 속 인용은 무시하려고 끝부분만 본다.
+
+
+def _uia():
+    import uiautomation as auto
+    from uiautomation import uiautomation as core
+    return auto, core._AutomationClient.instance().IUIAutomation
+
+
+def page_text(hwnd: int) -> str | None:
+    """창의 지금 탭 웹 페이지 글 전체. 못 읽으면 None."""
+    auto, client = _uia()
+    cond = client.CreatePropertyCondition(auto.PropertyId.ControlTypeProperty, auto.ControlType.DocumentControl)
+    element = auto.ControlFromHandle(hwnd).Element.FindFirst(4, cond)  # 4 = TreeScope_Descendants
+    if not element:
+        return None
+    try:
+        return auto.Control.CreateControlFromElement(element).GetTextPattern().DocumentRange.GetText(-1)
+    except Exception:
+        return None
+
+
+def find_pause_line(text: str) -> str | None:
+    """페이지 끝부분에서 '사용량 일시 중지' 줄(시각이 들어 있는)을 찾는다."""
+    from usage_pause import find_resume
+    lines = [ln.strip() for ln in text.splitlines() if ln.strip()][-PAUSE_TAIL_LINES:]
+    for i in range(len(lines) - 1, -1, -1):
+        for candidate in (lines[i], " ".join(lines[i:i + 2])):  # 시각이 다음 줄로 넘어간 경우
+            if len(candidate) < 300 and PAUSE_LINE.search(candidate) and find_resume(candidate):
+                return candidate
+    return None
+
+
+def find_clickable(hwnd: int, phrase: str):
+    """창 안에서 이름이 phrase 인(없으면 phrase 가 들어간) 누를 수 있는 요소. (control, 설명) 또는 None."""
+    auto, client = _uia()
+    root = auto.ControlFromHandle(hwnd).Element
+    exact = root.FindFirst(4, client.CreatePropertyCondition(auto.PropertyId.NameProperty, phrase))
+    if exact:
+        control = auto.Control.CreateControlFromElement(exact)
+        return control, f"{control.ControlTypeName.replace('Control', '')} '{control.Name[:40]}'"
+    wanted = phrase.lower()
+    for type_name in CLICKABLE_TYPES:
+        cond = client.CreatePropertyCondition(auto.PropertyId.ControlTypeProperty, getattr(auto.ControlType, type_name))
+        found = root.FindAll(4, cond)
+        for i in range(found.Length if found else 0):
+            element = found.GetElement(i)
+            if wanted in (element.CurrentName or "").lower():
+                control = auto.Control.CreateControlFromElement(element)
+                return control, f"{type_name.replace('Control', '')} '{control.Name[:40]}'"
+    return None
+
+
+def press_control(control, hwnd: int) -> str:
+    """Invoke → 기본 동작 → 토글·선택 → (마지막 수단) 창을 앞으로 가져와 실제 클릭. 쓴 방법을 돌려준다."""
+    for how, act in (("누름", lambda: control.GetInvokePattern().Invoke()),
+                     ("기본 동작", lambda: control.GetLegacyIAccessiblePattern().DoDefaultAction()),
+                     ("토글", lambda: control.GetTogglePattern().Toggle()),
+                     ("선택", lambda: control.GetSelectionItemPattern().Select())):
+        try:
+            act()
+            return how
+        except Exception:
+            continue
+    activate(hwnd)
+    time.sleep(0.2)
+    control.Click(simulateMove=False)
+    return "마우스 클릭"
+
+
 def normalize_url(text: str) -> str:
     """'naver.com' → 'https://naver.com'. 이미 주소(https:, chrome:, file: …)거나 검색어(띄어쓰기)면 그대로."""
     text = text.strip()
@@ -407,7 +484,10 @@ if __name__ == "__main__" and "--check" in sys.argv:
 
 
 # ───────────────────────── 화면 ─────────────────────────
-from PySide6.QtCore import QPoint, QSize, Qt, QTimer  # noqa: E402
+import threading  # noqa: E402
+
+import usage_pause  # noqa: E402  같은 폴더: 일시 중지 문구 → 다시 쓸 시각 (pauses.json)
+from PySide6.QtCore import QObject, QPoint, QSize, Qt, QTimer, Signal  # noqa: E402
 from PySide6.QtGui import QBrush, QColor, QCursor, QIcon, QImage, QKeySequence, QPixmap, QShortcut  # noqa: E402
 from PySide6.QtWidgets import (  # noqa: E402
     QAbstractItemView, QApplication, QCheckBox, QComboBox, QDialog, QDialogButtonBox, QDoubleSpinBox, QGridLayout,
@@ -415,6 +495,37 @@ from PySide6.QtWidgets import (  # noqa: E402
     QMessageBox, QPlainTextEdit, QPushButton, QRadioButton, QSpinBox, QSplitter, QStyle,
     QSystemTrayIcon, QTreeWidget, QTreeWidgetItem, QVBoxLayout, QWidget,
 )
+
+
+class TextScanner(QObject):
+    """창들의 페이지 글을 다른 스레드에서 읽어 {hwnd: 글} 로 알려 준다(화면이 멈추지 않게)."""
+    done = Signal(object)
+
+    def __init__(self):
+        super().__init__()
+        self.busy = False
+
+    def start(self, hwnds: list[int]) -> None:
+        if self.busy or not hwnds:
+            return
+        self.busy = True
+        threading.Thread(target=self._run, args=(list(hwnds),), daemon=True).start()
+
+    def _run(self, hwnds: list[int]) -> None:
+        out = {}
+        try:
+            import uiautomation as auto
+            with auto.UIAutomationInitializerInThread():
+                for hwnd in hwnds:
+                    try:
+                        out[hwnd] = page_text(hwnd)
+                    except Exception:
+                        out[hwnd] = None
+        except Exception:
+            pass
+        finally:
+            self.busy = False
+            self.done.emit(out)
 
 
 def fmt_hm(seconds: float) -> str:
@@ -597,7 +708,7 @@ class Tree(QTreeWidget):
         self.setHeaderLabels(["그룹 / 프로필", "창", "작업", "시작 URL"])
         self.setColumnWidth(0, 260)
         self.setColumnWidth(1, 34)
-        self.setColumnWidth(2, 64)
+        self.setColumnWidth(2, 120)
         self.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
         self.setDragDropMode(QAbstractItemView.DragDropMode.InternalMove)
         self.setEditTriggers(QAbstractItemView.EditTrigger.EditKeyPressed)  # 이름 바꾸기는 F2 로만
@@ -627,7 +738,12 @@ class Manager(QMainWindow):
         self.cfg.setdefault("hotkeys", {})
         for name, default in DEFAULT_HOTKEYS.items():
             self.cfg["hotkeys"].setdefault(name, default)
+        self.cfg.setdefault("pause_done", {})   # 이미 알린 일시 중지 줄(같은 안내가 남아 있어도 내일 시각으로 다시 적지 않게)
         self.popup = Popup()
+        self.pause_path = usage_pause.store_path()
+        self.pauses = usage_pause.load(self.pause_path)   # {이름(프로필 키 등): {resume, seen, text}}
+        self.scanner = TextScanner()
+        self.scanner.done.connect(self.on_texts)
         self.other_group: QTreeWidgetItem | None = None
         self.windows: dict[int, dict] = {}   # hwnd → 창 상태. key = 프로필 폴더명 또는 "@앱ID"
         self.capture_order: list[int] = []
@@ -671,6 +787,10 @@ class Manager(QMainWindow):
         self.filter_box.setChecked(self.cfg.get("filter", False))
         self.filter_box.toggled.connect(self.apply_filter)
         self.filter_box.toggled.connect(self.save)
+        self.pause_box = QCheckBox("사용량 일시 중지 시각 찾기")
+        self.pause_box.setToolTip("열린 창 페이지 끝부분에 '오후 12:10 이후 다시 제공' 같은 안내가 뜨면 그 시각을 적고 그때 알린다(20초마다 확인)")
+        self.pause_box.setChecked(self.cfg.get("pause_scan", True))
+        self.pause_box.toggled.connect(self.save)
 
         self.work_spin = QDoubleSpinBox()
         self.work_spin.setRange(0, 24)
@@ -702,7 +822,11 @@ class Manager(QMainWindow):
         box.addLayout(buttons)
         box.addWidget(self.tree)
         box.addLayout(settings)
-        box.addWidget(self.filter_box)
+        checks = QHBoxLayout()
+        checks.addWidget(self.filter_box)
+        checks.addWidget(self.pause_box)
+        checks.addStretch()
+        box.addLayout(checks)
         box.addWidget(help_text)
 
         # 오른쪽: 미리보기
@@ -758,6 +882,10 @@ class Manager(QMainWindow):
         self.tree.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.tree.customContextMenuRequested.connect(self.tree_menu)
         self.register_hotkeys()
+        self.scan_timer = QTimer(self)
+        self.scan_timer.timeout.connect(self.start_scan)
+        self.scan_timer.start(20_000)
+        QTimer.singleShot(3000, self.start_scan)
         self.monitor_timer = QTimer(self)
         self.monitor_timer.timeout.connect(self.monitor)
         self.monitor_timer.start(1000)
@@ -902,7 +1030,7 @@ class Manager(QMainWindow):
             groups.append({"name": group.text(0), "profiles": folders})
         self.cfg.update(groups=groups, idle_sec=self.idle_spin.value(),
                         timer_min=self.timer_spin.value(), filter=self.filter_box.isChecked(),
-                        work_alert_hours=self.work_spin.value())
+                        work_alert_hours=self.work_spin.value(), pause_scan=self.pause_box.isChecked())
         CONFIG.write_text(json.dumps(self.cfg, ensure_ascii=False, indent=2), encoding="utf-8")
 
     def add_group(self, *_):
@@ -1020,7 +1148,8 @@ class Manager(QMainWindow):
             item.setSizeHint(QSize(THUMB_W + 16, THUMB_H + 64))
             self.windows[hwnd] = {"folder": folder, "aumid": aumid, "key": folder or f"@{aumid}",
                                   "item": item, "sig": None, "last_change": now, "watch": False,
-                                  "alerted": False, "deadline": None}
+                                  "alerted": False, "deadline": None,
+                                  "text_watch": [], "text_seen": set()}   # 글자 감시: 찾을 글, 지금 보이는 것
             changed = True
         if changed:
             self.building = True
@@ -1068,6 +1197,7 @@ class Manager(QMainWindow):
         self.sync_windows(now)
         self.capture_some(now)
         self.refresh_work(now)
+        self.check_pauses(datetime.now())
         idle_limit = self.idle_spin.value()
         for hwnd, st in self.windows.items():
             lines = [self.label(hwnd), win32gui.GetWindowText(hwnd)[:34]]
@@ -1088,6 +1218,11 @@ class Manager(QMainWindow):
             work = self.cfg["work"].get(st["key"])
             if work:
                 status.append(f"작업 {fmt_hm(now - work['start'])}")
+            pause = self.pause_text(st["key"], datetime.now())
+            if pause:
+                status.append(pause)
+            if st["text_watch"]:
+                status.append("글자 감시" + (" ●" if st["text_seen"] else ""))
             if status:
                 lines.append(" · ".join(status))
             st["item"].setText("\n".join(lines))
@@ -1159,8 +1294,15 @@ class Manager(QMainWindow):
                                lambda: self.stop_work(wkey))
             else:
                 menu.addAction("이 프로필 작업 시간 재기 시작", lambda: self.start_work(wkey))
+            if wkey in self.pauses:
+                menu.addAction(f"다시 쓸 시각 지우기 ({self.pause_text(wkey, datetime.now())})",
+                               lambda: self.clear_pause(wkey))
+            else:
+                menu.addAction("다시 쓸 시각 직접 적기…", lambda: self.set_pause_by_hand(wkey))
             menu.addAction("이 창에 입력", lambda: self.broadcast(targets=hwnds))
             menu.addAction("이 창 사이트 이동", lambda: self.go_to_site(targets=hwnds))
+            menu.addAction("글자 감시…" + (" (켜짐)" if st["text_watch"] else ""), lambda: self.set_text_watch(hwnds))
+            menu.addAction("문구 찾아 누르기…", lambda: self.click_phrase(hwnds))
             tab_sub = menu.addMenu("탭 정리")
             for mode, name in TAB_MODES.items():
                 tab_sub.addAction(f"{name} 닫기", lambda m=mode: self.close_tabs_bulk(m, targets=hwnds))
@@ -1172,6 +1314,8 @@ class Manager(QMainWindow):
             menu.addAction(f"타이머 취소 ({n}개)", lambda: self.toggle_timer(hwnds, False))
             menu.addAction(f"고른 창 {n}개에 일괄 입력", lambda: self.broadcast(targets=hwnds))
             menu.addAction(f"고른 창 {n}개 사이트 이동", lambda: self.go_to_site(targets=hwnds))
+            menu.addAction(f"고른 창 {n}개 글자 감시…", lambda: self.set_text_watch(hwnds))
+            menu.addAction(f"고른 창 {n}개에서 문구 찾아 누르기…", lambda: self.click_phrase(hwnds))
             tab_sub = menu.addMenu(f"고른 창 {n}개 탭 정리")
             for mode, name in TAB_MODES.items():
                 tab_sub.addAction(f"{name} 닫기", lambda m=mode: self.close_tabs_bulk(m, targets=hwnds))
@@ -1282,6 +1426,144 @@ class Manager(QMainWindow):
         done = len(targets) - len(failed) - len(stopped)
         self.statusBar().showMessage(f"{done}개 창에 {verb}.{note}", 20000)
 
+    # ───── 페이지 글: 사용량 일시 중지 시각 · 글자 감시 · 문구 찾아 누르기 ─────
+    def start_scan(self):
+        if self.pause_box.isChecked():
+            hwnds = list(self.windows)
+        else:
+            hwnds = [h for h, st in self.windows.items() if st["text_watch"]]
+        self.scanner.start(hwnds)
+
+    def save_pauses(self):
+        self.pause_path.write_text(json.dumps(self.pauses, ensure_ascii=False, indent=1), encoding="utf-8")
+
+    def pause_of(self, key: str) -> datetime | None:
+        try:
+            return datetime.fromisoformat(self.pauses[key]["resume"])
+        except (KeyError, ValueError):
+            return None
+
+    def record_pause(self, key: str, line: str, announce: bool = True) -> datetime | None:
+        resume = usage_pause.record(self.pause_path, key, line)
+        self.pauses = usage_pause.load(self.pause_path)
+        if resume and announce:
+            label = self.work_label(key)
+            message = f"{resume:%H:%M} 부터 다시 쓸 수 있습니다 — 그때 알려 드릴게요."
+            self.tray.showMessage(f"⏸ {label}", message)
+            self.popup.show_text(f"⏸ {label}\n{message}", 8)
+        return resume
+
+    def on_texts(self, results: dict):
+        """다른 스레드가 읽어 온 페이지 글 처리(이 함수는 화면 스레드에서 돈다)."""
+        for hwnd, text in results.items():
+            st = self.windows.get(hwnd)
+            if not st or text is None:
+                continue
+            key = st["key"]
+            if self.pause_box.isChecked():
+                line = find_pause_line(text)
+                norm = " ".join(line.split())[:120] if line else None
+                already = self.pauses.get(key, {}).get("text")
+                if line and norm != already and norm != self.cfg["pause_done"].get(key):
+                    self.record_pause(key, line)
+            if st["text_watch"]:
+                lowered = text.lower()
+                now_seen = {p for p in st["text_watch"] if p.lower() in lowered}
+                for phrase in now_seen - st["text_seen"]:  # 새로 나타난 것만 알림
+                    self.alert(hwnd, f"'{phrase}' 글자가 보입니다.")
+                st["text_seen"] = now_seen
+
+    def check_pauses(self, now_dt: datetime):
+        for name, resume, ok in usage_pause.due(self.pauses, now_dt):
+            if not ok:
+                continue
+            label = self.work_label(name)
+            message = f"{resume:%H:%M} 이 됐습니다. 이제 다시 쓸 수 있어요."
+            self.tray.showMessage(f"▶ {label}", message)
+            self.popup.show_text(f"▶ {label}\n{message}", 15)
+            QApplication.beep()
+            for st in self.windows.values():
+                if st["key"] == name:
+                    st["item"].setBackground(ALERT_BG)
+            self.cfg["pause_done"][name] = self.pauses[name].get("text", "")
+            del self.pauses[name]
+            self.save_pauses()
+            self.save()
+
+    def pause_text(self, key: str, now_dt: datetime) -> str | None:
+        resume = self.pause_of(key)
+        if not resume:
+            return None
+        return f"⏸ {resume:%H:%M}까지 ({fmt_long((resume - now_dt).total_seconds())})"
+
+    def set_pause_by_hand(self, key: str):
+        text, ok = QInputDialog.getText(self, "다시 쓸 시각 적기",
+                                        "창에 뜬 안내를 붙여 넣거나 시각만 적으세요\n(예: 오후 12:10 / 2시간 후 / 3:30 PM):")
+        if not ok or not text.strip():
+            return
+        line = text if usage_pause.PAUSE_WORDS.search(text) else f"다시 사용 {text}"
+        if not self.record_pause(key, line):
+            QMessageBox.information(self, "다시 쓸 시각", "시각을 못 읽었어요. '오후 12:10', '14:20', '2시간 후' 처럼 적어 주세요.")
+
+    def clear_pause(self, key: str):
+        if key in self.pauses:
+            self.cfg["pause_done"][key] = self.pauses[key].get("text", "")
+            del self.pauses[key]
+            self.save_pauses()
+            self.save()
+
+    def set_text_watch(self, hwnds: list[int]):
+        current = ", ".join(self.windows[hwnds[0]]["text_watch"])
+        text, ok = QInputDialog.getText(
+            self, "글자 감시", f"창 {len(hwnds)}개에서 이 글이 나타나면 알립니다(여러 개는 쉼표로, 비우면 끔).\n"
+                             "20초마다 지금 보이는 탭의 페이지 글을 확인합니다.", text=current)
+        if not ok:
+            return
+        phrases = [p.strip() for p in text.split(",") if p.strip()]
+        for hwnd in hwnds:
+            self.windows[hwnd]["text_watch"] = phrases
+            self.windows[hwnd]["text_seen"] = set()
+        if phrases:
+            self.start_scan()
+
+    def click_phrase(self, hwnds: list[int]):
+        phrase, ok = QInputDialog.getText(
+            self, "문구 찾아 누르기",
+            f"창 {len(hwnds)}개에서 이 글이 적힌 단추·링크를 찾아 누릅니다.\n(먼저 찾은 것을 보여 주고 한 번 더 묻습니다)",
+            text=self.cfg.get("last_click", ""))
+        phrase = phrase.strip()
+        if not ok or not phrase:
+            return
+        self.cfg["last_click"] = phrase
+        self.save()
+        QApplication.setOverrideCursor(Qt.CursorShape.WaitCursor)
+        found, missing = [], []
+        try:
+            for hwnd in hwnds:
+                try:
+                    hit = find_clickable(hwnd, phrase)
+                except Exception:
+                    hit = None
+                (found.append((hwnd, *hit)) if hit else missing.append(self.label(hwnd)))
+        finally:
+            QApplication.restoreOverrideCursor()
+        if not found:
+            QMessageBox.information(self, "문구 찾아 누르기", f"'{phrase}' 단추·링크를 찾지 못했습니다.")
+            return
+        lines = [f"{self.label(h)} — {desc}" for h, _, desc in found][:12]
+        note = f"\n\n못 찾음: {', '.join(missing)}" if missing else ""
+        if QMessageBox.question(self, "문구 찾아 누르기",
+                                f"찾았습니다. 누를까요?\n\n" + "\n".join(lines) + note) != QMessageBox.StandardButton.Yes:
+            return
+        done = []
+        for hwnd, control, _ in found:
+            try:
+                done.append(press_control(control, hwnd))
+            except Exception:
+                missing.append(self.label(hwnd))
+        self.statusBar().showMessage(f"'{phrase}' {len(done)}곳을 눌렀습니다." +
+                                     (f" / 못 누름·못 찾음: {', '.join(missing)}" if missing else ""), 15000)
+
     # ───── 작업 시간 ─────
     def work_key(self, item: QTreeWidgetItem) -> str | None:
         if item is None or item is self.other_group:
@@ -1353,8 +1635,10 @@ class Manager(QMainWindow):
             for item in items + self.profile_items():
                 wkey = self.work_key(item)
                 w = work.get(wkey) if wkey else None
-                item.setText(2, fmt_hm(now - w["start"]) if w else "")
-                item.setToolTip(2, self.work_text(wkey, now) if w else "")
+                pause = self.pause_text(wkey, datetime.now()) if wkey and not wkey.startswith("group:") else None
+                item.setText(2, " ".join(t for t in (fmt_hm(now - w["start"]) if w else "",
+                                                     f"⏸{self.pause_of(wkey):%H:%M}" if pause else "") if t))
+                item.setToolTip(2, "\n".join(t for t in (self.work_text(wkey, now) if w else "", pause or "") if t))
                 item.setForeground(2, QBrush(WORK_ALERT_COLOR) if w and w.get("alerted") else QBrush())
         finally:
             self.building = False
@@ -1442,6 +1726,12 @@ class Manager(QMainWindow):
         if others:
             lines.append("재고 있는 작업:" if not lines else "\n다른 작업:")
             lines += [f"  ⏱ {self.work_text(k, now)}" for k in others]
+        if self.pauses:
+            now_dt = datetime.now()
+            lines.append("\n다시 쓸 시각:" if lines else "다시 쓸 시각:")
+            for name, resume, ok in usage_pause.due(self.pauses, now_dt):
+                left = "지금 가능" if ok else f"{fmt_long((resume - now_dt).total_seconds())} 남음"
+                lines.append(f"  {'▶' if ok else '⏸'} {self.work_label(name)}  {resume:%H:%M} ({left})")
         if not lines:
             lines = ["재고 있는 작업 시간이 없습니다.",
                      f"Chrome 창에서 {self.cfg['hotkeys']['toggle']} 또는 매니저 트리 오른쪽 클릭으로 시작합니다."]

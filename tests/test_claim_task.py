@@ -245,3 +245,40 @@ def test_next_never_picks_sections_outside_order_or_standing(repos):
         make_branch(repos["a"], f"task/{n}-busy", "w1", f"{n} 시작")
     r = claim(repos["b"], "--next", "--name", "w2")
     assert r.returncode == 1 and "상시 일" in r.stdout and "T80" not in r.stdout
+
+
+# --- 검토(2026-11-27)에서 나온 경우 ---
+
+def test_takeover_works_in_single_branch_clone(tmp_path, repos):
+    """main 만 받는 복제본에서도 이어받기가 되고, 실패해도 남의 일지가 스테이징된 채 남지 않는다."""
+    make_branch(repos["a"], "task/T77-write-lock", "claude-web-1", "T77 진행 — 반쯤", OLD)
+    c = tmp_path / "c"
+    g(tmp_path, "clone", "-q", "--single-branch", "-b", "main", str(repos["origin"]), str(c))
+    r = claim(c, "T77", "x", "--name", "w3")
+    assert r.returncode == 0, r.stdout
+    assert "이어받았어요" in r.stdout
+    assert g(c, "status", "--porcelain") == ""
+
+
+def test_returning_first_worker_is_not_owner_after_takeover(repos, tmp_path):
+    make_branch(repos["a"], "task/T77-write-lock", "claude-web-1", "T77 시작 (브랜치 task/T77-write-lock)", OLD)
+    assert claim(repos["b"], "T77", "x", "--name", "w2").returncode == 0
+    r = claim(repos["a"], "T77", "x", "--name", "claude-web-1")
+    assert r.returncode == 1, r.stdout
+    assert "w2 가 이어받음" in r.stdout
+
+
+def test_merged_branch_does_not_block_or_get_taken_over(repos):
+    make_branch(repos["a"], "task/T77-work", "claude-web-1", "T77 그만둠 — 절반 합침", OLD)
+    g(repos["a"], "push", "-q", "origin", "origin/task/T77-work:refs/heads/main")  # main 에 다 합쳐짐(ff)
+    r = claim(repos["b"], "T77", "work", "--name", "w2")
+    assert r.returncode == 0, r.stdout
+    assert "잡았어요" in r.stdout and "task/T77-work-2" in r.stdout  # 같은 이름이 있어 -2
+
+
+def test_next_skips_failed_takeover(repos):
+    """이 PC 의 다른 작업 폴더가 쓰는 멈춘 브랜치는 이어받기 후보가 아니다 → 다음 일로."""
+    make_branch(repos["a"], "task/T98-big", "claude-web-1", "T98 진행", OLD)
+    g(repos["a2"], "switch", "-q", "task/T98-big")  # a 와 a2 는 브랜치 목록을 같이 씀 — 같은 PC 의 다른 작업 폴더가 그 브랜치를 씀
+    r = claim(repos["a"], "--next", "--check")
+    assert r.returncode == 0 and "T99" not in r.stdout and "T77" in r.stdout, r.stdout

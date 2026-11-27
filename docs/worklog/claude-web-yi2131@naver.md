@@ -39,5 +39,7 @@
 - 2026-11-27 17:39 S1 (teacherlesson-assistant) 시작 (브랜치 task/S1-tests-prepare-lessons-helpers)
 - 2026-11-27 17:46 S2 (teacherlesson-assistant) 시작 (브랜치 task/S2-review-pr141-143)
 - 2026-11-27 17:55 S1 PR 올림 — 수업 기록 파일 처리 시험 51개(`tests/test_session_records.py`): `safe_name`·`session_path`(차시 키 파일명, 폴더 밖 거절)·`session_matches_lesson`·`saved_mismatch_info`·`save_session`·`state()` 의 기록 붙이기/이전 기록 알림(ISSUE-046 에서 고친 동작). 소스를 13곳 깨뜨려 모두 잡힘 확인, 소스는 안 고침. 실제 기록 폴더 분리 확인은 교사 PC(확인 필요)
+- 2026-11-27 18:01 S2 (teacherlesson-assistant) 시작 (브랜치 task/S2-review-pr145-149)
 - 2026-11-27 18:30 S1 PR 올림 — `prepare_lessons.py` 준비 과정 시험 47개(`tests/test_prepare_pipeline.py`): is_running·write_status(윈도우 파일 잠금 재시도)·lesson_pdf·pdf_text_source·prepare_one(가짜 Gemini: 형식 틀리면 이유를 붙여 다시 묻기, 뼈대는 한 번만)·main(이미 준비 중 거절, 직접 고친 흐름 보존, 종료 코드). 소스를 24곳 깨뜨려 모두 잡힘 확인, 소스는 안 고침. 메모: prepare_one 의 '시간 합계 35~45분 아니면 확인 필요' 알림은 뼈대가 40분으로 고정이라 지금은 사실상 안 뜸(가짜 parse_flow 로만 시험)
 - 2026-11-27 18:50 S2 PR 올림 — PR #141(parse_plan 음수 분, 고침 되돌리면 시험 1개 실패 확인)·PR #143(긴 이름 차시 재현, 표시 떼면 4개 모두 AssertionError 확인) 검토 → `docs/reviews/fix-parse-plan-negative-minutes.md`·`task-S3-sites-longer-lesson-name.md`. 둘 다 합쳐도 됨. #141 은 #136 위에 쌓여 있어 둘 다 합치면 test_parse_plan.py 충돌
+- 2026-11-27 19:20 S2 PR 올림 — PR #145(CI selenium: sites 시험 98→116 통과·건너뜀 0)·PR #149(남은 사진·본문 삭제: 시험·참조 확인, 기록에는 남음 알림)·PR #139(쓰기 잠금 설계 메모: 줄 번호·함수 대조 일치, import functools 빠짐) 검토 → `docs/reviews/task-S5-ci-sites-selenium.md`·`fix-remove-remaining-files.md`·`task-S7-s7-write-lock.md`. 셋 다 합쳐도 됨

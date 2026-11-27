@@ -348,6 +348,13 @@ def saved_mismatch_info(saved: dict) -> dict:
 def state(day: date) -> dict:
     cfg = load_config()
     lessons, source = fetch_schedule(cfg, day)
+    overdue = []
+    if cfg.get("schedule_backend", "supabase") == "supabase":
+        try:
+            import supabase_schedule
+            overdue = supabase_schedule.overdue_planned(day)
+        except Exception as exc:
+            print(f"[schedule] 지난 미완료 조회 실패: {type(exc).__name__}: {exc}", file=sys.stderr)
     cautions = read_json(CAUTIONS_PATH, {})
     subjects = cfg.get("subjects", {})
     for lesson in lessons:
@@ -388,6 +395,7 @@ def state(day: date) -> dict:
         "ai_sites": ai_sites(cfg),
         "schedule_api": cfg.get("schedule_api", ""),
         "lessons": lessons,
+        "overdue": overdue,
     }
 
 
@@ -896,6 +904,8 @@ class Handler(BaseHTTPRequestHandler):
             return self._send(200, (WEB / "tools.js").read_bytes(), "application/javascript; charset=utf-8")
         if url.path == "/recording_export.js":
             return self._send(200, (WEB / "recording_export.js").read_bytes(), "application/javascript; charset=utf-8")
+        if url.path == "/overdue.js":
+            return self._send(200, (WEB / "overdue.js").read_bytes(), "application/javascript; charset=utf-8")
         if url.path == "/mobile.css":
             return self._send(200, (WEB / "mobile.css").read_bytes(), "text/css; charset=utf-8")
         if url.path == "/api/state":

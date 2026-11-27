@@ -154,6 +154,29 @@ def day_schedule(day: date) -> list[dict]:
     return sorted(selected, key=lambda x: x["period"] or 99)
 
 
+def overdue_planned(day: date) -> list[dict]:
+    """Return planned classes dated before day without changing the schedule."""
+    slots = _get(SLOTS, slot_date=f"lt.{day.isoformat()}", status="eq.planned",
+                 order="slot_date,slot_period,slot_order", select=LESSON_REL)
+    rows = []
+    for slot in slots:
+        slot_date = str(slot.get("slot_date") or "")
+        if slot.get("status") != "planned" or not slot_date or slot_date >= day.isoformat():
+            continue
+        lesson = slot.get("lesson") or {}
+        rows.append({
+            "subject": (lesson.get("subject") or {}).get("name", ""),
+            "unit": (lesson.get("unit") or {}).get("name", ""),
+            "lesson": str(lesson.get("lesson_number") or ""),
+            "title": lesson.get("title") or "",
+            "record_key": lesson.get("legacy_lesson_id") or "",
+            "slot_id": slot.get("id"),
+            "original_date": slot_date,
+            "original_period": _period(slot.get("slot_period")),
+        })
+    return rows
+
+
 def upcoming(subject: str) -> list[dict]:
     subjects = _get(SUBJECTS, name=f"eq.{subject}")
     if not subjects:

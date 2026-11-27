@@ -264,14 +264,15 @@
 - **해결/조치**: 미정(추정: dict 가 아니면 `{}` 로 보면 됨).
 - **관련 파일**: `assistant_server.py`(`prepare_status`), 재현 시험 `test_assistant_flow_status.py`(expectedFailure)
 
-### ISSUE-새: parse_plan 이 음수 분의 부호를 버림 (2026-11-27, S1 시험 중 발견)
-- **상태**: 📌 백로그
-- **증상**: `prepare_lessons.parse_plan` 이 단계 시간 `-5` 를 `5` 분으로 읽는다(`re.search(r"\d+", ...)` 가 부호를 못 봄). 다른 단계 합이 35 면 합계 40 검사도 통과해 잘못된 뼈대가 그대로 쓰인다.
-- **원인**: 숫자 뽑는 정규식에 부호 처리가 없음.
-- **해결/조치**: 미정(추정: 정규식을 `-?\d+` 로 바꾸면 범위 검사 `1~40` 에서 거부됨 — 시험으로 확인 필요).
-- **관련 파일**: `prepare_lessons.py`(`parse_plan`), 재현 시험 `tests/test_parse_plan.py`(xfail strict)
-
 ## 🟢 해결됨
+
+### ISSUE-새: parse_plan 이 음수 분의 부호를 버림 (2026-11-27)
+- **상태**: 🟢 해결됨 (2026-11-27)
+- **증상**: 단계 시간 `-5` 를 `5` 분으로 읽어 합계 40 검사까지 통과했다.
+- **원인**: 숫자를 뽑는 정규식 `\d+` 가 부호를 못 봄.
+- **해결**: `parse_plan` 의 정규식을 `-?\d+` 로 바꿈 → `-5` 는 범위 검사(1~40분)에서 거부. 시험 `tests/test_parse_plan.py::test_negative_minutes_is_an_error_not_read_as_positive`.
+- **남은 점**: 같은 파일 `parse_flow`(뼈대 없이 부르는 옛 경로, 309줄 근처)에도 같은 정규식이 있음 — 거기는 범위 검사가 없어 음수가 양수로 읽힐 뿐 거부되지는 않음. 이번에는 고치지 않음(확인 필요).
+- **관련 파일**: `prepare_lessons.py`, `tests/test_parse_plan.py`
 
 ### ISSUE-새: 다른 교시의 단계 타이머가 복원됨 (2026-11-27)
 - **증상**: 2교시 화면에서 1교시 단계 타이머가 이어서 도는 것처럼 보일 수 있다.

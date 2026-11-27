@@ -38,3 +38,4 @@
 - 2026-11-27 13:40 S1 PR 올림 (teacherlesson-guide) — tests/test_guide_download.py 25개: safe·nice_name·_zip_name·미래엔 주소 기억·ZIP 안 PDF 꺼내기(가짜 ZIP, 이미 있음/PDF 아님/.part 정리). 변이 6가지 모두 잡힘(ZIP UTF-8 표시는 처음엔 못 잡아 시험 보강). 소스 안 고침. 참고: teacherlesson-schedule/organize.py 는 import 만 해도 폴더를 만드는 일회용 스크립트라 시험 대상에서 뺌
 - 2026-11-27 17:38 S7 (teacherlesson-schedule) 시작 (브랜치 task/S7-s7-write-lock)
 - 2026-11-27 18:05 S7 PR 올림 (teacherlesson-schedule) — docs/plans/teacherlesson-schedule-write-lock.md: ISSUE-004 한계·ISSUE-005(T77)를 '데코레이터 하나(잠금+ScheduleError→JSON)'로 풀어 7개 경로에 적용하는 설계 메모(표·코드 뼈대·시험·변이·주의점). 코드는 안 고침. extend·pull·move·swap 내부는 줄 단위로 안 읽음(확인 필요)
+- 2026-11-27 19:16 T98 시작 (브랜치 task/T98-overdue-lessons)

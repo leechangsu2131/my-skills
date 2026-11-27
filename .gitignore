@@ -161,7 +161,6 @@ skills/classmanage-exam-graderV2/data/raw_images/
 skills/classmanage-exam-graderV2/data/aligned_images/
 
 # 영수증 사진·시험지 그림·번역 결과물 (2026-11-27 삭제)
-skills/admin-class-buy/data/*.jpg
-skills/admin-class-buy/data/*.png
+skills/admin-class-buy/data/
 skills/classmanage-exam-graderV2/data/template/
 skills/util-pdf-translator/scripts/output/

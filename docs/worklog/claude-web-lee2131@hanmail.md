@@ -30,3 +30,4 @@
 - 2026-11-27 12:17 S2 (review-T92) 시작 (브랜치 task/S2-review-t92)
 - 2026-11-27 12:18 S2 (review-T92) PR 올림 — PR #113(T92 깨진 한글 되살림) 검토 글 docs/reviews/task-T92-fix-mojibake.md. 확인: 설치한 환경에서 tests 108 통과, 코드를 일부러 되돌린 4가지를 시험이 모두 잡음, 개인정보 모양 없음. 결론 합쳐도 됨, 🟡 auto_planner.py 506줄 '??⑥썝' 한 곳 남음
 - 2026-11-27 18:04 S2 (review-PR139) 시작 (브랜치 task/S2-review-pr139)
+- 2026-11-27 18:05 S2 (review-PR139) PR 올림 — PR #139(S7 쓰기 경로 잠금 설계 메모) 검토 글 docs/reviews/task-PR139-write-lock-design.md. 확인: 라우트 7개·줄 번호·ScheduleError 계층·_rewrite_bridge_sheet 경로·시험 파일을 현재 main 코드와 대조 — 합쳐도 됨. 🟡 import functools 빠짐, ValueError 잡는 범위가 넓어짐 한 줄 필요, 변이 ③ 표현

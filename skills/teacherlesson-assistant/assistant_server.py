@@ -655,6 +655,8 @@ def prepare_status() -> dict:
     """수업 준비(prepare_lessons.py) 진행 상황. 프로세스가 죽었으면 진행 중이 아님."""
     import prepare_lessons  # 기본 파이썬만 씀
     status = read_json(prepare_lessons.STATUS, {})
+    if not isinstance(status, dict):   # 파일이 올바른 JSON 이지만 객체가 아니면(예: []) 없는 것으로 본다
+        status = {}
     status["running"] = prepare_lessons.is_running(status)
     return status
 

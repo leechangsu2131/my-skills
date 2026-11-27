@@ -132,11 +132,11 @@ class PrepareStatusTest(unittest.TestCase):
         self.assertFalse(got["running"])
         self.assertEqual(got["done"], 5)
 
-    @unittest.expectedFailure
-    def test_status_file_that_is_not_an_object_should_not_crash(self):
-        # 지금은 파일 내용이 JSON 목록 등 객체가 아니면 AttributeError (ISSUE-새). 고치면 이 시험이 '예상 밖 성공' 으로 실패해 알려 준다.
-        self.path.write_text("[]", encoding="utf-8")
-        self.assertEqual(app.prepare_status(), {"running": False})
+    def test_status_file_that_is_not_an_object_is_treated_as_missing(self):
+        # 예전에는 파일 내용이 JSON 목록 등 객체가 아니면 AttributeError 로 멈췄다(ISSUE-새, 고침)
+        for raw in ("[]", '"문자"', "5", "null", "[1, 2]"):
+            self.path.write_text(raw, encoding="utf-8")
+            self.assertEqual(app.prepare_status(), {"running": False}, raw)
 
 
 if __name__ == "__main__":

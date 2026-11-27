@@ -307,6 +307,42 @@ def recent_memos(subject: str, limit: int = 6) -> list[dict]:
     return found[:limit]
 
 
+def session_matches_lesson(saved: dict, day: date, lesson: dict) -> bool:
+    """저장 기록 안의 수업 정보가 현재 날짜·교시·과목·차시와 맞는지 확인한다.
+
+    예전 기록에 정보가 없는 항목은 교시별 파일 경로를 신뢰해 허용한다.
+    값이 기록되어 있는데 현재 수업과 다르면 다른 교시 기록으로 취급한다.
+    """
+    if not isinstance(saved, dict):
+        return False
+    expected = {
+        "date": day.isoformat(),
+        "period": lesson.get("period"),
+        "subject": lesson.get("subject", ""),
+        "record_key": lesson.get("record_key", ""),
+    }
+    for key, want in expected.items():
+        got = saved.get(key)
+        if got in (None, "") or want in (None, ""):
+            continue
+        if key == "period":
+            if _period_no(got) != _period_no(want):
+                return False
+        elif str(got) != str(want):
+            return False
+    return True
+
+
+def saved_mismatch_info(saved: dict) -> dict:
+    if not isinstance(saved, dict):
+        return {"record_key": "", "lesson": "", "title": ""}
+    return {
+        "record_key": saved.get("record_key", ""),
+        "lesson": saved.get("lesson", ""),
+        "title": saved.get("title", ""),
+    }
+
+
 def state(day: date) -> dict:
     cfg = load_config()
     lessons, source = fetch_schedule(cfg, day)
@@ -325,19 +361,21 @@ def state(day: date) -> dict:
         lesson["recent_memos"] = recent_memos(lesson["subject"])
         old_session = read_json(session_path(day.isoformat(), lesson["period"], lesson["subject"]), None)
         if lesson.get("record_key"):
-            lesson["saved"] = read_json(session_path(day.isoformat(), lesson["period"], lesson["subject"],
-                                                        lesson["record_key"]), None)
-            if lesson["saved"] is None and old_session:
-                if not old_session.get("record_key") or old_session.get("record_key") == lesson["record_key"]:
-                    lesson["saved"] = old_session
-                else:
-                    lesson["saved_mismatch"] = {
-                        "record_key": old_session.get("record_key", ""),
-                        "lesson": old_session.get("lesson", ""),
-                        "title": old_session.get("title", ""),
-                    }
+            saved = read_json(session_path(day.isoformat(), lesson["period"], lesson["subject"],
+                                           lesson["record_key"]), None)
+            if saved and session_matches_lesson(saved, day, lesson):
+                lesson["saved"] = saved
+            elif saved:
+                lesson["saved_mismatch"] = saved_mismatch_info(saved)
+            elif old_session and session_matches_lesson(old_session, day, lesson):
+                lesson["saved"] = old_session
+            elif old_session:
+                lesson["saved_mismatch"] = saved_mismatch_info(old_session)
         else:
-            lesson["saved"] = old_session
+            if old_session and session_matches_lesson(old_session, day, lesson):
+                lesson["saved"] = old_session
+            elif old_session:
+                lesson["saved_mismatch"] = saved_mismatch_info(old_session)
     return {
         "date": day.isoformat(),
         "source": source,

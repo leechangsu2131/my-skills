@@ -29,12 +29,12 @@ metadata:
 | 명령 | 하는 일 | 결과가 저장되는 곳 |
 |---|---|---|
 | `find <pdf> "찾을 내용" [--model M]` | Gemini CLI 가 관련 원문을 `[p.N]`(PDF 쪽 번호)과 함께 인용. 한 번에 40~70초 | `answers/` |
-| `pages <pdf> 4,7-8` 또는 `pages <pdf> --from 답.md` | 그 쪽만 새 PDF 로 | `pages/` |
-| `prep <pdf…> [--images auto\|all\|none]` | NotebookLM 에 올릴 소스: 쪽마다 `〔p.N〕` 을 붙인 글(md) + 글자가 거의 없는 쪽의 흑백 PDF(`auto` 일 때) | `sources/` |
-| `split <받은.md> [--pattern 정규식]` | 북마클릿 등으로 받은 md 를 제목 줄(`#`, `**`)에서 자르기. 첫 제목 앞의 글은 버림 | `notes/` |
-| `nb list` / `nb add <주제> <주소>` / `nb open <주제> --q "찾을 내용"` | 노트북 목록 관리. `open` 은 찾기 전용 질문을 복사하고 노트북을 연다(윈도우 전용) | `notebooks.json` |
+| `pages <pdf> 4,7-8` 또는 `pages <pdf> --from 답.md` | 그 쪽만 새 PDF 로. `--from` 은 답 글의 `[p.N]`·`[p.N-M]`·`PDF 파일 N쪽` 표시를 모은다. 범위 밖 쪽은 빼고, 남는 쪽이 없으면 멈춘다 | `pages/` |
+| `prep <pdf…> [--images auto\|all\|none] [--title 제목]` | NotebookLM 에 올릴 소스: 쪽마다 `〔p.N〕` 을 붙인 글(`<PDF이름>.md`) + 흑백 그림 PDF(`<PDF이름>_그림.pdf`). `auto`(기본)는 글자가 거의 없는 쪽만, `all` 은 모든 쪽, `none` 은 그림 없음. 제목은 안 주면 PDF 이름. 50만 단어 한도에 가까우면 경고 | `sources/` |
+| `split <받은.md> [--pattern 정규식]` | 북마클릿 등으로 받은 md 를 제목 줄(`#`, `**`)에서 자르기. `--pattern` 을 주면 그 정규식이 든 제목에서만 자른다. 첫 제목 앞의 글은 버림. 조각 이름은 `01_제목.md` 꼴 | `notes/<받은 파일 이름>/` |
+| `nb list` / `nb add <주제> <주소> [--note 설명]` / `nb open <주제> [--q "찾을 내용"]` | 노트북 목록 관리. `open` 은 찾기 전용 질문을 복사하고 노트북을 연다(윈도우 전용) | `notebooks.json` |
 
-- 저장 위치는 모두 데이터 폴더 `내 문서\my-skills-data\util-notebooklm\` 아래다. `--out` 으로 바꿀 수 있다(`find`·`pages`·`prep`·`split`).
+- 저장 위치는 모두 데이터 폴더 `내 문서\my-skills-data\util-notebooklm\` 아래다. `--out` 으로 바꿀 수 있다. 다만 `find`·`pages` 의 `--out` 은 **파일 경로**, `prep`·`split` 의 `--out` 은 **폴더**다.
 - `nb add` 의 주소는 `https://notebooklm.google.com/` 으로 시작해야 한다.
 
 ### 다른 스킬에서 가져다 쓰기

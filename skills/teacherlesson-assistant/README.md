@@ -6,7 +6,7 @@ Claude 작업 절차는 [SKILL.md](SKILL.md), 문제·할 일은 [ISSUES.md](ISS
 
 - 바탕화면 `수업 준비 비서` → `실행_수업비서.bat`을 켠다. 수업 비서는 왼쪽 모니터의 약 1/3, 교과 사이트는 오른쪽 모니터 전체에 열린다. 오른쪽 모니터가 없으면 왼쪽 화면의 나머지 영역을 쓴다. 12시간에 한 번 `build_units.py`(단원 개관)도 돌린다.
 - 시간표·완료·연장·미루기·따라잡기는 Supabase를 읽고 쓴다. 중앙 `.env`에 `SUPABASE_URL`(또는 `NEXT_PUBLIC_SUPABASE_URL`)과 `SUPABASE_SERVICE_ROLE_KEY`가 있어야 한다. 진도 서버(5000번)는 이전 Google Sheets 기능을 사용할 때만 필요하다.
-- "수업 사이트 열기"는 수업 도우미 공용 Chrome 프로필(config `chrome_profile`, 기본 `%LOCALAPPDATA%\MusicClassHelper\chrome_profile`, 원격 디버깅 포트 `debug_port` 9233)로 오른쪽 모니터 전체에 창을 연다. Chrome 이 이미 실행 중이어도 새 창을 다시 배치한다. 열 수 있는 주소는 config 의 과목 사이트·바로가기·하이클래스·AI 사이트 주소뿐이다. 한 번 로그인하면 그 프로필에 로그인이 유지된다.
+- "수업 사이트 열기"는 수업 도우미 공용 Chrome 프로필(config `chrome_profile`, 기본 `%LOCALAPPDATA%\MusicClassHelper\chrome_profile`, 원격 디버깅 포트 `debug_port` 9233)로 오른쪽 모니터 전체에 창을 연다. Chrome 이 이미 실행 중이어도 새 창을 다시 배치한다. 열 수 있는 주소는 config 의 과목 사이트·바로가기·하이클래스·AI 사이트·NotebookLM 노트북 주소뿐이다. 한 번 로그인하면 그 프로필에 로그인이 유지된다.
 - 9222 포트는 다른 자동화(에듀파인)가 쓰고 있을 수 있어 9233을 쓴다.
 - 서버는 Host 가 127.0.0.1/localhost 인 요청만 받는다(다른 사이트·DNS 리바인딩 차단). 클립보드로 복사한 비밀번호는 30초 뒤 지운다.
 - 최초 설정은 `python -m pip install -r requirements.txt`. 서비스 키는 로컬 Python 서버에서만 읽고 브라우저로 보내지 않는다.
@@ -62,6 +62,7 @@ Claude 작업 절차는 [SKILL.md](SKILL.md), 문제·할 일은 [ISSUES.md](ISS
 - `➕ 한 차시 더 필요`: 한 시간 더 쓰고 뒤 진도를 하나씩 밀어요.
 - `⏭ 이후 진도 미루기`: 며칠 미룰지 물어봐요(처음 값 7일).
 - `📍 실제로 할 차시 고르기`: 오늘 실제로 할 차시를 검색해서 눌러요. 앞 차시는 '이미 함'이 되고, 고른 차시가 오늘 칸에 나와요. 회색 '✓ 함' 차시를 누르면 거기로 되돌려요.
+- `🏫 과목·차시 바꾸기`: 이 교시에 다른 과목을 할 때 그 과목의 안 한 차시를 골라요. 원래 과목의 차시는 다음 같은 과목 시간으로 밀려요.
 - 누르면 **확인 창**이 뜨고, 확인해야 Supabase 진도에 바로 반영돼요. 되돌리고 싶으면 다시 `📍` 로 원하는 차시를 골라요.
 
 **막히면**: 화면이 비었으면 `점검_PC.bat` 결과를 보고, 진도가 안 바뀌면 중앙 `.env` 의 Supabase 설정부터 확인해요.
@@ -97,13 +98,15 @@ Claude 작업 절차는 [SKILL.md](SKILL.md), 문제·할 일은 [ISSUES.md](ISS
 | 수업 흐름 전체 (접이식) | `flows/*.json`의 목표·준비물·전체 단계(활동, 💬발문, 💡팁). 단계를 눌러 바로 이동 가능. 단계 이동 시 시각 기록(`sessions` 메모의 `step`, `idx` 포함). **✏ 흐름 고치기/직접 만들기**로 화면에서 편집(목표·준비물·단계 이름·분·활동·발문·팁·중요도 ⭐꼭 해야 함/✂ 줄여도 됨)·저장(`POST /api/flow`, 고친 흐름은 자동 준비가 덮어쓰지 않음) |
 | 수업 기록 | 녹음(10초마다 서버에 이어 저장), 👍좋았음 🔧고칠점 🙋학생 발표 ★표시 🎤음성 메모, 직접 입력 메모. 모두 녹음 기준 [mm:ss] |
 | 알림장 | 내용 작성 → 클립보드 복사 + 하이클래스 열기 (자동 게시는 아직 없음) |
-| 진도 조정 | ✅ 완료 / 📍 실제로 할 차시 고르기(옛 이름: 여기부터 다시 잡기) / 한 차시 더 / 며칠 미루기 → Supabase 수업 슬롯에 바로 반영. 단원·차시·제목 검색으로 진도를 찾는다. 실행 전 확인 창 |
+| 🛠 교실 도구 | ⏱ 타이머, 🙋 발표자 뽑기(번호 범위), 🎙 소음 측정(녹음·저장 없이 크기만 표시) |
+| 🔗 바로가기 | config `links` 에 적은 주소 열기 |
+| 진도 조정 | ✅ 완료 / 📍 실제로 할 차시 고르기(옛 이름: 여기부터 다시 잡기) / 🏫 과목·차시 바꾸기 / 한 차시 더 / 며칠 미루기 → Supabase 수업 슬롯에 바로 반영. 단원·차시·제목 검색으로 진도를 찾는다. 실행 전 확인 창 |
 
 ## 저장 위치 (깃에 올리지 않음)
 
 `내 문서\my-skills-data\teacherlesson-assistant\`
 
-- `config.json` — 교시 시각, 내선번호, 바로가기, 과목별 출판사·사이트·`secret_prefix`, `schedule_backend`, `ai_sites`. 처음 실행 때 `config.example.json`을 복사해 만든다. 연락처는 비공개 데이터 폴더의 `phones`에 역할 이름과 내선만 입력한다. 외부 전화번호·개인 휴대전화는 저장소 예시나 코드에 넣지 않는다.
+- `config.json` — 교시 시각, 내선번호, 바로가기, 과목별 출판사·사이트·`secret_prefix`, `schedule_backend`, `ai_sites`. 처음 실행 때 `config.example.json`을 복사해 만든다. 그 밖에 `left_ratio`(수업 비서 창 너비 비율, 기본 0.32), `helper_python`(📂 차시 자료 도우미를 돌릴 Python, 안 적으면 `C:\Python313\python.exe`, 없으면 서버와 같은 것), `google_account_hint`(지도서 받기에서 고를 구글 계정)를 쓴다. 연락처는 비공개 데이터 폴더의 `phones`에 역할 이름과 내선만 입력한다. 외부 전화번호·개인 휴대전화는 저장소 예시나 코드에 넣지 않는다.
 - `units/<과목>__<대단원>.json`·`.pdf` — 단원 개관 (`build_units.py`가 만든다)
 - `flows/<record_key>.json` 또는 `flows/<과목>__<차시제목>.json` — 수업 흐름 (선택). Supabase 차시의 record_key 는 `lesson-0075` 같은 차시 번호(`lesson_lessons.legacy_lesson_id`)
 - `sessions/<날짜>/<교시>교시_<과목>_<차시ID>.json` — 차시별 메모·알림장·시작/마침 시각. 예전 ID 없는 파일도 읽고, 다른 차시 기록은 현재 차시에 잘못 붙이지 않는다.
@@ -137,8 +140,9 @@ Claude 작업 절차는 [SKILL.md](SKILL.md), 문제·할 일은 [ISSUES.md](ISS
 - 화면: `web/index.html` (한 파일)
 - 서버·저장 형식: `assistant_server.py`
 - 시간표 조회·진도 변경(Supabase): `supabase_schedule.py`. 수업 흐름 자동 준비: `prepare_lessons.py`
-- 자동 시험(표준 라이브러리만, 임시 폴더·가짜 서버라 실제 데이터·DB 를 안 건드림): 이 폴더에서 `python -m unittest test_assistant_server test_supabase_schedule`
+- 자동 시험(표준 라이브러리만, 임시 폴더·가짜 서버라 실제 데이터·DB 를 안 건드림): 이 폴더에서 `python -m unittest test_assistant_server test_supabase_schedule`. `tests/`·`sites/` 의 시험까지 모두 돌리려면 pytest 로 `python -m pytest tests sites test_assistant_server.py test_supabase_schedule.py`
 - 단원 개관 규칙: `build_units.py` (`LESSON_START`)
 - 과목별 차시 자료 도우미: `sites/music_douclass/`, `sites/social_class/` (각 README). 서버의 `SITE_HELPERS` 에 등록
 - NotebookLM 소스·노트: `notebook_sources.py`, `split_notes.py` (차시 표시 규칙 `lesson_tag` 은 `assistant_server.py`)
+- 녹음 받아쓰기·분석: `transcribe.py` (사용법은 파일 맨 위, faster-whisper 필요). 주간 정리: `weekly_report.py`
 - 설정 항목: `config.example.json` (실사용 설정은 데이터 폴더의 `config.json`)

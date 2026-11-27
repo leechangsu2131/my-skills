@@ -1156,7 +1156,7 @@ def plan_lesson_extension(records, subject, row_number=None, extra_slots=1):
 
 def _legacy_mark_done_via_bridge(ws, records, subject, target_date=None, record_key=None, bridge_support=None):
     subject = _clean_text(subject)
-    target_date = _coerce_date(target_date, field_name="?꾨즺 ?좎쭨")
+    target_date = _coerce_date(target_date, field_name="완료 날짜")
     records_by_lesson_id = _records_by_lesson_id(records)
     bridge_support = _load_bridge_support(ws)
     if bridge_support and bridge_support["rows"]:
@@ -1228,14 +1228,14 @@ def _legacy_mark_done_via_bridge(ws, records, subject, target_date=None, record_
     return {
         "updated": len(lesson_ids),
         "rows": [record["_row"] for record in records if _lesson_id_of(record) in lesson_ids],
-        "message": f"{len(lesson_ids)}媛??섏뾽???꾨즺 泥섎━?덉뒿?덈떎.",
+        "message": f"{len(lesson_ids)}개 수업을 완료 처리했습니다.",
     }
 
 
 def _legacy_push_schedule_via_bridge(ws, records, subject, days, from_date=None, bridge_support=None):
     subject = _clean_text(subject)
     days = _coerce_days(days)
-    from_date = _coerce_date(from_date, field_name="湲곗? ?좎쭨")
+    from_date = _coerce_date(from_date, field_name="기준 날짜")
     bridge_support = _load_bridge_support(ws)
     if bridge_support and bridge_support["rows"]:
         bridge_result = _push_schedule_via_bridge(
@@ -1288,7 +1288,7 @@ def _legacy_push_schedule_via_bridge(ws, records, subject, days, from_date=None,
     return {
         "updated": len(updated_rows),
         "rows": [row.get("_row") for row in updated_rows if row.get("_row")],
-        "message": f"[{subject}] {len(updated_rows)}媛??섏뾽??{days}??諛?덉뒿?덈떎.",
+        "message": f"[{subject}] {len(updated_rows)}개 수업을 {days}일 밀었습니다.",
     }
 
 
@@ -1335,7 +1335,7 @@ def _extend_lesson_via_bridge(
     subject = _clean_text(subject)
     extra_slots = _coerce_days(extra_slots)
     if extra_slots < 1:
-        raise ValueError("?곗옣??李⑥떆 ?섎뒗 1 ?댁긽?댁뼱???⑸땲??")
+        raise ValueError("연장할 차시 수는 1 이상이어야 합니다.")
 
     records_by_lesson_id = _records_by_lesson_id(records)
     subject_rows = [
@@ -1421,8 +1421,8 @@ def _extend_lesson_via_bridge(
         "updated": len(rewritten_subject_rows),
         "rows": [row.get("_row") for row in rewritten_subject_rows if row.get("_row")],
         "message": (
-            f"[{subject}] lesson {target_lesson_id}??{extra_slots}媛?slot???붽??섍퀬 "
-            f"?ㅼ쓬 ?섏뾽???ㅻ줈 諛곗튂?덉뒿?덈떎."
+            f"[{subject}] lesson {target_lesson_id}에 {extra_slots}개 slot을 추가하고 "
+            f"다음 수업을 뒤로 배치했습니다."
         ),
         "shifted": max(0, len(rewritten_subject_rows) - insertion_index - extra_slots),
     }
@@ -1898,7 +1898,7 @@ def catch_up_to_lesson(
         message = f"[{subject}] 수업배치에서 고른 차시를 찾지 못했어요."
         return {"updated": 0, "rows": [], "bridge_rows": [], "message": message}
 
-    current_date = _coerce_date(current_date, field_name="湲곗? ?좎쭨") or date.today()
+    current_date = _coerce_date(current_date, field_name="기준 날짜") or date.today()
 
     completed_rows = []
     for bridge_row in subject_rows[:target_index]:
@@ -2989,9 +2989,9 @@ def print_progress(records, subjects):
     print(f"{'=' * 50}")
     for subject in subjects:
         progress = get_progress(records, subject)
-        total = int(progress.get("?꾩껜", 0))
-        done = int(progress.get("?꾨즺", 0))
-        percentage_text = progress.get("吏꾨룄??", "0.0%")
+        total = int(progress.get("전체", 0))
+        done = int(progress.get("완료", 0))
+        percentage_text = progress.get("진도율", "0.0%")
         filled = int(20 * done / total) if total > 0 else 0
         bar = "#" * filled + "." * (20 - filled)
         print(f"  [{subject}] {bar} {percentage_text} ({done}/{total})")

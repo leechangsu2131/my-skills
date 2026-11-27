@@ -11,9 +11,18 @@
 - 2026-11-26 10:12 다음: T66 (아직 안 잡음). 여기까지 PR #67 #68 #69 #70
 - 2026-11-26 12:49 T76 시작 (브랜치 task/T76-weekly-report)
 - 2026-11-26 12:50 T76 PR 올림 — weekly_report.py(과목·출판사별·후보·학생별), 새 시험 5개, 스킬 시험 통과. 이름 가리기 한계는 ISSUE-038
+- 2026-11-26 20:17 T84 시작 (브랜치 task/T84-neis-change-design)
 - 2026-11-26 20:18 T85 시작 (브랜치 task/T85-hiclass-notice-design)
 - 2026-11-26 20:18 T85 그만둠(잠시) — 잡기만 하고 설계 메모는 아직. 교사 확인 뒤 다음에 할 것: admin-hitalk-sender 연결 방식 읽고 docs/plans/hiclass-notice.md 작성
-- 2026-11-26 20:17 T84 시작 (브랜치 task/T84-neis-change-design)
 - 2026-11-26 20:18 T84 PR 올림 — 설계 메모, 인용한 함수·키 이름을 코드와 대조. 보결 반영 여부는 확인 필요
 - 2026-11-27 11:22 T85 다시 시작
 - 2026-11-27 11:22 T85 PR 올림 — 설계 메모(docs/plans/hiclass-notice.md), 인용한 함수·포트·키를 코드와 대조. 하이클래스 화면은 확인 필요
+- 2026-11-27 11:24 S4 (teacherlesson-assistant) 시작 (브랜치 task/S4-teacherlesson-assistant-docs)
+- 2026-11-27 11:25 S4 PR 올림 (teacherlesson-assistant) — SKILL.md·README 를 코드와 맞춤(과목 바꾸기·교실 도구·받아쓰기·설정 키·시험 명령). pytest 373 통과, 1 건너뜀, 1 xfail
+- 2026-11-27 12:06 S3 (teacherlesson-schedule) 시작 (브랜치 task/S3-teacherlesson-schedule-rollover-rule)
+- 2026-11-27 12:06 S3 PR 올림 (teacherlesson-schedule) — ISSUE-8 재현 시험 3개(expectedFailure), 소스 안 고침
+- 2026-11-27 12:07 PR #125 에 ISSUE-8 수정 추가(교사 요청) — check_rule, 시험 갱신, 시트 연결 전 거절
+- 2026-11-27 12:17 S2 (review-batch-1127-pm) 시작 (브랜치 task/S2-review-batch-1127-pm)
+- 2026-11-27 12:19 S2 PR 올림 (review-batch-1127-pm) — PR 8건 검토, 겹친 짝 #118↔#122·#123↔#124
+- 2026-11-27 12:19 S5 (merge-rehearsal) 시작 (브랜치 task/S5-merge-rehearsal)
+- 2026-11-27 12:21 S5 PR 올림 (merge-rehearsal) — 열린 PR 12건 합쳐 시험. 새로 깨지는 것 없음, mapper 2건은 main 에서도 실패

@@ -40,6 +40,7 @@ USER_DATA = Path(os.path.expandvars(os.environ.get("CHROME_USER_DATA_DIR", "")) 
                  Path(os.environ["LOCALAPPDATA"]) / "Google" / "Chrome" / "User Data")
 CONFIG = data_dir(SKILL) / "config.json"
 UNGROUPED = "미분류"
+OTHER = "기타 Chrome 창"
 CHANGE_THRESHOLD = 2.0   # 32x32 흑백 축소본의 평균 밝기 차이. 클수록 둔감하다.
 CAPTURE_BUDGET = 0.15    # 1초마다 캡처에 쓰는 최대 시간(초). 창이 많으면 돌아가며 찍는다.
 THUMB_W, THUMB_H = 240, 150
@@ -229,7 +230,7 @@ if __name__ == "__main__" and "--check" in sys.argv:
 
 # ───────────────────────── 화면 ─────────────────────────
 from PySide6.QtCore import QSize, Qt, QTimer  # noqa: E402
-from PySide6.QtGui import QBrush, QColor, QIcon, QImage, QPixmap  # noqa: E402
+from PySide6.QtGui import QBrush, QColor, QIcon, QImage, QKeySequence, QPixmap, QShortcut  # noqa: E402
 from PySide6.QtWidgets import (  # noqa: E402
     QAbstractItemView, QApplication, QCheckBox, QHBoxLayout, QInputDialog, QLabel, QListView,
     QListWidget, QListWidgetItem, QMainWindow, QMenu, QMessageBox, QPushButton, QSpinBox, QSplitter,
@@ -270,6 +271,7 @@ class Tree(QTreeWidget):
         self.setColumnWidth(1, 34)
         self.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
         self.setDragDropMode(QAbstractItemView.DragDropMode.InternalMove)
+        self.setEditTriggers(QAbstractItemView.EditTrigger.EditKeyPressed)  # 이름 바꾸기는 F2 로만
         root = self.invisibleRootItem()
         root.setFlags(root.flags() & ~DROP)  # 프로필은 그룹 안으로만 떨어진다.
 
@@ -291,7 +293,9 @@ class Manager(QMainWindow):
         except Exception:
             self.cfg = {}
         self.cfg.setdefault("start_url", {})
-        self.windows: dict[int, dict] = {}   # hwnd → 창 상태
+        self.cfg.setdefault("aliases", {})   # 기타 Chrome 창 앱 ID → 사용자가 붙인 이름
+        self.other_group: QTreeWidgetItem | None = None
+        self.windows: dict[int, dict] = {}   # hwnd → 창 상태. key = 프로필 폴더명 또는 "@앱ID"
         self.capture_order: list[int] = []
         self.launch_queue: list[str] = []
         self.building = False
@@ -309,7 +313,7 @@ class Manager(QMainWindow):
             ("그룹 삭제", self.remove_group, "고른 그룹을 지우고 안의 프로필은 미분류로 옮긴다."),
             ("시작 URL", self.set_start_url, "고른 프로필들의 시작 URL 을 한 번에 바꾼다(비우면 해제)."),
             ("일괄 입력", self.broadcast, "열린 창(고른 프로필이 있으면 그 창들)의 커서 위치에 같은 글을 붙여 넣는다."),
-            ("일괄 닫기", self.close_windows, "고른 프로필(그룹이면 그룹 전체)의 창을 모두 닫는다. 아무것도 안 고르면 프로필 창 전체. '기타 Chrome 창'은 닫지 않는다."),
+            ("일괄 닫기", self.close_windows, "트리에서 고른 프로필(그룹이면 그룹 전체)의 창을 모두 닫는다. 아무것도 안 고르면 프로필 창 전체('기타 Chrome 창'은 직접 고를 때만)."),
         ):
             button = QPushButton(label)
             button.setToolTip(tip)
@@ -336,7 +340,8 @@ class Manager(QMainWindow):
         settings.addWidget(self.timer_spin)
         settings.addStretch()
 
-        help_text = QLabel("미리보기: 클릭=창 앞으로 · Ctrl+클릭=타이머 시작/취소 · 오른쪽 클릭=변화 감시 등")
+        help_text = QLabel("미리보기: 클릭=창 앞으로 · 드래그/Shift+클릭=여러 개 고르기 · Del=고른 창 닫기\n"
+                           "Ctrl+클릭=타이머 시작/취소 · 오른쪽 클릭=변화 감시·닫기 등 · 기타 창 이름은 F2")
         help_text.setStyleSheet("color: gray")
 
         left = QWidget()
@@ -355,13 +360,35 @@ class Manager(QMainWindow):
         self.thumbs.setIconSize(QSize(THUMB_W, THUMB_H))
         self.thumbs.setGridSize(QSize(THUMB_W + 20, THUMB_H + 70))
         self.thumbs.setWordWrap(True)
+        self.thumbs.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
+        self.thumbs.setSelectionRectVisible(True)
         self.thumbs.itemClicked.connect(self.on_thumb_click)
+        self.thumbs.itemSelectionChanged.connect(self.on_thumb_selection)
         self.thumbs.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.thumbs.customContextMenuRequested.connect(self.thumb_menu)
+        delete_key = QShortcut(QKeySequence(Qt.Key.Key_Delete), self.thumbs)
+        delete_key.setContext(Qt.ShortcutContext.WidgetShortcut)
+        delete_key.activated.connect(self.close_selected_thumbs)
+
+        self.thumb_count = QLabel()
+        self.close_thumbs_button = QPushButton("고른 창 닫기")
+        self.close_thumbs_button.clicked.connect(self.close_selected_thumbs)
+        clear_button = QPushButton("고르기 해제")
+        clear_button.clicked.connect(self.thumbs.clearSelection)
+        thumb_bar = QHBoxLayout()
+        thumb_bar.addWidget(self.thumb_count)
+        thumb_bar.addStretch()
+        thumb_bar.addWidget(self.close_thumbs_button)
+        thumb_bar.addWidget(clear_button)
+        right = QWidget()
+        right_box = QVBoxLayout(right)
+        right_box.setContentsMargins(0, 0, 0, 0)
+        right_box.addLayout(thumb_bar)
+        right_box.addWidget(self.thumbs)
 
         splitter = QSplitter()
         splitter.addWidget(left)
-        splitter.addWidget(self.thumbs)
+        splitter.addWidget(right)
         splitter.setSizes([500, 700])
         self.setCentralWidget(splitter)
 
@@ -374,6 +401,7 @@ class Manager(QMainWindow):
 
         self.build_tree()
         self.monitor()
+        self.on_thumb_selection()
         self.monitor_timer = QTimer(self)
         self.monitor_timer.timeout.connect(self.monitor)
         self.monitor_timer.start(1000)
@@ -382,7 +410,7 @@ class Manager(QMainWindow):
     def group_item(self, name: str) -> QTreeWidgetItem:
         for i in range(self.tree.topLevelItemCount()):
             item = self.tree.topLevelItem(i)
-            if not item.data(0, ROLE) and item.text(0) == name:
+            if not item.data(0, ROLE) and item.text(0) == name and item is not self.other_group:
                 return item
         item = QTreeWidgetItem([name])
         flags = (item.flags() | DROP) & ~DRAG
@@ -428,11 +456,70 @@ class Manager(QMainWindow):
         self.save()
         self.reorder_thumbs()
 
+    # ───── 기타 Chrome 창(다른 데이터 폴더로 띄운 Chrome, 앱 창 등) ─────
+    def other_name(self, aumid: str) -> str:
+        if self.cfg["aliases"].get(aumid):
+            return self.cfg["aliases"][aumid]
+        if aumid.endswith(".SystemProfile"):
+            return "프로필 선택 창"
+        rest = aumid[len("Chrome."):] if aumid.startswith("Chrome.") else aumid
+        return rest.replace(".", " · ") or aumid
+
+    def refresh_other_group(self):
+        """열린 기타 창을 앱 ID 별로 트리 맨 아래 '기타 Chrome 창' 그룹에 보인다."""
+        keys = sorted({st["key"] for st in self.windows.values() if not st["folder"]})
+        group = self.other_group
+        if not keys:
+            if group is not None:
+                self.tree.takeTopLevelItem(self.tree.indexOfTopLevelItem(group))
+                self.other_group = None
+            return
+        if group is None:
+            group = self.other_group = QTreeWidgetItem([OTHER])
+            group.setFlags(group.flags() & ~DROP & ~DRAG & ~EDIT)
+            group.setForeground(0, QBrush(QColor("gray")))
+            group.setToolTip(0, "다른 데이터 폴더로 띄운 Chrome(자동화용 등)·앱 창. 이름은 고르고 F2 로 바꾼다.")
+            self.tree.addTopLevelItem(group)
+            group.setExpanded(True)
+        else:  # 사용자가 그룹을 새로 만들어도 늘 맨 아래에 둔다
+            index = self.tree.indexOfTopLevelItem(group)
+            if index != self.tree.topLevelItemCount() - 1:
+                expanded = group.isExpanded()
+                self.tree.takeTopLevelItem(index)
+                self.tree.addTopLevelItem(group)
+                group.setExpanded(expanded)
+        have = {group.child(i).data(0, ROLE): group.child(i) for i in range(group.childCount())}
+        for key, item in have.items():
+            if key not in keys:
+                group.removeChild(item)
+        for key in keys:
+            if key not in have:
+                item = QTreeWidgetItem([self.other_name(key[1:]), "", ""])
+                item.setData(0, ROLE, key)
+                item.setToolTip(0, key[1:])
+                item.setFlags((item.flags() | EDIT) & ~DRAG & ~DROP)
+                group.addChild(item)
+
     def on_item_changed(self, item, column):
-        if not self.building and column == 0 and not item.data(0, ROLE):
+        if self.building or column != 0:
+            return
+        key = item.data(0, ROLE)
+        if key and key.startswith("@"):  # 기타 창 이름 바꾸기
+            aumid, name = key[1:], item.text(0).strip()
+            if name and name != self.other_name(aumid):
+                self.cfg["aliases"][aumid] = name
+            elif not name:
+                self.cfg["aliases"].pop(aumid, None)
+                self.building = True
+                item.setText(0, self.other_name(aumid))
+                self.building = False
+            self.save()
+            self.monitor()
+        elif not key:
             self.save()
 
     def selected_profiles(self) -> list[str]:
+        """트리에서 고른 키 목록(그룹이면 그 안 전체). 기타 창은 '@앱ID'."""
         result = []
         for item in self.tree.selectedItems():
             children = [item] if item.data(0, ROLE) else [item.child(i) for i in range(item.childCount())]
@@ -445,6 +532,8 @@ class Manager(QMainWindow):
         groups = []
         for i in range(self.tree.topLevelItemCount()):
             group = self.tree.topLevelItem(i)
+            if group is self.other_group:
+                continue
             folders = [group.child(j).data(0, ROLE) for j in range(group.childCount())]
             groups.append({"name": group.text(0), "profiles": folders})
         self.cfg.update(groups=groups, idle_sec=self.idle_spin.value(),
@@ -458,7 +547,8 @@ class Manager(QMainWindow):
             self.save()
 
     def remove_group(self, *_):
-        groups = [it for it in self.tree.selectedItems() if not it.data(0, ROLE) and it.text(0) != UNGROUPED]
+        groups = [it for it in self.tree.selectedItems() if not it.data(0, ROLE)
+                  and it.text(0) != UNGROUPED and it is not self.other_group]
         for group in groups:
             children = group.takeChildren()
             self.tree.takeTopLevelItem(self.tree.indexOfTopLevelItem(group))
@@ -467,7 +557,7 @@ class Manager(QMainWindow):
             self.save()
 
     def set_start_url(self, *_):
-        folders = self.selected_profiles()
+        folders = [k for k in self.selected_profiles() if not k.startswith("@")]
         if not folders:
             return
         url, ok = QInputDialog.getText(self, "시작 URL", f"프로필 {len(folders)}개의 시작 URL (비우면 해제):")
@@ -495,8 +585,11 @@ class Manager(QMainWindow):
     def open_profiles(self, folders):
         force_new = bool(QApplication.keyboardModifiers() & Qt.KeyboardModifier.ShiftModifier)
         for folder in folders:
-            existing = [h for h, st in self.windows.items() if st["folder"] == folder]
-            if existing and not force_new:
+            existing = [h for h, st in self.windows.items() if st["key"] == folder]
+            if folder.startswith("@"):  # 기타 창은 새로 띄울 수 없어 앞으로만
+                if existing:
+                    activate(existing[-1])
+            elif existing and not force_new:
                 activate(existing[-1])
             else:
                 self.launch_queue.append(folder)
@@ -515,14 +608,13 @@ class Manager(QMainWindow):
             QTimer.singleShot(400, self.launch_next)
 
     # ───── 미리보기 / 감시 / 알림 ─────
-    def label_of(self, folder: str | None, aumid: str | None) -> str:
-        if folder:
-            return self.profiles[folder]
-        return f"기타 Chrome 창 ({aumid})" if aumid else "기타 Chrome 창"
+    def label(self, hwnd: int) -> str:
+        st = self.windows[hwnd]
+        return self.profiles[st["folder"]] if st["folder"] else f"기타 · {self.other_name(st['aumid'])}"
 
     def sort_key(self, hwnd: int):
         order = {item.data(0, ROLE): i for i, item in enumerate(self.profile_items())}
-        return (order.get(self.windows[hwnd]["folder"], 10_000), hwnd)
+        return (order.get(self.windows[hwnd]["key"], 10_000), hwnd)
 
     def reorder_thumbs(self):
         """미리보기를 트리 순서(그룹 → 프로필)대로 늘어놓는다."""
@@ -539,7 +631,7 @@ class Manager(QMainWindow):
     def apply_filter(self):
         chosen = set(self.selected_profiles()) if self.filter_box.isChecked() else set()
         for st in self.windows.values():
-            st["item"].setHidden(bool(chosen) and st["folder"] not in chosen)
+            st["item"].setHidden(bool(chosen) and st["key"] not in chosen)
 
     def sync_windows(self, now: float) -> bool:
         live = chrome_windows()
@@ -554,18 +646,21 @@ class Manager(QMainWindow):
             if not aumid:
                 continue  # 앱 ID 가 아직 안 붙은 막 뜬 창은 다음 차례에
             folder = self.aumids.get(aumid)
-            item = QListWidgetItem(self.label_of(folder, aumid))
+            item = QListWidgetItem()
             item.setData(ROLE, hwnd)
             item.setSizeHint(QSize(THUMB_W + 16, THUMB_H + 64))
-            self.windows[hwnd] = {"folder": folder, "aumid": aumid, "item": item, "sig": None,
-                                  "last_change": now, "watch": False, "alerted": False,
-                                  "deadline": None}
+            self.windows[hwnd] = {"folder": folder, "aumid": aumid, "key": folder or f"@{aumid}",
+                                  "item": item, "sig": None, "last_change": now, "watch": False,
+                                  "alerted": False, "deadline": None}
             changed = True
         if changed:
+            self.building = True
+            self.refresh_other_group()
+            self.building = False
             self.reorder_thumbs()
             counts = {}
             for st in self.windows.values():
-                counts[st["folder"]] = counts.get(st["folder"], 0) + 1
+                counts[st["key"]] = counts.get(st["key"], 0) + 1
             self.building = True
             for item in self.profile_items():
                 n = counts.get(item.data(0, ROLE), 0)
@@ -605,7 +700,7 @@ class Manager(QMainWindow):
         self.capture_some(now)
         idle_limit = self.idle_spin.value()
         for hwnd, st in self.windows.items():
-            lines = [self.label_of(st["folder"], st["aumid"]), win32gui.GetWindowText(hwnd)[:34]]
+            lines = [self.label(hwnd), win32gui.GetWindowText(hwnd)[:34]]
             status = []
             if st["watch"]:
                 idle = int(now - st["last_change"])
@@ -627,7 +722,7 @@ class Manager(QMainWindow):
     def alert(self, hwnd: int, message: str):
         st = self.windows[hwnd]
         st["item"].setBackground(ALERT_BG)
-        self.tray.showMessage(self.label_of(st["folder"], st["aumid"]), message)
+        self.tray.showMessage(self.label(hwnd), message)
         QApplication.beep()
 
     def on_thumb_click(self, item):
@@ -635,65 +730,115 @@ class Manager(QMainWindow):
         if hwnd not in self.windows:
             return
         item.setBackground(QBrush())
-        if QApplication.keyboardModifiers() & Qt.KeyboardModifier.ControlModifier:
-            self.toggle_timer(hwnd)
+        modifiers = QApplication.keyboardModifiers()
+        if modifiers & Qt.KeyboardModifier.ShiftModifier:
+            return  # Shift+클릭은 고르기만
+        if modifiers & Qt.KeyboardModifier.ControlModifier:
+            self.toggle_timer([hwnd])
         else:
             activate(hwnd)
 
-    def toggle_timer(self, hwnd: int):
-        st = self.windows[hwnd]
-        st["deadline"] = None if st["deadline"] else time.time() + self.timer_spin.value() * 60
+    def selected_thumbs(self) -> list[int]:
+        return [it.data(ROLE) for it in self.thumbs.selectedItems()
+                if it.data(ROLE) in self.windows and not it.isHidden()]
+
+    def on_thumb_selection(self):
+        n = len(self.selected_thumbs())
+        self.thumb_count.setText(f"고른 창 {n}개" if n else "미리보기를 드래그해 여러 개 고를 수 있습니다")
+        self.close_thumbs_button.setEnabled(bool(n))
+
+    def toggle_timer(self, hwnds: list[int], on: bool | None = None):
+        for hwnd in hwnds:
+            st = self.windows[hwnd]
+            start = (not st["deadline"]) if on is None else on
+            st["deadline"] = time.time() + self.timer_spin.value() * 60 if start else None
         self.monitor()
 
-    def toggle_watch(self, hwnd: int):
-        st = self.windows[hwnd]
-        st["watch"] = not st["watch"]
-        st["last_change"] = time.time()
-        st["alerted"] = False
+    def toggle_watch(self, hwnds: list[int], on: bool | None = None):
+        for hwnd in hwnds:
+            st = self.windows[hwnd]
+            st["watch"] = (not st["watch"]) if on is None else on
+            st["last_change"] = time.time()
+            st["alerted"] = False
         self.monitor()
 
     def thumb_menu(self, pos):
         item = self.thumbs.itemAt(pos)
         if not item or item.data(ROLE) not in self.windows:
             return
-        hwnd = item.data(ROLE)
-        st = self.windows[hwnd]
+        if not item.isSelected():  # 고른 묶음 밖을 누르면 그 창 하나만
+            self.thumbs.clearSelection()
+            item.setSelected(True)
+        hwnds = self.selected_thumbs()
+        idle, minutes = self.idle_spin.value(), self.timer_spin.value()
         menu = QMenu(self)
-        menu.addAction("창 앞으로", lambda: activate(hwnd))
-        menu.addAction(f"변화 감시 {'끄기' if st['watch'] else '켜기'} ({self.idle_spin.value()}초)",
-                       lambda: self.toggle_watch(hwnd))
-        menu.addAction(f"타이머 {'취소' if st['deadline'] else '시작'} ({self.timer_spin.value()}분)",
-                       lambda: self.toggle_timer(hwnd))
-        menu.addAction("알림 표시 지우기", lambda: item.setBackground(QBrush()))
+        if len(hwnds) == 1:
+            hwnd = hwnds[0]
+            st = self.windows[hwnd]
+            menu.addAction("창 앞으로", lambda: activate(hwnd))
+            menu.addAction(f"변화 감시 {'끄기' if st['watch'] else '켜기'} ({idle}초)",
+                           lambda: self.toggle_watch(hwnds))
+            menu.addAction(f"타이머 {'취소' if st['deadline'] else '시작'} ({minutes}분)",
+                           lambda: self.toggle_timer(hwnds))
+            menu.addAction("이 창에 입력", lambda: self.broadcast(targets=hwnds))
+        else:
+            n = len(hwnds)
+            menu.addAction(f"변화 감시 켜기 ({n}개, {idle}초)", lambda: self.toggle_watch(hwnds, True))
+            menu.addAction(f"변화 감시 끄기 ({n}개)", lambda: self.toggle_watch(hwnds, False))
+            menu.addAction(f"타이머 시작 ({n}개, {minutes}분)", lambda: self.toggle_timer(hwnds, True))
+            menu.addAction(f"타이머 취소 ({n}개)", lambda: self.toggle_timer(hwnds, False))
+            menu.addAction(f"고른 창 {n}개에 일괄 입력", lambda: self.broadcast(targets=hwnds))
+        menu.addAction("알림 표시 지우기",
+                       lambda: [self.windows[h]["item"].setBackground(QBrush()) for h in hwnds if h in self.windows])
         menu.addSeparator()
-        menu.addAction("이 창 닫기", lambda: close_window(hwnd))
+        menu.addAction("이 창 닫기" if len(hwnds) == 1 else f"고른 창 {len(hwnds)}개 닫기",
+                       lambda: self.close_selected_thumbs(ask=len(hwnds) > 1))
         menu.exec(self.thumbs.viewport().mapToGlobal(pos))
 
     # ───── 일괄 닫기 ─────
-    def close_windows(self, *_):
-        chosen = set(self.selected_profiles())
-        targets = [h for h, st in self.windows.items()
-                   if st["folder"] and (not chosen or st["folder"] in chosen)]
+    def confirm_close(self, targets: list[int], scope: str) -> None:
         if not targets:
-            QMessageBox.information(self, "일괄 닫기", "닫을 창이 없습니다.")
+            QMessageBox.information(self, "닫기", "닫을 창이 없습니다.")
             return
-        names = sorted({self.profiles[self.windows[h]["folder"]] for h in targets})
-        shown = "\n".join(names[:12]) + (f"\n… 외 {len(names) - 12}개 프로필" if len(names) > 12 else "")
-        scope = "고른 프로필" if chosen else "모든 프로필"
+        names = [self.label(h) for h in sorted(targets, key=self.sort_key)]
+        counted = {n: names.count(n) for n in dict.fromkeys(names)}
+        lines = [f"{n} ×{c}" if c > 1 else n for n, c in counted.items()]
+        shown = "\n".join(lines[:12]) + (f"\n… 외 {len(lines) - 12}개" if len(lines) > 12 else "")
         answer = QMessageBox.question(
-            self, "일괄 닫기",
-            f"{scope}의 창 {len(targets)}개를 닫을까요?\n\n{shown}\n\n"
-            "(닫은 탭은 그 프로필 창에서 Ctrl+Shift+T 로 되살릴 수 있습니다)")
+            self, "닫기", f"{scope} {len(targets)}개를 닫을까요?\n\n{shown}\n\n"
+                          "(닫은 탭은 그 프로필 창에서 Ctrl+Shift+T 로 되살릴 수 있습니다)")
         if answer == QMessageBox.StandardButton.Yes:
-            for hwnd in targets:
-                close_window(hwnd)
-            self.statusBar().showMessage(f"창 {len(targets)}개에 닫기를 보냈습니다.", 10000)
+            self.close_now(targets)
+
+    def close_now(self, targets: list[int]) -> None:
+        for hwnd in targets:
+            close_window(hwnd)
+        self.statusBar().showMessage(f"창 {len(targets)}개에 닫기를 보냈습니다.", 10000)
+
+    def close_windows(self, *_):
+        """왼쪽 '일괄 닫기': 트리에서 고른 프로필·그룹 기준."""
+        chosen = set(self.selected_profiles())
+        if chosen:
+            targets = [h for h, st in self.windows.items() if st["key"] in chosen]
+        else:  # 아무것도 안 고르면 프로필 창 전체(기타 창 제외)
+            targets = [h for h, st in self.windows.items() if st["folder"]]
+        self.confirm_close(targets, "고른 프로필의 창" if chosen else "모든 프로필 창")
+
+    def close_selected_thumbs(self, *_, ask: bool = True):
+        """오른쪽 미리보기에서 고른 창 닫기(Del 키, 버튼, 오른쪽 클릭)."""
+        targets = self.selected_thumbs()
+        if ask or len(targets) > 1:
+            self.confirm_close(targets, "고른 창")
+        elif targets:
+            self.close_now(targets)
 
     # ───── 일괄 입력 ─────
-    def broadcast(self, *_):
-        chosen = set(self.selected_profiles())
-        targets = [h for h in sorted(self.windows, key=self.sort_key)
-                   if (not chosen or self.windows[h]["folder"] in chosen)]
+    def broadcast(self, *_, targets: list[int] | None = None):
+        if targets is None:
+            chosen = set(self.selected_profiles())
+            targets = [h for h in sorted(self.windows, key=self.sort_key)
+                       if (not chosen or self.windows[h]["key"] in chosen)]
+        targets = [h for h in targets if h in self.windows]
         if not targets:
             QMessageBox.information(self, "일괄 입력", "열려 있는 대상 창이 없습니다.")
             return
@@ -711,8 +856,7 @@ class Manager(QMainWindow):
                 press_ctrl_v()
                 time.sleep(0.2)
             else:  # 엉뚱한 창에 붙지 않게 건너뛴다
-                st = self.windows[hwnd]
-                failed.append(self.label_of(st["folder"], st["aumid"]))
+                failed.append(self.label(hwnd))
         time.sleep(0.2)
         if old_clip is not None:
             set_clipboard(old_clip)

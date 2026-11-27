@@ -30,7 +30,7 @@ metadata:
 |---|---|---|
 | `find <pdf> "찾을 내용" [--model M]` | Gemini CLI 가 관련 원문을 `[p.N]`(PDF 쪽 번호)과 함께 인용. 한 번에 40~70초 | `answers/` |
 | `pages <pdf> 4,7-8` 또는 `pages <pdf> --from 답.md` | 그 쪽만 새 PDF 로 | `pages/` |
-| `prep <pdf…> [--images auto\|all\|none]` | NotebookLM 에 올릴 소스: 쪽마다 `〔p.N〕` 을 붙인 글(md) + 글자가 거의 없는 쪽의 흑백 PDF(`auto` 일 때) | `sources/` |
+| `prep <pdf…> [--images auto\|all\|none] [--title 제목]` | NotebookLM 에 올릴 소스: 쪽마다 `〔p.N〕` 을 붙인 글(md) + 글자가 거의 없는 쪽의 흑백 PDF(`auto` 일 때). `--title` 은 소스 제목(기본은 PDF 파일 이름) | `sources/` |
 | `split <받은.md> [--pattern 정규식]` | 북마클릿 등으로 받은 md 를 제목 줄(`#`, `**`)에서 자르기. 첫 제목 앞의 글은 버림 | `notes/` |
 | `nb list` / `nb add <주제> <주소>` / `nb open <주제> --q "찾을 내용"` | 노트북 목록 관리. `open` 은 찾기 전용 질문을 복사하고 노트북을 연다(윈도우 전용) | `notebooks.json` |
 

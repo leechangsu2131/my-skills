@@ -39,3 +39,4 @@
 - 2026-11-27 07:24 S4 (teacherlesson-schedule) 시작 (브랜치 task/S4-check-schedule-docs)
 - 2026-11-27 07:25 S4 (teacherlesson-schedule) PR 올림 — SKILL.md·README 를 코드·시험과 대조: PyMuPDF 이미 추가(T93)인데 '빠져 있음' 고침, 확인 명령에 빠진 시험 파일 추가. 시험 72개 중 3 오류(fitz 없음 2·ISSUE-003 1). 실제 Google Sheets 는 확인 필요
 - 2026-11-27 11:22 S4 (util-notebooklm) 시작 (브랜치 task/S4-check-notebooklm-docs)
+- 2026-11-27 11:22 S4 (util-notebooklm) PR 올림 — SKILL.md 를 nlm.py 와 대조: 명령·옵션·함수·모델·키 이름·저장 폴더 모두 맞음. 빠진 옵션 prep --title 만 추가. 못 한 것: 실제 Gemini·NotebookLM 호출은 확인 필요

@@ -20,3 +20,4 @@
 - 2026-11-27 09:44 S1 (teacherlesson-assistant) 시작 (브랜치 task/S1-check-setup-helpers)
 - 2026-11-27 10:20 T99 시작 (브랜치 task/T99-clova-mp3-export)
 - 2026-11-27 21:27 T57 시작 (브랜치 task/T57-work)
+- 2026-11-27 09:50 T57 (teacherlesson-from-neis) PR 올림 — SKILL.md 를 쉬운 한국어로 다시 씀(뜻 그대로). 확인: 옛 글·새 글의 코드 이름·링크·핵심 숫자(12시간·v1.7.0·질병결석 기본값) 비교로 빠진 것 없음, 머리말 그대로, build_catalog --check·check_privacy 통과. 남은 것: teacherlesson-assistant

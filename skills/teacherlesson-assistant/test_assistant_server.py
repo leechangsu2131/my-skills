@@ -11,6 +11,7 @@ import sys
 import tempfile
 import threading
 import unittest
+from datetime import date
 from http.server import ThreadingHTTPServer
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
@@ -38,6 +39,58 @@ class FlowTestBase(unittest.TestCase):
     def tearDown(self):
         app.FLOWS, app.load_config = self._saved
         self._tmp.cleanup()
+
+
+class SessionPeriodIsolationTest(unittest.TestCase):
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self._saved = (app.load_config, app.fetch_schedule, app.SESSIONS, app.CAUTIONS_PATH,
+                       app.find_flow, app.find_unit, app.recent_memos)
+        root = pathlib.Path(self._tmp.name)
+        app.load_config = lambda: {"subjects": {"국어": {"publisher": "가출판"}}}
+        app.fetch_schedule = lambda _cfg, _day: ([
+            {"period": 1, "subject": "국어", "lesson": "1차시", "title": "첫 수업", "record_key": "K1"},
+            {"period": 2, "subject": "국어", "lesson": "2차시", "title": "둘째 수업", "record_key": "K2"},
+        ], "시험용 시간표")
+        app.SESSIONS = root / "sessions"
+        app.CAUTIONS_PATH = root / "publisher_notes.json"
+        app.find_flow = lambda _lesson: None
+        app.find_unit = lambda _lesson: None
+        app.recent_memos = lambda _subject: []
+
+    def tearDown(self):
+        (app.load_config, app.fetch_schedule, app.SESSIONS, app.CAUTIONS_PATH,
+         app.find_flow, app.find_unit, app.recent_memos) = self._saved
+        self._tmp.cleanup()
+
+    def test_period_two_does_not_receive_period_one_saved_timer(self):
+        day = date(2026, 11, 27)
+        first = {"date": day.isoformat(), "period": 1, "subject": "국어", "record_key": "K1",
+                 "lesson": "1차시", "title": "첫 수업", "memos": [{"kind": "step", "idx": 2}]}
+        wrong_second = {**first, "memos": [{"kind": "step", "idx": 0}]}
+        for record_key, saved in (("K1", first), ("K2", wrong_second)):
+            path = app.session_path(day.isoformat(), 1 if record_key == "K1" else 2, "국어", record_key)
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(json.dumps(saved, ensure_ascii=False), encoding="utf-8")
+
+        lessons = app.state(day)["lessons"]
+
+        self.assertEqual(lessons[0]["saved"]["period"], 1)
+        self.assertNotIn("saved", lessons[1])
+        self.assertEqual(lessons[1]["saved_mismatch"]["record_key"], "K1")
+
+    def test_period_two_keeps_its_own_saved_timer(self):
+        day = date(2026, 11, 27)
+        saved = {"date": day.isoformat(), "period": 2, "subject": "국어", "record_key": "K2",
+                 "lesson": "2차시", "title": "둘째 수업", "memos": [{"kind": "step", "idx": 1}]}
+        path = app.session_path(day.isoformat(), 2, "국어", "K2")
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps(saved, ensure_ascii=False), encoding="utf-8")
+
+        lessons = app.state(day)["lessons"]
+
+        self.assertEqual(lessons[1]["saved"]["record_key"], "K2")
+        self.assertEqual(lessons[1]["saved"]["memos"][0]["idx"], 1)
 
 
 class SaveFlowTest(FlowTestBase):
@@ -305,6 +358,41 @@ class OpenWindowTest(unittest.TestCase):
         self.assertEqual(app.open_window("https://x.example/", "right", {}), "창을 열었어요.")
         self.assertEqual(len(self.popen_calls), 1)
         self.assertFalse(self.raised.wait(0.3))
+
+
+class OpenSocialLessonTest(unittest.TestCase):
+    def setUp(self):
+        self._saved = (app.load_config, app.open_window, app.subprocess.Popen)
+        self.site = ("https://www.i-scream.co.kr/user/subject/SubjectChasiList.do"
+                     "?search_grade_cd=3&search_term_cd=2&search_subject_cd=238096#none")
+        self.cfg = {"debug_port": 9233, "chrome_profile": "profile",
+                    "helper_python": sys.executable,
+                    "subjects": {"사회": {"helper": "social_class", "site": self.site}}}
+        self.opened, self.started = [], []
+        app.load_config = lambda: self.cfg
+        app.open_window = lambda url, side, cfg: self.opened.append((url, side)) or "창을 열었어요."
+        app.subprocess.Popen = lambda args, **kwargs: self.started.append((args, kwargs))
+
+    def tearDown(self):
+        app.load_config, app.open_window, app.subprocess.Popen = self._saved
+
+    def test_social_lesson_uses_configured_subject_and_right_window(self):
+        message = app.open_lesson({"subject": "사회", "unit": "2단원", "title": "교통의 변화"})
+
+        self.assertEqual(self.opened, [(self.site, "right")])
+        args, kwargs = self.started[0]
+        self.assertEqual(args[-3:], ["run", "2단원", "교통의 변화"])
+        self.assertEqual(kwargs["env"]["SOCIAL_CLASS_BASE_URL"], self.site)
+        self.assertIn("오른쪽 창", message)
+
+    def test_social_site_url_must_be_in_config(self):
+        self.cfg["subjects"]["사회"]["site"] = ""
+
+        with self.assertRaises(ValueError):
+            app.open_lesson({"subject": "사회", "unit": "2단원", "title": "교통의 변화"})
+
+        self.assertEqual(self.opened, [])
+        self.assertEqual(self.started, [])
 
 
 class FaviconTest(unittest.TestCase):

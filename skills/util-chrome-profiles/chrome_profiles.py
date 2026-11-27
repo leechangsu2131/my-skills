@@ -276,6 +276,17 @@ def parse_macro(text: str) -> list[tuple]:
     return steps
 
 
+def normalize_url(text: str) -> str:
+    """'naver.com' → 'https://naver.com'. 이미 주소(https:, chrome:, file: …)거나 검색어(띄어쓰기)면 그대로."""
+    text = text.strip()
+    if (not text or " " in text or re.match(r"^[A-Za-z][\w+.-]*://", text)
+            or re.match(r"(?i)^(about|chrome|edge|mailto|data|javascript):", text)):
+        return text
+    if re.match(r"(?i)^(localhost|127\.0\.0\.1|\d+\.\d+\.\d+\.\d+)(:\d+)?(/|$)", text):
+        return "http://" + text
+    return "https://" + text if "." in text else text
+
+
 def describe_macro(steps: list[tuple]) -> str:
     out = []
     for step in steps:
@@ -339,11 +350,46 @@ if __name__ == "__main__" and "--check" in sys.argv:
 from PySide6.QtCore import QSize, Qt, QTimer  # noqa: E402
 from PySide6.QtGui import QBrush, QColor, QIcon, QImage, QKeySequence, QPixmap, QShortcut  # noqa: E402
 from PySide6.QtWidgets import (  # noqa: E402
-    QAbstractItemView, QApplication, QCheckBox, QDialog, QDialogButtonBox, QGridLayout, QHBoxLayout,
-    QInputDialog, QLabel, QListView, QListWidget, QListWidgetItem, QMainWindow, QMenu, QMessageBox,
-    QPlainTextEdit, QPushButton, QSpinBox, QSplitter, QStyle, QSystemTrayIcon, QTreeWidget,
-    QTreeWidgetItem, QVBoxLayout, QWidget,
+    QAbstractItemView, QApplication, QCheckBox, QComboBox, QDialog, QDialogButtonBox, QGridLayout,
+    QHBoxLayout, QInputDialog, QLabel, QListView, QListWidget, QListWidgetItem, QMainWindow, QMenu,
+    QMessageBox, QPlainTextEdit, QPushButton, QRadioButton, QSpinBox, QSplitter, QStyle,
+    QSystemTrayIcon, QTreeWidget, QTreeWidgetItem, QVBoxLayout, QWidget,
 )
+
+
+class GotoDialog(QDialog):
+    """사이트 이동 창: 주소(최근 주소 목록) + 방식(지금 탭 / 새 탭)."""
+
+    def __init__(self, parent, scope: str, recent: list[str], mode: str, has_windows: bool, can_launch: bool):
+        super().__init__(parent)
+        self.setWindowTitle("사이트 이동")
+        self.resize(520, 220)
+        self.url = QComboBox()
+        self.url.setEditable(True)
+        self.url.addItems(recent)
+        self.url.setCurrentText(recent[0] if recent else "")
+        self.url.lineEdit().setPlaceholderText("예: naver.com, https://www.neis.go.kr")
+        self.url.lineEdit().selectAll()
+        self.this_tab = QRadioButton("지금 보는 탭을 이 주소로 (창이 하나씩 앞으로 와서 주소창에 넣음)")
+        self.new_tab = QRadioButton("새 탭으로 열기 (창 전환 없음 · 안 열린 프로필은 새 창으로)")
+        self.this_tab.setEnabled(has_windows)
+        self.new_tab.setEnabled(can_launch)
+        use_new = (mode == "new" and can_launch) or not has_windows
+        (self.new_tab if use_new else self.this_tab).setChecked(True)
+        buttons = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel)
+        buttons.button(QDialogButtonBox.StandardButton.Ok).setText("이동")
+        buttons.accepted.connect(self.accept)
+        buttons.rejected.connect(self.reject)
+        box = QVBoxLayout(self)
+        box.addWidget(QLabel(f"대상: {scope}"))
+        box.addWidget(self.url)
+        box.addWidget(self.this_tab)
+        box.addWidget(self.new_tab)
+        note = QLabel("기타 브라우저 창은 '지금 탭' 방식만 됩니다. 지금 탭 방식은 그동안 마우스·키보드를 쓰지 마세요.")
+        note.setWordWrap(True)
+        note.setStyleSheet("color: gray")
+        box.addWidget(note)
+        box.addWidget(buttons)
 
 
 class BroadcastDialog(QDialog):
@@ -465,7 +511,7 @@ class Manager(QMainWindow):
         self.other_group: QTreeWidgetItem | None = None
         self.windows: dict[int, dict] = {}   # hwnd → 창 상태. key = 프로필 폴더명 또는 "@앱ID"
         self.capture_order: list[int] = []
-        self.launch_queue: list[str] = []
+        self.launch_queue: list[tuple[str, str, bool]] = []   # (프로필 키, 주소, 새 창?)
         self.building = False
 
         # 왼쪽: 그룹 트리
@@ -474,19 +520,23 @@ class Manager(QMainWindow):
         self.tree.itemChanged.connect(self.on_item_changed)
         self.tree.itemSelectionChanged.connect(self.apply_filter)
 
-        buttons = QHBoxLayout()
-        for label, slot, tip in (
-            ("열기", self.open_selected, "고른 프로필(그룹이면 그룹 전체)을 연다. 이미 열려 있으면 앞으로 가져온다. Shift 를 누르고 누르면 늘 새 창."),
-            ("그룹 추가", self.add_group, "새 그룹. 이름은 그룹을 고르고 F2 로 바꾼다."),
-            ("그룹 삭제", self.remove_group, "고른 그룹을 지우고 안의 프로필은 미분류로 옮긴다."),
-            ("시작 URL", self.set_start_url, "고른 프로필들의 시작 URL 을 한 번에 바꾼다(비우면 해제)."),
-            ("일괄 입력", self.broadcast, "열린 창(고른 프로필이 있으면 그 창들)의 커서 위치에 같은 글을 붙여 넣는다."),
-            ("일괄 닫기", self.close_windows, "트리에서 고른 프로필(그룹이면 그룹 전체)의 창을 모두 닫는다. 아무것도 안 고르면 프로필 창 전체('기타 Chrome 창'은 직접 고를 때만)."),
+        buttons = QVBoxLayout()
+        for row in (
+            (("열기", self.open_selected, "고른 프로필(그룹이면 그룹 전체)을 연다. 이미 열려 있으면 앞으로 가져온다. Shift 를 누르고 누르면 늘 새 창."),
+             ("사이트 이동", self.go_to_site, "고른 프로필(안 고르면 열린 프로필 창 전체)을 같은 주소로 보낸다. 지금 탭을 바꾸거나 새 탭으로 연다."),
+             ("일괄 입력", self.broadcast, "열린 창(고른 프로필이 있으면 그 창들)의 커서 위치에 같은 글·특수 키를 넣는다."),
+             ("일괄 닫기", self.close_windows, "트리에서 고른 프로필(그룹이면 그룹 전체)의 창을 모두 닫는다. 아무것도 안 고르면 프로필 창 전체(기타 창은 직접 고를 때만).")),
+            (("그룹 추가", self.add_group, "새 그룹. 이름은 그룹을 고르고 F2 로 바꾼다."),
+             ("그룹 삭제", self.remove_group, "고른 그룹을 지우고 안의 프로필은 미분류로 옮긴다."),
+             ("시작 URL", self.set_start_url, "고른 프로필들의 시작 URL 을 한 번에 바꾼다(비우면 해제).")),
         ):
-            button = QPushButton(label)
-            button.setToolTip(tip)
-            button.clicked.connect(slot)
-            buttons.addWidget(button)
+            line = QHBoxLayout()
+            for label, slot, tip in row:
+                button = QPushButton(label)
+                button.setToolTip(tip)
+                button.clicked.connect(slot)
+                line.addWidget(button)
+            buttons.addLayout(line)
 
         self.idle_spin = QSpinBox()
         self.idle_spin.setRange(5, 86400)
@@ -763,18 +813,21 @@ class Manager(QMainWindow):
             elif existing and not force_new:
                 activate(existing[-1])
             else:
-                self.launch_queue.append(folder)
+                self.launch_queue.append((folder, self.cfg["start_url"].get(folder, ""), True))
         self.launch_next()
 
     def launch_next(self):
-        """여러 개를 한꺼번에 띄우면 Chrome 이 버벅이므로 0.4초 간격으로 하나씩."""
+        """대기열 (프로필 키, 주소, 새 창?) 을 0.4초 간격으로 하나씩 띄운다(한꺼번에 띄우면 버벅임).
+        새 창이 아니면 그 프로필의 마지막 창에 새 탭으로 열린다(창이 없으면 새 창)."""
         if not self.launch_queue:
             return
-        folder = self.launch_queue.pop(0)
-        info = self.profile_info[folder]
-        args = [info["exe"], f"--profile-directory={info['folder']}", "--new-window"]
-        if self.cfg["start_url"].get(folder):
-            args.append(self.cfg["start_url"][folder])
+        key, url, new_window = self.launch_queue.pop(0)
+        info = self.profile_info[key]
+        args = [info["exe"], f"--profile-directory={info['folder']}"]
+        if new_window:
+            args.append("--new-window")
+        if url:
+            args.append(url)
         subprocess.Popen(args)
         if self.launch_queue:
             QTimer.singleShot(400, self.launch_next)
@@ -953,6 +1006,7 @@ class Manager(QMainWindow):
             menu.addAction(f"타이머 {'취소' if st['deadline'] else '시작'} ({minutes}분)",
                            lambda: self.toggle_timer(hwnds))
             menu.addAction("이 창에 입력", lambda: self.broadcast(targets=hwnds))
+            menu.addAction("이 창 사이트 이동", lambda: self.go_to_site(targets=hwnds))
         else:
             n = len(hwnds)
             menu.addAction(f"변화 감시 켜기 ({n}개, {idle}초)", lambda: self.toggle_watch(hwnds, True))
@@ -960,6 +1014,7 @@ class Manager(QMainWindow):
             menu.addAction(f"타이머 시작 ({n}개, {minutes}분)", lambda: self.toggle_timer(hwnds, True))
             menu.addAction(f"타이머 취소 ({n}개)", lambda: self.toggle_timer(hwnds, False))
             menu.addAction(f"고른 창 {n}개에 일괄 입력", lambda: self.broadcast(targets=hwnds))
+            menu.addAction(f"고른 창 {n}개 사이트 이동", lambda: self.go_to_site(targets=hwnds))
         menu.addAction("알림 표시 지우기",
                        lambda: [self.windows[h]["item"].setBackground(QBrush()) for h in hwnds if h in self.windows])
         menu.addSeparator()
@@ -1030,6 +1085,10 @@ class Manager(QMainWindow):
                 f"순서: {describe_macro(steps)}\n\n진행할까요?")
             if answer != QMessageBox.StandardButton.Yes:
                 return
+        self.run_steps(targets, steps, "넣었습니다")
+
+    def run_steps(self, targets: list[int], steps: list[tuple], verb: str) -> None:
+        """창을 하나씩 앞으로 가져와 steps(글·특수 키·대기)를 차례로 보낸다."""
         old_clip = get_clipboard()
         failed, stopped = [], []
         for hwnd in targets:
@@ -1061,7 +1120,51 @@ class Manager(QMainWindow):
         if stopped:
             note += f" / 도중에 다른 창이 앞에 와서 멈춤: {', '.join(stopped)}"
         done = len(targets) - len(failed) - len(stopped)
-        self.statusBar().showMessage(f"{done}개 창에 넣었습니다.{note}", 20000)
+        self.statusBar().showMessage(f"{done}개 창에 {verb}.{note}", 20000)
+
+    # ───── 사이트 이동 ─────
+    def go_to_site(self, *_, targets: list[int] | None = None):
+        """targets(미리보기에서 고른 창)가 없으면 트리 기준: 고른 프로필, 안 고르면 열린 프로필 창 전체."""
+        if targets is not None:
+            windows = [h for h in targets if h in self.windows]
+            keys = list(dict.fromkeys(self.windows[h]["key"] for h in windows))
+            scope = f"고른 창 {len(windows)}개"
+        else:
+            chosen = self.selected_profiles()
+            if chosen:
+                windows = [h for h in sorted(self.windows, key=self.sort_key) if self.windows[h]["key"] in chosen]
+                keys = chosen
+                scope = f"고른 프로필 {len(keys)}개 (열린 창 {len(windows)}개)"
+            else:
+                windows = [h for h in sorted(self.windows, key=self.sort_key) if self.windows[h]["folder"]]
+                keys = list(dict.fromkeys(self.windows[h]["key"] for h in windows))
+                scope = f"열린 프로필 창 전체 {len(windows)}개"
+        launchable = [k for k in keys if k in self.profile_info]
+        if not windows and not launchable:
+            QMessageBox.information(self, "사이트 이동", "대상이 없습니다.")
+            return
+        dialog = GotoDialog(self, scope, self.cfg.get("recent_urls", []),
+                            self.cfg.get("goto_mode", "tab"), bool(windows), bool(launchable))
+        if dialog.exec() != QDialog.DialogCode.Accepted:
+            return
+        url = normalize_url(dialog.url.currentText())
+        if not url:
+            return
+        mode = "new" if dialog.new_tab.isChecked() else "tab"
+        self.cfg["recent_urls"] = [url] + [u for u in self.cfg.get("recent_urls", []) if u != url][:9]
+        self.cfg["goto_mode"] = mode
+        self.save()
+        if mode == "new":
+            for key in launchable:
+                self.launch_queue.append((key, url, False))
+            self.launch_next()
+            skipped = len(keys) - len(launchable)
+            note = f" / 기타 창 {skipped}개는 새 탭으로 열 수 없어 건너뜀" if skipped else ""
+            self.statusBar().showMessage(f"프로필 {len(launchable)}개에 새 탭으로 엽니다.{note}", 15000)
+        else:
+            steps = [("keys", [win32con.VK_CONTROL], ord("L"), "Ctrl+L"), ("text", url),
+                     ("keys", [], win32con.VK_RETURN, "Enter")]
+            self.run_steps(windows, steps, "주소를 넣었습니다")
 
     def closeEvent(self, event):
         self.save()

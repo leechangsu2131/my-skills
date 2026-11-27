@@ -34,30 +34,50 @@ class StrictFirstTests(unittest.TestCase):
 
 
 class FallbackTests(unittest.TestCase):
-    """엄격한 규칙으로 하나도 못 찾을 때만 이름이 비슷한 하나로 찾는다."""
+    """엄격한 규칙으로 못 찾을 때: 띄어쓰기·기호만 다르면 자동, 그 밖의 비슷한 이름은 확인받고 연다 (교사 결정 2026-11-27)."""
 
-    def test_lesson_found_when_only_spacing_and_marks_differ(self):
-        a = lesson("1. 우리 고장", "[6~7차시] 우리가 사는 곳에 있는 여러 장소를 표현해 볼까요(사23~27p)")
+    def test_lesson_found_automatically_when_only_spacing_and_marks_differ(self):
+        a = lesson("1. 우리 고장", "우리가 사는 곳에 있는 여러 장소를 표현해 볼까요")
         self.assertIs(sc.find_lesson_item([a], "1단원", "우리가 사는 곳에 있는 여러 장소를 표현해볼까요"), a)
 
-    def test_unit_found_by_similar_name(self):
-        a = lesson("1. 우리 지역의 모습", "[1차시] 지도 보기")
-        b = lesson("2. 민주주의와 시민", "[1차시] 시민 알아보기")
-        self.assertIs(sc.find_lesson_item([a, b], "우리지역 모습", "지도 보기"), a)
+    def test_unit_found_automatically_when_only_spacing_and_marks_differ(self):
+        a = lesson("우리 지역의 모습", "[1차시] 지도 보기")
+        b = lesson("민주주의와 시민", "[1차시] 시민 알아보기")
+        self.assertIs(sc.find_lesson_item([a, b], "우리지역 의 모습", "지도 보기"), a)
 
-    def test_best_candidate_wins_not_first(self):
-        a = lesson("1. 우리 고장", "[3차시] 위치 알아보기")
-        b = lesson("1. 우리 고장", "[4차시] 위치 찾아 보기")
-        # '위치찾아보기'(정리 후) 와 같은 것은 b 하나라 b
-        self.assertIs(sc.find_lesson_item([a, b], "1단원", "위치찾아보기"), b)
+    def test_label_or_number_difference_is_not_opened_without_confirmation(self):
+        a = lesson("1. 우리 고장", "[6~7차시] 우리가 사는 곳을 표현해 볼까요(사23~27p)")
+        self.assertIsNone(sc.find_lesson_item([a], "1단원", "우리가 사는 곳을 표현해볼까요"))
+        self.assertIsNone(sc.find_lesson_item([a], "1단원", "우리가 사는 곳을 표현해볼까요", confirm=lambda *args: False))
+
+    def test_opens_when_teacher_says_yes(self):
+        a = lesson("1. 우리 고장", "[6~7차시] 우리가 사는 곳을 표현해 볼까요(사23~27p)")
+        asked = []
+
+        def yes(kind, query, candidate, level):
+            asked.append((kind, query, candidate))
+            return True
+
+        self.assertIs(sc.find_lesson_item([a], "1단원", "우리가 사는 곳을 표현해볼까요", confirm=yes), a)
+        self.assertEqual(len(asked), 1)
+        self.assertEqual(asked[0][0], "차시")
+
+    def test_similar_name_is_not_opened_automatically(self):
+        a = lesson("1. 우리 지역", "우리 지역의 자연환경 알아보기")
+        self.assertIsNone(sc.find_lesson_item([a], "1단원", "우리 지역의 인문환경 알아보기"))
+
+    def test_exact_name_goes_before_longer_name(self):
+        a = lesson("1. 우리 지역", "우리 지역의 문화유산")
+        b = lesson("1. 우리 지역", "우리 지역의 문화")
+        self.assertIs(sc.find_lesson_item([a, b], "1단원", "우리 지역의 문화"), b)
 
     def test_other_lesson_number_is_not_rescued_by_name(self):
         a = lesson("1. 우리 고장", "[3차시] 위치 알아보기")
-        self.assertIsNone(sc.find_lesson_item([a], "1단원", "[4차시] 위치 알아보기"))
+        self.assertIsNone(sc.find_lesson_item([a], "1단원", "[4차시] 위치 알아보기", confirm=lambda *args: True))
 
     def test_different_name_is_not_found(self):
         a = lesson("1. 우리 고장", "[3차시] 위치 알아보기")
-        self.assertIsNone(sc.find_lesson_item([a], "1단원", "민주주의와 시민"))
+        self.assertIsNone(sc.find_lesson_item([a], "1단원", "민주주의와 시민", confirm=lambda *args: True))
 
     def test_empty_list(self):
         self.assertIsNone(sc.find_lesson_item([], "1단원", "위치 알아보기"))

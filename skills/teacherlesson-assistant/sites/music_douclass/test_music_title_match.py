@@ -11,9 +11,10 @@ def lesson(unit, title):
     return {"unit_title": unit, "title": title, "chapter": object()}
 
 
-def found(lessons, unit_text, references):
-    """find_adjacent_lesson(offset=0) 은 '찾은 차시 자신'을 돌려준다 → 어느 차시를 골랐는지 본다."""
-    return music_helper.find_adjacent_lesson(lessons, unit_text, references, 0)
+def found(lessons, unit_text, references, confirm=None):
+    """find_adjacent_lesson(offset=0) 은 '찾은 차시 자신'을 돌려준다 → 어느 차시를 골랐는지 본다.
+    confirm 을 안 주면 확인 없이(=묻지 않고 '아니오') 돌린다 — 시험이 키보드 입력을 기다리지 않게."""
+    return music_helper.find_adjacent_lesson(lessons, unit_text, references, 0, confirm=confirm)
 
 
 class StrictFirstTests(unittest.TestCase):
@@ -46,22 +47,49 @@ class StrictFirstTests(unittest.TestCase):
 
 
 class FallbackTests(unittest.TestCase):
-    def test_unit_found_by_name_when_strict_finds_none(self):
-        a = lesson("1. 만나요, 음악 시간", "[1차시] 노래 부르기")
-        b = lesson("2. 함께해요, 리듬", "[1차시] 리듬 치기")
-        self.assertIs(found([a, b], "만나요 음악시간", ["노래 부르기"]), a)
+    """엄격한 규칙으로 못 찾을 때: 띄어쓰기·기호만 다르면 자동, 그 밖의 비슷한 이름은 확인받고 연다 (교사 결정 2026-11-27)."""
 
-    def test_lesson_found_by_name_when_strict_finds_none(self):
-        a = lesson("1. 만나요, 음악 시간", "[3~4차시] 구슬비 노래 부르기")
+    def test_unit_found_automatically_when_only_spacing_and_marks_differ(self):
+        a = lesson("만나요, 음악 시간", "[1차시] 노래 부르기")
+        b = lesson("함께해요, 리듬", "[1차시] 리듬 치기")
+        self.assertIs(found([a, b], "만나요 음악시간", ["노래 부르기"]), a)  # 확인 없이도
+
+    def test_lesson_found_automatically_when_only_spacing_and_marks_differ(self):
+        a = lesson("1. 만나요, 음악 시간", "구슬비 노래 부르기")
         self.assertIs(found([a], "1단원", ["구슬비 노래부르기"]), a)
+
+    def test_other_differences_are_not_opened_without_confirmation(self):
+        a = lesson("1. 만나요, 음악 시간", "[3~4차시] 구슬비 노래 부르기")  # 차시 표시가 달려 있어 '띄어쓰기·기호만' 이 아니다
+        self.assertIsNone(found([a], "1단원", ["구슬비 노래부르기"]))
+        self.assertIsNone(found([a], "1단원", ["구슬비 노래부르기"], confirm=lambda *args: False))
+
+    def test_other_differences_open_when_teacher_says_yes(self):
+        a = lesson("1. 만나요, 음악 시간", "[3~4차시] 구슬비 노래 부르기")
+        asked = []
+
+        def yes(kind, query, candidate, level):
+            asked.append((kind, query))
+            return True
+
+        self.assertIs(found([a], "1단원", ["구슬비 노래부르기"], confirm=yes), a)
+        self.assertEqual(asked, [("차시", "구슬비 노래부르기")])
+
+    def test_similar_name_is_asked_not_opened(self):
+        a = lesson("1. 우리 지역", "자연환경 알아보기")
+        self.assertIsNone(found([a], "1단원", ["인문환경 알아보기"]))
+
+    def test_exact_name_goes_before_longer_name(self):
+        a = lesson("1. 우리 지역", "우리 지역의 문화유산")
+        b = lesson("1. 우리 지역", "우리 지역의 문화")
+        self.assertIs(found([a, b], "1단원", ["우리 지역의 문화"]), b)
 
     def test_other_lesson_number_is_not_rescued_by_name(self):
         a = lesson("1. 만나요, 음악 시간", "[3차시] 위치 알아보기")
-        self.assertIsNone(found([a], "1단원", ["[4차시] 위치 알아보기"]))
+        self.assertIsNone(found([a], "1단원", ["[4차시] 위치 알아보기"], confirm=lambda *args: True))
 
     def test_different_name_is_not_found(self):
         a = lesson("1. 만나요, 음악 시간", "[3차시] 구슬비")
-        self.assertIsNone(found([a], "1단원", ["민주주의와 시민"]))
+        self.assertIsNone(found([a], "1단원", ["민주주의와 시민"], confirm=lambda *args: True))
 
 
 class RuleUnchangedTests(unittest.TestCase):

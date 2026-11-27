@@ -92,19 +92,54 @@ def _strict(title, query):
     return bool(q) and q in " ".join((title or "").split())
 
 
+class PlainKeyTests(unittest.TestCase):
+    def test_only_spacing_and_symbols_are_dropped(self):
+        self.assertEqual(tm.plain_key("1. 만나요, 음악 시간"), "1만나요음악시간")  # 번호는 남는다
+        self.assertEqual(tm.plain_key("우리 지역의 모습!"), tm.plain_key("우리지역의 모습"))
+        self.assertEqual(tm.plain_key(None), "")
+
+    def test_digits_and_parenthesized_text_stay(self):
+        self.assertNotEqual(tm.plain_key("노래 부르기(1)"), tm.plain_key("노래 부르기(2)"))
+        self.assertNotEqual(tm.plain_key("[3차시] 위치"), tm.plain_key("위치"))
+        # normalize_title 은 이 둘을 같게 보지만(숫자 든 괄호를 뺌), 자동으로 열 기준에서는 다르다
+        self.assertEqual(tm.match_level("노래 부르기(1)", "노래 부르기(2)"), tm.SAME)
+
+
 class ResolveTests(unittest.TestCase):
     TITLES = ["[3차시] 위치 알아보기", "[4차시] 위치 찾아보기"]
 
     def test_strict_hit_keeps_query_unchanged(self):
         self.assertEqual(tm.resolve_query("위치 찾아보기", self.TITLES, _strict), "위치 찾아보기")
 
-    def test_fallback_replaces_with_site_title(self):
-        # 엄격하게는 하나도 안 맞고(쉼표·띄어쓰기), 이름이 같은 하나가 있으면 그 제목으로
-        titles = ["1. 만나요, 음악 시간", "2. 함께해요, 리듬"]
-        self.assertEqual(tm.resolve_query("만나요 음악시간", titles, _strict), "1. 만나요, 음악 시간")
+    def test_only_spacing_and_symbols_differ_is_automatic(self):
+        titles = ["만나요, 음악 시간", "함께해요, 리듬"]
+        self.assertEqual(tm.resolve_query("만나요 음악시간", titles, _strict), "만나요, 음악 시간")  # confirm 없이도
 
-    def test_no_candidate_keeps_query(self):
-        self.assertEqual(tm.resolve_query("민주주의와 시민", self.TITLES, _strict), "민주주의와 시민")
+    def test_other_differences_need_confirmation(self):
+        titles = ["1. 만나요, 음악 시간", "2. 함께해요, 리듬"]  # 번호가 달라서 띄어쓰기·기호만의 차이가 아니다
+        asked = []
+
+        def yes(q, c, level):
+            asked.append((q, c, level))
+            return True
+
+        self.assertEqual(tm.resolve_query("만나요 음악시간", titles, _strict), "만나요 음악시간")  # confirm 없음 → 안 바꿈
+        self.assertEqual(tm.resolve_query("만나요 음악시간", titles, _strict, confirm=lambda *a: False), "만나요 음악시간")
+        self.assertEqual(tm.resolve_query("만나요 음악시간", titles, _strict, confirm=yes), "1. 만나요, 음악 시간")
+        self.assertEqual(asked, [("만나요 음악시간", "1. 만나요, 음악 시간", tm.SAME)])
+
+    def test_contains_and_similar_are_asked_with_their_level(self):
+        asked = []
+        tm.resolve_query("구슬비 노래", ["구슬비 노래 부르기"], lambda t, q: False,
+                         confirm=lambda q, c, lv: asked.append(lv) or False)
+        tm.resolve_query("우리 지역의 인문환경 알아보기", ["우리 지역의 자연환경 알아보기"], lambda t, q: False,
+                         confirm=lambda q, c, lv: asked.append(lv) or False)
+        self.assertEqual(asked, [tm.CONTAINS, tm.SIMILAR])
+
+    def test_no_candidate_keeps_query_and_never_asks(self):
+        asked = []
+        self.assertEqual(tm.resolve_query("민주주의와 시민", self.TITLES, _strict, confirm=lambda *a: asked.append(a) or True), "민주주의와 시민")
+        self.assertEqual(asked, [])
 
     def test_empty_titles_keeps_query(self):
         self.assertEqual(tm.resolve_query("위치", [], _strict), "위치")
@@ -115,32 +150,127 @@ class ResolveTests(unittest.TestCase):
         self.assertEqual(tm.resolve_references(refs, self.TITLES, _strict), refs)
 
     def test_references_collapse_to_single_best_when_none_is_strict(self):
-        titles = ["1. 만나요, 음악 시간", "2. 함께해요, 리듬"]
-        refs = ["만나요 음악시간", "함께해요 리듬"]  # 둘 다 쉼표 때문에 엄격하게는 안 맞고, 이름은 같음 → 먼저 나온 것
-        self.assertEqual(tm.resolve_references(refs, titles, _strict), ["1. 만나요, 음악 시간"])
-        # 엄격하게 맞는 후보가 하나라도 있으면(둘째 '리듬') 모두 그대로 둔다
-        refs = ["만나요 음악시간", "리듬"]
+        titles = ["만나요, 음악 시간", "함께해요, 리듬"]
+        refs = ["만나요 음악시간", "함께해요 리듬"]  # 둘 다 띄어쓰기·기호만 다름 → 먼저 나온 것
+        self.assertEqual(tm.resolve_references(refs, titles, _strict), ["만나요, 음악 시간"])
+        refs = ["만나요 음악시간", "리듬"]  # 둘째 '리듬' 이 엄격하게 맞으면 모두 그대로
         self.assertEqual(tm.resolve_references(refs, titles, _strict), refs)
+
+    def test_plain_candidate_beats_a_closer_looking_one(self):
+        titles = ["위치 찾아보기 활동", "위치 찾아 보기"]  # 둘째가 띄어쓰기만 다름
+        self.assertEqual(tm.resolve_query("위치찾아보기", titles, lambda t, q: False), "위치 찾아 보기")
 
     def test_number_guard(self):
         titles = ["[3차시] 위치 알아보기"]
-        self.assertEqual(tm.resolve_query("[4차시] 위치 알아보기", titles, lambda t, q: False, guard_numbers=True), "[4차시] 위치 알아보기")
-        # 가드가 없으면 이름이 같아서 되살린다 → 호출하는 쪽이 가드를 켜야 하는 이유
-        self.assertEqual(tm.resolve_query("[4차시] 위치 알아보기", titles, lambda t, q: False), "[3차시] 위치 알아보기")
+        no_strict = lambda t, q: False  # noqa: E731
+        yes = lambda *a: True  # noqa: E731
+        # 가드가 없으면 확인에서 '예' 하면 되살아난다 → 호출하는 쪽이 가드를 켜야 하는 이유
+        self.assertEqual(tm.resolve_query("[4차시] 위치 알아보기", titles, no_strict, confirm=yes), "[3차시] 위치 알아보기")
+        # 가드가 있으면 번호가 이미 '아니다'라고 한 것은 확인조차 하지 않는다
+        self.assertEqual(tm.resolve_query("[4차시] 위치 알아보기", titles, no_strict, guard_numbers=True, confirm=yes), "[4차시] 위치 알아보기")
 
     def test_resolve_search_texts_unit_then_lesson(self):
         lessons = [
             {"unit_title": "1. 우리 지역의 모습", "title": "[1차시] 지도 보기"},
-            {"unit_title": "2. 우리 지역의 모습과 변화", "title": "[1차시] 변화 살펴보기"},
+            {"unit_title": "2. 우리 지역의 모습과 변화", "title": "변화 살펴보기"},
         ]
-
         unit, refs = tm.resolve_search_texts(lessons, "우리 지역의 모습과 변화", ["변화 살펴보기"], _strict, _strict)
         self.assertEqual((unit, refs), ("우리 지역의 모습과 변화", ["변화 살펴보기"]))  # 엄격하게 맞으니 그대로
 
-        # 엄격하게 하나도 안 맞으면 단원 → 그 단원 안의 차시 순으로 사이트 이름으로 바로잡는다
-        unit, refs = tm.resolve_search_texts(lessons, "우리지역 모습과 변화", ["변화살펴 보기"], _strict, _strict)
+        # 띄어쓰기만 다르면 단원 → 그 단원 안의 차시 순으로 자동으로 바로잡는다
+        unit, refs = tm.resolve_search_texts(lessons, "2. 우리지역의 모습과 변화", ["변화살펴 보기"], _strict, _strict)
         self.assertEqual(unit, "2. 우리 지역의 모습과 변화")
-        self.assertEqual(refs, ["[1차시] 변화 살펴보기"])
+        self.assertEqual(refs, ["변화 살펴보기"])
+
+    def test_resolve_search_texts_passes_kind_to_confirm(self):
+        lessons = [{"unit_title": "1. 우리 지역의 모습", "title": "지도 그리기 활동"}]
+        asked = []
+        tm.resolve_search_texts(
+            lessons, "우리 지역 모습", ["지도그리기"], _strict, _strict,
+            confirm=lambda kind, q, c, lv: asked.append((kind, q, c)) or kind == "단원",  # 단원만 '예'
+        )
+        self.assertEqual([k for k, *_ in asked], ["단원", "차시"])
+        self.assertEqual(asked[0][1:], ("우리 지역 모습", "1. 우리 지역의 모습"))
+
+
+class ExactOrderTests(unittest.TestCase):
+    def test_exact_name_goes_first_rest_keep_order(self):
+        lessons = [
+            {"unit_title": "1. 단원", "title": "우리 지역의 문화유산"},
+            {"unit_title": "1. 단원", "title": "우리 지역의 문화"},
+            {"unit_title": "1. 단원", "title": "우리 지역의 문화재"},
+        ]
+        self.assertEqual(tm.exact_order(lessons, "1단원", ["우리 지역의 문화"]), [1, 0, 2])
+        self.assertEqual(tm.exact_order(lessons, "1단원", ["없는 이름"]), [0, 1, 2])  # 같은 것이 없으면 그대로
+        self.assertEqual(tm.exact_order(lessons, "1단원", ["문화재", "우리 지역의 문화"]), [1, 0, 2])  # 여러 이름 중 하나라도
+
+    def test_spacing_is_collapsed_but_not_removed(self):
+        lessons = [{"unit_title": "u", "title": "가  나"}, {"unit_title": "u", "title": "가나"}]
+        self.assertEqual(tm.exact_order(lessons, "u", ["가 나"]), [0, 1])
+
+    def test_exact_unit_first(self):
+        lessons = [
+            {"unit_title": "우리 지역의 문화유산", "title": "차시"},
+            {"unit_title": "우리 지역의 문화", "title": "차시"},
+        ]
+        self.assertEqual(tm.exact_order(lessons, "우리 지역의 문화", ["차시"]), [1, 0])
+
+    def test_exact_first_for_pairs(self):
+        pairs = [("A", "우리 지역의 문화유산"), ("B", None), ("C", "우리 지역의 문화")]
+        self.assertEqual(tm.exact_first(pairs, "우리 지역의 문화"), ["C", "A", "B"])
+
+
+class ConsoleConfirmTests(unittest.TestCase):
+    def setUp(self):
+        tm.reset_confirm_answers()
+        self.addCleanup(tm.reset_confirm_answers)
+        self.lines = []
+
+    def run_confirm(self, answer, query="구슬비", candidate="구슬비 노래 부르기", level=tm.CONTAINS, kind="차시"):
+        def ask(message):
+            self.asked = getattr(self, "asked", 0) + 1
+            if isinstance(answer, Exception):
+                raise answer
+            return answer
+
+        return tm.console_confirm(kind, query, candidate, level, ask=ask, show=self.lines.append)
+
+    def test_yes_variants(self):
+        for answer in ("y", "Y", " yes ", "ㅇ", "예"):
+            tm.reset_confirm_answers()
+            with self.subTest(answer=answer):
+                self.assertTrue(self.run_confirm(answer))
+
+    def test_default_is_no(self):
+        for answer in ("", "n", "아니오", "그냥", EOFError(), KeyboardInterrupt()):
+            tm.reset_confirm_answers()
+            with self.subTest(answer=repr(answer)):
+                self.assertFalse(self.run_confirm(answer))
+
+    def test_shows_what_will_be_opened(self):
+        self.run_confirm("n", query="구슬비", candidate="구슬비 노래 부르기", level=tm.CONTAINS)
+        text = "\n".join(self.lines)
+        self.assertIn("구슬비", text)
+        self.assertIn("구슬비 노래 부르기", text)
+        self.assertIn("이름이 겹침", text)
+        self.lines.clear()
+        tm.reset_confirm_answers()
+        self.run_confirm("n", level=tm.SIMILAR)
+        self.assertIn("글자가 비슷함", "\n".join(self.lines))
+
+    def test_same_question_is_asked_only_once(self):
+        self.asked = 0
+        self.assertTrue(self.run_confirm("y"))
+        self.assertTrue(self.run_confirm("n"))  # 두 번째는 묻지 않고 첫 대답(예)을 쓴다
+        self.assertEqual(self.asked, 1)
+        self.assertTrue(self.run_confirm("y", candidate="다른 차시"))  # 후보가 다르면 새로 묻는다
+        self.assertEqual(self.asked, 2)
+
+    def test_a_no_is_remembered_too(self):
+        self.asked = 0
+        self.assertFalse(self.run_confirm("n"))
+        self.assertFalse(self.run_confirm("y"))
+        self.assertEqual(self.asked, 1)
 
 
 class LessonNumberTests(unittest.TestCase):

@@ -9,8 +9,12 @@
 비교 순서: 이름 정리 → 같음(same) → 포함(contains) → 비슷함(similar). 모두 아니면 None.
 
 쓰는 법(중요): 느슨한 판정을 '처음 맞는 것을 고르는 반복문' 안에 넣지 않는다 — 비슷한 앞 차시가 정확한 뒤 차시보다 먼저 걸린다.
-대신 찾기 직전에 resolve_search_texts·resolve_query 를 한 번 부른다: 기존 엄격한 규칙으로 맞는 것이 하나라도 있으면 그대로 두고,
-하나도 없을 때만 가장 닮은 하나의 사이트 이름으로 바꿔 준다. 반복문과 엄격한 규칙은 손대지 않는다.
+대신 찾기 직전에 resolve_search_texts·resolve_query 를 한 번 부른다.
+  ① 기존 엄격한 규칙으로 맞는 것이 하나라도 있으면 그대로 둔다.
+  ② 하나도 없으면 가장 닮은 하나를 고르되, 띄어쓰기·기호만 다른 경우(plain_key 가 같음)만 자동으로 바꾸고,
+     그 밖(포함·비슷함, 번호·괄호 안 숫자가 다른 것 포함)은 confirm(교사 확인)이 '예'일 때만 바꾼다. confirm 이 없으면 못 찾은 것으로 둔다.
+  ③ 이름이 글자 그대로 같은 항목을 먼저 보도록 exact_order·exact_first 로 순서를 잡는다(엄격한 규칙은 '포함'도 맞다고 보기 때문).
+반복문과 엄격한 규칙은 손대지 않는다. 확인창은 console_confirm(같은 질문은 한 번만, 기본 '아니오').
 """
 from __future__ import annotations
 
@@ -100,19 +104,33 @@ def best_match(
     return best
 
 
+def plain_key(text: Optional[str]) -> str:
+    """띄어쓰기·기호(쉼표·점·괄호 모양 등)만 지운 글자. 숫자·번호·괄호 안의 글자는 **그대로 남긴다**.
+    normalize_title 보다 훨씬 좁다 — '노래 부르기(1)' 과 '노래 부르기(2)' 는 다르고, '1. 만나요' 와 '만나요' 도 다르다.
+    자동으로 열어도 되는지(띄어쓰기·기호만 다른가)를 가릴 때 쓴다."""
+    return _NOT_WORD.sub("", str(text or "").lower())
+
+
+# confirm(찾는 이름, 후보 이름, 수준) -> 열어도 되면 True. 수준은 CONTAINS 또는 SIMILAR.
+ConfirmFn = Callable[[str, str, str], bool]
+
+
 def resolve_references(
     references: Sequence[str],
     titles: Sequence[str],
     strict: Callable[[str, str], bool],
     guard_numbers: bool = False,
+    confirm: Optional[ConfirmFn] = None,
 ) -> list:
-    """찾는 이름(references)을 사이트의 이름으로 바로잡는다. '엄격 → 없을 때만 가장 비슷한 하나'.
+    """찾는 이름(references)을 사이트의 이름으로 바로잡는다. '엄격 → 띄어쓰기·기호만 다르면 자동 → 그 밖에는 확인받기'.
 
     ① 기존 엄격한 규칙(strict(제목, 찾는 이름))으로 맞는 것이 하나라도 있으면 **그대로** 돌려준다
        → 정확히 찾던 것은 예전과 똑같이 찾고, 비슷한 다른 이름이 앞에 있어도 끌려가지 않는다.
-    ② 하나도 없을 때만 같음 > 포함 > 비슷함 순으로 가장 닮은 제목 **하나**의 이름으로 바꿔 돌려준다.
-       찾는 이름이 여러 개여도 전체에서 가장 닮은 하나만 고른다. 그 이름은 사이트 이름 그대로라 엄격한 규칙에도 맞는다.
-    ③ 그것도 없으면 그대로 돌려준다(못 찾으면 못 찾았다고 해야 한다).
+    ② 하나도 없을 때만 가장 닮은 제목 **하나**를 고른다(띄어쓰기·기호만 다른 것 > 같음 > 포함 > 비슷함, 점수 순).
+       - 띄어쓰기·기호만 다르면(plain_key 가 같으면) **자동으로** 그 사이트 이름으로 바꿔 돌려준다.
+       - 그 밖(포함·비슷함, 숫자·번호가 다른 것 포함)은 **확인받는다**: confirm 이 True 를 돌려줄 때만 바꾼다.
+         confirm 이 없으면(None) 바꾸지 않는다 → 못 찾은 것으로 둔다(다른 차시를 멋대로 열지 않는다. 교사 결정 2026-11-27).
+    ③ 후보가 없거나 확인에서 거절되면 그대로 돌려준다(못 찾으면 못 찾았다고 해야 한다).
     guard_numbers=True 면 양쪽에 차시 번호가 있는 쌍은 번호가 이미 '아니다'라고 한 것이므로 이름으로 되살리지 않는다.
     """
     refs = list(references)
@@ -121,8 +139,8 @@ def resolve_references(
         return refs
     if any(strict(t, r) for r in refs for t in pool):
         return refs
-    best: Optional[str] = None
-    best_key: Tuple[int, float] = (0, 0.0)
+    best: Optional[Tuple[str, str, str, bool]] = None  # (찾는 이름, 후보, 수준, 띄어쓰기·기호만 다른가)
+    best_key: Tuple[int, int, float] = (0, 0, 0.0)
     for r in refs:
         for t in pool:
             if guard_numbers and numbers_can_decide(t, r):
@@ -130,10 +148,18 @@ def resolve_references(
             level = match_level(r, t)
             if level is None:
                 continue
-            key = (_RANK[level], similarity(r, t))
+            plain = bool(plain_key(r)) and plain_key(r) == plain_key(t)
+            key = (1 if plain else 0, _RANK[level], similarity(r, t))
             if key > best_key:  # 같은 점수면 먼저 나온 것을 지킨다
-                best, best_key = t, key
-    return [best] if best is not None else refs
+                best, best_key = (r, t, level, plain), key
+    if best is None:
+        return refs
+    ref, title, level, plain = best
+    if plain:
+        return [title]
+    if confirm is not None and confirm(ref, title, level):
+        return [title]
+    return refs
 
 
 def resolve_query(
@@ -141,9 +167,10 @@ def resolve_query(
     titles: Sequence[str],
     strict: Callable[[str, str], bool],
     guard_numbers: bool = False,
+    confirm: Optional[ConfirmFn] = None,
 ) -> str:
     """resolve_references 의 찾는 이름이 하나일 때."""
-    return resolve_references([query], titles, strict, guard_numbers)[0]
+    return resolve_references([query], titles, strict, guard_numbers, confirm)[0]
 
 
 def resolve_search_texts(
@@ -152,17 +179,85 @@ def resolve_search_texts(
     lesson_texts: Sequence[str],
     unit_matches: Callable[[str, str], bool],
     lesson_matches: Callable[[str, str], bool],
+    confirm: Optional[Callable[[str, str, str, str], bool]] = None,
 ) -> Tuple[str, list]:
     """차시 목록(각 항목에 'unit_title'·'title')에서 단원 이름과 차시 이름들을 사이트 이름으로 바로잡는다.
-    단원을 먼저 정하고, 그 단원 안의 차시들만 보고 차시를 정한다. 반복문은 그대로 두고 찾기 직전에 한 번만 부른다."""
+    단원을 먼저 정하고, 그 단원 안의 차시들만 보고 차시를 정한다. 반복문은 그대로 두고 찾기 직전에 한 번만 부른다.
+    confirm(종류, 찾는 이름, 후보 이름, 수준) — 종류는 '단원' 또는 '차시'. None 이면 띄어쓰기·기호만 다른 것만 자동으로 바로잡는다."""
     unit_titles = []
     for item in lessons:
         name = (item.get("unit_title") or "").strip()
         if name and name not in unit_titles:
             unit_titles.append(name)
-    unit_text = resolve_query(unit_text, unit_titles, unit_matches)
+    unit_confirm = (lambda q, c, lv: confirm("단원", q, c, lv)) if confirm else None
+    lesson_confirm = (lambda q, c, lv: confirm("차시", q, c, lv)) if confirm else None
+    unit_text = resolve_query(unit_text, unit_titles, unit_matches, confirm=unit_confirm)
     titles = [item.get("title") or "" for item in lessons if unit_matches(item.get("unit_title") or "", unit_text)]
-    return unit_text, resolve_references(lesson_texts, titles, lesson_matches, guard_numbers=True)
+    return unit_text, resolve_references(lesson_texts, titles, lesson_matches, guard_numbers=True, confirm=lesson_confirm)
+
+
+def _same_text(a: Optional[str], b: Optional[str]) -> bool:
+    return " ".join(str(a or "").split()) == " ".join(str(b or "").split())
+
+
+def exact_order(lessons: Sequence[dict], unit_text: str, lesson_texts: Sequence[str]) -> list:
+    """차시 목록의 위치(index)를 '이름이 글자 그대로 같은 것 먼저'로 늘어놓는다(나머지는 원래 순서).
+    기존 엄격한 규칙은 '포함'도 맞다고 보므로, '우리 지역의 문화유산' 이 앞에 있으면 '우리 지역의 문화' 를 찾을 때도
+    그것이 먼저 걸린다. 이름이 정확히 같은 항목이 있으면 그것을 먼저 보게 해서 막는다."""
+    texts = list(lesson_texts)
+
+    def key(index: int) -> Tuple[int, int]:
+        item = lessons[index]
+        return (
+            0 if _same_text(item.get("unit_title"), unit_text) else 1,
+            0 if any(_same_text(item.get("title"), t) for t in texts) else 1,
+        )
+
+    return sorted(range(len(lessons)), key=key)
+
+
+def exact_first(pairs: Sequence[Tuple[T, Optional[str]]], wanted: str) -> list:
+    """(항목, 글자) 짝들에서 글자가 wanted 와 글자 그대로 같은 항목을 앞으로 보낸 항목 목록(나머지는 원래 순서).
+    화면의 단원 상자처럼 목록이 아니라 상자를 하나씩 보는 곳에서 쓴다."""
+    return [item for item, text in sorted(pairs, key=lambda p: 0 if p[1] is not None and _same_text(p[1], wanted) else 1)]
+
+
+def console_confirm(
+    kind: str,
+    query: str,
+    candidate: str,
+    level: str,
+    ask: Optional[Callable[[str], str]] = None,
+    show: Optional[Callable[[str], None]] = None,
+) -> bool:
+    """콘솔에서 '이 이름으로 열까요?' 를 묻는다. 기본은 아니오(Enter·입력 없음·오류 모두 아니오).
+    같은 (종류, 찾는 이름, 후보)는 한 번만 묻는다 — 단원은 펼칠 때와 찾을 때 두 번 걸려도 한 번만 묻는다."""
+    memo_key = (kind, query, candidate)
+    if memo_key in _ANSWERS:
+        return _ANSWERS[memo_key]
+    ask = ask or _default_ask
+    show = show or print
+    reason = "이름이 겹침" if level == CONTAINS else "글자가 비슷함"
+    show(f"  [?] 찾는 {kind} '{query}' 과(와) 이름이 같은 것이 사이트에 없습니다.")
+    show(f"      비슷한 {kind}: '{candidate}' ({reason})")
+    try:
+        answer = str(ask("      이것을 열까요? [y/N]: ")).strip().lower()
+    except (EOFError, KeyboardInterrupt):
+        answer = ""
+    result = answer in {"y", "yes", "ㅇ", "예"}
+    _ANSWERS[memo_key] = result
+    return result
+
+
+_ANSWERS: dict = {}
+
+
+def reset_confirm_answers() -> None:
+    _ANSWERS.clear()
+
+
+def _default_ask(message: str) -> str:
+    return input(message)
 
 
 def lesson_label_numbers(text: Optional[str]) -> list:

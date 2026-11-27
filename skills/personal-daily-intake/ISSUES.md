@@ -12,6 +12,11 @@
 
 ## 📌 백로그
 
+### ISSUE-004: 제미나이 없이 PC 에서 말하기 → md (2026-11-28)
+- **상태**: 📌 백로그
+- 참고: 예람쌤 RamBot·RamNeis 사용 가이드(교사 개인 드라이브 `my-skills-개인자료\resource\guide-rambot.pdf`·`guide-ramneis.pdf`, 2026-11-28 읽음). 기능 생각만 가져오고 글·그림·코드는 베끼지 않는다.
+- PC 마이크로 말하기 → 내 PC 받아쓰기(faster-whisper, 수업 비서 `transcribe.py` 와 같은 엔진, 고쳐 쓰기 사전 함께 — 수업 비서 ISSUE-053 ①) → Claude Code 또는 Gemini CLI 가 `gem_prompt.md` 지침대로 md → inbox. 제미나이 스킬이 없어져도 같은 흐름이 됨.
+
 ### ISSUE-001: Notion 업무일지·일기·습관기록 DB에 쓰기 (2026-11-27)
 - **상태**: 📌 백로그
 - **증상**: 지금 중앙 .env 의 Notion 연결(`NOTION_TOKEN`)은 독서 DB·도서 신청 DB만, `NOTION_API_KEY` 는 수업실행·진도·학생 기록 DB만 보인다. 업무일지·일기·습관기록은 어느 쪽에도 공유돼 있지 않다.

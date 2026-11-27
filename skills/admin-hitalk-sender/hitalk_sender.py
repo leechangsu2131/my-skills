@@ -16,6 +16,7 @@
   4. python hitalk_sender.py --dry-run    (미리보기만)
 """
 
+import csv
 import io
 import json
 import subprocess
@@ -40,10 +41,7 @@ def _wrap_stream_utf8(stream):
         return stream
 
 
-# Windows 터미널 UTF-8 인코딩 설정
-if sys.platform == "win32":
-    sys.stdout = _wrap_stream_utf8(getattr(sys, "stdout", None))
-    sys.stderr = _wrap_stream_utf8(getattr(sys, "stderr", None))
+# Windows 터미널 UTF-8 인코딩 설정은 CLI 진입점(run)에서 수행한다.
 
 SELENIUM_IMPORT_ERROR = None
 try:
@@ -248,21 +246,22 @@ def find_gws_executable():
     return None
 
 
-def check_runtime_dependencies():
+def check_runtime_dependencies(require_selenium=True, require_gws=True):
     """실행 전에 필요한 도구가 설치되어 있는지 확인"""
     global GWS_EXECUTABLE
     missing_dependencies = []
 
-    if SELENIUM_IMPORT_ERROR is not None:
+    if require_selenium and SELENIUM_IMPORT_ERROR is not None:
         missing_dependencies.append(
             ("selenium", f'python -m pip install -r "{REQUIREMENTS_PATH}"')
         )
 
-    GWS_EXECUTABLE = find_gws_executable()
-    if GWS_EXECUTABLE is None and find_service_account_material() is None:
-        missing_dependencies.append(
-            ("gws CLI", "npm install -g @googleworkspace/cli")
-        )
+    if require_gws:
+        GWS_EXECUTABLE = find_gws_executable()
+        if GWS_EXECUTABLE is None and find_service_account_material() is None:
+            missing_dependencies.append(
+                ("gws CLI", "npm install -g @googleworkspace/cli")
+            )
 
     if missing_dependencies:
         print_dependency_help(missing_dependencies)
@@ -628,6 +627,48 @@ def fetch_sheet_values(config):
     return data.get("values", [])
 
 
+def read_roster_file(roster_path):
+    """로컬 CSV/TSV/TXT 명단 파일 읽기"""
+    if not os.path.exists(roster_path):
+        print(f"[✗] 명단 파일을 찾을 수 없습니다: {roster_path}")
+        sys.exit(1)
+
+    raw_text = None
+    for encoding in ("utf-8-sig", "utf-8", "cp949"):
+        try:
+            with open(roster_path, "r", encoding=encoding) as f:
+                raw_text = f.read()
+            break
+        except UnicodeDecodeError:
+            continue
+
+    if raw_text is None:
+        print(f"[✗] 명단 파일 인코딩을 읽을 수 없습니다: {roster_path}")
+        sys.exit(1)
+
+    lines = [line for line in raw_text.splitlines() if line.strip()]
+    if not lines:
+        return []
+
+    delimiter = "\t" if (roster_path.lower().endswith(".tsv") or "\t" in lines[0]) else ","
+    return list(csv.reader(lines, delimiter=delimiter))
+
+
+def parse_target_names(raw_students):
+    """--student 인자 목록을 정규화된 이름 리스트로 변환"""
+    if not raw_students:
+        return []
+    names = []
+    seen = set()
+    for item in raw_students:
+        for part in str(item).split(","):
+            cleaned = clean_cell(part)
+            if cleaned and cleaned not in seen:
+                seen.add(cleaned)
+                names.append(cleaned)
+    return names
+
+
 def read_scores(config):
     """CLI용 구글시트 데이터 읽기"""
     try:
@@ -637,11 +678,11 @@ def read_scores(config):
         sys.exit(1)
 
 
-def parse_students(raw_data, config):
+def parse_students(raw_data, config, target_names=None, allow_missing_filter_column=False):
     """raw 데이터에서 학생별 전송 컨텍스트 추출"""
     name_col = config.get("name_column", 1)   # B열 = index 1
     score_col = config.get("score_column", 2)  # C열 = index 2
-    recipient_filter = get_recipient_filter(config)
+    recipient_filter = None if target_names else get_recipient_filter(config)
 
     if not raw_data or len(raw_data) < 2:
         print("[✗] 시트에 데이터가 없습니다.")
@@ -649,6 +690,9 @@ def parse_students(raw_data, config):
 
     header = [clean_cell(cell) for cell in raw_data[0]]
     print(f"  📋 헤더: {header}")
+
+    if "이름" in header and (name_col >= len(header) or header[name_col] != "이름"):
+        name_col = header.index("이름")
 
     if recipient_filter:
         available_keys = {header_name for header_name in header if header_name}
@@ -659,10 +703,14 @@ def parse_students(raw_data, config):
             recipient_filter["column"] not in available_keys
             and recipient_filter["normalized_column"] not in available_keys
         ):
-            raise RuntimeError(
-                f"대상 필터 열 '{recipient_filter['column']}' 을(를) 헤더에서 찾지 못했습니다."
-            )
+            if allow_missing_filter_column:
+                recipient_filter = None
+            else:
+                raise RuntimeError(
+                    f"대상 필터 열 '{recipient_filter['column']}' 을(를) 헤더에서 찾지 못했습니다."
+                )
 
+    target_name_set = set(target_names) if target_names else None
     students = []
     total_named_students = 0
     for row in raw_data[1:]:
@@ -673,6 +721,9 @@ def parse_students(raw_data, config):
         if not name:
             continue
         total_named_students += 1
+
+        if target_name_set is not None and name not in target_name_set:
+            continue
 
         score = ""
         if score_col is not None and len(row) > score_col:
@@ -695,7 +746,10 @@ def parse_students(raw_data, config):
 
         students.append({"name": name, "score": score, "fields": fields})
 
-    if recipient_filter:
+    if target_names:
+        print(f"  🎯 지정 학생: {', '.join(target_names)}")
+        print(f"  ✅ {total_named_students}명 중 {len(students)}명 선택 완료")
+    elif recipient_filter:
         print(f"  🎯 대상 필터: {describe_recipient_filter(config)}")
         print(f"  ✅ {total_named_students}명 중 {len(students)}명 선택 완료")
     else:
@@ -1325,6 +1379,9 @@ def send_to_all(driver, students, config, custom_message=None):
 
 def run():
     """전체 실행 흐름"""
+    if sys.platform == "win32":
+        sys.stdout = _wrap_stream_utf8(getattr(sys, "stdout", None))
+        sys.stderr = _wrap_stream_utf8(getattr(sys, "stderr", None))
     parser = argparse.ArgumentParser(
         description="하이톡 개별 메시지 전송"
     )
@@ -1355,10 +1412,24 @@ def run():
         default=None,
         help="메시지 템플릿 파일 경로 (.txt). [학생], [과목], [점수], [코멘트], 시트 헤더 placeholder 사용 가능"
     )
+    parser.add_argument(
+        "--roster-file",
+        default=None,
+        help="로컬 명단 파일 경로 (.csv, .tsv, .txt). 지정 시 구글시트 대신 이 파일을 읽음"
+    )
+    parser.add_argument(
+        "--student",
+        action="append",
+        default=None,
+        help="전송할 학생 이름(쉼표 구분 또는 여러 번 지정 가능). 명단 없이 단독 실행 가능"
+    )
     args = parser.parse_args()
 
     config = load_config(args.config or CONFIG_PATH)
-    check_runtime_dependencies()
+    target_names = parse_target_names(args.student)
+    use_direct_students = bool(target_names and not args.roster_file and not args.config)
+    require_gws = not bool(args.roster_file or use_direct_students)
+    check_runtime_dependencies(require_selenium=(not args.dry_run), require_gws=require_gws)
     port = config.get("remote_port", 9223)
     custom_message = load_message_template(config, args)
 
@@ -1366,12 +1437,33 @@ def run():
     print("  🎯 하이톡 개별 전송 시스템")
     print("=" * 60)
     print(f"  과목: {config.get('subject', '시험')}")
-    print(f"  시트: {config['spreadsheet_id'][:12]}...")
+    if args.roster_file:
+        print(f"  명단: {args.roster_file}")
+    elif use_direct_students:
+        print(f"  대상: {', '.join(target_names)} (직접 지정)")
+    else:
+        print(f"  시트: {config['spreadsheet_id'][:12]}...")
 
-    # 1. 구글시트에서 점수 읽기
-    raw_data = read_scores(config)
-    students = parse_students(raw_data, config)
-    filter_text = describe_recipient_filter(config)
+    # 1. 명단 읽기 (로컬 파일 / 직접 지정 / 구글시트)
+    if args.roster_file:
+        raw_data = read_roster_file(args.roster_file)
+        students = parse_students(
+            raw_data,
+            config,
+            target_names=target_names or None,
+            allow_missing_filter_column=True,
+        )
+        filter_text = "" if target_names else describe_recipient_filter(config)
+    elif use_direct_students:
+        students = [
+            {"name": name, "score": "", "fields": {"이름": name}}
+            for name in target_names
+        ]
+        filter_text = ""
+    else:
+        raw_data = read_scores(config)
+        students = parse_students(raw_data, config, target_names=target_names or None)
+        filter_text = "" if target_names else describe_recipient_filter(config)
 
     if not students:
         if filter_text:

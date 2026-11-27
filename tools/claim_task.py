@@ -1,13 +1,18 @@
 """일 잡기 — 실행 직전에 같은 일을 누가 하는지 확인하고, 비어 있으면 브랜치·일지 '시작' 줄을 올려 잡는다.
+앞 작업자가 멈춘 일(토큰이 끊김 등)이면 그 브랜치를 그대로 받아 이어받는다.
 
+    python tools/claim_task.py --next --name claude-web-173                  # 다음 일을 골라 잡기(멈춘 일 이어받기 먼저)
+    python tools/claim_task.py --next --check                                # 무엇을 고를지 보기만
     python tools/claim_task.py T77 --check                                   # 확인만(아무것도 바꾸지 않음)
-    python tools/claim_task.py T77 write-lock --name bizcoder-1              # 잡기
+    python tools/claim_task.py T77 write-lock --name bizcoder-1              # 잡기(멈춘 브랜치가 있으면 이어받기)
     python tools/claim_task.py T31 korean --name gemini-1 --skill admin-s2b-buyer   # 여러 스킬에 걸친 일·상시 일(S)
 
-종료값: 0 잡음(--check 면 비어 있음, 이미 내가 잡은 일이면 이어서) / 1 이미 누가 함·완료·교사 결정 대기 / 2 사용법·git 오류
+종료값: 0 잡음·이어받음(--check 면 잡을 수 있음, 이미 내가 잡은 일이면 이어서) / 1 이미 누가 함·완료·교사 결정 대기·고를 일 없음 / 2 사용법·git 오류
 
 왜: 교사가 여러 작업자에게 같은 일을 "해"라고 할 수 있고, 다른 폴더(따로 받은 저장소)에서 일하면
 원격 브랜치를 새로 받지 않아 남이 잡은 일을 못 본다. 2026-11-25~26 T10·T11·T23·T25 가 그렇게 두 번씩 만들어졌다.
+또 작업자는 대개 토큰이 떨어져 말없이 멈춘다(2026-11-27 S1 브랜치 둘이 '시작' 한 줄로 몇 시간 멈춤) →
+교사가 일을 하나씩 다시 시키지 않아도 다음 작업자가 이어받게 한다(교사 요청 2026-11-27).
 
 보는 것 (모두 바로 앞에서 `git fetch --prune` 한 뒤)
 1. 원격 main 의 docs/TASKS.md 상태: `완료`·`교사 결정 대기`·`보류`·`프로젝트 P<n>` 이면 잡지 않음
@@ -15,15 +20,29 @@
 3. 이 저장소의 로컬 브랜치 `task/<번호>-…` — 같은 PC 의 다른 작업 폴더(git worktree, tools/start_worker.ps1)가
    아직 안 올린 것도 보인다(작업 폴더끼리 브랜치 목록을 같이 씀)
 --skill 을 주면 브랜치 이름에 그 스킬 이름이 든 것만 같은 일로 본다(T31·T33·S1 처럼 스킬마다 따로 잡는 일).
+
+이어받기: 남의 원격 브랜치라도 그 브랜치 일지 마지막 줄이 `그만둠` 이거나, STALE_HOURS(기본 2시간,
+환경변수 CLAIM_STALE_HOURS) 넘게 새 커밋이 없으면(마지막 줄이 `시작`·`진행`·`합칠 준비`·`이어받음`) 잡을 수 있다.
+`PR 올림`(끝남 — 합치기 기다림)·`막힘`(교사가 풂)은 이어받지 않는다. 이어받을 때는 새 브랜치를 만들지 않고 그 브랜치에
+내 일지 `이어받음` 줄을 올린다 — 같은 때 둘이 이어받으면 늦은 쪽은 푸시가 거절돼 ❌.
 """
 from __future__ import annotations
 
 import argparse
+import os
 import re
 import subprocess
 import sys
+import time
 from datetime import datetime
+from functools import lru_cache
 from pathlib import Path
+
+STALE_HOURS = float(os.environ.get("CLAIM_STALE_HOURS", "2"))
+# 일지 줄의 종류(worklog/README.md). 줄 앞쪽(" — " 앞)에서 가장 먼저 나오는 것으로 정한다.
+KINDS = ("이어받음", "PR 올림", "합칠 준비", "그만둠", "막힘", "진행", "시작")
+NO_TAKEOVER = {"PR 올림": "끝남 — 합치기를 기다림", "막힘": "막힘 — 교사가 풂"}
+DEFAULT_ORDER = ["K", "I", "G", "H", "J", "E"]
 
 
 class GitError(Exception):
@@ -38,10 +57,13 @@ def git(*args: str, check: bool = True) -> str:
     return res.stdout.strip()
 
 
+def tasks_text() -> str:
+    return git("show", "origin/main:docs/TASKS.md", check=False)
+
+
 def task_status(number: str) -> str | None:
     """원격 main 의 TASKS 표에서 그 번호 줄의 마지막 칸(상태). 줄이 없으면 None."""
-    text = git("show", "origin/main:docs/TASKS.md", check=False)
-    m = re.search(r"^\|\s*" + re.escape(number) + r"\s*\|.*\|\s*([^|\n]*?)\s*\|\s*$", text, re.M)
+    m = re.search(r"^\|\s*" + re.escape(number) + r"\s*\|.*\|\s*([^|\n]*?)\s*\|\s*$", tasks_text(), re.M)
     return m.group(1) if m else None
 
 
@@ -59,6 +81,21 @@ def blocked_reason(status: str | None) -> str | None:
     return None
 
 
+@lru_cache(maxsize=1)
+def remote_task_heads() -> tuple[str, ...]:
+    """원격의 task/… 브랜치 이름들. git ls-remote 로 직접 묻고, 내용(일지)을 볼 수 있게 한 번에 받아 둔다.
+    main 만 받아 오는 복제본(--single-branch, 웹 작업자 등)은 fetch 해도 남의 task/… 브랜치가 refs/remotes 에
+    안 생겨서, 그것만 보면 겹침을 놓친다(2026-11-26 작업자 제보)."""
+    heads = []
+    for line in git("ls-remote", "--heads", "origin").splitlines():
+        ref = line.split("\t")[-1]
+        if ref.startswith("refs/heads/task/"):
+            heads.append(ref[len("refs/heads/"):])
+    if heads:
+        git("fetch", "--quiet", "origin", "+refs/heads/task/*:refs/remotes/origin/task/*", check=False)
+    return tuple(heads)
+
+
 def same_task_branches(number: str, skill: str | None) -> list[str]:
     """같은 번호의 원격·로컬 브랜치 이름들(origin/ 은 붙여서)."""
     prefix = re.compile(r"^task/" + re.escape(number) + r"-", re.I)
@@ -66,16 +103,7 @@ def same_task_branches(number: str, skill: str | None) -> list[str]:
     def wanted(short: str) -> bool:
         return bool(prefix.match(short)) and (not skill or skill.lower() in short.lower())
 
-    out = []
-    # 원격은 git ls-remote 로 직접 묻는다. main 만 받아 오는 복제본(--single-branch, 웹 작업자 등)은
-    # fetch 해도 남의 task/… 브랜치가 refs/remotes 에 안 생겨서, 그것만 보면 겹침을 놓친다(2026-11-26 작업자 제보).
-    for line in git("ls-remote", "--heads", "origin").splitlines():
-        ref = line.split("\t")[-1]
-        short = ref[len("refs/heads/"):]
-        if ref.startswith("refs/heads/") and wanted(short):
-            # 내용(일지)을 볼 수 있게 그 브랜치만 받아 둔다
-            git("fetch", "--quiet", "origin", f"+{ref}:refs/remotes/origin/{short}", check=False)
-            out.append("origin/" + short)
+    out = ["origin/" + short for short in remote_task_heads() if wanted(short)]
     # 로컬 브랜치: 같은 저장소의 다른 작업 폴더(git worktree)가 아직 안 올린 것도 여기 보인다
     for ref in git("for-each-ref", "--format=%(refname)", "refs/heads/task/").splitlines():
         short = ref[len("refs/heads/"):]
@@ -85,9 +113,9 @@ def same_task_branches(number: str, skill: str | None) -> list[str]:
 
 
 def owner_is_me(branch: str, name: str, number: str) -> bool:
-    """그 브랜치의 내 일지에 이 번호 '시작' 줄이 있으면 내가 잡은 일."""
+    """그 브랜치의 내 일지에 이 번호 '시작'·'이어받음' 줄이 있으면 내가 잡은 일."""
     log = git("show", f"{branch}:docs/worklog/{name}.md", check=False)
-    return bool(re.search(re.escape(number) + r"\b[^\n]*시작", log))
+    return bool(re.search(re.escape(number) + r"\b[^\n]*(시작|이어받음)", log))
 
 
 def worktree_of(branch: str) -> str | None:
@@ -101,19 +129,240 @@ def worktree_of(branch: str) -> str | None:
     return None
 
 
+def log_kind(line: str) -> str:
+    head = line.split(" — ")[0]
+    found = [(head.find(k), k) for k in KINDS if k in head]
+    return min(found)[1] if found else ""
+
+
+def worklog_lines(branch: str) -> list[tuple[str, str]]:
+    """그 브랜치가 스스로 올린 일지 줄들 (작업자, 줄), 오래된 것부터.
+    main 을 받아 합친 커밋(merge)은 빼고(남의 일지가 섞임), 이미 main 에 합쳐진 브랜치면 마지막 일지 커밋 하나만."""
+    tip = git("rev-parse", branch, check=False)
+    base = git("merge-base", "origin/main", branch, check=False)
+    rng = [f"{base}..{branch}"] if base and base != tip else ["-n", "1", branch]
+    diff = git("log", "--first-parent", "--no-merges", "--reverse", "-p", "--format=", *rng,
+               "--", "docs/worklog/", check=False)
+    out, who = [], ""
+    for line in diff.splitlines():
+        if line.startswith("+++ "):
+            m = re.search(r"docs/worklog/(.+)\.md$", line)
+            who = m.group(1) if m and m.group(1) != "README" else ""
+        elif who and line.startswith(("+- ", "+* ")):
+            out.append((who, line[3:].strip()))
+    return out
+
+
+def branch_state(branch: str) -> dict:
+    ct = git("log", "-1", "--format=%ct", branch, check=False)
+    hours = (time.time() - int(ct)) / 3600 if ct.isdigit() else 0.0
+    lines = worklog_lines(branch)
+    who, last = lines[-1] if lines else ("", "")
+    return {"branch": branch, "hours": hours, "who": who, "last": last, "kind": log_kind(last), "lines": lines}
+
+
+def takeover_reason(state: dict, limit: float = STALE_HOURS) -> str | None:
+    """이어받을 수 있으면 그 까닭, 아니면 None."""
+    if not state["branch"].startswith("origin/"):
+        return None  # 아직 안 올린 로컬 브랜치 — 받을 수 없음
+    if state["kind"] in NO_TAKEOVER:
+        return None
+    if state["kind"] == "그만둠":
+        return f"앞 작업자({state['who']})가 그만둠"
+    if state["hours"] >= limit:
+        return f"{state['hours']:.0f}시간 동안 새 커밋 없음({state['who'] or '일지 없음'}, 마지막: {state['kind'] or '?'})"
+    return None
+
+
+def evaluate(number: str, skill: str | None, name: str | None, limit: float) -> dict:
+    """잡을 수 있는지 본다(아무것도 바꾸지 않음). action: blocked · busy · mine · takeover · free."""
+    why = blocked_reason(task_status(number))
+    if why:
+        return {"action": "blocked", "why": why}
+    found = same_task_branches(number, skill)
+    mine = [b for b in found if name and owner_is_me(b, name, number)]
+    others = [b for b in found if b not in mine]
+    if mine:
+        return {"action": "mine", "branches": mine}
+    if not others:
+        return {"action": "free"}
+    states = [branch_state(b) for b in others]
+    busy = [s for s in states if not takeover_reason(s, limit)]
+    if busy:
+        return {"action": "busy", "states": busy}
+    # 모두 멈춤 — 가장 최근에 손댄 브랜치를 이어받는다(나머지는 오케스트레이터가 정리)
+    pick = min(states, key=lambda s: s["hours"])
+    return {"action": "takeover", "state": pick, "why": takeover_reason(pick, limit)}
+
+
+def append_log(name: str, line: str) -> str:
+    root = Path(git("rev-parse", "--show-toplevel"))
+    log = root / "docs" / "worklog" / f"{name}.md"
+    log.parent.mkdir(parents=True, exist_ok=True)
+    text = log.read_text(encoding="utf-8") if log.exists() else f"# {name} 일지\n\n"
+    if not text.endswith("\n"):
+        text += "\n"
+    log.write_text(text + f"- {datetime.now():%Y-%m-%d %H:%M} {line}\n", encoding="utf-8")
+    return str(log.relative_to(root))
+
+
+def push(branch: str) -> str | None:
+    res = subprocess.run(["git", "push", "--quiet", "-u", "origin", branch], capture_output=True, text=True,
+                         encoding="utf-8", errors="replace")
+    return None if res.returncode == 0 else res.stderr.strip()
+
+
+def claim_new(number: str, skill: str | None, name: str, desc: str) -> int:
+    scope = f" ({skill})" if skill else ""
+    desc = re.sub(r"[^A-Za-z0-9._-]+", "-", desc).strip("-").lower() or "work"
+    branch = f"task/{number}-{desc}"
+    git("switch", "--quiet", "-c", branch, "origin/main")
+    git("add", append_log(name, f"{number}{scope} 시작 (브랜치 {branch})"))
+    git("commit", "--quiet", "-m", f"docs: [worklog] {name} {number}{scope} 시작")
+    err = push(branch)
+    if err:
+        print(f"❌ 올리지 못했어요(같은 이름을 누가 먼저 올렸을 수 있음): {err}")
+        return 1
+    # 거의 같은 때 다른 이름으로 잡은 사람이 있는지 한 번 더
+    git("fetch", "--quiet", "--prune", "origin")
+    remote_task_heads.cache_clear()
+    rivals = [b for b in same_task_branches(number, skill) if b not in (branch, "origin/" + branch)]
+    if rivals:
+        print(f"⚠ 잡았지만 거의 같은 때 같은 일을 잡은 브랜치가 있어요: {', '.join(rivals)} → 교사에게 알리세요.")
+        return 1
+    print(f"✅ {number}{scope} 를 잡았어요: 브랜치 {branch} (일지 '시작' 줄을 올림)")
+    return 0
+
+
+def take_over(number: str, skill: str | None, name: str, state: dict, why: str) -> int:
+    scope = f" ({skill})" if skill else ""
+    remote = state["branch"]
+    short = remote.removeprefix("origin/")
+    here = Path(git("rev-parse", "--show-toplevel")).resolve()
+    if git("rev-parse", "--verify", "--quiet", f"refs/heads/{short}", check=False):
+        if worktree_of(short) and Path(worktree_of(short)).resolve() != here:
+            print(f"❌ {short} 는 이 PC 의 다른 작업 폴더({worktree_of(short)})가 쓰고 있어요 — 그 폴더에서 이어서 하세요.")
+            return 1
+        if git("rev-list", "--count", f"{remote}..{short}") != "0":
+            print(f"❌ 로컬 {short} 에 원격에 없는 커밋이 있어요 — 먼저 정리하세요(남의 일이 섞이지 않게).")
+            return 2
+        git("switch", "--quiet", short)
+        git("merge", "--quiet", "--ff-only", remote)
+    else:
+        git("switch", "--quiet", "-c", short, "--track", remote)
+    prev = f"{state['who']}: {state['last'][:80]}" if state["last"] else "일지 없음"
+    git("add", append_log(name, f"{number}{scope} 이어받음 (브랜치 {short}, 앞 — {prev})"))
+    git("commit", "--quiet", "-m", f"docs: [worklog] {name} {number}{scope} 이어받음")
+    err = push(short)
+    if err:
+        print(f"❌ 그새 누가 이 브랜치에 올렸어요(앞 작업자가 다시 왔거나 다른 작업자가 먼저 이어받음): {err}")
+        print("→ 이 일은 두고 `python tools/claim_task.py --next --name <내 이름>` 으로 다른 일을 고르세요.")
+        git("reset", "--quiet", "--hard", remote)
+        return 1
+    print(f"✅ {number}{scope} 를 이어받았어요: 브랜치 {short} ({why})")
+    print("   앞 작업자가 남긴 일지(어디까지 했고 다음에 무엇을 할지) — 여기서부터 이어서 하세요:")
+    for who, line in state["lines"][-6:]:
+        print(f"   - {who}: {line}")
+    behind = git("rev-list", "--count", f"{short}..origin/main", check=False)
+    if behind.isdigit() and int(behind) > 20:
+        print(f"   (main 보다 {behind}커밋 뒤처짐 — 고치기 전에 `git merge origin/main` 으로 맞추세요)")
+    print("   TASKS 의 '끝난 기준'·체크리스트에서 안 된 것부터 하고, 단계마다 커밋·푸시·일지 `진행` 줄을 남기세요.")
+    return 0
+
+
+def next_candidates(grade: str) -> list[str]:
+    """TASKS 에서 고를 순서대로 '열림' T 번호들. 순서는 TASKS 의 `고르는 순서(claim_task.py --next): K I …` 줄."""
+    text = tasks_text()
+    m = re.search(r"고르는 순서\(claim_task\.py --next\)\s*:\s*([A-Z](?:[\s,→]+[A-Z])*)", text)
+    order = re.findall(r"[A-Z]", m.group(1)) if m else DEFAULT_ORDER
+    by_section: dict[str, list[str]] = {}
+    section = None
+    for line in text.splitlines():
+        if line.startswith("## "):
+            sm = re.match(r"##\s+([A-Z])\.", line)
+            section = sm.group(1) if sm else None
+            continue
+        cells = [c.strip() for c in line.strip().strip("|").split("|")]
+        if section is None or len(cells) < 3 or not re.fullmatch(r"T\d{1,3}", cells[0]):
+            continue
+        status = cells[-1]
+        gm = re.match(r"\s*([RP])\s*·", status)
+        need = gm.group(1) if gm else "R"
+        if blocked_reason(status) or not ("열림" in status or "진행" in status):
+            continue
+        if grade == "R" and need == "P":
+            continue
+        by_section.setdefault(section, []).append(cells[0])
+    return [n for s in order for n in by_section.get(s, [])]
+
+
+def show_busy(number: str, skill: str | None, states: list[dict]) -> None:
+    print(f"❌ {number}{' (' + skill + ')' if skill else ''} 는 이미 누가 하고 있어요:")
+    for s in states:
+        b = s["branch"]
+        where = worktree_of(b) if not b.startswith("origin/") else None
+        last = git("log", "-1", "--format=%an, %ad", "--date=format:%m-%d %H:%M", b, check=False)
+        note = f"일지 '{s['kind']}'" if s["kind"] else ""
+        if s["kind"] not in NO_TAKEOVER and b.startswith("origin/"):
+            note += f"{', ' if note else ''}{s['hours']:.1f}시간 전 — {STALE_HOURS:g}시간 넘게 멈추면 이어받을 수 있음"
+        print(f"   {b}  ({last}{', 작업 폴더 ' + where if where else ''}{'; ' + note if note else ''})")
+
+
+def run_next(a) -> int:
+    cands = next_candidates(a.grade)
+    plans = [(n, evaluate(n, None, a.name, a.stale_hours)) for n in cands]
+    for kind in ("mine", "takeover", "free"):
+        for n, ev in plans:
+            if ev["action"] != kind:
+                continue
+            if kind == "mine":
+                print(f"✅ {n} 는 이미 {a.name} 가 잡은 일이에요(이어서 하세요): {', '.join(ev['branches'])}")
+                return 0
+            if a.check:
+                what = f"이어받기 — {ev['why']}" if kind == "takeover" else "새로 잡기"
+                print(f"✅ 다음 일: {n} ({what})")
+                return 0
+            if git("status", "--porcelain"):
+                print("❌ 이 작업 폴더에 커밋 안 한 변경이 있어요. 정리한 뒤 다시 잡으세요(남의 변경이 섞이지 않게).")
+                return 2
+            if kind == "takeover":
+                return take_over(n, None, a.name, ev["state"], ev["why"])
+            return claim_new(n, None, a.name, a.desc or "work")
+    print("고를 '열림' 일이 없어요 → TASKS 맨 아래 상시 일(S)을 하세요. 예:")
+    print(f"   python tools/claim_task.py S1 <짧은-영어-설명> --name {a.name or '<내 이름>'} --skill <★ 묶음 스킬 이름>")
+    return 1
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("number", help="TASKS 번호(예: T77, S1)")
+    ap.add_argument("number", nargs="?", help="TASKS 번호(예: T77, S1). --next 면 비움")
     ap.add_argument("desc", nargs="?", help="브랜치 이름 뒷부분(짧은 영어, 예: write-lock)")
     ap.add_argument("--name", help="작업자 이름(일지 파일 이름) — 잡을 때 필요")
     ap.add_argument("--skill", help="스킬마다 따로 잡는 일이면 스킬 이름")
     ap.add_argument("--check", action="store_true", help="확인만")
+    ap.add_argument("--next", action="store_true", help="다음 일을 골라 잡기: 내 일 → 멈춘 일 이어받기 → 열림 일")
+    ap.add_argument("--grade", choices=["R", "P"], default="R", help="내 등급(P: 교사 PC 작업자 — P 일도 고름)")
+    ap.add_argument("--stale-hours", type=float, default=STALE_HOURS, help="몇 시간 새 커밋이 없으면 이어받을지")
     a = ap.parse_args(argv)
-    number = a.number.upper()
     if a.name:
         a.name = re.sub(r"\s+", "", a.name).strip("[]")  # 지침 첫 줄 '[claude-web- 173]' 처럼 띄어쓰기·대괄호가 섞여도 같은 일지 파일로
+
+    if a.next:
+        if a.number and not a.desc:  # `--next work` 처럼 설명만 준 경우
+            a.desc, a.number = a.number, None
+        if not a.check and not a.name:
+            print("--next 로 잡으려면 --name 이 필요해요. 보기만 하려면 --check.")
+            return 2
+        try:
+            git("fetch", "--quiet", "--prune", "origin")
+            return run_next(a)
+        except GitError as e:
+            print(f"❌ git 오류: {e}")
+            return 2
+
+    number = (a.number or "").upper()
     if not re.fullmatch(r"[TS]\d{1,3}", number):
-        print(f"번호 모양이 아니에요: {a.number} (예: T77, S1)")
+        print(f"번호 모양이 아니에요: {a.number} (예: T77, S1 — 다음 일을 고르게 하려면 --next)")
         return 2
     if number.startswith("S") and not a.skill:
         print("상시 일(S)은 --skill <스킬 이름> 으로 무엇을 하는지 정해야 해요(겹침 확인용).")
@@ -124,58 +373,30 @@ def main(argv: list[str] | None = None) -> int:
 
     try:
         git("fetch", "--quiet", "--prune", "origin")
-        why = blocked_reason(task_status(number))
-        if why:
-            print(f"❌ {number} 는 잡지 않아요: {why}")
+        ev = evaluate(number, a.skill, a.name, a.stale_hours)
+        scope = f" ({a.skill})" if a.skill else ""
+        if ev["action"] == "blocked":
+            print(f"❌ {number} 는 잡지 않아요: {ev['why']}")
             return 1
-        found = same_task_branches(number, a.skill)
-        mine = [b for b in found if a.name and owner_is_me(b, a.name, number)]
-        others = [b for b in found if b not in mine]
-        if others:
-            print(f"❌ {number}{' (' + a.skill + ')' if a.skill else ''} 는 이미 누가 하고 있어요:")
-            for b in others:
-                where = worktree_of(b) if not b.startswith("origin/") else None
-                last = git("log", "-1", "--format=%an, %ad", "--date=format:%m-%d %H:%M", b, check=False)
-                print(f"   {b}  ({last}{', 작업 폴더 ' + where if where else ''})")
-            print("→ 시작하지 말고 교사(오케스트레이터)에게 한 줄 알린 뒤 다른 일을 고르세요.")
+        if ev["action"] == "busy":
+            show_busy(number, a.skill, ev["states"])
+            print("→ 시작하지 말고 다른 일을 고르세요(`python tools/claim_task.py --next --name <내 이름>`).")
             return 1
-        if mine:
-            print(f"✅ {number} 는 이미 {a.name} 가 잡은 일이에요(이어서 하세요): {', '.join(mine)}")
+        if ev["action"] == "mine":
+            print(f"✅ {number} 는 이미 {a.name} 가 잡은 일이에요(이어서 하세요): {', '.join(ev['branches'])}")
             return 0
         if a.check:
-            print(f"✅ {number}{' (' + a.skill + ')' if a.skill else ''} 는 비어 있어요.")
+            if ev["action"] == "takeover":
+                print(f"✅ {number}{scope} 는 이어받을 수 있어요: {ev['state']['branch']} ({ev['why']})")
+            else:
+                print(f"✅ {number}{scope} 는 비어 있어요.")
             return 0
-
         if git("status", "--porcelain"):
             print("❌ 이 작업 폴더에 커밋 안 한 변경이 있어요. 정리한 뒤 다시 잡으세요(남의 변경이 섞이지 않게).")
             return 2
-        desc = re.sub(r"[^A-Za-z0-9._-]+", "-", a.desc).strip("-").lower() or "work"
-        branch = f"task/{number}-{desc}"
-        git("switch", "--quiet", "-c", branch, "origin/main")
-        root = Path(git("rev-parse", "--show-toplevel"))
-        log = root / "docs" / "worklog" / f"{a.name}.md"
-        log.parent.mkdir(parents=True, exist_ok=True)
-        text = log.read_text(encoding="utf-8") if log.exists() else f"# {a.name} 일지\n\n"
-        if not text.endswith("\n"):
-            text += "\n"
-        scope = f" ({a.skill})" if a.skill else ""
-        text += f"- {datetime.now():%Y-%m-%d %H:%M} {number}{scope} 시작 (브랜치 {branch})\n"
-        log.write_text(text, encoding="utf-8")
-        git("add", str(log.relative_to(root)))
-        git("commit", "--quiet", "-m", f"docs: [worklog] {a.name} {number}{scope} 시작")
-        push = subprocess.run(["git", "push", "--quiet", "-u", "origin", branch], capture_output=True, text=True,
-                              encoding="utf-8", errors="replace")
-        if push.returncode != 0:
-            print(f"❌ 올리지 못했어요(같은 이름을 누가 먼저 올렸을 수 있음): {push.stderr.strip()}")
-            return 1
-        # 거의 같은 때 다른 이름으로 잡은 사람이 있는지 한 번 더
-        git("fetch", "--quiet", "--prune", "origin")
-        rivals = [b for b in same_task_branches(number, a.skill) if b not in (branch, "origin/" + branch)]
-        if rivals:
-            print(f"⚠ 잡았지만 거의 같은 때 같은 일을 잡은 브랜치가 있어요: {', '.join(rivals)} → 교사에게 알리세요.")
-            return 1
-        print(f"✅ {number}{scope} 를 잡았어요: 브랜치 {branch} (일지 '시작' 줄을 올림)")
-        return 0
+        if ev["action"] == "takeover":
+            return take_over(number, a.skill, a.name, ev["state"], ev["why"])
+        return claim_new(number, a.skill, a.name, a.desc)
     except GitError as e:
         print(f"❌ git 오류: {e}")
         return 2

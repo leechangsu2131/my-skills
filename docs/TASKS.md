@@ -5,7 +5,9 @@
 > 브랜치 이름: `task/<번호>-<짧은-설명>`. 같은 번호의 원격 브랜치가 있으면 이미 누가 하는 중입니다.
 > **맡기는 기준(2026-11-26)**: 양이 많고 시험으로 확인되는 일(시험·문서·번역·버그 하나 고치기)은 작업자에게. 핵심 파일을 조금 고치는 일(진도 계산·잠금·서버 경로)과 교사 판단이 필요한 일은 **P(교사 PC 의 Claude Code)** — 검토 비용이 직접 하는 비용보다 커서.
 > **공용 파일 주인**: `.github/workflows/check.yml` 은 한 번에 한 작업자만(브랜치 이름에 `ci`). 다른 작업자는 고칠 내용을 자기 PR 설명에 적는다.
-> 마지막 정리: 2026-11-26
+> **일 받기(2026-11-27)**: 작업자는 번호를 고르지 않고 `python tools/claim_task.py --next --name <이름>` — 하던 일 → 멈춘 일 이어받기(2시간·`그만둠`) → 아래 순서의 '열림' 일. [WORKER_GUIDE 2-1](WORKER_GUIDE.md).
+> 고르는 순서(claim_task.py --next): K I G H J E
+> 마지막 정리: 2026-11-27
 
 ## ★ 지금 집중: 수업 비서 (교사 결정 2026-11-26)
 
@@ -20,7 +22,8 @@
 | `teacherlesson-from-neis` | 시간표 변경을 수업 비서에 보여 줄 때만(T84) |
 | 저장소 공용 `tools/`·`docs/` | 작업자 협업 |
 
-- 고르는 순서: **I(수업 비서 다음 일) → G → H → E** → 상시 일(S, 묶음 안에서만). D 와 P 등급 일은 교사 PC 작업자(Antigravity 등)만.
+- 고르는 순서: **K(수업 비서 큰 일, 체크리스트) → I(수업 비서 다음 일) → G → H → J → E** → 상시 일(S, 묶음 안에서만). `claim_task.py --next` 가 이 순서로 고른다.
+- **상시 일(S)은 고를 일이 정말 없을 때만** — 2026-11-27 저녁 S1 시험·S2 검토 브랜치가 20개 넘게 쌓였다. K 일이 있으면 K 가 먼저. D 와 P 등급 일은 교사 PC 작업자(Antigravity 등)만.
 - 묶음 밖 스킬에서 문제를 보면 고치지 말고 그 스킬 `ISSUES.md` 에 한 줄만 적는다. 묶음 밖 '열림' 일은 `보류`(교사가 쓴다고 하면 다시 엶).
 
 ## ★ 큰 프로젝트 — Codex·Antigravity (교사 결정 2026-11-26)
@@ -39,6 +42,20 @@ Codex·Antigravity 는 토큰이 넉넉하고 교사와 길게 이야기하며 �
 
 - **로컬 IDE(Codex·Antigravity)는 교사 PC 의 원래 `my-skills` 폴더에서 한 번에 하나**(교대). 받고 올리기는 `python tools/sync_work.py start/save/end`([WORKER_GUIDE 2-2](WORKER_GUIDE.md)). 클라우드 Codex·Claude 웹은 GitHub 에서 따로 일하므로 함께 돌아도 됨.
 - **`web/index.html`·`assistant_server.py` 는 P1·P2 가 같이 건드린다** → 새 기능은 새 파일로, 큰 파일에는 불러오는 몇 줄만. 먼저 합쳐진 쪽 뒤에 다른 쪽이 바로 main 을 받아 맞춘다.
+
+## K. 수업 비서 큰 일 — 체크리스트 (2026-11-27 채움, 할 수 있는 데까지 · 이어받기)
+
+> 한 작업자가 끝까지 못 해도 된다. 체크리스트 한 칸 끝날 때마다 커밋·푸시·일지 `진행 — ①② 끝 / 다음: ③`. 토큰이 끊기면 다음 작업자가 `--next` 로 같은 브랜치를 이어받아 남은 칸부터 한다.
+> 쓸 만한 중간(시험 통과)이면 일지 `합칠 준비` → PR 하고 계속. 전부 끝나면 `PR 올림`. `web/index.html`·`assistant_server.py` 는 P2(Codex)와 같이 쓰므로 **불러오는 몇 줄만**, 새 기능은 새 파일로.
+
+| 번호 | 할 일(체크리스트) | 고칠 파일 | 끝난 기준 | 등급·상태 |
+|---|---|---|---|---|
+| T98 | **지난 미완료 차시 알리기·가져오기**(teacherlesson-assistant ISSUE-043 — 어제 `planned` 로 남은 차시가 오늘 화면에서 사라짐). ① `supabase_schedule.py` 에 오늘 앞 날짜의 미완료(`planned`) 슬롯을 읽는 함수(읽기만, 가짜 클라이언트 시험) ② `assistant_server.py` `state()` 응답에 `overdue` 목록(과목·차시·원래 날짜·교시) ③ 화면: 오늘 교시 위에 "지난 미완료 N개" 알림 — 새 파일 `web/overdue.js`, 차시마다 [이 교시로 가져오기] 는 기존 `과목·차시 바꾸기`(`replace_subject_period`) 확인 창을 그대로 부름. **자동으로 DB 를 바꾸지 않음** ④ `tests/test_issue_repros.py` ISSUE-043 xfail 지우고 통과 ⑤ ISSUE-043 갱신 | `supabase_schedule.py`, `assistant_server.py`(`state` 몇 줄), 새 `web/overdue.js`, `web/index.html`(불러오기 몇 줄), 시험 | ①~⑤, 전체 시험 통과 | R · 열림 |
+| T99 | **클로바노트용 MP3 내보내기**(ISSUE-039, 설계 [docs/plans/clova-export.md](../skills/teacherlesson-assistant/docs/plans/clova-export.md) 그대로). ① 새 `audio_export.py` — ffmpeg 찾기(없으면 설치 안내 문장)·변환 명령 만들기(MP3 64kbps 모노)·결과 파일 이름을 순수 함수로 ② `GET /api/recording-export/<날짜>/<파일>` — 원본은 그대로 두고 변환본을 데이터 폴더에 만들어 내려줌, 이미 있으면 재사용 ③ 녹음 목록에 `🎧 클로바노트용` 단추(새 `web/recording_export.js`) ④ 가짜 ffmpeg(subprocess mock) 시험: 없음·실패·성공·재사용·경로 탈출(`..`) 막기 ⑤ ISSUE-039 에 교사 PC 확인할 것(실제 50분 녹음 변환 시간·크기) | 새 `audio_export.py`·`web/recording_export.js`, `assistant_server.py`(경로 몇 줄), 시험 | ①~⑤, 전체 시험 통과 | R · 열림 |
+| T100 | **진도 서버 쓰기 경로 오류를 JSON 으로**(teacherlesson-schedule ISSUE-005 — `/api/catch-up` 밖의 쓰기 경로 6개가 `ScheduleError` 를 500 HTML 로 냄 → 수업 비서가 "알 수 없는 오류"). ① `tests/test_server_write_routes_schedule_error.py` 의 xfail 을 하나씩 통과시키기(오류 바꾸는 곳을 함수 하나로) ② 수업 비서 쪽이 그 JSON 오류 문장을 화면에 그대로 보여 주는지 확인(안 보이면 `assistant_server.py` 의 전달 부분만) ③ ISSUE-005 🟢. 잠금(T77)은 하지 않음 | `skills/teacherlesson-schedule/server.py`, 그 시험, (필요하면) `assistant_server.py` 전달 몇 줄 | xfail 0, 전체 시험 통과 | R · 열림 |
+| T101 | **수업 흐름 점검 도구**(T40 의 도구 부분 — 🌙 준비가 만든 `flows/*.json` 이 이상한지 기계로 먼저 봄). ① 새 `flow_check.py` 순수 함수: 단계 분 합계 ≠ 40(±5)·빈 단계·음수/0분·같은 단계명 반복·옛 `do/say/tip` 과 새 단계별 안내(ISSUE-041) 섞임·차시 목표 없음 ② 지도서 구간 글(`notebooklm/<과목>/<단원>.md`)을 주면 흐름 낱말 중 구간에 없는 비율(다른 차시 내용 섞임 의심) ③ 명령줄: `python flow_check.py <flows 폴더> [--guide <md>]` → 표로 출력, 파일은 고치지 않음 ④ 가짜 흐름 10개 이상 시험 ⑤ SKILL.md 에 사용법 두 줄 | 새 `flow_check.py`, `tests/test_flow_check.py`, `SKILL.md` | ①~⑤ — 교사 PC 실제 실행은 T103 | R · 열림 |
+| T102 | **교실 PC 확인 묶음**(ISSUES 에 '교실 PC 확인 대기'로 쌓인 것 한 번에): ISSUE-042(☀ 오늘 준비·🌙 내일 준비·📞 검색·오른쪽 모니터), ISSUE-046(옛 사회 기록 분리 알림), ISSUE-048(녹음 목록·재생·내려받기), ISSUE-049(바로가기 실행 때 `py` 없음 오류), ISSUE-002(NotebookLM 새 창). 하나씩 실제로 눌러 보고 ISSUES 를 🟢 또는 '남은 것 — 무엇'으로. **진도·DB 는 바꾸지 않음**(보기만), 고칠 것이 나오면 K 에 새 일로 적어 PR 설명에 | ISSUES.md(상태만) | 다섯 개 모두 🟢 또는 남은 것 적힘 | P · 열림 |
+| T103 | **다음 주 수업 미리 준비 + 점검**(T43·T40 실행 부분): 다음 주 날마다 `prepare_lessons.py --date` → 실패 차시 목록 → T101 `flow_check.py` 로 만든 흐름 점검 → `데이터 폴더/reports/flow_check_<날짜>.md`(저장소 밖). 흐름은 고치지 않고, 반복되는 실패 원인을 ISSUES 에 | (코드 안 고침) ISSUES.md | 보고 파일 + 실패 원인 ISSUES 기록 | P · 보류(T101 합친 뒤 엶) |
 
 ## A. 자동 시험 쓰기 (R) — 소스는 고치지 말고 `tests/` 만. 네트워크·비밀값·실제 사이트 없이 가짜(mock)로. 버그는 그 스킬 ISSUES.md 에 기록하고 시험은 xfail
 
@@ -96,10 +113,10 @@ Codex·Antigravity 는 토큰이 넉넉하고 교사와 길게 이야기하며 �
 
 | 번호 | 할 일 | 상태 |
 |---|---|---|
-| T40 | 🌙 자동 준비로 만든 `flows/*.json` 을 같은 차시 지도서 글(`notebooklm/<과목>/<단원>.md` 구간)과 대조 → 다른 차시 내용·지도서에 없는 내용·시간 합계 이상 목록(`데이터 폴더/reports/flow_check_<날짜>.md`). 흐름은 고치지 않음 | 열림 |
+| T40 | 🌙 자동 준비로 만든 `flows/*.json` 을 같은 차시 지도서 글(`notebooklm/<과목>/<단원>.md` 구간)과 대조 → 다른 차시 내용·지도서에 없는 내용·시간 합계 이상 목록(`데이터 폴더/reports/flow_check_<날짜>.md`). 흐름은 고치지 않음 | 보류 — K T101·T103 로 옮김(2026-11-27) |
 | T41 | 한 주 수업 메모(sessions)에서 출판사별로 반복되는 특징 후보 뽑기 → 교사가 골라 `publisher_notes.json` 에 | 열림 |
 | T42 | `teacherlesson-guide/auto_split.py` 를 2학기 남은 단원마다 실행, 검사 실패 단원 목록 + 이유 | 열림 |
-| T43 | 다음 주 수업을 `prepare_lessons.py --date` 로 하루씩 준비하고 실패 차시 목록(음악은 지도서 PDF 없음 알려진 문제) | 열림 |
+| T43 | 다음 주 수업을 `prepare_lessons.py --date` 로 하루씩 준비하고 실패 차시 목록(음악은 지도서 PDF 없음 알려진 문제) | 보류 — K T103 로 옮김(2026-11-27) |
 | T44 | 미술 5·6교시 진도 확인: 슈파베이스 진도는 둘 다 '괴불주머니 만들기', 사이트는 5~6차시 '자개 무늬로 생활용품 꾸미기' → 대조표만 만들고 교사 확인 | 열림 |
 
 ## E. 문서 — 원래 T(글만) 등급이던 것. 이제 R 작업자가 저장소에 파일로 올린다(결과 파일 위치는 상태 칸)

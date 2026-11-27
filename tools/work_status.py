@@ -13,13 +13,17 @@
 from __future__ import annotations
 
 import argparse
+import os
 import re
 import subprocess
 import sys
 from datetime import datetime, timezone
+from pathlib import Path
 
 ROOT = subprocess.run(["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True).stdout.strip() or "."
 STALE_DAYS = 3
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import claim_task  # noqa: E402  이어받기 기준(멈춘 시간·일지 마지막 줄)을 claim_task.py 와 똑같이 쓰려고
 TASK_RE = re.compile(r"\b(T\d{2,3}|S\d{1,2})\b", re.I)
 
 
@@ -75,9 +79,19 @@ def branches() -> list[dict]:
             age = 0
         files = len(git("diff", "--name-only", f"{main}...{ref}").splitlines())
         log = last_worklog(ref)
+        takeover = None
+        if name.startswith("task/"):
+            prev = os.getcwd()
+            try:
+                os.chdir(ROOT)
+                takeover = claim_task.takeover_reason(claim_task.branch_state(ref))
+            except claim_task.GitError:
+                takeover = None
+            finally:
+                os.chdir(prev)
         out.append({"branch": name, "tasks": tasks, "who": who, "when": when[:16].replace("T", " "),
                     "age": age, "ahead": ahead, "behind": behind, "clean": clean, "files": files,
-                    "subject": subject[:60], "log": log})
+                    "subject": subject[:60], "log": log, "takeover": takeover})
     return sorted(out, key=lambda b: b["when"], reverse=True)
 
 
@@ -109,10 +123,12 @@ def report(as_md: bool) -> str:
     open_free = [k for k, v in tasks.items() if re.match(r"(?:[RPT]\s*·\s*)?열림", v["status"]) and k not in taken]
     ready = [b for b in rows if b["clean"] and b["age"] <= STALE_DAYS]
     stale = [b for b in rows if b["age"] > STALE_DAYS]
+    free_to_take = [b for b in rows if b["takeover"]]
     L = []
     L.append(f"# 작업 현황 ({datetime.now():%Y-%m-%d %H:%M})")
     L.append("")
     L.append(f"- 진행 중 브랜치 {len(rows)}개 · 합칠 준비(충돌 없음) {len(ready)}개 · 멈춤({STALE_DAYS}일 넘게) {len(stale)}개")
+    L.append(f"- 이어받기 가능({claim_task.STALE_HOURS:g}시간 넘게 멈춤·그만둠): {len(free_to_take)}개 — 다음 작업자의 `claim_task.py --next` 가 먼저 잡음")
     L.append(f"- TASKS '열림' 중 아무도 안 잡은 일: {len(open_free)}개" + ("  ← 10개 아래면 목록 채우기" if len(open_free) < 10 else ""))
     L.append("")
     L.append("| 브랜치 | 일 | 작업자 | 마지막 커밋 | 앞섬/뒤처짐 | 파일 | 충돌 | 마지막 일지 |")
@@ -120,6 +136,8 @@ def report(as_md: bool) -> str:
     for b in rows:
         mark = "" if b["clean"] else "⚠ 있음"
         when = b["when"] + (f" (멈춤 {b['age']}일)" if b["age"] > STALE_DAYS else "")
+        if b["takeover"]:
+            when += " · 이어받기 가능"
         tdesc = ", ".join(f"{t} {tasks.get(t, {}).get('desc', '')}".strip() for t in b["tasks"]) or "(번호 없음)"
         L.append(f"| `{b['branch']}` | {tdesc} | {b['who']} | {when} | {b['ahead']}/{b['behind']} | {b['files']} | {mark or '없음'} | {b['log'] or b['subject']} |")
     if open_free:

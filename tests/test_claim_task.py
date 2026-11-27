@@ -12,6 +12,23 @@ TOOL = Path(__file__).resolve().parents[1] / "tools" / "claim_task.py"
 
 TASKS = """# 할 일
 
+> 고르는 순서(claim_task.py --next): K I
+
+## K. 큰 일
+
+| 번호 | 할 일 | 상태 |
+|---|---|---|
+| T98 | 큰 일 | R · 열림 |
+| T99 | 교사 PC 일 | P · 열림 |
+
+## B. 순서 밖
+
+| 번호 | 할 일 | 상태 |
+|---|---|---|
+| T80 | 순서 밖 | 열림 |
+
+## I. 다음 일
+
 | 번호 | 할 일 | 상태 |
 |---|---|---|
 | T77 | 잠금 | 열림 |
@@ -145,3 +162,86 @@ def test_dirty_worktree_is_refused(repos):
     (repos["a"] / "scratch.txt").write_text("x", encoding="utf-8")
     r = claim(repos["a"], "T77", "write-lock", "--name", "w")
     assert r.returncode == 2 and "커밋 안 한" in r.stdout
+
+
+# --- 이어받기·--next (2026-11-27: 토큰이 끊겨 말없이 멈춘 일을 다른 작업자가 이어받게) ---
+
+OLD = "2026-01-01T09:00:00+09:00"
+
+
+def make_branch(repo: Path, branch: str, who: str, line: str, date: str | None = None) -> None:
+    """남의 작업 브랜치를 손으로 만든다 — date 를 주면 그때 커밋한 것처럼(멈춘 브랜치)."""
+    g(repo, "fetch", "-q", "origin")
+    g(repo, "switch", "-q", "-c", branch, "origin/main")
+    log = repo / "docs" / "worklog" / f"{who}.md"
+    log.write_text(f"# {who} 일지\n\n- 2026-01-01 09:00 {line}\n", encoding="utf-8")
+    g(repo, "add", ".")
+    env = {**ENV, **({"GIT_COMMITTER_DATE": date, "GIT_AUTHOR_DATE": date} if date else {})}
+    r = subprocess.run(["git", "commit", "-q", "-m", f"docs: {who}"], cwd=repo, env=env, capture_output=True, text=True)
+    assert r.returncode == 0, r.stderr
+    g(repo, "push", "-q", "-u", "origin", branch)
+    g(repo, "switch", "-q", "--detach", "origin/main")
+
+
+def test_stale_branch_is_taken_over_on_same_branch(repos):
+    make_branch(repos["a"], "task/T77-write-lock", "claude-web-1", "T77 진행 — 잠금 함수까지, 다음: 시험", OLD)
+    r = claim(repos["b"], "T77", "other-name", "--name", "claude-web-2")
+    assert r.returncode == 0, r.stdout
+    assert "이어받았어요" in r.stdout and "잠금 함수까지" in r.stdout
+    assert "task/T77-other-name" not in g(repos["b"], "ls-remote", "--heads", "origin")  # 새 브랜치 안 만듦
+    log = g(repos["b"], "show", "origin/task/T77-write-lock:docs/worklog/claude-web-2.md")
+    assert "T77 이어받음 (브랜치 task/T77-write-lock" in log and "claude-web-1" in log
+    # 이어받은 뒤에는 그 작업자가 주인 — 다시 돌리면 '이어서'
+    assert "이어서" in claim(repos["b"], "T77", "x", "--name", "claude-web-2").stdout
+
+
+def test_fresh_branch_is_not_taken_over(repos):
+    make_branch(repos["a"], "task/T77-write-lock", "claude-web-1", "T77 시작 (브랜치 task/T77-write-lock)")
+    r = claim(repos["b"], "T77", "--check")
+    assert r.returncode == 1 and "이어받을 수 있음" in r.stdout
+
+
+def test_quit_line_is_taken_over_right_away(repos):
+    make_branch(repos["a"], "task/T77-write-lock", "claude-web-1", "T77 그만둠 — 사용량 끝, 다음: 시험 2개")
+    r = claim(repos["b"], "T77", "--check")
+    assert r.returncode == 0 and "이어받을 수 있어요" in r.stdout
+
+
+@pytest.mark.parametrize("line", ["T77 PR 올림 — 다 했음", "T77 막힘 — 교사 PC 필요"])
+def test_done_or_stuck_is_not_taken_over_even_when_old(repos, line):
+    make_branch(repos["a"], "task/T77-write-lock", "claude-web-1", line, OLD)
+    assert claim(repos["b"], "T77", "--check").returncode == 1
+
+
+def test_second_taker_sees_first_takeover(repos, tmp_path):
+    make_branch(repos["a"], "task/T77-write-lock", "claude-web-1", "T77 시작", OLD)
+    assert claim(repos["b"], "T77", "x", "--name", "w2").returncode == 0
+    c = tmp_path / "c"
+    g(tmp_path, "clone", "-q", str(repos["origin"]), str(c))
+    r = claim(c, "T77", "x", "--name", "w3")
+    assert r.returncode == 1 and "이미 누가" in r.stdout
+
+
+def test_next_picks_takeover_before_new_work(repos):
+    make_branch(repos["a"], "task/T77-write-lock", "claude-web-1", "T77 진행 — 반쯤", OLD)
+    r = claim(repos["b"], "--next", "--check")
+    assert r.returncode == 0 and "T77" in r.stdout and "이어받기" in r.stdout
+    assert "task/T98" not in g(repos["b"], "ls-remote", "--heads", "origin")  # --check 는 아무것도 안 바꿈
+    r = claim(repos["b"], "--next", "--name", "w2")
+    assert r.returncode == 0 and "이어받았어요" in r.stdout
+
+
+def test_next_follows_section_order_and_grade(repos):
+    r = claim(repos["b"], "--next", "--name", "w2")
+    assert r.returncode == 0 and "T98" in r.stdout  # K 가 I 보다 먼저
+    assert "refs/heads/task/T98-work" in g(repos["b"], "ls-remote", "--heads", "origin")
+    # 사람이 바뀌면(T98 은 방금 잡혀 바쁨) R 은 P 일(T99)을 건너뛰고 I 의 T77, P 는 T99
+    assert "T77" in claim(repos["a"], "--next", "--check").stdout
+    assert "T99" in claim(repos["a"], "--next", "--check", "--grade", "P").stdout
+
+
+def test_next_never_picks_sections_outside_order_or_standing(repos):
+    for n in ("T98", "T77", "T31"):
+        make_branch(repos["a"], f"task/{n}-busy", "w1", f"{n} 시작")
+    r = claim(repos["b"], "--next", "--name", "w2")
+    assert r.returncode == 1 and "상시 일" in r.stdout and "T80" not in r.stdout

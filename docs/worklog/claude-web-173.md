@@ -35,3 +35,4 @@
 - 2026-11-27 12:40 S4 PR 올림 (util-notebooklm) — SKILL.md 를 nlm.py 와 대조해 빠진/틀린 설명만 고침: prep --title·그림 옵션 뜻·파일 이름, nb add --note, --out 이 find·pages 는 파일/prep·split 은 폴더, pages --from 이 읽는 표시, split --pattern 동작. 코드는 안 고침. gemini 실행은 안 함(키·네트워크 없음)
 - 2026-11-27 13:00 S3 PR 올림 (teacherlesson-schedule ISSUE-005 재현) — tests/test_server_write_routes_schedule_error.py: 쓰기 경로 6개(done·push·extend·pull·move·swap)가 ScheduleError 를 JSON 오류로 안 바꾸는 것을 expectedFailure 6개로 고정 + ValueError 400·catch-up 500 회귀 시험 2개. 고치면 '예상 밖 성공'으로 알려줌(push 에 except 를 임시로 넣어 확인 후 되돌림). 소스는 안 고침(T77 과 함께)
 - 2026-11-27 17:38 S7 (teacherlesson-schedule) 시작 (브랜치 task/S7-s7-write-lock)
+- 2026-11-27 18:05 S7 PR 올림 (teacherlesson-schedule) — docs/plans/teacherlesson-schedule-write-lock.md: ISSUE-004 한계·ISSUE-005(T77)를 '데코레이터 하나(잠금+ScheduleError→JSON)'로 풀어 7개 경로에 적용하는 설계 메모(표·코드 뼈대·시험·변이·주의점). 코드는 안 고침. extend·pull·move·swap 내부는 줄 단위로 안 읽음(확인 필요)

@@ -17,3 +17,4 @@
 - 2026-11-27 06:35 T94 시작 (브랜치 task/T94-ci-sites-tests)
 - 2026-11-27 06:36 T94 PR 올림 — check.yml 의 teacherlesson-assistant 시험 대상에 sites 추가. 확인: 이 환경에서 pytest sites 30 통과·2 건너뜀(selenium 없음), 전체 묶음은 fitz 가 없어 여기서 못 돌림 → PR 자동 검사 결과로 확인 (브랜치 task/T94-ci-sites-tests)
 - 2026-11-27 06:37 T94 확인 — PR #102 자동 점검 teacherlesson-assistant 초록불, main 326 통과 → 358 통과·1 건너뜀
+- 2026-11-27 17:38 S3 (sites) 시작 (브랜치 task/S3-sites-longer-lesson-name)

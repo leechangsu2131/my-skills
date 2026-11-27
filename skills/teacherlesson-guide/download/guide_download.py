@@ -343,9 +343,10 @@ def download(item: dict, dest: pathlib.Path) -> str:
             while chunk := res.read(1 << 20):
                 fh.write(chunk)
     with open(tmp, "rb") as fh:
-        if fh.read(5) != b"%PDF-":
-            tmp.unlink()
-            raise RuntimeError("PDF가 아닌 응답이 왔어요.")
+        head = fh.read(5)
+    if head != b"%PDF-":
+        tmp.unlink()  # 닫은 뒤에 지움 — 연 채로 지우면 윈도우에서 PermissionError(2026-11-27 시험이 찾음)
+        raise RuntimeError("PDF가 아닌 응답이 왔어요.")
     tmp.replace(dest)
     return f"받음 {dest.stat().st_size / 1048576:.1f}MB"
 

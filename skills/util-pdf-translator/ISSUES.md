@@ -17,10 +17,10 @@ _없음_
 - **관련 파일**: `scripts/03_send_discord.py`, `scripts/run_daily.py`
 
 ### ISSUE-006: 책 본문 일부가 저장소에 올라가 있다 — 교사 결정 필요 (2026-11-25)
-- **상태**: 📌 백로그 (**교사 결정 필요**, 저작물)
+- **상태**: 📌 백로그 (본문 파일은 2026-11-27 교사 결정으로 지움, 나머지는 남음)
 - **증상**: `scripts/output/chapter_01.txt`(약 4KB)에 출판된 책의 본문(머리말)이 들어 있고, 공개 저장소에 추적되고 있다. `scripts/toc.json`(챕터 149개 목차)도 특정 책의 목차로 보인다.
 - **원인**: `.gitignore` 가 `skills/output/` 만 막고 `scripts/output/` 은 막지 않는다. 작업자 안내(WORKER_GUIDE)는 지도서·교과서 같은 저작물을 저장소에 올리지 않게 한다.
-- **해결/조치**: (미적용 — 교사 결정 전에는 지우지 않음) 추적에서 빼기(`git rm --cached`), `.gitignore` 에 `scripts/output/` 추가, 결과물은 `data_dir()` 로 옮기기. 이미 올라간 기록(히스토리)까지 지울지도 결정 필요. T24(결과물이 추적되면 경고)와 함께 보면 좋다.
+- **해결/조치**: `chapter_01.txt` 삭제, `.gitignore` 에 `scripts/output/` 추가(2026-11-27). 남은 것: `toc.json`, 결과물은 `data_dir()` 로 옮기기. 이미 올라간 기록(히스토리)까지 지울지도 결정 필요. T24(결과물이 추적되면 경고)와 함께 보면 좋다.
 - **관련 파일**: `scripts/output/chapter_01.txt`, `scripts/toc.json`, `/.gitignore`
 
 ### ISSUE-005: Gems 로 보내는 글이 챕터 앞 8000자뿐이다 (2026-11-25)

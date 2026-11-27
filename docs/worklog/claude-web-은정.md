@@ -9,6 +9,9 @@
 - 2026-11-26 21:00 S2 (T82) 시작 (브랜치 task/S2-review-t82-sites-title-match)
 - 2026-11-26 21:01 S2 (T82) PR 올림 — docs/reviews/task-T82-sites-title-match.md. 🔴 PR #87 그대로 합치면 앞의 비슷한 차시가 정확한 차시보다 먼저 골라짐(가짜 목록 사례 A·B·C 를 합치기 전/후 코드로 비교해 재현). 확인: sites 49 통과·3 건너뜀, 도우미 시험 12개(가짜 selenium) 통과, 개인정보 검사 0. 대상 브랜치는 고치지 않음 (브랜치 task/S2-review-t82-sites-title-match)
 - 2026-11-27 06:34 S2 PR #87 고친 커밋(6b75290) 다시 검토 — 첫 재현 3건 해결, 남은 것 2개를 docs/reviews/…-recheck.md 에. 확인: PR 시험 44 통과(가짜 selenium)·pytest sites 63 통과 3 건너뜀·추가 사례 재현. 파일 이름은 main 의 같은 이름과 겹치지 않게 바꿈
+- 2026-11-27 06:35 T94 시작 (브랜치 task/T94-ci-sites-tests)
+- 2026-11-27 06:36 T94 PR 올림 — check.yml 의 teacherlesson-assistant 시험 대상에 sites 추가. 확인: 이 환경에서 pytest sites 30 통과·2 건너뜀(selenium 없음), 전체 묶음은 fitz 가 없어 여기서 못 돌림 → PR 자동 검사 결과로 확인 (브랜치 task/T94-ci-sites-tests)
+- 2026-11-27 06:37 T94 확인 — PR #102 자동 점검 teacherlesson-assistant 초록불, main 326 통과 → 358 통과·1 건너뜀
 - 2026-11-27 06:38 S2 (t91) 시작 (브랜치 task/S2-review-t91-enter-default)
 - 2026-11-27 06:39 S2 (T91) PR 올림 — docs/reviews/task-T91-enter-default.md, 🟢 합치기 권함(🟡 2개). 확인: mapper 시험 main 26 통과 2 실패 → PR 34 통과 2 실패(가짜 모듈), 가짜 시트로 올리기 한 번, 개인정보 검사 (브랜치 task/S2-review-t91-enter-default)
 - 2026-11-27 06:44 S2 (T82) 교사 결정 기록 — 못 찾을 때는 띄어쓰기·기호만 다른 것만 자동, 나머지 확인(나). 검토 파일에 반영, PR #87 에 댓글. 참고(T92 용): 교사 계정의 진도표 파일 휴업일 탭 첫 열 제목은 '날짜'(첫 몇 줄 읽기만), 날짜 모양 '2026. 3. 2' 는 fetch_holidays 가 main 에서 읽음(가짜 시트). 코드가 쓰는 파일과 같은지는 추정
@@ -17,3 +20,13 @@
 - 2026-11-27 06:35 T94 시작 (브랜치 task/T94-ci-sites-tests)
 - 2026-11-27 06:36 T94 PR 올림 — check.yml 의 teacherlesson-assistant 시험 대상에 sites 추가. 확인: 이 환경에서 pytest sites 30 통과·2 건너뜀(selenium 없음), 전체 묶음은 fitz 가 없어 여기서 못 돌림 → PR 자동 검사 결과로 확인 (브랜치 task/T94-ci-sites-tests)
 - 2026-11-27 06:37 T94 확인 — PR #102 자동 점검 teacherlesson-assistant 초록불, main 326 통과 → 358 통과·1 건너뜀
+- 2026-11-27 17:38 S3 (sites) 시작 (브랜치 task/S3-sites-longer-lesson-name)
+- 2026-11-27 17:39 S3 (sites) PR 올림 — 차시 고르기: 띄어쓰기만 다른 차시가 있어도 더 긴 이름의 다른 차시가 열리는 문제 재현 시험 8개(그중 expectedFailure 4개)와 ISSUE-005 기록, T82 때 깨진 줄(글자 '\n') 고침. 확인: 가짜 selenium 으로 8개 실행(통과 4·예상 실패 4, 이유 모두 AssertionError 0 != 1), pytest sites 94 통과·4 건너뜀, 개인정보 검사·카탈로그 점검 통과
+- 2026-11-27 17:41 S3 (sites) 고침 — 자동 검사에는 selenium 이 없어 새 시험 파일이 통째로 건너뛰어졌음 → 음악 시험만 건너뛰게 바꿔 사회 4개는 실제로 돌게 함. 확인: selenium 없이 pytest sites 96 통과·7 건너뜀·2 xfail
+- 2026-11-27 17:43 S5 (ci-sites-selenium) 시작 (브랜치 task/S5-ci-sites-selenium)
+- 2026-11-27 17:44 S5 (ci) PR 올림 — check.yml 의 teacherlesson-assistant 설치에 selenium 추가(음악 도우미 시험이 건너뛰지 않게). 확인: yaml 읽기·개인정보 검사·카탈로그 점검 통과, 시험 결과는 PR 자동 검사에서 확인
+- 2026-11-27 17:45 S5 (ci) 확인 — PR #145 자동 검사 모두 초록불, teacherlesson-assistant 524 통과·0 건너뜀·1 xfail (#143 전 504 통과·3 건너뜀·1 xfail)
+- 2026-11-27 17:48 S2 (pr142) 시작 (브랜치 task/S2-review-pr142-144-146)
+- 2026-11-27 17:50 S2 (pr142·144·146) PR 올림 — 검토 3개: #144 🔴(requests 없는 자동 검사에서 시험 6개 실패, 가짜 모듈 고침 후보 47 통과 확인), #146 🟢, #142 🟢(낡은 문장 1개). 확인: 합친 상태에서 시험·소스 깨뜨리기(#144 12/12, #146 7/7)·자동 검사 기록·개인정보 검사
+- 2026-11-27 18:10 교사 지시(차시 자료 도우미) 시작 (브랜치 fix/lesson-pick-ask-longer, #143 위에 쌓음) — 결정: 더 긴 이름만 있으면 물어보고 열기
+- 2026-11-27 18:11 교사 지시(차시 자료 도우미) PR 올림 — 교사 결정 반영: 이름이 더 긴 차시·단원은 띄어쓰기만 다른 것이 있으면 그것을 열고, 없으면 물어보고 열기(번호·쪽 표시만 덧붙은 것은 바로 열기). sites/title_match.py adds_only_marks 추가, 음악·사회 unit_matches·lesson_matches 가 사용. 예전 시험 1개의 기대를 결정에 맞게 바꿈(앞에 글자가 더 붙은 이름은 확인). 확인: 가짜 selenium 으로 sites 137 통과·1 건너뜀, selenium 없이 105 통과·15 건너뜀, 새 검사 5곳을 하나씩 빼면 시험 실패, 전·후 비교에서 바뀐 것은 '더 긴 이름' 짝 5개뿐

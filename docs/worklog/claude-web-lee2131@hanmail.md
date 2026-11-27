@@ -29,3 +29,13 @@
 - 2026-11-27 11:20 T82 2차 검토 반영(교사 결정 '나') — 띄어쓰기·기호만 다른 이름은 자동으로 열고, 포함·비슷함·번호/괄호 숫자·차시 표시가 다른 것은 'y/N' 로 교사에게 물어 '예'일 때만 열기(같은 질문 1번, 기본 아니오, confirm 없으면 못 찾음). 이름이 글자 그대로 같은 항목을 먼저 보게 함(문화유산 vs 문화). 확인: 2차 검토 재현(E·H·2번·정확한 이름) 모두 정답, 시험 수업비서 424 통과·2 건너뜀, selenium 포함 sites 116 통과, build_catalog·check_privacy 통과. 남은 일: 실제 사이트 확인(교사 PC)
 - 2026-11-27 12:17 S2 (review-T92) 시작 (브랜치 task/S2-review-t92)
 - 2026-11-27 12:18 S2 (review-T92) PR 올림 — PR #113(T92 깨진 한글 되살림) 검토 글 docs/reviews/task-T92-fix-mojibake.md. 확인: 설치한 환경에서 tests 108 통과, 코드를 일부러 되돌린 4가지를 시험이 모두 잡음, 개인정보 모양 없음. 결론 합쳐도 됨, 🟡 auto_planner.py 506줄 '??⑥썝' 한 곳 남음
+- 2026-11-27 17:32 S3 (teacherlesson-assistant) 시작 (브랜치 task/S3-weekly-mask-repro)
+- 2026-11-27 17:33 S3 (teacherlesson-assistant) PR 올림 — ISSUE-038(주간 정리 글 이름 가리기 한계) 재현 시험 tests/test_weekly_report_issue038.py: xfail 4개(①명단에 없는 이름 안 가려짐 ②이름 아닌 첫 낱말이 가려짐 ③학생A·학생A가 따로 묶임 ④띄어 쓴 이름 첫 토막만) + 지금 되는 동작 1개. 확인: --runxfail 로 네 개 모두 의도한 assert 에서 실패, 기존 weekly 시험 5개 통과, 코드는 안 고침. ①은 반 명단 위치 확인 필요
+- 2026-11-27 17:39 S4 (teacherlesson-schedule) 시작 (브랜치 task/S4-schedule-docs)
+- 2026-11-27 17:39 S4 (teacherlesson-schedule) PR 올림 — SKILL.md·README.md 를 코드와 맞춤: ① 시험 파일 2개(test_korean_restore·test_server_write_routes_schedule_error) 누락 → 범위 목록·확인 명령에 추가 ② 'test_auto_planner 알려진 실패(ISSUE-003)' 는 T92 로 해결돼 문구 바꿈 ③ schedule.py 명령 tomorrow·thisweek 추가 ④ README 의 C:/Users/... 절대 경로 링크 → 상대 경로. 확인: 고친 확인 명령 그대로 144개 통과(expected failures 6), 설명 속 파일·명령·포트(5173)·bat 이름 대조, 코드는 안 고침
+- 2026-11-27 17:46 S7 (teacherlesson-assistant) 시작 (브랜치 task/S7-nugagirok-design)
+- 2026-11-27 17:47 S7 (teacherlesson-assistant) PR 올림 — ISSUE-008 8번(학생 발표·관찰 메모 → 누가기록) 설계 메모 docs/plans/nugagirok-from-lesson-memos.md: 새 nugagirok.py(weekly_report 의 load_sessions·student_name 재사용)·출력 모양(임시)·시험 8가지·N1~N3 나누기·교사 결정 3가지. 확인: 인용한 파일·함수·NEIS 열 이름을 코드와 대조, 누가기록 파일 모양은 '확인 필요'로 표시. 코드는 안 만듦
+- 2026-11-27 18:04 S2 (review-PR139) 시작 (브랜치 task/S2-review-pr139)
+- 2026-11-27 18:05 S2 (review-PR139) PR 올림 — PR #139(S7 쓰기 경로 잠금 설계 메모) 검토 글 docs/reviews/task-PR139-write-lock-design.md. 확인: 라우트 7개·줄 번호·ScheduleError 계층·_rewrite_bridge_sheet 경로·시험 파일을 현재 main 코드와 대조 — 합쳐도 됨. 🟡 import functools 빠짐, ValueError 잡는 범위가 넓어짐 한 줄 필요, 변이 ③ 표현
+- 2026-11-27 18:07 S2 (review-PR152) 시작 (브랜치 task/S2-review-pr152)
+- 2026-11-27 18:08 S2 (review-PR152) PR 올림 — PR #152(S1 flow_candidates·safe_name·monitor_rects·prepare_status 시험) 검토 글 docs/reviews/task-PR152-flow-status-tests.md. 확인: 17 통과·1 expectedFailure, 코드를 일부러 망가뜨린 6가지를 시험이 모두 잡음, ISSUES 새 항목은 코드와 맞음 — 합쳐도 됨. 🟡 새 시험 파일이 폴더 맨 위라 CI target 에 안 들어감(tests/ 로 옮기거나 check.yml 에 이름 추가)

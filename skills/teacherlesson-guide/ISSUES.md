@@ -20,6 +20,12 @@
 
 ## 📌 백로그
 
+### ISSUE-34: `download/guide_download.py` 의 이름 만들기·ZIP 꺼내기에 시험이 없었음 (2026-11-27, S1 로 시험 추가)
+- **상태**: 📌 백로그 (시험은 추가됨, 고칠 것은 없음)
+- **내용**: 크롬·사이트 없이 도는 부분(`safe`·`nice_name`·`_zip_name`·미래엔 주소 기억·ZIP 안 PDF 꺼내기 `download`)을 `tests/test_guide_download.py` 25개로 고정. 소스를 일부러 틀리게 한 변이 6가지를 모두 시험이 잡음. 사이트·크롬을 쓰는 함수(`*_guides`, `connect` 등)는 시험하지 않음
+- **참고**: 시험은 selenium 이 없으면 가짜 모듈로 불러옴. 맨 위 `tests/` 는 CI 가 안 돌림(어제 건강 점검 참고)
+- **관련 파일**: `download/guide_download.py`, `tests/test_guide_download.py`
+
 
 ### ISSUE-003: 지도서 처리 남은 일 (수업 비서에서 옮김, 2026-11-22)
 - guide-mapper 대체 매칭: 3-1 국어를 다시 만들면 독서·매체 행이 3-2 PDF를 가리킴(이 PC에 3-1 PDF 없음). 학년·학기가 다르면 대체 매칭에서 빼기

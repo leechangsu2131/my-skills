@@ -14,3 +14,4 @@
 - 2026-11-27 18:34 lee21 PC·Claude Code 합치는 중 (소연 웹 세션 18:17 합치는 중에서 멈춤 — 교사 요청으로 이어받음)
 - 2026-11-27 19:01 lee21 PC·Claude Code 합치기 끝 (소연 세션 이어받음) — 29개 합침(문서·시험 22: S1×9·S2×8·S3×2·S4·S7×2 / 코드 6: fix 음수 분 parse_plan·parse_flow, prepare_status 객체 아님, 이름 더 긴 차시는 묻고 열기(ISSUE-005), CI selenium(S5), 교사 지시 남은 파일 삭제(지운 5개는 내 문서\my-skills-data\_backup\2026-11-27-remove-remaining-files) / 직접 1: guide_download .part 윈도우 PermissionError). 새 도구: claim_task --next·이어받기(검토 🔴3 반영), TASKS K(T98~T104 수업 비서 큰 일). P2 는 일지만이라 건너뜀
 - 2026-11-27 19:46 lee21 PC·Claude Code 합치는 중
+- 2026-11-27 19:48 lee21 PC·Claude Code 합치기 끝 — 5개 합침(문서·시험 3: S1 check_setup·splitter 2 / 코드 2: T100 진도 서버 쓰기 오류 JSON, T99 클로바노트용 MP3 내보내기). TASKS T99·T100 완료. 건너뜀: T98(일하는 중)·S2-review-pr145-149·P2(일지만)

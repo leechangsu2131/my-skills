@@ -136,7 +136,7 @@ def _serialize_lesson_item(item):
         item.get("slot_date") or item.get(schedule.COLUMN_DATE)
     )
     planned_period = schedule._clean_text(
-        item.get("slot_period") or item.get("planned_period") or item.get("怨꾪쉷援먯떆")
+        item.get("slot_period") or item.get("planned_period") or item.get("계획교시")
     )
     status = _item_status(item)
     row_number = item.get("_row")

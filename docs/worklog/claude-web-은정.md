@@ -19,3 +19,4 @@
 - 2026-11-27 06:37 T94 확인 — PR #102 자동 점검 teacherlesson-assistant 초록불, main 326 통과 → 358 통과·1 건너뜀
 - 2026-11-27 17:43 S5 (ci-sites-selenium) 시작 (브랜치 task/S5-ci-sites-selenium)
 - 2026-11-27 17:44 S5 (ci) PR 올림 — check.yml 의 teacherlesson-assistant 설치에 selenium 추가(음악 도우미 시험이 건너뛰지 않게). 확인: yaml 읽기·개인정보 검사·카탈로그 점검 통과, 시험 결과는 PR 자동 검사에서 확인
+- 2026-11-27 17:45 S5 (ci) 확인 — PR #145 자동 검사 모두 초록불, teacherlesson-assistant 524 통과·0 건너뜀·1 xfail (#143 전 504 통과·3 건너뜀·1 xfail)

@@ -249,14 +249,14 @@
 - **남은 일**: ① 학교 PC 에서 `실행_수업비서.bat` 을 켜 서버·단원 개관·수업 준비 창이 모두 뜨는지 확인(여기서는 윈도우 bat 를 돌려 보지 못함 — 확인 필요) ② `check_setup.py` 의 안내 문구(`RECOMMENDED_PYTHON` 주석, 'Python 실행기' 항목의 "서버는 python 으로 켜고 단원 개관만 py -3.13" 설명, 시험 `test_python_warn_fix_matches_what_the_bat_really_does`)가 옛 동작을 설명함 — 같은 파일을 T75 가 고치는 중이라 이번엔 건드리지 않았고, T75 합친 뒤 따로 맞춘다
 - **관련 파일**: `실행_수업비서.bat`, `점검_PC.bat`, `check_setup.py`
 
-### ISSUE-새: 준비 상태 파일이 JSON 객체가 아니면 `prepare_status` 가 오류 (2026-11-27, S1 시험 중 발견)
-- **상태**: 📌 백로그
-- **증상**: `prepare_status.json` 안이 `[]` 처럼 올바른 JSON 이지만 객체가 아니면 `assistant_server.prepare_status()` 가 `AttributeError: 'list' object has no attribute 'get'` 로 멈춤(깨진 JSON 은 `read_json` 이 `{}` 로 처리해 괜찮음).
-- **원인**: `read_json` 의 결과가 dict 인지 확인하지 않고 `prepare_lessons.is_running(status)` 에 넘김. 실제로 그런 파일이 생길 경우는 거의 없음(추정: 사람이 손으로 고쳤을 때).
-- **해결/조치**: 미정(추정: dict 가 아니면 `{}` 로 보면 됨).
-- **관련 파일**: `assistant_server.py`(`prepare_status`), 재현 시험 `test_assistant_flow_status.py`(expectedFailure)
-
 ## 🟢 해결됨
+
+### ISSUE-새: 준비 상태 파일이 JSON 객체가 아니면 `prepare_status` 가 오류 (2026-11-27)
+- **상태**: 🟢 해결됨 (2026-11-27)
+- **증상**: `prepare_status.json` 안이 `[]` 처럼 올바른 JSON 이지만 객체가 아니면 `prepare_status()` 가 `AttributeError` 로 멈춤.
+- **원인**: `read_json` 결과가 dict 인지 확인하지 않고 `is_running(status)` 에 넘김.
+- **해결**: `prepare_status` 가 dict 가 아니면 `{}`(없는 것)으로 봄. 시험 `test_assistant_flow_status.py::test_status_file_that_is_not_an_object_is_treated_as_missing`.
+- **관련 파일**: `assistant_server.py`(`prepare_status`)
 
 ### ISSUE-새: 다른 교시의 단계 타이머가 복원됨 (2026-11-27)
 - **증상**: 2교시 화면에서 1교시 단계 타이머가 이어서 도는 것처럼 보일 수 있다.

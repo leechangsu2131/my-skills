@@ -39,3 +39,4 @@
 - 2026-11-27 07:24 S4 (teacherlesson-schedule) 시작 (브랜치 task/S4-check-schedule-docs)
 - 2026-11-27 07:25 S4 (teacherlesson-schedule) PR 올림 — SKILL.md·README 를 코드·시험과 대조: PyMuPDF 이미 추가(T93)인데 '빠져 있음' 고침, 확인 명령에 빠진 시험 파일 추가. 시험 72개 중 3 오류(fitz 없음 2·ISSUE-003 1). 실제 Google Sheets 는 확인 필요
 - 2026-11-27 12:05 S3 (teacherlesson-schedule) 시작 (브랜치 task/S3-schedule-write-errors)
+- 2026-11-27 12:06 S3 (teacherlesson-schedule) PR 올림 — ISSUE-005 재현 시험 tests/test_server_write_errors.py(쓰기 경로 6개, 연결·읽기 실패 2종은 expectedFailure, ValueError→400 은 지금도 통과). server.py 는 안 고침. 확인: 임시로 6곳을 고치면 '예상 밖 성공'으로 바뀜(되돌림). 이 환경은 fitz·flask_cors 가 없어 가짜로 돌림 — 교사 PC 에서 진짜로 한 번 확인 필요

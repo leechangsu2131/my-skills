@@ -32,7 +32,7 @@ _없음_
 
 ### ISSUE-005: `/api/catch-up` 밖의 쓰기 경로 6개도 ScheduleError 를 JSON 오류로 안 바꿈 (2026-11-26)
 - **상태**: 📌 백로그 (T77 과 같은 함수들이라 T77 을 하는 교사 PC 작업자가 함께 고치는 것을 권함)
-- **증상**: `/api/done`·`push`·`extend`·`pull`·`move`·`swap` 은 `except ValueError` 만 있어, 시트 읽기·머리글 문제(`ScheduleError`)가 나면 JSON 이 아닌 서버 오류 화면으로 올라옴(`/api/catch-up`·`/api/lessons` 는 ISSUE-001·002 로 고쳐짐). 시험은 아직 없음(추정: `catch_up` 과 같은 증상)
+- **증상**: `/api/done`·`push`·`extend`·`pull`·`move`·`swap` 은 `except ValueError` 만 있어, 시트 읽기·머리글 문제(`ScheduleError`)가 나면 JSON 이 아닌 서버 오류 화면으로 올라옴(`/api/catch-up`·`/api/lessons` 는 ISSUE-001·002 로 고쳐짐). 재현 시험 있음: `tests/test_server_write_errors.py`(S3, 2026-11-27 — 6개 경로가 JSON 오류 대신 오류 화면으로 올라옴을 `expectedFailure` 로 표시. 고치면 "unexpected success" 로 바뀌니 그때 `@unittest.expectedFailure` 를 지움. 임시로 6곳을 고쳐 보면 통과로 바뀌는 것까지 확인하고 server.py 는 되돌림)
 - **해결/조치**: 미적용. 같은 방식으로 `except schedule.ScheduleError as exc: return _action_error(str(exc), 500)` 를 `ValueError` 앞에 더하면 됨. 이 함수들은 T77(수업배치 쓰기 잠금)도 고치므로 겹치지 않게 함께
 - **관련 파일**: `server.py`(`done`·`push`·`extend`·`pull`·`move`·`swap`)
 

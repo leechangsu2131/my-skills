@@ -6,6 +6,10 @@
     python tools/claim_task.py T77 --check                                   # 확인만(아무것도 바꾸지 않음)
     python tools/claim_task.py T77 write-lock --name bizcoder-1              # 잡기(멈춘 브랜치가 있으면 이어받기)
     python tools/claim_task.py T31 korean --name gemini-1 --skill admin-s2b-buyer   # 여러 스킬에 걸친 일·상시 일(S)
+    python tools/claim_task.py --skills                                       # S8 후보 스킬 순위 보기
+
+--next 순서: 내 일 → 멈춘 일 이어받기 → TASKS '열림' 일(K I G H J E) → 그것도 없으면 **S8**(열린 이슈가 있는 스킬 하나를
+맡아 ISSUES 를 고치기) — 수업 비서 묶음 스킬 먼저, 그다음 열린 이슈·최근 커밋이 많은 스킬(교사 요청 2026-11-28: 일이 금방 떨어짐).
 
 종료값: 0 잡음·이어받음(--check 면 잡을 수 있음, 이미 내가 잡은 일이면 이어서) / 1 이미 누가 함·완료·교사 결정 대기·고를 일 없음 / 2 사용법·git 오류
 
@@ -43,6 +47,11 @@ STALE_HOURS = float(os.environ.get("CLAIM_STALE_HOURS", "2"))
 KINDS = ("이어받음", "PR 올림", "합칠 준비", "그만둠", "막힘", "진행", "시작")
 NO_TAKEOVER = {"PR 올림": "끝남 — 합치기를 기다림", "막힘": "막힘 — 교사가 풂"}
 DEFAULT_ORDER = ["K", "I", "G", "H", "J", "E"]
+# S8: TASKS 에 고를 일이 없을 때 스킬 하나의 열린 이슈를 고치는 일 — 브랜치 task/S8-<스킬>
+ISSUE_TASK = "S8"
+BUNDLE = ("teacherlesson-assistant", "util-notebooklm", "teacherlesson-guide", "teacherlesson-schedule",
+          "teacherlesson-from-neis")  # TASKS.md 맨 위 ★ 수업 비서 묶음
+RECENT_DAYS = 14
 
 
 class GitError(Exception):
@@ -358,32 +367,96 @@ def show_busy(number: str, skill: str | None, states: list[dict]) -> None:
         print(f"   {b}  ({last}{', 작업 폴더 ' + where if where else ''}{'; ' + note if note else ''})")
 
 
-def run_next(a) -> int:
-    cands = next_candidates(a.grade)
-    plans = [(n, evaluate(n, None, a.name, a.stale_hours)) for n in cands]
+def rank_skills() -> list[dict]:
+    """S8 후보: 원격 main 에서 열린 이슈(🔵 진행 중·📌 백로그의 `###` 항목)가 있는 스킬.
+    수업 비서 묶음이 먼저, 그다음 점수(열린 이슈 ×2 + 최근 RECENT_DAYS 일 커밋 수, 최대 10) 순. 보관 스킬은 뺀다."""
+    open_issues: dict[str, int] = {}
+    section_open: dict[str, bool] = {}
+    out = git("grep", "-n", "-e", "^## ", "-e", "^### ", "origin/main", "--", "skills/*/ISSUES.md", check=False)
+    for line in out.splitlines():
+        m = re.match(r"^origin/main:skills/([^/]+)/ISSUES\.md:\d+:(.*)$", line)
+        if not m:
+            continue
+        skill, text = m.groups()
+        if text.startswith("## "):
+            section_open[skill] = bool(re.search(r"🔵|📌|진행 중|백로그", text)) and "🟢" not in text
+        elif section_open.get(skill):
+            open_issues[skill] = open_issues.get(skill, 0) + 1
+    shelved = set()
+    for line in git("grep", "-n", "-e", "status:", "origin/main", "--", "skills/*/SKILL.md", check=False).splitlines():
+        m = re.match(r"^origin/main:skills/([^/]+)/SKILL\.md:\d+:\s*status:\s*(\S+)", line)
+        if m and m.group(2).startswith("보관"):
+            shelved.add(m.group(1))
+    recent: dict[str, set] = {}
+    log = git("log", "origin/main", f"--since={RECENT_DAYS}.days.ago", "--format=@%H", "--name-only", "--", "skills/",
+              check=False)
+    sha = ""
+    for line in log.splitlines():
+        if line.startswith("@"):
+            sha = line[1:]
+        elif line.startswith("skills/"):
+            recent.setdefault(line.split("/")[1], set()).add(sha)
+    ranked = []
+    for skill, n in open_issues.items():
+        if skill in shelved or skill.startswith("_"):
+            continue
+        c = len(recent.get(skill, ()))
+        ranked.append({"skill": skill, "issues": n, "recent": c, "bundle": skill in BUNDLE,
+                       "score": n * 2 + min(c, 10)})
+    ranked.sort(key=lambda r: (not r["bundle"], -r["score"], r["skill"]))
+    return ranked
+
+
+def _pick(a, plans: list) -> int | None:
+    """plans: [((번호, 스킬), evaluate 결과)]. 잡았거나 이미 내 일이면 종료값, 고를 게 없으면 None."""
     for kind in ("mine", "takeover", "free"):
-        for n, ev in plans:
+        for (n, skill), ev in plans:
             if ev["action"] != kind:
                 continue
+            label = f"{n} ({skill})" if skill else n
             if kind == "mine":
-                print(f"✅ {n} 는 이미 {a.name} 가 잡은 일이에요(이어서 하세요): {', '.join(ev['branches'])}")
+                print(f"✅ {label} 는 이미 {a.name} 가 잡은 일이에요(이어서 하세요): {', '.join(ev['branches'])}")
                 return 0
             if a.check:
                 what = f"이어받기 — {ev['why']}" if kind == "takeover" else "새로 잡기"
-                print(f"✅ 다음 일: {n} ({what})")
+                print(f"✅ 다음 일: {label} ({what})")
                 return 0
             if git("status", "--porcelain"):
                 print("❌ 이 작업 폴더에 커밋 안 한 변경이 있어요. 정리한 뒤 다시 잡으세요(남의 변경이 섞이지 않게).")
                 return 2
             if kind == "takeover":
-                if take_over(n, None, a.name, ev["state"], ev["why"]) == 0:
+                if take_over(n, skill, a.name, ev["state"], ev["why"]) == 0:
                     return 0
-                print(f"   → {n} 는 건너뛰고 다음 후보를 봐요.")
+                print(f"   → {label} 는 건너뛰고 다음 후보를 봐요.")
                 continue
-            return claim_new(n, None, a.name, a.desc or "work")
-    print("고를 '열림' 일이 없어요 → TASKS 맨 아래 상시 일(S)을 하세요. 예:")
-    print(f"   python tools/claim_task.py S1 <짧은-영어-설명> --name {a.name or '<내 이름>'} --skill <★ 묶음 스킬 이름>")
+            return claim_new(n, skill, a.name, skill or a.desc or "work")
+    return None
+
+
+def run_next(a) -> int:
+    cands = next_candidates(a.grade)
+    r = _pick(a, [((n, None), evaluate(n, None, a.name, a.stale_hours)) for n in cands])
+    if r is not None:
+        return r
+    ranked = rank_skills()[:12]
+    if ranked:
+        print(f"TASKS 에 고를 '열림' 일이 없어요 → {ISSUE_TASK}: 열린 이슈가 있는 스킬 하나를 맡아요"
+              "(수업 비서 묶음 먼저, 그다음 열린 이슈·최근 커밋이 많은 스킬).")
+        r = _pick(a, [((ISSUE_TASK, x["skill"]), evaluate(ISSUE_TASK, x["skill"], a.name, a.stale_hours))
+                      for x in ranked])
+        if r is not None:
+            return r
+    print("고를 일이 없어요 → TASKS 맨 아래 상시 일(S)을 하세요. 예:")
+    print(f"   python tools/claim_task.py S1 <짧은-영어-설명> --name {a.name or '<내 이름>'} --skill <스킬 이름>")
     return 1
+
+
+def show_skills() -> int:
+    ranked = rank_skills()
+    print(f"S8 후보 스킬(열린 이슈 · 최근 {RECENT_DAYS}일 커밋) — 위에서부터 고름")
+    for i, x in enumerate(ranked, 1):
+        print(f"{i:>2}. {'★ ' if x['bundle'] else '  '}{x['skill']}  이슈 {x['issues']} · 커밋 {x['recent']}")
+    return 0
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -396,7 +469,11 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--next", action="store_true", help="다음 일을 골라 잡기: 내 일 → 멈춘 일 이어받기 → 열림 일")
     ap.add_argument("--grade", choices=["R", "P"], default="R", help="내 등급(P: 교사 PC 작업자 — P 일도 고름)")
     ap.add_argument("--stale-hours", type=float, default=STALE_HOURS, help="몇 시간 새 커밋이 없으면 이어받을지")
+    ap.add_argument("--skills", action="store_true", help="S8 후보 스킬 순위만 보기")
     a = ap.parse_args(argv)
+    if a.skills:
+        git("fetch", "--quiet", "origin", check=False)
+        return show_skills()
     if a.name:
         a.name = re.sub(r"\s+", "", a.name).strip("[]")  # 지침 첫 줄 '[claude-web- 173]' 처럼 띄어쓰기·대괄호가 섞여도 같은 일지 파일로
 

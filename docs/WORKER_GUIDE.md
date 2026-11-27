@@ -6,7 +6,8 @@
 - 저장소: https://github.com/leechangsu2131/my-skills (공개 저장소)
 - 파일 원문 주소: `https://raw.githubusercontent.com/leechangsu2131/my-skills/main/<경로>`
 - 할 일 목록: [docs/TASKS.md](TASKS.md)
-- **지금 집중: 수업 비서 묶음만 고친다** — 묶음 스킬은 [TASKS.md 맨 위 ★](TASKS.md). 묶음 밖 스킬은 고치지 않고 그 스킬 `ISSUES.md` 에 한 줄만(교사 결정 2026-11-26, 잘 안 쓰는 스킬을 고치느라 시간이 감)
+- **수업 비서가 먼저** — 묶음 스킬은 [TASKS.md 맨 위 ★](TASKS.md). TASKS 에 고를 일이 없으면 `--next` 가 **S8**: 열린 이슈가 있는 스킬 하나(브랜치 `task/S8-<스킬>`)를 준다 — 묶음 스킬 먼저, 그다음 열린 이슈·최근 커밋이 많은 스킬(교사 결정 2026-11-28: 수업 비서만 고치니 일이 금방 떨어짐). 잡은 스킬만 고치고, 다른 스킬에서 본 문제는 그 스킬 `ISSUES.md` 에 한 줄.
+  - S8 에서 하는 일: 그 스킬 `ISSUES.md` 의 🔵 진행 중·📌 백로그 가운데 **실제 실행(NEIS·에듀파인·발송·결제)이나 교사 결정 없이** 고칠 수 있는 것부터 하나씩 — 고치고 시험(가짜) 붙이고 🟢 해결됨으로 옮김. 할 수 있는 데까지 여러 개, 하나 끝날 때마다 커밋·일지 `진행`. 교사 확인이 필요한 항목은 건너뛰고 PR 설명의 '교사 PC 에서 할 일'에 적음.
 - 기본 규칙 원본: [README.md](../README.md), [CONTRIBUTING.md](../CONTRIBUTING.md), [CLAUDE.md](../CLAUDE.md)
 
 ## 1. 시작할 때 읽을 것 (순서대로, 필요한 만큼만)

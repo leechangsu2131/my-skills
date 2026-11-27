@@ -31,3 +31,4 @@
 - 2026-11-27 18:10 교사 지시(차시 자료 도우미) 시작 (브랜치 fix/lesson-pick-ask-longer, #143 위에 쌓음) — 결정: 더 긴 이름만 있으면 물어보고 열기
 - 2026-11-27 18:11 교사 지시(차시 자료 도우미) PR 올림 — 교사 결정 반영: 이름이 더 긴 차시·단원은 띄어쓰기만 다른 것이 있으면 그것을 열고, 없으면 물어보고 열기(번호·쪽 표시만 덧붙은 것은 바로 열기). sites/title_match.py adds_only_marks 추가, 음악·사회 unit_matches·lesson_matches 가 사용. 예전 시험 1개의 기대를 결정에 맞게 바꿈(앞에 글자가 더 붙은 이름은 확인). 확인: 가짜 selenium 으로 sites 137 통과·1 건너뜀, selenium 없이 105 통과·15 건너뜀, 새 검사 5곳을 하나씩 빼면 시험 실패, 전·후 비교에서 바뀐 것은 '더 긴 이름' 짝 5개뿐
 - 2026-11-28 06:28 S5 (repo-root-requests) 시작 (브랜치 task/S5-repo-root-requests)
+- 2026-11-28 06:28 S5 (repo-root-requests) PR 올림 — main 자동 검사 tests (repo-root) 실패(11-27 합치기 뒤, requests 없는 칸에서 test_prepare_pipeline 6개) 고침: 세 시험이 supabase_schedule 가짜 모듈을 씀. 확인: requests 를 막고도·두고도 47 통과, requests 막은 저장소 tests 385 통과·1 건너뜀(test_auto_split 은 이 환경에 PyMuPDF 가 없어 못 모음)

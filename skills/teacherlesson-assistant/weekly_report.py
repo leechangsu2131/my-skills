@@ -85,7 +85,7 @@ def mask(text: str, names) -> str:
     return text
 
 
-def build_report(records, monday: date, names, cautions: dict) -> str:
+def build_report(records, monday: date, names, cautions: dict, ment_week=None) -> str:
     end = monday + timedelta(days=6)
     week = [r for r in records if monday <= r["day"] <= end]
     lines = [f"# 주간 수업 정리 {monday} ~ {end}", "",
@@ -139,7 +139,22 @@ def build_report(records, monday: date, names, cautions: dict) -> str:
         lines += ["메모의 첫 낱말로 묶었습니다.", ""]
     for name, items in sorted(students.items()):
         lines += [f"### {name}", *items, ""]
+
+    # 💬 학생 대응 멘트 도우미(T106): 상황별로 몇 번 눌렀는지만(이름·글 없음). '###' 제목은 쓰지 않는다(위 학생별 절 개수와 섞이지 않게).
+    lines += ["## 💬 상황별 대응 멘트 사용 횟수", ""]
+    if ment_week:
+        lines += [f"- {label}: {n}번" for label, n in sorted(ment_week, key=lambda item: (-item[1], item[0]))] + [""]
+    else:
+        lines += ["이번 주에 누른 기록이 없습니다.", ""]
     return "\n".join(lines)
+
+
+def _ment_week(data: pathlib.Path, monday: date):
+    """그 주 상황별 횟수 [(상황 이름, 횟수)] — 상황 이름은 문장 파일에서, 없는 id 는 id 그대로."""
+    import ment
+    labels = {s["id"]: s["label"] for s in ment.load_situations(pathlib.Path(__file__).resolve().parent / "web" / "ment.json")}
+    week = ment.week_counts(ment.read_counts(data / "ment_counts.json"), monday)
+    return [(labels.get(sid, sid), n) for sid, n in week.items()]
 
 
 def make_report(data: pathlib.Path, day: date):
@@ -148,7 +163,7 @@ def make_report(data: pathlib.Path, day: date):
     records, broken = load_sessions(data / "sessions")
     cautions = read_json(data / "publisher_notes.json")
     # 이름은 지난 기록 전체에서 모은다(이번 주에 🙋 가 없던 학생도 가리려고).
-    text = build_report(records, monday, known_names(records), cautions if isinstance(cautions, dict) else {})
+    text = build_report(records, monday, known_names(records), cautions if isinstance(cautions, dict) else {}, _ment_week(data, monday))
     path = data / "reports" / f"week-{monday}.md"
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(text, encoding="utf-8")

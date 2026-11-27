@@ -38,6 +38,7 @@ sys.path.insert(0, str(next(p / "_shared" for p in SKILL_DIR.parents if (p / "_s
 from skill_env import data_dir, env_values  # noqa: E402
 sys.path.insert(0, str(SKILL_DIR))
 import audio_export  # noqa: E402  (녹음 → 클로바노트용 MP3, T99)
+import ment  # noqa: E402  (학생 대응 멘트 도우미, T106)
 
 SKILL = "teacherlesson-assistant"
 DATA = data_dir(SKILL)
@@ -47,6 +48,9 @@ FLOWS = DATA / "flows"
 UNITS = DATA / "units"
 SESSIONS = DATA / "sessions"
 CAUTIONS_PATH = DATA / "publisher_notes.json"
+MENT_JSON = WEB / "ment.json"  # 문장(저장소, 교사 검토)
+MENT_CUSTOM = DATA / "ment_custom.json"  # 교사가 덧붙인 대답(저장소 아님)
+MENT_COUNTS = DATA / "ment_counts.json"  # 상황별 누른 횟수(이름 없음)
 NOTEBOOKLM = DATA / "notebooklm"
 DEFAULT_AI_SITES = [
     {"name": "Claude", "url": "https://claude.ai/new"},
@@ -908,6 +912,10 @@ class Handler(BaseHTTPRequestHandler):
             return self._send(200, (WEB / "overdue.js").read_bytes(), "application/javascript; charset=utf-8")
         if url.path == "/mobile.css":
             return self._send(200, (WEB / "mobile.css").read_bytes(), "text/css; charset=utf-8")
+        if url.path == "/ment.js":
+            return self._send(200, (WEB / "ment.js").read_bytes(), "application/javascript; charset=utf-8")
+        if url.path == "/api/ment":
+            return self._json({"status": "success", "situations": ment_situations()})
         if url.path == "/api/state":
             try:
                 day = date.fromisoformat(q.get("date", [date.today().isoformat()])[0])
@@ -1001,6 +1009,10 @@ class Handler(BaseHTTPRequestHandler):
                 return self._json(save_flow(body))
             if url.path == "/api/caution":
                 return self._json(add_caution(body))
+            if url.path == "/api/ment-custom":
+                return self._json(ment_custom(body))
+            if url.path == "/api/ment-count":
+                return self._json(ment_count(body))
             if url.path.startswith("/api/progress/"):
                 return self._json(progress(url.path.rsplit("/", 1)[-1], body))
         except (ValueError, KeyError, RuntimeError, subprocess.CalledProcessError) as exc:
@@ -1274,6 +1286,27 @@ def add_caution(body: dict) -> dict:
         notes.setdefault(key, []).append({"text": text, "date": date.today().isoformat()})
         write_json(CAUTIONS_PATH, notes)
     return {"status": "success", "message": "다음 수업 주의점에 추가했어요."}
+
+
+def ment_situations() -> list[dict]:
+    """💬 상황 목록 + 교사가 덧붙인 대답(문장 파일을 못 읽으면 빈 목록)."""
+    return ment.with_custom(ment.load_situations(MENT_JSON), ment.read_custom(MENT_CUSTOM))
+
+
+def ment_custom(body: dict) -> dict:
+    """교사가 자기 대답을 덧붙이거나(`text`) 지운다(`delete`: 번호)."""
+    situations = ment.load_situations(MENT_JSON)
+    if "delete" in body:
+        items = ment.remove_custom(MENT_CUSTOM, situations, str(body.get("situation", "")), body["delete"])
+    else:
+        items = ment.add_custom(MENT_CUSTOM, situations, str(body.get("situation", "")), body.get("text"))
+    return {"status": "success", "custom": items}
+
+
+def ment_count(body: dict) -> dict:
+    """상황 단추를 누른 횟수만 센다(이름·글 없음)."""
+    n = ment.press(MENT_COUNTS, ment.load_situations(MENT_JSON), str(body.get("situation", "")))
+    return {"status": "success", "count": n}
 
 
 def main() -> None:

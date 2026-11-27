@@ -109,7 +109,7 @@ python mapper\map_general_guides_to_sheet.py --subject 국어 --grade 3-2   # �
 ## 주의
 
 - 지도서 PDF·나눈 결과는 저작물이다. **저장소에 올리지 않는다.**
-- 이 폴더의 `.gitignore` 가 막는 것은 `tmp*/`, `generated_rows/`, `.cache/` 같은 정해진 이름뿐이다. 예를 들어 `output/` 폴더의 `pdf_splits` 는 막지 않는다. 결과는 `D:\지도서` 아래처럼 저장소 밖에 둔다.
+- 이 폴더의 `.gitignore` 는 `tmp*/`, `generated_rows/`, `.cache/` 와 분할기 기본 결과 폴더 `output/`, 그리고 `pdf_splits/`·`groups.json` 을 막는다(T90, ISSUE-32). 하지만 정해진 이름만 막으므로 다른 이름의 폴더에 저장하면 올라갈 수 있다. 결과는 `D:\지도서` 아래처럼 저장소 밖에 둔다.
 
 ## 문서
 

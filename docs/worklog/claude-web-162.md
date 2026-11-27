@@ -39,3 +39,4 @@
 - 2026-11-27 07:24 S4 (teacherlesson-schedule) 시작 (브랜치 task/S4-check-schedule-docs)
 - 2026-11-27 07:25 S4 (teacherlesson-schedule) PR 올림 — SKILL.md·README 를 코드·시험과 대조: PyMuPDF 이미 추가(T93)인데 '빠져 있음' 고침, 확인 명령에 빠진 시험 파일 추가. 시험 72개 중 3 오류(fitz 없음 2·ISSUE-003 1). 실제 Google Sheets 는 확인 필요
 - 2026-11-27 11:21 S4 (teacherlesson-guide) 시작 (브랜치 task/S4-check-guide-docs)
+- 2026-11-27 11:21 S4 (teacherlesson-guide) PR 올림 — SKILL.md 를 파일·옵션·mapper 업로드 확인 동작과 대조: .gitignore 설명만 낡아서 고침(output/·pdf_splits/·groups.json 은 이제 막음, T90). 나머지는 코드와 맞음. mapper 시험은 이 환경에 fitz 가 없어 못 돌림(확인 필요)

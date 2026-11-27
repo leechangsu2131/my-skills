@@ -31,5 +31,7 @@
 - 2026-11-27 06:55 S7 PR #107 갱신 — 교사 답 반영: 클로바노트 제한 600분(파일 길이인지 월 사용 시간인지는 미확인), ffmpeg 없으면 교사가 설치(imageio-ffmpeg 안 넣음), 64kbps MP3 는 잘 알아듣는다고 들음. 메모 §0·§3·§7 과 ISSUE-039 줄 고침, 구현 가능 상태
 - 2026-11-27 07:26 S1 (teacherlesson-assistant) 시작 (브랜치 task/S1-tests-build-units)
 - 2026-11-27 11:17 S1(teacherlesson-assistant, build_units) PR 올림 — `tests/test_build_units.py`(새, 소스는 안 고침): build_units.py 시험 49개(차시 번호 추론·묶기·지도서마다 다른 '차시 시작' 표시·분할본 개관 찾기·단원 JSON/PDF 만들기·--if-older). 진도표·PDF 는 가짜. 소스를 19군데 깨뜨려 처음 3군데를 놓쳐 시험 3개를 더한 뒤 모두 잡힘 확인, 소스는 되돌림. 알아 둘 점: lesson_no(정수 0)은 None(글자 '0'은 0). 버그 후보 없음
+- 2026-11-27 12:19 S2 (util-notebooklm) 시작 (브랜치 task/S2-review-pr126-123)
+- 2026-11-27 12:40 S2 PR 올림 — PR #126(util-notebooklm 시험 41개, 소스 6곳 깨뜨려 모두 잡힘 확인)·PR #123(schedule 쓰기 경로 재현 시험, 6곳 임시 수정 시 unexpected success 확인) 검토 → `docs/reviews/task-S1-tests-util-notebooklm.md`·`task-S3-schedule-write-errors.md`. 둘 다 합쳐도 됨. #123 과 #124 는 같은 ISSUE-005 시험이라 하나만 합치길 권함
 - 2026-11-27 12:54 S1 (teacherlesson-assistant) 시작 (브랜치 task/S1-tests-replace-subject-period)
 - 2026-11-27 13:20 S1 PR 올림 — `supabase_schedule.replace_subject_period`(교시 과목 바꾸기)·`progress("replace-subject")` 시험 27개(`tests/test_replace_subject_period.py`). 가짜 메모리 표로 최종 슬롯 상태를 확인(밀기·뒤 차시 당기기·날짜 없는 꼬리 칸·앞 중복 비우기·막는 경우 14가지). 소스를 12곳 깨뜨려 보니 8곳은 시험이 잡았고 4곳은 결과가 같아 잡을 수 없는 변경(같은 차시 검사는 같은 과목 검사에 먼저 걸림 등). 소스는 안 고침

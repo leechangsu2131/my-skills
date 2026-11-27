@@ -16,3 +16,4 @@
 - 2026-11-27 19:46 lee21 PC·Claude Code 합치는 중
 - 2026-11-27 19:48 lee21 PC·Claude Code 합치기 끝 — 5개 합침(문서·시험 3: S1 check_setup·splitter 2 / 코드 2: T100 진도 서버 쓰기 오류 JSON, T99 클로바노트용 MP3 내보내기). TASKS T99·T100 완료. 건너뜀: T98(일하는 중)·S2-review-pr145-149·P2(일지만)
 - 2026-11-27 22:47 lee21 PC·Claude Code 합치는 중
+- 2026-11-27 22:49 lee21 PC·Claude Code 합치기 끝 — P2 일지 2줄 합침(codex-1 12:21·12:32 사회 3-2 실제 확인), P2·S2-review-pr145-149(시작 일지만, 검토 대상 PR 은 19:01 에 이미 합침) 브랜치 지움. T105 는 bizcoder-1 토큰 소진으로 그만둠 — 진행분(activate_debug_tab, 시험 41 통과) task/T105-work 에 대신 올림, 다음 작업자가 이어받음

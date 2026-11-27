@@ -15,3 +15,4 @@
 - 2026-11-27 08:47 S1 (teacherlesson-assistant) 시작 (브랜치 task/S1-memo-sync-key-pull)
 - 2026-11-27 09:04 S1 (teacherlesson-assistant) 시작 (브랜치 task/S1-flow-monitor-status-tests)
 - 2026-11-27 09:10 S1 (teacherlesson-assistant) 시작 (브랜치 task/S1-transcribe-markdown-tests)
+- 2026-11-27 10:20 T99 시작 (브랜치 task/T99-clova-mp3-export)

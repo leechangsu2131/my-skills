@@ -276,6 +276,65 @@ def parse_macro(text: str) -> list[tuple]:
     return steps
 
 
+# ───── 탭 정리: UI 자동화(UIA)로 탭 줄을 읽어 지울 탭의 X 단추만 누른다(창 전환·마우스 없음) ─────
+CLOSE_BUTTON_NAMES = {"닫기", "close", "탭 닫기", "close tab"}
+TAB_MODES = {"others": "다른 탭", "right": "오른쪽 탭", "left": "왼쪽 탭"}
+
+
+def browser_tabs(hwnd: int) -> list[dict]:
+    """창의 탭을 탭 줄 순서대로 [{"name", "selected", "close"}]. 웹 페이지 안(Document)은 들여다보지 않는다."""
+    import uiautomation as auto
+    tabs, stack = [], [(auto.ControlFromHandle(hwnd), 0)]
+    while stack:
+        control, depth = stack.pop()
+        try:
+            kind = control.ControlTypeName
+        except Exception:
+            continue
+        if kind == "TabItemControl":
+            try:
+                selected = bool(control.GetSelectionItemPattern().IsSelected)
+            except Exception:
+                selected = False
+            buttons = [b for b in control.GetChildren() if b.ControlTypeName == "ButtonControl"]
+            close = next((b for b in buttons if (b.Name or "").strip().lower() in CLOSE_BUTTON_NAMES),
+                         buttons[-1] if buttons else None)
+            tabs.append({"name": control.Name, "selected": selected, "close": close})
+            continue
+        if kind == "DocumentControl" or depth >= 14:
+            continue
+        children = control.GetChildren()
+        stack.extend((c, depth + 1) for c in reversed(children))
+    return tabs
+
+
+def tabs_to_close(tabs: list[dict], mode: str) -> list[dict]:
+    """지금 보는 탭(여러 개 골라 둔 경우 그 탭들)을 기준으로 닫을 탭. 보는 탭을 못 찾으면 아무것도 안 닫는다."""
+    picked = [i for i, t in enumerate(tabs) if t["selected"]]
+    if not picked:
+        return []
+    if mode == "others":
+        return [t for t in tabs if not t["selected"]]
+    if mode == "right":
+        return tabs[picked[-1] + 1:]
+    if mode == "left":
+        return tabs[:picked[0]]
+    raise ValueError(mode)
+
+
+def close_tabs(targets: list[dict]) -> tuple[int, int]:
+    """오른쪽부터 차례로 X 단추를 누른다. (닫음, 못 닫음)"""
+    closed = failed = 0
+    for tab in reversed(targets):
+        try:
+            tab["close"].GetInvokePattern().Invoke()
+            closed += 1
+            time.sleep(0.06)
+        except Exception:
+            failed += 1
+    return closed, failed
+
+
 def normalize_url(text: str) -> str:
     """'naver.com' → 'https://naver.com'. 이미 주소(https:, chrome:, file: …)거나 검색어(띄어쓰기)면 그대로."""
     text = text.strip()
@@ -525,7 +584,8 @@ class Manager(QMainWindow):
             (("열기", self.open_selected, "고른 프로필(그룹이면 그룹 전체)을 연다. 이미 열려 있으면 앞으로 가져온다. Shift 를 누르고 누르면 늘 새 창."),
              ("사이트 이동", self.go_to_site, "고른 프로필(안 고르면 열린 프로필 창 전체)을 같은 주소로 보낸다. 지금 탭을 바꾸거나 새 탭으로 연다."),
              ("일괄 입력", self.broadcast, "열린 창(고른 프로필이 있으면 그 창들)의 커서 위치에 같은 글·특수 키를 넣는다."),
-             ("일괄 닫기", self.close_windows, "트리에서 고른 프로필(그룹이면 그룹 전체)의 창을 모두 닫는다. 아무것도 안 고르면 프로필 창 전체(기타 창은 직접 고를 때만).")),
+             ("일괄 닫기", self.close_windows, "트리에서 고른 프로필(그룹이면 그룹 전체)의 창을 모두 닫는다. 아무것도 안 고르면 프로필 창 전체(기타 창은 직접 고를 때만)."),
+             ("탭 정리 ▾", self.tab_menu, "다른 탭 닫기 / 오른쪽 탭 닫기 / 왼쪽 탭 닫기를 여러 창에 한꺼번에. 창 전환 없음.")),
             (("그룹 추가", self.add_group, "새 그룹. 이름은 그룹을 고르고 F2 로 바꾼다."),
              ("그룹 삭제", self.remove_group, "고른 그룹을 지우고 안의 프로필은 미분류로 옮긴다."),
              ("시작 URL", self.set_start_url, "고른 프로필들의 시작 URL 을 한 번에 바꾼다(비우면 해제).")),
@@ -1007,6 +1067,9 @@ class Manager(QMainWindow):
                            lambda: self.toggle_timer(hwnds))
             menu.addAction("이 창에 입력", lambda: self.broadcast(targets=hwnds))
             menu.addAction("이 창 사이트 이동", lambda: self.go_to_site(targets=hwnds))
+            tab_sub = menu.addMenu("탭 정리")
+            for mode, name in TAB_MODES.items():
+                tab_sub.addAction(f"{name} 닫기", lambda m=mode: self.close_tabs_bulk(m, targets=hwnds))
         else:
             n = len(hwnds)
             menu.addAction(f"변화 감시 켜기 ({n}개, {idle}초)", lambda: self.toggle_watch(hwnds, True))
@@ -1015,6 +1078,9 @@ class Manager(QMainWindow):
             menu.addAction(f"타이머 취소 ({n}개)", lambda: self.toggle_timer(hwnds, False))
             menu.addAction(f"고른 창 {n}개에 일괄 입력", lambda: self.broadcast(targets=hwnds))
             menu.addAction(f"고른 창 {n}개 사이트 이동", lambda: self.go_to_site(targets=hwnds))
+            tab_sub = menu.addMenu(f"고른 창 {n}개 탭 정리")
+            for mode, name in TAB_MODES.items():
+                tab_sub.addAction(f"{name} 닫기", lambda m=mode: self.close_tabs_bulk(m, targets=hwnds))
         menu.addAction("알림 표시 지우기",
                        lambda: [self.windows[h]["item"].setBackground(QBrush()) for h in hwnds if h in self.windows])
         menu.addSeparator()
@@ -1121,6 +1187,72 @@ class Manager(QMainWindow):
             note += f" / 도중에 다른 창이 앞에 와서 멈춤: {', '.join(stopped)}"
         done = len(targets) - len(failed) - len(stopped)
         self.statusBar().showMessage(f"{done}개 창에 {verb}.{note}", 20000)
+
+    # ───── 탭 정리 ─────
+    def tab_menu(self, *_):
+        menu = QMenu(self)
+        for mode, name in TAB_MODES.items():
+            menu.addAction(f"{name} 닫기", lambda m=mode: self.close_tabs_bulk(m))
+        button = self.sender()
+        menu.exec(button.mapToGlobal(button.rect().bottomLeft()) if button else self.cursor().pos())
+
+    def target_windows(self, targets: list[int] | None) -> tuple[list[int], str]:
+        """미리보기에서 고른 창 → 트리에서 고른 프로필의 창 → 열린 프로필 창 전체(기타 창 제외)."""
+        if targets is not None:
+            windows = [h for h in targets if h in self.windows]
+            return windows, f"고른 창 {len(windows)}개"
+        chosen = set(self.selected_profiles())
+        ordered = sorted(self.windows, key=self.sort_key)
+        if chosen:
+            windows = [h for h in ordered if self.windows[h]["key"] in chosen]
+            return windows, f"고른 프로필의 창 {len(windows)}개"
+        windows = [h for h in ordered if self.windows[h]["folder"]]
+        return windows, f"열린 프로필 창 전체 {len(windows)}개"
+
+    def close_tabs_bulk(self, mode: str, targets: list[int] | None = None):
+        windows, scope = self.target_windows(targets)
+        if not windows:
+            QMessageBox.information(self, "탭 정리", "대상 창이 없습니다.")
+            return
+        try:
+            import uiautomation  # noqa: F401
+        except ImportError:
+            QMessageBox.warning(self, "탭 정리", "uiautomation 패키지가 없습니다.\n실행.bat 으로 다시 켜면 설치됩니다.")
+            return
+        QApplication.setOverrideCursor(Qt.CursorShape.WaitCursor)
+        plan, unreadable = [], []
+        try:
+            for hwnd in windows:
+                try:
+                    found = tabs_to_close(browser_tabs(hwnd), mode)
+                except Exception:
+                    unreadable.append(self.label(hwnd))
+                    continue
+                if found:
+                    plan.append((hwnd, found))
+        finally:
+            QApplication.restoreOverrideCursor()
+        total = sum(len(found) for _, found in plan)
+        name = TAB_MODES[mode]
+        if not total:
+            note = f"\n(탭을 못 읽은 창: {', '.join(unreadable)})" if unreadable else ""
+            QMessageBox.information(self, "탭 정리", f"{scope}에서 닫을 {name}이 없습니다.{note}")
+            return
+        lines = [f"{self.label(h)} — {len(found)}개" for h, found in plan]
+        shown = "\n".join(lines[:12]) + (f"\n… 외 {len(lines) - 12}개 창" if len(lines) > 12 else "")
+        answer = QMessageBox.question(
+            self, "탭 정리",
+            f"{scope}에서 지금 보는 탭 기준 {name} {total}개를 닫을까요?\n\n{shown}\n\n"
+            "(닫은 탭은 그 창에서 Ctrl+Shift+T 로 되살릴 수 있습니다)")
+        if answer != QMessageBox.StandardButton.Yes:
+            return
+        closed = failed = 0
+        for _, found in plan:
+            c, f = close_tabs(found)
+            closed, failed = closed + c, failed + f
+        note = f" / 못 닫음 {failed}개" if failed else ""
+        note += f" / 탭을 못 읽은 창: {', '.join(unreadable)}" if unreadable else ""
+        self.statusBar().showMessage(f"{name} {closed}개를 닫았습니다.{note}", 15000)
 
     # ───── 사이트 이동 ─────
     def go_to_site(self, *_, targets: list[int] | None = None):

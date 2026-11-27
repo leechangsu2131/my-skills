@@ -36,3 +36,4 @@
 - 2026-11-27 12:54 S1 (teacherlesson-assistant) 시작 (브랜치 task/S1-tests-replace-subject-period)
 - 2026-11-27 13:20 S1 PR 올림 — `supabase_schedule.replace_subject_period`(교시 과목 바꾸기)·`progress("replace-subject")` 시험 27개(`tests/test_replace_subject_period.py`). 가짜 메모리 표로 최종 슬롯 상태를 확인(밀기·뒤 차시 당기기·날짜 없는 꼬리 칸·앞 중복 비우기·막는 경우 14가지). 소스를 12곳 깨뜨려 보니 8곳은 시험이 잡았고 4곳은 결과가 같아 잡을 수 없는 변경(같은 차시 검사는 같은 과목 검사에 먼저 걸림 등). 소스는 안 고침
 - 2026-11-27 17:32 S1 (teacherlesson-assistant) 시작 (브랜치 task/S1-tests-session-records)
+- 2026-11-27 17:55 S1 PR 올림 — 수업 기록 파일 처리 시험 51개(`tests/test_session_records.py`): `safe_name`·`session_path`(차시 키 파일명, 폴더 밖 거절)·`session_matches_lesson`·`saved_mismatch_info`·`save_session`·`state()` 의 기록 붙이기/이전 기록 알림(ISSUE-046 에서 고친 동작). 소스를 13곳 깨뜨려 모두 잡힘 확인, 소스는 안 고침. 실제 기록 폴더 분리 확인은 교사 PC(확인 필요)

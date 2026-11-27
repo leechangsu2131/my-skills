@@ -302,6 +302,7 @@ body.focus-mode> #toast{z-index:12}
       <div class="bar"><i id="heroBar"></i></div>
       <div id="heroPace" hidden></div>
       <button id="heroCompress" hidden title="교시 끝까지 모자란 시간만큼 뒤 단계의 분을 한 번에 줄여요. ✂ 줄여도 됨 단계는 더, ⭐ 핵심 단계는 덜 줄이고, 한 단계는 1분 밑으로 안 줄어요. 잘못 줄이면 단계마다 +1분으로 되돌릴 수 있어요."></button>
+      <button id="stepFinish" class="ghost" hidden>✓ 단계 마침</button>
     </div>
     <div id="heroNext" hidden></div>
     <button id="heroSuggest" hidden></button>
@@ -492,7 +493,7 @@ body.focus-mode> #toast{z-index:12}
 <script>
 const $ = id => document.getElementById(id);
 const qDate = new URLSearchParams(location.search).get('date');
-let S = null, day = qDate ? new Date(qDate+'T09:00:00') : new Date(), cur = null, stepIdx = -1, stepAt = 0;
+let S = null, day = qDate ? new Date(qDate+'T09:00:00') : new Date(), cur = null, stepIdx = -1, stepAt = 0, stepEnded = false;
 let sess = null, rec = null, saveTimer = null;
 let focusMemoKind = 'note';
 let stepAdj = {};   // 이번 수업에서 단계별로 늘리거나 줄인 분(흐름 파일은 안 바꿈). 기록(adj)으로 남겨 새로고침해도 이어짐
@@ -583,7 +584,7 @@ function select(i){
   if (rec) { toast('녹음 중입니다. 먼저 수업을 마쳐 주세요'); return; }
   if (!leaveEdit()) return;
   flushSave();
-  cur = i>=0 ? S.lessons[i] : null; stepIdx = -1; stepAt = 0; stepAdj = {};
+  cur = i>=0 ? S.lessons[i] : null; stepIdx = -1; stepAt = 0; stepEnded = false; stepAdj = {};
   $('memoLog').open = false;   // 교시를 바꾸면 기록 목록은 다시 접음
   $('memoIn').value = ''; setMemoKind('note');   // 쓰던 메모가 다른 수업에 들어가지 않게
   renderTabs();
@@ -612,7 +613,7 @@ function select(i){
 
 /* 새로고침(F5)·창을 다시 열어도 수업 중이던 단계와 시간을 이어 간다: 오늘 수업이고, 마지막 단계 기록 뒤에 '수업 마침'이 없을 때 */
 function restoreStep(){
-  stepIdx = -1; stepAt = 0; stepAdj = {};
+  stepIdx = -1; stepAt = 0; stepEnded = false; stepAdj = {};
   const steps = (cur && cur.flow && cur.flow.steps) || [];
   if (!sess || !steps.length || S.date !== iso(new Date())) return;
   for (const m of sess.memos) {   // 시간 조정 기록을 처음부터 더하고, '수업 마침'을 만나면 비움
@@ -622,6 +623,11 @@ function restoreStep(){
   for (let i = sess.memos.length-1; i >= 0; i--) {
     const m = sess.memos[i];
     if (m.kind === 'sys' && m.text === '수업 마침') return;
+    if (m.kind === 'sys' && m.text === '단계 마침' && Number.isInteger(m.idx) && m.idx >= 0 && m.idx < steps.length) {
+      const at = Date.parse(m.at);
+      if (!Number.isFinite(at) || iso(new Date(at)) !== S.date) continue;
+      stepIdx = m.idx; stepEnded = true; return;
+    }
     if (m.kind === 'step' && Number.isInteger(m.idx) && m.idx >= 0 && m.idx < steps.length) {
       const at = Date.parse(m.at);
       if (!Number.isFinite(at) || iso(new Date(at)) !== S.date) continue;
@@ -799,6 +805,8 @@ function renderHero(){
   const f = cur && cur.flow;
   const next = $('stepNext');
   $('stepPrev').disabled = stepIdx <= 0;
+  $('stepFinish').hidden = stepIdx < 0 || !steps.length;
+  $('stepFinish').textContent = stepEnded ? '▶ 단계 다시 시작' : '✓ 단계 마침';
   setBlock('heroSuggest', '');
   if (!cur) {
     $('hero').className = 'hero idle'; $('heroStatus').textContent = '';
@@ -914,6 +922,14 @@ function tickHero(){
     else b.hidden = true;
     return;
   }
+  if (stepEnded) {
+    hero.className = 'hero idle';
+    $('heroLabel').textContent = '이 단계가 끝났어요';
+    $('heroRemain').textContent = '멈춤';
+    $('heroBar').style.width = '0';
+    $('heroPace').hidden = true; $('heroCompress').hidden = true;
+    return;
+  }
   const st = steps[stepIdx], el = (Date.now() - stepAt) / 1000, total = effMin(stepIdx) * 60;
   if (total) {
     const left = total - el, state = left < 0 ? 'over' : left <= 60 ? 'warn' : 'run';
@@ -979,10 +995,18 @@ function tickPace(steps){
 function goStep(i){
   const steps = (cur && cur.flow && cur.flow.steps) || [];
   if (i<0 || i>=steps.length) return;
-  stepIdx = i; stepAt = Date.now();
+  stepIdx = i; stepAt = Date.now(); stepEnded = false;
   addMemo('step', `단계: ${steps[i].name}`, true, {idx: i});
   renderFlow();
   const el = document.querySelector(`.step[data-s="${i}"]`); if (el) el.scrollIntoView({block:'nearest'});
+}
+
+function finishStep(){
+  if (stepIdx < 0 || !cur) return;
+  if (stepEnded) { goStep(stepIdx); return; }
+  stepEnded = true; stepAt = 0;
+  addMemo('sys', '단계 마침', true, {idx: stepIdx});
+  renderFlow();
 }
 
 function relTime(){ return rec && sess.started_ms ? mmss(Date.now()-sess.started_ms) : new Date().toTimeString().slice(0,5); }
@@ -1075,7 +1099,7 @@ async function startRec(){
   if ('wakeLock' in navigator) navigator.wakeLock.request('screen').then(w=>rec.wake=w).catch(()=>{});
   $('recBtn').textContent='■ 수업 마침'; $('recBtn').className='rec';
   addMemo('sys', '수업 시작', true);
-  if (cur.flow && cur.flow.steps && cur.flow.steps.length && stepIdx < 0) goStep(0);   // 이미 단계를 시작했으면 시간을 되돌리지 않음
+  if (cur.flow && cur.flow.steps && cur.flow.steps.length && (stepIdx < 0 || stepEnded)) goStep(stepIdx < 0 ? 0 : stepIdx);
 }
 async function stopRec(){
   addMemo('sys', '수업 마침', true);
@@ -1093,7 +1117,7 @@ async function stopRec(){
   $('rdot').classList.remove('on'); $('mlev').style.width='0';
   $('recBtn').textContent='● 수업 시작'; $('recBtn').className='pri';
   sess.ended_at = new Date().toISOString();
-  stepIdx = -1; stepAt = 0; stepAdj = {}; renderFlow();   // 수업이 끝나면 '지금 할 일' 도 처음 상태로
+  stepIdx = -1; stepAt = 0; stepEnded = false; stepAdj = {}; renderFlow();   // 수업이 끝나면 '지금 할 일' 도 처음 상태로
   scheduleSave(false);
   $('recMsg').textContent = recLeft
     ? `⚠ 수업 기록은 저장했지만 녹음 조각 ${recLeft}개를 서버에 못 보냈어요. 녹음 파일이 중간에서 끊겼을 수 있어요.`
@@ -1150,6 +1174,7 @@ $('phoneBtn').onclick = () => { const p=$('phones'); p.style.display = p.style.d
 $('steps').onclick = e => { const s=e.target.closest('.step'); if (s) goStep(+s.dataset.s); };
 $('stepPrev').onclick = () => goStep(stepIdx-1);
 $('stepNext').onclick = () => goStep(stepIdx+1);
+$('stepFinish').onclick = finishStep;
 $('heroSuggest').onclick = e => goStep(+e.currentTarget.dataset.s);
 // 키보드·발표용 리모컨(PageUp/PageDown)으로 단계 넘기기 — 글 쓰는 칸에서는 동작하지 않음
 document.addEventListener('keydown', e => {

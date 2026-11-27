@@ -305,22 +305,21 @@ DONE_TASKS = """# 할 일
 
 
 def issues(open_n: int, solved_n: int = 1) -> str:
-    body = "# 이슈\n\n## 🔵 진행 중\n\n" + "".join(f"### ISSUE-{i:03d}: 열림 {i}\n- 할 일\n\n" for i in range(1, open_n + 1))
+    body = "# 이슈\n\n## 🔵 진행 중\n\n### 📄 기존 ing.md 내용\n\n" + "".join(f"### ISSUE-{i:03d}: 열림 {i}\n- 할 일\n\n" for i in range(1, open_n + 1))
     body += "## 📌 백로그\n\n_없음_\n\n## 🟢 해결됨\n\n"
     return body + "".join(f"### ISSUE-{100 + i}: 끝남\n" for i in range(solved_n))
 
 
-@pytest.fixture()
-def issue_repos(tmp_path):
+def make_issue_repo(tmp_path, specs, tasks=DONE_TASKS):
+    """specs: [(스킬, 열린 이슈 수, 상태)]. 작업자 a·b 의 복제본을 돌려준다."""
     origin = tmp_path / "origin.git"
     g(tmp_path, "init", "--bare", "-b", "main", str(origin))
     seed = tmp_path / "seed"
     g(tmp_path, "clone", "-q", str(origin), str(seed))
     (seed / "docs" / "worklog").mkdir(parents=True)
-    (seed / "docs" / "TASKS.md").write_text(DONE_TASKS, encoding="utf-8")
+    (seed / "docs" / "TASKS.md").write_text(tasks, encoding="utf-8")
     (seed / "docs" / "worklog" / "README.md").write_text("# 일지\n", encoding="utf-8")
-    for skill, n, status in [("teacherlesson-assistant", 1, "개발"), ("admin-a", 3, "운영"),
-                             ("admin-b", 0, "운영"), ("old-thing", 5, "보관")]:
+    for skill, n, status in specs:
         d = seed / "skills" / skill
         d.mkdir(parents=True)
         (d / "ISSUES.md").write_text(issues(n), encoding="utf-8")
@@ -332,6 +331,12 @@ def issue_repos(tmp_path):
     g(tmp_path, "clone", "-q", str(origin), str(a))
     g(tmp_path, "clone", "-q", str(origin), str(b))
     return {"a": a, "b": b}
+
+
+@pytest.fixture()
+def issue_repos(tmp_path):
+    return make_issue_repo(tmp_path, [("teacherlesson-assistant", 1, "개발"), ("admin-a", 3, "운영"),
+                                      ("admin-b", 0, "운영"), ("old-thing", 5, "보관")])
 
 
 def test_skills_ranking_bundle_first_skips_solved_and_shelved(issue_repos):
@@ -349,3 +354,26 @@ def test_next_falls_back_to_s8_and_spreads_workers(issue_repos):
     assert r.returncode == 0 and "S8 (admin-a)" in r.stdout, r.stdout
     r = claim(issue_repos["a"], "--next", "--check", "--name", "w1")  # 다시 물으면 내 일
     assert "이미 w1 가 잡은 일" in r.stdout, r.stdout
+
+
+def test_similar_skill_names_do_not_collide(tmp_path):
+    """exam-grader 와 exam-graderV2: 한쪽을 잡아도 다른 쪽은 비어 있고, 남의 브랜치를 이어받지 않는다(검토 2026-11-28)."""
+    r = make_issue_repo(tmp_path, [("exam-graderV2", 3, "운영"), ("exam-grader", 1, "운영")])
+    assert claim(r["a"], "--next", "--name", "w1").returncode == 0
+    assert g(r["a"], "branch", "--show-current") == "task/S8-exam-graderv2"
+    out = claim(r["b"], "--next", "--check", "--name", "w2").stdout
+    assert "S8 (exam-grader) (새로 잡기)" in out, out
+
+
+def test_mine_s8_comes_before_new_t_task_and_works_from_subfolder(issue_repos):
+    a, b = issue_repos["a"], issue_repos["b"]
+    assert claim(a, "--next", "--name", "w1").returncode == 0
+    # 교사가 TASKS 에 새 일을 연다
+    tasks = (b / "docs" / "TASKS.md").read_text(encoding="utf-8").replace("| T98 | 끝난 일 | R · 완료 |", "| T98 | 새 일 | R · 열림 |")
+    (b / "docs" / "TASKS.md").write_text(tasks, encoding="utf-8")
+    g(b, "commit", "-q", "-am", "T98 열기")
+    g(b, "push", "-q", "origin", "HEAD:main")
+    out = claim(a / "docs", "--next", "--check", "--name", "w1").stdout  # 하위 폴더에서
+    assert "S8 는 이미 w1 가 잡은 일" in out, out
+    out = claim(b / "docs", "--skills").stdout
+    assert "teacherlesson-assistant" in out and "이슈 1 " in out, out  # 옮김 제목은 세지 않음

@@ -701,7 +701,7 @@ def unit_matches(unit_title: str, unit_text: str) -> bool:
     normalized_query = normalize_space(unit_text)
     if not normalized_query:
         return True
-    if normalized_query in normalized_title:
+    if normalized_query in normalized_title and title_match.adds_only_marks(normalized_title, normalized_query):
         return True
 
     title_numbers = extract_numbers(normalized_title)
@@ -718,18 +718,16 @@ def lesson_matches(title_text: str, lesson_text: str) -> bool:
         return True
 
     lesson_numbers = extract_numbers(normalized_lesson)
-    title_match = re.search(r"\[(.*?)\]\s*(.*)", normalized_title)
-    if title_match:
-        bracket_text = title_match.group(1)
-        topic_text = title_match.group(2)
-        title_numbers = extract_numbers(bracket_text)
-
+    bracket = re.search(r"\[(.*?)\]", normalized_title)
+    if bracket:
+        title_numbers = extract_numbers(bracket.group(1))
         if lesson_numbers and title_numbers:
             return set(lesson_numbers).issubset(set(title_numbers))
-        if not lesson_numbers and normalized_lesson and normalized_lesson in topic_text:
-            return True
 
-    return normalized_lesson in normalized_title if normalized_lesson else False
+    # 이름으로 맞추기: 번호·쪽 표시만 덧붙은 것까지. 이름이 더 긴 것은 확인받아야 연다(title_match).
+    if not normalized_lesson or normalized_lesson not in normalized_title:
+        return False
+    return title_match.adds_only_marks(normalized_title, normalized_lesson)
 
 
 def confirm_similar(kind: str, query: str, candidate: str, level: str) -> bool:

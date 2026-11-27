@@ -84,7 +84,7 @@ class FallbackTests(unittest.TestCase):
 
 
 class RuleUnchangedTests(unittest.TestCase):
-    """unit_matches·lesson_matches 자체는 원래 엄격 규칙 그대로다."""
+    """unit_matches·lesson_matches 의 엄격 규칙(번호 우선, 이름은 번호·쪽 표시만 덧붙은 것까지)."""
 
     def test_unit_matches_strict(self):
         self.assertTrue(sc.unit_matches("1. 우리 지역의 모습", "1단원"))

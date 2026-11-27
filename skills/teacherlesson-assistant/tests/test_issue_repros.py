@@ -22,9 +22,10 @@ OVERDUE_KEY = "lesson-0410"
 
 def slot(slot_id, day, period, status, key, number, sort_order):
     return {"id": slot_id, "slot_date": day.isoformat(), "slot_period": period, "slot_order": 1, "status": status,
-            "source": "", "lesson": {"legacy_lesson_id": key, "lesson_number": number, "title": f"{number}차시",
-                                     "sort_order": sort_order, "pdf_path": "",
-                                     "subject": {"name": "국어"}, "unit": {"name": "3.5 매체"}}}
+            "source": "", "lesson": {"id": key, "subject_id": "국어", "unit_id": "3.5 매체",
+                                      "legacy_lesson_id": key, "lesson_number": number, "title": f"{number}차시",
+                                      "sort_order": sort_order, "pdf_path": "",
+                                      "subject": {"name": "국어"}, "unit": {"name": "3.5 매체"}}}
 
 
 # ISSUE-043 실제 사례를 줄인 것: 어제 3교시 5차시가 미완료로 남고, 오늘 1교시에는 완료된 4차시가 있다.
@@ -38,6 +39,8 @@ SLOTS = [
 def fake_supabase(monkeypatch):
     """슬롯 조회를 흉내: 날짜와 상태 조건을 지킨다."""
     def fake_get(table, **params):
+        if table == sm.LESSONS:
+            return [dict(slot["lesson"]) for slot in SLOTS]
         assert table == sm.SLOTS
         rows = list(SLOTS)
         date_filter = params.get("slot_date", "")

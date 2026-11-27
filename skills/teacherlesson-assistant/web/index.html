@@ -514,6 +514,7 @@ const iso = d => new Date(d.getTime() - d.getTimezoneOffset()*6e4).toISOString()
 const hm = s => { const [h,m] = s.split(':').map(Number); return h*60+m; };
 const mmss = ms => { const s = Math.max(0, Math.floor(ms/1000)); return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0'); };
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const lessonText = item => `${item.lesson || ''}차시${item.lesson_part ? ` (${item.lesson_part})` : ''}`;
 function toast(msg, ms=2600){ const t=$('toast'); t.textContent=msg; t.style.display='block'; clearTimeout(t._h); t._h=setTimeout(()=>t.style.display='none', ms); }
 async function post(url, body){
   const r = await fetch(url, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)});
@@ -612,7 +613,7 @@ function select(i){
   const saved = cur.saved;
   sess = sessionMatchesLesson(saved, S.date, cur) ? saved : {date:S.date, period:cur.period, subject:cur.subject, publisher:cur.publisher, title:cur.title, unit:cur.unit, lesson:cur.lesson, record_key:cur.record_key, memos:[], notice:''};
   $('lTitle').textContent = `${cur.subject} · ${cur.title || cur.lesson || '차시 정보 없음'}`;
-  $('lMeta').innerHTML = [cur.publisher && `<span class="tag">${esc(cur.publisher)}</span>`, cur.unit && esc(cur.unit), cur.lesson && `${esc(cur.lesson)}차시`,
+  $('lMeta').innerHTML = [cur.publisher && `<span class="tag">${esc(cur.publisher)}</span>`, cur.unit && esc(cur.unit), cur.lesson && esc(lessonText(cur)),
     cur.status === 'done' ? '<span class="tag" style="background:#e6f4ea;color:var(--ok)">✅ 완료됨</span>' : (cur.status && `상태: ${esc({planned:'예정', pending:'예정'}[cur.status] || cur.status)}`)].filter(Boolean).join(' · ');
   $('catchBox').style.display = 'none';
   $('replaceBox').style.display = 'none';
@@ -1297,7 +1298,7 @@ function renderCatchList(query = '') {
     const plan = i.planned_date ? `${i.planned_date.slice(5).replace('-', '/')} ${esc(i.planned_period)}교시` : '';
     const note = i.done ? '✓ 함 (누르면 여기로 되돌리기)' : plan ? `계획 ${plan}` : '날짜 없음 (누르면 앞 차시의 남은 시간을 넘겨받아요)';
     html += `<button data-n="${n}" class="${now ? 'now' : ''}${i.done ? ' done' : ''}">`
-          + `${esc(i.lesson)}차시 · ${esc(i.title)}<small>${note}${now ? ' ◀ 지금 계획된 차시' : ''}</small></button>`;
+          + `${esc(lessonText(i))} · ${esc(i.title)}<small>${note}${now ? ' ◀ 지금 계획된 차시' : ''}</small></button>`;
   });
   $('catchList').innerHTML = html;
 }
@@ -1319,7 +1320,7 @@ $('catchList').onclick = async e => {
   const n = +b.dataset.n, it = catchItems[n];
   const before = catchItems.slice(0, n).filter(i => !i.done);          // 건너뛰어 '이미 함'이 될 차시
   const reopen = catchItems.slice(n).filter(i => i.done);              // 되돌려 '아직 안 함'이 될 차시
-  const name = i => `${i.lesson}차시 ${i.title}`;
+  const name = i => `${lessonText(i)} ${i.title}`;
   const list = a => `${a.slice(0, 4).map(name).join(', ')}${a.length > 4 ? ' …' : ''}`;
   const msg = [`[${cur.subject}] 「${it.unit} ${name(it)}」을(를)\n오늘 실제로 할 차시로 정할까요?`, '',
     before.length ? `• 그 앞의 ${before.length}개 차시는 '이미 함'으로 표시돼요:\n   ${list(before)}` : '',
@@ -1352,7 +1353,7 @@ function renderReplaceList(query = '') {
   matches.forEach(i => {
     if (i.unit !== unit) { unit = i.unit; html += `<h4>${esc(unit || '단원 없음')}</h4>`; }
     const plan = i.planned_date ? `계획 ${i.planned_date.slice(5).replace('-', '/')} ${esc(i.planned_period)}교시` : '날짜 없음';
-    html += `<button data-key="${esc(i.record_key)}">${esc(i.lesson)}차시 · ${esc(i.title)}<small>${plan}</small></button>`;
+    html += `<button data-key="${esc(i.record_key)}">${esc(lessonText(i))} · ${esc(i.title)}<small>${plan}</small></button>`;
   });
   $('replaceList').innerHTML = html;
 }
@@ -1379,7 +1380,7 @@ async function replaceWithLesson(it, newSubject) {
   if (!cur || !cur.record_key || !cur.slot_id || cur.status !== 'planned') { toast('가져올 예정 교시를 먼저 선택해 주세요.'); return; }
   if (cur.subject === newSubject) { toast('같은 과목 교시에는 ‘실제로 할 차시 고르기’를 사용해 주세요.'); return; }
   const msg = [`[${S.date} ${cur.period}교시] ${cur.subject}에서 ${newSubject}로 바꿀까요?`,
-    `• 선택한 차시: ${it.lesson}차시 ${it.title}`,
+    `• 선택한 차시: ${lessonText(it)} ${it.title}`,
     `• 원래 ${cur.subject} 차시는 완료 처리하지 않고 다음 ${cur.subject} 시간으로 넘겨요. 뒤 차시도 순서대로 한 칸씩 이동해요.`,
     `• 현재 계획에 남는 ${cur.subject} 차시는 날짜 없이 남겨요.`,
     `• 선택한 과목의 앞 미완료 차시는 완료로 표시되고, 그 뒤 차시는 기존 예정 칸에 이어서 배치돼요.`].join('\n');

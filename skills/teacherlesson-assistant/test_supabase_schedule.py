@@ -193,6 +193,31 @@ class FakeServerCase(unittest.TestCase):
         return [(m, t) for m, t, _ in self.db.log if m != "GET"]
 
 
+class LessonDisplayLabelsTest(unittest.TestCase):
+    def lesson(self, index, number, title):
+        return {"id": f"L{index}", "subject_id": "국어", "unit_id": "4단원",
+                "lesson_number": number, "title": title, "sort_order": index}
+
+    def test_fills_blanks_and_groups_repeated_titles(self):
+        numbers = [1, 2, None, None, None, None, 7, None, None, None, None, None, None, 14]
+        titles = ["1", "2", "3~4", "3~4", "5~6", "5~6", "7", "8~9", "8~9",
+                  "10~11", "10~11", "12~13", "12~13", "14"]
+        labels = sm.lesson_display_labels([
+            self.lesson(index, number, title)
+            for index, (number, title) in enumerate(zip(numbers, titles), 1)
+        ])
+        self.assertEqual([labels[f"L{i}"]["number"] for i in range(1, 15)], list(range(1, 15)))
+        self.assertEqual(labels["L3"], {"number": 3, "lesson": "3~4", "lesson_part": "1/2"})
+        self.assertEqual(labels["L4"], {"number": 4, "lesson": "3~4", "lesson_part": "2/2"})
+        self.assertEqual(labels["L7"], {"number": 7, "lesson": "7", "lesson_part": ""})
+
+    def test_existing_number_restarts_count_after_mismatch(self):
+        rows = [self.lesson(1, 1, "A"), self.lesson(2, None, "B"),
+                self.lesson(3, 5, "C"), self.lesson(4, None, "D")]
+        labels = sm.lesson_display_labels(rows)
+        self.assertEqual([labels[f"L{i}"]["number"] for i in range(1, 5)], [1, 2, 5, 6])
+
+
 class DayScheduleTest(FakeServerCase):
     def test_reads_one_day_in_legacy_shape(self):
         rows = sm.day_schedule(sm.date(2026, 11, 23))
@@ -235,6 +260,23 @@ class DayScheduleTest(FakeServerCase):
         self.db.by_id("lesson_lessons", "L1")["pdf_path"] = "D:\\지도서\\수학.pdf"
         self.assertTrue(sm.day_schedule(sm.date(2026, 11, 23))[0]["has_pdf"])
 
+    def test_day_schedule_uses_display_range_and_part(self):
+        self.db.by_id("lesson_lessons", "L3")["lesson_number"] = None
+        self.db.by_id("lesson_lessons", "L4")["lesson_number"] = None
+        self.db.by_id("lesson_lessons", "L3")["title"] = "묶음 활동"
+        self.db.by_id("lesson_lessons", "L4")["title"] = "묶음 활동"
+        self.db.tables["lesson_slots"].append({
+            "id": "sRange", "lesson_id": "L3", "slot_date": "2026-11-23", "slot_period": 5,
+            "slot_order": 1, "status": "planned", "source": "x", "memo": None,
+        })
+        row = next(item for item in sm.day_schedule(sm.date(2026, 11, 23)) if item["slot_id"] == "sRange")
+        self.assertEqual((row["lesson"], row["lesson_part"]), ("3~4", "1/2"))
+
+    def test_reads_lesson_list_once_for_display_numbers(self):
+        sm.day_schedule(sm.date(2026, 11, 23))
+        reads = [q for method, table, q in self.db.log if method == "GET" and table == "lesson_lessons"]
+        self.assertEqual(len(reads), 1)
+
 
 class ReadersTest(FakeServerCase):
     def test_upcoming_lists_subject_lessons_in_order(self):
@@ -252,6 +294,15 @@ class ReadersTest(FakeServerCase):
 
     def test_upcoming_unknown_subject(self):
         self.assertEqual(sm.upcoming("체육"), [])
+
+    def test_upcoming_uses_display_range_and_part(self):
+        self.db.by_id("lesson_lessons", "L3")["lesson_number"] = None
+        self.db.by_id("lesson_lessons", "L4")["lesson_number"] = None
+        self.db.by_id("lesson_lessons", "L3")["title"] = "묶음 활동"
+        self.db.by_id("lesson_lessons", "L4")["title"] = "묶음 활동"
+        rows = sm.upcoming("수학")
+        self.assertEqual((rows[2]["lesson"], rows[2]["lesson_part"]), ("3~4", "1/2"))
+        self.assertEqual((rows[3]["lesson"], rows[3]["lesson_part"]), ("3~4", "2/2"))
 
     def test_records_legacy_columns(self):
         self.slot("sA")["status"] = "done"

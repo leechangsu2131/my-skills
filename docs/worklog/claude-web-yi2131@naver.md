@@ -36,3 +36,4 @@
 - 2026-11-27 12:54 S1 (teacherlesson-assistant) 시작 (브랜치 task/S1-tests-replace-subject-period)
 - 2026-11-27 13:20 S1 PR 올림 — `supabase_schedule.replace_subject_period`(교시 과목 바꾸기)·`progress("replace-subject")` 시험 27개(`tests/test_replace_subject_period.py`). 가짜 메모리 표로 최종 슬롯 상태를 확인(밀기·뒤 차시 당기기·날짜 없는 꼬리 칸·앞 중복 비우기·막는 경우 14가지). 소스를 12곳 깨뜨려 보니 8곳은 시험이 잡았고 4곳은 결과가 같아 잡을 수 없는 변경(같은 차시 검사는 같은 과목 검사에 먼저 걸림 등). 소스는 안 고침
 - 2026-11-27 17:46 S2 (teacherlesson-assistant) 시작 (브랜치 task/S2-review-pr141-143)
+- 2026-11-27 18:50 S2 PR 올림 — PR #141(parse_plan 음수 분, 고침 되돌리면 시험 1개 실패 확인)·PR #143(긴 이름 차시 재현, 표시 떼면 4개 모두 AssertionError 확인) 검토 → `docs/reviews/fix-parse-plan-negative-minutes.md`·`task-S3-sites-longer-lesson-name.md`. 둘 다 합쳐도 됨. #141 은 #136 위에 쌓여 있어 둘 다 합치면 test_parse_plan.py 충돌

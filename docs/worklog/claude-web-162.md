@@ -39,3 +39,4 @@
 - 2026-11-27 07:24 S4 (teacherlesson-schedule) 시작 (브랜치 task/S4-check-schedule-docs)
 - 2026-11-27 07:25 S4 (teacherlesson-schedule) PR 올림 — SKILL.md·README 를 코드·시험과 대조: PyMuPDF 이미 추가(T93)인데 '빠져 있음' 고침, 확인 명령에 빠진 시험 파일 추가. 시험 72개 중 3 오류(fitz 없음 2·ISSUE-003 1). 실제 Google Sheets 는 확인 필요
 - 2026-11-27 13:30 S1 (teacherlesson-from-neis) 시작 (브랜치 task/S1-tests-neis-viewer)
+- 2026-11-27 18:12 S1 (teacherlesson-from-neis) PR 올림 — tests/viewer.test.js 11개(viewer.js 날짜 계산 weekDays·weekBounds·monthBounds·monthCells·shiftPeriod, colorForSubject, groupedByDate). viewer.js 는 안 고침. 확인: popup 14 + viewer 11 = 25개 통과, 소스를 일부러 망가뜨린 5곳을 모두 잡음(되돌림). render* 와 실제 크롬 화면은 확인 필요

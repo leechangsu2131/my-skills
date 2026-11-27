@@ -282,3 +282,70 @@ def test_next_skips_failed_takeover(repos):
     g(repos["a2"], "switch", "-q", "task/T98-big")  # a 와 a2 는 브랜치 목록을 같이 씀 — 같은 PC 의 다른 작업 폴더가 그 브랜치를 씀
     r = claim(repos["a"], "--next", "--check")
     assert r.returncode == 0 and "T99" not in r.stdout and "T77" in r.stdout, r.stdout
+
+
+# --- S8: TASKS 에 고를 일이 없으면 열린 이슈가 있는 스킬을 맡음(교사 요청 2026-11-28) ---
+
+DONE_TASKS = """# 할 일
+
+> 고르는 순서(claim_task.py --next): K
+
+## K. 큰 일
+
+| 번호 | 할 일 | 상태 |
+|---|---|---|
+| T98 | 끝난 일 | R · 완료 |
+
+## S. 상시 일
+
+| 번호 | 할 일 | 등급 |
+|---|---|---|
+| S8 | 스킬 하나의 열린 이슈 고치기 | R |
+"""
+
+
+def issues(open_n: int, solved_n: int = 1) -> str:
+    body = "# 이슈\n\n## 🔵 진행 중\n\n" + "".join(f"### ISSUE-{i:03d}: 열림 {i}\n- 할 일\n\n" for i in range(1, open_n + 1))
+    body += "## 📌 백로그\n\n_없음_\n\n## 🟢 해결됨\n\n"
+    return body + "".join(f"### ISSUE-{100 + i}: 끝남\n" for i in range(solved_n))
+
+
+@pytest.fixture()
+def issue_repos(tmp_path):
+    origin = tmp_path / "origin.git"
+    g(tmp_path, "init", "--bare", "-b", "main", str(origin))
+    seed = tmp_path / "seed"
+    g(tmp_path, "clone", "-q", str(origin), str(seed))
+    (seed / "docs" / "worklog").mkdir(parents=True)
+    (seed / "docs" / "TASKS.md").write_text(DONE_TASKS, encoding="utf-8")
+    (seed / "docs" / "worklog" / "README.md").write_text("# 일지\n", encoding="utf-8")
+    for skill, n, status in [("teacherlesson-assistant", 1, "개발"), ("admin-a", 3, "운영"),
+                             ("admin-b", 0, "운영"), ("old-thing", 5, "보관")]:
+        d = seed / "skills" / skill
+        d.mkdir(parents=True)
+        (d / "ISSUES.md").write_text(issues(n), encoding="utf-8")
+        (d / "SKILL.md").write_text(f"---\nname: {skill}\nmetadata:\n  status: {status}\n---\n", encoding="utf-8")
+    g(seed, "add", ".")
+    g(seed, "commit", "-q", "-m", "init")
+    g(seed, "push", "-q", "origin", "HEAD:main")
+    a, b = tmp_path / "a", tmp_path / "b"
+    g(tmp_path, "clone", "-q", str(origin), str(a))
+    g(tmp_path, "clone", "-q", str(origin), str(b))
+    return {"a": a, "b": b}
+
+
+def test_skills_ranking_bundle_first_skips_solved_and_shelved(issue_repos):
+    r = claim(issue_repos["a"], "--skills")
+    assert r.returncode == 0, r.stdout
+    lines = [l for l in r.stdout.splitlines() if l[:3].strip().rstrip(".").isdigit()]
+    assert "teacherlesson-assistant" in lines[0] and "admin-a" in lines[1] and len(lines) == 2, r.stdout
+
+
+def test_next_falls_back_to_s8_and_spreads_workers(issue_repos):
+    r = claim(issue_repos["a"], "--next", "--name", "w1")
+    assert r.returncode == 0 and "S8 (teacherlesson-assistant)" in r.stdout, r.stdout
+    assert g(issue_repos["a"], "branch", "--show-current") == "task/S8-teacherlesson-assistant"
+    r = claim(issue_repos["b"], "--next", "--name", "w2")  # 앞 스킬은 w1 이 막 잡음 → 다음 스킬
+    assert r.returncode == 0 and "S8 (admin-a)" in r.stdout, r.stdout
+    r = claim(issue_repos["a"], "--next", "--check", "--name", "w1")  # 다시 물으면 내 일
+    assert "이미 w1 가 잡은 일" in r.stdout, r.stdout

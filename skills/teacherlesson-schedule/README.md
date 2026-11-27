@@ -120,8 +120,7 @@ npm.cmd run dev -- --host 127.0.0.1 --port 5173 --strictPort
 - `auto_planner.py`: 시간표/시작일 기준 자동 배치
 - `server.py`: Flask API
 - `src/`: React UI
-- `tests/test_schedule.py`
-- `tests/test_server.py`
+- `tests/` — `test_schedule.py`, `test_server.py`, `test_server_lessons_catchup.py`, `test_server_write_routes_schedule_error.py`, `test_auto_planner.py`, `test_bridge_sheet.py`, `test_semester_rollover.py`, `test_korean_restore.py`
 
 별도 저장소:
 
@@ -194,11 +193,11 @@ python schedule.py push 국어 7 2026-04-03
 ## 테스트
 
 ```powershell
-python -m unittest tests.test_schedule tests.test_server tests.test_server_lessons_catchup tests.test_auto_planner tests.test_bridge_sheet tests.test_semester_rollover
+python -m unittest tests.test_schedule tests.test_server tests.test_server_lessons_catchup tests.test_auto_planner tests.test_bridge_sheet tests.test_semester_rollover tests.test_korean_restore tests.test_server_write_routes_schedule_error
 python -m py_compile schedule.py auto_planner.py bridge_sheet.py server.py
 npm.cmd run build
 ```
 
 ## 참고 문서
 
-- [bridge-sheet-design.md](C:/Users/user/.gemini/antigravity/scratch/repos/my-skills/skills/teacherlesson-schedule/docs/bridge-sheet-design.md)
+- [bridge-sheet-design.md](docs/bridge-sheet-design.md)

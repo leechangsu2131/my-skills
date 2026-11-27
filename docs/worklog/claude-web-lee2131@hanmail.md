@@ -39,3 +39,4 @@
 - 2026-11-27 18:05 S2 (review-PR139) PR 올림 — PR #139(S7 쓰기 경로 잠금 설계 메모) 검토 글 docs/reviews/task-PR139-write-lock-design.md. 확인: 라우트 7개·줄 번호·ScheduleError 계층·_rewrite_bridge_sheet 경로·시험 파일을 현재 main 코드와 대조 — 합쳐도 됨. 🟡 import functools 빠짐, ValueError 잡는 범위가 넓어짐 한 줄 필요, 변이 ③ 표현
 - 2026-11-27 18:07 S2 (review-PR152) 시작 (브랜치 task/S2-review-pr152)
 - 2026-11-27 18:08 S2 (review-PR152) PR 올림 — PR #152(S1 flow_candidates·safe_name·monitor_rects·prepare_status 시험) 검토 글 docs/reviews/task-PR152-flow-status-tests.md. 확인: 17 통과·1 expectedFailure, 코드를 일부러 망가뜨린 6가지를 시험이 모두 잡음, ISSUES 새 항목은 코드와 맞음 — 합쳐도 됨. 🟡 새 시험 파일이 폴더 맨 위라 CI target 에 안 들어감(tests/ 로 옮기거나 check.yml 에 이름 추가)
+- 2026-11-28 06:28 T106 시작 (브랜치 task/T106-work)

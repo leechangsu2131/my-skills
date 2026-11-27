@@ -43,5 +43,6 @@
 - 2026-11-27 19:40 T100 PR 올림 — teacherlesson-schedule server.py 에 _json_schedule_errors 데코레이터(ScheduleError→JSON 500)를 done·push·extend·pull·move·swap 에 붙임. S3 의 expectedFailure 6개를 일반 시험으로(고치기 전 실패→후 통과, 변이 3가지 잡음). 수업 비서 쪽 전달은 이미 맞아(assistant_server.py 안 고침) 시험 6개만 추가(변이 잡음). 잠금(T77)은 안 함. 전체: schedule 144개 중 오류 4개는 fitz 가짜 모듈 때문(변경 전 동일), assistant tests 402 통과, 루트 test_supabase_schedule PDF 1개는 변경 전에도 실패
 - 2026-11-28 06:29 T108 시작 (브랜치 task/T108-submissions-check)
 - 2026-11-28 06:31 T108 PR 올림 — 제출 확인표: submissions.py(만들기·체크·안 낸 번호·명단 읽기)·/api/submissions·web/submissions.js·index.html 칸. 시험 Python 32·Node 11, 소스 변이 10개 모두 잡음, assistant tests 505 통과(+4 xfail)
+- 2026-11-28 06:34 T110 시작 (브랜치 task/T110-theme-layout)
 - 2026-11-28 13:05 T111 시작 (브랜치 task/T111-stt-words-2)
 - 2026-11-28 13:07 T111 PR 올림 — #185(claude-web-162)가 이미 합쳐 남아 있던 ③ 화면 칸만: 수업 비서 '🎙 받아쓰기 사전' 칸(web/stt_words.js)·GET/POST /api/stt-words(모양·길이·개수 검사). 시험 Python 15·Node 9, 변이 9개 모두 잡음, 실제 크롬 점검(API 가짜) 통과, assistant tests 508 통과

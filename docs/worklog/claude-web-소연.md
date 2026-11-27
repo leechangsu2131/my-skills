@@ -18,3 +18,4 @@
 - 2026-11-27 11:22 T85 다시 시작
 - 2026-11-27 11:22 T85 PR 올림 — 설계 메모(docs/plans/hiclass-notice.md), 인용한 함수·포트·키를 코드와 대조. 하이클래스 화면은 확인 필요
 - 2026-11-27 12:19 S5 (merge-rehearsal) 시작 (브랜치 task/S5-merge-rehearsal)
+- 2026-11-27 12:21 S5 PR 올림 (merge-rehearsal) — 열린 PR 12건 합쳐 시험. 새로 깨지는 것 없음, mapper 2건은 main 에서도 실패

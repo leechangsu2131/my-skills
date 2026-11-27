@@ -180,5 +180,33 @@ class LoadNewRowsTests(unittest.TestCase):
         self.assertEqual(Path(path).read_text(encoding="utf-8"), before)
 
 
+class Issue8ReproTests(unittest.TestCase):
+    """ISSUE-8 재현: unit·title 이 없는 완료 기준은 거절해야 하는데, 지금은 모든 행을 완료로 칠한다.
+
+    '바라는 동작'을 적어 두고 expectedFailure 로 표시했다. 고치면 'unexpected success' 로 실패하니
+    그때 표시를 떼고, 지금 동작을 적은 test_missing_keys_in_rule_match_everything 도 함께 바꾼다.
+    """
+
+    def assert_rejected_without_marking(self, rule):
+        rows = [row("1. 가", "a"), row("2. 나", "b"), row("3. 다", "c")]
+        try:
+            with self.assertRaises(ValueError):
+                sr.mark_until(rows, rule)
+        finally:
+            self.assertEqual([r[DONE] for r in rows], [False, False, False])
+
+    @unittest.expectedFailure
+    def test_rule_with_only_subject_is_rejected(self):
+        self.assert_rejected_without_marking({"subject": "음악"})
+
+    @unittest.expectedFailure
+    def test_rule_with_misspelled_key_is_rejected(self):
+        self.assert_rejected_without_marking({"subject": "음악", "tilte": "a"})
+
+    @unittest.expectedFailure
+    def test_rule_with_blank_unit_and_title_is_rejected(self):
+        self.assert_rejected_without_marking({"subject": "음악", "unit": " ", "title": ""})
+
+
 if __name__ == "__main__":
     unittest.main()

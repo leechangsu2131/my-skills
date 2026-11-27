@@ -26,6 +26,14 @@
 
 ## 🔵 진행 중
 
+### ISSUE-051: 두 시간짜리 차시의 차시 번호가 비어 화면에 '차시'만 나옴 (2026-11-27)
+- **상태**: 🔵 원인 확인, 고치기 전 (TASKS T104)
+- **증상**: 교사 PC(lee21)에서 수업 비서를 켜고 `/api/state?date=2026-11-30` 을 보니 2교시 국어 `lesson-0415`(4단원 '높임 표현을 바르게 사용하는 방법을 안다.')의 `lesson` 이 빈 글자 → 화면에 번호 없이 '차시'. 국어 `/api/upcoming` 149개 중 같은 제목이 두 줄인 차시(지도서의 '3~4차시' 같은 두 시간 묶음)는 **모두** 번호가 비고, 한 시간짜리(1·2·7·13·14차시)만 번호가 있다.
+- **원인(추정 아님 — 표 정의 확인)**: Supabase `lesson_lessons.lesson_number` 가 `INT`(`teacherlesson-workspace/supabase/migrations/001_initial_schema.sql`). 진도표의 '3~4' 같은 범위 글자는 숫자로 못 넣어 NULL 이 된 것으로 보임(넣는 스크립트 위치는 확인 필요).
+- **영향**: 화면 표시와 '3차시인지 4차시인지' 구분. 🌙 준비의 지도서 구간 찾기(`prepare_lessons.lesson_section`)는 제목으로 대신 찾아 **정상**(같은 PC 에서 확인: 번호 없음·'3' 모두 '3~4차시' 구간 6,659자).
+- **고칠 방향**: 진도는 바꾸지 않고 **보여 줄 때만** 같은 단원 안 `sort_order` 순서로 번호를 채움(4단원: 1,2,_,_,_,_,7 → 3,4,5,6 — 실제 번호와 맞는 것 확인). 같은 제목 두 줄이면 '3~4차시 중 1번째'처럼.
+- **관련 파일**: `supabase_schedule.py`(`day_schedule`·`upcoming` 의 `"lesson"` 만드는 곳), `web/index.html`
+
 ### ISSUE-042: 오늘·내일 수업 준비 구분, 내선 검색, 사이트 창 배치 재보정 (2026-11-26)
 - **상태**: 🔵 코드·자동 점검 완료, 실제 교실 PC 확인 대기
 - **요청**: 아침에 누르는 오늘 준비와 방과 후 누르는 내일 준비를 별도 단추로 나누고, 첨부 비상연락망은 내선번호 위주로 안내. 교과 사이트 창은 오른쪽 모니터 전체로 열어야 함.
@@ -161,6 +169,7 @@
   - 녹음(webm)은 PC 에만. 키는 중앙 .env 의 `SUPABASE_URL`·`SUPABASE_SERVICE_ROLE_KEY`(코드·커밋에 값 금지)
   - 확인할 것: 학생 기록 표 이름·열 구조, 학생 명단 출처, Supabase 표 만들기(SQL) 권한 — 표를 만들기 전에 SQL 초안을 먼저 교사에게 보여 승인받기
 - **분할 자동화**(Gemini, 쓸 때 토큰 0)는 `teacherlesson-guide` ISSUE-001 — 쪽 머리 글만 주면 9/9 정답 확인
+- **확인(2026-11-27, lee21 PC)**: 이 PC 의 데이터 폴더는 아직 `내 문서\my-skills-data`(로컬)이고 `MY_SKILLS_DATA_DIR` 설정이 없음 → 흐름(flows)·단원 개관은 PC 마다 따로. OneDrive `95. 개인\my-skills-data	eacherlesson-assistant` 에는 `학생명단.csv`·`수업분석` 만 있음. 그래서 다른 PC 에서 🌙 준비한 11/30 흐름이 이 PC 화면에는 '없음'. 흐름을 OneDrive 로 옮길지는 교사 결정.
 - **관련 파일**: `assistant_server.py`(`/api/session`), `supabase_schedule.py`, `실행_수업비서.bat`
 
 ### ISSUE-003: NotebookLM 노트북 만들기·등록·찾기 시험 (2026-11-21)

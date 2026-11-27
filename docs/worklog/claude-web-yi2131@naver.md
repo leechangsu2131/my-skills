@@ -44,3 +44,4 @@
 - 2026-11-27 18:50 S2 PR 올림 — PR #141(parse_plan 음수 분, 고침 되돌리면 시험 1개 실패 확인)·PR #143(긴 이름 차시 재현, 표시 떼면 4개 모두 AssertionError 확인) 검토 → `docs/reviews/fix-parse-plan-negative-minutes.md`·`task-S3-sites-longer-lesson-name.md`. 둘 다 합쳐도 됨. #141 은 #136 위에 쌓여 있어 둘 다 합치면 test_parse_plan.py 충돌
 - 2026-11-27 19:20 S2 PR 올림 — PR #145(CI selenium: sites 시험 98→116 통과·건너뜀 0)·PR #149(남은 사진·본문 삭제: 시험·참조 확인, 기록에는 남음 알림)·PR #139(쓰기 잠금 설계 메모: 줄 번호·함수 대조 일치, import functools 빠짐) 검토 → `docs/reviews/task-S5-ci-sites-selenium.md`·`fix-remove-remaining-files.md`·`task-S7-s7-write-lock.md`. 셋 다 합쳐도 됨
 - 2026-11-28 06:34 S2 (teacherlesson-assistant) 시작 (브랜치 task/S2-review-pr174-178)
+- 2026-11-28 07:20 S2 PR 올림 — PR #174(T98: main 에 T98 이 이미 다른 구현으로 들어와 중복·충돌 7곳 → 닫기 권함, 14일 창·중복 제거·30개 한도는 가져올 만함)·PR #178(T108 제출 확인표: 시험 505 통과, 소스 14곳 중 12곳 잡힘, 학생 이름은 로컬 명단 화면에만) 검토 → `docs/reviews/task-T98-overdue-lessons.md`·`task-T108-submissions-check.md`

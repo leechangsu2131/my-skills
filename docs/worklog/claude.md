@@ -8,6 +8,7 @@
 - 2026-11-27 05:25 fix/parse-plan-negative-minutes PR 올림 — 교사 요청: parse_plan 이 음수 분(-5)을 5분으로 읽던 것 고침(정규식 -?\d+). 재현 xfail 시험을 일반 시험으로 바꾸고 ISSUES 를 해결됨으로 옮김. 확인: 전체 pytest 424 통과, build_catalog --check·check_privacy 통과. 앞 PR(task/S1-parse-plan-tests) 위에 쌓음
 - 2026-11-27 05:50 S1 (teacherlesson-assistant) PR 올림 — memo_sync.pull_due(내려받을 때가 됐나)·key_of(서버 키 고르기) 시험 13개 새로 씀(tests/test_memo_sync_pull_due.py), 코드는 안 고침. 확인: 그 폴더 unittest discover 통과, build_catalog --check·check_privacy 통과
 - 2026-11-27 06:20 S1 (teacherlesson-assistant) PR 올림 — assistant_server 의 safe_name·flow_candidates·monitor_rects·prepare_status 시험 18개 새로 씀(test_assistant_flow_status.py), 코드는 안 고침. 시험 중 '준비 상태 파일이 JSON 객체가 아니면 prepare_status 오류' 발견 → expectedFailure 재현 시험 + ISSUES.md 한 항목. 확인: 그 폴더 unittest(test_assistant_* 74개·tests 폴더) 통과, 루트 pytest 395 통과, build_catalog --check·check_privacy 통과
+- 2026-11-27 06:45 fix/parse-flow-negative-minutes PR 올림 — 교사 요청: parse_flow(옛 경로)가 음수 분(-5)을 5분으로 읽던 것 고침(음수는 0). 시험 tests/test_parse_flow_minutes.py(고치기 전 4개 실패 확인). 전체 pytest 410 통과, build_catalog --check·check_privacy 통과
 - 2026-11-27 07:25 S1 (teacherlesson-assistant) PR 올림 — transcribe.build_markdown(받아쓰기 결과 → 마크다운 글) 시험 10개 새로 씀(tests/test_transcribe_markdown.py), 코드는 안 고침. 확인: 그 폴더 unittest discover 93개 통과, 루트 pytest 395 통과, build_catalog --check·check_privacy 통과
 - 2026-11-27 08:33 S1 (teacherlesson-assistant) 시작 (브랜치 task/S1-parse-plan-tests)
 - 2026-11-27 08:47 S1 (teacherlesson-assistant) 시작 (브랜치 task/S1-memo-sync-key-pull)

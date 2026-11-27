@@ -2,3 +2,4 @@
 
 - 2026-11-25 21:27 시작 — 첫 실행 때 임시 스크립트가 저장소를 찾지 못하는 오류 수정 (브랜치 fix/start-worker-temp-path)
 - 2026-11-25 21:28 PR 올림 — TEMP에서 실행해 기존 작업 폴더 인식, 카탈로그 점검 통과
+- 2026-11-27 21:17 T98 이어받음 (브랜치 task/T98-overdue-lessons, 앞 — claude-web-173: 2026-11-27 19:16 T98 시작 (브랜치 task/T98-overdue-lessons))

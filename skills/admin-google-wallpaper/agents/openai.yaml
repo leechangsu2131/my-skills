@@ -1,4 +1,0 @@
-interface:
-  display_name: 학생 Chrome 배경 관리
-  short_description: 계정별 Chrome 배경과 시작 사이트 설정
-  default_prompt: 학생 태블릿 계정의 Chrome 배경 이미지를 설정해 줘

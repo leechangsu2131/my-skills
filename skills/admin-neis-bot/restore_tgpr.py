@@ -38,7 +38,7 @@ js = """
         "cncdSn": "1",
         "dptCd": "R100006630",
         "dptNm": "화천초등학교",
-        "emgCnctTelno": "010-4233-0844",
+        "emgCnctTelno": "",
         "endHh": "18",
         "endHm": "1800",
         "endMm": "00",

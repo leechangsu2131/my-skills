@@ -151,3 +151,11 @@ skills/personal-youtube-gemini-kakao-automation/v/backlog_transcripts/
 skills/personal-youtube-gemini-kakao-automation/v/last_transcript_*.txt
 skills/personal-record-trade/data/report_web/
 skills/personal-record-trade/data/report/**/extracted_metrics.txt
+
+# 학생·학부모 정보가 찍히는 화면 캡처·답안지 사진은 올리지 않는다
+skills/admin-hitalk-sender/*.png
+skills/admin-neis-bot/*.png
+skills/admin-neis-bot/data/*.png
+skills/classmanage-iscream-evaluate/*.png
+skills/classmanage-exam-graderV2/data/raw_images/
+skills/classmanage-exam-graderV2/data/aligned_images/

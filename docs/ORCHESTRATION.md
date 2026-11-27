@@ -14,7 +14,8 @@
 |---|---|---|---|
 | Antigravity (계정 2개) | 넉넉함 — 쉬지 않고 씀 | 교사 PC 원래 `my-skills` 폴더(로컬 IDE 는 한 번에 하나) | Codex 를 안 쓸 때. P 일(D·I 의 P)·큰 프로젝트 |
 | Codex (계정 2개) | 넉넉함 — 쉬지 않고 씀 | 교사 PC 원래 `my-skills` 폴더(한 번에 하나) 또는 클라우드 | 교사와 함께 큰 프로젝트. 클라우드 Codex 는 GitHub 에서 바로 일해 로컬 IDE 와 동시에 돌려도 됨. 클라우드가 푸시를 못 하면 오케스트레이터가 `claim_task.py` 로 미리 잡아 줌 |
-| Claude 웹·bizcoder | — | 웹·교사 PC | R 일 |
+| bizcoder | — | 교사 PC 원래 `my-skills` 폴더 — Codex·Antigravity 와 교대로 한 번에 하나(교사 결정 2026-11-27, 따로 폴더 안 만듦) | R·P 의 작은 T 번호 일(`start_worker.ps1 -Task`) |
+| Claude 웹 | — | 웹 | R 일 |
 | ChatGPT 웹 | — | — | 맡기지 않음(저장소를 못 바꿈) |
 
 ## 0. 시작 위치
@@ -45,9 +46,9 @@ powershell -ExecutionPolicy Bypass -File tools\start_worker.ps1 -Tool bizcoder -
 ```
 - `-Tool` 은 bizcoder / claude / gemini / codex(CLI). 로컬 IDE(Codex 앱·Antigravity)는 이 스크립트를 쓰지 않고 원래 `my-skills` 폴더에서 한 번에 하나(WORKER_GUIDE 2-2).
 - **까만 창 CLI 작업자(bizcoder·로컬 Claude Code·Gemini CLI·Codex CLI)의 일은 오케스트레이터가 정한다** → `-Task <번호>`. 스크립트가 도구를 켜기 전에 `tools/claim_task.py <번호> --check` 로 확인하고, 누가 하고 있거나 완료·결정 대기면 켜지 않는다. 작업자는 시작 직전에 `claim_task.py` 로 일을 잡는다. `-Task` 없이 켜면 스스로 고르되 역시 `claim_task.py` 로 잡는다.
-- **로컬 CLI 작업자는 이 스크립트가 만든 폴더에서만** 일한다. 따로 받은 저장소·다른 폴더에서 돌리면 원격 브랜치를 새로 받지 않아 남이 잡은 일을 못 본다(2026-11-25~26 T10·T11·T25 를 다른 폴더의 로컬 작업자가 다시 함). 같은 저장소의 작업 폴더끼리는 브랜치 목록을 같이 써서, 아직 안 올린 브랜치까지 `claim_task.py` 가 본다.
-- 작업자마다 **자기 작업 폴더** `GitHub\my-skills-<이름>`(git worktree)를 처음 한 번 만들고, 거기서 도구를 켜고 첫 요청을 넣는다. 같은 폴더를 여러 작업자가 쓰면 브랜치가 뒤섞인다.
-- 여러 명이면 까만 창을 여러 개 열어 이름만 바꿔 실행(`bizcoder-2`, `gemini-1` …). 이어서 할 때도 같은 명령.
+- **로컬 CLI 작업자는 이 스크립트가 정한 폴더에서만** 일한다. 따로 받은 저장소·다른 폴더에서 돌리면 원격 브랜치를 새로 받지 않아 남이 잡은 일을 못 본다(2026-11-25~26 T10·T11·T25 를 다른 폴더의 로컬 작업자가 다시 함).
+- **bizcoder 는 원래 `my-skills` 폴더에서** (교사 결정 2026-11-27 — 작업 폴더를 더 만들지 않음). Codex·Antigravity 와 **교대로 한 번에 하나**. 스크립트는 폴더에 커밋 안 한 변경이 있거나 남의 브랜치가 걸려 있으면(앞 작업자가 `sync_work.py end` 를 안 함) 켜지 않는다. bizcoder 는 일 하나마다 `claim_task.py` 로 잡기 → 커밋 → 일지 `PR 올림` → `sync_work.py end`(올리고 폴더 비우기) → 다음 일.
+- bizcoder 를 여럿 동시에 돌려야 할 때만 `-Separate` 를 붙이면 예전처럼 자기 작업 폴더 `GitHub\my-skills-<이름>`(git worktree)를 만든다. 그 밖의 CLI(gemini·claude·codex)는 늘 자기 작업 폴더. 같은 폴더를 여러 작업자가 동시에 쓰면 브랜치가 뒤섞인다.
 - bizcoder 는 확인 없이 스스로 진행(`--auto`, 위험 명령·공개 배포만 물음). 사용량 `bizcoder usage`, 로그인 `bizcoder whoami`, 읽는 지침 `bizcoder compat`.
 - 다 쓴 작업 폴더 지우기: `git worktree remove ..\my-skills-<이름>` (안 합친 브랜치가 없을 때).
 

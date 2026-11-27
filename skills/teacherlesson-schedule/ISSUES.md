@@ -9,11 +9,25 @@ _없음_
 
 ## 📌 백로그
 
+### ISSUE-6: `auto_planner.py`·`server.py` 에 깨진 한글이 코드에 그대로 들어 있음 (2026-11-26)
+- **상태**: 📌 백로그
+- **증상**: 안내·오류 문구가 `珥덇린 …` 처럼 읽을 수 없게 나옴. 문구뿐 아니라 동작에 쓰는 이름도 깨져 있음 — ① `auto_planner.py` 의 기본 진도표 시트 이름(`SHEET_NAME` 이 없을 때, 원래 "시트1" 로 보임 — ISSUE-003) ② `fetch_holidays` 의 날짜 칸 이름: 못 찾으면 첫 칸을 읽으므로, 날짜가 둘째 칸이면 휴업일이 0개로 읽힘(가짜 시트로 확인) ③ `server.py` `_serialize_lesson_item` 의 `계획교시` 대신 쓰는 이름(수업배치가 없을 때 교시가 빌 수 있음 — 추정)
+- **원인**: UTF-8 한글이 다른 인코딩으로 잘못 읽힌 채 저장된 것으로 보임(추정). `auto_planner.py` 51줄, `schedule.py` 8줄, `server.py` 1줄에 한자 섞인 글자가 있음
+- **해결/조치**: 아직 안 함(T57 문서 작업 범위 밖). 고칠 때는 휴업일·시트 이름 시험을 먼저 만들 것. 실제 시트에서 날짜 칸이 몇 번째인지는 확인 필요(교사 PC)
+- **관련 파일**: `auto_planner.py`, `server.py`, `schedule.py`
+
+### ISSUE-7: `requirements.txt` 에 PyMuPDF 가 없음 (2026-11-26)
+- **상태**: 🟢 해결(T93, 2026-11-27)
+- **증상**: `server.py` 는 첫머리에서 `import fitz`(PyMuPDF)를 하는데 `requirements.txt` 에 없음. `fitz` 가 없는 곳에서 서버 시험 2개 파일이 `ModuleNotFoundError: No module named 'fitz'` 로 시작도 못 함 → 새 PC 에서 `pip install -r requirements.txt` 만 하면 서버가 안 켜질 것(추정)
+- **원인**: 목록 빠뜨림
+- **해결/조치**: `requirements.txt` 에 `PyMuPDF>=1.24` 추가(teacherlesson-assistant 와 같은 표기). 요구 파일만으로 만든 새 가상환경에서 시험 91개 중 90개 통과, 서버 시험 2개 파일이 이제 시작됨. 실패 1개는 ISSUE-003 의 원래부터 실패하던 시험. CI(check.yml)의 schedule 칸 `extra: PyMuPDF` 는 이제 필요 없음(공용 파일이라 PR 설명으로 제안)
+- **관련 파일**: `requirements.txt`, `server.py`
+
 ### ISSUE-003: `test_auto_planner` 시험 1개가 원래부터 실패함 (2026-11-25)
 - **상태**: 📌 백로그
 - **증상**: `pytest tests/test_auto_planner.py` 에서 `test_resolve_progress_worksheet_skips_invalid_first_candidate` 가 `ValueError: Could not find a progress sheet. Checked: ?쒗듃1` 로 실패. 내 변경을 모두 빼고(`git stash -u`) 돌려도 똑같이 실패(나머지 9개는 통과)
-- **원인**: 확인 필요. 추정 — 시험 안의 한글 시트 이름(예: "시트1")이 글자 깨짐(인코딩)으로 `?쒗듃1` 처럼 바뀌어 후보 이름이 서로 안 맞는 것으로 보임
-- **해결/조치**: 아직 안 함(T04 범위 밖). 시험 파일 인코딩과 `auto_planner.py` 의 후보 이름 비교를 확인할 것
+- **원인**(2026-11-26 확인): 깨진 것은 시험이 아니라 `auto_planner.py` 의 기본 시트 이름 `os.getenv("SHEET_NAME", "?쒗듃1")`. 환경값 `SHEET_NAME=시트1` 을 주고 돌리면 `tests.test_auto_planner` 10개가 모두 통과함
+- **해결/조치**: 아직 안 함(T04 범위 밖). `auto_planner.py` 의 기본값을 "시트1" 로 고치면 됨(같은 깨짐은 아래 새 항목 참고)
 - **관련 파일**: `tests/test_auto_planner.py`, `auto_planner.py`
 
 ### ISSUE-005: `/api/catch-up` 밖의 쓰기 경로 6개도 ScheduleError 를 JSON 오류로 안 바꿈 (2026-11-26)
@@ -21,6 +35,12 @@ _없음_
 - **증상**: `/api/done`·`push`·`extend`·`pull`·`move`·`swap` 은 `except ValueError` 만 있어, 시트 읽기·머리글 문제(`ScheduleError`)가 나면 JSON 이 아닌 서버 오류 화면으로 올라옴(`/api/catch-up`·`/api/lessons` 는 ISSUE-001·002 로 고쳐짐). 시험은 아직 없음(추정: `catch_up` 과 같은 증상)
 - **해결/조치**: 미적용. 같은 방식으로 `except schedule.ScheduleError as exc: return _action_error(str(exc), 500)` 를 `ValueError` 앞에 더하면 됨. 이 함수들은 T77(수업배치 쓰기 잠금)도 고치므로 겹치지 않게 함께
 - **관련 파일**: `server.py`(`done`·`push`·`extend`·`pull`·`move`·`swap`)
+
+### ISSUE-8: `semester_rollover.py` 의 완료 기준(규칙)에 `unit`·`title` 이 하나도 없으면 모든 행이 완료로 칠해짐 (2026-11-27)
+- **상태**: 📌 백로그 (S1 시험 `tests/test_semester_rollover.py` 를 쓰다 발견. 고치지는 않음)
+- **증상**: `matches(row, rule)` 은 규칙의 `unit`·`title` 만 보고, 없으면 빈 글자로 비교해 **모든 행에 맞는다**. 설정 JSON 의 `done_until_new`·`done_until_existing` 규칙에서 `title` 을 `tilte` 처럼 오타 내거나 빠뜨리면 `mark_until` 이 그 과목 **전 행을 완료로 칠하고**, "다음 수업: 없음(모두 완료)"로 나옴. 확인: `mark_until(rows, {"tilte": "a"})` → 3개 모두 완료. `--apply` 없이 돌리면 미리보기에 개수가 나와 알아챌 수 있지만, 그대로 `--apply` 하면 진도표에 반영됨(반영 전 백업은 저장됨)
+- **해결 방향**: `matches`/`mark_until` 이 `unit`·`title` 둘 다 비어 있는 규칙을 `ValueError` 로 거절(못 찾았을 때와 같은 방식) + 모르는 키(오타)도 거절. 지금 동작은 시험(`test_missing_keys_in_rule_match_everything`)에 남겨 두었으니 고칠 때 그 시험을 새 동작으로 바꾸기
+- **관련 파일**: `semester_rollover.py`(`matches`·`mark_until`·`main` 의 3)·4)), `tests/test_semester_rollover.py`
 
 
 ## 🟢 해결됨

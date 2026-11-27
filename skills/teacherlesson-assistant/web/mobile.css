@@ -1,4 +1,18 @@
 /* 휴대폰에서 수업 비서의 준비·기록·진행 화면을 편하게 쓰도록 조정합니다. */
+#stepFinish {
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+  border: 1px solid var(--line);
+  background: #fff;
+  font-weight: 700;
+}
+
+#stepFinish:hover {
+  background: var(--acc-soft);
+  filter: none;
+}
+
 @media (max-width: 720px) {
   header {
     padding: max(6px, env(safe-area-inset-top)) 8px 6px;
@@ -11,8 +25,7 @@
     row-gap: 2px;
   }
 
-  .bar-row > .grow,
-  #prepMsg {
+  .bar-row > .grow {
     display: none;
   }
 
@@ -79,6 +92,20 @@
     padding-right: 8px;
     padding-left: 8px;
     white-space: nowrap;
+  }
+
+  #prepMsg {
+    grid-column: 1 / -1;
+    grid-row: 3;
+    display: block;
+    min-height: 0;
+    padding: 0 6px 2px;
+    font-size: 12px;
+    line-height: 1.35;
+  }
+
+  #prepMsg:empty {
+    display: none;
   }
 
   #tabs {

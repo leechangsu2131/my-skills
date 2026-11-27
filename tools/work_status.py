@@ -105,7 +105,8 @@ def main_worklogs() -> list[tuple[str, str]]:
 def report(as_md: bool) -> str:
     rows, tasks = branches(), task_rows()
     taken = {t for b in rows for t in b["tasks"]}
-    open_free = [k for k, v in tasks.items() if v["status"].startswith("열림") and k not in taken]
+    # 상태 칸이 "R · 열림"·"P · 열림"(등급·상태 칸)인 줄도 센다
+    open_free = [k for k, v in tasks.items() if re.match(r"(?:[RPT]\s*·\s*)?열림", v["status"]) and k not in taken]
     ready = [b for b in rows if b["clean"] and b["age"] <= STALE_DAYS]
     stale = [b for b in rows if b["age"] > STALE_DAYS]
     L = []

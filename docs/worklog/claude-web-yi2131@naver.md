@@ -18,3 +18,14 @@
 - 2026-11-26 10:08 T75 PR 올림 — teacherlesson-assistant `check_setup.load_config` 가 config.json 이 { } 모양이 아니면(`[]`·`5`·`null`) ❌ 로 알리고 멈추지 않게 (tests/test_check_setup.py 115개 통과, 옛 소스로 되돌리면 9개 실패 확인 후 복구, 폴더 전체 148개 통과), ISSUE-035 🟢
 - 2026-11-26 13:30 T71 시작 (브랜치 task/T71-transcribe-skeleton)
 - 2026-11-26 13:33 T71 PR 올림 — teacherlesson-assistant `transcribe.py`(새): 녹음(webm)을 faster-whisper 로 받아쓰고(없으면 설치 안내), '수업 시작' 메모의 `at` 로 메모와 시간 맞춰 `<녹음>.transcript.md` 생성 + 분석(단계별 시간·말소리 비율·물음표 문장 수, 교사 말 비율은 화자 구분 없으면 '확인 필요'). 시험 30개 통과(가짜 받아쓰기만, 소스를 잠깐 깨뜨려 4개 실패 확인 후 되돌림), 수업 비서 전체 183개 통과, build_catalog --check 통과, check_privacy 통과. 교사 PC 에서 할 일: faster-whisper 설치·실제 녹음으로 속도·정확도 확인
+- 2026-11-26 20:26 S1 (teacherlesson-assistant) 시작 (브랜치 task/S1-tests-split-notes)
+- 2026-11-26 20:28 S1(teacherlesson-assistant) PR 올림 — `tests/test_notebook_notes.py`(새, 소스는 안 고침): split_notes.py·notebook_sources.py 시험 45개(통과 45·실패 0). 가짜 fitz 로 쪽 글만 돌려줌, 소스를 13군데 잠깐 깨뜨려 보니 처음엔 2군데(폴더 밖 쓰기 막는 검사·같은 PDF 차시 묶기)를 놓쳐서 시험 3개를 더한 뒤 13군데 모두 잡히는 것 확인, 소스는 되돌림. 수업 비서 전체 243개 통과. 버그 후보 없음
+- 2026-11-26 21:11 S3 (teacherlesson-assistant) 시작 (브랜치 task/S3-repro-open-issue)
+- 2026-11-26 21:12 S3(teacherlesson-assistant) PR 올림 — `tests/test_issue_repros.py`(새, 소스는 안 고침): ISSUE-043(날짜 지난 미완료 차시가 오늘 화면에 안 나옴) 재현 시험 3개(통과 2·xfail 1). 고친 상황을 흉내 내면 XPASS 로 알려 주는 것까지 확인 후 소스 되돌림. ISSUE-043 에 시험 위치 한 줄. 수업 비서 전체 시험 통과
+- 2026-11-27 06:48 S7 (teacherlesson-assistant) 시작 (브랜치 task/S7-clova-export-design)
+- 2026-11-27 06:51 S7(teacherlesson-assistant) PR 올림 — `docs/plans/clova-export.md`(새, 코드는 안 고침): ISSUE-039 녹음 WebM→클로바노트용 MP3 설계. 이 환경 ffmpeg 로 형식별 용량·변환 시간을 직접 잼(MP3 64kbps 모노 50분 약 23MB), 코드의 함수·줄 이름 대조 완료. 확인 필요: 클로바노트 용량·길이 제한(공식 안내가 이 환경에서 안 열림)·학교 PC ffmpeg·imageio-ffmpeg 윈도우 번들의 MP3 인코더·실제 수업 녹음 변환. 교사 결정: imageio-ffmpeg 를 requirements 에 넣을지
+- 2026-11-27 06:55 S7 PR #107 갱신 — 교사 답 반영: 클로바노트 제한 600분(파일 길이인지 월 사용 시간인지는 미확인), ffmpeg 없으면 교사가 설치(imageio-ffmpeg 안 넣음), 64kbps MP3 는 잘 알아듣는다고 들음. 메모 §0·§3·§7 과 ISSUE-039 줄 고침, 구현 가능 상태
+- 2026-11-27 06:17 T93 시작 (브랜치 task/T93-schedule-pymupdf-req)
+- 2026-11-27 06:18 T93 PR 올림 — `teacherlesson-schedule/requirements.txt` 에 `PyMuPDF>=1.24` 한 줄 추가, ISSUE-7 해결로 표시. 요구 파일만으로 만든 새 가상환경: 전엔 서버 시험 2개 파일이 `No module named 'fitz'` 로 못 모임 → 이제 91개 중 90개 통과(실패 1개는 ISSUE-003 의 원래부터 실패하던 시험). check.yml 은 안 고치고 PR 설명으로 제안
+- 2026-11-27 06:18 T95 시작 (브랜치 task/T95-douclass-cli-args)
+- 2026-11-27 06:20 T95 PR 올림 — `scan_music_pdf_header.py`: 하드코딩 `C:\Users\user\Downloads\music.pdf` → 명령줄 인자(없거나 파일 없으면 안내 후 종료 코드 2, `--help`·`--target` 지원, 쪽 머리 판정은 함수로 뺌). `douclass_probe.py`: 사용자 경로는 원래 없었음 — `--help` 가 되게 selenium 을 뒤로 미루고 `--port`·`--lesson`(기본값은 예전과 같음) 추가. 새 시험 `test_douclass_scripts.py` 13개, 소스를 8군데 깨뜨려 모두 잡힘 확인. 수업 비서 시험(sites 포함) 371 통과·1 건너뜀. 남은 사용자 경로: `PDF_EXTRACTION.md`(작업 기록이라 안 고침)

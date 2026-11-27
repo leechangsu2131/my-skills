@@ -30,3 +30,4 @@
 - 2026-11-27 12:17 S2 (review-T92) 시작 (브랜치 task/S2-review-t92)
 - 2026-11-27 12:18 S2 (review-T92) PR 올림 — PR #113(T92 깨진 한글 되살림) 검토 글 docs/reviews/task-T92-fix-mojibake.md. 확인: 설치한 환경에서 tests 108 통과, 코드를 일부러 되돌린 4가지를 시험이 모두 잡음, 개인정보 모양 없음. 결론 합쳐도 됨, 🟡 auto_planner.py 506줄 '??⑥썝' 한 곳 남음
 - 2026-11-27 17:39 S4 (teacherlesson-schedule) 시작 (브랜치 task/S4-schedule-docs)
+- 2026-11-27 17:39 S4 (teacherlesson-schedule) PR 올림 — SKILL.md·README.md 를 코드와 맞춤: ① 시험 파일 2개(test_korean_restore·test_server_write_routes_schedule_error) 누락 → 범위 목록·확인 명령에 추가 ② 'test_auto_planner 알려진 실패(ISSUE-003)' 는 T92 로 해결돼 문구 바꿈 ③ schedule.py 명령 tomorrow·thisweek 추가 ④ README 의 C:/Users/... 절대 경로 링크 → 상대 경로. 확인: 고친 확인 명령 그대로 144개 통과(expected failures 6), 설명 속 파일·명령·포트(5173)·bat 이름 대조, 코드는 안 고침

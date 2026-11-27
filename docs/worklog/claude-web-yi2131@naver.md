@@ -36,3 +36,4 @@
 - 2026-11-27 12:54 S1 (teacherlesson-assistant) 시작 (브랜치 task/S1-tests-replace-subject-period)
 - 2026-11-27 13:20 S1 PR 올림 — `supabase_schedule.replace_subject_period`(교시 과목 바꾸기)·`progress("replace-subject")` 시험 27개(`tests/test_replace_subject_period.py`). 가짜 메모리 표로 최종 슬롯 상태를 확인(밀기·뒤 차시 당기기·날짜 없는 꼬리 칸·앞 중복 비우기·막는 경우 14가지). 소스를 12곳 깨뜨려 보니 8곳은 시험이 잡았고 4곳은 결과가 같아 잡을 수 없는 변경(같은 차시 검사는 같은 과목 검사에 먼저 걸림 등). 소스는 안 고침
 - 2026-11-27 18:01 S2 (teacherlesson-assistant) 시작 (브랜치 task/S2-review-pr145-149)
+- 2026-11-27 19:20 S2 PR 올림 — PR #145(CI selenium: sites 시험 98→116 통과·건너뜀 0)·PR #149(남은 사진·본문 삭제: 시험·참조 확인, 기록에는 남음 알림)·PR #139(쓰기 잠금 설계 메모: 줄 번호·함수 대조 일치, import functools 빠짐) 검토 → `docs/reviews/task-S5-ci-sites-selenium.md`·`fix-remove-remaining-files.md`·`task-S7-s7-write-lock.md`. 셋 다 합쳐도 됨

@@ -30,3 +30,4 @@
 - 2026-11-27 06:18 T95 시작 (브랜치 task/T95-douclass-cli-args)
 - 2026-11-27 06:20 T95 PR 올림 — `scan_music_pdf_header.py`: 하드코딩 `C:\Users\user\Downloads\music.pdf` → 명령줄 인자(없거나 파일 없으면 안내 후 종료 코드 2, `--help`·`--target` 지원, 쪽 머리 판정은 함수로 뺌). `douclass_probe.py`: 사용자 경로는 원래 없었음 — `--help` 가 되게 selenium 을 뒤로 미루고 `--port`·`--lesson`(기본값은 예전과 같음) 추가. 새 시험 `test_douclass_scripts.py` 13개, 소스를 8군데 깨뜨려 모두 잡힘 확인. 수업 비서 시험(sites 포함) 371 통과·1 건너뜀. 남은 사용자 경로: `PDF_EXTRACTION.md`(작업 기록이라 안 고침)
 - 2026-11-27 12:19 S2 (util-notebooklm) 시작 (브랜치 task/S2-review-pr126-123)
+- 2026-11-27 12:40 S2 PR 올림 — PR #126(util-notebooklm 시험 41개, 소스 6곳 깨뜨려 모두 잡힘 확인)·PR #123(schedule 쓰기 경로 재현 시험, 6곳 임시 수정 시 unexpected success 확인) 검토 → `docs/reviews/task-S1-tests-util-notebooklm.md`·`task-S3-schedule-write-errors.md`. 둘 다 합쳐도 됨. #123 과 #124 는 같은 ISSUE-005 시험이라 하나만 합치길 권함

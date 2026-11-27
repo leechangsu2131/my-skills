@@ -20,3 +20,4 @@
 - 2026-11-27 09:44 S1 (teacherlesson-assistant) 시작 (브랜치 task/S1-check-setup-helpers)
 - 2026-11-27 10:20 T99 시작 (브랜치 task/T99-clova-mp3-export)
 - 2026-11-27 21:34 T57 (teacherlesson-assistant) 시작 (브랜치 task/T57-easy-korean-assistant)
+- 2026-11-27 10:30 T57 (teacherlesson-assistant) PR 올림 — SKILL.md 를 쉬운 한국어로 다시 씀(뜻 그대로, 제목 A~F·코드 이름·JSON 예시 그대로). 확인: 인라인 코드 65개·숫자·굵은 글·링크·ISSUE 번호·머리말 모두 옛 글과 같음, build_catalog --check·check_privacy 통과. 이로써 T57 묶음 스킬 5개 모두 끝

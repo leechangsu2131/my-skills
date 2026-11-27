@@ -35,3 +35,4 @@
 - 2026-11-27 12:40 S2 PR 올림 — PR #126(util-notebooklm 시험 41개, 소스 6곳 깨뜨려 모두 잡힘 확인)·PR #123(schedule 쓰기 경로 재현 시험, 6곳 임시 수정 시 unexpected success 확인) 검토 → `docs/reviews/task-S1-tests-util-notebooklm.md`·`task-S3-schedule-write-errors.md`. 둘 다 합쳐도 됨. #123 과 #124 는 같은 ISSUE-005 시험이라 하나만 합치길 권함
 - 2026-11-27 12:54 S1 (teacherlesson-assistant) 시작 (브랜치 task/S1-tests-replace-subject-period)
 - 2026-11-27 13:20 S1 PR 올림 — `supabase_schedule.replace_subject_period`(교시 과목 바꾸기)·`progress("replace-subject")` 시험 27개(`tests/test_replace_subject_period.py`). 가짜 메모리 표로 최종 슬롯 상태를 확인(밀기·뒤 차시 당기기·날짜 없는 꼬리 칸·앞 중복 비우기·막는 경우 14가지). 소스를 12곳 깨뜨려 보니 8곳은 시험이 잡았고 4곳은 결과가 같아 잡을 수 없는 변경(같은 차시 검사는 같은 과목 검사에 먼저 걸림 등). 소스는 안 고침
+- 2026-11-27 17:46 S2 (teacherlesson-assistant) 시작 (브랜치 task/S2-review-pr141-143)

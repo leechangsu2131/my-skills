@@ -240,7 +240,7 @@ def parse_plan(text: str) -> dict:
         if not isinstance(s, dict) or not str(s.get("name", "")).strip():
             raise ValueError("단계 이름이 없음")
         try:
-            minutes = int(re.search(r"\d+", str(s.get("minutes", "0"))).group())
+            minutes = int(re.search(r"-?\d+", str(s.get("minutes", "0"))).group())
         except (AttributeError, ValueError):
             minutes = 0
         if not 1 <= minutes <= 40:

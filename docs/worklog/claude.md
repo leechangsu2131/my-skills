@@ -6,3 +6,4 @@
 - 2026-11-27 04:40 S1 (teacherlesson-assistant) PR 올림 — assistant_server.py 의 열 수 있는 주소 확인(ai_sites·allowed_urls·check_site_url)·저장 기록 일치 확인(session_matches_lesson·saved_mismatch_info) 시험 18개 새로 씀(test_assistant_url_session.py, 코드는 안 고침). 확인: 새 시험 18개 + 기존 test_assistant_server 합쳐 56개 통과, build_catalog --check·check_privacy 통과
 - 2026-11-27 08:33 S1 (teacherlesson-assistant) 시작 (브랜치 task/S1-parse-plan-tests)
 - 2026-11-27 05:05 S1 (teacherlesson-assistant) PR 올림 — prepare_lessons.parse_plan(수업 뼈대 검사) 시험 29개 새로 씀(tests/test_parse_plan.py). 시험 중 '음수 분 -5 를 5 로 읽음' 버그 발견 → xfail(strict) 재현 시험 + ISSUES.md 에 한 항목, 코드는 안 고침. 확인: 전체 pytest 423 통과·1 xfail(새 것), build_catalog --check·check_privacy 통과
+- 2026-11-27 05:25 fix/parse-plan-negative-minutes PR 올림 — 교사 요청: parse_plan 이 음수 분(-5)을 5분으로 읽던 것 고침(정규식 -?\d+). 재현 xfail 시험을 일반 시험으로 바꾸고 ISSUES 를 해결됨으로 옮김. 확인: 전체 pytest 424 통과, build_catalog --check·check_privacy 통과. 앞 PR(task/S1-parse-plan-tests) 위에 쌓음

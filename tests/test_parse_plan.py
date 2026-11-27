@@ -68,11 +68,10 @@ def test_step_minutes_out_of_range_is_an_error(minutes):
         pl.parse_plan(plan(steps))
 
 
-@pytest.mark.xfail(strict=True, reason="ISSUE-새: parse_plan 이 '-3' 의 부호를 버리고 3분으로 읽음(re.search(r'\\d+'))")
-def test_negative_minutes_should_be_an_error_not_read_as_positive():
-    # -5 가 5 로 읽혀 합계가 40 이 맞아 버려서 통과한다(고치면 이 시험이 XPASS 로 실패해 알려 줌)
+def test_negative_minutes_is_an_error_not_read_as_positive():
+    # 예전에는 -5 가 5 로 읽혀 합계 40 이 맞아 그대로 통과했다(ISSUE-새, 고침)
     steps = [step("도입", -5), step("활동 1", 15), step("활동 2", 15), step("정리", 5)]
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="1~40"):
         pl.parse_plan(plan(steps))
 
 

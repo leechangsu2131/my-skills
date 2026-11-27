@@ -13,3 +13,4 @@
 - 2026-11-26 12:50 T76 PR 올림 — weekly_report.py(과목·출판사별·후보·학생별), 새 시험 5개, 스킬 시험 통과. 이름 가리기 한계는 ISSUE-038
 - 2026-11-26 20:17 T84 시작 (브랜치 task/T84-neis-change-design)
 - 2026-11-26 20:18 T84 PR 올림 — 설계 메모, 인용한 함수·키 이름을 코드와 대조. 보결 반영 여부는 확인 필요
+- 2026-11-27 11:24 S4 (teacherlesson-assistant) 시작 (브랜치 task/S4-teacherlesson-assistant-docs)

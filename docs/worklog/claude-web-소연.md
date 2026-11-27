@@ -26,3 +26,5 @@
 - 2026-11-27 12:19 S2 PR 올림 (review-batch-1127-pm) — PR 8건 검토, 겹친 짝 #118↔#122·#123↔#124
 - 2026-11-27 12:19 S5 (merge-rehearsal) 시작 (브랜치 task/S5-merge-rehearsal)
 - 2026-11-27 12:21 S5 PR 올림 (merge-rehearsal) — 열린 PR 12건 합쳐 시험. 새로 깨지는 것 없음, mapper 2건은 main 에서도 실패
+- 2026-11-27 17:35 S2 (review-1127-evening) 시작 (브랜치 task/S2-review-1127-evening)
+- 2026-11-27 17:37 S2 PR 올림 (review-1127-evening) — #134·#135·#136 검토, 셋 다 합쳐도 됨

@@ -9,7 +9,7 @@ import sys
 import time
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, Iterable, List, Optional
+from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple
 from urllib.parse import urlparse
 
 try:
@@ -32,6 +32,9 @@ except ImportError:
 
 import social_class_store
 import social_guide_extract
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))  # sites/ 의 공용 title_match (T82)
+import title_match
 
 
 import sys as _sys, pathlib as _pl; _sys.path.insert(0, str(next(p / "_shared" for p in _pl.Path(__file__).resolve().parents if (p / "_shared" / "skill_env.py").is_file())))
@@ -642,6 +645,20 @@ def collect_lessons(driver: Any, config: HelperConfig) -> List[Dict[str, Any]]:
 
 def ensure_unit_loaded(driver: Any, unit_text: str) -> None:
     folding_boxes = driver.find_elements(By.CLASS_NAME, "folding-box")
+    # 엄격한 규칙으로 맞는 단원이 없을 때만 바로잡는다: 띄어쓰기·기호만 다르면 자동, 그 밖에는 확인받기 (T82)
+    pairs: List[Tuple[Any, Optional[str]]] = []
+    for folding_box in folding_boxes:
+        try:
+            pairs.append((folding_box, folding_box.find_element(By.CLASS_NAME, "txbd-fold-subject").text.strip()))
+        except Exception:
+            pairs.append((folding_box, None))
+    unit_text = title_match.resolve_query(
+        unit_text,
+        [text for _, text in pairs if text],
+        unit_matches,
+        confirm=lambda q, c, lv: confirm_similar("단원", q, c, lv),
+    )
+    folding_boxes = title_match.exact_first(pairs, unit_text)  # 이름이 같은 단원 상자를 먼저
     for folding_box in folding_boxes:
         try:
             subject_el = folding_box.find_element(By.CLASS_NAME, "txbd-fold-subject")
@@ -713,6 +730,29 @@ def lesson_matches(title_text: str, lesson_text: str) -> bool:
             return True
 
     return normalized_lesson in normalized_title if normalized_lesson else False
+
+
+def confirm_similar(kind: str, query: str, candidate: str, level: str) -> bool:
+    """찾는 단원·차시와 이름이 같은 것이 없을 때, 비슷한 것을 열어도 되는지 콘솔에서 묻는다(기본 아니오)."""
+    return title_match.console_confirm(kind, query, candidate, level, ask=prompt_input)
+
+
+def find_lesson_item(
+    lessons: List[Dict[str, Any]],
+    unit_text: str,
+    lesson_text: str,
+    confirm: Optional[Callable[[str, str, str, str], bool]] = None,
+) -> Optional[Dict[str, Any]]:
+    """차시 목록에서 찾는 차시 하나. 엄격한 규칙으로 먼저 찾고(이름이 같은 것 먼저), 하나도 없을 때만 바로잡는다 (T82):
+    띄어쓰기·기호만 다르면 자동, 그 밖의 비슷한 이름은 confirm 이 True 를 돌려줄 때만(confirm 이 없으면 못 찾은 것으로)."""
+    unit_text, (lesson_text,) = title_match.resolve_search_texts(
+        lessons, unit_text, [lesson_text], unit_matches, lesson_matches, confirm=confirm
+    )
+    for index in title_match.exact_order(lessons, unit_text, [lesson_text]):
+        item = lessons[index]
+        if unit_matches(item["unit_title"], unit_text) and lesson_matches(item["title"], lesson_text):
+            return item
+    return None
 
 
 def normalize_match_text(text: str) -> str:
@@ -829,15 +869,12 @@ def open_resource_for_lesson(
     prepare_lesson_page(driver, config, unit_text=unit_text)
     lessons = collect_lessons(driver, config)
     print(f"  -> 총 {len(lessons)}개의 차시 블록을 확인했습니다.")
+    target = find_lesson_item(lessons, unit_text, lesson_text, confirm=confirm_similar)
 
-    for item in lessons:
+    for item in ([target] if target is not None else []):
         title_text = item["title"]
         chapter = item["chapter"]
         current_unit_title = item["unit_title"]
-        if not unit_matches(current_unit_title, unit_text):
-            continue
-        if not lesson_matches(title_text, lesson_text):
-            continue
 
         print(f"  -> 대상 차시를 찾았습니다: [{current_unit_title}] {title_text}")
         highlight_lesson(driver, chapter)

@@ -39,3 +39,4 @@
 - 2026-11-27 17:38 S7 (teacherlesson-schedule) 시작 (브랜치 task/S7-s7-write-lock)
 - 2026-11-27 18:05 S7 PR 올림 (teacherlesson-schedule) — docs/plans/teacherlesson-schedule-write-lock.md: ISSUE-004 한계·ISSUE-005(T77)를 '데코레이터 하나(잠금+ScheduleError→JSON)'로 풀어 7개 경로에 적용하는 설계 메모(표·코드 뼈대·시험·변이·주의점). 코드는 안 고침. extend·pull·move·swap 내부는 줄 단위로 안 읽음(확인 필요)
 - 2026-11-27 19:16 T98 시작 (브랜치 task/T98-overdue-lessons)
+- 2026-11-28 07:00 T98 PR 올림 — 지난 미완료 차시 알림·가져오기(ISSUE-043): supabase_schedule.overdue(읽기만) → assistant_server state()의 overdue 목록 → 화면 '⏰ 지난 미완료 N개'(web/overdue.js) + [이 교시로 가져오기](같은 과목=진도 맞춤, 다른 과목=과목·차시 바꾸기의 기존 확인 창). 자동 DB 변경 없음. 시험 파이썬 14·JS 16 추가, repro xfail 제거, 변이 10가지 모두 잡힘(처음 2개 놓쳐 가짜 DB 를 연산자까지 지키게 보강). assistant tests 409 통과. 브라우저 클릭 확인은 못 함(교사 PC 점검표 8-8~8-11)

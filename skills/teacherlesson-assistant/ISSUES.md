@@ -73,12 +73,13 @@
 - **관련 파일**: `assistant_server.py`(`SITE_HELPERS`), `config.example.json`, `sites/`
 
 ### ISSUE-043: 날짜 지난 미완료 차시가 오늘 화면으로 자동 이월되지 않음 (2026-11-25)
-- **상태**: 🔵 진행 중 (이번 국어 건은 오늘 날짜로 다시 배치해 해결)
+- **상태**: 🟢 알림·가져오기 구현 (T98, 2026-11-28). 실제 화면 확인은 교사 PC(점검표 8-8~8-11). 이월은 교사가 누를 때만 — 자동 DB 변경 없음
 - **증상**: Supabase에 어제 날짜의 `planned` 슬롯이 미완료로 남으면, 오늘 `/api/state`는 오늘 날짜 슬롯만 읽는다. 오늘 슬롯에 완료된 이전 차시가 있으면 그 수업이 오늘 화면에 보이고, 어제 미완료 차시는 보이지 않는다.
 - **실제 사례와 조치**: `lesson-0410`(국어 3.5 매체 단원 5차시, 실천하기)이 2026-11-24 3교시에 `planned`로 남아 있었다. 11/25 API는 완료된 4차시만 반환했다. 교사 의도에 맞춰 5차시를 11/25 1교시로 재배치했고, API 재조회에서 오늘 수업 5차시, 이후 6차시(11/26 2교시)·7차시(11/27 1교시)를 확인했다.
-- **다음 개선**: 수업 화면에서 날짜 지난 미완료 차시를 감지해 알리고, 교사가 실제로 다음 수업으로 이월할지 선택하도록 한다. 자동 DB 변경은 하지 않는다. '실제로 할 차시 고르기'와 뒤 차시 재배치 규칙도 함께 확인한다.
-- **재현 시험(S3, 2026-11-26)**: `tests/test_issue_repros.py` — 어제 3교시 미완료 5차시가 오늘 `state()` 어디에도 없음을 xfail(strict)로 표시. 고치면 XPASS 로 실패해 알려 주니 그때 xfail 을 지운다. 대조 시험 둘(어제를 물으면 나옴·오늘은 오늘 슬롯만)은 전제가 바뀌면 함께 고친다.
-- **관련 파일**: `supabase_schedule.py`(`day_schedule`, `progress`), `assistant_server.py`(`fetch_schedule`), `web/index.html`(`load`, 진도 맞춤)
+- **해결(T98)**: ① `supabase_schedule.overdue(day)` — 오늘 앞 14일의 `planned` 슬롯을 읽기만 함(차시별 가장 최근 1개, 오래된 날짜부터, 최대 30개) ② `assistant_server.fetch_overdue` → `/api/state` 에 `overdue` 목록(과목·차시·원래 날짜·교시, 오늘 교시에 이미 있는 차시는 뺌, 조회 실패·옛 진도 서버면 빈 목록이라 수업 화면은 그대로 뜸) ③ 화면: 오늘 교시 위에 "⏰ 지난 미완료 N개" 알림(새 `web/overdue.js`), 차시마다 [이 교시로 가져오기] — 같은 과목이면 `📍 실제로 할 차시 고르기`, 다른 과목이면 `🏫 과목·차시 바꾸기` 의 기존 확인 창을 그대로 부름(그 창에서 확인해야만 DB 가 바뀜)
+- **시험**: `tests/test_overdue_lessons.py` 14개(가짜 Supabase — 범위·상태·중복·정렬·한도·읽기만·state 연결·실패 시 빈 목록), `tests/test_overdue.js` 16개(날짜 차·문구·정렬·가져오기 방식), `tests/test_issue_repros.py` 의 ISSUE-043 xfail 를 지우고 통과. 소스를 일부러 틀리게 한 변이 10가지(경계 `lt`·`gte`, 상태 조건, 범위, 중복, 오늘 차시 제외, 오류 삼키기, 한도, JS 3가지)를 모두 시험이 잡음
+- **남은 것**: 같은 과목에서는 `catchItems` 목록에 그 차시가 있어야 하고, 다른 과목은 `replace-subject` 규칙(앞 미완료 차시는 완료 처리됨)을 그대로 따름. 날짜가 14일을 넘게 지난 차시는 알림에 안 뜸. 브라우저에서 클릭 흐름은 확인하지 못함(교사 PC)
+- **관련 파일**: `supabase_schedule.py`(`overdue`), `assistant_server.py`(`fetch_overdue`·`state`·`/overdue.js`), `web/overdue.js`, `web/index.html`(`renderOverdue`), `tests/test_overdue_lessons.py`, `tests/test_overdue.js`, `tests/test_issue_repros.py`
 
 ### ISSUE-044: 오늘 교시의 과목·차시 바꾸기 (2026-11-25)
 - **상태**: 🟢 로컬 구현 완료 (실제 시간표 변경은 교사가 화면에서 선택할 때만 적용)

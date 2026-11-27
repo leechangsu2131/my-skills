@@ -343,6 +343,23 @@ def saved_mismatch_info(saved: dict) -> dict:
     }
 
 
+def fetch_overdue(cfg: dict, day: date, lessons: list[dict]) -> list[dict]:
+    """오늘 앞 날짜에 미완료로 남은 차시 목록(알림용, ISSUE-043). 읽기만 하고 DB 를 바꾸지 않는다.
+
+    Supabase 진도표에서만 읽는다. 읽기에 실패해도 수업 화면은 그대로 뜨도록 빈 목록을 돌려준다.
+    오늘 교시에 이미 올라와 있는 차시는 뺀다.
+    """
+    if cfg.get("schedule_backend", "supabase") != "supabase":
+        return []
+    try:
+        import supabase_schedule
+        today_keys = {str(l.get("record_key") or "") for l in lessons}
+        return [item for item in supabase_schedule.overdue(day) if item["record_key"] not in today_keys]
+    except Exception as exc:
+        print(f"[schedule] 지난 미완료 차시 조회 실패: {type(exc).__name__}: {exc}", file=sys.stderr)
+        return []
+
+
 def state(day: date) -> dict:
     cfg = load_config()
     lessons, source = fetch_schedule(cfg, day)
@@ -386,6 +403,7 @@ def state(day: date) -> dict:
         "ai_sites": ai_sites(cfg),
         "schedule_api": cfg.get("schedule_api", ""),
         "lessons": lessons,
+        "overdue": fetch_overdue(cfg, day, lessons),
     }
 
 
@@ -853,6 +871,8 @@ class Handler(BaseHTTPRequestHandler):
             return self._send(200, (WEB / "index.html").read_bytes(), "text/html; charset=utf-8")
         if url.path == "/tools.js":
             return self._send(200, (WEB / "tools.js").read_bytes(), "application/javascript; charset=utf-8")
+        if url.path == "/overdue.js":
+            return self._send(200, (WEB / "overdue.js").read_bytes(), "application/javascript; charset=utf-8")
         if url.path == "/mobile.css":
             return self._send(200, (WEB / "mobile.css").read_bytes(), "text/css; charset=utf-8")
         if url.path == "/api/state":

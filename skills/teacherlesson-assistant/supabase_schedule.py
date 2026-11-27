@@ -154,6 +154,41 @@ def day_schedule(day: date) -> list[dict]:
     return sorted(selected, key=lambda x: x["period"] or 99)
 
 
+OVERDUE_DAYS_BACK = 14     # 오늘 앞 며칠까지 '지난 미완료 차시'를 찾을지
+OVERDUE_LIMIT = 30
+
+
+def overdue(day: date, days_back: int = OVERDUE_DAYS_BACK) -> list[dict]:
+    """오늘(day) 앞 날짜에 미완료(planned)로 남은 슬롯을 읽는다. 읽기만 한다(DB 를 바꾸지 않음, ISSUE-043).
+
+    같은 차시(record_key)가 여러 슬롯에 남아 있으면 가장 최근 것 하나만 돌려준다.
+    결과: 오래된 날짜부터, 각 항목 {period, subject, unit, lesson, title, record_key, slot_id, planned_date}.
+    """
+    start = day - timedelta(days=days_back)
+    slots = _get(SLOTS, **{"and": f"(slot_date.gte.{start.isoformat()},slot_date.lt.{day.isoformat()})"},
+                 status="eq.planned", order="slot_date,slot_period,slot_order", select=LESSON_REL)
+    latest = {}
+    for slot in slots:
+        lesson = slot.get("lesson") or {}
+        key = lesson.get("legacy_lesson_id") or ""
+        planned = str(slot.get("slot_date") or "")[:10]
+        if not key or not planned or slot.get("status", "planned") != "planned":
+            continue
+        row = {
+            "period": _period(slot.get("slot_period")),
+            "subject": (lesson.get("subject") or {}).get("name", ""),
+            "unit": (lesson.get("unit") or {}).get("name", ""),
+            "lesson": str(lesson.get("lesson_number") or ""),
+            "title": lesson.get("title") or "",
+            "record_key": key, "slot_id": slot.get("id"), "planned_date": planned,
+        }
+        previous = latest.get(key)
+        if previous is None or (planned, row["period"] or 0) >= (previous["planned_date"], previous["period"] or 0):
+            latest[key] = row
+    rows = sorted(latest.values(), key=lambda r: (r["planned_date"], r["period"] or 99))
+    return rows[-OVERDUE_LIMIT:]
+
+
 def upcoming(subject: str) -> list[dict]:
     subjects = _get(SUBJECTS, name=f"eq.{subject}")
     if not subjects:

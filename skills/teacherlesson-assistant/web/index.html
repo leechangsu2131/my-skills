@@ -284,6 +284,11 @@ body.focus-mode> #toast{z-index:12}
     <div class="focus-rail-note">진행 단계를 누르면 해당 단계로 이동해요.</div>
   </aside>
 
+  <!-- 지난 미완료 차시 알림(ISSUE-043): 자동으로 바꾸지 않고, 교사가 누르면 기존 확인 창이 뜬다 -->
+  <section id="overdueBox" class="card" hidden>
+    <div class="row"><b id="overdueTitle"></b><span class="muted">날짜가 지났는데 아직 안 한 차시예요</span><button id="overdueToggle" style="margin-left:auto">접기</button></div>
+    <div id="overdueList"></div>
+  </section>
   <!-- 지금 할 일 -->
   <section class="hero idle" id="hero">
     <div class="hero-top"><span id="heroStatus"></span><span id="heroEnd"></span></div>
@@ -548,8 +553,42 @@ async function load(){
   const np = nowPeriod();
   const first = S.lessons.find(l=>l.period===np) || S.lessons[0];
   select(first ? S.lessons.indexOf(first) : -1);
+  renderOverdue();
   refreshRecordings(false);
 }
+
+// ── 지난 미완료 차시 알림 (ISSUE-043): 자동으로 DB 를 바꾸지 않는다. [이 교시로 가져오기] 는 기존 확인 창을 그대로 부른다 ──
+function renderOverdue(){
+  const items = sortOverdue(S && S.overdue);
+  $('overdueBox').hidden = !items.length;
+  if (!items.length) return;
+  $('overdueTitle').textContent = '⏰ ' + overdueSummary(items);
+  $('overdueList').innerHTML = items.map((it, n) =>
+    `<div class="row" style="margin-top:6px"><span>${esc(overdueLine(it, S.date))}</span>`
+    + `<button data-o="${n}" style="margin-left:auto">이 교시로 가져오기</button></div>`).join('');
+  $('overdueList').dataset.items = JSON.stringify(items);
+}
+$('overdueToggle').onclick = () => { const h = $('overdueList').hidden = !$('overdueList').hidden; $('overdueToggle').textContent = h ? '펴기' : '접기'; };
+$('overdueList').onclick = async e => {
+  const b = e.target.closest('button[data-o]'); if (!b) return;
+  const it = JSON.parse($('overdueList').dataset.items || '[]')[+b.dataset.o];
+  const mode = bringMode(it, cur);
+  if (!mode) { toast('가져오려면 먼저 아래에서 바꿀 교시(예정된 수업)를 골라 주세요.', 6000); return; }
+  if (mode === 'catch-up') {            // 같은 과목: '진도 맞춤' 목록에서 이 차시를 눌러 확인 창을 띄운다
+    await $('catchBtn').onclick();
+    const idx = catchItems.findIndex(i => i.record_key === it.record_key);
+    if (idx < 0) { toast('이 과목 목록에서 그 차시를 찾지 못했어요.', 6000); return; }
+    $('catchList').querySelector(`button[data-n="${idx}"]`)?.click();
+  } else {                              // 다른 과목: '과목·차시 바꾸기' 목록에서 이 차시를 눌러 확인 창을 띄운다
+    await $('replaceBtn').onclick();
+    if (!replaceSubjects.includes(it.subject)) { toast('그 과목을 바꿀 과목 목록에서 찾지 못했어요.', 6000); return; }
+    $('replaceSubject').value = it.subject;
+    await loadReplaceItems();
+    const btn = [...$('replaceList').querySelectorAll('button[data-key]')].find(x => x.dataset.key === it.record_key);
+    if (!btn) { toast('그 차시가 미완료 목록에 없어요.', 6000); return; }
+    btn.click();
+  }
+};
 
 let savedRecordings = [];
 function recordingMarkup(items){
@@ -1420,6 +1459,7 @@ setInterval(()=>{ const n=new Date(); $('clock').textContent=n.toTimeString().sl
 load();
 </script>
 <script src="/tools.js"></script>
+<script src="/overdue.js"></script>
 <script>
 /* ── 교실 도구 묶음 UI 연결 ─────────────────────────── */
 (function () {

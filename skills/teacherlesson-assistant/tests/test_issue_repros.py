@@ -36,11 +36,17 @@ SLOTS = [
 
 @pytest.fixture
 def fake_supabase(monkeypatch):
-    """슬롯 조회를 흉내: slot_date=eq.<날짜> 조건만 지킨다."""
+    """슬롯 조회를 흉내: slot_date=eq.<날짜>, and=(slot_date.gte.A,slot_date.lt.B), status=eq.<상태> 조건을 지킨다."""
     def fake_get(table, **params):
         assert table == sm.SLOTS
         want = params.get("slot_date", "").removeprefix("eq.")
-        return [s for s in SLOTS if not want or s["slot_date"] == want]
+        rows = [s for s in SLOTS if not want or s["slot_date"] == want]
+        if "and" in params:
+            lo, hi = [part.split(".", 2)[2] for part in params["and"].strip("()").split(",")]   # gte, lt 가정
+            rows = [s for s in rows if lo <= s["slot_date"] < hi]
+        if "status" in params:
+            rows = [s for s in rows if s["status"] == params["status"].removeprefix("eq.")]
+        return rows
     monkeypatch.setattr(sm, "_get", fake_get)
 
 
@@ -55,7 +61,7 @@ def isolated_state(tmp_path, monkeypatch, fake_supabase):
     monkeypatch.setattr(app, "session_path", lambda day, period, subject, record_key="": tmp_path / "없는기록.json")
 
 
-# ── ISSUE-043: 날짜 지난 미완료 차시가 오늘 화면으로 이월되지 않고 알려지지도 않음 ──
+# ── ISSUE-043: 날짜 지난 미완료 차시는 자동 이월하지 않고 `overdue` 로 알린다(T98에서 구현) ──
 
 def test_issue_043_control_fake_returns_yesterday_when_asked_for_yesterday(fake_supabase):
     """(대조) 가짜가 날짜 조건을 지키는지: 어제를 물으면 어제 미완료 차시가 나온다."""
@@ -69,8 +75,6 @@ def test_issue_043_control_today_shows_the_completed_lesson(fake_supabase):
     assert [(r["record_key"], r["status"]) for r in rows] == [("lesson-0409", "completed")]
 
 
-@pytest.mark.xfail(strict=True, reason="ISSUE-043: 오늘 상태에 날짜 지난 미완료 차시가 없다(알림·이월 선택 미구현). "
-                                       "고칠 때 이 시험의 확인 방식(상태 어디에든 그 차시가 드러남)을 실제 키에 맞춰도 된다.")
 def test_issue_043_today_state_reveals_overdue_planned_lesson(isolated_state):
     state = app.state(TODAY)
     assert OVERDUE_KEY in json.dumps(state, ensure_ascii=False), "어제 3교시에 미완료로 남은 5차시가 오늘 화면 정보에 없다"

@@ -30,3 +30,4 @@
 - 2026-11-27 06:18 T95 시작 (브랜치 task/T95-douclass-cli-args)
 - 2026-11-27 06:20 T95 PR 올림 — `scan_music_pdf_header.py`: 하드코딩 `C:\Users\user\Downloads\music.pdf` → 명령줄 인자(없거나 파일 없으면 안내 후 종료 코드 2, `--help`·`--target` 지원, 쪽 머리 판정은 함수로 뺌). `douclass_probe.py`: 사용자 경로는 원래 없었음 — `--help` 가 되게 selenium 을 뒤로 미루고 `--port`·`--lesson`(기본값은 예전과 같음) 추가. 새 시험 `test_douclass_scripts.py` 13개, 소스를 8군데 깨뜨려 모두 잡힘 확인. 수업 비서 시험(sites 포함) 371 통과·1 건너뜀. 남은 사용자 경로: `PDF_EXTRACTION.md`(작업 기록이라 안 고침)
 - 2026-11-27 12:54 S1 (teacherlesson-assistant) 시작 (브랜치 task/S1-tests-replace-subject-period)
+- 2026-11-27 13:20 S1 PR 올림 — `supabase_schedule.replace_subject_period`(교시 과목 바꾸기)·`progress("replace-subject")` 시험 27개(`tests/test_replace_subject_period.py`). 가짜 메모리 표로 최종 슬롯 상태를 확인(밀기·뒤 차시 당기기·날짜 없는 꼬리 칸·앞 중복 비우기·막는 경우 14가지). 소스를 12곳 깨뜨려 보니 8곳은 시험이 잡았고 4곳은 결과가 같아 잡을 수 없는 변경(같은 차시 검사는 같은 과목 검사에 먼저 걸림 등). 소스는 안 고침

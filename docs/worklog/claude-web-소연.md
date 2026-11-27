@@ -19,6 +19,9 @@
 - 2026-11-27 11:22 T85 PR 올림 — 설계 메모(docs/plans/hiclass-notice.md), 인용한 함수·포트·키를 코드와 대조. 하이클래스 화면은 확인 필요
 - 2026-11-27 11:24 S4 (teacherlesson-assistant) 시작 (브랜치 task/S4-teacherlesson-assistant-docs)
 - 2026-11-27 11:25 S4 PR 올림 (teacherlesson-assistant) — SKILL.md·README 를 코드와 맞춤(과목 바꾸기·교실 도구·받아쓰기·설정 키·시험 명령). pytest 373 통과, 1 건너뜀, 1 xfail
+- 2026-11-27 12:06 S3 (teacherlesson-schedule) 시작 (브랜치 task/S3-teacherlesson-schedule-rollover-rule)
+- 2026-11-27 12:06 S3 PR 올림 (teacherlesson-schedule) — ISSUE-8 재현 시험 3개(expectedFailure), 소스 안 고침
+- 2026-11-27 12:07 PR #125 에 ISSUE-8 수정 추가(교사 요청) — check_rule, 시험 갱신, 시트 연결 전 거절
 - 2026-11-27 12:17 S2 (review-batch-1127-pm) 시작 (브랜치 task/S2-review-batch-1127-pm)
 - 2026-11-27 12:19 S2 PR 올림 (review-batch-1127-pm) — PR 8건 검토, 겹친 짝 #118↔#122·#123↔#124
 - 2026-11-27 12:19 S5 (merge-rehearsal) 시작 (브랜치 task/S5-merge-rehearsal)

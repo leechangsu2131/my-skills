@@ -5,7 +5,7 @@
 
 설정 JSON (예시는 아래 EXAMPLE):
 - append: 새로 붙일 과목과 teacherlesson-guide/mapper 결과 파일, 대단원 이름 바꾸기, 순서
-- done_until: 과목별로 "여기까지 완료" 기준 (새 행 / 기존 행 모두). 대단원·수업내용 일부 글자로 찾는다
+- done_until: 과목별로 "여기까지 완료" 기준 (새 행 / 기존 행 모두). 대단원(unit)·수업내용(title) 일부 글자로 찾는다. 둘 중 하나는 꼭 있어야 한다
 - update_titles: 기존 행의 수업내용·pdf파일을 새 결과로 고칠 과목(예: 도덕 5~8단원)
 - close_old_rows: 이 과목들의 기존 행(지난 학기)은 모두 완료 처리
 - clear_stale_dates_before: 완료 안 된 행 중 계획일이 이 날짜 이전이면 계획일·계획교시를 비운다(다시 배치되게)
@@ -37,6 +37,18 @@ def matches(row: dict, rule: dict) -> bool:
     return norm(rule.get("unit", "")) in norm(row.get("대단원")) and norm(rule.get("title", "")) in norm(row.get("수업내용"))
 
 
+RULE_KEYS = {"subject", "unit", "title", "exclusive"}
+
+
+def check_rule(rule: dict) -> None:
+    """완료 기준이 잘못되면 거절. unit·title 이 둘 다 비면 모든 행에 맞아 전부 완료가 된다(ISSUE-8)."""
+    unknown = sorted(k for k in rule if k not in RULE_KEYS and not k.startswith("_"))
+    if unknown:
+        raise ValueError(f"완료 기준에 모르는 항목 {unknown} 이 있어요(오타인지 확인): {rule}")
+    if not norm(rule.get("unit")) and not norm(rule.get("title")):
+        raise ValueError(f"완료 기준에 unit 이나 title 이 있어야 해요: {rule}")
+
+
 def load_new_rows(cfg: dict) -> list[dict]:
     out = []
     for spec in cfg.get("append", []):
@@ -61,6 +73,7 @@ def load_new_rows(cfg: dict) -> list[dict]:
 
 def mark_until(rows: list[dict], rule: dict) -> int:
     """rows 순서대로 rule 에 맞는 마지막 행까지 완료로. 바뀐 개수."""
+    check_rule(rule)
     idx = max((i for i, r in enumerate(rows) if matches(r, rule)), default=None)
     if idx is None:
         raise ValueError(f"'{rule}'에 맞는 행을 찾지 못했어요.")
@@ -77,6 +90,9 @@ def mark_until(rows: list[dict], rule: dict) -> int:
 def main() -> None:
     cfg = json.loads(pathlib.Path(sys.argv[1]).read_text(encoding="utf-8"))
     apply = "--apply" in sys.argv
+    # 진도표에 연결하기 전에 완료 기준부터 모두 확인한다.
+    for rule in cfg.get("done_until_existing", []) + cfg.get("done_until_new", []):
+        check_rule(rule)
     ws = schedule.connect()
     # 진도표 머리글이 수업배치 머리글로 덮인 경우가 있어 schedule 의 보정된 열 지도를 쓴다.
     real = ("수업내용", "과목", "대단원", "소단원", "차시", "계획일", "실행여부", "pdf파일",

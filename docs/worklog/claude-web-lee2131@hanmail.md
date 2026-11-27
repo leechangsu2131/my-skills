@@ -33,6 +33,8 @@
 - 2026-11-27 17:33 S3 (teacherlesson-assistant) PR 올림 — ISSUE-038(주간 정리 글 이름 가리기 한계) 재현 시험 tests/test_weekly_report_issue038.py: xfail 4개(①명단에 없는 이름 안 가려짐 ②이름 아닌 첫 낱말이 가려짐 ③학생A·학생A가 따로 묶임 ④띄어 쓴 이름 첫 토막만) + 지금 되는 동작 1개. 확인: --runxfail 로 네 개 모두 의도한 assert 에서 실패, 기존 weekly 시험 5개 통과, 코드는 안 고침. ①은 반 명단 위치 확인 필요
 - 2026-11-27 17:39 S4 (teacherlesson-schedule) 시작 (브랜치 task/S4-schedule-docs)
 - 2026-11-27 17:39 S4 (teacherlesson-schedule) PR 올림 — SKILL.md·README.md 를 코드와 맞춤: ① 시험 파일 2개(test_korean_restore·test_server_write_routes_schedule_error) 누락 → 범위 목록·확인 명령에 추가 ② 'test_auto_planner 알려진 실패(ISSUE-003)' 는 T92 로 해결돼 문구 바꿈 ③ schedule.py 명령 tomorrow·thisweek 추가 ④ README 의 C:/Users/... 절대 경로 링크 → 상대 경로. 확인: 고친 확인 명령 그대로 144개 통과(expected failures 6), 설명 속 파일·명령·포트(5173)·bat 이름 대조, 코드는 안 고침
+- 2026-11-27 17:46 S7 (teacherlesson-assistant) 시작 (브랜치 task/S7-nugagirok-design)
+- 2026-11-27 17:47 S7 (teacherlesson-assistant) PR 올림 — ISSUE-008 8번(학생 발표·관찰 메모 → 누가기록) 설계 메모 docs/plans/nugagirok-from-lesson-memos.md: 새 nugagirok.py(weekly_report 의 load_sessions·student_name 재사용)·출력 모양(임시)·시험 8가지·N1~N3 나누기·교사 결정 3가지. 확인: 인용한 파일·함수·NEIS 열 이름을 코드와 대조, 누가기록 파일 모양은 '확인 필요'로 표시. 코드는 안 만듦
 - 2026-11-27 18:04 S2 (review-PR139) 시작 (브랜치 task/S2-review-pr139)
 - 2026-11-27 18:05 S2 (review-PR139) PR 올림 — PR #139(S7 쓰기 경로 잠금 설계 메모) 검토 글 docs/reviews/task-PR139-write-lock-design.md. 확인: 라우트 7개·줄 번호·ScheduleError 계층·_rewrite_bridge_sheet 경로·시험 파일을 현재 main 코드와 대조 — 합쳐도 됨. 🟡 import functools 빠짐, ValueError 잡는 범위가 넓어짐 한 줄 필요, 변이 ③ 표현
 - 2026-11-27 18:07 S2 (review-PR152) 시작 (브랜치 task/S2-review-pr152)

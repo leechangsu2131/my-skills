@@ -34,6 +34,7 @@ metadata:
 - `tests/test_server_lessons_catchup.py`
 - `tests/test_auto_planner.py`
 - `tests/test_bridge_sheet.py`
+- `tests/test_semester_rollover.py`
 
 제외:
 
@@ -118,12 +119,12 @@ metadata:
 이 폴더에서 실행합니다.
 
 ```powershell
-python -m unittest tests.test_schedule tests.test_server tests.test_server_lessons_catchup tests.test_auto_planner tests.test_bridge_sheet
+python -m unittest tests.test_schedule tests.test_server tests.test_server_lessons_catchup tests.test_auto_planner tests.test_bridge_sheet tests.test_semester_rollover
 python -m py_compile schedule.py auto_planner.py bridge_sheet.py server.py
 npm.cmd run build
 ```
 
-- 서버 시험에는 PDF 라이브러리 PyMuPDF(`fitz`)도 필요합니다(`requirements.txt` 에는 빠져 있음 — [ISSUES.md](ISSUES.md)).
+- 서버 시험에는 PDF 라이브러리 PyMuPDF(`fitz`)가 필요합니다. `requirements.txt` 에 들어 있으니(T93, [ISSUES.md](ISSUES.md) ISSUE-7) `pip install -r requirements.txt` 를 먼저 합니다. 없으면 서버 시험 2개 파일이 시작도 못 합니다.
 - `test_auto_planner` 시험 1개는 알려진 실패입니다([ISSUES.md](ISSUES.md) ISSUE-003).
 
 ## 자주 쓰는 명령

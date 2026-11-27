@@ -11,6 +11,7 @@ schooltodo·gspread 는 쓸 때 불러온다 — 없어도 수업 비서의 다�
 """
 from __future__ import annotations
 
+import importlib
 import os
 import pathlib
 import sys
@@ -33,14 +34,15 @@ class PanelError(Exception):
     """화면에 그대로 보여 줘도 되는 쉬운 말 이유."""
 
 
-def _todo_modules():
+def _todo(*names: str):
+    """school-todo-kakao 의 schooltodo 모듈들. 읽기에는 필요 없는 것까지 부르지 않는다(inbox 는 requests 가 필요)."""
     if str(TODO_DIR) not in sys.path:
         sys.path.append(str(TODO_DIR))  # 뒤에 붙인다: 같은 이름의 수업 비서 파일을 가리지 않게
     try:
-        from schooltodo import classify, dates, db, inbox, message
+        return [importlib.import_module(f"schooltodo.{name}") for name in names]
     except ImportError as exc:
-        raise PanelError("school-todo-kakao 스킬을 불러오지 못했어요(파이썬 3.11 이상이 필요해요).") from exc
-    return classify, dates, db, inbox, message
+        raise PanelError(f"school-todo-kakao 스킬을 불러오지 못했어요(없는 것: {exc.name or '확인 필요'}). "
+                         "파이썬 3.11 이상과 requests 설치를 확인해 주세요.") from exc
 
 
 # ──────────────────────────── 정리(순수 함수) ────────────────────────────
@@ -52,7 +54,7 @@ def empty_agenda(today: date, reason: str = "") -> dict:
 
 def build(rows: list[dict], today: date) -> dict:
     """일정DB 행 → 오늘 행사, 이번 주 남은 일정, 할 일(지난 것·오늘·30일 안)."""
-    classify, dates, _db, _inbox, message = _todo_modules()
+    classify, dates, message = _todo("classify", "dates", "message")
     items = [i for i in message.parse_items(rows, today) if not i.status and i.target != classify.OTHER]
     order = message.CATEGORY_ORDER
     events = [i for i in items if i.category != message.TASK_CATEGORY]
@@ -112,7 +114,7 @@ def summary_line(todays: list[dict], tasks: list[dict], order: dict) -> str:
 
 def quick_line(text, today: date) -> tuple[str, dict]:
     """빠른 할 일 한 줄 검사 → (시트에 넣을 글, 어떻게 읽히는지). 시트 규칙은 schooltodo/inbox.py."""
-    _classify, dates, _db, inbox, _message = _todo_modules()
+    dates, inbox = _todo("dates", "inbox")
     line = " ".join(str(text or "").split())
     if not line:
         raise PanelError("할 일을 적어 주세요.")
@@ -143,7 +145,7 @@ def apply_settings(values: dict, environ=os.environ, env_dir: pathlib.Path | Non
 
 
 def open_db():
-    _classify, _dates, db, _inbox, _message = _todo_modules()
+    (db,) = _todo("db")
     from skill_env import central_env_path, env_values  # 수업 비서 서버가 _shared 를 이미 경로에 넣었다
 
     central = central_env_path()

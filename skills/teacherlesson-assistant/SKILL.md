@@ -15,6 +15,7 @@ metadata:
   - 화면 배치: 수업 비서는 왼쪽 모니터의 약 1/3, 수업 사이트는 오른쪽 모니터 전체를 쓴다. 오른쪽 모니터가 없으면 왼쪽 화면의 남는 자리에 놓는다.
   - `🎯 수업 진행`은 수업 단계·발문·활동·남은 시간만 크게 보여 주는 모드다. 오늘 저장된 녹음은 화면에서 찾아 재생하고 저장할 수 있고, **🎧 클로바노트용 MP3 받기**로 클로바노트에 올릴 수 있는 MP3(64 kbps 모노, 50분 약 23 MB)를 받을 수 있다(원본은 그대로, ffmpeg 가 PC 에 있어야 함 — 없으면 화면에 설치 안내가 뜬다). 클로바노트에 올리는 것은 교사가 직접 한다(학생 목소리가 들어 있음).
   - 수업 기록은 차시 ID별로 내 컴퓨터의 데이터 폴더에 저장한다.
+  - **📅 일정·할 일 칸**(`schedule_panel.py` + `web/agenda.js`): `school-todo-kakao` 의 일정DB 시트(카톡 아침 알림과 같은 시트)를 10분마다 읽어, 위쪽 한 줄(개수만) → 누르면 오늘 행사·할 일 D-day·이번 주 일정. 쉬는 시간에는 '지금 할 일' 아래에 다음 교시 과목과 오늘까지 할 일 수가 보인다. '빠른 할 일'은 **확인 창을 거친 한 줄만** 시트의 `빠른입력` 탭에 적고, 일정에는 다음 sync 뒤에 나타난다. 🎯 수업 진행 화면에서는 숨긴다. 필요한 것: 중앙 `.env` 의 `school-todo-kakao` 설정(`DB_SHEET_ID`, `GOOGLE_SERVICE_ACCOUNT_FILE` 또는 `…_JSON`, 필요하면 `DB_TAB`·`INBOX_TAB`)과 `python -m pip install gspread`. 없으면 칸을 눌렀을 때 이유가 보이고 다른 기능은 그대로다.
   - Supabase에 연결하려면 중앙 `.env`에 `SUPABASE_URL`(또는 `NEXT_PUBLIC_SUPABASE_URL`)과 `SUPABASE_SERVICE_ROLE_KEY`가 있어야 한다.
   - 과목별로 차시 자료를 자동으로 열어 주는 도우미는 `sites/`에 있다(음악 Douclass, 사회 아이스크림·Douclass, Selenium). 미술 아트앤컬쳐 도우미는 아직 만들지 않았다(ISSUES ISSUE-006).
   - 실행 방법·화면 기능·저장 위치·지도서 받기는 [README.md](README.md)에 있다.

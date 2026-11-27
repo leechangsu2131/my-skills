@@ -2,7 +2,10 @@
 from __future__ import annotations
 
 import pathlib
+import shutil
+import subprocess
 import sys
+import threading
 from datetime import date, timedelta
 
 import pytest
@@ -86,7 +89,7 @@ def test_empty_sheet_summary():
 
 def test_same_rows_as_morning_message():
     """아침 메시지에 나오는 오늘 항목은 칸에도 오늘 행사나 할 일로 나온다."""
-    panel._todo_modules()
+    panel._todo("message")
     from schooltodo.message import build_message
 
     rows = [row(WED, "출장 가", "출장"), row(WED, "할 일 나", "개인"), row(WED, "제외", status="✔"),
@@ -98,6 +101,19 @@ def test_same_rows_as_morning_message():
         assert name in shown and any(name in line for line in lines)
     for name in ("제외", "남의 것"):
         assert name not in shown and not any(name in line for line in lines)
+
+
+def test_reading_needs_no_extra_package_and_a_missing_one_is_named(monkeypatch):
+    panel._todo("message")
+    for name in ("requests", "schooltodo.inbox", "schooltodo.sync", "schooltodo.sources"):
+        monkeypatch.setitem(sys.modules, name, None)  # 설치 안 된 것처럼
+    import schooltodo
+
+    for name in ("inbox", "sync", "sources"):
+        monkeypatch.delattr(schooltodo, name, raising=False)
+    assert texts(panel.build([row(WED, "행사")], WED)["today"]) == ["행사"]
+    got = panel.Panel(lambda: pytest.fail("시트를 열면 안 됨"), Clock()).quick({"text": "할 일", "confirm": True}, WED)
+    assert got["written"] is False and "schooltodo.inbox" in got["message"]
 
 
 class FakeSheet:
@@ -120,7 +136,7 @@ class FakeDb:
         return self.data
 
     def inbox(self):
-        panel._todo_modules()
+        panel._todo("inbox")
         from schooltodo.inbox import InboxSheet
 
         return InboxSheet(self.sheet) if self.with_inbox else None
@@ -246,7 +262,7 @@ def test_only_sheet_settings_are_copied_and_existing_values_win():
 
 
 def test_relative_key_file_is_looked_up_beside_the_central_env(tmp_path, monkeypatch):
-    panel._todo_modules()
+    panel._todo("envload")
     from schooltodo import envload
 
     monkeypatch.setattr(envload, "ENV_DIRS", [])
@@ -255,3 +271,64 @@ def test_relative_key_file_is_looked_up_beside_the_central_env(tmp_path, monkeyp
     (tmp_path / "key.json").write_text("{}", encoding="utf-8")
     assert envload.ENV_DIRS == [tmp_path]
     assert envload.resolve_path("key.json") == tmp_path / "key.json"
+
+
+@pytest.mark.skipif(not shutil.which("node"), reason="node 가 없어 화면 함수 시험(test_agenda.js)을 건너뜀")
+def test_screen_functions_in_node():
+    got = subprocess.run([shutil.which("node"), str(SKILL / "tests" / "test_agenda.js")],
+                         capture_output=True, text=True, encoding="utf-8", timeout=60)
+    assert got.returncode == 0, got.stderr
+    assert "통과" in got.stdout
+
+
+@pytest.fixture
+def server(monkeypatch, tmp_path):
+    """수업 비서 서버를 빈 포트에 띄우고, 일정 칸만 가짜 시트로 바꾼다."""
+    import http.client
+    import json
+    from http.server import ThreadingHTTPServer
+
+    monkeypatch.setenv("MY_SKILLS_DATA_DIR", str(tmp_path))
+    import assistant_server as app
+
+    db = FakeDb([row(date.today(), "오늘 행사")])
+    monkeypatch.setattr(panel, "PANEL", panel.Panel(lambda: db, Clock()))
+    srv = ThreadingHTTPServer(("127.0.0.1", 0), app.Handler)
+    threading.Thread(target=srv.serve_forever, daemon=True).start()
+
+    def call(method, url, body=None, headers=None):
+        conn = http.client.HTTPConnection("127.0.0.1", srv.server_port, timeout=10)
+        conn.request(method, url, json.dumps(body).encode() if body is not None else None, headers or {})
+        res = conn.getresponse()
+        data = res.read().decode("utf-8")
+        conn.close()
+        return res.status, data
+
+    yield db, call, json.loads
+    srv.shutdown()
+    srv.server_close()
+
+
+def test_server_routes(server):
+    db, call, load = server
+    status, script = call("GET", "/agenda.js")
+    assert status == 200 and "function breakLine" in script
+    assert '<script src="/agenda.js"></script>' in call("GET", "/")[1]
+    status, data = call("GET", "/api/agenda")
+    assert status == 200 and texts(load(data)["today"]) == ["오늘 행사"]
+    call("GET", "/api/agenda")
+    assert db.reads == 1
+    call("GET", "/api/agenda?refresh=1")
+    assert db.reads == 2
+    got = load(call("POST", "/api/agenda/add", {"text": "내일 할 일"})[1])
+    assert got["written"] is False and db.sheet.calls == []
+    got = load(call("POST", "/api/agenda/add", {"text": "내일 할 일", "confirm": True})[1])
+    assert got["written"] is True and db.sheet.calls[0][0] == ["내일 할 일"]
+
+
+def test_other_sites_cannot_read_or_write_the_sheet(server):
+    db, call, _load = server
+    evil = {"Origin": "https://evil.example"}
+    assert call("GET", "/api/agenda", headers=evil)[0] == 403
+    assert call("POST", "/api/agenda/add", {"text": "할 일", "confirm": True}, evil)[0] == 403
+    assert db.reads == 0 and db.sheet.calls == []

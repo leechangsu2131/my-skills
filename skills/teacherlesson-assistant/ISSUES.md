@@ -135,12 +135,14 @@
 - **관련 파일**: `assistant_server.py`(`/api/recordings`, `/api/recording/`), `web/index.html`
 
 ### ISSUE-039: 저장 녹음 WebM을 클로바노트에 업로드할 수 없음 (2026-11-25)
-- **상태**: 📌 변환 형식 선택·내보내기 기능 필요
+- **상태**: 🟡 구현함(2026-11-27, T99) — **교사 PC 에서 실제 녹음으로 확인하기 전이라 해결로 옮기지 않음**
 - **증상**: 수업 비서 녹음은 브라우저에서 `.webm`(일부 환경 `.mp4`)으로 저장한다. 클로바노트 파일 업로드에는 `.m4a`, `.mp3`, `.aac`, `.amr`, `.wav`만 안내되어 있어 원본 WebM은 바로 올릴 수 없다.
 - **확인**: [클로바노트 공식 PC 업로드 안내](https://help.naver.com/service/24269/contents/12820?osType=PC). 현재 화면의 재생·저장 기능은 원본 보존과 청취용이며, 호환 형식 변환은 아직 하지 않는다.
 - **할 일**: 원본 녹음은 보존하고 클로바노트 호환 형식(예: 용량을 고려한 MP3 또는 WAV)으로 변환해 내려받는 동작을 추가한다. 긴 녹음의 파일 크기·음질·변환 도구 설치 여부를 고려해 구현한다.
 - **설계 메모(S7, 2026-11-27)**: [docs/plans/clova-export.md](docs/plans/clova-export.md) — ffmpeg 로 MP3 64 kbps 모노(50분 약 23 MB) 변환, `audio_export.py` 새 파일 + `GET /api/recording-export/…` + 화면 단추. 교사 답(2026-11-27): 클로바노트 제한 600분(파일 길이인지 월 사용 시간인지는 확인 필요), ffmpeg 가 없으면 교사가 설치(`imageio-ffmpeg` 는 안 넣음), 64 kbps MP3 는 잘 알아듣는다고 들음 → 구현할 수 있는 상태.
-- **관련 파일**: `assistant_server.py`(저장·파일 API), `web/index.html`(녹음 재생·다운로드)
+- **한 일(T99, 2026-11-27)**: 설계대로 구현. 새 `audio_export.py`(ffmpeg 찾기 `ffmpeg_path`→PATH, MP3 64 kbps 모노 변환, 원본은 표준입력으로 흘려 넣고 영문 임시 이름→`export/<원래이름>.mp3`, 새것이면 재사용, 마지막으로 바뀐 지 30초가 안 되면 '녹음 중'), `GET /api/recording-export/<날짜>/<파일>?format=mp3|m4a`(없는 파일 404·녹음 중 409·ffmpeg 없음 501·변환 실패 500), 녹음 목록의 `🎧 클로바노트용 MP3 받기` 단추(`web/recording_export.js`). 재생과 내보내기가 같은 검사 함수 `recording_file()` 을 씀. 시험: `tests/test_audio_export.py`·`test_assistant_recording_export.py`(진짜 ffmpeg 가 있으면 끝에서 끝까지 도는 시험 포함)·`tests/test_recording_export.js`.
+- **교사 PC 에서 확인할 것**: ① `ffmpeg -version` 이 되는지(안 되면 `winget install Gyan.FFmpeg` 후 수업 비서를 다시 켬) ② 실제 50분 녹음(`.webm`·`.mp4`)을 눌러 변환 시간·파일 크기(설계 값: 50분 약 23 MB) ③ 클로바노트에 올렸을 때 받아들이는지·말을 잘 알아듣는지(64 kbps 모노), 600분 제한이 파일 하나의 길이인지 달마다 쓰는 시간인지, 파일 크기(MB) 제한 ④ 윈도우에서 한글 이름 파일이 저장되는지.
+- **관련 파일**: `audio_export.py`, `assistant_server.py`(`recording_file`·`_recording_export`), `web/index.html`, `web/recording_export.js`
 
 ### ISSUE-040: 2학기 시간표 사진과 Supabase 내일 수업 슬롯 불일치 (2026-11-25)
 - **상태**: 🔵 시간표 재배치 적용, 학기 종료 뒤 음악 2차시 날짜 확인 필요

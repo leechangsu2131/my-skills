@@ -233,6 +233,9 @@ body.focus-mode #focusAssist{grid-column:3;grid-row:2;padding:16px;overflow:auto
 .recording-meta{font-size:11px;color:var(--sub);margin:2px 0 6px}
 .recording-entry audio{width:100%;height:34px}
 .recording-entry a{font-size:12px;color:var(--acc)}
+.recording-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.recording-entry .rec-export{font-size:12px;padding:4px 10px;border:1px solid var(--line);border-radius:6px;background:transparent;color:var(--acc);cursor:pointer}
+.recording-entry .rec-export:disabled{opacity:.6;cursor:wait}
 #savedRecordings,#focusSavedRecordings{max-height:240px;overflow:auto;margin-top:8px;padding:0 10px;background:#fff;border:1px solid var(--line);border-radius:12px}
 #focusSavedRecordings{background:#f7f8fc}
 #focusFooter{display:none}
@@ -557,14 +560,14 @@ function recordingMarkup(items){
   return items.map(item=>{
     const size = `${(item.size/1048576).toFixed(1)}MB`, label = `${item.period ? item.period+'교시 · ' : ''}${item.subject || '수업'}${item.lesson ? ' · '+item.lesson+'차시' : ''}`;
     const title = item.title || item.file;
-    return `<div class="recording-entry"><div class="recording-title">${esc(label)}</div><div class="recording-meta">${esc(title)} · ${size}</div><audio controls preload="none" src="${esc(item.url)}"></audio><div><a href="${esc(item.url)}" download="${esc(item.file)}">파일 저장</a></div></div>`;
+    return `<div class="recording-entry"><div class="recording-title">${esc(label)}</div><div class="recording-meta">${esc(title)} · ${size}</div><audio controls preload="none" src="${esc(item.url)}"></audio><div class="recording-actions"><a href="${esc(item.url)}" download="${esc(item.file)}">파일 저장</a><button type="button" class="rec-export" data-url="${esc(item.url)}" data-file="${esc(item.file)}">🎧 클로바노트용 MP3 받기</button></div></div>`;
   }).join('');
 }
 async function refreshRecordings(show=true){
   if (!S) return;
   const j = await (await fetch('/api/recordings?date='+encodeURIComponent(S.date))).json().catch(()=>({items:[]}));
   savedRecordings = j.items || [];
-  $('recordingCount').textContent = savedRecordings.length ? `${savedRecordings.length}건 · MP3 변환 전 원본` : '아직 저장된 녹음이 없어요';
+  $('recordingCount').textContent = savedRecordings.length ? `${savedRecordings.length}건 · 원본은 그대로 보관` : '아직 저장된 녹음이 없어요';
   $('loadRecordings').textContent = `🎧 저장된 녹음 ${savedRecordings.length}건 보기`;
   $('focusLoadRecordings').textContent = `🎧 저장된 녹음 ${savedRecordings.length}건 보기`;
   if (show) {
@@ -1420,6 +1423,7 @@ setInterval(()=>{ const n=new Date(); $('clock').textContent=n.toTimeString().sl
 load();
 </script>
 <script src="/tools.js"></script>
+<script src="/recording_export.js"></script>
 <script>
 /* ── 교실 도구 묶음 UI 연결 ─────────────────────────── */
 (function () {

@@ -4,6 +4,7 @@
   "schedule_backend": "supabase",
   "schedule_api": "http://127.0.0.1:5000",
   "left_ratio": 0.32,
+  "ffmpeg_path": "",
   "periods": [
     {"no": 1, "start": "09:00", "end": "09:40"},
     {"no": 2, "start": "09:50", "end": "10:30"},

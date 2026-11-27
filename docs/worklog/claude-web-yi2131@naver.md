@@ -29,3 +29,5 @@
 - 2026-11-27 06:18 T93 PR 올림 — `teacherlesson-schedule/requirements.txt` 에 `PyMuPDF>=1.24` 한 줄 추가, ISSUE-7 해결로 표시. 요구 파일만으로 만든 새 가상환경: 전엔 서버 시험 2개 파일이 `No module named 'fitz'` 로 못 모임 → 이제 91개 중 90개 통과(실패 1개는 ISSUE-003 의 원래부터 실패하던 시험). check.yml 은 안 고치고 PR 설명으로 제안
 - 2026-11-27 06:18 T95 시작 (브랜치 task/T95-douclass-cli-args)
 - 2026-11-27 06:20 T95 PR 올림 — `scan_music_pdf_header.py`: 하드코딩 `C:\Users\user\Downloads\music.pdf` → 명령줄 인자(없거나 파일 없으면 안내 후 종료 코드 2, `--help`·`--target` 지원, 쪽 머리 판정은 함수로 뺌). `douclass_probe.py`: 사용자 경로는 원래 없었음 — `--help` 가 되게 selenium 을 뒤로 미루고 `--port`·`--lesson`(기본값은 예전과 같음) 추가. 새 시험 `test_douclass_scripts.py` 13개, 소스를 8군데 깨뜨려 모두 잡힘 확인. 수업 비서 시험(sites 포함) 371 통과·1 건너뜀. 남은 사용자 경로: `PDF_EXTRACTION.md`(작업 기록이라 안 고침)
+- 2026-11-27 07:26 S1 (teacherlesson-assistant) 시작 (브랜치 task/S1-tests-build-units)
+- 2026-11-27 11:17 S1(teacherlesson-assistant, build_units) PR 올림 — `tests/test_build_units.py`(새, 소스는 안 고침): build_units.py 시험 49개(차시 번호 추론·묶기·지도서마다 다른 '차시 시작' 표시·분할본 개관 찾기·단원 JSON/PDF 만들기·--if-older). 진도표·PDF 는 가짜. 소스를 19군데 깨뜨려 처음 3군데를 놓쳐 시험 3개를 더한 뒤 모두 잡힘 확인, 소스는 되돌림. 알아 둘 점: lesson_no(정수 0)은 None(글자 '0'은 0). 버그 후보 없음

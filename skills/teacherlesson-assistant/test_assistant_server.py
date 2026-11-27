@@ -5,12 +5,14 @@
 임시 폴더만 쓰므로 내 문서의 실제 데이터(flows 등)는 건드리지 않는다.
 """
 import http.client
+import io
 import json
 import pathlib
 import sys
 import tempfile
 import threading
 import unittest
+from unittest import mock
 from datetime import date
 from http.server import ThreadingHTTPServer
 
@@ -358,6 +360,26 @@ class OpenWindowTest(unittest.TestCase):
         self.assertEqual(app.open_window("https://x.example/", "right", {}), "창을 열었어요.")
         self.assertEqual(len(self.popen_calls), 1)
         self.assertFalse(self.raised.wait(0.3))
+
+
+class ActivateDebugTabTest(unittest.TestCase):
+    def test_activates_exact_page_target(self):
+        responses = [mock.MagicMock(), mock.MagicMock()]
+        responses[0].__enter__.return_value = io.BytesIO(json.dumps([
+            {"id": "tab-1", "type": "page", "url": "https://notebooklm.google.com/"}
+        ]).encode())
+        responses[1].__enter__.return_value = io.BytesIO(b"Target activated")
+        with mock.patch.object(app.urllib.request, "urlopen", side_effect=responses) as opened:
+            self.assertTrue(app.activate_debug_tab("https://notebooklm.google.com/", 9233))
+        self.assertIn("/json/activate/tab-1", opened.call_args_list[1].args[0])
+
+    def test_missing_target_or_connection_failure_is_false(self):
+        empty = mock.MagicMock()
+        empty.__enter__.return_value = io.BytesIO(b"[]")
+        with mock.patch.object(app.urllib.request, "urlopen", return_value=empty):
+            self.assertFalse(app.activate_debug_tab("https://example.com/", 9233))
+        with mock.patch.object(app.urllib.request, "urlopen", side_effect=OSError("off")):
+            self.assertFalse(app.activate_debug_tab("https://example.com/", 9233))
 
 
 class OpenSocialLessonTest(unittest.TestCase):

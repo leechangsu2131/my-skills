@@ -553,11 +553,29 @@ def raise_window(user32, hwnd, rect: tuple[int, int, int, int] | None = None,
     user32.SetForegroundWindow(hwnd)
 
 
+def activate_debug_tab(url: str, port: int) -> bool:
+    """Activate the Chrome tab for url through the local debugging endpoint."""
+    try:
+        with urllib.request.urlopen(f"http://127.0.0.1:{port}/json", timeout=2) as response:
+            targets = json.load(response)
+        target = next((item for item in targets if item.get("type") == "page" and item.get("url") == url), None)
+        if not target or not target.get("id"):
+            return False
+        with urllib.request.urlopen(
+            f"http://127.0.0.1:{port}/json/activate/{urllib.parse.quote(str(target['id']))}", timeout=2
+        ):
+            return True
+    except (OSError, ValueError, urllib.error.URLError):
+        return False
+
+
 def _raise_new_window(before: set[int], rect: tuple[int, int, int, int] | None = None,
-                      maximize: bool = False) -> None:
+                      maximize: bool = False, url: str = "", debug_port: int | None = None) -> None:
     try:
         api = _win_api()
         hwnd = wait_for_new_window(lambda: chrome_windows(api), before)
+        if not hwnd and url and debug_port:
+            activate_debug_tab(url, debug_port)
         if hwnd:
             import time as _time
             if rect:
@@ -657,7 +675,9 @@ def open_window(url: str, side: str, cfg: dict) -> str:
             before = None
     subprocess.Popen(args, close_fds=True)
     if before is not None:
-        threading.Thread(target=_raise_new_window, args=(before, rect, maximize), daemon=True).start()
+        threading.Thread(target=_raise_new_window,
+                         args=(before, rect, maximize, url, int(cfg["debug_port"]) if cfg.get("debug_port") else None),
+                         daemon=True).start()
     return "창을 열었어요."
 
 

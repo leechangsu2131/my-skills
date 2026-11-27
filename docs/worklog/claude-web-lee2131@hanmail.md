@@ -29,3 +29,5 @@
 - 2026-11-27 11:20 T82 2차 검토 반영(교사 결정 '나') — 띄어쓰기·기호만 다른 이름은 자동으로 열고, 포함·비슷함·번호/괄호 숫자·차시 표시가 다른 것은 'y/N' 로 교사에게 물어 '예'일 때만 열기(같은 질문 1번, 기본 아니오, confirm 없으면 못 찾음). 이름이 글자 그대로 같은 항목을 먼저 보게 함(문화유산 vs 문화). 확인: 2차 검토 재현(E·H·2번·정확한 이름) 모두 정답, 시험 수업비서 424 통과·2 건너뜀, selenium 포함 sites 116 통과, build_catalog·check_privacy 통과. 남은 일: 실제 사이트 확인(교사 PC)
 - 2026-11-27 12:17 S2 (review-T92) 시작 (브랜치 task/S2-review-t92)
 - 2026-11-27 12:18 S2 (review-T92) PR 올림 — PR #113(T92 깨진 한글 되살림) 검토 글 docs/reviews/task-T92-fix-mojibake.md. 확인: 설치한 환경에서 tests 108 통과, 코드를 일부러 되돌린 4가지를 시험이 모두 잡음, 개인정보 모양 없음. 결론 합쳐도 됨, 🟡 auto_planner.py 506줄 '??⑥썝' 한 곳 남음
+- 2026-11-27 18:04 S2 (review-PR139) 시작 (브랜치 task/S2-review-pr139)
+- 2026-11-27 18:05 S2 (review-PR139) PR 올림 — PR #139(S7 쓰기 경로 잠금 설계 메모) 검토 글 docs/reviews/task-PR139-write-lock-design.md. 확인: 라우트 7개·줄 번호·ScheduleError 계층·_rewrite_bridge_sheet 경로·시험 파일을 현재 main 코드와 대조 — 합쳐도 됨. 🟡 import functools 빠짐, ValueError 잡는 범위가 넓어짐 한 줄 필요, 변이 ③ 표현

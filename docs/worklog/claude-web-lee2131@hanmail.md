@@ -30,3 +30,4 @@
 - 2026-11-27 12:17 S2 (review-T92) 시작 (브랜치 task/S2-review-t92)
 - 2026-11-27 12:18 S2 (review-T92) PR 올림 — PR #113(T92 깨진 한글 되살림) 검토 글 docs/reviews/task-T92-fix-mojibake.md. 확인: 설치한 환경에서 tests 108 통과, 코드를 일부러 되돌린 4가지를 시험이 모두 잡음, 개인정보 모양 없음. 결론 합쳐도 됨, 🟡 auto_planner.py 506줄 '??⑥썝' 한 곳 남음
 - 2026-11-27 17:32 S3 (teacherlesson-assistant) 시작 (브랜치 task/S3-weekly-mask-repro)
+- 2026-11-27 17:33 S3 (teacherlesson-assistant) PR 올림 — ISSUE-038(주간 정리 글 이름 가리기 한계) 재현 시험 tests/test_weekly_report_issue038.py: xfail 4개(①명단에 없는 이름 안 가려짐 ②이름 아닌 첫 낱말이 가려짐 ③학생A·학생A가 따로 묶임 ④띄어 쓴 이름 첫 토막만) + 지금 되는 동작 1개. 확인: --runxfail 로 네 개 모두 의도한 assert 에서 실패, 기존 weekly 시험 5개 통과, 코드는 안 고침. ①은 반 명단 위치 확인 필요

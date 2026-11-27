@@ -7,6 +7,7 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 import semester_rollover as sr
 
@@ -46,7 +47,7 @@ class MatchesTests(unittest.TestCase):
     def test_row_missing_fields_does_not_match_a_real_rule(self):
         self.assertFalse(sr.matches({}, {"unit": "만나요"}))
         self.assertFalse(sr.matches({"대단원": None, "수업내용": None}, {"title": "구슬비"}))
-        self.assertTrue(sr.matches({}, {}))  # 빈 규칙은 빈 행에도 맞는다(의도된 동작은 아니지만 지금 동작)
+        self.assertTrue(sr.matches({}, {}))  # matches 자체는 빈 규칙에 맞는다. 거절은 check_rule 이 한다
 
 
 class MarkUntilTests(unittest.TestCase):
@@ -180,32 +181,39 @@ class LoadNewRowsTests(unittest.TestCase):
         self.assertEqual(Path(path).read_text(encoding="utf-8"), before)
 
 
-class Issue8ReproTests(unittest.TestCase):
-    """ISSUE-8 재현: unit·title 이 없는 완료 기준은 거절해야 하는데, 지금은 모든 행을 완료로 칠한다.
-
-    '바라는 동작'을 적어 두고 expectedFailure 로 표시했다. 고치면 'unexpected success' 로 실패하니
-    그때 표시를 떼고, 지금 동작을 적은 test_missing_keys_in_rule_match_everything 도 함께 바꾼다.
-    """
+class RuleCheckTests(unittest.TestCase):
+    """ISSUE-8: unit·title 이 없는 완료 기준은 거절하고, 아무 행도 바꾸지 않는다."""
 
     def assert_rejected_without_marking(self, rule):
         rows = [row("1. 가", "a"), row("2. 나", "b"), row("3. 다", "c")]
-        try:
-            with self.assertRaises(ValueError):
-                sr.mark_until(rows, rule)
-        finally:
-            self.assertEqual([r[DONE] for r in rows], [False, False, False])
+        with self.assertRaises(ValueError):
+            sr.mark_until(rows, rule)
+        self.assertEqual([r[DONE] for r in rows], [False, False, False])
 
-    @unittest.expectedFailure
     def test_rule_with_only_subject_is_rejected(self):
         self.assert_rejected_without_marking({"subject": "음악"})
 
-    @unittest.expectedFailure
     def test_rule_with_misspelled_key_is_rejected(self):
         self.assert_rejected_without_marking({"subject": "음악", "tilte": "a"})
+        self.assert_rejected_without_marking({"subject": "음악", "unit": "가", "tilte": "a"})
 
-    @unittest.expectedFailure
     def test_rule_with_blank_unit_and_title_is_rejected(self):
         self.assert_rejected_without_marking({"subject": "음악", "unit": " ", "title": ""})
+
+    def test_known_keys_and_underscore_notes_are_allowed(self):
+        sr.check_rule({"subject": "음악", "unit": "가", "exclusive": True, "_메모": "설명"})
+        sr.check_rule({"title": "a"})
+
+    def test_main_stops_before_connecting_to_the_sheet(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            cfg = Path(tmp) / "cfg.json"
+            for key in ("done_until_existing", "done_until_new"):
+                cfg.write_text(json.dumps({key: [{"subject": "음악"}]}), encoding="utf-8")
+                with mock.patch.object(sr.sys, "argv", ["x", str(cfg), "--apply"]), \
+                        mock.patch.object(sr.schedule, "connect") as connect:
+                    with self.assertRaises(ValueError):
+                        sr.main()
+                connect.assert_not_called()
 
 
 if __name__ == "__main__":

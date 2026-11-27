@@ -36,15 +36,14 @@ _없음_
 - **해결/조치**: 미적용. 같은 방식으로 `except schedule.ScheduleError as exc: return _action_error(str(exc), 500)` 를 `ValueError` 앞에 더하면 됨. 이 함수들은 T77(수업배치 쓰기 잠금)도 고치므로 겹치지 않게 함께
 - **관련 파일**: `server.py`(`done`·`push`·`extend`·`pull`·`move`·`swap`)
 
-### ISSUE-8: `semester_rollover.py` 의 완료 기준(규칙)에 `unit`·`title` 이 하나도 없으면 모든 행이 완료로 칠해짐 (2026-11-27)
-- **상태**: 📌 백로그 (S1 시험 `tests/test_semester_rollover.py` 를 쓰다 발견. 고치지는 않음)
-- **증상**: `matches(row, rule)` 은 규칙의 `unit`·`title` 만 보고, 없으면 빈 글자로 비교해 **모든 행에 맞는다**. 설정 JSON 의 `done_until_new`·`done_until_existing` 규칙에서 `title` 을 `tilte` 처럼 오타 내거나 빠뜨리면 `mark_until` 이 그 과목 **전 행을 완료로 칠하고**, "다음 수업: 없음(모두 완료)"로 나옴. 확인: `mark_until(rows, {"tilte": "a"})` → 3개 모두 완료. `--apply` 없이 돌리면 미리보기에 개수가 나와 알아챌 수 있지만, 그대로 `--apply` 하면 진도표에 반영됨(반영 전 백업은 저장됨)
-- **해결 방향**: `matches`/`mark_until` 이 `unit`·`title` 둘 다 비어 있는 규칙을 `ValueError` 로 거절(못 찾았을 때와 같은 방식) + 모르는 키(오타)도 거절. 지금 동작은 시험(`test_missing_keys_in_rule_match_everything`)에 남겨 두었으니 고칠 때 그 시험을 새 동작으로 바꾸기
-- **재현 시험(S3, 2026-11-27)**: `tests/test_semester_rollover.py` 의 `Issue8ReproTests` 3개(과목만 있음·키 오타·빈 값). `expectedFailure` 라 지금은 통과로 셈. 소스는 안 고침
-- **관련 파일**: `semester_rollover.py`(`matches`·`mark_until`·`main` 의 3)·4)), `tests/test_semester_rollover.py`
-
-
 ## 🟢 해결됨
+
+### ISSUE-8: `semester_rollover.py` 의 완료 기준(규칙)에 `unit`·`title` 이 하나도 없으면 모든 행이 완료로 칠해짐 (2026-11-27)
+- **상태**: 🟢 해결 (2026-11-27)
+- **증상**: `matches(row, rule)` 은 규칙의 `unit`·`title` 만 보고, 없으면 빈 글자로 비교해 **모든 행에 맞는다**. 설정 JSON 의 `done_until_new`·`done_until_existing` 규칙에서 `title` 을 `tilte` 처럼 오타 내거나 빠뜨리면 `mark_until` 이 그 과목 **전 행을 완료로 칠하고**, "다음 수업: 없음(모두 완료)"로 나옴. 확인: `mark_until(rows, {"tilte": "a"})` → 3개 모두 완료. `--apply` 없이 돌리면 미리보기에 개수가 나와 알아챌 수 있지만, 그대로 `--apply` 하면 진도표에 반영됨(반영 전 백업은 저장됨)
+- **해결/조치**: `check_rule` 이 `unit`·`title` 이 둘 다 빈 기준과 모르는 키(오타)를 `ValueError` 로 거절(`_` 로 시작하는 메모 키는 허용). `main` 은 진도표에 연결하기 전에 모든 기준을 확인. 가짜 시험만 했고 실제 진도표로는 돌리지 않음
+- **관련 파일**: `semester_rollover.py`(`check_rule`), `tests/test_semester_rollover.py`(`RuleCheckTests`)
+
 
 ### ISSUE-002: `/api/lessons` 가 '날짜 시각' 모양의 slot_date 에서 죽음 (2026-11-25, 2026-11-26 해결)
 - **상태**: 🟢 해결됨 (T69)

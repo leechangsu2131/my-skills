@@ -249,6 +249,13 @@
 - **남은 일**: ① 학교 PC 에서 `실행_수업비서.bat` 을 켜 서버·단원 개관·수업 준비 창이 모두 뜨는지 확인(여기서는 윈도우 bat 를 돌려 보지 못함 — 확인 필요) ② `check_setup.py` 의 안내 문구(`RECOMMENDED_PYTHON` 주석, 'Python 실행기' 항목의 "서버는 python 으로 켜고 단원 개관만 py -3.13" 설명, 시험 `test_python_warn_fix_matches_what_the_bat_really_does`)가 옛 동작을 설명함 — 같은 파일을 T75 가 고치는 중이라 이번엔 건드리지 않았고, T75 합친 뒤 따로 맞춘다
 - **관련 파일**: `실행_수업비서.bat`, `점검_PC.bat`, `check_setup.py`
 
+### ISSUE-새: parse_plan 이 음수 분의 부호를 버림 (2026-11-27, S1 시험 중 발견)
+- **상태**: 📌 백로그
+- **증상**: `prepare_lessons.parse_plan` 이 단계 시간 `-5` 를 `5` 분으로 읽는다(`re.search(r"\d+", ...)` 가 부호를 못 봄). 다른 단계 합이 35 면 합계 40 검사도 통과해 잘못된 뼈대가 그대로 쓰인다.
+- **원인**: 숫자 뽑는 정규식에 부호 처리가 없음.
+- **해결/조치**: 미정(추정: 정규식을 `-?\d+` 로 바꾸면 범위 검사 `1~40` 에서 거부됨 — 시험으로 확인 필요).
+- **관련 파일**: `prepare_lessons.py`(`parse_plan`), 재현 시험 `tests/test_parse_plan.py`(xfail strict)
+
 ## 🟢 해결됨
 
 ### ISSUE-새: 다른 교시의 단계 타이머가 복원됨 (2026-11-27)

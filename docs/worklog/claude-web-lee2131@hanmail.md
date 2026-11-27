@@ -30,3 +30,4 @@
 - 2026-11-27 12:17 S2 (review-T92) 시작 (브랜치 task/S2-review-t92)
 - 2026-11-27 12:18 S2 (review-T92) PR 올림 — PR #113(T92 깨진 한글 되살림) 검토 글 docs/reviews/task-T92-fix-mojibake.md. 확인: 설치한 환경에서 tests 108 통과, 코드를 일부러 되돌린 4가지를 시험이 모두 잡음, 개인정보 모양 없음. 결론 합쳐도 됨, 🟡 auto_planner.py 506줄 '??⑥썝' 한 곳 남음
 - 2026-11-27 17:46 S7 (teacherlesson-assistant) 시작 (브랜치 task/S7-nugagirok-design)
+- 2026-11-27 17:47 S7 (teacherlesson-assistant) PR 올림 — ISSUE-008 8번(학생 발표·관찰 메모 → 누가기록) 설계 메모 docs/plans/nugagirok-from-lesson-memos.md: 새 nugagirok.py(weekly_report 의 load_sessions·student_name 재사용)·출력 모양(임시)·시험 8가지·N1~N3 나누기·교사 결정 3가지. 확인: 인용한 파일·함수·NEIS 열 이름을 코드와 대조, 누가기록 파일 모양은 '확인 필요'로 표시. 코드는 안 만듦

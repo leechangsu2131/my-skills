@@ -36,23 +36,39 @@ INSTALL_HELP = ("받아쓰기 도구(faster-whisper)가 없어요. 설치: pip i
 
 WORDS_FILE = "stt_words.json"   # 데이터 폴더. 학생 이름이 들어갈 수 있어 저장소에는 stt_words.example.json 만 둔다
 HINT_LIMIT = 200                # whisper initial_prompt 는 토큰 224개까지라 글자 수로 넉넉히 줄인다
-PARTICLES = ("에서", "에게", "한테", "으로", "은", "는", "이", "가", "을", "를", "의", "에", "도", "와", "과", "로")
+PARTICLES = ("에서", "에게", "한테", "으로", "은", "는", "이", "가", "을", "를", "의", "에", "도", "와", "과", "로",
+             "만", "까지", "부터", "에게서", "한테서", "하고", "처럼", "보다")
+# 받침 있는 이름 뒤에만 붙는 꼴(지민이가·지민아)과 받침 없는 말 뒤에만 붙는 꼴(민수랑·민수야). 아무 데나 허용하면 다른 이름(민수아)을 바꾼다
+AFTER_BATCHIM = ("이가", "이는", "이를", "이랑", "이도", "이만", "이의", "이한테", "이에게", "아")
+AFTER_VOWEL = ("랑", "야")
+# 뒤에 는·은·도·만 이 한 번 더 붙을 수 있는 조사(에게는·랑은)
+CHAINABLE = ("에서", "에게", "한테", "으로", "로", "까지", "부터", "에게서", "한테서", "이한테", "이에게", "랑", "이랑", "하고", "처럼", "보다")
 
 
 class Unavailable(RuntimeError):
     """받아쓰기 도구가 없을 때."""
 
 
-def load_words(path=None):
-    """사전 파일 → (자주 쓰는 말 목록, {틀린 말: 맞는 말}). 없거나 깨지면 빈 값."""
+def load_words(path=None, warn=print):
+    """사전 파일 → (자주 쓰는 말 목록, {틀린 말: 맞는 말}). 파일이 없으면 빈 값.
+    파일이 있는데 못 읽거나 모양이 틀리면 그 부분은 빼고 warn 으로 알린다(받아쓰기는 계속)."""
     path = pathlib.Path(path) if path else data_dir(SKILL) / WORDS_FILE
+    if not path.is_file():
+        return [], {}
     data = read_json(path)
     if not isinstance(data, dict):
+        warn(f"⚠ 받아쓰기 사전({path.name})을 읽지 못해 쓰지 않았어요. 쉼표·따옴표·괄호가 맞는지, UTF-8 로 저장했는지 확인해 주세요.")
         return [], {}
-    hints = [w.strip() for w in data.get("자주 쓰는 말") or [] if isinstance(w, str) and w.strip()]
-    raw = data.get("고쳐 쓰기")
-    fixes = {k.strip(): v.strip() for k, v in raw.items()
-             if isinstance(k, str) and isinstance(v, str) and k.strip()} if isinstance(raw, dict) else {}
+    words, raw = data.get("자주 쓰는 말"), data.get("고쳐 쓰기")
+    if words is not None and not isinstance(words, list):
+        warn(f'⚠ 받아쓰기 사전의 "자주 쓰는 말"은 ["낱말", "낱말"] 모양이어야 해요. 이 부분은 쓰지 않았어요.')
+        words = None
+    if raw is not None and not isinstance(raw, dict):
+        warn(f'⚠ 받아쓰기 사전의 "고쳐 쓰기"는 {{"틀린 말": "맞는 말"}} 모양이어야 해요. 이 부분은 쓰지 않았어요.')
+        raw = None
+    hints = [w.strip() for w in words or [] if isinstance(w, str) and w.strip()]
+    fixes = {k.strip(): v.strip() for k, v in (raw or {}).items()
+             if isinstance(k, str) and isinstance(v, str) and k.strip()}
     return hints, fixes
 
 
@@ -70,15 +86,28 @@ def build_hint(words, limit=HINT_LIMIT):
     return out
 
 
+def _suffix_pattern(key: str) -> str:
+    """key 뒤에 와도 되는 것(조사 또는 낱말 끝)을 보는 lookahead. 한글로 끝나면 받침에 맞는 조사만."""
+    last = key[-1]
+    batchim = (ord(last) - 0xAC00) % 28 != 0 if "가" <= last <= "힣" else None   # None: 영문·숫자 등은 둘 다 허용
+    parts = list(PARTICLES)
+    if batchim is not False:
+        parts += AFTER_BATCHIM
+    if batchim is not True:
+        parts += AFTER_VOWEL
+    chain = "|".join(map(re.escape, sorted((x for x in parts if x in CHAINABLE), key=len, reverse=True)))
+    plain = "|".join(map(re.escape, sorted(parts, key=len, reverse=True)))
+    return rf"(?=(?:(?:{chain})(?:는|은|도|만)|(?:{plain}))?(?!\w))"
+
+
 def apply_fixes(text: str, fixes: dict) -> str:
     """틀린 말 → 맞는 말. 낱말 경계에서만(앞뒤가 글자·숫자로 이어지면 건드리지 않음, 뒤에 조사는 허용),
-    긴 것부터, 한 번에 훑어 바꾼 결과가 다시 바뀌지 않는다."""
+    긴 것부터, 한 번에 훑어 바꾼 결과가 다시 바뀌지 않는다. 조사는 그대로 두며 받침에 맞춰 바꾸지는 않는다."""
     keys = sorted((k for k in fixes if k), key=len, reverse=True)
     if not keys or not text:
         return text
-    particles = "|".join(map(re.escape, PARTICLES))
-    pattern = re.compile(r"(?<![\w])(" + "|".join(map(re.escape, keys)) + r")(?=(?:" + particles + r")?(?![\w]))")
-    return pattern.sub(lambda m: fixes[m.group(1)], text)
+    pattern = re.compile(r"(?<!\w)(?:" + "|".join(re.escape(k) + _suffix_pattern(k) for k in keys) + ")")
+    return pattern.sub(lambda m: fixes[m.group(0)], text)
 
 
 def fmt_time(sec) -> str:

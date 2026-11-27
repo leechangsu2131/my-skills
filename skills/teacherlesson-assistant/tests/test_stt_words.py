@@ -36,6 +36,21 @@ class ApplyFixes(unittest.TestCase):
         self.assertEqual(tr.apply_fixes("학생에이가 말했다", {"학생에이": "학생A"}), "학생A가 말했다")
         self.assertEqual(tr.apply_fixes("학생에이에게", {"학생에이": "학생A"}), "학생A에게")
 
+    def test_more_particles_after_vowel_ending_name(self):
+        fx = {"민수": "민서"}
+        for tail in ("랑", "만", "야", "까지", "부터", "에게서", "한테는", "에게도", "랑은", "하고", "처럼"):
+            self.assertEqual(tr.apply_fixes("민수" + tail + " 왔다", fx), "민서" + tail + " 왔다", tail)
+
+    def test_forms_after_batchim_name(self):
+        fx = {"지민": "지빈"}
+        for tail in ("이가", "이는", "이를", "이랑", "이도", "이만", "이한테", "이에게는", "아"):
+            self.assertEqual(tr.apply_fixes("지민" + tail + ", 봐", fx), "지빈" + tail + ", 봐", tail)
+
+    def test_other_names_are_not_touched(self):
+        # 받침 없는 이름 뒤 '아'·'이가' 는 조사가 아니라 다른 이름일 수 있다. 받침 있는 이름 뒤 '야'·'랑' 도 마찬가지
+        self.assertEqual(tr.apply_fixes("민수아 김민수 민수연", {"민수": "민서"}), "민수아 김민수 민수연")
+        self.assertEqual(tr.apply_fixes("지민야 지민랑 지민수", {"지민": "지빈"}), "지민야 지민랑 지민수")
+
     def test_regex_chars_are_literal(self):
         self.assertEqual(tr.apply_fixes("1+1 은 2", {"1+1": "일 더하기 일"}), "일 더하기 일 은 2")
 
@@ -70,11 +85,36 @@ class LoadWords(unittest.TestCase):
     def test_missing_or_broken_is_empty(self):
         with tempfile.TemporaryDirectory() as d:
             p = pathlib.Path(d) / "w.json"
-            self.assertEqual(tr.load_words(p), ([], {}))
+            said = []
+            self.assertEqual(tr.load_words(p, warn=said.append), ([], {}))
+            self.assertEqual(said, [])   # 파일이 없는 것은 정상이라 알리지 않는다
             p.write_text("{깨짐", encoding="utf-8")
             self.assertEqual(tr.load_words(p), ([], {}))
             p.write_text(json.dumps(["목록"]), encoding="utf-8")
             self.assertEqual(tr.load_words(p), ([], {}))
+
+    def test_unreadable_file_warns(self):
+        with tempfile.TemporaryDirectory() as d:
+            p = pathlib.Path(d) / "w.json"
+            for raw in (b'{"a": 1,}', '{"자주 쓰는 말": ["알림장"]}'.encode("cp949"), b"[]"):
+                p.write_bytes(raw)
+                said = []
+                self.assertEqual(tr.load_words(p, warn=said.append), ([], {}))
+                self.assertEqual(len(said), 1, raw)
+                self.assertIn("쓰지 않았어요", said[0])
+
+    def test_wrong_shape_skips_only_that_part_and_warns(self):
+        with tempfile.TemporaryDirectory() as d:
+            p = pathlib.Path(d) / "w.json"
+            for bad in (5, "알림장", {"a": "b"}):
+                p.write_text(json.dumps({"자주 쓰는 말": bad, "고쳐 쓰기": {"x": "y"}}), encoding="utf-8")
+                said = []
+                self.assertEqual(tr.load_words(p, warn=said.append), ([], {"x": "y"}), bad)
+                self.assertEqual(len(said), 1)
+            p.write_text(json.dumps({"자주 쓰는 말": ["a"], "고쳐 쓰기": ["x"]}), encoding="utf-8")
+            said = []
+            self.assertEqual(tr.load_words(p, warn=said.append), (["a"], {}))
+            self.assertEqual(len(said), 1)
 
     def test_bad_entries_skipped(self):
         with tempfile.TemporaryDirectory() as d:

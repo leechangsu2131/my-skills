@@ -1,4 +1,4 @@
-"""하루 기록(제미나이 Gem 정리본 md) → 갈래별로 나눠 일정DB 시트·Notion·옵시디언 볼트에 넣는다.
+"""하루 기록(제미나이 정리본 md) → 갈래별로 나눠 일정DB 시트·Notion·옵시디언 볼트에 넣는다.
 
     python intake.py plan  [파일]                       # 어디에 무엇을 넣을지 표만 (아무것도 안 바꿈)
     python intake.py apply [파일] [--skip sheet,notion]   # 표대로 넣기 — 교사가 표를 보고 동의한 뒤에만

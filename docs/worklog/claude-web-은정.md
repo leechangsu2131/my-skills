@@ -20,3 +20,4 @@
 - 2026-11-27 17:38 S3 (sites) 시작 (브랜치 task/S3-sites-longer-lesson-name)
 - 2026-11-27 17:39 S3 (sites) PR 올림 — 차시 고르기: 띄어쓰기만 다른 차시가 있어도 더 긴 이름의 다른 차시가 열리는 문제 재현 시험 8개(그중 expectedFailure 4개)와 ISSUE-005 기록, T82 때 깨진 줄(글자 '\n') 고침. 확인: 가짜 selenium 으로 8개 실행(통과 4·예상 실패 4, 이유 모두 AssertionError 0 != 1), pytest sites 94 통과·4 건너뜀, 개인정보 검사·카탈로그 점검 통과
 - 2026-11-27 17:41 S3 (sites) 고침 — 자동 검사에는 selenium 이 없어 새 시험 파일이 통째로 건너뛰어졌음 → 음악 시험만 건너뛰게 바꿔 사회 4개는 실제로 돌게 함. 확인: selenium 없이 pytest sites 96 통과·7 건너뜀·2 xfail
+- 2026-11-27 18:10 교사 지시(차시 자료 도우미) 시작 (브랜치 fix/lesson-pick-ask-longer, #143 위에 쌓음) — 결정: 더 긴 이름만 있으면 물어보고 열기

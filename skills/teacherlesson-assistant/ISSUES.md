@@ -256,6 +256,13 @@
 - **해결/조치**: 미정(추정: dict 가 아니면 `{}` 로 보면 됨).
 - **관련 파일**: `assistant_server.py`(`prepare_status`), 재현 시험 `test_assistant_flow_status.py`(expectedFailure)
 
+### ISSUE-새: parse_plan 이 음수 분의 부호를 버림 (2026-11-27, S1 시험 중 발견)
+- **상태**: 📌 백로그
+- **증상**: `prepare_lessons.parse_plan` 이 단계 시간 `-5` 를 `5` 분으로 읽는다(`re.search(r"\d+", ...)` 가 부호를 못 봄). 다른 단계 합이 35 면 합계 40 검사도 통과해 잘못된 뼈대가 그대로 쓰인다.
+- **원인**: 숫자 뽑는 정규식에 부호 처리가 없음.
+- **해결/조치**: 미정(추정: 정규식을 `-?\d+` 로 바꾸면 범위 검사 `1~40` 에서 거부됨 — 시험으로 확인 필요).
+- **관련 파일**: `prepare_lessons.py`(`parse_plan`), 재현 시험 `tests/test_parse_plan.py`(xfail strict)
+
 ## 🟢 해결됨
 
 ### ISSUE-새: 다른 교시의 단계 타이머가 복원됨 (2026-11-27)

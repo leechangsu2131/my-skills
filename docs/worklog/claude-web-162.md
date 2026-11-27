@@ -43,3 +43,4 @@
 - 2026-11-27 12:06 S1 (util-notebooklm) 시작 (브랜치 task/S1-tests-util-notebooklm)
 - 2026-11-27 12:07 S1 (util-notebooklm) PR 올림 — tests/test_nlm.py 41개(page_refs·parse_pages·compact·split_text·is_low_text·page_text·노트북 목록·gemini_command·gemini_ask 대체 모델 순서·제한시간·키 처리). nlm.py 는 안 고침. 확인: 통과 41/41, 소스를 일부러 망가뜨린 5곳을 모두 잡음(되돌림). fitz 를 쓰는 pages·prep 은 시험 못 함(이 환경에 없음)
 - 2026-11-27 18:44 S1 (teacherlesson-guide) 시작 (브랜치 task/S1-tests-apply-annual-plan)
+- 2026-11-27 18:45 S1 (teacherlesson-guide) PR 올림 — splitter/tests/test_apply_annual_plan.py 19개(plan_entries 계획 글 읽기 11 + main 흐름 8: 짝짓기·미리보기·백업 한 번만·개수 다르면 중단·개관/계획 묶음 제외·차시 범위). apply_annual_plan.py 는 안 고침. 확인: 19개 통과(splitter 전체 pytest 29), 소스를 망가뜨린 9곳을 모두 잡음(되돌림). 참고: 다시 돌리면 source_title 이 첫 실행 제목으로 덮임(백업엔 원본 있음). 진짜 fitz·실제 지도서 PDF 는 확인 필요

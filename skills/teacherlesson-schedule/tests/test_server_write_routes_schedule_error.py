@@ -1,11 +1,10 @@
 """쓰기 경로 6개(`/api/done`·`push`·`extend`·`pull`·`move`·`swap`)가 ScheduleError 를 JSON 오류로 바꾸는지 (ISSUE-005, S3).
 
 `/api/catch-up`·`/api/lessons` 는 이미 고쳐졌다(ISSUE-001·002). 이 6개는 `except ValueError` 만 있어
-`schedule.ScheduleError`(ValueError 의 하위가 아님)가 나면 JSON 이 아니라 파이썬 오류로 올라온다 — 아직 안 고쳤으므로
-**expectedFailure**. 고치면(ValueError 앞에 `except schedule.ScheduleError → _action_error(…, 500)`)
-"unexpected success" 로 알려 주니 그때 표시를 지운다.
+`schedule.ScheduleError`(ValueError 의 하위가 아님)가 나면 JSON 이 아니라 파이썬 오류로 올라온다 — T100 에서 `server._json_schedule_errors`
+(ScheduleError → JSON 500)를 6개 경로에 붙여 고쳤다. 처음엔 expectedFailure 였다.
 
-Flask test client + 가짜 시트라 네트워크·비밀값 없이 돈다. 소스(server.py)는 고치지 않는다.
+Flask test client + 가짜 시트라 네트워크·비밀값 없이 돈다.
 """
 import unittest
 from unittest.mock import patch
@@ -44,28 +43,22 @@ class WriteRoutesScheduleErrorTests(unittest.TestCase):
                 self.assertEqual(body["status"], "error")
                 self.assertIn(str(error), body["message"])
 
-    # --- 아직 안 고침: 고치면 표시를 지운다 ---
-    @unittest.expectedFailure
+    # --- ISSUE-005 (T100 에서 고침) ---
     def test_done_schedule_error_is_json(self):
         self.check_json_error("done")
 
-    @unittest.expectedFailure
     def test_push_schedule_error_is_json(self):
         self.check_json_error("push")
 
-    @unittest.expectedFailure
     def test_extend_schedule_error_is_json(self):
         self.check_json_error("extend")
 
-    @unittest.expectedFailure
     def test_pull_schedule_error_is_json(self):
         self.check_json_error("pull")
 
-    @unittest.expectedFailure
     def test_move_schedule_error_is_json(self):
         self.check_json_error("move")
 
-    @unittest.expectedFailure
     def test_swap_schedule_error_is_json(self):
         self.check_json_error("swap")
 

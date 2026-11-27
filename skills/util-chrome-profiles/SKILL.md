@@ -1,18 +1,19 @@
 ---
 name: util-chrome-profiles
-description: 여러 Chrome 프로필을 한 창에서 관리하는 Windows 데스크톱 앱(PySide6). 프로필 그룹화·드래그 이동, 클릭으로 열기·일괄 닫기, 미리보기 드래그로 여러 창 골라 닫기, 기타 Chrome 창(자동화용 등) 관리, 시작 URL 일괄 지정, 열린 창 미리보기(작업표시줄 미리보기처럼), 여러 창 커서 위치에 같은 글 일괄 입력, 화면 변화 없음 감시·Ctrl+클릭 타이머 알림. '크롬 프로필 관리', '크롬 프로필 매니저', '프로필 여러 개 한꺼번에 열기', '크롬 창 미리보기', '여러 크롬 창에 같은 글 입력' 같은 요청에 쓴다.
+description: 여러 Chrome·Edge 프로필을 한 창에서 관리하는 Windows 데스크톱 앱(PySide6). 프로필 그룹화·드래그 이동, 클릭으로 열기·일괄 닫기, 미리보기 드래그로 여러 창 골라 닫기, 기타 브라우저 창(자동화용 등) 관리, 시작 URL 일괄 지정, 열린 창 미리보기(작업표시줄 미리보기처럼), 여러 창 커서 위치에 같은 글 일괄 입력, 화면 변화 없음 감시·Ctrl+클릭 타이머 알림. '크롬 프로필 관리', '크롬 프로필 매니저', '프로필 여러 개 한꺼번에 열기', '크롬 창 미리보기', '여러 크롬 창에 같은 글 입력', '엣지 프로필 관리' 같은 요청에 쓴다.
 metadata:
   category: 공통 유틸
   status: 개발
   version: v0.1.0
-  summary: Chrome 프로필을 그룹으로 묶어 클릭으로 열고, 열린 창을 미리보기로 보며 일괄 입력·변화 없음 감시·타이머 알림을 주는 Windows 앱. 로그인 상태는 그대로 유지된다.
+  summary: Chrome·Edge 프로필을 그룹으로 묶어 클릭으로 열고, 열린 창을 미리보기로 보며 일괄 입력·변화 없음 감시·타이머 알림을 주는 Windows 앱. 로그인 상태는 그대로 유지된다.
 ---
 
-# util-chrome-profiles — Chrome 프로필 매니저
+# util-chrome-profiles — Chrome·Edge 프로필 매니저
 
-Chrome 을 평소처럼 실행하고(로그인 유지) Windows API 로 창을 다루는 작은 데스크톱 앱이다.
-창이 어느 프로필인지는 Chrome 이 창마다 붙이는 작업표시줄 앱 ID 로 알아낸다
-(기본 프로필 `Chrome`, Profile 4 `Chrome.UserData.Profile4`). 그래서 매니저 밖에서 연 창,
+Chrome·Edge 를 평소처럼 실행하고(로그인 유지) Windows API 로 창을 다루는 작은 데스크톱 앱이다.
+창이 어느 프로필인지는 브라우저가 창마다 붙이는 작업표시줄 앱 ID 로 알아낸다
+(Chrome 기본 `Chrome`, Profile 4 `Chrome.UserData.Profile4` / Edge 기본 `MSEdge`, Profile 1 `MSEdge.UserData.Profile1`).
+Edge 프로필은 트리에 `Edge · 이름` 으로 보이고 Chrome 프로필과 똑같이 그룹·열기·닫기·입력이 된다. 그래서 매니저 밖에서 연 창,
 매니저를 켜기 전부터 열려 있던 창도 프로필별로 잡힌다.
 
 ## 언제 쓰나
@@ -22,7 +23,7 @@ Chrome 을 평소처럼 실행하고(로그인 유지) Windows API 로 창을 �
 
 ## 준비
 - Windows, Python 3.10+, `pip install -r requirements.txt` (PySide6-Essentials, pywin32)
-- 설정 키(선택): 중앙 `.env` 의 `CHROME_USER_DATA_DIR` — 기본 `%LOCALAPPDATA%\Google\Chrome\User Data`
+- 설정 키(선택): 중앙 `.env` 의 `CHROME_USER_DATA_DIR`·`EDGE_USER_DATA_DIR` — 기본 `%LOCALAPPDATA%\Google\Chrome\User Data`, `%LOCALAPPDATA%\Microsoft\Edge\User Data`. 설치 안 된 브라우저는 건너뛴다.
 - 그룹·시작 URL·감시 시간은 `내 문서\my-skills-data\util-chrome-profiles\config.json` 에 저장된다.
 
 ## 사용법
@@ -44,7 +45,7 @@ python chrome_profiles.py --check
 | 일괄 입력 | "일괄 입력" → 열린 창(고른 프로필이 있으면 그 창들)의 현재 커서 위치에 붙여 넣기 |
 | 미리보기에서 여러 개 고르기 | 미리보기 위를 드래그하거나 Shift+클릭. 고른 창은 위의 "고른 창 닫기"·Del 키로 닫고, 오른쪽 클릭으로 감시·타이머·일괄 입력을 한꺼번에 |
 | 일괄 닫기 | 트리에서 프로필·그룹 고르고 "일괄 닫기"(안 고르면 프로필 창 전체, 기타 창은 직접 고를 때만). 확인 창 뒤 X 버튼과 같은 닫기. 한 창만은 미리보기 오른쪽 클릭 → "이 창 닫기" |
-| 기타 Chrome 창 관리 | 트리 맨 아래 "기타 Chrome 창" 그룹에 앱 ID 별로 보인다. 고르면 미리보기 거르기·일괄 닫기·일괄 입력 대상이 되고, 더블클릭 = 창 앞으로, F2 = 알아보기 쉬운 이름 붙이기(저장됨) |
+| 기타 브라우저 창 관리 | 트리 맨 아래 "기타 브라우저 창" 그룹에 앱 ID 별로 보인다. 고르면 미리보기 거르기·일괄 닫기·일괄 입력 대상이 되고, 더블클릭 = 창 앞으로, F2 = 알아보기 쉬운 이름 붙이기(저장됨) |
 | 타이머 | 미리보기 Ctrl+클릭 → 지정한 분이 지나면 트레이 알림·소리·빨간 표시. 다시 Ctrl+클릭 = 취소 |
 | 변화 없음 감시 | 미리보기 오른쪽 클릭 → "변화 감시 켜기". 지정한 초 동안 화면이 안 바뀌면 알림 |
 
@@ -53,7 +54,7 @@ python chrome_profiles.py --check
   앞으로 못 가져온 창은 엉뚱한 곳에 붙지 않게 건너뛰고 상태 표시줄에 알린다. 클립보드는 끝나면 되돌린다.
 - 일괄 입력은 글을 넣기만 하고 Enter 는 누르지 않는다. 제출·발송은 사람이 한다.
 - 최소화된 창은 미리보기가 마지막 화면에 멈춘다(변화 감시도 그동안 "변화 없음"으로 센다).
-- 다른 user-data-dir 로 띄운 Chrome(자동화용 등)·프로필 선택 창·앱 창은 "기타 Chrome 창"으로 보인다. 새로 띄우기는 못 하고(어느 폴더인지 몰라서) 앞으로·닫기·입력만 된다.
+- 다른 user-data-dir 로 띄운 Chrome(자동화용 등)·프로필 선택 창·앱 창은 "기타 브라우저 창"으로 보인다. 새로 띄우기는 못 하고(어느 폴더인지 몰라서) 앞으로·닫기·입력만 된다.
 
 ## 문서
 - [ISSUES.md](ISSUES.md) — 문제·해결 기록, 진행 중인 일

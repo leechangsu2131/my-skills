@@ -1,12 +1,14 @@
-"""Chrome 프로필 매니저 (Windows / Python 3.10+)
+"""Chrome·Edge 프로필 매니저 (Windows / Python 3.10+)
 
 설치: pip install -r requirements.txt
 실행: 실행.bat 더블클릭, 또는 pythonw chrome_profiles.py
 점검: python chrome_profiles.py --check   (프로필·열린 창 목록만 출력하고 끝냄)
 
-Chrome 을 평소처럼 실행하고(로그인 상태 유지) Windows API 로 창을 다룬다.
-창이 어느 프로필인지는 Chrome 이 창마다 붙이는 작업표시줄 앱 ID(AppUserModelID)로 알아낸다.
-  기본 프로필 → "Chrome",  Profile 4 → "Chrome.UserData.Profile4"
+Chrome·Edge 를 평소처럼 실행하고(로그인 상태 유지) Windows API 로 창을 다룬다.
+창이 어느 프로필인지는 브라우저가 창마다 붙이는 작업표시줄 앱 ID(AppUserModelID)로 알아낸다.
+  Chrome 기본 프로필 → "Chrome",  Profile 4 → "Chrome.UserData.Profile4"
+  Edge   기본 프로필 → "MSEdge",  Profile 1 → "MSEdge.UserData.Profile1"
+프로필 키: Chrome 은 폴더명 그대로("Profile 4"), Edge 는 "edge:Profile 1".
 그래서 매니저 밖에서 연 창, 매니저를 다시 켜기 전부터 열려 있던 창도 프로필별로 잡힌다.
 """
 from __future__ import annotations
@@ -36,34 +38,54 @@ from win32com.propsys import propsys, pscon  # noqa: E402
 SKILL = "util-chrome-profiles"
 load_env(skill=SKILL)
 
-USER_DATA = Path(os.path.expandvars(os.environ.get("CHROME_USER_DATA_DIR", "")) or
-                 Path(os.environ["LOCALAPPDATA"]) / "Google" / "Chrome" / "User Data")
+LOCAL = Path(os.environ["LOCALAPPDATA"])
+# prefix=프로필 키 앞머리, aumid=앱 ID 바탕, install=설치 폴더(Application 의 상위), env=User Data 덮어쓰기 설정 키
+BROWSERS = [
+    {"prefix": "", "label": "Chrome", "aumid": "Chrome", "exe": "chrome.exe",
+     "install": Path("Google") / "Chrome", "env": "CHROME_USER_DATA_DIR"},
+    {"prefix": "edge:", "label": "Edge", "aumid": "MSEdge", "exe": "msedge.exe",
+     "install": Path("Microsoft") / "Edge", "env": "EDGE_USER_DATA_DIR"},
+]
+for _b in BROWSERS:
+    _b["user_data"] = Path(os.path.expandvars(os.environ.get(_b["env"], "")) or LOCAL / _b["install"] / "User Data")
+BROWSER_EXES = tuple(os.sep + b["exe"] for b in BROWSERS)
 CONFIG = data_dir(SKILL) / "config.json"
 UNGROUPED = "미분류"
-OTHER = "기타 Chrome 창"
+OTHER = "기타 브라우저 창"
 CHANGE_THRESHOLD = 2.0   # 32x32 흑백 축소본의 평균 밝기 차이. 클수록 둔감하다.
 CAPTURE_BUDGET = 0.15    # 1초마다 캡처에 쓰는 최대 시간(초). 창이 많으면 돌아가며 찍는다.
 THUMB_W, THUMB_H = 240, 150
 
 
 # ───────────────────────── Chrome / Windows 유틸 ─────────────────────────
-def find_chrome() -> str:
+def find_exe(browser: dict) -> str | None:
     for base in ("PROGRAMFILES", "PROGRAMFILES(X86)", "LOCALAPPDATA"):
-        p = Path(os.environ.get(base, "")) / "Google" / "Chrome" / "Application" / "chrome.exe"
+        p = Path(os.environ.get(base, "")) / browser["install"] / "Application" / browser["exe"]
         if p.exists():
             return str(p)
-    raise FileNotFoundError("chrome.exe 를 찾지 못했습니다.")
+    return None
 
 
-def load_profiles() -> dict[str, str]:
-    """Local State 에서 {폴더명: 표시 이름(이메일)} 을 읽는다."""
-    data = json.loads((USER_DATA / "Local State").read_text(encoding="utf-8"))
+def load_profiles() -> dict[str, dict]:
+    """설치된 브라우저마다 Local State 에서 프로필을 읽는다.
+    {키: {"name": 표시 이름, "folder": 폴더명, "exe": 실행 파일, "browser": 브라우저 정보}}"""
     out = {}
-    for folder, info in data["profile"]["info_cache"].items():
-        name = info.get("name") or folder
-        email = info.get("user_name")
-        out[folder] = f"{name} ({email})" if email else name
-    return dict(sorted(out.items(), key=lambda kv: _natural(kv[0])))
+    for browser in BROWSERS:
+        exe, state = find_exe(browser), browser["user_data"] / "Local State"
+        if not exe or not state.is_file():
+            continue
+        cache = json.loads(state.read_text(encoding="utf-8"))["profile"]["info_cache"]
+        for folder in sorted(cache, key=_natural):
+            info = cache[folder]
+            name = info.get("name") or folder
+            email = info.get("user_name")
+            name = f"{name} ({email})" if email else name
+            if browser["prefix"]:
+                name = f"{browser['label']} · {name}"
+            out[browser["prefix"] + folder] = {"name": name, "folder": folder, "exe": exe, "browser": browser}
+    if not out:
+        raise FileNotFoundError("Chrome·Edge 를 찾지 못했습니다.")
+    return out
 
 
 def _natural(text: str):
@@ -75,12 +97,14 @@ def _aumid_part(text: str) -> str:
     return re.sub(r"[^A-Za-z0-9.]", "", text)
 
 
-def aumid_table(folders) -> dict[str, str]:
-    """{창의 앱 ID: 프로필 폴더명}"""
-    prefix = "Chrome." + _aumid_part(USER_DATA.name) + "."
-    table = {prefix + _aumid_part(f): f for f in folders}
-    if "Default" in folders:
-        table["Chrome"] = "Default"
+def aumid_table(profiles: dict[str, dict]) -> dict[str, str]:
+    """{창의 앱 ID: 프로필 키}"""
+    table = {}
+    for key, info in profiles.items():
+        browser = info["browser"]
+        table[f"{browser['aumid']}.{_aumid_part(browser['user_data'].name)}.{_aumid_part(info['folder'])}"] = key
+        if info["folder"] == "Default":
+            table[browser["aumid"]] = key
     return table
 
 
@@ -95,7 +119,7 @@ def _is_chrome_pid(pid: int) -> bool:
                 exe = win32process.GetModuleFileNameEx(handle, 0)
             finally:
                 win32api.CloseHandle(handle)
-            _exe_cache[pid] = exe.lower().endswith("\\chrome.exe")
+            _exe_cache[pid] = exe.lower().endswith(BROWSER_EXES)
         except Exception:
             _exe_cache[pid] = False
     return _exe_cache[pid]
@@ -110,7 +134,7 @@ def window_aumid(hwnd: int) -> str | None:
 
 
 def chrome_windows() -> list[int]:
-    """보이는 Chrome 브라우저 창(대화상자·팝업 제외)."""
+    """보이는 Chrome·Edge 브라우저 창(대화상자·팝업 제외)."""
     found = []
 
     def callback(hwnd, _):
@@ -210,16 +234,17 @@ def capture_bits(hwnd: int):
 def check() -> None:
     profiles = load_profiles()
     table = aumid_table(profiles)
-    print(f"User Data: {USER_DATA}")
+    for browser in BROWSERS:
+        print(f"{browser['label']} User Data: {browser['user_data']}")
     print(f"설정 파일: {CONFIG}")
     print(f"프로필 {len(profiles)}개")
-    for folder, name in profiles.items():
-        print(f"  {folder:12} {name}")
-    print("열린 Chrome 창")
+    for key, info in profiles.items():
+        print(f"  {key:16} {info['name']}")
+    print("열린 브라우저 창")
     for hwnd in chrome_windows():
         aumid = window_aumid(hwnd)
-        folder = table.get(aumid or "", "?")
-        print(f"  {hwnd:>10}  {folder:12} {aumid!s:32} {win32gui.GetWindowText(hwnd)[:40]}")
+        key = table.get(aumid or "", "?")
+        print(f"  {hwnd:>10}  {key:16} {aumid!s:32} {win32gui.GetWindowText(hwnd)[:40]}")
 
 
 if __name__ == "__main__" and "--check" in sys.argv:
@@ -283,11 +308,11 @@ class Tree(QTreeWidget):
 class Manager(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Chrome 프로필 매니저")
+        self.setWindowTitle("Chrome·Edge 프로필 매니저")
         self.resize(1200, 720)
-        self.chrome = find_chrome()
-        self.profiles = load_profiles()
-        self.aumids = aumid_table(self.profiles)
+        self.profile_info = load_profiles()
+        self.profiles = {key: info["name"] for key, info in self.profile_info.items()}  # 키 → 표시 이름
+        self.aumids = aumid_table(self.profile_info)
         try:
             self.cfg = json.loads(CONFIG.read_text(encoding="utf-8"))
         except Exception:
@@ -395,7 +420,7 @@ class Manager(QMainWindow):
         icon = self.style().standardIcon(QStyle.StandardPixmap.SP_ComputerIcon)
         self.setWindowIcon(icon)
         self.tray = QSystemTrayIcon(icon, self)
-        self.tray.setToolTip("Chrome 프로필 매니저")
+        self.tray.setToolTip("Chrome·Edge 프로필 매니저")
         self.tray.activated.connect(lambda *_: (self.showNormal(), self.raise_(), self.activateWindow()))
         self.tray.show()
 
@@ -462,8 +487,11 @@ class Manager(QMainWindow):
             return self.cfg["aliases"][aumid]
         if aumid.endswith(".SystemProfile"):
             return "프로필 선택 창"
-        rest = aumid[len("Chrome."):] if aumid.startswith("Chrome.") else aumid
-        return rest.replace(".", " · ") or aumid
+        for browser in BROWSERS:
+            if aumid.startswith(browser["aumid"] + "."):
+                rest = aumid[len(browser["aumid"]) + 1:].replace(".", " · ")
+                return rest if browser["label"] == "Chrome" else f"{browser['label']} · {rest}"
+        return aumid
 
     def refresh_other_group(self):
         """열린 기타 창을 앱 ID 별로 트리 맨 아래 '기타 Chrome 창' 그룹에 보인다."""
@@ -600,7 +628,8 @@ class Manager(QMainWindow):
         if not self.launch_queue:
             return
         folder = self.launch_queue.pop(0)
-        args = [self.chrome, f"--profile-directory={folder}", "--new-window"]
+        info = self.profile_info[folder]
+        args = [info["exe"], f"--profile-directory={info['folder']}", "--new-window"]
         if self.cfg["start_url"].get(folder):
             args.append(self.cfg["start_url"][folder])
         subprocess.Popen(args)
@@ -885,5 +914,5 @@ if __name__ == "__main__":
         log = data_dir(SKILL) / "error.log"
         log.write_text(traceback.format_exc(), encoding="utf-8")
         _user32.MessageBoxW(0, f"시작하지 못했습니다.\n\n{traceback.format_exc()[-800:]}\n\n기록: {log}",
-                            "Chrome 프로필 매니저", 0x10)
+                            "Chrome·Edge 프로필 매니저", 0x10)
         raise

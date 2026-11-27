@@ -1,7 +1,7 @@
 # 스킬 카탈로그
 
 > 이 파일은 `python tools/build_catalog.py`로 자동 생성된다. 직접 고치지 말고 각 스킬의 `SKILL.md` 앞머리(`metadata`)를 고친 뒤 다시 실행한다.
-> 생성일: 2026-11-28 · 스킬 61개
+> 생성일: 2026-11-28 · 스킬 62개
 
 ## 빠른 찾기
 
@@ -10,7 +10,7 @@
 - [📚 수업·교사 도구](#수업교사-도구) — 11개
 - [🌐 홈페이지](#홈페이지) — 1개
 - [👤 개인·생활](#개인생활) — 16개
-- [🛠️ 공통 유틸](#공통-유틸) — 12개
+- [🛠️ 공통 유틸](#공통-유틸) — 13개
 
 ## 학교 행정
 
@@ -91,7 +91,8 @@
 | 스킬 | 상태 | 버전 | 할 수 있는 일 | 문서 |
 |---|---|---|---|---|
 | `ego-browser` | 🔧 개발 | - | Ego Lite의 `ego-browser` CLI로 브라우저를 조작하고, 사용자 탭과 관리형 TaskSpace 창의 차이를 확인하며 작업 기록·스크린샷을 과업별 폴더에 정리한다. | [SKILL](skills/ego-browser/SKILL.md) · [이슈](skills/ego-browser/ISSUES.md) · [README](skills/ego-browser/README.md) |
-| `util-chrome-profiles` | 🔧 개발 | v0.1.0 | Chrome 프로필을 그룹으로 묶어 클릭으로 열고, 열린 창을 미리보기로 보며 일괄 입력·변화 없음 감시·타이머 알림을 주는 Windows 앱. 로그인 상태는 그대로 유지된다. | [SKILL](skills/util-chrome-profiles/SKILL.md) · [이슈](skills/util-chrome-profiles/ISSUES.md) 🔵1 |
+| `util-bat-launcher` | 🔧 개발 | v0.1.0 | 저장소의 모든 bat·cmd 를 분야·스킬별로 모아 보여 주고 더블클릭으로 실행하는 실행기. 찾기, 즐겨찾기, 최근 실행, 바탕화면 바로가기. | [SKILL](skills/util-bat-launcher/SKILL.md) · [이슈](skills/util-bat-launcher/ISSUES.md) 🔵1 |
+| `util-chrome-profiles` | 🔧 개발 | v0.1.0 | Chrome·Edge 프로필을 그룹으로 묶어 클릭으로 열고, 열린 창을 미리보기로 보며 일괄 입력·변화 없음 감시·타이머 알림을 주는 Windows 앱. 로그인 상태는 그대로 유지된다. | [SKILL](skills/util-chrome-profiles/SKILL.md) · [이슈](skills/util-chrome-profiles/ISSUES.md) 🔵1 |
 | `util-discord-memo` | ✅ 운영 | - | Discord 메모 채널의 내용을 요약해 공지/리포트로 정리하는 대화형 워크플로를 설명한다. | [SKILL](skills/util-discord-memo/SKILL.md) · [이슈](skills/util-discord-memo/ISSUES.md) |
 | `util-edusearch-main` | ✅ 운영 | - | 인디스쿨·수업나누리 등에서 수집한 교육 자료를 내 PC의 로컬 검색 DB로 모아 한 번에 검색하는 개인용 스크래퍼+검색 시스템. | [SKILL](skills/util-edusearch-main/SKILL.md) · [이슈](skills/util-edusearch-main/ISSUES.md) · [README](skills/util-edusearch-main/README.md) |
 | `util-map-time` | ✅ 운영 | - | Kakao 지도 기반 로컬 웹 앱. Excel 장소의 이동 거리·시간, 다대다 경로, 중간지점 및 경유지 비교를 제공한다. | [SKILL](skills/util-map-time/SKILL.md) · [이슈](skills/util-map-time/ISSUES.md) · [README](skills/util-map-time/README.md) |

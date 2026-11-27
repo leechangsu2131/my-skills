@@ -38,6 +38,8 @@
 - 2026-11-27 06:49 S4 (teacherlesson-from-neis) PR 올림 — SKILL.md·README 를 코드와 대조: 체험학습 신청서·보고서도 접수·상신을 지원(v1.7.0, ISSUE-005)하는데 '조회 전용'이라 적혀 있어 고침, 단추 이름 '결석·체험학습 접수·상신 대상 확인' 으로 바로잡음. 못 한 것: 앞머리 description·summary 는 '결석신고서만' 표현이라 안 고침(카탈로그 영향, 교사 확인), 실제 NEIS 화면은 확인 필요
 - 2026-11-27 07:24 S4 (teacherlesson-schedule) 시작 (브랜치 task/S4-check-schedule-docs)
 - 2026-11-27 07:25 S4 (teacherlesson-schedule) PR 올림 — SKILL.md·README 를 코드·시험과 대조: PyMuPDF 이미 추가(T93)인데 '빠져 있음' 고침, 확인 명령에 빠진 시험 파일 추가. 시험 72개 중 3 오류(fitz 없음 2·ISSUE-003 1). 실제 Google Sheets 는 확인 필요
+- 2026-11-27 13:30 S1 (teacherlesson-from-neis) 시작 (브랜치 task/S1-tests-neis-viewer)
+- 2026-11-27 18:12 S1 (teacherlesson-from-neis) PR 올림 — tests/viewer.test.js 11개(viewer.js 날짜 계산 weekDays·weekBounds·monthBounds·monthCells·shiftPeriod, colorForSubject, groupedByDate). viewer.js 는 안 고침. 확인: popup 14 + viewer 11 = 25개 통과, 소스를 일부러 망가뜨린 5곳을 모두 잡음(되돌림). render* 와 실제 크롬 화면은 확인 필요
 - 2026-11-27 11:21 S4 (teacherlesson-guide) 시작 (브랜치 task/S4-check-guide-docs)
 - 2026-11-27 11:21 S4 (teacherlesson-guide) PR 올림 — SKILL.md 를 파일·옵션·mapper 업로드 확인 동작과 대조: .gitignore 설명만 낡아서 고침(output/·pdf_splits/·groups.json 은 이제 막음, T90). 나머지는 코드와 맞음. mapper 시험은 이 환경에 fitz 가 없어 못 돌림(확인 필요)
 - 2026-11-27 12:06 S1 (util-notebooklm) 시작 (브랜치 task/S1-tests-util-notebooklm)

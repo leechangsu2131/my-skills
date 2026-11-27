@@ -86,6 +86,8 @@ Sheet-header placeholders:
 ```powershell
 python hitalk_sender_gui.py
 python hitalk_sender.py --dry-run
+python hitalk_sender.py --student 학생A --custom-message "안녕하세요, [학생] 학생 안내입니다." --dry-run
+python hitalk_sender.py --roster-file "G:\내 드라이브\my-skills-개인자료\학생명단_연락처.csv" --student 학생A --dry-run
 python hitalk_sender.py --message-file learning_guidance_invitation_template.txt --dry-run
 python hitalk_sender.py --rehearsal
 python hitalk_sender.py

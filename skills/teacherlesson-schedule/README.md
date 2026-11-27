@@ -194,7 +194,7 @@ python schedule.py push 국어 7 2026-04-03
 ## 테스트
 
 ```powershell
-python -m unittest tests.test_schedule tests.test_server tests.test_auto_planner tests.test_bridge_sheet
+python -m unittest tests.test_schedule tests.test_server tests.test_server_lessons_catchup tests.test_auto_planner tests.test_bridge_sheet tests.test_semester_rollover
 python -m py_compile schedule.py auto_planner.py bridge_sheet.py server.py
 npm.cmd run build
 ```

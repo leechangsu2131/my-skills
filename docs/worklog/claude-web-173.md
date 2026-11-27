@@ -24,7 +24,9 @@
 - 2026-11-27 06:06 T91 시작 (브랜치 task/T91-enter-default)
 - 2026-11-27 06:20 T90 PR 올림 — skills/teacherlesson-guide/.gitignore 에 output/·pdf_splits/·groups.json·*.pdf·*.part 추가(요청보다 넓게), ISSUE-32 를 🟢 로 옮김. 확인: git check-ignore -v 로 막혀야 할 경로 11개 막힘·코드/문서 8개 안 막힘, 이미 추적 중인 파일 새로 걸림 없음, 가짜 파일로 git status 잡음 없음, 다른 스킬 폴더 영향 없음, build_catalog --check 문제 없음. 꼭 올릴 PDF 는 git add -f
 - 2026-11-27 06:45 T91 PR 올림 — mapper/map_general_guides_to_sheet.py confirm_upload_action 기본값을 '올리지 않기'([y/N])·방식 질문 Enter='그대로 추가'(지우지 않음)로 바꿈. 2·3번은 번호 직접 입력. SKILL.md 경고·mapper/README.md·ISSUE-33 갱신. 확인: 가짜 input 시험 10개(Enter 만·여러 번 Enter·n 계열·y 뒤 Enter·2/3 명시·잘못된 입력·문구) 통과, 변이 3가지 모두 잡힘, mapper 시험 18개 통과(전체 36개 중 실패 2개는 변경 전에도 동일 — find_best_pdf). 실제 시트 실행 안 함
+- 2026-11-27 11:15 T57 (teacherlesson-from-neis) 시작 (브랜치 task/T57-easy-neis-skill)
 - 2026-11-27 11:22 S5 (repo-health) 시작 (브랜치 task/S5-health-1127)
+- 2026-11-27 11:50 T57 PR 올림(teacherlesson-from-neis 뒷정리) — 이미 합쳐진 T57 쉬운 한국어판에 옛 글이 겹쳐 있어(SKILL.md 124→106줄) 옛 글 지우고, 체험학습 접수·상신 지원·버튼 이름을 코드(v1.7.2 popup.html)에 맞게 고침. 새로 쓴 글이 아니라 겹침 정리라 뜻 변화 없음. claim 도구는 '비어 있음'이라 했으나 이미 합쳐진 T57 이 있었음 — 그래서 범위를 정리로 한정. 실제 NEIS 에서는 확인 안 함
 - 2026-11-27 12:05 S4 (util-notebooklm) 시작 (브랜치 task/S4-s4-notebooklm)
 - 2026-11-27 12:05 S5 PR 올림 — docs/reviews/health-2026-11-27.md(가벼운 판): 패키지 설치가 막혀 어제 점검 대비 달라진 것만 정리. 카탈로그 경고 38→1, assistant 시험 130→245. 가짜 모듈 때문에 나는 실패는 코드 문제로 세지 않음. 못 한 것 명시
 - 2026-11-27 12:06 S3 (teacherlesson-schedule) 시작 (브랜치 task/S3-s3-write-paths)

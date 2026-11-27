@@ -625,6 +625,9 @@ function restoreStep(){
     if (m.kind === 'step' && Number.isInteger(m.idx) && m.idx >= 0 && m.idx < steps.length) {
       const at = Date.parse(m.at);
       if (!Number.isFinite(at) || iso(new Date(at)) !== S.date) continue;
+      const period = (S.periods || []).find(p => Number(p.no) === Number(cur.period));
+      const startsAt = period ? new Date(`${S.date}T${period.start}:00`).getTime() : NaN;
+      if (!sess.started_ms && Number.isFinite(startsAt) && at < startsAt) continue;
       stepIdx = m.idx; stepAt = at; return;
     }
   }

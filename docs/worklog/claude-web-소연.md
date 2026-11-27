@@ -21,3 +21,5 @@
 - 2026-11-27 11:25 S4 PR 올림 (teacherlesson-assistant) — SKILL.md·README 를 코드와 맞춤(과목 바꾸기·교실 도구·받아쓰기·설정 키·시험 명령). pytest 373 통과, 1 건너뜀, 1 xfail
 - 2026-11-27 12:17 S2 (review-batch-1127-pm) 시작 (브랜치 task/S2-review-batch-1127-pm)
 - 2026-11-27 12:19 S2 PR 올림 (review-batch-1127-pm) — PR 8건 검토, 겹친 짝 #118↔#122·#123↔#124
+- 2026-11-27 12:19 S5 (merge-rehearsal) 시작 (브랜치 task/S5-merge-rehearsal)
+- 2026-11-27 12:21 S5 PR 올림 (merge-rehearsal) — 열린 PR 12건 합쳐 시험. 새로 깨지는 것 없음, mapper 2건은 main 에서도 실패

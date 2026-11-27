@@ -25,3 +25,4 @@
 - 2026-11-27 06:06 T91 시작 (브랜치 task/T91-enter-default)
 - 2026-11-27 06:45 T91 PR 올림 — mapper/map_general_guides_to_sheet.py confirm_upload_action 기본값을 '올리지 않기'([y/N])·방식 질문 Enter='그대로 추가'(지우지 않음)로 바꿈. 2·3번은 번호 직접 입력. SKILL.md 경고·mapper/README.md·ISSUE-33 갱신. 확인: 가짜 input 시험 10개(Enter 만·여러 번 Enter·n 계열·y 뒤 Enter·2/3 명시·잘못된 입력·문구) 통과, 변이 3가지 모두 잡힘, mapper 시험 18개 통과(전체 36개 중 실패 2개는 변경 전에도 동일 — find_best_pdf). 실제 시트 실행 안 함
 - 2026-11-27 11:15 T57 (teacherlesson-from-neis) 시작 (브랜치 task/T57-easy-neis-skill)
+- 2026-11-27 11:50 T57 PR 올림(teacherlesson-from-neis 뒷정리) — 이미 합쳐진 T57 쉬운 한국어판에 옛 글이 겹쳐 있어(SKILL.md 124→106줄) 옛 글 지우고, 체험학습 접수·상신 지원·버튼 이름을 코드(v1.7.2 popup.html)에 맞게 고침. 새로 쓴 글이 아니라 겹침 정리라 뜻 변화 없음. claim 도구는 '비어 있음'이라 했으나 이미 합쳐진 T57 이 있었음 — 그래서 범위를 정리로 한정. 실제 NEIS 에서는 확인 안 함

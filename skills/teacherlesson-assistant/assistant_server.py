@@ -36,6 +36,8 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 SKILL_DIR = pathlib.Path(__file__).resolve().parent
 sys.path.insert(0, str(next(p / "_shared" for p in SKILL_DIR.parents if (p / "_shared" / "skill_env.py").is_file())))
 from skill_env import data_dir, env_values  # noqa: E402
+sys.path.insert(0, str(SKILL_DIR))
+import audio_export  # noqa: E402  (녹음 → 클로바노트용 MP3, T99)
 
 SKILL = "teacherlesson-assistant"
 DATA = data_dir(SKILL)
@@ -833,6 +835,45 @@ class Handler(BaseHTTPRequestHandler):
                 self.wfile.write(chunk)
                 remaining -= len(chunk)
 
+    def _send_download(self, path: pathlib.Path, content_type: str, filename: str) -> None:
+        """파일을 내려받기로 보낸다(한글 파일 이름은 filename* 로)."""
+        size = path.stat().st_size
+        self.send_response(200)
+        self.send_header("Content-Type", content_type)
+        self.send_header("Content-Length", str(size))
+        self.send_header("Content-Disposition",
+                         f"attachment; filename=\"recording{path.suffix}\"; filename*=UTF-8''{urllib.parse.quote(filename)}")
+        self.send_header("Cache-Control", "no-store")
+        self.end_headers()
+        with path.open("rb") as handle:
+            while True:
+                chunk = handle.read(64 * 1024)
+                if not chunk:
+                    break
+                self.wfile.write(chunk)
+
+    def _recording_export(self, url, q) -> None:
+        """GET /api/recording-export/<날짜>/<파일>?format=mp3 — 클로바노트에 올릴 수 있게 바꿔 내려준다(원본은 그대로)."""
+        parts = [urllib.parse.unquote(part) for part in url.path.split("/") if part]
+        if len(parts) != 4 or parts[1] != "recording-export":
+            return self._json({"status": "error", "message": "녹음 파일 주소가 올바르지 않아요."}, 404)
+        fmt = (q.get("format", ["mp3"])[0] or "mp3").lower()
+        if fmt not in audio_export.FORMATS:
+            return self._json({"status": "error", "message": "형식은 mp3 또는 m4a 만 쓸 수 있어요."}, 400)
+        try:
+            path = recording_file(parts[2], parts[3])
+        except RecordingLookupError as exc:
+            return self._json({"status": "error", "message": exc.message}, exc.code)
+        if audio_export.is_still_recording(path):
+            return self._json({"status": "error", "message": "아직 녹음 중이거나 방금 끝난 녹음이에요. 30초쯤 뒤에 다시 눌러 주세요."}, 409)
+        try:
+            out = audio_export.convert(path, fmt, audio_export.find_ffmpeg(load_config()))
+        except audio_export.FfmpegMissing as exc:
+            return self._json({"status": "error", "message": str(exc)}, 501)
+        except audio_export.ExportError as exc:
+            return self._json({"status": "error", "message": str(exc)}, 500)
+        return self._send_download(out, audio_export.FORMATS[fmt]["mime"], f"{path.stem}.{fmt}")
+
     def _trusted(self) -> bool:
         """DNS 리바인딩·다른 사이트 요청 막기: Host 는 127.0.0.1/localhost 만, Origin 은 없거나 그 둘만."""
         port = self.server.server_port
@@ -853,6 +894,8 @@ class Handler(BaseHTTPRequestHandler):
             return self._send(200, (WEB / "index.html").read_bytes(), "text/html; charset=utf-8")
         if url.path == "/tools.js":
             return self._send(200, (WEB / "tools.js").read_bytes(), "application/javascript; charset=utf-8")
+        if url.path == "/recording_export.js":
+            return self._send(200, (WEB / "recording_export.js").read_bytes(), "application/javascript; charset=utf-8")
         if url.path == "/mobile.css":
             return self._send(200, (WEB / "mobile.css").read_bytes(), "text/css; charset=utf-8")
         if url.path == "/api/state":
@@ -876,21 +919,16 @@ class Handler(BaseHTTPRequestHandler):
             except ValueError:
                 return self._json({"status": "error", "message": "날짜 형식이 잘못됐어요."}, 400)
             return self._json({"status": "success", "items": recordings_for_day(day)})
+        if url.path.startswith("/api/recording-export/"):
+            return self._recording_export(url, q)
         if url.path.startswith("/api/recording/"):
             parts = [urllib.parse.unquote(part) for part in url.path.split("/") if part]
             if len(parts) != 4 or parts[1] != "recording":
                 return self._json({"status": "error", "message": "녹음 파일 주소가 올바르지 않아요."}, 404)
             try:
-                day = date.fromisoformat(parts[2]).isoformat()
-            except ValueError:
-                return self._json({"status": "error", "message": "날짜 형식이 잘못됐어요."}, 400)
-            name = parts[3]
-            stem, suffix = os.path.splitext(name)
-            if safe_name(stem) != stem or pathlib.Path(name).name != name or suffix.lower() not in {".webm", ".mp4"}:
-                return self._json({"status": "error", "message": "녹음 파일 이름이 올바르지 않아요."}, 404)
-            path = (SESSIONS / day / name).resolve()
-            if not path.is_relative_to(SESSIONS.resolve()) or not path.is_file():
-                return self._json({"status": "error", "message": "녹음 파일을 찾지 못했어요."}, 404)
+                path = recording_file(parts[2], parts[3])
+            except RecordingLookupError as exc:
+                return self._json({"status": "error", "message": exc.message}, exc.code)
             return self._send_audio(path)
         if url.path == "/api/subjects":
             try:
@@ -1153,6 +1191,27 @@ def save_audio(q: dict, raw: bytes) -> dict:
             raise
         _REC_STATE[key] = new_state
         return ok()
+
+
+class RecordingLookupError(Exception):
+    def __init__(self, code: int, message: str):
+        super().__init__(message)
+        self.code, self.message = code, message
+
+
+def recording_file(day_text: str, name: str) -> pathlib.Path:
+    """주소로 온 날짜·파일 이름을 검사해 저장된 녹음 파일 경로를 돌려준다(재생·내보내기가 같이 씀)."""
+    try:
+        day = date.fromisoformat(day_text).isoformat()
+    except ValueError:
+        raise RecordingLookupError(400, "날짜 형식이 잘못됐어요.") from None
+    stem, suffix = os.path.splitext(name)
+    if safe_name(stem) != stem or pathlib.Path(name).name != name or suffix.lower() not in {".webm", ".mp4"}:
+        raise RecordingLookupError(404, "녹음 파일 이름이 올바르지 않아요.")
+    path = (SESSIONS / day / name).resolve()
+    if not path.is_relative_to(SESSIONS.resolve()) or not path.is_file():
+        raise RecordingLookupError(404, "녹음 파일을 찾지 못했어요.")
+    return path
 
 
 def recordings_for_day(day: str) -> list[dict]:

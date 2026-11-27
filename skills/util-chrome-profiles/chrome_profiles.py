@@ -705,4 +705,12 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except Exception:  # pythonw 는 콘솔이 없어 오류가 안 보이므로 창과 파일로 남긴다
+        import traceback
+        log = data_dir(SKILL) / "error.log"
+        log.write_text(traceback.format_exc(), encoding="utf-8")
+        _user32.MessageBoxW(0, f"시작하지 못했습니다.\n\n{traceback.format_exc()[-800:]}\n\n기록: {log}",
+                            "Chrome 프로필 매니저", 0x10)
+        raise

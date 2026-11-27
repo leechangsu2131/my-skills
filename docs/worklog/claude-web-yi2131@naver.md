@@ -36,3 +36,4 @@
 - 2026-11-27 12:54 S1 (teacherlesson-assistant) 시작 (브랜치 task/S1-tests-replace-subject-period)
 - 2026-11-27 13:20 S1 PR 올림 — `supabase_schedule.replace_subject_period`(교시 과목 바꾸기)·`progress("replace-subject")` 시험 27개(`tests/test_replace_subject_period.py`). 가짜 메모리 표로 최종 슬롯 상태를 확인(밀기·뒤 차시 당기기·날짜 없는 꼬리 칸·앞 중복 비우기·막는 경우 14가지). 소스를 12곳 깨뜨려 보니 8곳은 시험이 잡았고 4곳은 결과가 같아 잡을 수 없는 변경(같은 차시 검사는 같은 과목 검사에 먼저 걸림 등). 소스는 안 고침
 - 2026-11-27 17:39 S1 (teacherlesson-assistant) 시작 (브랜치 task/S1-tests-prepare-lessons-helpers)
+- 2026-11-27 18:30 S1 PR 올림 — `prepare_lessons.py` 준비 과정 시험 47개(`tests/test_prepare_pipeline.py`): is_running·write_status(윈도우 파일 잠금 재시도)·lesson_pdf·pdf_text_source·prepare_one(가짜 Gemini: 형식 틀리면 이유를 붙여 다시 묻기, 뼈대는 한 번만)·main(이미 준비 중 거절, 직접 고친 흐름 보존, 종료 코드). 소스를 24곳 깨뜨려 모두 잡힘 확인, 소스는 안 고침. 메모: prepare_one 의 '시간 합계 35~45분 아니면 확인 필요' 알림은 뼈대가 40분으로 고정이라 지금은 사실상 안 뜸(가짜 parse_flow 로만 시험)

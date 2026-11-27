@@ -111,6 +111,7 @@ Claude 작업 절차는 [SKILL.md](SKILL.md), 문제·할 일은 [ISSUES.md](ISS
 - `flows/<record_key>.json` 또는 `flows/<과목>__<차시제목>.json` — 수업 흐름 (선택). Supabase 차시의 record_key 는 `lesson-0075` 같은 차시 번호(`lesson_lessons.legacy_lesson_id`)
 - `sessions/<날짜>/<교시>교시_<과목>_<차시ID>.json` — 차시별 메모·알림장·시작/마침 시각. 예전 ID 없는 파일도 읽고, 다른 차시 기록은 현재 차시에 잘못 붙이지 않는다.
 - `sessions/<날짜>/<교시>교시_<과목>_<시각>.webm` — 녹음
+- `sessions/<날짜>/export/<같은 이름>.mp3` — 클로바노트용으로 바꾼 파일(🎧 단추를 누르면 만들어지고, 원본이 더 붙기 전까지 다시 쓴다)
 - `ask/<날짜>/<교시>_<과목>/` — 웹 AI에 끌어다 놓을 PDF와 질문.txt
 - `notebooklm/<과목>/` — NotebookLM 소스(`<대단원>.md`, `_그림.pdf`), `notes/` 차시별 노트, `목록.txt`
 - `reports/week-<월요일>.md` — 주간 정리 글 (`python weekly_report.py [--date YYYY-MM-DD]`). 과목·출판사별 고칠점·좋았음, 출판사 주의점 후보, 학생별 발표 메모. **학생 이름이 있으니 밖에 보내지 않는다**
@@ -144,5 +145,6 @@ Claude 작업 절차는 [SKILL.md](SKILL.md), 문제·할 일은 [ISSUES.md](ISS
 - 단원 개관 규칙: `build_units.py` (`LESSON_START`)
 - 과목별 차시 자료 도우미: `sites/music_douclass/`, `sites/social_class/` (각 README). 서버의 `SITE_HELPERS` 에 등록
 - NotebookLM 소스·노트: `notebook_sources.py`, `split_notes.py` (차시 표시 규칙 `lesson_tag` 은 `assistant_server.py`)
+- 클로바노트에 올리기: 화면의 저장된 녹음에서 **🎧 클로바노트용 MP3 받기** → 받은 파일을 클로바노트에서 직접 올린다. ffmpeg 가 필요하다(`winget install Gyan.FFmpeg`, 설치 뒤 수업 비서를 다시 켬. 경로를 따로 쓰려면 config.json 의 `ffmpeg_path`). 녹음이 끝난 지 30초 안이면 잠시 뒤에 다시 누른다.
 - 녹음 받아쓰기·분석: `transcribe.py` (사용법은 파일 맨 위, faster-whisper 필요). 주간 정리: `weekly_report.py`
 - 설정 항목: `config.example.json` (실사용 설정은 데이터 폴더의 `config.json`)

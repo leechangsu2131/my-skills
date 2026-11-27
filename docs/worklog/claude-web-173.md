@@ -25,3 +25,4 @@
 - 2026-11-27 06:06 T91 시작 (브랜치 task/T91-enter-default)
 - 2026-11-27 06:45 T91 PR 올림 — mapper/map_general_guides_to_sheet.py confirm_upload_action 기본값을 '올리지 않기'([y/N])·방식 질문 Enter='그대로 추가'(지우지 않음)로 바꿈. 2·3번은 번호 직접 입력. SKILL.md 경고·mapper/README.md·ISSUE-33 갱신. 확인: 가짜 input 시험 10개(Enter 만·여러 번 Enter·n 계열·y 뒤 Enter·2/3 명시·잘못된 입력·문구) 통과, 변이 3가지 모두 잡힘, mapper 시험 18개 통과(전체 36개 중 실패 2개는 변경 전에도 동일 — find_best_pdf). 실제 시트 실행 안 함
 - 2026-11-27 12:05 S4 (util-notebooklm) 시작 (브랜치 task/S4-s4-notebooklm)
+- 2026-11-27 12:40 S4 PR 올림 (util-notebooklm) — SKILL.md 를 nlm.py 와 대조해 빠진/틀린 설명만 고침: prep --title·그림 옵션 뜻·파일 이름, nb add --note, --out 이 find·pages 는 파일/prep·split 은 폴더, pages --from 이 읽는 표시, split --pattern 동작. 코드는 안 고침. gemini 실행은 안 함(키·네트워크 없음)

@@ -10,6 +10,7 @@
 - 받아쓰기는 내 PC 에서 도는 faster-whisper 로 한다. 설치돼 있지 않으면 설치 방법만 안내하고 멈춘다
   (이미 받아쓴 글이 있으면 --no-transcribe 로 맞추기·분석은 할 수 있다).
   처음 한 번 모델 파일을 내려받는다(그 뒤로는 인터넷 없이 된다).
+- 사전(선택): 데이터 폴더 stt_words.json — "자주 쓰는 말"(받아쓰기 힌트)·"고쳐 쓰기"(틀린 말→맞는 말). 모양은 stt_words.example.json.
 - 결과(녹음 파일 옆): <녹음>.transcript.json(받아쓴 조각), <녹음>.transcript.md(메모를 끼워 넣은 글 + 분석)
 - 메모 시각은 세션의 '수업 시작' 메모(`at`)를 0초로 잡는다. 메모의 `t` 는 녹음 중이 아니면 시계 시각(HH:MM)이라
   mm:ss 와 헷갈릴 수 있어 쓰지 않는다.
@@ -33,8 +34,51 @@ INSTALL_HELP = ("받아쓰기 도구(faster-whisper)가 없어요. 설치: pip i
                 "(처음 한 번 모델 파일을 내려받아요). 이미 받아쓴 글이 있으면 --no-transcribe 로 맞추기·분석만 할 수 있어요.")
 
 
+WORDS_FILE = "stt_words.json"   # 데이터 폴더. 학생 이름이 들어갈 수 있어 저장소에는 stt_words.example.json 만 둔다
+HINT_LIMIT = 200                # whisper initial_prompt 는 토큰 224개까지라 글자 수로 넉넉히 줄인다
+PARTICLES = ("에서", "에게", "한테", "으로", "은", "는", "이", "가", "을", "를", "의", "에", "도", "와", "과", "로")
+
+
 class Unavailable(RuntimeError):
     """받아쓰기 도구가 없을 때."""
+
+
+def load_words(path=None):
+    """사전 파일 → (자주 쓰는 말 목록, {틀린 말: 맞는 말}). 없거나 깨지면 빈 값."""
+    path = pathlib.Path(path) if path else data_dir(SKILL) / WORDS_FILE
+    data = read_json(path)
+    if not isinstance(data, dict):
+        return [], {}
+    hints = [w.strip() for w in data.get("자주 쓰는 말") or [] if isinstance(w, str) and w.strip()]
+    raw = data.get("고쳐 쓰기")
+    fixes = {k.strip(): v.strip() for k, v in raw.items()
+             if isinstance(k, str) and isinstance(v, str) and k.strip()} if isinstance(raw, dict) else {}
+    return hints, fixes
+
+
+def build_hint(words, limit=HINT_LIMIT):
+    """자주 쓰는 말 → whisper 힌트 글. 같은 말은 한 번만, 낱말 단위로 limit 글자 안에서 자른다."""
+    out, seen = "", set()
+    for w in words:
+        if w in seen:
+            continue
+        seen.add(w)
+        nxt = f"{out}, {w}" if out else w
+        if len(nxt) > limit:
+            break
+        out = nxt
+    return out
+
+
+def apply_fixes(text: str, fixes: dict) -> str:
+    """틀린 말 → 맞는 말. 낱말 경계에서만(앞뒤가 글자·숫자로 이어지면 건드리지 않음, 뒤에 조사는 허용),
+    긴 것부터, 한 번에 훑어 바꾼 결과가 다시 바뀌지 않는다."""
+    keys = sorted((k for k in fixes if k), key=len, reverse=True)
+    if not keys or not text:
+        return text
+    particles = "|".join(map(re.escape, PARTICLES))
+    pattern = re.compile(r"(?<![\w])(" + "|".join(map(re.escape, keys)) + r")(?=(?:" + particles + r")?(?![\w]))")
+    return pattern.sub(lambda m: fixes[m.group(1)], text)
 
 
 def fmt_time(sec) -> str:
@@ -189,17 +233,21 @@ def build_markdown(recording_name, segments, entries, result, notes):
     return "\n".join(out)
 
 
-def load_transcriber(model_name="small"):
-    """faster-whisper 로 받아쓰는 함수(경로 → 조각 목록)를 돌려준다. 없으면 Unavailable."""
+def load_transcriber(model_name="small", words=None):
+    """faster-whisper 로 받아쓰는 함수(경로 → 조각 목록)를 돌려준다. 없으면 Unavailable.
+    words = (자주 쓰는 말, 고쳐 쓰기) — 없으면 데이터 폴더의 stt_words.json 을 읽는다."""
     try:
         from faster_whisper import WhisperModel
     except ImportError as exc:
         raise Unavailable(INSTALL_HELP) from exc
     model = WhisperModel(model_name, device="cpu", compute_type="int8")
+    hints, fixes = words if words is not None else load_words()
+    hint = build_hint(hints)
 
     def run(path):
-        segments, _info = model.transcribe(str(path), language="ko", vad_filter=True)
-        return [{"start": float(s.start), "end": float(s.end), "text": s.text.strip()} for s in segments]
+        kwargs = {"initial_prompt": hint} if hint else {}
+        segments, _info = model.transcribe(str(path), language="ko", vad_filter=True, **kwargs)
+        return [{"start": float(s.start), "end": float(s.end), "text": apply_fixes(s.text.strip(), fixes)} for s in segments]
     return run
 
 

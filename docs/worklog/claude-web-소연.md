@@ -26,3 +26,4 @@
 - 2026-11-27 12:19 S2 PR 올림 (review-batch-1127-pm) — PR 8건 검토, 겹친 짝 #118↔#122·#123↔#124
 - 2026-11-27 12:19 S5 (merge-rehearsal) 시작 (브랜치 task/S5-merge-rehearsal)
 - 2026-11-27 12:21 S5 PR 올림 (merge-rehearsal) — 열린 PR 12건 합쳐 시험. 새로 깨지는 것 없음, mapper 2건은 main 에서도 실패
+- 2026-11-27 17:48 교사 지시 PR 올림 (남은 파일 삭제) — 영수증 사진 1, 빈 시험지 3, chapter_01.txt. 히스토리에는 남음

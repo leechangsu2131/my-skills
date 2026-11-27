@@ -306,7 +306,7 @@ def parse_flow(text: str, plan: dict | None = None) -> dict:
             if not isinstance(s, dict) or not str(s.get("name", "")).strip():
                 raise ValueError("단계 이름이 없음")
             try:
-                minutes = int(re.search(r"\d+", str(s.get("minutes", "0"))).group())
+                minutes = max(0, int(re.search(r"-?\d+", str(s.get("minutes", "0"))).group()))   # 음수는 읽을 수 없는 값처럼 0
             except (AttributeError, ValueError):
                 minutes = 0
             step = {k: str(s.get(k) or "").strip() for k in ("name", "do", "say", "tip")} | {"minutes": minutes}

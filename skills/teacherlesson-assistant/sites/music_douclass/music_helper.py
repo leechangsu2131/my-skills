@@ -16,6 +16,9 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 import class_manager
 
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))  # sites/ 의 공용 title_match (T82)
+import title_match
+
 
 # 9222 는 에듀파인 자동화 크롬이 쓸 수 있어 수업 도우미 공용 포트 9233 (수업 비서가 MUSIC_CLASS_REMOTE_PORT 로 넘김)
 REMOTE_PORT = int(os.environ.get("MUSIC_CLASS_REMOTE_PORT") or 9233)
@@ -446,6 +449,20 @@ def collect_unit_titles(driver):
 
 def ensure_unit_loaded(driver, unit_text):
     folding_boxes = driver.find_elements(By.CLASS_NAME, "folding-box")
+    # 엄격한 규칙으로 맞는 단원이 없을 때만 바로잡는다: 띄어쓰기·기호만 다르면 자동, 그 밖에는 확인받기 (T82)
+    pairs = []
+    for folding_box in folding_boxes:
+        try:
+            pairs.append((folding_box, folding_box.find_element(By.CLASS_NAME, "txbd-fold-subject").text.strip()))
+        except Exception:
+            pairs.append((folding_box, None))
+    unit_text = title_match.resolve_query(
+        unit_text,
+        [text for _, text in pairs if text],
+        unit_matches,
+        confirm=lambda q, c, lv: confirm_similar("단원", q, c, lv),
+    )
+    folding_boxes = title_match.exact_first(pairs, unit_text)  # 이름이 같은 단원 상자를 먼저
     for folding_box in folding_boxes:
         try:
             subject_el = folding_box.find_element(By.CLASS_NAME, "txbd-fold-subject")
@@ -549,16 +566,25 @@ def found_unit_titles(lessons):
     return titles
 
 
+def confirm_similar(kind, query, candidate, level):
+    """찾는 단원·차시와 이름이 같은 것이 없을 때, 비슷한 것을 열어도 되는지 콘솔에서 묻는다(기본 아니오)."""
+    return title_match.console_confirm(kind, query, candidate, level, ask=prompt_input)
+
+
 def click_ppt_for_lesson(driver, unit_text, lesson_text, manual_click=False):
     print(f"\n[STEP 2] '{unit_text}' '{lesson_text}' PPT 열기 시도...")
     prepare_lesson_page(driver, unit_text=unit_text)
     lessons = collect_lessons(driver)
     print(f"  -> 총 {len(lessons)}개의 차시 블록을 확인합니다.")
+    # 엄격한 규칙으로 맞는 것이 없을 때만 바로잡는다: 띄어쓰기·기호만 다르면 자동, 그 밖에는 확인받기 (T82)
+    unit_text, (lesson_text,) = title_match.resolve_search_texts(
+        lessons, unit_text, [lesson_text], unit_matches, lesson_matches, confirm=confirm_similar
+    )
     unit_lesson_list = lessons_in_unit(lessons, unit_text)
 
     extracted_title = None
 
-    for item in lessons:
+    for item in (lessons[i] for i in title_match.exact_order(lessons, unit_text, [lesson_text])):  # 이름이 같은 것 먼저
         try:
             title_text = item["title"]
             chapter = item["chapter"]
@@ -643,8 +669,12 @@ def find_lesson_position(driver, unit_text, lesson_text):
     prepare_lesson_page(driver, unit_text=unit_text)
     lessons = collect_lessons(driver)
     print(f"  -> 총 {len(lessons)}개의 차시 블록을 확인합니다.")
+    unit_text, (lesson_text,) = title_match.resolve_search_texts(
+        lessons, unit_text, [lesson_text], unit_matches, lesson_matches, confirm=confirm_similar
+    )
 
-    for index, item in enumerate(lessons):
+    for index in title_match.exact_order(lessons, unit_text, [lesson_text]):  # 이름이 같은 것 먼저
+        item = lessons[index]
         if unit_matches(item["unit_title"], unit_text) and lesson_matches(item["title"], lesson_text):
             return lessons, index
 
@@ -655,9 +685,13 @@ def find_lesson_position_from_candidates(driver, unit_text, references):
     prepare_lesson_page(driver, unit_text=unit_text)
     lessons = collect_lessons(driver)
     print(f"  -> 총 {len(lessons)}개의 차시 블록을 확인합니다.")
+    unit_text, references = title_match.resolve_search_texts(
+        lessons, unit_text, references, unit_matches, lesson_matches, confirm=confirm_similar
+    )
 
     for reference in references:
-        for index, item in enumerate(lessons):
+        for index in title_match.exact_order(lessons, unit_text, [reference]):  # 이름이 같은 것 먼저
+            item = lessons[index]
             if unit_matches(item["unit_title"], unit_text) and lesson_matches(item["title"], reference):
                 return lessons, index, reference
 
@@ -783,9 +817,13 @@ def run_lesson(unit_text, lesson_text, pdf_path=None, save_name=None, source_nam
     return True
 
 
-def find_adjacent_lesson(lessons, unit_text, references, offset):
+def find_adjacent_lesson(lessons, unit_text, references, offset, confirm=confirm_similar):
+    unit_text, references = title_match.resolve_search_texts(
+        lessons, unit_text, references, unit_matches, lesson_matches, confirm=confirm
+    )
     current_index = -1
-    for index, item in enumerate(lessons):
+    for index in title_match.exact_order(lessons, unit_text, references):  # 이름이 같은 것 먼저
+        item = lessons[index]
         if not unit_matches(item["unit_title"], unit_text):
             continue
         if any(lesson_matches(item["title"], reference) for reference in references):

@@ -77,7 +77,8 @@ jobs:
             dir: skills/teacherlesson-assistant
             requirements: requirements.txt
             # tests 폴더 밖에 있는 시험 2개(가짜 로컬 서버만 씀)와 sites/(차시 자료 도우미) 시험도 함께 돌린다
-            # sites 시험 중 selenium 이 필요한 것은 요구 파일에 없어 건너뜀으로 나온다
+            # 음악 도우미 시험은 selenium 이 있어야 불러와져 extra 로 설치한다(브라우저는 띄우지 않음)
+            extra: selenium
             target: tests sites test_assistant_server.py test_supabase_schedule.py
           - name: teacherlesson-guide-splitter
             dir: skills/teacherlesson-guide/splitter

@@ -11,7 +11,9 @@
 - 2026-11-27 06:45 fix/parse-flow-negative-minutes PR 올림 — 교사 요청: parse_flow(옛 경로)가 음수 분(-5)을 5분으로 읽던 것 고침(음수는 0). 시험 tests/test_parse_flow_minutes.py(고치기 전 4개 실패 확인). 전체 pytest 410 통과, build_catalog --check·check_privacy 통과
 - 2026-11-27 07:00 fix/prepare-status-non-object PR 올림 — 교사 요청: prepare_status 가 상태 파일이 JSON 객체가 아닐 때 멈추던 것 고침(없는 것으로 봄). expectedFailure 시험을 일반 시험으로 바꾸고 ISSUES 를 해결됨으로 옮김. 앞 PR(task/S1-flow-monitor-status-tests) 위에 쌓음. test_assistant_* 74개·tests 폴더·루트 pytest 395 통과, build_catalog --check·check_privacy 통과
 - 2026-11-27 07:25 S1 (teacherlesson-assistant) PR 올림 — transcribe.build_markdown(받아쓰기 결과 → 마크다운 글) 시험 10개 새로 씀(tests/test_transcribe_markdown.py), 코드는 안 고침. 확인: 그 폴더 unittest discover 93개 통과, 루트 pytest 395 통과, build_catalog --check·check_privacy 통과
+- 2026-11-27 07:50 S1 (teacherlesson-assistant) PR 올림 — check_setup.py 의 expand_percent·read_node_version·find_chrome·find_onedrive 시험 24개 새로 씀(tests/test_check_setup_helpers.py), 코드는 안 고침. 확인: 그 폴더 pytest 345 통과·1 xfail(기존 것), 루트 pytest 395 통과, build_catalog --check·check_privacy 통과
 - 2026-11-27 08:33 S1 (teacherlesson-assistant) 시작 (브랜치 task/S1-parse-plan-tests)
 - 2026-11-27 08:47 S1 (teacherlesson-assistant) 시작 (브랜치 task/S1-memo-sync-key-pull)
 - 2026-11-27 09:04 S1 (teacherlesson-assistant) 시작 (브랜치 task/S1-flow-monitor-status-tests)
 - 2026-11-27 09:10 S1 (teacherlesson-assistant) 시작 (브랜치 task/S1-transcribe-markdown-tests)
+- 2026-11-27 09:44 S1 (teacherlesson-assistant) 시작 (브랜치 task/S1-check-setup-helpers)

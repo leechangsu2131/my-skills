@@ -2,6 +2,7 @@ import json
 import os
 import re
 import time
+import functools
 import threading
 from datetime import date, datetime, timedelta
 from io import BytesIO
@@ -390,6 +391,22 @@ def _action_error(message, status_code=400):
     return jsonify({"status": "error", "message": message}), status_code
 
 
+def _json_schedule_errors(view):
+    """시트 읽기·머리글 문제(`schedule.ScheduleError`, ValueError 의 하위가 아님)를 JSON 오류(500)로 바꾼다.
+
+    수업 비서가 "알 수 없는 오류" 대신 문장을 그대로 보여 줄 수 있게 한다(ISSUE-005). 잠금(T77)은 하지 않는다.
+    `@app.route` 바로 아래에 붙인다.
+    """
+    @functools.wraps(view)
+    def wrapper(*args, **kwargs):
+        try:
+            return view(*args, **kwargs)
+        except schedule.ScheduleError as exc:
+            return _action_error(str(exc), 500)
+
+    return wrapper
+
+
 app = Flask(__name__)
 CORS(app)
 
@@ -458,6 +475,7 @@ def dashboard():
 
 
 @app.route("/api/done", methods=["POST"])
+@_json_schedule_errors
 def done():
     data = request.json or {}
     subject = data.get("subject")
@@ -490,6 +508,7 @@ def done():
 
 
 @app.route("/api/push", methods=["POST"])
+@_json_schedule_errors
 def push():
     data = request.json or {}
     subject = data.get("subject")
@@ -514,6 +533,7 @@ def push():
 
 
 @app.route("/api/extend", methods=["POST"])
+@_json_schedule_errors
 def extend():
     data = request.json or {}
     subject = data.get("subject")
@@ -551,6 +571,7 @@ def extend():
 
 
 @app.route("/api/pull", methods=["POST"])
+@_json_schedule_errors
 def pull():
     data = request.json or {}
     bridge_row = data.get("bridge_row")
@@ -599,6 +620,7 @@ def catch_up():
 
 
 @app.route("/api/move", methods=["POST"])
+@_json_schedule_errors
 def move():
     data = request.json or {}
     bridge_row = data.get("bridge_row")
@@ -618,6 +640,7 @@ def move():
 
 
 @app.route("/api/swap", methods=["POST"])
+@_json_schedule_errors
 def swap():
     data = request.json or {}
     first_bridge_row = data.get("first_bridge_row")

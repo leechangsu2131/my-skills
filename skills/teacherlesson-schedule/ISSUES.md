@@ -16,13 +16,15 @@ _없음_
 - **해결/조치**: `requirements.txt` 에 `PyMuPDF>=1.24` 추가(teacherlesson-assistant 와 같은 표기). 요구 파일만으로 만든 새 가상환경에서 시험 91개 중 90개 통과, 서버 시험 2개 파일이 이제 시작됨. 실패 1개는 ISSUE-003 의 원래부터 실패하던 시험. CI(check.yml)의 schedule 칸 `extra: PyMuPDF` 는 이제 필요 없음(공용 파일이라 PR 설명으로 제안)
 - **관련 파일**: `requirements.txt`, `server.py`
 
-### ISSUE-005: `/api/catch-up` 밖의 쓰기 경로 6개도 ScheduleError 를 JSON 오류로 안 바꿈 (2026-11-26)
-- **상태**: 📌 백로그 (T77 과 같은 함수들이라 T77 을 하는 교사 PC 작업자가 함께 고치는 것을 권함)
-- **증상**: `/api/done`·`push`·`extend`·`pull`·`move`·`swap` 은 `except ValueError` 만 있어, 시트 읽기·머리글 문제(`ScheduleError`)가 나면 JSON 이 아닌 서버 오류 화면으로 올라옴(`/api/catch-up`·`/api/lessons` 는 ISSUE-001·002 로 고쳐짐). 재현 시험은 `tests/test_server_write_routes_schedule_error.py`(6개 expectedFailure, S3 — 고치면 "예상 밖 성공"으로 알려 주니 표시를 지울 것)
-- **해결/조치**: 미적용. 같은 방식으로 `except schedule.ScheduleError as exc: return _action_error(str(exc), 500)` 를 `ValueError` 앞에 더하면 됨. 이 함수들은 T77(수업배치 쓰기 잠금)도 고치므로 겹치지 않게 함께
-- **관련 파일**: `server.py`(`done`·`push`·`extend`·`pull`·`move`·`swap`)
-
 ## 🟢 해결됨
+
+### ISSUE-005: `/api/catch-up` 밖의 쓰기 경로 6개도 ScheduleError 를 JSON 오류로 안 바꿈 (2026-11-26, 2026-11-27 해결)
+- **상태**: 🟢 해결됨 (T100). 잠금(ISSUE-004 한계)은 아직 — T77
+- **증상**: `/api/done`·`push`·`extend`·`pull`·`move`·`swap` 은 `except ValueError` 만 있어, 시트 읽기·머리글 문제(`ScheduleError`)가 나면 JSON 이 아닌 서버 오류 화면이 됐다(수업 비서에는 "알 수 없는 오류").
+- **해결**: `server.py` 에 `_json_schedule_errors` 데코레이터(`ScheduleError` → `{"status":"error","message":…}` + 500)를 만들어 6개 경로의 `@app.route` 바로 아래에 붙임. 경로 안의 `ValueError`→400 처리는 그대로. 잠금은 하지 않음(T77, 설계는 `docs/plans/teacherlesson-schedule-write-lock.md`)
+- **시험**: `tests/test_server_write_routes_schedule_error.py` — expectedFailure 6개를 일반 시험으로(고치기 전엔 모두 실패). 변이 3가지(잡는 예외 바꾸기·상태 400·`swap` 에서 데코레이터 빼기) 모두 잡힘. 수업 비서 쪽은 `teacherlesson-assistant/tests/test_progress_legacy_errors.py` 6개 — 옛 진도 서버의 JSON 오류 문장을 그대로 넘기고, JSON 이 아니면 "진도 서버 오류 500", 꺼졌으면 "꺼져 있어요" (`assistant_server.py` 는 고칠 필요 없었음. 화면은 `j.message` 를 토스트로 보임)
+- **남은 것**: `pull`·`move`·`swap` 은 수업 비서가 `PROGRESS_ACTIONS` 로 넘기지 않아 이 서버 화면에서 직접 쓸 때만 해당. 실제 시트 확인은 교사 PC
+- **관련 파일**: `server.py`(`_json_schedule_errors`), `tests/test_server_write_routes_schedule_error.py`, `../teacherlesson-assistant/tests/test_progress_legacy_errors.py`
 
 ### ISSUE-6: `auto_planner.py`·`schedule.py`·`server.py` 에 깨진 한글이 코드에 그대로 들어 있음 (2026-11-26, 2026-11-27 해결)
 - **상태**: 🟢 해결됨 (T92)

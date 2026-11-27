@@ -11,3 +11,4 @@
 - 2026-11-27 13:31 학교PC(user)·Claude Code 합치는 중 (PC 옮기기 전 총정리)
 - 2026-11-27 13:38 학교PC(user)·Claude Code 합치기 끝 (PC 옮기기 전 총정리) — 17개 합침(문서·시험 15: S1×4·S2×3·S3 쓰기 경로(#124)·S4×3·S5×2·S7·T57 / 코드 2: T92(S2 검토 🟢)·S3 학기 넘김 규칙(검토 🟢, 🟡 3은 schedule ISSUE-8 남은 것)). 같은 일 다른 판 닫음: task/S3-schedule-write-errors(c9d0957, #123), task/S4-check-notebooklm-docs(c2aacb5, #118). TASKS T82·T85·T92 완료
 - 2026-11-27 18:17 웹(claude-web-소연, 교사 요청) 합치는 중
+- 2026-11-27 18:34 lee21 PC·Claude Code 합치는 중 (소연 웹 세션 18:17 합치는 중에서 멈춤 — 교사 요청으로 이어받음)

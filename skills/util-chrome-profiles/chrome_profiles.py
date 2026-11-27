@@ -147,6 +147,12 @@ def activate(hwnd: int) -> bool:
     return win32gui.GetForegroundWindow() == hwnd
 
 
+def close_window(hwnd: int) -> None:
+    """창의 X 버튼을 누른 것과 같다. 작성 중인 글이 있으면 Chrome 이 '나가시겠습니까?'를 묻는다."""
+    if win32gui.IsWindow(hwnd):
+        win32gui.PostMessage(hwnd, win32con.WM_CLOSE, 0, 0)
+
+
 def get_clipboard() -> str | None:
     try:
         win32clipboard.OpenClipboard()
@@ -303,6 +309,7 @@ class Manager(QMainWindow):
             ("그룹 삭제", self.remove_group, "고른 그룹을 지우고 안의 프로필은 미분류로 옮긴다."),
             ("시작 URL", self.set_start_url, "고른 프로필들의 시작 URL 을 한 번에 바꾼다(비우면 해제)."),
             ("일괄 입력", self.broadcast, "열린 창(고른 프로필이 있으면 그 창들)의 커서 위치에 같은 글을 붙여 넣는다."),
+            ("일괄 닫기", self.close_windows, "고른 프로필(그룹이면 그룹 전체)의 창을 모두 닫는다. 아무것도 안 고르면 프로필 창 전체. '기타 Chrome 창'은 닫지 않는다."),
         ):
             button = QPushButton(label)
             button.setToolTip(tip)
@@ -658,7 +665,29 @@ class Manager(QMainWindow):
         menu.addAction(f"타이머 {'취소' if st['deadline'] else '시작'} ({self.timer_spin.value()}분)",
                        lambda: self.toggle_timer(hwnd))
         menu.addAction("알림 표시 지우기", lambda: item.setBackground(QBrush()))
+        menu.addSeparator()
+        menu.addAction("이 창 닫기", lambda: close_window(hwnd))
         menu.exec(self.thumbs.viewport().mapToGlobal(pos))
+
+    # ───── 일괄 닫기 ─────
+    def close_windows(self, *_):
+        chosen = set(self.selected_profiles())
+        targets = [h for h, st in self.windows.items()
+                   if st["folder"] and (not chosen or st["folder"] in chosen)]
+        if not targets:
+            QMessageBox.information(self, "일괄 닫기", "닫을 창이 없습니다.")
+            return
+        names = sorted({self.profiles[self.windows[h]["folder"]] for h in targets})
+        shown = "\n".join(names[:12]) + (f"\n… 외 {len(names) - 12}개 프로필" if len(names) > 12 else "")
+        scope = "고른 프로필" if chosen else "모든 프로필"
+        answer = QMessageBox.question(
+            self, "일괄 닫기",
+            f"{scope}의 창 {len(targets)}개를 닫을까요?\n\n{shown}\n\n"
+            "(닫은 탭은 그 프로필 창에서 Ctrl+Shift+T 로 되살릴 수 있습니다)")
+        if answer == QMessageBox.StandardButton.Yes:
+            for hwnd in targets:
+                close_window(hwnd)
+            self.statusBar().showMessage(f"창 {len(targets)}개에 닫기를 보냈습니다.", 10000)
 
     # ───── 일괄 입력 ─────
     def broadcast(self, *_):

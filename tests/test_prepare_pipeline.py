@@ -180,8 +180,15 @@ class FakeResponse:
         return False
 
 
+def fake_supabase(monkeypatch):
+    """저장소 루트 자동 검사에는 supabase_schedule 이 쓰는 패키지(requests·truststore)가 없어 가짜 모듈로 바꾼다."""
+    fake = mock.Mock()
+    monkeypatch.setitem(sys.modules, "supabase_schedule", fake)
+    return fake
+
+
 def test_lesson_pdf_from_supabase_writes_the_pdf(tmp_path, monkeypatch):
-    import supabase_schedule
+    supabase_schedule = fake_supabase(monkeypatch)
     monkeypatch.setattr(supabase_schedule, "pdf_for_lesson", lambda key: b"%PDF-1.7 " + key.encode())
     dest = tmp_path / "x.pdf"
     assert pl.lesson_pdf({}, "lesson-9", dest)  # schedule_backend 기본은 supabase
@@ -191,7 +198,7 @@ def test_lesson_pdf_from_supabase_writes_the_pdf(tmp_path, monkeypatch):
 @pytest.mark.parametrize("error", [FileNotFoundError("없음"), RuntimeError("설정"), ValueError("값"),
                                    urllib.error.URLError("연결")])
 def test_lesson_pdf_failures_return_false_without_writing(tmp_path, monkeypatch, error):
-    import supabase_schedule
+    supabase_schedule = fake_supabase(monkeypatch)
     monkeypatch.setattr(supabase_schedule, "pdf_for_lesson", mock.Mock(side_effect=error))
     dest = tmp_path / "x.pdf"
     assert pl.lesson_pdf({"schedule_backend": "supabase"}, "k", dest) is False
@@ -199,7 +206,7 @@ def test_lesson_pdf_failures_return_false_without_writing(tmp_path, monkeypatch,
 
 
 def test_lesson_pdf_rejects_data_that_is_not_a_pdf(tmp_path, monkeypatch):
-    import supabase_schedule
+    supabase_schedule = fake_supabase(monkeypatch)
     monkeypatch.setattr(supabase_schedule, "pdf_for_lesson", lambda key: "<html>오류 화면</html>".encode())
     dest = tmp_path / "x.pdf"
     assert pl.lesson_pdf({}, "k", dest) is False

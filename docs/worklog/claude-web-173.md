@@ -25,3 +25,4 @@
 - 2026-11-27 06:06 T91 시작 (브랜치 task/T91-enter-default)
 - 2026-11-27 06:45 T91 PR 올림 — mapper/map_general_guides_to_sheet.py confirm_upload_action 기본값을 '올리지 않기'([y/N])·방식 질문 Enter='그대로 추가'(지우지 않음)로 바꿈. 2·3번은 번호 직접 입력. SKILL.md 경고·mapper/README.md·ISSUE-33 갱신. 확인: 가짜 input 시험 10개(Enter 만·여러 번 Enter·n 계열·y 뒤 Enter·2/3 명시·잘못된 입력·문구) 통과, 변이 3가지 모두 잡힘, mapper 시험 18개 통과(전체 36개 중 실패 2개는 변경 전에도 동일 — find_best_pdf). 실제 시트 실행 안 함
 - 2026-11-27 12:07 S1 (teacherlesson-guide) 시작 (브랜치 task/S1-s1-guide-download)
+- 2026-11-27 13:40 S1 PR 올림 (teacherlesson-guide) — tests/test_guide_download.py 25개: safe·nice_name·_zip_name·미래엔 주소 기억·ZIP 안 PDF 꺼내기(가짜 ZIP, 이미 있음/PDF 아님/.part 정리). 변이 6가지 모두 잡힘(ZIP UTF-8 표시는 처음엔 못 잡아 시험 보강). 소스 안 고침. 참고: teacherlesson-schedule/organize.py 는 import 만 해도 폴더를 만드는 일회용 스크립트라 시험 대상에서 뺌

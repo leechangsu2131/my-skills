@@ -83,7 +83,9 @@ class SocialClassHelperTests(unittest.TestCase):
 
         self.assertTrue(social_class_helper.lesson_matches(title, title))
         self.assertTrue(social_class_helper.lesson_matches(title, "3차시"))
-        self.assertTrue(social_class_helper.lesson_matches(title, "위치 알아보기"))
+        self.assertTrue(social_class_helper.lesson_matches(title, "우리 고장의 위치 알아보기"))
+        # 앞에 글자가 더 붙은 이름은 바로 맞다고 하지 않고, 확인받은 뒤에 연다(교사 결정 2026-11-27)
+        self.assertFalse(social_class_helper.lesson_matches(title, "위치 알아보기"))
 
     def test_resource_match_score_prefers_matching_keywords(self):
         score = social_class_helper.resource_match_score(

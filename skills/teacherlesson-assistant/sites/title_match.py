@@ -10,11 +10,12 @@
 
 쓰는 법(중요): 느슨한 판정을 '처음 맞는 것을 고르는 반복문' 안에 넣지 않는다 — 비슷한 앞 차시가 정확한 뒤 차시보다 먼저 걸린다.
 대신 찾기 직전에 resolve_search_texts·resolve_query 를 한 번 부른다.
-  ① 기존 엄격한 규칙으로 맞는 것이 하나라도 있으면 그대로 둔다.
+  ① 도우미의 엄격한 규칙으로 맞는 것이 하나라도 있으면 그대로 둔다.
+     엄격한 규칙의 '포함'은 번호·쪽 표시만 덧붙은 이름까지다(adds_only_marks). 이름이 더 긴 것은 ②로 간다.
   ② 하나도 없으면 가장 닮은 하나를 고르되, 띄어쓰기·기호만 다른 경우(plain_key 가 같음)만 자동으로 바꾸고,
      그 밖(포함·비슷함, 번호·괄호 안 숫자가 다른 것 포함)은 confirm(교사 확인)이 '예'일 때만 바꾼다. confirm 이 없으면 못 찾은 것으로 둔다.
   ③ 이름이 글자 그대로 같은 항목을 먼저 보도록 exact_order·exact_first 로 순서를 잡는다(엄격한 규칙은 '포함'도 맞다고 보기 때문).
-반복문과 엄격한 규칙은 손대지 않는다. 확인창은 console_confirm(같은 질문은 한 번만, 기본 '아니오').
+반복문은 손대지 않는다. 확인창은 console_confirm(같은 질문은 한 번만, 기본 '아니오').
 """
 from __future__ import annotations
 
@@ -55,6 +56,20 @@ def normalize_title(text: Optional[str]) -> str:
     value = _LEADING_NUMBER.sub("", value.strip())
     value = value.replace("차시", " ")
     return _NOT_WORD.sub("", value.lower())
+
+
+def _unwrap_word_label(match: "re.Match[str]") -> str:
+    label = match.group(0)
+    return " " if re.search(r"\d", label) else f" {label[1:-1]} "
+
+
+def adds_only_marks(title: Optional[str], query: Optional[str]) -> bool:
+    """query 가 title 안에 들어 있을 때, 덧붙은 것이 번호·쪽 표시·띄어쓰기·기호뿐인가(교사 결정 2026-11-27).
+    '[3차시] 위치 알아보기(사23~27p)' 는 '위치 알아보기' 에 표시만 붙은 것이고, '우리 지역의 문화유산' 은 '우리 지역의 문화' 보다
+    이름이 더 긴 다른 것이다 → 도우미의 엄격한 규칙은 앞의 것만 맞다고 보고, 뒤의 것은 교사에게 물어본 뒤에 연다.
+    normalize_title 과 달리 '[심화]' 처럼 숫자 없는 꼬리표는 이름의 일부로 본다. query 에 이름 글자가 없으면(번호만) True."""
+    wanted = normalize_title(_SQUARE_LABEL.sub(_unwrap_word_label, str(query or "")))
+    return not wanted or normalize_title(_SQUARE_LABEL.sub(_unwrap_word_label, str(title or ""))) == wanted
 
 
 def similarity(a: Optional[str], b: Optional[str]) -> float:

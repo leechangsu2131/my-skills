@@ -511,7 +511,7 @@ def unit_matches(unit_title, unit_text):
     normalized_query = (unit_text or "").strip()
     if not normalized_query:
         return True
-    if normalized_query in normalized_title:
+    if normalized_query in normalized_title and title_match.adds_only_marks(normalized_title, normalized_query):
         return True
 
     title_numbers = extract_numbers(normalized_title)
@@ -528,20 +528,14 @@ def lesson_matches(title_text, lesson_text):
         return True
 
     lesson_nums = extract_numbers(lesson_text)
-    title_match = re.search(r"\[(.*?)\]\s*(.*)", title_text)
-
-    if title_match:
-        bracket_text = title_match.group(1)
-        topic_text = title_match.group(2)
-        title_nums = extract_numbers(bracket_text)
-
+    bracket = re.search(r"\[(.*?)\]", title_text)
+    if bracket:
+        title_nums = extract_numbers(bracket.group(1))
         if lesson_nums and title_nums:
             return set(lesson_nums).issubset(set(title_nums))
-        if not lesson_nums and lesson_text in topic_text:
-            return True
-        return lesson_text in title_text
 
-    return lesson_text in title_text
+    # 이름으로 맞추기: 번호·쪽 표시만 덧붙은 것까지. 이름이 더 긴 것은 확인받아야 연다(title_match).
+    return lesson_text in title_text and title_match.adds_only_marks(title_text, lesson_text)
 
 
 def lesson_reference_candidates(lesson_text, exact_title=None):

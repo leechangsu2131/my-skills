@@ -34,12 +34,13 @@
   "google_account_hint": "",
   "grade_term": "3-2",
   "_notebooklm": "과목마다 NotebookLM 노트북 주소를 subjects.<과목>.notebooklm 에 적으면 NotebookLM 단추가 그 노트북을 연다. 소스는 notebook_sources.py 로 만든다. 그림만 PDF 로도 넣을 과목:",
+  "_social_site": "아이스크림 사회 주소에는 선택한 사회 교과서 코드가 들어간다. 학년·학기 변경 시 search_grade_cd, search_term_cd, search_subject_cd 를 새 주소에 맞게 바꾼다.",
   "notebooklm_image_subjects": ["음악", "미술"],
   "subjects": {
     "국어": {"publisher": "미래엔", "site": "https://e.m-teacher.co.kr/pages/ele/Main.mrn", "login": "google", "notebooklm": ""},
     "수학": {"publisher": "아이스크림", "site": "https://www.i-scream.co.kr/user/subject/SubjectChasiList.do", "login": "google", "notebooklm": ""},
     "음악": {"publisher": "두클래스", "site": "https://ele.douclass.com", "login": "google", "helper": "music_douclass"},
-    "사회": {"publisher": "아이스크림", "site": "https://www.i-scream.co.kr/user/subject/SubjectChasiList.do", "login": "google", "helper": "social_class"},
+    "사회": {"publisher": "아이스크림", "site": "https://www.i-scream.co.kr/user/subject/SubjectChasiList.do?search_grade_cd=3&search_term_cd=2&search_subject_cd=238096#none", "login": "google", "helper": "social_class"},
     "도덕": {"publisher": "천재교육", "site": "https://www.tsherpa.co.kr", "secret_prefix": "TSHERPA"}
   },
   "fallback_timetable": {

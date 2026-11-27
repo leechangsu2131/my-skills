@@ -703,6 +703,12 @@ def open_lesson(body: dict) -> str:
     unit, title = clean(body.get("unit")), clean(body.get("title"))
     if not unit or not title:
         raise ValueError("단원·차시 정보가 없어요.")
+    subject_site = str(cfg.get("subjects", {}).get(subject, {}).get("site", ""))
+    if helper == "social_class":
+        # 사회는 공용 아이스크림 첫 화면이 마지막으로 고른 과목을 복원하지 않을 수 있다.
+        # 앱 설정의 사회 주소(과목 코드 포함)를 Selenium에도 전달하고, 오른쪽 창에서 시작한다.
+        subject_site = check_site_url(subject_site, cfg)
+        open_window(subject_site, "right", cfg)
     folder, script = SITE_HELPERS[helper]
     cwd = SKILL_DIR / "sites" / folder
     py = cfg.get("helper_python") or r"C:\Python313\python.exe"
@@ -712,8 +718,12 @@ def open_lesson(body: dict) -> str:
     profile = os.path.expandvars(cfg.get("chrome_profile", r"%LOCALAPPDATA%\MusicClassHelper\chrome_profile"))
     env = dict(os.environ, MUSIC_CLASS_REMOTE_PORT=port, SOCIAL_CLASS_REMOTE_PORT=port,
                SOCIAL_CLASS_CHROME_PROFILE_DIR=profile, PYTHONIOENCODING="utf-8")
+    if helper == "social_class":
+        env["SOCIAL_CLASS_BASE_URL"] = subject_site
     subprocess.Popen([py, script, "run", unit, title], cwd=cwd, env=env,
                      creationflags=getattr(subprocess, "CREATE_NEW_CONSOLE", 0))
+    if helper == "social_class":
+        return f"사회 수업 사이트를 오른쪽 창에서 열고 「{title}」 자료를 찾는 중이에요."
     return f"{subject} 도우미가 「{title}」 자료를 여는 중이에요 (새 창)."
 
 

@@ -360,6 +360,41 @@ class OpenWindowTest(unittest.TestCase):
         self.assertFalse(self.raised.wait(0.3))
 
 
+class OpenSocialLessonTest(unittest.TestCase):
+    def setUp(self):
+        self._saved = (app.load_config, app.open_window, app.subprocess.Popen)
+        self.site = ("https://www.i-scream.co.kr/user/subject/SubjectChasiList.do"
+                     "?search_grade_cd=3&search_term_cd=2&search_subject_cd=238096#none")
+        self.cfg = {"debug_port": 9233, "chrome_profile": "profile",
+                    "helper_python": sys.executable,
+                    "subjects": {"사회": {"helper": "social_class", "site": self.site}}}
+        self.opened, self.started = [], []
+        app.load_config = lambda: self.cfg
+        app.open_window = lambda url, side, cfg: self.opened.append((url, side)) or "창을 열었어요."
+        app.subprocess.Popen = lambda args, **kwargs: self.started.append((args, kwargs))
+
+    def tearDown(self):
+        app.load_config, app.open_window, app.subprocess.Popen = self._saved
+
+    def test_social_lesson_uses_configured_subject_and_right_window(self):
+        message = app.open_lesson({"subject": "사회", "unit": "2단원", "title": "교통의 변화"})
+
+        self.assertEqual(self.opened, [(self.site, "right")])
+        args, kwargs = self.started[0]
+        self.assertEqual(args[-3:], ["run", "2단원", "교통의 변화"])
+        self.assertEqual(kwargs["env"]["SOCIAL_CLASS_BASE_URL"], self.site)
+        self.assertIn("오른쪽 창", message)
+
+    def test_social_site_url_must_be_in_config(self):
+        self.cfg["subjects"]["사회"]["site"] = ""
+
+        with self.assertRaises(ValueError):
+            app.open_lesson({"subject": "사회", "unit": "2단원", "title": "교통의 변화"})
+
+        self.assertEqual(self.opened, [])
+        self.assertEqual(self.started, [])
+
+
 class FaviconTest(unittest.TestCase):
     def test_favicon_path_returns_small_svg_icon(self):
         server = ThreadingHTTPServer(("127.0.0.1", 0), app.Handler)

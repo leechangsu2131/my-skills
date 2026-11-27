@@ -15,12 +15,13 @@ from unittest import mock
 SITES = pathlib.Path(__file__).resolve().parent
 sys.path[:0] = [str(SITES), str(SITES / "music_douclass"), str(SITES / "social_class")]
 
+import social_class_helper  # selenium 이 없어도 불러와짐
+import title_match
+
 try:
     import music_helper
-    import social_class_helper
-    import title_match
-except ImportError as exc:  # selenium 이 없는 곳에서는 건너뜀
-    raise unittest.SkipTest(f"도우미를 불러올 수 없어 건너뜀: {exc}")
+except ImportError:  # 음악 도우미는 selenium 이 없으면 못 불러옴 → 음악 시험만 건너뜀
+    music_helper = None
 
 
 def lessons(*pairs):
@@ -70,6 +71,7 @@ class _Cases:
         self.assertEqual(self.pick(lessons((UNIT, LONGER), (UNIT, WANTED)), UNIT, WANTED), 1)
 
 
+@unittest.skipIf(music_helper is None, "music_helper 를 불러올 수 없음(selenium 없음)")
 class MusicTests(_Cases, unittest.TestCase):
     pick = staticmethod(pick_music)
 

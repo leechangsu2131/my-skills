@@ -39,4 +39,5 @@
 - 2026-11-27 17:38 S7 (teacherlesson-schedule) 시작 (브랜치 task/S7-s7-write-lock)
 - 2026-11-27 18:05 S7 PR 올림 (teacherlesson-schedule) — docs/plans/teacherlesson-schedule-write-lock.md: ISSUE-004 한계·ISSUE-005(T77)를 '데코레이터 하나(잠금+ScheduleError→JSON)'로 풀어 7개 경로에 적용하는 설계 메모(표·코드 뼈대·시험·변이·주의점). 코드는 안 고침. extend·pull·move·swap 내부는 줄 단위로 안 읽음(확인 필요)
 - 2026-11-27 19:12 T100 시작 (브랜치 task/T100-write-errors-json)
+- 2026-11-27 19:16 T98 시작 (브랜치 task/T98-overdue-lessons)
 - 2026-11-27 19:40 T100 PR 올림 — teacherlesson-schedule server.py 에 _json_schedule_errors 데코레이터(ScheduleError→JSON 500)를 done·push·extend·pull·move·swap 에 붙임. S3 의 expectedFailure 6개를 일반 시험으로(고치기 전 실패→후 통과, 변이 3가지 잡음). 수업 비서 쪽 전달은 이미 맞아(assistant_server.py 안 고침) 시험 6개만 추가(변이 잡음). 잠금(T77)은 안 함. 전체: schedule 144개 중 오류 4개는 fitz 가짜 모듈 때문(변경 전 동일), assistant tests 402 통과, 루트 test_supabase_schedule PDF 1개는 변경 전에도 실패

@@ -36,11 +36,19 @@ SLOTS = [
 
 @pytest.fixture
 def fake_supabase(monkeypatch):
-    """슬롯 조회를 흉내: slot_date=eq.<날짜> 조건만 지킨다."""
+    """슬롯 조회를 흉내: 날짜와 상태 조건을 지킨다."""
     def fake_get(table, **params):
         assert table == sm.SLOTS
-        want = params.get("slot_date", "").removeprefix("eq.")
-        return [s for s in SLOTS if not want or s["slot_date"] == want]
+        rows = list(SLOTS)
+        date_filter = params.get("slot_date", "")
+        if date_filter.startswith("eq."):
+            rows = [s for s in rows if s["slot_date"] == date_filter.removeprefix("eq.")]
+        elif date_filter.startswith("lt."):
+            rows = [s for s in rows if s["slot_date"] < date_filter.removeprefix("lt.")]
+        status_filter = params.get("status", "")
+        if status_filter.startswith("eq."):
+            rows = [s for s in rows if s["status"] == status_filter.removeprefix("eq.")]
+        return rows
     monkeypatch.setattr(sm, "_get", fake_get)
 
 
@@ -69,8 +77,15 @@ def test_issue_043_control_today_shows_the_completed_lesson(fake_supabase):
     assert [(r["record_key"], r["status"]) for r in rows] == [("lesson-0409", "completed")]
 
 
-@pytest.mark.xfail(strict=True, reason="ISSUE-043: 오늘 상태에 날짜 지난 미완료 차시가 없다(알림·이월 선택 미구현). "
-                                       "고칠 때 이 시험의 확인 방식(상태 어디에든 그 차시가 드러남)을 실제 키에 맞춰도 된다.")
 def test_issue_043_today_state_reveals_overdue_planned_lesson(isolated_state):
     state = app.state(TODAY)
-    assert OVERDUE_KEY in json.dumps(state, ensure_ascii=False), "어제 3교시에 미완료로 남은 5차시가 오늘 화면 정보에 없다"
+    assert state["overdue"] == [{
+        "subject": "국어", "unit": "3.5 매체", "lesson": "5", "title": "5차시",
+        "record_key": OVERDUE_KEY, "slot_id": "s-yesterday",
+        "original_date": YESTERDAY.isoformat(), "original_period": 3,
+    }]
+    assert OVERDUE_KEY in json.dumps(state, ensure_ascii=False)
+
+
+def test_issue_043_state_has_empty_overdue_list_when_none(isolated_state):
+    assert app.state(YESTERDAY)["overdue"] == []

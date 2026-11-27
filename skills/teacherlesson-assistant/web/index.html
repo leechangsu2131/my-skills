@@ -33,6 +33,13 @@ header{position:sticky;top:0;z-index:5;background:rgba(255,255,255,.86);backdrop
 #tabs button.on{background:#fff;color:var(--ink);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.12)}
 #tabs button.now::before{content:"";position:absolute;top:5px;right:6px;width:7px;height:7px;border-radius:50%;background:var(--acc)}
 #tabs small{display:block;font-size:11px;font-weight:400;opacity:.85}
+#overdue{margin-top:8px}
+.overdue-banner{background:var(--warn-soft);border:1px solid #efd39b;border-radius:12px;padding:8px 10px}
+.overdue-banner summary{cursor:pointer;font-weight:700}
+.overdue-item{display:flex;align-items:center;gap:8px;padding:7px 0;border-top:1px solid #ead9b5}
+.overdue-item:first-of-type{margin-top:6px}
+.overdue-item span{flex:1;min-width:0;font-size:13px}
+.overdue-item button{white-space:nowrap;background:#fff}
 
 main{padding:14px 14px 90px;max-width:900px;margin:0 auto}
 
@@ -183,7 +190,7 @@ textarea:focus,input[type=text]:focus{outline:2px solid var(--acc-soft);border-c
 #focusToggle.on{background:#3b4da3;color:#fff}
 body.focus-mode{--bg:#f3f5fa;--card:#fff;--ink:#1d2340;--sub:#66708f;--line:#d8deed;--fill:#eaedf7;--acc:#3b4da3;--acc-soft:#e3e8fa;--warn:#805500;--warn-soft:#fff2d4}
 body.focus-mode header{padding:12px 26px 10px}
-body.focus-mode .datenav,body.focus-mode #prepMsg,body.focus-mode .prep-actions,body.focus-mode #clock,body.focus-mode #tabs{display:none}
+body.focus-mode .datenav,body.focus-mode #prepMsg,body.focus-mode .prep-actions,body.focus-mode #clock,body.focus-mode #overdue,body.focus-mode #tabs{display:none}
 body.focus-mode #focusProgress{display:grid}
 body.focus-mode main>.card,body.focus-mode main>details.fold{display:none}
 body.focus-mode main{max-width:none;width:100%;height:calc(100vh - 98px);min-height:620px;margin:0;padding:16px 26px 96px;display:grid;grid-template-columns:minmax(210px,250px) minmax(430px,1fr) minmax(260px,320px);grid-template-rows:auto minmax(0,1fr);gap:16px;align-items:stretch}
@@ -268,6 +275,7 @@ body.focus-mode> #toast{z-index:12}
     <span id="clock"></span>
     <button class="ghost icon" id="phoneBtn" title="교실 내선번호">📞</button>
   </div>
+  <div id="overdue" hidden></div>
   <div id="tabs"></div>
   <div id="focusProgress" aria-label="수업 단계 진행"></div>
   <div id="phones"></div>
@@ -493,6 +501,7 @@ body.focus-mode> #toast{z-index:12}
 </div>
 <div id="toast"></div>
 
+<script src="/overdue.js"></script>
 <script>
 const $ = id => document.getElementById(id);
 const qDate = new URLSearchParams(location.search).get('date');
@@ -544,6 +553,7 @@ async function load(){
   history.replaceState(null, '', iso(day) === iso(new Date()) ? location.pathname : '?date=' + iso(day));  // F5 해도 보던 날짜 유지
   S = await (await fetch('/api/state?date='+iso(day))).json();
   $('source').textContent = '출처: ' + S.source;
+  renderOverdue(S.overdue || []);
   renderPhones();
   $('links').innerHTML = S.links.map((l,i)=>`<button data-l="${i}">${esc(l.name)}</button>`).join('');
   $('aiBtns').innerHTML = (S.ai_sites||[]).map((a,i)=>`<button data-ai="${i}">${esc(a.name)}</button>`).join('');
@@ -1365,10 +1375,10 @@ async function loadReplaceItems() {
 $('replaceSubject').onchange = loadReplaceItems;
 $('replaceSearch').oninput = e => renderReplaceList(e.target.value);
 $('replaceCancel').onclick = () => { $('replaceBox').style.display = 'none'; };
-$('replaceList').onclick = async e => {
-  const b = e.target.closest('button[data-key]'); if (!b || !cur) return;
-  const it = replaceItems.find(i => i.record_key === b.dataset.key); if (!it) return;
-  const msg = [`[${S.date} ${cur.period}교시] ${cur.subject}에서 ${$('replaceSubject').value}로 바꿀까요?`,
+async function replaceWithLesson(it, newSubject) {
+  if (!cur || !cur.record_key || !cur.slot_id || cur.status !== 'planned') { toast('가져올 예정 교시를 먼저 선택해 주세요.'); return; }
+  if (cur.subject === newSubject) { toast('같은 과목 교시에는 ‘실제로 할 차시 고르기’를 사용해 주세요.'); return; }
+  const msg = [`[${S.date} ${cur.period}교시] ${cur.subject}에서 ${newSubject}로 바꿀까요?`,
     `• 선택한 차시: ${it.lesson}차시 ${it.title}`,
     `• 원래 ${cur.subject} 차시는 완료 처리하지 않고 다음 ${cur.subject} 시간으로 넘겨요. 뒤 차시도 순서대로 한 칸씩 이동해요.`,
     `• 현재 계획에 남는 ${cur.subject} 차시는 날짜 없이 남겨요.`,
@@ -1377,6 +1387,11 @@ $('replaceList').onclick = async e => {
   const j = await post('/api/progress/replace-subject', {subject: cur.subject, slot_id: cur.slot_id, target_record_key: it.record_key, target_date: S.date, target_period: cur.period});
   if (j.status === 'success') { addMemo('sys', `과목 변경: ${j.message}`, true); $('replaceBox').style.display = 'none'; setTimeout(load, 800); }
   else toast(j.message || '과목 변경에 실패했어요', 10000);
+}
+$('replaceList').onclick = async e => {
+  const b = e.target.closest('button[data-key]'); if (!b || !cur) return;
+  const it = replaceItems.find(i => i.record_key === b.dataset.key); if (!it) return;
+  await replaceWithLesson(it, $('replaceSubject').value);
 };
 // ── 🌙 수업 준비: 흐름 없는 차시를 뒤에서 자동 준비, 진행 상황을 지켜봄 ──
 let prepTimer = null;

@@ -14,6 +14,7 @@ Chrome·Edge 를 평소처럼 실행하고(로그인 상태 유지) Windows API 
 from __future__ import annotations
 
 import ctypes
+import ctypes.wintypes
 import json
 import os
 import pathlib
@@ -406,14 +407,64 @@ if __name__ == "__main__" and "--check" in sys.argv:
 
 
 # ───────────────────────── 화면 ─────────────────────────
-from PySide6.QtCore import QSize, Qt, QTimer  # noqa: E402
-from PySide6.QtGui import QBrush, QColor, QIcon, QImage, QKeySequence, QPixmap, QShortcut  # noqa: E402
+from PySide6.QtCore import QPoint, QSize, Qt, QTimer  # noqa: E402
+from PySide6.QtGui import QBrush, QColor, QCursor, QIcon, QImage, QKeySequence, QPixmap, QShortcut  # noqa: E402
 from PySide6.QtWidgets import (  # noqa: E402
-    QAbstractItemView, QApplication, QCheckBox, QComboBox, QDialog, QDialogButtonBox, QGridLayout,
+    QAbstractItemView, QApplication, QCheckBox, QComboBox, QDialog, QDialogButtonBox, QDoubleSpinBox, QGridLayout,
     QHBoxLayout, QInputDialog, QLabel, QListView, QListWidget, QListWidgetItem, QMainWindow, QMenu,
     QMessageBox, QPlainTextEdit, QPushButton, QRadioButton, QSpinBox, QSplitter, QStyle,
     QSystemTrayIcon, QTreeWidget, QTreeWidgetItem, QVBoxLayout, QWidget,
 )
+
+
+def fmt_hm(seconds: float) -> str:
+    hours, minutes = divmod(int(seconds) // 60, 60)
+    return f"{hours}:{minutes:02d}"
+
+
+def fmt_long(seconds: float) -> str:
+    hours, minutes = divmod(int(seconds) // 60, 60)
+    return f"{hours}시간 {minutes}분" if hours else f"{minutes}분"
+
+
+def parse_hotkey(text: str) -> tuple[int, int]:
+    """'Ctrl+Alt+T' → (RegisterHotKey 수식 값, 가상 키). 모르면 ValueError."""
+    mod_bits = {"ctrl": 0x2, "alt": 0x1, "shift": 0x4, "win": 0x8}
+    *mods, key = [p.strip().lower() for p in text.split("+")]
+    bits = 0x4000  # MOD_NOREPEAT
+    for m in mods:
+        bits |= mod_bits[m]
+    vk = SPECIAL_KEYS.get(key) or (ord(key.upper()) if len(key) == 1 and key.isascii() and key.isalnum() else None)
+    if not vk:
+        raise ValueError(text)
+    return bits, vk
+
+
+class Popup(QLabel):
+    """마우스 옆에 몇 초 떴다 사라지는 작은 안내(포커스를 빼앗지 않음)."""
+
+    def __init__(self):
+        super().__init__(None, Qt.WindowType.ToolTip | Qt.WindowType.FramelessWindowHint
+                         | Qt.WindowType.WindowStaysOnTopHint)
+        self.setStyleSheet("QLabel { background: #202833; color: #f0f0f0; border: 1px solid #5a6a80;"
+                           " padding: 10px 14px; font-size: 13px; }")
+        self.hide_timer = QTimer(self)
+        self.hide_timer.setSingleShot(True)
+        self.hide_timer.timeout.connect(self.hide)
+
+    def show_text(self, text: str, seconds: float = 6):
+        self.setText(text)
+        self.adjustSize()
+        pos = QCursor.pos() + QPoint(18, 18)
+        screen = QApplication.screenAt(QCursor.pos())
+        if screen:  # 화면 밖으로 나가지 않게
+            area = screen.availableGeometry()
+            pos.setX(min(pos.x(), area.right() - self.width()))
+            pos.setY(min(pos.y(), area.bottom() - self.height()))
+        self.move(pos)
+        self.show()
+        self.raise_()
+        self.hide_timer.start(int(seconds * 1000))
 
 
 class GotoDialog(QDialog):
@@ -511,6 +562,10 @@ class BroadcastDialog(QDialog):
         super().accept()
 
 ROLE = Qt.ItemDataRole.UserRole
+NAME_ROLE = Qt.ItemDataRole.UserRole + 1
+DEFAULT_HOTKEYS = {"show": "Ctrl+Alt+T", "toggle": "Ctrl+Alt+S"}
+HOTKEY_IDS = {"show": 0xB001, "toggle": 0xB002}
+WORK_ALERT_COLOR = QColor("#ff6b6b")
 DRAG = Qt.ItemFlag.ItemIsDragEnabled
 DROP = Qt.ItemFlag.ItemIsDropEnabled
 EDIT = Qt.ItemFlag.ItemIsEditable
@@ -539,9 +594,10 @@ class Tree(QTreeWidget):
     def __init__(self, on_drop):
         super().__init__()
         self.on_drop = on_drop
-        self.setHeaderLabels(["그룹 / 프로필", "창", "시작 URL"])
+        self.setHeaderLabels(["그룹 / 프로필", "창", "작업", "시작 URL"])
         self.setColumnWidth(0, 260)
         self.setColumnWidth(1, 34)
+        self.setColumnWidth(2, 64)
         self.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
         self.setDragDropMode(QAbstractItemView.DragDropMode.InternalMove)
         self.setEditTriggers(QAbstractItemView.EditTrigger.EditKeyPressed)  # 이름 바꾸기는 F2 로만
@@ -567,6 +623,11 @@ class Manager(QMainWindow):
             self.cfg = {}
         self.cfg.setdefault("start_url", {})
         self.cfg.setdefault("aliases", {})   # 기타 Chrome 창 앱 ID → 사용자가 붙인 이름
+        self.cfg.setdefault("work", {})      # 작업 시간: {프로필 키 또는 "group:이름": {start, alert_min, alerted}}
+        self.cfg.setdefault("hotkeys", {})
+        for name, default in DEFAULT_HOTKEYS.items():
+            self.cfg["hotkeys"].setdefault(name, default)
+        self.popup = Popup()
         self.other_group: QTreeWidgetItem | None = None
         self.windows: dict[int, dict] = {}   # hwnd → 창 상태. key = 프로필 폴더명 또는 "@앱ID"
         self.capture_order: list[int] = []
@@ -611,15 +672,29 @@ class Manager(QMainWindow):
         self.filter_box.toggled.connect(self.apply_filter)
         self.filter_box.toggled.connect(self.save)
 
+        self.work_spin = QDoubleSpinBox()
+        self.work_spin.setRange(0, 24)
+        self.work_spin.setSingleStep(0.5)
+        self.work_spin.setDecimals(1)
+        self.work_spin.setSpecialValueText("끔")
+        self.work_spin.setValue(self.cfg.get("work_alert_hours", 5))
+        self.work_spin.setToolTip("작업 시간 재기를 시작할 때 기본으로 걸 알림. 0 = 알림 없음")
+        self.work_spin.valueChanged.connect(self.save)
+
         settings = QHBoxLayout()
         settings.addWidget(QLabel("변화 감시(초)"))
         settings.addWidget(self.idle_spin)
         settings.addWidget(QLabel("타이머(분)"))
         settings.addWidget(self.timer_spin)
+        settings.addWidget(QLabel("작업 알림(시간)"))
+        settings.addWidget(self.work_spin)
         settings.addStretch()
 
+        hk = self.cfg["hotkeys"]
         help_text = QLabel("미리보기: 클릭=창 앞으로 · 드래그/Shift+클릭=여러 개 고르기 · Del=고른 창 닫기\n"
-                           "Ctrl+클릭=타이머 시작/취소 · 오른쪽 클릭=변화 감시·닫기 등 · 기타 창 이름은 F2")
+                           "Ctrl+클릭=타이머 시작/취소 · 오른쪽 클릭=변화 감시·닫기 등 · 기타 창 이름은 F2\n"
+                           f"트리 오른쪽 클릭=작업 시간 재기 · 어디서든 {hk['show']}=작업 시간 보기, "
+                           f"{hk['toggle']}=지금 창 프로필 시작/멈춤")
         help_text.setStyleSheet("color: gray")
 
         left = QWidget()
@@ -680,6 +755,9 @@ class Manager(QMainWindow):
         self.build_tree()
         self.monitor()
         self.on_thumb_selection()
+        self.tree.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        self.tree.customContextMenuRequested.connect(self.tree_menu)
+        self.register_hotkeys()
         self.monitor_timer = QTimer(self)
         self.monitor_timer.timeout.connect(self.monitor)
         self.monitor_timer.start(1000)
@@ -691,6 +769,7 @@ class Manager(QMainWindow):
             if not item.data(0, ROLE) and item.text(0) == name and item is not self.other_group:
                 return item
         item = QTreeWidgetItem([name])
+        item.setData(0, NAME_ROLE, name)  # 이름을 바꾸면 작업 시간을 새 이름으로 옮기려고 기억
         flags = (item.flags() | DROP) & ~DRAG
         item.setFlags(flags & ~EDIT if name == UNGROUPED else flags | EDIT)
         self.tree.addTopLevelItem(item)
@@ -698,7 +777,7 @@ class Manager(QMainWindow):
         return item
 
     def profile_item(self, folder: str) -> QTreeWidgetItem:
-        item = QTreeWidgetItem([self.profiles[folder], "", self.cfg["start_url"].get(folder, "")])
+        item = QTreeWidgetItem([self.profiles[folder], "", "", self.cfg["start_url"].get(folder, "")])
         item.setData(0, ROLE, folder)
         item.setToolTip(0, folder)
         item.setFlags((item.flags() | DRAG) & ~DROP & ~EDIT)
@@ -775,7 +854,7 @@ class Manager(QMainWindow):
                 group.removeChild(item)
         for key in keys:
             if key not in have:
-                item = QTreeWidgetItem([self.other_name(key[1:]), "", ""])
+                item = QTreeWidgetItem([self.other_name(key[1:]), "", "", ""])
                 item.setData(0, ROLE, key)
                 item.setToolTip(0, key[1:])
                 item.setFlags((item.flags() | EDIT) & ~DRAG & ~DROP)
@@ -796,7 +875,11 @@ class Manager(QMainWindow):
                 self.building = False
             self.save()
             self.monitor()
-        elif not key:
+        elif not key:  # 그룹 이름 바꾸기 → 그 그룹의 작업 시간도 새 이름으로
+            old, new = item.data(0, NAME_ROLE), item.text(0)
+            if old and old != new and f"group:{old}" in self.cfg["work"]:
+                self.cfg["work"][f"group:{new}"] = self.cfg["work"].pop(f"group:{old}")
+            item.setData(0, NAME_ROLE, new)
             self.save()
 
     def selected_profiles(self) -> list[str]:
@@ -818,7 +901,8 @@ class Manager(QMainWindow):
             folders = [group.child(j).data(0, ROLE) for j in range(group.childCount())]
             groups.append({"name": group.text(0), "profiles": folders})
         self.cfg.update(groups=groups, idle_sec=self.idle_spin.value(),
-                        timer_min=self.timer_spin.value(), filter=self.filter_box.isChecked())
+                        timer_min=self.timer_spin.value(), filter=self.filter_box.isChecked(),
+                        work_alert_hours=self.work_spin.value())
         CONFIG.write_text(json.dumps(self.cfg, ensure_ascii=False, indent=2), encoding="utf-8")
 
     def add_group(self, *_):
@@ -847,7 +931,7 @@ class Manager(QMainWindow):
         url = url.strip()
         for item in self.profile_items():
             if item.data(0, ROLE) in folders:
-                item.setText(2, url)
+                item.setText(3, url)
         for folder in folders:
             if url:
                 self.cfg["start_url"][folder] = url
@@ -983,6 +1067,7 @@ class Manager(QMainWindow):
         now = time.time()
         self.sync_windows(now)
         self.capture_some(now)
+        self.refresh_work(now)
         idle_limit = self.idle_spin.value()
         for hwnd, st in self.windows.items():
             lines = [self.label(hwnd), win32gui.GetWindowText(hwnd)[:34]]
@@ -1000,6 +1085,9 @@ class Manager(QMainWindow):
                     self.alert(hwnd, f"{self.timer_spin.value()}분 타이머가 끝났습니다.")
                 else:
                     status.append(f"타이머 {remaining // 60}:{remaining % 60:02d}")
+            work = self.cfg["work"].get(st["key"])
+            if work:
+                status.append(f"작업 {fmt_hm(now - work['start'])}")
             if status:
                 lines.append(" · ".join(status))
             st["item"].setText("\n".join(lines))
@@ -1065,6 +1153,12 @@ class Manager(QMainWindow):
                            lambda: self.toggle_watch(hwnds))
             menu.addAction(f"타이머 {'취소' if st['deadline'] else '시작'} ({minutes}분)",
                            lambda: self.toggle_timer(hwnds))
+            wkey = st["key"]
+            if wkey in self.cfg["work"]:
+                menu.addAction(f"작업 시간 멈춤 ({fmt_long(time.time() - self.cfg['work'][wkey]['start'])} 지남)",
+                               lambda: self.stop_work(wkey))
+            else:
+                menu.addAction("이 프로필 작업 시간 재기 시작", lambda: self.start_work(wkey))
             menu.addAction("이 창에 입력", lambda: self.broadcast(targets=hwnds))
             menu.addAction("이 창 사이트 이동", lambda: self.go_to_site(targets=hwnds))
             tab_sub = menu.addMenu("탭 정리")
@@ -1188,6 +1282,171 @@ class Manager(QMainWindow):
         done = len(targets) - len(failed) - len(stopped)
         self.statusBar().showMessage(f"{done}개 창에 {verb}.{note}", 20000)
 
+    # ───── 작업 시간 ─────
+    def work_key(self, item: QTreeWidgetItem) -> str | None:
+        if item is None or item is self.other_group:
+            return None
+        return item.data(0, ROLE) or f"group:{item.text(0)}"
+
+    def work_label(self, wkey: str) -> str:
+        if wkey.startswith("group:"):
+            return f"그룹 {wkey[6:]}"
+        if wkey.startswith("@"):
+            return f"기타 · {self.other_name(wkey[1:])}"
+        return self.profiles.get(wkey, wkey)
+
+    def group_of(self, key: str) -> str | None:
+        for item in self.profile_items():
+            if item.data(0, ROLE) == key and item.parent() and item.parent() is not self.other_group:
+                return item.parent().text(0)
+        return None
+
+    def start_work(self, wkey: str, alert_hours: float | None = None):
+        hours = self.work_spin.value() if alert_hours is None else alert_hours
+        self.cfg["work"][wkey] = {"start": time.time(), "alert_min": round(hours * 60), "alerted": False}
+        self.save()
+        self.refresh_work(time.time())
+        alert = f"\n{fmt_long(hours * 3600)} 뒤에 알립니다." if hours else ""
+        self.popup.show_text(f"⏱ {self.work_label(wkey)}\n작업 시간 재기 시작 ({time.strftime('%H:%M')}){alert}")
+
+    def stop_work(self, wkey: str):
+        work = self.cfg["work"].pop(wkey, None)
+        self.save()
+        self.refresh_work(time.time())
+        if work:
+            self.popup.show_text(f"⏹ {self.work_label(wkey)}\n{fmt_long(time.time() - work['start'])} 작업하고 멈췄습니다.")
+
+    def set_work_alert(self, wkey: str, hours: float):
+        work = self.cfg["work"].get(wkey)
+        if work:
+            work.update(alert_min=round(hours * 60), alerted=False)
+            self.save()
+            self.refresh_work(time.time())
+
+    def ask_alert_hours(self) -> float | None:
+        hours, ok = QInputDialog.getDouble(self, "작업 알림", "몇 시간 뒤에 알릴까요? (0 = 알림 없음)",
+                                           self.work_spin.value() or 5, 0, 24, 1)
+        return hours if ok else None
+
+    def work_text(self, wkey: str, now: float) -> str:
+        work = self.cfg["work"][wkey]
+        text = f"{self.work_label(wkey)}: {fmt_long(now - work['start'])} (시작 {time.strftime('%H:%M', time.localtime(work['start']))})"
+        if work.get("alert_min"):
+            left = work["alert_min"] * 60 - (now - work["start"])
+            text += f" · 알림 {fmt_hm(work['alert_min'] * 60)}" + (" 지남" if left <= 0 else f"까지 {fmt_long(left)}")
+        return text
+
+    def refresh_work(self, now: float):
+        """트리 '작업' 칸을 고치고, 정한 시간이 지난 작업은 한 번 알린다."""
+        work = self.cfg["work"]
+        for wkey, w in work.items():
+            if w.get("alert_min") and not w.get("alerted") and now - w["start"] >= w["alert_min"] * 60:
+                w["alerted"] = True
+                self.save()
+                message = f"작업 시작한 지 {fmt_long(now - w['start'])} 지났습니다."
+                self.tray.showMessage(f"⏱ {self.work_label(wkey)}", message)
+                self.popup.show_text(f"⏱ {self.work_label(wkey)}\n{message}", 15)
+                QApplication.beep()
+        self.building = True
+        try:
+            items = [self.tree.topLevelItem(i) for i in range(self.tree.topLevelItemCount())]
+            for item in items + self.profile_items():
+                wkey = self.work_key(item)
+                w = work.get(wkey) if wkey else None
+                item.setText(2, fmt_hm(now - w["start"]) if w else "")
+                item.setToolTip(2, self.work_text(wkey, now) if w else "")
+                item.setForeground(2, QBrush(WORK_ALERT_COLOR) if w and w.get("alerted") else QBrush())
+        finally:
+            self.building = False
+
+    def tree_menu(self, pos):
+        item = self.tree.itemAt(pos)
+        wkey = self.work_key(item)
+        if not wkey:
+            return
+        menu = QMenu(self)
+        now = time.time()
+        if wkey in self.cfg["work"]:
+            info = menu.addAction(self.work_text(wkey, now))
+            info.setEnabled(False)
+            menu.addAction("작업 시간 멈춤", lambda: self.stop_work(wkey))
+            menu.addAction("0부터 다시 재기", lambda: self.start_work(wkey, self.cfg["work"][wkey]["alert_min"] / 60))
+            sub = menu.addMenu("알림 바꾸기")
+        else:
+            hours = self.work_spin.value()
+            menu.addAction(f"작업 시간 재기 시작" + (f" ({fmt_long(hours * 3600)} 뒤 알림)" if hours else ""),
+                           lambda: self.start_work(wkey))
+            sub = menu.addMenu("작업 시간 재기 시작 + 알림")
+        apply = (lambda h: self.set_work_alert(wkey, h)) if wkey in self.cfg["work"] else (lambda h: self.start_work(wkey, h))
+        for hours in (1, 2, 3, 4, 5, 6, 8):
+            sub.addAction(f"{hours}시간 뒤", lambda h=hours: apply(h))
+        sub.addAction("알림 없음", lambda: apply(0))
+        sub.addAction("직접 입력…", lambda: (lambda h: h is not None and apply(h))(self.ask_alert_hours()))
+        if item.data(0, ROLE):
+            menu.addSeparator()
+            menu.addAction("열기", lambda: self.open_profiles([item.data(0, ROLE)]))
+        menu.exec(self.tree.viewport().mapToGlobal(pos))
+
+    # ───── 어디서든 쓰는 단축키(RegisterHotKey) ─────
+    def register_hotkeys(self):
+        hwnd = int(self.winId())
+        failed = []
+        for name, hid in HOTKEY_IDS.items():
+            text = self.cfg["hotkeys"][name]
+            try:
+                mods, vk = parse_hotkey(text)
+                if not _user32.RegisterHotKey(hwnd, hid, mods, vk):
+                    failed.append(text)
+            except (ValueError, KeyError):
+                failed.append(text)
+        if failed:
+            self.statusBar().showMessage(f"단축키를 못 잡았습니다(다른 프로그램이 쓰는 중이거나 형식 오류): {', '.join(failed)}"
+                                         " — config.json 의 hotkeys 에서 바꿀 수 있습니다", 30000)
+
+    def nativeEvent(self, event_type, message):
+        kind = event_type.data() if hasattr(event_type, "data") else event_type
+        if bytes(kind) == b"windows_generic_MSG":
+            msg = ctypes.wintypes.MSG.from_address(int(message))
+            if msg.message == 0x0312 and msg.wParam in HOTKEY_IDS.values():  # WM_HOTKEY
+                QTimer.singleShot(0, lambda w=msg.wParam: self.on_hotkey(w))
+                return True, 0
+        return super().nativeEvent(event_type, message)
+
+    def foreground_key(self) -> str | None:
+        """지금 맨 앞 창이 Chrome·Edge 창이면 그 프로필 키."""
+        fg = _user32.GetAncestor(win32gui.GetForegroundWindow(), 2)  # GA_ROOT
+        if fg and fg not in self.windows:
+            self.sync_windows(time.time())
+        st = self.windows.get(fg)
+        return st["key"] if st else None
+
+    def on_hotkey(self, hid: int):
+        now = time.time()
+        key = self.foreground_key()
+        if hid == HOTKEY_IDS["toggle"]:
+            if not key:
+                self.popup.show_text("Chrome·Edge 창을 앞에 두고 누르세요.\n그 창 프로필의 작업 시간을 시작하거나 멈춥니다.", 4)
+            elif key in self.cfg["work"]:
+                self.stop_work(key)
+            else:
+                self.start_work(key)
+            return
+        lines = []
+        if key:
+            group = self.group_of(key)
+            mine = [k for k in (key, f"group:{group}" if group else None) if k and k in self.cfg["work"]]
+            lines.append(f"지금 창: {self.work_label(key)}")
+            lines += [f"  ⏱ {self.work_text(k, now)}" for k in mine] or ["  (재고 있는 작업 시간 없음)"]
+        others = [k for k in sorted(self.cfg["work"], key=lambda k: self.cfg["work"][k]["start"])
+                  if not (key and k in (key, f"group:{self.group_of(key)}"))]
+        if others:
+            lines.append("재고 있는 작업:" if not lines else "\n다른 작업:")
+            lines += [f"  ⏱ {self.work_text(k, now)}" for k in others]
+        if not lines:
+            lines = ["재고 있는 작업 시간이 없습니다.",
+                     f"Chrome 창에서 {self.cfg['hotkeys']['toggle']} 또는 매니저 트리 오른쪽 클릭으로 시작합니다."]
+        self.popup.show_text("\n".join(lines), 8)
+
     # ───── 탭 정리 ─────
     def tab_menu(self, *_):
         menu = QMenu(self)
@@ -1300,6 +1559,9 @@ class Manager(QMainWindow):
 
     def closeEvent(self, event):
         self.save()
+        for hid in HOTKEY_IDS.values():
+            _user32.UnregisterHotKey(int(self.winId()), hid)
+        self.popup.hide()
         self.tray.hide()
         super().closeEvent(event)
 

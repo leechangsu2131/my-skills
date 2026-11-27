@@ -20,7 +20,7 @@ SUBJECTS = "lesson_subjects"
 UNITS = "lesson_units"
 LESSONS = "lesson_lessons"
 SLOTS = "lesson_slots"
-LESSON_REL = "id,lesson_id,slot_date,slot_period,slot_order,status,source,memo,lesson:lesson_lessons(id,legacy_lesson_id,subject_id,lesson_number,title,pdf_path,start_page,end_page,note,sort_order,subject:lesson_subjects(id,name,color),unit:lesson_units(name))"
+LESSON_REL = "id,lesson_id,slot_date,slot_period,slot_order,status,source,memo,lesson:lesson_lessons(id,legacy_lesson_id,subject_id,unit_id,lesson_number,title,pdf_path,start_page,end_page,note,sort_order,subject:lesson_subjects(id,name,color),unit:lesson_units(name))"
 
 
 _sessions: dict = {}          # (url, key) → Session. 요청마다 새 연결(TLS 악수)을 맺던 것을 재사용해 빠르게 한다
@@ -104,17 +104,58 @@ def _period(value):
         return None
 
 
+def lesson_display_labels(lessons: list[dict]) -> dict:
+    """Build display-only lesson numbers within each subject and unit."""
+    labels = {}
+    groups = {}
+    for lesson in lessons:
+        groups.setdefault((lesson.get("subject_id"), lesson.get("unit_id")), []).append(lesson)
+    for group in groups.values():
+        ordered = sorted(group, key=lambda row: (int(row.get("sort_order") or 0), str(row.get("id") or "")))
+        numbered = []
+        next_number = 1
+        for lesson in ordered:
+            number = _period(lesson.get("lesson_number"))
+            if number is None:
+                number = next_number
+            next_number = number + 1
+            numbered.append((lesson, number))
+        start = 0
+        while start < len(numbered):
+            title = str(numbered[start][0].get("title") or "").strip()
+            end = start + 1
+            while title and end < len(numbered) and str(numbered[end][0].get("title") or "").strip() == title:
+                end += 1
+            run = numbered[start:end]
+            first, last = run[0][1], run[-1][1]
+            display = str(first) if len(run) == 1 else f"{first}~{last}"
+            for index, (lesson, number) in enumerate(run, 1):
+                labels[lesson.get("id")] = {
+                    "number": number,
+                    "lesson": display,
+                    "lesson_part": f"{index}/{len(run)}" if len(run) > 1 else "",
+                }
+            start = end
+    return labels
+
+
 def day_schedule(day: date) -> list[dict]:
     # PostgREST relation names match the workspace schema.
     slots = _get(SLOTS, slot_date=f"eq.{day.isoformat()}", order="slot_period,slot_order", select=LESSON_REL)
+    if not slots:
+        return []
+    lessons = _get(LESSONS, order="sort_order", select="id,subject_id,unit_id,lesson_number,title,sort_order")
+    display_labels = lesson_display_labels(lessons)
     rows = []
     for slot in slots:
         lesson = slot.get("lesson") or {}
         subject = lesson.get("subject") or {}
         unit = lesson.get("unit") or {}
+        label = display_labels.get(lesson.get("id"), {})
         rows.append({
             "period": _period(slot.get("slot_period")), "subject": subject.get("name", ""),
-            "unit": unit.get("name", ""), "lesson": str(lesson.get("lesson_number") or ""),
+            "unit": unit.get("name", ""), "lesson": label.get("lesson", str(lesson.get("lesson_number") or "")),
+            "lesson_part": label.get("lesson_part", ""),
             "title": lesson.get("title") or "", "record_key": lesson.get("legacy_lesson_id") or "",
             "slot_id": slot.get("id"), "status": slot.get("status", "planned"),
             "has_pdf": bool(lesson.get("pdf_path")),
@@ -182,6 +223,7 @@ def upcoming(subject: str) -> list[dict]:
     if not subjects:
         return []
     lessons = _get(LESSONS, subject_id=f"eq.{subjects[0]['id']}", order="sort_order")
+    display_labels = lesson_display_labels(lessons)
     slots = _get(SLOTS)
     by_lesson = {}
     for slot in slots:
@@ -190,9 +232,11 @@ def upcoming(subject: str) -> list[dict]:
     for lesson in lessons:
         occurrences = by_lesson.get(lesson["id"], [])
         planned = [s for s in occurrences if s.get("status") == "planned"]
+        label = display_labels.get(lesson.get("id"), {})
         out.append({
             "record_key": lesson.get("legacy_lesson_id") or "", "unit": "", # filled from unit relation below
-            "lesson": str(lesson.get("lesson_number") or ""), "title": lesson.get("title") or "",
+            "lesson": label.get("lesson", str(lesson.get("lesson_number") or "")),
+            "lesson_part": label.get("lesson_part", ""), "title": lesson.get("title") or "",
             "done": bool(occurrences) and not planned,
             "planned_date": min((s.get("slot_date", "") for s in planned), default=""),
             "planned_period": next((_period(s.get("slot_period")) for s in planned), None),

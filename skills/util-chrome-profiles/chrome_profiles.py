@@ -201,10 +201,92 @@ def set_clipboard(text: str) -> None:
 
 
 def press_ctrl_v() -> None:
-    win32api.keybd_event(win32con.VK_CONTROL, 0, 0, 0)
-    win32api.keybd_event(ord("V"), 0, 0, 0)
-    win32api.keybd_event(ord("V"), 0, win32con.KEYEVENTF_KEYUP, 0)
-    win32api.keybd_event(win32con.VK_CONTROL, 0, win32con.KEYEVENTF_KEYUP, 0)
+    press_keys([win32con.VK_CONTROL], ord("V"))
+
+
+# ───── 일괄 입력의 특수 키: {Enter}, {Ctrl+A}, {대기 1} 처럼 중괄호로 적는다 ─────
+_VK = win32con
+SPECIAL_KEYS = {
+    "enter": _VK.VK_RETURN, "엔터": _VK.VK_RETURN, "tab": _VK.VK_TAB, "탭": _VK.VK_TAB,
+    "esc": _VK.VK_ESCAPE, "escape": _VK.VK_ESCAPE, "space": _VK.VK_SPACE, "스페이스": _VK.VK_SPACE,
+    "backspace": _VK.VK_BACK, "bs": _VK.VK_BACK, "delete": _VK.VK_DELETE, "del": _VK.VK_DELETE,
+    "insert": _VK.VK_INSERT, "up": _VK.VK_UP, "down": _VK.VK_DOWN, "left": _VK.VK_LEFT,
+    "right": _VK.VK_RIGHT, "home": _VK.VK_HOME, "end": _VK.VK_END, "pageup": _VK.VK_PRIOR,
+    "pagedown": _VK.VK_NEXT, **{f"f{i}": getattr(_VK, f"VK_F{i}") for i in range(1, 13)},
+}
+MODIFIER_KEYS = {"ctrl": _VK.VK_CONTROL, "컨트롤": _VK.VK_CONTROL, "shift": _VK.VK_SHIFT,
+                 "시프트": _VK.VK_SHIFT, "alt": _VK.VK_MENU, "알트": _VK.VK_MENU}
+EXTENDED_KEYS = {_VK.VK_INSERT, _VK.VK_DELETE, _VK.VK_HOME, _VK.VK_END, _VK.VK_PRIOR, _VK.VK_NEXT,
+                 _VK.VK_UP, _VK.VK_DOWN, _VK.VK_LEFT, _VK.VK_RIGHT}
+MAX_WAIT = 10.0
+
+
+def _key_event(vk: int, up: bool) -> None:
+    flags = (win32con.KEYEVENTF_KEYUP if up else 0) | (win32con.KEYEVENTF_EXTENDEDKEY if vk in EXTENDED_KEYS else 0)
+    win32api.keybd_event(vk, win32api.MapVirtualKey(vk, 0), flags, 0)
+
+
+def press_keys(mods: list[int], vk: int) -> None:
+    for m in mods:
+        _key_event(m, False)
+    _key_event(vk, False)
+    _key_event(vk, True)
+    for m in reversed(mods):
+        _key_event(m, True)
+
+
+def parse_macro(text: str) -> list[tuple]:
+    """글과 {특수 키}를 차례대로 나눈다. 결과: ("text", 글) / ("keys", [수식키], vk, 이름) / ("wait", 초)
+    {{ 와 }} 는 중괄호 글자 그대로. 모르는 키 이름이면 ValueError."""
+    steps: list[tuple] = []
+    buffer = ""
+    for m in re.finditer(r"\{\{|\}\}|\{([^{}]*)\}|[^{}]+|[{}]", text):
+        token = m.group(0)
+        if token in ("{{", "}}"):
+            buffer += token[0]
+            continue
+        if m.group(1) is None:
+            buffer += token
+            continue
+        if buffer:
+            steps.append(("text", buffer))
+            buffer = ""
+        inner = m.group(1).strip()
+        wait = re.fullmatch(r"(?i)(?:대기|wait)\s*([\d.]+)\s*(?:초|s)?", inner)
+        if wait:
+            steps.append(("wait", min(float(wait.group(1)), MAX_WAIT)))
+            continue
+        parts = [p.strip().lower() for p in inner.replace(" ", "").split("+") if p.strip()]
+        if not parts:
+            raise ValueError(f"빈 키 이름: {token}")
+        *mod_names, key_name = parts
+        try:
+            mods = [MODIFIER_KEYS[name] for name in mod_names]
+        except KeyError as e:
+            raise ValueError(f"모르는 수식 키 {e} — Ctrl·Shift·Alt 만 됩니다: {token}") from None
+        if key_name in SPECIAL_KEYS:
+            vk = SPECIAL_KEYS[key_name]
+        elif len(key_name) == 1 and key_name.isascii() and key_name.isalnum():
+            vk = ord(key_name.upper())
+        else:
+            raise ValueError(f"모르는 키 이름: {token}")
+        steps.append(("keys", mods, vk, inner))
+    if buffer:
+        steps.append(("text", buffer))
+    return steps
+
+
+def describe_macro(steps: list[tuple]) -> str:
+    out = []
+    for step in steps:
+        if step[0] == "text":
+            body = step[1].replace("\n", "↵")
+            out.append(f"글 '{body[:20]}{'…' if len(body) > 20 else ''}'")
+        elif step[0] == "keys":
+            out.append(f"[{step[3]}]")
+        else:
+            out.append(f"{step[1]:g}초 대기")
+    return " → ".join(out)
 
 
 def capture_bits(hwnd: int):
@@ -257,10 +339,71 @@ if __name__ == "__main__" and "--check" in sys.argv:
 from PySide6.QtCore import QSize, Qt, QTimer  # noqa: E402
 from PySide6.QtGui import QBrush, QColor, QIcon, QImage, QKeySequence, QPixmap, QShortcut  # noqa: E402
 from PySide6.QtWidgets import (  # noqa: E402
-    QAbstractItemView, QApplication, QCheckBox, QHBoxLayout, QInputDialog, QLabel, QListView,
-    QListWidget, QListWidgetItem, QMainWindow, QMenu, QMessageBox, QPushButton, QSpinBox, QSplitter,
-    QStyle, QSystemTrayIcon, QTreeWidget, QTreeWidgetItem, QVBoxLayout, QWidget,
+    QAbstractItemView, QApplication, QCheckBox, QDialog, QDialogButtonBox, QGridLayout, QHBoxLayout,
+    QInputDialog, QLabel, QListView, QListWidget, QListWidgetItem, QMainWindow, QMenu, QMessageBox,
+    QPlainTextEdit, QPushButton, QSpinBox, QSplitter, QStyle, QSystemTrayIcon, QTreeWidget,
+    QTreeWidgetItem, QVBoxLayout, QWidget,
 )
+
+
+class BroadcastDialog(QDialog):
+    """일괄 입력 창: 글 + 특수 키 단추. 단추를 누르면 커서 자리에 {Enter} 같은 표시가 들어간다."""
+    KEY_BUTTONS = ["Enter", "Shift+Enter", "Ctrl+Enter", "Tab", "Esc", "Backspace",
+                   "Ctrl+A", "Ctrl+V", "Up", "Down", "F5", "대기 1"]
+
+    def __init__(self, parent, count: int, last_text: str):
+        super().__init__(parent)
+        self.setWindowTitle("일괄 입력")
+        self.resize(560, 420)
+        self.edit = QPlainTextEdit(last_text)
+        self.edit.selectAll()
+        grid = QGridLayout()
+        for i, name in enumerate(self.KEY_BUTTONS):
+            button = QPushButton("{" + name + "}")
+            button.setAutoDefault(False)
+            button.clicked.connect(lambda _=False, n=name: self.insert("{" + n + "}"))
+            grid.addWidget(button, i // 6, i % 6)
+        self.preview = QLabel()
+        self.preview.setWordWrap(True)
+        self.preview.setStyleSheet("color: gray")
+        self.edit.textChanged.connect(self.update_preview)
+        guide = QLabel(
+            f"창 {count}개에 차례로 넣습니다. 창이 하나씩 앞으로 오니 그동안 마우스·키보드를 쓰지 마세요.\n"
+            "특수 키는 중괄호로: {Enter} {Tab} {Esc} {Ctrl+A} {Shift+Enter} {F5} {Up} {대기 1.5}\n"
+            "중괄호 글자 자체는 {{ }} 로 적습니다. 그냥 줄바꿈은 글 속 줄바꿈으로 들어갑니다.")
+        guide.setWordWrap(True)
+        buttons = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel)
+        buttons.button(QDialogButtonBox.StandardButton.Ok).setText("보내기")
+        buttons.accepted.connect(self.accept)
+        buttons.rejected.connect(self.reject)
+        box = QVBoxLayout(self)
+        box.addWidget(guide)
+        box.addWidget(self.edit)
+        box.addLayout(grid)
+        box.addWidget(self.preview)
+        box.addWidget(buttons)
+        self.update_preview()
+
+    def insert(self, token: str):
+        self.edit.insertPlainText(token)
+        self.edit.setFocus()
+
+    def update_preview(self):
+        try:
+            steps = parse_macro(self.edit.toPlainText())
+            self.preview.setText("순서: " + (describe_macro(steps) or "(비어 있음)"))
+            self.preview.setStyleSheet("color: gray")
+        except ValueError as e:
+            self.preview.setText(f"⚠ {e}")
+            self.preview.setStyleSheet("color: #d04040")
+
+    def accept(self):
+        try:
+            parse_macro(self.edit.toPlainText())
+        except ValueError as e:
+            QMessageBox.warning(self, "일괄 입력", str(e))
+            return
+        super().accept()
 
 ROLE = Qt.ItemDataRole.UserRole
 DRAG = Qt.ItemFlag.ItemIsDragEnabled
@@ -871,27 +1014,54 @@ class Manager(QMainWindow):
         if not targets:
             QMessageBox.information(self, "일괄 입력", "열려 있는 대상 창이 없습니다.")
             return
-        text, ok = QInputDialog.getMultiLineText(
-            self, "일괄 입력",
-            f"창 {len(targets)}개의 현재 커서 위치에 붙여 넣을 내용\n(창이 하나씩 앞으로 오며 붙여 넣습니다. 그동안 마우스·키보드를 쓰지 마세요):")
-        if not ok or not text:
+        dialog = BroadcastDialog(self, len(targets), self.cfg.get("last_broadcast", ""))
+        if dialog.exec() != QDialog.DialogCode.Accepted:
             return
+        text = dialog.edit.toPlainText()
+        steps = parse_macro(text)
+        if not steps:
+            return
+        self.cfg["last_broadcast"] = text
+        self.save()
+        if any(s[0] == "keys" and s[2] == win32con.VK_RETURN for s in steps):
+            answer = QMessageBox.question(
+                self, "일괄 입력",
+                f"Enter 가 들어 있어 창 {len(targets)}개에서 보내기·제출이 될 수 있습니다.\n\n"
+                f"순서: {describe_macro(steps)}\n\n진행할까요?")
+            if answer != QMessageBox.StandardButton.Yes:
+                return
         old_clip = get_clipboard()
-        set_clipboard(text)
-        failed = []
+        failed, stopped = [], []
         for hwnd in targets:
-            if activate(hwnd):
-                time.sleep(0.25)
-                press_ctrl_v()
-                time.sleep(0.2)
-            else:  # 엉뚱한 창에 붙지 않게 건너뛴다
+            if not activate(hwnd):  # 엉뚱한 창에 넣지 않게 건너뛴다
                 failed.append(self.label(hwnd))
+                continue
+            time.sleep(0.25)
+            for step in steps:
+                if win32gui.GetForegroundWindow() != hwnd:  # 중간에 다른 창이 앞으로 오면 그 창은 멈춤
+                    stopped.append(self.label(hwnd))
+                    break
+                if step[0] == "text":
+                    set_clipboard(step[1])
+                    press_ctrl_v()
+                    time.sleep(0.2)
+                elif step[0] == "keys":
+                    press_keys(step[1], step[2])
+                    time.sleep(0.1)
+                else:
+                    time.sleep(step[1])
+            time.sleep(0.15)
         time.sleep(0.2)
         if old_clip is not None:
             set_clipboard(old_clip)
         activate(int(self.winId()))
-        note = f" / 앞으로 못 가져와 건너뜀: {', '.join(failed)}" if failed else ""
-        self.statusBar().showMessage(f"{len(targets) - len(failed)}개 창에 넣었습니다.{note}", 15000)
+        note = ""
+        if failed:
+            note += f" / 앞으로 못 가져와 건너뜀: {', '.join(failed)}"
+        if stopped:
+            note += f" / 도중에 다른 창이 앞에 와서 멈춤: {', '.join(stopped)}"
+        done = len(targets) - len(failed) - len(stopped)
+        self.statusBar().showMessage(f"{done}개 창에 넣었습니다.{note}", 20000)
 
     def closeEvent(self, event):
         self.save()

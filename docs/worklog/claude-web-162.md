@@ -51,3 +51,4 @@
 - 2026-11-27 18:45 S1 (teacherlesson-guide) 시작 (브랜치 task/S1-tests-split-lesson-headers)
 - 2026-11-27 18:46 S1 (teacherlesson-guide) PR 올림 — splitter/tests/test_split_by_lesson_headers.py 23개(lesson_starts 차시 머리 4형식·겹침·최빈 총 차시, plan_titles·clean_title·safe, main 저장 흐름·미리보기·단원 개관·파일 순서·건너뜀). split_by_lesson_headers.py 는 안 고침. 확인: 23개 통과, 소스를 망가뜨린 9곳을 모두 잡음(되돌림). 진짜 fitz·실제 지도서 PDF 는 확인 필요
 - 2026-11-28 06:34 T109 시작 (브랜치 task/T109-school-info)
+- 2026-11-28 06:36 T109 PR 올림 — school_info.py(NEIS 급식·open-meteo 날씨, 하루 한 번 캐시, 알레르기 번호 지움, 실패 시 조용히 빈칸)·GET /api/school-info·web/school_info.js·위쪽 한 줄. 가짜 응답 시험 python 11 + js 6, 수업 비서 전체 390 통과(fitz 없는 2개 파일 제외). 진짜 NEIS·open-meteo 호출은 확인 필요

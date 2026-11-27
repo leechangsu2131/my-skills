@@ -2,10 +2,11 @@
 
 화면 위쪽에 "🍱 오늘 메뉴 · ☀ 12°" 한 줄을 보여 주려고 오늘 급식과 날씨를 가져온다.
 
-- 급식: NEIS 교육정보 개방 포털 급식 API. 학교 코드·교육청 코드는 중앙 .env 에 적는다.
-    TEACHERLESSON_ASSISTANT__SCHOOL_CODE=   (행정표준코드, 학교 하나)
-    TEACHERLESSON_ASSISTANT__OFFICE_CODE=   (시도교육청 코드)
-    NEIS_OPEN_API_KEY=                      (선택. 없으면 키 없이 부른다)
+- 급식: NEIS 교육정보 개방 포털 급식 API. 중앙 .env 의 공용 키를 읽는다.
+    NEIS_SCHOOL_CODE=   (행정표준코드, 학교 하나)
+    NEIS_OFFICE_CODE=   (시도교육청 코드)
+    NEIS_API_KEY=       (선택. 없으면 키 없이 부른다)
+  (옛 이름 TEACHERLESSON_ASSISTANT__SCHOOL_CODE·__OFFICE_CODE·NEIS_OPEN_API_KEY 도 공용 키가 없을 때만 받아 준다)
 - 날씨: 키가 필요 없는 open-meteo. 좌표는 .env 에 적는다.
     TEACHERLESSON_ASSISTANT__LATITUDE=  /  TEACHERLESSON_ASSISTANT__LONGITUDE=
 - 하루에 한 번만 가져와 내 문서\\my-skills-data\\teacherlesson-assistant\\school_info_cache.json 에 둔다.
@@ -97,13 +98,19 @@ def _setting(env: dict, name: str) -> str:
     return str(env.get(PREFIX + name) or "").strip()
 
 
+def _neis(env: dict, shared: str, old: str) -> str:
+    """공용 키(NEIS_…)를 먼저, 없으면 옛 이름."""
+    return str(env.get(shared) or env.get(old) or "").strip()
+
+
 def fetch_meal(day: date, env: dict, fetch=None) -> str:
-    school, office = _setting(env, "SCHOOL_CODE"), _setting(env, "OFFICE_CODE")
+    school = _neis(env, "NEIS_SCHOOL_CODE", PREFIX + "SCHOOL_CODE")
+    office = _neis(env, "NEIS_OFFICE_CODE", PREFIX + "OFFICE_CODE")
     if not school or not office:
         return ""
     params = {"Type": "json", "pIndex": 1, "pSize": 10, "ATPT_OFCDC_SC_CODE": office,
               "SD_SCHUL_CODE": school, "MLSV_YMD": day.strftime("%Y%m%d")}
-    key = str(env.get("NEIS_OPEN_API_KEY") or "").strip()
+    key = _neis(env, "NEIS_API_KEY", "NEIS_OPEN_API_KEY")
     if key:
         params["KEY"] = key
     return parse_meal((fetch or fetch_json)(MEAL_URL + "?" + urllib.parse.urlencode(params)))

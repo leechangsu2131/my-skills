@@ -12,7 +12,7 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
 import school_info as si  # noqa: E402
 
 DAY = date(2026, 11, 28)
-ENV = {"TEACHERLESSON_ASSISTANT__SCHOOL_CODE": "0000000", "TEACHERLESSON_ASSISTANT__OFFICE_CODE": "X00",
+ENV = {"NEIS_SCHOOL_CODE": "0000000", "NEIS_OFFICE_CODE": "X00",
        "TEACHERLESSON_ASSISTANT__LATITUDE": "37.5", "TEACHERLESSON_ASSISTANT__LONGITUDE": "127.0"}
 MEAL = {"mealServiceDietInfo": [{"head": [{"list_total_count": 2}]}, {"row": [
     {"MMEAL_SC_NM": "조식", "DDISH_NM": "죽"},
@@ -63,7 +63,7 @@ def test_get_info_builds_urls_and_caches(tmp_path):
 
 def test_key_added_only_when_present(tmp_path):
     f = Fake()
-    si.get_school_info({**ENV, "NEIS_OPEN_API_KEY": "FAKEKEY"}, tmp_path / "c.json", DAY, f)
+    si.get_school_info({**ENV, "NEIS_API_KEY": "FAKEKEY"}, tmp_path / "c.json", DAY, f)
     assert urllib.parse.parse_qs(urllib.parse.urlparse(f.urls[0]).query)["KEY"] == ["FAKEKEY"]
 
 
@@ -104,3 +104,16 @@ def test_broken_cache_file_is_ignored(tmp_path):
     cache.write_text("{깨짐", encoding="utf-8")
     assert si.get_school_info(ENV, cache, DAY, Fake())["meal"]
     assert json.loads(cache.read_text(encoding="utf-8"))["date"] == "2026-11-28"
+
+
+def test_old_key_names_still_work_but_shared_wins(tmp_path):
+    old = {"TEACHERLESSON_ASSISTANT__SCHOOL_CODE": "1111111", "TEACHERLESSON_ASSISTANT__OFFICE_CODE": "Y00",
+           "NEIS_OPEN_API_KEY": "OLDKEY"}
+    f = Fake()
+    si.get_school_info(old, tmp_path / "a.json", DAY, f)
+    q = urllib.parse.parse_qs(urllib.parse.urlparse(f.urls[0]).query)
+    assert q["SD_SCHUL_CODE"] == ["1111111"] and q["KEY"] == ["OLDKEY"]
+    f2 = Fake()
+    si.get_school_info({**old, **ENV, "NEIS_API_KEY": "NEWKEY"}, tmp_path / "b.json", DAY, f2)
+    q2 = urllib.parse.parse_qs(urllib.parse.urlparse(f2.urls[0]).query)
+    assert q2["SD_SCHUL_CODE"] == ["0000000"] and q2["KEY"] == ["NEWKEY"]

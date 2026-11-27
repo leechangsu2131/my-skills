@@ -105,6 +105,9 @@ jobs:
           - name: personal-obsidansystem-main
             dir: skills/personal-obsidansystem-main
             extra: pyyaml
+          - name: personal-daily-intake
+            dir: skills/personal-daily-intake
+            extra: requests
           - name: personal-record-trade
             dir: skills/personal-record-trade
             requirements: requirements-valuation.txt

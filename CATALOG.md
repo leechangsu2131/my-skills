@@ -1,7 +1,7 @@
 # 스킬 카탈로그
 
 > 이 파일은 `python tools/build_catalog.py`로 자동 생성된다. 직접 고치지 말고 각 스킬의 `SKILL.md` 앞머리(`metadata`)를 고친 뒤 다시 실행한다.
-> 생성일: 2026-11-27 · 스킬 59개
+> 생성일: 2026-11-27 · 스킬 60개
 
 ## 빠른 찾기
 
@@ -9,7 +9,7 @@
 - [📝 학생 기록·평가](#학생-기록평가) — 11개
 - [📚 수업·교사 도구](#수업교사-도구) — 11개
 - [🌐 홈페이지](#홈페이지) — 1개
-- [👤 개인·생활](#개인생활) — 15개
+- [👤 개인·생활](#개인생활) — 16개
 - [🛠️ 공통 유틸](#공통-유틸) — 11개
 
 ## 학교 행정
@@ -50,7 +50,7 @@
 | `picture-book-library` | ✅ 운영 | - | 초등 그림책 수업 자료와 개인 서재를 연계하여 도서 추천, 카드 작성, 검색 색인 및 HTML 목록을 관리한다. | [SKILL](skills/picture-book-library/SKILL.md) · [이슈](skills/picture-book-library/ISSUES.md) |
 | `teacher-3dprint` | 🔧 개발 | - | 수업 아이디어·물체·지형을 실제 출력 가능한 STL로 설계한다. 실측 지형, 기능 부품, 식품 몰드 참고 절차와 독도 지형 예제가 있다. | [SKILL](skills/teacher-3dprint/SKILL.md) · [이슈](skills/teacher-3dprint/ISSUES.md) |
 | `teacherlesson-aiep-courseware` | ✅ 운영 | - | 상위 공통 수업꾸러미의 AIEP 어댑터. 경북 AIEP의 성취기준, LCMS·파일/링크 배치, 공개 범위와 학습 순서를 반영해 꾸러미를 만들고 학습자 미리보기를 점검한다. | [SKILL](skills/teacherlesson-aiep-courseware/SKILL.md) · [이슈](skills/teacherlesson-aiep-courseware/ISSUES.md) · [README](skills/teacherlesson-aiep-courseware/README.md) |
-| `teacherlesson-assistant` | 🔧 개발 | v0.1.0 | 진도표·지도서·출판사 사이트·녹음·메모를 묶은 교시별 수업 진행 화면과, 수업 뒤 메모를 정리해 다음 수업에 반영하는 Claude 작업 절차. | [SKILL](skills/teacherlesson-assistant/SKILL.md) · [이슈](skills/teacherlesson-assistant/ISSUES.md) 🔵19 · [README](skills/teacherlesson-assistant/README.md) |
+| `teacherlesson-assistant` | 🔧 개발 | v0.1.0 | 진도표·지도서·출판사 사이트·녹음·메모를 묶은 교시별 수업 진행 화면과, 수업 뒤 메모를 정리해 다음 수업에 반영하는 Claude 작업 절차. | [SKILL](skills/teacherlesson-assistant/SKILL.md) · [이슈](skills/teacherlesson-assistant/ISSUES.md) 🔵20 · [README](skills/teacherlesson-assistant/README.md) |
 | `teacherlesson-classtool-courseware` | ✅ 운영 | - | 클래스툴의 내 수업 보관함에서 수업자료를 설계하고, 링크·콘텐츠·OX·객관식·주관식·화이트보드 활동을 구성한다. 교사 자료실 공개와 학생 클래스 배포, 실시간 응답 흐름을 구분한다. | [SKILL](skills/teacherlesson-classtool-courseware/SKILL.md) · [이슈](skills/teacherlesson-classtool-courseware/ISSUES.md) |
 | `teacherlesson-courseware-builder` | ✅ 운영 | - | 플랫폼 공통 수업 패키지와 자료를 설계하고, AIEP·클래스툴 등 사이트별 어댑터로 콘텐츠 배치, 학생 응답 방식, 공개/배포 범위를 구분해 제작한다. 새 플랫폼은 어댑터와 카탈로그 항목으로 확장한다. | [SKILL](skills/teacherlesson-courseware-builder/SKILL.md) · [이슈](skills/teacherlesson-courseware-builder/ISSUES.md) |
 | `teacherlesson-from-neis` | ✅ 운영 | Chrome 확장 v1.7.2 | NEIS 수업내용과 학생 출결·신청 현황을 조회해 뷰어에 표시하고, 신청 내용을 확인해 선택한 결석신고서만 결석 구분과 Chrome에 저장한 유형별 결재선을 적용해 접수·승인요청한다. 최종 결재는 하지 않는다. | [SKILL](skills/teacherlesson-from-neis/SKILL.md) · [이슈](skills/teacherlesson-from-neis/ISSUES.md) 🔵2 · [README](skills/teacherlesson-from-neis/README.md) |
@@ -73,6 +73,7 @@
 | `personal-attach-files` | ✅ 운영 | - | 프로젝트의 핵심 코드/기획 파일을 모아 AI에 첨부하기 쉬운 임시 폴더로 준비한다. | [SKILL](skills/personal-attach-files/SKILL.md) · [이슈](skills/personal-attach-files/ISSUES.md) |
 | `personal-carrot` | 🔧 개발 | - | Appium으로 Android 당근마켓 앱의 매물을 검색·수집해 Google Sheets에 기록한다. | [SKILL](skills/personal-carrot/SKILL.md) · [이슈](skills/personal-carrot/ISSUES.md) |
 | `personal-chesley-morning-brief-main` | ✅ 운영 | - | 유튜브 '체슬리모닝브리프' 새 영상을 감지해 전체 스크립트를 Gemini Gems 웹 세션으로 구조화 요약하고 디스코드로 보낸다. | [SKILL](skills/personal-chesley-morning-brief-main/SKILL.md) · [이슈](skills/personal-chesley-morning-brief-main/ISSUES.md) · [README](skills/personal-chesley-morning-brief-main/README.md) |
+| `personal-daily-intake` | 🔧 개발 | v0.1.0 | 제미나이 Gem이 받아쓰고 나눈 하루 기록 md를 일정DB 시트·Notion 독서 DB·옵시디언(daily/, 00_Inbox, 10_NOTE/수업)에 표로 확인받고 한 번에 나눠 넣는다. 같은 것을 두 번 넣지 않는다. | [SKILL](skills/personal-daily-intake/SKILL.md) · [이슈](skills/personal-daily-intake/ISSUES.md) 🔵1 |
 | `personal-free-parents-app` | 🔧 개발 | - | 공동 육아 놀이터 앱 ‘같이 놀자’의 개발·디자인 통합 안내와 구현 메모를 담는다. | [SKILL](skills/personal-free-parents-app/SKILL.md) · [이슈](skills/personal-free-parents-app/ISSUES.md) 🔵2 · [README](skills/personal-free-parents-app/README.md) |
 | `personal-library-search` | ✅ 운영 | - | Notion 도서 목록에서 ISBN/서점 정보를 찾고 경주시립도서관 소장 여부를 확인하며, 미소장 도서 희망도서 신청 흐름을 지원한다. | [SKILL](skills/personal-library-search/SKILL.md) · [이슈](skills/personal-library-search/ISSUES.md) · [README](skills/personal-library-search/README.md) |
 | `personal-mp3-baby` | ✅ 운영 | - | 아기 잠자리동화 MP3를 한국어 타임코드 SRT로 전사해 이야기 구간을 찾아 넘길 수 있게 한다. | [SKILL](skills/personal-mp3-baby/SKILL.md) · [이슈](skills/personal-mp3-baby/ISSUES.md) |

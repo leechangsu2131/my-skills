@@ -20,7 +20,9 @@
 - 2026-11-27 09:10 S1 (teacherlesson-assistant) 시작 (브랜치 task/S1-transcribe-markdown-tests)
 - 2026-11-27 09:10 T99 PR 올림 — 클로바노트용 MP3 내보내기 구현: 새 audio_export.py·web/recording_export.js, assistant_server 의 GET /api/recording-export/(재생과 같은 recording_file 검사), 화면 🎧 단추, 시험 3종(변환 26·서버 13·화면 순수함수 5), SKILL·README·ISSUE-039·config.example 갱신. 확인: test_assistant_*.py 87개·skill pytest 422 통과(기존 xfail 5)·루트 pytest 524 통과·node 시험 통과·build_catalog --check·check_privacy 통과. 교사 PC 확인 남음(실제 녹음 변환·클로바노트 업로드)
 - 2026-11-27 09:44 S1 (teacherlesson-assistant) 시작 (브랜치 task/S1-check-setup-helpers)
+- 2026-11-27 09:50 T57 (teacherlesson-from-neis) PR 올림 — SKILL.md 를 쉬운 한국어로 다시 씀(뜻 그대로). 확인: 옛 글·새 글의 코드 이름·링크·핵심 숫자(12시간·v1.7.0·질병결석 기본값) 비교로 빠진 것 없음, 머리말 그대로, build_catalog --check·check_privacy 통과. 남은 것: teacherlesson-assistant
 - 2026-11-27 10:20 T99 시작 (브랜치 task/T99-clova-mp3-export)
 - 2026-11-27 10:30 T57 (teacherlesson-assistant) PR 올림 — SKILL.md 를 쉬운 한국어로 다시 씀(뜻 그대로, 제목 A~F·코드 이름·JSON 예시 그대로). 확인: 인라인 코드 65개·숫자·굵은 글·링크·ISSUE 번호·머리말 모두 옛 글과 같음, build_catalog --check·check_privacy 통과. 이로써 T57 묶음 스킬 5개 모두 끝
+- 2026-11-27 21:27 T57 시작 (브랜치 task/T57-work)
 - 2026-11-27 21:34 T57 (teacherlesson-assistant) 시작 (브랜치 task/T57-easy-korean-assistant)
 - 2026-11-27 21:53 S2 (teacherlesson-assistant) 시작 (브랜치 task/S2-review-pr179-181-183)

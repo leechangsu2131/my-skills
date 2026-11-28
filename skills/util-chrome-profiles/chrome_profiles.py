@@ -521,6 +521,63 @@ def fill_field(hwnd: int, field, text: str) -> bool:
     return win32gui.GetForegroundWindow() == hwnd and field_value(field).strip() == text.strip()
 
 
+def _aria(control, name: str) -> str | None:
+    m = re.search(rf"(?:^|;){name}=([^;]*)", control.AriaProperties or "")
+    return m.group(1) if m else None
+
+
+def find_input(hwnd: int, hint: str = ""):
+    """창의 웹 페이지에서 글을 넣을 입력칸을 고른다. (control, 설명) 또는 None.
+    hint 가 있으면 이름·자리표시 글(예: '답글')에 그 낱말이 든 칸만. 없으면 '여러 줄 · 맨 아래 · 넓은' 칸
+    (채팅 입력 막대)을 먼저, 검색칸은 뒤로."""
+    auto, client = _uia()
+    doc = auto.ControlFromHandle(hwnd).Element.FindFirst(4, client.CreatePropertyCondition(
+        auto.PropertyId.ControlTypeProperty, auto.ControlType.DocumentControl))
+    if not doc:
+        return None
+    found = doc.FindAll(4, client.CreatePropertyCondition(auto.PropertyId.ControlTypeProperty,
+                                                          auto.ControlType.EditControl))
+    wanted = hint.strip().lower()
+    candidates = []
+    for i in range(found.Length if found else 0):
+        control = auto.Control.CreateControlFromElement(found.GetElement(i))
+        try:
+            if not control.IsEnabled or not control.IsKeyboardFocusable or _aria(control, "readonly") == "true":
+                continue
+            rect = control.BoundingRectangle
+            if rect.width() < 20 or rect.height() < 8:
+                continue
+        except Exception:
+            continue
+        label = f"{control.Name or ''} {control.HelpText or ''}".strip()
+        if wanted and wanted not in label.lower():
+            continue
+        is_search = (control.AriaRole == "searchbox" or re.search(r"검색|search", label, re.I) is not None)
+        multiline = _aria(control, "multiline") == "true"
+        candidates.append(((not is_search, multiline, rect.bottom, rect.width()), control, label))
+    if not candidates:
+        return None
+    _, control, label = max(candidates, key=lambda c: c[0])
+    return control, f"입력칸 '{label[:40] or '(이름 없음)'}'"
+
+
+def focus_input(hwnd: int, control) -> bool:
+    """입력칸에 초점을 주고(필요하면 화면이 그 칸까지 내려감) 글 끝으로 간다. 초점이 정말 그 칸이면 True."""
+    auto, client = _uia()
+    try:
+        control.SetFocus()
+    except Exception:
+        return False
+    time.sleep(0.2)
+    focused = auto.GetFocusedControl()
+    if not focused or not client.CompareElements(focused.Element, control.Element):
+        return False
+    if win32gui.GetForegroundWindow() != hwnd:
+        return False
+    press_keys([win32con.VK_CONTROL], win32con.VK_END)   # 이미 쓴 글이 있으면 그 뒤에 이어서
+    return True
+
+
 def focus_in_browser_ui(hwnd: int) -> bool:
     """키보드 초점이 이 창의 브라우저 글칸(주소창 등)에 있고 웹 페이지 안이 아닌지(Ctrl+L 이 주소창으로 갔는지)."""
     auto, _ = _uia()
@@ -652,6 +709,7 @@ from PySide6.QtCore import QObject, QPoint, QSize, Qt, QTimer, Signal  # noqa: E
 from PySide6.QtGui import QBrush, QColor, QCursor, QIcon, QImage, QKeySequence, QPixmap, QShortcut  # noqa: E402
 from PySide6.QtWidgets import (  # noqa: E402
     QAbstractItemView, QApplication, QCheckBox, QComboBox, QDialog, QDialogButtonBox, QDoubleSpinBox, QGridLayout,
+    QLineEdit,
     QHBoxLayout, QInputDialog, QLabel, QListView, QListWidget, QListWidgetItem, QMainWindow, QMenu,
     QMessageBox, QPlainTextEdit, QProgressDialog, QPushButton, QRadioButton, QSpinBox, QSplitter, QStyle,
     QSystemTrayIcon, QTreeWidget, QTreeWidgetItem, QVBoxLayout, QWidget,
@@ -850,10 +908,10 @@ class BroadcastDialog(QDialog):
     KEY_BUTTONS = ["Enter", "Shift+Enter", "Ctrl+Enter", "Tab", "Esc", "Backspace",
                    "Ctrl+A", "Ctrl+V", "Up", "Down", "F5", "대기 1"]
 
-    def __init__(self, parent, count: int, last_text: str):
+    def __init__(self, parent, count: int, last_text: str, mode: str = "find", hint: str = ""):
         super().__init__(parent)
         self.setWindowTitle("일괄 입력")
-        self.resize(560, 420)
+        self.resize(580, 500)
         self.edit = QPlainTextEdit(last_text)
         self.edit.selectAll()
         grid = QGridLayout()
@@ -866,6 +924,18 @@ class BroadcastDialog(QDialog):
         self.preview.setWordWrap(True)
         self.preview.setStyleSheet("color: gray")
         self.edit.textChanged.connect(self.update_preview)
+        self.find_box = QRadioButton("입력칸을 찾아서 넣기 (커서가 없어도 — 보통 맨 아래 채팅 입력 막대)")
+        self.at_cursor = QRadioButton("지금 커서가 있는 자리에 넣기")
+        (self.at_cursor if mode == "cursor" else self.find_box).setChecked(True)
+        self.hint = QLineEdit(hint)
+        self.hint.setPlaceholderText("입력칸 이름에 든 낱말(예: 답글). 비우면 알아서 고름")
+        self.hint.setToolTip("입력칸 이름이나 칸 안에 흐리게 보이는 글(자리표시)에 이 낱말이 든 칸만 고른다")
+        self.find_box.toggled.connect(self.hint.setEnabled)
+        self.hint.setEnabled(self.find_box.isChecked())
+        hint_row = QHBoxLayout()
+        hint_row.addSpacing(24)
+        hint_row.addWidget(QLabel("칸 이름:"))
+        hint_row.addWidget(self.hint)
         guide = QLabel(
             f"창 {count}개에 차례로 넣습니다. 창이 하나씩 앞으로 오니 그동안 마우스·키보드를 쓰지 마세요.\n"
             "특수 키는 중괄호로: {Enter} {Tab} {Esc} {Ctrl+A} {Shift+Enter} {F5} {Up} {대기 1.5}\n"
@@ -877,6 +947,9 @@ class BroadcastDialog(QDialog):
         buttons.rejected.connect(self.reject)
         box = QVBoxLayout(self)
         box.addWidget(guide)
+        box.addWidget(self.find_box)
+        box.addLayout(hint_row)
+        box.addWidget(self.at_cursor)
         box.addWidget(self.edit)
         box.addLayout(grid)
         box.addWidget(self.preview)
@@ -1720,7 +1793,8 @@ class Manager(QMainWindow):
         if not targets:
             QMessageBox.information(self, "일괄 입력", "열려 있는 대상 창이 없습니다.")
             return
-        dialog = BroadcastDialog(self, len(targets), self.last_broadcast)
+        dialog = BroadcastDialog(self, len(targets), self.last_broadcast,
+                                 self.cfg.get("input_mode", "find"), self.cfg.get("input_hint", ""))
         if dialog.exec() != QDialog.DialogCode.Accepted:
             return
         text = dialog.edit.toPlainText()
@@ -1728,6 +1802,11 @@ class Manager(QMainWindow):
         if not steps:
             return
         self.last_broadcast = text   # 이 창이 켜져 있는 동안만 기억(파일에 남기지 않음)
+        self.cfg["input_mode"] = "find" if dialog.find_box.isChecked() else "cursor"
+        self.cfg["input_hint"] = dialog.hint.text().strip()
+        self.save()
+        if dialog.find_box.isChecked():  # 창마다 먼저 입력칸을 찾아 초점을 준다
+            steps = [("focus_input", self.cfg["input_hint"])] + steps
         if any(s[0] == "keys" and s[2] == win32con.VK_RETURN for s in steps):
             answer = QMessageBox.question(
                 self, "일괄 입력",
@@ -1759,7 +1838,7 @@ class Manager(QMainWindow):
         키를 누르기 바로 전마다 맨 앞 창을 확인하고, 아니면 그 창은 거기서 멈춘다."""
         targets = [h for h in targets if h in self.windows and win32gui.IsWindow(h)]  # 그새 닫힌 창 빼기
         old_clip = get_clipboard()
-        failed, stopped, no_address = [], [], []
+        failed, stopped, no_address, no_input = [], [], [], []
         done, cancelled = 0, False
         progress = self.progress(f"창 {len(targets)}개에 차례로 넣는 중… (멈추려면 '멈추기')", len(targets))
         try:
@@ -1789,6 +1868,15 @@ class Manager(QMainWindow):
                     elif step[0] == "keys":
                         press_keys(step[1], step[2])
                         time.sleep(0.1)
+                    elif step[0] == "focus_input":
+                        try:
+                            hit = find_input(hwnd, step[1])
+                        except Exception:
+                            hit = None
+                        if not hit or not focus_input(hwnd, hit[0]):  # 칸을 못 찾으면 그 창은 아무것도 안 넣음
+                            no_input.append(label)
+                            ok = False
+                            break
                     elif step[0] == "check_address":
                         time.sleep(0.15)
                         if not focus_in_browser_ui(hwnd):  # 주소창이 없는 창(앱 창 등): 페이지 칸에 주소가 들어가지 않게
@@ -1821,6 +1909,8 @@ class Manager(QMainWindow):
             note += f" / 도중에 다른 창이 앞에 와서 멈춤: {', '.join(stopped)}"
         if no_address:
             note += f" / 주소창이 없어 건너뜀: {', '.join(no_address)}"
+        if no_input:
+            note += f" / 입력칸을 못 찾아 건너뜀: {', '.join(no_input)}"
         if cancelled:
             note += " / 멈추기로 중단"
         self.statusBar().showMessage(f"{done}개 창에 {verb}.{note}", 20000)

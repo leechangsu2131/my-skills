@@ -36,7 +36,7 @@ cd my-skills\skills\teacherlesson-guide\mapper
 pip install -r requirements.txt
 ```
 
-`.env`는 이 폴더에 두는 것이 가장 좋습니다. 아직 없다면 기존 `teacher-schedule\.env`를 자동으로 찾아서 사용합니다.
+비밀값·시트 설정은 교사 PC 의 중앙 `.env` 한 곳에서만 읽습니다(`skills/_shared/skill_env.py` 의 `load_env()`). 이 폴더에 `.env`를 따로 둘 필요가 없습니다.
 
 ## 사용 예시
 

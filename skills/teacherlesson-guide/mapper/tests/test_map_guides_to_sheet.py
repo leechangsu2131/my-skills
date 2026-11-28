@@ -32,6 +32,21 @@ class MapGuidesToSheetTests(unittest.TestCase):
         self.assertTrue(pdf_path.endswith("국어3-1지도서_2_1.pdf"))
         self.assertTrue(reading_path.endswith("국어3-1지도서_2_독서.pdf"))
 
+    def test_pdf_name_other_term_only_checks_leading_grade_term(self):
+        f = map_guides_to_sheet.pdf_name_other_term
+        self.assertTrue(f("국어3-2지도서_2.pdf", "3-1"))
+        self.assertFalse(f("국어3-1지도서_2_1.pdf", "3-1"))
+        self.assertFalse(f("국어지도서_4.pdf", "3-1"))
+        self.assertFalse(f("국어3-2지도서.pdf", "3"))
+
+    def test_find_best_pdf_fallback_skips_other_term(self):
+        fake_pdfs = [
+            Path(r"C:\fake\사회3-2지도서_독서.pdf"),
+        ]
+        with patch.object(map_guides_to_sheet, "iter_search_pdfs", return_value=fake_pdfs):
+            pdf_path = map_guides_to_sheet.find_best_pdf("사회", 9, 1, grade_str="3-1")
+        self.assertIsNone(pdf_path)
+
     def test_parse_korean_overview_lines_sorts_ranges_and_maps_titles(self):
         lines = [
             "단원의 름",

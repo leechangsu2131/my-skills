@@ -22,7 +22,9 @@
 - 2026-11-27 09:44 S1 (teacherlesson-assistant) 시작 (브랜치 task/S1-check-setup-helpers)
 - 2026-11-27 09:50 T57 (teacherlesson-from-neis) PR 올림 — SKILL.md 를 쉬운 한국어로 다시 씀(뜻 그대로). 확인: 옛 글·새 글의 코드 이름·링크·핵심 숫자(12시간·v1.7.0·질병결석 기본값) 비교로 빠진 것 없음, 머리말 그대로, build_catalog --check·check_privacy 통과. 남은 것: teacherlesson-assistant
 - 2026-11-27 10:20 T99 시작 (브랜치 task/T99-clova-mp3-export)
+- 2026-11-28 12:42 S8 (teacherlesson-guide) 이어받음 (브랜치 task/S8-teacherlesson-guide, 앞 — claude-web-소연: 2026-11-28 14:40 S8 (teacherlesson-guide) 시작 (브랜치 task/S8-teacherlesson-guide))
 - 2026-11-27 10:30 T57 (teacherlesson-assistant) PR 올림 — SKILL.md 를 쉬운 한국어로 다시 씀(뜻 그대로, 제목 A~F·코드 이름·JSON 예시 그대로). 확인: 인라인 코드 65개·숫자·굵은 글·링크·ISSUE 번호·머리말 모두 옛 글과 같음, build_catalog --check·check_privacy 통과. 이로써 T57 묶음 스킬 5개 모두 끝
 - 2026-11-27 21:27 T57 시작 (브랜치 task/T57-work)
 - 2026-11-27 21:34 T57 (teacherlesson-assistant) 시작 (브랜치 task/T57-easy-korean-assistant)
 - 2026-11-27 21:53 S2 (teacherlesson-assistant) 시작 (브랜치 task/S2-review-pr179-181-183)
+- 2026-11-28 12:44 S8 (teacherlesson-guide) 합칠 준비 — ISSUE-003 두 항목 처리: ①find_best_pdf 대체 매칭이 파일 이름 앞쪽 학년-학기가 다르면 건너뜀(시험 2개 추가, 새 시험 통과) ②mapper README 의 낡은 .env 문장 정정. build_catalog --check·check_privacy 통과. 기존 시험 2개는 윈도우 경로라 리눅스에서 원래 실패(변경 전후 동일). 다음: ISSUE-003 의 pdf_splits 조각 남음 항목

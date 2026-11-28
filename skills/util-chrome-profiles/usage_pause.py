@@ -18,9 +18,11 @@ import sys
 from datetime import datetime, timedelta
 from pathlib import Path
 
-PAUSE_WORDS = re.compile(r"일시\s*중지|사용량|한도|limit|usage|try again|다시 (제공|사용|시도)|resets?", re.I)
+PAUSE_WORDS = re.compile(r"일시\s*중지|사용량|한도|limit|usage|try again|다시 (제공|사용|시도)|resets?"
+                         r"|무료\s*메시지|메시지를?\s*(모두\s*)?(사용|소진)|사용할\s*수\s*없|out of (free )?messages", re.I)
 
 _KO = re.compile(r"(오전|오후)\s*(\d{1,2})(?:\s*[:시]\s*(\d{1,2}))?\s*분?")
+_KO24 = re.compile(r"(?<![\d:])(\d{1,2})\s*시(?!간)(?:\s*(\d{1,2})\s*분)?\s*(?:까지|에|이후|부터)")  # '18시까지', '6시 30분에'
 _EN = re.compile(r"\b(\d{1,2})(?::(\d{2}))?\s*([ap])\.?\s*m\.?\b", re.I)
 _24 = re.compile(r"(?<![\d:])(\d{1,2}):(\d{2})(?![\d:])")
 _REL_KO = re.compile(r"(\d+)\s*시간(?:\s*(\d+)\s*분)?\s*(?:후|뒤)|(\d+)\s*분\s*(?:후|뒤)")
@@ -47,6 +49,9 @@ def find_resume(text: str, now: datetime | None = None) -> datetime | None:
     if m:
         h, mi = int(m.group(1)) % 12, int(m.group(2) or 0)
         return _at(now, h + (12 if m.group(3).lower() == "p" else 0), mi)
+    m = _KO24.search(text)
+    if m:
+        return _at(now, int(m.group(1)), int(m.group(2) or 0))
     m = _REL_KO.search(text)
     if m:
         mins = int(m.group(1) or 0) * 60 + int(m.group(2) or 0) if m.group(1) else int(m.group(3))

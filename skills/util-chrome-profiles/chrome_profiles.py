@@ -352,7 +352,9 @@ CLICKABLE_TYPES = ("ButtonControl", "HyperlinkControl", "MenuItemControl", "TabI
                    "ListItemControl", "CheckBoxControl", "RadioButtonControl", "SplitButtonControl")
 PAUSE_LINE = re.compile(
     r"일시\s*중지|다시\s*제공|이후\s*다시|사용량.{0,30}(한도|제한|초과|다시)|한도.{0,20}(도달|초과)"
-    r"|usage\s*limit|limit.{0,40}(reset|again)|resets?\s+(at|in)|try\s+again\s+(after|at|in)", re.I)
+    r"|usage\s*limit|limit.{0,40}(reset|again)|resets?\s+(at|in)|try\s+again\s+(after|at|in)"
+    r"|까지\s*무료\s*메시지|무료\s*메시지.{0,20}(다시|사용|제공)|메시지를?\s*(모두\s*)?(사용|소진)(했|하였)"
+    r"|다시\s*사용할\s*수\s*없|out\s+of\s+(free\s+)?messages", re.I)
 PAUSE_TAIL_LINES = 30   # 일시 중지 안내는 보통 페이지 맨 아래(입력칸 근처)에 뜬다. 대화 속 인용은 무시하려고 끝부분만 본다.
 
 
@@ -1193,9 +1195,15 @@ class Manager(QMainWindow):
         thumb_bar.addStretch()
         thumb_bar.addWidget(self.close_thumbs_button)
         thumb_bar.addWidget(clear_button)
+        self.pause_summary = QLabel()   # 다시 쓸 시각 한눈에(창을 하나하나 안 봐도 되게)
+        self.pause_summary.setWordWrap(True)
+        self.pause_summary.setStyleSheet("QLabel { background: #2b3a55; color: #f0f0f0; padding: 6px 8px; border-radius: 4px; }")
+        self.pause_summary.setToolTip("페이지 끝의 '…까지 무료 메시지를 모두 사용했습니다', '오후 6:00에 다시 제공' 같은 안내를 20초마다 읽어 적은 것")
+        self.pause_summary.hide()
         right = QWidget()
         right_box = QVBoxLayout(right)
         right_box.setContentsMargins(0, 0, 0, 0)
+        right_box.addWidget(self.pause_summary)
         right_box.addLayout(thumb_bar)
         right_box.addWidget(self.thumbs)
 
@@ -1629,6 +1637,7 @@ class Manager(QMainWindow):
         self.capture_some(now)
         self.refresh_work(now)
         self.check_pauses(datetime.now())
+        self.update_pause_summary(datetime.now())
         idle_limit = self.idle_spin.value()
         for hwnd, st in self.windows.items():
             lines = [self.label(hwnd), win32gui.GetWindowText(hwnd)[:34]]
@@ -2010,6 +2019,39 @@ class Manager(QMainWindow):
             del self.pauses[name]
             self.save_pauses()
             self.save()
+
+    def short_name(self, sid: str) -> str:
+        """요약 줄에 쓸 짧은 이름: '소연', '262a173', 'Edge 개인' 처럼."""
+        key = self.local_key(sid)
+        info = self.profile_info.get(key) if key else None
+        if not info:
+            return self.work_label(sid)
+        full = info["name"]
+        prefix = "Edge " if full.startswith("Edge · ") else ""
+        full = full.replace("Edge · ", "")
+        name, _, rest = full.partition(" (")
+        email = rest.rstrip(")")
+        if ("." in name or not name) and "@" in email:   # 'sc.gyo6.net' 처럼 이름이 도메인이면 이메일 앞부분
+            name = email.split("@")[0]
+        return prefix + name
+
+    def update_pause_summary(self, now_dt: datetime):
+        rows = [(name, resume) for name, resume, ok in usage_pause.due(self.pauses, now_dt) if not ok]
+        if not rows:
+            self.pause_summary.hide()
+            self.tray.setToolTip("Chrome·Edge 프로필 매니저")
+            return
+        by_time: dict[datetime, list[str]] = {}
+        for name, resume in rows:
+            by_time.setdefault(resume, []).append(self.short_name(name))
+        parts = []
+        for resume, names in sorted(by_time.items()):
+            shown = "·".join(names[:4]) + (f" 외 {len(names) - 4}" if len(names) > 4 else "")
+            parts.append(f"{resume:%H:%M} ({fmt_long((resume - now_dt).total_seconds())}): {shown}")
+        text = "⏸ 다시 쓸 시각 — " + "  │  ".join(parts)
+        self.pause_summary.setText(text)
+        self.pause_summary.show()
+        self.tray.setToolTip(text[:120])
 
     def pause_text(self, key: str, now_dt: datetime) -> str | None:
         resume = self.pause_of(key)

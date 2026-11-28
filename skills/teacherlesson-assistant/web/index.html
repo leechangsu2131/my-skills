@@ -115,6 +115,11 @@ details.fold>summary{padding:14px 16px;font-weight:600;cursor:pointer;list-style
 details.fold>summary::-webkit-details-marker{display:none}
 details.fold>summary::after{content:"›";margin-left:auto;color:var(--sub);font-size:20px;line-height:1;transition:transform .15s}
 details.fold[open]>summary::after{transform:rotate(90deg)}
+.sub-item{margin:4px 6px 0 0}
+.sub-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(54px,1fr));gap:6px;margin-top:10px}
+.sub-cell{padding:8px 2px;border:1px solid var(--line,#ccc);border-radius:8px;background:transparent;cursor:pointer}
+.sub-cell.on{background:#d9f2e0;font-weight:700}
+.sub-cell small{display:block;font-size:10px;color:var(--sub)}
 .fold-body{padding:0 16px 14px}
 
 ul{margin:4px 0;padding-left:18px}
@@ -359,6 +364,12 @@ body.focus-mode> #toast{z-index:12}
     </div>
   </details>
 
+  <!-- 제출 확인표 (T108) -->
+  <details class="fold" id="subBox">
+    <summary>✅ 제출 확인표</summary>
+    <div id="subBody" style="padding:0 16px 14px"></div>
+  </details>
+
   <!-- 수업 기록 -->
   <section class="card">
     <h2>🎙 수업 기록</h2>
@@ -516,6 +527,7 @@ body.focus-mode> #toast{z-index:12}
 
 <script src="/overdue.js"></script>
 <script src="/stt_words.js"></script>
+<script src="/submissions.js"></script>
 <script>
 const $ = id => document.getElementById(id);
 const qDate = new URLSearchParams(location.search).get('date');

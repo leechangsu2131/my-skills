@@ -40,6 +40,7 @@ sys.path.insert(0, str(SKILL_DIR))
 import audio_export  # noqa: E402  (녹음 → 클로바노트용 MP3, T99)
 import schedule_panel  # noqa: E402  (일정·할 일 칸, T107)
 import transcribe  # noqa: E402  (받아쓰기 사전 파일 이름·읽기, T111)
+import submissions  # noqa: E402  (제출 확인표, T108)
 
 SKILL = "teacherlesson-assistant"
 DATA = data_dir(SKILL)
@@ -52,6 +53,8 @@ CAUTIONS_PATH = DATA / "publisher_notes.json"
 NOTEBOOKLM = DATA / "notebooklm"
 STT_WORDS_PATH = DATA / transcribe.WORDS_FILE  # 학생 이름이 들어갈 수 있어 데이터 폴더에만 둠
 STT_MAX_WORDS, STT_MAX_FIXES, STT_MAX_LEN = 200, 300, 40
+SUBMISSIONS = DATA / "submissions"
+ROSTER_PATH = DATA / "roster.txt"  # 선택: 줄 순서 = 번호. 이름은 이 PC 화면에만 보냄
 DEFAULT_AI_SITES = [
     {"name": "Claude", "url": "https://claude.ai/new"},
     {"name": "Gemini", "url": "https://gemini.google.com/app"},
@@ -916,6 +919,13 @@ class Handler(BaseHTTPRequestHandler):
             return self._send(200, (WEB / "stt_words.js").read_bytes(), "application/javascript; charset=utf-8")
         if url.path == "/api/stt-words":
             return self._json(stt_words_get())
+        if url.path == "/submissions.js":
+            return self._send(200, (WEB / "submissions.js").read_bytes(), "application/javascript; charset=utf-8")
+        if url.path == "/api/submissions":
+            try:
+                return self._json(submissions_get(q.get("title", [""])[0]))
+            except ValueError as exc:
+                return self._json({"status": "error", "message": str(exc)}, 400)
         if url.path == "/mobile.css":
             return self._send(200, (WEB / "mobile.css").read_bytes(), "text/css; charset=utf-8")
         if url.path == "/api/state":
@@ -1015,6 +1025,8 @@ class Handler(BaseHTTPRequestHandler):
                 return self._json(save_flow(body))
             if url.path == "/api/stt-words":
                 return self._json(stt_words_save(body))
+            if url.path == "/api/submissions":
+                return self._json(submissions_post(body))
             if url.path == "/api/caution":
                 return self._json(add_caution(body))
             if url.path.startswith("/api/progress/"):
@@ -1059,6 +1071,29 @@ def stt_words_save(body: dict) -> dict:
     return {"status": "success", "message": f"저장했어요. 자주 쓰는 말 {len(clean_words)}개, 고쳐 쓰기 {len(clean_fixes)}개."
             + (" (자주 쓰는 말이 많아 앞쪽만 받아쓰기 힌트로 쓰여요)" if len(hint) < len(", ".join(clean_words)) else ""),
             "words": clean_words, "fixes": clean_fixes}
+def submissions_get(title: str = "") -> dict:
+    """제출 확인표 목록, 또는 title 하나의 표(+이 PC 명단이 있으면 번호→이름)."""
+    if not title:
+        total = load_config().get("class_size", submissions.DEFAULT_TOTAL)
+        return {"status": "success", "items": submissions.list_all(SUBMISSIONS), "class_size": total}
+    rec = submissions.load(SUBMISSIONS, title)
+    if rec is None:
+        raise ValueError("그 확인표를 찾을 수 없어요.")
+    return {"status": "success", "record": rec, "missing": submissions.missing(rec),
+            "missing_text": submissions.missing_text(rec),
+            "roster": {str(k): v for k, v in submissions.load_roster(ROSTER_PATH).items()}}
+
+
+def submissions_post(body: dict) -> dict:
+    action = body.get("action")
+    if action == "create":
+        total = body.get("total") or load_config().get("class_size", submissions.DEFAULT_TOTAL)
+        submissions.create(SUBMISSIONS, body.get("title", ""), total)
+    elif action == "mark":
+        submissions.mark(SUBMISSIONS, body.get("title", ""), body.get("no"), bool(body.get("done", True)))
+    else:
+        raise ValueError("알 수 없는 동작이에요.")
+    return submissions_get(str(body.get("title", "")))
 
 
 ASK_ITEMS = ["1. 40분 수업 흐름(도입–전개–정리)과 시간 배분",

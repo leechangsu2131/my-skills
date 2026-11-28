@@ -27,4 +27,14 @@ t('보여 주기 → 다시 읽기 왕복', () => {
 });
 t('보여 주기 모양', () => { assert.strictEqual(formatFixLines({ a: 'b' }), 'a → b'); assert.strictEqual(formatWordLines(['a', 'b']), 'a\nb'); assert.strictEqual(formatFixLines(null), ''); });
 
+t('접었다 펼 때: 처음엔 채우고, 안 고쳤으면 다시 채우고, 고쳤으면 그대로 둠', () => {
+  const { sttCanRefill } = require('../web/stt_words.js');
+  const last = { words: 'a\nb', fixes: 'x → y' };
+  assert.strictEqual(sttCanRefill({ words: '', fixes: '' }, null), true);                       // 한 번도 안 채움
+  assert.strictEqual(sttCanRefill({ words: 'a\nb', fixes: 'x → y' }, last), true);             // 안 고침 → 서버 값 다시 받아도 안전
+  assert.strictEqual(sttCanRefill({ words: 'a\nb\nc', fixes: 'x → y' }, last), false);        // 낱말 칸을 고침
+  assert.strictEqual(sttCanRefill({ words: 'a\nb', fixes: 'x → z' }, last), false);            // 고쳐 쓰기 칸을 고침
+  assert.strictEqual(sttCanRefill({ words: '', fixes: '' }, { words: '', fixes: '' }), true);   // 빈 사전을 안 고침
+});
+
 console.log(`${pass} passed`);

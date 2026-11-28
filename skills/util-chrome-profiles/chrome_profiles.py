@@ -418,7 +418,6 @@ INSTR_EDIT_BUTTON = "지침 편집"          # 프로젝트 페이지 오른쪽 
 INSTR_FIELD = "프로젝트 지침 설정"       # 편집 창(대화상자)과 그 안 글칸의 이름
 INSTR_SAVE = "지침 저장"
 INSTR_CANCEL = "취소"
-WORKER_INSTRUCTIONS = Path(__file__).resolve().parents[2] / "docs" / "WORKER_INSTRUCTIONS.md"
 
 
 def _by_name(hwnd: int, name: str, control_type: str | None = None):
@@ -511,21 +510,6 @@ def compose_instructions(current: str, body: str, keep_lines: int) -> str:
     """지금 지침의 맨 위 keep_lines 줄은 그대로 두고, 그 아래를 body 로 바꾼다(사이에 빈 줄 하나)."""
     kept = current.replace("\r\n", "\n").split("\n")[:keep_lines]
     return "\n".join(kept).rstrip() + "\n\n" + body.replace("\r\n", "\n").strip("\n") + "\n"
-
-
-def worker_instructions_body() -> str | None:
-    """docs/WORKER_INSTRUCTIONS.md '## 전체본' 의 코드 블록에서 맨 첫 줄([이름] 줄)을 뺀 나머지."""
-    try:
-        text = WORKER_INSTRUCTIONS.read_text(encoding="utf-8")
-    except OSError:
-        return None
-    m = re.search(r"^## 전체본\s*\n+```[^\n]*\n(.*?)\n```", text, re.S | re.M)
-    if not m:
-        return None
-    lines = m.group(1).split("\n")
-    if lines and lines[0].lstrip().startswith("["):
-        lines = lines[1:]
-    return "\n".join(lines).strip("\n")
 
 
 def normalize_url(text: str) -> str:
@@ -696,16 +680,19 @@ class Popup(QLabel):
 class InstructionsDialog(QDialog):
     """프로젝트 지침 일괄 바꾸기: 새 글 + 남길 줄 수 + 안전 설정."""
 
-    def __init__(self, parent, scope: str, last_body: str):
+    def __init__(self, parent, scope: str):
         super().__init__(parent)
         self.setWindowTitle("프로젝트 지침 일괄 바꾸기 (claude.ai)")
         self.resize(640, 560)
-        self.body = QPlainTextEdit(last_body)
-        self.body.setPlaceholderText("맨 위 이름 줄 아래에 들어갈 새 지침을 붙여 넣으세요.")
-        load = QPushButton("WORKER_INSTRUCTIONS.md 전체본 불러오기")
-        load.setToolTip(str(WORKER_INSTRUCTIONS))
-        load.setAutoDefault(False)
-        load.clicked.connect(self.load_worker)
+        self.body = QPlainTextEdit()
+        self.body.setPlaceholderText("새 지침 전체를 여기에 한 번 붙여 넣으세요(Ctrl+V).\n"
+                                     "첫 줄이 [이름] 줄이어도 괜찮습니다 — 그 줄은 빼고, 창마다 원래 이름 줄을 남깁니다.")
+        self.drop_first = QCheckBox("붙여 넣은 글의 첫 줄이 [ 로 시작하면 그 줄은 빼기")
+        self.drop_first.setChecked(True)
+        self.note = QLabel()
+        self.note.setStyleSheet("color: gray")
+        self.body.textChanged.connect(self.update_note)
+        self.drop_first.toggled.connect(self.update_note)
         self.keep = QSpinBox()
         self.keep.setRange(1, 20)
         self.keep.setValue(1)
@@ -728,20 +715,33 @@ class InstructionsDialog(QDialog):
         box.addWidget(guide)
         box.addLayout(keep_row)
         box.addWidget(self.body)
-        box.addWidget(load)
+        box.addWidget(self.note)
+        box.addWidget(self.drop_first)
         box.addWidget(self.only_bracket)
         box.addWidget(self.preview_only)
         box.addWidget(buttons)
+        self.update_note()
+        self.body.setFocus()
 
-    def load_worker(self):
-        body = worker_instructions_body()
-        if body is None:
-            QMessageBox.warning(self, "불러오기", f"전체본을 못 찾았습니다:\n{WORKER_INSTRUCTIONS}")
+    def final_body(self) -> str:
+        """창마다 이름 줄 아래에 들어갈 글."""
+        lines = self.body.toPlainText().replace("\r\n", "\n").strip("\n").split("\n")
+        if self.drop_first.isChecked() and lines and lines[0].lstrip().startswith("["):
+            lines = lines[1:]
+        return "\n".join(lines).strip("\n")
+
+    def update_note(self):
+        text = self.body.toPlainText().strip()
+        if not text:
+            self.note.setText("")
             return
-        self.body.setPlainText(body)
+        first = text.split("\n", 1)[0].strip()
+        dropped = self.drop_first.isChecked() and first.startswith("[")
+        self.note.setText((f"첫 줄 '{first[:40]}' 은 빼고 " if dropped else "") +
+                          f"{len(self.final_body())}자를 넣습니다.")
 
     def accept(self):
-        if not self.body.toPlainText().strip():
+        if not self.final_body().strip():
             QMessageBox.warning(self, "프로젝트 지침", "새 지침 글이 비어 있습니다.")
             return
         super().accept()
@@ -1922,13 +1922,11 @@ class Manager(QMainWindow):
         if not windows:
             QMessageBox.information(self, "프로젝트 지침", "대상 창이 없습니다.")
             return
-        dialog = InstructionsDialog(self, scope, self.cfg.get("last_instructions", ""))
+        dialog = InstructionsDialog(self, scope)
         if dialog.exec() != QDialog.DialogCode.Accepted:
             return
-        body, keep = dialog.body.toPlainText(), dialog.keep.value()
+        body, keep = dialog.final_body(), dialog.keep.value()
         only_bracket, preview_only = dialog.only_bracket.isChecked(), dialog.preview_only.isChecked()
-        self.cfg["last_instructions"] = body
-        self.save()
 
         # 1) 읽기: 창마다 편집 창을 열어 지금 지침을 읽고 취소로 닫는다(바꾸지 않음)
         plans, skipped = [], []

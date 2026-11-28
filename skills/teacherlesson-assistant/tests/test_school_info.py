@@ -119,45 +119,83 @@ def test_old_key_names_still_work_but_shared_wins(tmp_path):
     assert q2["SD_SCHUL_CODE"] == ["0000000"] and q2["KEY"] == ["NEWKEY"]
 
 
-def test_env_values_from_central_env_reaches_weather_and_old_names(tmp_path, monkeypatch):
-    """서버가 만드는 모양(skill_env.env_values: 스킬 앞머리를 뗀 사전)으로도 읽혀야 한다(검토 🔴)."""
+# ── 검토 🔴🟡🟢 반영(이어받기): 서버가 실제로 만드는 설정 모양을 지나가는지 ──
+def _server_env(tmp_path, monkeypatch, text):
+    """서버(assistant_server)와 같은 방식: 중앙 .env → env_values(앞머리 뗌) + os.environ."""
     sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[2] / "_shared"))
     import skill_env
-    envfile = tmp_path / ".env"
-    envfile.write_text("TEACHERLESSON_ASSISTANT__LATITUDE=37.5\nTEACHERLESSON_ASSISTANT__LONGITUDE=127.0\n"
-                       "TEACHERLESSON_ASSISTANT__SCHOOL_CODE=1111111\nTEACHERLESSON_ASSISTANT__OFFICE_CODE=Y00\n",
-                       encoding="utf-8")
-    monkeypatch.setenv("MY_SKILLS_ENV", str(envfile))
-    env = skill_env.env_values("teacherlesson-assistant")
+    env_file = tmp_path / ".env"
+    env_file.write_text(text, encoding="utf-8")
+    monkeypatch.setenv("MY_SKILLS_ENV", str(env_file))
+    return skill_env.env_values("teacherlesson-assistant")
+
+
+def test_weather_coordinates_survive_env_values_prefix_strip(tmp_path, monkeypatch):
+    env = _server_env(tmp_path, monkeypatch,
+                      "NEIS_SCHOOL_CODE=0000000\nNEIS_OFFICE_CODE=X00\n"
+                      "TEACHERLESSON_ASSISTANT__LATITUDE=37.5\nTEACHERLESSON_ASSISTANT__LONGITUDE=127.0\n")
     f = Fake()
-    out = si.get_school_info(env, tmp_path / "c.json", DAY, f)
-    assert out["weather"] == {"temp": 12, "icon": "☀"}            # 날씨 호출이 일어남
-    meal_q = urllib.parse.parse_qs(urllib.parse.urlparse(f.urls[0]).query)
-    assert meal_q["SD_SCHUL_CODE"] == ["1111111"]                   # 옛 이름 급식도 읽힘
+    info = si.get_school_info(env, tmp_path / "c.json", DAY, f)
+    assert info["weather"] == {"temp": 12, "icon": "☀"}
+    assert len(f.urls) == 2
 
 
-def test_changing_settings_same_day_refetches(tmp_path):
-    cache = tmp_path / "c.json"
+def test_old_names_survive_env_values_prefix_strip(tmp_path, monkeypatch):
+    env = _server_env(tmp_path, monkeypatch,
+                      "TEACHERLESSON_ASSISTANT__SCHOOL_CODE=1111111\nTEACHERLESSON_ASSISTANT__OFFICE_CODE=Y00\n")
     f = Fake()
-    out = si.get_school_info({}, cache, DAY, f)                    # 설정 없이 한 번 켠 날
-    assert out["weather"] is None and f.urls == []
-    si.get_school_info(ENV, cache, DAY, f)                         # 같은 날 설정을 채움 → 다시 받아야 함
-    assert f.urls and si.get_school_info(ENV, cache, DAY, f)["weather"]["temp"] == 12
-    n = len(f.urls)
-    si.get_school_info(ENV, cache, DAY, f)
-    assert len(f.urls) == n                                         # 설정이 같으면 하루 한 번
+    assert si.get_school_info(env, tmp_path / "c.json", DAY, f)["meal"]
+    q = urllib.parse.parse_qs(urllib.parse.urlparse(f.urls[0]).query)
+    assert q["SD_SCHUL_CODE"] == ["1111111"] and q["ATPT_OFCDC_SC_CODE"] == ["Y00"]
 
 
-def test_neis_error_response_is_not_cached(tmp_path):
+def test_windows_env_var_with_prefix_still_works(tmp_path):
+    f = Fake()
+    assert si.get_school_info(ENV, tmp_path / "c.json", DAY, f)["weather"]
+
+
+def test_changing_settings_refetches_same_day(tmp_path):
     cache = tmp_path / "c.json"
-    bad = Fake(meal={"RESULT": {"CODE": "ERROR-337", "MESSAGE": "x"}})
-    out = si.get_school_info(ENV, cache, DAY, bad)
-    assert out["meal"] == "" and out["weather"] and not cache.exists()
-    # 급식이 없는 날(INFO-200)은 정상 빈 값 — 저장한다
-    none_day = Fake(meal={"RESULT": {"CODE": "INFO-200"}})
-    si.get_school_info(ENV, cache, DAY, none_day)
+    no_coords = {"NEIS_SCHOOL_CODE": "0000000", "NEIS_OFFICE_CODE": "X00"}
+    assert si.get_school_info(no_coords, cache, DAY, Fake())["weather"] is None
+    f = Fake()
+    assert si.get_school_info(ENV, cache, DAY, f)["weather"]      # 좌표를 적은 뒤엔 같은 날에도 다시 받는다
+    assert len(f.urls) == 2
+    f2 = Fake()
+    si.get_school_info(ENV, cache, DAY, f2)                        # 설정이 같으면 캐시
+    assert f2.urls == []
+
+
+def test_changing_school_refetches_same_day(tmp_path):
+    cache = tmp_path / "c.json"
+    si.get_school_info(ENV, cache, DAY, Fake())
+    f = Fake()
+    si.get_school_info({**ENV, "NEIS_SCHOOL_CODE": "9999999"}, cache, DAY, f)
+    assert len(f.urls) == 2
+
+
+def test_cache_file_does_not_contain_api_key_or_codes(tmp_path):
+    cache = tmp_path / "c.json"
+    si.get_school_info({**ENV, "NEIS_API_KEY": "SECRETKEY"}, cache, DAY, Fake())
+    text = cache.read_text(encoding="utf-8")
+    assert "SECRETKEY" not in text and "0000000" not in text and "37.5" not in text
+
+
+def test_error_code_response_is_a_failure_and_not_cached(tmp_path):
+    cache = tmp_path / "c.json"
+    err = {"RESULT": {"CODE": "ERROR-337", "MESSAGE": "일일 트래픽 제한"}}
+    info = si.get_school_info(ENV, cache, DAY, Fake(meal=err))
+    assert info["meal"] == "" and info["weather"]          # 날씨는 그대로
+    assert not cache.exists()                              # 빈 급식을 하루 종일 저장하지 않는다
+
+
+def test_info_200_no_data_is_normal_and_cached(tmp_path):
+    cache = tmp_path / "c.json"
+    none = {"RESULT": {"CODE": "INFO-200", "MESSAGE": "해당하는 데이터가 없습니다."}}
+    assert si.get_school_info(ENV, cache, DAY, Fake(meal=none))["meal"] == ""
     assert cache.exists()
 
 
-def test_clean_menu_keeps_digits_in_dish_names():
-    assert si.clean_menu("비타500<br/>쌀밥 5.6.<br/>우유 2.") == "비타500, 쌀밥, 우유"
+def test_menu_names_with_numbers_are_kept():
+    assert si.clean_menu("비타500<br/>우유 2.<br/>쌀밥5.6.<br/>빵 5<br/>떡볶이") == "비타500, 우유, 쌀밥, 빵, 떡볶이"
+    assert si.clean_menu("콜라 500ml (1)") == "콜라 500ml"

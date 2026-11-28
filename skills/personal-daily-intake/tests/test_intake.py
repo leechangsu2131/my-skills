@@ -153,6 +153,26 @@ def test_sheet_failure_does_not_stop_rest(tmp_path):
     assert "실패: 인터넷 없음" in "\n".join(screen)
 
 
+def test_collect_downloads(tmp_path):
+    dl, inbox, arch = tmp_path / "Downloads", tmp_path / "inbox", tmp_path / "gemini"
+    dl.mkdir()
+    (dl / "하루기록-2026-11-28.md").write_text("---\ndate: 2026-11-28\n---\n", encoding="utf-8")
+    (dl / "gemini-2026-11-28-대화.json").write_text("{}", encoding="utf-8")
+    (dl / "다른파일.md").write_text("x", encoding="utf-8")
+    (inbox / "done").mkdir(parents=True)
+    (inbox / "done" / "2026-11-28.md").write_text("앞서 넣은 것", encoding="utf-8")  # 같은 날 두 번째
+    moved = intake.collect_downloads(dl, inbox, arch)
+    assert moved == ["2026-11-28-2.md", "gemini-2026-11-28-대화.json"]
+    assert (inbox / "2026-11-28-2.md").exists() and (dl / "다른파일.md").exists()
+    assert intake.collect_downloads(tmp_path / "없는폴더", inbox, arch) == []
+
+
+def test_bookmarklet_one_line():
+    url = intake.bookmarklet()
+    assert url.startswith("javascript:(function") and "\n" not in url and "/*" not in url
+    assert "#" not in url and "%23" in url  # 즐겨찾기 주소에서 # 은 잘림
+
+
 IDEAS = """---
 date: 2026-11-28
 ---

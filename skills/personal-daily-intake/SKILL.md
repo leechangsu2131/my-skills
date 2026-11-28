@@ -16,7 +16,10 @@ Notion·시트에는 처리할 것(할 일, 책 행)만 보낸다. mem 대신 �
 
 ## 흐름
 1. 제미나이에서 [gem_prompt.md](gem_prompt.md)의 지침으로 만든 제미나이 스킬에 하루 일을 쭉 말한다 → md 한 장을 받는다.
-2. 그 md를 `내 문서\my-skills-data\personal-daily-intake\inbox\YYYY-MM-DD.md`로 저장한다.
+2. 그 대화 화면에서 즐겨찾기 **'제미나이 내보내기'**(북마클릿)를 누른다 → 다운로드 폴더에 `하루기록-YYYY-MM-DD.md`(정리본)와
+   `gemini-날짜-제목.json`(내가 쓴 말·답 전부)이 생긴다. `plan`·`apply` 가 다운로드 폴더에서 집어 inbox·대화 보관 폴더(`gemini\`)로 옮긴다.
+   북마클릿 만들기: `python intake.py bookmarklet` → 클립보드의 주소를 Chrome 즐겨찾기 URL 칸에 붙여 넣기(한 번만).
+   북마클릿 없이: md 를 복사해 `내 문서\my-skills-data\personal-daily-intake\inbox\YYYY-MM-DD.md`로 저장해도 된다.
 3. Claude에게 "하루 기록 저장해줘" → Claude가 `plan`으로 표를 보여 준다 → 교사가 동의하면 `apply`.
 
 ## 언제 쓰나
@@ -62,5 +65,6 @@ python intake.py apply 파일.md --skip notion   # 인터넷·권한 문제로 �
 - 볼트 파일은 직접 커밋하지 않는다. 이창수의 Obsidian Git 자동 백업이 올린다(볼트 작업자 가이드).
 
 ## 문서
+- [gemini_bookmarklet.js](gemini_bookmarklet.js) — 제미나이 대화 내보내기 북마클릿 원본(`python intake.py bookmarklet` 이 한 줄로 만듦)
 - [gem_prompt.md](gem_prompt.md) — 제미나이 스킬 지침(형식을 바꾸면 `intake.py`도)
 - [ISSUES.md](ISSUES.md) — 문제·해결 기록, 진행 중인 일

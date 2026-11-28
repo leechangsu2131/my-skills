@@ -564,13 +564,21 @@ def find_input(hwnd: int, hint: str = ""):
 def focus_input(hwnd: int, control) -> bool:
     """입력칸에 초점을 주고(필요하면 화면이 그 칸까지 내려감) 글 끝으로 간다. 초점이 정말 그 칸이면 True."""
     auto, client = _uia()
-    try:
-        control.SetFocus()
-    except Exception:
-        return False
-    time.sleep(0.2)
-    focused = auto.GetFocusedControl()
-    if not focused or not client.CompareElements(focused.Element, control.Element):
+    for _ in range(3):   # 초점이 옮겨지는 데 시간이 걸릴 때가 있어 몇 번 확인
+        try:
+            control.SetFocus()
+        except Exception:
+            time.sleep(0.3)
+            continue
+        for _ in range(6):
+            time.sleep(0.15)
+            focused = auto.GetFocusedControl()
+            if focused and client.CompareElements(focused.Element, control.Element):
+                break
+        else:
+            continue
+        break
+    else:
         return False
     if win32gui.GetForegroundWindow() != hwnd:
         return False
@@ -650,8 +658,14 @@ def describe_macro(steps: list[tuple]) -> str:
             out.append(f"글 '{body[:20]}{'…' if len(body) > 20 else ''}'")
         elif step[0] == "keys":
             out.append(f"[{step[3]}]")
-        else:
+        elif step[0] == "wait":
             out.append(f"{step[1]:g}초 대기")
+        elif step[0] == "focus_input":
+            out.append(f"입력칸 찾기('{step[1]}')" if step[1] else "입력칸 찾기")
+        elif step[0] == "check_address":
+            out.append("주소창 확인")
+        else:
+            out.append(str(step[0]))
     return " → ".join(out)
 
 
@@ -1869,10 +1883,15 @@ class Manager(QMainWindow):
                         press_keys(step[1], step[2])
                         time.sleep(0.1)
                     elif step[0] == "focus_input":
-                        try:
-                            hit = find_input(hwnd, step[1])
-                        except Exception:
-                            hit = None
+                        hit = None
+                        for _ in range(3):   # 막 앞으로 온 창은 페이지 정보가 늦게 잡힐 때가 있어 몇 번 찾아본다
+                            try:
+                                hit = find_input(hwnd, step[1])
+                            except Exception:
+                                hit = None
+                            if hit:
+                                break
+                            time.sleep(0.4)
                         if not hit or not focus_input(hwnd, hit[0]):  # 칸을 못 찾으면 그 창은 아무것도 안 넣음
                             no_input.append(label)
                             ok = False
@@ -1883,7 +1902,7 @@ class Manager(QMainWindow):
                             no_address.append(label)
                             ok = False
                             break
-                    else:  # 대기
+                    elif step[0] == "wait":
                         end = time.time() + step[1]
                         while time.time() < end and not cancelled:
                             time.sleep(0.1)

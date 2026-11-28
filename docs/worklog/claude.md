@@ -27,3 +27,4 @@
 - 2026-11-27 21:34 T57 (teacherlesson-assistant) 시작 (브랜치 task/T57-easy-korean-assistant)
 - 2026-11-27 21:53 S2 (teacherlesson-assistant) 시작 (브랜치 task/S2-review-pr179-181-183)
 - 2026-11-28 11:05 S2 (teacherlesson-assistant) 시작 (브랜치 task/S2-teacherlesson-assistant-review-pr189-192)
+- 2026-11-28 그만둠 — S2(#189·#192 검토) 잡자마자 대상이 정리됨: #192 는 이미 합쳐지고 검토 글(task-PR192-195…)이 있고, #189 는 작성자가 검토를 반영해 고침(코멘트 2건). 다음에 할 것: 검토 글이 없는 새 PR(#201 T115, #199)

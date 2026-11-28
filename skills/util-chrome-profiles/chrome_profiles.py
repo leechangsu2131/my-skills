@@ -488,6 +488,85 @@ def open_instructions(hwnd: int, wait: float = 6.0):
     return None
 
 
+PROJECTS_URL = "https://claude.ai/projects"
+
+
+def _bare(url: str) -> str:
+    return url.split("://", 1)[-1].rstrip("/")
+
+
+def navigate(hwnd: int, url: str, ready=None, timeout: float = 20.0) -> bool:
+    """이 창 지금 탭을 url 로(Ctrl+L → 주소창인지 확인 → 붙여넣기 → Enter). ready() 가 참이 될 때까지 기다린다.
+    클립보드를 쓰므로 부르는 쪽에서 되돌린다."""
+    if not activate(hwnd):
+        return False
+    time.sleep(0.2)
+    press_keys([win32con.VK_CONTROL], ord("L"))
+    time.sleep(0.25)
+    if not focus_in_browser_ui(hwnd):
+        return False
+    set_clipboard(url)
+    if win32gui.GetForegroundWindow() != hwnd:
+        return False
+    press_ctrl_v()
+    time.sleep(0.1)
+    if win32gui.GetForegroundWindow() != hwnd:
+        return False
+    press_keys([], win32con.VK_RETURN)
+    end = time.time() + timeout
+    while time.time() < end:
+        time.sleep(0.4)
+        if _bare(page_url(hwnd) or "") == _bare(url) and (ready is None or ready()):
+            return True
+    return False
+
+
+def pick_project(hwnd: int, name: str = "", wait: float = 15.0):
+    """claude.ai/projects 목록에서 프로젝트 하나: name 이 있으면 이름에 그 낱말이 든 것, 없으면 맨 위.
+    (주소, 이름) 또는 None. 왼쪽 사이드바보다 가운데 목록을 먼저 본다."""
+    auto, client = _uia()
+    left, _, right, _ = win32gui.GetWindowRect(hwnd)
+    end = time.time() + wait
+    while time.time() < end:
+        doc = auto.ControlFromHandle(hwnd).Element.FindFirst(4, client.CreatePropertyCondition(
+            auto.PropertyId.ControlTypeProperty, auto.ControlType.DocumentControl))
+        found = doc.FindAll(4, client.CreatePropertyCondition(
+            auto.PropertyId.ControlTypeProperty, auto.ControlType.HyperlinkControl)) if doc else None
+        links = []
+        for i in range(found.Length if found else 0):
+            control = auto.Control.CreateControlFromElement(found.GetElement(i))
+            try:
+                value = control.GetValuePattern().Value or ""
+            except Exception:
+                continue
+            if "/project/" not in value:
+                continue
+            if name and name.lower() not in (control.Name or "").lower():
+                continue
+            rect = control.BoundingRectangle
+            in_sidebar = rect.left < left + (right - left) * 0.2
+            links.append(((in_sidebar, rect.top, rect.left), value, control.Name or ""))
+        if links:
+            _, value, title = min(links, key=lambda x: x[0])
+            return (value if "://" in value else "https://" + value.lstrip("/")), title
+        time.sleep(0.5)
+    return None
+
+
+def go_back(hwnd: int, original: str, count: int) -> bool:
+    """우리가 옮겨 간 만큼 '뒤로'(Alt+←). 그래도 원래 주소가 아니면 원래 주소로 직접 간다."""
+    if not count or not activate(hwnd):
+        return False
+    for _ in range(count):
+        if win32gui.GetForegroundWindow() != hwnd:
+            return False
+        press_keys([win32con.VK_MENU], win32con.VK_LEFT)
+        time.sleep(1.2)
+    if _bare(page_url(hwnd) or "") == _bare(original):
+        return True
+    return navigate(hwnd, "https://" + _bare(original))
+
+
 def close_instructions(hwnd: int, save: bool) -> bool:
     button = _by_name(hwnd, INSTR_SAVE if save else INSTR_CANCEL, "ButtonControl")
     if not button:
@@ -835,6 +914,13 @@ class InstructionsDialog(QDialog):
         self.only_bracket = QCheckBox("첫 줄이 [ 로 시작하는 창만 (작업자 이름 줄이 있는 프로젝트만)")
         self.only_bracket.setChecked(True)
         self.preview_only = QCheckBox("미리보기만 — 글칸에 넣어 확인하고 저장하지 않고 취소")
+        self.project_name = QLineEdit()
+        self.project_name.setPlaceholderText("비우면: 지금 보는 프로젝트, 아니면 프로젝트 목록 맨 위")
+        self.go_back = QCheckBox("끝나면 원래 보던 페이지로 돌아가기")
+        self.go_back.setChecked(True)
+        project_row = QHBoxLayout()
+        project_row.addWidget(QLabel("프로젝트 이름에 든 낱말:"))
+        project_row.addWidget(self.project_name)
         buttons = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel)
         buttons.button(QDialogButtonBox.StandardButton.Ok).setText("다음: 지금 지침 읽기")
         buttons.accepted.connect(self.accept)
@@ -844,7 +930,8 @@ class InstructionsDialog(QDialog):
         keep_row.addWidget(self.keep)
         keep_row.addWidget(QLabel("줄은 그대로 두고, 그 아래를 아래 글로 바꿉니다."))
         keep_row.addStretch()
-        guide = QLabel(f"대상: {scope}\n각 창은 claude.ai 프로젝트 페이지(오른쪽에 '지침' 카드)를 열어 둔 상태여야 합니다.\n"
+        guide = QLabel(f"대상: {scope}\n각 창이 claude.ai 의 아무 페이지(채팅 등)에 있으면 됩니다 — 프로젝트 페이지가 아니면 "
+                       "프로젝트 목록(claude.ai/projects)으로 가서 프로젝트를 골라 들어갑니다. claude.ai 가 아닌 창은 건너뜁니다.\n"
                        "다음을 누르면 먼저 창마다 지금 지침을 읽어 무엇이 바뀌는지 보여 주고, 한 번 더 묻습니다.")
         guide.setWordWrap(True)
         box = QVBoxLayout(self)
@@ -855,6 +942,8 @@ class InstructionsDialog(QDialog):
         box.addWidget(self.drop_first)
         box.addWidget(self.only_bracket)
         box.addWidget(self.preview_only)
+        box.addLayout(project_row)
+        box.addWidget(self.go_back)
         box.addWidget(buttons)
         self.update_note()
         self.body.setFocus()
@@ -1193,6 +1282,12 @@ class Manager(QMainWindow):
         thumb_bar = QHBoxLayout()
         thumb_bar.addWidget(self.thumb_count)
         thumb_bar.addStretch()
+        self.overdue_button = QPushButton()
+        self.overdue_button.setToolTip("작업 알림 시간이 지난 프로필·그룹의 열린 창을 한꺼번에 닫고 그 작업 시간도 멈춘다(닫기 전에 묻는다)")
+        self.overdue_button.setStyleSheet("QPushButton { color: #ff8080; }")
+        self.overdue_button.clicked.connect(lambda: self.close_work_windows(self.overdue_keys()))
+        self.overdue_button.hide()
+        thumb_bar.addWidget(self.overdue_button)
         thumb_bar.addWidget(self.close_thumbs_button)
         thumb_bar.addWidget(clear_button)
         self.pause_summary = QLabel()   # 다시 쓸 시각 한눈에(창을 하나하나 안 봐도 되게)
@@ -2185,6 +2280,49 @@ class Manager(QMainWindow):
             text += f" · 알림 {fmt_hm(work['alert_min'] * 60)}" + (" 지남" if left <= 0 else f"까지 {fmt_long(left)}")
         return text
 
+    def overdue_keys(self, now: float | None = None) -> list[str]:
+        """알림 시간이 지난 작업(프로필·그룹·기타 창 키)."""
+        now = now or time.time()
+        return [k for k, w in self.cfg["work"].items()
+                if w.get("alert_min") and now - w["start"] >= w["alert_min"] * 60]
+
+    def work_windows(self, wkey: str) -> list[int]:
+        """작업 키에 딸린 열린 창: 프로필이면 그 프로필 창, 그룹이면 그 그룹 안 모든 프로필 창."""
+        if wkey.startswith("group:"):
+            name = wkey[6:]
+            keys = set()
+            for i in range(self.tree.topLevelItemCount()):
+                group = self.tree.topLevelItem(i)
+                if group is not self.other_group and group.text(0) == name:
+                    keys = {group.child(j).data(0, ROLE) for j in range(group.childCount())}
+        else:
+            keys = {wkey}
+        return [h for h in sorted(self.windows, key=self.sort_key) if self.windows[h]["key"] in keys]
+
+    def close_work_windows(self, wkeys: list[str]):
+        """작업들의 열린 창을 확인 뒤 닫고, 그 작업 시간도 멈춘다."""
+        now = time.time()
+        wkeys = [k for k in wkeys if k in self.cfg["work"]]
+        targets, lines = [], []
+        for wkey in wkeys:
+            hwnds = [h for h in self.work_windows(wkey) if h not in targets]
+            targets += hwnds
+            lines.append(f"{self.work_label(wkey)} — {fmt_long(now - self.cfg['work'][wkey]['start'])} 작업, 창 {len(hwnds)}개")
+        if not wkeys:
+            QMessageBox.information(self, "작업 시간", "시간이 다 된 작업이 없습니다.")
+            return
+        message = ("이 작업들의 열린 창을 닫고 작업 시간도 멈출까요?\n\n" + "\n".join(lines[:12]) +
+                   (f"\n… 외 {len(lines) - 12}개" if len(lines) > 12 else "") +
+                   f"\n\n닫을 창 모두 {len(targets)}개 (닫은 탭은 그 프로필 창에서 Ctrl+Shift+T 로 되살릴 수 있습니다)")
+        if QMessageBox.question(self, "작업 시간 다 된 창 닫기", message) != QMessageBox.StandardButton.Yes:
+            return
+        self.close_now(targets)
+        for wkey in wkeys:
+            self.cfg["work"].pop(wkey, None)
+        self.save()
+        self.refresh_work(time.time())
+        self.statusBar().showMessage(f"작업 {len(wkeys)}개를 멈추고 창 {len(targets)}개에 닫기를 보냈습니다.", 15000)
+
     def refresh_work(self, now: float):
         """트리 '작업' 칸을 고치고, 정한 시간이 지난 작업은 한 번 알린다."""
         work = self.cfg["work"]
@@ -2196,6 +2334,13 @@ class Manager(QMainWindow):
                 self.tray.showMessage(f"⏱ {self.work_label(wkey)}", message)
                 self.popup.show_text(f"⏱ {self.work_label(wkey)}\n{message}", 15)
                 QApplication.beep()
+        overdue = self.overdue_keys(now)
+        if overdue:
+            count = sum(len(self.work_windows(k)) for k in overdue)
+            self.overdue_button.setText(f"⏱ 시간 다 된 창 닫기 ({count})")
+            self.overdue_button.show()
+        else:
+            self.overdue_button.hide()
         self.building = True
         try:
             items = [self.tree.topLevelItem(i) for i in range(self.tree.topLevelItemCount())]
@@ -2221,6 +2366,7 @@ class Manager(QMainWindow):
             info = menu.addAction(self.work_text(wkey, now))
             info.setEnabled(False)
             menu.addAction("작업 시간 멈춤", lambda: self.stop_work(wkey))
+            menu.addAction("이 작업의 창 모두 닫고 작업 시간 멈춤", lambda: self.close_work_windows([wkey]))
             menu.addAction("0부터 다시 재기", lambda: self.start_work(wkey, self.cfg["work"][wkey].get("alert_min", 0) / 60))
             sub = menu.addMenu("알림 바꾸기")
         else:
@@ -2321,17 +2467,60 @@ class Manager(QMainWindow):
             return
         body, keep = dialog.final_body(), dialog.keep.value()
         only_bracket, preview_only = dialog.only_bracket.isChecked(), dialog.preview_only.isChecked()
-
-        # 1) 읽기: 창마다 편집 창을 열어 지금 지침을 읽고 취소로 닫는다(바꾸지 않음)
-        plans, skipped = [], []
-        QApplication.setOverrideCursor(Qt.CursorShape.WaitCursor)
+        project_name, want_back = dialog.project_name.text().strip(), dialog.go_back.isChecked()
+        moved: dict[int, list] = {}   # hwnd → [원래 주소, 옮겨 간 횟수]
+        old_clip = get_clipboard()
         try:
-            for hwnd in windows:
+            self.run_replace_instructions(windows, body, keep, only_bracket, preview_only, project_name, moved)
+        finally:
+            back_failed = []
+            if want_back:
+                for hwnd, (original, count) in moved.items():
+                    try:
+                        if win32gui.IsWindow(hwnd) and not go_back(hwnd, original, count):
+                            back_failed.append(self.label(hwnd))
+                    except Exception:
+                        back_failed.append(self.label(hwnd))
+            time.sleep(0.2)
+            if old_clip is not None:
+                set_clipboard(old_clip)
+            activate(int(self.winId()))
+            if back_failed:
+                self.statusBar().showMessage(f"원래 페이지로 못 돌아간 창: {', '.join(back_failed)}", 20000)
+
+    def reach_project(self, hwnd: int, name: str, moved: dict) -> tuple[str | None, str]:
+        """창이 claude.ai 프로젝트 페이지에 있게 한다(아니면 목록에서 골라 들어감). (프로젝트 주소, 못 간 까닭)."""
+        url = page_url(hwnd) or ""
+        if "claude.ai" not in url:
+            return None, "claude.ai 창이 아님"
+        if "claude.ai/project/" in url and not name:
+            return url, ""
+        record = moved.setdefault(hwnd, [url, 0])
+        if not navigate(hwnd, PROJECTS_URL):
+            return None, "프로젝트 목록으로 못 감"
+        record[1] += 1
+        target = pick_project(hwnd, name)
+        if not target:
+            return None, f"목록에서 프로젝트를 못 찾음{f' (이름: {name})' if name else ''}"
+        project_url, title = target
+        if not navigate(hwnd, project_url, ready=lambda: _by_name(hwnd, INSTR_EDIT_BUTTON, "ButtonControl")):
+            return None, f"'{title}' 프로젝트로 못 감"
+        record[1] += 1
+        return page_url(hwnd) or "", ""
+
+    def run_replace_instructions(self, windows, body, keep, only_bracket, preview_only, project_name, moved):
+        # 1) 읽기: 창마다 프로젝트로 가서 편집 창을 열어 지금 지침을 읽고 취소로 닫는다(바꾸지 않음)
+        plans, skipped = [], []
+        progress = self.progress(f"창 {len(windows)}개의 프로젝트 지침을 읽는 중… (멈추려면 '멈추기')", len(windows))
+        try:
+            for index, hwnd in enumerate(windows):
+                if not self.pump(progress, index):
+                    return
                 label = self.label(hwnd)
                 try:
-                    url = page_url(hwnd) or ""
-                    if "claude.ai/project/" not in url:
-                        skipped.append(f"{label} — 프로젝트 페이지가 아님")
+                    url, why = self.reach_project(hwnd, project_name, moved)
+                    if not url:
+                        skipped.append(f"{label} — {why}")
                         continue
                     field = open_instructions(hwnd)
                     if not field:
@@ -2352,7 +2541,7 @@ class Manager(QMainWindow):
                     continue
                 plans.append((hwnd, label, current, new, url))
         finally:
-            QApplication.restoreOverrideCursor()
+            progress.close()
         if not plans:
             QMessageBox.information(self, "프로젝트 지침", "바꿀 창이 없습니다.\n\n" + "\n".join(skipped[:15]))
             return
@@ -2368,7 +2557,6 @@ class Manager(QMainWindow):
 
         # 2) 바꾸기: 페이지·지금 지침이 1단계와 같은지 다시 확인 → 글칸 전체 선택 → 붙여넣기 → 글칸 확인
         #    → 저장(또는 원래 글로 되돌리고 취소) → 새로 고쳐 다시 읽어 확인
-        old_clip = get_clipboard()
         done, failed = [], []
         progress = self.progress(f"창 {len(plans)}개의 지침을 바꾸는 중… (멈추려면 '멈추기')", len(plans))
         try:
@@ -2420,11 +2608,7 @@ class Manager(QMainWindow):
                 except Exception as e:
                     failed.append(f"{label} — 오류 {e.__class__.__name__}")
         finally:
-            progress.close()
-            time.sleep(0.2)
-            if old_clip is not None:
-                set_clipboard(old_clip)
-            activate(int(self.winId()))
+            progress.close()   # 클립보드 되돌리기·원래 페이지로 돌아가기는 replace_instructions 가 한다
         verb = "미리보기했습니다(저장 안 함)" if preview_only else "바꾸고 저장해 확인했습니다"
         QMessageBox.information(self, "프로젝트 지침",
                                 f"{len(done)}개 창의 지침을 {verb}." +

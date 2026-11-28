@@ -70,7 +70,9 @@ def find_exe(browser: dict) -> str | None:
 
 def load_profiles() -> dict[str, dict]:
     """설치된 브라우저마다 Local State 에서 프로필을 읽는다.
-    {키: {"name": 표시 이름, "folder": 폴더명, "exe": 실행 파일, "browser": 브라우저 정보}}"""
+    {키: {"name": 표시 이름, "folder": 폴더명, "exe": 실행 파일, "browser": 브라우저 정보, "sid": 저장용 이름}}
+    키(폴더명, Edge 는 "edge:폴더명")는 이 PC 안에서만 뜻이 있다. 설정 파일에는 PC 가 달라도 같은 계정이면 같은
+    sid("acct:이메일", Edge 는 "edge:acct:이메일")로 적는다. 로그인 안 한 프로필은 폴더 키를 그대로 쓴다."""
     out = {}
     for browser in BROWSERS:
         exe, state = find_exe(browser), browser["user_data"] / "Local State"
@@ -80,13 +82,21 @@ def load_profiles() -> dict[str, dict]:
         for folder in sorted(cache, key=_natural):
             info = cache[folder]
             name = info.get("name") or folder
-            email = info.get("user_name")
+            email = (info.get("user_name") or "").strip()
             name = f"{name} ({email})" if email else name
             if browser["prefix"]:
                 name = f"{browser['label']} · {name}"
-            out[browser["prefix"] + folder] = {"name": name, "folder": folder, "exe": exe, "browser": browser}
+            key = browser["prefix"] + folder
+            sid = f"{browser['prefix']}acct:{email.lower()}" if email else key
+            out[key] = {"name": name, "folder": folder, "exe": exe, "browser": browser, "sid": sid}
     if not out:
         raise FileNotFoundError("Chrome·Edge 를 찾지 못했습니다.")
+    seen: dict[str, int] = {}
+    for info in out.values():
+        seen[info["sid"]] = seen.get(info["sid"], 0) + 1
+    for key, info in out.items():  # 같은 계정이 두 프로필에 있으면(드묾) 헷갈리지 않게 폴더 키로
+        if seen[info["sid"]] > 1:
+            info["sid"] = key
     return out
 
 
@@ -568,7 +578,7 @@ def check() -> None:
     print(f"설정 파일: {CONFIG}")
     print(f"프로필 {len(profiles)}개")
     for key, info in profiles.items():
-        print(f"  {key:16} {info['name']}")
+        print(f"  {key:16} {info['name']}   [설정 저장 이름: {info['sid']}]")
     print("열린 브라우저 창")
     for hwnd in chrome_windows():
         aumid = window_aumid(hwnd)
@@ -908,9 +918,13 @@ class Manager(QMainWindow):
         for name, default in DEFAULT_HOTKEYS.items():
             self.cfg["hotkeys"].setdefault(name, default)
         self.cfg.setdefault("pause_done", {})   # 이미 알린 일시 중지 줄(같은 안내가 남아 있어도 내일 시각으로 다시 적지 않게)
+        self.key_of_sid = {info["sid"]: key for key, info in self.profile_info.items()}
+        self.foreign = {"groups": {}, "start_url": {}, "work": {}}   # 이 PC 에 없는 계정 설정(지우지 않고 그대로 저장)
+        self.cfg_from_file()
         self.popup = Popup()
         self.pause_path = usage_pause.store_path()
-        self.pauses = usage_pause.load(self.pause_path)   # {이름(프로필 키 등): {resume, seen, text}}
+        self.pauses = usage_pause.load(self.pause_path)   # {sid(또는 손으로 적은 이름): {resume, seen, text}}
+        self.migrate_pause_names()
         self.scanner = TextScanner()
         self.scanner.done.connect(self.on_texts)
         self.other_group: QTreeWidgetItem | None = None
@@ -1177,6 +1191,8 @@ class Manager(QMainWindow):
             old, new = item.data(0, NAME_ROLE), item.text(0)
             if old and old != new and f"group:{old}" in self.cfg["work"]:
                 self.cfg["work"][f"group:{new}"] = self.cfg["work"].pop(f"group:{old}")
+            if old and old != new and old in self.foreign["groups"]:  # 다른 PC 계정도 새 이름 그룹으로
+                self.foreign["groups"][new] = self.foreign["groups"].pop(old)
             item.setData(0, NAME_ROLE, new)
             self.save()
 
@@ -1187,6 +1203,71 @@ class Manager(QMainWindow):
             children = [item] if item.data(0, ROLE) else [item.child(i) for i in range(item.childCount())]
             result += [c.data(0, ROLE) for c in children if c.data(0, ROLE) not in result]
         return result
+
+    # ───── 설정 파일 ↔ 이 PC 키 (다른 PC 와 함께 써도 계정 기준으로 맞게) ─────
+    def sid(self, key: str) -> str:
+        """이 PC 키 → 설정 파일에 적는 이름. 그룹("group:…")·기타 창("@…")은 그대로."""
+        info = self.profile_info.get(key)
+        return info["sid"] if info else key
+
+    def local_key(self, sid: str) -> str | None:
+        """설정 파일 이름 → 이 PC 키. 이 PC 에 없는 계정이면 None."""
+        if sid in self.key_of_sid:
+            return self.key_of_sid[sid]
+        if sid in self.profile_info:          # 예전(폴더 이름으로 적던) 설정 — 이 PC 에서 처음 옮길 때
+            return sid
+        if sid.startswith(("group:", "@")):
+            return sid
+        return None
+
+    def cfg_from_file(self):
+        """파일의 sid 를 이 PC 키로 바꿔 self.cfg 에 두고, 이 PC 에 없는 계정 설정은 self.foreign 에 떼어 둔다."""
+        for name in ("start_url", "work"):
+            local = {}
+            for sid, value in self.cfg.get(name, {}).items():
+                key = self.local_key(sid)
+                if key:
+                    local[key] = value
+                else:
+                    self.foreign[name][sid] = value
+            self.cfg[name] = local
+        groups = []
+        for group in self.cfg.get("groups", []):
+            mine, others = [], []
+            for sid in group.get("profiles", []):
+                key = self.local_key(sid)
+                (mine if key else others).append(key or sid)
+            groups.append({"name": group["name"], "profiles": mine})
+            if others:
+                self.foreign["groups"][group["name"]] = others
+        self.cfg["groups"] = groups
+
+    def cfg_to_file(self) -> dict:
+        out = dict(self.cfg)
+        out["groups"] = [{"name": g["name"],
+                          "profiles": [self.sid(k) for k in g["profiles"]] + self.foreign["groups"].get(g["name"], [])}
+                         for g in self.cfg["groups"]]
+        names = {g["name"] for g in self.cfg["groups"]}
+        out["groups"] += [{"name": n, "profiles": sids} for n, sids in self.foreign["groups"].items() if n not in names]
+        for name in ("start_url", "work"):
+            out[name] = {**self.foreign[name], **{self.sid(k): v for k, v in self.cfg[name].items()}}
+        out["id_version"] = 2   # 2 = 계정(이메일) 기준
+        return out
+
+    def migrate_pause_names(self):
+        """pauses.json 의 예전 폴더 이름을 sid 로."""
+        changed = False
+        for name in list(self.pauses):
+            key = self.local_key(name)
+            if key and self.sid(key) != name and self.sid(key) not in self.pauses:
+                self.pauses[self.sid(key)] = self.pauses.pop(name)
+                changed = True
+        for name in list(self.cfg["pause_done"]):
+            key = self.local_key(name)
+            if key and self.sid(key) != name:
+                self.cfg["pause_done"][self.sid(key)] = self.cfg["pause_done"].pop(name)
+        if changed:
+            self.save_pauses()
 
     def save(self, *_):
         if self.building:
@@ -1201,7 +1282,7 @@ class Manager(QMainWindow):
         self.cfg.update(groups=groups, idle_sec=self.idle_spin.value(),
                         timer_min=self.timer_spin.value(), filter=self.filter_box.isChecked(),
                         work_alert_hours=self.work_spin.value(), pause_scan=self.pause_box.isChecked())
-        CONFIG.write_text(json.dumps(self.cfg, ensure_ascii=False, indent=2), encoding="utf-8")
+        CONFIG.write_text(json.dumps(self.cfg_to_file(), ensure_ascii=False, indent=2), encoding="utf-8")
 
     def add_group(self, *_):
         name, ok = QInputDialog.getText(self, "그룹 추가", "그룹 이름:")
@@ -1216,6 +1297,9 @@ class Manager(QMainWindow):
             children = group.takeChildren()
             self.tree.takeTopLevelItem(self.tree.indexOfTopLevelItem(group))
             self.group_item(UNGROUPED).addChildren(children)
+            others = self.foreign["groups"].pop(group.text(0), [])  # 다른 PC 계정도 미분류로
+            if others:
+                self.foreign["groups"].setdefault(UNGROUPED, []).extend(others)
         if groups:
             self.save()
 
@@ -1464,7 +1548,7 @@ class Manager(QMainWindow):
                                lambda: self.stop_work(wkey))
             else:
                 menu.addAction("이 프로필 작업 시간 재기 시작", lambda: self.start_work(wkey))
-            if wkey in self.pauses:
+            if self.sid(wkey) in self.pauses:
                 menu.addAction(f"다시 쓸 시각 지우기 ({self.pause_text(wkey, datetime.now())})",
                                lambda: self.clear_pause(wkey))
             else:
@@ -1612,12 +1696,12 @@ class Manager(QMainWindow):
 
     def pause_of(self, key: str) -> datetime | None:
         try:
-            return datetime.fromisoformat(self.pauses[key]["resume"])
+            return datetime.fromisoformat(self.pauses[self.sid(key)]["resume"])
         except (KeyError, ValueError):
             return None
 
     def record_pause(self, key: str, line: str, announce: bool = True) -> datetime | None:
-        resume = usage_pause.record(self.pause_path, key, line)
+        resume = usage_pause.record(self.pause_path, self.sid(key), line)
         self.pauses = usage_pause.load(self.pause_path)
         if resume and announce:
             label = self.work_label(key)
@@ -1636,8 +1720,8 @@ class Manager(QMainWindow):
             if self.pause_box.isChecked():
                 line = find_pause_line(text)
                 norm = " ".join(line.split())[:120] if line else None
-                already = self.pauses.get(key, {}).get("text")
-                if line and norm != already and norm != self.cfg["pause_done"].get(key):
+                already = self.pauses.get(self.sid(key), {}).get("text")
+                if line and norm != already and norm != self.cfg["pause_done"].get(self.sid(key)):
                     self.record_pause(key, line)
             if st["text_watch"]:
                 lowered = text.lower()
@@ -1650,13 +1734,13 @@ class Manager(QMainWindow):
         for name, resume, ok in usage_pause.due(self.pauses, now_dt):
             if not ok:
                 continue
-            label = self.work_label(name)
+            label = self.work_label(self.local_key(name) or name)
             message = f"{resume:%H:%M} 이 됐습니다. 이제 다시 쓸 수 있어요."
             self.tray.showMessage(f"▶ {label}", message)
             self.popup.show_text(f"▶ {label}\n{message}", 15)
             QApplication.beep()
             for st in self.windows.values():
-                if st["key"] == name:
+                if self.sid(st["key"]) == name:
                     st["item"].setBackground(ALERT_BG)
             self.cfg["pause_done"][name] = self.pauses[name].get("text", "")
             del self.pauses[name]
@@ -1679,9 +1763,10 @@ class Manager(QMainWindow):
             QMessageBox.information(self, "다시 쓸 시각", "시각을 못 읽었어요. '오후 12:10', '14:20', '2시간 후' 처럼 적어 주세요.")
 
     def clear_pause(self, key: str):
-        if key in self.pauses:
-            self.cfg["pause_done"][key] = self.pauses[key].get("text", "")
-            del self.pauses[key]
+        name = self.sid(key)
+        if name in self.pauses:
+            self.cfg["pause_done"][name] = self.pauses[name].get("text", "")
+            del self.pauses[name]
             self.save_pauses()
             self.save()
 
@@ -1748,6 +1833,8 @@ class Manager(QMainWindow):
             return f"그룹 {wkey[6:]}"
         if wkey.startswith("@"):
             return f"기타 · {self.other_name(wkey[1:])}"
+        if "acct:" in wkey and wkey not in self.profiles:   # 이 PC 에 없는 계정
+            return wkey.replace("edge:acct:", "Edge · ").replace("acct:", "")
         return self.profiles.get(wkey, wkey)
 
     def group_of(self, key: str) -> str | None:
@@ -1904,7 +1991,7 @@ class Manager(QMainWindow):
             lines.append("\n다시 쓸 시각:" if lines else "다시 쓸 시각:")
             for name, resume, ok in usage_pause.due(self.pauses, now_dt):
                 left = "지금 가능" if ok else f"{fmt_long((resume - now_dt).total_seconds())} 남음"
-                lines.append(f"  {'▶' if ok else '⏸'} {self.work_label(name)}  {resume:%H:%M} ({left})")
+                lines.append(f"  {'▶' if ok else '⏸'} {self.work_label(self.local_key(name) or name)}  {resume:%H:%M} ({left})")
         if not lines:
             lines = ["재고 있는 작업 시간이 없습니다.",
                      f"Chrome 창에서 {self.cfg['hotkeys']['toggle']} 또는 매니저 트리 오른쪽 클릭으로 시작합니다."]

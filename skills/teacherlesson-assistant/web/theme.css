@@ -1,0 +1,64 @@
+/* 어두운 화면(T110). html[data-theme="dark"] 일 때만 걸리며 색만 바꾼다(크기·배치는 index.html·mobile.css 그대로). */
+
+/* 화면 설정 칸 */
+body.focus-mode #layoutBox{display:none}
+.layout-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:7px 0;border-top:1px solid var(--line)}
+.layout-row:first-child{margin-top:8px}
+.layout-row select{font:inherit;padding:4px 8px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink)}
+
+html[data-theme="dark"]{color-scheme:dark;
+  --bg:#111114;--card:#1c1c20;--ink:#ececf0;--sub:#a2a2ad;--line:#34343c;--fill:#2a2a31;
+  --acc:#2f8fef;--acc-soft:#17324f;--ok:#4cc07b;--warn:#f0b44c;--warn-soft:#3a2d12;--red:#ff6b60;--red-soft:#42201d;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 4px 16px rgba(0,0,0,.3)}
+html[data-theme="dark"] body.focus-mode{--bg:#111114;--card:#1c1c20;--ink:#ececf0;--sub:#a2a2ad;--line:#34343c;--fill:#2a2a31;--acc:#6b80d9;--acc-soft:#262d4d;--warn:#f0b44c;--warn-soft:#3a2d12}
+
+html[data-theme="dark"] header{background:rgba(24,24,28,.9)}
+html[data-theme="dark"] #tabs{background:#25252b}
+html[data-theme="dark"] #tabs button.on{background:#3a3a44;color:var(--ink)}
+html[data-theme="dark"] button.ghost:hover,
+html[data-theme="dark"] .adj button,
+html[data-theme="dark"] #heroCompress{background:rgba(255,255,255,.1)}
+html[data-theme="dark"] #focusToggle{background:var(--acc);color:#fff}
+
+/* 흰 바탕으로 고정된 곳 */
+html[data-theme="dark"] textarea,
+html[data-theme="dark"] input,
+html[data-theme="dark"] select{background:#222228;color:var(--ink);border-color:var(--line)}
+html[data-theme="dark"] .overdue-item button,
+html[data-theme="dark"] .ed-step,
+html[data-theme="dark"] .pick,
+html[data-theme="dark"] .pick button,
+html[data-theme="dark"] #phones,
+html[data-theme="dark"] #stepFinish,
+html[data-theme="dark"] #focusPrepare,
+html[data-theme="dark"] #focusRail,
+html[data-theme="dark"] #focusAssist,
+html[data-theme="dark"] #savedRecordings,
+html[data-theme="dark"] .focus-ctl{background:var(--card);color:var(--ink)}
+html[data-theme="dark"] .overdue-banner,
+html[data-theme="dark"] .overdue-item{border-color:#6b5420}
+html[data-theme="dark"] .hero-detail,
+html[data-theme="dark"] .flow-detail,
+html[data-theme="dark"] .focus-box,
+html[data-theme="dark"] .focus-card,
+html[data-theme="dark"] .focus-stage:hover,
+html[data-theme="dark"] #focusSavedRecordings,
+html[data-theme="dark"] .focus-ctl.start{background:#26262d}
+html[data-theme="dark"] .hero-detail.expected{background:#1b2f24}
+html[data-theme="dark"] .hero-detail.support{background:#332a16}
+html[data-theme="dark"] .ulist li.now,
+html[data-theme="dark"] .pick button.now{background:#4a3d12;color:var(--ink)}
+html[data-theme="dark"] .pick button.done{background:#202026;color:#8a8a94}
+html[data-theme="dark"] .pick button:disabled{color:#6c6c76}
+html[data-theme="dark"] body.focus-mode #heroDo{color:#c3c7da}
+html[data-theme="dark"] .focus-seg{background:#34384a}
+html[data-theme="dark"] .focus-seg.past{background:#4f5a94}
+html[data-theme="dark"] .focus-seg.now{background:var(--acc)}
+html[data-theme="dark"] .focus-bar{background:#34384a}
+html[data-theme="dark"] #focusRecord{background:#3a2226;border-color:#6d363d;color:#ff9aa2}
+html[data-theme="dark"] #focusRecord.on,
+html[data-theme="dark"] .focus-ctl.on{background:#a93740;border-color:#a93740;color:#fff}
+html[data-theme="dark"] .focus-ctl.primary,
+html[data-theme="dark"] .focus-memos button.on,
+html[data-theme="dark"] #memoBtns button.on{background:var(--acc);border-color:var(--acc);color:#fff}
+html[data-theme="dark"] body.focus-mode #focusFooter{background:rgba(24,24,28,.94);border-color:var(--line)}

@@ -139,7 +139,8 @@ Claude 작업 절차는 [SKILL.md](SKILL.md), 문제·할 일은 [ISSUES.md](ISS
 
 ## 고칠 때 볼 곳
 
-- 화면: `web/index.html` (한 파일)
+- 화면: `web/index.html` (+ `web/*.js`·`mobile.css`·`theme.css`)
+- 🎨 화면 설정(맨 아래 칸): 어두운 화면, 칸마다 보이기·접기·숨기기. 그 브라우저에만 저장되며 🎯 수업 진행 화면의 배치는 바꾸지 않는다(`web/layout.js`)
 - 서버·저장 형식: `assistant_server.py`
 - 시간표 조회·진도 변경(Supabase): `supabase_schedule.py`. 수업 흐름 자동 준비: `prepare_lessons.py`
 - 자동 시험(표준 라이브러리만, 임시 폴더·가짜 서버라 실제 데이터·DB 를 안 건드림): 이 폴더에서 `python -m unittest test_assistant_server test_supabase_schedule`. `tests/`·`sites/` 의 시험까지 모두 돌리려면 pytest 로 `python -m pytest tests sites test_assistant_server.py test_supabase_schedule.py`

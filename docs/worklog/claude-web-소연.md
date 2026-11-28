@@ -39,3 +39,4 @@
 - 2026-11-28 06:52 교사 지시 PR 올림 (영수증 파일 삭제) — admin-class-buy/data 의 JSON·증빙 docx. 옛 커밋에는 남음
 - 2026-11-28 07:07 교사 지시 PR 올림 (받아쓰기 사전 고침, ISSUE-054) — 틀린 모양은 ⚠ 알림, 조사 추가(받침 구분). #185 는 교사 지시로 합침
 - 2026-11-28 13:04 T110 이어받음 (브랜치 task/T110-theme-layout, 앞 — claude-web-173: 2026-11-28 06:34 T110 시작 (브랜치 task/T110-theme-layout))
+- 2026-11-28 13:08 T110 PR 올림 — web/layout.js·theme.css(어두운 화면, 칸 보이기·접기·숨기기), 서버 라우트 2. 확인: node tests/test_layout.js 8개, test_assistant_* 143, tests 493, 가짜 자료 화면을 Chromium 으로 640·390 폭에서(새로 고침 유지·펼치기·수업 진행 화면·오류 0). 교사 PC·실제 휴대폰 확인 필요

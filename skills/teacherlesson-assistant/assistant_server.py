@@ -906,6 +906,10 @@ class Handler(BaseHTTPRequestHandler):
             return self._send(200, (WEB / "recording_export.js").read_bytes(), "application/javascript; charset=utf-8")
         if url.path == "/overdue.js":
             return self._send(200, (WEB / "overdue.js").read_bytes(), "application/javascript; charset=utf-8")
+        if url.path == "/layout.js":
+            return self._send(200, (WEB / "layout.js").read_bytes(), "application/javascript; charset=utf-8")
+        if url.path == "/theme.css":
+            return self._send(200, (WEB / "theme.css").read_bytes(), "text/css; charset=utf-8")
         if url.path == "/mobile.css":
             return self._send(200, (WEB / "mobile.css").read_bytes(), "text/css; charset=utf-8")
         if url.path == "/api/state":

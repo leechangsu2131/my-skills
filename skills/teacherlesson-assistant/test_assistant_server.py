@@ -448,6 +448,23 @@ class FaviconTest(unittest.TestCase):
         self.assertIn("application/javascript", response.getheader("Content-Type"))
         self.assertIn("function renderOverdue", script)
 
+    def test_layout_files_are_served_and_loaded_by_page(self):
+        server = ThreadingHTTPServer(("127.0.0.1", 0), app.Handler)
+        thread = threading.Thread(target=server.serve_forever, daemon=True)
+        thread.start()
+        self.addCleanup(server.server_close)
+        self.addCleanup(server.shutdown)
+        conn = http.client.HTTPConnection("127.0.0.1", server.server_port, timeout=2)
+        self.addCleanup(conn.close)
+        for path, kind in (("/layout.js", "application/javascript"), ("/theme.css", "text/css"), ("/", "text/html")):
+            conn.request("GET", path)
+            response = conn.getresponse()
+            body = response.read().decode("utf-8")
+            self.assertEqual(response.status, 200, path)
+            self.assertIn(kind, response.getheader("Content-Type"))
+        self.assertIn('href="/theme.css"', body)
+        self.assertIn('src="/layout.js"', body)
+
 
 if __name__ == "__main__":
     unittest.main()

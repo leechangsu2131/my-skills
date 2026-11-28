@@ -337,3 +337,23 @@ class WeeklyReportTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class MentLayoutFixTests(unittest.TestCase):
+    """PR #179 검토 🔴🟡: 접은 칸이 수업 진행 단추를 가리지 않게, 지우기 더블클릭이 두 개를 지우지 않게."""
+
+    SRC = (pathlib.Path(__file__).resolve().parent.parent / "web" / "ment.js").read_text(encoding="utf-8")
+
+    def test_ment_sits_above_focus_footer(self):
+        self.assertIn("body.focus-mode #ment{bottom:84px}", self.SRC)
+        self.assertIn("body{padding-bottom:84px}", self.SRC)
+
+    def test_delete_and_add_are_locked_while_sending(self):
+        self.assertIn("let busy = false", self.SRC)
+        self.assertIn("if (!t || busy) return;", self.SRC)
+        self.assertEqual(self.SRC.count("busy = true;"), 2)      # 추가·지우기 둘 다
+        self.assertEqual(self.SRC.count("finally { busy = false; }"), 2)
+
+    def test_enter_adds_and_typed_text_is_kept(self):
+        self.assertIn("e.target.id === 'mentInput'", self.SRC)
+        self.assertIn("if (again && keepTyped)", self.SRC)

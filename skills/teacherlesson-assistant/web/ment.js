@@ -85,7 +85,10 @@ if (typeof module !== 'undefined') {
   #ment .ment-why{font-size:13px;color:var(--sub,#6e6e73);margin:4px 0 8px}
   #ment .ment-add{display:flex;gap:6px;margin-top:8px}
   #ment .ment-add input{flex:1;font:inherit;border:1px solid var(--line,#e5e5ea);border-radius:10px;padding:6px 8px;background:transparent;color:inherit}
-  #ment .ment-note{font-size:12px;color:var(--sub,#6e6e73);margin-top:4px}`;
+  #ment .ment-note{font-size:12px;color:var(--sub,#6e6e73);margin-top:4px}
+  body{padding-bottom:84px}
+  body.focus-mode{padding-bottom:0}
+  body.focus-mode #ment{bottom:84px}`;
 
   function mount() {
     const host = document.getElementById('mentMount');
@@ -133,6 +136,9 @@ if (typeof module !== 'undefined') {
     }
     host.innerHTML = `<details${open ? ' open' : ''}><summary>${mentEsc(mentSummaryText(focus))}</summary><div class="ment-body">${body}</div></details>`;
     host.querySelector('.ment-body').onclick = onClick;
+    host.querySelector('.ment-body').onkeydown = e => {   // 입력 칸에서 Enter 로도 추가
+      if (e.key === 'Enter' && !e.isComposing && e.target.id === 'mentInput') { e.preventDefault(); const b = host.querySelector('[data-add]'); if (b) b.click(); }
+    };
   }
 
   async function post(path, body) {
@@ -140,12 +146,18 @@ if (typeof module !== 'undefined') {
     return r.json();
   }
 
+  let busy = false;   // 보내는 중에 같은 단추가 또 눌려 대답이 두 개 지워지는 일을 막는다
+
   async function onClick(event) {
     const t = event.target.closest('button');
-    if (!t) return;
+    if (!t || busy) return;
     note = '';
+    const typedEl = document.getElementById('mentInput');
+    const typed = typedEl ? typedEl.value : '';   // 다른 단추를 눌러도 쓰던 글은 남긴다
+    let keepTyped = true;
     if (t.dataset.s) {
       current = situations.find(s => s.id === t.dataset.s) || null;
+      keepTyped = false;   // 다른 상황으로 바꾸면 쓰던 글은 비움
       if (current) post('/api/ment-count', { situation: current.id }).catch(() => {});  // 세기만 — 실패해도 화면은 그대로
     } else if (t.dataset.copy !== undefined) {
       await copyText(t.dataset.copy);
@@ -154,13 +166,21 @@ if (typeof module !== 'undefined') {
       if (t.dataset.focus === 'on') store.set(MENT_FOCUS_KEY, { id: current.id, day: today() }); else store.del(MENT_FOCUS_KEY);
     } else if (t.dataset.add && current) {
       const input = document.getElementById('mentInput');
-      const res = await post('/api/ment-custom', { situation: current.id, text: input ? input.value : '' });
-      if (res.status === 'success') { current.custom = res.custom; } else { note = res.message || '추가하지 못했어요.'; }
+      busy = true;
+      try {
+        const res = await post('/api/ment-custom', { situation: current.id, text: input ? input.value : '' });
+        if (res.status === 'success') { current.custom = res.custom; keepTyped = false; } else { note = res.message || '추가하지 못했어요.'; }
+      } finally { busy = false; }
     } else if (t.dataset.del !== undefined && current) {
-      const res = await post('/api/ment-custom', { situation: current.id, delete: Number(t.dataset.del) });
-      if (res.status === 'success') { current.custom = res.custom; } else { note = res.message || '지우지 못했어요.'; }
+      busy = true;
+      try {
+        const res = await post('/api/ment-custom', { situation: current.id, delete: Number(t.dataset.del) });
+        if (res.status === 'success') { current.custom = res.custom; } else { note = res.message || '지우지 못했어요.'; }
+      } finally { busy = false; }
     }
     render();
+    const again = document.getElementById('mentInput');
+    if (again && keepTyped) again.value = typed;
   }
 
   async function copyText(text) {

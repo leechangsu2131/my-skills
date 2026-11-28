@@ -11,18 +11,26 @@ html[data-theme="dark"] body:not(.focus-mode) input,
 html[data-theme="dark"] body:not(.focus-mode) select,
 html[data-theme="dark"] body:not(.focus-mode) textarea{background:var(--fill);color:var(--ink);border-color:var(--line)}
 html[data-theme="dark"] body:not(.focus-mode) #stepFinish{background:var(--fill);color:var(--ink)}
+html[data-theme="dark"] body:not(.focus-mode) #tabs{background:var(--fill)}
+html[data-theme="dark"] body:not(.focus-mode) #tabs button.on{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.5)}
 html[data-theme="dark"] body:not(.focus-mode) .sub-cell{color:var(--ink)}
 html[data-theme="dark"] body:not(.focus-mode) .sub-cell.on{background:#1f3d2b}
 
 /* 칸 숨기기·접기 — 수업 진행 화면에서는 적용하지 않는다 */
-body:not(.focus-mode) .layout-hidden{display:none!important}
-body:not(.focus-mode) .layout-collapsed>*:not(h2){display:none!important}
+body:not(.focus-mode) [data-layout-hidden]{display:none!important}
+body:not(.focus-mode) [data-layout-collapsed]>*:not(h2){display:none!important}
 .layout-fold-head{cursor:pointer}
 .layout-fold-head::after{content:" ▾";font-size:11px}
-body:not(.focus-mode) .layout-collapsed>.layout-fold-head::after{content:" ▸"}
+body:not(.focus-mode) [data-layout-collapsed]>.layout-fold-head::after{content:" ▸"}
 
 /* 화면 설정 창 */
 #layoutPanel{position:absolute;right:8px;top:100%;z-index:20;background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.2);padding:12px 14px;min-width:230px;max-height:70vh;overflow:auto}
 #layoutPanel label{display:block;padding:3px 0}
 #layoutPanel h3{margin:10px 0 4px;font-size:13px;color:var(--sub)}
 body.focus-mode #layoutBtn,body.focus-mode #layoutPanel{display:none}
+
+/* 좁은 화면: ⚙ 가 머리글에 새 줄을 만들지 않게 📞 옆 칸(4번째 열)에 둔다 */
+@media(max-width:720px){
+  header .bar-row{grid-template-columns:minmax(0,1fr) auto auto auto}
+  #layoutBtn{grid-column:4;grid-row:1;min-width:38px;min-height:44px}
+}

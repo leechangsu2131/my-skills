@@ -26,3 +26,4 @@
 - 2026-11-27 21:27 T57 시작 (브랜치 task/T57-work)
 - 2026-11-27 21:34 T57 (teacherlesson-assistant) 시작 (브랜치 task/T57-easy-korean-assistant)
 - 2026-11-27 21:53 S2 (teacherlesson-assistant) 시작 (브랜치 task/S2-review-pr179-181-183)
+- 2026-11-28 12:42 S8 (util-notebooklm) 시작 (브랜치 task/S8-util-notebooklm)

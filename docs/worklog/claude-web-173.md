@@ -49,3 +49,4 @@
 - 2026-11-28 13:05 T111 시작 (브랜치 task/T111-stt-words-2)
 - 2026-11-28 13:07 T111 PR 올림 — #185(claude-web-162)가 이미 합쳐 남아 있던 ③ 화면 칸만: 수업 비서 '🎙 받아쓰기 사전' 칸(web/stt_words.js)·GET/POST /api/stt-words(모양·길이·개수 검사). 시험 Python 15·Node 9, 변이 9개 모두 잡음, 실제 크롬 점검(API 가짜) 통과, assistant tests 508 통과
 - 2026-11-28 20:06 T109 진행 — 검토(docs/reviews/task-T109-school-info.md) 🔴 설정 이름(앞머리 뗀 모양·옛 이름)·🟡 설정 바뀌면 캐시 다시 받기·ERROR 응답 저장 안 함·🟢 '비타500'·한 줄 줄임표 반영, main 받기(충돌은 양쪽 줄 남김). school_info 시험 21개(서버와 같은 env_values 거치는 시험 포함, 변이 7개 모두 잡음), assistant tests 605 통과. 실제 NEIS·날씨 호출은 교사 PC
+- 2026-11-28 20:31 T122 시작 (브랜치 task/T122-session-keeper)

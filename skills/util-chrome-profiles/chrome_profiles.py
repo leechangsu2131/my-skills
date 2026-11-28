@@ -3278,9 +3278,19 @@ class Manager(QMainWindow):
                     if not field:
                         failed.append(f"{label} — 편집 창을 못 엶")
                         continue
-                    if not same_text(read_field(field), current):
+                    now_text = read_field(field)
+                    if not same_text(now_text, current):   # 글이 늦게 불러와졌을 수 있어 한 번 더
+                        dismiss_popups(hwnd)
+                        time.sleep(1.0)
+                        now_text = read_field(field, timeout=6.0)
+                    if not same_text(now_text, current):
                         close_instructions(hwnd, save=False)
-                        failed.append(f"{label} — 지침이 1단계에서 읽은 것과 달라 건너뜀(다시 해 주세요)")
+                        a = current.replace("\r\n", "\n").split("\n")
+                        b = now_text.replace("\r\n", "\n").split("\n")
+                        first_diff = next((i + 1 for i, (x, y) in enumerate(zip(a, b)) if x.rstrip() != y.rstrip()),
+                                          min(len(a), len(b)) + 1)
+                        failed.append(f"{label} — 지침이 1단계에서 읽은 것과 달라 건너뜀(1단계 {len(current)}자, 지금 {len(now_text)}자, "
+                                      f"{first_diff}번째 줄부터 다름 — 이 창만 골라 다시 해 주세요)")
                         continue
                     if not activate(hwnd):
                         close_instructions(hwnd, save=False)

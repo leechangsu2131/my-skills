@@ -41,6 +41,8 @@
 - 2026-11-27 19:12 T100 시작 (브랜치 task/T100-write-errors-json)
 - 2026-11-27 19:16 T98 시작 (브랜치 task/T98-overdue-lessons)
 - 2026-11-27 19:40 T100 PR 올림 — teacherlesson-schedule server.py 에 _json_schedule_errors 데코레이터(ScheduleError→JSON 500)를 done·push·extend·pull·move·swap 에 붙임. S3 의 expectedFailure 6개를 일반 시험으로(고치기 전 실패→후 통과, 변이 3가지 잡음). 수업 비서 쪽 전달은 이미 맞아(assistant_server.py 안 고침) 시험 6개만 추가(변이 잡음). 잠금(T77)은 안 함. 전체: schedule 144개 중 오류 4개는 fitz 가짜 모듈 때문(변경 전 동일), assistant tests 402 통과, 루트 test_supabase_schedule PDF 1개는 변경 전에도 실패
+- 2026-11-28 14:48 S8 (util-notebooklm) 시작 (브랜치 task/S8-util-notebooklm-notebooklm-issues)
+- 2026-11-28 14:49 S8(util-notebooklm) PR 올림 — ISSUE-004 둘째: nlm.py verify(답의 [p.N] 인용을 쪽 원문과 대조, 지어낸 인용은 종료 코드 1) + tests/test_verify.py 24개(변이 9개 모두 잡음), 스킬 시험 전체 통과. 실제 PDF·Gemini 답 확인 필요
 - 2026-11-28 15:29 T109 이어받음 (브랜치 task/T109-school-info, 앞 — orchestrator: 2026-11-28 15:08 T109 그만둠 — 검토 🔴(오케스트레이터 대신 적음): 중앙 .env 공용 이름(NEIS_SCHOOL_CODE )
 - 2026-11-28 06:29 T108 시작 (브랜치 task/T108-submissions-check)
 - 2026-11-28 06:31 T108 PR 올림 — 제출 확인표: submissions.py(만들기·체크·안 낸 번호·명단 읽기)·/api/submissions·web/submissions.js·index.html 칸. 시험 Python 32·Node 11, 소스 변이 10개 모두 잡음, assistant tests 505 통과(+4 xfail)

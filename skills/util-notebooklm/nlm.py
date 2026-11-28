@@ -3,6 +3,7 @@
     python nlm.py find <pdf> "찾을 내용" [--model M]     # Gemini CLI 가 관련 쪽·원문만 찾아 [p.N] 으로 답함
     python nlm.py pages <pdf> 4,7-8 [--out 파일]          # 그 쪽만 잘라 새 PDF
     python nlm.py pages <pdf> --from 답.md                # 답에 적힌 [p.N] 쪽만 잘라 냄
+    python nlm.py verify <pdf> <답.md>                    # 답의 인용문이 정말 그 쪽에 있는지 원문과 대조
     python nlm.py prep <pdf…> [--out 폴더] [--images auto|all|none]   # NotebookLM 소스(md + 그림 PDF)
     python nlm.py split <받은.md> [--pattern 정규식] [--out 폴더]       # 북마클릿 md 를 제목별로 자르기
     python nlm.py nb list | nb add <주제> <주소> [--note 설명] | nb open <주제> [--q 질문]
@@ -181,6 +182,83 @@ def page_refs(text: str) -> list[int]:
     return sorted(p for p in pages if p >= 1)
 
 
+# ──────────────────────────── 답의 인용을 원문과 대조 (ISSUE-004) ────────────────────────────
+MIN_QUOTE = 8          # 정리한 뒤 이보다 짧은 인용은 우연히 맞을 수 있어 대조하지 않음
+NOT_QUOTE = re.compile(r"^\s*(?:쪽\s*[:：]|<!--|없음\s*$)")
+
+
+def squash(text: str) -> str:
+    """대조용으로 글자만 남긴다(공백·문장부호·따옴표·머리 기호·보이지 않는 글자 제거, 영문은 소문자)."""
+    return re.sub(r"[\W_]+", "", CTL.sub("", text)).lower()
+
+
+def quote_lines(answer: str) -> list[tuple[list[int], str]]:
+    """답 글에서 [p.N] 표시가 있는 줄마다 (쪽 목록, 인용 글). '쪽: 3, 5' 마무리 줄·'없음'·머리말 주석은 건너뛴다.
+    인용 글은 표시를 뺀 나머지이며, 표시만 있고 글이 없는 줄도 건너뛴다."""
+    out = []
+    for line in answer.splitlines():
+        if NOT_QUOTE.match(line):
+            continue
+        pages = page_refs(line)
+        if not pages:
+            continue
+        quote = PAGE_REF.sub(" ", line).strip(" \t-*•>\"'“”‘’「」")
+        if squash(quote):
+            out.append((pages, quote))
+    return out
+
+
+def quote_fragments(quote: str) -> list[str]:
+    """'…'·'...' 로 줄여 쓴 인용은 조각마다 따로 찾는다. 너무 짧은 조각은 뺀다."""
+    frags = [squash(f) for f in re.split(r"…|\.{3,}|\[\s*중략\s*\]|\(\s*중략\s*\)", quote)]
+    return [f for f in frags if len(f) >= MIN_QUOTE]
+
+
+def verify_quotes(answer: str, pages: list[str]) -> list[dict]:
+    """답의 인용마다 원문 쪽(pages[0] = 1쪽)에 정말 있는지 본다. 읽기만 하고 아무것도 바꾸지 않는다.
+    status: ok(적힌 쪽에 있음) · elsewhere(다른 쪽에 있음 → found 에 쪽 번호) · missing(어디에도 없음 — 지어냈거나 줄여 쓴 것)
+            short(너무 짧아 대조 안 함) · out_of_range(없는 쪽 번호)"""
+    flat = [squash(t) for t in pages]
+    results = []
+    for cited, quote in quote_lines(answer):
+        frags = quote_fragments(quote)
+        row = {"pages": cited, "quote": quote, "status": "short", "found": []}
+        if not frags:
+            results.append(row)
+            continue
+        valid = [n for n in cited if 1 <= n <= len(flat)]
+        if not valid:
+            row["status"] = "out_of_range"
+            results.append(row)
+            continue
+        if all(any(f in flat[n - 1] for n in valid) for f in frags):
+            row["status"] = "ok"
+        else:
+            elsewhere = [n for n in range(1, len(flat) + 1) if all(f in flat[n - 1] for f in frags)]
+            row["status"], row["found"] = ("elsewhere", elsewhere) if elsewhere else ("missing", [])
+        results.append(row)
+    return results
+
+
+def verify_report(results: list[dict]) -> str:
+    """사람이 읽는 요약. 문제가 있는 줄만 자세히."""
+    if not results:
+        return "대조할 인용(앞에 [p.N] 이 붙은 줄)이 없어요."
+    count = {s: sum(1 for r in results if r["status"] == s) for s in ("ok", "elsewhere", "missing", "short", "out_of_range")}
+    lines = [f"인용 {len(results)}개 — 맞음 {count['ok']} · 다른 쪽에 있음 {count['elsewhere']} · 원문에 없음 {count['missing']}"
+             f" · 대조 안 함(너무 짧음) {count['short']} · 없는 쪽 {count['out_of_range']}"]
+    for r in results:
+        tag = "[" + ",".join(map(str, r["pages"])) + "]"
+        short = r["quote"][:40] + ("…" if len(r["quote"]) > 40 else "")
+        if r["status"] == "elsewhere":
+            lines.append(f"⚠ 쪽이 달라요 {tag} → 실제 {','.join(map(str, r['found'][:5]))}쪽: {short}")
+        elif r["status"] == "missing":
+            lines.append(f"⚠ 원문에서 못 찾음 {tag}: {short}")
+        elif r["status"] == "out_of_range":
+            lines.append(f"⚠ PDF 에 없는 쪽 {tag}: {short}")
+    return "\n".join(lines)
+
+
 def parse_pages(spec: str) -> list[int]:
     pages: set[int] = set()
     for part in re.split(r"[,\s]+", spec.strip()):
@@ -312,6 +390,17 @@ def cmd_pages(a) -> None:
     print(f"{len(pages)}쪽 → {out}")
 
 
+def cmd_verify(a) -> None:
+    f = fitz()
+    answer = pathlib.Path(a.answer).read_text(encoding="utf-8-sig")
+    with f.open(pathlib.Path(a.pdf)) as doc:
+        pages = [page_text(doc[i]) for i in range(doc.page_count)]
+    results = verify_quotes(answer, pages)
+    print(verify_report(results))
+    if any(r["status"] in ("missing", "out_of_range") for r in results):
+        raise SystemExit(1)   # 지어낸 인용이 있으면 실패 코드(자동 흐름에서 거를 수 있게)
+
+
 def compact(pages: list[int]) -> str:
     runs, start = [], pages[0]
     for prev, cur in zip(pages, pages[1:] + [None]):
@@ -373,6 +462,7 @@ def main() -> None:
     p.add_argument("--model", default=DEFAULT_MODEL); p.add_argument("--out"); p.set_defaults(fn=cmd_find)
     p = sub.add_parser("pages"); p.add_argument("pdf"); p.add_argument("spec", nargs="?")
     p.add_argument("--from", dest="from_md"); p.add_argument("--out"); p.set_defaults(fn=cmd_pages)
+    p = sub.add_parser("verify"); p.add_argument("pdf"); p.add_argument("answer"); p.set_defaults(fn=cmd_verify)
     p = sub.add_parser("prep"); p.add_argument("pdfs", nargs="+"); p.add_argument("--out"); p.add_argument("--title")
     p.add_argument("--images", choices=["auto", "all", "none"], default="auto"); p.set_defaults(fn=cmd_prep)
     p = sub.add_parser("split"); p.add_argument("md"); p.add_argument("--pattern"); p.add_argument("--out"); p.set_defaults(fn=cmd_split)

@@ -171,6 +171,7 @@ def test_bookmarklet_one_line():
     url = intake.bookmarklet()
     assert url.startswith("javascript:(function") and "\n" not in url and "/*" not in url
     assert "#" not in url and "%23" in url  # 즐겨찾기 주소에서 # 은 잘림
+    assert url.isascii() and "\\ud558\\ub8e8" in url  # '하루' — 한글은 \uXXXX 로(복사하다 깨지지 않게)
 
 
 IDEAS = """---

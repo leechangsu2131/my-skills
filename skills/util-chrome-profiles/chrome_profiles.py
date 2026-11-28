@@ -495,15 +495,20 @@ def _bare(url: str) -> str:
     return url.split("://", 1)[-1].rstrip("/")
 
 
-def navigate(hwnd: int, url: str, ready=None, timeout: float = 20.0) -> bool:
+def navigate(hwnd: int, url: str, ready=None, timeout: float = 20.0, sent: list | None = None) -> bool:
     """이 창 지금 탭을 url 로(Ctrl+L → 주소창인지 확인 → 붙여넣기 → Enter). ready() 가 참이 될 때까지 기다린다.
+    Enter 를 눌렀으면(페이지가 바뀌기 시작했으면) sent 에 True 를 넣는다 — '뒤로' 횟수를 맞추려고.
     클립보드를 쓰므로 부르는 쪽에서 되돌린다."""
-    if not activate(hwnd):
-        return False
-    time.sleep(0.2)
-    press_keys([win32con.VK_CONTROL], ord("L"))
-    time.sleep(0.25)
-    if not focus_in_browser_ui(hwnd):
+    for attempt in range(3):   # 막 앞으로 온 창은 Ctrl+L 이 늦게 먹을 때가 있다
+        if not activate(hwnd):
+            return False
+        time.sleep(0.3 + 0.3 * attempt)
+        press_keys([win32con.VK_CONTROL], ord("L"))
+        time.sleep(0.3 + 0.3 * attempt)
+        if focus_in_browser_ui(hwnd):
+            break
+        press_keys([], win32con.VK_ESCAPE)
+    else:
         return False
     set_clipboard(url)
     if win32gui.GetForegroundWindow() != hwnd:
@@ -513,12 +518,60 @@ def navigate(hwnd: int, url: str, ready=None, timeout: float = 20.0) -> bool:
     if win32gui.GetForegroundWindow() != hwnd:
         return False
     press_keys([], win32con.VK_RETURN)
+    if sent is not None:
+        sent.append(True)
     end = time.time() + timeout
     while time.time() < end:
         time.sleep(0.4)
         if _bare(page_url(hwnd) or "") == _bare(url) and (ready is None or ready()):
             return True
     return False
+
+
+def _squash(text: str) -> str:
+    return re.sub(r"\s+", "", text).lower()
+
+
+def dismiss_popups(hwnd: int) -> list[str]:
+    """페이지를 덮은 팝업(업그레이드 권유 등)을 Esc·닫기 단추로 닫아 본다. 그래도 남은 팝업 이름들을 돌려준다.
+    우리가 여는 '프로젝트 지침 설정' 편집 창은 건드리지 않는다."""
+    auto, client = _uia()
+
+    def popups():
+        doc = auto.ControlFromHandle(hwnd).Element.FindFirst(4, client.CreatePropertyCondition(
+            auto.PropertyId.ControlTypeProperty, auto.ControlType.DocumentControl))
+        if not doc:
+            return []
+        found = doc.FindAll(4, client.CreateOrCondition(
+            client.CreatePropertyCondition(auto.PropertyId.AriaRoleProperty, "dialog"),
+            client.CreatePropertyCondition(auto.PropertyId.AriaRoleProperty, "alertdialog")))
+        out = []
+        for i in range(found.Length if found else 0):
+            control = auto.Control.CreateControlFromElement(found.GetElement(i))
+            if control.Name != INSTR_FIELD and control.BoundingRectangle.width() > 0:
+                out.append(control)
+        return out
+
+    for _ in range(3):
+        current = popups()
+        if not current:
+            return []
+        if activate(hwnd):
+            press_keys([], win32con.VK_ESCAPE)
+            time.sleep(0.5)
+        for popup in popups():   # Esc 로 안 닫히면 그 안의 닫기 단추
+            buttons = popup.Element.FindAll(4, client.CreatePropertyCondition(
+                auto.PropertyId.ControlTypeProperty, auto.ControlType.ButtonControl))
+            for i in range(buttons.Length if buttons else 0):
+                element = buttons.GetElement(i)
+                if (element.CurrentName or "").strip().lower() in ("닫기", "close", "x", "×", "나중에", "not now"):
+                    try:
+                        auto.Control.CreateControlFromElement(element).GetInvokePattern().Invoke()
+                    except Exception:
+                        pass
+                    time.sleep(0.5)
+                    break
+    return [c.Name or "이름 없는 팝업" for c in popups()]
 
 
 def pick_project(hwnd: int, name: str = "", wait: float = 15.0):
@@ -541,7 +594,7 @@ def pick_project(hwnd: int, name: str = "", wait: float = 15.0):
                 continue
             if "/project/" not in value:
                 continue
-            if name and name.lower() not in (control.Name or "").lower():
+            if name and _squash(name) not in _squash(control.Name or ""):   # '깃랩 관리' = '깃랩관리'
                 continue
             rect = control.BoundingRectangle
             in_sidebar = rect.left < left + (right - left) * 0.2
@@ -2493,19 +2546,29 @@ class Manager(QMainWindow):
         url = page_url(hwnd) or ""
         if "claude.ai" not in url:
             return None, "claude.ai 창이 아님"
+        left = dismiss_popups(hwnd)
+        if left:
+            return None, f"팝업이 떠 있어 못 함: {', '.join(left)[:40]}"
         if "claude.ai/project/" in url and not name:
             return url, ""
         record = moved.setdefault(hwnd, [url, 0])
-        if not navigate(hwnd, PROJECTS_URL):
+        sent: list = []
+        ok = navigate(hwnd, PROJECTS_URL, sent=sent)
+        record[1] += len(sent)
+        if not ok:
             return None, "프로젝트 목록으로 못 감"
-        record[1] += 1
         target = pick_project(hwnd, name)
         if not target:
             return None, f"목록에서 프로젝트를 못 찾음{f' (이름: {name})' if name else ''}"
         project_url, title = target
-        if not navigate(hwnd, project_url, ready=lambda: _by_name(hwnd, INSTR_EDIT_BUTTON, "ButtonControl")):
-            return None, f"'{title}' 프로젝트로 못 감"
-        record[1] += 1
+        sent = []
+        ok = navigate(hwnd, project_url, sent=sent,
+                      ready=lambda: _by_name(hwnd, INSTR_EDIT_BUTTON, "ButtonControl"))
+        record[1] += len(sent)
+        if not ok:
+            return None, f"'{title}' 프로젝트로 못 감(지침 카드가 안 보임)"
+        if dismiss_popups(hwnd):
+            return None, "프로젝트 페이지에 팝업이 떠 있어 못 함"
         return page_url(hwnd) or "", ""
 
     def run_replace_instructions(self, windows, body, keep, only_bracket, preview_only, project_name, moved):

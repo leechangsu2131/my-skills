@@ -911,6 +911,8 @@ class Handler(BaseHTTPRequestHandler):
             return self._send(200, (WEB / "tools.js").read_bytes(), "application/javascript; charset=utf-8")
         if url.path == "/recording_export.js":
             return self._send(200, (WEB / "recording_export.js").read_bytes(), "application/javascript; charset=utf-8")
+        if url.path == "/voice_cmd.js":
+            return self._send(200, (WEB / "voice_cmd.js").read_bytes(), "application/javascript; charset=utf-8")
         if url.path == "/overdue.js":
             return self._send(200, (WEB / "overdue.js").read_bytes(), "application/javascript; charset=utf-8")
         if url.path == "/agenda.js":

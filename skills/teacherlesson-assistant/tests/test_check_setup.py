@@ -27,10 +27,10 @@ def test_python_fail_has_fix():
 
 
 def test_python_warn_fix_matches_what_the_bat_really_does():
-    # 실행_수업비서.bat 은 서버를 python 으로 켠다 — 'py -3.13 을 먼저 찾는다'고 말하면 틀린 안내
+    # 실행_수업비서.bat 은 py -3.13 이 되면 그것, 아니면 python 하나로 전부 켠다 — 옛 안내(단원 개관만 py)가 되살아나면 안 됨
     fix = cs.check_python((3, 12, 4)).fix
-    assert "먼저 찾아요" not in fix
-    assert "python" in fix and "py -3.13" in fix
+    assert "단원 개관만" not in fix
+    assert "python" in fix and "py -3.13" in fix and "아니면" in fix
 
 
 # ── Python 실행기 (py -3.13 / python) ──
@@ -40,31 +40,29 @@ def _versions(py, plain):
     return lambda cmd: table[tuple(cmd)]
 
 
-def test_launchers_same_minor_is_ok():
-    r = cs.check_python_launchers(_versions((3, 13, 1), (3, 13, 5)))
-    assert r.status == OK and "3.13.1" in r.detail
+def test_launchers_py_available_is_used_even_if_python_differs():
+    r = cs.check_python_launchers(_versions((3, 13, 1), (3, 11, 4)))   # bat 는 하나만 쓰므로 달라도 문제 아님
+    assert r.status == OK and "py -3.13" in r.detail and "3.13.1" in r.detail and "3.11.4" not in r.detail
 
 
-def test_launchers_different_minor_is_warn_and_names_both():
-    r = cs.check_python_launchers(_versions((3, 13, 1), (3, 11, 4)))
-    assert r.status == WARN
-    assert "3.13.1" in r.detail and "3.11.4" in r.detail and "달라요" in r.detail
-    assert "pip install" in r.fix
-
-
-def test_launchers_python_missing_is_warn():
+def test_launchers_py_available_python_missing_is_ok():
     r = cs.check_python_launchers(_versions((3, 13, 1), None))
-    assert r.status == WARN and "python 명령" in r.detail and r.fix
+    assert r.status == OK and "py -3.13" in r.detail
 
 
-def test_launchers_py_launcher_missing_is_warn_about_build_units():
-    r = cs.check_python_launchers(_versions(None, (3, 13, 1)))
-    assert r.status == WARN and "build_units.py" in r.detail
+def test_launchers_only_python_new_enough_is_ok():
+    r = cs.check_python_launchers(_versions(None, (3, 13, 5)))
+    assert r.status == OK and "python (3.13.5)" in r.detail
+
+
+def test_launchers_only_old_python_is_warn_with_install_fix():
+    r = cs.check_python_launchers(_versions(None, (3, 11, 4)))
+    assert r.status == WARN and "3.11.4" in r.detail and "python.org" in r.fix
 
 
 def test_launchers_neither_found_is_warn():
     r = cs.check_python_launchers(_versions(None, None))
-    assert r.status == WARN and "python.org" in r.fix
+    assert r.status == WARN and "python.org" in r.fix and "안 켜져요" in r.detail
 
 
 def test_read_python_version_real_interpreter_and_missing_command():

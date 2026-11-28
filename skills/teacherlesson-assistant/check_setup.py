@@ -32,7 +32,7 @@ OK, WARN, FAIL = "ok", "warn", "fail"
 MARK = {OK: "✅", WARN: "⚠", FAIL: "❌"}
 
 MIN_PYTHON = (3, 10)
-RECOMMENDED_PYTHON = (3, 13)          # 실행_수업비서.bat: 단원 개관은 py -3.13, 서버·수업 준비는 python
+RECOMMENDED_PYTHON = (3, 13)          # 실행_수업비서.bat: py -3.13 이 되면 그것, 아니면 python 하나로 전부 실행
 DEFAULT_PORT = 5180
 DEFAULT_DEBUG_PORT = 9233
 ASSISTANT_SERVER_PREFIX = "LessonAssistant"   # assistant_server.py 의 Handler.server_version 과 같게 둔다
@@ -180,15 +180,16 @@ def check_python(version=None, executable: str | None = None) -> Result:
                       "https://www.python.org/downloads/ 에서 Python 3.13 을 설치하세요 (Add to PATH 체크)")
     if v[:2] < RECOMMENDED_PYTHON:
         return Result(WARN, "Python 버전", f"{text} (권장 3.13)",
-                      "실행_수업비서.bat 은 서버를 python 명령으로 켜고 단원 개관만 py -3.13 으로 돌려요. "
-                      "3.13 을 설치하고 python 도 3.13 을 가리키는지는 바로 아래 'Python 실행기' 항목에서 봐요")
+                      "실행_수업비서.bat 은 py -3.13 이 되면 그것으로, 아니면 python 으로 서버·단원 개관·수업 준비를 모두 켜요. "
+                      "3.13 을 설치하면 py -3.13 이 먼저 쓰여요. 어느 쪽이 쓰이는지는 바로 아래 'Python 실행기' 항목에서 봐요")
     return Result(OK, "Python 버전", text)
 
 
 def check_python_launchers(read_version=read_python_version) -> Result:
-    """실행_수업비서.bat 이 쓰는 두 명령(py -3.13, python)을 모두 돌려 보고, 없거나 서로 다른 Python 이면 ⚠.
+    """실행_수업비서.bat 이 고르는 Python 하나를 알려 준다(py -3.13 이 되면 그것, 아니면 python).
 
-    점검_PC.bat 은 py -3.13 을 먼저 쓰지만 수업 비서 서버는 python 으로 켜지므로, 패키지가 한쪽에만 깔려 있을 수 있다.
+    bat 는 단원 개관·수업 준비·서버를 모두 같은 실행기로 켜므로 두 명령이 달라도 문제가 아니다.
+    고른 쪽이 권장(3.13)보다 낮거나 둘 다 없을 때만 ⚠.
     """
     via_py, via_plain = read_version(PY_LAUNCHER), read_version(PY_PLAIN)
     show = lambda v: ".".join(str(n) for n in v)  # noqa: E731
@@ -196,16 +197,12 @@ def check_python_launchers(read_version=read_python_version) -> Result:
     if via_py is None and via_plain is None:
         return Result(WARN, title, "py -3.13 도 python 도 못 돌렸어요 — 실행_수업비서.bat 이 안 켜져요",
                       "https://www.python.org/downloads/ 에서 Python 3.13 을 설치하세요 (Add to PATH 체크)")
-    if via_plain is None:
-        return Result(WARN, title, f"py -3.13 은 {show(via_py)}, python 명령은 못 찾았어요 — 서버·수업 준비(python …)가 안 켜져요",
-                      "Python 설치 프로그램에서 Add to PATH 를 체크해 다시 설치하거나, 실행_수업비서.bat 의 python 을 py -3.13 으로 바꾸세요")
-    if via_py is None:
-        return Result(WARN, title, f"python 은 {show(via_plain)}, py -3.13 은 못 찾았어요 — 단원 개관 자동 갱신(build_units.py)을 건너뛰어요",
+    if via_py is not None:
+        return Result(OK, title, f"py -3.13 ({show(via_py)}) 으로 전부 실행돼요")
+    if via_plain[:2] < RECOMMENDED_PYTHON:
+        return Result(WARN, title, f"py -3.13 은 못 찾았고 python {show(via_plain)} 으로 전부 실행돼요 (권장 3.13)",
                       "https://www.python.org/downloads/ 에서 Python 3.13 을 설치하세요 (py 실행기 포함)")
-    if via_py[:2] != via_plain[:2]:
-        return Result(WARN, title, f"서로 달라요 — py -3.13 은 {show(via_py)}, python 은 {show(via_plain)}",
-                      "패키지가 한쪽에만 깔렸을 수 있어요. python -m pip install -r requirements.txt 를 python 쪽에도 하거나, PATH 의 python 이 3.13 을 가리키게 하세요")
-    return Result(OK, title, f"둘 다 {show(via_py)}")
+    return Result(OK, title, f"python ({show(via_plain)}) 으로 전부 실행돼요")
 
 
 def check_packages(requirements_text: str, find_spec=importlib.util.find_spec,

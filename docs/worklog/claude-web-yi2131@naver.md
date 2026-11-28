@@ -44,3 +44,4 @@
 - 2026-11-27 18:50 S2 PR 올림 — PR #141(parse_plan 음수 분, 고침 되돌리면 시험 1개 실패 확인)·PR #143(긴 이름 차시 재현, 표시 떼면 4개 모두 AssertionError 확인) 검토 → `docs/reviews/fix-parse-plan-negative-minutes.md`·`task-S3-sites-longer-lesson-name.md`. 둘 다 합쳐도 됨. #141 은 #136 위에 쌓여 있어 둘 다 합치면 test_parse_plan.py 충돌
 - 2026-11-27 19:20 S2 PR 올림 — PR #145(CI selenium: sites 시험 98→116 통과·건너뜀 0)·PR #149(남은 사진·본문 삭제: 시험·참조 확인, 기록에는 남음 알림)·PR #139(쓰기 잠금 설계 메모: 줄 번호·함수 대조 일치, import functools 빠짐) 검토 → `docs/reviews/task-S5-ci-sites-selenium.md`·`fix-remove-remaining-files.md`·`task-S7-s7-write-lock.md`. 셋 다 합쳐도 됨
 - 2026-11-28 14:40 S8 (teacherlesson-assistant) 시작 (브랜치 task/S8-teacherlesson-assistant)
+- 2026-11-28 14:55 S8 (teacherlesson-assistant) 진행 — ISSUE-034 남은 일 ②: check_setup 'Python 실행기' 점검을 bat 의 하나만 고르는 방식에 맞춤(시험 115개, 변이 2곳 잡힘). 다음: 다른 열린 이슈

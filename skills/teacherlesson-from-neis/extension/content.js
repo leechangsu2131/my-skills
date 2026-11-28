@@ -85,6 +85,8 @@
 
     function reportExtensionApiError(error) {
         if (!/extension context invalidated/i.test(String(error?.message || error || ""))) return;
+        // 저장할 수 없으니 화면 쪽(neis-reader.js)에 알려 주차 자동 조회를 멈춘다.
+        if (!extensionContextLost) window.postMessage({ source: SOURCE, type: "extension-lost" }, location.origin);
         extensionContextLost = true;
         status.textContent = "확장 프로그램이 갱신되었습니다. NEIS에 저장할 내용이 있으면 먼저 저장한 뒤 이 탭을 새로고침하세요.";
     }
@@ -298,6 +300,7 @@
     window.addEventListener("message", (event) => {
         const message = event.data;
         if (event.source !== window || message?.source !== SOURCE) return;
+        if (extensionContextLost) return; // 진행 문구가 새로고침 안내를 덮지 않게
         if (message.type === "blocked") {
             progressStatus = message.payload?.message || "미저장 수업 변경 때문에 자동 동기화를 건너뛰었습니다.";
             status.textContent = progressStatus;

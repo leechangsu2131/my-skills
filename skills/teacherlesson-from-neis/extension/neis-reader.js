@@ -14,6 +14,7 @@
     let captureGeneration = 0;
     let lastBlockedSignature = "";
     let autoSyncRunning = false;
+    let extensionLost = false;
     let cacheRequestId = 0;
     const cacheWaiters = new Map();
     const internalEntryKeys = new Set();
@@ -227,6 +228,11 @@
             cacheWaiters.get(message.payload?.requestId)?.(message.payload);
             return;
         }
+        if (message.type === "extension-lost") {
+            // 확장이 다시 불려 저장할 곳이 없다. 이 탭을 새로고침할 때까지 NEIS 주차를 대신 넘기지 않는다.
+            extensionLost = true;
+            return;
+        }
         if (message.type === "reader-ready" && lastPayload) post("lessons", lastPayload);
     });
 
@@ -287,6 +293,10 @@
         autoSyncRunning = true;
         const weeksToCheck = weekRows.filter((week) => week.begin !== currentWeek.begin || week.end !== currentWeek.end);
         const cache = await askWhichWeeksAreFresh(weeksToCheck.map(({ begin, end }) => ({ start: begin, end })));
+        if (extensionLost) {
+            autoSyncRunning = false;
+            return;
+        }
         const staleWeeks = weeksToCheck.filter((week) => !cache.ok || cache.fresh?.[`${week.begin}|${week.end}`] !== true);
         if (!staleWeeks.length) {
             post("progress", { message: `NEIS 등록 ${weekRows.length}주 자료가 최신 상태입니다.` });
@@ -325,6 +335,7 @@
         post("progress", { message: `NEIS 등록 주차 확인 중 · 0/${staleWeeks.length}` });
         try {
             for (const week of staleWeeks) {
+                if (extensionLost) break; // 아래 finally 가 원래 주차로 돌려놓는다
                 const previousExpectedWeek = expectedWeek;
                 expectedWeek = week;
                 await submitWeek(app, week, search, weekControl, submission, previousExpectedWeek);

@@ -151,3 +151,42 @@ def test_sheet_failure_does_not_stop_rest(tmp_path):
     _, screen, fails = intake.apply(doc, intake.plan(doc), tmp_path, broken, FakeNotion(), now=datetime(2026, 11, 27))
     assert fails == 2 and (tmp_path / "daily/2026-11-27.md").exists()
     assert "실패: 인터넷 없음" in "\n".join(screen)
+
+
+IDEAS = """---
+date: 2026-11-28
+---
+## 조각
+### [개선] 수업 비서에 다음 교시 준비물 알림
+- 대상: 수업 비서
+- 내용: 쉬는 시간에 다음 교시 준비물을 띄워 주면 좋겠다
+- 민감: 아니오
+
+### [개선] 카톡 아침 알림에 날씨도
+- 내용: 일정 시트 알림에 우산 챙기기
+- 민감: 아니오
+
+### [개선] 뭔가 불편했던 것
+- 내용: 김가나 일 처리할 때 불편
+- 민감: 예
+"""
+
+
+def test_improvement_ideas_go_to_list(tmp_path, capsys):
+    doc = intake.parse(IDEAS)
+    acts = intake.plan(doc)
+    assert [a.data["target"] for a in acts] == ["teacherlesson-assistant", "school-todo-kakao", "(대상 확인 필요)"]
+    ideas = tmp_path / "ideas.json"
+    _, screen, fails = intake.apply(doc, acts, tmp_path, FakeSheet(), FakeNotion(), now=datetime(2026, 11, 28), ideas=ideas)
+    assert fails == 0 and "아이디어 목록에 적음" in screen[1]
+    daily = (tmp_path / "daily/2026-11-28.md").read_text(encoding="utf-8")
+    assert "[개선] 수업 비서에 다음 교시 준비물 알림 → 개선 아이디어 → teacherlesson-assistant ISSUES 후보" in daily
+    # 다시 넣어도 두 번 적지 않음
+    intake.apply(doc, acts, tmp_path, FakeSheet(), FakeNotion(), now=datetime(2026, 11, 28), ideas=ideas)
+    assert intake.show_ideas(ideas) == 0
+    out = capsys.readouterr().out
+    assert out.count("| 새것 |") == 3 and "김가나" not in out
+    intake.show_ideas(ideas, done="1,2")
+    capsys.readouterr()
+    intake.show_ideas(ideas)
+    assert capsys.readouterr().out.count("| 새것 |") == 1

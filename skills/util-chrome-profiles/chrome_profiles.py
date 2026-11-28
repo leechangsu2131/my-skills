@@ -535,6 +535,7 @@ def pick_project_chat(hwnd: int, which: str = "bottom", wait: float = 10.0):
         if chats:
             top, value, title = (max if which == "bottom" else min)(chats, key=lambda x: x[0])
             return (value if "://" in value else "https://" + value.lstrip("/")), title
+        dismiss_popups(hwnd)
         time.sleep(0.5)
     return None
 
@@ -650,7 +651,14 @@ def open_instructions(hwnd: int, wait: float = 6.0):
     field = _by_name(hwnd, INSTR_FIELD, "EditControl")
     if field:
         return field
-    button = _by_name(hwnd, INSTR_EDIT_BUTTON, "ButtonControl")
+    button = None
+    end = time.time() + wait
+    while time.time() < end:   # 업그레이드 권유 팝업이 뜨면 페이지 나머지가 가려져 단추가 안 보인다 → 닫고 다시 찾기
+        button = _by_name(hwnd, INSTR_EDIT_BUTTON, "ButtonControl")
+        if button:
+            break
+        dismiss_popups(hwnd)
+        time.sleep(0.5)
     if not button:
         return None
     button.GetInvokePattern().Invoke()
@@ -696,10 +704,15 @@ def navigate(hwnd: int, url: str, ready=None, timeout: float = 20.0, sent: list 
     if sent is not None:
         sent.append(True)
     end = time.time() + timeout
+    last_dismiss = 0.0
     while time.time() < end:
         time.sleep(0.4)
-        if _bare(page_url(hwnd) or "") == _bare(url) and (ready is None or ready()):
-            return True
+        if _bare(page_url(hwnd) or "") == _bare(url):
+            if ready is None or ready():
+                return True
+            if time.time() - last_dismiss > 1.5:   # 페이지가 뜬 뒤 늦게 나타나는 팝업이 가리고 있을 수 있음
+                last_dismiss = time.time()
+                dismiss_popups(hwnd)
     return False
 
 
@@ -730,6 +743,20 @@ def dismiss_popups(hwnd: int) -> list[str]:
     for _ in range(3):
         current = popups()
         if not current:
+            return []
+        for popup in current:   # 먼저 '닫기'·'나중에' 단추(키를 누르지 않아 안전), 그래도 남으면 Esc
+            buttons = popup.Element.FindAll(4, client.CreatePropertyCondition(
+                auto.PropertyId.ControlTypeProperty, auto.ControlType.ButtonControl))
+            for i in range(buttons.Length if buttons else 0):
+                element = buttons.GetElement(i)
+                if (element.CurrentName or "").strip().lower() in ("닫기", "close", "나중에", "not now", "x", "×"):
+                    try:
+                        auto.Control.CreateControlFromElement(element).GetInvokePattern().Invoke()
+                    except Exception:
+                        pass
+                    time.sleep(0.5)
+                    break
+        if not popups():
             return []
         if activate(hwnd):
             press_keys([], win32con.VK_ESCAPE)
@@ -777,6 +804,7 @@ def pick_project(hwnd: int, name: str = "", wait: float = 15.0):
         if links:
             _, value, title = min(links, key=lambda x: x[0])
             return (value if "://" in value else "https://" + value.lstrip("/")), title
+        dismiss_popups(hwnd)
         time.sleep(0.5)
     return None
 
@@ -949,6 +977,15 @@ def focus_in_browser_ui(hwnd: int) -> bool:
         return False
     except Exception:
         return False
+
+
+def automation_log(title: str, lines: list[str]) -> None:
+    """자동화 결과(창별 성공·실패 까닭)를 데이터 폴더 automation.log 에 남긴다 — 실패 원인을 나중에 보려고. 페이지 글은 안 적음."""
+    try:
+        with open(data_dir(SKILL) / "automation.log", "a", encoding="utf-8") as f:
+            f.write(f"\n[{time.strftime('%Y-%m-%d %H:%M:%S')}] {title}\n" + "".join(f"  {x}\n" for x in lines))
+    except OSError:
+        pass
 
 
 def write_json_atomic(path: Path, data) -> None:
@@ -3078,6 +3115,7 @@ class Manager(QMainWindow):
             if old_clip is not None:
                 set_clipboard(old_clip)
             activate(int(self.winId()))
+        automation_log(f"대화 들어가기({which})", [f"성공 {x}" for x in done] + [f"실패 {x}" for x in failed])
         QMessageBox.information(self, "대화 들어가기", f"{len(done)}개 창을 옮겼습니다.\n\n" + "\n".join(done[:15]) +
                                 (f"\n\n안 된 곳:\n" + "\n".join(failed) if failed else ""))
 
@@ -3166,6 +3204,7 @@ class Manager(QMainWindow):
         finally:
             progress.close()
         if not plans:
+            automation_log("프로젝트 지침 — 바꿀 창 없음", [f"건너뜀 {x}" for x in skipped])
             QMessageBox.information(self, "프로젝트 지침", "바꿀 창이 없습니다.\n\n" + "\n".join(skipped[:15]))
             return
         lines = [f"{label}\n    남김: {current.split(chr(10), 1)[0][:50]}\n    {len(current)}자 → {len(new)}자"
@@ -3232,6 +3271,8 @@ class Manager(QMainWindow):
                     failed.append(f"{label} — 오류 {e.__class__.__name__}")
         finally:
             progress.close()   # 클립보드 되돌리기·원래 페이지로 돌아가기는 replace_instructions 가 한다
+        automation_log("프로젝트 지침" + (" 미리보기" if preview_only else " 바꾸기"),
+                       [f"성공 {x}" for x in done] + [f"실패 {x}" for x in failed] + [f"건너뜀 {x}" for x in skipped])
         verb = "미리보기했습니다(저장 안 함)" if preview_only else "바꾸고 저장해 확인했습니다"
         QMessageBox.information(self, "프로젝트 지침",
                                 f"{len(done)}개 창의 지침을 {verb}." +

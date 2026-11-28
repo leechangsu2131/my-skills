@@ -359,10 +359,41 @@ def apply(doc: Doc, acts: list, vault: Path, sheet=None, notion=None, skip=(), n
 
 # ---------- 명령 ----------
 
+def downloads_dir() -> Path:
+    raw = os.environ.get("DOWNLOADS", "").strip()  # .env 의 PERSONAL_DAILY_INTAKE__DOWNLOADS (다운로드 폴더를 옮겼을 때)
+    return Path(os.path.expandvars(raw)) if raw else Path.home() / "Downloads"
+
+
+def collect_downloads(downloads: Path, inbox: Path, archive: Path) -> list[str]:
+    """북마클릿이 받은 파일을 옮긴다: 하루기록-*.md → inbox, gemini-*.json → 대화 보관 폴더. 옮긴 이름들."""
+    moved = []
+    for pattern, dest in (("하루기록-*.md", inbox), ("gemini-*.json", archive)):
+        for f in sorted(downloads.glob(pattern)) if downloads.is_dir() else []:
+            dest.mkdir(parents=True, exist_ok=True)
+            name = f.name[len("하루기록-"):] if f.name.startswith("하루기록-") else f.name
+            target, n = dest / name, 2
+            while target.exists() or (dest / "done" / target.name).exists():  # 같은 날 두 번째 기록
+                target, n = dest / f"{Path(name).stem}-{n}{Path(name).suffix}", n + 1
+            f.replace(target)
+            moved.append(target.name)
+    return moved
+
+
+def bookmarklet() -> str:
+    """gemini_bookmarklet.js → 즐겨찾기 주소(javascript:…) 한 줄."""
+    js = (SKILL_DIR / "gemini_bookmarklet.js").read_text(encoding="utf-8")
+    js = re.sub(r"/\*.*?\*/", " ", js, flags=re.S)
+    js = " ".join(line.strip() for line in js.splitlines() if line.strip())
+    return "javascript:" + js.replace("%", "%25").replace("#", "%23")
+
+
 def find_input(arg: str | None) -> Path:
     if arg:
         return Path(arg)
     inbox = data_dir(SKILL, "inbox")
+    moved = collect_downloads(downloads_dir(), inbox, data_dir(SKILL, "gemini"))
+    if moved:
+        print(f"다운로드 폴더에서 옮김: {', '.join(moved)}")
     files = sorted(inbox.glob("*.md"), key=lambda f: f.stat().st_mtime)
     if not files:
         raise SystemExit(f"넣을 파일이 없어요 — 제미나이 정리본을 {inbox} 에 .md 로 저장하세요.")
@@ -403,7 +434,7 @@ def main(argv=None) -> int:
         if hasattr(s, "reconfigure"):
             s.reconfigure(encoding="utf-8")
     ap = argparse.ArgumentParser(description="하루 기록을 갈래별로 나눠 넣기")
-    ap.add_argument("cmd", choices=["plan", "apply", "ideas"])
+    ap.add_argument("cmd", choices=["plan", "apply", "ideas", "bookmarklet"])
     ap.add_argument("file", nargs="?")
     ap.add_argument("--skip", default="", help="쉼표로: sheet,notion")
     ap.add_argument("--done", default="", help="ideas: ISSUES 에 옮긴 번호(쉼표로)")
@@ -411,6 +442,16 @@ def main(argv=None) -> int:
     a = ap.parse_args(argv)
     if a.cmd == "ideas":
         return show_ideas(data_dir(SKILL) / "ideas.json", a.done, a.all)
+    if a.cmd == "bookmarklet":
+        url = bookmarklet()
+        try:
+            import subprocess
+            subprocess.run(["powershell", "-NoProfile", "-Command", "Set-Clipboard -Value $input"],
+                           input=url, text=True, encoding="utf-8", check=True)
+            print("즐겨찾기 주소를 클립보드에 넣었어요 — Chrome 즐겨찾기 추가 → 이름 '제미나이 내보내기', URL 칸에 붙여 넣기.")
+        except (OSError, subprocess.CalledProcessError):
+            print(url)
+        return 0
     load_env()
     src = find_input(a.file)
     m = DATE_RE.search(src.stem)

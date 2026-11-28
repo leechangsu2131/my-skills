@@ -6,6 +6,10 @@
     python tools/claim_task.py T77 --check                                   # 확인만(아무것도 바꾸지 않음)
     python tools/claim_task.py T77 write-lock --name bizcoder-1              # 잡기(멈춘 브랜치가 있으면 이어받기)
     python tools/claim_task.py T31 korean --name gemini-1 --skill admin-s2b-buyer   # 여러 스킬에 걸친 일·상시 일(S)
+    python tools/claim_task.py --skills                                       # S8 후보 스킬 순위 보기
+
+--next 순서: 내 일 → 멈춘 일 이어받기 → TASKS '열림' 일(K I G H J E) → 그것도 없으면 **S8**(열린 이슈가 있는 스킬 하나를
+맡아 ISSUES 를 고치기) — 수업 비서 묶음 스킬 먼저, 그다음 열린 이슈·최근 커밋이 많은 스킬(교사 요청 2026-11-28: 일이 금방 떨어짐).
 
 종료값: 0 잡음·이어받음(--check 면 잡을 수 있음, 이미 내가 잡은 일이면 이어서) / 1 이미 누가 함·완료·교사 결정 대기·고를 일 없음 / 2 사용법·git 오류
 
@@ -43,6 +47,12 @@ STALE_HOURS = float(os.environ.get("CLAIM_STALE_HOURS", "2"))
 KINDS = ("이어받음", "PR 올림", "합칠 준비", "그만둠", "막힘", "진행", "시작")
 NO_TAKEOVER = {"PR 올림": "끝남 — 합치기를 기다림", "막힘": "막힘 — 교사가 풂"}
 DEFAULT_ORDER = ["K", "I", "G", "H", "J", "E"]
+# S8: TASKS 에 고를 일이 없을 때 스킬 하나의 열린 이슈를 고치는 일 — 브랜치 task/S8-<스킬>
+ISSUE_TASK = "S8"
+PUSH_FAILED = 3  # claim_new 안에서만: 못 올려 원래 자리로 돌아감 → --next 는 다음 후보로(밖으로는 1)
+BUNDLE = ("teacherlesson-assistant", "util-notebooklm", "teacherlesson-guide", "teacherlesson-schedule",
+          "teacherlesson-from-neis")  # TASKS.md 맨 위 ★ 수업 비서 묶음
+RECENT_DAYS = 14
 
 
 class GitError(Exception):
@@ -99,9 +109,12 @@ def remote_task_heads() -> tuple[str, ...]:
 def same_task_branches(number: str, skill: str | None) -> list[str]:
     """같은 번호의 원격·로컬 브랜치 이름들(origin/ 은 붙여서)."""
     prefix = re.compile(r"^task/" + re.escape(number) + r"-", re.I)
+    # 스킬이 있으면 번호 바로 뒤가 그 스킬 이름이고 그 뒤는 끝이나 '-' — 부분 문자열로 보면
+    # exam-grader 가 exam-graderv2 브랜치를, photo-organizer 가 student-photo-organizer 브랜치를 제 것으로 봄(검토 2026-11-28)
+    exact = re.compile(r"^task/" + re.escape(number) + "-" + re.escape(skill or "") + r"(?:-|$)", re.I)
 
     def wanted(short: str) -> bool:
-        return bool(prefix.match(short)) and (not skill or skill.lower() in short.lower())
+        return bool(exact.match(short)) if skill else bool(prefix.match(short))
 
     out = ["origin/" + short for short in remote_task_heads() if wanted(short)]
     # 로컬 브랜치: 같은 저장소의 다른 작업 폴더(git worktree)가 아직 안 올린 것도 여기 보인다
@@ -239,18 +252,23 @@ def push(branch: str) -> str | None:
 def claim_new(number: str, skill: str | None, name: str, desc: str) -> int:
     scope = f" ({skill})" if skill else ""
     desc = re.sub(r"[^A-Za-z0-9._-]+", "-", desc).strip("-").lower() or "work"
+    if skill and not re.match(re.escape(skill.lower()) + r"(?:-|$)", desc):
+        desc = f"{skill.lower()}-{desc}"
     taken = set(remote_task_heads()) | {r[len("refs/heads/"):] for r in
                                         git("for-each-ref", "--format=%(refname)", "refs/heads/task/").splitlines()}
     branch, n = f"task/{number}-{desc}", 2
     while branch in taken:  # 합쳐진 옛 브랜치가 같은 이름이면
         branch, n = f"task/{number}-{desc}-{n}", n + 1
+    back = git("symbolic-ref", "--quiet", "--short", "HEAD", check=False) or git("rev-parse", "HEAD")
     git("switch", "--quiet", "-c", branch, "origin/main")
     git("add", append_log(name, f"{number}{scope} 시작 (브랜치 {branch})"))
     git("commit", "--quiet", "-m", f"docs: [worklog] {name} {number}{scope} 시작")
     err = push(branch)
     if err:
-        print(f"❌ 올리지 못했어요(같은 이름을 누가 먼저 올렸을 수 있음): {err}")
-        return 1
+        git("checkout", "--quiet", "-f", back, check=False)  # 원래 자리로, 못 올린 브랜치는 지움(검토 2026-11-28)
+        git("branch", "--quiet", "-D", branch, check=False)
+        print(f"❌ 올리지 못했어요(같은 이름을 누가 먼저 올렸을 수 있음, 원래 자리로 돌아감): {err}")
+        return PUSH_FAILED
     # 거의 같은 때 다른 이름으로 잡은 사람이 있는지 한 번 더
     git("fetch", "--quiet", "--prune", "origin")
     remote_task_heads.cache_clear()
@@ -358,32 +376,120 @@ def show_busy(number: str, skill: str | None, states: list[dict]) -> None:
         print(f"   {b}  ({last}{', 작업 폴더 ' + where if where else ''}{'; ' + note if note else ''})")
 
 
-def run_next(a) -> int:
-    cands = next_candidates(a.grade)
-    plans = [(n, evaluate(n, None, a.name, a.stale_hours)) for n in cands]
-    for kind in ("mine", "takeover", "free"):
-        for n, ev in plans:
+def rank_skills() -> list[dict]:
+    """S8 후보: 원격 main 에서 열린 이슈(🔵 진행 중·📌 백로그의 `###` 항목)가 있는 스킬.
+    수업 비서 묶음이 먼저, 그다음 점수(열린 이슈 ×2 + 최근 RECENT_DAYS 일 커밋 수, 최대 10) 순. 보관 스킬은 뺀다."""
+    open_issues: dict[str, int] = {}
+    section_open: dict[str, bool] = {}
+    out = git("grep", "-n", "-e", "^## ", "-e", "^### ", "origin/main", "--", "skills/*/ISSUES.md", check=False)
+    for line in out.splitlines():
+        m = re.match(r"^origin/main:skills/([^/]+)/ISSUES\.md:\d+:(.*)$", line)
+        if not m:
+            continue
+        skill, text = m.groups()
+        if text.startswith("## "):
+            section_open[skill] = bool(re.search(r"🔵|📌|진행 중|백로그", text)) and "🟢" not in text
+        elif section_open.get(skill) and re.match(r"###\s+[A-Z][A-Za-z]*-\S", text):
+            # `### 📄 기존 ing.md 내용` 같은 옮김 제목은 세지 않음(검토 2026-11-28)
+            open_issues[skill] = open_issues.get(skill, 0) + 1
+    shelved = set()
+    for line in git("grep", "-n", "-e", "status:", "origin/main", "--", "skills/*/SKILL.md", check=False).splitlines():
+        m = re.match(r"^origin/main:skills/([^/]+)/SKILL\.md:\d+:\s*status:\s*(\S+)", line)
+        if m and m.group(2).startswith("보관"):
+            shelved.add(m.group(1))
+    recent: dict[str, set] = {}
+    log = git("log", "origin/main", f"--since={RECENT_DAYS}.days.ago", "--format=@%H", "--name-only", "--", "skills/",
+              check=False)
+    sha = ""
+    for line in log.splitlines():
+        if line.startswith("@"):
+            sha = line[1:]
+        elif line.startswith("skills/"):
+            recent.setdefault(line.split("/")[1], set()).add(sha)
+    ranked = []
+    for skill, n in open_issues.items():
+        if skill in shelved or skill.startswith("_"):
+            continue
+        c = len(recent.get(skill, ()))
+        ranked.append({"skill": skill, "issues": n, "recent": c, "bundle": skill in BUNDLE,
+                       "score": n * 2 + min(c, 10)})
+    ranked.sort(key=lambda r: (not r["bundle"], -r["score"], r["skill"]))
+    return ranked
+
+
+def _pick(a, plans: list, kinds=("mine", "takeover", "free")) -> int | None:
+    """plans: [((번호, 스킬), evaluate 결과)]. 잡았거나 이미 내 일이면 종료값, 고를 게 없으면 None."""
+    for kind in kinds:
+        for (n, skill), ev in plans:
             if ev["action"] != kind:
                 continue
+            label = f"{n} ({skill})" if skill else n
             if kind == "mine":
-                print(f"✅ {n} 는 이미 {a.name} 가 잡은 일이에요(이어서 하세요): {', '.join(ev['branches'])}")
+                print(f"✅ {label} 는 이미 {a.name} 가 잡은 일이에요(이어서 하세요): {', '.join(ev['branches'])}")
                 return 0
             if a.check:
                 what = f"이어받기 — {ev['why']}" if kind == "takeover" else "새로 잡기"
-                print(f"✅ 다음 일: {n} ({what})")
+                print(f"✅ 다음 일: {label} ({what})")
                 return 0
             if git("status", "--porcelain"):
                 print("❌ 이 작업 폴더에 커밋 안 한 변경이 있어요. 정리한 뒤 다시 잡으세요(남의 변경이 섞이지 않게).")
                 return 2
             if kind == "takeover":
-                if take_over(n, None, a.name, ev["state"], ev["why"]) == 0:
+                if take_over(n, skill, a.name, ev["state"], ev["why"]) == 0:
                     return 0
-                print(f"   → {n} 는 건너뛰고 다음 후보를 봐요.")
+                print(f"   → {label} 는 건너뛰고 다음 후보를 봐요.")
                 continue
-            return claim_new(n, None, a.name, a.desc or "work")
-    print("고를 '열림' 일이 없어요 → TASKS 맨 아래 상시 일(S)을 하세요. 예:")
-    print(f"   python tools/claim_task.py S1 <짧은-영어-설명> --name {a.name or '<내 이름>'} --skill <★ 묶음 스킬 이름>")
+            r = claim_new(n, skill, a.name, skill or a.desc or "work")
+            if r == PUSH_FAILED:
+                print(f"   → {label} 는 건너뛰고 다음 후보를 봐요.")
+                continue
+            return r
+    return None
+
+
+def my_issue_branches(name: str | None) -> list[str]:
+    """내가 마지막으로 잡은(시작·이어받음) S8 브랜치 — 순위가 바뀌어도 '내 일'로 먼저 찾게."""
+    if not name:
+        return []
+    return [b for b in same_task_branches(ISSUE_TASK, None)
+            if not (b.startswith("origin/") and is_merged(b)) and owner_is_me(b, name, ISSUE_TASK)]
+
+
+def run_next(a) -> int:
+    t_plans = [((n, None), evaluate(n, None, a.name, a.stale_hours)) for n in next_candidates(a.grade)]
+    # 1) 내 일 — T 든 S8 이든 먼저(내 S8 을 두고 새 T 일을 잡지 않게, 검토 2026-11-28)
+    r = _pick(a, t_plans, ("mine",))
+    if r is not None:
+        return r
+    mine8 = my_issue_branches(a.name)
+    if mine8:
+        print(f"✅ {ISSUE_TASK} 는 이미 {a.name} 가 잡은 일이에요(이어서 하세요): {', '.join(mine8)}")
+        return 0
+    # 2) TASKS 일: 멈춘 일 이어받기 → 새로 잡기
+    r = _pick(a, t_plans, ("takeover", "free"))
+    if r is not None:
+        return r
+    # 3) S8 — 순위대로 하나씩 평가(첫 후보가 비면 바로 잡음)
+    ranked = rank_skills()[:12]
+    if ranked:
+        print(f"TASKS 에 고를 '열림' 일이 없어요 → {ISSUE_TASK}: 열린 이슈가 있는 스킬 하나를 맡아요"
+              "(수업 비서 묶음 먼저, 그다음 열린 이슈·최근 커밋이 많은 스킬).")
+        for x in ranked:
+            plan = [((ISSUE_TASK, x["skill"]), evaluate(ISSUE_TASK, x["skill"], a.name, a.stale_hours))]
+            r = _pick(a, plan, ("takeover", "free"))
+            if r is not None:
+                return r
+    print("고를 일이 없어요 → TASKS 맨 아래 상시 일(S)을 하세요. 예:")
+    print(f"   python tools/claim_task.py S1 <짧은-영어-설명> --name {a.name or '<내 이름>'} --skill <스킬 이름>")
     return 1
+
+
+def show_skills() -> int:
+    ranked = rank_skills()
+    print(f"S8 후보 스킬(열린 이슈 · 최근 {RECENT_DAYS}일 커밋) — 위에서부터 고름")
+    for i, x in enumerate(ranked, 1):
+        print(f"{i:>2}. {'★ ' if x['bundle'] else '  '}{x['skill']}  이슈 {x['issues']} · 커밋 {x['recent']}")
+    return 0
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -396,7 +502,16 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--next", action="store_true", help="다음 일을 골라 잡기: 내 일 → 멈춘 일 이어받기 → 열림 일")
     ap.add_argument("--grade", choices=["R", "P"], default="R", help="내 등급(P: 교사 PC 작업자 — P 일도 고름)")
     ap.add_argument("--stale-hours", type=float, default=STALE_HOURS, help="몇 시간 새 커밋이 없으면 이어받을지")
+    ap.add_argument("--skills", action="store_true", help="S8 후보 스킬 순위만 보기")
     a = ap.parse_args(argv)
+    try:  # tools/·docs/ 에서 돌려도 pathspec(skills/*, docs/worklog/)이 맞게 저장소 맨 위로(검토 2026-11-28)
+        os.chdir(git("rev-parse", "--show-toplevel"))
+    except GitError as e:
+        print(f"❌ git 저장소 안에서 돌려 주세요: {e}")
+        return 2
+    if a.skills:
+        git("fetch", "--quiet", "origin", check=False)
+        return show_skills()
     if a.name:
         a.name = re.sub(r"\s+", "", a.name).strip("[]")  # 지침 첫 줄 '[claude-web- 173]' 처럼 띄어쓰기·대괄호가 섞여도 같은 일지 파일로
 
@@ -449,7 +564,8 @@ def main(argv: list[str] | None = None) -> int:
             return 2
         if ev["action"] == "takeover":
             return take_over(number, a.skill, a.name, ev["state"], ev["why"])
-        return claim_new(number, a.skill, a.name, a.desc)
+        r = claim_new(number, a.skill, a.name, a.desc)
+        return 1 if r == PUSH_FAILED else r
     except GitError as e:
         print(f"❌ git 오류: {e}")
         return 2

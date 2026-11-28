@@ -19,3 +19,4 @@
 - 2026-11-27 09:10 T99 PR 올림 — 클로바노트용 MP3 내보내기 구현: 새 audio_export.py·web/recording_export.js, assistant_server 의 GET /api/recording-export/(재생과 같은 recording_file 검사), 화면 🎧 단추, 시험 3종(변환 26·서버 13·화면 순수함수 5), SKILL·README·ISSUE-039·config.example 갱신. 확인: test_assistant_*.py 87개·skill pytest 422 통과(기존 xfail 5)·루트 pytest 524 통과·node 시험 통과·build_catalog --check·check_privacy 통과. 교사 PC 확인 남음(실제 녹음 변환·클로바노트 업로드)
 - 2026-11-27 09:44 S1 (teacherlesson-assistant) 시작 (브랜치 task/S1-check-setup-helpers)
 - 2026-11-27 10:20 T99 시작 (브랜치 task/T99-clova-mp3-export)
+- 2026-11-28 12:42 S8 (teacherlesson-guide) 이어받음 (브랜치 task/S8-teacherlesson-guide, 앞 — claude-web-소연: 2026-11-28 14:40 S8 (teacherlesson-guide) 시작 (브랜치 task/S8-teacherlesson-guide))

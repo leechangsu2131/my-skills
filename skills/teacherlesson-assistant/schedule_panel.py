@@ -282,8 +282,7 @@ class Panel:
             inbox = self._open().inbox()
             if inbox is None:
                 raise PanelError("일정 시트에 '빠른입력' 탭이 없어요. 시트에 그 이름의 탭을 만들어 주세요.")
-            # RAW: '=' 로 시작하는 글이 수식이 되거나 날짜가 시트 마음대로 바뀌지 않게 글자 그대로 넣는다.
-            inbox._ws.append_row([line], value_input_option="RAW", table_range="A1")
+            inbox.append(line)   # school-todo-kakao 의 공개 함수(글자 그대로 RAW 로 덧붙임, ISSUE-008)
         except (Exception, SystemExit) as exc:
             return {"status": "error", "written": False, "message": explain(exc)}
         return {"status": "success", "written": True, "line": line, "parsed": parsed,

@@ -104,6 +104,11 @@ class InboxSheet:
                 out.append((i, text))
         return out
 
+    def append(self, line: str) -> None:
+        """'빠른입력' 맨 아래에 한 줄 덧붙인다(A열). 수업 비서 칸 등 다른 곳에서 `_ws` 를 직접 건드리지 않게 둔 공개 함수.
+        RAW: '=' 로 시작하는 글이 수식이 되거나 날짜가 시트 마음대로 바뀌지 않게 글자 그대로 넣는다."""
+        self._ws.append_row([line], value_input_option="RAW", table_range="A1")
+
     def mark(self, marks: dict[int, str]) -> None:
         if marks:
             self._ws.batch_update([{"range": f"B{n}", "values": [[v]]} for n, v in sorted(marks.items())])

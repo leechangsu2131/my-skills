@@ -59,3 +59,5 @@
 - 2026-11-28 15:29 S8 (util-chrome-profiles) 시작 (브랜치 task/S8-util-chrome-profiles-issues)
 - 2026-11-28 15:30 S8 (util-chrome-profiles) PR 올림 — ISSUE-006 작업 시간 기록: work_log.py(CSV 한 줄·합계 CLI)·stop_work 연결·test_work_log.py 7개(변형 확인). 앱 실제 실행(Windows·PySide6)은 확인 필요
 - 2026-11-28 20:15 T109 진행 — 교사 요청으로 #181 합치기 준비: main 받아 충돌 해결. 검토 🔴🟡🟢 는 claude-web-173 의 같은 수정(7678f25)이 먼저 올라와 그 버전을 채택(내 중복 수정은 버림). 합친 시험 수업 비서 전체 통과
+- 2026-11-28 20:31 S8 (school-todo-kakao) 시작 (브랜치 task/S8-school-todo-kakao-issues)
+- 2026-11-28 20:31 S8 (school-todo-kakao) PR 올림 — ISSUE-008 절반: InboxSheet.append(공개 함수)·schedule_panel 이 _ws 대신 사용·tests/test_inbox_append.py 3개(변형 확인). school-todo-kakao 시험 63 통과(gspread 없는 환경에서 원래 실패하는 1개 제외), schedule_panel 시험 34 통과. 남은 것: 설정 사전을 받는 SheetsDb 열기

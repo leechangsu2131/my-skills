@@ -73,7 +73,12 @@ function handle_(utter, uid, props) {
     // 무엇을 보냈든 아이디를 함께 알려 준다(이메일·이름을 보내는 경우가 많다).
     return '아직 등록되지 않은 사용자예요.\n아래 아이디를 선생님께 알려 주세요.\n\n' + uid;
   }
-  let m = text.match(/^(?:되돌리기|취소)\s+(.+)$/);
+  // 할 일 추가(관리자만): '완료'로 끝나는 내용도 추가로 보도록 완료 명령보다 먼저 본다.
+  // '추가 취소'가 '취소'라는 할 일 추가로 읽히지 않게 취소를 먼저 본다.
+  if (/^추가\s*취소$/.test(text)) return ctx.isAdmin ? undoAdd_(uid, props) : '할 일 추가는 선생님(관리자)만 할 수 있어요.';
+  let m = text.match(/^(?:추가|할\s*일\s*추가|일정\s*추가)\s+(.+)$/);
+  if (m) return ctx.isAdmin ? addTask_(m[1], uid, props) : '할 일 추가는 선생님(관리자)만 할 수 있어요.';
+  m = text.match(/^(?:되돌리기|취소)\s+(.+)$/);
   if (m) return undo_(ctx, m[1]);
   m = text.match(/^(?:완료|끝)\s+(.+)$/) || text.match(/^(.+?)\s*(?:완료했어|완료|끝났어|했어)$/);
   if (m) return complete_(ctx, /^(나|저|내가|다|전부|모두)$/.test(m[1]) ? '' : m[1]);
@@ -83,8 +88,110 @@ function handle_(utter, uid, props) {
   if (/^(?:내\s*)?할\s*일$/.test(text)) return listMine_(ctx);
   if (text === '오늘') return listToday_(ctx);
   return ctx.isAdmin
-    ? '이렇게 말해 주세요:\n• 완료 탄소중립\n• 되돌리기 탄소중립\n• 할일 / 오늘\n• 현황\n• 완료 탄소중립 이영희 (대신 처리)'
+    ? '이렇게 말해 주세요:\n• 완료 탄소중립\n• 되돌리기 탄소중립\n• 할일 / 오늘\n• 현황\n• 완료 탄소중립 이영희 (대신 처리)\n• 추가 내일 학부모 상담 (할 일 추가)'
     : '이렇게 말해 주세요:\n• 완료 탄소중립\n• 되돌리기 탄소중립\n• 할일 / 오늘';
+}
+
+// ---------- 할 일 추가 (python schooltodo/inbox.py parse_line, sync.make_key와 같은 규칙) ----------
+// 바꿀 때는 두 쪽을 함께 고치고 harness2.js의 '같은 결과' 시험을 갱신한다.
+const REL_DAYS_ = { '오늘': 0, '내일': 1, '모레': 2, '글피': 3 };
+const KO_WD_ = '월화수목금토일';
+const WEEK_OFFSET_ = { '이번': 0, '다음': 1, '다다음': 2 };
+
+function ymd_(y, mo, d) {
+  const t = new Date(Date.UTC(y, mo - 1, d));
+  if (t.getUTCFullYear() !== y || t.getUTCMonth() !== mo - 1 || t.getUTCDate() !== d) return null;
+  return t.toISOString().slice(0, 10);
+}
+function addDays_(s, n) {
+  return new Date(Date.UTC(Number(s.slice(0, 4)), Number(s.slice(5, 7)) - 1, Number(s.slice(8, 10)) + n)).toISOString().slice(0, 10);
+}
+function weekday_(s) { // 0=월 … 6=일 (python date.weekday와 같음)
+  return (new Date(Date.UTC(Number(s.slice(0, 4)), Number(s.slice(5, 7)) - 1, Number(s.slice(8, 10)))).getUTCDay() + 6) % 7;
+}
+function resolveYear_(mo, d, today) {
+  const y = Number(today.slice(0, 4));
+  let best = null;
+  [y - 1, y, y + 1].forEach(function (yy) {
+    const c = ymd_(yy, mo, d);
+    if (c && (best === null || Math.abs(dayDiff_(today, c)) < Math.abs(dayDiff_(today, best)))) best = c;
+  });
+  return best;
+}
+
+function parseLine_(line, today) {
+  let s = String(line).trim();
+  let d = null;
+  let m = s.match(/^\s*(오늘|내일|모레|글피)[\s,:·-]*/);
+  if (m) { d = addDays_(today, REL_DAYS_[m[1]]); s = s.slice(m[0].length); }
+  if (d === null && (m = s.match(/^\s*(\d{4})\s*[-./년]\s*(\d{1,2})\s*[-./월]\s*(\d{1,2})\s*일?[\s,:·-]*/))) {
+    d = ymd_(Number(m[1]), Number(m[2]), Number(m[3]));
+    if (d !== null) s = s.slice(m[0].length);
+  }
+  if (d === null && (m = s.match(/^\s*(\d{1,2})\s*(?:\/|\.|월)\s*(\d{1,2})\s*일?[\s,:·-]*/))) {
+    d = resolveYear_(Number(m[1]), Number(m[2]), today);
+    if (d !== null) s = s.slice(m[0].length);
+  }
+  if (d === null && (m = s.match(/^\s*(?:(이번|다음|다다음)\s*주\s*([월화수목금토일])(?:요일)?|([월화수목금토일])요일)[\s,:·-]*/))) {
+    const wd = KO_WD_.indexOf(m[2] || m[3]);
+    if (m[1]) d = addDays_(addDays_(today, -weekday_(today)), 7 * WEEK_OFFSET_[m[1]] + wd);
+    else d = addDays_(today, (wd - weekday_(today) + 7) % 7);
+    s = s.slice(m[0].length);
+  }
+  const text = s.trim();
+  if (!text) return null;
+  return { date: d || today, category: text.indexOf('출장') >= 0 ? '출장' : '개인', text: text };
+}
+
+function makeKey_(d, text) {
+  return d.slice(5, 7) + d.slice(8, 10) + '-' + Array.from(text.replace(/\s+/g, '')).slice(0, 10).join('');
+}
+
+function addTask_(line, uid, props) {
+  const today = todayStr_();
+  const p = parseLine_(line, today);
+  if (!p) return '추가할 내용을 같이 적어 주세요. 예) 추가 내일 학부모 상담';
+  if (p.date < today) return '지난 날짜예요(' + md_(p.date) + '). 날짜를 고쳐 다시 보내 주세요.';
+  const key = makeKey_(p.date, p.text);
+  const sh = SpreadsheetApp.getActive().getSheetByName(SHEET_NAME);
+  const values = sh.getDataRange().getValues();
+  const head = values[0].map(String);
+  const col = headIndex_(head);
+  const iKey = col('키', true), iDate = col('날짜', true), iCat = col('구분', true), iText = col('내용', true);
+  const iSrc = col('출처'), iTarget = col('대상');
+  for (let r = 1; r < values.length; r++) {
+    if (trim_(values[r][iKey]) === key) return '이미 있어요: ' + md_(p.date) + ' ' + p.text;
+  }
+  const row = head.map(function () { return ''; });
+  row[iKey] = key;
+  row[iCat] = p.category;
+  row[iText] = p.text;
+  if (iSrc >= 0) row[iSrc] = '수동';
+  if (iTarget >= 0) row[iTarget] = '전체'; // 내가 직접 적은 것은 걸러지면 안 된다(빠른입력과 같음)
+  // 날짜 칸은 텍스트(yyyy-mm-dd)로 둔다. 앞의 '는 시트가 날짜값으로 바꾸지 않게 하는 표시(저장되지 않음).
+  // 카카오 5초 제한 때문에 쓰기를 한 번으로 줄였다.
+  row[iDate] = "'" + p.date;
+  sh.appendRow(row);
+  props.setProperty('LAST_ADD_' + uid, key);
+  return '✅ ' + md_(p.date) + '(' + KO_WD_[weekday_(p.date)] + ') [' + p.category + '] ' + p.text + '\n잘못 넣었으면 "추가취소"';
+}
+
+function undoAdd_(uid, props) {
+  const key = props.getProperty('LAST_ADD_' + uid) || '';
+  if (!key) return '취소할 추가 기록이 없어요.';
+  const sh = SpreadsheetApp.getActive().getSheetByName(SHEET_NAME);
+  const values = sh.getDataRange().getValues();
+  const col = headIndex_(values[0].map(String));
+  const iKey = col('키', true), iText = col('내용', true), iStatus = col('상태');
+  for (let r = values.length - 1; r >= 1; r--) {
+    if (trim_(values[r][iKey]) !== key) continue;
+    if (iStatus >= 0 && trim_(values[r][iStatus])) return '이미 완료 표시가 있어 지우지 않았어요. 시트에서 직접 고쳐 주세요.';
+    sh.deleteRow(r + 1);
+    props.setProperty('LAST_ADD_' + uid, '');
+    return '🗑 지웠어요: ' + trim_(values[r][iText]);
+  }
+  props.setProperty('LAST_ADD_' + uid, '');
+  return '방금 추가한 줄을 찾지 못했어요(이미 지웠을 수 있어요).';
 }
 
 // ---------- 사용자·담당자 ----------

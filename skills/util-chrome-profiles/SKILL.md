@@ -24,6 +24,7 @@ Edge 프로필은 트리에 `Edge · 이름` 으로 보이고 Chrome 프로필�
 ## 준비
 - Windows, Python 3.10+, `pip install -r requirements.txt` (PySide6-Essentials, pywin32, uiautomation)
 - 설정 키(선택): 중앙 `.env` 의 `CHROME_USER_DATA_DIR`·`EDGE_USER_DATA_DIR` — 기본 `%LOCALAPPDATA%\Google\Chrome\User Data`, `%LOCALAPPDATA%\Microsoft\Edge\User Data`. 설치 안 된 브라우저는 건너뛴다.
+- **다른 PC에서 써도 됨**: 설정은 프로필 폴더 이름(Profile 4)이 아니라 **계정 이메일 기준**(`acct:이메일`, Edge 는 `edge:acct:이메일`)으로 저장한다. PC 마다 폴더 순서가 달라도 같은 계정이면 같은 그룹·시작 URL·작업 시간, 그 PC 에 없는 계정 설정은 지우지 않고 남겨 둔다. 로그인 안 한 프로필만 폴더 이름 기준(PC 가 다르면 다른 프로필일 수 있음). 설정 파일을 다른 PC 로 복사하거나 OneDrive 로 함께 써도 된다. `python chrome_profiles.py --check` 로 '설정 저장 이름' 확인.
 - 그룹·시작 URL·감시 시간·작업 시간은 `내 문서\my-skills-data\util-chrome-profiles\config.json`, 다시 쓸 시각은 같은 폴더 `pauses.json` 에 저장된다. 페이지 글 자체는 저장하지 않는다(일시 중지 안내 줄 앞 120자만).
 
 ## 사용법

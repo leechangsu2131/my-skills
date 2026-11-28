@@ -24,7 +24,7 @@ Edge 프로필은 트리에 `Edge · 이름` 으로 보이고 Chrome 프로필�
 ## 준비
 - Windows, Python 3.10+, `pip install -r requirements.txt` (PySide6-Essentials, pywin32, uiautomation)
 - 설정 키(선택): 중앙 `.env` 의 `CHROME_USER_DATA_DIR`·`EDGE_USER_DATA_DIR` — 기본 `%LOCALAPPDATA%\Google\Chrome\User Data`, `%LOCALAPPDATA%\Microsoft\Edge\User Data`. 설치 안 된 브라우저는 건너뛴다.
-- **다른 PC에서 써도 됨**: 설정은 프로필 폴더 이름(Profile 4)이 아니라 **계정 이메일 기준**(`acct:이메일`, Edge 는 `edge:acct:이메일`)으로 저장한다. PC 마다 폴더 순서가 달라도 같은 계정이면 같은 그룹·시작 URL·작업 시간, 그 PC 에 없는 계정 설정은 지우지 않고 남겨 둔다. 로그인 안 한 프로필만 폴더 이름 기준(PC 가 다르면 다른 프로필일 수 있음). 설정 파일을 다른 PC 로 복사하거나 OneDrive 로 함께 써도 된다. `python chrome_profiles.py --check` 로 '설정 저장 이름' 확인.
+- **다른 PC에서 써도 됨**: 설정은 프로필 폴더 이름(Profile 4)이 아니라 **계정 이메일 기준**(`acct:이메일`, Edge 는 `edge:acct:이메일`)으로 저장한다. PC 마다 폴더 순서가 달라도 같은 계정이면 같은 그룹·시작 URL·작업 시간, 그 PC 에 없는 계정 설정은 지우지 않고 남겨 둔다. 로그인 안 한 프로필만 폴더 이름 기준(PC 가 다르면 다른 프로필일 수 있음). 설정 파일을 다른 PC 로 복사하거나 OneDrive 로 함께 써도 된다(단 두 PC 를 동시에 켜 두면 마지막에 저장한 쪽이 이김). `python chrome_profiles.py --check` 로 '설정 저장 이름' 확인.
 - 그룹·시작 URL·감시 시간·작업 시간은 `내 문서\my-skills-data\util-chrome-profiles\config.json`, 다시 쓸 시각은 같은 폴더 `pauses.json` 에 저장된다. 페이지 글 자체는 저장하지 않는다(일시 중지 안내 줄 앞 120자만).
 
 ## 사용법
@@ -59,6 +59,7 @@ python chrome_profiles.py --check
 | 변화 없음 감시 | 미리보기 오른쪽 클릭 → "변화 감시 켜기". 지정한 초 동안 화면이 안 바뀌면 알림 |
 
 ## 주의
+- 여러 창에 차례로 하는 일(일괄 입력·사이트 이동·지침 바꾸기)은 진행 창이 뜨고 '멈추기'로 언제든 멈출 수 있다. 오류는 `error.log`(데이터 폴더)에 남는다.
 - 프로젝트 지침 바꾸기는 작업자 계정의 claude.ai 설정을 실제로 바꾼다. 처음엔 "미리보기만"으로, 그다음 한 창만 골라 저장해 본다. claude.ai 는 편집 창에서 취소해도 쓴 글이 그 페이지에 남아 있다가 다음 저장에 들어갈 수 있어, 미리보기·실패 때는 원래 글로 되돌린 뒤 취소한다.
 - 일괄 입력은 창을 하나씩 앞으로 가져와 Ctrl+V 한다. 그동안 마우스·키보드를 쓰지 않는다.
   앞으로 못 가져온 창은 엉뚱한 곳에 붙지 않게 건너뛰고 상태 표시줄에 알린다. 클립보드는 끝나면 되돌린다.

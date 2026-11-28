@@ -75,5 +75,19 @@ python chrome_profiles.py --check
 - **미리보기가 멈추는 경우 두 가지**: ① 최소화된 창 — Chrome 이 아예 그리지 않음. 미리보기에 "🗕 최소화 — 그림 멈춤"이 붙고, 미리보기 위 "최소화된 창 펼치기"(또는 "최소화된 창 자동으로 뒤에 펼쳐 두기")로 앞을 가리지 않게 뒤쪽에 펼치면 다시 찍힌다. ② 다른 프로그램 창에 완전히 가려진 창 — Chrome 절약 기능이 그리기를 멈춤. "가려진 창도 계속 그리기"(기본 켬)는 프로필을 열 때 실행 옵션(`--disable-features=CalculateNativeWinOcclusion --disable-backgrounding-occluded-windows`)을 붙이는데, 브라우저가 처음 켜질 때만 먹어 **Chrome·Edge 를 모두 닫고 이 매니저로 다시 열어야** 적용된다(안 됐으면 미리보기 위에 안내). 글로 읽는 기능(답글 모아보기·일시 중지 감지·자동 누르기)은 최소화·가려짐과 상관없이 된다.
 - 다른 user-data-dir 로 띄운 Chrome(자동화용 등)·프로필 선택 창·앱 창은 "기타 브라우저 창"으로 보인다. 새로 띄우기는 못 하고(어느 폴더인지 몰라서) 앞으로·닫기·입력만 된다.
 
+## 이 스킬을 고칠 때 (다른 AI 작업자용)
+- **코드 한 파일**: `chrome_profiles.py`(약 3천 줄) — 위쪽은 Windows·UIA 도우미 함수, 아래 `Manager` 클래스가 화면. 시각 읽기는 `usage_pause.py`(시험 `test_usage_pause.py`, `python -m pytest -q`).
+- **교사가 매니저를 켜 둔 채 쓰고 있다.** 켜진 매니저는 20초마다 모든 Chrome·Edge 창을 읽으므로, 시험 페이지에 '…오후 12:10 이후 다시 제공' 같은 글을 띄우면
+  교사의 실제 `pauses.json` 에 기록된다 → 시험 문구는 피하거나 끝나고 지운다.
+- **교사 창은 건드리지 않는다**: 시험은 새 창(`chrome.exe --profile-directory=… --new-window <주소>`)을 띄워 하고 끝나면 닫는다.
+  설정·기록은 사본으로(`cp.CONFIG = Path("사본.json")`, `cp.usage_pause.store_path = lambda: Path("사본.json")`).
+- **바깥에 영향 주는 동작은 대역으로**: 프로젝트 지침은 '미리보기만', 메시지 보내기(`type_and_send`)·자동 누르기(`auto_click_once`)·창 닫기(`close_window`)는
+  시험 때 함수를 바꿔 끼워 기록만 한다. claude.ai 는 편집 창에서 취소해도 쓴 글이 페이지에 남는다(되돌린 뒤 취소).
+- **화면 구조는 실제로 읽어 보고** 짠다(UIA 이름: `지침 편집`, `프로젝트 지침 설정`, `지침 저장`, `응답 중지`, 메시지 article '입력 내용:'/'Claude 응답:', 업그레이드 팝업은 aria-modal 이라 뜨면 페이지 나머지가 숨는다).
+  읽기만 하는 시험(창 목록·이름·주소)은 교사 창에 해도 된다.
+- 셸 here-doc 으로 파이썬을 고치면 `
+` 같은 역슬래시가 깨질 수 있다 — 고친 뒤 `python -m py_compile chrome_profiles.py`.
+- 바뀐 기능은 이 표와 `ISSUES.md` 에 함께 적는다.
+
 ## 문서
 - [ISSUES.md](ISSUES.md) — 문제·해결 기록, 진행 중인 일

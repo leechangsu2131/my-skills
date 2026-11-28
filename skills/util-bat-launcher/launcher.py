@@ -124,6 +124,7 @@ class Launcher(QMainWindow):
             self.cfg = {}
         self.cfg.setdefault("favorites", [])
         self.cfg.setdefault("recent", [])
+        self.cfg.setdefault("ran", [])   # 한 번이라도 실행한 파일(처음 실행 확인을 다시 묻지 않음)
 
         self.search = QLineEdit()
         self.search.setPlaceholderText("찾기: 스킬·파일 이름·설명 (예: 나이스, 인쇄, 실행)")
@@ -228,11 +229,37 @@ class Launcher(QMainWindow):
             QMessageBox.warning(self, "스킬 실행기", f"파일이 없습니다:\n{path}")
             self.reload()
             return
-        os.startfile(str(path), cwd=str(path.parent))  # 탐색기 더블클릭과 같게, 그 폴더에서
+        if rel not in self.cfg["ran"]:  # 처음 실행하는 파일은 한 번 묻는다(크롬 강제 종료·프린터 초기화 같은 것도 섞여 있음)
+            box = QMessageBox(QMessageBox.Icon.Question, "스킬 실행기",
+                              f"처음 실행하는 파일입니다.\n\n{rel}\n{self.entries.get(rel, {}).get('note', '')}\n\n실행할까요?",
+                              parent=self)
+            run = box.addButton("실행", QMessageBox.ButtonRole.AcceptRole)
+            look = box.addButton("내용 먼저 보기", QMessageBox.ButtonRole.ActionRole)
+            box.addButton("취소", QMessageBox.ButtonRole.RejectRole)
+            box.exec()
+            if box.clickedButton() is look:
+                self.show_file(path)
+                return
+            if box.clickedButton() is not run:
+                return
+            self.cfg["ran"].append(rel)
+        try:
+            os.startfile(str(path), cwd=str(path.parent))  # 탐색기 더블클릭과 같게, 그 폴더에서
+        except OSError as e:
+            QMessageBox.warning(self, "스킬 실행기", f"실행하지 못했습니다:\n{path}\n\n{e}")
+            return
         self.cfg["recent"] = [rel] + [r for r in self.cfg["recent"] if r != rel][:RECENT_MAX - 1]
         self.save()
         self.statusBar().showMessage(f"실행: {rel}", 8000)
+        scroll = self.tree.verticalScrollBar().value()   # 목록을 새로 그려도 보던 자리 유지
         self.rebuild()
+        self.tree.verticalScrollBar().setValue(scroll)
+
+    def show_file(self, path: Path):
+        try:
+            os.startfile("notepad.exe", arguments=f'"{path}"')
+        except OSError as e:
+            QMessageBox.warning(self, "스킬 실행기", f"메모장을 열지 못했습니다:\n{e}")
 
     def toggle_favorite(self, rel: str):
         favs = self.cfg["favorites"]
@@ -252,7 +279,7 @@ class Launcher(QMainWindow):
                        lambda: self.toggle_favorite(rel))
         menu.addSeparator()
         menu.addAction("폴더 열기", lambda: os.startfile(str(path.parent)))
-        menu.addAction("내용 보기(메모장)", lambda: os.startfile("notepad.exe", arguments=f'"{path}"'))
+        menu.addAction("내용 보기(메모장)", lambda: self.show_file(path))
         menu.addAction("경로 복사", lambda: QGuiApplication.clipboard().setText(str(path)))
         if rel in self.cfg["recent"]:
             menu.addAction("최근 실행에서 지우기", lambda: (self.cfg["recent"].remove(rel), self.save(), self.rebuild()))

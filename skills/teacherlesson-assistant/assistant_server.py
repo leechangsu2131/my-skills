@@ -39,6 +39,9 @@ from skill_env import data_dir, env_values  # noqa: E402
 sys.path.insert(0, str(SKILL_DIR))
 import audio_export  # noqa: E402  (녹음 → 클로바노트용 MP3, T99)
 import school_info  # noqa: E402  (급식·날씨 한 줄, T109)
+import schedule_panel  # noqa: E402  (일정·할 일 칸, T107)
+import transcribe  # noqa: E402  (받아쓰기 사전 파일 이름·읽기, T111)
+import submissions  # noqa: E402  (제출 확인표, T108)
 
 SKILL = "teacherlesson-assistant"
 DATA = data_dir(SKILL)
@@ -49,6 +52,10 @@ UNITS = DATA / "units"
 SESSIONS = DATA / "sessions"
 CAUTIONS_PATH = DATA / "publisher_notes.json"
 NOTEBOOKLM = DATA / "notebooklm"
+STT_WORDS_PATH = DATA / transcribe.WORDS_FILE  # 학생 이름이 들어갈 수 있어 데이터 폴더에만 둠
+STT_MAX_WORDS, STT_MAX_FIXES, STT_MAX_LEN = 200, 300, 40
+SUBMISSIONS = DATA / "submissions"
+ROSTER_PATH = DATA / "roster.txt"  # 선택: 줄 순서 = 번호. 이름은 이 PC 화면에만 보냄
 DEFAULT_AI_SITES = [
     {"name": "Claude", "url": "https://claude.ai/new"},
     {"name": "Gemini", "url": "https://gemini.google.com/app"},
@@ -905,6 +912,8 @@ class Handler(BaseHTTPRequestHandler):
             return self._send(200, (WEB / "tools.js").read_bytes(), "application/javascript; charset=utf-8")
         if url.path == "/recording_export.js":
             return self._send(200, (WEB / "recording_export.js").read_bytes(), "application/javascript; charset=utf-8")
+        if url.path == "/voice_cmd.js":
+            return self._send(200, (WEB / "voice_cmd.js").read_bytes(), "application/javascript; charset=utf-8")
         if url.path == "/overdue.js":
             return self._send(200, (WEB / "overdue.js").read_bytes(), "application/javascript; charset=utf-8")
         if url.path == "/school_info.js":
@@ -912,6 +921,23 @@ class Handler(BaseHTTPRequestHandler):
         if url.path == "/api/school-info":
             env = {**env_values(SKILL), **os.environ}
             return self._json(school_info.get_school_info(env, DATA / "school_info_cache.json"))
+        if url.path == "/agenda.js":
+            return self._send(200, (WEB / "agenda.js").read_bytes(), "application/javascript; charset=utf-8")
+        if url.path == "/stt_words.js":
+            return self._send(200, (WEB / "stt_words.js").read_bytes(), "application/javascript; charset=utf-8")
+        if url.path == "/api/stt-words":
+            return self._json(stt_words_get())
+        if url.path == "/submissions.js":
+            return self._send(200, (WEB / "submissions.js").read_bytes(), "application/javascript; charset=utf-8")
+        if url.path == "/api/submissions":
+            try:
+                return self._json(submissions_get(q.get("title", [""])[0]))
+            except ValueError as exc:
+                return self._json({"status": "error", "message": str(exc)}, 400)
+        if url.path == "/layout.js":
+            return self._send(200, (WEB / "layout.js").read_bytes(), "application/javascript; charset=utf-8")
+        if url.path == "/theme.css":
+            return self._send(200, (WEB / "theme.css").read_bytes(), "text/css; charset=utf-8")
         if url.path == "/mobile.css":
             return self._send(200, (WEB / "mobile.css").read_bytes(), "text/css; charset=utf-8")
         if url.path == "/api/state":
@@ -954,6 +980,8 @@ class Handler(BaseHTTPRequestHandler):
                 return self._json({"status": "success", "items": supabase_schedule.subject_names()})
             except (ValueError, RuntimeError, urllib.error.URLError, OSError) as exc:
                 return self._json({"status": "error", "message": str(exc) or "과목 목록을 불러오지 못했어요."}, 502)
+        if url.path == "/api/agenda":
+            return self._json(schedule_panel.PANEL.agenda(date.today(), refresh=q.get("refresh") == ["1"]))
         if url.path == "/api/prepare-status":
             return self._json(prepare_status())
         if url.path.startswith("/api/unit-pdf/"):
@@ -1003,8 +1031,14 @@ class Handler(BaseHTTPRequestHandler):
                 return self._json(ask_prepare(body))
             if url.path == "/api/session":
                 return self._json(save_session(body))
+            if url.path == "/api/agenda/add":  # confirm: true 일 때만 시트에 쓴다
+                return self._json(schedule_panel.PANEL.quick(body, date.today()))
             if url.path == "/api/flow":
                 return self._json(save_flow(body))
+            if url.path == "/api/stt-words":
+                return self._json(stt_words_save(body))
+            if url.path == "/api/submissions":
+                return self._json(submissions_post(body))
             if url.path == "/api/caution":
                 return self._json(add_caution(body))
             if url.path.startswith("/api/progress/"):
@@ -1012,6 +1046,66 @@ class Handler(BaseHTTPRequestHandler):
         except (ValueError, KeyError, RuntimeError, subprocess.CalledProcessError) as exc:
             return self._json({"status": "error", "message": str(exc)}, 400)
         return self._json({"status": "error", "message": "없는 주소"}, 404)
+
+
+def stt_words_get() -> dict:
+    """받아쓰기 사전(데이터 폴더 stt_words.json). 파일이 없으면 빈 사전. 못 읽는 부분은 빼고 notes 로 알림."""
+    notes: list[str] = []
+    words, fixes = transcribe.load_words(STT_WORDS_PATH, warn=notes.append)
+    return {"status": "success", "words": words, "fixes": fixes, "notes": notes}
+
+
+def stt_words_save(body: dict) -> dict:
+    """화면에서 고친 사전을 저장한다. 모양·길이를 검사하고, 통과하면 통째로 바꿔 쓴다(임시 파일 → 바꿔치기)."""
+    words, fixes = body.get("words"), body.get("fixes")
+    if not isinstance(words, list) or not isinstance(fixes, dict):
+        raise ValueError("사전 모양이 잘못됐어요.")
+    clean_words, seen = [], set()
+    for w in words:
+        w = str(w).strip() if isinstance(w, str) else ""
+        if w and w not in seen:
+            seen.add(w)
+            clean_words.append(w)
+    clean_fixes = {}
+    for k, v in fixes.items():
+        k, v = (k.strip() if isinstance(k, str) else ""), (v.strip() if isinstance(v, str) else None)
+        if not k or v is None:
+            continue
+        if k == v:
+            continue
+        clean_fixes[k] = v
+    if len(clean_words) > STT_MAX_WORDS or len(clean_fixes) > STT_MAX_FIXES:
+        raise ValueError(f"자주 쓰는 말은 {STT_MAX_WORDS}개, 고쳐 쓰기는 {STT_MAX_FIXES}개까지만 쓸 수 있어요.")
+    if any(len(x) > STT_MAX_LEN for x in clean_words) or any(len(k) > STT_MAX_LEN or len(v) > STT_MAX_LEN for k, v in clean_fixes.items()):
+        raise ValueError(f"낱말 하나는 {STT_MAX_LEN}글자 안으로 적어 주세요.")
+    write_json(STT_WORDS_PATH, {"자주 쓰는 말": clean_words, "고쳐 쓰기": clean_fixes})
+    hint = transcribe.build_hint(clean_words)
+    return {"status": "success", "message": f"저장했어요. 자주 쓰는 말 {len(clean_words)}개, 고쳐 쓰기 {len(clean_fixes)}개."
+            + (" (자주 쓰는 말이 많아 앞쪽만 받아쓰기 힌트로 쓰여요)" if len(hint) < len(", ".join(clean_words)) else ""),
+            "words": clean_words, "fixes": clean_fixes}
+def submissions_get(title: str = "") -> dict:
+    """제출 확인표 목록, 또는 title 하나의 표(+이 PC 명단이 있으면 번호→이름)."""
+    if not title:
+        total = load_config().get("class_size", submissions.DEFAULT_TOTAL)
+        return {"status": "success", "items": submissions.list_all(SUBMISSIONS), "class_size": total}
+    rec = submissions.load(SUBMISSIONS, title)
+    if rec is None:
+        raise ValueError("그 확인표를 찾을 수 없어요.")
+    return {"status": "success", "record": rec, "missing": submissions.missing(rec),
+            "missing_text": submissions.missing_text(rec),
+            "roster": {str(k): v for k, v in submissions.load_roster(ROSTER_PATH).items()}}
+
+
+def submissions_post(body: dict) -> dict:
+    action = body.get("action")
+    if action == "create":
+        total = body.get("total") or load_config().get("class_size", submissions.DEFAULT_TOTAL)
+        submissions.create(SUBMISSIONS, body.get("title", ""), total)
+    elif action == "mark":
+        submissions.mark(SUBMISSIONS, body.get("title", ""), body.get("no"), bool(body.get("done", True)))
+    else:
+        raise ValueError("알 수 없는 동작이에요.")
+    return submissions_get(str(body.get("title", "")))
 
 
 ASK_ITEMS = ["1. 40분 수업 흐름(도입–전개–정리)과 시간 배분",

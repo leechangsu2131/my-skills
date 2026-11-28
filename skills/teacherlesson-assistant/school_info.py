@@ -15,6 +15,7 @@
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import re
@@ -41,7 +42,8 @@ def clean_menu(raw: str) -> str:
     dishes = []
     for line in text.split("\n"):
         line = re.sub(r"\(\s*[\d.\s,]+\s*\)", "", line)   # (5.6) 같은 번호 묶음
-        line = re.sub(r"(?<=[가-힣a-zA-Z])\s*\d+(?:\.\d+)*\.?$", "", line.strip())  # 끝에 붙은 번호
+        # 끝에 붙은 알레르기 번호("우유 2." · "쌀밥5.6." · "빵 5"). 메뉴 이름의 숫자("비타500")는 지우지 않는다
+        line = re.sub(r"(?<=[가-힣a-zA-Z])(?:\s*\d{1,2}(?:\.\d{1,2})+\.?|\s*\d{1,2}\.|\s+\d{1,2})$", "", line.strip())
         line = re.sub(r"\s+", " ", line).strip()
         if line:
             dishes.append(line)
@@ -95,12 +97,13 @@ def parse_weather(data):
 
 
 def _setting(env: dict, name: str) -> str:
-    return str(env.get(PREFIX + name) or "").strip()
+    """서버는 skill_env.env_values 로 앞머리(TEACHERLESSON_ASSISTANT__)를 뗀 이름을 주고, 윈도우 환경변수는 앞머리가 붙은 채 온다. 둘 다 받는다."""
+    return str(env.get(name) or env.get(PREFIX + name) or "").strip()
 
 
 def _neis(env: dict, shared: str, old: str) -> str:
-    """공용 키(NEIS_…)를 먼저, 없으면 옛 이름."""
-    return str(env.get(shared) or env.get(old) or "").strip()
+    """공용 키(NEIS_…)를 먼저, 없으면 옛 이름(앞머리 붙은 것, 뗀 것 모두)."""
+    return str(env.get(shared) or env.get(old) or env.get(old.removeprefix(PREFIX)) or "").strip()
 
 
 def fetch_meal(day: date, env: dict, fetch=None) -> str:
@@ -113,7 +116,12 @@ def fetch_meal(day: date, env: dict, fetch=None) -> str:
     key = _neis(env, "NEIS_API_KEY", "NEIS_OPEN_API_KEY")
     if key:
         params["KEY"] = key
-    return parse_meal((fetch or fetch_json)(MEAL_URL + "?" + urllib.parse.urlencode(params)))
+    data = (fetch or fetch_json)(MEAL_URL + "?" + urllib.parse.urlencode(params))
+    result = data.get("RESULT") if isinstance(data, dict) else None
+    code = str(result.get("CODE", "")) if isinstance(result, dict) else ""
+    if code.startswith("ERROR"):  # 서버가 오류를 정상 응답으로 줄 때(INFO-200 '자료 없음'은 정상) — 빈 급식을 저장하지 않는다
+        raise ValueError(code)
+    return parse_meal(data)
 
 
 def fetch_weather(env: dict, fetch=None):
@@ -135,6 +143,13 @@ def _read_cache(path):
         return {}
 
 
+def _signature(env: dict) -> str:
+    """캐시가 어떤 설정으로 받은 값인지(학교·교육청·좌표). 키는 넣지 않고, 파일에는 해시만 둔다."""
+    parts = [_neis(env, "NEIS_SCHOOL_CODE", PREFIX + "SCHOOL_CODE"), _neis(env, "NEIS_OFFICE_CODE", PREFIX + "OFFICE_CODE"),
+             _setting(env, "LATITUDE"), _setting(env, "LONGITUDE")]
+    return hashlib.sha1("|".join(parts).encode("utf-8")).hexdigest()[:12]
+
+
 def get_school_info(env: dict, cache_path, today: date | None = None, fetch=None) -> dict:
     """오늘 급식·날씨. 하루 한 번만 가져오고 실패한 칸은 None 으로 둔다.
 
@@ -143,7 +158,8 @@ def get_school_info(env: dict, cache_path, today: date | None = None, fetch=None
     today = today or date.today()
     iso = today.isoformat()
     cached = _read_cache(cache_path)
-    if cached.get("date") == iso and cached.get("done"):
+    sig = _signature(env)
+    if cached.get("date") == iso and cached.get("done") and cached.get("sig") == sig:  # 설정을 고치면 같은 날에도 다시 받는다
         return {"status": "success", "date": iso, "meal": cached.get("meal", ""), "weather": cached.get("weather")}
     meal, weather, ok = "", None, True
     try:
@@ -157,7 +173,7 @@ def get_school_info(env: dict, cache_path, today: date | None = None, fetch=None
     result = {"status": "success", "date": iso, "meal": meal, "weather": weather}
     if ok:  # 실패가 있으면 저장하지 않아 다음에 다시 시도한다
         try:
-            cache_path.write_text(json.dumps({**result, "done": True}, ensure_ascii=False), encoding="utf-8")
+            cache_path.write_text(json.dumps({**result, "done": True, "sig": sig}, ensure_ascii=False), encoding="utf-8")
         except OSError:
             pass
     return result

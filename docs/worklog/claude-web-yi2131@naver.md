@@ -44,3 +44,4 @@
 - 2026-11-27 18:50 S2 PR 올림 — PR #141(parse_plan 음수 분, 고침 되돌리면 시험 1개 실패 확인)·PR #143(긴 이름 차시 재현, 표시 떼면 4개 모두 AssertionError 확인) 검토 → `docs/reviews/fix-parse-plan-negative-minutes.md`·`task-S3-sites-longer-lesson-name.md`. 둘 다 합쳐도 됨. #141 은 #136 위에 쌓여 있어 둘 다 합치면 test_parse_plan.py 충돌
 - 2026-11-27 19:20 S2 PR 올림 — PR #145(CI selenium: sites 시험 98→116 통과·건너뜀 0)·PR #149(남은 사진·본문 삭제: 시험·참조 확인, 기록에는 남음 알림)·PR #139(쓰기 잠금 설계 메모: 줄 번호·함수 대조 일치, import functools 빠짐) 검토 → `docs/reviews/task-S5-ci-sites-selenium.md`·`fix-remove-remaining-files.md`·`task-S7-s7-write-lock.md`. 셋 다 합쳐도 됨
 - 2026-11-28 06:52 T112 시작 (브랜치 task/T112-voice-cmd)
+- 2026-11-28 13:40 T112 PR 올림 — 수업 중 말로 명령: `web/voice_cmd.js`(정해진 말만·낱말 표·긴 말 버림·듣기 자동 재시작·마이크 거부 시 끔) + `index.html` 단추·말풍선·타이머 칩 + 서버 라우트. 확인: JS 시험 28개, 소스 5곳 깨뜨려 4곳 잡힘(남은 1곳은 결과가 같은 변이), 진짜 브라우저(가짜 음성 인식) 25항목 통과. 교사 PC 에서: 진짜 마이크·녹음과 동시 사용 확인(ISSUES-053)

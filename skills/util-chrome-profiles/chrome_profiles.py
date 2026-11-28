@@ -359,6 +359,7 @@ PAUSE_TAIL_LINES = 30   # 일시 중지 안내는 보통 페이지 맨 아래(�
 def _uia():
     import uiautomation as auto
     from uiautomation import uiautomation as core
+    auto.Logger.SetLogFile("")   # 기본은 지금 폴더(저장소 안)에 @AutomationLog.txt 를 만든다 → 끔
     return auto, core._AutomationClient.instance().IUIAutomation
 
 
@@ -387,9 +388,13 @@ def find_pause_line(text: str) -> str | None:
 
 
 def find_clickable(hwnd: int, phrase: str):
-    """창 안에서 이름이 phrase 인(없으면 phrase 가 들어간) 누를 수 있는 요소. (control, 설명) 또는 None."""
+    """창의 웹 페이지 안에서 이름이 phrase 인(없으면 phrase 가 들어간) 누를 수 있는 요소. (control, 설명) 또는 None.
+    탭 줄·북마크 같은 브라우저 화면은 찾지 않는다('닫기'가 탭 닫기 단추로 잡히지 않게)."""
     auto, client = _uia()
-    root = auto.ControlFromHandle(hwnd).Element
+    doc_cond = client.CreatePropertyCondition(auto.PropertyId.ControlTypeProperty, auto.ControlType.DocumentControl)
+    root = auto.ControlFromHandle(hwnd).Element.FindFirst(4, doc_cond)
+    if not root:
+        return None
     exact = root.FindFirst(4, client.CreatePropertyCondition(auto.PropertyId.NameProperty, phrase))
     if exact:
         control = auto.Control.CreateControlFromElement(exact)
@@ -417,8 +422,20 @@ def press_control(control, hwnd: int) -> str:
             return how
         except Exception:
             continue
-    activate(hwnd)
+    # 마지막 수단: 실제 마우스 클릭. 창이 맨 앞이고, 누를 자리가 그 창 안이며 그 자리의 창이 이 창일 때만.
+    if not activate(hwnd):
+        raise RuntimeError("창을 앞으로 못 가져옴")
     time.sleep(0.2)
+    rect = control.BoundingRectangle
+    if rect.width() <= 0 or rect.height() <= 0:
+        raise RuntimeError("누를 자리가 화면에 안 보임")
+    x, y = rect.xcenter(), rect.ycenter()
+    left, top, right, bottom = win32gui.GetWindowRect(hwnd)
+    at = win32gui.WindowFromPoint((x, y))
+    if not (left <= x < right and top <= y < bottom) or _user32.GetAncestor(at, 2) != hwnd:
+        raise RuntimeError("누를 자리가 창 밖이거나 다른 창에 가려 있음")
+    if win32gui.GetForegroundWindow() != hwnd:
+        raise RuntimeError("다른 창이 앞으로 옴")
     control.Click(simulateMove=False)
     return "마우스 클릭"
 
@@ -491,12 +508,47 @@ def fill_field(hwnd: int, field, text: str) -> bool:
         return False
     field.SetFocus()
     time.sleep(0.15)
-    press_keys([win32con.VK_CONTROL], ord("A"))
     set_clipboard(text)
+    # 키를 누르기 바로 전마다 맨 앞 창을 다시 본다(그 사이 다른 창이 앞으로 오면 그 창 글이 바뀌지 않게)
+    if win32gui.GetForegroundWindow() != hwnd:
+        return False
+    press_keys([win32con.VK_CONTROL], ord("A"))
     time.sleep(0.05)
+    if win32gui.GetForegroundWindow() != hwnd:
+        return False
     press_ctrl_v()
     time.sleep(0.6)
     return win32gui.GetForegroundWindow() == hwnd and field_value(field).strip() == text.strip()
+
+
+def focus_in_browser_ui(hwnd: int) -> bool:
+    """키보드 초점이 이 창의 브라우저 글칸(주소창 등)에 있고 웹 페이지 안이 아닌지(Ctrl+L 이 주소창으로 갔는지)."""
+    auto, _ = _uia()
+    try:
+        control = auto.GetFocusedControl()
+        if not control or control.ControlTypeName != "EditControl":
+            return False
+        if _user32.GetAncestor(control.NativeWindowHandle or hwnd, 2) != hwnd:
+            return False
+        node = control
+        for _ in range(40):
+            node = node.GetParentControl()
+            if not node:
+                return True
+            if node.ControlTypeName == "DocumentControl":
+                return False
+            if node.NativeWindowHandle == hwnd:
+                return True
+        return False
+    except Exception:
+        return False
+
+
+def write_json_atomic(path: Path, data) -> None:
+    """임시 파일에 쓰고 바꿔 끼운다(쓰다가 꺼져도 원래 파일이 깨지지 않게)."""
+    tmp = path.with_suffix(path.suffix + ".tmp")
+    tmp.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+    os.replace(tmp, path)
 
 
 def reload_and_read_instructions(hwnd: int, wait: float = 20.0) -> str | None:
@@ -601,7 +653,7 @@ from PySide6.QtGui import QBrush, QColor, QCursor, QIcon, QImage, QKeySequence, 
 from PySide6.QtWidgets import (  # noqa: E402
     QAbstractItemView, QApplication, QCheckBox, QComboBox, QDialog, QDialogButtonBox, QDoubleSpinBox, QGridLayout,
     QHBoxLayout, QInputDialog, QLabel, QListView, QListWidget, QListWidgetItem, QMainWindow, QMenu,
-    QMessageBox, QPlainTextEdit, QPushButton, QRadioButton, QSpinBox, QSplitter, QStyle,
+    QMessageBox, QPlainTextEdit, QProgressDialog, QPushButton, QRadioButton, QSpinBox, QSplitter, QStyle,
     QSystemTrayIcon, QTreeWidget, QTreeWidgetItem, QVBoxLayout, QWidget,
 )
 
@@ -785,7 +837,8 @@ class GotoDialog(QDialog):
         box.addWidget(self.url)
         box.addWidget(self.this_tab)
         box.addWidget(self.new_tab)
-        note = QLabel("기타 브라우저 창은 '지금 탭' 방식만 됩니다. 지금 탭 방식은 그동안 마우스·키보드를 쓰지 마세요.")
+        note = QLabel("기타 브라우저 창은 '지금 탭' 방식만 되고, 주소창이 없는 창(앱 창 등)은 건너뜁니다. "
+                      "지금 탭 방식은 그동안 마우스·키보드를 쓰지 마세요.")
         note.setWordWrap(True)
         note.setStyleSheet("color: gray")
         box.addWidget(note)
@@ -907,10 +960,22 @@ class Manager(QMainWindow):
         self.profile_info = load_profiles()
         self.profiles = {key: info["name"] for key, info in self.profile_info.items()}  # 키 → 표시 이름
         self.aumids = aumid_table(self.profile_info)
+        self.config_warning = ""
         try:
             self.cfg = json.loads(CONFIG.read_text(encoding="utf-8"))
-        except Exception:
+        except FileNotFoundError:
             self.cfg = {}
+        except Exception:  # 깨진 설정은 지우지 않고 따로 남긴다(빈 설정으로 덮어써 그룹이 사라지지 않게)
+            broken = CONFIG.with_name(f"config.broken-{time.strftime('%Y%m%d-%H%M%S')}.json")
+            try:
+                os.replace(CONFIG, broken)
+            except OSError:
+                pass
+            self.cfg = {}
+            self.config_warning = f"설정 파일이 깨져 있어 빈 설정으로 시작했습니다. 원래 파일: {broken.name}"
+        self.cfg.pop("last_broadcast", None)   # 예전 판: 일괄 입력 글 전체를 저장하던 것 지움(이제 메모리에만)
+        self.last_broadcast = ""
+        self.cfg_version = int(self.cfg.get("id_version", 1) or 1)
         self.cfg.setdefault("start_url", {})
         self.cfg.setdefault("aliases", {})   # 기타 Chrome 창 앱 ID → 사용자가 붙인 이름
         self.cfg.setdefault("work", {})      # 작업 시간: {프로필 키 또는 "group:이름": {start, alert_min, alerted}}
@@ -1066,6 +1131,12 @@ class Manager(QMainWindow):
         self.tree.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.tree.customContextMenuRequested.connect(self.tree_menu)
         self.register_hotkeys()
+        try:
+            _uia()
+        except Exception:
+            pass
+        if self.config_warning:
+            self.statusBar().showMessage(self.config_warning, 60000)
         self.scan_timer = QTimer(self)
         self.scan_timer.timeout.connect(self.start_scan)
         self.scan_timer.start(20_000)
@@ -1097,17 +1168,19 @@ class Manager(QMainWindow):
 
     def build_tree(self):
         self.building = True
-        seen = set()
-        for group in self.cfg.get("groups", []):
-            parent = self.group_item(group["name"])
-            for folder in group["profiles"]:
-                if folder in self.profiles and folder not in seen:
-                    parent.addChild(self.profile_item(folder))
-                    seen.add(folder)
-        for folder in self.profiles:  # 새로 생긴 프로필은 미분류로
-            if folder not in seen:
-                self.group_item(UNGROUPED).addChild(self.profile_item(folder))
-        self.building = False
+        try:
+            seen = set()
+            for group in self.cfg.get("groups", []):
+                parent = self.group_item(group["name"])
+                for folder in group["profiles"]:
+                    if folder in self.profiles and folder not in seen:
+                        parent.addChild(self.profile_item(folder))
+                        seen.add(folder)
+            for folder in self.profiles:  # 새로 생긴 프로필은 미분류로
+                if folder not in seen:
+                    self.group_item(UNGROUPED).addChild(self.profile_item(folder))
+        finally:
+            self.building = False
 
     def profile_items(self) -> list[QTreeWidgetItem]:
         out = []
@@ -1189,6 +1262,16 @@ class Manager(QMainWindow):
             self.monitor()
         elif not key:  # 그룹 이름 바꾸기 → 그 그룹의 작업 시간도 새 이름으로
             old, new = item.data(0, NAME_ROLE), item.text(0)
+            others = [self.tree.topLevelItem(i).text(0) for i in range(self.tree.topLevelItemCount())
+                      if self.tree.topLevelItem(i) is not item and self.tree.topLevelItem(i) is not self.other_group]
+            if old and new != old and (new in others or new in self.foreign["groups"] or not new.strip()):
+                self.building = True
+                try:
+                    item.setText(0, old)
+                finally:
+                    self.building = False
+                self.statusBar().showMessage(f"'{new}' 그룹이 이미 있거나 이름이 비어 있어 바꾸지 않았습니다.", 10000)
+                return
             if old and old != new and f"group:{old}" in self.cfg["work"]:
                 self.cfg["work"][f"group:{new}"] = self.cfg["work"].pop(f"group:{old}")
             if old and old != new and old in self.foreign["groups"]:  # 다른 PC 계정도 새 이름 그룹으로
@@ -1214,8 +1297,8 @@ class Manager(QMainWindow):
         """설정 파일 이름 → 이 PC 키. 이 PC 에 없는 계정이면 None."""
         if sid in self.key_of_sid:
             return self.key_of_sid[sid]
-        if sid in self.profile_info:          # 예전(폴더 이름으로 적던) 설정 — 이 PC 에서 처음 옮길 때
-            return sid
+        if sid in self.profile_info and (self.cfg_version < 2 or self.profile_info[sid]["sid"] == sid):
+            return sid   # 예전(폴더 이름) 설정을 이 PC 에서 처음 옮길 때, 또는 로그인 안 한 프로필
         if sid.startswith(("group:", "@")):
             return sid
         return None
@@ -1282,7 +1365,7 @@ class Manager(QMainWindow):
         self.cfg.update(groups=groups, idle_sec=self.idle_spin.value(),
                         timer_min=self.timer_spin.value(), filter=self.filter_box.isChecked(),
                         work_alert_hours=self.work_spin.value(), pause_scan=self.pause_box.isChecked())
-        CONFIG.write_text(json.dumps(self.cfg_to_file(), ensure_ascii=False, indent=2), encoding="utf-8")
+        write_json_atomic(CONFIG, self.cfg_to_file())
 
     def add_group(self, *_):
         name, ok = QInputDialog.getText(self, "그룹 추가", "그룹 이름:")
@@ -1297,6 +1380,7 @@ class Manager(QMainWindow):
             children = group.takeChildren()
             self.tree.takeTopLevelItem(self.tree.indexOfTopLevelItem(group))
             self.group_item(UNGROUPED).addChildren(children)
+            self.cfg["work"].pop(f"group:{group.text(0)}", None)   # 그 그룹 작업 시간도 끝
             others = self.foreign["groups"].pop(group.text(0), [])  # 다른 PC 계정도 미분류로
             if others:
                 self.foreign["groups"].setdefault(UNGROUPED, []).extend(others)
@@ -1360,7 +1444,9 @@ class Manager(QMainWindow):
 
     # ───── 미리보기 / 감시 / 알림 ─────
     def label(self, hwnd: int) -> str:
-        st = self.windows[hwnd]
+        st = self.windows.get(hwnd)
+        if not st:
+            return "닫힌 창"
         return self.profiles[st["folder"]] if st["folder"] else f"기타 · {self.other_name(st['aumid'])}"
 
     def sort_key(self, hwnd: int):
@@ -1407,17 +1493,21 @@ class Manager(QMainWindow):
             changed = True
         if changed:
             self.building = True
-            self.refresh_other_group()
-            self.building = False
+            try:
+                self.refresh_other_group()
+            finally:
+                self.building = False
             self.reorder_thumbs()
             counts = {}
             for st in self.windows.values():
                 counts[st["key"]] = counts.get(st["key"], 0) + 1
             self.building = True
-            for item in self.profile_items():
-                n = counts.get(item.data(0, ROLE), 0)
-                item.setText(1, str(n) if n else "")
-            self.building = False
+            try:
+                for item in self.profile_items():
+                    n = counts.get(item.data(0, ROLE), 0)
+                    item.setText(1, str(n) if n else "")
+            finally:
+                self.building = False
         return changed
 
     def capture_some(self, now: float):
@@ -1630,15 +1720,14 @@ class Manager(QMainWindow):
         if not targets:
             QMessageBox.information(self, "일괄 입력", "열려 있는 대상 창이 없습니다.")
             return
-        dialog = BroadcastDialog(self, len(targets), self.cfg.get("last_broadcast", ""))
+        dialog = BroadcastDialog(self, len(targets), self.last_broadcast)
         if dialog.exec() != QDialog.DialogCode.Accepted:
             return
         text = dialog.edit.toPlainText()
         steps = parse_macro(text)
         if not steps:
             return
-        self.cfg["last_broadcast"] = text
-        self.save()
+        self.last_broadcast = text   # 이 창이 켜져 있는 동안만 기억(파일에 남기지 않음)
         if any(s[0] == "keys" and s[2] == win32con.VK_RETURN for s in steps):
             answer = QMessageBox.question(
                 self, "일괄 입력",
@@ -1648,39 +1737,92 @@ class Manager(QMainWindow):
                 return
         self.run_steps(targets, steps, "넣었습니다")
 
+    def progress(self, title: str, total: int) -> QProgressDialog:
+        dialog = QProgressDialog(title, "멈추기", 0, max(total, 1), self)
+        dialog.setWindowTitle("진행 중")
+        dialog.setWindowModality(Qt.WindowModality.WindowModal)
+        dialog.setMinimumDuration(0)
+        dialog.setValue(0)
+        QApplication.processEvents()
+        return dialog
+
+    @staticmethod
+    def pump(dialog: QProgressDialog, value: int | None = None) -> bool:
+        """화면을 살려 두고(응답 없음 방지) '멈추기'를 눌렀는지 본다. 계속해도 되면 True."""
+        if value is not None:
+            dialog.setValue(value)
+        QApplication.processEvents()
+        return not dialog.wasCanceled()
+
     def run_steps(self, targets: list[int], steps: list[tuple], verb: str) -> None:
-        """창을 하나씩 앞으로 가져와 steps(글·특수 키·대기)를 차례로 보낸다."""
+        """창을 하나씩 앞으로 가져와 steps(글·특수 키·대기·주소창 확인)를 차례로 보낸다.
+        키를 누르기 바로 전마다 맨 앞 창을 확인하고, 아니면 그 창은 거기서 멈춘다."""
+        targets = [h for h in targets if h in self.windows and win32gui.IsWindow(h)]  # 그새 닫힌 창 빼기
         old_clip = get_clipboard()
-        failed, stopped = [], []
-        for hwnd in targets:
-            if not activate(hwnd):  # 엉뚱한 창에 넣지 않게 건너뛴다
-                failed.append(self.label(hwnd))
-                continue
-            time.sleep(0.25)
-            for step in steps:
-                if win32gui.GetForegroundWindow() != hwnd:  # 중간에 다른 창이 앞으로 오면 그 창은 멈춤
-                    stopped.append(self.label(hwnd))
+        failed, stopped, no_address = [], [], []
+        done, cancelled = 0, False
+        progress = self.progress(f"창 {len(targets)}개에 차례로 넣는 중… (멈추려면 '멈추기')", len(targets))
+        try:
+            for index, hwnd in enumerate(targets):
+                if not self.pump(progress, index):
+                    cancelled = True
                     break
-                if step[0] == "text":
-                    set_clipboard(step[1])
-                    press_ctrl_v()
-                    time.sleep(0.2)
-                elif step[0] == "keys":
-                    press_keys(step[1], step[2])
-                    time.sleep(0.1)
-                else:
-                    time.sleep(step[1])
-            time.sleep(0.15)
-        time.sleep(0.2)
-        if old_clip is not None:
-            set_clipboard(old_clip)
-        activate(int(self.winId()))
+                label = self.label(hwnd)
+                if not win32gui.IsWindow(hwnd) or not activate(hwnd):  # 엉뚱한 창에 넣지 않게 건너뛴다
+                    failed.append(label)
+                    continue
+                time.sleep(0.25)
+                ok = True
+                for step in steps:
+                    if win32gui.GetForegroundWindow() != hwnd:  # 중간에 다른 창이 앞으로 오면 그 창은 멈춤
+                        stopped.append(label)
+                        ok = False
+                        break
+                    if step[0] == "text":
+                        set_clipboard(step[1])
+                        if win32gui.GetForegroundWindow() != hwnd:
+                            stopped.append(label)
+                            ok = False
+                            break
+                        press_ctrl_v()
+                        time.sleep(0.2)
+                    elif step[0] == "keys":
+                        press_keys(step[1], step[2])
+                        time.sleep(0.1)
+                    elif step[0] == "check_address":
+                        time.sleep(0.15)
+                        if not focus_in_browser_ui(hwnd):  # 주소창이 없는 창(앱 창 등): 페이지 칸에 주소가 들어가지 않게
+                            no_address.append(label)
+                            ok = False
+                            break
+                    else:  # 대기
+                        end = time.time() + step[1]
+                        while time.time() < end and not cancelled:
+                            time.sleep(0.1)
+                            cancelled = not self.pump(progress)
+                        if cancelled:
+                            ok = False
+                            break
+                if ok:
+                    done += 1
+                time.sleep(0.15)
+                if cancelled:
+                    break
+        finally:
+            progress.close()
+            time.sleep(0.2)
+            if old_clip is not None:
+                set_clipboard(old_clip)
+            activate(int(self.winId()))
         note = ""
         if failed:
             note += f" / 앞으로 못 가져와 건너뜀: {', '.join(failed)}"
         if stopped:
             note += f" / 도중에 다른 창이 앞에 와서 멈춤: {', '.join(stopped)}"
-        done = len(targets) - len(failed) - len(stopped)
+        if no_address:
+            note += f" / 주소창이 없어 건너뜀: {', '.join(no_address)}"
+        if cancelled:
+            note += " / 멈추기로 중단"
         self.statusBar().showMessage(f"{done}개 창에 {verb}.{note}", 20000)
 
     # ───── 페이지 글: 사용량 일시 중지 시각 · 글자 감시 · 문구 찾아 누르기 ─────
@@ -1692,7 +1834,19 @@ class Manager(QMainWindow):
         self.scanner.start(hwnds)
 
     def save_pauses(self):
-        self.pause_path.write_text(json.dumps(self.pauses, ensure_ascii=False, indent=1), encoding="utf-8")
+        write_json_atomic(self.pause_path, self.pauses)
+        self.pause_mtime = self.pause_path.stat().st_mtime
+
+    def reload_pauses(self, force: bool = False):
+        """다른 곳(usage_pause.py --text 등)에서 고친 것을 놓치지 않게 파일이 바뀌었으면 다시 읽는다."""
+        try:
+            mtime = self.pause_path.stat().st_mtime
+        except OSError:
+            mtime = None
+        if force or mtime != getattr(self, "pause_mtime", None):
+            loaded = usage_pause.load(self.pause_path)
+            self.pauses = {k: v for k, v in loaded.items() if isinstance(v, dict)}
+            self.pause_mtime = mtime
 
     def pause_of(self, key: str) -> datetime | None:
         try:
@@ -1702,7 +1856,7 @@ class Manager(QMainWindow):
 
     def record_pause(self, key: str, line: str, announce: bool = True) -> datetime | None:
         resume = usage_pause.record(self.pause_path, self.sid(key), line)
-        self.pauses = usage_pause.load(self.pause_path)
+        self.reload_pauses(force=True)
         if resume and announce:
             label = self.work_label(key)
             message = f"{resume:%H:%M} 부터 다시 쓸 수 있습니다 — 그때 알려 드릴게요."
@@ -1731,6 +1885,7 @@ class Manager(QMainWindow):
                 st["text_seen"] = now_seen
 
     def check_pauses(self, now_dt: datetime):
+        self.reload_pauses()
         for name, resume, ok in usage_pause.due(self.pauses, now_dt):
             if not ok:
                 continue
@@ -1763,6 +1918,7 @@ class Manager(QMainWindow):
             QMessageBox.information(self, "다시 쓸 시각", "시각을 못 읽었어요. '오후 12:10', '14:20', '2시간 후' 처럼 적어 주세요.")
 
     def clear_pause(self, key: str):
+        self.reload_pauses(force=True)
         name = self.sid(key)
         if name in self.pauses:
             self.cfg["pause_done"][name] = self.pauses[name].get("text", "")
@@ -1914,7 +2070,7 @@ class Manager(QMainWindow):
             info = menu.addAction(self.work_text(wkey, now))
             info.setEnabled(False)
             menu.addAction("작업 시간 멈춤", lambda: self.stop_work(wkey))
-            menu.addAction("0부터 다시 재기", lambda: self.start_work(wkey, self.cfg["work"][wkey]["alert_min"] / 60))
+            menu.addAction("0부터 다시 재기", lambda: self.start_work(wkey, self.cfg["work"][wkey].get("alert_min", 0) / 60))
             sub = menu.addMenu("알림 바꾸기")
         else:
             hours = self.work_spin.value()
@@ -2043,14 +2199,14 @@ class Manager(QMainWindow):
                 if new.strip() == current.strip():
                     skipped.append(f"{label} — 이미 같은 지침")
                     continue
-                plans.append((hwnd, label, current, new))
+                plans.append((hwnd, label, current, new, url))
         finally:
             QApplication.restoreOverrideCursor()
         if not plans:
             QMessageBox.information(self, "프로젝트 지침", "바꿀 창이 없습니다.\n\n" + "\n".join(skipped[:15]))
             return
         lines = [f"{label}\n    남김: {current.split(chr(10), 1)[0][:50]}\n    {len(current)}자 → {len(new)}자"
-                 for _, label, current, new in plans]
+                 for _, label, current, new, _url in plans]
         what = "미리보기(글칸에 넣고 확인한 뒤 취소, 저장 안 함)" if preview_only else "바꾸고 '지침 저장'"
         message = (f"창 {len(plans)}개의 프로젝트 지침을 {what} 할까요?\n\n" + "\n".join(lines[:10]) +
                    (f"\n… 외 {len(lines) - 10}개" if len(lines) > 10 else "") +
@@ -2059,42 +2215,65 @@ class Manager(QMainWindow):
         if QMessageBox.question(self, "프로젝트 지침", message) != QMessageBox.StandardButton.Yes:
             return
 
-        # 2) 바꾸기: 편집 창 → 글칸 전체 선택 → 붙여넣기 → 글칸 확인 → 저장(또는 취소) → 다시 열어 확인
+        # 2) 바꾸기: 페이지·지금 지침이 1단계와 같은지 다시 확인 → 글칸 전체 선택 → 붙여넣기 → 글칸 확인
+        #    → 저장(또는 원래 글로 되돌리고 취소) → 새로 고쳐 다시 읽어 확인
         old_clip = get_clipboard()
         done, failed = [], []
-        for hwnd, label, current, new in plans:
-            try:
-                field = open_instructions(hwnd)
-                if not field or not activate(hwnd):
-                    failed.append(f"{label} — 편집 창을 못 열었거나 창을 앞으로 못 가져옴")
-                    continue
-                time.sleep(0.2)
-                ok = fill_field(hwnd, field, new)
-                if not ok or preview_only:
-                    if preview_only and ok:
-                        time.sleep(0.8)  # 눈으로 볼 틈
-                    # claude.ai 는 취소해도 쓴 글이 그 페이지에 남아 있다가 다음 저장 때 들어갈 수 있어, 원래 글로 되돌리고 취소
-                    restored = fill_field(hwnd, field, current)
-                    close_instructions(hwnd, save=False)
-                    if ok:
-                        done.append(label if restored else f"{label} (원래 글 되돌리기 확인 못 함 — 그 창은 새로 고침 권장)")
+        progress = self.progress(f"창 {len(plans)}개의 지침을 바꾸는 중… (멈추려면 '멈추기')", len(plans))
+        try:
+            for index, (hwnd, label, current, new, url) in enumerate(plans):
+                if not self.pump(progress, index):
+                    failed.append("(멈추기로 나머지는 안 함)")
+                    break
+                try:
+                    if not win32gui.IsWindow(hwnd):
+                        failed.append(f"{label} — 창이 닫힘")
+                        continue
+                    if (page_url(hwnd) or "") != url:
+                        failed.append(f"{label} — 그새 다른 페이지로 바뀜, 건너뜀")
+                        continue
+                    field = open_instructions(hwnd)
+                    if not field:
+                        failed.append(f"{label} — 편집 창을 못 엶")
+                        continue
+                    if field_value(field).strip() != current.strip():
+                        close_instructions(hwnd, save=False)
+                        failed.append(f"{label} — 지침이 1단계에서 읽은 것과 달라 건너뜀(다시 해 주세요)")
+                        continue
+                    if not activate(hwnd):
+                        close_instructions(hwnd, save=False)
+                        failed.append(f"{label} — 창을 앞으로 못 가져옴")
+                        continue
+                    time.sleep(0.2)
+                    ok = fill_field(hwnd, field, new)
+                    if not ok or preview_only:
+                        if preview_only and ok:
+                            time.sleep(0.8)  # 눈으로 볼 틈
+                        # claude.ai 는 취소해도 쓴 글이 그 페이지에 남아 있다가 다음 저장 때 들어갈 수 있어, 원래 글로 되돌리고 취소
+                        restored = field_value(field).strip() == current.strip() or fill_field(hwnd, field, current)
+                        close_instructions(hwnd, save=False)
+                        if ok:
+                            done.append(label if restored else f"{label} (원래 글 되돌리기 확인 못 함 — 그 창은 새로 고침 권장)")
+                        else:
+                            failed.append(f"{label} — 글칸에 제대로 안 들어가서 원래대로 두고 취소함(저장 안 함)"
+                                          + ("" if restored else " — 그 창은 새로 고침 권장"))
+                        continue
+                    if not close_instructions(hwnd, save=True):
+                        failed.append(f"{label} — '지침 저장' 뒤 편집 창이 안 닫힘(확인 필요)")
+                        continue
+                    saved = reload_and_read_instructions(hwnd)
+                    if saved is not None and saved.strip() == new.strip():
+                        done.append(label)
                     else:
-                        failed.append(f"{label} — 글칸에 제대로 안 들어가서 원래대로 두고 취소함(저장 안 함)")
-                    continue
-                if not close_instructions(hwnd, save=True):
-                    failed.append(f"{label} — '지침 저장' 뒤 편집 창이 안 닫힘(확인 필요)")
-                    continue
-                saved = reload_and_read_instructions(hwnd)
-                if saved is not None and saved.strip() == new.strip():
-                    done.append(label)
-                else:
-                    failed.append(f"{label} — 저장 뒤 새로 고쳐 읽은 글이 다름(확인 필요)")
-            except Exception as e:
-                failed.append(f"{label} — 오류 {e.__class__.__name__}")
-        time.sleep(0.2)
-        if old_clip is not None:
-            set_clipboard(old_clip)
-        activate(int(self.winId()))
+                        failed.append(f"{label} — 저장 뒤 새로 고쳐 읽은 글이 다름(확인 필요)")
+                except Exception as e:
+                    failed.append(f"{label} — 오류 {e.__class__.__name__}")
+        finally:
+            progress.close()
+            time.sleep(0.2)
+            if old_clip is not None:
+                set_clipboard(old_clip)
+            activate(int(self.winId()))
         verb = "미리보기했습니다(저장 안 함)" if preview_only else "바꾸고 저장해 확인했습니다"
         QMessageBox.information(self, "프로젝트 지침",
                                 f"{len(done)}개 창의 지침을 {verb}." +
@@ -2159,9 +2338,19 @@ class Manager(QMainWindow):
         if answer != QMessageBox.StandardButton.Yes:
             return
         closed = failed = 0
-        for _, found in plan:
-            c, f = close_tabs(found)
+        changed = []
+        for hwnd, found in plan:
+            try:
+                fresh = tabs_to_close(browser_tabs(hwnd), mode)
+            except Exception:
+                fresh = []
+            if [t["name"] for t in fresh] != [t["name"] for t in found]:   # 그새 탭을 바꿨으면 그 창은 안 닫음
+                changed.append(self.label(hwnd))
+                continue
+            c, f = close_tabs(fresh)
             closed, failed = closed + c, failed + f
+        if changed:
+            unreadable += [f"{n}(그새 탭이 바뀌어 건너뜀)" for n in changed]
         note = f" / 못 닫음 {failed}개" if failed else ""
         note += f" / 탭을 못 읽은 창: {', '.join(unreadable)}" if unreadable else ""
         self.statusBar().showMessage(f"{name} {closed}개를 닫았습니다.{note}", 15000)
@@ -2206,7 +2395,7 @@ class Manager(QMainWindow):
             note = f" / 기타 창 {skipped}개는 새 탭으로 열 수 없어 건너뜀" if skipped else ""
             self.statusBar().showMessage(f"프로필 {len(launchable)}개에 새 탭으로 엽니다.{note}", 15000)
         else:
-            steps = [("keys", [win32con.VK_CONTROL], ord("L"), "Ctrl+L"), ("text", url),
+            steps = [("keys", [win32con.VK_CONTROL], ord("L"), "Ctrl+L"), ("check_address",), ("text", url),
                      ("keys", [], win32con.VK_RETURN, "Enter")]
             self.run_steps(windows, steps, "주소를 넣었습니다")
 
@@ -2221,6 +2410,20 @@ class Manager(QMainWindow):
 
 def main():
     app = QApplication(sys.argv)
+
+    def log_exception(kind, value, tb):  # pythonw 는 콘솔이 없어 오류가 안 보이므로 파일과 상태 표시줄에 남긴다
+        import traceback
+        text = "".join(traceback.format_exception(kind, value, tb))
+        try:
+            with open(data_dir(SKILL) / "error.log", "a", encoding="utf-8") as f:
+                f.write(f"\n[{time.strftime('%Y-%m-%d %H:%M:%S')}]\n{text}")
+        except OSError:
+            pass
+        for widget in QApplication.topLevelWidgets():
+            if isinstance(widget, Manager):
+                widget.statusBar().showMessage(f"오류가 있었습니다: {value} — error.log 에 적음", 30000)
+
+    sys.excepthook = log_exception
     window = Manager()
     window.show()
     sys.exit(app.exec())

@@ -25,7 +25,7 @@
 | `admin-neis-bot` | ✅ 운영 | - | NEIS 체험학습·결석 서류 접수, 출장·연수 등록, 창체/동아리 기록, 시간표 작업 등 교사 행정을 자동화한다. | [SKILL](skills/admin-neis-bot/SKILL.md) · [이슈](skills/admin-neis-bot/ISSUES.md) 🔵2 |
 | `admin-s2b-buyer` | ✅ 운영 | - | S2B에서 전국 최저가 검색·상세 비교·견적서 담기/삭제·에듀파인 연계 엑셀 받기를 사용자 Chrome으로 하고, 에듀파인 품의(admin-edufine)로 넘긴다. 실제 계약·구매 확정은 하지 않는다. | [SKILL](skills/admin-s2b-buyer/SKILL.md) · [이슈](skills/admin-s2b-buyer/ISSUES.md) |
 | `admin-school-facility` | 🔧 개발 | 0.2.0 | 구글 시트로 학교 기물 대장·공간(특별실·강당 등) 교시별 사용 신청·기물 대여를 관리하고, 3D 건물 화면으로 현황을 보여 주는 Apps Script 웹앱을 만든다. 카카오톡 챗봇(스쿨투두 채널 공유)으로 대여·반납·예약도 된다. | [SKILL](skills/admin-school-facility/SKILL.md) · [이슈](skills/admin-school-facility/ISSUES.md) 🔵1 |
-| `school-todo-kakao` | ✅ 운영 | - | 학교 공용 일정 시트와 내가 직접 적은 할 일을 **내 일정DB 시트 한 곳**에 모으고, 평일 아침마다 그날 일정을 카카오톡 **나에게 보내기**로 알려 주는 작은 파이썬 프로그램입니다. | [SKILL](skills/school-todo-kakao/SKILL.md) · [이슈](skills/school-todo-kakao/ISSUES.md) 🔵2 · [README](skills/school-todo-kakao/README.md) |
+| `school-todo-kakao` | ✅ 운영 | - | 학교 공용 일정 시트와 내가 직접 적은 할 일을 **내 일정DB 시트 한 곳**에 모으고, 평일 아침마다 그날 일정을 카카오톡 **나에게 보내기**로 알려 주는 작은 파이썬 프로그램입니다. | [SKILL](skills/school-todo-kakao/SKILL.md) · [이슈](skills/school-todo-kakao/ISSUES.md) 🔵3 · [README](skills/school-todo-kakao/README.md) |
 
 ## 학생 기록·평가
 
@@ -73,7 +73,7 @@
 | `personal-attach-files` | ✅ 운영 | - | 프로젝트의 핵심 코드/기획 파일을 모아 AI에 첨부하기 쉬운 임시 폴더로 준비한다. | [SKILL](skills/personal-attach-files/SKILL.md) · [이슈](skills/personal-attach-files/ISSUES.md) |
 | `personal-carrot` | 🔧 개발 | - | Appium으로 Android 당근마켓 앱의 매물을 검색·수집해 Google Sheets에 기록한다. | [SKILL](skills/personal-carrot/SKILL.md) · [이슈](skills/personal-carrot/ISSUES.md) |
 | `personal-chesley-morning-brief-main` | ✅ 운영 | - | 유튜브 '체슬리모닝브리프' 새 영상을 감지해 전체 스크립트를 Gemini Gems 웹 세션으로 구조화 요약하고 디스코드로 보낸다. | [SKILL](skills/personal-chesley-morning-brief-main/SKILL.md) · [이슈](skills/personal-chesley-morning-brief-main/ISSUES.md) · [README](skills/personal-chesley-morning-brief-main/README.md) |
-| `personal-daily-intake` | 🔧 개발 | v0.1.0 | 제미나이 스킬이 받아쓰고 나눈 하루 기록 md를 일정DB 시트·Notion 독서 DB·옵시디언(daily/, 00_Inbox, 10_NOTE/수업)에 표로 확인받고 한 번에 나눠 넣는다. 같은 것을 두 번 넣지 않는다. | [SKILL](skills/personal-daily-intake/SKILL.md) · [이슈](skills/personal-daily-intake/ISSUES.md) 🔵1 |
+| `personal-daily-intake` | 🔧 개발 | v0.1.0 | 제미나이 스킬이 받아쓰고 나눈 하루 기록 md를 일정DB 시트·Notion 독서 DB·옵시디언(daily/, 00_Inbox, 10_NOTE/수업)에 표로 확인받고 한 번에 나눠 넣는다. 같은 것을 두 번 넣지 않는다. | [SKILL](skills/personal-daily-intake/SKILL.md) · [이슈](skills/personal-daily-intake/ISSUES.md) 🔵2 |
 | `personal-free-parents-app` | 🔧 개발 | - | 공동 육아 놀이터 앱 ‘같이 놀자’의 개발·디자인 통합 안내와 구현 메모를 담는다. | [SKILL](skills/personal-free-parents-app/SKILL.md) · [이슈](skills/personal-free-parents-app/ISSUES.md) 🔵2 · [README](skills/personal-free-parents-app/README.md) |
 | `personal-library-search` | ✅ 운영 | - | Notion 도서 목록에서 ISBN/서점 정보를 찾고 경주시립도서관 소장 여부를 확인하며, 미소장 도서 희망도서 신청 흐름을 지원한다. | [SKILL](skills/personal-library-search/SKILL.md) · [이슈](skills/personal-library-search/ISSUES.md) · [README](skills/personal-library-search/README.md) |
 | `personal-mp3-baby` | ✅ 운영 | - | 아기 잠자리동화 MP3를 한국어 타임코드 SRT로 전사해 이야기 구간을 찾아 넘길 수 있게 한다. | [SKILL](skills/personal-mp3-baby/SKILL.md) · [이슈](skills/personal-mp3-baby/ISSUES.md) |

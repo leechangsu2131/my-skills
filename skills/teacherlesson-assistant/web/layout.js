@@ -70,10 +70,11 @@ if (typeof document !== 'undefined') {
     const keys = panelKeys(panels.map(el => ({ id: el.id, title: titleOf(el) })));
     const render = () => {
       panels.forEach((el, i) => {
-        el.classList.toggle('layout-hidden', layout.hidden.includes(keys[i]));
+        // class 가 아니라 속성으로 표시한다 — index.html 이 hero.className 을 통째로 다시 써도 지워지지 않게
+        el.toggleAttribute('data-layout-hidden', layout.hidden.includes(keys[i]));
         if (keys[i] in layout.folded && el.id !== 'hero') {
           if (el.tagName === 'DETAILS') el.open = !layout.folded[keys[i]];
-          else el.classList.toggle('layout-collapsed', layout.folded[keys[i]]);
+          else el.toggleAttribute('data-layout-collapsed', layout.folded[keys[i]]);
         }
       });
       const list = document.getElementById('layoutList');
@@ -91,7 +92,7 @@ if (typeof document !== 'undefined') {
         if (h) {
           h.classList.add('layout-fold-head');
           h.title = '눌러서 접기·펴기';
-          h.addEventListener('click', () => { layout = setFolded(layout, keys[i], !el.classList.contains('layout-collapsed')); save(); render(); });
+          h.addEventListener('click', () => { layout = setFolded(layout, keys[i], !el.hasAttribute('data-layout-collapsed')); save(); render(); });
         }
       }
     });
@@ -104,7 +105,7 @@ if (typeof document !== 'undefined') {
         if (box) { layout = toggleHidden(layout, keys[Number(box.dataset.i)]); save(); render(); }
       });
       document.getElementById('themeBtn').addEventListener('click', () => { layout = { ...layout, theme: nextTheme(layout.theme) }; save(); applyTheme(); render(); });
-      document.getElementById('layoutReset').addEventListener('click', () => { layout = normalizeLayout(null); save(); applyTheme(); panels.forEach(el => { el.classList.remove('layout-collapsed'); if (el.tagName === 'DETAILS') el.open = el.id === 'cautionBox'; }); render(); });
+      document.getElementById('layoutReset').addEventListener('click', () => { layout = normalizeLayout(null); save(); applyTheme(); panels.forEach(el => { el.removeAttribute('data-layout-collapsed'); if (el.tagName === 'DETAILS') el.open = el.id === 'cautionBox'; }); render(); });
     }
     render();
   });

@@ -37,7 +37,7 @@ def test_dark_rules_never_touch_focus_mode():
 
 
 def test_hide_and_collapse_rules_are_skipped_in_focus_mode():
-    for rule in re.findall(r"[^{}]*layout-(?:hidden|collapsed)[^{}]*\{", CSS):
+    for rule in re.findall(r"[^{}]*data-layout-(?:hidden|collapsed)[^{}]*\{", CSS):
         assert "body:not(.focus-mode)" in rule or "::after" in rule, rule
 
 
@@ -51,4 +51,21 @@ def test_theme_css_does_not_redefine_mobile_rules():
 
 def test_collapse_rule_beats_id_display_rules():
     # #recbar{display:flex} 같은 id 규칙보다 이겨야 접힌 칸에 제목만 남는다(브라우저 점검에서 찾은 문제)
-    assert re.search(r"layout-collapsed>\*:not\(h2\)\{display:none!important\}", CSS)
+    assert re.search(r"data-layout-collapsed\]>\*:not\(h2\)\{display:none!important\}", CSS)
+
+
+def test_hidden_state_uses_attributes_not_classes():
+    # index.html 이 hero.className 을 통째로 다시 써도 숨김이 풀리지 않게 속성으로 표시한다(PR #189 검토 🔴)
+    js = (WEB / "layout.js").read_text(encoding="utf-8")
+    assert "toggleAttribute('data-layout-hidden'" in js
+    assert "classList.toggle('layout-hidden'" not in js
+    assert "[data-layout-hidden]" in CSS
+
+
+def test_dark_theme_covers_tabs():
+    assert re.search(r'data-theme="dark"\] body:not\(\.focus-mode\) #tabs\{', CSS)
+    assert re.search(r'#tabs button\.on\{', CSS)
+
+
+def test_gear_button_gets_its_own_header_column_on_phones():
+    assert "#layoutBtn{grid-column:4" in CSS

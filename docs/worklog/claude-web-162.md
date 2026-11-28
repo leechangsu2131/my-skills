@@ -55,3 +55,4 @@
 - 2026-11-28 14:48 S8 (teacherlesson-schedule) 시작 (브랜치 task/S8-teacherlesson-schedule-issues)
 - 2026-11-28 14:48 S8 (teacherlesson-schedule) PR 올림 — 열린 이슈로 잡혀 있던 ISSUE-7(이미 🟢 해결·T93)을 ISSUES.md 백로그에서 해결됨 절로 옮김. 남은 열린 이슈 없음(ISSUE-004 잠금은 T77·P). 카탈로그 점검 통과
 - 2026-11-28 15:29 S8 (util-chrome-profiles) 시작 (브랜치 task/S8-util-chrome-profiles-issues)
+- 2026-11-28 15:30 S8 (util-chrome-profiles) PR 올림 — ISSUE-006 작업 시간 기록: work_log.py(CSV 한 줄·합계 CLI)·stop_work 연결·test_work_log.py 7개(변형 확인). 앱 실제 실행(Windows·PySide6)은 확인 필요

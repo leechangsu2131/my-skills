@@ -43,3 +43,15 @@
 - 2026-11-27 18:30 S1 PR 올림 — `prepare_lessons.py` 준비 과정 시험 47개(`tests/test_prepare_pipeline.py`): is_running·write_status(윈도우 파일 잠금 재시도)·lesson_pdf·pdf_text_source·prepare_one(가짜 Gemini: 형식 틀리면 이유를 붙여 다시 묻기, 뼈대는 한 번만)·main(이미 준비 중 거절, 직접 고친 흐름 보존, 종료 코드). 소스를 24곳 깨뜨려 모두 잡힘 확인, 소스는 안 고침. 메모: prepare_one 의 '시간 합계 35~45분 아니면 확인 필요' 알림은 뼈대가 40분으로 고정이라 지금은 사실상 안 뜸(가짜 parse_flow 로만 시험)
 - 2026-11-27 18:50 S2 PR 올림 — PR #141(parse_plan 음수 분, 고침 되돌리면 시험 1개 실패 확인)·PR #143(긴 이름 차시 재현, 표시 떼면 4개 모두 AssertionError 확인) 검토 → `docs/reviews/fix-parse-plan-negative-minutes.md`·`task-S3-sites-longer-lesson-name.md`. 둘 다 합쳐도 됨. #141 은 #136 위에 쌓여 있어 둘 다 합치면 test_parse_plan.py 충돌
 - 2026-11-27 19:20 S2 PR 올림 — PR #145(CI selenium: sites 시험 98→116 통과·건너뜀 0)·PR #149(남은 사진·본문 삭제: 시험·참조 확인, 기록에는 남음 알림)·PR #139(쓰기 잠금 설계 메모: 줄 번호·함수 대조 일치, import functools 빠짐) 검토 → `docs/reviews/task-S5-ci-sites-selenium.md`·`fix-remove-remaining-files.md`·`task-S7-s7-write-lock.md`. 셋 다 합쳐도 됨
+- 2026-11-28 14:50 S1 (teacherlesson-assistant) 시작 (브랜치 task/S1-teacherlesson-assistant-srv-glue-tests)
+- 2026-11-28 15:20 S1 PR 올림 — assistant_server.py 연결 함수 시험 60개(`tests/test_server_glue.py`): fetch_schedule(옛 진도 서버 거르기·같은 교시 겹침·미래 날 완료 숨김·꺼졌을 때 기본 시간표)·upcoming(앞 30·뒤 80 창, 404 때 agenda 대체)·recent_memos·copy_secret(비밀값은 클립보드에만, 답에 안 나옴)·start_prepare(두 번 눌러도 하나, 토큰)·ask_prepare/ask_notebooklm(PDF 아니면 저장 안 함, 차시 번호 검사, 주의점 5개 제한). 소스 15곳 깨뜨려 14곳 잡힘(남은 1곳: 저장 위치 검사는 safe_name 이 먼저 막아 닿지 않는 안전장치). 소스는 안 고침
+- 2026-11-28 14:40 S8 (teacherlesson-assistant) 시작 (브랜치 task/S8-teacherlesson-assistant)
+- 2026-11-28 14:55 S8 (teacherlesson-assistant) 진행 — ISSUE-034 남은 일 ②: check_setup 'Python 실행기' 점검을 bat 의 하나만 고르는 방식에 맞춤(시험 115개, 변이 2곳 잡힘). 다음: 다른 열린 이슈
+- 2026-11-28 06:34 S2 (teacherlesson-assistant) 시작 (브랜치 task/S2-review-pr174-178)
+- 2026-11-28 06:52 T112 시작 (브랜치 task/T112-voice-cmd)
+- 2026-11-28 07:20 S2 PR 올림 — PR #174(T98: main 에 T98 이 이미 다른 구현으로 들어와 중복·충돌 7곳 → 닫기 권함, 14일 창·중복 제거·30개 한도는 가져올 만함)·PR #178(T108 제출 확인표: 시험 505 통과, 소스 14곳 중 12곳 잡힘, 학생 이름은 로컬 명단 화면에만) 검토 → `docs/reviews/task-T98-overdue-lessons.md`·`task-T108-submissions-check.md`
+- 2026-11-28 13:40 T112 PR 올림 — 수업 중 말로 명령: `web/voice_cmd.js`(정해진 말만·낱말 표·긴 말 버림·듣기 자동 재시작·마이크 거부 시 끔) + `index.html` 단추·말풍선·타이머 칩 + 서버 라우트. 확인: JS 시험 28개, 소스 5곳 깨뜨려 4곳 잡힘(남은 1곳은 결과가 같은 변이), 진짜 브라우저(가짜 음성 인식) 25항목 통과. 교사 PC 에서: 진짜 마이크·녹음과 동시 사용 확인(ISSUES-053)
+- 2026-11-28 20:31 T121 시작 (브랜치 task/T121-speaker-level)
+- 2026-11-28 21:10 T121 PR 올림(①②④) — `speaker_level.py`: PC 스피커 소리 크기만 1초마다 `day_audio/<날짜>/speaker_level.csv`(소리는 저장 안 함), 영상 구간 찾기(소리 큼·20초 이상·8초까지 끊김은 이어 붙임), start/stop/status(pid 파일, 두 번 안 켜짐)/segments. 시험 42개, 소스 14곳 깨뜨려 14곳 잡음. **다음: ③ (T116 합쳐진 뒤)** — day_split.py 표에 영상 구간 붙이기, transcribe.py --skip-video. 교사 PC: 점검표 V-1~6(실제 영상으로 기준 확인)
+- 2026-11-28 15:29 T115 시작 (브랜치 task/T115-safety-guards)
+- 2026-11-28 15:50 T115 PR 올림 — ① 말로 명령 타이머 상한 99분 59초→60분(`voice_cmd.js`, 60분 1초부터 안내만) ② 제출 확인표 `slug()` 가 윈도우 예약 이름(con·prn·aux·nul·com1~9·lpt1~9, `con.txt` 같은 점 뒤 이름 포함)에 `_` 를 붙임 ③ 제목 60자·두 번째 저장·저장 실패 때 옛 파일 보존 시험 ④ 점검표 S-7(명단 있는 PC 를 큰 화면에 띄우면 이름이 보임). 시험: JS 28개·submissions 55개·전체 통과, 소스 7곳 깨뜨려 모두 잡힘

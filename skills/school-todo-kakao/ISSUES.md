@@ -32,7 +32,7 @@
 ## 📌 백로그
 
 ### ISSUE-008: 수업 비서가 일정 시트를 쓰는 곳에 공개 함수가 필요함 (2026-11-28)
-- **상태**: 📌 백로그 — `teacherlesson-assistant/schedule_panel.py`(PR #183)가 `inbox._ws.append_row` 를 직접 부르고, `SheetsDb.from_env` 에 설정을 주려고 환경변수를 잠깐 바꾼다. `InboxSheet` 에 한 줄 덧붙이기 함수와, 설정 값 사전을 받는 열기 함수를 두면 둘 다 없앨 수 있다.
+- **상태**: 📌 백로그 — `teacherlesson-assistant/schedule_panel.py`(PR #183)가 `inbox._ws.append_row` 를 직접 부르고, `SheetsDb.from_env` 에 설정을 주려고 환경변수를 잠깐 바꾼다. `InboxSheet` 에 한 줄 덧붙이기 함수와, 설정 값 사전을 받는 열기 함수를 두면 둘 다 없앨 수 있다. **절반 됨(2026-11-28 S8)**: `InboxSheet.append(line)` 추가(시험 `tests/test_inbox_append.py` 3개), `schedule_panel.py` 는 이제 `_ws` 를 안 건드림. **남은 것**: 설정 사전을 받는 `SheetsDb` 열기 함수(`from_env` 가 환경변수를 읽어서 수업 비서 쪽이 환경변수를 잠깐 바꿈).
 
 ### ISSUE-003: 할 일을 안 한 사람에게만 이메일 알림 (2026-11-20)
 - **상태**: 📌 백로그

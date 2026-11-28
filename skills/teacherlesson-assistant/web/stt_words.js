@@ -27,18 +27,35 @@ function parseFixLines(text) {
 function formatWordLines(words) { return (words || []).join('\n'); }
 function formatFixLines(fixes) { return Object.keys(fixes || {}).map(k => `${k} → ${fixes[k]}`).join('\n'); }
 
+/**
+ * 칸을 펼칠 때 서버 값으로 다시 채워도 되는가.
+ * 한 번도 안 채웠거나(last 없음), 화면 글이 마지막으로 채운 값 그대로(고친 게 없음)일 때만 true.
+ * 저장하지 않은 글이 있으면 false — 접었다 펴도 쓰던 글이 사라지지 않게(T113).
+ */
+function sttCanRefill(current, last) {
+  if (!last) return true;
+  return current.words === last.words && current.fixes === last.fixes;
+}
+
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { parseWordLines, parseFixLines, formatWordLines, formatFixLines };
+  module.exports = { parseWordLines, parseFixLines, formatWordLines, formatFixLines, sttCanRefill };
 }
 
 // ──────── 화면 (브라우저에서만) ────────
 if (typeof document !== 'undefined' && document.getElementById('sttBox')) {
+  let sttLast = null;    // 마지막으로 칸에 채운(또는 저장한) 글 — 이것과 다르면 저장 안 한 글이 있다는 뜻
+  const sttCurrent = () => ({ words: document.getElementById('sttWords').value, fixes: document.getElementById('sttFixes').value });
   const sttFill = async () => {
+    if (!sttCanRefill(sttCurrent(), sttLast)) {
+      document.getElementById('sttMsg').textContent = '저장하지 않은 글이 있어서 그대로 두었어요.';
+      return;
+    }
     const j = await (await fetch('/api/stt-words')).json().catch(() => null);
     if (!j || j.status !== 'success') { document.getElementById('sttMsg').textContent = '사전을 불러오지 못했어요.'; return; }
     document.getElementById('sttWords').value = formatWordLines(j.words);
     document.getElementById('sttFixes').value = formatFixLines(j.fixes);
     document.getElementById('sttMsg').textContent = (j.notes || []).join(' ');
+    sttLast = sttCurrent();
   };
   document.getElementById('sttBox').addEventListener('toggle', e => { if (e.target.open) sttFill(); });
   document.getElementById('sttSave').onclick = async () => {
@@ -46,6 +63,6 @@ if (typeof document !== 'undefined' && document.getElementById('sttBox')) {
     if (bad.length) { document.getElementById('sttMsg').textContent = `고쳐 쓰기 ${bad.join(', ')}번째 줄을 "틀린 말 → 맞는 말" 모양으로 고쳐 주세요.`; return; }
     const r = await post('/api/stt-words', { words: parseWordLines(document.getElementById('sttWords').value), fixes });
     document.getElementById('sttMsg').textContent = r.message || '';
-    if (r.status === 'success') { document.getElementById('sttWords').value = formatWordLines(r.words); document.getElementById('sttFixes').value = formatFixLines(r.fixes); }
+    if (r.status === 'success') { document.getElementById('sttWords').value = formatWordLines(r.words); document.getElementById('sttFixes').value = formatFixLines(r.fixes); sttLast = sttCurrent(); }
   };
 }

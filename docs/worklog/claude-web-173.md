@@ -47,3 +47,4 @@
 - 2026-11-28 06:36 T110 PR 올림 — 화면 설정: web/theme.css·web/layout.js(어두운 화면·칸 숨기기·접기, localStorage)·index.html 몇 줄·서버 서빙. Node 13·정적 점검 7·소스 변이 8개 모두 잡음, 실제 브라우저(Playwright) 점검 통과, assistant tests 통과
 - 2026-11-28 13:05 T111 시작 (브랜치 task/T111-stt-words-2)
 - 2026-11-28 13:07 T111 PR 올림 — #185(claude-web-162)가 이미 합쳐 남아 있던 ③ 화면 칸만: 수업 비서 '🎙 받아쓰기 사전' 칸(web/stt_words.js)·GET/POST /api/stt-words(모양·길이·개수 검사). 시험 Python 15·Node 9, 변이 9개 모두 잡음, 실제 크롬 점검(API 가짜) 통과, assistant tests 508 통과
+- 2026-11-28 20:06 T106 이어받음 (브랜치 task/T106-work, 앞 — claude-web-한멜: 2026-11-28 15:31 claude-web-한멜 T106 이어받음·PR 올림(#179 고침) — main 합침(충돌은 양쪽 줄 남김), )

@@ -12,7 +12,7 @@ function mkSheet(name) {
     name,
     getDataRange: () => ({ getValues: () => tabs[name].map(r => r.slice()) }),
     getRange: (r, c) => ({ setNumberFormat() { return this; }, setValue: v => { while (tabs[name].length < r) tabs[name].push([]); const row = tabs[name][r-1]; while (row.length < c) row.push(''); row[c-1] = v; } }),
-    appendRow: row => tabs[name].push(row.slice()),
+    appendRow: row => tabs[name].push(row.map(v => typeof v === 'string' && v[0] === "'" ? v.slice(1) : v)), // 시트처럼 앞의 '는 텍스트 표시로만 쓰고 저장하지 않음
     deleteRow: r => tabs[name].splice(r - 1, 1),
   };
 }
@@ -202,6 +202,29 @@ pg = ctx.doGet({ parameter: { code: 'bad' } });
 check('token error page', pg.html.includes('등록하지 못했어요') && pg.html.includes('KOE320'), pg.html);
 pg = ctx.doGet({ parameter: { error: 'access_denied' } });
 check('user cancel page', pg.html.includes('취소'), pg.html);
+// 22. 할 일 추가 / 추가취소 (관리자만)
+reset();
+const before = tabs['일정DB'].length;
+t = say('추가 내일 학부모 상담 전화', 'U-teacher');
+const added = tabs['일정DB'][before];
+check('add appends row', tabs['일정DB'].length === before + 1 && added[1] === off(1) && added[2] === '개인' && added[3] === '학부모 상담 전화' && added[5] === '수동' && added[6] === '전체', JSON.stringify(added));
+check('add key like python', added[0] === off(1).slice(5, 7) + off(1).slice(8, 10) + '-학부모상담전화', added[0]);
+check('add reply', t.startsWith('✅') && t.includes('추가취소'), t);
+t = say('추가 내일 학부모 상담 전화', 'U-teacher');
+check('add duplicate', t.startsWith('이미 있어요') && tabs['일정DB'].length === before + 1, t);
+t = say('할일', 'U-teacher');
+check('added shows in 할일', t.includes('학부모 상담 전화'), t);
+t = say('추가 2020-01-01 옛날 일', 'U-teacher');
+check('add past date rejected', t.startsWith('지난 날짜') && tabs['일정DB'].length === before + 1, t);
+t = say('추가 다음주 화요일 출장 보고 완료', 'U-teacher');
+check('add wins over 완료 and 출장 category', t.startsWith('✅') && t.includes('[출장]') && doneRows().length === 0, t);
+t = say('추가 내일 몰래 추가', 'U-kim');
+check('add admin only', t.includes('관리자)만') && !JSON.stringify(tabs['일정DB']).includes('몰래'), t);
+t = say('추가취소', 'U-teacher');
+check('undo add removes last', t.startsWith('🗑') && !JSON.stringify(tabs['일정DB']).includes('출장 보고 완료'), t);
+t = say('추가 취소', 'U-teacher');
+check('undo add twice', t.includes('없어요'), t);
+check('earlier add kept', JSON.stringify(tabs['일정DB']).includes('학부모 상담 전화'));
 // 21. 자세히 보기 페이지
 tabs['공유링크'] = [['VIEW_TOKEN', 'tok123'], ['DAILY_TEXT', '📅 오늘\n• [학교] <행사>'], ['WEEKLY_TEXT', '🧳 출장'], ['DAILY_UPDATED', '2026-11-23 07:00'], ['WEEKLY_UPDATED', '2026-11-16 07:00']];
 pg = ctx.doGet({ parameter: { view: 'tok123', k: 'daily' } });

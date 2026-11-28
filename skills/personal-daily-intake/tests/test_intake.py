@@ -174,6 +174,25 @@ def test_bookmarklet_one_line():
     assert url.isascii() and "\\ud558\\ub8e8" in url  # '하루' — 한글은 \uXXXX 로(복사하다 깨지지 않게)
 
 
+def test_convert_old_gemini_chat(tmp_path):
+    import json
+    src = tmp_path / "gemini-2026-11-28-하루.json"
+    src.write_text(json.dumps({"title": "하루", "exported": "2026-11-28T05:00:00Z", "turns": [
+        {"user": "어제 국어 시간에 시화를 찾았다", "model": "좋네요"}, {"user": "", "model": "x"}]}, ensure_ascii=False),
+        encoding="utf-8")
+    seen = {}
+
+    def fake_ask(f, prompt):
+        seen["text"], seen["prompt"] = f.read_text(encoding="utf-8"), prompt
+        return "정리했어요\n```markdown\n---\ndate: 2026-11-27\nsource: gemini\n---\n# 하루\n\n## 조각\n### [수업] 시화 찾기\n- 민감: 아니오\n\n## 원문\n어제…\n```"
+
+    out = intake.convert(src, tmp_path / "inbox", tmp_path / "gemini", ask=fake_ask)
+    assert out.name == "2026-11-27.md" and intake.parse(out.read_text(encoding="utf-8")).pieces[0].kind == "수업"
+    assert "어제 국어 시간에 시화를 찾았다" in seen["text"] and "좋네요" not in seen["text"]  # 제미나이 답은 빼고
+    assert "2026-11-28 로 두고" in seen["prompt"] and "[갈래]" in seen["prompt"]
+    assert (tmp_path / "gemini" / src.name).exists() and src.exists()  # 교사 폴더 원본은 그대로
+
+
 IDEAS = """---
 date: 2026-11-28
 ---
@@ -211,3 +230,12 @@ def test_improvement_ideas_go_to_list(tmp_path, capsys):
     capsys.readouterr()
     intake.show_ideas(ideas)
     assert capsys.readouterr().out.count("| 새것 |") == 1
+
+
+def test_collect_from_drop_folder_keeps_originals(tmp_path):
+    drop, inbox, arch = tmp_path / "노트", tmp_path / "inbox", tmp_path / "gemini"
+    drop.mkdir()
+    (drop / "gemini-2026-11-28-a.json").write_text("{}", encoding="utf-8")
+    assert intake.collect_downloads(drop, inbox, arch, keep=True) == ["gemini-2026-11-28-a.json"]
+    assert (drop / "gemini-2026-11-28-a.json").exists()
+    assert intake.collect_downloads(drop, inbox, arch, keep=True) == []  # 두 번 가져오지 않음

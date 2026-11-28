@@ -122,6 +122,44 @@ def safe_name(title: str) -> str:
     return re.sub(r"\s+", " ", name).strip(" .")[:80] or "제목 없음"
 
 
+# [개선] 조각의 대상 → 이슈를 적을 곳(스킬 폴더 또는 저장소). 위에서부터 먼저 맞는 것.
+TARGETS = (
+    (r"수업\s*비서|교시|수업\s*흐름|수업\s*준비|녹음|받아쓰기", "teacherlesson-assistant"),
+    (r"지도서|차시\s*나누", "teacherlesson-guide"),
+    (r"진도|시간표", "teacherlesson-schedule"),
+    (r"하루\s*기록|제미나이\s*스킬|정리기", "personal-daily-intake"),
+    (r"일정\s*DB|일정\s*시트|카톡\s*알림|아침\s*알림|할\s*일\s*알림", "school-todo-kakao"),
+    (r"투자\s*시트|매매|포트폴리오", "invest-sheet(GitLab)"),
+    (r"옵시디언|볼트|PKM|노트\s*정리", "personal-obsidansystem-main"),
+    (r"홈페이지|웹\s*사이트|HomePage", "HomePage"),
+    (r"나이스|NEIS", "admin-neis-bot"),
+    (r"에듀파인|품의|기안|공문", "admin-edufine"),
+    (r"하이톡|하이클래스|알림장", "admin-hitalk-sender"),
+    (r"노트북\s*LM|NotebookLM", "util-notebooklm"),
+    (r"크롬\s*프로필|크롬\s*창", "util-chrome-profiles"),
+    (r"학생\s*기록|누가\s*기록|평가", "classmanage-student-classifier"),
+)
+
+
+def guess_target(text: str) -> str:
+    for pat, target in TARGETS:
+        if re.search(pat, text or "", re.I):
+            return target
+    return "(대상 확인 필요)"
+
+
+def add_idea(path: Path, doc: Doc, p: Piece, target: str) -> bool:
+    """개선 아이디어를 데이터 폴더 ideas.json 에 적는다(같은 날·같은 제목이면 건너뜀). 새로 적었으면 True."""
+    ideas = json.loads(path.read_text(encoding="utf-8")) if path.exists() else []
+    if any(x["date"] == doc.date and x["title"] == p.title for x in ideas):
+        return False
+    ideas.append({"no": max((x["no"] for x in ideas), default=0) + 1, "date": doc.date, "title": p.title,
+                  "content": p.get("내용"), "target": target, "sensitive": p.sensitive, "status": "new"})
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(ideas, ensure_ascii=False, indent=1), encoding="utf-8")
+    return True
+
+
 def plan(doc: Doc) -> list:
     acts = []
     for p in doc.pieces:
@@ -151,6 +189,9 @@ def plan(doc: Doc) -> list:
             acts.append(Action("candidate", "투자시트 분위기 일지 후보 — personal-invest-sheet 로", p))
         elif k in ("업무", "일기", "습관"):
             acts.append(Action("candidate", f"Notion {k} DB — 아직 연결 공유 전이라 daily 에만 (ISSUES ISSUE-001)", p))
+        elif k == "개선":
+            tgt = guess_target(" ".join((p.get("대상"), p.title, p.get("내용"))))
+            acts.append(Action("idea", f"개선 아이디어 → {tgt} ISSUES 후보", p, {"target": tgt}))
         else:
             acts.append(Action("daily", "daily 에만", p))
     return acts
@@ -246,9 +287,10 @@ def open_notion() -> Notion:
     return Notion(token, db)
 
 
-def apply(doc: Doc, acts: list, vault: Path, sheet=None, notion=None, skip=(), now=None):
-    """(보낸 곳 줄들, 화면 줄들, 실패 수). sheet·notion 은 필요할 때 여는 함수나 객체."""
+def apply(doc: Doc, acts: list, vault: Path, sheet=None, notion=None, skip=(), now=None, ideas: Path | None = None):
+    """(보낸 곳 줄들, 화면 줄들, 실패 수). sheet·notion 은 필요할 때 여는 함수나 객체. ideas: 개선 아이디어 목록 파일."""
     now = now or datetime.now()
+    ideas = ideas or data_dir(SKILL) / "ideas.json"
     sent, screen, fails = [], [], 0
 
     def note(i, a, result, ok=True):
@@ -258,7 +300,7 @@ def apply(doc: Doc, acts: list, vault: Path, sheet=None, notion=None, skip=(), n
         if ok and a.dest != "daily":
             label = f"[{a.piece.kind}] {a.piece.title}"
             sent.append(f"- {label} → " + (f"[[{a.where[:-3]}]]" if a.dest == "vault-note" else a.where)
-                        + ("" if a.dest == "candidate" else f" ({result})"))
+                        + ("" if a.dest in ("candidate", "idea") else f" ({result})"))
 
     # 일정DB: 한 번에 읽고 한 번에 넣는다
     sheet_acts = [(i, a) for i, a in enumerate(acts, 1) if a.dest == "sheet"]
@@ -303,6 +345,9 @@ def apply(doc: Doc, acts: list, vault: Path, sheet=None, notion=None, skip=(), n
                     continue
                 nt = nt or (notion() if callable(notion) else notion)
                 note(i, a, nt.add_book(a.data["book"], a.piece.get("내용"), doc.date))
+            elif a.dest == "idea":
+                new = add_idea(ideas, doc, a.piece, a.data["target"])
+                note(i, a, "아이디어 목록에 적음 (python intake.py ideas)" if new else "이미 적혀 있음")
             else:
                 note(i, a, "후보" if a.dest == "candidate" else "daily 에만")
         except Exception as e:  # noqa: BLE001
@@ -333,15 +378,39 @@ def vault_path() -> Path:
     return v
 
 
+def show_ideas(path: Path, done: str = "", show_all: bool = False) -> int:
+    """개선 아이디어 목록. --done 번호면 '옮김'으로 표시. 민감 아이디어는 제목을 가린다."""
+    ideas = json.loads(path.read_text(encoding="utf-8")) if path.exists() else []
+    marks = {int(x) for x in re.findall(r"\d+", done)}
+    for x in ideas:
+        if x["no"] in marks:
+            x["status"] = "moved"
+    if marks:
+        path.write_text(json.dumps(ideas, ensure_ascii=False, indent=1), encoding="utf-8")
+    rows = [x for x in ideas if show_all or x["status"] == "new"]
+    if not rows:
+        print("옮길 개선 아이디어가 없어요.")
+        return 0
+    print("| 번호 | 날짜 | 대상 | 아이디어 | 상태 |\n|---|---|---|---|---|")
+    for x in rows:
+        title = "(민감 — 제목 숨김)" if x.get("sensitive") else x["title"]
+        print(f"| {x['no']} | {x['date']} | {x['target']} | {title} | {'옮김' if x['status'] == 'moved' else '새것'} |")
+    return 0
+
+
 def main(argv=None) -> int:
     for s in (sys.stdout, sys.stderr):
         if hasattr(s, "reconfigure"):
             s.reconfigure(encoding="utf-8")
     ap = argparse.ArgumentParser(description="하루 기록을 갈래별로 나눠 넣기")
-    ap.add_argument("cmd", choices=["plan", "apply"])
+    ap.add_argument("cmd", choices=["plan", "apply", "ideas"])
     ap.add_argument("file", nargs="?")
     ap.add_argument("--skip", default="", help="쉼표로: sheet,notion")
+    ap.add_argument("--done", default="", help="ideas: ISSUES 에 옮긴 번호(쉼표로)")
+    ap.add_argument("--all", action="store_true", help="ideas: 옮긴 것도 보기")
     a = ap.parse_args(argv)
+    if a.cmd == "ideas":
+        return show_ideas(data_dir(SKILL) / "ideas.json", a.done, a.all)
     load_env()
     src = find_input(a.file)
     m = DATE_RE.search(src.stem)

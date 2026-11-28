@@ -1323,6 +1323,8 @@ class InstructionsDialog(QDialog):
         super().accept()
 
 
+STATE_ORDER = ["답하는 중", "내 답 필요", "보낸 뒤 대기", "끝남"]   # 트리 '작업' 칸: 여러 창이면 앞쪽(급한) 것
+STATE_SHORT = {"답하는 중": "✍ 진행 중", "내 답 필요": "❓ 답 필요", "보낸 뒤 대기": "⌛ 보냄", "끝남": "✅ 대기"}
 REPLY_MARK = {"답하는 중": "✍", "내 답 필요": "❓", "끝남": "✅", "보낸 뒤 대기": "⌛"}
 REPLY_COLOR = {"답하는 중": "#6aa0ff", "내 답 필요": "#ffb347", "끝남": "#7bd67b", "보낸 뒤 대기": "#bbbbbb",
                "일시 중지": "#999999"}
@@ -1613,10 +1615,10 @@ class Tree(QTreeWidget):
     def __init__(self, on_drop):
         super().__init__()
         self.on_drop = on_drop
-        self.setHeaderLabels(["그룹 / 프로필", "창", "작업", "시작 URL"])
+        self.setHeaderLabels(["그룹 / 프로필", "창", "작업·상태", "시작 URL"])
         self.setColumnWidth(0, 260)
         self.setColumnWidth(1, 34)
-        self.setColumnWidth(2, 120)
+        self.setColumnWidth(2, 190)
         self.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
         self.setDragDropMode(QAbstractItemView.DragDropMode.InternalMove)
         self.setEditTriggers(QAbstractItemView.EditTrigger.EditKeyPressed)  # 이름 바꾸기는 F2 로만
@@ -2980,6 +2982,38 @@ class Manager(QMainWindow):
         self.refresh_work(time.time())
         self.statusBar().showMessage(f"작업 {len(wkeys)}개를 멈추고 창 {len(targets)}개에 닫기를 보냈습니다.", 15000)
 
+    def key_states(self, key: str) -> list[str]:
+        """프로필(또는 기타 창) 키의 열린 창들 답글 상태(일시 중지는 빼고 — ⏸ 시각으로 따로 보임)."""
+        return [self.replies[h]["status"] for h, st in self.windows.items()
+                if st["key"] == key and h in self.replies and self.replies[h]["status"] in STATE_SHORT]
+
+    def column_state(self, item: QTreeWidgetItem, wkey: str | None) -> tuple[str, str]:
+        """'작업' 칸에 붙일 상태 글과 말풍선. 프로필: 가장 급한 상태 하나, 그룹: 상태별 개수."""
+        if not wkey:
+            return "", ""
+        if wkey.startswith("group:"):
+            counts: dict[str, int] = {}
+            paused = 0
+            for i in range(item.childCount()):
+                key = item.child(i).data(0, ROLE)
+                states = self.key_states(key)
+                if states:
+                    top = min(states, key=STATE_ORDER.index)
+                    counts[top] = counts.get(top, 0) + 1
+                if self.pause_of(key):
+                    paused += 1
+            parts = [f"{STATE_SHORT[s][0]}{counts[s]}" for s in STATE_ORDER if counts.get(s)]
+            if paused:
+                parts.append(f"⏸{paused}")
+            tip = ", ".join(f"{STATE_SHORT[s]} {counts[s]}" for s in STATE_ORDER if counts.get(s))
+            return " ".join(parts), (tip + (f", ⏸ 못 씀 {paused}" if paused else "")).strip(", ")
+        states = self.key_states(wkey)
+        if not states:
+            return "", ""
+        top = min(states, key=STATE_ORDER.index)
+        tip = f"창 {len(states)}개: " + ", ".join(STATE_SHORT[s] for s in states) if len(states) > 1 else STATE_SHORT[top]
+        return STATE_SHORT[top], tip
+
     def refresh_work(self, now: float):
         """트리 '작업' 칸을 고치고, 정한 시간이 지난 작업은 한 번 알린다."""
         work = self.cfg["work"]
@@ -3005,9 +3039,11 @@ class Manager(QMainWindow):
                 wkey = self.work_key(item)
                 w = work.get(wkey) if wkey else None
                 pause = self.pause_text(wkey, datetime.now()) if wkey and not wkey.startswith("group:") else None
-                item.setText(2, " ".join(t for t in (fmt_hm(now - w["start"]) if w else "",
+                state, state_tip = self.column_state(item, wkey)
+                item.setText(2, " ".join(t for t in (fmt_hm(now - w["start"]) if w else "", state,
                                                      f"⏸{self.pause_of(wkey):%H:%M}" if pause else "") if t))
-                item.setToolTip(2, "\n".join(t for t in (self.work_text(wkey, now) if w else "", pause or "") if t))
+                item.setToolTip(2, "\n".join(t for t in (self.work_text(wkey, now) if w else "", state_tip,
+                                                          pause or "") if t))
                 item.setForeground(2, QBrush(WORK_ALERT_COLOR) if w and w.get("alerted") else QBrush())
         finally:
             self.building = False

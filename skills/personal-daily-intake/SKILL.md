@@ -19,6 +19,9 @@ Notion·시트에는 처리할 것(할 일, 책 행)만 보낸다. mem 대신 �
 2. 그 대화 화면에서 즐겨찾기 **'제미나이 내보내기'**(북마클릿)를 누른다 → 다운로드 폴더에 `하루기록-YYYY-MM-DD.md`(정리본)와
    `gemini-날짜-제목.json`(내가 쓴 말·답 전부)이 생긴다. `plan`·`apply` 가 다운로드 폴더에서 집어 inbox·대화 보관 폴더(`gemini\`)로 옮긴다.
    북마클릿 만들기: `python intake.py bookmarklet` → 클립보드의 주소를 Chrome 즐겨찾기 URL 칸에 붙여 넣기(한 번만).
+   다운로드 대신 중앙 `.env` 의 `PERSONAL_DAILY_INTAKE__DROP` 폴더(예: 구글 드라이브 `my-skills-개인자료\노트`)에 둬도 된다 — 거기 것은 원본을 두고 복사만.
+   **정리본 없이 그냥 나눈 대화**(하루 기록 스킬 전에 한 대화 등)는 `python intake.py convert` — 그 json 에서 내가 한 말만 모아
+   Gemini CLI 에 같은 지침으로 다시 정리시켜 inbox 에 md 로 둔다(날짜를 모르면 '확인 필요'에 '날짜 확인').
    북마클릿 없이: md 를 복사해 `내 문서\my-skills-data\personal-daily-intake\inbox\YYYY-MM-DD.md`로 저장해도 된다.
 3. Claude에게 "하루 기록 저장해줘" → Claude가 `plan`으로 표를 보여 준다 → 교사가 동의하면 `apply`.
 

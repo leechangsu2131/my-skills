@@ -38,6 +38,7 @@ sys.path.insert(0, str(next(p / "_shared" for p in SKILL_DIR.parents if (p / "_s
 from skill_env import data_dir, env_values  # noqa: E402
 sys.path.insert(0, str(SKILL_DIR))
 import audio_export  # noqa: E402  (녹음 → 클로바노트용 MP3, T99)
+import school_info  # noqa: E402  (급식·날씨 한 줄, T109)
 import schedule_panel  # noqa: E402  (일정·할 일 칸, T107)
 import transcribe  # noqa: E402  (받아쓰기 사전 파일 이름·읽기, T111)
 import submissions  # noqa: E402  (제출 확인표, T108)
@@ -915,6 +916,11 @@ class Handler(BaseHTTPRequestHandler):
             return self._send(200, (WEB / "voice_cmd.js").read_bytes(), "application/javascript; charset=utf-8")
         if url.path == "/overdue.js":
             return self._send(200, (WEB / "overdue.js").read_bytes(), "application/javascript; charset=utf-8")
+        if url.path == "/school_info.js":
+            return self._send(200, (WEB / "school_info.js").read_bytes(), "application/javascript; charset=utf-8")
+        if url.path == "/api/school-info":
+            env = {**env_values(SKILL), **os.environ}
+            return self._json(school_info.get_school_info(env, DATA / "school_info_cache.json"))
         if url.path == "/agenda.js":
             return self._send(200, (WEB / "agenda.js").read_bytes(), "application/javascript; charset=utf-8")
         if url.path == "/stt_words.js":

@@ -56,3 +56,4 @@
 - 2026-11-28 06:53 T111 PR 올림 — transcribe.py 받아쓰기 사전(load_words·build_hint·apply_fixes, 힌트 initial_prompt 200자, 낱말 경계·긴 것부터·조사 허용)·stt_words.example.json·tests/test_stt_words.py 15개(변형 확인), 수업 비서 전체 394 통과(fitz 없는 2개 파일 제외). ③ 화면 칸은 파일 직접 편집으로 두고 못 함, 진짜 faster-whisper 실행은 확인 필요
 - 2026-11-28 14:48 S8 (teacherlesson-schedule) 시작 (브랜치 task/S8-teacherlesson-schedule-issues)
 - 2026-11-28 14:48 S8 (teacherlesson-schedule) PR 올림 — 열린 이슈로 잡혀 있던 ISSUE-7(이미 🟢 해결·T93)을 ISSUES.md 백로그에서 해결됨 절로 옮김. 남은 열린 이슈 없음(ISSUE-004 잠금은 T77·P). 카탈로그 점검 통과
+- 2026-11-28 20:07 T109 진행 — 검토 🔴🟡🟢 반영(교사 요청으로 직접): 중앙 .env 앞머리 뗀 이름도 읽음(날씨 좌표·옛 이름), 설정이 바뀌면 같은 날도 다시 받음, NEIS ERROR 응답은 저장 안 함, 비타500 숫자 안 지움, 긴 메뉴 줄임표. main 받아 충돌 해결. 시험 python 16·js 6, 수업 비서 506 통과. claude-web-173 이어받음 줄과 겹침 — 이 푸시가 먼저 들어가면 173 은 main 받고 이어서

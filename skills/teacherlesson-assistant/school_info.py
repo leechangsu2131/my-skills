@@ -41,7 +41,7 @@ def clean_menu(raw: str) -> str:
     dishes = []
     for line in text.split("\n"):
         line = re.sub(r"\(\s*[\d.\s,]+\s*\)", "", line)   # (5.6) 같은 번호 묶음
-        line = re.sub(r"(?<=[가-힣a-zA-Z])\s*\d+(?:\.\d+)*\.?$", "", line.strip())  # 끝에 붙은 번호
+        line = re.sub(r"(?<=[가-힣a-zA-Z])\s*\d{1,2}(?:\.\d{1,2})*\.$", "", line.strip())  # 끝에 붙은 번호
         line = re.sub(r"\s+", " ", line).strip()
         if line:
             dishes.append(line)
@@ -52,6 +52,9 @@ def parse_meal(data) -> str:
     """API 응답에서 점심(없으면 첫 번째 식사) 메뉴 글을 뽑는다. 없으면 ''."""
     if not isinstance(data, dict):
         return ""
+    result = data.get("RESULT")
+    if isinstance(result, dict) and str(result.get("CODE", "")).upper().startswith("ERROR"):
+        raise ValueError("NEIS 오류 응답")   # 오류는 빈 급식으로 저장하지 않고 다음에 다시 받는다
     rows = []
     for block in data.get("mealServiceDietInfo") or []:
         if isinstance(block, dict) and isinstance(block.get("row"), list):
@@ -94,13 +97,19 @@ def parse_weather(data):
         return None
 
 
+def _get(env: dict, name: str) -> str:
+    """값을 읽는다. 중앙 .env 를 skill_env.env_values 로 읽으면 스킬 앞머리가 떼어져 오므로
+    '앞머리 없는 이름'과 '앞머리 붙은 이름'(윈도우 환경변수) 둘 다 찾는다."""
+    return str(env.get(name) or env.get(PREFIX + name) or "").strip()
+
+
 def _setting(env: dict, name: str) -> str:
-    return str(env.get(PREFIX + name) or "").strip()
+    return _get(env, name)
 
 
 def _neis(env: dict, shared: str, old: str) -> str:
-    """공용 키(NEIS_…)를 먼저, 없으면 옛 이름."""
-    return str(env.get(shared) or env.get(old) or "").strip()
+    """공용 키(NEIS_…)를 먼저, 없으면 옛 이름(앞머리 있든 없든)."""
+    return _get(env, shared) or _get(env, old.removeprefix(PREFIX))
 
 
 def fetch_meal(day: date, env: dict, fetch=None) -> str:
@@ -135,6 +144,12 @@ def _read_cache(path):
         return {}
 
 
+def settings_key(env: dict) -> str:
+    """캐시가 어느 설정으로 받은 값인지(코드·좌표가 바뀌면 다시 받으려고). 키 값은 넣지 않는다."""
+    return "|".join([_neis(env, "NEIS_SCHOOL_CODE", PREFIX + "SCHOOL_CODE"), _neis(env, "NEIS_OFFICE_CODE", PREFIX + "OFFICE_CODE"),
+                     _get(env, "LATITUDE"), _get(env, "LONGITUDE")])
+
+
 def get_school_info(env: dict, cache_path, today: date | None = None, fetch=None) -> dict:
     """오늘 급식·날씨. 하루 한 번만 가져오고 실패한 칸은 None 으로 둔다.
 
@@ -143,7 +158,8 @@ def get_school_info(env: dict, cache_path, today: date | None = None, fetch=None
     today = today or date.today()
     iso = today.isoformat()
     cached = _read_cache(cache_path)
-    if cached.get("date") == iso and cached.get("done"):
+    sig = settings_key(env)
+    if cached.get("date") == iso and cached.get("done") and cached.get("settings") == sig:
         return {"status": "success", "date": iso, "meal": cached.get("meal", ""), "weather": cached.get("weather")}
     meal, weather, ok = "", None, True
     try:
@@ -157,7 +173,7 @@ def get_school_info(env: dict, cache_path, today: date | None = None, fetch=None
     result = {"status": "success", "date": iso, "meal": meal, "weather": weather}
     if ok:  # 실패가 있으면 저장하지 않아 다음에 다시 시도한다
         try:
-            cache_path.write_text(json.dumps({**result, "done": True}, ensure_ascii=False), encoding="utf-8")
+            cache_path.write_text(json.dumps({**result, "done": True, "settings": sig}, ensure_ascii=False), encoding="utf-8")
         except OSError:
             pass
     return result

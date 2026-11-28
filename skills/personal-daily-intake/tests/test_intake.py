@@ -239,3 +239,14 @@ def test_collect_from_drop_folder_keeps_originals(tmp_path):
     assert intake.collect_downloads(drop, inbox, arch, keep=True) == ["gemini-2026-11-28-a.json"]
     assert (drop / "gemini-2026-11-28-a.json").exists()
     assert intake.collect_downloads(drop, inbox, arch, keep=True) == []  # 두 번 가져오지 않음
+
+
+def test_notion_status_lists_missing_dbs():
+    def call(path, body):
+        if path == "users/me":
+            return {"name": "book manage"}
+        return {"results": [{"title": [{"plain_text": "독서 DB"}]}, {"title": [{"plain_text": "2026 업무일지"}]}], "has_more": False}
+
+    bot, rows = intake.notion_status(call)
+    assert bot == "book manage"
+    assert {k: t for k, _, t in rows} == {"독서": "독서 DB", "업무": "2026 업무일지", "일기": None, "습관": None}

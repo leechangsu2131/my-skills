@@ -189,7 +189,7 @@ def plan(doc: Doc) -> list:
         elif k == "투자":
             acts.append(Action("candidate", "투자시트 분위기 일지 후보 — personal-invest-sheet 로", p))
         elif k in ("업무", "일기", "습관"):
-            acts.append(Action("candidate", f"Notion {k} DB — 아직 연결 공유 전이라 daily 에만 (ISSUES ISSUE-001)", p))
+            acts.append(Action("candidate", f"daily 에만 — Notion {k} DB 는 아직 안 붙임(연결 확인: python intake.py notion)", p))
         elif k == "개선":
             tgt = guess_target(" ".join((p.get("대상"), p.title, p.get("내용"))))
             acts.append(Action("idea", f"개선 아이디어 → {tgt} ISSUES 후보", p, {"target": tgt}))
@@ -273,6 +273,55 @@ class Notion:
             props["한줄평"] = {"rich_text": [{"text": {"content": review[:1900]}}]}
         self._call("pages", {"parent": {"database_id": self.reading_db}, "properties": props})
         return "새 행"
+
+
+# 하루 기록이 Notion 에 넣고 싶은 DB — (갈래, 제목에 들어갈 낱말). 아직 쓰기는 독서만, 나머지는 공유 확인부터(ISSUE-001)
+NOTION_WANTED = (("독서", "독서"), ("업무", "업무일지"), ("일기", "일기"), ("습관", "습관"))
+NOTION_HOWTO = """Notion 에서 연결하는 법(DB 마다 한 번):
+  1. Notion 에서 그 DB(또는 DB 가 든 페이지 — 예: '2026 업무일지', '생활습관 및 일기')를 연다
+  2. 오른쪽 위 ··· → '연결'(Connections) → '{bot}' 를 찾아 누르고 '확인'
+     (페이지에 연결하면 그 안의 DB 들이 함께 열린다)
+  3. 다시 python intake.py notion 으로 ✅ 가 되는지 본다"""
+
+
+def notion_status(call) -> tuple[str, list[tuple[str, str, str | None]]]:
+    """(연결 이름, [(갈래, 찾는 낱말, 찾은 DB 제목 또는 None)]). call(경로, 본문 또는 None) → JSON."""
+    me = call("users/me", None)
+    found, cursor = [], None
+    while True:
+        body = {"filter": {"property": "object", "value": "database"}, "page_size": 100}
+        if cursor:
+            body["start_cursor"] = cursor
+        d = call("search", body)
+        found += ["".join(x.get("plain_text", "") for x in db.get("title", [])) for db in d.get("results", [])]
+        if not d.get("has_more"):
+            break
+        cursor = d.get("next_cursor")
+    rows = [(kind, word, next((t for t in found if word in t), None)) for kind, word in NOTION_WANTED]
+    return me.get("name") or "(이름 모름)", rows
+
+
+def show_notion() -> int:
+    token = os.environ.get("NOTION_TOKEN", "").strip()
+    if not token:
+        print("중앙 .env 에 NOTION_TOKEN 이 없어요.")
+        return 1
+
+    def call(path, body):
+        req = urllib.request.Request(
+            "https://api.notion.com/v1/" + path, data=json.dumps(body).encode("utf-8") if body is not None else None,
+            headers={"Authorization": "Bearer " + token, "Notion-Version": "2022-06-28", "Content-Type": "application/json"})
+        with urllib.request.urlopen(req, timeout=30) as r:
+            return json.load(r)
+
+    bot, rows = notion_status(call)
+    print(f"Notion 연결 이름: {bot}")
+    for kind, word, title in rows:
+        print(f"{'✅' if title else '❌'} {kind}: " + (f"'{title}' 보임" if title else f"'{word}' 가 든 DB 가 안 보임 — 공유 필요"))
+    if any(t is None for _, _, t in rows):
+        print("\n" + NOTION_HOWTO.format(bot=bot))
+        print("\n공유한 뒤에도 업무·일기·습관에 실제로 쓰는 기능은 아직 없어요 — 공유가 되면 Claude 에게 'Notion 쓰기 붙여 줘'(ISSUE-001).")
+    return 0
 
 
 def open_sheet():
@@ -511,7 +560,7 @@ def main(argv=None) -> int:
         if hasattr(s, "reconfigure"):
             s.reconfigure(encoding="utf-8")
     ap = argparse.ArgumentParser(description="하루 기록을 갈래별로 나눠 넣기")
-    ap.add_argument("cmd", choices=["plan", "apply", "ideas", "bookmarklet", "convert"])
+    ap.add_argument("cmd", choices=["plan", "apply", "ideas", "bookmarklet", "convert", "notion"])
     ap.add_argument("file", nargs="?")
     ap.add_argument("files", nargs="*", help="convert: 여러 json")
     ap.add_argument("--skip", default="", help="쉼표로: sheet,notion")
@@ -520,6 +569,9 @@ def main(argv=None) -> int:
     a = ap.parse_args(argv)
     if a.cmd == "ideas":
         return show_ideas(data_dir(SKILL) / "ideas.json", a.done, a.all)
+    if a.cmd == "notion":
+        load_env()
+        return show_notion()
     if a.cmd == "convert":
         load_env()
         inbox, archive = data_dir(SKILL, "inbox"), data_dir(SKILL, "gemini")

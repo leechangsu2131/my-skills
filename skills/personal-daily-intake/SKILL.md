@@ -35,6 +35,10 @@ Notion·시트에는 처리할 것(할 일, 책 행)만 보낸다. mem 대신 �
 - 중앙 `.env`: `DB_SHEET_ID`·`GOOGLE_SERVICE_ACCOUNT_FILE`(school-todo-kakao 와 같은 값), `NOTION_TOKEN`,
   `PERSONAL_DAILY_INTAKE__NOTION_READING_DB_ID`(독서 DB), 볼트 경로 `PERSONAL_OBSIDANSYSTEM_MAIN__VAULT`
   (이 스킬만 다른 볼트를 쓰려면 `PERSONAL_DAILY_INTAKE__VAULT`)
+- **Notion 연결**: `NOTION_TOKEN` 의 연결 이름은 **`book manage`** 다(2026-11-28 확인). 이 연결에 공유된 DB 만 읽고 쓸 수 있다 —
+  지금은 독서 DB 뿐. 업무일지·일기·습관 DB 를 쓰려면 Notion 에서 그 DB(또는 DB 가 든 페이지)를 열고
+  오른쪽 위 ··· → 연결 → `book manage` 추가. 확인은 `python intake.py notion`(무엇이 보이고 무엇이 안 보이는지 + 연결 방법).
+  공유한 뒤 업무·일기·습관에 실제로 쓰는 기능은 ISSUE-001 로 붙인다(그전까지 그 갈래는 daily 에만).
 
 ## 사용법
 ```powershell

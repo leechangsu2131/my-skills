@@ -17,6 +17,7 @@ import hashlib
 import json
 import os
 import re
+import shutil
 import sys
 import urllib.request
 from dataclasses import dataclass, field
@@ -364,19 +365,87 @@ def downloads_dir() -> Path:
     return Path(os.path.expandvars(raw)) if raw else Path.home() / "Downloads"
 
 
-def collect_downloads(downloads: Path, inbox: Path, archive: Path) -> list[str]:
-    """북마클릿이 받은 파일을 옮긴다: 하루기록-*.md → inbox, gemini-*.json → 대화 보관 폴더. 옮긴 이름들."""
+def collect_downloads(downloads: Path, inbox: Path, archive: Path, keep: bool = False) -> list[str]:
+    """북마클릿이 받은 파일을 가져온다: 하루기록-*.md → inbox, gemini-*.json → 대화 보관 폴더. 가져온 이름들.
+    keep=True(교사가 정한 DROP 폴더, 예: 구글 드라이브 노트)면 원본은 두고 복사만, 이미 가져온 이름은 건너뜀."""
     moved = []
     for pattern, dest in (("하루기록-*.md", inbox), ("gemini-*.json", archive)):
         for f in sorted(downloads.glob(pattern)) if downloads.is_dir() else []:
             dest.mkdir(parents=True, exist_ok=True)
             name = f.name[len("하루기록-"):] if f.name.startswith("하루기록-") else f.name
             target, n = dest / name, 2
+            if keep:
+                if target.exists() or (dest / "done" / name).exists():
+                    continue
+                shutil.copy2(f, target)
+                moved.append(target.name)
+                continue
             while target.exists() or (dest / "done" / target.name).exists():  # 같은 날 두 번째 기록
                 target, n = dest / f"{Path(name).stem}-{n}{Path(name).suffix}", n + 1
             f.replace(target)
             moved.append(target.name)
     return moved
+
+
+def drop_dirs() -> list[Path]:
+    """북마클릿 파일을 찾을 곳: 다운로드 폴더 + (있으면) .env PERSONAL_DAILY_INTAKE__DROP 폴더(예: 구글 드라이브 노트 폴더)."""
+    out = [downloads_dir()]
+    raw = os.environ.get("DROP", "").strip()
+    if raw:
+        out.append(Path(os.path.expandvars(raw)))
+    return out
+
+
+def gem_instructions() -> str:
+    """gem_prompt.md 의 상자 안 지침(제미나이 스킬과 같은 글)."""
+    t = (SKILL_DIR / "gem_prompt.md").read_text(encoding="utf-8")
+    return t.split("````text", 1)[1].rsplit("````", 1)[0].strip()
+
+
+def conversation_text(data: dict) -> str:
+    """내보낸 대화 json → 선생님이 한 말만(제미나이 답은 원문이 아니므로 뺀다)."""
+    parts = [f"# {data.get('title', '대화')}"]
+    for i, t in enumerate(data.get("turns", []), 1):
+        if (t.get("user") or "").strip():
+            parts.append(f"## 내가 한 말 {i}\n{t['user'].strip()}")
+    return "\n\n".join(parts) + "\n"
+
+
+def extract_md(answer: str) -> str:
+    """Gemini 답에서 정리본 md 만(코드 상자를 벗김)."""
+    m = re.search(r"```(?:markdown|md)?\s*\n(---\s*\n.*?)```", answer, re.S)
+    text = m.group(1) if m else answer
+    i = text.find("---")
+    return text[i:].strip() + "\n" if i != -1 else ""
+
+
+def convert(src: Path, inbox: Path, archive: Path, ask=None) -> Path:
+    """지난 Gemini 대화 json 을 제미나이 스킬과 같은 지침으로 다시 정리해 inbox 에 md 로. ask(파일, 지침) → 답."""
+    data = json.loads(src.read_text(encoding="utf-8"))
+    exported = (data.get("exported") or "")[:10] or date.today().isoformat()
+    body = archive / "convert" / (src.stem + ".md")
+    body.parent.mkdir(parents=True, exist_ok=True)
+    body.write_text(conversation_text(data), encoding="utf-8")
+    prompt = (gem_instructions() + "\n\n[이번 일] 파일 @{file} 은 선생님이 그날 제미나이에게 한 말을 모은 것이다(받아쓴 글로 본다). "
+              f"위 형식의 md 한 장으로만 답하라. 기록 날짜(date)는 글에서 알 수 있으면 그 날짜, 모르면 {exported} 로 두고 "
+              "'확인 필요'에 '날짜 확인'을 적어라. '원문' 절에는 파일의 '내가 한 말' 글을 그대로 옮긴다.")
+    if ask is None:
+        sys.path.insert(0, str(SKILLS / "util-notebooklm"))
+        from nlm import gemini_ask  # Gemini CLI — 지침·글을 넘겨 답을 받음
+        ask = lambda f, p: gemini_ask(f, p)[0]  # noqa: E731
+    md = extract_md(ask(body, prompt))
+    doc = parse(md)  # 날짜·조각이 없으면 여기서 멈춤
+    if not doc.pieces:
+        raise SystemExit(f"{src.name}: 조각을 하나도 못 받았어요 — 다시 해 보거나 손으로 고치세요.")
+    inbox.mkdir(parents=True, exist_ok=True)
+    out, n = inbox / f"{doc.date}.md", 2
+    while out.exists() or (inbox / "done" / out.name).exists():
+        out, n = inbox / f"{doc.date}-{n}.md", n + 1
+    out.write_text(md, encoding="utf-8")
+    archive.mkdir(parents=True, exist_ok=True)
+    if src.parent != archive:  # 다운로드 폴더 것은 옮기고, 그 밖(교사 폴더)은 복사만
+        (src.replace if src.parent == downloads_dir() else lambda t: shutil.copy2(src, t))(archive / src.name)
+    return out
 
 
 def bookmarklet() -> str:
@@ -398,7 +467,8 @@ def find_input(arg: str | None) -> Path:
     if arg:
         return Path(arg)
     inbox = data_dir(SKILL, "inbox")
-    moved = collect_downloads(downloads_dir(), inbox, data_dir(SKILL, "gemini"))
+    dl = downloads_dir()
+    moved = [n for d in drop_dirs() for n in collect_downloads(d, inbox, data_dir(SKILL, "gemini"), keep=d != dl)]
     if moved:
         print(f"다운로드 폴더에서 옮김: {', '.join(moved)}")
     files = sorted(inbox.glob("*.md"), key=lambda f: f.stat().st_mtime)
@@ -441,14 +511,31 @@ def main(argv=None) -> int:
         if hasattr(s, "reconfigure"):
             s.reconfigure(encoding="utf-8")
     ap = argparse.ArgumentParser(description="하루 기록을 갈래별로 나눠 넣기")
-    ap.add_argument("cmd", choices=["plan", "apply", "ideas", "bookmarklet"])
+    ap.add_argument("cmd", choices=["plan", "apply", "ideas", "bookmarklet", "convert"])
     ap.add_argument("file", nargs="?")
+    ap.add_argument("files", nargs="*", help="convert: 여러 json")
     ap.add_argument("--skip", default="", help="쉼표로: sheet,notion")
     ap.add_argument("--done", default="", help="ideas: ISSUES 에 옮긴 번호(쉼표로)")
     ap.add_argument("--all", action="store_true", help="ideas: 옮긴 것도 보기")
     a = ap.parse_args(argv)
     if a.cmd == "ideas":
         return show_ideas(data_dir(SKILL) / "ideas.json", a.done, a.all)
+    if a.cmd == "convert":
+        load_env()
+        inbox, archive = data_dir(SKILL, "inbox"), data_dir(SKILL, "gemini")
+        srcs = [Path(x) for x in ([a.file] if a.file else []) + a.files]
+        if not srcs:  # 안 주면: 다운로드·DROP 폴더와 보관 폴더에서 아직 안 바꾼 gemini-*.json
+            done = {p.stem for p in (archive / "convert").glob("*.md")} if (archive / "convert").is_dir() else set()
+            srcs = [p for d in drop_dirs() + [archive] if d.is_dir() for p in sorted(d.glob("gemini-*.json"))
+                    if p.stem not in done]
+        if not srcs:
+            print("바꿀 Gemini 대화(json)가 없어요.")
+            return 1
+        for s in srcs:
+            out = convert(s, inbox, archive)
+            print(f"✅ {s.name[:50]} → inbox\\{out.name}")
+        print("이제 python intake.py plan <파일> 로 표를 보고 apply 하세요(날짜가 '확인 필요'면 md 의 date 를 고친 뒤).")
+        return 0
     if a.cmd == "bookmarklet":
         url = bookmarklet()
         try:

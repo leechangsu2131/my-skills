@@ -462,11 +462,63 @@ def reply_status(info: dict | None, paused: bool = False) -> str:
     return "내 답 필요" if _ASKS.search(last["text"][-400:]) else "끝남"
 
 
-def maximize(hwnd: int) -> None:
-    """창이 작으면 페이지 모양이 달라져(사이드바·지침 카드가 숨음) 자동화가 틀리기 쉬워 최대화한다."""
-    if win32gui.IsWindow(hwnd) and not _user32.IsZoomed(hwnd):
-        win32gui.ShowWindow(hwnd, win32con.SW_MAXIMIZE)
-        time.sleep(0.6)
+SMALL_WINDOW_WIDTH = 1000   # 이보다 좁은 창은 페이지 모양이 달라져(사이드바·지침 카드가 숨음) 자동화가 틀리기 쉽다
+
+
+def maximize(hwnd: int, only_small: bool = False) -> None:
+    """창을 최대화. only_small 이면 폭이 SMALL_WINDOW_WIDTH 보다 좁을 때만(바둑판 배열은 그대로 두려고)."""
+    if not win32gui.IsWindow(hwnd) or _user32.IsZoomed(hwnd):
+        return
+    if only_small and not win32gui.IsIconic(hwnd):
+        left, _, right, _ = win32gui.GetWindowRect(hwnd)
+        if right - left >= SMALL_WINDOW_WIDTH:
+            return
+    win32gui.ShowWindow(hwnd, win32con.SW_MAXIMIZE)
+    time.sleep(0.6)
+
+
+LAYOUTS = {2: (2, 1), 3: (3, 1), 4: (2, 2), 6: (3, 2), 8: (4, 2), 9: (3, 3), 12: (4, 3), 16: (4, 4)}   # 칸 수 → (가로, 세로)
+
+
+def work_area_at_cursor() -> tuple[int, int, int, int]:
+    """마우스가 있는 모니터의 작업 영역(작업 표시줄 뺀 곳), 실제 화소."""
+    monitor = win32api.MonitorFromPoint(win32api.GetCursorPos(), win32con.MONITOR_DEFAULTTONEAREST)
+    return win32api.GetMonitorInfo(monitor)["Work"]
+
+
+def place_window(hwnd: int, x: int, y: int, w: int, h: int) -> None:
+    """창을 (x, y, w, h) 칸에 딱 맞게. 최대화·최소화를 풀고(앞으로 가져오지 않음), 보이지 않는 테두리만큼 보정."""
+    if win32gui.IsIconic(hwnd) or _user32.IsZoomed(hwnd):
+        win32gui.ShowWindow(hwnd, win32con.SW_SHOWNOACTIVATE if win32gui.IsIconic(hwnd) else win32con.SW_RESTORE)
+        if _user32.IsZoomed(hwnd):
+            win32gui.ShowWindow(hwnd, win32con.SW_RESTORE)
+        time.sleep(0.15)
+    rect = win32gui.GetWindowRect(hwnd)
+    frame = ctypes.wintypes.RECT()
+    ctypes.windll.dwmapi.DwmGetWindowAttribute(hwnd, 9, ctypes.byref(frame), ctypes.sizeof(frame))  # 보이는 테두리
+    dl, dt = frame.left - rect[0], frame.top - rect[1]
+    dr, db = rect[2] - frame.right, rect[3] - frame.bottom
+    win32gui.SetWindowPos(hwnd, 0, x - dl, y - dt, w + dl + dr, h + dt + db,
+                          win32con.SWP_NOZORDER | win32con.SWP_NOACTIVATE)
+
+
+def tile_windows(hwnds: list[int], slots: int | None = None) -> int:
+    """창들을 마우스가 있는 모니터에 바둑판으로. slots 칸(없으면 창 수에 맞는 가장 작은 배치). 칸보다 많으면 같은 칸에 겹친다."""
+    if not hwnds:
+        return 0
+    if not slots:
+        slots = next((n for n in sorted(LAYOUTS) if n >= len(hwnds)), max(LAYOUTS))
+    cols, rows = LAYOUTS[slots] if slots in LAYOUTS else (slots, 1)
+    left, top, right, bottom = work_area_at_cursor()
+    w, h = (right - left) // cols, (bottom - top) // rows
+    for i, hwnd in enumerate(hwnds):
+        slot = i % (cols * rows)
+        r, c = divmod(slot, cols)
+        try:
+            place_window(hwnd, left + c * w, top + r * h, w, h)
+        except Exception:
+            pass
+    return cols * rows
 
 
 # 다른 프로그램 창에 가려진 창도 계속 그리게 하는 실행 옵션(브라우저가 처음 켜질 때만 먹는다 — 프로필들이 한 프로세스를 함께 씀)
@@ -1695,7 +1747,8 @@ class Manager(QMainWindow):
              ("그룹 삭제", self.remove_group, "고른 그룹을 지우고 안의 프로필은 미분류로 옮긴다."),
              ("시작 URL", self.set_start_url, "고른 프로필들의 시작 URL 을 한 번에 바꾼다(비우면 해제)."),
              ("자동화 ▾", self.automation_menu, "여러 창에 같은 웹 작업을 차례로: claude.ai 프로젝트 지침 일괄 바꾸기 등"),
-             ("답글 모아보기", self.show_replies, "claude.ai 창마다 상태(답하는 중·끝남·내 답 필요…)와 마지막 답을 한눈에")),
+             ("답글 모아보기", self.show_replies, "claude.ai 창마다 상태(답하는 중·끝남·내 답 필요…)와 마지막 답을 한눈에"),
+             ("창 배치 ▾", self.layout_menu, "고른 창(없으면 트리에서 고른 그룹·프로필, 그것도 없으면 프로필 창 전체)을 최대화·이전 크기·최소화·바둑판 배열")),
         ):
             line = QHBoxLayout()
             for label, slot, tip in row:
@@ -1725,8 +1778,9 @@ class Manager(QMainWindow):
         self.reply_box.setToolTip("claude.ai 창의 최근 메시지를 20초마다 읽어 '답글 모아보기'에 모으고, 답이 끝나면 알린다")
         self.reply_box.setChecked(self.cfg.get("reply_scan", True))
         self.reply_box.toggled.connect(self.save)
-        self.max_box = QCheckBox("창 최대화")
-        self.max_box.setToolTip("프로필을 열 때, 그리고 자동화(일괄 입력·지침 바꾸기·대화 들어가기) 전에 창을 최대화한다 — 작은 창은 페이지 모양이 달라 틀리기 쉬움")
+        self.max_box = QCheckBox("작은 창은 최대화")
+        self.max_box.setToolTip(f"프로필을 최대화로 열고, 자동화(일괄 입력·지침 바꾸기·대화 들어가기) 전에 폭 {SMALL_WINDOW_WIDTH} 미만인 창만 최대화한다 "
+                                "— 아주 작은 창은 페이지 모양이 달라 틀리기 쉬움. 바둑판으로 나눈 창은 그대로 둔다")
         self.max_box.setChecked(self.cfg.get("maximize", True))
         self.max_box.toggled.connect(self.save)
         self.cfg.setdefault("auto_click_names", list(AUTO_CLICK_DEFAULT))
@@ -2454,6 +2508,7 @@ class Manager(QMainWindow):
             menu.addAction(f"고른 창 {n}개 프로젝트 맨 아래 대화로 들어가기",
                            lambda: self.enter_project_chat("bottom", targets=hwnds))
             menu.addAction(f"고른 창 {n}개 최대화", lambda: [maximize(h) for h in hwnds])
+            menu.addAction(f"고른 창 {n}개 바둑판 배열", lambda: self.arrange("tile", hwnds))
             tab_sub = menu.addMenu(f"고른 창 {n}개 탭 정리")
             for mode, name in TAB_MODES.items():
                 tab_sub.addAction(f"{name} 닫기", lambda m=mode: self.close_tabs_bulk(m, targets=hwnds))
@@ -2569,7 +2624,7 @@ class Manager(QMainWindow):
                     failed.append(label)
                     continue
                 if self.max_box.isChecked():
-                    maximize(hwnd)
+                    maximize(hwnd, only_small=True)
                 time.sleep(0.25)
                 ok = True
                 for step in steps:
@@ -3083,6 +3138,10 @@ class Manager(QMainWindow):
             menu.addAction("이 그룹: 새로 진행(새 채팅 + 시작 프롬프트)",
                            lambda: self.run_group_mode("new", targets=self.work_windows(f"group:{group}")))
             menu.addAction("이 그룹 프롬프트 설정…", lambda: self.edit_group_prompts(current=group))
+            menu.addSeparator()
+            menu.addAction("이 그룹 창 바둑판 배열", lambda: self.arrange("tile", self.work_windows(f"group:{group}")))
+            menu.addAction("이 그룹 창 최대화", lambda: self.arrange("max", self.work_windows(f"group:{group}")))
+            menu.addAction("이 그룹 창 최소화", lambda: self.arrange("min", self.work_windows(f"group:{group}")))
         menu.exec(self.tree.viewport().mapToGlobal(pos))
 
     # ───── 어디서든 쓰는 단축키(RegisterHotKey) ─────
@@ -3152,6 +3211,43 @@ class Manager(QMainWindow):
         self.popup.show_text("\n".join(lines), 8)
 
     # ───── 자동화 ─────
+    def layout_menu(self, *_, targets: list[int] | None = None, anchor=None):
+        menu = QMenu(self)
+        menu.addAction("전체화면(최대화)", lambda: self.arrange("max", targets))
+        menu.addAction("이전 크기로", lambda: self.arrange("restore", targets))
+        menu.addAction("최소화", lambda: self.arrange("min", targets))
+        menu.addSeparator()
+        menu.addAction("바둑판 배열 — 자동(창 수에 맞게)", lambda: self.arrange("tile", targets))
+        for n in sorted(LAYOUTS):
+            cols, rows = LAYOUTS[n]
+            menu.addAction(f"{n}분할 ({cols}×{rows})", lambda k=n: self.arrange("tile", targets, k))
+        button = anchor or self.sender()
+        menu.exec(button.mapToGlobal(button.rect().bottomLeft()) if isinstance(button, QPushButton) else QCursor.pos())
+
+    def arrange(self, how: str, targets: list[int] | None = None, slots: int | None = None):
+        windows, scope = self.target_windows(targets)
+        windows = [h for h in windows if win32gui.IsWindow(h)]
+        if not windows:
+            QMessageBox.information(self, "창 배치", "대상 창이 없습니다.")
+            return
+        if how == "max":
+            for hwnd in windows:
+                win32gui.ShowWindow(hwnd, win32con.SW_SHOWMAXIMIZED if win32gui.IsIconic(hwnd) else win32con.SW_MAXIMIZE)
+            note = "최대화"
+        elif how == "restore":
+            for hwnd in windows:
+                win32gui.ShowWindow(hwnd, win32con.SW_RESTORE)
+            note = "이전 크기로"
+        elif how == "min":
+            for hwnd in windows:
+                win32gui.ShowWindow(hwnd, win32con.SW_SHOWMINNOACTIVE)
+            note = "최소화"
+        else:
+            used = tile_windows(windows, slots)
+            note = f"{used}칸 바둑판 배열" + (f"(창이 더 많아 겹침)" if len(windows) > used else "")
+        activate(int(self.winId()))
+        self.statusBar().showMessage(f"{scope}: {note}", 10000)
+
     def automation_menu(self, *_):
         menu = QMenu(self)
         menu.addAction("프로젝트 지침 일괄 바꾸기 (claude.ai, 맨 위 이름 줄은 두고)…", self.replace_instructions)
@@ -3398,7 +3494,7 @@ class Manager(QMainWindow):
             if not is_blank_page(url) and not used_claude:
                 return None, "claude.ai 창이 아님(이 프로필은 claude.ai 를 쓴 적이 없어 건드리지 않음)"
             if self.max_box.isChecked():
-                maximize(hwnd)
+                maximize(hwnd, only_small=True)
             if not is_blank_page(url):   # 다른 사이트였으면 끝나고 돌아올 수 있게 기록(빈 새 탭은 기록 안 함 — 클로드에 그대로 둠)
                 moved.setdefault(hwnd, [url, 0])
             sent: list = []
@@ -3410,7 +3506,7 @@ class Manager(QMainWindow):
             url = page_url(hwnd) or ""
         self.remember_claude(hwnd)
         if self.max_box.isChecked():
-            maximize(hwnd)
+            maximize(hwnd, only_small=True)
         left = dismiss_popups(hwnd)
         if left:
             return None, f"팝업이 떠 있어 못 함: {', '.join(left)[:40]}"

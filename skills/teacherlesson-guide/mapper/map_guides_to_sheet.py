@@ -245,6 +245,21 @@ def find_subject_specific_pdf(subject_prefix, all_pdfs, unit_num, lesson_num=Non
     return None
 
 
+def pdf_name_other_term(pdf_name, grade_str):
+    """파일 이름 앞쪽의 '학년-학기'(예: 3-2)가 찾는 학년-학기와 다르면 True.
+
+    대체 매칭에서 3-1 을 찾는데 3-2 PDF 를 고르지 않게 한다(ISSUE-003).
+    학기를 모르거나(grade_str 에 숫자 둘이 없음) 이름에서 학년-학기를 못 읽으면 False(그대로 둠).
+    """
+    wanted = re.findall(r"\d+", str(grade_str or ""))
+    if len(wanted) < 2:
+        return False
+    found = re.search(r"(?<!\d)([1-6])\s*[-_]\s*([12])(?!\d)", str(pdf_name))
+    if not found:
+        return False
+    return (found.group(1), found.group(2)) != (wanted[0], wanted[1])
+
+
 def find_best_pdf(subject_prefix, unit_num, lesson_num=None, grade_str="3-1", lesson_title=None):
     all_pdfs = list(iter_search_pdfs(subject_prefix, GUIDE_SEARCH_DIRS))
     if not all_pdfs:
@@ -270,6 +285,8 @@ def find_best_pdf(subject_prefix, unit_num, lesson_num=None, grade_str="3-1", le
     lesson_title_tokens = extract_title_match_tokens(lesson_title)
 
     for pdf in all_pdfs:
+        if pdf_name_other_term(pdf.name, grade_str):
+            continue
         name = normalize_search_text(pdf.name)
         full_path = normalize_search_text(str(pdf))
         score = 0

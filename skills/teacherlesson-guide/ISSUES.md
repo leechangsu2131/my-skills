@@ -28,11 +28,12 @@
 
 
 ### ISSUE-003: 지도서 처리 남은 일 (수업 비서에서 옮김, 2026-11-22)
-- guide-mapper 대체 매칭: 3-1 국어를 다시 만들면 독서·매체 행이 3-2 PDF를 가리킴(이 PC에 3-1 PDF 없음). 학년·학기가 다르면 대체 매칭에서 빼기
+- ~~guide-mapper 대체 매칭: 학년·학기가 다른 PDF 를 고름~~ → 🟢 해결(2026-11-28, S8): `find_best_pdf` 대체 매칭이 파일 이름 앞쪽 학년-학기가 다르면 건너뜀(`pdf_name_other_term`, 시험 2개). 3-1 PDF 가 없으면 이제 빈 칸이 나옴(3-1 PDF 를 받아야 함)
 - `split_by_lesson_headers` 재실행 시 예전 `pdf_splits` 조각이 남음 / `apply_annual_plan` 의 `groups.orig.json` 이 첫 분할 것만 보관
 - 아이스크림 자동 로그인 불안정: 크롬 저장 비밀번호가 사람 클릭 전에는 칸에 안 채워질 때가 있음 (지도서 파일 자체는 로그인 없이 받아짐)
 - 음악 지도서 분할본(`D:\지도서\음악\pdf_splits`)이 이 PC에 없음 — 진도표 경로는 그곳을 가리킴
-- mapper 의 `.env` 대체 경로가 옛 `teacher-schedule\.env` 를 가리킴 → 중앙 .env 만 쓰도록 정리
+- ~~mapper 의 `.env` 대체 경로가 옛 `teacher-schedule\.env` 를 가리킴~~ → 🟢 해결(2026-11-28, S8): 코드는 이미 중앙 .env(`skill_env.load_env`)만 씀, 낡은 README 문장을 고침
+- 참고(2026-11-28): `mapper/tests/test_map_guides_to_sheet.py` 의 `find_best_pdf_uses_exact_*` 2개는 윈도우 경로(`C:\fake\…`)를 쓰므로 리눅스에서는 원래 실패함(교사 PC 에서 확인 필요)
 
 ### ISSUE-001: 분할 자동화 — "쪽 머리 글 → Gemini → 쪽 범위" (2026-11-22, 교사 요청: 만들 때만 토큰, 쓸 때는 0) ← 다음에 할 큰 일
 - **시험 결과 (2026-11-22)**: 국어 3-2 4단원(52쪽)

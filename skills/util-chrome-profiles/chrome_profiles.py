@@ -389,6 +389,149 @@ def find_pause_line(text: str) -> str | None:
     return None
 
 
+STREAMING_NAME = "현재 스트리밍 중인 메시지"   # claude.ai 가 답을 쓰는 동안 붙이는 메시지 이름
+STOP_NAME = "응답 중지"                         # 답을 쓰는 동안 보이는 단추
+AUTO_CLICK_DEFAULT = ["계속", "다시 시도"]       # 자동으로 누를 단추 이름(정확히 같은 이름만 — 답마다 있는 '재시도'와 섞이지 않게)
+AUTO_CLICK_COOLDOWN = 120                        # 같은 창은 2분에 한 번까지
+_WHEN = re.compile(r"(방금|\d+\s*(초|분|시간|일)\s*전|어제)\s*$")
+_ASKS = re.compile(r"\?\s*$|\?\s|할까요|하시겠|괜찮을까요|좋을까요|원하시면|알려\s*주세요|골라\s*주세요|확인해\s*주세요"
+                   r"|어느\s*쪽|어떻게\s*할|승인|답해\s*주시면|정해\s*주세요|결정해\s*주", re.M)
+
+
+def read_messages(hwnd: int) -> dict | None:
+    """claude.ai 창의 화면 근처 메시지들(맨 아래 몇 개만 보임). {"messages": [{who, text, when}], "streaming": bool}.
+    claude.ai 가 아니면 None. 글은 메모리에만 둔다(저장 단추를 눌렀을 때만 파일로)."""
+    auto, client = _uia()
+    if "claude.ai" not in (page_url(hwnd) or ""):
+        return None
+    doc = auto.ControlFromHandle(hwnd).Element.FindFirst(4, client.CreatePropertyCondition(
+        auto.PropertyId.ControlTypeProperty, auto.ControlType.DocumentControl))
+    if not doc:
+        return None
+    found = doc.FindAll(4, client.CreatePropertyCondition(auto.PropertyId.AriaRoleProperty, "article"))
+    text_cond = client.CreatePropertyCondition(auto.PropertyId.ControlTypeProperty, auto.ControlType.TextControl)
+    messages, streaming = [], False
+    for i in range(found.Length if found else 0):
+        article = found.GetElement(i)
+        if (article.CurrentName or "") == STREAMING_NAME:
+            streaming = True
+            continue
+        pieces = article.FindAll(4, text_cond)
+        raw: list[str] = []
+        for j in range(pieces.Length if pieces else 0):   # 화면 낭독용으로 같은 글이 두 번 잡히는 것 빼기
+            piece = " ".join((pieces.GetElement(j).CurrentName or "").split())
+            if piece and piece not in raw:
+                raw.append(piece)
+        # 다른(더 긴) 조각 안에 통째로 들어 있는 조각도 뺀다(요약 글 + 본문 조각처럼 겹쳐 잡힐 때)
+        parts = [x for x in raw if not any(x != y and x in y for y in raw)]
+        text = " ".join(parts).strip()
+        half = len(text) // 2   # 그래도 글 전체가 두 번 이어져 있으면 하나만
+        if half > 10 and text[:half].strip() == text[half:].strip():
+            text = text[:half].strip()
+        if text.startswith("입력 내용:"):
+            who, text = "나", text[len("입력 내용:"):]
+        elif text.startswith("Claude 응답:"):
+            who, text = "Claude", text[len("Claude 응답:"):]
+        else:
+            continue
+        text = text.strip()
+        m = _WHEN.search(text)
+        when = m.group(1) if m else ""
+        if m:
+            text = text[:m.start()].rstrip()
+        messages.append({"who": who, "text": text, "when": when})
+    if not streaming:   # '응답 중지' 단추가 있으면 답을 쓰는 중
+        stop = doc.FindFirst(4, client.CreatePropertyCondition(auto.PropertyId.NameProperty, STOP_NAME))
+        streaming = bool(stop)
+    return {"messages": messages, "streaming": streaming}
+
+
+def reply_status(info: dict | None, paused: bool = False) -> str:
+    if info is None:
+        return ""
+    if info["streaming"]:
+        return "답하는 중"
+    if paused:
+        return "일시 중지"
+    msgs = info["messages"]
+    if not msgs:
+        return "메시지 없음"
+    last = msgs[-1]
+    if last["who"] == "나":
+        return "보낸 뒤 대기"
+    return "내 답 필요" if _ASKS.search(last["text"][-400:]) else "끝남"
+
+
+def maximize(hwnd: int) -> None:
+    """창이 작으면 페이지 모양이 달라져(사이드바·지침 카드가 숨음) 자동화가 틀리기 쉬워 최대화한다."""
+    if win32gui.IsWindow(hwnd) and not _user32.IsZoomed(hwnd):
+        win32gui.ShowWindow(hwnd, win32con.SW_MAXIMIZE)
+        time.sleep(0.6)
+
+
+def _in_navigation(control) -> bool:
+    """링크가 왼쪽 사이드바(navigation 영역) 안에 있는지."""
+    node = control
+    for _ in range(30):
+        node = node.GetParentControl()
+        if not node or node.ControlTypeName == "DocumentControl":
+            return False
+        if (node.AriaRole or "") in ("navigation", "complementary"):
+            return True
+    return False
+
+
+def pick_project_chat(hwnd: int, which: str = "bottom", wait: float = 10.0):
+    """프로젝트 페이지 가운데 대화 목록에서 맨 아래(또는 맨 위) 대화. (주소, 제목) 또는 None. 사이드바 대화는 뺀다."""
+    auto, client = _uia()
+    end = time.time() + wait
+    while time.time() < end:
+        doc = auto.ControlFromHandle(hwnd).Element.FindFirst(4, client.CreatePropertyCondition(
+            auto.PropertyId.ControlTypeProperty, auto.ControlType.DocumentControl))
+        found = doc.FindAll(4, client.CreatePropertyCondition(
+            auto.PropertyId.ControlTypeProperty, auto.ControlType.HyperlinkControl)) if doc else None
+        chats = []
+        for i in range(found.Length if found else 0):
+            control = auto.Control.CreateControlFromElement(found.GetElement(i))
+            try:
+                value = control.GetValuePattern().Value or ""
+            except Exception:
+                continue
+            if "/chat/" not in value or control.BoundingRectangle.height() <= 0 or _in_navigation(control):
+                continue
+            chats.append((control.BoundingRectangle.top, value, control.Name or ""))
+        if chats:
+            top, value, title = (max if which == "bottom" else min)(chats, key=lambda x: x[0])
+            return (value if "://" in value else "https://" + value.lstrip("/")), title
+        time.sleep(0.5)
+    return None
+
+
+def auto_click_once(hwnd: int, names: list[str]) -> str | None:
+    """창의 웹 페이지에 이름이 정확히 names 중 하나인 단추가 보이고 답을 쓰는 중이 아니면 누른다. 누른 이름 또는 None."""
+    auto, client = _uia()
+    doc = auto.ControlFromHandle(hwnd).Element.FindFirst(4, client.CreatePropertyCondition(
+        auto.PropertyId.ControlTypeProperty, auto.ControlType.DocumentControl))
+    if not doc or doc.FindFirst(4, client.CreatePropertyCondition(auto.PropertyId.NameProperty, STOP_NAME)):
+        return None
+    button_type = client.CreatePropertyCondition(auto.PropertyId.ControlTypeProperty, auto.ControlType.ButtonControl)
+    for name in names:
+        element = doc.FindFirst(4, client.CreateAndCondition(
+            button_type, client.CreatePropertyCondition(auto.PropertyId.NameProperty, name)))
+        if not element:
+            continue
+        control = auto.Control.CreateControlFromElement(element)
+        rect = control.BoundingRectangle
+        if not control.IsEnabled or rect.width() <= 0 or rect.height() <= 0 or control.IsOffscreen:
+            continue
+        try:
+            control.GetInvokePattern().Invoke()
+            return name
+        except Exception:
+            continue
+    return None
+
+
 def find_clickable(hwnd: int, phrase: str):
     """창의 웹 페이지 안에서 이름이 phrase 인(없으면 phrase 가 들어간) 누를 수 있는 요소. (control, 설명) 또는 None.
     탭 줄·북마크 같은 브라우저 화면은 찾지 않는다('닫기'가 탭 닫기 단추로 잡히지 않게)."""
@@ -857,7 +1000,7 @@ from PySide6.QtCore import QObject, QPoint, QSize, Qt, QTimer, Signal  # noqa: E
 from PySide6.QtGui import QBrush, QColor, QCursor, QIcon, QImage, QKeySequence, QPixmap, QShortcut  # noqa: E402
 from PySide6.QtWidgets import (  # noqa: E402
     QAbstractItemView, QApplication, QCheckBox, QComboBox, QDialog, QDialogButtonBox, QDoubleSpinBox, QGridLayout,
-    QLineEdit,
+    QLineEdit, QTableWidget, QTableWidgetItem,
     QHBoxLayout, QInputDialog, QLabel, QListView, QListWidget, QListWidgetItem, QMainWindow, QMenu,
     QMessageBox, QPlainTextEdit, QProgressDialog, QPushButton, QRadioButton, QSpinBox, QSplitter, QStyle,
     QSystemTrayIcon, QTreeWidget, QTreeWidgetItem, QVBoxLayout, QWidget,
@@ -871,6 +1014,9 @@ class TextScanner(QObject):
     def __init__(self):
         super().__init__()
         self.busy = False
+        self.read_replies = True
+        self.auto_click: list[str] = []          # 비어 있으면 끔
+        self.last_click: dict[int, float] = {}   # hwnd → 마지막으로 누른 때
 
     def start(self, hwnds: list[int]) -> None:
         if self.busy or not hwnds:
@@ -885,9 +1031,22 @@ class TextScanner(QObject):
             with auto.UIAutomationInitializerInThread():
                 for hwnd in hwnds:
                     try:
-                        out[hwnd] = page_text(hwnd)
+                        text = page_text(hwnd)
                     except Exception:
-                        out[hwnd] = None
+                        text = None
+                    try:
+                        chat = read_messages(hwnd) if self.read_replies else None
+                    except Exception:
+                        chat = None
+                    clicked = None
+                    if self.auto_click and time.time() - self.last_click.get(hwnd, 0) > AUTO_CLICK_COOLDOWN:
+                        try:
+                            clicked = auto_click_once(hwnd, self.auto_click)
+                        except Exception:
+                            clicked = None
+                        if clicked:
+                            self.last_click[hwnd] = time.time()
+                    out[hwnd] = {"text": text, "chat": chat, "clicked": clicked}
         except Exception:
             pass
         finally:
@@ -1023,6 +1182,104 @@ class InstructionsDialog(QDialog):
             QMessageBox.warning(self, "프로젝트 지침", "새 지침 글이 비어 있습니다.")
             return
         super().accept()
+
+
+REPLY_MARK = {"답하는 중": "✍", "내 답 필요": "❓", "끝남": "✅", "보낸 뒤 대기": "⌛"}
+REPLY_COLOR = {"답하는 중": "#6aa0ff", "내 답 필요": "#ffb347", "끝남": "#7bd67b", "보낸 뒤 대기": "#bbbbbb",
+               "일시 중지": "#999999"}
+
+
+class ReplyWindow(QDialog):
+    """답글 모아보기: claude.ai 창마다 상태·마지막 답. 줄을 누르면 아래에 최근 메시지, 두 번 누르면 그 창을 앞으로."""
+
+    def __init__(self, manager):
+        super().__init__(manager)
+        self.manager = manager
+        self.setWindowTitle("답글 모아보기 (claude.ai)")
+        self.resize(900, 640)
+        self.setWindowFlag(Qt.WindowType.WindowMinMaxButtonsHint, True)
+        self.table = QTableWidget(0, 4)
+        self.table.setHorizontalHeaderLabels(["창", "상태", "언제", "마지막 답"])
+        self.table.horizontalHeader().setStretchLastSection(True)
+        self.table.setColumnWidth(0, 230)
+        self.table.setColumnWidth(1, 100)
+        self.table.setColumnWidth(2, 70)
+        self.table.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
+        self.table.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
+        self.table.itemSelectionChanged.connect(self.show_detail)
+        self.table.cellDoubleClicked.connect(lambda row, _c: self.bring(row))
+        self.detail = QPlainTextEdit()
+        self.detail.setReadOnly(True)
+        self.only_needs = QCheckBox("내 답 필요·끝남만 보기")
+        self.only_needs.toggled.connect(self.refresh)
+        refresh = QPushButton("지금 다시 읽기")
+        refresh.clicked.connect(manager.start_scan)
+        bring = QPushButton("그 창 앞으로")
+        bring.clicked.connect(lambda: self.bring(self.table.currentRow()))
+        save = QPushButton("모아 둔 답 저장(.md)")
+        save.setToolTip("데이터 폴더 replies\\날짜.md 에 덧붙인다. 화면에 학생 정보가 있으면 그대로 저장되니 주의")
+        save.clicked.connect(self.save)
+        top = QHBoxLayout()
+        top.addWidget(self.only_needs)
+        top.addStretch()
+        for b in (refresh, bring, save):
+            top.addWidget(b)
+        note = QLabel("20초마다 claude.ai 창의 화면 근처 메시지(맨 아래 몇 개)를 읽습니다. 글은 저장 단추를 누를 때만 파일로 남습니다.")
+        note.setStyleSheet("color: gray")
+        splitter = QSplitter(Qt.Orientation.Vertical)
+        splitter.addWidget(self.table)
+        splitter.addWidget(self.detail)
+        splitter.setSizes([330, 270])
+        box = QVBoxLayout(self)
+        box.addLayout(top)
+        box.addWidget(splitter)
+        box.addWidget(note)
+        self.rows: list[int] = []
+
+    def refresh(self):
+        m = self.manager
+        keep = self.rows[self.table.currentRow()] if 0 <= self.table.currentRow() < len(self.rows) else None
+        order = {"내 답 필요": 0, "끝남": 1, "답하는 중": 2, "보낸 뒤 대기": 3, "일시 중지": 4}
+        rows = [h for h in m.replies if h in m.windows]
+        if self.only_needs.isChecked():
+            rows = [h for h in rows if m.replies[h]["status"] in ("내 답 필요", "끝남")]
+        rows.sort(key=lambda h: (order.get(m.replies[h]["status"], 9), m.sort_key(h)))
+        self.rows = rows
+        self.table.setRowCount(len(rows))
+        for row, hwnd in enumerate(rows):
+            r = m.replies[hwnd]
+            msgs = r["chat"]["messages"]
+            last = next((x for x in reversed(msgs) if x["who"] == "Claude"), None)
+            cells = [m.label(hwnd), f"{REPLY_MARK.get(r['status'], '')} {r['status']}".strip(),
+                     last["when"] if last else "", (last["text"] if last else "").replace("\n", " ")[:200]]
+            for col, value in enumerate(cells):
+                item = QTableWidgetItem(value)
+                if col == 1 and r["status"] in REPLY_COLOR:
+                    item.setForeground(QBrush(QColor(REPLY_COLOR[r["status"]])))
+                self.table.setItem(row, col, item)
+        if keep in rows:
+            self.table.selectRow(rows.index(keep))
+        self.setWindowTitle(f"답글 모아보기 (claude.ai) — 창 {len(rows)}개")
+
+    def show_detail(self):
+        row = self.table.currentRow()
+        if not (0 <= row < len(self.rows)):
+            self.detail.clear()
+            return
+        r = self.manager.replies.get(self.rows[row])
+        if not r:
+            return
+        parts = [f"[{x['who']}] {x['when']}\n{x['text']}" for x in r["chat"]["messages"]]
+        self.detail.setPlainText("\n\n".join(parts) or "(화면에 보이는 메시지가 없음)")
+        self.detail.verticalScrollBar().setValue(self.detail.verticalScrollBar().maximum())
+
+    def bring(self, row: int):
+        if 0 <= row < len(self.rows):
+            activate(self.rows[row])
+
+    def save(self):
+        path = self.manager.save_replies()
+        QMessageBox.information(self, "답글 저장", f"저장했습니다:\n{path}" if path else "모아 둔 답이 없습니다.")
 
 
 class GotoDialog(QDialog):
@@ -1223,6 +1480,8 @@ class Manager(QMainWindow):
         self.migrate_pause_names()
         self.scanner = TextScanner()
         self.scanner.done.connect(self.on_texts)
+        self.replies: dict[int, dict] = {}   # hwnd → {"chat", "status", "seen"} (메모리에만)
+        self.reply_window = None
         self.other_group: QTreeWidgetItem | None = None
         self.windows: dict[int, dict] = {}   # hwnd → 창 상태. key = 프로필 폴더명 또는 "@앱ID"
         self.capture_order: list[int] = []
@@ -1245,7 +1504,8 @@ class Manager(QMainWindow):
             (("그룹 추가", self.add_group, "새 그룹. 이름은 그룹을 고르고 F2 로 바꾼다."),
              ("그룹 삭제", self.remove_group, "고른 그룹을 지우고 안의 프로필은 미분류로 옮긴다."),
              ("시작 URL", self.set_start_url, "고른 프로필들의 시작 URL 을 한 번에 바꾼다(비우면 해제)."),
-             ("자동화 ▾", self.automation_menu, "여러 창에 같은 웹 작업을 차례로: claude.ai 프로젝트 지침 일괄 바꾸기 등")),
+             ("자동화 ▾", self.automation_menu, "여러 창에 같은 웹 작업을 차례로: claude.ai 프로젝트 지침 일괄 바꾸기 등"),
+             ("답글 모아보기", self.show_replies, "claude.ai 창마다 상태(답하는 중·끝남·내 답 필요…)와 마지막 답을 한눈에")),
         ):
             line = QHBoxLayout()
             for label, slot, tip in row:
@@ -1271,6 +1531,20 @@ class Manager(QMainWindow):
         self.pause_box.setToolTip("열린 창 페이지 끝부분에 '오후 12:10 이후 다시 제공' 같은 안내가 뜨면 그 시각을 적고 그때 알린다(20초마다 확인)")
         self.pause_box.setChecked(self.cfg.get("pause_scan", True))
         self.pause_box.toggled.connect(self.save)
+        self.reply_box = QCheckBox("답글 모으기·답 끝남 알림")
+        self.reply_box.setToolTip("claude.ai 창의 최근 메시지를 20초마다 읽어 '답글 모아보기'에 모으고, 답이 끝나면 알린다")
+        self.reply_box.setChecked(self.cfg.get("reply_scan", True))
+        self.reply_box.toggled.connect(self.save)
+        self.max_box = QCheckBox("창 최대화")
+        self.max_box.setToolTip("프로필을 열 때, 그리고 자동화(일괄 입력·지침 바꾸기·대화 들어가기) 전에 창을 최대화한다 — 작은 창은 페이지 모양이 달라 틀리기 쉬움")
+        self.max_box.setChecked(self.cfg.get("maximize", True))
+        self.max_box.toggled.connect(self.save)
+        self.cfg.setdefault("auto_click_names", list(AUTO_CLICK_DEFAULT))
+        self.click_box = QCheckBox("'" + "'·'".join(self.cfg["auto_click_names"]) + "' 자동으로 누르기")
+        self.click_box.setToolTip("20초마다 창을 볼 때 이 이름과 정확히 같은 단추가 보이면 누른다(답을 쓰는 중이면 안 누름, 같은 창은 2분에 한 번). "
+                                  "단추 이름은 자동화 ▾ → '자동으로 누를 단추 이름'에서 바꾼다")
+        self.click_box.setChecked(self.cfg.get("auto_click", False))
+        self.click_box.toggled.connect(self.save)
 
         self.work_spin = QDoubleSpinBox()
         self.work_spin.setRange(0, 24)
@@ -1305,8 +1579,14 @@ class Manager(QMainWindow):
         checks = QHBoxLayout()
         checks.addWidget(self.filter_box)
         checks.addWidget(self.pause_box)
+        checks.addWidget(self.reply_box)
+        checks2 = QHBoxLayout()
+        checks2.addWidget(self.max_box)
+        checks2.addWidget(self.click_box)
+        checks2.addStretch()
         checks.addStretch()
         box.addLayout(checks)
+        box.addLayout(checks2)
         box.addWidget(help_text)
 
         # 오른쪽: 미리보기
@@ -1607,7 +1887,9 @@ class Manager(QMainWindow):
             groups.append({"name": group.text(0), "profiles": folders})
         self.cfg.update(groups=groups, idle_sec=self.idle_spin.value(),
                         timer_min=self.timer_spin.value(), filter=self.filter_box.isChecked(),
-                        work_alert_hours=self.work_spin.value(), pause_scan=self.pause_box.isChecked())
+                        work_alert_hours=self.work_spin.value(), pause_scan=self.pause_box.isChecked(),
+                        reply_scan=self.reply_box.isChecked(), maximize=self.max_box.isChecked(),
+                        auto_click=self.click_box.isChecked())
         write_json_atomic(CONFIG, self.cfg_to_file())
 
     def add_group(self, *_):
@@ -1679,6 +1961,8 @@ class Manager(QMainWindow):
         args = [info["exe"], f"--profile-directory={info['folder']}"]
         if new_window:
             args.append("--new-window")
+            if self.max_box.isChecked():
+                args.append("--start-maximized")
         if url:
             args.append(url)
         subprocess.Popen(args)
@@ -1806,6 +2090,9 @@ class Manager(QMainWindow):
             work = self.cfg["work"].get(st["key"])
             if work:
                 status.append(f"작업 {fmt_hm(now - work['start'])}")
+            reply = self.replies.get(hwnd, {}).get("status")
+            if reply in REPLY_MARK:
+                status.append(f"{REPLY_MARK[reply]} {reply}")
             pause = self.pause_text(st["key"], datetime.now())
             if pause:
                 status.append(pause)
@@ -1892,6 +2179,8 @@ class Manager(QMainWindow):
             menu.addAction("글자 감시…" + (" (켜짐)" if st["text_watch"] else ""), lambda: self.set_text_watch(hwnds))
             menu.addAction("문구 찾아 누르기…", lambda: self.click_phrase(hwnds))
             menu.addAction("프로젝트 지침 바꾸기(claude.ai)…", lambda: self.replace_instructions(targets=hwnds))
+            menu.addAction("프로젝트 맨 아래 대화로 들어가기", lambda: self.enter_project_chat("bottom", targets=hwnds))
+            menu.addAction("창 최대화", lambda: [maximize(h) for h in hwnds])
             tab_sub = menu.addMenu("탭 정리")
             for mode, name in TAB_MODES.items():
                 tab_sub.addAction(f"{name} 닫기", lambda m=mode: self.close_tabs_bulk(m, targets=hwnds))
@@ -1907,6 +2196,9 @@ class Manager(QMainWindow):
             menu.addAction(f"고른 창 {n}개에서 문구 찾아 누르기…", lambda: self.click_phrase(hwnds))
             menu.addAction(f"고른 창 {n}개 프로젝트 지침 일괄 바꾸기(claude.ai)…",
                            lambda: self.replace_instructions(targets=hwnds))
+            menu.addAction(f"고른 창 {n}개 프로젝트 맨 아래 대화로 들어가기",
+                           lambda: self.enter_project_chat("bottom", targets=hwnds))
+            menu.addAction(f"고른 창 {n}개 최대화", lambda: [maximize(h) for h in hwnds])
             tab_sub = menu.addMenu(f"고른 창 {n}개 탭 정리")
             for mode, name in TAB_MODES.items():
                 tab_sub.addAction(f"{name} 닫기", lambda m=mode: self.close_tabs_bulk(m, targets=hwnds))
@@ -2021,6 +2313,8 @@ class Manager(QMainWindow):
                 if not win32gui.IsWindow(hwnd) or not activate(hwnd):  # 엉뚱한 창에 넣지 않게 건너뛴다
                     failed.append(label)
                     continue
+                if self.max_box.isChecked():
+                    maximize(hwnd)
                 time.sleep(0.25)
                 ok = True
                 for step in steps:
@@ -2093,7 +2387,9 @@ class Manager(QMainWindow):
 
     # ───── 페이지 글: 사용량 일시 중지 시각 · 글자 감시 · 문구 찾아 누르기 ─────
     def start_scan(self):
-        if self.pause_box.isChecked():
+        self.scanner.read_replies = self.reply_box.isChecked()
+        self.scanner.auto_click = list(self.cfg["auto_click_names"]) if self.click_box.isChecked() else []
+        if self.pause_box.isChecked() or self.reply_box.isChecked() or self.click_box.isChecked():
             hwnds = list(self.windows)
         else:
             hwnds = [h for h, st in self.windows.items() if st["text_watch"]]
@@ -2132,9 +2428,18 @@ class Manager(QMainWindow):
 
     def on_texts(self, results: dict):
         """다른 스레드가 읽어 온 페이지 글 처리(이 함수는 화면 스레드에서 돈다)."""
-        for hwnd, text in results.items():
+        for hwnd, result in results.items():
             st = self.windows.get(hwnd)
-            if not st or text is None:
+            if not st or not result:
+                continue
+            if result.get("clicked"):
+                message = f"'{result['clicked']}' 단추를 자동으로 눌렀습니다."
+                self.tray.showMessage(f"🖱 {self.label(hwnd)}", message)
+                self.statusBar().showMessage(f"{self.label(hwnd)}: {message}", 15000)
+            if self.reply_box.isChecked():
+                self.update_reply(hwnd, result.get("chat"))
+            text = result.get("text")
+            if text is None:
                 continue
             key = st["key"]
             if self.pause_box.isChecked():
@@ -2149,6 +2454,51 @@ class Manager(QMainWindow):
                 for phrase in now_seen - st["text_seen"]:  # 새로 나타난 것만 알림
                     self.alert(hwnd, f"'{phrase}' 글자가 보입니다.")
                 st["text_seen"] = now_seen
+
+    # ───── 답글 모으기 ─────
+    def update_reply(self, hwnd: int, chat: dict | None):
+        if chat is None:
+            self.replies.pop(hwnd, None)
+            return
+        st = self.windows[hwnd]
+        status = reply_status(chat, paused=self.sid(st["key"]) in self.pauses)
+        before = self.replies.get(hwnd, {}).get("status")
+        self.replies[hwnd] = {"chat": chat, "status": status, "seen": time.time()}
+        if before == "답하는 중" and status in ("끝남", "내 답 필요"):   # 답이 막 끝남
+            label = self.label(hwnd)
+            last = chat["messages"][-1]["text"] if chat["messages"] else ""
+            message = ("질문으로 끝났어요 — 답이 필요해요." if status == "내 답 필요" else "답이 끝났어요.") + \
+                      (f"\n{last[-80:]}" if last else "")
+            self.tray.showMessage(f"💬 {label}", message)
+        if self.reply_window and self.reply_window.isVisible():
+            self.reply_window.refresh()
+
+    def show_replies(self, *_):
+        if not self.reply_box.isChecked():
+            self.reply_box.setChecked(True)
+        if self.reply_window is None:
+            self.reply_window = ReplyWindow(self)
+        self.reply_window.refresh()
+        self.reply_window.show()
+        self.reply_window.raise_()
+        self.reply_window.activateWindow()
+        self.start_scan()
+
+    def save_replies(self) -> Path | None:
+        """모아 둔 최근 메시지를 data_dir/replies/날짜.md 에 덧붙인다(단추를 눌렀을 때만)."""
+        rows = [(h, r) for h, r in self.replies.items() if h in self.windows and r["chat"]["messages"]]
+        if not rows:
+            return None
+        folder = data_dir(SKILL, "replies")
+        path = folder / f"{time.strftime('%Y-%m-%d')}.md"
+        lines = [f"\n# {time.strftime('%H:%M')} 모아 둔 답글\n"]
+        for hwnd, r in sorted(rows, key=lambda x: self.sort_key(x[0])):
+            lines.append(f"## {self.label(hwnd)} — {r['status']}\n")
+            for msg in r["chat"]["messages"]:
+                lines.append(f"**{msg['who']}** {msg['when']}\n\n{msg['text']}\n")
+        with open(path, "a", encoding="utf-8") as f:
+            f.write("\n".join(lines))
+        return path
 
     def check_pauses(self, now_dt: datetime):
         self.reload_pauses()
@@ -2507,6 +2857,11 @@ class Manager(QMainWindow):
     def automation_menu(self, *_):
         menu = QMenu(self)
         menu.addAction("프로젝트 지침 일괄 바꾸기 (claude.ai, 맨 위 이름 줄은 두고)…", self.replace_instructions)
+        menu.addSeparator()
+        menu.addAction("프로젝트 대화 목록의 맨 아래 대화로 들어가기", lambda: self.enter_project_chat("bottom"))
+        menu.addAction("프로젝트 대화 목록의 맨 위 대화로 들어가기", lambda: self.enter_project_chat("top"))
+        menu.addSeparator()
+        menu.addAction("자동으로 누를 단추 이름…", self.set_auto_click_names)
         button = self.sender()
         menu.exec(button.mapToGlobal(button.rect().bottomLeft()) if button else QCursor.pos())
 
@@ -2541,11 +2896,82 @@ class Manager(QMainWindow):
             if back_failed:
                 self.statusBar().showMessage(f"원래 페이지로 못 돌아간 창: {', '.join(back_failed)}", 20000)
 
+    def enter_project_chat(self, which: str = "bottom", targets: list[int] | None = None):
+        """창마다 프로젝트 페이지로 가서(이미 있으면 그대로) 가운데 대화 목록의 맨 아래(또는 맨 위) 대화로 들어간다."""
+        windows, scope = self.target_windows(targets)
+        windows = [h for h in windows if "claude.ai" in (page_url(h) or "")]
+        if not windows:
+            QMessageBox.information(self, "대화 들어가기", "claude.ai 창이 없습니다.")
+            return
+        where = "맨 아래" if which == "bottom" else "맨 위"
+        name, ok = QInputDialog.getText(
+            self, "대화 들어가기",
+            f"claude.ai 창 {len(windows)}개를 각자 프로젝트의 대화 목록 {where} 대화로 옮깁니다.\n"
+            "프로젝트 페이지가 아닌 창은 프로젝트 목록에서 고릅니다 — 프로젝트 이름에 든 낱말(비우면 지금 프로젝트 또는 목록 맨 위):",
+            text=self.cfg.get("chat_project_name", ""))
+        if not ok:
+            return
+        name = name.strip()
+        self.cfg["chat_project_name"] = name
+        self.save()
+        old_clip = get_clipboard()
+        done, failed = [], []
+        progress = self.progress(f"창 {len(windows)}개를 대화로 옮기는 중… (멈추려면 '멈추기')", len(windows))
+        try:
+            for index, hwnd in enumerate(windows):
+                if not self.pump(progress, index):
+                    break
+                label = self.label(hwnd)
+                try:
+                    url, why = self.reach_project(hwnd, name, {})
+                    if not url:
+                        failed.append(f"{label} — {why}")
+                        continue
+                    target = pick_project_chat(hwnd, which)
+                    if not target:
+                        failed.append(f"{label} — 프로젝트에 대화가 없음")
+                        continue
+                    chat_url, title = target
+                    if navigate(hwnd, chat_url):
+                        done.append(f"{label} → {title[:30]}")
+                    else:
+                        failed.append(f"{label} — '{title[:20]}' 대화로 못 감")
+                except Exception as e:
+                    failed.append(f"{label} — 오류 {e.__class__.__name__}")
+        finally:
+            progress.close()
+            time.sleep(0.2)
+            if old_clip is not None:
+                set_clipboard(old_clip)
+            activate(int(self.winId()))
+        QMessageBox.information(self, "대화 들어가기", f"{len(done)}개 창을 옮겼습니다.\n\n" + "\n".join(done[:15]) +
+                                (f"\n\n안 된 곳:\n" + "\n".join(failed) if failed else ""))
+
+    def set_auto_click_names(self, *_):
+        text, ok = QInputDialog.getText(
+            self, "자동으로 누를 단추 이름",
+            "쉼표로 여러 개. 이름이 정확히 같은 단추만 누릅니다(예: 계속, 다시 시도).\n"
+            "답마다 붙는 '재시도'·'편집' 같은 단추 이름은 넣지 마세요 — 답을 다시 쓰게 됩니다.",
+            text=", ".join(self.cfg["auto_click_names"]))
+        if not ok:
+            return
+        names = [n.strip() for n in text.split(",") if n.strip()]
+        risky = [n for n in names if n in ("재시도", "편집", "복사", "삭제", "보내기", "메시지 보내기")]
+        if risky and QMessageBox.question(self, "자동으로 누를 단추 이름",
+                                          f"{', '.join(risky)} 은(는) 답마다 있거나 되돌리기 어려운 단추입니다. 그래도 넣을까요?") \
+                != QMessageBox.StandardButton.Yes:
+            return
+        self.cfg["auto_click_names"] = names or list(AUTO_CLICK_DEFAULT)
+        self.click_box.setText("'" + "'·'".join(self.cfg["auto_click_names"]) + "' 자동으로 누르기")
+        self.save()
+
     def reach_project(self, hwnd: int, name: str, moved: dict) -> tuple[str | None, str]:
         """창이 claude.ai 프로젝트 페이지에 있게 한다(아니면 목록에서 골라 들어감). (프로젝트 주소, 못 간 까닭)."""
         url = page_url(hwnd) or ""
         if "claude.ai" not in url:
             return None, "claude.ai 창이 아님"
+        if self.max_box.isChecked():
+            maximize(hwnd)
         left = dismiss_popups(hwnd)
         if left:
             return None, f"팝업이 떠 있어 못 함: {', '.join(left)[:40]}"

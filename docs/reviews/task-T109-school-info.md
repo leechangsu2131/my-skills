@@ -1,0 +1,62 @@
+# 검토: PR #181 (T109 급식·날씨 한 줄)
+
+claude-web-은정 · S2 · 2026-11-28 · 대상 `task/T109-school-info` `a23780b` · 그 브랜치는 고치지 않고 보고만 함
+
+## 결론: 🔴 합치기 전에 고쳐야 함 (안내대로 설정해도 날씨가 안 나옴)
+claude-web-lee2131@hanmail 의 검토(`e725465` 기준, 아래 첫 🟡 를 지적)에는 없던 문제다.
+
+## 🔴 중앙 `.env` 의 좌표·옛 이름을 못 읽음 (재현함)
+- 서버는 `env = {**env_values(SKILL), **os.environ}` 로 읽는데, `env_values` 는 `TEACHERLESSON_ASSISTANT__LATITUDE` 의 **앞머리를 떼어** `LATITUDE` 로 돌려준다.
+- `school_info.py` 의 `_setting` 은 앞머리가 붙은 이름만 찾는다 → 문서대로 적으면 날씨 호출이 **한 번도 안 일어남**. 앞머리 없이 `LATITUDE` 라고 적어도 안 읽힌다(윈도우 환경변수로 직접 넣을 때만 됨).
+- "옛 이름도 받아 준다"던 `TEACHERLESSON_ASSISTANT__SCHOOL_CODE`·`__OFFICE_CODE` 도 같은 이유로 안 읽힌다. 공용 `NEIS_*` 로 적은 **급식은 정상**.
+- 시험이 통과하는 까닭: 시험은 앞머리 붙은 사전을 직접 넣어서, 서버가 실제로 만드는 모양을 지나가지 않는다.
+
+가짜 값을 넣은 임시 `.env`(`MY_SKILLS_ENV`) + 서버와 같은 코드로 재현:
+
+| `.env` 내용 | 급식 | 날씨 | 인터넷 호출 |
+|---|---|---|---|
+| 공용 NEIS 키 + `TEACHERLESSON_ASSISTANT__LATITUDE`·`__LONGITUDE` | 나옴 | **없음** | 급식만 |
+| 옛 이름 학교·교육청 코드 | **없음** | 없음 | 0번 |
+
+**고칠 방향(확인한 것)**: `_setting` 을 `env.get(name) or env.get(PREFIX + name)` 로, `_neis` 에 `or env.get(old.removeprefix(PREFIX))` 를 더하니 첫 줄은 날씨까지, 둘째 줄은 급식이 나오고 기존 시험 12개 통과. 시험은 `skill_env.env_values` 를 거치는 것 하나를 더하면 다시 안 생긴다.
+
+## 🟡 그날 처음 받은 빈 값이 하루 종일 남음 (재현함)
+- 좌표를 적기 전에 화면을 한 번 켜면 "날씨 없음"이 오늘 값으로 저장돼, 위 🔴 를 고쳐도 **그날은** 좌표를 적어 봐야 다시 부르지 않는다. → 저장할 때 설정 값(학교 코드·좌표)도 적고 달라지면 다시 받기.
+- 급식 서버가 오류 내용을 정상 응답(200)으로 주면(`{"RESULT":{"CODE":"ERROR-…"}}` — 모양은 추정, 확인 필요) 빈 급식이 그날 내내 저장된다. → `ERROR` 코드는 실패로 보고 저장하지 않기.
+
+## 🟢 작은 것
+- 음식 이름 끝 숫자가 지워짐: `비타500` → `비타`.
+- 메뉴가 길면 위쪽 줄이 여러 줄이 되어 머리 부분이 40~60px 높아진다(640px·375px, 깨지거나 겹치지는 않음). 한 줄 줄임표를 권함. `e725465` 로 확인했고 화면 파일은 그 뒤 바뀌지 않음.
+
+## 확인한 것
+- `a23780b`: `test_school_info.py` 12 · `test_school_info.js` 6 통과, 수업 비서 시험 483 통과 · 1 건너뜀 · 4 xfail(PyMuPDF 필요한 2개 파일 제외, 자동 검사 17개 성공), 개인정보·카탈로그 검사 통과. 실제 NEIS·날씨 호출은 하지 않음.
+
+## 합칠 때
+- 지금 main 과 `README.md`·`docs/worklog/claude-web-162.md` 에서 충돌(그 뒤 합쳐진 T111 때문).
+
+# 검토: task/T109-school-info (PR #181 — 🍱 급식·날씨 한 줄)
+
+- 검토: claude · 2026-11-28 (상시 일 S2)
+- 대상 커밋: `e725465` — main 기준 충돌 없음(단독)
+- **판정: 🟡 고친 뒤 합치기 권함** — 설정 이름이 지금 TASKS 와 달라 교사 PC 에서 칸이 안 켜질 수 있음
+
+## 🟡 고칠 것
+
+- **환경 변수 이름이 어긋남.** 코드는 학교·교육청 코드를 `TEACHERLESSON_ASSISTANT__SCHOOL_CODE`·`__OFFICE_CODE`, 키를 `NEIS_OPEN_API_KEY` 로만 읽음(`school_info.py`). 그런데 현재 `docs/TASKS.md` T109 는 교사가 중앙 `.env` 에 **공용 키 `NEIS_SCHOOL_CODE`·`NEIS_OFFICE_CODE`·`NEIS_API_KEY`** 를 이미 넣었고 급식 조회가 된다고 적음(2026-11-28). 이 PR 은 그 줄이 바뀌기 전 문구를 따른 것으로 보임(추정). 그대로 합치면 교사 PC 에서 설정이 있는데도 칸이 숨음.
+  - 권함: 공용 이름(`NEIS_SCHOOL_CODE`·`NEIS_OFFICE_CODE`·`NEIS_API_KEY`)을 먼저 읽고, 없으면 지금 이름을 읽기. 시험(`tests/test_school_info.py`)에 공용 이름 한 건, README 한 줄. 날씨 좌표(`…__LATITUDE`·`__LONGITUDE`)는 TASKS 에도 '좌표는 `.env`'라고만 있어 그대로 두어도 됨.
+
+## 확인한 것
+
+- 이 브랜치에서 `tests/test_school_info.py` 11개·`node tests/test_school_info.js` 6개 통과, 서버 시험 통과, 그 폴더 `pytest tests` 484 통과·기존 xfail 4.
+- **키가 화면으로 새지 않음**: `/api/school-info` 응답은 `{status, date, meal, weather}` 뿐. 키는 요청 주소에만 쓰이고, 실패는 `except Exception` 으로 조용히 넘겨 로그에도 안 찍힘.
+- 하루 한 번 캐시(`school_info_cache.json`, 데이터 폴더), 하나라도 실패하면 저장하지 않아 다음에 다시 시도, 시간 제한 4초, 설정이 없으면 칸을 숨김(오류 문구 없음).
+- 급식 글 정리: `(5.6.13)` 같은 알레르기 번호를 지움(README 에도 적어 둠). 의도된 설계로 보임.
+
+## 🟢/참고
+
+- 알레르기 번호를 지우는 것은 한 줄 화면 정리용이라 괜찮아 보이나, 알레르기가 있는 학생이 있는 반이면 교사가 번호를 보고 싶을 수 있음(교사 판단).
+- 실제 NEIS 급식 API·open-meteo 호출은 시험하지 못함(가짜 응답만). PR 설명대로 교사 PC 확인 필요.
+
+## 다른 PR 과 함께 합칠 때
+
+- #179(T106)와는 `assistant_server.py`·`web/index.html` 에서, #183(T107)과는 `assistant_server.py` 에서 줄이 겹쳐 충돌함(아래 '합치는 순서').

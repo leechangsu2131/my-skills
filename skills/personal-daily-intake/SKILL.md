@@ -19,6 +19,9 @@ Notion·시트에는 처리할 것(할 일, 책 행)만 보낸다. mem 대신 �
 2. 그 대화 화면에서 즐겨찾기 **'제미나이 내보내기'**(북마클릿)를 누른다 → 다운로드 폴더에 `하루기록-YYYY-MM-DD.md`(정리본)와
    `gemini-날짜-제목.json`(내가 쓴 말·답 전부)이 생긴다. `plan`·`apply` 가 다운로드 폴더에서 집어 inbox·대화 보관 폴더(`gemini\`)로 옮긴다.
    북마클릿 만들기: `python intake.py bookmarklet` → 클립보드의 주소를 Chrome 즐겨찾기 URL 칸에 붙여 넣기(한 번만).
+   다운로드 대신 중앙 `.env` 의 `PERSONAL_DAILY_INTAKE__DROP` 폴더(예: 구글 드라이브 `my-skills-개인자료\노트`)에 둬도 된다 — 거기 것은 원본을 두고 복사만.
+   **정리본 없이 그냥 나눈 대화**(하루 기록 스킬 전에 한 대화 등)는 `python intake.py convert` — 그 json 에서 내가 한 말만 모아
+   Gemini CLI 에 같은 지침으로 다시 정리시켜 inbox 에 md 로 둔다(날짜를 모르면 '확인 필요'에 '날짜 확인').
    북마클릿 없이: md 를 복사해 `내 문서\my-skills-data\personal-daily-intake\inbox\YYYY-MM-DD.md`로 저장해도 된다.
 3. Claude에게 "하루 기록 저장해줘" → Claude가 `plan`으로 표를 보여 준다 → 교사가 동의하면 `apply`.
 
@@ -32,6 +35,10 @@ Notion·시트에는 처리할 것(할 일, 책 행)만 보낸다. mem 대신 �
 - 중앙 `.env`: `DB_SHEET_ID`·`GOOGLE_SERVICE_ACCOUNT_FILE`(school-todo-kakao 와 같은 값), `NOTION_TOKEN`,
   `PERSONAL_DAILY_INTAKE__NOTION_READING_DB_ID`(독서 DB), 볼트 경로 `PERSONAL_OBSIDANSYSTEM_MAIN__VAULT`
   (이 스킬만 다른 볼트를 쓰려면 `PERSONAL_DAILY_INTAKE__VAULT`)
+- **Notion 연결**: `NOTION_TOKEN` 의 연결 이름은 **`book manage`** 다(2026-11-28 확인). 이 연결에 공유된 DB 만 읽고 쓸 수 있다 —
+  지금은 독서 DB 뿐. 업무일지·일기·습관 DB 를 쓰려면 Notion 에서 그 DB(또는 DB 가 든 페이지)를 열고
+  오른쪽 위 ··· → 연결 → `book manage` 추가. 확인은 `python intake.py notion`(무엇이 보이고 무엇이 안 보이는지 + 연결 방법).
+  업무일지·일기·습관기록·프로젝트 DB 는 2026-11-28 공유·연결됨(DB id: `.env` `PERSONAL_DAILY_INTAKE__NOTION_WORK|DIARY|HABIT|PROJECT_DB_ID`).
 
 ## 사용법
 ```powershell
@@ -52,7 +59,9 @@ python intake.py apply 파일.md --skip notion   # 인터넷·권한 문제로 �
 | 독서 | Notion 독서 DB 새 행(책제목·한줄평·읽은기간) |
 | 학생 | 후보만 — `classmanage-student-classifier` |
 | 투자 | 후보만 — 투자시트 분위기 일지(`personal-invest-sheet`) |
-| 업무·일기·습관 | 지금은 daily 에만 (Notion DB 연결 공유 전, ISSUE-001) |
+| 업무 | Notion 업무일지 새 행(이름·날짜, 말에 프로젝트 이름이 나오면 프로젝트 DB 에 연결, 본문에 내용·daily 링크) |
+| 일기 | Notion 일기 새 행(Name·Date, 제미나이가 붙인 감정 → Emotion) |
+| 습관 | Notion 습관기록 — 그날 줄이 있으면 해당 칸(운동·독서·명상·물·일찍자기·감사일기)만 체크, 없으면 새 줄 |
 | 개선 | 데이터 폴더 `ideas.json` 에 적음(대상 스킬을 낱말로 짐작) → `python intake.py ideas` 로 보고, 교사가 고른 것을 그 스킬 `ISSUES.md` 📌 백로그로 옮김 → S8 로 작업자에게 감 |
 | 모든 조각 | 볼트 `daily/YYYY-MM-DD.md` (원문 그대로 + '보낸 곳' 목록) |
 

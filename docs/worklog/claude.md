@@ -1,5 +1,7 @@
 # claude 일지
 
+- 2026-11-28 S2 (teacherlesson-assistant) PR 올림 — PR #179(T106 멘트)·#181(T109 급식·날씨)·#183(T107 일정) 검토 + 합치는 순서 메모(docs/reviews/ 4개). #179·#183 🟢, #181 🟡(설정 이름 NEIS_SCHOOL_CODE 등 공용 키와 어긋남), 세 PR 은 assistant_server.py 줄이 겹쳐 충돌 → 양쪽 줄 남기면 합친 시험 555 통과. 개인정보·범위 밖 수정 없음, build_catalog --check·check_privacy 통과
+- 2026-11-28 그만둠 — S2 PR #191 닫음. 같은 PR(#179·#181·#183)을 다른 작업자가 더 자세히 검토함(#193: 실제 브라우저로 재현해 #179 의 수업 진행 화면 단추 가림·#181 의 설정 이름 앞머리 문제를 찾음). 제 검토는 코드만 읽고 #179 를 🟢 으로 본 것이 틀렸고, 같은 이름의 검토 파일을 만들어 #193 과 충돌함. 다음에 할 것: 아직 검토 안 된 PR(#189·#192)
 - 2026-11-27 04:08 S7 (util-notebooklm) 시작 (브랜치 task/S7-multi-pdf-find)
 - 2026-11-27 04:14 S1 (teacherlesson-assistant) 시작 (브랜치 task/S1-url-session-tests)
 - 2026-11-27 04:30 S7 (util-notebooklm) PR 올림 — ISSUE-004 '여러 PDF 한 번에 찾기'·'[p.N] 자동 대조' 설계 메모(skills/util-notebooklm/docs/plans/multi-pdf-find.md). 코드는 안 고침. 확인: nlm.py·tests/test_nlm.py 를 읽고 함수 이름·시험 모양 정함, build_catalog --check·check_privacy 통과(시험 코드는 없음)
@@ -18,4 +20,9 @@
 - 2026-11-27 09:10 S1 (teacherlesson-assistant) 시작 (브랜치 task/S1-transcribe-markdown-tests)
 - 2026-11-27 09:10 T99 PR 올림 — 클로바노트용 MP3 내보내기 구현: 새 audio_export.py·web/recording_export.js, assistant_server 의 GET /api/recording-export/(재생과 같은 recording_file 검사), 화면 🎧 단추, 시험 3종(변환 26·서버 13·화면 순수함수 5), SKILL·README·ISSUE-039·config.example 갱신. 확인: test_assistant_*.py 87개·skill pytest 422 통과(기존 xfail 5)·루트 pytest 524 통과·node 시험 통과·build_catalog --check·check_privacy 통과. 교사 PC 확인 남음(실제 녹음 변환·클로바노트 업로드)
 - 2026-11-27 09:44 S1 (teacherlesson-assistant) 시작 (브랜치 task/S1-check-setup-helpers)
+- 2026-11-27 09:50 T57 (teacherlesson-from-neis) PR 올림 — SKILL.md 를 쉬운 한국어로 다시 씀(뜻 그대로). 확인: 옛 글·새 글의 코드 이름·링크·핵심 숫자(12시간·v1.7.0·질병결석 기본값) 비교로 빠진 것 없음, 머리말 그대로, build_catalog --check·check_privacy 통과. 남은 것: teacherlesson-assistant
 - 2026-11-27 10:20 T99 시작 (브랜치 task/T99-clova-mp3-export)
+- 2026-11-27 10:30 T57 (teacherlesson-assistant) PR 올림 — SKILL.md 를 쉬운 한국어로 다시 씀(뜻 그대로, 제목 A~F·코드 이름·JSON 예시 그대로). 확인: 인라인 코드 65개·숫자·굵은 글·링크·ISSUE 번호·머리말 모두 옛 글과 같음, build_catalog --check·check_privacy 통과. 이로써 T57 묶음 스킬 5개 모두 끝
+- 2026-11-27 21:27 T57 시작 (브랜치 task/T57-work)
+- 2026-11-27 21:34 T57 (teacherlesson-assistant) 시작 (브랜치 task/T57-easy-korean-assistant)
+- 2026-11-27 21:53 S2 (teacherlesson-assistant) 시작 (브랜치 task/S2-review-pr179-181-183)

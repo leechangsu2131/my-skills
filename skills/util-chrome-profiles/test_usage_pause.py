@@ -18,12 +18,19 @@ NOW = datetime(2026, 11, 28, 9, 30)
     ("사용량 한도 — 2시간 30분 후 다시 시도하세요", datetime(2026, 11, 28, 12, 0)),
     ("usage limit, try again in 3 hours", datetime(2026, 11, 28, 12, 30)),
     ("한도에 도달했습니다. 14:20 이후 다시 사용", datetime(2026, 11, 28, 14, 20)),
+    # claude.ai 무료 메시지 안내(2026-11-28 실제 화면 문구)
+    ("오후 6:00까지 무료 메시지를 모두 사용했습니다.", datetime(2026, 11, 28, 18, 0)),
+    ("오후 6:00까지 무료 메시지를 다시 사용할 수 없습니다", datetime(2026, 11, 28, 18, 0)),
+    ("무료 메시지는 오후 8:30에 다시 제공되며, 지금 Pro 플랜으로 계속 이용하실 수도 있습니다.", datetime(2026, 11, 28, 20, 30)),
+    ("18시까지 무료 메시지를 사용하였습니다.", datetime(2026, 11, 28, 18, 0)),
+    ("You are out of free messages until 6:00 PM", datetime(2026, 11, 28, 18, 0)),
 ])
 def test_find_resume(text, want):
     assert up.find_resume(text, NOW) == want
 
 
-@pytest.mark.parametrize("text", ["", "오늘 회의는 오후 3시", "12:10 에 점심", "사용량 한도에 도달했습니다"])
+@pytest.mark.parametrize("text", ["", "오늘 회의는 오후 3시", "12:10 에 점심", "사용량 한도에 도달했습니다",
+                                  "무료 메시지를 모두 사용했습니다", "2시간 동안 메시지를 사용했습니다"])
 def test_no_resume(text):
     assert up.find_resume(text, NOW) is None
 

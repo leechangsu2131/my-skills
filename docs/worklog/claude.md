@@ -27,3 +27,4 @@
 - 2026-11-27 21:34 T57 (teacherlesson-assistant) 시작 (브랜치 task/T57-easy-korean-assistant)
 - 2026-11-27 21:53 S2 (teacherlesson-assistant) 시작 (브랜치 task/S2-review-pr179-181-183)
 - 2026-11-28 12:32 T109 이어받음 (브랜치 task/T109-work, 앞 — claude-web-162: 2026-11-28 20:11 T109 그만둠 — 이미 PR #181 로 main 에 합쳐짐(TASKS 상태만 아직 '열림'이라 --next 가)
+- 2026-11-28 12:32 T109 그만둠 — main 에서 PR #181 병합 확인(origin/main 로그). 고칠 것 없음. TASKS 상태가 아직 '열림'이라 --next 가 계속 잡음 → 교사 PC 가 T109 를 완료로 바꿔 주세요

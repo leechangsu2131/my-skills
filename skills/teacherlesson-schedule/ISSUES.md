@@ -9,14 +9,16 @@ _없음_
 
 ## 📌 백로그
 
+_없음_
+
+## 🟢 해결됨
+
 ### ISSUE-7: `requirements.txt` 에 PyMuPDF 가 없음 (2026-11-26)
 - **상태**: 🟢 해결(T93, 2026-11-27)
 - **증상**: `server.py` 는 첫머리에서 `import fitz`(PyMuPDF)를 하는데 `requirements.txt` 에 없음. `fitz` 가 없는 곳에서 서버 시험 2개 파일이 `ModuleNotFoundError: No module named 'fitz'` 로 시작도 못 함 → 새 PC 에서 `pip install -r requirements.txt` 만 하면 서버가 안 켜질 것(추정)
 - **원인**: 목록 빠뜨림
 - **해결/조치**: `requirements.txt` 에 `PyMuPDF>=1.24` 추가(teacherlesson-assistant 와 같은 표기). 요구 파일만으로 만든 새 가상환경에서 시험 91개 중 90개 통과, 서버 시험 2개 파일이 이제 시작됨. 실패 1개는 ISSUE-003 의 원래부터 실패하던 시험. CI(check.yml)의 schedule 칸 `extra: PyMuPDF` 는 이제 필요 없음(공용 파일이라 PR 설명으로 제안)
 - **관련 파일**: `requirements.txt`, `server.py`
-
-## 🟢 해결됨
 
 ### ISSUE-005: `/api/catch-up` 밖의 쓰기 경로 6개도 ScheduleError 를 JSON 오류로 안 바꿈 (2026-11-26, 2026-11-27 해결)
 - **상태**: 🟢 해결됨 (T100). 잠금(ISSUE-004 한계)은 아직 — T77

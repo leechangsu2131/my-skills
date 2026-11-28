@@ -17,6 +17,7 @@ import hashlib
 import json
 import os
 import re
+import shutil
 import sys
 import urllib.request
 from dataclasses import dataclass, field
@@ -122,6 +123,44 @@ def safe_name(title: str) -> str:
     return re.sub(r"\s+", " ", name).strip(" .")[:80] or "제목 없음"
 
 
+# [개선] 조각의 대상 → 이슈를 적을 곳(스킬 폴더 또는 저장소). 위에서부터 먼저 맞는 것.
+TARGETS = (
+    (r"수업\s*비서|교시|수업\s*흐름|수업\s*준비|녹음|받아쓰기", "teacherlesson-assistant"),
+    (r"지도서|차시\s*나누", "teacherlesson-guide"),
+    (r"진도|시간표", "teacherlesson-schedule"),
+    (r"하루\s*기록|제미나이\s*스킬|정리기", "personal-daily-intake"),
+    (r"일정\s*DB|일정\s*시트|카톡\s*알림|아침\s*알림|할\s*일\s*알림", "school-todo-kakao"),
+    (r"투자\s*시트|매매|포트폴리오", "invest-sheet(GitLab)"),
+    (r"옵시디언|볼트|PKM|노트\s*정리", "personal-obsidansystem-main"),
+    (r"홈페이지|웹\s*사이트|HomePage", "HomePage"),
+    (r"나이스|NEIS", "admin-neis-bot"),
+    (r"에듀파인|품의|기안|공문", "admin-edufine"),
+    (r"하이톡|하이클래스|알림장", "admin-hitalk-sender"),
+    (r"노트북\s*LM|NotebookLM", "util-notebooklm"),
+    (r"크롬\s*프로필|크롬\s*창", "util-chrome-profiles"),
+    (r"학생\s*기록|누가\s*기록|평가", "classmanage-student-classifier"),
+)
+
+
+def guess_target(text: str) -> str:
+    for pat, target in TARGETS:
+        if re.search(pat, text or "", re.I):
+            return target
+    return "(대상 확인 필요)"
+
+
+def add_idea(path: Path, doc: Doc, p: Piece, target: str) -> bool:
+    """개선 아이디어를 데이터 폴더 ideas.json 에 적는다(같은 날·같은 제목이면 건너뜀). 새로 적었으면 True."""
+    ideas = json.loads(path.read_text(encoding="utf-8")) if path.exists() else []
+    if any(x["date"] == doc.date and x["title"] == p.title for x in ideas):
+        return False
+    ideas.append({"no": max((x["no"] for x in ideas), default=0) + 1, "date": doc.date, "title": p.title,
+                  "content": p.get("내용"), "target": target, "sensitive": p.sensitive, "status": "new"})
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(ideas, ensure_ascii=False, indent=1), encoding="utf-8")
+    return True
+
+
 def plan(doc: Doc) -> list:
     acts = []
     for p in doc.pieces:
@@ -151,6 +190,9 @@ def plan(doc: Doc) -> list:
             acts.append(Action("candidate", "투자시트 분위기 일지 후보 — personal-invest-sheet 로", p))
         elif k in ("업무", "일기", "습관"):
             acts.append(Action("candidate", f"Notion {k} DB — 아직 연결 공유 전이라 daily 에만 (ISSUES ISSUE-001)", p))
+        elif k == "개선":
+            tgt = guess_target(" ".join((p.get("대상"), p.title, p.get("내용"))))
+            acts.append(Action("idea", f"개선 아이디어 → {tgt} ISSUES 후보", p, {"target": tgt}))
         else:
             acts.append(Action("daily", "daily 에만", p))
     return acts
@@ -246,9 +288,10 @@ def open_notion() -> Notion:
     return Notion(token, db)
 
 
-def apply(doc: Doc, acts: list, vault: Path, sheet=None, notion=None, skip=(), now=None):
-    """(보낸 곳 줄들, 화면 줄들, 실패 수). sheet·notion 은 필요할 때 여는 함수나 객체."""
+def apply(doc: Doc, acts: list, vault: Path, sheet=None, notion=None, skip=(), now=None, ideas: Path | None = None):
+    """(보낸 곳 줄들, 화면 줄들, 실패 수). sheet·notion 은 필요할 때 여는 함수나 객체. ideas: 개선 아이디어 목록 파일."""
     now = now or datetime.now()
+    ideas = ideas or data_dir(SKILL) / "ideas.json"
     sent, screen, fails = [], [], 0
 
     def note(i, a, result, ok=True):
@@ -258,7 +301,7 @@ def apply(doc: Doc, acts: list, vault: Path, sheet=None, notion=None, skip=(), n
         if ok and a.dest != "daily":
             label = f"[{a.piece.kind}] {a.piece.title}"
             sent.append(f"- {label} → " + (f"[[{a.where[:-3]}]]" if a.dest == "vault-note" else a.where)
-                        + ("" if a.dest == "candidate" else f" ({result})"))
+                        + ("" if a.dest in ("candidate", "idea") else f" ({result})"))
 
     # 일정DB: 한 번에 읽고 한 번에 넣는다
     sheet_acts = [(i, a) for i, a in enumerate(acts, 1) if a.dest == "sheet"]
@@ -303,6 +346,9 @@ def apply(doc: Doc, acts: list, vault: Path, sheet=None, notion=None, skip=(), n
                     continue
                 nt = nt or (notion() if callable(notion) else notion)
                 note(i, a, nt.add_book(a.data["book"], a.piece.get("내용"), doc.date))
+            elif a.dest == "idea":
+                new = add_idea(ideas, doc, a.piece, a.data["target"])
+                note(i, a, "아이디어 목록에 적음 (python intake.py ideas)" if new else "이미 적혀 있음")
             else:
                 note(i, a, "후보" if a.dest == "candidate" else "daily 에만")
         except Exception as e:  # noqa: BLE001
@@ -314,10 +360,117 @@ def apply(doc: Doc, acts: list, vault: Path, sheet=None, notion=None, skip=(), n
 
 # ---------- 명령 ----------
 
+def downloads_dir() -> Path:
+    raw = os.environ.get("DOWNLOADS", "").strip()  # .env 의 PERSONAL_DAILY_INTAKE__DOWNLOADS (다운로드 폴더를 옮겼을 때)
+    return Path(os.path.expandvars(raw)) if raw else Path.home() / "Downloads"
+
+
+def collect_downloads(downloads: Path, inbox: Path, archive: Path, keep: bool = False) -> list[str]:
+    """북마클릿이 받은 파일을 가져온다: 하루기록-*.md → inbox, gemini-*.json → 대화 보관 폴더. 가져온 이름들.
+    keep=True(교사가 정한 DROP 폴더, 예: 구글 드라이브 노트)면 원본은 두고 복사만, 이미 가져온 이름은 건너뜀."""
+    moved = []
+    for pattern, dest in (("하루기록-*.md", inbox), ("gemini-*.json", archive)):
+        for f in sorted(downloads.glob(pattern)) if downloads.is_dir() else []:
+            dest.mkdir(parents=True, exist_ok=True)
+            name = f.name[len("하루기록-"):] if f.name.startswith("하루기록-") else f.name
+            target, n = dest / name, 2
+            if keep:
+                if target.exists() or (dest / "done" / name).exists():
+                    continue
+                shutil.copy2(f, target)
+                moved.append(target.name)
+                continue
+            while target.exists() or (dest / "done" / target.name).exists():  # 같은 날 두 번째 기록
+                target, n = dest / f"{Path(name).stem}-{n}{Path(name).suffix}", n + 1
+            f.replace(target)
+            moved.append(target.name)
+    return moved
+
+
+def drop_dirs() -> list[Path]:
+    """북마클릿 파일을 찾을 곳: 다운로드 폴더 + (있으면) .env PERSONAL_DAILY_INTAKE__DROP 폴더(예: 구글 드라이브 노트 폴더)."""
+    out = [downloads_dir()]
+    raw = os.environ.get("DROP", "").strip()
+    if raw:
+        out.append(Path(os.path.expandvars(raw)))
+    return out
+
+
+def gem_instructions() -> str:
+    """gem_prompt.md 의 상자 안 지침(제미나이 스킬과 같은 글)."""
+    t = (SKILL_DIR / "gem_prompt.md").read_text(encoding="utf-8")
+    return t.split("````text", 1)[1].rsplit("````", 1)[0].strip()
+
+
+def conversation_text(data: dict) -> str:
+    """내보낸 대화 json → 선생님이 한 말만(제미나이 답은 원문이 아니므로 뺀다)."""
+    parts = [f"# {data.get('title', '대화')}"]
+    for i, t in enumerate(data.get("turns", []), 1):
+        if (t.get("user") or "").strip():
+            parts.append(f"## 내가 한 말 {i}\n{t['user'].strip()}")
+    return "\n\n".join(parts) + "\n"
+
+
+def extract_md(answer: str) -> str:
+    """Gemini 답에서 정리본 md 만(코드 상자를 벗김)."""
+    m = re.search(r"```(?:markdown|md)?\s*\n(---\s*\n.*?)```", answer, re.S)
+    text = m.group(1) if m else answer
+    i = text.find("---")
+    return text[i:].strip() + "\n" if i != -1 else ""
+
+
+def convert(src: Path, inbox: Path, archive: Path, ask=None) -> Path:
+    """지난 Gemini 대화 json 을 제미나이 스킬과 같은 지침으로 다시 정리해 inbox 에 md 로. ask(파일, 지침) → 답."""
+    data = json.loads(src.read_text(encoding="utf-8"))
+    exported = (data.get("exported") or "")[:10] or date.today().isoformat()
+    body = archive / "convert" / (src.stem + ".md")
+    body.parent.mkdir(parents=True, exist_ok=True)
+    body.write_text(conversation_text(data), encoding="utf-8")
+    prompt = (gem_instructions() + "\n\n[이번 일] 파일 @{file} 은 선생님이 그날 제미나이에게 한 말을 모은 것이다(받아쓴 글로 본다). "
+              f"위 형식의 md 한 장으로만 답하라. 기록 날짜(date)는 글에서 알 수 있으면 그 날짜, 모르면 {exported} 로 두고 "
+              "'확인 필요'에 '날짜 확인'을 적어라. '원문' 절에는 파일의 '내가 한 말' 글을 그대로 옮긴다.")
+    if ask is None:
+        sys.path.insert(0, str(SKILLS / "util-notebooklm"))
+        from nlm import gemini_ask  # Gemini CLI — 지침·글을 넘겨 답을 받음
+        ask = lambda f, p: gemini_ask(f, p)[0]  # noqa: E731
+    md = extract_md(ask(body, prompt))
+    doc = parse(md)  # 날짜·조각이 없으면 여기서 멈춤
+    if not doc.pieces:
+        raise SystemExit(f"{src.name}: 조각을 하나도 못 받았어요 — 다시 해 보거나 손으로 고치세요.")
+    inbox.mkdir(parents=True, exist_ok=True)
+    out, n = inbox / f"{doc.date}.md", 2
+    while out.exists() or (inbox / "done" / out.name).exists():
+        out, n = inbox / f"{doc.date}-{n}.md", n + 1
+    out.write_text(md, encoding="utf-8")
+    archive.mkdir(parents=True, exist_ok=True)
+    if src.parent != archive:  # 다운로드 폴더 것은 옮기고, 그 밖(교사 폴더)은 복사만
+        (src.replace if src.parent == downloads_dir() else lambda t: shutil.copy2(src, t))(archive / src.name)
+    return out
+
+
+def bookmarklet() -> str:
+    """gemini_bookmarklet.js → 즐겨찾기 주소(javascript:…) 한 줄."""
+    js = (SKILL_DIR / "gemini_bookmarklet.js").read_text(encoding="utf-8")
+    js = re.sub(r"/\*.*?\*/", " ", js, flags=re.S)
+    js = " ".join(line.strip() for line in js.splitlines() if line.strip())
+    # 한글은 \uXXXX 로 — 클립보드·콘솔 인코딩을 거치며 깨지지 않게(2026-11-28 붙여 넣으니 끝부분이 깨짐). 한글은 문자열 안에만 있다
+    js = "".join(c if ord(c) < 128 else _u_escape(c) for c in js)
+    return "javascript:" + js.replace("%", "%25").replace("#", "%23")
+
+
+def _u_escape(c: str) -> str:
+    b = c.encode("utf-16-be")
+    return "".join(f"\\u{int.from_bytes(b[i:i + 2], 'big'):04x}" for i in range(0, len(b), 2))
+
+
 def find_input(arg: str | None) -> Path:
     if arg:
         return Path(arg)
     inbox = data_dir(SKILL, "inbox")
+    dl = downloads_dir()
+    moved = [n for d in drop_dirs() for n in collect_downloads(d, inbox, data_dir(SKILL, "gemini"), keep=d != dl)]
+    if moved:
+        print(f"다운로드 폴더에서 옮김: {', '.join(moved)}")
     files = sorted(inbox.glob("*.md"), key=lambda f: f.stat().st_mtime)
     if not files:
         raise SystemExit(f"넣을 파일이 없어요 — 제미나이 정리본을 {inbox} 에 .md 로 저장하세요.")
@@ -333,15 +486,66 @@ def vault_path() -> Path:
     return v
 
 
+def show_ideas(path: Path, done: str = "", show_all: bool = False) -> int:
+    """개선 아이디어 목록. --done 번호면 '옮김'으로 표시. 민감 아이디어는 제목을 가린다."""
+    ideas = json.loads(path.read_text(encoding="utf-8")) if path.exists() else []
+    marks = {int(x) for x in re.findall(r"\d+", done)}
+    for x in ideas:
+        if x["no"] in marks:
+            x["status"] = "moved"
+    if marks:
+        path.write_text(json.dumps(ideas, ensure_ascii=False, indent=1), encoding="utf-8")
+    rows = [x for x in ideas if show_all or x["status"] == "new"]
+    if not rows:
+        print("옮길 개선 아이디어가 없어요.")
+        return 0
+    print("| 번호 | 날짜 | 대상 | 아이디어 | 상태 |\n|---|---|---|---|---|")
+    for x in rows:
+        title = "(민감 — 제목 숨김)" if x.get("sensitive") else x["title"]
+        print(f"| {x['no']} | {x['date']} | {x['target']} | {title} | {'옮김' if x['status'] == 'moved' else '새것'} |")
+    return 0
+
+
 def main(argv=None) -> int:
     for s in (sys.stdout, sys.stderr):
         if hasattr(s, "reconfigure"):
             s.reconfigure(encoding="utf-8")
     ap = argparse.ArgumentParser(description="하루 기록을 갈래별로 나눠 넣기")
-    ap.add_argument("cmd", choices=["plan", "apply"])
+    ap.add_argument("cmd", choices=["plan", "apply", "ideas", "bookmarklet", "convert"])
     ap.add_argument("file", nargs="?")
+    ap.add_argument("files", nargs="*", help="convert: 여러 json")
     ap.add_argument("--skip", default="", help="쉼표로: sheet,notion")
+    ap.add_argument("--done", default="", help="ideas: ISSUES 에 옮긴 번호(쉼표로)")
+    ap.add_argument("--all", action="store_true", help="ideas: 옮긴 것도 보기")
     a = ap.parse_args(argv)
+    if a.cmd == "ideas":
+        return show_ideas(data_dir(SKILL) / "ideas.json", a.done, a.all)
+    if a.cmd == "convert":
+        load_env()
+        inbox, archive = data_dir(SKILL, "inbox"), data_dir(SKILL, "gemini")
+        srcs = [Path(x) for x in ([a.file] if a.file else []) + a.files]
+        if not srcs:  # 안 주면: 다운로드·DROP 폴더와 보관 폴더에서 아직 안 바꾼 gemini-*.json
+            done = {p.stem for p in (archive / "convert").glob("*.md")} if (archive / "convert").is_dir() else set()
+            srcs = [p for d in drop_dirs() + [archive] if d.is_dir() for p in sorted(d.glob("gemini-*.json"))
+                    if p.stem not in done]
+        if not srcs:
+            print("바꿀 Gemini 대화(json)가 없어요.")
+            return 1
+        for s in srcs:
+            out = convert(s, inbox, archive)
+            print(f"✅ {s.name[:50]} → inbox\\{out.name}")
+        print("이제 python intake.py plan <파일> 로 표를 보고 apply 하세요(날짜가 '확인 필요'면 md 의 date 를 고친 뒤).")
+        return 0
+    if a.cmd == "bookmarklet":
+        url = bookmarklet()
+        try:
+            import subprocess
+            subprocess.run(["powershell", "-NoProfile", "-Command", "Set-Clipboard -Value $input"],
+                           input=url, text=True, encoding="utf-8", check=True)
+            print("즐겨찾기 주소를 클립보드에 넣었어요 — Chrome 즐겨찾기 추가 → 이름 '제미나이 내보내기', URL 칸에 붙여 넣기.")
+        except (OSError, subprocess.CalledProcessError):
+            print(url)
+        return 0
     load_env()
     src = find_input(a.file)
     m = DATE_RE.search(src.stem)

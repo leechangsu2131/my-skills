@@ -112,7 +112,7 @@ _없음_
 - 자동 대신 항상 트레이1로 돌리고 싶으면 `POST_PRINT_TRAY=1`로 바꾸면 됩니다.
 
 ##### 그래도 한글의 다른 문서가 계속 트레이2를 찾는 경우
-- `ParameterSetObject.pdf` 기준 `HPrint`에는 `PrinterPaperSize`, `PrinterPaperWidth`, `PrinterPaperLength`, `PrinterName`은 있지만 트레이/용지함(`DEVMODE.dmDefaultSource`) 파라미터는 없습니다.
+- `ParameterSetObject.pdf`(한컴 공개 참고서, 2026-11-28 저장소에서 빼고 교사 구글 드라이브 `my-skills-개인자료\resource\util-school-print\`로 옮김) 기준 `HPrint`에는 `PrinterPaperSize`, `PrinterPaperWidth`, `PrinterPaperLength`, `PrinterName`은 있지만 트레이/용지함(`DEVMODE.dmDefaultSource`) 파라미터는 없습니다.
 - 따라서 Windows 프린터 기본값이 정상인데도 한글에서만 트레이2를 찾으면, 한글이 레지스트리에 저장한 마지막 인쇄 파라미터가 남아 있을 가능성이 큽니다.
 - 한글 문서를 모두 저장하고 한글을 완전히 종료한 뒤 `reset_hwp_print_settings.bat`을 실행하세요.
 - 이 도구는 `HKCU\Software\HNC\Hwp\*\Parameters\00000215` 값을 JSON으로 백업한 뒤 삭제하고, 프린터 기본 용지함도 `POST_PRINT_TRAY` 값으로 되돌립니다.

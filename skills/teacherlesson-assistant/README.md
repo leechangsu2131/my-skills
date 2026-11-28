@@ -153,4 +153,5 @@ Claude 작업 절차는 [SKILL.md](SKILL.md), 문제·할 일은 [ISSUES.md](ISS
 - NotebookLM 소스·노트: `notebook_sources.py`, `split_notes.py` (차시 표시 규칙 `lesson_tag` 은 `assistant_server.py`)
 - 클로바노트에 올리기: 화면의 저장된 녹음에서 **🎧 클로바노트용 MP3 받기** → 받은 파일을 클로바노트에서 직접 올린다. ffmpeg 가 필요하다(`winget install Gyan.FFmpeg`, 설치 뒤 수업 비서를 다시 켬. 경로를 따로 쓰려면 config.json 의 `ffmpeg_path`). 녹음이 끝난 지 30초 안이면 잠시 뒤에 다시 누른다.
 - 녹음 받아쓰기·분석: `transcribe.py` (사용법은 파일 맨 위, faster-whisper 필요). 주간 정리: `weekly_report.py`
+- 영상 재생 구간 표시: `speaker_level.py start`/`stop`/`status`/`segments --date …` — PC 스피커로 나가는 소리의 **크기만** 1초마다 `day_audio/<날짜>/speaker_level.csv` 에 적어(소리는 저장 안 함) 영상 구간을 찾는다. 루프백은 `pip install soundcard`(순수 파이썬이라 설치가 쉬워 골랐고, 없으면 안내만 하고 켜지 않음). 실제 영상으로 기준(`LOUD_DB`) 확인은 교사 PC
 - 설정 항목: `config.example.json` (실사용 설정은 데이터 폴더의 `config.json`)

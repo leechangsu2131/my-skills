@@ -54,3 +54,4 @@
 - 2026-11-28 06:53 T111 PR 올림 — transcribe.py 받아쓰기 사전(load_words·build_hint·apply_fixes, 힌트 initial_prompt 200자, 낱말 경계·긴 것부터·조사 허용)·stt_words.example.json·tests/test_stt_words.py 15개(변형 확인), 수업 비서 전체 394 통과(fitz 없는 2개 파일 제외). ③ 화면 칸은 파일 직접 편집으로 두고 못 함, 진짜 faster-whisper 실행은 확인 필요
 - 2026-11-28 14:48 S8 (teacherlesson-schedule) 시작 (브랜치 task/S8-teacherlesson-schedule-issues)
 - 2026-11-28 14:48 S8 (teacherlesson-schedule) PR 올림 — 열린 이슈로 잡혀 있던 ISSUE-7(이미 🟢 해결·T93)을 ISSUES.md 백로그에서 해결됨 절로 옮김. 남은 열린 이슈 없음(ISSUE-004 잠금은 T77·P). 카탈로그 점검 통과
+- 2026-11-28 15:29 S8 (util-chrome-profiles) 시작 (브랜치 task/S8-util-chrome-profiles-issues)

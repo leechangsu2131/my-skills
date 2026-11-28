@@ -963,6 +963,32 @@ def focus_input(hwnd: int, control) -> bool:
     return True
 
 
+def is_streaming(hwnd: int) -> bool:
+    auto, client = _uia()
+    doc = auto.ControlFromHandle(hwnd).Element.FindFirst(4, client.CreatePropertyCondition(
+        auto.PropertyId.ControlTypeProperty, auto.ControlType.DocumentControl))
+    return bool(doc and doc.FindFirst(4, client.CreatePropertyCondition(auto.PropertyId.NameProperty, STOP_NAME)))
+
+
+def type_and_send(hwnd: int, control, text: str) -> bool:
+    """입력칸에 초점 → 칸 안 글을 모두 바꿔(남은 초안 지움) text 붙여넣기 → Enter. 키마다 맨 앞 창 확인."""
+    if not focus_input(hwnd, control):
+        return False
+    set_clipboard(text)
+    if win32gui.GetForegroundWindow() != hwnd:
+        return False
+    press_keys([win32con.VK_CONTROL], ord("A"))   # 입력칸 안만 선택된다(초점이 칸에 있음)
+    time.sleep(0.1)
+    if win32gui.GetForegroundWindow() != hwnd:
+        return False
+    press_ctrl_v()
+    time.sleep(0.6)
+    if win32gui.GetForegroundWindow() != hwnd:
+        return False
+    press_keys([], win32con.VK_RETURN)
+    return True
+
+
 def focus_in_browser_ui(hwnd: int) -> bool:
     """키보드 초점이 이 창의 브라우저 글칸(주소창 등)에 있고 웹 페이지 안이 아닌지(Ctrl+L 이 주소창으로 갔는지)."""
     auto, _ = _uia()
@@ -1393,6 +1419,55 @@ class ReplyWindow(QDialog):
     def save(self):
         path = self.manager.save_replies()
         QMessageBox.information(self, "답글 저장", f"저장했습니다:\n{path}" if path else "모아 둔 답이 없습니다.")
+
+
+class GroupPromptDialog(QDialog):
+    """그룹마다 '이어서 보낼 말'과 '새 채팅 시작 프롬프트'. 같은 그룹 창들은 같은 글을 쓴다."""
+
+    def __init__(self, parent, groups: list[str], prompts: dict, current: str | None = None):
+        super().__init__(parent)
+        self.setWindowTitle("그룹별 프롬프트")
+        self.resize(620, 480)
+        self.prompts = {g: dict(prompts.get(g, {})) for g in groups}
+        self.group = QComboBox()
+        self.group.addItems(groups)
+        self.cont = QLineEdit()
+        self.cont.setPlaceholderText("비우면 '다음'")
+        self.start = QPlainTextEdit()
+        self.start.setPlaceholderText("새 채팅을 열 때 처음 보낼 글(이 그룹 창 모두 같은 글)")
+        self.shown = None
+        self.group.currentTextChanged.connect(self.switch)
+        buttons = QDialogButtonBox(QDialogButtonBox.StandardButton.Save | QDialogButtonBox.StandardButton.Cancel)
+        buttons.accepted.connect(self.accept)
+        buttons.rejected.connect(self.reject)
+        box = QVBoxLayout(self)
+        row = QHBoxLayout()
+        row.addWidget(QLabel("그룹:"))
+        row.addWidget(self.group, 1)
+        box.addLayout(row)
+        box.addWidget(QLabel("이어서 모드 — 가장 최근 대화에 보낼 말('계속'·'다시 시도' 단추가 있으면 그걸 먼저 누름):"))
+        box.addWidget(self.cont)
+        box.addWidget(QLabel("새로 진행 모드 — 같은 프로젝트에 새 채팅을 열며 보낼 시작 프롬프트:"))
+        box.addWidget(self.start)
+        box.addWidget(buttons)
+        if current in groups:
+            self.group.setCurrentText(current)
+        self.switch(self.group.currentText())
+
+    def keep(self):
+        if self.shown is not None:
+            self.prompts[self.shown] = {"continue": self.cont.text().strip(), "new": self.start.toPlainText().strip()}
+
+    def switch(self, group: str):
+        self.keep()
+        self.shown = group
+        values = self.prompts.get(group, {})
+        self.cont.setText(values.get("continue", ""))
+        self.start.setPlainText(values.get("new", ""))
+
+    def accept(self):
+        self.keep()
+        super().accept()
 
 
 class GotoDialog(QDialog):
@@ -2964,6 +3039,14 @@ class Manager(QMainWindow):
         if item.data(0, ROLE):
             menu.addSeparator()
             menu.addAction("열기", lambda: self.open_profiles([item.data(0, ROLE)]))
+        elif item is not self.other_group:   # 그룹
+            group = item.text(0)
+            menu.addSeparator()
+            menu.addAction("이 그룹: 이전 작업 이어서",
+                           lambda: self.run_group_mode("continue", targets=self.work_windows(f"group:{group}")))
+            menu.addAction("이 그룹: 새로 진행(새 채팅 + 시작 프롬프트)",
+                           lambda: self.run_group_mode("new", targets=self.work_windows(f"group:{group}")))
+            menu.addAction("이 그룹 프롬프트 설정…", lambda: self.edit_group_prompts(current=group))
         menu.exec(self.tree.viewport().mapToGlobal(pos))
 
     # ───── 어디서든 쓰는 단축키(RegisterHotKey) ─────
@@ -3041,6 +3124,10 @@ class Manager(QMainWindow):
         menu.addAction("프로젝트 대화 목록의 맨 위 대화로 들어가기", lambda: self.enter_project_chat("top"))
         menu.addSeparator()
         menu.addAction("자동으로 누를 단추 이름…", self.set_auto_click_names)
+        menu.addSeparator()
+        menu.addAction("이전 작업 이어서 (고른 그룹·프로필: 맨 위 프로젝트의 최근 대화)", lambda: self.run_group_mode("continue"))
+        menu.addAction("새로 진행 (고른 그룹·프로필: 같은 프로젝트에 새 채팅 + 그룹 시작 프롬프트)", lambda: self.run_group_mode("new"))
+        menu.addAction("그룹별 프롬프트 설정…", self.edit_group_prompts)
         button = self.sender()
         menu.exec(button.mapToGlobal(button.rect().bottomLeft()) if button else QCursor.pos())
 
@@ -3128,6 +3215,109 @@ class Manager(QMainWindow):
         QMessageBox.information(self, "대화 들어가기", f"{len(done)}개 창을 옮겼습니다.\n\n" + "\n".join(done[:15]) +
                                 (f"\n\n안 된 곳:\n" + "\n".join(failed) if failed else ""))
 
+    def group_names(self) -> list[str]:
+        return [self.tree.topLevelItem(i).text(0) for i in range(self.tree.topLevelItemCount())
+                if self.tree.topLevelItem(i) is not self.other_group]
+
+    def edit_group_prompts(self, *_, current: str | None = None) -> bool:
+        dialog = GroupPromptDialog(self, self.group_names(), self.cfg.get("group_prompts", {}), current)
+        if dialog.exec() != QDialog.DialogCode.Accepted:
+            return False
+        self.cfg["group_prompts"] = {g: v for g, v in dialog.prompts.items() if v.get("continue") or v.get("new")}
+        self.save()
+        return True
+
+    def run_group_mode(self, mode: str, targets: list[int] | None = None):
+        """mode='continue': 맨 위 프로젝트의 가장 최근 대화에서 '계속'·'다시 시도'를 누르거나 그룹의 이어서 보낼 말 + Enter.
+        mode='new': 맨 위 프로젝트 페이지 입력칸에 그룹 시작 프롬프트 + Enter(새 채팅)."""
+        windows, scope = self.target_windows(targets)
+        windows = [h for h in windows if self.windows[h]["folder"]]
+        if not windows:
+            QMessageBox.information(self, "그룹 진행", "대상 창이 없습니다(트리에서 그룹을 고르세요).")
+            return
+        prompts = self.cfg.get("group_prompts", {})
+        group_of = {h: self.group_of(self.windows[h]["key"]) or UNGROUPED for h in windows}
+        text_of = {}
+        for h in windows:
+            values = prompts.get(group_of[h], {})
+            text_of[h] = (values.get("continue") or "다음") if mode == "continue" else values.get("new", "")
+        missing = sorted({group_of[h] for h in windows if not text_of[h]})
+        if missing:
+            QMessageBox.information(self, "새로 진행", f"시작 프롬프트가 없는 그룹: {', '.join(missing)}\n먼저 적어 주세요.")
+            if self.edit_group_prompts(current=missing[0]):
+                self.run_group_mode(mode, targets)
+            return
+        counts: dict[str, int] = {}
+        for h in windows:
+            counts[group_of[h]] = counts.get(group_of[h], 0) + 1
+        lines = [f"{g} — 창 {n}개: " + text_of[next(h for h in windows if group_of[h] == g)].replace("\n", " ")[:60]
+                 for g, n in counts.items()]
+        what = ("맨 위 프로젝트의 가장 최근 대화로 들어가 '" + "'·'".join(self.cfg["auto_click_names"]) +
+                "' 단추가 있으면 누르고, 없으면 아래 말을 보냅니다(답하는 중인 창은 그대로 둠)."
+                if mode == "continue" else "맨 위 프로젝트에서 새 채팅을 열며 아래 시작 프롬프트를 보냅니다.")
+        if QMessageBox.question(self, "이전 작업 이어서" if mode == "continue" else "새로 진행",
+                                f"{scope}\n{what}\n\n" + "\n".join(lines) +
+                                "\n\n메시지가 실제로 보내집니다. 창이 하나씩 앞으로 오니 그동안 마우스·키보드를 쓰지 마세요.") \
+                != QMessageBox.StandardButton.Yes:
+            return
+        old_clip = get_clipboard()
+        done, failed = [], []
+        progress = self.progress(f"창 {len(windows)}개 진행 중… (멈추려면 '멈추기')", len(windows))
+        try:
+            for index, hwnd in enumerate(windows):
+                if not self.pump(progress, index):
+                    break
+                label = self.label(hwnd)
+                try:
+                    url, why = self.reach_project(hwnd, "", {}, force_list=True)
+                    if not url:
+                        failed.append(f"{label} — {why}")
+                        continue
+                    if mode == "new":
+                        hit = find_input(hwnd)
+                        if not hit or not type_and_send(hwnd, hit[0], text_of[hwnd]):
+                            failed.append(f"{label} — 프로젝트 입력칸에 못 넣음")
+                            continue
+                        end = time.time() + 15
+                        while time.time() < end and "claude.ai/chat/" not in (page_url(hwnd) or ""):
+                            time.sleep(0.5)
+                        ok = "claude.ai/chat/" in (page_url(hwnd) or "")
+                        (done if ok else failed).append(f"{label} — " + ("새 채팅 시작" if ok else "보냈지만 새 채팅으로 안 넘어감(확인 필요)"))
+                        continue
+                    chat = pick_project_chat(hwnd, "top")   # 프로젝트 대화 목록 맨 위 = 가장 최근
+                    if not chat:
+                        failed.append(f"{label} — 프로젝트에 대화가 없음(새로 진행 모드를 쓰세요)")
+                        continue
+                    if not navigate(hwnd, chat[0], ready=lambda h=hwnd: find_input(h) is not None):
+                        failed.append(f"{label} — '{chat[1][:20]}' 대화로 못 감")
+                        continue
+                    time.sleep(1.5)   # 메시지·단추가 다 뜨도록
+                    dismiss_popups(hwnd)
+                    if is_streaming(hwnd):
+                        done.append(f"{label} — 답하는 중이라 그대로 둠")
+                        continue
+                    clicked = auto_click_once(hwnd, self.cfg["auto_click_names"])
+                    if clicked:
+                        done.append(f"{label} — '{clicked}' 누름")
+                        continue
+                    hit = find_input(hwnd)
+                    if hit and type_and_send(hwnd, hit[0], text_of[hwnd]):
+                        done.append(f"{label} — '{text_of[hwnd][:20]}' 보냄 ({chat[1][:20]})")
+                    else:
+                        failed.append(f"{label} — 입력칸에 못 넣음")
+                except Exception as e:
+                    failed.append(f"{label} — 오류 {e.__class__.__name__}")
+        finally:
+            progress.close()
+            time.sleep(0.2)
+            if old_clip is not None:
+                set_clipboard(old_clip)
+            activate(int(self.winId()))
+        automation_log("이전 작업 이어서" if mode == "continue" else "새로 진행",
+                       [f"성공 {x}" for x in done] + [f"실패 {x}" for x in failed])
+        QMessageBox.information(self, "그룹 진행", f"{len(done)}개 창 처리.\n\n" + "\n".join(done[:15]) +
+                                (f"\n\n안 된 곳:\n" + "\n".join(failed) if failed else ""))
+
     def set_auto_click_names(self, *_):
         text, ok = QInputDialog.getText(
             self, "자동으로 누를 단추 이름",
@@ -3157,7 +3347,7 @@ class Manager(QMainWindow):
             sids.append(sid)
             self.save()
 
-    def reach_project(self, hwnd: int, name: str, moved: dict) -> tuple[str | None, str]:
+    def reach_project(self, hwnd: int, name: str, moved: dict, force_list: bool = False) -> tuple[str | None, str]:
         """창이 claude.ai 프로젝트 페이지에 있게 한다(아니면 목록에서 골라 들어감). (프로젝트 주소, 못 간 까닭)."""
         url = page_url(hwnd) or ""
         if "claude.ai" not in url and not is_blank_page(url):
@@ -3188,7 +3378,7 @@ class Manager(QMainWindow):
         left = dismiss_popups(hwnd)
         if left:
             return None, f"팝업이 떠 있어 못 함: {', '.join(left)[:40]}"
-        if "claude.ai/project/" in url and not name:
+        if "claude.ai/project/" in url and not name and not force_list:
             return url, ""
         record = moved.setdefault(hwnd, [url, 0])
         sent: list = []

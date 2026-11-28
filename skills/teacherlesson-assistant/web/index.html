@@ -346,6 +346,19 @@ body.focus-mode> #toast{z-index:12}
     <button id="focusPrepare">📚 준비·자료 화면으로</button>
   </aside>
 
+  <!-- 받아쓰기 사전 (T111 ③) -->
+  <details class="fold" id="sttBox">
+    <summary>🎙 받아쓰기 사전</summary>
+    <div class="fold-body">
+      <p class="muted">녹음을 글로 받아쓸 때(<code>transcribe.py</code>) 쓰는 사전이에요. 이 PC 의 데이터 폴더에만 저장돼요(학생 이름을 적어도 저장소에는 안 올라가요).</p>
+      <b>자주 쓰는 말</b> <span class="muted">(한 줄에 하나 — 받아쓰기가 이 낱말을 잘 알아듣게 힌트로 줘요)</span>
+      <textarea id="sttWords" rows="5" style="width:100%"></textarea>
+      <b>고쳐 쓰기</b> <span class="muted">(한 줄에 하나: 틀린 말 → 맞는 말)</span>
+      <textarea id="sttFixes" rows="5" style="width:100%" placeholder="알림 장 → 알림장"></textarea>
+      <div class="row"><button type="button" id="sttSave">저장</button><span id="sttMsg" class="muted"></span></div>
+    </div>
+  </details>
+
   <!-- 수업 기록 -->
   <section class="card">
     <h2>🎙 수업 기록</h2>
@@ -502,6 +515,7 @@ body.focus-mode> #toast{z-index:12}
 <div id="toast"></div>
 
 <script src="/overdue.js"></script>
+<script src="/stt_words.js"></script>
 <script>
 const $ = id => document.getElementById(id);
 const qDate = new URLSearchParams(location.search).get('date');

@@ -674,6 +674,13 @@ def open_instructions(hwnd: int, wait: float = 6.0):
 PROJECTS_URL = "https://claude.ai/projects"
 
 
+def is_blank_page(url: str) -> bool:
+    """새 탭·빈 페이지(주소창이 비었거나 chrome://newtab 등)."""
+    bare = (url or "").strip().lower()
+    return (not bare or bare.startswith(("chrome://newtab", "edge://newtab", "chrome://new-tab-page", "about:blank",
+                                         "chrome-search://", "edge://new-tab")))
+
+
 def _bare(url: str) -> str:
     return url.split("://", 1)[-1].rstrip("/")
 
@@ -2635,6 +2642,7 @@ class Manager(QMainWindow):
         status = reply_status(chat, paused=self.sid(st["key"]) in self.pauses)
         before = self.replies.get(hwnd, {}).get("status")
         self.replies[hwnd] = {"chat": chat, "status": status, "seen": time.time()}
+        self.remember_claude(hwnd)
         if before == "답하는 중" and status in ("끝남", "내 답 필요"):   # 답이 막 끝남
             label = self.label(hwnd)
             last = chat["messages"][-1]["text"] if chat["messages"] else ""
@@ -3070,9 +3078,10 @@ class Manager(QMainWindow):
     def enter_project_chat(self, which: str = "bottom", targets: list[int] | None = None):
         """창마다 프로젝트 페이지로 가서(이미 있으면 그대로) 가운데 대화 목록의 맨 아래(또는 맨 위) 대화로 들어간다."""
         windows, scope = self.target_windows(targets)
-        windows = [h for h in windows if "claude.ai" in (page_url(h) or "")]
+        windows = [h for h in windows if "claude.ai" in (page_url(h) or "") or is_blank_page(page_url(h) or "")
+                   or self.sid(self.windows[h]["key"]) in self.cfg.get("claude_sids", [])]
         if not windows:
-            QMessageBox.information(self, "대화 들어가기", "claude.ai 창이 없습니다.")
+            QMessageBox.information(self, "대화 들어가기", "claude.ai 창(또는 빈 새 탭)이 없습니다.")
             return
         where = "맨 아래" if which == "bottom" else "맨 위"
         name, ok = QInputDialog.getText(
@@ -3137,11 +3146,43 @@ class Manager(QMainWindow):
         self.click_box.setText("'" + "'·'".join(self.cfg["auto_click_names"]) + "' 자동으로 누르기")
         self.save()
 
+    def remember_claude(self, hwnd: int):
+        """이 창 프로필이 claude.ai 를 쓰는 프로필임을 기억(다른 사이트에 있어도 자동화 때 claude.ai 를 열어 줄지 판단)."""
+        st = self.windows.get(hwnd)
+        if not st or not st["folder"]:
+            return
+        sids = self.cfg.setdefault("claude_sids", [])
+        sid = self.sid(st["key"])
+        if sid not in sids:
+            sids.append(sid)
+            self.save()
+
     def reach_project(self, hwnd: int, name: str, moved: dict) -> tuple[str | None, str]:
         """창이 claude.ai 프로젝트 페이지에 있게 한다(아니면 목록에서 골라 들어감). (프로젝트 주소, 못 간 까닭)."""
         url = page_url(hwnd) or ""
+        if "claude.ai" not in url and not is_blank_page(url):
+            for _ in range(10):   # 아직 페이지가 뜨는 중일 수 있어 5초까지 기다려 본다
+                time.sleep(0.5)
+                url = page_url(hwnd) or ""
+                if "claude.ai" in url or is_blank_page(url):
+                    break
         if "claude.ai" not in url:
-            return None, "claude.ai 창이 아님"
+            st = self.windows.get(hwnd)
+            used_claude = bool(st) and self.sid(st["key"]) in self.cfg.get("claude_sids", [])
+            if not is_blank_page(url) and not used_claude:
+                return None, "claude.ai 창이 아님(이 프로필은 claude.ai 를 쓴 적이 없어 건드리지 않음)"
+            if self.max_box.isChecked():
+                maximize(hwnd)
+            if not is_blank_page(url):   # 다른 사이트였으면 끝나고 돌아올 수 있게 기록(빈 새 탭은 기록 안 함 — 클로드에 그대로 둠)
+                moved.setdefault(hwnd, [url, 0])
+            sent: list = []
+            ok = navigate(hwnd, PROJECTS_URL, sent=sent)
+            if hwnd in moved:
+                moved[hwnd][1] += len(sent)
+            if not ok:
+                return None, "claude.ai 를 열지 못함(로그인이 안 된 프로필일 수 있음)"
+            url = page_url(hwnd) or ""
+        self.remember_claude(hwnd)
         if self.max_box.isChecked():
             maximize(hwnd)
         left = dismiss_popups(hwnd)

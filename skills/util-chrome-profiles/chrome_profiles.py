@@ -1187,6 +1187,7 @@ if __name__ == "__main__" and "--check" in sys.argv:
 import threading  # noqa: E402
 
 import usage_pause  # noqa: E402  같은 폴더: 일시 중지 문구 → 다시 쓸 시각 (pauses.json)
+import work_log  # noqa: E402  같은 폴더: 작업 시간 멈출 때 work_log.csv 에 한 줄 (ISSUE-006)
 from PySide6.QtCore import QObject, QPoint, QSize, Qt, QTimer, Signal  # noqa: E402
 from PySide6.QtGui import QBrush, QColor, QCursor, QIcon, QImage, QKeySequence, QPixmap, QShortcut  # noqa: E402
 from PySide6.QtWidgets import (  # noqa: E402
@@ -2972,6 +2973,11 @@ class Manager(QMainWindow):
         self.save()
         self.refresh_work(time.time())
         if work:
+            try:   # 기록이 안 남아도 멈추는 일은 그대로(이름·그룹만 남기고 창 글자는 남기지 않음)
+                group = wkey[6:] if wkey.startswith("group:") else (self.group_of(wkey) or "")
+                work_log.append(work_log.store_path(), self.work_label(wkey), group, work["start"], time.time())
+            except Exception:
+                pass
             self.popup.show_text(f"⏹ {self.work_label(wkey)}\n{fmt_long(time.time() - work['start'])} 작업하고 멈췄습니다.")
 
     def set_work_alert(self, wkey: str, hours: float):

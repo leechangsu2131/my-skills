@@ -152,5 +152,6 @@ Claude 작업 절차는 [SKILL.md](SKILL.md), 문제·할 일은 [ISSUES.md](ISS
 - 과목별 차시 자료 도우미: `sites/music_douclass/`, `sites/social_class/` (각 README). 서버의 `SITE_HELPERS` 에 등록
 - NotebookLM 소스·노트: `notebook_sources.py`, `split_notes.py` (차시 표시 규칙 `lesson_tag` 은 `assistant_server.py`)
 - 클로바노트에 올리기: 화면의 저장된 녹음에서 **🎧 클로바노트용 MP3 받기** → 받은 파일을 클로바노트에서 직접 올린다. ffmpeg 가 필요하다(`winget install Gyan.FFmpeg`, 설치 뒤 수업 비서를 다시 켬. 경로를 따로 쓰려면 config.json 의 `ffmpeg_path`). 녹음이 끝난 지 30초 안이면 잠시 뒤에 다시 누른다.
+- 하루 종일 녹음(교실 PC 마이크, 탭을 닫아도 계속): `python day_recorder.py start` 로 켜고 `stop`·`status`·`list`(마이크 목록). 30분 조각이 `day_audio/<날짜>/<시작시각>.mp3` 에 쌓이고 **PC 안에만** 저장된다. 마이크는 `config.json` 의 `day_recorder_mic`(이름 일부)로 고른다. 나누기·받아쓰기는 이어지는 일(ISSUE-055)
 - 녹음 받아쓰기·분석: `transcribe.py` (사용법은 파일 맨 위, faster-whisper 필요). 주간 정리: `weekly_report.py`
 - 설정 항목: `config.example.json` (실사용 설정은 데이터 폴더의 `config.json`)

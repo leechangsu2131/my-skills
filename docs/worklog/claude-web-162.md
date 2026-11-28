@@ -50,7 +50,10 @@
 - 2026-11-27 18:45 S1 (teacherlesson-guide) PR 올림 — splitter/tests/test_apply_annual_plan.py 19개(plan_entries 계획 글 읽기 11 + main 흐름 8: 짝짓기·미리보기·백업 한 번만·개수 다르면 중단·개관/계획 묶음 제외·차시 범위). apply_annual_plan.py 는 안 고침. 확인: 19개 통과(splitter 전체 pytest 29), 소스를 망가뜨린 9곳을 모두 잡음(되돌림). 참고: 다시 돌리면 source_title 이 첫 실행 제목으로 덮임(백업엔 원본 있음). 진짜 fitz·실제 지도서 PDF 는 확인 필요
 - 2026-11-27 18:45 S1 (teacherlesson-guide) 시작 (브랜치 task/S1-tests-split-lesson-headers)
 - 2026-11-27 18:46 S1 (teacherlesson-guide) PR 올림 — splitter/tests/test_split_by_lesson_headers.py 23개(lesson_starts 차시 머리 4형식·겹침·최빈 총 차시, plan_titles·clean_title·safe, main 저장 흐름·미리보기·단원 개관·파일 순서·건너뜀). split_by_lesson_headers.py 는 안 고침. 확인: 23개 통과, 소스를 망가뜨린 9곳을 모두 잡음(되돌림). 진짜 fitz·실제 지도서 PDF 는 확인 필요
+- 2026-11-28 06:34 T109 시작 (브랜치 task/T109-school-info)
+- 2026-11-28 06:36 T109 PR 올림 — school_info.py(NEIS 급식·open-meteo 날씨, 하루 한 번 캐시, 알레르기 번호 지움, 실패 시 조용히 빈칸)·GET /api/school-info·web/school_info.js·위쪽 한 줄. 가짜 응답 시험 python 11 + js 6, 수업 비서 전체 390 통과(fitz 없는 2개 파일 제외). 진짜 NEIS·open-meteo 호출은 확인 필요
 - 2026-11-28 06:52 T111 시작 (브랜치 task/T111-stt-words)
 - 2026-11-28 06:53 T111 PR 올림 — transcribe.py 받아쓰기 사전(load_words·build_hint·apply_fixes, 힌트 initial_prompt 200자, 낱말 경계·긴 것부터·조사 허용)·stt_words.example.json·tests/test_stt_words.py 15개(변형 확인), 수업 비서 전체 394 통과(fitz 없는 2개 파일 제외). ③ 화면 칸은 파일 직접 편집으로 두고 못 함, 진짜 faster-whisper 실행은 확인 필요
 - 2026-11-28 14:48 S8 (teacherlesson-schedule) 시작 (브랜치 task/S8-teacherlesson-schedule-issues)
 - 2026-11-28 14:48 S8 (teacherlesson-schedule) PR 올림 — 열린 이슈로 잡혀 있던 ISSUE-7(이미 🟢 해결·T93)을 ISSUES.md 백로그에서 해결됨 절로 옮김. 남은 열린 이슈 없음(ISSUE-004 잠금은 T77·P). 카탈로그 점검 통과
+- 2026-11-28 20:15 T109 진행 — 교사 요청으로 #181 합치기 준비: main 받아 충돌 해결. 검토 🔴🟡🟢 는 claude-web-173 의 같은 수정(7678f25)이 먼저 올라와 그 버전을 채택(내 중복 수정은 버림). 합친 시험 수업 비서 전체 통과

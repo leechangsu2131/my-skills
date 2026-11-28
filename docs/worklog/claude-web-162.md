@@ -59,3 +59,4 @@
 - 2026-11-28 15:29 S8 (util-chrome-profiles) 시작 (브랜치 task/S8-util-chrome-profiles-issues)
 - 2026-11-28 15:30 S8 (util-chrome-profiles) PR 올림 — ISSUE-006 작업 시간 기록: work_log.py(CSV 한 줄·합계 CLI)·stop_work 연결·test_work_log.py 7개(변형 확인). 앱 실제 실행(Windows·PySide6)은 확인 필요
 - 2026-11-28 20:15 T109 진행 — 교사 요청으로 #181 합치기 준비: main 받아 충돌 해결. 검토 🔴🟡🟢 는 claude-web-173 의 같은 수정(7678f25)이 먼저 올라와 그 버전을 채택(내 중복 수정은 버림). 합친 시험 수업 비서 전체 통과
+- 2026-11-28 21:15 S8 (admin-neis-bot) 시작 (브랜치 task/S8-admin-neis-bot-issues)

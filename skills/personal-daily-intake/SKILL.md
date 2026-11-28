@@ -16,7 +16,10 @@ Notion·시트에는 처리할 것(할 일, 책 행)만 보낸다. mem 대신 �
 
 ## 흐름
 1. 제미나이에서 [gem_prompt.md](gem_prompt.md)의 지침으로 만든 제미나이 스킬에 하루 일을 쭉 말한다 → md 한 장을 받는다.
-2. 그 md를 `내 문서\my-skills-data\personal-daily-intake\inbox\YYYY-MM-DD.md`로 저장한다.
+2. 그 대화 화면에서 즐겨찾기 **'제미나이 내보내기'**(북마클릿)를 누른다 → 다운로드 폴더에 `하루기록-YYYY-MM-DD.md`(정리본)와
+   `gemini-날짜-제목.json`(내가 쓴 말·답 전부)이 생긴다. `plan`·`apply` 가 다운로드 폴더에서 집어 inbox·대화 보관 폴더(`gemini\`)로 옮긴다.
+   북마클릿 만들기: `python intake.py bookmarklet` → 클립보드의 주소를 Chrome 즐겨찾기 URL 칸에 붙여 넣기(한 번만).
+   북마클릿 없이: md 를 복사해 `내 문서\my-skills-data\personal-daily-intake\inbox\YYYY-MM-DD.md`로 저장해도 된다.
 3. Claude에게 "하루 기록 저장해줘" → Claude가 `plan`으로 표를 보여 준다 → 교사가 동의하면 `apply`.
 
 ## 언제 쓰나
@@ -50,6 +53,7 @@ python intake.py apply 파일.md --skip notion   # 인터넷·권한 문제로 �
 | 학생 | 후보만 — `classmanage-student-classifier` |
 | 투자 | 후보만 — 투자시트 분위기 일지(`personal-invest-sheet`) |
 | 업무·일기·습관 | 지금은 daily 에만 (Notion DB 연결 공유 전, ISSUE-001) |
+| 개선 | 데이터 폴더 `ideas.json` 에 적음(대상 스킬을 낱말로 짐작) → `python intake.py ideas` 로 보고, 교사가 고른 것을 그 스킬 `ISSUES.md` 📌 백로그로 옮김 → S8 로 작업자에게 감 |
 | 모든 조각 | 볼트 `daily/YYYY-MM-DD.md` (원문 그대로 + '보낸 곳' 목록) |
 
 ## Claude 행동 지침
@@ -57,8 +61,10 @@ python intake.py apply 파일.md --skip notion   # 인터넷·권한 문제로 �
 - 원문은 고치지 않는다. 기존 노트는 고치지 않는다(새 파일만 만든다). 후보는 교사가 고르면 그때 손으로 반영한다.
 - 공명은 교사가 직접 한 말만 — 제미나이가 `공명: 없음`이면 비워 둔다.
 - 민감 조각(학생 이름·가족·건강·남의 사적인 일)은 화면 표에 제목을 내지 않는다. 볼트에는 넣되 `민감: true`를 단다.
+- **개선 아이디어 옮기기**: apply 뒤 `python intake.py ideas` 표를 보여 주고, 교사가 고른 번호를 그 스킬 `ISSUES.md` 📌 백로그 맨 위에 `### ISSUE-<다음 번호>: <제목> (날짜)` + `- **상태**: 📌 백로그 — 교사 아이디어(하루 기록 <날짜>)` + 내용으로 적는다. my-skills 는 공개 저장소라 학생 이름·사적인 내용은 빼고 기능만 쓴다. 대상이 `HomePage`·`invest-sheet(GitLab)`이면 그 저장소의 ISSUES 에, `(대상 확인 필요)`면 교사에게 묻는다. 옮긴 뒤 `python intake.py ideas --done <번호들>`.
 - 볼트 파일은 직접 커밋하지 않는다. 이창수의 Obsidian Git 자동 백업이 올린다(볼트 작업자 가이드).
 
 ## 문서
+- [gemini_bookmarklet.js](gemini_bookmarklet.js) — 제미나이 대화 내보내기 북마클릿 원본(`python intake.py bookmarklet` 이 한 줄로 만듦)
 - [gem_prompt.md](gem_prompt.md) — 제미나이 스킬 지침(형식을 바꾸면 `intake.py`도)
 - [ISSUES.md](ISSUES.md) — 문제·해결 기록, 진행 중인 일

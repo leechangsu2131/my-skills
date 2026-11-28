@@ -11,7 +11,7 @@
 
 ## ★ 지금 집중: 수업 비서 (교사 결정 2026-11-26)
 
-교사가 매일 쓰는 것은 **수업 비서**다. 당분간 작업자는 아래 묶음만 고친다(다른 스킬은 잘 안 써서 고쳐도 도움이 안 됨).
+교사가 매일 쓰는 것은 **수업 비서**다. 아래 묶음이 먼저다. 체크리스트 일이 떨어지면 `--next` 가 **S8**(열린 이슈가 있는 스킬 하나 — 묶음 먼저, 그다음 열린 이슈·최근 커밋 많은 스킬)을 준다(교사 결정 2026-11-28: 수업 비서만 고치니 일이 금방 떨어짐). 교사가 바라는 기능은 그 스킬 `ISSUES.md` 에 적으면 작업자에게 간다.
 
 | 묶음 스킬 | 왜 |
 |---|---|
@@ -22,9 +22,9 @@
 | `teacherlesson-from-neis` | 시간표 변경을 수업 비서에 보여 줄 때만(T84) |
 | 저장소 공용 `tools/`·`docs/` | 작업자 협업 |
 
-- 고르는 순서: **K(수업 비서 큰 일, 체크리스트) → I(수업 비서 다음 일) → G → H → J → E** → 상시 일(S, 묶음 안에서만). `claim_task.py --next` 가 이 순서로 고른다.
+- 고르는 순서: **K(수업 비서 큰 일, 체크리스트) → I(수업 비서 다음 일) → G → H → J → E → S8(열린 이슈가 있는 스킬, `python tools/claim_task.py --skills` 로 순위)** → 그 밖의 상시 일(S). `claim_task.py --next` 가 이 순서로 고른다.
 - **상시 일(S)은 고를 일이 정말 없을 때만** — 2026-11-27 저녁 S1 시험·S2 검토 브랜치가 20개 넘게 쌓였다. K 일이 있으면 K 가 먼저. D 와 P 등급 일은 교사 PC 작업자(Antigravity 등)만.
-- 묶음 밖 스킬에서 문제를 보면 고치지 말고 그 스킬 `ISSUES.md` 에 한 줄만 적는다. 묶음 밖 '열림' 일은 `보류`(교사가 쓴다고 하면 다시 엶).
+- 잡은 일(스킬) 밖에서 문제를 보면 고치지 말고 그 스킬 `ISSUES.md` 에 한 줄만 적는다(그러면 나중에 S8 로 누군가 고침). 묶음 밖 TASKS '열림' 일은 여전히 `보류`.
 
 ## ★ 큰 프로젝트 — Codex·Antigravity (교사 결정 2026-11-26)
 
@@ -38,7 +38,7 @@ Codex·Antigravity 는 토큰이 넉넉하고 교사와 길게 이야기하며 �
 | P2 | 로컬 IDE — Codex (교사와 함께) | 휴대폰(전화)에서 쓰는 기능·화면 개선 | — | 화면 배치·스타일(가능하면 새 `web/*.css`·`web/*.js`) | 진행 중 — 1차(휴대폰 화면 `web/mobile.css`) 합침 2026-11-26 |
 | P3 | (비어 있음) | 차시 자료 바로 열기 완성: 이름 맞추기, 미술·사회 도우미 | T82, T87, T88 | `sites/` | 열림 |
 | P4 | (비어 있음) | 진도 안정화: 따라잡기 뒤 뒤 차시 밀기, 쓰기 잠금, 2026-11-26 Codex 가 넣은 **교시 과목 바꾸기**(`supabase_schedule.replace_subject_period`) 가짜 시험 — 지금 시험 없음 | T79, T77 | `supabase_schedule.py`, `teacherlesson-schedule/server.py` | 열림 |
-| P5 | (비어 있음) | 녹음·받아쓰기: 조각 재전송, 받아쓰기·수업 분석 연결 | T71(진행 중 브랜치 이어받기), T73 | `transcribe.py`, 녹음 부분 | 열림 — T71·T73 끝. 다음: 클로바노트 txt 를 받아 진도·지도서와 맞춘 수업 분석(교사 PC 의 OneDrive 수업분석 폴더에 임시 도구 있음) |
+| P5 | (비어 있음) | 녹음·받아쓰기: 조각 재전송, 받아쓰기·수업 분석 연결, **🎤 음성 메모를 내 PC 받아쓰기로(구글 서버 안 거치게, ISSUE-053 ③ 2026-11-28 추가)** | T71(진행 중 브랜치 이어받기), T73 | `transcribe.py`, 녹음 부분 | 열림 — T71·T73 끝. 다음: 클로바노트 txt 를 받아 진도·지도서와 맞춘 수업 분석(교사 PC 의 OneDrive 수업분석 폴더에 임시 도구 있음) |
 
 - **로컬 IDE(Codex·Antigravity)는 교사 PC 의 원래 `my-skills` 폴더에서 한 번에 하나**(교대). 받고 올리기는 `python tools/sync_work.py start/save/end`([WORKER_GUIDE 2-2](WORKER_GUIDE.md)). 클라우드 Codex·Claude 웹은 GitHub 에서 따로 일하므로 함께 돌아도 됨.
 - **`web/index.html`·`assistant_server.py` 는 P1·P2 가 같이 건드린다** → 새 기능은 새 파일로, 큰 파일에는 불러오는 몇 줄만. 먼저 합쳐진 쪽 뒤에 다른 쪽이 바로 main 을 받아 맞춘다.
@@ -58,11 +58,16 @@ Codex·Antigravity 는 토큰이 넉넉하고 교사와 길게 이야기하며 �
 | T105 | **교실 PC 새 Chrome 창 전면 표시 고치기**(ISSUE-002·042, T102 재현): NotebookLM·수업 사이트 요청은 성공 안내가 나와도 새 창이 창 목록·전면에 안 보임. ① 공용 Chrome 프로필로 실제 새 창이 생기는지 확인 ② `wait_for_new_window`가 못 찾는 원인 기록 ③ 필요하면 `debug_port` CDP `Page.bringToFront` 연결 ④ 모니터 1대면 남는 영역, 2대면 오른쪽 모니터 배치 실제 확인 ⑤ 가짜 user32·CDP 시험 | `assistant_server.py`, `test_assistant_server.py`, ISSUE-002·042 | NotebookLM·사이트 창이 실제로 보이고 배치됨, 시험 통과 | P · 열림 |
 | T102 | **교실 PC 확인 묶음**(ISSUES 에 '교실 PC 확인 대기'로 쌓인 것 한 번에): ISSUE-042(☀ 오늘 준비·🌙 내일 준비·📞 검색·오른쪽 모니터), ISSUE-046(옛 사회 기록 분리 알림), ISSUE-048(녹음 목록·재생·내려받기), ISSUE-049(바로가기 실행 때 `py` 없음 오류), ISSUE-002(NotebookLM 새 창). 하나씩 실제로 눌러 보고 ISSUES 를 🟢 또는 '남은 것 — 무엇'으로. **진도·DB 는 바꾸지 않음**(보기만), 고칠 것이 나오면 K 에 새 일로 적어 PR 설명에 | ISSUES.md(상태만) | 다섯 개 모두 🟢 또는 남은 것 적힘 | P · 완료 |
 | T103 | **다음 주 수업 미리 준비 + 점검**(T43·T40 실행 부분): 다음 주 날마다 `prepare_lessons.py --date` → 실패 차시 목록 → T101 `flow_check.py` 로 만든 흐름 점검 → `데이터 폴더/reports/flow_check_<날짜>.md`(저장소 밖). 흐름은 고치지 않고, 반복되는 실패 원인을 ISSUES 에 | (코드 안 고침) ISSUES.md | 보고 파일 + 실패 원인 ISSUES 기록 | P · 열림 |
-| T106 | **💬 학생 대응 멘트 도우미**(ISSUE-052 ①, 참고: 쌤동네 '학생 대응 멘트 도우미'). 수업 중 아이가 한 말·행동 단추를 누르면 교육적으로 맞는 대답 2~3개를 띄운다. **AI 호출 없이** 문장 파일만(토큰 0 원칙). ① 새 `web/ment.json` — 상황 12개 이상(떠들기·"못 해요" 포기·거부·다툼·남 탓·고자질·자리 이탈·장난·울음·무시하기·늦게 옴·과제 안 함), 상황마다 대답 2~3개 + 바탕 원리 한 줄(나-전달법, 감정 읽기, 선택권 주기, 성장 마인드셋, 행동과 사람 나누기 등) ② 새 `web/ment.js` — 오른쪽 작은 칸 또는 접는 칸, 상황 단추 → 대답 크게, 📋 복사 ③ '이번 주 집중 하나' — 교사가 고친 행동 하나를 골라 두면 칸 맨 위에 늘 보임(localStorage) ④ 교사가 자기 대답을 덧붙이면 데이터 폴더 `ment_custom.json` 에(저장소 아님) ⑤ 누른 횟수만 날짜·상황별로 세서 주간 정리에 `상황별 몇 번`(이름 없음) ⑥ 시험: json 모양 검사·custom 합치기 | 새 `web/ment.json`·`web/ment.js`, `assistant_server.py`(custom 읽기·쓰기 경로 몇 줄), `web/index.html`(불러오기 몇 줄), 시험 | ①~⑥, 전체 시험 통과 — **문장 내용은 교사 검토**(PR 설명에 표로) | R · 열림 |
-| T107 | **📅 오늘·이번 주 일정과 할 일 칸**(ISSUE-052 ②, 참고: 굿데이티처 캘린더·D-day·AI 알림·할 일). 일정DB 시트(`school-todo-kakao`, 카톡 아침 알림과 같은 시트)를 **읽어** 수업 비서 위쪽에 보여 준다. ① 새 `schedule_panel.py` 순수 함수: 일정DB 행 → 오늘 행사(학교·출장·공지), 이번 주 남은 일정, 기한 있는 할 일(구분 `개인`, ✔ 없는 것) `D-n` — 규칙은 `schooltodo/message.py` 와 같게(가능하면 그 함수를 불러 씀) ② `GET /api/agenda` — 시트는 `schooltodo.db.SheetsDb.from_env()` 로 읽고 10분 캐시, 실패하면 빈 목록과 이유 ③ 새 `web/agenda.js` — 위쪽 한 줄 요약("오늘 출장 1 · 할 일 D-1 2"), 누르면 펼침 ④ ➕ 빠른 할 일: 입력하면 시트의 '빠른입력' 탭에 한 줄(다음 sync 가 일정DB 로 옮김, `schooltodo/inbox.py` 규칙) — **확인 창 뒤에만 씀** ⑤ 쉬는 시간(교시 사이)에 다음 교시 과목 + 오늘 남은 할 일 수를 '지금 할 일' 카드 아래 한 줄로 ⑥ 가짜 시트 시험 | 새 `schedule_panel.py`·`web/agenda.js`, `assistant_server.py`(경로 몇 줄), `web/index.html`(불러오기 몇 줄), 시험 | ①~⑥, 전체 시험 통과 — 실제 시트 읽기는 교사 PC 에서 | R · 열림 |
-| T108 | **✅ 제출 확인표**(ISSUE-052 ③, 참고: 굿데이티처 제출 확인표). 동의서·신청서·과제를 누가 냈는지 번호 칸을 눌러 체크. ① 새 `submissions.py` — 데이터 폴더 `submissions/<제목>.json`(번호→낸 날짜), 만들기·체크·안 낸 번호 목록 순수 함수 ② `GET/POST /api/submissions` ③ 새 `web/submissions.js` — 번호 칸 표(반 인원은 config, 이름은 데이터 폴더 명단 파일이 있으면 그 PC 화면에만), 안 낸 번호 복사 단추(알림장용) ④ 저장소·서버 밖으로 보내지 않음, 화면 출력·로그에 이름 없음 ⑤ 가짜 명단 시험 | 새 `submissions.py`·`web/submissions.js`, `assistant_server.py`(경로 몇 줄), 시험 | ①~⑤, 전체 시험 통과 | R · 열림 |
-| T109 | **🍱 급식·날씨 작은 칸**(ISSUE-052 ④, 참고: 굿데이티처). ① 새 `school_info.py` — 급식: NEIS 교육정보 개방 포털 급식 API(학교 코드는 중앙 `.env` `TEACHERLESSON_ASSISTANT__SCHOOL_CODE`·`__OFFICE_CODE`, 키가 있으면 `NEIS_OPEN_API_KEY`), 날씨: 키 없는 open-meteo(좌표는 `.env`) — 하루 한 번 캐시 ② `GET /api/school-info` ③ 새 `web/school_info.js` — 위쪽 오른쪽에 "🍱 오늘 메뉴 · ☀ 12°" 한 줄, 알레르기 번호는 지움 ④ 인터넷이 없으면 조용히 숨김 ⑤ 가짜 응답 시험 | 새 `school_info.py`·`web/school_info.js`, `assistant_server.py`(경로 몇 줄), 시험 | ①~⑤, 전체 시험 통과 — 학교 코드는 교사가 `.env` 에 | R · 열림 |
-| T110 | **🌙 어두운 화면·칸 접기·숨기기**(ISSUE-052 ⑤, 참고: 굿데이티처 꾸미기). ① 새 `web/theme.css`·`web/layout.js` — 밝은/어두운 화면 단추, 칸(지금 할 일·사이트 목록·메모·새로 생기는 일정·멘트 칸)마다 접기·숨기기, 설정은 localStorage ② 수업 진행(🎯) 화면은 그대로 크게 ③ P2(휴대폰 화면 `mobile.css`)와 겹치지 않게 — 먼저 main 을 받고 `mobile.css` 규칙을 덮지 않는지 확인 | 새 `web/theme.css`·`web/layout.js`, `web/index.html`(불러오기 몇 줄) | 두 화면·접기·숨기기가 새로 고쳐도 유지, JS 시험 통과 | R · 열림 |
+| T106 | **💬 학생 대응 멘트 도우미**(ISSUE-052 ①, 참고: 쌤동네 '학생 대응 멘트 도우미'). 수업 중 아이가 한 말·행동 단추를 누르면 교육적으로 맞는 대답 2~3개를 띄운다. **AI 호출 없이** 문장 파일만(토큰 0 원칙). ① 새 `web/ment.json` — 상황 12개 이상(떠들기·"못 해요" 포기·거부·다툼·남 탓·고자질·자리 이탈·장난·울음·무시하기·늦게 옴·과제 안 함), 상황마다 대답 2~3개 + 바탕 원리 한 줄(나-전달법, 감정 읽기, 선택권 주기, 성장 마인드셋, 행동과 사람 나누기 등) ② 새 `web/ment.js` — 오른쪽 작은 칸 또는 접는 칸, 상황 단추 → 대답 크게, 📋 복사 ③ '이번 주 집중 하나' — 교사가 고친 행동 하나를 골라 두면 칸 맨 위에 늘 보임(localStorage) ④ 교사가 자기 대답을 덧붙이면 데이터 폴더 `ment_custom.json` 에(저장소 아님) ⑤ 누른 횟수만 날짜·상황별로 세서 주간 정리에 `상황별 몇 번`(이름 없음) ⑥ 시험: json 모양 검사·custom 합치기 | 새 `web/ment.json`·`web/ment.js`, `assistant_server.py`(custom 읽기·쓰기 경로 몇 줄), `web/index.html`(불러오기 몇 줄), 시험 | ①~⑥, 전체 시험 통과 — **문장 내용은 교사 검토**(PR 설명에 표로) — 검토 🔴(접은 멘트 칸이 🎯 수업 진행 '다음 단계' 단추를 가림, [docs/reviews/task-T106-work.md](reviews/task-T106-work.md)): 이어받는 사람은 `task/T106-work` 에서 고치고 main 받기(충돌은 양쪽 줄 남기기) | R · 열림 |
+| T107 | **📅 오늘·이번 주 일정과 할 일 칸**(ISSUE-052 ②, 참고: 굿데이티처 캘린더·D-day·AI 알림·할 일). 일정DB 시트(`school-todo-kakao`, 카톡 아침 알림과 같은 시트)를 **읽어** 수업 비서 위쪽에 보여 준다. ① 새 `schedule_panel.py` 순수 함수: 일정DB 행 → 오늘 행사(학교·출장·공지), 이번 주 남은 일정, 기한 있는 할 일(구분 `개인`, ✔ 없는 것) `D-n` — 규칙은 `schooltodo/message.py` 와 같게(가능하면 그 함수를 불러 씀) ② `GET /api/agenda` — 시트는 `schooltodo.db.SheetsDb.from_env()` 로 읽고 10분 캐시, 실패하면 빈 목록과 이유 ③ 새 `web/agenda.js` — 위쪽 한 줄 요약("오늘 출장 1 · 할 일 D-1 2"), 누르면 펼침 ④ ➕ 빠른 할 일: 입력하면 시트의 '빠른입력' 탭에 한 줄(다음 sync 가 일정DB 로 옮김, `schooltodo/inbox.py` 규칙) — **확인 창 뒤에만 씀** ⑤ 쉬는 시간(교시 사이)에 다음 교시 과목 + 오늘 남은 할 일 수를 '지금 할 일' 카드 아래 한 줄로 ⑥ 가짜 시트 시험 | 새 `schedule_panel.py`·`web/agenda.js`, `assistant_server.py`(경로 몇 줄), `web/index.html`(불러오기 몇 줄), 시험 | ①~⑥, 전체 시험 통과 — 실제 시트 읽기는 교사 PC 에서 | R · 완료 |
+| T108 | **✅ 제출 확인표**(ISSUE-052 ③, 참고: 굿데이티처 제출 확인표). 동의서·신청서·과제를 누가 냈는지 번호 칸을 눌러 체크. ① 새 `submissions.py` — 데이터 폴더 `submissions/<제목>.json`(번호→낸 날짜), 만들기·체크·안 낸 번호 목록 순수 함수 ② `GET/POST /api/submissions` ③ 새 `web/submissions.js` — 번호 칸 표(반 인원은 config, 이름은 데이터 폴더 명단 파일이 있으면 그 PC 화면에만), 안 낸 번호 복사 단추(알림장용) ④ 저장소·서버 밖으로 보내지 않음, 화면 출력·로그에 이름 없음 ⑤ 가짜 명단 시험 | 새 `submissions.py`·`web/submissions.js`, `assistant_server.py`(경로 몇 줄), 시험 | ①~⑤, 전체 시험 통과 | R · 완료 |
+| T109 | **🍱 급식·날씨 작은 칸**(ISSUE-052 ④, 참고: 굿데이티처). ① 새 `school_info.py` — 급식: NEIS 교육정보 개방 포털 급식 API(중앙 `.env` 공용 키 `NEIS_SCHOOL_CODE`·`NEIS_OFFICE_CODE`·`NEIS_API_KEY` — 교사가 넣었고 급식 조회 됨, 2026-11-28), 날씨: 키 없는 open-meteo(좌표는 `.env`) — 하루 한 번 캐시 ② `GET /api/school-info` ③ 새 `web/school_info.js` — 위쪽 오른쪽에 "🍱 오늘 메뉴 · ☀ 12°" 한 줄, 알레르기 번호는 지움 ④ 인터넷이 없으면 조용히 숨김 ⑤ 가짜 응답 시험 | 새 `school_info.py`·`web/school_info.js`, `assistant_server.py`(경로 몇 줄), 시험 | ①~⑤, 전체 시험 통과 — 실제 조회는 교사 PC(키 있음) — 검토 🔴(중앙 `.env` 공용 이름·좌표를 못 읽어 날씨가 안 나옴, [docs/reviews/task-T109-school-info.md](reviews/task-T109-school-info.md)): 이어받는 사람은 `task/T109-school-info` 에서 고치고 main 받기(충돌은 양쪽 줄 남기기) | R · 열림 |
+| T110 | **🌙 어두운 화면·칸 접기·숨기기**(ISSUE-052 ⑤, 참고: 굿데이티처 꾸미기). ① 새 `web/theme.css`·`web/layout.js` — 밝은/어두운 화면 단추, 칸(지금 할 일·사이트 목록·메모·새로 생기는 일정·멘트 칸)마다 접기·숨기기, 설정은 localStorage ② 수업 진행(🎯) 화면은 그대로 크게 ③ P2(휴대폰 화면 `mobile.css`)와 겹치지 않게 — 먼저 main 을 받고 `mobile.css` 규칙을 덮지 않는지 확인 | 새 `web/theme.css`·`web/layout.js`, `web/index.html`(불러오기 몇 줄) | 두 화면·접기·숨기기가 새로 고쳐도 유지, JS 시험 통과 | R · 완료 |
+| T111 | **받아쓰기 고쳐 쓰기 사전**(ISSUE-053 ①, 참고: RamBot '자주 쓰는 말·고쳐 쓰기'). ① 데이터 폴더 `stt_words.json` — `자주 쓰는 말`(목록)·`고쳐 쓰기`(틀린 말→맞는 말). 학생 이름이 들어가므로 저장소에 넣지 않음, 저장소에는 `stt_words.example.json`(가짜 낱말) ② `transcribe.py` — faster-whisper 에 자주 쓰는 말을 힌트로(`initial_prompt`/`hotwords`, 길이 제한 지킴), 받아쓴 뒤 고쳐 쓰기 적용(낱말 경계만, 긴 것부터) ③ 수업 비서 화면 설정에 사전 고치는 칸(없으면 파일 직접) ④ 시험: 바꾸기 순서·겹침·경계, 힌트 길이 자르기 | `transcribe.py`, 새 `stt_words.example.json`, 시험 | ①~④, 전체 시험 통과 | R · 완료 |
+| T112 | **수업 중 말로 명령**(ISSUE-053 ②, 참고: RamBot 명령 모드). 🎯 수업 진행 화면에서만, 단추로 켜고 끄며 **기본은 꺼짐**. ① 새 `web/voice_cmd.js` — 정해진 말만: "다음 단계"·"이전 단계"·"타이머 N분"·"좋았음"·"고칠점"·"별표"·"녹음 시작/멈춰"(비슷하게 들려도 알아듣게 낱말 표), 그 밖의 말은 버리고 글로 남기지 않음 ② 듣는 중 표시 색(명령 파랑), 알아들으면 말풍선 "다음 단계로!" ③ 브라우저 음성 인식은 소리가 구글로 간다는 안내를 켤 때 한 번 ④ 명령 해석은 순수 함수로 JS 시험 | 새 `web/voice_cmd.js`, `web/index.html`(불러오기 몇 줄), 시험 | ①~④, JS 시험 통과 | R · 완료 |
+| T113 | **받아쓰기 사전 칸 다듬기**(teacherlesson-assistant, PR #192 검토 🟡 — [docs/reviews/task-PR192-195-stt-words-ui-check-setup.md](reviews/task-PR192-195-stt-words-ui-check-setup.md)). ① `🎙 받아쓰기 사전` 칸을 접었다 펴면 저장 안 한 글이 서버 값으로 덮여 사라짐 → 처음 한 번만 채우거나, 저장한 값이 바뀌었을 때만 채우기 ② `틀린 말 →`(오른쪽 비움)은 '지우기'로 저장됨 → 칸 안내 글에 "오른쪽을 비우면 그 말을 지워요" 한 줄 ③ README 의 `stt_words.json` 줄에서 "화면 편집 칸은 아직 없고" 문구 고치기(이제 칸 있음) | `web/stt_words.js`, `web/index.html`(안내 글 한 줄), `README.md` 한 줄, `tests/test_stt_words_ui.js` | ①~③, 펼침·접힘 시험 하나 추가, 전체 시험 통과 | R · 열림 |
+| T114 | **일정 칸 서비스 계정 값을 서버 환경 변수에 남기지 않기**(teacherlesson-assistant, T107 검토 🟡 — [docs/reviews/task-T107-schedule-panel.md](reviews/task-T107-schedule-panel.md)). `schedule_panel.py` `sheet_settings`(옛 검토 글에는 `apply_settings`) 가 `GOOGLE_SERVICE_ACCOUNT_JSON` 등을 `os.environ` 에 올려, 서버가 띄우는 ffmpeg·Chrome 이 물려받음 → 먼저 `SheetsDb` 가 값을 직접 받을 수 있는지 보고, 되면 직접 넘기기, 안 되면 시트를 여는 동안만 넣고 바로 지우기. 다른 스킬(school-todo-kakao) 파일은 고치지 않음 | `schedule_panel.py`, `tests/test_schedule_panel.py` | 시트를 연 뒤 `os.environ` 에 그 값이 남지 않는다는 시험, 전체 시험 통과 | R · 열림 |
+| T115 | **말로 명령·제출 확인표 작은 안전장치**(teacherlesson-assistant, PR #190·T108 검토 🟡 — [docs/reviews/task-PR190-voice-cmd.md](reviews/task-PR190-voice-cmd.md), [docs/reviews/task-T108-submissions-check.md](reviews/task-T108-submissions-check.md)). ① 말로 명령 "타이머 N분" 에 상한 60분(넘으면 무시하고 안내) ② 제출 확인표 `slug()` 가 윈도우 예약 이름(`con`·`nul`·`prn`·`aux`·`com1`~`lpt9`)을 거르기 ③ 제목 60자 제한·두 번째 저장(같은 파일 덮어쓰기, `os.replace`) 시험 ④ 점검표(checklist-manual)에 "명단 있는 PC 를 교실 큰 화면에 띄우면 이름이 보임" 한 줄 | `web/voice_cmd.js`, `submissions.py`, `tests/test_voice_cmd.js`, `tests/test_submissions.py`, `docs/checklist-manual.md` | ①~④, 전체 시험 통과 | R · 열림 |
 
 ## A. 자동 시험 쓰기 (R) — 소스는 고치지 말고 `tests/` 만. 네트워크·비밀값·실제 사이트 없이 가짜(mock)로. 버그는 그 스킬 ISSUES.md 에 기록하고 시험은 xfail
 
@@ -204,7 +209,7 @@ Codex·Antigravity 는 토큰이 넉넉하고 교사와 길게 이야기하며 �
 | T96 | T84 설계 이어서: 교사 PC 에서 나이스 주간학습안내에 보결·교체가 실제로 반영되는지 확인(설계 메모의 '확인 필요') → 반영되면 비교 함수·화면 표시 구현 일을 TASKS 에 나눠 적기, 안 되면 다른 자료원 메모 | `skills/teacherlesson-assistant/docs/plans/neis-timetable-change.md` 의 '확인 필요' 칸 | 확인 결과가 메모에 적힘 + 다음 일 번호 | P · 열림 |
 | T97 | T52 개선안(`docs/plans/T52-prompt.md`)을 `prepare_lessons.py` 의 `PROMPT` 에 넣기 — 교사가 개선안을 읽고 넣을 부분을 고른 뒤. 넣은 뒤 한 차시 🌙 준비로 전후 비교 | `prepare_lessons.py` 의 `PROMPT` | 같은 차시 전후 결과를 교사가 확인 | P · 결정 대기(교사가 개선안 검토) |
 
-## S. 상시 일 — 고를 일이 없을 때 (★ 수업 비서 묶음 안에서만. 번호를 브랜치에 넣고, 대상 스킬은 `--skill` 로)
+## S. 상시 일 — 고를 일이 없을 때 (번호를 브랜치에 넣고, 대상 스킬은 `--skill` 로. S8 은 `--next` 가 스킬까지 골라 줌)
 
 | 번호 | 할 일 | 등급 |
 |---|---|---|
@@ -213,6 +218,7 @@ Codex·Antigravity 는 토큰이 넉넉하고 교사와 길게 이야기하며 �
 | S3 | **묶음 스킬 ISSUES.md 열린 항목 하나 골라 재현 시험 만들기**(고치지는 말고 xfail 로) | R |
 | S4 | 묶음 스킬 하나 골라 SKILL.md·README 가 코드와 맞는지 확인, 틀린 설명만 고침 | R |
 | S5 | `python tools/build_catalog.py --check`·전체 시험을 돌려 깨진 것을 `docs/reviews/health-<날짜>.md` 로 | R |
+| S8 | **스킬 하나의 열린 이슈 고치기**(`--next` 가 고름: 묶음 먼저, 그다음 열린 이슈·최근 커밋 많은 스킬 — 브랜치 `task/S8-<스킬>`). 그 스킬 ISSUES 🔵·📌 가운데 실제 실행·교사 결정 없이 고칠 수 있는 것부터 — 고치고 가짜 시험 붙이고 🟢 로. 할 수 있는 데까지 여러 개, 하나마다 커밋·`진행` 줄. 교사 확인이 필요한 것은 건너뛰고 PR 설명에 | R |
 | S7 | 묶음 스킬 ISSUES 📌 백로그 항목 하나를 골라 "어떻게 만들면 될지" 짧은 설계 메모(파일 경로·함수 이름 수준) → `docs/plans/` | R |
 
 ## 원래 큰 계획 (교사 PC 의 Claude Code 가 함 — 참고)

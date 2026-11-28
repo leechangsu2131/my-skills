@@ -151,3 +151,63 @@ def test_sheet_failure_does_not_stop_rest(tmp_path):
     _, screen, fails = intake.apply(doc, intake.plan(doc), tmp_path, broken, FakeNotion(), now=datetime(2026, 11, 27))
     assert fails == 2 and (tmp_path / "daily/2026-11-27.md").exists()
     assert "실패: 인터넷 없음" in "\n".join(screen)
+
+
+def test_collect_downloads(tmp_path):
+    dl, inbox, arch = tmp_path / "Downloads", tmp_path / "inbox", tmp_path / "gemini"
+    dl.mkdir()
+    (dl / "하루기록-2026-11-28.md").write_text("---\ndate: 2026-11-28\n---\n", encoding="utf-8")
+    (dl / "gemini-2026-11-28-대화.json").write_text("{}", encoding="utf-8")
+    (dl / "다른파일.md").write_text("x", encoding="utf-8")
+    (inbox / "done").mkdir(parents=True)
+    (inbox / "done" / "2026-11-28.md").write_text("앞서 넣은 것", encoding="utf-8")  # 같은 날 두 번째
+    moved = intake.collect_downloads(dl, inbox, arch)
+    assert moved == ["2026-11-28-2.md", "gemini-2026-11-28-대화.json"]
+    assert (inbox / "2026-11-28-2.md").exists() and (dl / "다른파일.md").exists()
+    assert intake.collect_downloads(tmp_path / "없는폴더", inbox, arch) == []
+
+
+def test_bookmarklet_one_line():
+    url = intake.bookmarklet()
+    assert url.startswith("javascript:(function") and "\n" not in url and "/*" not in url
+    assert "#" not in url and "%23" in url  # 즐겨찾기 주소에서 # 은 잘림
+    assert url.isascii() and "\\ud558\\ub8e8" in url  # '하루' — 한글은 \uXXXX 로(복사하다 깨지지 않게)
+
+
+IDEAS = """---
+date: 2026-11-28
+---
+## 조각
+### [개선] 수업 비서에 다음 교시 준비물 알림
+- 대상: 수업 비서
+- 내용: 쉬는 시간에 다음 교시 준비물을 띄워 주면 좋겠다
+- 민감: 아니오
+
+### [개선] 카톡 아침 알림에 날씨도
+- 내용: 일정 시트 알림에 우산 챙기기
+- 민감: 아니오
+
+### [개선] 뭔가 불편했던 것
+- 내용: 김가나 일 처리할 때 불편
+- 민감: 예
+"""
+
+
+def test_improvement_ideas_go_to_list(tmp_path, capsys):
+    doc = intake.parse(IDEAS)
+    acts = intake.plan(doc)
+    assert [a.data["target"] for a in acts] == ["teacherlesson-assistant", "school-todo-kakao", "(대상 확인 필요)"]
+    ideas = tmp_path / "ideas.json"
+    _, screen, fails = intake.apply(doc, acts, tmp_path, FakeSheet(), FakeNotion(), now=datetime(2026, 11, 28), ideas=ideas)
+    assert fails == 0 and "아이디어 목록에 적음" in screen[1]
+    daily = (tmp_path / "daily/2026-11-28.md").read_text(encoding="utf-8")
+    assert "[개선] 수업 비서에 다음 교시 준비물 알림 → 개선 아이디어 → teacherlesson-assistant ISSUES 후보" in daily
+    # 다시 넣어도 두 번 적지 않음
+    intake.apply(doc, acts, tmp_path, FakeSheet(), FakeNotion(), now=datetime(2026, 11, 28), ideas=ideas)
+    assert intake.show_ideas(ideas) == 0
+    out = capsys.readouterr().out
+    assert out.count("| 새것 |") == 3 and "김가나" not in out
+    intake.show_ideas(ideas, done="1,2")
+    capsys.readouterr()
+    intake.show_ideas(ideas)
+    assert capsys.readouterr().out.count("| 새것 |") == 1

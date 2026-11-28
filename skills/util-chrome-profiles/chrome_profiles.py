@@ -1525,6 +1525,9 @@ class GroupPromptDialog(QDialog):
         super().accept()
 
 
+DEFAULT_GOTO_URL = "https://claude.ai/projects"
+
+
 class GotoDialog(QDialog):
     """사이트 이동 창: 주소(최근 주소 목록) + 방식(지금 탭 / 새 탭)."""
 
@@ -1532,10 +1535,13 @@ class GotoDialog(QDialog):
         super().__init__(parent)
         self.setWindowTitle("사이트 이동")
         self.resize(520, 220)
+        items = list(recent)
+        if DEFAULT_GOTO_URL not in items:
+            items.append(DEFAULT_GOTO_URL)
         self.url = QComboBox()
         self.url.setEditable(True)
-        self.url.addItems(recent)
-        self.url.setCurrentText(recent[0] if recent else "")
+        self.url.addItems(items)
+        self.url.setCurrentText(items[0])
         self.url.lineEdit().setPlaceholderText("예: naver.com, https://www.neis.go.kr")
         self.url.lineEdit().selectAll()
         self.this_tab = QRadioButton("지금 보는 탭을 이 주소로 (창이 하나씩 앞으로 와서 주소창에 넣음)")
@@ -1878,6 +1884,12 @@ class Manager(QMainWindow):
         self.overdue_button.clicked.connect(lambda: self.close_work_windows(self.overdue_keys()))
         self.overdue_button.hide()
         thumb_bar.addWidget(self.overdue_button)
+        self.pause_close_button = QPushButton()
+        self.pause_close_button.setToolTip("사용량이 일시 중지된 프로필의 열린 창을 한꺼번에 닫는다(닫기 전에 묻는다)")
+        self.pause_close_button.setStyleSheet("QPushButton { color: #90c0ff; }")
+        self.pause_close_button.clicked.connect(self.close_paused_windows)
+        self.pause_close_button.hide()
+        thumb_bar.addWidget(self.pause_close_button)
         self.restore_button = QPushButton()
         self.restore_button.setToolTip("최소화된 창은 그림이 멈춘다. 앞으로 가져오지 않고 지금 하던 작업 뒤쪽에 펼쳐 두면 미리보기가 계속 바뀐다")
         self.restore_button.clicked.connect(self.restore_minimized)
@@ -2845,7 +2857,31 @@ class Manager(QMainWindow):
             name = email.split("@")[0]
         return prefix + name
 
+    def paused_windows(self, now_dt: datetime | None = None) -> list[int]:
+        """사용량 일시 중지 중인 프로필의 열린 창 목록(트리 순서)."""
+        now_dt = now_dt or datetime.now()
+        result = []
+        for hwnd in sorted(self.windows, key=self.sort_key):
+            resume = self.pause_of(self.windows[hwnd]["key"])
+            if resume and resume > now_dt:
+                result.append(hwnd)
+        return result
+
+    def close_paused_windows(self, *_):
+        """사용량이 일시 중지된 프로필의 열린 창을 확인 뒤 한꺼번에 닫는다."""
+        targets = self.paused_windows()
+        if not targets:
+            QMessageBox.information(self, "일시 중지 일괄 닫기", "닫을 일시 중지 창이 없습니다.")
+            return
+        self.confirm_close(targets, "사용량 일시 중지된 창")
+
     def update_pause_summary(self, now_dt: datetime):
+        paused_hwnds = self.paused_windows(now_dt)
+        if paused_hwnds:
+            self.pause_close_button.setText(f"⏸ 일시 중지 일괄 닫기 ({len(paused_hwnds)})")
+            self.pause_close_button.show()
+        else:
+            self.pause_close_button.hide()
         rows = [(name, resume) for name, resume, ok in usage_pause.due(self.pauses, now_dt) if not ok]
         if not rows:
             self.pause_summary.hide()
@@ -3133,11 +3169,40 @@ class Manager(QMainWindow):
             sub.addAction(f"{hours}시간 뒤", lambda h=hours: apply(h))
         sub.addAction("알림 없음", lambda: apply(0))
         sub.addAction("직접 입력…", lambda: (lambda h: h is not None and apply(h))(self.ask_alert_hours()))
-        if item.data(0, ROLE):
+        selected_items = self.tree.selectedItems()
+        selected_keys = self.selected_profiles()
+        if len(selected_items) > 1 and selected_keys:
+            launchable = [k for k in selected_keys if k in self.profile_info]
+            open_hwnds = [h for h in sorted(self.windows, key=self.sort_key)
+                          if self.windows[h]["key"] in set(selected_keys)]
             menu.addSeparator()
-            menu.addAction("열기", lambda: self.open_profiles([item.data(0, ROLE)]))
+            if launchable:
+                menu.addAction(f"고른 프로필 {len(launchable)}개 열기",
+                               lambda keys=launchable: self.open_profiles(keys))
+            close_act = menu.addAction(
+                f"고른 프로필 창 닫기 ({len(open_hwnds)}개)",
+                lambda hwnds=open_hwnds, n=len(selected_keys): self.confirm_close(hwnds, f"고른 프로필 {n}개의 창"),
+            )
+            close_act.setEnabled(bool(open_hwnds))
+        elif item.data(0, ROLE):
+            key = item.data(0, ROLE)
+            hwnds = [h for h in sorted(self.windows, key=self.sort_key) if self.windows[h]["key"] == key]
+            menu.addSeparator()
+            menu.addAction("열기", lambda k=key: self.open_profiles([k]))
+            close_act = menu.addAction(
+                f"이 프로필 창 닫기 ({len(hwnds)}개)",
+                lambda hs=hwnds: self.confirm_close(hs, "이 프로필의 창"),
+            )
+            close_act.setEnabled(bool(hwnds))
         elif item is not self.other_group:   # 그룹
             group = item.text(0)
+            hwnds = self.work_windows(f"group:{group}")
+            menu.addSeparator()
+            close_act = menu.addAction(
+                f"이 그룹 창 닫기 ({len(hwnds)}개)",
+                lambda hs=hwnds, g=group: self.confirm_close(hs, f"그룹 '{g}'의 창"),
+            )
+            close_act.setEnabled(bool(hwnds))
             menu.addSeparator()
             menu.addAction("이 그룹: 이전 작업 이어서",
                            lambda: self.run_group_mode("continue", targets=self.work_windows(f"group:{group}")))

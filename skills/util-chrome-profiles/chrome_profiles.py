@@ -800,7 +800,7 @@ def close_instructions(hwnd: int, save: bool) -> bool:
     if not button:
         return False
     button.GetInvokePattern().Invoke()
-    for _ in range(20):  # 편집 창이 닫힐 때까지
+    for _ in range(40):  # 편집 창이 닫힐 때까지(저장은 몇 초 걸릴 수 있음)
         time.sleep(0.25)
         if not _by_name(hwnd, INSTR_FIELD, "EditControl"):
             return True
@@ -811,23 +811,56 @@ def field_value(field) -> str:
     return (field.GetValuePattern().Value or "").replace("\r\n", "\n")
 
 
+def same_text(a: str, b: str) -> bool:
+    """줄바꿈 모양·줄 끝 공백·앞뒤 빈 줄 차이는 같은 글로 본다."""
+    norm = lambda t: "\n".join(line.rstrip() for line in t.replace("\r\n", "\n").split("\n")).strip()
+    return norm(a) == norm(b)
+
+
+def read_field(field, timeout: float = 4.0) -> str:
+    """편집 창이 막 열려 글이 아직 불러와지는 중일 수 있어, 연달아 두 번 같은 값이 나올 때까지 기다려 읽는다."""
+    last = field_value(field)
+    end = time.time() + timeout
+    while time.time() < end:
+        time.sleep(0.35)
+        now = field_value(field)
+        if now == last and (now or time.time() > end - timeout / 2):   # 빈 칸이면 조금 더 기다려 본다
+            return now
+        last = now
+    return last
+
+
 def fill_field(hwnd: int, field, text: str) -> bool:
     """글칸을 실제 키보드처럼 채운다(전체 선택 → 붙여넣기). 창이 맨 앞이고 글칸 글이 text 와 같으면 True."""
     if win32gui.GetForegroundWindow() != hwnd and not activate(hwnd):
         return False
-    field.SetFocus()
-    time.sleep(0.15)
+    auto, client = _uia()
+    for _ in range(10):   # 편집 창이 막 열린 참이면 초점이 늦게 들어간다 — 정말 그 글칸에 들어갔는지 확인
+        try:
+            field.SetFocus()
+        except Exception:
+            pass
+        time.sleep(0.2)
+        focused = auto.GetFocusedControl()
+        if focused and client.CompareElements(focused.Element, field.Element):
+            break
+    else:
+        return False
     set_clipboard(text)
     # 키를 누르기 바로 전마다 맨 앞 창을 다시 본다(그 사이 다른 창이 앞으로 오면 그 창 글이 바뀌지 않게)
     if win32gui.GetForegroundWindow() != hwnd:
         return False
     press_keys([win32con.VK_CONTROL], ord("A"))
-    time.sleep(0.05)
+    time.sleep(0.1)
     if win32gui.GetForegroundWindow() != hwnd:
         return False
     press_ctrl_v()
-    time.sleep(0.6)
-    return win32gui.GetForegroundWindow() == hwnd and field_value(field).strip() == text.strip()
+    end = time.time() + 6.0   # 긴 글은 붙여 넣은 뒤 화면에 반영되기까지 시간이 걸린다
+    while time.time() < end:
+        time.sleep(0.3)
+        if same_text(field_value(field), text):
+            return win32gui.GetForegroundWindow() == hwnd
+    return False
 
 
 def _aria(control, name: str) -> str | None:
@@ -930,14 +963,18 @@ def reload_and_read_instructions(hwnd: int, wait: float = 20.0) -> str | None:
     if win32gui.GetForegroundWindow() != hwnd and not activate(hwnd):
         return None
     press_keys([], win32con.VK_F5)
-    time.sleep(2.0)
+    gone = time.time() + 5   # 옛 페이지가 사라질 때까지(안 그러면 새로 고치기 전 페이지를 읽을 수 있음)
+    while time.time() < gone and _by_name(hwnd, INSTR_EDIT_BUTTON, "ButtonControl"):
+        time.sleep(0.2)
+    time.sleep(1.0)
     end = time.time() + wait
     while time.time() < end and not _by_name(hwnd, INSTR_EDIT_BUTTON, "ButtonControl"):
         time.sleep(0.5)
+    time.sleep(0.8)
     field = open_instructions(hwnd)
     if not field:
         return None
-    value = field_value(field)
+    value = read_field(field)
     close_instructions(hwnd, save=False)
     return value
 
@@ -3112,7 +3149,7 @@ class Manager(QMainWindow):
                     if not field:
                         skipped.append(f"{label} — '지침 편집'을 못 엶")
                         continue
-                    current = field_value(field)
+                    current = read_field(field)
                     close_instructions(hwnd, save=False)
                 except Exception as e:
                     skipped.append(f"{label} — 읽기 오류 {e.__class__.__name__}")
@@ -3122,7 +3159,7 @@ class Manager(QMainWindow):
                     skipped.append(f"{label} — 첫 줄이 [ 로 시작하지 않음: {first[:30]}")
                     continue
                 new = compose_instructions(current, body, keep)
-                if new.strip() == current.strip():
+                if same_text(new, current):
                     skipped.append(f"{label} — 이미 같은 지침")
                     continue
                 plans.append((hwnd, label, current, new, url))
@@ -3161,7 +3198,7 @@ class Manager(QMainWindow):
                     if not field:
                         failed.append(f"{label} — 편집 창을 못 엶")
                         continue
-                    if field_value(field).strip() != current.strip():
+                    if not same_text(read_field(field), current):
                         close_instructions(hwnd, save=False)
                         failed.append(f"{label} — 지침이 1단계에서 읽은 것과 달라 건너뜀(다시 해 주세요)")
                         continue
@@ -3175,7 +3212,7 @@ class Manager(QMainWindow):
                         if preview_only and ok:
                             time.sleep(0.8)  # 눈으로 볼 틈
                         # claude.ai 는 취소해도 쓴 글이 그 페이지에 남아 있다가 다음 저장 때 들어갈 수 있어, 원래 글로 되돌리고 취소
-                        restored = field_value(field).strip() == current.strip() or fill_field(hwnd, field, current)
+                        restored = same_text(field_value(field), current) or fill_field(hwnd, field, current)
                         close_instructions(hwnd, save=False)
                         if ok:
                             done.append(label if restored else f"{label} (원래 글 되돌리기 확인 못 함 — 그 창은 새로 고침 권장)")
@@ -3187,7 +3224,7 @@ class Manager(QMainWindow):
                         failed.append(f"{label} — '지침 저장' 뒤 편집 창이 안 닫힘(확인 필요)")
                         continue
                     saved = reload_and_read_instructions(hwnd)
-                    if saved is not None and saved.strip() == new.strip():
+                    if saved is not None and same_text(saved, new):
                         done.append(label)
                     else:
                         failed.append(f"{label} — 저장 뒤 새로 고쳐 읽은 글이 다름(확인 필요)")

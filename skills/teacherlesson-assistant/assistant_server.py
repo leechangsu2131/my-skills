@@ -38,6 +38,7 @@ sys.path.insert(0, str(next(p / "_shared" for p in SKILL_DIR.parents if (p / "_s
 from skill_env import data_dir, env_values  # noqa: E402
 sys.path.insert(0, str(SKILL_DIR))
 import audio_export  # noqa: E402  (녹음 → 클로바노트용 MP3, T99)
+import schedule_panel  # noqa: E402  (일정·할 일 칸, T107)
 
 SKILL = "teacherlesson-assistant"
 DATA = data_dir(SKILL)
@@ -906,6 +907,8 @@ class Handler(BaseHTTPRequestHandler):
             return self._send(200, (WEB / "recording_export.js").read_bytes(), "application/javascript; charset=utf-8")
         if url.path == "/overdue.js":
             return self._send(200, (WEB / "overdue.js").read_bytes(), "application/javascript; charset=utf-8")
+        if url.path == "/agenda.js":
+            return self._send(200, (WEB / "agenda.js").read_bytes(), "application/javascript; charset=utf-8")
         if url.path == "/mobile.css":
             return self._send(200, (WEB / "mobile.css").read_bytes(), "text/css; charset=utf-8")
         if url.path == "/api/state":
@@ -948,6 +951,8 @@ class Handler(BaseHTTPRequestHandler):
                 return self._json({"status": "success", "items": supabase_schedule.subject_names()})
             except (ValueError, RuntimeError, urllib.error.URLError, OSError) as exc:
                 return self._json({"status": "error", "message": str(exc) or "과목 목록을 불러오지 못했어요."}, 502)
+        if url.path == "/api/agenda":
+            return self._json(schedule_panel.PANEL.agenda(date.today(), refresh=q.get("refresh") == ["1"]))
         if url.path == "/api/prepare-status":
             return self._json(prepare_status())
         if url.path.startswith("/api/unit-pdf/"):
@@ -997,6 +1002,8 @@ class Handler(BaseHTTPRequestHandler):
                 return self._json(ask_prepare(body))
             if url.path == "/api/session":
                 return self._json(save_session(body))
+            if url.path == "/api/agenda/add":  # confirm: true 일 때만 시트에 쓴다
+                return self._json(schedule_panel.PANEL.quick(body, date.today()))
             if url.path == "/api/flow":
                 return self._json(save_flow(body))
             if url.path == "/api/caution":

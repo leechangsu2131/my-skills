@@ -50,6 +50,7 @@ python intake.py apply 파일.md --skip notion   # 인터넷·권한 문제로 �
 | 학생 | 후보만 — `classmanage-student-classifier` |
 | 투자 | 후보만 — 투자시트 분위기 일지(`personal-invest-sheet`) |
 | 업무·일기·습관 | 지금은 daily 에만 (Notion DB 연결 공유 전, ISSUE-001) |
+| 개선 | 데이터 폴더 `ideas.json` 에 적음(대상 스킬을 낱말로 짐작) → `python intake.py ideas` 로 보고, 교사가 고른 것을 그 스킬 `ISSUES.md` 📌 백로그로 옮김 → S8 로 작업자에게 감 |
 | 모든 조각 | 볼트 `daily/YYYY-MM-DD.md` (원문 그대로 + '보낸 곳' 목록) |
 
 ## Claude 행동 지침
@@ -57,6 +58,7 @@ python intake.py apply 파일.md --skip notion   # 인터넷·권한 문제로 �
 - 원문은 고치지 않는다. 기존 노트는 고치지 않는다(새 파일만 만든다). 후보는 교사가 고르면 그때 손으로 반영한다.
 - 공명은 교사가 직접 한 말만 — 제미나이가 `공명: 없음`이면 비워 둔다.
 - 민감 조각(학생 이름·가족·건강·남의 사적인 일)은 화면 표에 제목을 내지 않는다. 볼트에는 넣되 `민감: true`를 단다.
+- **개선 아이디어 옮기기**: apply 뒤 `python intake.py ideas` 표를 보여 주고, 교사가 고른 번호를 그 스킬 `ISSUES.md` 📌 백로그 맨 위에 `### ISSUE-<다음 번호>: <제목> (날짜)` + `- **상태**: 📌 백로그 — 교사 아이디어(하루 기록 <날짜>)` + 내용으로 적는다. my-skills 는 공개 저장소라 학생 이름·사적인 내용은 빼고 기능만 쓴다. 대상이 `HomePage`·`invest-sheet(GitLab)`이면 그 저장소의 ISSUES 에, `(대상 확인 필요)`면 교사에게 묻는다. 옮긴 뒤 `python intake.py ideas --done <번호들>`.
 - 볼트 파일은 직접 커밋하지 않는다. 이창수의 Obsidian Git 자동 백업이 올린다(볼트 작업자 가이드).
 
 ## 문서

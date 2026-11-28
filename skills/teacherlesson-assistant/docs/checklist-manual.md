@@ -231,6 +231,19 @@
 
 ---
 
+## 영상 재생 구간 표시 — 스피커 소리 크기 (T121)
+
+| # | 무엇을 하나 | 보여야 하는 것 | 확인 |
+|---|---|---|---|
+| V-1 | 명령 창에서 `pip install soundcard` 후 `python speaker_level.py start` | "켰어요(pid …)". 패키지가 없으면 설치 안내만 나오고 켜지지 않는다 | [ ] |
+| V-2 | 한 번 더 `python speaker_level.py start` | "이미 켜져 있어요." (두 개가 돌지 않음) | [ ] |
+| V-3 | PC 에서 1~2분짜리 영상을 소리 켜고 틀었다가 끈다 → `python speaker_level.py segments` | 영상을 튼 시각과 길이가 맞게 나온다. 알림음처럼 짧은 소리는 안 나온다 | [ ] |
+| V-4 | 데이터 폴더 `day_audio\<날짜>\speaker_level.csv` 를 메모장으로 열기 | `시각,숫자` 두 칸만 있다(소리 파일·말 내용은 없음) | [ ] |
+| V-5 | 이어폰으로 영상을 듣거나 소리를 줄여서 틀어 본다 | 구간이 안 잡히면 `speaker_level.py` 맨 위 `LOUD_DB`(기본 -45) 를 더 작게(예: -55) 고쳐 다시 확인 | [ ] |
+| V-6 | `python speaker_level.py stop`, 이어서 `status` | "껐어요." → "꺼져 있어요" | [ ] |
+
+---
+
 ## 주간 정리 (`weekly_report.py`)
 
 | # | 무엇을 하나 | 보여야 하는 것 | 확인 |

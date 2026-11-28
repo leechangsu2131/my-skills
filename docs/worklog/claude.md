@@ -27,3 +27,4 @@
 - 2026-11-27 21:27 T57 시작 (브랜치 task/T57-work)
 - 2026-11-27 21:34 T57 (teacherlesson-assistant) 시작 (브랜치 task/T57-easy-korean-assistant)
 - 2026-11-27 21:53 S2 (teacherlesson-assistant) 시작 (브랜치 task/S2-review-pr179-181-183)
+- 2026-11-28 12:44 S8 (teacherlesson-guide) 합칠 준비 — ISSUE-003 두 항목 처리: ①find_best_pdf 대체 매칭이 파일 이름 앞쪽 학년-학기가 다르면 건너뜀(시험 2개 추가, 새 시험 통과) ②mapper README 의 낡은 .env 문장 정정. build_catalog --check·check_privacy 통과. 기존 시험 2개는 윈도우 경로라 리눅스에서 원래 실패(변경 전후 동일). 다음: ISSUE-003 의 pdf_splits 조각 남음 항목

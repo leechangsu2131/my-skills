@@ -384,7 +384,14 @@ def bookmarklet() -> str:
     js = (SKILL_DIR / "gemini_bookmarklet.js").read_text(encoding="utf-8")
     js = re.sub(r"/\*.*?\*/", " ", js, flags=re.S)
     js = " ".join(line.strip() for line in js.splitlines() if line.strip())
+    # 한글은 \uXXXX 로 — 클립보드·콘솔 인코딩을 거치며 깨지지 않게(2026-11-28 붙여 넣으니 끝부분이 깨짐). 한글은 문자열 안에만 있다
+    js = "".join(c if ord(c) < 128 else _u_escape(c) for c in js)
     return "javascript:" + js.replace("%", "%25").replace("#", "%23")
+
+
+def _u_escape(c: str) -> str:
+    b = c.encode("utf-16-be")
+    return "".join(f"\\u{int.from_bytes(b[i:i + 2], 'big'):04x}" for i in range(0, len(b), 2))
 
 
 def find_input(arg: str | None) -> Path:

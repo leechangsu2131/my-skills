@@ -469,6 +469,38 @@ def maximize(hwnd: int) -> None:
         time.sleep(0.6)
 
 
+# 다른 프로그램 창에 가려진 창도 계속 그리게 하는 실행 옵션(브라우저가 처음 켜질 때만 먹는다 — 프로필들이 한 프로세스를 함께 씀)
+RENDER_FLAGS = ["--disable-features=CalculateNativeWinOcclusion", "--disable-backgrounding-occluded-windows"]
+
+
+def browser_render_status() -> dict[str, bool]:
+    """지금 켜진 Chrome·Edge 본 프로세스가 RENDER_FLAGS 로 켜졌는지. {'Chrome': True/False} (안 켜진 브라우저는 빠짐)."""
+    out: dict[str, bool] = {}
+    try:
+        import win32com.client
+        wmi = win32com.client.GetObject("winmgmts:")
+        for browser in BROWSERS:
+            rows = wmi.ExecQuery(f"SELECT CommandLine FROM Win32_Process WHERE Name = '{browser['exe']}'")
+            for row in rows:
+                line = row.CommandLine or ""
+                if "--type=" in line:   # 렌더러 등 딸린 프로세스는 빼고 본 프로세스만
+                    continue
+                out[browser["label"]] = "CalculateNativeWinOcclusion" in line
+                break
+    except Exception:
+        pass
+    return out
+
+
+def restore_behind(hwnd: int) -> None:
+    """최소화된 창을 앞으로 가져오지 않고 펼쳐 맨 뒤에 둔다(최소화된 창은 Chrome 이 그리지 않아 미리보기가 멈춤)."""
+    if not win32gui.IsWindow(hwnd) or not win32gui.IsIconic(hwnd):
+        return
+    win32gui.ShowWindow(hwnd, win32con.SW_SHOWNOACTIVATE)   # 최소화 전 모양(최대화였으면 최대화)으로
+    win32gui.SetWindowPos(hwnd, win32con.HWND_BOTTOM, 0, 0, 0, 0,
+                          win32con.SWP_NOMOVE | win32con.SWP_NOSIZE | win32con.SWP_NOACTIVATE)
+
+
 def _in_navigation(control) -> bool:
     """링크가 왼쪽 사이드바(navigation 영역) 안에 있는지."""
     node = control
@@ -1545,6 +1577,16 @@ class Manager(QMainWindow):
                                   "단추 이름은 자동화 ▾ → '자동으로 누를 단추 이름'에서 바꾼다")
         self.click_box.setChecked(self.cfg.get("auto_click", False))
         self.click_box.toggled.connect(self.save)
+        self.unminimize_box = QCheckBox("최소화된 창 자동으로 뒤에 펼쳐 두기")
+        self.unminimize_box.setToolTip("최소화한 창도 10초 안에 지금 하던 작업 뒤쪽으로 다시 펼쳐, 미리보기가 늘 바뀌게 한다(앞을 가리지 않음)")
+        self.unminimize_box.setChecked(self.cfg.get("auto_unminimize", False))
+        self.unminimize_box.toggled.connect(self.save)
+        self.render_box = QCheckBox("가려진 창도 계속 그리기")
+        self.render_box.setToolTip("프로필을 열 때 Chrome·Edge 에 '가려진 창도 그리기' 실행 옵션을 붙인다. 브라우저가 처음 켜질 때만 먹으므로, "
+                                   "브라우저를 모두 닫고 이 매니저로 다시 열어야 적용된다. 가려진 창이 그림을 계속 그려 CPU 를 조금 더 쓴다")
+        self.render_box.setChecked(self.cfg.get("keep_rendering", True))
+        self.render_box.toggled.connect(self.save)
+        self.render_box.toggled.connect(lambda *_: self.update_render_hint(force=True))
 
         self.work_spin = QDoubleSpinBox()
         self.work_spin.setRange(0, 24)
@@ -1583,6 +1625,8 @@ class Manager(QMainWindow):
         checks2 = QHBoxLayout()
         checks2.addWidget(self.max_box)
         checks2.addWidget(self.click_box)
+        checks2.addWidget(self.unminimize_box)
+        checks2.addWidget(self.render_box)
         checks2.addStretch()
         checks.addStretch()
         box.addLayout(checks)
@@ -1621,6 +1665,11 @@ class Manager(QMainWindow):
         self.overdue_button.clicked.connect(lambda: self.close_work_windows(self.overdue_keys()))
         self.overdue_button.hide()
         thumb_bar.addWidget(self.overdue_button)
+        self.restore_button = QPushButton()
+        self.restore_button.setToolTip("최소화된 창은 그림이 멈춘다. 앞으로 가져오지 않고 지금 하던 작업 뒤쪽에 펼쳐 두면 미리보기가 계속 바뀐다")
+        self.restore_button.clicked.connect(self.restore_minimized)
+        self.restore_button.hide()
+        thumb_bar.addWidget(self.restore_button)
         thumb_bar.addWidget(self.close_thumbs_button)
         thumb_bar.addWidget(clear_button)
         self.pause_summary = QLabel()   # 다시 쓸 시각 한눈에(창을 하나하나 안 봐도 되게)
@@ -1632,6 +1681,11 @@ class Manager(QMainWindow):
         right_box = QVBoxLayout(right)
         right_box.setContentsMargins(0, 0, 0, 0)
         right_box.addWidget(self.pause_summary)
+        self.render_hint = QLabel()
+        self.render_hint.setWordWrap(True)
+        self.render_hint.setStyleSheet("QLabel { background: #4a3b20; color: #f0e0c0; padding: 6px 8px; border-radius: 4px; }")
+        self.render_hint.hide()
+        right_box.addWidget(self.render_hint)
         right_box.addLayout(thumb_bar)
         right_box.addWidget(self.thumbs)
 
@@ -1889,7 +1943,8 @@ class Manager(QMainWindow):
                         timer_min=self.timer_spin.value(), filter=self.filter_box.isChecked(),
                         work_alert_hours=self.work_spin.value(), pause_scan=self.pause_box.isChecked(),
                         reply_scan=self.reply_box.isChecked(), maximize=self.max_box.isChecked(),
-                        auto_click=self.click_box.isChecked())
+                        auto_click=self.click_box.isChecked(), auto_unminimize=self.unminimize_box.isChecked(),
+                        keep_rendering=self.render_box.isChecked())
         write_json_atomic(CONFIG, self.cfg_to_file())
 
     def add_group(self, *_):
@@ -1959,6 +2014,8 @@ class Manager(QMainWindow):
         key, url, new_window = self.launch_queue.pop(0)
         info = self.profile_info[key]
         args = [info["exe"], f"--profile-directory={info['folder']}"]
+        if self.render_box.isChecked():
+            args += RENDER_FLAGS   # 브라우저가 이미 켜져 있으면 무시되고, 새로 켜질 때 먹는다
         if new_window:
             args.append("--new-window")
             if self.max_box.isChecked():
@@ -1966,6 +2023,7 @@ class Manager(QMainWindow):
         if url:
             args.append(url)
         subprocess.Popen(args)
+        QTimer.singleShot(5000, lambda: self.update_render_hint(force=True))   # 새로 켜졌으면 안내를 다시 본다
         if self.launch_queue:
             QTimer.singleShot(400, self.launch_next)
 
@@ -2063,6 +2121,41 @@ class Manager(QMainWindow):
                 st["alerted"] = False
             st["sig"] = sig
 
+    def update_render_hint(self, force: bool = False):
+        if not force and time.time() - getattr(self, "last_render_check", 0) < 600:   # 확인에 0.6초쯤 걸려 10분마다
+            return
+        self.last_render_check = time.time()
+        if not self.render_box.isChecked():
+            self.render_hint.hide()
+            return
+        missing = [name for name, ok in browser_render_status().items() if not ok]
+        if missing:
+            self.render_hint.setText(
+                f"ⓘ 지금 켜진 {'·'.join(missing)} 는 '가려진 창도 그리기'가 꺼진 채로 켜져 있어, 다른 프로그램에 가려진 창은 미리보기가 멈춥니다. "
+                f"{'·'.join(missing)} 창을 모두 닫았다가 이 매니저로 다시 열면 적용됩니다.")
+            self.render_hint.show()
+        else:
+            self.render_hint.hide()
+
+    def restore_minimized(self, *_):
+        hwnds = [h for h in self.windows if win32gui.IsIconic(h)]
+        for hwnd in hwnds:
+            restore_behind(hwnd)
+        self.statusBar().showMessage(f"최소화된 창 {len(hwnds)}개를 뒤쪽에 펼쳤습니다 — 이제 미리보기가 계속 바뀝니다.", 10000)
+
+    def update_minimized(self):
+        minimized = [h for h in self.windows if win32gui.IsIconic(h)]
+        if minimized and self.unminimize_box.isChecked() and time.time() - getattr(self, "last_unminimize", 0) > 10:
+            self.last_unminimize = time.time()
+            for hwnd in minimized:
+                restore_behind(hwnd)
+            minimized = []
+        if minimized:
+            self.restore_button.setText(f"🗕 최소화된 창 펼치기 ({len(minimized)})")
+            self.restore_button.show()
+        else:
+            self.restore_button.hide()
+
     def monitor(self):
         now = time.time()
         self.sync_windows(now)
@@ -2070,6 +2163,8 @@ class Manager(QMainWindow):
         self.refresh_work(now)
         self.check_pauses(datetime.now())
         self.update_pause_summary(datetime.now())
+        self.update_minimized()
+        self.update_render_hint()
         idle_limit = self.idle_spin.value()
         for hwnd, st in self.windows.items():
             lines = [self.label(hwnd), win32gui.GetWindowText(hwnd)[:34]]
@@ -2090,6 +2185,8 @@ class Manager(QMainWindow):
             work = self.cfg["work"].get(st["key"])
             if work:
                 status.append(f"작업 {fmt_hm(now - work['start'])}")
+            if win32gui.IsIconic(hwnd):
+                status.append("🗕 최소화 — 그림 멈춤")
             reply = self.replies.get(hwnd, {}).get("status")
             if reply in REPLY_MARK:
                 status.append(f"{REPLY_MARK[reply]} {reply}")

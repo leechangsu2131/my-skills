@@ -73,6 +73,11 @@
 
 ## 🟢 해결됨
 
+### ISSUE-011: 미리보기가 그 창을 봐야만 바뀌는 것처럼 보임 (2026-11-28)
+- **원인**: 창 12개 중 11개가 최소화 — 최소화된 창은 Chrome 이 그리지 않아 PrintWindow 가 못 찍음. 또 다른 프로그램 창에 완전히 가려진 창은 Chrome 의 가림 계산(CalculateNativeWinOcclusion)이 그리기를 멈춤(Chrome 창끼리 가린 건 계속 그림).
+- **해결**: 최소화 표시·'최소화된 창 펼치기'(SW_SHOWNOACTIVATE + HWND_BOTTOM, 앞 창 안 바뀜)·자동 펼쳐 두기(기본 끔). 프로필 열 때 RENDER_FLAGS 붙임(기본 켬), 지금 켜진 본 프로세스 명령줄(WMI)에 없으면 안내 — 브라우저를 다시 켜야 적용. 임시 user-data-dir Chrome 으로 비교: 옵션 없음 → 맨 뒤 창 그림 변화 0, 있음 → 계속 바뀜.
+- **관련 파일**: `chrome_profiles.py` (`restore_behind`, `RENDER_FLAGS`, `browser_render_status`, `update_minimized`, `update_render_hint`)
+
 ### ISSUE-009: 독립 검토(reviewer) 반영 (2026-11-28)
 - **고침**: H1 지침 바꾸기 2단계에서 주소·지금 지침이 1단계와 같은지 다시 확인(다르면 건너뜀) · H2 문구 누르기 마지막 마우스 클릭은 창이 맨 앞이고 누를 자리가 그 창 안·가려지지 않았을 때만 · M1 대화상자 사이 닫힌 창(label KeyError), 클립보드는 try/finally 로 늘 되돌림 · M2 Ctrl+A·Ctrl+V 바로 전마다 맨 앞 창 확인 · M3 문구 찾기는 웹 페이지(Document) 안에서만(탭 '닫기' 단추 안 잡힘) · M4 pauses.json 은 파일이 바뀌면 다시 읽고 바꾸기 직전 다시 읽음, 원자적 쓰기 · M5 config.json 원자적 쓰기, 깨진 파일은 config.broken-시각.json 으로 남기고 경고 · M6 계정 기준 파일(id_version 2)의 폴더 키는 이 PC 에서도 로그인 안 한 프로필일 때만 받음 · M7 일괄 입력·사이트 이동·지침 바꾸기에 진행 창과 '멈추기'(응답 없음 방지) · M8 사이트 이동 '지금 탭'은 Ctrl+L 뒤 초점이 주소창일 때만(앱 창은 건너뜀) · L1 같은 이름 그룹으로 바꾸기 막음 · L2 지운 그룹 작업 시간도 지움 · L4 UIA 를 화면 스레드에서 먼저 만듦 · L5 @AutomationLog.txt 안 만듦 · L6 pythonw 오류를 error.log·상태 표시줄에 · L7 building 플래그 try/finally · L8 탭 정리는 닫기 직전 다시 읽어 확인 창과 같을 때만 · L9 일괄 입력 글을 설정 파일에 저장하지 않음 · L10 alert_min 없는 예전 설정. launcher: 처음 실행하는 bat 은 한 번 확인(내용 먼저 보기), 실행 실패 알림, 목록 위치 유지.
 - **안 고침(알고 있음)**: L3 앱을 켰을 때 이미 지난 시각의 안내는 내일 시각으로 적힘(usage_pause 규칙). 두 PC 를 동시에 켜 두고 같은 설정 파일을 쓰면 마지막에 저장한 쪽이 이김.

@@ -928,6 +928,10 @@ class Handler(BaseHTTPRequestHandler):
                 return self._json(submissions_get(q.get("title", [""])[0]))
             except ValueError as exc:
                 return self._json({"status": "error", "message": str(exc)}, 400)
+        if url.path == "/layout.js":
+            return self._send(200, (WEB / "layout.js").read_bytes(), "application/javascript; charset=utf-8")
+        if url.path == "/theme.css":
+            return self._send(200, (WEB / "theme.css").read_bytes(), "text/css; charset=utf-8")
         if url.path == "/mobile.css":
             return self._send(200, (WEB / "mobile.css").read_bytes(), "text/css; charset=utf-8")
         if url.path == "/api/state":

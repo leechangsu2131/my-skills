@@ -273,6 +273,8 @@ body.focus-mode> #toast{z-index:12}
 @media(max-width:720px){body.focus-mode header{padding:8px 12px}body.focus-mode main{height:auto;min-height:0;display:flex;flex-direction:column;padding:10px 12px 86px;gap:10px}body.focus-mode #titleBlock{flex-wrap:wrap;gap:6px}body.focus-mode #lTitle{font-size:17px;flex:1}body.focus-mode #lMeta{font-size:11px}body.focus-mode #focusProgress{margin-top:6px}body.focus-mode #hero{min-height:54vh;padding:20px}body.focus-mode #focusRail{order:2;padding:10px}.focus-stage{display:flex;flex-direction:column;min-width:82px;text-align:center}.focus-stage-time,.focus-rail-note{display:none}body.focus-mode #focusRail .focus-head{margin-bottom:4px}body.focus-mode #focusRail #focusStages{display:flex;overflow:auto;gap:4px}body.focus-mode #focusAssist{order:3;display:block;padding:12px}body.focus-mode #focusFooter{grid-template-columns:1fr 1.2fr 1fr;gap:6px;padding:8px 10px}.focus-ctl{height:52px;font-size:14px}}
 </style>
 <link rel="stylesheet" href="/mobile.css">
+<link rel="stylesheet" href="/theme.css">
+<script src="/layout.js"></script>
 </head>
 <body>
 <header>
@@ -289,6 +291,13 @@ body.focus-mode> #toast{z-index:12}
     <button class="ghost" id="focusToggle" title="수업 중 지금 할 단계에 집중하는 화면" disabled>🎯 수업 진행</button>
     <span id="clock"></span>
     <button class="ghost icon" id="phoneBtn" title="교실 내선번호">📞</button>
+    <button class="ghost icon" id="layoutBtn" title="화면 설정 (어두운 화면·칸 숨기기)">⚙</button>
+  </div>
+  <div id="layoutPanel" hidden>
+    <button type="button" id="themeBtn">🌙 어두운 화면으로</button>
+    <h3>보일 칸</h3>
+    <div id="layoutList"></div>
+    <button type="button" id="layoutReset" class="ghost">처음대로</button>
   </div>
   <div id="overdue" hidden></div>
   <div id="tabs"></div>

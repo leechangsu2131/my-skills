@@ -17,11 +17,17 @@ MAX_TOTAL = 60
 DEFAULT_TOTAL = 25
 
 
+_WINDOWS_RESERVED = {"con", "prn", "aux", "nul",
+                     *(f"com{n}" for n in range(1, 10)), *(f"lpt{n}" for n in range(1, 10))}
+
+
 def slug(title: str) -> str:
     """파일 이름으로 쓸 수 있게 다듬는다. 비면 ValueError."""
     text = re.sub(r'[\\/:*?"<>|\s]+', "_", str(title or "")).strip("._")[:60]
     if not text:
         raise ValueError("제목을 적어 주세요.")
+    if text.split(".")[0].lower() in _WINDOWS_RESERVED:   # 윈도우는 con.json·nul.x.json 같은 이름을 파일로 못 만든다
+        text = "_" + text
     return text
 
 

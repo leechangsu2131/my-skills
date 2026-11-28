@@ -11,6 +11,7 @@ schooltodo·gspread 는 쓸 때 불러온다 — 없어도 수업 비서의 다�
 """
 from __future__ import annotations
 
+import contextlib
 import importlib
 import os
 import pathlib
@@ -27,6 +28,9 @@ TODO_SKILL = "school-todo-kakao"
 SHEET_KEYS = ("GOOGLE_SERVICE_ACCOUNT_JSON", "GOOGLE_SERVICE_ACCOUNT_FILE", "DB_SHEET_ID", "DB_TAB", "INBOX_TAB")
 CACHE_SECONDS = 600
 FAIL_SECONDS = 60  # 실패한 결과는 짧게만 기억한다(설정을 고치면 곧 다시 읽게)
+WAIT_SECONDS = 15  # 화면 요청이 시트 응답을 기다리는 가장 긴 시간
+GIVE_UP_SECONDS = 120  # 이만큼 응답 없는 읽기는 버리고 새로 읽는다
+SLOW_REASON = "일정 시트가 아직 응답하지 않아요. 잠시 뒤 ↻ 새로 읽기를 눌러 주세요."
 MAX_TEXT = 200
 
 
@@ -131,17 +135,64 @@ def quick_line(text, today: date) -> tuple[str, dict]:
 
 # ──────────────────────────── 시트 ────────────────────────────
 
-def apply_settings(values: dict, environ=os.environ, env_dir: pathlib.Path | None = None) -> None:
-    """중앙 .env 값에서 시트 설정만 환경변수로 옮긴다. 이미 있는 환경변수가 우선."""
-    for key in SHEET_KEYS:
-        value = (values.get(key) or "").strip()
-        if value and not environ.get(key):
-            environ[key] = value
-    if env_dir is not None:  # 키 파일을 상대 경로로 적은 경우: 카톡 알림처럼 .env 폴더에서 찾는다
-        from schooltodo import envload
+_settings_lock = threading.Lock()  # 환경변수를 바꾸는 순간에만 잡는다(시트를 여는 동안은 잡지 않는다)
+_settings_added = {}  # (id(environ), 키) → [쓰는 블록 수, 넣기 전 값]
 
+
+@contextlib.contextmanager
+def sheet_settings(values: dict, environ=os.environ, env_dir: pathlib.Path | None = None):
+    """중앙 .env 의 시트 설정만, 이 블록 안에서만 환경변수에 둔다. 이미 있는 환경변수가 우선.
+
+    schooltodo 는 설정을 환경변수에서 읽는다. 서비스 계정 키가 남으면 수업 비서가 나중에 띄우는 다른 프로그램이
+    물려받으므로, 마지막 블록이 끝나면 여기서 넣은 것은 지운다. 여는 중에 시트가 응답하지 않아도
+    다른 블록은 기다리지 않는다.
+    """
+    if env_dir is not None:  # 키 파일을 상대 경로로 적은 경우: 카톡 알림처럼 .env 폴더에서 찾는다
+        (envload,) = _todo("envload")
         if env_dir not in envload.ENV_DIRS:
             envload.ENV_DIRS.append(env_dir)
+    mine = []
+    with _settings_lock:
+        for key in SHEET_KEYS:
+            value = (values.get(key) or "").strip()
+            slot = (id(environ), key)
+            if slot in _settings_added:
+                _settings_added[slot][0] += 1
+            elif value and not environ.get(key):
+                _settings_added[slot] = [1, environ.get(key)]  # 없었으면 None, 빈 값이었으면 ""
+            else:
+                continue
+            mine.append(slot)
+            if value:
+                environ[key] = value
+    try:
+        yield
+    finally:
+        with _settings_lock:
+            for slot in mine:
+                entry = _settings_added[slot]
+                entry[0] -= 1
+                if entry[0]:
+                    continue
+                del _settings_added[slot]
+                if entry[1] is None:
+                    environ.pop(slot[1], None)
+                else:
+                    environ[slot[1]] = entry[1]
+
+
+class _Opened:
+    """연 시트. '빠른입력' 탭 이름(INBOX_TAB)도 설정에서 읽으므로 inbox() 때 한 번 더 설정을 둔다."""
+
+    def __init__(self, sheets, values: dict):
+        self._sheets, self._values = sheets, values
+
+    def rows(self) -> list[dict]:
+        return self._sheets.rows()
+
+    def inbox(self):
+        with sheet_settings(self._values):
+            return self._sheets.inbox()
 
 
 def open_db():
@@ -149,8 +200,10 @@ def open_db():
     from skill_env import central_env_path, env_values  # 수업 비서 서버가 _shared 를 이미 경로에 넣었다
 
     central = central_env_path()
-    apply_settings(env_values(TODO_SKILL), env_dir=central.parent if central else None)
-    return db.SheetsDb.from_env()
+    values = env_values(TODO_SKILL)
+    with sheet_settings(values, env_dir=central.parent if central else None):
+        sheets = db.SheetsDb.from_env()
+    return _Opened(sheets, values)
 
 
 def explain(exc: BaseException) -> str:
@@ -166,12 +219,36 @@ def explain(exc: BaseException) -> str:
     return f"일정 시트에 연결하지 못했어요({type(exc).__name__}). 인터넷과 school-todo-kakao 설정을 확인해 주세요."
 
 
+class _Read:
+    """시트 읽기 한 번. 응답이 없어도 화면 요청이 붙잡히지 않게 따로 도는 일로 둔다."""
+
+    def __init__(self, started: float):
+        self.started = started
+        self.done = threading.Event()
+        self.result = ([], SLOW_REASON)
+
+
 class Panel:
-    def __init__(self, opener=open_db, clock=time.monotonic):
+    def __init__(self, opener=open_db, clock=time.monotonic, wait=WAIT_SECONDS):
         self._open = opener
         self._clock = clock
-        self._lock = threading.Lock()
-        self._cache = None  # (읽은 시각, 행 목록 | None, 이유)
+        self._wait = wait
+        self._lock = threading.Lock()  # 아래 두 값을 바꿀 때만 잠깐 잡는다
+        self._cache = None  # (읽은 시각, 행 목록, 이유)
+        self._reading = None
+
+    def _read(self, job: _Read) -> None:
+        try:
+            result = self._open().rows(), ""
+        except (Exception, SystemExit) as exc:  # schooltodo 는 설정 오류를 SystemExit 로 알린다
+            result = [], explain(exc)
+            print(f"[agenda] 일정 시트 읽기 실패: {type(exc).__name__}", file=sys.stderr)
+        with self._lock:
+            job.result = result
+            if self._reading is job:  # 버린 옛 읽기가 늦게 끝나도 새 결과를 덮지 않는다
+                self._cache = (self._clock(), *result)
+                self._reading = None
+        job.done.set()
 
     def _rows(self, refresh: bool):
         with self._lock:
@@ -180,13 +257,12 @@ class Panel:
                 read_at, rows, reason = self._cache
                 if now - read_at < (FAIL_SECONDS if reason else CACHE_SECONDS):
                     return rows, reason
-            try:
-                rows, reason = self._open().rows(), ""
-            except (Exception, SystemExit) as exc:  # schooltodo 는 설정 오류를 SystemExit 로 알린다
-                rows, reason = [], explain(exc)
-                print(f"[agenda] 일정 시트 읽기 실패: {type(exc).__name__}", file=sys.stderr)
-            self._cache = (self._clock(), rows, reason)
-            return rows, reason
+            job = self._reading
+            if job is None or now - job.started >= GIVE_UP_SECONDS:
+                job = self._reading = _Read(now)
+                threading.Thread(target=self._read, args=(job,), daemon=True).start()
+        job.done.wait(self._wait)
+        return job.result
 
     def agenda(self, today: date, refresh: bool = False) -> dict:
         rows, reason = self._rows(refresh)

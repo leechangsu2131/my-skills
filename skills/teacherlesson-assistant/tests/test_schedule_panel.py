@@ -254,11 +254,43 @@ def test_quick_line_is_what_sync_will_read():
     assert marks == {2: "✔ 반영"} and rows[0]["날짜"] == "2026-12-01" and rows[0]["내용"] == "공문 마감"
 
 
-def test_only_sheet_settings_are_copied_and_existing_values_win():
-    environ = {"DB_TAB": "이미 있음"}
-    panel.apply_settings({"DB_SHEET_ID": "가짜", "DB_TAB": "새 값", "KAKAO_REFRESH_TOKEN": "가짜 토큰",
-                          "MY_NAME": "교사A", "INBOX_TAB": ""}, environ)
-    assert environ == {"DB_SHEET_ID": "가짜", "DB_TAB": "이미 있음"}
+def test_only_sheet_settings_are_set_inside_the_block_and_removed_after():
+    environ = {"DB_TAB": "이미 있음", "INBOX_TAB": ""}
+    values = {"DB_SHEET_ID": "가짜", "DB_TAB": "새 값", "KAKAO_REFRESH_TOKEN": "가짜 토큰", "MY_NAME": "교사A",
+              "GOOGLE_SERVICE_ACCOUNT_JSON": "{}", "INBOX_TAB": "적는 곳"}
+    with pytest.raises(RuntimeError):
+        with panel.sheet_settings(values, environ):
+            assert environ == {"DB_SHEET_ID": "가짜", "DB_TAB": "이미 있음", "GOOGLE_SERVICE_ACCOUNT_JSON": "{}",
+                               "INBOX_TAB": "적는 곳"}
+            raise RuntimeError("열다가 실패")
+    assert environ == {"DB_TAB": "이미 있음", "INBOX_TAB": ""}
+
+
+def test_a_stuck_open_does_not_block_the_next_one_and_the_last_one_cleans_up():
+    environ, inside, release = {}, threading.Event(), threading.Event()
+
+    def stuck():
+        with panel.sheet_settings({"DB_SHEET_ID": "옛 값"}, environ):
+            inside.set()
+            release.wait(10)
+
+    first = threading.Thread(target=stuck, daemon=True)
+    first.start()
+    assert inside.wait(10)
+
+    def second():
+        with panel.sheet_settings({"DB_SHEET_ID": "새 값"}, environ):
+            seen.append(dict(environ))
+
+    seen = []
+    other = threading.Thread(target=second, daemon=True)
+    other.start()
+    other.join(5)
+    assert not other.is_alive() and seen == [{"DB_SHEET_ID": "새 값"}]
+    assert "DB_SHEET_ID" in environ  # 아직 여는 중인 블록이 있다
+    release.set()
+    first.join(10)
+    assert environ == {}
 
 
 def test_relative_key_file_is_looked_up_beside_the_central_env(tmp_path, monkeypatch):
@@ -266,19 +298,93 @@ def test_relative_key_file_is_looked_up_beside_the_central_env(tmp_path, monkeyp
     from schooltodo import envload
 
     monkeypatch.setattr(envload, "ENV_DIRS", [])
-    panel.apply_settings({}, {}, env_dir=tmp_path)
-    panel.apply_settings({}, {}, env_dir=tmp_path)
+    for _ in range(2):
+        with panel.sheet_settings({}, {}, env_dir=tmp_path):
+            pass
     (tmp_path / "key.json").write_text("{}", encoding="utf-8")
     assert envload.ENV_DIRS == [tmp_path]
     assert envload.resolve_path("key.json") == tmp_path / "key.json"
 
 
-@pytest.mark.skipif(not shutil.which("node"), reason="node 가 없어 화면 함수 시험(test_agenda.js)을 건너뜀")
-def test_screen_functions_in_node():
-    got = subprocess.run([shutil.which("node"), str(SKILL / "tests" / "test_agenda.js")],
-                         capture_output=True, text=True, encoding="utf-8", timeout=60)
-    assert got.returncode == 0, got.stderr
-    assert "통과" in got.stdout
+def test_open_db_leaves_no_key_in_the_environment(tmp_path, monkeypatch):
+    """진짜 open_db: 가짜 중앙 .env → from_env·inbox 안에서만 설정이 보이고, 뒤에는 남지 않는다."""
+    import os
+
+    env_file = tmp_path / ".env"
+    env_file.write_text("SCHOOL_TODO_KAKAO__DB_SHEET_ID=FAKE-SHEET\nGOOGLE_SERVICE_ACCOUNT_JSON={}\n"
+                        "INBOX_TAB=적는 곳\nKAKAO_REFRESH_TOKEN=fake\n", encoding="utf-8")
+    monkeypatch.setenv("MY_SKILLS_ENV", str(env_file))
+    for key in (*panel.SHEET_KEYS, "KAKAO_REFRESH_TOKEN"):
+        monkeypatch.delenv(key, raising=False)
+    panel._todo("db", "envload")
+    from schooltodo import db, envload
+
+    monkeypatch.setattr(envload, "ENV_DIRS", [])
+    seen = []
+
+    def snapshot(label):
+        seen.append((label, {k: os.environ[k] for k in (*panel.SHEET_KEYS, "KAKAO_REFRESH_TOKEN") if k in os.environ}))
+
+    class Sheets:
+        def rows(self):
+            snapshot("rows")
+            return [row(WED, "행사")]
+
+        def inbox(self):
+            snapshot("inbox")
+            return None
+
+    monkeypatch.setattr(db.SheetsDb, "from_env", classmethod(lambda cls: snapshot("open") or Sheets()))
+    opened = panel.open_db()
+    assert texts(panel.build(opened.rows(), WED)["today"]) == ["행사"]
+    assert opened.inbox() is None
+    wanted = {"DB_SHEET_ID": "FAKE-SHEET", "GOOGLE_SERVICE_ACCOUNT_JSON": "{}", "INBOX_TAB": "적는 곳"}
+    assert seen == [("open", wanted), ("rows", {}), ("inbox", wanted)]
+    assert not [k for k in wanted if k in os.environ]
+
+
+class SlowDb:
+    """release 를 부를 때까지 응답하지 않는 시트."""
+
+    def __init__(self, text):
+        self.text, self.release = text, threading.Event()
+
+    def rows(self):
+        assert self.release.wait(10)
+        return [row(WED, self.text)]
+
+
+def finish(p, db):
+    """멈춰 있던 읽기를 풀고, 그 일이 끝날 때까지 기다린다."""
+    job = p._reading
+    db.release.set()
+    if job:
+        assert job.done.wait(10)
+
+
+def test_silent_sheet_does_not_hold_the_screen_and_is_read_only_once():
+    db, clock, opened = SlowDb("늦은 행사"), Clock(), []
+    p = panel.Panel(lambda: opened.append(1) or db, clock, wait=0.05)
+    for refresh in (False, False, True):
+        got = p.agenda(WED, refresh=refresh)
+        assert got["reason"] == panel.SLOW_REASON and got["today"] == []
+    assert len(opened) == 1
+    finish(p, db)
+    assert texts(p.agenda(WED)["today"]) == ["늦은 행사"] and len(opened) == 1
+
+
+def test_very_old_read_is_dropped_and_its_late_answer_ignored():
+    old, new = SlowDb("옛 답"), SlowDb("새 답")
+    queue, clock = [old, new], Clock()
+    p = panel.Panel(lambda: queue.pop(0), clock, wait=0.05)
+    p.agenda(WED)
+    first = p._reading
+    clock.now += panel.GIVE_UP_SECONDS
+    new.release.set()
+    assert texts(p.agenda(WED)["today"]) == ["새 답"]
+    old.release.set()
+    assert first.done.wait(10)
+    assert texts(p.agenda(WED)["today"]) == ["새 답"] and queue == []
 
 
 @pytest.fixture

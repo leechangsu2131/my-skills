@@ -20,3 +20,4 @@
 - 2026-11-27 09:44 S1 (teacherlesson-assistant) 시작 (브랜치 task/S1-check-setup-helpers)
 - 2026-11-27 10:20 T99 시작 (브랜치 task/T99-clova-mp3-export)
 - 2026-11-27 21:53 S2 (teacherlesson-assistant) 시작 (브랜치 task/S2-review-pr179-181-183)
+- 2026-11-28 S2 (teacherlesson-assistant) PR 올림 — PR #179(T106 멘트)·#181(T109 급식·날씨)·#183(T107 일정) 검토 + 합치는 순서 메모(docs/reviews/ 4개). #179·#183 🟢, #181 🟡(설정 이름 NEIS_SCHOOL_CODE 등 공용 키와 어긋남), 세 PR 은 assistant_server.py 줄이 겹쳐 충돌 → 양쪽 줄 남기면 합친 시험 555 통과. 개인정보·범위 밖 수정 없음, build_catalog --check·check_privacy 통과

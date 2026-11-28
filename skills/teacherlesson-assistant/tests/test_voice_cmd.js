@@ -38,12 +38,15 @@ test('시간: 분·초·분초, 한글·숫자', () => {
   assert.deepStrictEqual(vcParseDuration('1분30초'), { seconds: 90 });
   assert.deepStrictEqual(vcParseDuration('삼십초'), { seconds: 30 });
   assert.deepStrictEqual(vcParseDuration('이분오초'), { seconds: 125 });
-  assert.deepStrictEqual(vcParseDuration('99분59초'), { seconds: 5999 });
+  assert.deepStrictEqual(vcParseDuration('60분'), { seconds: 3600 });
+  assert.deepStrictEqual(vcParseDuration('59분59초'), { seconds: 3599 });
 });
 test('시간: 0·범위 밖은 오류, 형식이 아니면 null', () => {
   assert.deepStrictEqual(vcParseDuration('0분'), { error: 'zero' });
   assert.deepStrictEqual(vcParseDuration('100분'), { error: 'range' });
-  assert.deepStrictEqual(vcParseDuration('99분60초'), { error: 'range' });
+  assert.deepStrictEqual(vcParseDuration('61분'), { error: 'range' });
+  assert.deepStrictEqual(vcParseDuration('60분1초'), { error: 'range' });
+  assert.deepStrictEqual(vcParseDuration('구십분'), { error: 'range' });
   for (const t of ['', '분', '5', '5분후', '오늘', null]) assert.strictEqual(vcParseDuration(t), null, String(t));
 });
 
@@ -117,7 +120,7 @@ test('타이머 입력 칸 글·이름', () => {
 test('말풍선 글', () => {
   assert.strictEqual(voiceCommandMessage({ cmd: 'next' }), '다음 단계로!');
   assert.strictEqual(voiceCommandMessage({ cmd: 'timer', seconds: 90 }), '⏱ 타이머 1분 30초 시작!');
-  assert.ok(voiceCommandMessage({ cmd: 'timer_error', reason: 'range' }).includes('99분 59초'));
+  assert.ok(voiceCommandMessage({ cmd: 'timer_error', reason: 'range' }).includes('60분'));
   assert.ok(voiceCommandMessage({ cmd: 'timer_error', reason: 'zero' }).includes('0보다'));
   for (const c of ['prev', 'good', 'fix', 'star', 'rec_start', 'rec_stop']) assert.ok(voiceCommandMessage({ cmd: c }).length > 0, c);
   assert.strictEqual(voiceCommandMessage(null), '');

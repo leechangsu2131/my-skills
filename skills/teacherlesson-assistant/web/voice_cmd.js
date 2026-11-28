@@ -54,7 +54,7 @@ const COMMAND_WORDS = {
 };
 
 const SINO = { 일: 1, 이: 2, 삼: 3, 사: 4, 오: 5, 육: 6, 칠: 7, 팔: 8, 구: 9 };
-const MAX_TIMER_SEC = 99 * 60 + 59;
+const MAX_TIMER_SEC = 60 * 60;          // 수업 중 오인식으로 90분 같은 값이 켜지지 않게 60분까지(T115)
 
 /** "5"·"05"·"오"·"십"·"십오"·"이십"·"삼십오" → 숫자. 모르면 null. (1~99) */
 function vcParseNumber(word) {
@@ -69,7 +69,7 @@ function vcParseNumber(word) {
   return n > 0 ? n : null;
 }
 
-/** "5분"·"1분30초"·"오분"·"삼십초" → 초. 형식이 아니면 null, 0 이하·99분59초 넘으면 {error}. */
+/** "5분"·"1분30초"·"오분"·"삼십초" → 초. 형식이 아니면 null, 0 이하·60분 넘으면 {error}. */
 function vcParseDuration(text) {
   const m = String(text || '').match(/^(?:([0-9일이삼사오육칠팔구십]+)분)?(?:([0-9일이삼사오육칠팔구십]+)초)?$/);
   if (!m || (m[1] === undefined && m[2] === undefined)) return null;
@@ -159,7 +159,7 @@ function voiceCommandMessage(c) {
     case 'next': return '다음 단계로!';
     case 'prev': return '이전 단계로!';
     case 'timer': return '⏱ 타이머 ' + voiceTimerLabel(c.seconds) + ' 시작!';
-    case 'timer_error': return c.reason === 'zero' ? '타이머 시간을 0보다 크게 말해 주세요.' : '타이머는 1초부터 99분 59초까지예요.';
+    case 'timer_error': return c.reason === 'zero' ? '타이머 시간을 0보다 크게 말해 주세요.' : '타이머는 1초부터 60분까지예요.';
     case 'good': return '👍 좋았음 기록!';
     case 'fix': return '🔧 고칠점 기록!';
     case 'star': return '★ 별표!';

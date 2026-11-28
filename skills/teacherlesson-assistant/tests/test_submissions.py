@@ -178,3 +178,56 @@ def test_server_unknown_action_and_missing_sheet(server):
         app.submissions_post({"action": "delete", "title": "a"})
     with pytest.raises(ValueError):
         app.submissions_get("없음")
+
+
+# ── T115: 파일 이름·긴 제목·두 번째 저장 ──
+
+@pytest.mark.parametrize("title", ["con", "CON", "nul", "Prn", "aux", "com1", "COM9", "lpt1", "LPT9", "con.txt", "nul.x"])
+def test_windows_reserved_names_get_a_safe_file_name(base, title):
+    sub.create(base, title, 3)
+    names = [p.name for p in base.glob("*.json")]
+    assert len(names) == 1 and names[0].startswith("_")          # con.json 같은 이름은 윈도우가 못 만든다
+    assert sub.load(base, title)["title"] == title.strip()        # 화면에 보이는 제목은 그대로
+
+
+@pytest.mark.parametrize("title", ["com0", "com10", "console", "lpt", "connect", "nulls", "내용"])
+def test_similar_but_not_reserved_names_are_left_alone(base, title):
+    assert sub.slug(title) == title
+
+
+def test_reserved_and_underscored_titles_do_not_overwrite_each_other_silently(base):
+    sub.create(base, "con", 3)
+    with pytest.raises(ValueError, match="이미"):
+        sub.create(base, "_con", 3)       # _con 은 같은 파일로 닿으므로 덮어쓰지 않고 거절
+
+
+def test_long_title_is_cut_to_60_chars_in_the_file_name_only(base):
+    title = "가" * 100
+    rec = sub.create(base, title, 3)
+    assert rec["title"] == title                                   # 기록 안의 제목은 그대로
+    assert [p.stem for p in base.glob("*.json")] == ["가" * 60]
+    assert sub.load(base, title)["title"] == title
+
+
+def test_titles_that_differ_only_after_60_chars_share_one_sheet(base):
+    sub.create(base, "가" * 60 + "A", 3)
+    with pytest.raises(ValueError, match="이미"):
+        sub.create(base, "가" * 60 + "B", 3)
+
+
+def test_second_save_replaces_the_same_file_and_leaves_no_temp_file(base):
+    sub.create(base, "동의서", 5)
+    sub.mark(base, "동의서", 1, today=D)
+    sub.mark(base, "동의서", 2, today=D)
+    files = sorted(p.name for p in base.iterdir())
+    assert files == ["동의서.json"]                                  # 임시 파일(.tmp)이 남지 않음
+    assert json.loads((base / "동의서.json").read_text(encoding="utf-8"))["marks"] == {"1": "2026-11-28", "2": "2026-11-28"}
+
+
+def test_save_failure_keeps_the_old_file_intact(base, monkeypatch):
+    sub.create(base, "동의서", 5)
+    sub.mark(base, "동의서", 1, today=D)
+    monkeypatch.setattr(sub.os, "replace", lambda *a: (_ for _ in ()).throw(PermissionError("열려 있음")))
+    with pytest.raises(PermissionError):
+        sub.mark(base, "동의서", 2, today=D)
+    assert sub.load(base, "동의서")["marks"] == {"1": "2026-11-28"}   # 옛 내용 그대로

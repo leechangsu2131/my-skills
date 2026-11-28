@@ -35,6 +35,10 @@ Notion·시트에는 처리할 것(할 일, 책 행)만 보낸다. mem 대신 �
 - 중앙 `.env`: `DB_SHEET_ID`·`GOOGLE_SERVICE_ACCOUNT_FILE`(school-todo-kakao 와 같은 값), `NOTION_TOKEN`,
   `PERSONAL_DAILY_INTAKE__NOTION_READING_DB_ID`(독서 DB), 볼트 경로 `PERSONAL_OBSIDANSYSTEM_MAIN__VAULT`
   (이 스킬만 다른 볼트를 쓰려면 `PERSONAL_DAILY_INTAKE__VAULT`)
+- **Notion 연결**: `NOTION_TOKEN` 의 연결 이름은 **`book manage`** 다(2026-11-28 확인). 이 연결에 공유된 DB 만 읽고 쓸 수 있다 —
+  지금은 독서 DB 뿐. 업무일지·일기·습관 DB 를 쓰려면 Notion 에서 그 DB(또는 DB 가 든 페이지)를 열고
+  오른쪽 위 ··· → 연결 → `book manage` 추가. 확인은 `python intake.py notion`(무엇이 보이고 무엇이 안 보이는지 + 연결 방법).
+  업무일지·일기·습관기록·프로젝트 DB 는 2026-11-28 공유·연결됨(DB id: `.env` `PERSONAL_DAILY_INTAKE__NOTION_WORK|DIARY|HABIT|PROJECT_DB_ID`).
 
 ## 사용법
 ```powershell
@@ -55,7 +59,9 @@ python intake.py apply 파일.md --skip notion   # 인터넷·권한 문제로 �
 | 독서 | Notion 독서 DB 새 행(책제목·한줄평·읽은기간) |
 | 학생 | 후보만 — `classmanage-student-classifier` |
 | 투자 | 후보만 — 투자시트 분위기 일지(`personal-invest-sheet`) |
-| 업무·일기·습관 | 지금은 daily 에만 (Notion DB 연결 공유 전, ISSUE-001) |
+| 업무 | Notion 업무일지 새 행(이름·날짜, 말에 프로젝트 이름이 나오면 프로젝트 DB 에 연결, 본문에 내용·daily 링크) |
+| 일기 | Notion 일기 새 행(Name·Date, 제미나이가 붙인 감정 → Emotion) |
+| 습관 | Notion 습관기록 — 그날 줄이 있으면 해당 칸(운동·독서·명상·물·일찍자기·감사일기)만 체크, 없으면 새 줄 |
 | 개선 | 데이터 폴더 `ideas.json` 에 적음(대상 스킬을 낱말로 짐작) → `python intake.py ideas` 로 보고, 교사가 고른 것을 그 스킬 `ISSUES.md` 📌 백로그로 옮김 → S8 로 작업자에게 감 |
 | 모든 조각 | 볼트 `daily/YYYY-MM-DD.md` (원문 그대로 + '보낸 곳' 목록) |
 

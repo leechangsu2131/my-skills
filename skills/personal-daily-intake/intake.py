@@ -188,8 +188,8 @@ def plan(doc: Doc) -> list:
             acts.append(Action("candidate", "학생 기록 DB 후보 — classmanage-student-classifier 로", p))
         elif k == "투자":
             acts.append(Action("candidate", "투자시트 분위기 일지 후보 — personal-invest-sheet 로", p))
-        elif k in ("업무", "일기", "습관"):
-            acts.append(Action("candidate", f"Notion {k} DB — 아직 연결 공유 전이라 daily 에만 (ISSUES ISSUE-001)", p))
+        elif k in NOTION_KINDS:
+            acts.append(Action("notion-" + NOTION_KINDS[k][0], f"Notion {NOTION_KINDS[k][1]}", p))
         elif k == "개선":
             tgt = guess_target(" ".join((p.get("대상"), p.title, p.get("내용"))))
             acts.append(Action("idea", f"개선 아이디어 → {tgt} ISSUES 후보", p, {"target": tgt}))
@@ -250,17 +250,108 @@ def write_daily(vault: Path, doc: Doc, sent: list, now: datetime) -> str:
     return f"daily/{doc.date}.md — 새로 만듦"
 
 
-class Notion:
-    def __init__(self, token: str, reading_db: str):
-        self.token, self.reading_db = token, reading_db
+# 갈래 → (Notion 쓰기 종류, 표에 보일 이름). DB id 는 중앙 .env PERSONAL_DAILY_INTAKE__NOTION_<종류>_DB_ID
+NOTION_KINDS = {"업무": ("work", "업무일지"), "일기": ("diary", "일기"), "습관": ("habit", "습관기록")}
+HABIT_WORDS = ("운동", "독서", "명상", "물", "일찍", "감사")  # 습관기록 체크 칸 이름에 든 낱말
 
-    def _call(self, path: str, body: dict) -> dict:
+
+def _title(text: str) -> dict:
+    return {"title": [{"text": {"content": text[:1900]}}]}
+
+
+class Notion:
+    def __init__(self, token: str, reading_db: str, ids: dict | None = None):
+        self.token, self.reading_db, self.ids = token, reading_db, ids or {}
+        self._schemas, self._projects = {}, None
+
+    def _call(self, path: str, body: dict | None = None, method: str | None = None) -> dict:
         req = urllib.request.Request(
-            "https://api.notion.com/v1/" + path, data=json.dumps(body).encode("utf-8"),
+            "https://api.notion.com/v1/" + path, data=json.dumps(body).encode("utf-8") if body is not None else None,
             headers={"Authorization": "Bearer " + self.token, "Notion-Version": "2022-06-28",
-                     "Content-Type": "application/json"})
+                     "Content-Type": "application/json"}, method=method)
         with urllib.request.urlopen(req, timeout=30) as r:
             return json.load(r)
+
+    # --- 공용 ---
+    def db(self, kind: str) -> str:
+        if not self.ids.get(kind):
+            raise RuntimeError(f"중앙 .env 에 PERSONAL_DAILY_INTAKE__NOTION_{kind.upper()}_DB_ID 가 없어요(python intake.py notion)")
+        return self.ids[kind]
+
+    def schema(self, db: str) -> dict:
+        if db not in self._schemas:
+            self._schemas[db] = self._call(f"databases/{db}", method="GET")["properties"]
+        return self._schemas[db]
+
+    def query(self, db: str, flt: dict) -> list:
+        return self._call(f"databases/{db}/query", {"filter": flt, "page_size": 5}).get("results", [])
+
+    def create(self, db: str, props: dict, lines: list[str]) -> None:
+        children = [{"object": "block", "type": "paragraph",
+                     "paragraph": {"rich_text": [{"type": "text", "text": {"content": ln[:1900]}}]}} for ln in lines if ln]
+        self._call("pages", {"parent": {"database_id": db}, "properties": props, "children": children})
+
+    def projects(self) -> list[tuple[str, str]]:
+        """(프로젝트 이름, page id) — 업무 조각을 프로젝트에 이을 때. 프로젝트 DB 가 없으면 빈 목록."""
+        if self._projects is None:
+            self._projects = []
+            db, cursor = self.ids.get("project"), None
+            while db:
+                body = {"page_size": 100, **({"start_cursor": cursor} if cursor else {})}
+                d = self._call(f"databases/{db}/query", body)
+                for pg in d.get("results", []):
+                    props = pg.get("properties", {})
+                    name = "".join(x.get("plain_text", "") for x in props.get("업무", {}).get("title", []))
+                    sel = (props.get("프로젝트", {}).get("select") or {}).get("name", "")
+                    for n in {name.strip(), sel.strip()}:
+                        if len(n) >= 2:
+                            self._projects.append((n, pg["id"]))
+                if not d.get("has_more"):
+                    break
+                cursor = d.get("next_cursor")
+        return self._projects
+
+    # --- 갈래별 ---
+    def add_work(self, p: "Piece", day: str) -> str:
+        db = self.db("work")
+        if self.query(db, {"and": [{"property": "이름", "title": {"equals": p.title}},
+                                   {"property": "날짜", "date": {"equals": day}}]}):
+            return "이미 있음"
+        props = {"이름": _title(p.title), "날짜": {"date": {"start": day}}}
+        text = " ".join((p.title, p.get("내용"), p.get("관련")))
+        hits = sorted((n for n in self.projects() if n[0].lower() in text.lower()), key=lambda n: -len(n[0]))
+        if hits and "프로젝트 DB" in self.schema(db):
+            props["프로젝트 DB"] = {"relation": [{"id": hits[0][1]}]}
+        self.create(db, props, [p.get("내용"), f"원문: Obsidian daily/{day}.md"])
+        return "새 행" + (f" (프로젝트 '{hits[0][0]}')" if hits else "")
+
+    def add_diary(self, p: "Piece", day: str) -> str:
+        db = self.db("diary")
+        if self.query(db, {"and": [{"property": "Name", "title": {"equals": p.title}},
+                                   {"property": "Date", "date": {"equals": day}}]}):
+            return "이미 있음"
+        props = {"Name": _title(p.title), "Date": {"date": {"start": day}}}
+        opts = [o["name"] for o in self.schema(db).get("Emotion", {}).get("multi_select", {}).get("options", [])]
+        feel = [o for o in opts if o in p.get("감정")]
+        if feel:
+            props["Emotion"] = {"multi_select": [{"name": o} for o in feel]}
+        self.create(db, props, [p.get("내용"), f"원문: Obsidian daily/{day}.md"])
+        return "새 행" + (f" {''.join(feel)}" if feel else "")
+
+    def add_habit(self, p: "Piece", day: str) -> str:
+        db = self.db("habit")
+        boxes = [k for k, v in self.schema(db).items() if v.get("type") == "checkbox"]
+        said = p.get("습관") or f"{p.title} {p.get('내용')}"
+        tick = [b for b in boxes if any(w in b and w in said for w in HABIT_WORDS)]
+        if not tick:
+            return "체크할 습관 칸을 못 찾음 — daily 에만"
+        props = {b: {"checkbox": True} for b in tick}
+        rows = self.query(db, {"property": "Date", "date": {"equals": day}})
+        if rows:
+            self._call(f"pages/{rows[0]['id']}", {"properties": props}, method="PATCH")
+            return "그날 줄에 체크: " + ", ".join(tick)
+        self.create(db, {"Name": _title(day), "Date": {"date": {"start": day}}, **props}, [])
+        return "새 줄에 체크: " + ", ".join(tick)
 
     def add_book(self, book: str, review: str, day: str) -> str:
         found = self._call(f"databases/{self.reading_db}/query",
@@ -275,6 +366,55 @@ class Notion:
         return "새 행"
 
 
+# 하루 기록이 Notion 에 넣고 싶은 DB — (갈래, 제목에 들어갈 낱말). 아직 쓰기는 독서만, 나머지는 공유 확인부터(ISSUE-001)
+NOTION_WANTED = (("독서", "독서"), ("업무", "업무일지"), ("일기", "일기"), ("습관", "습관"))
+NOTION_HOWTO = """Notion 에서 연결하는 법(DB 마다 한 번):
+  1. Notion 에서 그 DB(또는 DB 가 든 페이지 — 예: '2026 업무일지', '생활습관 및 일기')를 연다
+  2. 오른쪽 위 ··· → '연결'(Connections) → '{bot}' 를 찾아 누르고 '확인'
+     (페이지에 연결하면 그 안의 DB 들이 함께 열린다)
+  3. 다시 python intake.py notion 으로 ✅ 가 되는지 본다"""
+
+
+def notion_status(call) -> tuple[str, list[tuple[str, str, str | None]]]:
+    """(연결 이름, [(갈래, 찾는 낱말, 찾은 DB 제목 또는 None)]). call(경로, 본문 또는 None) → JSON."""
+    me = call("users/me", None)
+    found, cursor = [], None
+    while True:
+        body = {"filter": {"property": "object", "value": "database"}, "page_size": 100}
+        if cursor:
+            body["start_cursor"] = cursor
+        d = call("search", body)
+        found += ["".join(x.get("plain_text", "") for x in db.get("title", [])) for db in d.get("results", [])]
+        if not d.get("has_more"):
+            break
+        cursor = d.get("next_cursor")
+    rows = [(kind, word, next((t for t in found if word in t), None)) for kind, word in NOTION_WANTED]
+    return me.get("name") or "(이름 모름)", rows
+
+
+def show_notion() -> int:
+    token = os.environ.get("NOTION_TOKEN", "").strip()
+    if not token:
+        print("중앙 .env 에 NOTION_TOKEN 이 없어요.")
+        return 1
+
+    def call(path, body):
+        req = urllib.request.Request(
+            "https://api.notion.com/v1/" + path, data=json.dumps(body).encode("utf-8") if body is not None else None,
+            headers={"Authorization": "Bearer " + token, "Notion-Version": "2022-06-28", "Content-Type": "application/json"})
+        with urllib.request.urlopen(req, timeout=30) as r:
+            return json.load(r)
+
+    bot, rows = notion_status(call)
+    print(f"Notion 연결 이름: {bot}")
+    for kind, word, title in rows:
+        print(f"{'✅' if title else '❌'} {kind}: " + (f"'{title}' 보임" if title else f"'{word}' 가 든 DB 가 안 보임 — 공유 필요"))
+    if any(t is None for _, _, t in rows):
+        print("\n" + NOTION_HOWTO.format(bot=bot))
+        print("\n공유한 뒤에도 업무·일기·습관에 실제로 쓰는 기능은 아직 없어요 — 공유가 되면 Claude 에게 'Notion 쓰기 붙여 줘'(ISSUE-001).")
+    return 0
+
+
 def open_sheet():
     from schooltodo.db import SheetsDb
     return SheetsDb.from_env()
@@ -285,7 +425,8 @@ def open_notion() -> Notion:
     db = os.environ.get("NOTION_READING_DB_ID", "").strip()  # .env 의 PERSONAL_DAILY_INTAKE__ 접두어는 load_env 가 뗀다
     if not token or not db:
         raise RuntimeError("중앙 .env 에 NOTION_TOKEN 과 PERSONAL_DAILY_INTAKE__NOTION_READING_DB_ID 가 필요해요")
-    return Notion(token, db)
+    ids = {k: os.environ.get(f"NOTION_{k.upper()}_DB_ID", "").strip() for k in ("work", "diary", "habit", "project")}
+    return Notion(token, db, ids)
 
 
 def apply(doc: Doc, acts: list, vault: Path, sheet=None, notion=None, skip=(), now=None, ideas: Path | None = None):
@@ -340,12 +481,15 @@ def apply(doc: Doc, acts: list, vault: Path, sheet=None, notion=None, skip=(), n
                 path.parent.mkdir(parents=True, exist_ok=True)
                 path.write_text(note_text(doc, a), encoding="utf-8")
                 note(i, a, "새 노트")
-            elif a.dest == "notion-reading":
+            elif a.dest.startswith("notion-"):
                 if "notion" in skip:
                     note(i, a, "건너뜀(--skip)", ok=False)
                     continue
                 nt = nt or (notion() if callable(notion) else notion)
-                note(i, a, nt.add_book(a.data["book"], a.piece.get("내용"), doc.date))
+                if a.dest == "notion-reading":
+                    note(i, a, nt.add_book(a.data["book"], a.piece.get("내용"), doc.date))
+                else:
+                    note(i, a, getattr(nt, "add_" + a.dest[len("notion-"):])(a.piece, doc.date))
             elif a.dest == "idea":
                 new = add_idea(ideas, doc, a.piece, a.data["target"])
                 note(i, a, "아이디어 목록에 적음 (python intake.py ideas)" if new else "이미 적혀 있음")
@@ -511,7 +655,7 @@ def main(argv=None) -> int:
         if hasattr(s, "reconfigure"):
             s.reconfigure(encoding="utf-8")
     ap = argparse.ArgumentParser(description="하루 기록을 갈래별로 나눠 넣기")
-    ap.add_argument("cmd", choices=["plan", "apply", "ideas", "bookmarklet", "convert"])
+    ap.add_argument("cmd", choices=["plan", "apply", "ideas", "bookmarklet", "convert", "notion"])
     ap.add_argument("file", nargs="?")
     ap.add_argument("files", nargs="*", help="convert: 여러 json")
     ap.add_argument("--skip", default="", help="쉼표로: sheet,notion")
@@ -520,6 +664,9 @@ def main(argv=None) -> int:
     a = ap.parse_args(argv)
     if a.cmd == "ideas":
         return show_ideas(data_dir(SKILL) / "ideas.json", a.done, a.all)
+    if a.cmd == "notion":
+        load_env()
+        return show_notion()
     if a.cmd == "convert":
         load_env()
         inbox, archive = data_dir(SKILL, "inbox"), data_dir(SKILL, "gemini")

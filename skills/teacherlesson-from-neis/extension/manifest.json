@@ -25,6 +25,11 @@
       "matches": ["https://*.neis.go.kr/*"],
       "js": ["content.js"],
       "run_at": "document_idle"
+    },
+    {
+      "matches": ["https://*.neis.go.kr/*"],
+      "js": ["session-keeper.js"],
+      "run_at": "document_idle"
     }
   ],
   "action": {

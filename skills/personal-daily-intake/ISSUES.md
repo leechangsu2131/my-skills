@@ -23,16 +23,14 @@
 - 참고: 예람쌤 RamBot·RamNeis 사용 가이드(교사 개인 드라이브 `my-skills-개인자료\resource\guide-rambot.pdf`·`guide-ramneis.pdf`, 2026-11-28 읽음). 기능 생각만 가져오고 글·그림·코드는 베끼지 않는다.
 - PC 마이크로 말하기 → 내 PC 받아쓰기(faster-whisper, 수업 비서 `transcribe.py` 와 같은 엔진, 고쳐 쓰기 사전 함께 — 수업 비서 ISSUE-053 ①) → Claude Code 또는 Gemini CLI 가 `gem_prompt.md` 지침대로 md → inbox. 제미나이 스킬이 없어져도 같은 흐름이 됨.
 
-### ISSUE-001: Notion 업무일지·일기·습관기록 DB에 쓰기 (2026-11-27)
-- **상태**: 📌 백로그
-- **증상**: 지금 중앙 .env 의 Notion 연결(`NOTION_TOKEN`)은 독서 DB·도서 신청 DB만, `NOTION_API_KEY` 는 수업실행·진도·학생 기록 DB만 보인다. 업무일지·일기·습관기록은 어느 쪽에도 공유돼 있지 않다.
-- **필요한 것**: 교사가 Notion 에서 그 DB 페이지 → ··· → 연결 → `NOTION_TOKEN` 쪽 연결을 추가. 그 뒤 속성을 읽어 갈래별 쓰기를 붙인다.
-- **함께 볼 것**: 수업 조각을 Notion 수업실행 `메모`(그날·과목 행)에 덧붙이기 — 기존 행을 고치는 일이라 표로 확인받는 방식으로. 진도는 이제 Supabase(teacherlesson-schedule)가 원본이라 수업실행이 아직 쓰이는지 먼저 확인.
-
 ### ISSUE-003: 후보를 바로 반영하는 길 (2026-11-27)
 - **상태**: 📌 백로그
 - 수업 요령 → 과목 노트 '진행 방식', 학생 → 학생 기록 DB(이름 관계 찾기), 투자 → 투자시트 분위기 일지. 지금은 '후보'로 daily 에 남기고 교사가 고르면 손으로 한다.
 
 ## 🟢 해결됨
 
-_없음_
+### ISSUE-001: Notion 업무일지·일기·습관기록 DB에 쓰기 (2026-11-27)
+- **상태**: 🟢 해결 (2026-11-28) — 교사가 `book manage` 연결을 공유, `Notion.add_work`·`add_diary`·`add_habit` 붙임(가짜 API 시험). 실제 첫 넣기 결과는 ISSUE-002 에서 확인
+- **증상**: 지금 중앙 .env 의 Notion 연결(`NOTION_TOKEN`)은 독서 DB·도서 신청 DB만, `NOTION_API_KEY` 는 수업실행·진도·학생 기록 DB만 보인다. 업무일지·일기·습관기록은 어느 쪽에도 공유돼 있지 않다.
+- **필요한 것**: 교사가 Notion 에서 그 DB 페이지 → ··· → 연결 → **`book manage`**(`NOTION_TOKEN` 의 연결 이름) 추가. 확인은 `python intake.py notion`(2026-11-28 추가). 그 뒤 속성을 읽어 갈래별 쓰기를 붙인다.
+- **함께 볼 것**: 수업 조각을 Notion 수업실행 `메모`(그날·과목 행)에 덧붙이기 — 기존 행을 고치는 일이라 표로 확인받는 방식으로. 진도는 이제 Supabase(teacherlesson-schedule)가 원본이라 수업실행이 아직 쓰이는지 먼저 확인.

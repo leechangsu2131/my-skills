@@ -38,3 +38,4 @@
 - 2026-11-28 06:30 교사 지시 PR 올림 (repo-root 자동 검사 고침) — #144 시험 6개를 가짜 supabase_schedule 로. pytest·pyyaml·PyMuPDF 만 설치한 환경에서 tests 524 통과
 - 2026-11-28 06:52 교사 지시 PR 올림 (영수증 파일 삭제) — admin-class-buy/data 의 JSON·증빙 docx. 옛 커밋에는 남음
 - 2026-11-28 07:07 교사 지시 PR 올림 (받아쓰기 사전 고침, ISSUE-054) — 틀린 모양은 ⚠ 알림, 조사 추가(받침 구분). #185 는 교사 지시로 합침
+- 2026-11-28 14:40 S8 (teacherlesson-guide) 시작 (브랜치 task/S8-teacherlesson-guide)

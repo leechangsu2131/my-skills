@@ -413,6 +413,121 @@ def press_control(control, hwnd: int) -> str:
     return "마우스 클릭"
 
 
+# ───── 자동화: claude.ai 프로젝트 지침 일괄 바꾸기 ─────
+INSTR_EDIT_BUTTON = "지침 편집"          # 프로젝트 페이지 오른쪽 '지침' 카드의 연필 단추
+INSTR_FIELD = "프로젝트 지침 설정"       # 편집 창(대화상자)과 그 안 글칸의 이름
+INSTR_SAVE = "지침 저장"
+INSTR_CANCEL = "취소"
+WORKER_INSTRUCTIONS = Path(__file__).resolve().parents[2] / "docs" / "WORKER_INSTRUCTIONS.md"
+
+
+def _by_name(hwnd: int, name: str, control_type: str | None = None):
+    auto, client = _uia()
+    cond = client.CreatePropertyCondition(auto.PropertyId.NameProperty, name)
+    if control_type:
+        cond = client.CreateAndCondition(cond, client.CreatePropertyCondition(
+            auto.PropertyId.ControlTypeProperty, getattr(auto.ControlType, control_type)))
+    element = auto.ControlFromHandle(hwnd).Element.FindFirst(4, cond)
+    return auto.Control.CreateControlFromElement(element) if element else None
+
+
+def page_url(hwnd: int) -> str | None:
+    """주소창 글(예: claude.ai/project/…)."""
+    auto, client = _uia()
+    cond = client.CreatePropertyCondition(auto.PropertyId.ControlTypeProperty, auto.ControlType.EditControl)
+    element = auto.ControlFromHandle(hwnd).Element.FindFirst(4, cond)  # 첫 글칸 = 주소창
+    try:
+        return auto.Control.CreateControlFromElement(element).GetValuePattern().Value if element else None
+    except Exception:
+        return None
+
+
+def open_instructions(hwnd: int, wait: float = 6.0):
+    """'지침 편집'을 눌러 편집 창의 글칸을 돌려준다. 못 열면 None."""
+    field = _by_name(hwnd, INSTR_FIELD, "EditControl")
+    if field:
+        return field
+    button = _by_name(hwnd, INSTR_EDIT_BUTTON, "ButtonControl")
+    if not button:
+        return None
+    button.GetInvokePattern().Invoke()
+    end = time.time() + wait
+    while time.time() < end:
+        time.sleep(0.3)
+        field = _by_name(hwnd, INSTR_FIELD, "EditControl")
+        if field:
+            return field
+    return None
+
+
+def close_instructions(hwnd: int, save: bool) -> bool:
+    button = _by_name(hwnd, INSTR_SAVE if save else INSTR_CANCEL, "ButtonControl")
+    if not button:
+        return False
+    button.GetInvokePattern().Invoke()
+    for _ in range(20):  # 편집 창이 닫힐 때까지
+        time.sleep(0.25)
+        if not _by_name(hwnd, INSTR_FIELD, "EditControl"):
+            return True
+    return False
+
+
+def field_value(field) -> str:
+    return (field.GetValuePattern().Value or "").replace("\r\n", "\n")
+
+
+def fill_field(hwnd: int, field, text: str) -> bool:
+    """글칸을 실제 키보드처럼 채운다(전체 선택 → 붙여넣기). 창이 맨 앞이고 글칸 글이 text 와 같으면 True."""
+    if win32gui.GetForegroundWindow() != hwnd and not activate(hwnd):
+        return False
+    field.SetFocus()
+    time.sleep(0.15)
+    press_keys([win32con.VK_CONTROL], ord("A"))
+    set_clipboard(text)
+    time.sleep(0.05)
+    press_ctrl_v()
+    time.sleep(0.6)
+    return win32gui.GetForegroundWindow() == hwnd and field_value(field).strip() == text.strip()
+
+
+def reload_and_read_instructions(hwnd: int, wait: float = 20.0) -> str | None:
+    """페이지를 새로 고친 뒤(F5) 저장된 지침을 읽는다(편집 창에 남은 글이 아니라 서버에 저장된 글)."""
+    if win32gui.GetForegroundWindow() != hwnd and not activate(hwnd):
+        return None
+    press_keys([], win32con.VK_F5)
+    time.sleep(2.0)
+    end = time.time() + wait
+    while time.time() < end and not _by_name(hwnd, INSTR_EDIT_BUTTON, "ButtonControl"):
+        time.sleep(0.5)
+    field = open_instructions(hwnd)
+    if not field:
+        return None
+    value = field_value(field)
+    close_instructions(hwnd, save=False)
+    return value
+
+
+def compose_instructions(current: str, body: str, keep_lines: int) -> str:
+    """지금 지침의 맨 위 keep_lines 줄은 그대로 두고, 그 아래를 body 로 바꾼다(사이에 빈 줄 하나)."""
+    kept = current.replace("\r\n", "\n").split("\n")[:keep_lines]
+    return "\n".join(kept).rstrip() + "\n\n" + body.replace("\r\n", "\n").strip("\n") + "\n"
+
+
+def worker_instructions_body() -> str | None:
+    """docs/WORKER_INSTRUCTIONS.md '## 전체본' 의 코드 블록에서 맨 첫 줄([이름] 줄)을 뺀 나머지."""
+    try:
+        text = WORKER_INSTRUCTIONS.read_text(encoding="utf-8")
+    except OSError:
+        return None
+    m = re.search(r"^## 전체본\s*\n+```[^\n]*\n(.*?)\n```", text, re.S | re.M)
+    if not m:
+        return None
+    lines = m.group(1).split("\n")
+    if lines and lines[0].lstrip().startswith("["):
+        lines = lines[1:]
+    return "\n".join(lines).strip("\n")
+
+
 def normalize_url(text: str) -> str:
     """'naver.com' → 'https://naver.com'. 이미 주소(https:, chrome:, file: …)거나 검색어(띄어쓰기)면 그대로."""
     text = text.strip()
@@ -576,6 +691,60 @@ class Popup(QLabel):
         self.show()
         self.raise_()
         self.hide_timer.start(int(seconds * 1000))
+
+
+class InstructionsDialog(QDialog):
+    """프로젝트 지침 일괄 바꾸기: 새 글 + 남길 줄 수 + 안전 설정."""
+
+    def __init__(self, parent, scope: str, last_body: str):
+        super().__init__(parent)
+        self.setWindowTitle("프로젝트 지침 일괄 바꾸기 (claude.ai)")
+        self.resize(640, 560)
+        self.body = QPlainTextEdit(last_body)
+        self.body.setPlaceholderText("맨 위 이름 줄 아래에 들어갈 새 지침을 붙여 넣으세요.")
+        load = QPushButton("WORKER_INSTRUCTIONS.md 전체본 불러오기")
+        load.setToolTip(str(WORKER_INSTRUCTIONS))
+        load.setAutoDefault(False)
+        load.clicked.connect(self.load_worker)
+        self.keep = QSpinBox()
+        self.keep.setRange(1, 20)
+        self.keep.setValue(1)
+        self.only_bracket = QCheckBox("첫 줄이 [ 로 시작하는 창만 (작업자 이름 줄이 있는 프로젝트만)")
+        self.only_bracket.setChecked(True)
+        self.preview_only = QCheckBox("미리보기만 — 글칸에 넣어 확인하고 저장하지 않고 취소")
+        buttons = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel)
+        buttons.button(QDialogButtonBox.StandardButton.Ok).setText("다음: 지금 지침 읽기")
+        buttons.accepted.connect(self.accept)
+        buttons.rejected.connect(self.reject)
+        keep_row = QHBoxLayout()
+        keep_row.addWidget(QLabel("지금 지침의 맨 위"))
+        keep_row.addWidget(self.keep)
+        keep_row.addWidget(QLabel("줄은 그대로 두고, 그 아래를 아래 글로 바꿉니다."))
+        keep_row.addStretch()
+        guide = QLabel(f"대상: {scope}\n각 창은 claude.ai 프로젝트 페이지(오른쪽에 '지침' 카드)를 열어 둔 상태여야 합니다.\n"
+                       "다음을 누르면 먼저 창마다 지금 지침을 읽어 무엇이 바뀌는지 보여 주고, 한 번 더 묻습니다.")
+        guide.setWordWrap(True)
+        box = QVBoxLayout(self)
+        box.addWidget(guide)
+        box.addLayout(keep_row)
+        box.addWidget(self.body)
+        box.addWidget(load)
+        box.addWidget(self.only_bracket)
+        box.addWidget(self.preview_only)
+        box.addWidget(buttons)
+
+    def load_worker(self):
+        body = worker_instructions_body()
+        if body is None:
+            QMessageBox.warning(self, "불러오기", f"전체본을 못 찾았습니다:\n{WORKER_INSTRUCTIONS}")
+            return
+        self.body.setPlainText(body)
+
+    def accept(self):
+        if not self.body.toPlainText().strip():
+            QMessageBox.warning(self, "프로젝트 지침", "새 지침 글이 비어 있습니다.")
+            return
+        super().accept()
 
 
 class GotoDialog(QDialog):
@@ -765,7 +934,8 @@ class Manager(QMainWindow):
              ("탭 정리 ▾", self.tab_menu, "다른 탭 닫기 / 오른쪽 탭 닫기 / 왼쪽 탭 닫기를 여러 창에 한꺼번에. 창 전환 없음.")),
             (("그룹 추가", self.add_group, "새 그룹. 이름은 그룹을 고르고 F2 로 바꾼다."),
              ("그룹 삭제", self.remove_group, "고른 그룹을 지우고 안의 프로필은 미분류로 옮긴다."),
-             ("시작 URL", self.set_start_url, "고른 프로필들의 시작 URL 을 한 번에 바꾼다(비우면 해제).")),
+             ("시작 URL", self.set_start_url, "고른 프로필들의 시작 URL 을 한 번에 바꾼다(비우면 해제)."),
+             ("자동화 ▾", self.automation_menu, "여러 창에 같은 웹 작업을 차례로: claude.ai 프로젝트 지침 일괄 바꾸기 등")),
         ):
             line = QHBoxLayout()
             for label, slot, tip in row:
@@ -1303,6 +1473,7 @@ class Manager(QMainWindow):
             menu.addAction("이 창 사이트 이동", lambda: self.go_to_site(targets=hwnds))
             menu.addAction("글자 감시…" + (" (켜짐)" if st["text_watch"] else ""), lambda: self.set_text_watch(hwnds))
             menu.addAction("문구 찾아 누르기…", lambda: self.click_phrase(hwnds))
+            menu.addAction("프로젝트 지침 바꾸기(claude.ai)…", lambda: self.replace_instructions(targets=hwnds))
             tab_sub = menu.addMenu("탭 정리")
             for mode, name in TAB_MODES.items():
                 tab_sub.addAction(f"{name} 닫기", lambda m=mode: self.close_tabs_bulk(m, targets=hwnds))
@@ -1316,6 +1487,8 @@ class Manager(QMainWindow):
             menu.addAction(f"고른 창 {n}개 사이트 이동", lambda: self.go_to_site(targets=hwnds))
             menu.addAction(f"고른 창 {n}개 글자 감시…", lambda: self.set_text_watch(hwnds))
             menu.addAction(f"고른 창 {n}개에서 문구 찾아 누르기…", lambda: self.click_phrase(hwnds))
+            menu.addAction(f"고른 창 {n}개 프로젝트 지침 일괄 바꾸기(claude.ai)…",
+                           lambda: self.replace_instructions(targets=hwnds))
             tab_sub = menu.addMenu(f"고른 창 {n}개 탭 정리")
             for mode, name in TAB_MODES.items():
                 tab_sub.addAction(f"{name} 닫기", lambda m=mode: self.close_tabs_bulk(m, targets=hwnds))
@@ -1736,6 +1909,111 @@ class Manager(QMainWindow):
             lines = ["재고 있는 작업 시간이 없습니다.",
                      f"Chrome 창에서 {self.cfg['hotkeys']['toggle']} 또는 매니저 트리 오른쪽 클릭으로 시작합니다."]
         self.popup.show_text("\n".join(lines), 8)
+
+    # ───── 자동화 ─────
+    def automation_menu(self, *_):
+        menu = QMenu(self)
+        menu.addAction("프로젝트 지침 일괄 바꾸기 (claude.ai, 맨 위 이름 줄은 두고)…", self.replace_instructions)
+        button = self.sender()
+        menu.exec(button.mapToGlobal(button.rect().bottomLeft()) if button else QCursor.pos())
+
+    def replace_instructions(self, *_, targets: list[int] | None = None):
+        windows, scope = self.target_windows(targets)
+        if not windows:
+            QMessageBox.information(self, "프로젝트 지침", "대상 창이 없습니다.")
+            return
+        dialog = InstructionsDialog(self, scope, self.cfg.get("last_instructions", ""))
+        if dialog.exec() != QDialog.DialogCode.Accepted:
+            return
+        body, keep = dialog.body.toPlainText(), dialog.keep.value()
+        only_bracket, preview_only = dialog.only_bracket.isChecked(), dialog.preview_only.isChecked()
+        self.cfg["last_instructions"] = body
+        self.save()
+
+        # 1) 읽기: 창마다 편집 창을 열어 지금 지침을 읽고 취소로 닫는다(바꾸지 않음)
+        plans, skipped = [], []
+        QApplication.setOverrideCursor(Qt.CursorShape.WaitCursor)
+        try:
+            for hwnd in windows:
+                label = self.label(hwnd)
+                try:
+                    url = page_url(hwnd) or ""
+                    if "claude.ai/project/" not in url:
+                        skipped.append(f"{label} — 프로젝트 페이지가 아님")
+                        continue
+                    field = open_instructions(hwnd)
+                    if not field:
+                        skipped.append(f"{label} — '지침 편집'을 못 엶")
+                        continue
+                    current = field_value(field)
+                    close_instructions(hwnd, save=False)
+                except Exception as e:
+                    skipped.append(f"{label} — 읽기 오류 {e.__class__.__name__}")
+                    continue
+                first = current.split("\n", 1)[0].strip()
+                if only_bracket and not first.startswith("["):
+                    skipped.append(f"{label} — 첫 줄이 [ 로 시작하지 않음: {first[:30]}")
+                    continue
+                new = compose_instructions(current, body, keep)
+                if new.strip() == current.strip():
+                    skipped.append(f"{label} — 이미 같은 지침")
+                    continue
+                plans.append((hwnd, label, current, new))
+        finally:
+            QApplication.restoreOverrideCursor()
+        if not plans:
+            QMessageBox.information(self, "프로젝트 지침", "바꿀 창이 없습니다.\n\n" + "\n".join(skipped[:15]))
+            return
+        lines = [f"{label}\n    남김: {current.split(chr(10), 1)[0][:50]}\n    {len(current)}자 → {len(new)}자"
+                 for _, label, current, new in plans]
+        what = "미리보기(글칸에 넣고 확인한 뒤 취소, 저장 안 함)" if preview_only else "바꾸고 '지침 저장'"
+        message = (f"창 {len(plans)}개의 프로젝트 지침을 {what} 할까요?\n\n" + "\n".join(lines[:10]) +
+                   (f"\n… 외 {len(lines) - 10}개" if len(lines) > 10 else "") +
+                   (f"\n\n건너뜀:\n" + "\n".join(skipped[:10]) if skipped else "") +
+                   "\n\n창이 하나씩 앞으로 와서 글칸에 붙여 넣습니다. 그동안 마우스·키보드를 쓰지 마세요.")
+        if QMessageBox.question(self, "프로젝트 지침", message) != QMessageBox.StandardButton.Yes:
+            return
+
+        # 2) 바꾸기: 편집 창 → 글칸 전체 선택 → 붙여넣기 → 글칸 확인 → 저장(또는 취소) → 다시 열어 확인
+        old_clip = get_clipboard()
+        done, failed = [], []
+        for hwnd, label, current, new in plans:
+            try:
+                field = open_instructions(hwnd)
+                if not field or not activate(hwnd):
+                    failed.append(f"{label} — 편집 창을 못 열었거나 창을 앞으로 못 가져옴")
+                    continue
+                time.sleep(0.2)
+                ok = fill_field(hwnd, field, new)
+                if not ok or preview_only:
+                    if preview_only and ok:
+                        time.sleep(0.8)  # 눈으로 볼 틈
+                    # claude.ai 는 취소해도 쓴 글이 그 페이지에 남아 있다가 다음 저장 때 들어갈 수 있어, 원래 글로 되돌리고 취소
+                    restored = fill_field(hwnd, field, current)
+                    close_instructions(hwnd, save=False)
+                    if ok:
+                        done.append(label if restored else f"{label} (원래 글 되돌리기 확인 못 함 — 그 창은 새로 고침 권장)")
+                    else:
+                        failed.append(f"{label} — 글칸에 제대로 안 들어가서 원래대로 두고 취소함(저장 안 함)")
+                    continue
+                if not close_instructions(hwnd, save=True):
+                    failed.append(f"{label} — '지침 저장' 뒤 편집 창이 안 닫힘(확인 필요)")
+                    continue
+                saved = reload_and_read_instructions(hwnd)
+                if saved is not None and saved.strip() == new.strip():
+                    done.append(label)
+                else:
+                    failed.append(f"{label} — 저장 뒤 새로 고쳐 읽은 글이 다름(확인 필요)")
+            except Exception as e:
+                failed.append(f"{label} — 오류 {e.__class__.__name__}")
+        time.sleep(0.2)
+        if old_clip is not None:
+            set_clipboard(old_clip)
+        activate(int(self.winId()))
+        verb = "미리보기했습니다(저장 안 함)" if preview_only else "바꾸고 저장해 확인했습니다"
+        QMessageBox.information(self, "프로젝트 지침",
+                                f"{len(done)}개 창의 지침을 {verb}." +
+                                (f"\n\n안 된 곳:\n" + "\n".join(failed) if failed else ""))
 
     # ───── 탭 정리 ─────
     def tab_menu(self, *_):

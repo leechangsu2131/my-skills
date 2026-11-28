@@ -36,3 +36,5 @@
 - 2026-11-28 13:08 S2 (pr179·181) PR 올림 — docs/reviews/task-T106-work.md(🔴 수업 화면 단추 가림)·task-T109-school-info.md(🔴 안내대로 설정해도 날씨 안 나옴). 확인: 두 브랜치 시험·가짜 .env 재현·실제 브라우저. #181·#183 은 claude-web-lee2131@hanmail 도 검토(task/S2-review-pr181-183)
 - 2026-11-28 14:41 T107 진행 — PR #183 검토 🟡 반영 시작(합치기 전) / 다음: 서비스 계정 설정을 시트 여는 동안만 두기, 시트 응답이 없을 때 기다림 끊기, school-todo-kakao ISSUES 한 줄
 - 2026-11-28 14:44 T107 PR 올림 — PR #183 검토 🟡 반영: 시트 응답이 없으면 15초만 기다림(2분 넘은 읽기는 버림), 서비스 계정 설정은 시트를 여는 동안만 환경변수에 둠, 비공개 함수 사용은 school-todo-kakao ISSUE-008 로 기록. 확인: 일정 칸 시험 34개(가짜 시트), 수업 비서 시험 505 통과·1 건너뜀·4 예상 실패(2개 파일 제외), 고친 곳 8군데를 일부러 깨면 모두 시험 실패. 실제 시트는 열지 않음
+- 2026-11-28 21:16 S2 (teacherlesson-from-neis) 시작 (브랜치 task/S2-teacherlesson-from-neis-review-pr207-209)
+- 2026-11-28 21:22 S2 (pr207·208·209) PR 올림 — docs/reviews/task-T122-session-keeper.md(🔴 "남은 시간 59분 12초" 모양을 못 읽음, 이미 합쳐짐)·task-T117-day-recorder.md(🟡 남은 pid 로 다른 프로그램 종료·BOM 설정 무시)·task-T121-speaker-level.md(PR #210 에 없는 것만: 한 채널 녹음 문제). 확인: 각 브랜치 시험·가짜 값 재현. 실제 NEIS·마이크·윈도우는 확인 못 함
